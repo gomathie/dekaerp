@@ -13,14 +13,12 @@ use Webkul\Security\Livewire\AcceptInvitation;
 use Webkul\Security\Models\Role;
 use Webkul\Security\Policies\RolePolicy;
 use Webkul\Support\Traits\HasFilamentDefaults;
-use Webkul\Support\Traits\HasMultiCompany;
 use Webkul\Support\Traits\HasRouterMacros;
 use Webkul\Support\Traits\HasRtlSupport;
 
 class SupportServiceProvider extends PackageServiceProvider
 {
     use HasFilamentDefaults;
-    use HasMultiCompany;
     use HasRouterMacros;
     use HasRtlSupport;
 
@@ -33,7 +31,6 @@ class SupportServiceProvider extends PackageServiceProvider
         $package->name(static::$name)
             ->isCore()
             ->hasViews()
-            ->hasConfigFile('company-scope')
             ->hasTranslations()
             ->hasRoutes(['api'])
             ->hasMigrations([
@@ -97,10 +94,6 @@ class SupportServiceProvider extends PackageServiceProvider
         $this->registerFilamentDefaults();
 
         $this->registerRtlSupport();
-
-        $this->registerCompanySwitcher();
-
-        $this->registerCompanyScopes();
     }
 
     public function packageRegistered(): void

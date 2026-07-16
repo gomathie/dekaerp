@@ -24,7 +24,6 @@ services:
 
     volumes:
       - '.:/var/www/html'
-      - './docker/php/dekaerp-performance.ini:/etc/php/8.4/cli/conf.d/99-dekaerp.ini:ro'
 
     networks:
       - sail

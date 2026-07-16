@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan view:clear)",
-      "Bash(docker version *)"
-    ]
-  }
-}

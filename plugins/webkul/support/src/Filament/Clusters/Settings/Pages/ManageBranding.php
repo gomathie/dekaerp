@@ -130,12 +130,12 @@ class ManageBranding extends SettingsPage
     private function getDefaultColors(): array
     {
         return [
-            'primary_color' => Color::convertToHex(Color::Blue[600]),
-            'gray_color'    => Color::convertToHex(Color::Zinc[600]),
-            'danger_color'  => Color::convertToHex(Color::Red[600]),
-            'info_color'    => Color::convertToHex(Color::Blue[600]),
-            'success_color' => Color::convertToHex(Color::Green[600]),
-            'warning_color' => Color::convertToHex(Color::Amber[600]),
-        ];
+        'primary_color' => Color::convertToHex(Color::Amber[500]),
+        'gray_color'    => Color::convertToHex(Color::Stone[500]),
+        'danger_color'  => Color::convertToHex(Color::Red[600]),
+        'info_color'    => Color::convertToHex(Color::Slate[800]),
+        'success_color' => Color::convertToHex(Color::Green[600]),
+        'warning_color' => Color::convertToHex(Color::Amber[500]),
+    ];
     }
 }

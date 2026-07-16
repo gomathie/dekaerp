@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'title'            => 'DekaERP - Planification des ressources de l’entreprise',
-    'meta_description' => 'DekaERP - Système moderne de planification des ressources de l’entreprise',
+    'title'            => 'AureusERP - Planification des ressources de l’entreprise',
+    'meta_description' => 'AureusERP - Système moderne de planification des ressources de l’entreprise',
 
     'nav' => [
         'dashboard' => 'Tableau de bord',
@@ -11,7 +11,7 @@ return [
     ],
 
     'hero' => [
-        'title'         => 'Bienvenue sur DekaERP',
+        'title'         => 'Bienvenue sur AureusERP',
         'subtitle'      => 'Une solution moderne de gestion des ressources de l’entreprise',
         'description'   => 'Optimisez les opérations de votre entreprise grâce à notre système ERP complet. Gérez les ventes, les achats, les stocks, la comptabilité et bien plus encore depuis une seule plateforme.',
         'cta_primary'   => 'Commencer',
@@ -55,7 +55,7 @@ return [
 
     'cta' => [
         'title'       => 'Prêt à transformer votre entreprise ?',
-        'description' => 'Rejoignez des milliers d’entreprises qui font confiance à DekaERP pour leurs opérations quotidiennes.',
+        'description' => 'Rejoignez des milliers d’entreprises qui font confiance à AureusERP pour leurs opérations quotidiennes.',
         'button'      => 'Essai gratuit',
     ],
 

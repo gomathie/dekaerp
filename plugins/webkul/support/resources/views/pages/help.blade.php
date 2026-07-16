@@ -34,7 +34,7 @@
 
             <div class="flex shrink-0 flex-wrap items-center gap-3">
                 {{-- <a
-                    href="https://aureuserp.com/contacts"
+                    href="https://dekaerp.com/contacts"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-white/40 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
@@ -44,7 +44,7 @@
                 </a> --}}
 
                 <a
-                    href="https://aureuserp.com/contacts"
+                    href="https://dekaerp.com/contacts"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="text-primary-600 inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-lg bg-white px-5 py-2.5 text-sm font-semibold shadow-sm transition hover:bg-gray-100"

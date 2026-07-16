@@ -8,21 +8,21 @@ return new class extends SettingsMigration
 {
     public function up(): void
     {
-        $this->migrator->add('branding.primary_color', $this->defaultHex(Color::Blue));
-        $this->migrator->add('branding.gray_color', $this->defaultHex(Color::Zinc));
+        $this->migrator->add('branding.primary_color', $this->defaultHex(Color::Amber, 500));
+        $this->migrator->add('branding.gray_color', $this->defaultHex(Color::Stone, 500));
         $this->migrator->add('branding.danger_color', $this->defaultHex(Color::Red));
-        $this->migrator->add('branding.info_color', $this->defaultHex(Color::Blue));
+        $this->migrator->add('branding.info_color', $this->defaultHex(Color::Slate, 800));
         $this->migrator->add('branding.success_color', $this->defaultHex(Color::Green));
-        $this->migrator->add('branding.warning_color', $this->defaultHex(Color::Amber));
+        $this->migrator->add('branding.warning_color', $this->defaultHex(Color::Amber, 500));
         $this->migrator->add('branding.light_logo', 'images/logo.svg');
         $this->migrator->add('branding.dark_logo', 'images/logo.svg');
         $this->migrator->add('branding.favicon', 'images/favicon.ico');
         $this->migrator->add('branding.logo_height', '2rem');
     }
 
-    private function defaultHex(array $color): string
+    private function defaultHex(array $color, int $shade = 600): string
     {
-        return Color::convertToHex($color[600]);
+        return Color::convertToHex($color[$shade]);
     }
 
     public function down(): void

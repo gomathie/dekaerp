@@ -25,7 +25,7 @@ class CustomerPanelProvider extends PanelProvider
         return $panel
             ->id('customer')
             ->path('/')
-            ->homeUrl(url('/'))
+            ->homeUrl(url('/admin'))
             ->authPasswordBroker('customers')
             ->profile(isSimple: false)
             ->favicon(asset('images/favicon.ico'))
@@ -33,7 +33,7 @@ class CustomerPanelProvider extends PanelProvider
             ->darkMode(false)
             ->brandLogoHeight('2rem')
             ->colors([
-                'primary' => Color::Blue,
+                'primary' => Color::Amber,
             ])
             ->topNavigation()
             ->renderHook(
