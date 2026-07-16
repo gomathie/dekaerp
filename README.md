@@ -22,7 +22,6 @@ DekaERP is a comprehensive, open-source ERP solution for small and medium enterp
 - **Financial accounting** — invoicing, payments, and reporting
 - **Human resources** — employees, attendance, time-off, and recruitment
 - **Project management** — plan, track, and deliver on time
-- **Multi-company support** — manage multiple entities, assign user access by company, and switch company context from the admin UI
 - **Multi-language support** and a responsive Filament admin UI
 
 ## ⚡ Quick Start
@@ -73,10 +72,6 @@ Visit `http://localhost:8000` and log in with your admin credentials.
 ## 🧩 Plugin System
 
 DekaERP uses a modular plugin architecture (under `plugins/`). Each module is a self-contained package you can enable or disable to tailor the installation to your needs.
-
-## 🏢 Multi-company support
-
-For a full guide on configuring companies, assigning users, switching the active company context, and understanding the scoping behavior, see [docs/multi-company.md](docs/multi-company.md).
 
 ## 📄 License
 
