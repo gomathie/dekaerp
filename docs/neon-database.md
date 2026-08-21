@@ -12,7 +12,7 @@ Neon hands you a URL. Pass it as `DB_URL`:
 
 ```dotenv
 DB_CONNECTION=pgsql
-DB_URL=postgresql://USER:PASSWORD@ep-xxxx-pooler.REGION.aws.neon.tech/dekaerp?sslmode=require
+DB_URL=postgresql://USER:PASSWORD@ep-xxxx-pooler.REGION.aws.neon.tech/neondb?sslmode=require
 DB_SSLMODE=require
 ```
 
@@ -37,7 +37,7 @@ session state between statements. Run schema changes against the direct
 endpoint:
 
 ```bash
-DB_URL="postgresql://USER:PASSWORD@ep-xxxx.REGION.aws.neon.tech/dekaerp?sslmode=require" \
+DB_URL="postgresql://USER:PASSWORD@ep-xxxx.REGION.aws.neon.tech/neondb?sslmode=require" \
   php artisan migrate --force
 ```
 
@@ -51,7 +51,7 @@ environment; nothing else needs changing:
 ```bash
 docker run -d \
   -e DB_CONNECTION=pgsql \
-  -e DB_URL='postgresql://USER:PASSWORD@ep-xxxx-pooler.REGION.aws.neon.tech/dekaerp?sslmode=require' \
+  -e DB_URL='postgresql://USER:PASSWORD@ep-xxxx-pooler.REGION.aws.neon.tech/neondb?sslmode=require' \
   -e APP_KEY='base64:...' \
   -e APP_URL='https://erp.example.com' \
   -p 80:80 dekaerp:latest
@@ -87,7 +87,7 @@ database and every page fails:
 
 ```bash
 DB_CONNECTION=pgsql \
-DB_URL="postgresql://USER:PASSWORD@ep-xxxx.REGION.aws.neon.tech/dekaerp?sslmode=require" \
+DB_URL="postgresql://USER:PASSWORD@ep-xxxx.REGION.aws.neon.tech/neondb?sslmode=require" \
 DB_SSLMODE=require \
   php artisan erp:install --force --no-interaction \
     --admin-name="..." --admin-email="..." --admin-password="..."
