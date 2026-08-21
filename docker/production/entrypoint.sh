@@ -6,36 +6,89 @@ cd "$APP_DIR"
 
 log() { echo "[aureus-entrypoint] $(date '+%Y-%m-%d %H:%M:%S') $*"; }
 
+# Driver selection. Defaults to mysql so existing deployments keep the
+# self-contained internal-MySQL behaviour they had before pgsql was an option.
+DB_CONNECTION="${DB_CONNECTION:-mysql}"
+
+case "$DB_CONNECTION" in
+    mysql|mariadb) DEFAULT_DB_PORT=3306 ;;
+    pgsql)         DEFAULT_DB_PORT=5432 ;;
+    *)
+        log "ERROR: unsupported DB_CONNECTION '${DB_CONNECTION}'. Supported: mysql, mariadb, pgsql."
+        exit 1
+        ;;
+esac
+
 DB_HOST="${DB_HOST:-127.0.0.1}"
-DB_PORT="${DB_PORT:-3306}"
+DB_PORT="${DB_PORT:-$DEFAULT_DB_PORT}"
 DB_DATABASE="${DB_DATABASE:-aureus}"
 DB_USERNAME="${DB_USERNAME:-aureus}"
 DB_PASSWORD="${DB_PASSWORD:-aureus}"
 
-use_internal_mysql() { [[ "$DB_HOST" == "127.0.0.1" || "$DB_HOST" == "localhost" ]]; }
+# A managed database (Neon, RDS, Cloud SQL) is addressed either by DB_URL or by
+# a non-local DB_HOST. Either way the bundled MySQL server must stay down.
+is_managed_database() {
+    [[ -n "$DB_URL" ]] && return 0
+    [[ "$DB_CONNECTION" == "pgsql" ]] && return 0
+    [[ "$DB_HOST" != "127.0.0.1" && "$DB_HOST" != "localhost" ]] && return 0
+    return 1
+}
 
-if use_internal_mysql; then
+if is_managed_database; then
+    if [[ -n "$DB_URL" ]]; then
+        log "Mode: EXTERNAL ${DB_CONNECTION} (via DB_URL)"
+    else
+        log "Mode: EXTERNAL ${DB_CONNECTION} (${DB_HOST}:${DB_PORT})"
+    fi
+    export MYSQL_AUTOSTART=false
+else
     log "Mode: INTERNAL MySQL"
     export MYSQL_AUTOSTART=true
-else
-    log "Mode: EXTERNAL MySQL (${DB_HOST}:${DB_PORT})"
-    export MYSQL_AUTOSTART=false
 fi
 
 sed_escape() { printf '%s' "$1" | sed -e 's/[\\&|]/\\&/g'; }
 
+# Rewrites KEY=... in .env, appending the line when the key is absent so that
+# newer keys (DB_URL, DB_SSLMODE) work against an older .env.example.
 set_env() {
     local key="$1" val
     val=$(sed_escape "$2")
-    sed -i "s|^${key}=.*|${key}=${val}|" .env
+
+    if grep -q "^${key}=" .env; then
+        sed -i "s|^${key}=.*|${key}=${val}|" .env
+    else
+        printf '%s=%s\n' "$key" "$2" >> .env
+    fi
 }
 
 log "Applying runtime environment overrides..."
-set_env DB_HOST     "$DB_HOST"
-set_env DB_PORT     "$DB_PORT"
-set_env DB_DATABASE "$DB_DATABASE"
-set_env DB_USERNAME "$DB_USERNAME"
-set_env DB_PASSWORD "$DB_PASSWORD"
+set_env DB_CONNECTION "$DB_CONNECTION"
+
+if [ -n "$DB_URL" ]; then
+    # DB_URL overrides host, port, database and credentials wholesale, so the
+    # discrete keys are blanked rather than left holding stale values.
+    set_env DB_URL      "$DB_URL"
+    set_env DB_HOST     ""
+    set_env DB_PORT     ""
+    set_env DB_DATABASE ""
+    set_env DB_USERNAME ""
+    set_env DB_PASSWORD ""
+else
+    set_env DB_URL      ""
+    set_env DB_HOST     "$DB_HOST"
+    set_env DB_PORT     "$DB_PORT"
+    set_env DB_DATABASE "$DB_DATABASE"
+    set_env DB_USERNAME "$DB_USERNAME"
+    set_env DB_PASSWORD "$DB_PASSWORD"
+fi
+
+# Neon and most managed Postgres providers refuse unencrypted connections; the
+# framework default is 'prefer', which succeeds locally and fails there.
+if [ -n "$DB_SSLMODE" ]; then
+    set_env DB_SSLMODE "$DB_SSLMODE"
+elif [ "$DB_CONNECTION" = "pgsql" ] && is_managed_database; then
+    set_env DB_SSLMODE "require"
+fi
 
 set_env APP_ENV "${APP_ENV:-production}"
 set_env APP_DEBUG "${APP_DEBUG:-false}"
@@ -47,15 +100,61 @@ set_env APP_DEBUG "${APP_DEBUG:-false}"
 [ -n "$APP_CURRENCY" ] && set_env APP_CURRENCY "$APP_CURRENCY"
 [ -n "$APP_TIMEZONE" ] && set_env APP_TIMEZONE "$APP_TIMEZONE"
 
-if ! use_internal_mysql; then
-    log "Waiting for external MySQL at ${DB_HOST}:${DB_PORT}..."
+if is_managed_database; then
+    log "Waiting for ${DB_CONNECTION} to become reachable..."
+
+    # PHP does the probing so DB_URL is parsed by the same rules Laravel uses,
+    # and so a serverless database that is scaling up from zero simply retries.
+    probe='
+        $url = getenv("DB_URL") ?: null;
+        $driver = getenv("DB_CONNECTION") ?: "mysql";
+        $sslmode = getenv("DB_SSLMODE") ?: null;
+
+        if ($url) {
+            $p = parse_url($url);
+            parse_str($p["query"] ?? "", $q);
+            $driver = ($p["scheme"] ?? "") === "mysql" ? "mysql" : "pgsql";
+            $host = $p["host"] ?? "";
+            $port = $p["port"] ?? ($driver === "mysql" ? 3306 : 5432);
+            $db = ltrim($p["path"] ?? "", "/");
+            $user = urldecode($p["user"] ?? "");
+            $pass = urldecode($p["pass"] ?? "");
+            $sslmode = $q["sslmode"] ?? $sslmode;
+        } else {
+            $host = getenv("DB_HOST");
+            $port = getenv("DB_PORT");
+            $db = getenv("DB_DATABASE");
+            $user = getenv("DB_USERNAME");
+            $pass = getenv("DB_PASSWORD");
+        }
+
+        $dsn = $driver === "mysql"
+            ? sprintf("mysql:host=%s;port=%s", $host, $port)
+            : sprintf("pgsql:host=%s;port=%s;dbname=%s%s", $host, $port, $db,
+                $sslmode ? ";sslmode=".$sslmode : "");
+
+        try {
+            new PDO($dsn, $user, $pass, [PDO::ATTR_TIMEOUT => 5]);
+        } catch (Throwable $e) {
+            fwrite(STDERR, $e->getMessage().PHP_EOL);
+            exit(1);
+        }
+    '
+
     for i in $(seq 1 60); do
-        if php -r "try { new PDO('mysql:host=${DB_HOST};port=${DB_PORT}', '${DB_USERNAME}', '${DB_PASSWORD}'); } catch (Throwable \$e) { exit(1); }" 2>/dev/null; then
-            log "External MySQL is reachable."
+        if DB_URL="$DB_URL" DB_CONNECTION="$DB_CONNECTION" DB_SSLMODE="$DB_SSLMODE" \
+           DB_HOST="$DB_HOST" DB_PORT="$DB_PORT" DB_DATABASE="$DB_DATABASE" \
+           DB_USERNAME="$DB_USERNAME" DB_PASSWORD="$DB_PASSWORD" \
+           php -r "$probe" 2>/dev/null; then
+            log "Database is reachable."
             break
         fi
         if [ "$i" -eq 60 ]; then
-            log "ERROR: cannot reach external MySQL at ${DB_HOST}:${DB_PORT} after 60s."
+            log "ERROR: cannot reach the ${DB_CONNECTION} database after 60s."
+            DB_URL="$DB_URL" DB_CONNECTION="$DB_CONNECTION" DB_SSLMODE="$DB_SSLMODE" \
+            DB_HOST="$DB_HOST" DB_PORT="$DB_PORT" DB_DATABASE="$DB_DATABASE" \
+            DB_USERNAME="$DB_USERNAME" DB_PASSWORD="$DB_PASSWORD" \
+            php -r "$probe" || true
             exit 1
         fi
         sleep 1
