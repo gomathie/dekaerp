@@ -69,7 +69,6 @@ class Order extends Model
         'client_order_ref',
         'origin',
         'reference',
-        'sale_source',
         'signed_by',
         'invoice_status',
         'validity_date',
