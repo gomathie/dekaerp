@@ -73,12 +73,12 @@ use Webkul\Project\Models\TaskStage;
 use Webkul\Project\Settings\TaskSettings;
 use Webkul\Project\Settings\TimeSettings;
 use Webkul\Security\Filament\Resources\UserResource;
-use Webkul\Security\Traits\HasResourcePermissionQuery;
+use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Filament\Tables\Columns\ProgressBarEntry;
 
 class TaskResource extends Resource
 {
-    use HasCustomFields, HasResourcePermissionQuery;
+    use HasCustomFields;
 
     protected static ?string $model = Task::class;
 
@@ -93,9 +93,9 @@ class TaskResource extends Resource
         return __('projects::filament/resources/task.navigation.title');
     }
 
-    public static function getNavigationGroup(): string
+    public static function getNavigationGroup(): string|\UnitEnum
     {
-        return __('projects::filament/resources/task.navigation.group');
+        return NavigationGroup::Project;
     }
 
     public static function getGloballySearchableAttributes(): array
@@ -122,8 +122,8 @@ class TaskResource extends Resource
                             ->hiddenLabel()
                             ->inline()
                             ->required()
-                            ->options(fn () => TaskStage::orderBy('sort')->get()->mapWithKeys(fn ($stage) => [$stage->id => $stage->name]))
-                            ->default(TaskStage::first()?->id),
+                            ->options(fn (Get $get, ?Task $record) => TaskStage::where('project_id', $get('project_id') ?? $record?->project_id)->orderBy('sort')->get()->mapWithKeys(fn ($stage) => [$stage->id => $stage->name]))
+                            ->default(fn (Get $get) => static::getDefaultStageId($get('project_id'))),
                         Section::make(__('projects::filament/resources/task.form.sections.general.title'))
                             ->schema([
                                 TextInput::make('title')
@@ -190,6 +190,7 @@ class TaskResource extends Resource
                                     ->createOptionForm(fn (Schema $schema): Schema => ProjectResource::form($schema))
                                     ->afterStateUpdated(function (Set $set, $state) {
                                         $set('milestone_id', null);
+                                        $set('stage_id', static::getDefaultStageId($state));
                                         $project = $state ? Project::find($state) : null;
                                         $set('partner_id', $project?->partner_id);
                                     }),
@@ -265,11 +266,22 @@ class TaskResource extends Resource
             ->columns(3);
     }
 
+    protected static function getDefaultStageId($projectId): ?int
+    {
+        if (! $projectId) {
+            return null;
+        }
+
+        return TaskStage::query()
+            ->where('project_id', $projectId)
+            ->orderBy('sort')
+            ->first()?->id;
+    }
+
     public static function table(Table $table): Table
     {
         return $table
             ->reorderableColumns()
-            ->columnManagerColumns(2)
             ->columns(static::mergeCustomTableColumns([
                 TextColumn::make('id')
                     ->label(__('projects::filament/resources/task.table.columns.id'))
@@ -294,7 +306,7 @@ class TaskResource extends Resource
                     ->tooltip(fn (TaskState $state): string => $state->getLabel())
                     ->action(
                         Action::make('updateState')
-                            ->modalHeading('Update Task State')
+                            ->modalHeading(__('projects::filament/resources/task.table.actions.update-state.modal-heading'))
                             ->schema(fn (Task $record): array => [
                                 ToggleButtons::make('state')
                                     ->label(__('projects::filament/resources/task.table.columns.new-state'))
@@ -453,7 +465,7 @@ class TaskResource extends Resource
                     ->label(__('projects::filament/resources/task.table.groups.created-at'))
                     ->date(),
             ])
-            ->reorderable('sort')
+            ->reorderable('sort', direction: 'desc')
             ->defaultSort('sort', 'desc')
             ->filters([
                 QueryBuilder::make()
@@ -669,8 +681,8 @@ class TaskResource extends Resource
                         InfolistProgressStepper::make('stage_id')
                             ->hiddenLabel()
                             ->inline()
-                            ->options(fn () => TaskStage::orderBy('sort')->get()->mapWithKeys(fn ($stage) => [$stage->id => $stage->name])->toArray())
-                            ->default(TaskStage::first()?->id),
+                            ->options(fn ($record) => TaskStage::where('project_id', $record?->project_id)->orderBy('sort')->get()->mapWithKeys(fn ($stage) => [$stage->id => $stage->name])->toArray())
+                            ->default(fn ($record) => static::getDefaultStageId($record?->project_id)),
 
                         Section::make(__('projects::filament/resources/task.infolist.sections.general.title'))
                             ->schema([
@@ -720,7 +732,7 @@ class TaskResource extends Resource
                                             ->icon('heroicon-o-folder')
                                             ->placeholder('—')
                                             ->color('primary')
-                                            ->url(fn (Task $record): string => $record->project_id ? ProjectResource::getUrl('view', ['record' => $record->project]) : '#'),
+                                            ->url(fn (Task $record): string => $record->project_id ? ProjectResource::getUrl('view', ['record' => $record->project_id]) : '#'),
 
                                         TextEntry::make('milestone.name')
                                             ->label(__('projects::filament/resources/task.infolist.sections.project-information.entries.milestone'))
@@ -856,12 +868,12 @@ class TaskResource extends Resource
 
     private static function getTimeSettings(): TimeSettings
     {
-        return once(fn () => app(TimeSettings::class));
+        return settings(TimeSettings::class);
     }
 
     private static function getTaskSettings(): TaskSettings
     {
-        return once(fn () => app(TaskSettings::class));
+        return settings(TaskSettings::class);
     }
 
     public static function getRecordSubNavigation(Page $page): array

@@ -25,6 +25,10 @@ return [
                     'destination-location' => 'موقع الوجهة',
                 ],
             ],
+
+            'additional-fields' => [
+                'title' => 'معلومات إضافية',
+            ],
         ],
 
         'tabs' => [
@@ -45,6 +49,12 @@ return [
                     'picked'                     => 'تم الانتقاء',
                 ],
 
+                'actions' => [
+                    'open-product' => [
+                        'tooltip' => 'فتح المنتج',
+                    ],
+                ],
+
                 'fields' => [
                     'product'        => 'المنتج',
                     'final-location' => 'الموقع النهائي',
@@ -58,8 +68,9 @@ return [
                     'picked'         => 'تم الانتقاء',
 
                     'lines' => [
-                        'modal-heading' => 'إدارة حركات المخزون',
-                        'add-line'      => 'إضافة سطر',
+                        'modal-heading'             => 'إدارة حركات المخزون',
+                        'modal-submit-action-label' => 'حفظ',
+                        'add-line'                  => 'إضافة سطر',
 
                         'actions' => [
                             'generate' => 'توليد الأرقام التسلسلية/الدفعات',
@@ -137,6 +148,7 @@ return [
         ],
 
         'filters' => [
+            'operation-type'       => 'نوع العملية',
             'name'                 => 'الاسم',
             'state'                => 'الحالة',
             'partner'              => 'الشريك',

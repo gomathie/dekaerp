@@ -25,6 +25,7 @@ use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\FontWeight;
@@ -67,11 +68,11 @@ use Webkul\Project\Settings\TaskSettings;
 use Webkul\Project\Settings\TimeSettings;
 use Webkul\Security\Filament\Resources\CompanyResource;
 use Webkul\Security\Filament\Resources\UserResource;
-use Webkul\Security\Traits\HasResourcePermissionQuery;
+use Webkul\Support\Enums\NavigationGroup;
 
 class ProjectResource extends Resource
 {
-    use HasCustomFields, HasResourcePermissionQuery;
+    use HasCustomFields;
 
     protected static ?string $model = Project::class;
 
@@ -86,9 +87,9 @@ class ProjectResource extends Resource
         return __('projects::filament/resources/project.navigation.title');
     }
 
-    public static function getNavigationGroup(): string
+    public static function getNavigationGroup(): string|\UnitEnum
     {
-        return __('projects::filament/resources/project.navigation.group');
+        return NavigationGroup::Project;
     }
 
     public static function getGloballySearchableAttributes(): array
@@ -116,7 +117,7 @@ class ProjectResource extends Resource
                             ->required()
                             ->visible(static::getTaskSettings()->enable_project_stages)
                             ->options(fn () => ProjectStage::orderBy('sort')->get()->mapWithKeys(fn ($stage) => [$stage->id => $stage->name]))
-                            ->default(ProjectStage::first()?->id),
+                            ->default(fn () => static::getDefaultStageId(current_company_id())),
                         Section::make(__('projects::filament/resources/project.form.sections.general.title'))
                             ->schema([
                                 TextInput::make('name')
@@ -177,7 +178,8 @@ class ProjectResource extends Resource
                                     ->searchable()
                                     ->preload()
                                     ->label(__('projects::filament/resources/project.form.sections.additional.fields.company'))
-                                    ->default(fn () => Auth::user()->default_company_id)
+                                    ->live()
+                                    ->afterStateUpdated(fn (Set $set, $state) => $set('stage_id', static::getDefaultStageId($state)))
                                     ->createOptionForm(fn (Schema $schema) => CompanyResource::form($schema)),
                             ]))
                             ->columns(2),
@@ -225,6 +227,16 @@ class ProjectResource extends Resource
                     ->columnSpan(['lg' => 1]),
             ])
             ->columns(3);
+    }
+
+    protected static function getDefaultStageId($companyId): ?int
+    {
+        $companyId = $companyId ?: current_company_id();
+
+        return ProjectStage::query()
+            ->where(fn ($query) => $query->whereNull('company_id')->orWhere('company_id', $companyId))
+            ->orderBy('sort')
+            ->first()?->id;
     }
 
     public static function table(Table $table): Table
@@ -309,7 +321,7 @@ class ProjectResource extends Resource
                     ->label(__('projects::filament/resources/project.table.groups.created-at'))
                     ->date(),
             ])
-            ->reorderable('sort')
+            ->reorderable('sort', direction: 'desc')
             ->defaultSort('sort', 'desc')
             ->filters([
                 QueryBuilder::make()
@@ -664,12 +676,12 @@ class ProjectResource extends Resource
 
     public static function getTaskSettings(): TaskSettings
     {
-        return once(fn () => app(TaskSettings::class));
+        return settings(TaskSettings::class);
     }
 
     public static function getTimeSettings(): TimeSettings
     {
-        return once(fn () => app(TimeSettings::class));
+        return settings(TimeSettings::class);
     }
 
     public static function getRecordSubNavigation(Page $page): array

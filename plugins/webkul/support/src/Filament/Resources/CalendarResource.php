@@ -38,6 +38,7 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Filament\Resources\CalendarResource\Pages\CreateCalendar;
 use Webkul\Support\Filament\Resources\CalendarResource\Pages\EditCalendar;
 use Webkul\Support\Filament\Resources\CalendarResource\Pages\ListCalendars;
@@ -58,9 +59,9 @@ class CalendarResource extends Resource
         return __('support::filament/resources/calendar.title');
     }
 
-    public static function getNavigationGroup(): string
+    public static function getNavigationGroup(): string|\UnitEnum
     {
-        return __('support::filament/resources/calendar.navigation.group');
+        return NavigationGroup::Employee;
     }
 
     public static function getNavigationLabel(): string
@@ -99,7 +100,8 @@ class CalendarResource extends Resource
                                             ->label(__('support::filament/resources/calendar.form.sections.general.fields.company'))
                                             ->relationship('company', 'name')
                                             ->searchable()
-                                            ->preload(),
+                                            ->preload()
+                                            ->default(current_company_id()),
                                     ])->columns(2),
                                 Section::make(__('support::filament/resources/calendar.form.sections.configuration.title'))
                                     ->schema([
@@ -150,7 +152,6 @@ class CalendarResource extends Resource
     {
         return $table
             ->reorderableColumns()
-            ->columnManagerColumns(2)
             ->columns([
                 TextColumn::make('id')
                     ->label(__('support::filament/resources/calendar.table.columns.id'))

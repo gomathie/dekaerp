@@ -59,7 +59,7 @@ class PackageTypeResource extends Resource
             return true;
         }
 
-        return app(OperationSettings::class)->enable_packages;
+        return settings(OperationSettings::class)->enable_packages;
     }
 
     public static function form(Schema $schema): Schema
@@ -89,7 +89,8 @@ class PackageTypeResource extends Resource
                                     ->prefixIcon('heroicon-o-building-office')
                                     ->relationship('company', 'name')
                                     ->searchable()
-                                    ->preload(),
+                                    ->preload()
+                                    ->default(current_company_id()),
                             ]),
                     ])->columnSpanFull(),
 

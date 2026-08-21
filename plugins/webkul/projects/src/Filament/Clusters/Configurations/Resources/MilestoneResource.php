@@ -12,6 +12,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
@@ -19,6 +20,8 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Webkul\Field\Filament\Traits\HasCustomFields;
 use Webkul\Project\Filament\Clusters\Configurations;
 use Webkul\Project\Filament\Clusters\Configurations\Resources\MilestoneResource\Pages;
 use Webkul\Project\Filament\Resources\ProjectResource\Pages\ManageMilestones;
@@ -28,6 +31,8 @@ use Webkul\Project\Settings\TaskSettings;
 
 class MilestoneResource extends Resource
 {
+    use HasCustomFields;
+
     protected static ?string $model = Milestone::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-flag';
@@ -35,6 +40,11 @@ class MilestoneResource extends Resource
     protected static ?int $navigationSort = 3;
 
     protected static ?string $cluster = Configurations::class;
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->whereHas('project');
+    }
 
     public static function getNavigationLabel(): string
     {
@@ -47,7 +57,7 @@ class MilestoneResource extends Resource
             return true;
         }
 
-        return app(TaskSettings::class)->enable_milestones;
+        return settings(TaskSettings::class)->enable_milestones;
     }
 
     public static function form(Schema $schema): Schema
@@ -74,6 +84,9 @@ class MilestoneResource extends Resource
                     ->required()
                     ->searchable()
                     ->preload(),
+                Section::make()
+                    ->schema(static::getCustomFormFields())
+                    ->columns(2),
             ])
             ->columns(1);
     }
@@ -82,8 +95,7 @@ class MilestoneResource extends Resource
     {
         return $table
             ->reorderableColumns()
-            ->columnManagerColumns(2)
-            ->columns([
+            ->columns(static::mergeCustomTableColumns([
                 TextColumn::make('name')
                     ->label(__('projects::filament/clusters/configurations/resources/milestone.table.columns.name'))
                     ->searchable()
@@ -122,7 +134,7 @@ class MilestoneResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-            ])
+            ]))
             ->groups([
                 Group::make('project.name')
                     ->label(__('projects::filament/clusters/configurations/resources/milestone.table.groups.project')),
@@ -132,7 +144,7 @@ class MilestoneResource extends Resource
                     ->label(__('projects::filament/clusters/configurations/resources/milestone.table.groups.created-at'))
                     ->date(),
             ])
-            ->filters([
+            ->filters(static::mergeCustomTableFilters([
                 TernaryFilter::make('is_completed')
                     ->label(__('projects::filament/clusters/configurations/resources/milestone.table.filters.is-completed')),
                 SelectFilter::make('project_id')
@@ -149,7 +161,7 @@ class MilestoneResource extends Resource
                     ->relationship('creator', 'name')
                     ->searchable()
                     ->preload(),
-            ])
+            ]))
             ->recordActions([
                 EditAction::make()
                     ->successNotification(

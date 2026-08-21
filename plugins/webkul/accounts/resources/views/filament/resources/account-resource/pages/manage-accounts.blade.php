@@ -1,7 +1,12 @@
 <x-filament-panels::page>
+    <style>
+        .coa-tree ul { list-style: none; margin: 0; padding: 0; }
+        .coa-tree li { margin: 0; padding: 0; }
+        .coa-tree button { line-height: 1.25; }
+    </style>
+
     <div
         x-data="{
-            search: '',
             selected: @js($selectedCodePrefix),
             expanded: {@if($selectedCodePrefix) @js((string) substr($selectedCodePrefix, 0, 1)): true @endif},
             isExpanded(k) { return !! this.expanded[k] },
@@ -12,24 +17,44 @@
                 $wire.selectPrefix(prefix);
             },
         }"
-        class="flex flex-row items-start gap-6"
+        class="flex flex-row items-start gap-4"
     >
-        <aside x-cloak class="sticky top-4 w-40 shrink-0">
+        <aside
+            x-cloak
+            x-data="{
+                w: parseInt(localStorage.getItem('coa_sidebar_w')) || 104,
+                resize(e) {
+                    const sx = e.clientX, sw = this.w;
+                    const move = (ev) => {
+                        this.w = Math.min(420, Math.max(88, sw + (ev.clientX - sx)));
+                        localStorage.setItem('coa_sidebar_w', this.w);
+                    };
+                    const up = () => {
+                        document.removeEventListener('mousemove', move);
+                        document.removeEventListener('mouseup', up);
+                        document.body.style.userSelect = '';
+                    };
+                    document.body.style.userSelect = 'none';
+                    document.addEventListener('mousemove', move);
+                    document.addEventListener('mouseup', up);
+                },
+            }"
+            :style="`width:${w}px`"
+            class="sticky top-4 shrink-0"
+        >
             <nav
-                class="overflow-hidden rounded-2xl bg-white shadow-sm transition-opacity dark:bg-gray-900/60 dark:backdrop-blur"
+                class="relative overflow-hidden rounded-lg ring-1 ring-gray-950/5 bg-white transition-opacity dark:bg-gray-900 dark:ring-white/10"
                 wire:loading.delay.shortest.class="opacity-60"
                 wire:target="selectPrefix"
             >
-                <div class="max-h-[calc(100vh-12rem)] overflow-y-auto p-2">
-                    {{-- All --}}
+                <div class="coa-tree max-h-[calc(100vh-12rem)] overflow-y-auto p-1 text-sm">
                     <button
                         type="button"
                         @click="pick(null)"
-                        x-show="!search"
                         :class="selected === null
-                            ? 'bg-gradient-to-r from-primary-500/10 to-primary-500/5 text-primary-700 dark:text-primary-300'
+                            ? 'bg-primary-500/10 text-primary-700 dark:text-primary-300 font-medium'
                             : 'text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-white/5'"
-                        class="group mb-1 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-start text-sm font-medium transition"
+                        class="flex w-full items-center gap-2 rounded-md px-2 py-1 text-start transition"
                     >
                         <x-filament::icon
                             icon="heroicon-m-squares-2x2"
@@ -44,24 +69,17 @@
                         <span x-show="selected === null" class="h-1.5 w-1.5 rounded-full bg-primary-500"></span>
                     </button>
 
-                    <div x-show="!search" class="my-2 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent dark:via-white/10"></div>
+                    <div class="my-1 h-px bg-gray-100 dark:bg-white/5"></div>
 
-                    <ul class="space-y-0.5" role="tree">
+                    <ul role="tree">
                         @foreach($this->codeTree as $digit => $children)
                             @php($digit = (string) $digit)
                             @php($childCount = count($children))
-                            @php($childListJs = implode(',', array_map('strval', (array) $children)))
 
-                            <li
-                                role="treeitem"
-                                :aria-expanded="isExpanded('{{ $digit }}')"
-                                x-show="!search || '{{ $digit }}'.includes(search) || '{{ $childListJs }}'.includes(search)"
-                            >
+                            <li role="treeitem" :aria-expanded="isExpanded('{{ $digit }}')">
                                 <div
-                                    class="group flex items-center rounded-lg transition"
-                                    :class="selected === '{{ $digit }}'
-                                        ? 'bg-primary-500/10'
-                                        : 'hover:bg-gray-50 dark:hover:bg-white/5'"
+                                    class="flex items-center rounded-md transition"
+                                    :class="selected === '{{ $digit }}' ? 'bg-primary-500/10' : 'hover:bg-gray-50 dark:hover:bg-white/5'"
                                 >
                                     <button
                                         type="button"
@@ -79,10 +97,10 @@
                                     <button
                                         type="button"
                                         @click="pick('{{ $digit }}')"
-                                        class="flex min-w-0 flex-1 items-center gap-2 py-1.5 pe-2 text-start text-sm transition"
+                                        class="flex min-w-0 flex-1 items-center py-1 pe-2 text-start font-mono transition"
                                         :class="selected === '{{ $digit }}'
                                             ? 'font-semibold text-primary-700 dark:text-primary-300'
-                                            : 'font-medium text-gray-700 dark:text-gray-200'"
+                                            : 'text-gray-700 dark:text-gray-200'"
                                     >
                                         <span class="relative h-4 w-4 shrink-0">
                                             <x-filament::icon
@@ -118,36 +136,21 @@
 
                                 @if($childCount)
                                     <ul
-                                        class="relative ms-4 mt-0.5 space-y-0.5 ps-3"
+                                        style="margin-inline-start:0.85rem;padding-inline-start:0.5rem;border-inline-start:1px solid rgba(128,128,128,0.25);"
                                         role="group"
                                         x-show="isExpanded('{{ $digit }}')"
                                         x-collapse.duration.150ms
                                     >
-                                        <span
-                                            class="absolute start-0 top-0 bottom-2 w-px bg-gradient-to-b from-gray-200 via-gray-200 to-transparent dark:from-white/10 dark:via-white/10"
-                                            aria-hidden="true"
-                                        ></span>
-
                                         @foreach($children as $child)
                                             @php($child = (string) $child)
-
-                                            <li
-                                                role="treeitem"
-                                                class="relative"
-                                                x-show="!search || '{{ $child }}'.includes(search)"
-                                            >
-                                                <span
-                                                    class="absolute start-[-12px] top-1/2 h-px w-3 bg-gray-200 dark:bg-white/10"
-                                                    aria-hidden="true"
-                                                ></span>
-
+                                            <li role="treeitem">
                                                 <button
                                                     type="button"
                                                     @click="pick('{{ $child }}')"
-                                                    class="group/child flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-start text-sm transition"
+                                                    class="flex w-full items-center gap-1.5 rounded-md ps-2 pe-2 py-1 text-start font-mono transition"
                                                     :class="selected === '{{ $child }}'
                                                         ? 'bg-primary-500/10 font-semibold text-primary-700 dark:text-primary-300'
-                                                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-white'"
+                                                        : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-white/5'"
                                                 >
                                                     <span
                                                         class="h-1.5 w-1.5 shrink-0 rounded-full transition"
@@ -171,6 +174,14 @@
                         @endforeach
                     </ul>
                 </div>
+
+                <div
+                    @mousedown.prevent="resize($event)"
+                    style="position:absolute;top:0;bottom:0;right:0;width:6px;cursor:col-resize;"
+                    onmouseover="this.style.background='rgba(99,102,241,0.4)'"
+                    onmouseout="this.style.background='transparent'"
+                    title="Drag to resize"
+                ></div>
             </nav>
         </aside>
 

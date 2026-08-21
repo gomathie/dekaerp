@@ -28,10 +28,10 @@ use Webkul\Inventory\Models\PackageType;
 use Webkul\Inventory\Models\Product;
 use Webkul\Inventory\Models\ProductQuantity;
 use Webkul\Inventory\Models\Warehouse;
-use Webkul\Product\Models\Category;
 use Webkul\Inventory\Settings\OperationSettings;
 use Webkul\Inventory\Settings\TraceabilitySettings;
 use Webkul\Inventory\Settings\WarehouseSettings;
+use Webkul\Product\Models\Category;
 use Webkul\Product\Settings\ProductSettings;
 
 class QuantityResource extends Resource
@@ -78,11 +78,12 @@ class QuantityResource extends Resource
                     ->searchable()
                     ->preload()
                     ->required()
+                    ->default(fn (): ?int => Warehouse::where('company_id', current_company_id())->first()?->lot_stock_location_id)
                     ->live()
                     ->afterStateUpdated(function (Set $set) {
                         $set('package_id', null);
                     })
-                    ->visible(fn (WarehouseSettings $settings) => $settings->enable_locations),
+                    ->visible(static::getWarehouseSettings()->enable_locations),
                 Select::make('lot_id')
                     ->label(__('inventories::filament/clusters/products/resources/product/pages/manage-quantities.form.fields.lot'))
                     ->relationship(
@@ -161,24 +162,24 @@ class QuantityResource extends Resource
                     ->label(__('inventories::filament/clusters/products/resources/product/pages/manage-quantities.table.columns.location'))
                     ->searchable()
                     ->sortable()
-                    ->visible(fn (WarehouseSettings $settings) => $settings->enable_locations),
+                    ->visible(static::getWarehouseSettings()->enable_locations),
                 TextColumn::make('storageCategory.name')
                     ->label(__('inventories::filament/clusters/products/resources/product/pages/manage-quantities.table.columns.storage-category'))
                     ->searchable()
                     ->sortable()
                     ->placeholder('—')
-                    ->visible(fn (WarehouseSettings $settings) => $settings->enable_locations),
+                    ->visible(static::getWarehouseSettings()->enable_locations),
                 TextColumn::make('package.name')
                     ->label(__('inventories::filament/clusters/products/resources/product/pages/manage-quantities.table.columns.package'))
                     ->searchable()
                     ->sortable()
                     ->placeholder('—')
-                    ->visible(fn (OperationSettings $settings) => $settings->enable_packages),
+                    ->visible(static::getOperationSettings()->enable_packages),
                 TextColumn::make('lot.name')
                     ->label(__('inventories::filament/clusters/products/resources/product/pages/manage-quantities.table.columns.lot'))
                     ->searchable()
                     ->placeholder('—')
-                    ->visible(fn (TraceabilitySettings $settings) => $settings->enable_lots_serial_numbers),
+                    ->visible(static::getTraceabilitySettings()->enable_lots_serial_numbers),
                 TextInputColumn::make('quantity')
                     ->label(__('inventories::filament/clusters/products/resources/product/pages/manage-quantities.table.columns.on-hand'))
                     ->sortable()
@@ -211,7 +212,7 @@ class QuantityResource extends Resource
                     ->label(__('inventories::filament/clusters/products/resources/product/pages/manage-quantities.table.columns.unit'))
                     ->sortable()
                     ->placeholder('—')
-                    ->visible(fn (ProductSettings $settings) => $settings->enable_uom),
+                    ->visible(static::getProductSettings()->enable_uom),
             ])
             ->filters([
                 SelectFilter::make('warehouse')
@@ -220,7 +221,7 @@ class QuantityResource extends Resource
                     ->multiple()
                     ->searchable()
                     ->preload()
-                    ->visible(app(WarehouseSettings::class)->enable_locations)
+                    ->visible(static::getWarehouseSettings()->enable_locations)
                     ->query(fn (Builder $query, array $data) => empty($data['values'])
                         ? $query
                         : $query->whereHas('location', fn (Builder $q) => $q->whereIn('warehouse_id', $data['values']))),
@@ -230,7 +231,7 @@ class QuantityResource extends Resource
                     ->multiple()
                     ->searchable()
                     ->preload()
-                    ->visible(app(WarehouseSettings::class)->enable_locations),
+                    ->visible(static::getWarehouseSettings()->enable_locations),
                 SelectFilter::make('product_category')
                     ->label(__('inventories::filament/clusters/reporting.quantities.filters.product-category'))
                     ->options(fn () => Category::get()->pluck('full_name', 'id'))
@@ -246,21 +247,21 @@ class QuantityResource extends Resource
                     ->multiple()
                     ->searchable()
                     ->preload()
-                    ->visible(app(WarehouseSettings::class)->enable_locations),
+                    ->visible(static::getWarehouseSettings()->enable_locations),
                 SelectFilter::make('package')
                     ->label(__('inventories::filament/clusters/reporting.quantities.filters.package'))
                     ->relationship('package', 'name')
                     ->multiple()
                     ->searchable()
                     ->preload()
-                    ->visible(app(OperationSettings::class)->enable_packages),
+                    ->visible(static::getOperationSettings()->enable_packages),
                 SelectFilter::make('package_type')
                     ->label(__('inventories::filament/clusters/reporting.quantities.filters.package-type'))
                     ->options(fn () => PackageType::query()->orderBy('name')->pluck('name', 'id'))
                     ->multiple()
                     ->searchable()
                     ->preload()
-                    ->visible(app(OperationSettings::class)->enable_packages)
+                    ->visible(static::getOperationSettings()->enable_packages)
                     ->query(fn (Builder $query, array $data) => empty($data['values'])
                         ? $query
                         : $query->whereHas('package', fn (Builder $q) => $q->whereIn('package_type_id', $data['values']))),
@@ -270,14 +271,14 @@ class QuantityResource extends Resource
                     ->multiple()
                     ->searchable()
                     ->preload()
-                    ->visible(app(TraceabilitySettings::class)->enable_lots_serial_numbers),
+                    ->visible(static::getTraceabilitySettings()->enable_lots_serial_numbers),
             ])
             ->headerActions([
                 CreateAction::make()
                     ->label(__('inventories::filament/clusters/products/resources/product/pages/manage-quantities.table.header-actions.create.label'))
                     ->icon('heroicon-o-plus-circle')
                     ->mutateDataUsing(function (array $data): array {
-                        $data['location_id'] = $data['location_id'] ?? Warehouse::first()->lot_stock_location_id;
+                        $data['location_id'] = $data['location_id'] ?? Warehouse::query()->when(Product::find($data['product_id'])?->company_id, fn ($query, $scopedCompanyId) => $query->where(owned_by_company($scopedCompanyId)))->value('lot_stock_location_id');
 
                         $data['company_id'] = Product::find($data['product_id'])?->company_id;
 
@@ -286,7 +287,7 @@ class QuantityResource extends Resource
                         return $data;
                     })
                     ->before(function (array $data) {
-                        $existingQuantity = ProductQuantity::where('location_id', $data['location_id'] ?? Warehouse::first()->lot_stock_location_id)
+                        $existingQuantity = ProductQuantity::where('location_id', $data['location_id'] ?? Warehouse::query()->when(Product::find($data['product_id'])?->company_id, fn ($query, $scopedCompanyId) => $query->where(owned_by_company($scopedCompanyId)))->value('lot_stock_location_id'))
                             ->where('product_id', $data['product_id'])
                             ->where('package_id', $data['package_id'] ?? null)
                             ->where('lot_id', $data['lot_id'] ?? null)
@@ -317,8 +318,7 @@ class QuantityResource extends Resource
                             ->title(__('inventories::filament/clusters/products/resources/product/pages/manage-quantities.table.actions.delete.notification.title'))
                             ->body(__('inventories::filament/clusters/products/resources/product/pages/manage-quantities.table.actions.delete.notification.body')),
                     ),
-            ])
-            ->paginated(false);
+            ]);
     }
 
     public static function getPages(): array
@@ -326,5 +326,25 @@ class QuantityResource extends Resource
         return [
             'index' => ManageQuantities::route('/'),
         ];
+    }
+
+    public static function getOperationSettings(): OperationSettings
+    {
+        return settings(OperationSettings::class);
+    }
+
+    public static function getProductSettings(): ProductSettings
+    {
+        return settings(ProductSettings::class);
+    }
+
+    public static function getTraceabilitySettings(): TraceabilitySettings
+    {
+        return settings(TraceabilitySettings::class);
+    }
+
+    public static function getWarehouseSettings(): WarehouseSettings
+    {
+        return settings(WarehouseSettings::class);
     }
 }

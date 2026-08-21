@@ -42,7 +42,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
 use Webkul\Manufacturing\Enums\WorkCenterWorkingState;
 use Webkul\Manufacturing\Filament\Clusters\Configurations;
 use Webkul\Manufacturing\Filament\Clusters\Configurations\Resources\WorkCenterResource\Pages\CreateWorkCenter;
@@ -76,7 +75,7 @@ class WorkCenterResource extends Resource
             return true;
         }
 
-        return app(OperationSettings::class)->enable_work_orders;
+        return settings(OperationSettings::class)->enable_work_orders;
     }
 
     public static function getModelLabel(): string
@@ -145,7 +144,11 @@ class WorkCenterResource extends Resource
 
                                 Select::make('alternativeWorkCenters')
                                     ->label(__('manufacturing::filament/clusters/configurations/resources/work-center.form.sections.general.fields.alternative-work-centers'))
-                                    ->relationship('alternativeWorkCenters', 'name')
+                                    ->relationship(
+                                        'alternativeWorkCenters',
+                                        'name',
+                                        modifyQueryUsing: fn (Builder $query, Get $get) => $query->where(owned_by_company($get('company_id'))),
+                                    )
                                     ->multiple()
                                     ->searchable()
                                     ->preload(),
@@ -163,8 +166,8 @@ class WorkCenterResource extends Resource
                                     ->searchable()
                                     ->preload()
                                     ->required()
-                                    ->disabled(fn (): bool => filled(Auth::user()?->default_company_id))
-                                    ->default(Auth::user()?->default_company_id),
+                                    ->disabled(fn (): bool => filled(current_company_id()))
+                                    ->default(current_company_id()),
 
                                 Textarea::make('note')
                                     ->label(__('manufacturing::filament/clusters/configurations/resources/work-center.form.sections.description.fields.note'))
@@ -203,7 +206,11 @@ class WorkCenterResource extends Resource
                                     ->schema([
                                         Select::make('product_id')
                                             ->label(__('manufacturing::filament/clusters/configurations/resources/work-center.form.sections.specific-capacity.columns.product'))
-                                            ->relationship('product', 'name')
+                                            ->relationship(
+                                                'product',
+                                                'name',
+                                                modifyQueryUsing: fn (Builder $query, Get $get) => $query->where(owned_by_company($get('../../company_id'))),
+                                            )
                                             ->searchable()
                                             ->preload()
                                             ->wrapOptionLabels(false)
@@ -501,7 +508,7 @@ class WorkCenterResource extends Resource
                 CreateAction::make()
                     ->icon('heroicon-o-plus-circle'),
             ])
-            ->reorderable('sort')
+            ->reorderable('sort', direction: 'desc')
             ->defaultSort('sort', 'desc');
     }
 

@@ -25,6 +25,10 @@ return [
                     'destination-location' => 'Destination Location',
                 ],
             ],
+
+            'additional-fields' => [
+                'title' => 'Additional Information',
+            ],
         ],
 
         'tabs' => [
@@ -45,6 +49,12 @@ return [
                     'picked'                     => 'Picked',
                 ],
 
+                'actions' => [
+                    'open-product' => [
+                        'tooltip' => 'Open product',
+                    ],
+                ],
+
                 'fields' => [
                     'product'        => 'Product',
                     'final-location' => 'Final Location',
@@ -58,8 +68,9 @@ return [
                     'picked'         => 'Picked',
 
                     'lines' => [
-                        'modal-heading' => 'Manage Stock Moves',
-                        'add-line'      => 'Add Line',
+                        'modal-heading'             => 'Manage Stock Moves',
+                        'modal-submit-action-label' => 'Save',
+                        'add-line'                  => 'Add Line',
 
                         'actions' => [
                             'generate' => 'Generate Serials/Lots',
@@ -137,6 +148,7 @@ return [
         ],
 
         'filters' => [
+            'operation-type'       => 'Operation Type',
             'name'                 => 'Name',
             'state'                => 'State',
             'partner'              => 'Partner',

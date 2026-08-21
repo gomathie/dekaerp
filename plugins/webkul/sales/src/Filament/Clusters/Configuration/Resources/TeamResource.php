@@ -90,6 +90,7 @@ class TeamResource extends Resource
                                     ->relationship('company', 'name')
                                     ->preload()
                                     ->label(__('sales::filament/clusters/configurations/resources/team.form.sections.fields.fieldset.team-details.fields.company'))
+                                    ->default(current_company_id())
                                     ->searchable(),
                                 TextInput::make('invoiced_target')
                                     ->numeric()
@@ -265,7 +266,8 @@ class TeamResource extends Resource
                         ),
                 ]),
             ])
-            ->reorderable('sort', 'desc');
+            ->reorderable('sort', direction: 'desc')
+            ->defaultSort('sort', 'desc');
     }
 
     public static function infolist(Schema $schema): Schema

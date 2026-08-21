@@ -71,6 +71,7 @@ class QuantityResource extends Resource
                     ->searchable()
                     ->preload()
                     ->required()
+                    ->default(fn (): ?int => Warehouse::where('company_id', current_company_id())->first()?->lot_stock_location_id)
                     ->visible(static::getWarehouseSettings()->enable_locations),
                 Select::make('product_id')
                     ->label(__('inventories::filament/clusters/operations/resources/quantity.form.fields.product'))
@@ -143,7 +144,6 @@ class QuantityResource extends Resource
     {
         return $table
             ->reorderableColumns()
-            ->columnManagerColumns(2)
             ->recordTitleAttribute('name')
             ->columns([
                 TextColumn::make('location.full_name')
@@ -192,7 +192,7 @@ class QuantityResource extends Resource
                     ->sortable()
                     ->placeholder('—')
                     ->toggleable(isToggledHiddenByDefault: false)
-                    ->visible(fn (ProductSettings $settings) => $settings->enable_uom),
+                    ->visible(static::getProductSettings()->enable_uom),
                 TextInputColumn::make('counted_quantity')
                     ->label(__('inventories::filament/clusters/operations/resources/quantity.table.columns.counted'))
                     ->sortable()
@@ -409,7 +409,7 @@ class QuantityResource extends Resource
                     ->mutateDataUsing(function (array $data): array {
                         $product = Product::find($data['product_id']);
 
-                        $data['location_id'] = $data['location_id'] ?? Warehouse::first()->lot_stock_location_id;
+                        $data['location_id'] = $data['location_id'] ?? Warehouse::query()->when($product->company_id, fn ($query, $scopedCompanyId) => $query->where(owned_by_company($scopedCompanyId)))->value('lot_stock_location_id');
 
                         $data['company_id'] = $product->company_id;
 
@@ -422,7 +422,7 @@ class QuantityResource extends Resource
                         return $data;
                     })
                     ->before(function (CreateAction $action, array $data) {
-                        $existingQuantity = ProductQuantity::where('location_id', $data['location_id'] ?? Warehouse::first()->lot_stock_location_id)
+                        $existingQuantity = ProductQuantity::where('location_id', $data['location_id'] ?? Warehouse::query()->when(Product::find($data['product_id'])?->company_id, fn ($query, $scopedCompanyId) => $query->where(owned_by_company($scopedCompanyId)))->value('lot_stock_location_id'))
                             ->where('product_id', $data['product_id'])
                             ->where('package_id', $data['package_id'] ?? null)
                             ->where('lot_id', $data['lot_id'] ?? null)
@@ -497,22 +497,22 @@ class QuantityResource extends Resource
 
     public static function getOperationSettings(): OperationSettings
     {
-        return once(fn () => app(OperationSettings::class));
+        return settings(OperationSettings::class);
     }
 
     public static function getProductSettings(): ProductSettings
     {
-        return once(fn () => app(ProductSettings::class));
+        return settings(ProductSettings::class);
     }
 
     public static function getTraceabilitySettings(): TraceabilitySettings
     {
-        return once(fn () => app(TraceabilitySettings::class));
+        return settings(TraceabilitySettings::class);
     }
 
     public static function getWarehouseSettings(): WarehouseSettings
     {
-        return once(fn () => app(WarehouseSettings::class));
+        return settings(WarehouseSettings::class);
     }
 
     public static function getPages(): array
