@@ -25,12 +25,9 @@ use Webkul\Sale\Filament\Clusters\Orders\Resources\DirectSaleResource\Pages\Crea
 use Webkul\Sale\Filament\Clusters\Orders\Resources\DirectSaleResource\Pages\ListDirectSales;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\DirectSaleResource\Pages\PrintReceipt;
 use Webkul\Sale\Models\Order;
-use Webkul\Security\Traits\HasResourcePermissionQuery;
 
 class DirectSaleResource extends Resource
 {
-    use HasResourcePermissionQuery;
-
     public const SALE_SOURCE = 'direct';
 
     protected static ?string $model = Order::class;

@@ -32,6 +32,39 @@ services:
       - mysql
       - redis
       - mailpit
+      - pgsql
+
+  pgsql:
+    image: 'postgres:18-alpine'
+
+    ports:
+      - '${FORWARD_PGSQL_PORT:-5432}:5432'
+
+    environment:
+      PGPASSWORD: '${DB_PASSWORD:-secret}'
+      POSTGRES_DB: '${DB_DATABASE}'
+      POSTGRES_USER: '${DB_USERNAME}'
+      POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+
+    volumes:
+      - 'sail-pgsql:/var/lib/postgresql'
+      - './vendor/laravel/sail/database/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
+
+    networks:
+      - sail
+
+    healthcheck:
+      test:
+        - CMD
+        - pg_isready
+        - '-q'
+        - '-d'
+        - '${DB_DATABASE}'
+        - '-U'
+        - '${DB_USERNAME}'
+
+      retries: 3
+      timeout: 5s
 
   mysql:
     image: 'mysql/mysql-server:8.0'
@@ -104,4 +137,7 @@ volumes:
     driver: local
 
   sail-redis:
+    driver: local
+
+  sail-pgsql:
     driver: local

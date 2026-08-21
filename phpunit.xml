@@ -48,7 +48,7 @@
         <env name="CACHE_STORE" value="array"/>
         <!-- Dedicated test database: the test bootstrap runs migrate:fresh, so this
              MUST point at a throwaway DB and never the dev/production database. -->
-        <env name="DB_CONNECTION" value="mysql"/>
+        <env name="DB_CONNECTION" value="pgsql"/>
         <env name="DB_DATABASE" value="aureuserp_testing"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="PULSE_ENABLED" value="false"/>
