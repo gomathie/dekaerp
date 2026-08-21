@@ -32,3 +32,8 @@ opencode.json
 
 # Credential files (keystores, private keys, etc.)
 /credentials/
+
+# Extracted upstream release archives. Upstream is available as the "aureus"
+# remote with full history and tags, so an extracted copy is never needed in
+# git - and it is large enough to bloat the repository if committed.
+/aureuserp-*/
