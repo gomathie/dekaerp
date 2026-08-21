@@ -1,20 +1,20 @@
-<p align="center">
-  <a href="https://aureuserp.com">
+﻿<p align="center">
+  <a href="https://dekaerp.com">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/aureuserp/temp-media/main/aureus-logo-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/aureuserp/temp-media/main/aureus-logo-light.png">
-      <img src="https://raw.githubusercontent.com/aureuserp/temp-media/main/aureus-logo-light.png" alt="AureusERP logo">
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/dekaerp/temp-media/main/aureus-logo-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/dekaerp/temp-media/main/aureus-logo-light.png">
+      <img src="https://raw.githubusercontent.com/dekaerp/temp-media/main/aureus-logo-light.png" alt="DEKA ERP logo">
     </picture>
   </a>  
 </p>
 
 <p align="center">
-<a href="https://packagist.org/packages/aureuserp/aureuserp"><img src="https://poser.pugx.org/aureuserp/aureuserp/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/aureuserp/aureuserp"><img src="https://poser.pugx.org/aureuserp/aureuserp/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/aureuserp/aureuserp"><img src="https://poser.pugx.org/aureuserp/aureuserp/license.svg" alt="License"></a>
+<a href="https://packagist.org/packages/dekaerp/dekaerp"><img src="https://poser.pugx.org/dekaerp/dekaerp/d/total.svg" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/dekaerp/dekaerp"><img src="https://poser.pugx.org/dekaerp/dekaerp/v/stable.svg" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/dekaerp/dekaerp"><img src="https://poser.pugx.org/dekaerp/dekaerp/license.svg" alt="License"></a>
 </p>
 
-<h1 align="center">Aureus ERP</h1>
+<h1 align="center">DEKA ERP</h1>
 
 <p align="center">
   <strong>Open-Source Enterprise Resource Planning for Modern Businesses</strong>
@@ -30,7 +30,7 @@
 
 1. [Introduction](#-introduction)
 2. [Key Features](#-key-features)
-3. [Why Choose Aureus ERP?](#-why-choose-aureus-erp)
+3. [Why Choose DEKA ERP?](#-why-choose-aureus-erp)
 4. [Requirements](#-requirements)
 5. [Quick Start](#-quick-start)
 6. [Plugin System](#-plugin-system)
@@ -44,14 +44,14 @@
 ---
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/aureuserp/temp-media/main/introduction.png" alt="AureusERP Introduction" width="100%">
+  <img src="https://raw.githubusercontent.com/dekaerp/temp-media/main/introduction.png" alt="DEKA ERP Introduction" width="100%">
 </p>
 
 ## 🚀 Introduction
 
-Aureus ERP is a comprehensive, open-source Enterprise Resource Planning (ERP) solution designed for Small and Medium Enterprises (SMEs) and large-scale organizations. Built on **[Laravel 13](https://laravel.com)**, the most popular PHP framework, and **[FilamentPHP 5](https://filamentphp.com)**, a cutting-edge admin panel framework, Aureus ERP offers an extensible and developer-friendly platform for managing every aspect of your business operations.
+DEKA ERP is a comprehensive, open-source Enterprise Resource Planning (ERP) solution designed for Small and Medium Enterprises (SMEs) and large-scale organizations. Built on **[Laravel 13](https://laravel.com)**, the most popular PHP framework, and **[FilamentPHP 5](https://filamentphp.com)**, a cutting-edge admin panel framework, DEKA ERP offers an extensible and developer-friendly platform for managing every aspect of your business operations.
 
-Whether you're managing accounting, inventory, HR, CRM, or projects, Aureus ERP provides a modular approach that grows with your business.
+Whether you're managing accounting, inventory, HR, CRM, or projects, DEKA ERP provides a modular approach that grows with your business.
 
 ---
 
@@ -61,68 +61,68 @@ Whether you're managing accounting, inventory, HR, CRM, or projects, Aureus ERP 
   Built with Laravel 13 and FilamentPHP 5 for maximum performance and developer experience.
 
   <p align="center">
-    <img src="https://raw.githubusercontent.com/aureuserp/temp-media/main/mordern-architecture.png" alt="Modern Architecture" width="100%">
+    <img src="https://raw.githubusercontent.com/dekaerp/temp-media/main/mordern-architecture.png" alt="Modern Architecture" width="100%">
   </p>
 
   ### 🧩 Modular Plugin System
   Install only the features you need - from accounting to project management.
 
   <p align="center">
-    <img src="https://raw.githubusercontent.com/aureuserp/temp-media/main/modular-plugin-system.png" alt="Modular Plugin System" width="100%">
+    <img src="https://raw.githubusercontent.com/dekaerp/temp-media/main/modular-plugin-system.png" alt="Modular Plugin System" width="100%">
   </p>
 
   ### 🎨 Beautiful UI/UX
   Responsive design with TailwindCSS 4, optimized for desktop and mobile.
 
   <p align="center">
-    <img src="https://raw.githubusercontent.com/aureuserp/temp-media/main/mordern-ui-responsive-design.png" alt="Beautiful UI/UX" width="100%">
+    <img src="https://raw.githubusercontent.com/dekaerp/temp-media/main/mordern-ui-responsive-design.png" alt="Beautiful UI/UX" width="100%">
   </p>
 
   ### 🔐 Advanced Security
   Role-based access control with Filament Shield integration.
 
   <p align="center">
-    <img src="https://raw.githubusercontent.com/aureuserp/temp-media/main/advanced-security.png" alt="Advanced Security" width="100%">
+    <img src="https://raw.githubusercontent.com/dekaerp/temp-media/main/advanced-security.png" alt="Advanced Security" width="100%">
   </p>
 
   ### 📊 Business Intelligence
   Built-in analytics and reporting tools.
 
   <p align="center">
-    <img src="https://raw.githubusercontent.com/aureuserp/temp-media/main/business-intelligence.png" alt="Business Intelligence" width="100%">
+    <img src="https://raw.githubusercontent.com/dekaerp/temp-media/main/business-intelligence.png" alt="Business Intelligence" width="100%">
   </p>
 
   ### 🌐 Multi-Language Support
   Easily translate and localize for global businesses.
 
   <p align="center">
-    <img src="https://raw.githubusercontent.com/aureuserp/temp-media/main/multi-language-support.png" alt="Multi-Language Support" width="100%">
+    <img src="https://raw.githubusercontent.com/dekaerp/temp-media/main/multi-language-support.png" alt="Multi-Language Support" width="100%">
   </p>
 
   ### ⚡ High Performance
   Optimized database queries and caching strategies.
 
   <p align="center">
-    <img src="https://raw.githubusercontent.com/aureuserp/temp-media/main/high-performance.png" alt="High Performance" width="100%">
+    <img src="https://raw.githubusercontent.com/dekaerp/temp-media/main/high-performance.png" alt="High Performance" width="100%">
   </p>
 
   ### 🔧 Developer-Friendly
   Clean code, comprehensive documentation, and extensive APIs.
 
   <p align="center">
-    <img src="https://raw.githubusercontent.com/aureuserp/temp-media/main/developer-friendly.png" alt="Developer-Friendly" width="100%">
+    <img src="https://raw.githubusercontent.com/dekaerp/temp-media/main/developer-friendly.png" alt="Developer-Friendly" width="100%">
   </p>
 
   ### 🔄 Real-Time Updates
   LiveWire 4 integration for dynamic interfaces.
 
   <p align="center">
-    <img src="https://raw.githubusercontent.com/aureuserp/temp-media/main/real-time-updates.png" alt="Real-Time Updates" width="100%">
+    <img src="https://raw.githubusercontent.com/dekaerp/temp-media/main/real-time-updates.png" alt="Real-Time Updates" width="100%">
   </p>
 
 ---
 
-## 🎯 Why Choose Aureus ERP?
+## 🎯 Why Choose DEKA ERP?
 
 | Feature | Benefit |
 |---------|---------|
@@ -159,13 +159,13 @@ Ensure your development environment meets the following requirements:
 
 ## ⚡ Quick Start
 
-Get Aureus ERP up and running in just 4 simple steps:
+Get DEKA ERP up and running in just 4 simple steps:
 
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/aureuserp/aureuserp.git
-cd aureuserp
+git clone https://github.com/dekaerp/dekaerp.git
+cd dekaerp
 ```
 
 ### Step 2: Install Dependencies
@@ -198,13 +198,13 @@ Visit `http://localhost:8000` and log in with your admin credentials!
 
 ---
 
-## ☁️ AureusERP Cloud Hosting
+## ☁️ DEKA ERP Cloud Hosting
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/aureuserp/temp-media/main/cloud-hosting.png" alt="AureusERP Cloud Hosting" width="100%">
+  <img src="https://raw.githubusercontent.com/dekaerp/temp-media/main/cloud-hosting.png" alt="DEKA ERP Cloud Hosting" width="100%">
 </p>
 
-[AureusERP Cloud Hosting](https://aureuserp.com/cloud-hosting/) is a fully managed hosting solution where our team sets up, secures, and configures your AureusERP on reliable infrastructure.
+[DEKA ERP Cloud Hosting](https://dekaerp.com/cloud-hosting/) is a fully managed hosting solution where our team sets up, secures, and configures your DEKA ERP on reliable infrastructure.
 
 Get a ready-to-use ERP on your own domain, without manual installation or infrastructure complexity, and focus on growing your business while we handle the technology.
 
@@ -213,7 +213,7 @@ Get a ready-to-use ERP on your own domain, without manual installation or infras
 
 ## 🧩 Plugin System
 
-AureusERP features a powerful modular plugin system that allows you to customize your ERP installation based on your business needs. Choose only the modules you need to keep your system lean and efficient.
+DEKA ERP features a powerful modular plugin system that allows you to customize your ERP installation based on your business needs. Choose only the modules you need to keep your system lean and efficient.
 
 ### 📦 Core Plugins (System Plugins)
 
@@ -330,7 +330,7 @@ Some plugins require other plugins to function properly. The installation system
 
 ## 🎨 Customization
 
-AureusERP is designed to be highly customizable, allowing you to tailor the system to your specific business needs:
+DEKA ERP is designed to be highly customizable, allowing you to tailor the system to your specific business needs:
 
 ### Plugin Customization
 - 🔹 Install only the plugins you need
@@ -362,7 +362,7 @@ We welcome contributions from the community! Whether you're fixing bugs, adding 
 
 1. **Fork the Repository**
    ```bash
-   git clone https://github.com/aureuserp/aureuserp.git
+   git clone https://github.com/dekaerp/dekaerp.git
    ```
 
 2. **Create a Feature Branch**
@@ -400,7 +400,7 @@ We welcome contributions from the community! Whether you're fixing bugs, adding 
 
 ## 📄 License
 
-AureusERP is truly open-source ERP framework that will always be **free** under the [MIT License](LICENSE).
+DEKA ERP is truly open-source ERP framework that will always be **free** under the [MIT License](LICENSE).
 
 ### What This Means
 - ✅ Free to use for commercial and personal projects
@@ -412,13 +412,13 @@ AureusERP is truly open-source ERP framework that will always be **free** under 
 
 ## 🔒 Security
 
-Security is a top priority for AureusERP. We take all security vulnerabilities seriously.
+Security is a top priority for DEKA ERP. We take all security vulnerabilities seriously.
 
 ### Reporting Security Vulnerabilities
 
 **⚠️ Please DO NOT disclose security vulnerabilities publicly.**
 
-If you discover a security vulnerability in AureusERP, please report it responsibly:
+If you discover a security vulnerability in DEKA ERP, please report it responsibly:
 
 📧 **Email:** support@webkul.com
 
@@ -434,15 +434,15 @@ We will acknowledge your email within 48 hours and provide a detailed response w
 
 ## 💬 Support & Community
 
-Need help or want to connect with other AureusERP users?
+Need help or want to connect with other DEKA ERP users?
 
 ### 📚 Documentation
-- 📖 **Developer Documentation:** [devdocs.aureuserp.com](https://devdocs.aureuserp.com/) - Technical guides, API references, and development resources
-- 📘 **User Guide:** [docs.aureuserp.com](https://docs.aureuserp.com/) - Step-by-step tutorials and user manuals
+- 📖 **Developer Documentation:** [devdocs.dekaerp.com](https://devdocs.dekaerp.com/) - Technical guides, API references, and development resources
+- 📘 **User Guide:** [docs.dekaerp.com](https://docs.dekaerp.com/) - Step-by-step tutorials and user manuals
 
 ### 🤝 Get Support
 - 💬 **Community Forum:** [Coming Soon] - Connect with other users and share experiences
-- 🐛 **Issue Tracker:** [GitHub Issues](https://github.com/aureuserp/aureuserp/issues) - Report bugs and request features
+- 🐛 **Issue Tracker:** [GitHub Issues](https://github.com/dekaerp/dekaerp/issues) - Report bugs and request features
 - 📧 **Email Support:** support@webkul.com - Direct support from the team
 
 ### 🔔 Stay Updated
