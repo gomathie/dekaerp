@@ -25,7 +25,7 @@ class CustomerPanelProvider extends PanelProvider
         return $panel
             ->id('customer')
             ->path('/')
-            ->homeUrl(url('/admin'))
+            ->homeUrl(url('/'))
             ->authPasswordBroker('customers')
             ->profile(isSimple: false)
             ->favicon(asset('images/favicon.ico'))

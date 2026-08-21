@@ -58,17 +58,13 @@ class AdminPanelProvider extends PanelProvider
                     ->url(fn (): string => Profile::getUrl()),
             ])
             ->navigationGroups(
-                // The Website plugin is not installed in this fork, so its
-                // navigation group is dropped rather than registered empty.
-                collect(NavigationGroup::cases())
-                    ->reject(fn (NavigationGroup $case): bool => $case === NavigationGroup::Website)
-                    ->mapWithKeys(
-                        fn (NavigationGroup $case) => [
-                            $case->name => FilamentNavigationGroup::make()
-                                ->label(fn () => $case->getLabel())
-                                ->icon(fn () => $case->getIcon()),
-                        ]
-                    )->all()
+                collect(NavigationGroup::cases())->mapWithKeys(
+                    fn (NavigationGroup $case) => [
+                        $case->name => FilamentNavigationGroup::make()
+                            ->label(fn () => $case->getLabel())
+                            ->icon(fn () => $case->getIcon()),
+                    ]
+                )->all()
             )
             ->plugins([
                 FilamentShieldPlugin::make()
