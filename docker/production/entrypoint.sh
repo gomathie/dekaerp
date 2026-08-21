@@ -117,8 +117,12 @@ if is_managed_database; then
             $host = $p["host"] ?? "";
             $port = $p["port"] ?? ($driver === "mysql" ? 3306 : 5432);
             $db = ltrim($p["path"] ?? "", "/");
-            $user = urldecode($p["user"] ?? "");
-            $pass = urldecode($p["pass"] ?? "");
+            // rawurldecode, not urldecode, to match Laravel'"'"'s
+            // ConfigurationUrlParser - they differ on "+", and a generated
+            // password containing one would otherwise fail here but work
+            // in the application.
+            $user = rawurldecode($p["user"] ?? "");
+            $pass = rawurldecode($p["pass"] ?? "");
             $sslmode = $q["sslmode"] ?? $sslmode;
         } else {
             $host = getenv("DB_HOST");
