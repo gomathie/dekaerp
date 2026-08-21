@@ -72,6 +72,50 @@ Three things make that work:
 The entrypoint waits up to 60 seconds for the database, retrying rather than
 failing fast, which also covers a Neon compute scaling up from zero.
 
+### The image's bundled database does not apply to Neon
+
+`build-install.sh` runs at **image build time**: it initialises a MySQL data
+directory inside the image, starts it, runs `key:generate` and `erp:install`
+against it, then shuts it down and bakes `/var/lib/mysql` into the layer. That
+is what makes the default image self-contained.
+
+None of it carries over to Neon. The bundled MySQL stays switched off, the Neon
+database starts empty, and `entrypoint.sh` deliberately does **not** run
+migrations at startup. So the schema has to be created once, out of band,
+before or at the first deploy — otherwise the container boots against an empty
+database and every page fails:
+
+```bash
+DB_CONNECTION=pgsql \
+DB_URL="postgresql://USER:PASSWORD@ep-xxxx.REGION.aws.neon.tech/dekaerp?sslmode=require" \
+DB_SSLMODE=require \
+  php artisan erp:install --force --no-interaction \
+    --admin-name="..." --admin-email="..." --admin-password="..."
+```
+
+Note the **direct** endpoint, and run subsequent upgrades the same way with
+`php artisan migrate --force`.
+
+Migrations are left out of the entrypoint on purpose: running them at container
+start races when more than one replica boots at once. If you settle on a
+single-container deployment and would rather have it self-migrate, that belongs
+behind an explicit opt-in flag, not on by default.
+
+Two related build-time details worth knowing:
+
+- `APP_KEY` is generated during the build, so every container from the same
+  image shares it unless you pass `APP_KEY` at runtime. Pass it.
+- The image builds from `REPO_URL`/`APP_REF`, which default to
+  `https://github.com/aureuserp/aureuserp.git` at `master` — **upstream, not
+  this fork**. Build your own with:
+
+  ```bash
+  docker build docker/production \
+    --build-arg REPO_URL=https://github.com/gomathie/dekaerp.git \
+    --build-arg APP_REF=main \
+    -t dekaerp:latest
+  ```
+
 ## Serverless changes the cost of the default drivers
 
 `.env.example` ships with:
