@@ -14,7 +14,7 @@
 <a href="https://packagist.org/packages/dekaerp/dekaerp"><img src="https://poser.pugx.org/dekaerp/dekaerp/license.svg" alt="License"></a>
 </p>
 
-<h1 align="center">DEKA ERP</h1>
+<h1 align="center">DEKA ERP best</h1>
 
 <p align="center">
   <strong>Open-Source Enterprise Resource Planning for Modern Businesses</strong>
