@@ -1,7 +1,0 @@
-/vendor/
-/node_modules/
-/storage/
-/public/
-.git/
-*.log
-*.sqlite
