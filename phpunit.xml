@@ -53,6 +53,10 @@
              host/database/credentials wholesale - so a Neon DB_URL left in .env
              would otherwise route migrate:fresh straight at the remote database. -->
         <env name="DB_URL" value=""/>
+        <!-- neon env pull writes DATABASE_URL into .env. Laravel reads DB_URL, so
+             it is inert today - blanked anyway, because the test bootstrap runs
+             migrate:fresh and this value points at the production database. -->
+        <env name="DATABASE_URL" value=""/>
         <env name="DB_CONNECTION" value="pgsql"/>
         <env name="DB_HOST" value="pgsql"/>
         <env name="DB_PORT" value="5432"/>
