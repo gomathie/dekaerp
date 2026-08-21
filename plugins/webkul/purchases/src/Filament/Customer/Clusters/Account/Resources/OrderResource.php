@@ -21,8 +21,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Webkul\Purchase\Enums\OrderState;
+use Webkul\Purchase\Filament\Customer\Clusters\Account;
 use Webkul\Purchase\Models\Order;
-use Webkul\Website\Filament\Customer\Clusters\Account;
 
 class OrderResource extends Resource
 {

@@ -71,7 +71,7 @@ class PluginResource extends Resource
                         ->getStateUsing(fn ($record) => $record?->package?->icon
                             ? asset("svg/{$record->package->icon}.svg")
                             : null)
-                        ->imageSize(100)
+                        ->imageSize(56)
                         ->visible(fn ($record) => $record?->package?->icon)
                         ->grow(false),
 

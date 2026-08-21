@@ -55,9 +55,32 @@ class SupportPlugin implements Plugin
 
                         const sidebarWrapper = document.querySelector('nav.fi-sidebar-nav');
     
-                        sidebarWrapper.scrollTo(0, activeSidebarItem.offsetTop - 250);
+                        if (sidebarWrapper && activeSidebarItem) {
+                            sidebarWrapper.scrollTo(0, activeSidebarItem.offsetTop - 250);
+                        }
                     }, 0);
                 });
+
+                /* View Transitions API – Progressive Enhancement */
+                if (typeof Livewire !== 'undefined') {
+                    Livewire.hook('request', ({ respond, succeed, fail }) => {
+                        respond(({ status, response }) => {
+                            if (status !== 200 || !document.startViewTransition) return;
+
+                            document.startViewTransition(() => {
+                                return new Promise((resolve) => {
+                                    succeed(({ snapshot, effects }) => {
+                                        queueMicrotask(resolve);
+                                    });
+
+                                    fail(() => {
+                                        queueMicrotask(resolve);
+                                    });
+                                });
+                            });
+                        });
+                    });
+                }
             </script>
         "));
     }

@@ -1,0 +1,119 @@
+/* ==========================================================================
+   Records Grid – Fluid Responsive Layout
+   ========================================================================== */
+
+.fi-ta-content-grid {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+    container-type: inline-size;
+}
+
+/* ==========================================================================
+   Clickable Record Cards – Hover Feedback & Micro-interactions
+   ========================================================================== */
+
+.fi-ta-record.fi-clickable {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    /*
+     * No `overflow: hidden` here. On a flex/grid item it changes the
+     * automatic minimum size contribution from "auto" (content-based) to
+     * "0", which lets CSS Grid under-size a row and clip/overlap the
+     * next row of cards — the exact "text overlaps" symptom this was
+     * causing. Image zoom-on-hover containment is scoped to the image
+     * wrapper below instead, which doesn't have this side effect.
+     */
+
+    transition:
+        transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+
+    &:hover {
+        @apply border-primary-600 dark:border-primary-400;
+
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px -10px rgb(0 0 0 / 0.1);
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Image / Thumbnail / Icon Micro-interactions
+   -------------------------------------------------------------------------- */
+
+.fi-ta-record.fi-clickable img,
+.fi-ta-record.fi-clickable .fi-ta-image img,
+.fi-ta-record.fi-clickable [class*="avatar"] img,
+.fi-ta-record.fi-clickable [class*="thumbnail"] img {
+    transition: transform 0.2s ease;
+    will-change: transform;
+}
+
+.fi-ta-record.fi-clickable:hover img,
+.fi-ta-record.fi-clickable:hover .fi-ta-image img,
+.fi-ta-record.fi-clickable:hover [class*="avatar"] img,
+.fi-ta-record.fi-clickable:hover [class*="thumbnail"] img {
+    transform: scale(1.05);
+}
+
+/* Prevent layout shifts from scaled images */
+.fi-ta-record.fi-clickable .fi-ta-image,
+.fi-ta-record.fi-clickable [class*="avatar"],
+.fi-ta-record.fi-clickable [class*="thumbnail"] {
+    overflow: hidden;
+}
+
+/* Icon column SVGs – subtle scale on hover */
+.fi-ta-record.fi-clickable .fi-ta-icon svg {
+    transition: transform 0.2s ease;
+    will-change: transform;
+}
+
+.fi-ta-record.fi-clickable:hover .fi-ta-icon svg {
+    transform: scale(1.05);
+}
+
+/* ==========================================================================
+   Compact Record Actions – Icon & Icon-Button Sizing (Record Grid Only)
+   ========================================================================== */
+
+/*
+ * A 20x20 button was requested, but that falls under the WCAG 2.5.8 (AA)
+ * 24x24 minimum target size for icon-only controls with no spacing
+ * exception. 24px (Tailwind's `size-6`, same scale Filament itself is built
+ * on) is the closest accessible value. Margin is reset because spacing here
+ * comes from `.fi-ta-actions`' own `gap-3`, not Filament's default
+ * icon-button negative-margin compensation (tuned for its larger presets).
+ */
+.fi-ta-content-grid .fi-ta-record .fi-icon-btn {
+    @apply m-0 size-6 shrink-0;
+}
+
+/* Matches Filament's own `fi-size-xs` icon token (12px) — the exact size requested. */
+.fi-ta-content-grid .fi-ta-record .fi-icon-btn .fi-icon {
+    @apply size-3;
+}
+
+/* ==========================================================================
+   Responsive Record Content (Record Grid Only)
+   ========================================================================== */
+
+/*
+ * Filament's Split columns (`.fi-ta-split`) render as an unconditional row
+ * (`default:fi-ta-split`) with no responsive fallback unless a resource
+ * opts into a `->from()` breakpoint. Combined with our fluid, auto-fill grid
+ * (cards can render as narrow as 300px), a row of text + a badge has no
+ * room to breathe. Container queries respond to the card's own rendered
+ * width, not the viewport — the correct tool here since our grid columns
+ * are fluid, not fixed per-breakpoint. Only *nested* splits are targeted
+ * (a split inside another split): the outermost image/icon + content row
+ * stays a row since its content already flows/wraps normally.
+ */
+@container (max-width: 22rem) {
+    .fi-ta-content-grid .fi-ta-record .fi-ta-split .fi-ta-split {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

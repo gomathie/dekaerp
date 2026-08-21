@@ -16,8 +16,6 @@ class AccountMoveObserver
 
             $oldValue = $move->getOriginal('state');
             $newValue = $move->state;
-
-            dd($accountMove, $oldValue, $newValue);
         }
     }
 }

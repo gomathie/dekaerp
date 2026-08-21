@@ -1,7 +1,7 @@
 <?php
 
+use Webkul\Partner\Models\Customer;
 use Webkul\Security\Models\User;
-use Webkul\Website\Models\Partner;
 
 return [
 
@@ -75,7 +75,7 @@ return [
 
         'customers' => [
             'driver' => 'eloquent',
-            'model'  => env('AUTH_MODEL', Partner::class),
+            'model'  => env('AUTH_MODEL', Customer::class),
         ],
 
         // 'users' => [

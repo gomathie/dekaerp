@@ -30,3 +30,7 @@ docker-compose*.yml
 *.md
 !LICENSE.md
 docs
+
+# --- Dev-only DB tooling (never ship, no app-level auth in front of it) ---
+storage/app/adminer
+public/adminer.php

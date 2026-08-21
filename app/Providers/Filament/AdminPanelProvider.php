@@ -45,7 +45,7 @@ class AdminPanelProvider extends PanelProvider
             ->emailVerification()
             ->profile()
             ->colors([
-                'primary' => Color::Blue,
+                'primary' => Color::Amber,
             ])
             ->unsavedChangesAlerts()
             ->topNavigation()
@@ -97,9 +97,6 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label(fn (): string => __('admin.navigation.recruitment'))
                     ->icon('icon-recruitments'),
-                NavigationGroup::make()
-                    ->label(fn (): string => __('admin.navigation.website'))
-                    ->icon('icon-website'),
                 NavigationGroup::make()
                     ->label(fn (): string => __('admin.navigation.barcode'))
                     ->icon('icon-barcode'),

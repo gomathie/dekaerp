@@ -31,7 +31,8 @@
                             : 'text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-white/5'"
                         class="group mb-1 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-start text-sm font-medium transition"
                     >
-                        <x-heroicon-m-squares-2x2
+                        <x-filament::icon
+                            icon="heroicon-m-squares-2x2"
                             class="h-4 w-4 shrink-0"
                             ::class="selected === null
                                 ? 'text-primary-600 dark:text-primary-400'
@@ -68,7 +69,8 @@
                                         class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-gray-400 transition hover:text-gray-700 dark:hover:text-white"
                                         :aria-label="isExpanded('{{ $digit }}') ? 'Collapse {{ $digit }}' : 'Expand {{ $digit }}'"
                                     >
-                                        <x-heroicon-m-chevron-right
+                                        <x-filament::icon
+                                            icon="heroicon-m-chevron-right"
                                             class="h-4 w-4 transition-transform duration-200"
                                             ::class="isExpanded('{{ $digit }}') ? 'rotate-90' : ''"
                                         />
@@ -83,14 +85,16 @@
                                             : 'font-medium text-gray-700 dark:text-gray-200'"
                                     >
                                         <span class="relative h-4 w-4 shrink-0">
-                                            <x-heroicon-m-folder
+                                            <x-filament::icon
+                                                icon="heroicon-m-folder"
                                                 class="absolute inset-0 h-4 w-4"
                                                 x-show="!isExpanded('{{ $digit }}')"
                                                 ::class="selected === '{{ $digit }}'
                                                     ? 'text-primary-500'
                                                     : 'text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-400'"
                                             />
-                                            <x-heroicon-m-folder-open
+                                            <x-filament::icon
+                                                icon="heroicon-m-folder-open"
                                                 class="absolute inset-0 h-4 w-4 text-primary-500"
                                                 x-show="isExpanded('{{ $digit }}')"
                                                 x-cloak
@@ -152,7 +156,8 @@
                                                             : 'bg-gray-300 group-hover/child:bg-gray-400 dark:bg-white/20 dark:group-hover/child:bg-white/40'"
                                                     ></span>
                                                     <span class="font-mono tracking-tight">{{ $child }}</span>
-                                                    <x-heroicon-m-check
+                                                    <x-filament::icon
+                                                        icon="heroicon-m-check"
                                                         class="ms-auto h-3.5 w-3.5 text-primary-500"
                                                         x-show="selected === '{{ $child }}'"
                                                         x-cloak

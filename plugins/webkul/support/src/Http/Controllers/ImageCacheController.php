@@ -4,26 +4,18 @@ namespace Webkul\Support\Http\Controllers;
 
 use Exception;
 use Illuminate\Http\Response as IlluminateResponse;
-use Illuminate\Support\Facades\Cache;
 
 class ImageCacheController
 {
     /**
-     * Cache template
+     * Path to the local brand logo, relative to the public directory.
      *
      * @var string
      */
-    protected $template;
+    const LOGO_PATH = 'images/logo.svg';
 
     /**
-     * Logo
-     *
-     * @var string
-     */
-    const AUREUS_LOGO = 'https://updates.aureuserp.com/aureus.png';
-
-    /**
-     * Get HTTP response of template applied image file
+     * Get HTTP response of the local brand logo.
      *
      * @param  string  $filename
      * @return Illuminate\Http\Response
@@ -31,45 +23,12 @@ class ImageCacheController
     public function getImage($filename)
     {
         try {
-            $content = Cache::remember('aureus-logo', 10080, function () {
-                return base64_encode($this->getImageFromUrl(self::AUREUS_LOGO));
-            });
+            $content = base64_encode(file_get_contents(public_path(self::LOGO_PATH)));
         } catch (Exception $e) {
             $content = '';
         }
 
         return $this->buildResponse($content);
-    }
-
-    /**
-     * Init from given URL
-     *
-     * @param  string  $url
-     * @return string
-     */
-    public function getImageFromUrl($url)
-    {
-        $domain = config('app.url');
-
-        $options = [
-            'http' => [
-                'method'           => 'GET',
-                'protocol_version' => 1.1, // force use HTTP 1.1 for service mesh environment with envoy
-                'header'           => "Accept-language: en\r\n".
-                "Domain: $domain\r\n".
-                "User-Agent: Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36\r\n",
-            ],
-        ];
-
-        $context = stream_context_create($options);
-
-        if ($data = @file_get_contents($url, false, $context)) {
-            return $data;
-        }
-
-        throw new Exception(
-            'Unable to init from given url ('.$url.').'
-        );
     }
 
     /**

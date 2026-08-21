@@ -41,47 +41,14 @@
             />
 
             @if ($isAdminPanel)
-                <x-filament::dropdown placement="bottom-start" teleport width="sm">
-                    <x-slot name="trigger">
-                        <x-filament::icon-button icon="icon-menu" />
-                    </x-slot>
-
-                    <div
-                        class="grid grid-cols-2 gap-2 overflow-y-auto p-4 md:grid-cols-3"
-                        style="max-height: 80vh; grid-template-columns: repeat(3, minmax(0, 1fr));"
-                    >
-                        @foreach ($navigation as $group)
-                            @php
-                                $groupLabel = $group->getLabel();
-                                $groupIcon = $group->getIcon();
-                                $itemUrl = $group->getItems()->first()?->getUrl();
-                            @endphp
-
-                            @if (! $groupLabel || ! $itemUrl || ! $groupIcon)
-                                @continue
-                            @endif
-
-                            <div
-                                @class([
-                                    'fi-topbar-item',
-                                    'fi-active' => $group->isActive(),
-                                ])
-                            >
-                                <a
-                                    href="{{ $itemUrl }}"
-                                    class="fi-topbar-item-btn flex flex-col items-center justify-center gap-2 whitespace-nowrap rounded-lg p-4 text-center text-sm font-medium"
-                                >
-                                    <x-filament::icon
-                                        :icon="$groupIcon"
-                                        style="height: 64px; width: 64px"
-                                    />
-
-                                    {{ $groupLabel }}
-                                </a>
-                            </div>
-                        @endforeach
-                    </div>
-                </x-filament::dropdown>
+                {{-- Module menu trigger: toggles sidebar collapse on desktop/tablet, opens the drawer on mobile --}}
+                <x-filament::icon-button
+                    icon="icon-menu"
+                    x-data="{}"
+                    x-on:click="$store.moduleSidebar.primaryToggle()"
+                    :label="__('filament-panels::layout.actions.sidebar.expand.label')"
+                    class="fi-topbar-module-sidebar-toggle"
+                />
             @endif
         @endif
 
@@ -335,4 +302,339 @@
     </nav>
 
     <x-filament-actions::modals />
+
+@if ($isAdminPanel && $hasNavigation)
+        {{-- No-flash: apply persisted collapsed state before the main content paints --}}
+        <script>
+            (function () {
+                try {
+                    var collapsed = localStorage.getItem('moduleSidebarCollapsed') === '1';
+                    var el = document.documentElement;
+                    el.classList.add('module-sidebar-ready');
+                    el.classList.toggle('module-sidebar-collapsed', collapsed);
+                } catch (e) {}
+            })();
+        </script>
+
+        {{-- Modern collapsible module sidebar (replaces the app-launcher dropdown grid) --}}
+        <aside
+            x-data="{}"
+            :class="{
+                'is-collapsed': $store.moduleSidebar.collapsed,
+                'is-mobile-open': $store.moduleSidebar.mobileOpen,
+            }"
+            class="module-sidebar"
+        >
+            <div class="module-sidebar-header">
+                <button
+                    type="button"
+                    class="module-sidebar-close"
+                    x-on:click="$store.moduleSidebar.closeMobile()"
+                    aria-label="{{ __('filament-panels::layout.actions.sidebar.collapse.label') }}"
+                >
+                    <x-filament::icon :icon="\Filament\Support\Icons\Heroicon::OutlinedXMark" />
+                </button>
+            </div>
+
+            <nav class="module-sidebar-nav">
+                @foreach ($navigation as $group)
+                    @php
+                        $groupLabel = $group->getLabel();
+                        $groupIcon = $group->getIcon();
+                        $itemUrl = $group->getItems()->first()?->getUrl();
+                    @endphp
+
+                    @if (! $groupLabel || ! $itemUrl || ! $groupIcon)
+                        @continue
+                    @endif
+
+                    <div
+                        @class([
+                            'module-sidebar-item',
+                            'fi-active' => $group->isActive(),
+                        ])
+                    >
+                        <a
+                            href="{{ $itemUrl }}"
+                            title="{{ $groupLabel }}"
+                            class="module-sidebar-link"
+                        >
+                            <x-filament::icon :icon="$groupIcon" class="module-sidebar-icon" />
+
+                            <span class="module-sidebar-label">{{ $groupLabel }}</span>
+                        </a>
+                    </div>
+                @endforeach
+            </nav>
+        </aside>
+
+        {{-- Mobile drawer backdrop --}}
+        <div
+            x-data="{}"
+            x-show="$store.moduleSidebar.mobileOpen"
+            x-on:click="$store.moduleSidebar.closeMobile()"
+            x-transition.opacity
+            x-cloak
+            class="module-sidebar-backdrop"
+        ></div>
+
+        @assets
+            <style>
+                @verbatim
+                :root {
+                    --module-sidebar-width: 280px;
+                    --module-sidebar-width-collapsed: 72px;
+                    --module-topbar-height: 4rem;
+                }
+
+                /* Topbar stays full-width and sits above the sidebar; only the content column is pushed over (tablet & up) */
+                @media (min-width: 768px) {
+                    html.module-sidebar-ready .fi-layout {
+                        padding-inline-start: var(--module-sidebar-width);
+                        transition: padding-inline-start 0.25s ease;
+                    }
+
+                    html.module-sidebar-ready.module-sidebar-collapsed .fi-layout {
+                        padding-inline-start: var(--module-sidebar-width-collapsed);
+                    }
+                }
+
+                /* Sidebar shell — starts below the fixed topbar, not behind it */
+                .module-sidebar {
+                    position: fixed;
+                    top: var(--module-topbar-height);
+                    height: calc(100vh - var(--module-topbar-height));
+                    inset-inline-start: 0;
+                    z-index: 20;
+                    display: flex;
+                    flex-direction: column;
+                    width: var(--module-sidebar-width);
+                    background-color: var(--gray-50, #f9fafb);
+                    border-inline-end: 1px solid var(--gray-200, #e5e7eb);
+                    transition: width 0.25s ease, transform 0.25s ease;
+                    overflow: hidden;
+                }
+
+                .dark .module-sidebar {
+                    background-color: var(--gray-900, #111827);
+                    border-inline-end-color: var(--gray-800, #1f2937);
+                }
+
+                .module-sidebar.is-collapsed {
+                    width: var(--module-sidebar-width-collapsed);
+                }
+
+                /* Header — only holds the mobile drawer close button (hidden on desktop/tablet) */
+                .module-sidebar-header {
+                    display: none;
+                    align-items: center;
+                    justify-content: flex-end;
+                    min-height: 4rem;
+                    padding: 0.5rem 0.75rem;
+                    border-block-end: 1px solid var(--gray-200, #e5e7eb);
+                }
+
+                .dark .module-sidebar-header {
+                    border-block-end-color: var(--gray-800, #1f2937);
+                }
+
+                .module-sidebar-close {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 2rem;
+                    height: 2rem;
+                    border-radius: 0.5rem;
+                    color: var(--gray-500, #6b7280);
+                    cursor: pointer;
+                    transition: background-color 0.15s ease, color 0.15s ease;
+                }
+
+                .module-sidebar-close:hover {
+                    background-color: var(--gray-100, #f3f4f6);
+                    color: var(--gray-700, #374151);
+                }
+
+                .dark .module-sidebar-close:hover {
+                    background-color: var(--gray-800, #1f2937);
+                    color: var(--gray-200, #e5e7eb);
+                }
+
+                /* Navigation list */
+                .module-sidebar-nav {
+                    flex: 1;
+                    overflow-x: hidden;
+                    overflow-y: auto;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.125rem;
+                    padding: 0.5rem;
+                }
+
+                .module-sidebar-link {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                    padding: 0.5rem 0.625rem;
+                    border-radius: 0.5rem;
+                    color: var(--gray-700, #374151);
+                    font-size: 0.875rem;
+                    font-weight: 500;
+                    line-height: 1.25rem;
+                    white-space: nowrap;
+                    text-decoration: none;
+                    transition: background-color 0.15s ease, color 0.15s ease;
+                }
+
+                .module-sidebar-link:hover {
+                    background-color: var(--gray-100, #f3f4f6);
+                    color: var(--gray-900, #111827);
+                }
+
+                .dark .module-sidebar-link {
+                    color: var(--gray-300, #d1d5db);
+                }
+
+                .dark .module-sidebar-link:hover {
+                    background-color: var(--gray-800, #1f2937);
+                    color: #fff;
+                }
+
+                .module-sidebar-icon {
+                    width: 1.5rem;
+                    height: 1.5rem;
+                    flex-shrink: 0;
+                }
+
+                /* Active item — reuse the app's primary color with a subtle highlight */
+                .module-sidebar-item.fi-active .module-sidebar-link {
+                    background-color: var(--primary-50, #eff6ff);
+                    color: var(--primary-600, #2563eb);
+                    font-weight: 600;
+                }
+
+                .dark .module-sidebar-item.fi-active .module-sidebar-link {
+                    background-color: color-mix(in srgb, var(--primary-500, #3b82f6) 18%, transparent);
+                    color: var(--primary-300, #93c5fd);
+                }
+
+                /* Collapsed: icons only */
+                .module-sidebar.is-collapsed .module-sidebar-label {
+                    display: none;
+                }
+
+                .module-sidebar.is-collapsed .module-sidebar-link {
+                    justify-content: center;
+                    padding-inline: 0;
+                }
+
+                /* Mobile: slide-out drawer (labels always visible, collapse disabled) */
+                .module-sidebar-backdrop {
+                    position: fixed;
+                    top: var(--module-topbar-height);
+                    inset-inline: 0;
+                    bottom: 0;
+                    z-index: 15;
+                    background-color: rgba(0, 0, 0, 0.5);
+                }
+
+                @media (min-width: 768px) {
+                    .module-sidebar-backdrop {
+                        display: none !important;
+                    }
+                }
+
+                @media (max-width: 767px) {
+                    .module-sidebar {
+                        width: var(--module-sidebar-width);
+                        transform: translateX(-100%);
+                        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+                    }
+
+                    [dir="rtl"] .module-sidebar {
+                        transform: translateX(100%);
+                    }
+
+                    .module-sidebar.is-mobile-open,
+                    [dir="rtl"] .module-sidebar.is-mobile-open {
+                        transform: translateX(0);
+                    }
+
+                    .module-sidebar.is-collapsed {
+                        width: var(--module-sidebar-width);
+                    }
+
+                    .module-sidebar.is-collapsed .module-sidebar-label {
+                        display: inline;
+                    }
+
+                    .module-sidebar.is-collapsed .module-sidebar-link {
+                        justify-content: flex-start;
+                        padding-inline: 0.625rem;
+                    }
+
+                    .module-sidebar-header {
+                        display: flex;
+                    }
+                }
+                @endverbatim
+            </style>
+
+            <script>
+                (function () {
+                    function registerModuleSidebarStore() {
+                        if (! window.Alpine || Alpine.store('moduleSidebar')) {
+                            return;
+                        }
+
+                        Alpine.store('moduleSidebar', {
+                            collapsed: false,
+                            mobileOpen: false,
+
+                            init() {
+                                try {
+                                    this.collapsed = localStorage.getItem('moduleSidebarCollapsed') === '1';
+                                } catch (e) {}
+
+                                this.sync();
+                            },
+
+                            toggle() {
+                                this.collapsed = ! this.collapsed;
+                                this.save();
+                                this.sync();
+                            },
+
+                            primaryToggle() {
+                                if (window.matchMedia('(max-width: 767px)').matches) {
+                                    this.mobileOpen = ! this.mobileOpen;
+                                } else {
+                                    this.toggle();
+                                }
+                            },
+
+                            closeMobile() {
+                                this.mobileOpen = false;
+                            },
+
+                            save() {
+                                try {
+                                    localStorage.setItem('moduleSidebarCollapsed', this.collapsed ? '1' : '0');
+                                } catch (e) {}
+                            },
+
+                            sync() {
+                                var el = document.documentElement;
+                                el.classList.add('module-sidebar-ready');
+                                el.classList.toggle('module-sidebar-collapsed', this.collapsed);
+                            },
+                        });
+                    }
+
+                    document.addEventListener('alpine:init', registerModuleSidebarStore);
+                    registerModuleSidebarStore();
+                })();
+            </script>
+        @endassets
+@endif
 </div>

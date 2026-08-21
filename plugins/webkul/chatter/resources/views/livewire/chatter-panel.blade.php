@@ -119,7 +119,7 @@
                                     >
                                         <span class="truncate max-w-[14rem]">{{ $filter['label'] }}</span>
 
-                                        <x-heroicon-m-x-mark class="h-3.5 w-3.5" />
+                                        <x-filament::icon icon="heroicon-m-x-mark" class="h-3.5 w-3.5" />
                                     </button>
                                 @endforeach
 

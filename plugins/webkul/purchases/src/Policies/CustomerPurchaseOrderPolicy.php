@@ -3,8 +3,8 @@
 namespace Webkul\Purchase\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Webkul\Partner\Models\Customer as Partner;
 use Webkul\Purchase\Models\CustomerPurchaseOrder;
-use Webkul\Website\Models\Partner;
 
 class CustomerPurchaseOrderPolicy
 {

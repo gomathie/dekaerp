@@ -23,7 +23,11 @@ return Application::configure(basePath: dirname(__DIR__))
             SetLocale::class,
         ]);
 
-        $middleware->trustProxies(at: '*');
+        $trustedProxies = array_filter(array_map('trim', explode(',', (string) env('TRUSTED_PROXIES', ''))));
+
+        if (! empty($trustedProxies)) {
+            $middleware->trustProxies(at: $trustedProxies);
+        }
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (ValidationException $e, $request) {

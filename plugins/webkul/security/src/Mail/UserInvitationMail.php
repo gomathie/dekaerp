@@ -45,8 +45,9 @@ class UserInvitationMail extends Mailable
         return new Content(
             markdown: 'security::emails.user-invitation',
             with: [
-                'acceptUrl' => URL::signedRoute(
+                'acceptUrl' => URL::temporarySignedRoute(
                     'security.invitation.accept',
+                    now()->addDays(7),
                     ['invitation' => $this->invitation]
                 ),
             ]

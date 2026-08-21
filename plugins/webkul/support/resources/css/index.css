@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "./colors.css";
 @import "./repeater.css";
+@import "./grid-layout.css";
 
 @variant dark (&:where(.dark, .dark *));
 
