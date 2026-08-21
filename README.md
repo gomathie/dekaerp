@@ -14,7 +14,7 @@
 <a href="https://packagist.org/packages/dekaerp/dekaerp"><img src="https://poser.pugx.org/dekaerp/dekaerp/license.svg" alt="License"></a>
 </p>
 
-<h1 align="center">DEKA ERP best</h1>
+<h1 align="center">DEKA ERP</h1>
 
 <p align="center">
   <strong>Open-Source Enterprise Resource Planning for Modern Businesses</strong>
@@ -57,64 +57,73 @@ Whether you're managing accounting, inventory, HR, CRM, or projects, DEKA ERP pr
 
 ## ✨ Key Features
 
-  ### 🏗️ Modern Architecture
-  Built with Laravel 13 and FilamentPHP 5 for maximum performance and developer experience.
+### 🏗️ Modern Architecture
+
+Built with Laravel 13 and FilamentPHP 5 for maximum performance and developer experience.
 
   <p align="center">
     <img src="https://raw.githubusercontent.com/dekaerp/temp-media/main/mordern-architecture.png" alt="Modern Architecture" width="100%">
   </p>
 
-  ### 🧩 Modular Plugin System
-  Install only the features you need - from accounting to project management.
+### 🧩 Modular Plugin System
+
+Install only the features you need - from accounting to project management.
 
   <p align="center">
     <img src="https://raw.githubusercontent.com/dekaerp/temp-media/main/modular-plugin-system.png" alt="Modular Plugin System" width="100%">
   </p>
 
-  ### 🎨 Beautiful UI/UX
-  Responsive design with TailwindCSS 4, optimized for desktop and mobile.
+### 🎨 Beautiful UI/UX
+
+Responsive design with TailwindCSS 4, optimized for desktop and mobile.
 
   <p align="center">
     <img src="https://raw.githubusercontent.com/dekaerp/temp-media/main/mordern-ui-responsive-design.png" alt="Beautiful UI/UX" width="100%">
   </p>
 
-  ### 🔐 Advanced Security
-  Role-based access control with Filament Shield integration.
+### 🔐 Advanced Security
+
+Role-based access control with Filament Shield integration.
 
   <p align="center">
     <img src="https://raw.githubusercontent.com/dekaerp/temp-media/main/advanced-security.png" alt="Advanced Security" width="100%">
   </p>
 
-  ### 📊 Business Intelligence
-  Built-in analytics and reporting tools.
+### 📊 Business Intelligence
+
+Built-in analytics and reporting tools.
 
   <p align="center">
     <img src="https://raw.githubusercontent.com/dekaerp/temp-media/main/business-intelligence.png" alt="Business Intelligence" width="100%">
   </p>
 
-  ### 🌐 Multi-Language Support
-  Easily translate and localize for global businesses.
+### 🌐 Multi-Language Support
+
+Easily translate and localize for global businesses.
 
   <p align="center">
     <img src="https://raw.githubusercontent.com/dekaerp/temp-media/main/multi-language-support.png" alt="Multi-Language Support" width="100%">
   </p>
 
-  ### ⚡ High Performance
-  Optimized database queries and caching strategies.
+### ⚡ High Performance
+
+Optimized database queries and caching strategies.
 
   <p align="center">
     <img src="https://raw.githubusercontent.com/dekaerp/temp-media/main/high-performance.png" alt="High Performance" width="100%">
   </p>
 
-  ### 🔧 Developer-Friendly
-  Clean code, comprehensive documentation, and extensive APIs.
+### 🔧 Developer-Friendly
+
+Clean code, comprehensive documentation, and extensive APIs.
 
   <p align="center">
     <img src="https://raw.githubusercontent.com/dekaerp/temp-media/main/developer-friendly.png" alt="Developer-Friendly" width="100%">
   </p>
 
-  ### 🔄 Real-Time Updates
-  LiveWire 4 integration for dynamic interfaces.
+### 🔄 Real-Time Updates
+
+LiveWire 4 integration for dynamic interfaces.
 
   <p align="center">
     <img src="https://raw.githubusercontent.com/dekaerp/temp-media/main/real-time-updates.png" alt="Real-Time Updates" width="100%">
@@ -124,14 +133,14 @@ Whether you're managing accounting, inventory, HR, CRM, or projects, DEKA ERP pr
 
 ## 🎯 Why Choose DEKA ERP?
 
-| Feature | Benefit |
-|---------|---------|
-| **Open Source** | Free to use, modify, and extend. No vendor lock-in |
-| **Modern Stack** | Latest Laravel & FilamentPHP for cutting-edge features |
-| **Scalable** | Handles everything from startups to enterprise operations |
-| **Customizable** | Extend with your own plugins and modifications |
-| **Community-Driven** | Active community support and continuous improvements |
-| **Production-Ready** | Battle-tested with real-world business requirements |
+| Feature              | Benefit                                                   |
+| -------------------- | --------------------------------------------------------- |
+| **Open Source**      | Free to use, modify, and extend. No vendor lock-in        |
+| **Modern Stack**     | Latest Laravel & FilamentPHP for cutting-edge features    |
+| **Scalable**         | Handles everything from startups to enterprise operations |
+| **Customizable**     | Extend with your own plugins and modifications            |
+| **Community-Driven** | Active community support and continuous improvements      |
+| **Production-Ready** | Battle-tested with real-world business requirements       |
 
 ---
 
@@ -140,20 +149,23 @@ Whether you're managing accounting, inventory, HR, CRM, or projects, DEKA ERP pr
 Ensure your development environment meets the following requirements:
 
 ### Server Requirements
--   **PHP**: 8.3 or higher
--   **Database**: MySQL 8.0+ or SQLite 3.8.3+
--   **Web Server**: Apache 2.4+ or Nginx 1.18+
+
+- **PHP**: 8.3 or higher
+- **Database**: MySQL 8.0+ or SQLite 3.8.3+
+- **Web Server**: Apache 2.4+ or Nginx 1.18+
 
 ### Development Tools
--   **Composer**: Latest version (2.0+)
--   **Node.js**: 18.x or higher
--   **NPM/Yarn**: Latest stable version
+
+- **Composer**: Latest version (2.0+)
+- **Node.js**: 18.x or higher
+- **NPM/Yarn**: Latest stable version
 
 ### Framework Versions
--   **Laravel**: 13.x
--   **FilamentPHP**: 5.x
--   **Livewire**: 4.x
--   **TailwindCSS**: 4.x
+
+- **Laravel**: 13.x
+- **FilamentPHP**: 5.x
+- **Livewire**: 4.x
+- **TailwindCSS**: 4.x
 
 ---
 
@@ -208,7 +220,6 @@ Visit `http://localhost:8000` and log in with your admin credentials!
 
 Get a ready-to-use ERP on your own domain, without manual installation or infrastructure complexity, and focus on growing your business while we handle the technology.
 
-
 ---
 
 ## 🧩 Plugin System
@@ -233,37 +244,42 @@ These plugins are essential components of the system and are installed by defaul
 These plugins can be installed as needed to extend system functionality:
 
 #### 💼 Financial Management
-| Module     | Description                           |
-| ---------- | ------------------------------------- |
-| Accounting | Financial accounting and reporting    |
-| Accounts   | Core accounting operations            |
-| Invoices   | Invoice generation and management     |
-| Payments   | Payment processing and tracking       |
+
+| Module     | Description                        |
+| ---------- | ---------------------------------- |
+| Accounting | Financial accounting and reporting |
+| Accounts   | Core accounting operations         |
+| Invoices   | Invoice generation and management  |
+| Payments   | Payment processing and tracking    |
 
 #### 📦 Operations
-| Module        | Description                                                                     |
-| ------------- | ------------------------------------------------------------------------------- |
-| Inventories   | Inventory and warehouse management                                              |
+
+| Module        | Description                                                                           |
+| ------------- | ------------------------------------------------------------------------------------- |
+| Inventories   | Inventory and warehouse management                                                    |
 | Manufacturing | Bill of Materials (BOM), Manufacturing Orders, Work Orders, Work Centers & Operations |
-| Products      | Product catalog and management                                                  |
-| Purchases     | Procurement and purchase order management                                       |
-| Sales         | Sales pipeline and opportunity management                                       |
+| Products      | Product catalog and management                                                        |
+| Purchases     | Procurement and purchase order management                                             |
+| Sales         | Sales pipeline and opportunity management                                             |
 
 #### 👥 Human Resources
-| Module       | Description                       |
-| ------------ | --------------------------------- |
-| Employees    | Employee management               |
-| Recruitments | Applicant tracking and hiring     |
-| Timeoffs     | Leave management and tracking     |
-| Timesheet    | Employee work hour tracking       |
+
+| Module       | Description                   |
+| ------------ | ----------------------------- |
+| Employees    | Employee management           |
+| Recruitments | Applicant tracking and hiring |
+| Timeoffs     | Leave management and tracking |
+| Timesheet    | Employee work hour tracking   |
 
 #### 🤝 Customer & Partner Management
+
 | Module   | Description                                  |
 | -------- | -------------------------------------------- |
 | Contacts | Contact management for customers and vendors |
 | Partners | Partner relationship management              |
 
 #### 📊 Project & Content Management
+
 | Module   | Description                     |
 | -------- | ------------------------------- |
 | Blogs    | Content management and blogging |
@@ -298,6 +314,7 @@ This package products is already installed. What would you like to do? [Skip]:
 ```
 
 **Options:**
+
 - **Reseed**: Reinstall the plugin's seed data (overwrites existing data)
 - **Skip**: Continue without modifying the already installed dependency
 - **Show Seeders**: Display available data seeders for the plugin
@@ -321,6 +338,7 @@ php artisan inventories:uninstall
 ### Plugin Dependencies
 
 Some plugins require other plugins to function properly. The installation system:
+
 - ✅ Automatically detects dependencies
 - ✅ Prompts you to install required plugins
 - ✅ Prevents conflicts and missing prerequisites
@@ -333,21 +351,25 @@ Some plugins require other plugins to function properly. The installation system
 DEKA ERP is designed to be highly customizable, allowing you to tailor the system to your specific business needs:
 
 ### Plugin Customization
+
 - 🔹 Install only the plugins you need
 - 🔹 Extend existing plugins with custom functionality
 - 🔹 Create custom plugins using the modular architecture
 
 ### UI/UX Customization
+
 - 🔹 Create custom dashboards and reports
 - 🔹 Modify themes and branding
 - 🔹 Design custom forms and views with Filament
 
 ### Access Control
+
 - 🔹 Define custom user roles and permissions
 - 🔹 Configure role-based access control (RBAC)
 - 🔹 Set granular permissions using Filament Shield
 
 ### Business Logic
+
 - 🔹 Extend models with custom business rules
 - 🔹 Create custom workflows and automations
 - 🔹 Integrate with third-party services via APIs
@@ -361,36 +383,41 @@ We welcome contributions from the community! Whether you're fixing bugs, adding 
 ### How to Contribute
 
 1. **Fork the Repository**
-   ```bash
-   git clone https://github.com/dekaerp/dekaerp.git
-   ```
+
+    ```bash
+    git clone https://github.com/dekaerp/dekaerp.git
+    ```
 
 2. **Create a Feature Branch**
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
+
+    ```bash
+    git checkout -b feature/your-feature-name
+    ```
 
 3. **Make Your Changes**
-   - Follow the existing code style and conventions
-   - Write tests for new features
-   - Update documentation as needed
+    - Follow the existing code style and conventions
+    - Write tests for new features
+    - Update documentation as needed
 
 4. **Commit Your Changes**
-   ```bash
-   git commit -m "Add: Brief description of your changes"
-   ```
+
+    ```bash
+    git commit -m "Add: Brief description of your changes"
+    ```
 
 5. **Push to Your Fork**
-   ```bash
-   git push origin feature/your-feature-name
-   ```
+
+    ```bash
+    git push origin feature/your-feature-name
+    ```
 
 6. **Submit a Pull Request**
-   - Provide a clear description of the changes
-   - Reference any related issues
-   - Ensure all tests pass
+    - Provide a clear description of the changes
+    - Reference any related issues
+    - Ensure all tests pass
 
 ### Development Guidelines
+
 - Follow Laravel and Filament best practices
 - Maintain code quality with Laravel Pint: `vendor/bin/pint`
 - Write PHPUnit tests for new functionality
@@ -403,6 +430,7 @@ We welcome contributions from the community! Whether you're fixing bugs, adding 
 DEKA ERP is truly open-source ERP framework that will always be **free** under the [MIT License](LICENSE).
 
 ### What This Means
+
 - ✅ Free to use for commercial and personal projects
 - ✅ Modify and distribute as you wish
 - ✅ No licensing fees or restrictions
@@ -423,6 +451,7 @@ If you discover a security vulnerability in DEKA ERP, please report it responsib
 📧 **Email:** support@webkul.com
 
 ### What to Include
+
 - Description of the vulnerability
 - Steps to reproduce the issue
 - Potential impact assessment
@@ -437,15 +466,18 @@ We will acknowledge your email within 48 hours and provide a detailed response w
 Need help or want to connect with other DEKA ERP users?
 
 ### 📚 Documentation
+
 - 📖 **Developer Documentation:** [devdocs.dekaerp.com](https://devdocs.dekaerp.com/) - Technical guides, API references, and development resources
 - 📘 **User Guide:** [docs.dekaerp.com](https://docs.dekaerp.com/) - Step-by-step tutorials and user manuals
 
 ### 🤝 Get Support
+
 - 💬 **Community Forum:** [Coming Soon] - Connect with other users and share experiences
 - 🐛 **Issue Tracker:** [GitHub Issues](https://github.com/dekaerp/dekaerp/issues) - Report bugs and request features
 - 📧 **Email Support:** support@webkul.com - Direct support from the team
 
 ### 🔔 Stay Updated
+
 - ⭐ **Star** this repository to show your support
 - 👁️ **Watch** for new releases and updates
 - 🍴 **Fork** to contribute to the project
