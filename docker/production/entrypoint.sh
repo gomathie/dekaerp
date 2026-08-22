@@ -93,6 +93,12 @@ fi
 set_env APP_ENV "${APP_ENV:-production}"
 set_env APP_DEBUG "${APP_DEBUG:-false}"
 
+# Log to the container's stdout so the orchestrator collects it. The default
+# stack writes to storage/logs/laravel.log, which nothing reads and which is
+# discarded on every redeploy.
+set_env LOG_CHANNEL "${LOG_CHANNEL:-stderr}"
+set_env LOG_LEVEL "${LOG_LEVEL:-info}"
+
 [ -n "$APP_URL" ]      && set_env APP_URL      "$APP_URL"
 [ -n "$APP_KEY" ]      && set_env APP_KEY      "$APP_KEY"
 [ -n "$APP_NAME" ]     && set_env APP_NAME     "\"${APP_NAME}\""
