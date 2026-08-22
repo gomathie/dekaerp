@@ -9,3 +9,10 @@
 /.github export-ignore
 CHANGELOG.md export-ignore
 .styleci.yml export-ignore
+
+# Generated stylesheets. These are build output, not source: they must be
+# rebuilt (npm run build:support) rather than merged, and a conflict in them
+# carries no information. Marking them generated keeps diffs and reviews
+# readable; the resolution is always "take either side, then rebuild".
+plugins/webkul/support/resources/dist/support.css linguist-generated=true -diff
+public/css/support/support.css                    linguist-generated=true -diff

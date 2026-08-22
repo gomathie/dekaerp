@@ -2,10 +2,12 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
+        "build": "npm run build:support && vite build",
+        "build:support": "tailwindcss -i plugins/webkul/support/resources/css/index.css -o plugins/webkul/support/resources/dist/support.css --minify",
         "dev": "vite"
     },
     "devDependencies": {
+        "@tailwindcss/cli": "^4.3.0",
         "@tailwindcss/postcss": "^4.1.12",
         "@tailwindcss/vite": "^4.3.0",
         "autoprefixer": "^10.4.20",
