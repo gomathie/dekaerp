@@ -170,6 +170,12 @@ class TestBootstrapHelper
             '--class' => $seederClass,
             '--force' => true,
         ]);
+
+        // These seeders insert explicit ids. PostgreSQL leaves the sequence
+        // behind when that happens, so the next factory insert collides with a
+        // seeded row. The install commands call this after seeding; seeding
+        // directly, as above, skips them and must do it here.
+        db_dialect()->syncSequences();
     }
 
     private static function ensurePluginMarkedInstalled(string $pluginName): void
