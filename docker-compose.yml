@@ -35,16 +35,20 @@ services:
       - pgsql
 
   pgsql:
-    image: 'postgres:18-alpine'
+    image: 'postgres:17-alpine'
 
     ports:
       - '${FORWARD_PGSQL_PORT:-5432}:5432'
 
+    # Fixed, not read from .env. docker compose substitutes ${...} from the same
+    # .env Laravel uses, so when DB_* points at a managed database the local
+    # container would initialise with production's credentials and never create
+    # the local role. These values also match what phpunit.xml pins.
     environment:
-      PGPASSWORD: '${DB_PASSWORD:-secret}'
-      POSTGRES_DB: '${DB_DATABASE}'
-      POSTGRES_USER: '${DB_USERNAME}'
-      POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+      PGPASSWORD: 'password'
+      POSTGRES_DB: 'dekaerp'
+      POSTGRES_USER: 'sail'
+      POSTGRES_PASSWORD: 'password'
 
     volumes:
       - 'sail-pgsql:/var/lib/postgresql'
