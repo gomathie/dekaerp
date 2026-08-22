@@ -76,3 +76,7 @@ skills-lock.json
 # --- OS noise ---
 .DS_Store
 Thumbs.db
+
+# storage:link symlink - recreated inside the image, and Docker cannot
+# transfer it from a Windows build context ("invalid file request").
+/public/storage

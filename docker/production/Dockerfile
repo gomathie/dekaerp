@@ -1,13 +1,21 @@
+# DEKA ERP production image.
+#
+# Built from the REPOSITORY ROOT as the build context, so the image contains
+# this fork. Build with:
+#
+#   docker build -f docker/production/Dockerfile -t dekaerp:latest .
+#
+# Coolify does exactly this by default (repo as context, Dockerfile path set),
+# which is why the image must not fetch its own source.
+#
+# The database is external - Neon, or any managed Postgres/MySQL. The image
+# ships no database server and runs no installer at build time; schema
+# creation is a deploy step, see docs/neon-database.md.
+
 FROM ubuntu:24.04
 
-ARG APP_REF=master
 ARG PHP_VERSION=8.4
 ARG NODE_VERSION=22
-ARG REPO_URL=https://github.com/aureuserp/aureuserp.git
-
-ARG ADMIN_NAME=Administrator
-ARG ADMIN_EMAIL=admin@example.com
-ARG ADMIN_PASSWORD=password
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=UTC
@@ -24,11 +32,12 @@ RUN apt-get update && apt-get install -y \
     && apt-get update && apt-get install -y \
         imagemagick \
         libmagickwand-dev \
-        mysql-server \
         nginx \
         supervisor \
     && rm -rf /var/lib/apt/lists/*
 
+# pgsql for Neon and any managed Postgres; mysql retained so an external
+# MySQL/MariaDB remains a supported DB_CONNECTION.
 RUN apt-get update && apt-get install -y \
         php${PHP_VERSION}-bcmath \
         php${PHP_VERSION}-cli \
@@ -73,66 +82,67 @@ COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 
 WORKDIR /var/www/aureuserp
 
-RUN git clone --depth 1 --branch ${APP_REF} ${REPO_URL} . \
-    && composer install \
+# The application source, from the build context. .dockerignore at the
+# repository root keeps secrets, vendor, node_modules and dev tooling out.
+COPY . .
+
+RUN composer install \
         --no-dev \
         --no-interaction \
         --prefer-dist \
         --optimize-autoloader \
         --no-scripts \
-    && rm -rf .git /root/.composer/cache
+    && rm -rf /root/.composer/cache
 
+# A baseline .env. Every value that matters in production is rewritten by
+# entrypoint.sh from the container environment; this only guarantees the file
+# exists and is not in debug mode should a variable go unset.
 RUN cp .env.example .env \
-    && sed -i 's/^APP_DEBUG=.*/APP_DEBUG=false/' .env \
-    && sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=mysql/' .env \
-    && sed -i 's/^CACHE_STORE=.*/CACHE_STORE=file/' .env \
-    && sed -i 's/^# *DB_HOST=.*/DB_HOST=127.0.0.1/' .env \
-    && sed -i 's/^# *DB_PORT=.*/DB_PORT=3306/' .env \
-    && sed -i 's/^# *DB_DATABASE=.*/DB_DATABASE=aureus/' .env \
-    && sed -i 's/^# *DB_USERNAME=.*/DB_USERNAME=aureus/' .env \
-    && sed -i 's/^# *DB_PASSWORD=.*/DB_PASSWORD=aureus/' .env \
-    && sed -i 's|^APP_URL=.*|APP_URL=http://localhost|' .env
+    && sed -i 's/^APP_ENV=.*/APP_ENV=production/' .env \
+    && sed -i 's/^APP_DEBUG=.*/APP_DEBUG=false/' .env
+
+# A key is required for artisan to boot during the build. It is a placeholder:
+# entrypoint.sh overwrites it whenever APP_KEY is supplied, and production
+# MUST supply one - otherwise every container from this image shares a key.
+RUN php artisan key:generate --force --no-interaction
 
 RUN npm ci --no-audit --no-fund \
     && npm run build \
     && rm -rf node_modules /root/.npm \
     && php artisan package:discover --ansi \
     && php artisan filament:assets \
-    && php artisan vendor:publish --tag=laravel-assets --force --ansi
+    && php artisan vendor:publish --tag=laravel-assets --force --ansi \
+    && php artisan storage:link
 
-COPY mysql-init.sql /docker-entrypoint-initdb.d/init.sql
-COPY build-install.sh /tmp/build-install.sh
-RUN chmod +x /tmp/build-install.sh \
-    && ADMIN_NAME="${ADMIN_NAME}" \
-       ADMIN_EMAIL="${ADMIN_EMAIL}" \
-       ADMIN_PASSWORD="${ADMIN_PASSWORD}" \
-       bash /tmp/build-install.sh \
-    && rm /tmp/build-install.sh
-
-RUN sed -i 's/^APP_ENV=.*/APP_ENV=production/' .env
-
-COPY php.ini /etc/php/${PHP_VERSION}/fpm/conf.d/99-aureus.ini
-COPY php.ini /etc/php/${PHP_VERSION}/cli/conf.d/99-aureus.ini
-COPY php-fpm.conf /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
+COPY docker/production/php.ini /etc/php/${PHP_VERSION}/fpm/conf.d/99-aureus.ini
+COPY docker/production/php.ini /etc/php/${PHP_VERSION}/cli/conf.d/99-aureus.ini
+COPY docker/production/php-fpm.conf /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
 
 RUN rm -f /etc/nginx/sites-enabled/default /etc/nginx/conf.d/default.conf
-COPY nginx.conf /etc/nginx/conf.d/aureus.conf
+COPY docker/production/nginx.conf /etc/nginx/conf.d/aureus.conf
 
-COPY supervisord.conf /etc/supervisor/conf.d/aureus.conf
+COPY docker/production/supervisord.conf /etc/supervisor/conf.d/aureus.conf
 
-RUN mkdir -p /run/php /var/log/supervisor /var/log/aureus
+# Laravel requires these to exist; .dockerignore strips their contents.
+RUN mkdir -p /run/php /var/log/supervisor /var/log/aureus \
+        storage/app/public \
+        storage/app/private \
+        storage/framework/cache/data \
+        storage/framework/sessions \
+        storage/framework/views \
+        storage/logs \
+        bootstrap/cache
 
 RUN chown -R www-data:www-data /var/www/aureuserp /var/log/aureus \
     && chmod -R 775 storage bootstrap/cache \
     && find storage bootstrap/cache -type d -exec chmod g+s {} +
 
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY docker/production/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 RUN apt-get purge -y git nodejs \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
 
 EXPOSE 80
 

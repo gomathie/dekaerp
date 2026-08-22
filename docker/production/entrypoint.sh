@@ -40,10 +40,10 @@ if is_managed_database; then
     else
         log "Mode: EXTERNAL ${DB_CONNECTION} (${DB_HOST}:${DB_PORT})"
     fi
-    export MYSQL_AUTOSTART=false
 else
-    log "Mode: INTERNAL MySQL"
-    export MYSQL_AUTOSTART=true
+    log "Mode: LOCAL ${DB_CONNECTION} (${DB_HOST}:${DB_PORT})"
+    log "WARNING: no managed database detected. This image ships no database"
+    log "         server, so DB_HOST must point at a reachable host."
 fi
 
 sed_escape() { printf '%s' "$1" | sed -e 's/[\\&|]/\\&/g'; }
