@@ -37,12 +37,34 @@ return [
             'throw'  => false,
         ],
 
+        /*
+         | Uploads are written through disk('public') in ~27 places across the
+         | plugins. Rather than change those call sites, the disk itself is
+         | switchable: 'local' for development, 'tenant-s3' in production,
+         | which stores objects privately in S3 under companies/{company_id}/.
+         | See App\Providers\TenantFilesystemServiceProvider.
+         |
+         | The container filesystem is replaced on every deploy, so 'local' is
+         | only safe where storage/ is a persistent volume.
+         */
         'public' => [
-            'driver'     => 'local',
-            'root'       => storage_path('app/public'),
+            'driver'     => env('FILESYSTEM_PUBLIC_DRIVER', 'local'),
+            'root'       => env('FILESYSTEM_PUBLIC_DRIVER', 'local') === 'local'
+                ? storage_path('app/public')
+                : env('AWS_ROOT', ''),
             'url'        => env('APP_URL').'/storage',
-            'visibility' => 'public',
+            'visibility' => env('FILESYSTEM_PUBLIC_DRIVER', 'local') === 'local'
+                ? 'public'
+                : 'private',
             'throw'      => false,
+
+            // Used only when the driver is tenant-s3; ignored by the local driver.
+            'key'                     => env('AWS_ACCESS_KEY_ID'),
+            'secret'                  => env('AWS_SECRET_ACCESS_KEY'),
+            'region'                  => env('AWS_DEFAULT_REGION'),
+            'bucket'                  => env('AWS_BUCKET'),
+            'endpoint'                => env('AWS_ENDPOINT'),
+            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
         ],
 
         's3' => [
