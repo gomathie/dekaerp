@@ -97,7 +97,7 @@ Clean code, comprehensive REST API with Sanctum, Pest test suites, and a CLI-dri
 | **Open Source**      | Free to use, modify, and extend. No vendor lock-in        |
 | **Modern Stack**     | Laravel 13, FilamentPHP 5, Livewire 4, TailwindCSS 4     |
 | **Multi-Tenant**     | Built-in multi-company isolation for SaaS or multi-org    |
-| **PostgreSQL-First** | Production-ready on PostgreSQL / Neon serverless Postgres  |
+| **PostgreSQL-First** | Production-ready on PostgreSQL, hosted or managed          |
 | **Scalable**         | From 5 tenants to enterprise-scale operations             |
 | **Customizable**     | Extend with your own plugins using the modular architecture |
 | **Production-Ready** | Docker setup for Coolify/Hetzner with Supervisor, Nginx    |
@@ -153,7 +153,7 @@ The app includes a `DatabaseDialect` abstraction layer (`MySqlDialect` / `Postgr
 ### Server Requirements
 
 - **PHP**: 8.3 or higher
-- **Database**: PostgreSQL 14+ (recommended: [Neon](https://neon.tech) serverless Postgres)
+- **Database**: PostgreSQL 17 (production runs Supabase; MySQL and MariaDB also supported)
 - **Web Server**: Nginx 1.18+ (or Apache 2.4+)
 
 ### Development Tools
@@ -167,8 +167,8 @@ The app includes a `DatabaseDialect` abstraction layer (`MySqlDialect` / `Postgr
 
 | Database | Status | Notes |
 |----------|--------|-------|
-| PostgreSQL 14+ | ✅ **Primary** | Recommended for production |
-| Neon (serverless PG) | ✅ **Supported** | Use pooled endpoint for app, direct for migrations |
+| PostgreSQL 17 | ✅ **Primary** | Production standard |
+| Supabase | ✅ **Supported** | Use the session pooler; see docs/supabase-database.md |
 | MySQL 8.0+ | ⚠️ Supported | Via `MySqlDialect`; not the primary target |
 | SQLite | ⚠️ Dev only | For quick local testing |
 
@@ -245,8 +245,8 @@ DEKA ERP includes a production-ready Docker setup in `docker/production/` design
 └──────────────┬──────────────────────┘
                │
     ┌──────────┴──────────┐
-    │ Neon PostgreSQL      │
-    │ (pooled endpoint)    │
+    │ Supabase PostgreSQL  │
+    │ (session pooler)     │
     └─────────────────────┘
 ```
 
@@ -258,29 +258,38 @@ DEKA ERP includes a production-ready Docker setup in `docker/production/` design
 | `APP_DEBUG` | `false` |
 | `APP_URL` | `https://your-domain.com` |
 | `DB_CONNECTION` | `pgsql` |
-| `DB_URL` | Your Neon pooled connection string |
+| `DB_HOST` | Supabase session pooler host |
 | `DB_SSLMODE` | `require` |
-| `QUEUE_CONNECTION` | `database` |
-| `SESSION_DRIVER` | `database` |
-| `CACHE_STORE` | `database` (or `redis`) |
+| `QUEUE_CONNECTION` | `redis` |
+| `SESSION_DRIVER` | `redis` |
+| `CACHE_STORE` | `redis` |
 | `FILESYSTEM_DISK` | `public` (or `s3`) |
 
-### Neon PostgreSQL Setup
+### Supabase Setup
 
-The Docker entrypoint natively supports Neon via `DB_URL`:
+Use the **session pooler**. The direct host `db.<ref>.supabase.co` publishes only
+an AAAA record, so it is unreachable from any IPv4-only network, and the
+transaction pooler on port 6543 does not hold session state between statements,
+which breaks migrations.
 
 ```env
 DB_CONNECTION=pgsql
-DB_URL=postgresql://user:password@ep-xxx-pooler.region.aws.neon.tech/dekaerp?sslmode=require
+DB_HOST=aws-0-<region>.pooler.supabase.com
+DB_PORT=5432
+DB_DATABASE=postgres
+DB_USERNAME=postgres.<project-ref>
+DB_PASSWORD=<database password>
+DB_SSLMODE=require
 ```
 
-Use the **pooled** endpoint (`-pooler`) for the application and the **direct** endpoint for schema migrations:
+Prefer these discrete variables over `DB_URL`. Generated passwords routinely
+contain characters that must be percent-encoded inside a URL, and getting that
+wrong produces an authentication failure indistinguishable from a wrong
+password. The same connection is safe for application traffic and for
+`migrate --force`.
 
-```bash
-DB_URL="postgresql://user:pass@ep-xxx.region.aws.neon.tech/dekaerp?sslmode=require" \
-  php artisan migrate --force
-```
-
+See `docs/supabase-database.md` for rollback, operational limits, and why the
+local database should be pinned to the same major version.
 ### Health Check
 
 The container exposes a `/health` endpoint for uptime monitoring:

@@ -8,9 +8,9 @@
 # Coolify does exactly this by default (repo as context, Dockerfile path set),
 # which is why the image must not fetch its own source.
 #
-# The database is external - Neon, or any managed Postgres/MySQL. The image
+# The database is external - Supabase, or any managed Postgres/MySQL. The image
 # ships no database server and runs no installer at build time; schema
-# creation is a deploy step, see docs/neon-database.md.
+# creation is a deploy step, see docs/supabase-database.md.
 
 FROM ubuntu:24.04
 
@@ -36,7 +36,7 @@ RUN apt-get update && apt-get install -y \
         supervisor \
     && rm -rf /var/lib/apt/lists/*
 
-# pgsql for Neon and any managed Postgres; mysql retained so an external
+# pgsql for Supabase and any managed Postgres; mysql retained so an external
 # MySQL/MariaDB remains a supported DB_CONNECTION.
 RUN apt-get update && apt-get install -y \
         php${PHP_VERSION}-bcmath \
@@ -128,15 +128,20 @@ RUN set -eux; \
 # A baseline .env. Every value that matters in production is rewritten by
 # entrypoint.sh from the container environment; this only guarantees the file
 # exists and is not in debug mode should a variable go unset.
+# Every artisan boot calls Package::isPluginInstalled(), which opens a PDO
+# connection. No database exists during the build and the failure is caught -
+# but pointing at an unresolvable hostname makes each of the artisan commands
+# below wait out a DNS timeout first. 127.0.0.1 is refused instantly, which is
+# the difference between a slow build and a stalled one.
+#
+# Keep these comments outside the RUN: a # inside a line continuation is joined
+# into the command and comments out everything after it, which silently dropped
+# the DB_HOST substitution when it lived below.
 RUN cp .env.example .env \
     && sed -i 's/^APP_ENV=.*/APP_ENV=production/' .env \
     && sed -i 's/^APP_DEBUG=.*/APP_DEBUG=false/' .env \
-    # Every artisan boot calls Package::isPluginInstalled(), which opens a PDO
-    # connection. No database exists during the build, and the failure is caught
-    # - but pointing at an unresolvable hostname makes each of the five artisan
-    # commands below wait out a DNS timeout first. 127.0.0.1 is refused
-    # instantly, which is the difference between a slow build and a stalled one.
-    && sed -i 's/^DB_HOST=.*/DB_HOST=127.0.0.1/' .env
+    && sed -i 's/^DB_HOST=.*/DB_HOST=127.0.0.1/' .env \
+    && grep -q '^DB_HOST=127.0.0.1$' .env
 
 # A key is required for artisan to boot during the build. It is a placeholder:
 # entrypoint.sh overwrites it whenever APP_KEY is supplied, and production
