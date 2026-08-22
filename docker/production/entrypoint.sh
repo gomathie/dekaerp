@@ -171,6 +171,28 @@ if is_managed_database; then
     done
 fi
 
+# A persistent volume mounted at storage/app starts empty and owned by root,
+# hiding whatever the image created there. Recreate the directories the
+# application writes to, and hand them to the web user, before anything runs.
+log "Ensuring storage directories exist..."
+
+mkdir -p \
+    storage/app/public \
+    storage/app/private \
+    storage/framework/cache/data \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/logs \
+    bootstrap/cache
+
+chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true
+chmod -R 775 storage bootstrap/cache 2>/dev/null || true
+
+# public/storage is a symlink into storage/app/public. It is created at build
+# time, but a volume mount can leave it dangling, and storage:link is a no-op
+# when it is already correct.
+php artisan storage:link --no-interaction 2>/dev/null || true
+
 log "Refreshing cached configuration..."
 
 php artisan optimize:clear --no-interaction 2>/dev/null || true
