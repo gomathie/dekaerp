@@ -82,12 +82,17 @@ else
     set_env DB_PASSWORD "$DB_PASSWORD"
 fi
 
-# Neon and most managed Postgres providers refuse unencrypted connections; the
-# framework default is 'prefer', which succeeds locally and fails there.
+# SSL is never inferred. Requiring it because the driver happens to be pgsql
+# breaks every Postgres that does not offer TLS - a container on the same
+# network, or a server reached over a private link - with:
+#
+#   server does not support SSL, but SSL was required
+#
+# Managed providers that need it say so in their own connection string
+# (Neon appends ?sslmode=require, which Laravel's URL parser honours), and
+# DB_SSLMODE is there to set it explicitly for anything that does not.
 if [ -n "$DB_SSLMODE" ]; then
     set_env DB_SSLMODE "$DB_SSLMODE"
-elif [ "$DB_CONNECTION" = "pgsql" ] && is_managed_database; then
-    set_env DB_SSLMODE "require"
 fi
 
 set_env APP_ENV "${APP_ENV:-production}"
