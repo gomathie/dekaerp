@@ -99,7 +99,13 @@ RUN composer install \
 # exists and is not in debug mode should a variable go unset.
 RUN cp .env.example .env \
     && sed -i 's/^APP_ENV=.*/APP_ENV=production/' .env \
-    && sed -i 's/^APP_DEBUG=.*/APP_DEBUG=false/' .env
+    && sed -i 's/^APP_DEBUG=.*/APP_DEBUG=false/' .env \
+    # Every artisan boot calls Package::isPluginInstalled(), which opens a PDO
+    # connection. No database exists during the build, and the failure is caught
+    # - but pointing at an unresolvable hostname makes each of the five artisan
+    # commands below wait out a DNS timeout first. 127.0.0.1 is refused
+    # instantly, which is the difference between a slow build and a stalled one.
+    && sed -i 's/^DB_HOST=.*/DB_HOST=127.0.0.1/' .env
 
 # A key is required for artisan to boot during the build. It is a placeholder:
 # entrypoint.sh overwrites it whenever APP_KEY is supplied, and production
