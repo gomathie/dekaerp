@@ -35,8 +35,11 @@ auth.json
 /storage/app/adminer
 
 # --- Version control and CI ---
+# .gitignore is deliberately NOT excluded. Tailwind v4 detects its own sources
+# from the working directory and uses .gitignore to know what to skip; without
+# it the build scans vendor/ and node_modules/, producing a larger stylesheet
+# than the local build and taking longer to do it.
 .git
-.gitignore
 .gitattributes
 /.github
 /.scribe
