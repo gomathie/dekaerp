@@ -86,13 +86,38 @@ WORKDIR /var/www/aureuserp
 # repository root keeps secrets, vendor, node_modules and dev tooling out.
 COPY . .
 
-RUN composer install \
-        --no-dev \
-        --no-interaction \
-        --prefer-dist \
-        --optimize-autoloader \
-        --no-scripts \
-    && rm -rf /root/.composer/cache
+# Composer pulls most dists from GitHub's API, which rate-limits unauthenticated
+# requests and returns 504s under load. A single failed zipball fails the whole
+# build, so: retry twice, then fall back to installing from source rather than
+# giving up. Pass a token as the COMPOSER_AUTH build arg to avoid the limit
+# altogether on a busy CI host.
+ARG COMPOSER_AUTH=""
+ENV COMPOSER_AUTH=${COMPOSER_AUTH}
+
+RUN set -eux; \
+    for attempt in 1 2 3; do \
+        if composer install \
+            --no-dev \
+            --no-interaction \
+            --prefer-dist \
+            --optimize-autoloader \
+            --no-scripts; then \
+            break; \
+        fi; \
+        if [ "$attempt" = "3" ]; then \
+            echo "dist downloads kept failing; falling back to source"; \
+            composer install \
+                --no-dev \
+                --no-interaction \
+                --prefer-source \
+                --optimize-autoloader \
+                --no-scripts; \
+        else \
+            echo "composer install failed (attempt ${attempt}); retrying"; \
+            sleep 15; \
+        fi; \
+    done; \
+    rm -rf /root/.composer/cache
 
 # A baseline .env. Every value that matters in production is rewritten by
 # entrypoint.sh from the container environment; this only guarantees the file
