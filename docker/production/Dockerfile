@@ -92,14 +92,14 @@ COPY . .
 # giving up. Pass a token as the COMPOSER_AUTH build arg to avoid the limit
 # altogether on a busy CI host.
 #
-# COMPOSER_AUTH is read from the build argument inside the RUN below rather than
-# promoted to ENV: an ENV would persist into the final image and be readable
-# with docker inspect. Note a build arg is still visible in image history, so
-# for a real secret prefer a BuildKit secret mount or a pre-seeded auth.json.
-ARG COMPOSER_AUTH=""
-
+# If rate limiting becomes chronic, supply a token as a BuildKit secret rather
+# than a build arg - an ARG or ENV named for a credential leaks into image
+# history or the image itself:
+#
+#   RUN --mount=type=secret,id=composer_auth,env=COMPOSER_AUTH composer install ...
+#   docker build --secret id=composer_auth,env=COMPOSER_AUTH ...
+#
 RUN set -eux; \
-    export COMPOSER_AUTH="${COMPOSER_AUTH}"; \
     for attempt in 1 2 3; do \
         if composer install \
             --no-dev \
