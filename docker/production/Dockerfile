@@ -91,10 +91,15 @@ COPY . .
 # build, so: retry twice, then fall back to installing from source rather than
 # giving up. Pass a token as the COMPOSER_AUTH build arg to avoid the limit
 # altogether on a busy CI host.
+#
+# COMPOSER_AUTH is read from the build argument inside the RUN below rather than
+# promoted to ENV: an ENV would persist into the final image and be readable
+# with docker inspect. Note a build arg is still visible in image history, so
+# for a real secret prefer a BuildKit secret mount or a pre-seeded auth.json.
 ARG COMPOSER_AUTH=""
-ENV COMPOSER_AUTH=${COMPOSER_AUTH}
 
 RUN set -eux; \
+    export COMPOSER_AUTH="${COMPOSER_AUTH}"; \
     for attempt in 1 2 3; do \
         if composer install \
             --no-dev \
