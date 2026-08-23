@@ -40,7 +40,7 @@ permissions, admin user), so the container boots ready to use.
 | PHP | 8.4 FPM — bcmath, curl, exif, gd, gmp, intl, mbstring, mysql, soap, xml, zip, imagick |
 | Database | MySQL 8.0 (internal, pre-installed) |
 | Process manager | Supervisor — `mysql` · `php-fpm` · `nginx` · queue worker · scheduler |
-| Application path | `/var/www/aureuserp` |
+| Application path | `/var/www/dekaerp` |
 
 The image runs in one of two database modes:
 
@@ -78,7 +78,7 @@ docker pull webkul/aureuserp:latest
 
 docker run -d --name aureuserp -p 80:80 \
   -v aureus-mysql:/var/lib/mysql \
-  -v aureus-storage:/var/www/aureuserp/storage \
+  -v aureus-storage:/var/www/dekaerp/storage \
   webkul/aureuserp:latest
 ```
 
@@ -137,7 +137,7 @@ docker run -d --name aureuserp -p 80:80 \
 # with persistent named volumes (recommended)
 docker run -d --name aureuserp -p 80:80 \
   -v aureus-mysql:/var/lib/mysql \
-  -v aureus-storage:/var/www/aureuserp/storage \
+  -v aureus-storage:/var/www/dekaerp/storage \
   aureuserp:latest
 ```
 
@@ -207,7 +207,7 @@ entrypoint waits up to 60 s for the external server.
 
 ```bash
 docker run -d --name aureuserp -p 80:80 \
-  -v aureus-storage:/var/www/aureuserp/storage \
+  -v aureus-storage:/var/www/dekaerp/storage \
   -e DB_HOST=db.example.com \
   -e DB_PORT=3306 \
   -e DB_DATABASE=aureus \
@@ -247,7 +247,7 @@ installed data).
 | Volume | Container path | Purpose |
 |---|---|---|
 | `aureus-mysql` | `/var/lib/mysql` | Database files |
-| `aureus-storage` | `/var/www/aureuserp/storage` | Uploads, logs, sessions, app state |
+| `aureus-storage` | `/var/www/dekaerp/storage` | Uploads, logs, sessions, app state |
 
 Without volumes the container is ephemeral — all data is lost on `docker rm`.
 
@@ -295,7 +295,7 @@ docker pull webkul/aureuserp:latest        # or rebuild locally
 docker stop aureuserp && docker rm aureuserp
 docker run -d --name aureuserp -p 80:80 \
   -v aureus-mysql:/var/lib/mysql \
-  -v aureus-storage:/var/www/aureuserp/storage \
+  -v aureus-storage:/var/www/dekaerp/storage \
   webkul/aureuserp:latest
 ```
 

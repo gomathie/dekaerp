@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-APP_DIR="/var/www/aureuserp"
+APP_DIR="/var/www/dekaerp"
 cd "$APP_DIR"
 
 log() { echo "[aureus-entrypoint] $(date '+%Y-%m-%d %H:%M:%S') $*"; }

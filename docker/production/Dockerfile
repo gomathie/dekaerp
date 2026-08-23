@@ -81,7 +81,7 @@ RUN apt-get purge -y php${PHP_VERSION}-dev php-pear \
 
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 
-WORKDIR /var/www/aureuserp
+WORKDIR /var/www/dekaerp
 
 # The application source, from the build context. .dockerignore at the
 # repository root keeps secrets, vendor, node_modules and dev tooling out.
@@ -175,7 +175,7 @@ RUN mkdir -p /run/php /var/log/supervisor /var/log/aureus \
         storage/logs \
         bootstrap/cache
 
-RUN chown -R www-data:www-data /var/www/aureuserp /var/log/aureus \
+RUN chown -R www-data:www-data /var/www/dekaerp /var/log/aureus \
     && chmod -R 775 storage bootstrap/cache \
     && find storage bootstrap/cache -type d -exec chmod g+s {} +
 
