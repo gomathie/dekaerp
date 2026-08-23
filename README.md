@@ -100,7 +100,7 @@ Clean code, comprehensive REST API with Sanctum, Pest test suites, and a CLI-dri
 | **PostgreSQL-First** | Production-ready on PostgreSQL, hosted or managed          |
 | **Scalable**         | From 5 tenants to enterprise-scale operations             |
 | **Customizable**     | Extend with your own plugins using the modular architecture |
-| **Production-Ready** | Docker setup for Coolify/Hetzner with Supervisor, Nginx    |
+| **Production-Ready** | Runs on Laravel Cloud; Docker image included for self-hosting |
 
 ---
 
@@ -229,7 +229,9 @@ php artisan serve
 
 ## 🚀 Production Deployment
 
-DEKA ERP includes a production-ready Docker setup in `docker/production/` designed for **Hetzner + Coolify** (or any Docker-based host).
+DEKA ERP runs on **Laravel Cloud**, where compute is ephemeral: object storage is required for uploads, and sessions, cache and queues use Postgres or Redis rather than the local disk.
+
+A self-contained Docker image is also kept in `docker/production/` for any Docker-based host, and is what the local staging containers are built from.
 
 ### Architecture
 
@@ -585,5 +587,3 @@ Include:
 [⬆ Back to Top](#-table-of-contents)
 
 </div>
-#   d e k a - l a n d i n g  
- 

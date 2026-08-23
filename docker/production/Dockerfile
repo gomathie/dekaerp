@@ -5,8 +5,8 @@
 #
 #   docker build -f docker/production/Dockerfile -t dekaerp:latest .
 #
-# Coolify does exactly this by default (repo as context, Dockerfile path set),
-# which is why the image must not fetch its own source.
+# Most container platforms build this way by default (repo as context, with the
+# Dockerfile path set), which is why the image must not fetch its own source.
 #
 # The database is external - Supabase, or any managed Postgres/MySQL. The image
 # ships no database server and runs no installer at build time; schema
