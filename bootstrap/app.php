@@ -9,6 +9,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Validation\ValidationException;
+use Sentry\Laravel\Integration;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Webkul\Account\Exceptions\MissingJournalException;
@@ -32,6 +33,11 @@ return Application::configure(basePath: dirname(__DIR__))
         }
     })
     ->withExceptions(function (Exceptions $exceptions) {
+        // Reports unhandled exceptions to Sentry. Inert until SENTRY_LARAVEL_DSN
+        // is set, so local and test runs send nothing. Reporting is separate from
+        // the render() callbacks below - those still shape the client response.
+        Integration::handles($exceptions);
+
         $exceptions->render(function (MissingJournalException $e, $request) {
             if ($request->is('api/*') || $request->expectsJson()) {
                 return response()->json([
