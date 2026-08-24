@@ -7,10 +7,11 @@
 /storage/*.key
 /storage/pail
 /vendor
-.env
-.env.testing
-.env.backup
-.env.production
+# Ignore every .env variant. Listing them individually meant any new one -
+# .env.staging, .env.laravel-cloud - was tracked by default, which is the wrong
+# way round for files that hold credentials.
+.env*
+!.env.example
 .phpactor.json
 .phpunit.result.cache
 Homestead.json
