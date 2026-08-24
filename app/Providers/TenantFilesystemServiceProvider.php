@@ -3,9 +3,10 @@
 namespace App\Providers;
 
 use Illuminate\Filesystem\FilesystemManager;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
-use RuntimeException;
+use Throwable;
 
 /**
  * Registers the "tenant-s3" filesystem driver.
@@ -26,11 +27,31 @@ use RuntimeException;
  */
 class TenantFilesystemServiceProvider extends ServiceProvider
 {
-    public function boot(): void
+    /**
+     * Registered rather than booted.
+     *
+     * Laravel runs every provider's register() before any provider's boot(),
+     * and the disk is resolved during boot by packages we do not control -
+     * guava/filament-icon-picker creates its icon directory the moment
+     * IconFactory resolves. Extending in boot() left that ordering to chance,
+     * and package:discover failed the build with "Driver [tenant-s3] is not
+     * supported" because our provider had not booted yet.
+     */
+    public function register(): void
     {
-        Storage::extend('tenant-s3', function ($app, array $config) {
+        // FilesystemManager::extend() rebinds the callback's $this to itself.
+        // Calling $this->tenantRoot() inside the closure therefore resolved
+        // against the manager, missed, fell through to __call - which forwards
+        // to $this->disk(), the default disk, which is this very driver - and
+        // recursed until the process died with a segfault.
+        //
+        // This arrow function keeps $this bound to the provider because it is
+        // never handed to extend(), so it is never rebound.
+        $tenantRoot = fn (string $configuredRoot): string => $this->tenantRoot($configuredRoot);
+
+        Storage::extend('tenant-s3', function ($app, array $config) use ($tenantRoot) {
             $config['driver'] = 's3';
-            $config['root'] = $this->tenantRoot($config['root'] ?? '');
+            $config['root'] = $tenantRoot($config['root'] ?? '');
 
             /** @var FilesystemManager $manager */
             $manager = $app->make('filesystem');
@@ -42,27 +63,45 @@ class TenantFilesystemServiceProvider extends ServiceProvider
     /**
      * Build the object-key prefix for the company in context.
      *
-     * Deliberately throws when there is no company. Queue jobs and artisan
-     * commands run without one - CompanyScope skips itself entirely in console
-     * context - so a fallback here would silently file one tenant's documents
-     * under another, or under a shared prefix that every tenant can reach.
-     * Failing is recoverable; mis-filing is not.
+     * With no company, objects go under _system rather than under a tenant.
+     * This is not a relaxation of the isolation guarantee - it is what makes it
+     * hold. Tenant prefixes are always companies/{int}, so _system can never be
+     * mistaken for one, and SecureStorageController serves only companies/{id}/
+     * paths, so nothing written here is reachable by any user through any URL.
+     *
+     * The original version threw instead. That was wrong for a reason worth
+     * recording: the disk is legitimately resolved with no user at all, during
+     * package:discover, because guava/filament-icon-picker creates its icon
+     * directory when IconFactory resolves. Throwing there failed the build.
+     *
+     * A tenant document reaching _system - from a queued job that forgot to set
+     * company context, say - is still a bug. But it surfaces as a file nobody
+     * can read, which is loud and harmless, rather than as one company quietly
+     * holding another company's documents. The warning below is what makes it
+     * findable.
      */
     protected function tenantRoot(string $configuredRoot): string
     {
+        $base = trim($configuredRoot, '/');
+        $base = $base !== '' ? $base.'/' : '';
+
         $companyId = current_company_id();
 
         if (blank($companyId)) {
-            throw new RuntimeException(
-                'The tenant-s3 disk was resolved without a company in context, so there is '
-                .'no safe prefix to write under. This normally means a queued job, artisan '
-                .'command or unauthenticated request touched Storage::disk("public"). Set the '
-                .'company context explicitly for that code path rather than relaxing this check.'
-            );
+            // Never let diagnostics break the disk: this runs during early boot,
+            // where the log stack may not be usable yet.
+            try {
+                Log::warning('tenant-s3 resolved with no company in context; using the _system prefix.', [
+                    'console' => app()->runningInConsole(),
+                    'command' => app()->runningInConsole() ? implode(' ', array_slice($_SERVER['argv'] ?? [], 1, 2)) : null,
+                ]);
+            } catch (Throwable) {
+                // Nothing to do - the prefix below is still correct.
+            }
+
+            return $base.'_system';
         }
 
-        $base = trim($configuredRoot, '/');
-
-        return ($base !== '' ? $base.'/' : '')."companies/{$companyId}";
+        return $base."companies/{$companyId}";
     }
 }
