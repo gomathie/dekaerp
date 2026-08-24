@@ -52,7 +52,14 @@ return [
             'root'       => env('FILESYSTEM_PUBLIC_DRIVER', 'local') === 'local'
                 ? storage_path('app/public')
                 : env('AWS_ROOT', ''),
-            'url'        => env('APP_URL').'/storage',
+            // With the local driver, public/storage is a symlink and files are
+            // served directly. Object storage is private and has no fetchable
+            // URL, so ->url() is pointed at a route that authorizes the request
+            // first - see App\Http\Controllers\SecureStorageController. Every
+            // Filament component calling ->url() picks this up automatically.
+            'url'        => env('FILESYSTEM_PUBLIC_DRIVER', 'local') === 'local'
+                ? env('APP_URL').'/storage'
+                : env('APP_URL').'/secure-storage',
             'visibility' => env('FILESYSTEM_PUBLIC_DRIVER', 'local') === 'local'
                 ? 'public'
                 : 'private',
