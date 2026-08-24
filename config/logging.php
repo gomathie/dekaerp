@@ -105,6 +105,21 @@ return [
             'processors' => [PsrLogMessageProcessor::class],
         ],
 
+        /*
+         | Forwards log messages to Sentry. Defined but not active: nothing uses
+         | it until LOG_STACK names it. Unhandled exceptions reach Sentry
+         | through Integration::handles() in bootstrap/app.php regardless of the
+         | log channel, so this is only for deliberate Log:: calls.
+         |
+         | Do not switch LOG_CHANNEL to "stack" on Laravel Cloud without adding
+         | laravel-cloud-socket to LOG_STACK - that channel is what feeds the
+         | platform Logs tab, and replacing it silently stops log collection.
+         */
+        'sentry_logs' => [
+            'driver' => 'sentry_logs',
+            'level'  => env('LOG_LEVEL', 'info'),
+        ],
+
         'syslog' => [
             'driver'               => 'syslog',
             'level'                => env('LOG_LEVEL', 'debug'),
