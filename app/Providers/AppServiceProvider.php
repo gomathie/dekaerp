@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Component;
@@ -40,6 +41,8 @@ class AppServiceProvider extends ServiceProvider
 
         $this->tagSentryWithTenantContext();
 
+        $this->refreshTenantDiskOnLogin();
+
         on('dehydrate', function (Component $component): void {
             if (! Livewire::isLivewireRequest()) {
                 return;
@@ -70,6 +73,31 @@ class AppServiceProvider extends ServiceProvider
      * populated during the normal request, so nothing has to touch the session
      * or database while an exception is already being handled.
      */
+    /**
+     * Discard the cached "public" disk once a user is authenticated.
+     *
+     * The tenant-s3 driver computes its object-key prefix when the disk is
+     * resolved, and FilesystemManager caches the resolved disk for the rest of
+     * the request. Something always resolves it before authentication runs -
+     * guava/filament-icon-picker creates its icon directory during panel boot -
+     * so the disk gets cached with the no-company "_system" prefix, and every
+     * upload and every ->url() for the rest of that request inherits it.
+     *
+     * Forgetting it here forces one re-resolve after the user is known, this
+     * time under companies/{id}. Cheap: the disk is rebuilt at most once per
+     * request, and only when it had already been built too early.
+     */
+    protected function refreshTenantDiskOnLogin(): void
+    {
+        if (config('filesystems.disks.public.driver') !== 'tenant-s3') {
+            return;
+        }
+
+        Event::listen(Authenticated::class, function (): void {
+            Storage::forgetDisk('public');
+        });
+    }
+
     protected function tagSentryWithTenantContext(): void
     {
         Event::listen(Authenticated::class, function (Authenticated $event): void {
