@@ -268,9 +268,21 @@ class InstallCommand extends Command
         if (! $migrationsToRun->isEmpty()) {
             $this->info("⚙️ Running <comment>{$this->package->shortName()}</comment> database migrations...");
 
-            $this->call('migrate', [
-                '--path' => $migrationsToRun->toArray(),
+            // --force is required, not optional. migrate is a Confirmable
+            // command: in production it asks before running, and with no TTY
+            // that prompt resolves to "no". The call then returns quietly
+            // having done nothing, the success line below still prints, and
+            // the plugin is marked installed with none of its tables.
+            $exitCode = $this->call('migrate', [
+                '--path'  => $migrationsToRun->toArray(),
+                '--force' => true,
             ]);
+
+            if ($exitCode !== 0) {
+                $this->error("❌ Migrations for {$this->package->shortName()} failed (exit {$exitCode}). The plugin will not work correctly.");
+
+                return $this;
+            }
 
             $this->info("✅ Migrations <comment>{$this->package->shortName()}</comment> completed successfully.");
 
@@ -294,9 +306,23 @@ class InstallCommand extends Command
         if (! $settingsToRun->isEmpty()) {
             $this->info("⚙️ Running <comment>{$this->package->shortName()}</comment> settings database migrations...");
 
-            $this->call('migrate', [
-                '--path' => $settingsToRun->toArray(),
+            // Same --force requirement as above. Skipping these is worse than
+            // skipping tables: a missing settings row is not a missing feature,
+            // it is a fatal boot error. Resources read settings while the panel
+            // is being constructed, so the whole admin panel goes down - not
+            // just this plugin's screens.
+            $exitCode = $this->call('migrate', [
+                '--path'  => $settingsToRun->toArray(),
+                '--force' => true,
             ]);
+
+            if ($exitCode !== 0) {
+                $this->error("❌ Settings migrations for {$this->package->shortName()} failed (exit {$exitCode}).");
+                $this->warn('Resources read these settings during panel construction, so the');
+                $this->warn('admin panel will fail to boot until they exist. Resolve before continuing.');
+
+                return $this;
+            }
 
             $this->info("✅ Settings migrations <comment>{$this->package->shortName()}</comment> completed successfully.");
 
@@ -335,9 +361,17 @@ class InstallCommand extends Command
         $this->info("⚙️ Running <comment>{$this->package->shortName()}</comment> database seeders...");
 
         foreach ($this->package->seederClasses as $seeder) {
-            $this->call('db:seed', [
+            // db:seed is Confirmable too, so without --force it silently does
+            // nothing in production and the plugin installs with empty
+            // reference data.
+            $exitCode = $this->call('db:seed', [
                 '--class' => $seeder,
+                '--force' => true,
             ]);
+
+            if ($exitCode !== 0) {
+                $this->error("❌ Seeder {$seeder} failed (exit {$exitCode}). Reference data for {$this->package->shortName()} is incomplete.");
+            }
         }
 
         Package::syncPostgresSequences();
