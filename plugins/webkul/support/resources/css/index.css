@@ -8,3 +8,14 @@
 @source '../../../../app/Filament';
 @source '../../resources/views';
 @source '../../../../../vendor/guava/filament-icon-picker/resources/views';
+
+/* Page sub-navigation sidebar. Filament sizes this from the spacing scale -
+   calc(var(--spacing) * 72), i.e. 288px - which is wider than the short labels
+   here need. Setting the container resizes the whole column: the ul, li and
+   link inside are full-width and follow it. Only width is overridden, so the
+   display:none/flex breakpoint switch that turns this into a dropdown on small
+   screens is untouched. Unlayered, so it wins over Filament's @layer components
+   without !important - the same approach grid-layout.css already relies on. */
+.fi-page-sub-navigation-sidebar-ctn {
+    width: 200px;
+}
