@@ -7,7 +7,7 @@ return [
 
     'title'      => 'Ajuda',
     'heading'    => 'Ajuda e recursos',
-    'subheading' => 'Tudo de que você precisa para aproveitar ao máximo o AureusERP.',
+    'subheading' => 'Tudo de que você precisa para aproveitar ao máximo o :app.',
 
     'services' => [
         'group' => 'Serviços',
@@ -36,7 +36,7 @@ return [
 
         'extensions' => [
             'title'       => 'Módulos',
-            'description' => 'Explore complementos oficiais e da comunidade para estender o AureusERP com novos módulos e recursos.',
+            'description' => 'Explore complementos oficiais e da comunidade para estender o :app com novos módulos e recursos.',
             'button'      => 'Explorar módulos',
         ],
 
@@ -51,6 +51,12 @@ return [
             'description' => 'Guias passo a passo cobrindo configuração inicial, ajustes e uso diário de cada módulo do ERP.',
             'button'      => 'Abrir guia',
         ],
+
+        'website' => [
+            'title'       => 'Site do produto',
+            'description' => 'Visão geral dos módulos, notas de versão e tudo o que o :app pode fazer, no site do produto.',
+            'button'      => 'Visitar site',
+        ],
     ],
 
     'contact' => [
@@ -59,4 +65,6 @@ return [
         'live_chat'   => 'Chat ao vivo',
         'button'      => 'Fale Conosco',
     ],
+
+    'empty' => 'Os links de ajuda ainda não foram configurados para esta instalação do :app. Entre em contato com o administrador do sistema.',
 ];

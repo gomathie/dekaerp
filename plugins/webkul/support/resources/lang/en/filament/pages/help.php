@@ -7,7 +7,7 @@ return [
 
     'title'      => 'Help',
     'heading'    => 'Help & Resources',
-    'subheading' => 'Everything you need to get the most out of AureusERP.',
+    'subheading' => 'Everything you need to get the most out of :app.',
 
     'services' => [
         'group' => 'Services',
@@ -36,7 +36,7 @@ return [
 
         'extensions' => [
             'title'       => 'Modules',
-            'description' => 'Browse official and community add-ons to extend AureusERP with new modules and features.',
+            'description' => 'Browse official and community add-ons to extend :app with new modules and features.',
             'button'      => 'Browse Modules',
         ],
 
@@ -51,7 +51,15 @@ return [
             'description' => 'Step-by-step guides covering setup, configuration and everyday use of every ERP module.',
             'button'      => 'Open Guide',
         ],
+
+        'website' => [
+            'title'       => 'Product Site',
+            'description' => 'Module overviews, release notes and everything :app can do, on the product website.',
+            'button'      => 'Visit Website',
+        ],
     ],
+
+    'empty' => 'Help links have not been set up for this :app installation yet. Contact your system administrator for assistance.',
 
     'contact' => [
         'title'       => 'Still need a hand?',

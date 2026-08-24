@@ -442,12 +442,20 @@ class InstallCommand extends Command
 
             $artisan = escapeshellarg(base_path('artisan'));
 
-            $cmd = $this->buildTimeoutCommand(60, "$php $artisan shield:generate --all --option=permissions --panel=admin 2>&1");
+            // 60s was the original budget. It is enough against a local
+            // database and nowhere near enough against a managed one, where
+            // this writes hundreds of permission rows at network latency. When
+            // it expired the plugin still reported success while the admin
+            // role kept none of the new permissions, so every resource the
+            // plugin added stayed invisible in the panel.
+            $timeout = max(60, (int) config('deka.plugins.permission_timeout', 900));
+
+            $cmd = $this->buildTimeoutCommand($timeout, "$php $artisan shield:generate --all --option=permissions --panel=admin 2>&1");
 
             exec($cmd, $output, $exitCode);
 
             if ($exitCode === 124) {
-                throw new RuntimeException('Permission generation timed out after 60 seconds.');
+                throw new RuntimeException("Permission generation timed out after {$timeout} seconds.");
             }
 
             if ($exitCode !== 0) {
@@ -470,7 +478,21 @@ class InstallCommand extends Command
 
             $this->info('✅ Admin panel permissions refreshed successfully.');
         } catch (Throwable $e) {
-            $this->warn("⚠️  Permission refresh failed: {$e->getMessage()}");
+            // A warning alone is not enough here. The plugin is installed and
+            // its tables exist, but without permissions none of its resources
+            // appear in the panel - which reads as "the plugin did nothing"
+            // rather than "access control needs rebuilding". Say plainly what
+            // broke and what fixes it.
+            $this->error("❌ Permission refresh failed: {$e->getMessage()}");
+            $this->newLine();
+            $this->warn('The plugin is installed, but its screens will NOT appear in the');
+            $this->warn('panel until permissions are rebuilt. Run these, in order:');
+            $this->newLine();
+            $this->line('  php artisan shield:generate --all --option=permissions --panel=admin');
+            $this->line('  php artisan permission:cache-reset');
+            $this->newLine();
+            $this->warn('Then reassign permissions to the admin role. If this timed out,');
+            $this->warn('raise DEKA_PLUGIN_PERMISSION_TIMEOUT - see config/deka.php.');
         }
     }
 
