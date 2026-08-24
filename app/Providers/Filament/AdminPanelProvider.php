@@ -50,6 +50,10 @@ class AdminPanelProvider extends PanelProvider
             ->unsavedChangesAlerts()
             ->topNavigation()
             ->maxContentWidth(Width::Full)
+            // Filament defaults to 20rem. This panel uses top navigation for
+            // sections, so the sidebar only carries a short list of module
+            // links - 20rem left a wide band of empty space beside them.
+            ->sidebarWidth('15rem')
             ->databaseNotifications()
             ->databaseNotificationsPolling('30s')
             ->userMenuItems([
