@@ -50,7 +50,7 @@ class Post extends Model
             return null;
         }
 
-        return Storage::url($this->image);
+        return Storage::disk('public')->url($this->image);
     }
 
     public function getImageThumbUrlAttribute(): ?string

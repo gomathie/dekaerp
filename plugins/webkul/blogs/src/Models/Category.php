@@ -36,7 +36,7 @@ class Category extends Model
             return null;
         }
 
-        return Storage::url($this->image);
+        return Storage::disk('public')->url($this->image);
     }
 
     public function posts(): HasMany

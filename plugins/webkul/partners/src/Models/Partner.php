@@ -89,7 +89,7 @@ class Partner extends Authenticatable implements FilamentUser
             return;
         }
 
-        return Storage::url($this->avatar);
+        return Storage::disk('public')->url($this->avatar);
     }
 
     public function country(): BelongsTo
