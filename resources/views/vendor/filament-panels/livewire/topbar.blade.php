@@ -382,7 +382,7 @@
             <style>
                 @verbatim
                 :root {
-                    --module-sidebar-width: 280px;
+                    --module-sidebar-width: 200px;
                     --module-sidebar-width-collapsed: 72px;
                     --module-topbar-height: 4rem;
                 }
