@@ -70,6 +70,9 @@ skills-lock.json
 # --- Docs ---
 *.md
 !LICENSE
+# The in-app "What's New" page (Webkul\Support\Filament\Pages\WhatsNew) reads
+# this file at runtime, so it has to ship in the image unlike other markdown.
+!CHANGELOG.md
 /docs
 
 # --- Playwright ---
