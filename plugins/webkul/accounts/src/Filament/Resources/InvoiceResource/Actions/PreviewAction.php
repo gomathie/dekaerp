@@ -3,6 +3,7 @@
 namespace Webkul\Account\Filament\Resources\InvoiceResource\Actions;
 
 use Filament\Actions\Action;
+use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
 use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Models\Move;
@@ -59,7 +60,7 @@ class PreviewAction extends Action
                             $pdfPath = $this->prepareInvoice($record);
 
                             if ($pdfPath) {
-                                return response()->download(storage_path('app/public/'.$pdfPath));
+                                return Storage::disk('public')->download($pdfPath);
                             }
                         }),
                 ];
