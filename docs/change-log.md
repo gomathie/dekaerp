@@ -8,6 +8,55 @@ for the task/question log this change log is paired with.
 
 ---
 
+## 2026-09-02
+
+### Sentry: finished the wiring that was still missing
+
+**Files:**
+- `.env.example`
+- `docker/production/Dockerfile`
+- `docker/production/entrypoint.sh`
+- `docker/production/php.ini`
+
+**Context:** Working from Sentry's onboarding doc for this project. Most of it
+was already in place from `076735636` — `sentry/sentry-laravel` 4.27.0 is
+installed, `config/sentry.php` is published, `Integration::handles()` is in
+`bootstrap/app.php`, and the `sentry_logs` channel is defined in
+`config/logging.php`. These are the remaining gaps.
+
+**Excimer (profiling).** `pecl download excimer` + build, added to the
+production image in the same layer style as imagick and placed before
+`php-dev`/`php-pear` are purged. Wrapped in an `if/else` so a build failure
+prints a warning and continues instead of failing the image: profiling is
+optional and the SDK already degrades to a logged warning when the extension
+is absent (`vendor/sentry/sentry/src/Profiling/Profiler.php:76`), so it should
+not be able to block a deploy. Failure path simulated and confirmed to exit 0.
+
+**Env knobs.** `SENTRY_PROFILES_SAMPLE_RATE` and `SENTRY_ENABLE_LOGS` added to
+`.env.example`, both off by default, with comments on what turning each one on
+costs. Logs also need `LOG_CHANNEL=stack` and `LOG_STACK=stderr,sentry_logs` —
+the production entrypoint defaults `LOG_CHANNEL` to `stderr`, so naming the
+flag alone does nothing.
+
+**Entrypoint passthrough.** `SENTRY_*` container vars are now mirrored into
+`.env` alongside the `APP_*` ones. Not strictly required — `clear_env = no` in
+`php-fpm.conf` already exposes them to the workers, and Laravel's dotenv is
+immutable so it never overwrites a real environment variable — but it matches
+how every other runtime var is handled, and it stops `.env` from showing an
+empty DSN on a container that is happily sending events.
+
+**`zend.exception_ignore_args` — deliberately NOT set to Off.** Sentry's guide
+asks for `Off` so stack traces carry function arguments. Set explicitly to
+`On` instead, with the reasoning in the file: those arguments are customer
+records, invoice payloads and credentials passed to auth calls, which is the
+same data `SENTRY_SEND_DEFAULT_PII=false` was set to keep out of Sentry.
+Errors still carry file, line and the full frame list. Flagged for the user
+rather than decided silently.
+
+**Still needs the user:** `SENTRY_LARAVEL_DSN` has to be set as an environment
+variable on the host that runs the image. It is deliberately not committed —
+`.env.example` keeps the empty placeholder, matching the existing convention.
+
 ## 2026-08-28
 
 ### Feature: In-app "What's New" page, reading CHANGELOG.md

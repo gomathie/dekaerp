@@ -111,6 +111,22 @@ set_env LOG_LEVEL "${LOG_LEVEL:-info}"
 [ -n "$APP_CURRENCY" ] && set_env APP_CURRENCY "$APP_CURRENCY"
 [ -n "$APP_TIMEZONE" ] && set_env APP_TIMEZONE "$APP_TIMEZONE"
 
+# Error monitoring. php-fpm runs with clear_env = no, so these already reach
+# the workers as real environment variables and Laravel's dotenv leaves them
+# alone (it never overwrites what the environment already set). Mirroring them
+# into .env anyway keeps the file honest: debugging a live container by
+# reading .env should not show an empty DSN while events are flowing.
+#
+# Unset means unset - an empty DSN disables Sentry entirely, so a deployment
+# that never sets these behaves exactly as it did before.
+[ -n "$SENTRY_LARAVEL_DSN" ]          && set_env SENTRY_LARAVEL_DSN          "$SENTRY_LARAVEL_DSN"
+[ -n "$SENTRY_TRACES_SAMPLE_RATE" ]   && set_env SENTRY_TRACES_SAMPLE_RATE   "$SENTRY_TRACES_SAMPLE_RATE"
+[ -n "$SENTRY_PROFILES_SAMPLE_RATE" ] && set_env SENTRY_PROFILES_SAMPLE_RATE "$SENTRY_PROFILES_SAMPLE_RATE"
+[ -n "$SENTRY_ENABLE_LOGS" ]          && set_env SENTRY_ENABLE_LOGS          "$SENTRY_ENABLE_LOGS"
+[ -n "$SENTRY_SEND_DEFAULT_PII" ]     && set_env SENTRY_SEND_DEFAULT_PII     "$SENTRY_SEND_DEFAULT_PII"
+[ -n "$SENTRY_ENVIRONMENT" ]          && set_env SENTRY_ENVIRONMENT          "$SENTRY_ENVIRONMENT"
+[ -n "$SENTRY_RELEASE" ]              && set_env SENTRY_RELEASE              "$SENTRY_RELEASE"
+
 if is_managed_database; then
     log "Waiting for ${DB_CONNECTION} to become reachable..."
 

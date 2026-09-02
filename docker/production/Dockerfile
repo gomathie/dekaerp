@@ -71,6 +71,30 @@ RUN pecl channel-update pecl.php.net \
     && phpenmod -v ${PHP_VERSION} imagick \
     && rm -rf /tmp/imagick-build
 
+# Excimer powers Sentry profiling. Built the same way as imagick, and placed
+# here so it lands before php-dev and php-pear are purged below.
+#
+# Deliberately best-effort: profiling is optional and the SDK degrades to a
+# logged warning without the extension, so a release that fails to build
+# against a new PHP must not take the whole image - and every deploy - down
+# with it. The failure prints, so a missing profiler is findable in the log.
+RUN set -eux; \
+    if mkdir -p /tmp/excimer-build && cd /tmp/excimer-build \
+        && pecl download excimer \
+        && tar xzf excimer-*.tgz \
+        && cd excimer-*/ \
+        && phpize${PHP_VERSION} \
+        && ./configure --with-php-config=/usr/bin/php-config${PHP_VERSION} \
+        && make -j"$(nproc)" \
+        && make install; then \
+        echo "extension=excimer.so" > /etc/php/${PHP_VERSION}/mods-available/excimer.ini; \
+        phpenmod -v ${PHP_VERSION} excimer; \
+        echo "excimer installed; Sentry profiling available"; \
+    else \
+        echo "WARNING: excimer build failed; image ships without Sentry profiling"; \
+    fi; \
+    rm -rf /tmp/excimer-build
+
 RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - \
     && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
