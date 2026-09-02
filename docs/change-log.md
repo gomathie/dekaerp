@@ -8,6 +8,70 @@ for the task/question log this change log is paired with.
 
 ---
 
+## 2026-09-03 (later)
+
+### Selective backport from upstream v1.6.0
+
+Upstream released v1.6.0; a copy sits at `aureuserp-1.6.0/` (gitignored). 651
+files differ under `plugins/`, most of it v1.6.0's "refactored resource
+folder/file structure across all plugins". That restructure is not worth
+taking into a fork this diverged, so this is a cherry-pick of the fixes that
+matter, each checked against what the fork already has.
+
+**[Security] Chatter change-summary XSS.** Upstream escaped the values in the
+change summary; the fork still rendered them with `{!! !!}`
+(`content-text-entry.blade.php` lines 164/181). Field values are user-supplied
+- a partner name or note containing markup executed in the browser of any
+admin who opened that record's chatter. Now `{{ }}`.
+
+Deliberately *not* taken wholesale: the same file's other diff is upstream
+still using `Storage::url()` where the fork uses
+`Storage::disk('public')->url()`. Copying the file would have reverted the
+tenant-S3 fix from `c6d188ee0`. Only the two escaping changes were applied.
+
+**Pay modal bank field (#1481), partially.** `PaymentRegister::
+getBatchAvailablePartnerBanks()` did `collect($journal->bankAccount)` -
+passing a model to `collect()` wraps its *attributes*, so callers got a
+collection of columns and `pluck('id')` matched nothing. That is the blank
+bank field. Also made the partner lookup null-safe. The company filter line is
+identical upstream and downstream, so this merged cleanly.
+
+The rest of upstream's `PayAction` rework was **not** applied: it replaces the
+fork's company-scoped journal filter with its own resolution helpers.
+Different semantics in a multi-company install, and untestable from here.
+
+**Saved filter views (#1490).** `HasTableViews` gains a
+`shouldMountInteractsWithTable` guard and fills the filter form / handles
+deferred filters. The fork's copy was otherwise identical to upstream, so the
+file was taken as-is.
+
+**Currency deletion (#1514).** `EditCurrency` now catches the FK
+`QueryException` and shows a notification instead of a 500. Upstream shipped
+the new strings for `en` only; `ar`, `es` and `pt_BR` were added here, nested
+under `notification` to match the key the action actually calls
+(`...delete.notification.error.title`) - verified by flattening all four files
+and diffing key paths.
+
+**Livewire nesting depth** raised 10 -> 30, fixing deeply nested repeater
+errors.
+
+**Checked and deliberately skipped:**
+
+- *#1506 plugin install on Windows* - the fork is **ahead**. It already
+  short-circuits `buildTimeoutCommand()` on Windows, and adds `--force` on
+  migrate/db:seed, exit-code checks, and a configurable permission timeout
+  that v1.6.0 still hardcodes at 60s. Upstream only moved the OS branch into
+  `Package`. Taking it would have been a downgrade.
+- *"Use the Webkul User model instead of App\Models\User"* - cosmetic here.
+  `Webkul\Security\Models\User extends App\Models\User` in both versions, so
+  `HasApiTokens` is inherited either way and the API is unaffected.
+- The plugin-wide folder restructure, and the Filament 5.7.6 upgrade.
+
+**Not verified at runtime** - same PHP 8.4 / database blocker as before. Lint
+and Pint are clean, and the translation key parity was checked
+programmatically, but the table-views and currency changes touch live UI paths
+and want the Pest suite before deploying.
+
 ## 2026-09-03
 
 ### Review fix: public branding route was an unauthenticated arbitrary-file read
