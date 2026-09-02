@@ -342,6 +342,14 @@ class PaymentRegistrar
                     $move->computePaymentState();
 
                     $move->save();
+
+                    // The invoice's payment_state has just been recomputed;
+                    // re-saving the payments matched to it lets their own
+                    // state follow. Without this a fully-paid invoice left
+                    // its payment sitting in "in process".
+                    $move->matchedPayments()
+                        ->get()
+                        ->each(fn (Payment $matchedPayment) => $matchedPayment->save());
                 });
         }
     }

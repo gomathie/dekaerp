@@ -7,6 +7,33 @@ Note: this is a working log, separate from [`AGENTS.md`](../AGENTS.md) (Laravel
 Boost guidelines the agent follows) and [`CHANGELOG.md`](../CHANGELOG.md)
 (release notes). Code-change details go in [`docs/change-log.md`](change-log.md).
 
+## Standing instructions
+
+Set by the user 2026-09-03. These apply to every session, not one task.
+
+**This fork is in production, with multi-tenancy in use.** Real customers, real
+data, a public repo. Nothing here is a sandbox.
+
+1. **Go through all of it.** When working from a list - a release's notes, a
+   linter's findings, a review - check every item against the code. Report
+   which were verified and which were not. Do not summarise a category as
+   "probably fine"; that is how the one that mattered gets missed.
+2. **Read and confirm before changing.** Both sides of a diff. Upstream is
+   sometimes behind this fork, and copying a file wholesale can silently revert
+   work already done here.
+3. **Fix the real cause.** No patch stacked on top of a problem - that is how a
+   fix breaks something else. Name the cause before writing the fix, and if the
+   cause cannot be found, say so rather than papering over it.
+4. **Do not undo this fork's design.** Company scoping is a security boundary.
+   Upstream code that scans across tenant prefixes, drops a company filter, or
+   assumes a single company is a regression here regardless of how it is
+   labelled upstream. When a new release is brought in to compare and check, always look to apply the improvements, feautures and verify needed fixes.
+5. **Apply carefully and verify.** Diff against the source after each edit.
+   The app cannot be exercised locally (PHP 8.4 / database), so static
+   verification and the Pest suite are the only gates before live data.
+
+---
+
 ---
 
 ## 2026-09-02
@@ -79,6 +106,7 @@ Laravel's config, and the SDK initialises correctly inside a full framework
 boot. Error monitoring is live.
 
 Still open after this, none of it blocking error capture:
+
 - `LOG_CHANNEL=nightwatch` points at a channel that no longer exists
   (`laravel/nightwatch` is not installed), so `Log::` output falls through to
   the emergency logger and the Cloud Logs tab gets nothing. User asked to
@@ -114,8 +142,9 @@ Supabase Advisor reported 225 issues, effectively one systemic finding
 repeated across every table this ERP creates: "RLS Disabled in Public".
 
 **Confirmed exploitable, not lint noise:**
+
 - `select ... has_table_privilege('anon', ...)` returned `anon_can_select =
-  true` for `password_reset_tokens`, `users`, `sessions`, `jobs`,
+true` for `password_reset_tokens`, `users`, `sessions`, `jobs`,
   `job_batches`, `failed_jobs`. Supabase's default privileges grant
   `anon`/`authenticated` on new tables in `public`, and Laravel migrations
   create tables there.
@@ -144,8 +173,9 @@ future migration would re-add unprotected tables. The exposure is the
 `anon`/`authenticated` grants plus the API exposing `public`.
 
 **Fixed by the user 2026-09-02, verified** (SQL supplied here; no DB access from this session):
+
 1. `revoke all on all tables/sequences/functions in schema public from anon,
-   authenticated`, plus the matching `alter default privileges ... revoke` so
+authenticated`, plus the matching `alter default privileges ... revoke` so
    future migrations do not re-open it.
 2. Settings -> API -> Exposed schemas: remove `public`, or disable the Data
    API outright. Nothing in this repo uses it (no `SUPABASE_*` keys, no client
@@ -160,7 +190,7 @@ default-privileges half was proven empirically rather than assumed: creating
 a throwaway table in `public` and counting its `anon`/`authenticated` grants
 returned **0**, so migrations from here on do not re-grant. The first attempt
 at that test was inconclusive - `drop table` was the last statement and the
-editor reported *its* "no rows", which is indistinguishable from an empty
+editor reported _its_ "no rows", which is indistinguishable from an empty
 SELECT. Re-run with `count(*)` as the final statement, it returned an
 explicit 0. Worth remembering for any future check in that editor: end on the
 SELECT, and count rather than rely on emptiness.
@@ -194,6 +224,7 @@ onto a production admin screen would've been the wrong call to make silently.
 **Answered:** root `CHANGELOG.md`.
 
 **Done:**
+
 - Added a "What's New" page to the admin panel
   (`Webkul\Support\Filament\Pages\WhatsNew`, under the existing Help nav
   group), which parses `CHANGELOG.md` into collapsible per-version sections
@@ -209,10 +240,10 @@ onto a production admin screen would've been the wrong call to make silently.
   as-is.
 - Verified the markdown-parsing logic against the real `CHANGELOG.md`
   (10 releases, v1.0.0–v1.5.0) with a standalone PHP script, since `php
-  artisan` can't boot locally — see note below.
+artisan` can't boot locally — see note below.
 
 **Environment note:** Local PHP is 8.3.2, but `vendor/` was installed
-against a dependency requiring `>=8.4.1`, so *no* `artisan` command runs
+against a dependency requiring `>=8.4.1`, so _no_ `artisan` command runs
 locally right now (fails at the Composer platform check, before Laravel even
 boots). Verification here was by lint (`php -l`), `pint --dirty`, and a
 standalone script exercising the parser in isolation — not by loading the
@@ -227,10 +258,12 @@ page in a real panel. Worth fixing the PHP/vendor mismatch (or using the
 create this reminders log and a change log.
 
 **Open questions:**
+
 - None outstanding — root cause identified and fixed without needing
   production log access.
 
 **Done:**
+
 - Traced the invoice "Print" flow (Preview modal → Print) to
   `PreviewAction::setUp()` in
   `plugins/webkul/accounts/src/Filament/Resources/InvoiceResource/Actions/PreviewAction.php`.

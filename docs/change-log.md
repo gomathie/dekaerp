@@ -8,6 +8,168 @@ for the task/question log this change log is paired with.
 
 ---
 
+## 2026-09-03 (final v1.6.0 pass - invoices, partners, projects, website, products, recruitments, sales)
+
+Completes the plugin-by-plugin audit. Every plugin has now been looked at.
+
+### Applied
+
+**Applicant categories listing error (recruitments).** The table did
+`->reorderable('sort', direction: 'desc')->defaultSort('sort', 'desc')`, but
+`recruitments_applicant_categories` **has no `sort` column** - confirmed
+against the migration - so every listing ordered by a column that does not
+exist. Upstream removes both calls from this one table while keeping them on
+Degrees, Job Positions, Refuse Reasons and Stages, all of which do have the
+column. Checked each of those here before removing, so the fix is the cause,
+not a guess.
+
+**#1497 also affects quotations (sales).** `QuotationSummary::refreshSummary()`
+had the same missing `currency_id` read as the purchase order summary.
+
+**#1489 partner type filters (partners + accounts).** Employees / Customers /
+Vendors preset views on the partner list, with the rank-based two hidden when
+the accounts plugin is not installed. The accounts Customers and Vendors pages
+unset them, since those lists are already filtered. `customers` and `vendors`
+strings added for ar/es/pt_BR (`employees` already existed); parity verified.
+
+**Variant generation now reports its errors (products).** The catch showed a
+notification and swallowed the exception, so the real cause never reached the
+log - or Sentry. Added `report($e)`.
+
+**Invoices: adopted the restructure, deliberately.** See below.
+
+### On the restructure, and why invoices was different
+
+The "restructure" is upstream moving table and form definitions out of the
+resource class into `Tables/XxxTable.php` and `Schemas/XxxForm.php`, with the
+body copied verbatim. No behaviour changes. It is why ~150 files report as
+differing while saying nothing.
+
+Skipping it costs nothing functionally but accrues merge debt: every future
+upgrade has to be read through the same noise this audit just waded through.
+
+The rule used here: adopt it where the fork has **no** customisation in that
+resource - the extracted body is then provably identical to the inline one -
+and defer it where the fork customised the table or form, because that is
+where moving code silently drops company scoping. Invoices was the first kind:
+its two `ProductResource` classes matched upstream's extracted `ProductsTable`
+character for character. **`plugins/webkul/invoices` now has zero divergence
+from upstream.** Sales `CustomerResource` is the second kind - the fork adds
+its own `contentGrid()` - so it was left alone.
+
+### Skipped, with reasons
+
+- **Website translatable pages** - needs new composer packages (Spatie
+  Translatable, LaraZeus) and converts `title`/`content` to JSON columns. A
+  data-format migration against live content; a project, not a patch.
+- **Products usage registry** - the same all-or-nothing port described in the
+  earlier entry (ProductServiceProvider, Attribute, AttributeOption,
+  ProductAttribute, Product, ManageAttributes).
+- **Sequences** - sales/purchases `Order::name`, unchanged position.
+- **Projects and recruitments** - restructure throughout, no behaviour change.
+
+**Fork ahead again:** `Partner::getAvatarUrlAttribute()` uses
+`Storage::disk('public')->url()`; upstream still has bare `Storage::url()`.
+Taking upstream's file would have reverted the tenant-S3 fix, as it would have
+in the chatter view earlier.
+
+## 2026-09-03 (inventories, employees, purchases audit)
+
+Continuing the file-by-file v1.6.0 pass. Same method: triage by diff size,
+read both sides, apply only what merges without giving up fork behaviour.
+
+### employees - #1491, a real foreign-key bug
+
+`Employee::handlePartnerCreation()` and `handlePartnerUpdation()` both wrote
+`'parent_id' => $employee->parent_id` into the **Partner** they create.
+Confirmed against the migrations: `employees_employees.parent_id` is a FK to
+`employees_employees` (the manager), while `partners_partners.parent_id` is a
+FK to `partners_partners`. So an employee id was being written into a partner
+foreign key - a violation when no partner holds that id, and worse when one
+does, because it silently parents the partner to an unrelated record. Both
+lines removed; the file now matches upstream exactly.
+
+### purchases
+
+**#1497 currency in the order summary.** `OrderSummary::refreshSummary()`
+never read `currency_id` off the totals, so the component kept whatever
+currency it was initialised with and showed converted totals against the wrong
+symbol.
+
+**Vendor email warning.** Previously, sending a PO to vendors with no email
+address reported success in green and attached the PDF to chatter, while
+nothing was sent. `mailVendors()` now returns how many were actually mailed,
+callers skip the chatter attachment when that is zero, and the notification is
+danger / warning / success according to how many vendors lacked an address.
+Four code files from upstream plus `warning` and `danger` strings for both
+actions across ar/es/pt_BR (upstream shipped en only). Key parity verified by
+flattening all four locales and diffing paths.
+
+### inventories
+
+**Late operations.** Added the `late` preset view to `OperationResource` and
+its label in four locales. It pairs with the dashboard fix: the widget's late
+card linked to `getUrl('todo')` - the wrong view - and upstream points it at
+`late`, which only resolves now that the view exists. The widget's other card
+also now counts operations via `baseQuery()` rather than ASSIGNED *moves*,
+which matches the label it carries.
+
+**Fork is ahead:** `Inventory\Models\Move` uses
+`$move->operation?->confirmAdditionalMoves()`; upstream dropped the null-safe
+call. Not applied - upstream would fatal where this fork does not.
+
+**Skipped as feature ports:** sequences (Scrap, Warehouse, Operation,
+OperationType, Order, and the service providers), the resume-attachments
+feature in employees - which would also need tenant-S3 thought for its
+FileUpload - and the product-usage registry. Everything else in the three
+plugins was the resource restructure: table and form definitions moved into
+`Tables/` and `Schemas/` classes, leaving the originals slimmer.
+
+## 2026-09-03 (accounts audit)
+
+### v1.6.0 backport: full file-by-file pass over the accounts plugin
+
+35 files differed. Triaged by diff size - everything over ~100 lines was the
+resource restructure (form/table moved into `Schemas/`, `Tables/`), the small
+ones were real fixes.
+
+**#1478 payment state never updated - applied, two parts.**
+
+`Payment.php` compared `$invoice->payment_state === PaymentStatus::PAID`.
+`Move` casts `payment_state` to **`PaymentState`**, and PHP enum identity
+across two different enum classes is never true no matter that both cases
+carry the value `'paid'`. So the branch could not fire and a fully paid
+invoice left its payment in "in process". Now compares against
+`PaymentState::PAID`.
+
+`PaymentRegistrar` then re-saves the payments matched to a move after
+recomputing its state, so the payment follows the invoice.
+
+**AccountingSetupService - two multi-company fixes, applied.**
+`copyJournals()` carried `bank_account_id` in `JOURNAL_ACCOUNT_COLUMNS` and
+remapped it through `$accountMap`. That map holds chart-of-accounts ids, not
+bank account ids, so a new company's journals inherited the *template
+company's* bank account. Removed from the list and explicitly nulled. Also
+aligns a copied row's `currency_id` to the target company, so a journal is no
+longer denominated in a currency its own company does not use. (Placement
+before `array_merge($data, $overrides)` matches upstream, so an explicit
+override still wins.)
+
+**Skipped as pure refactor** (no behaviour change): `getMoveType()` extraction
+in CreateInvoice/CreateBill/CreateCreditNote/CreateRefund, import ordering in
+AccountPartnerSchema, and the unused `company_currency` accessors on
+PaymentRegister.
+
+**Skipped as feature ports**, each pulling in classes the fork does not have:
+sequences (Move, Journal, AccountServiceProvider, + 37 files project-wide),
+tax formulas (Tax, TaxRequest, TaxComputer, TaxResource, EditTax, and the V1
+API resource), the product-usage registry, and partner type filters
+(ListCustomers, ListVendors).
+
+**Still needing a decision:** `PayAction`. Upstream's rework replaces the
+fork's company-scoped journal filter with its own resolution helpers -
+different semantics under multi-company.
+
 ## 2026-09-03 (later)
 
 ### Selective backport from upstream v1.6.0

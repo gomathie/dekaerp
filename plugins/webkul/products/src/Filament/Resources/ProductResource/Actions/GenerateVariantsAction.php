@@ -41,6 +41,10 @@ class GenerateVariantsAction extends Action
                         ->body(__('products::filament/resources/product/actions/generate-variants.notification.success.body'))
                         ->send();
                 } catch (Exception $e) {
+                    // Without this the real cause never reaches the logs (or
+                    // Sentry) and the notification below is all anyone sees.
+                    report($e);
+
                     Notification::make()
                         ->danger()
                         ->title(__('products::filament/resources/product/actions/generate-variants.notification.error.title'))
