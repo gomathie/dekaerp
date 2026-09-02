@@ -55,6 +55,31 @@ and diffing key paths.
 **Livewire nesting depth** raised 10 -> 30, fixing deeply nested repeater
 errors.
 
+**Second pass - the four remaining items.** One more fix applied; the other
+three turned out to be feature ports rather than patches.
+
+- *Applied:* `Company::saving()` did `$company->currency->update(...)`, which
+  fatals when a company has no currency. Now `?->`.
+- *#1500 company currency lock* - **could not be located in the v1.6.0
+  source.** No `disabled()` on `currency_id` anywhere in the tree, no matching
+  strings in the company or accounts lang files, and `EditCompany`'s only diff
+  is an import swap. Either it lives somewhere the release note does not
+  suggest, or the note overstates what shipped. Not applied; worth checking
+  the upstream issue before assuming the fork lacks protection.
+- *#193 attribute deletion* - the fork **already blocks** this; its lang file
+  carries the error strings. v1.6.0 only enriches the message to name the
+  blocking products, and that enrichment is part of the subsystem below.
+- *#1187 / product-and-variant-in-use* - needs four new classes
+  (`ProductInUseException`, `VariantInUseException`, `ProductUsageRegistry`,
+  `VariantUsage`) plus registrations inside the `accounts`, `inventories` and
+  `manufacturing` service providers, which all carry fork changes. ~12 files.
+  **All-or-nothing:** with the registry unpopulated, `isInUse()` returns false
+  and every guard silently passes - protection that looks present and is not.
+  Left for a scoped change that can run the Pest suite.
+- *#153 tax computation* - a 520-line diff covering v1.6.0's new custom tax
+  formulas, batching and validation, on top of the resource restructure. A
+  feature, not a fix.
+
 **Checked and deliberately skipped:**
 
 - *#1506 plugin install on Windows* - the fork is **ahead**. It already
