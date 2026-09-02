@@ -81,7 +81,15 @@ return [
         'assets_directory' => null,
 
         // Middleware to attach to the docs endpoint (if `add_routes` is true).
-        'middleware' => [],
+        //
+        // /api/docs is public by default, which is a deliberate choice for a
+        // product whose customers integrate against it - but it does publish
+        // every endpoint, parameter and model shape of the ERP. Set
+        // SCRIBE_DOCS_PRIVATE=true to require an authenticated session
+        // instead; client integrations are unaffected either way, since they
+        // authenticate with a token against admin/api/* and never load this
+        // page.
+        'middleware' => env('SCRIBE_DOCS_PRIVATE', false) ? ['web', 'auth'] : [],
     ],
 
     'external' => [

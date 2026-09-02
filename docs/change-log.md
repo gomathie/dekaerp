@@ -8,6 +8,59 @@ for the task/question log this change log is paired with.
 
 ---
 
+## 2026-09-02 (later)
+
+### API hardening ahead of giving clients access
+
+**Files:** `plugins/webkul/plugin-manager/src/PackageServiceProvider.php`,
+`app/Providers/AppServiceProvider.php`,
+`app/Http/Middleware/EnforceApiTokenAbilities.php` (new), `bootstrap/app.php`,
+`plugins/webkul/security/src/Http/Controllers/API/V1/AuthController.php`,
+`config/api.php` (new), `config/scribe.php`, `.env.example`,
+`docs/api-access.md` (new)
+
+**Rate limiting — the API had none.** Plugin routes load through
+`loadRoutesFrom()` in the shared `PackageServiceProvider`, which never applied
+Laravel's `api` middleware group, so `throttle:api` reached none of them; only
+`login` carried a throttle of its own. The `api` file is now registered inside
+a `Route::middleware(['throttle:api', 'api.abilities'])` group at that one
+place, so all nine plugins - and any added later - inherit it. The
+`loadRoutesFrom()` cached-routes guard is mirrored explicitly, since going
+around that helper also goes around its check.
+
+Laravel defines no `api` limiter by default and this app never added one, so
+`throttle:api` would have thrown rather than throttled. Defined it alongside
+the existing `login` limiter, keyed on the Sanctum token id so one client's
+integration cannot exhaust another's budget, at `API_RATE_LIMIT` (120/min).
+
+**Token scoping.** `createToken('api-token')` passed no abilities, so every
+token was `['*']`. `login` now accepts `token_name` and `abilities`
+(`read`/`write`/`*`), enforced by `EnforceApiTokenAbilities`, which maps HTTP
+method onto ability rather than annotating several hundred endpoints. It is
+registered as the `api.abilities` alias so the plugin loader does not depend
+on a class in `app/`. **`abilities` still defaults to `['*']`** - the API is
+live and in use, so existing integrations must not break; scoping is opt-in.
+Tokens holding `*` bypass the check entirely.
+
+**JSON errors on the wrong prefix.** The eight handlers in `bootstrap/app.php`
+tested `$request->is('api/*')`, which never matches `admin/api/v1/...`, so API
+clients got HTML error pages unless they happened to send
+`Accept: application/json`. Now `is('api/*', 'admin/api/*')`.
+
+**Docs visibility made a decision rather than a default.** `/api/docs`
+returned 200 unauthenticated, publishing the whole endpoint surface. Left
+public - reasonable for a product customers integrate against - but now
+switchable with `SCRIBE_DOCS_PRIVATE=true`, with the trade-off written down.
+
+**Verification.** `php -l` on every touched file and `pint --dirty` clean.
+`Route::middleware(...)->group($file)` confirmed against
+`Router::loadRoutes()`/`RouteFileRegistrar`, which accept a path. Runtime
+verification was **not** possible: `route:list` needs a database because
+plugin route registration calls `isInstalled()`, and the only PHP 8.4 image
+available locally carries another project's entrypoint (it ran `key:generate`
+- confirmed it did not touch this repo's `.env`). The Pest suite, run
+serially against a real database, is the gate this needs before deploying.
+
 ## 2026-09-02
 
 ### Sentry: finished the wiring that was still missing

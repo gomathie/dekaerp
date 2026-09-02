@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnforceApiTokenAbilities;
 use App\Http\Middleware\SetLocale;
 use Filament\Notifications\Notification;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -26,6 +27,13 @@ return Application::configure(basePath: dirname(__DIR__))
             SetLocale::class,
         ]);
 
+        // Applied to every plugin's routes/api.php - see
+        // Webkul\PluginManager\PackageServiceProvider. Aliased rather than
+        // referenced by class so the plugin loader stays decoupled from app/.
+        $middleware->alias([
+            'api.abilities' => EnforceApiTokenAbilities::class,
+        ]);
+
         $trustedProxies = array_filter(array_map('trim', explode(',', (string) env('TRUSTED_PROXIES', ''))));
 
         if (! empty($trustedProxies)) {
@@ -39,7 +47,7 @@ return Application::configure(basePath: dirname(__DIR__))
         Integration::handles($exceptions);
 
         $exceptions->render(function (MissingJournalException $e, $request) {
-            if ($request->is('api/*') || $request->expectsJson()) {
+            if ($request->is('api/*', 'admin/api/*') || $request->expectsJson()) {
                 return response()->json([
                     'message' => $e->getMessage(),
                 ], 422);
@@ -56,7 +64,7 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->render(function (ValidationException $e, $request) {
-            if ($request->is('api/*') || $request->expectsJson()) {
+            if ($request->is('api/*', 'admin/api/*') || $request->expectsJson()) {
                 return response()->json([
                     'message' => $e->getMessage(),
                     'errors'  => $e->errors(),
@@ -65,7 +73,7 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->render(function (AuthenticationException $e, $request) {
-            if ($request->is('api/*') || $request->expectsJson()) {
+            if ($request->is('api/*', 'admin/api/*') || $request->expectsJson()) {
                 return response()->json([
                     'message' => 'Unauthenticated.',
                 ], 401);
@@ -73,7 +81,7 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->render(function (AuthorizationException $e, $request) {
-            if ($request->is('api/*') || $request->expectsJson()) {
+            if ($request->is('api/*', 'admin/api/*') || $request->expectsJson()) {
                 return response()->json([
                     'message' => 'This action is unauthorized.',
                 ], 403);
@@ -81,7 +89,7 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->render(function (AccessDeniedHttpException $e, $request) {
-            if ($request->is('api/*') || $request->expectsJson()) {
+            if ($request->is('api/*', 'admin/api/*') || $request->expectsJson()) {
                 return response()->json([
                     'message' => 'This action is unauthorized.',
                 ], 403);
@@ -89,7 +97,7 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->render(function (ModelNotFoundException $e, $request) {
-            if ($request->is('api/*') || $request->expectsJson()) {
+            if ($request->is('api/*', 'admin/api/*') || $request->expectsJson()) {
                 return response()->json([
                     'message' => 'Resource not found.',
                 ], 404);
@@ -97,7 +105,7 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->render(function (NotFoundHttpException $e, $request) {
-            if ($request->is('api/*') || $request->expectsJson()) {
+            if ($request->is('api/*', 'admin/api/*') || $request->expectsJson()) {
                 return response()->json([
                     'message' => 'The requested resource was not found.',
                 ], 404);
@@ -105,7 +113,7 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->render(function (Throwable $e, $request) {
-            if ($request->is('api/*') || $request->expectsJson()) {
+            if ($request->is('api/*', 'admin/api/*') || $request->expectsJson()) {
                 $statusCode = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
 
                 if ($statusCode === 500) {

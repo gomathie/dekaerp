@@ -62,6 +62,71 @@ connection string in the dashboard shows `[YOUR-PASSWORD]`. If it is not
 recorded anywhere, reset it under **Settings → Database → Reset database
 password**. There is no way to read the existing one.
 
+## The Data API must stay closed
+
+Not using Supabase's services is not the same as not being exposed by them.
+The Data API (PostgREST) is enabled by default and serves every table in
+`public` over HTTPS, and Supabase's default privileges grant `anon` and
+`authenticated` full DML on tables created there. Laravel migrations create
+tables there. Those two defaults together published this database.
+
+**Found 2026-09-02.** Supabase Advisor reported 225 "RLS Disabled in Public"
+findings. They were not noise:
+
+| Check | Result |
+| --- | --- |
+| `has_table_privilege('anon', ..., 'SELECT')` | `true` on `users`, `sessions`, `password_reset_tokens` |
+| Grants held by `anon` / `authenticated` | SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER on all **206** tables |
+| `GET https://<ref>.supabase.co/rest/v1/` unauthenticated | `401 {"message":"No API key found in request"}` — PostgREST live |
+
+The anon key is public by design, so this was readable and **writable** by
+anyone holding it: reset tokens for admin accounts, user emails and bcrypt
+hashes, and `TRUNCATE` on every table in the ERP.
+
+**Fixed by removing the grants and the exposure**, not by enabling RLS:
+
+```sql
+revoke all on all tables    in schema public from anon, authenticated;
+revoke all on all sequences in schema public from anon, authenticated;
+revoke all on all functions in schema public from anon, authenticated;
+alter default privileges in schema public revoke all on tables    from anon, authenticated;
+alter default privileges in schema public revoke all on sequences from anon, authenticated;
+alter default privileges in schema public revoke all on functions from anon, authenticated;
+```
+
+plus removing `public` from **Settings -> API -> Exposed schemas**.
+
+**RLS is the wrong lever here, despite what the advisor says.** The
+application connects as `postgres.<project-ref>`, which owns these tables,
+and owners bypass RLS. Enabling it on 206 tables would neither protect nor
+break the application's own path, and every new migration would add more
+unprotected tables. The grants and the API exposure are the actual control.
+
+**The `alter default privileges` lines are the half that keeps it fixed.**
+Without them the next migration creates tables carrying the same grants. They
+apply only to objects created by the role that ran them, so verify rather
+than assume:
+
+```sql
+-- current grants: expect zero rows
+select grantee, privilege_type, count(*)
+from information_schema.role_table_grants
+where table_schema = 'public' and grantee in ('anon', 'authenticated')
+group by 1, 2;
+
+-- future tables: expect no anon/authenticated entries
+select r.rolname as granted_by, d.defaclobjtype as obj_type, d.defaclacl
+from pg_default_acl d
+join pg_roles r on r.oid = d.defaclrole
+join pg_namespace n on n.oid = d.defaclnamespace
+where n.nspname = 'public';
+```
+
+Re-run both after any migration that adds tables, and treat a non-empty
+result as a live incident rather than a lint warning. Any other Supabase
+project used this way - as a plain Postgres host for a non-Supabase app -
+has the identical hole until closed the same way.
+
 ## Rollback: no branching
 
 Neon offered instant branches, which made "branch before every migration" a

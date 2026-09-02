@@ -3,6 +3,8 @@
 namespace Webkul\PluginManager;
 
 use Carbon\Carbon;
+use Illuminate\Contracts\Foundation\CachesRoutes;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Spatie\LaravelPackageTools\Exceptions\InvalidPackage;
@@ -201,7 +203,26 @@ abstract class PackageServiceProvider extends BasePackageServiceProvider
 
         if ($this->package->isCore || $this->package->isInstalled()) {
             foreach ($this->package->routeFileNames as $routeFileName) {
-                $this->loadRoutesFrom("{$this->package->basePath('/../routes/')}{$routeFileName}.php");
+                $routeFile = "{$this->package->basePath('/../routes/')}{$routeFileName}.php";
+
+                // Plugin API routes are loaded here rather than through
+                // routes/api.php, so they never picked up Laravel's "api"
+                // middleware group - which is where throttling lives. Without
+                // this every plugin endpoint was unlimited: only the login
+                // route carried a throttle of its own. The group is applied
+                // here so all nine plugins get it from one place instead of
+                // each route file remembering to.
+                // Mirrors loadRoutesFrom()'s own guard: with cached routes the
+                // file must not be re-registered.
+                if ($routeFileName === 'api') {
+                    if (! ($this->app instanceof CachesRoutes && $this->app->routesAreCached())) {
+                        Route::middleware(['throttle:api', 'api.abilities'])->group($routeFile);
+                    }
+
+                    continue;
+                }
+
+                $this->loadRoutesFrom($routeFile);
             }
         }
 

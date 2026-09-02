@@ -39,6 +39,19 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(5)->by(strtolower((string) $request->input('email')).'|'.$request->ip());
         });
 
+        // Every plugin's routes/api.php is registered under this limiter - see
+        // Webkul\PluginManager\PackageServiceProvider. Keyed on the Sanctum
+        // token id so one client's integration cannot spend another's budget,
+        // falling back to IP for the unauthenticated login route. Laravel does
+        // not define an "api" limiter by default and nothing here defined one,
+        // so until now "throttle:api" would have thrown rather than throttled.
+        RateLimiter::for('api', function (Request $request) {
+            $token = $request->user()?->currentAccessToken();
+
+            return Limit::perMinute((int) config('api.rate_limit', 120))
+                ->by($token?->id ? 'token:'.$token->id : 'ip:'.$request->ip());
+        });
+
         $this->tagSentryWithTenantContext();
 
         $this->refreshTenantDiskOnLogin();
