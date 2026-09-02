@@ -86,15 +86,15 @@ class ApplyBrandSettings
             }
 
             if (! empty($brand->light_logo)) {
-                $panel->brandLogo($this->assetUrl($brand->light_logo));
+                $panel->brandLogo($this->assetUrl($brand->light_logo, 'images/logo.svg'));
             }
 
             if (! empty($brand->dark_logo)) {
-                $panel->darkModeBrandLogo($this->assetUrl($brand->dark_logo));
+                $panel->darkModeBrandLogo($this->assetUrl($brand->dark_logo, 'images/logo.svg'));
             }
 
             if (! empty($brand->favicon)) {
-                $panel->favicon($this->assetUrl($brand->favicon));
+                $panel->favicon($this->assetUrl($brand->favicon, 'images/favicon.ico'));
             }
 
             if (! empty($brand->logo_height)) {
@@ -106,17 +106,28 @@ class ApplyBrandSettings
         return $next($request);
     }
 
-    protected function assetUrl(string $path): string
+    protected function assetUrl(string $path, string $fallback = 'images/logo.svg'): string
     {
         if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://') || str_starts_with($path, '//')) {
             return $path;
         }
 
-        if (Storage::disk('public')->exists($path)) {
-            return Storage::disk('public')->url($path);
+        if (file_exists(public_path($path))) {
+            return asset($path);
         }
 
-        return asset($path);
+        if (str_starts_with($path, 'branding/')) {
+            return url('branding/'.basename($path));
+        }
+
+        try {
+            if (Storage::disk('public')->exists($path)) {
+                return Storage::disk('public')->url($path);
+            }
+        } catch (Throwable) {
+        }
+
+        return asset($fallback);
     }
 
     protected function isSameColor(string $a, string $b): bool

@@ -8,6 +8,58 @@ for the task/question log this change log is paired with.
 
 ---
 
+## 2026-09-03
+
+### Review fix: public branding route was an unauthenticated arbitrary-file read
+
+**Files:** `app/Http/Controllers/BrandingController.php`, `routes/web.php`,
+`database/migrations/2026_09_03_000001_reset_invalid_branding_settings.php`
+
+Reviewing a branding fix written elsewhere in the project. The diagnosis
+behind it was correct - `settings` rows named uploaded logos that no longer
+existed, and there was no route serving `branding/`, so the login page got a
+404 and no logo. The middleware fallback and the cleanup migration were sound.
+The route was not.
+
+**The hole.** `Route::get('/branding/{path}')->where('path', '.*')`, no auth,
+and the controller passed that raw `$path` to `Storage::disk('public')` *and*
+to the raw `s3` disk, plus looped every company id looking for a match. Under
+`tenant-s3` that disk holds invoice PDFs, quotation PDFs, chatter attachments
+and avatars, so:
+
+    GET /branding/companies/3/pdfs/invoice-27-08-2026.pdf
+
+served another tenant's invoice to an anonymous caller, with filenames
+(`invoice-DD-MM-YYYY.pdf`) that enumerate by date. The `str_contains($path,
+'..')` guard was irrelevant - object keys do not need traversal. This bypassed
+`SecureStorageController`, whose whole purpose is that authorization is by
+company rather than URL secrecy.
+
+**Fixed** by making the endpoint incapable of expressing anything but a
+filename: the route takes `{filename}` constrained to `[A-Za-z0-9._-]+` (no
+slashes), and the controller `basename()`s it anyway so the guarantee does not
+rest on the route definition, rejects dotfiles, and only ever resolves
+`branding/{filename}`. The raw-`$path` candidates and the company loop are
+gone - which also removes a DB query plus one S3 HEAD per company on every
+unauthenticated request to a missing asset.
+
+Verified the constraint against the exploit paths directly: `logo.svg` and the
+ULID filenames match; `companies/3/pdfs/...`, `pdfs/...`, `users/avatars/...`,
+`_system/branding/...` and `../../.env` all fail to match.
+
+Known consequence, and the right trade-off: a logo uploaded with a company in
+context lives under `companies/{id}/branding/` and so resolves on
+authenticated pages but not on the login page, which reads `_system/branding/`
+and falls back to the bundled logo. An anonymous visitor has no company, and
+guessing one by scanning tenants is what created the leak.
+
+**Migration hardened too.** It reset any setting it could not find - but
+migrations run with no company in context, so the public disk resolves
+`_system/` and would have reported every company-scoped logo missing, wiping
+valid settings. It now resolves keys under the row's own `company_id`, and
+distinguishes `found` / `missing` / `unknown`: a store that cannot be reached
+leaves the row alone instead of treating "could not check" as "not there".
+
 ## 2026-09-02 (later)
 
 ### API hardening ahead of giving clients access
