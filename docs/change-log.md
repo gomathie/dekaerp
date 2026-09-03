@@ -8,6 +8,79 @@ for the task/question log this change log is paired with.
 
 ---
 
+## 2026-09-03 (v1.6.0 audit completed - the 11 plugins missed earlier)
+
+The earlier passes worked from an incomplete plugin list. These eleven were
+never triaged: accounting, blogs, chatter, fields, maintenance, manufacturing,
+plugin-manager, security, support, time-off, timesheets. All 21 plugins have
+now been examined.
+
+### [Security] The other half of the chatter XSS fix
+
+The Blade view was escaped in the first pass, but
+`ChatterNotificationService::buildChangeSummary()` builds the *same* change
+rows for notifications and did not escape them - so field values still reached
+notification bodies raw. Now `e($label)`, `e((string) $old)`, `e((string)
+$new)`, matching upstream exactly. The release note's single "escaped HTML
+entities in chatter change summaries" line covered two files; only finding one
+of them would have left the hole open.
+
+### Scope hardening (security + support)
+
+`OwnershipScope` guarded on `! $user`; upstream requires `! $user instanceof
+User`. Upstream also adds `CompanyContext::internalUser()` - the authenticated
+user only when it is a `Webkul\Security\Models\User` - and routes
+`CompanyScope`, `CompaniesScope` and `AllowedCompanyScope` through it.
+
+Checked against this fork's customer portal before applying, since these are
+the tenancy boundary: portal users authenticate as `Partner` on the `customer`
+guard, so `auth()->check()` on the default `web` guard is already false for
+them and both versions bail out identically. The change only differs when a
+non-User is authenticated on the default guard - where the fork would have
+proceeded and called `allowedCompanies()` on a model that has no such
+relation. The console short-circuit in `CompanyScope` is preserved.
+
+### Default currency for money columns (support)
+
+`default_currency_code()` helper, `Currency::getCodeAttribute()` /
+`findByCode()` / `resolveDefault()`, and `Table`/`Schema` `configureUsing` in
+`HasFilamentDefaults`, so money columns show the configured currency instead
+of a hardcoded default. `CurrencySettings::default_currency_id` already
+existed here. **The version string in that trait was deliberately left at
+1.5.0** - it is displayed in the UI, and this is a selective backport, not an
+upgrade to 1.6.0.
+
+### Also applied
+
+- `EditUser`: `->revealable()` on the password fields.
+- `User::handlePartner*()`: syncs only the Partner's fillable attributes
+  rather than spreading every remaining user column. (`password` and
+  `remember_token` are in `$hidden`, so `toArray()` already dropped them -
+  no credential was being copied; the change is correctness, not a leak.)
+- `ViewCurrency`: the same delete guard as `EditCurrency`, plus its own
+  `view-currency` strings in four locales, parity verified.
+- `maintenance/Models/Equipment.php`: trailing whitespace.
+
+### Fork is ahead - upstream not taken
+
+- `UserInvitationMail` uses `temporarySignedRoute(..., now()->addDays(7))`
+  here; upstream uses `signedRoute()`, an invitation link that never expires.
+- `chatter/Models/Attachment.php` - the tenant-S3 URL fix again.
+- `SupportPlugin` - null-guards the sidebar scroll and adds the View
+  Transitions enhancement.
+- `ImageCacheController` and `ManageBranding` default colours - this fork's
+  branding work.
+- `plugin-manager/Package.php`'s two new helpers exist to serve upstream's
+  slimmer `InstallCommand`; this fork's inline versions are better, so they
+  would be dead code.
+
+### Skipped
+
+Translatable Posts (blogs) with the same new composer packages as Website;
+sequences (manufacturing, support, Company); the product-usage registry;
+restructure throughout accounting, fields, timesheets, time-off, maintenance
+and manufacturing.
+
 ## 2026-09-03 (final v1.6.0 pass - invoices, partners, projects, website, products, recruitments, sales)
 
 Completes the plugin-by-plugin audit. Every plugin has now been looked at.
