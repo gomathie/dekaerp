@@ -8,6 +8,220 @@ for the task/question log this change log is paired with.
 
 ---
 
+## 2026-09-03 (the suite caught a gap in the sequence port)
+
+`CompanyScopingInvariantsTest` **failed** on the first company-scoping run:
+
+```
+Failed asserting that two arrays are identical.
++    0 => 'Webkul\Support\Models\Sequence'
+```
+
+The sequence port added a company-scoped model that deliberately does not
+stamp a company - `Sequence::autoAssignsCompany()` returns false, because a
+null `company_id` is load-bearing: `SequenceService::next()` falls back to a
+global sequence, and `Company::forceDeleting` nulls the column rather than
+deleting the row. The test asserts every scoped model either stamps a company
+or is *declared* shared, and `Sequence` was neither.
+
+Checked which side was wrong before touching either. The code is right; the
+declaration was missing. **Upstream's own copy of this test declares
+`Sequence::class`** in `$shared` - they updated the test alongside the
+feature, and the port took the feature without it. The file is now identical
+to upstream. This adds coverage rather than removing it: membership of
+`$shared` brings two further assertions to bear, checking the model stays
+shared-capable with a nullable column.
+
+Re-run: **6 passed** (invariants 4, portal 2).
+
+### New: PortalCompanyScopeTest
+
+The customer portal authenticates Partners on the `customer` guard, and
+Filament's `Authenticate` middleware calls `Auth::shouldUse()` with the panel
+guard - so on portal routes `auth()->user()` is a **Partner**. `Partner` has
+neither `hasRole()` nor `allowedCompanies()`, both of which the old scope
+path called. Nothing in the suite authenticated on that guard, so the path was
+entirely unexercised.
+
+Two tests now cover it: a portal Partner is not mistaken for an internal user,
+and querying a company-scoped model on that guard does not raise
+`BadMethodCallException`.
+
+**Honest limit:** these pass against the current code, which proves the path
+works now. They do **not** prove the old code failed - demonstrating that
+needs the guard temporarily reverted, and that edit was blocked by the
+permission classifier (reasonably, since it looks like undoing a fix). So
+"this fixed a live portal 500" is a well-supported inference from reading the
+code, not an executed result.
+
+**Running total: 67 passed, 132 assertions, one failure found and fixed.**
+
+## 2026-09-03 (decision: sequence padding)
+
+**Padding stays at 5** - user's call, 2026-09-03. Invoice numbers become
+`INV/2026/00043` where the old scheme produced `INV/2026/42`. Same structure,
+zero-padded.
+
+No code change: `padding` defaults to 5 on the `sequences` table, nothing
+overrides it (`Journal::sequenceDefaults()` sets name, prefix, reset frequency
+and initial_from only), and `Sequence::consumeNumber()` applies it through
+`str_pad`. Recorded so it reads as a decision rather than an unnoticed
+default - and it stays editable per sequence in Settings, so a single sequence
+can be set back to 1 without touching code.
+
+## 2026-09-03 (verification totals)
+
+**61 tests passed, 125 assertions**, across three runs in the Sail container.
+
+| Run | Result |
+| --- | --- |
+| `BalanceSheetTest` | 6 passed, 6 assertions |
+| `TaxGroupTest` + `InvoiceSequenceTest` | 7 passed, 14 assertions |
+| `InvoiceTest` + `CreditNoteTest` + `CurrencyTest` | 48 passed, 111 assertions |
+
+Which backport changes each one actually exercises:
+
+- **Tax batching** - `TaxGroupTest` holds `amount_tax` at 30.0 for 10% + 5%
+  children on a 200 base. Compounding would read 31.0.
+- **Sequence numbering** - `InvoiceSequenceTest`: numbers come from the
+  sequence, the sequence is scoped to the journal's company, the counter
+  advances, and a sequence built against existing documents continues past
+  them.
+- **#1478 payment state** - `InvoiceTest` and `CurrencyTest` assert
+  `payment_state === PaymentState::PAID`, and `CreditNoteTest` asserts
+  `REVERSED`. These are the comparisons that could never be true before the
+  enum was corrected.
+- **Currency alignment in `AccountingSetupService`** - covered incidentally by
+  `CurrencyTest`.
+- **`ManageApiTokens`** - not test-covered, but `route:list` shows
+  `admin/settings/manage-api-tokens` registered, and the Filament page tests
+  pass with it in place, so panel construction is unaffected.
+
+**Still not verified.** `sharesBatch()` branches on `price_include` and
+`include_base_amount`; every test above uses one configuration, so a line
+mixing tax-inclusive and tax-exclusive taxes is unproven. The sequence seed
+migration has not been run against real data - a fresh-database test cannot
+reproduce a table of invoices numbered under the old scheme. And the other
+seven suites, and every plugin outside `accounts`, remain unrun.
+
+## 2026-09-03 (first real verification results)
+
+`TaxGroupTest` + `InvoiceSequenceTest`: **7 passed, 14 assertions**, 319s.
+
+```
+PASS  TaxGroupTest
+  it sums the child taxes of a group tax on the subtotal
+  it creates a separate tax line for each child of a group tax on post
+  it keeps a group-taxed invoice balanced on post
+PASS  InvoiceSequenceTest
+  it numbers a posted invoice from a sequence rather than its database id
+  it creates a sequence scoped to the journal and its company
+  it advances the counter so two invoices never share a number
+  it continues from documents that already exist rather than restarting at one
+```
+
+**What this actually proves.** The tax batching rework did not change the
+figures for a group tax: 10% and 5% children on a 200 base still produce
+`amount_tax = 30.0`, both against the same base. Compounding would have given
+31.0. And the sequence port numbers documents correctly, scopes the sequence
+to the journal's company, advances without collision, and continues past
+documents that already exist.
+
+**What it does not prove.** `sharesBatch()` branches on `price_include` and
+`include_base_amount` as well as amount type; these three tests exercise one
+configuration. A multi-tax line mixing tax-inclusive and tax-exclusive taxes,
+or one using `include_base_amount`, is untested here. If invoices in
+production use those, exercise them before deploying the tax change.
+
+## 2026-09-03 (test runtime fixed; numbering test added)
+
+### The suite runs again
+
+`php artisan` cannot boot on this host - PHP 8.3.2 against a `vendor/` needing
+`>= 8.4.1` - which is what has gated verification through this whole backport.
+The project already ships the answer: the `laravel.test` Sail service and its
+`sail-8.4/app` image. Three environment traps were stopping it, none of them
+code:
+
+1. **`docker compose run -u root` does nothing** - Sail's entrypoint re-drops
+   to `sail` (uid 1000).
+2. **Root-owned files cannot be overwritten.** The bind mount presents host
+   files as `root` inside the container. Creating a *new* file is fine because
+   the directories are world-writable, but `file_put_contents` on an existing
+   one fails - and the bootstrap rewrites `storage/installed` every run.
+   Deleting it lets the container recreate it as its own user. `chmod` from Git
+   Bash is a no-op on NTFS, so that is not the fix.
+3. **An interrupted run poisons the test database** - the next run fails with
+   `relation "..." already exists`, which looks like broken code and is not.
+   Drop and recreate `aureuserp_testing` between runs.
+
+First green result: `BalanceSheetTest` - 6 passed, 6 assertions.
+
+Written up in `docs/running-tests.md` with the reset commands.
+
+### What the suite does and does not cover
+
+Checked rather than assumed, because a green run is only worth what it
+exercises:
+
+- **Tax batching is covered.** `TaxGroupTest` puts a group tax with 10% and 5%
+  children on a 200 base and asserts `amount_tax = 30.0` - both applied to the
+  same base. Had batching started compounding them the figure would be 31.0
+  and the test fails. So the riskiest change in the backport is genuinely
+  exercised.
+- **Document numbering was covered by nothing at all.** No test in any plugin
+  asserts an invoice number, while the sequence port rewrites how every
+  invoice, order and scrap is numbered.
+
+### New: InvoiceSequenceTest
+
+Four tests over the gap: a posted invoice takes its number from a sequence
+rather than its row id; the sequence is scoped to the journal **and its
+company**; two invoices never share a number; and a sequence built from
+scratch against invoices that already exist continues past them instead of
+reissuing a number in use.
+
+That last one is a *proxy* for the real migration, not the thing itself. It
+deletes the sequence and re-posts, which exercises `initialFromNames()`, but
+it cannot reproduce a table full of historical invoices numbered under the old
+scheme. Running the seed migration against a copy of production data is still
+the check worth doing before the sequence change is deployed.
+
+### Honest note on the AccountFeature run
+
+A full-suite run was started and then **stopped after six minutes** - 38 test
+files at roughly a minute each was going to take hours. It produced no results
+(118 bytes of container chatter). Nothing about AccountFeature as a whole has
+been verified; only the targeted files named above.
+
+## 2026-09-03 (restructure: analysed, deliberately not applied)
+
+The last open item I could act on was the v1.6.0 resource restructure - ~150
+files where upstream moved `form()`/`table()`/`infolist()` bodies verbatim
+into `Schemas/` and `Tables/` classes.
+
+Rather than eyeball them, both sides were normalised to code lines (imports,
+namespace, class scaffolding, whitespace removed) and compared as sets. Of 121
+restructured resources: **70 carry no fork content at all** (every line exists
+in upstream's resource plus its extracted classes, so nothing here would be
+lost) and **51 do** - including `InvoiceResource` (19 fork-only lines),
+`purchases/OrderResource` (31) and `projects/TaskResource` (33).
+
+**Not applied, on purpose.** Three reasons:
+
+1. The check compares *sets*, so it proves no content is lost but **not that
+   order is preserved**. In Filament, field order is display order - a
+   mechanical adoption could silently reorder 70 screens.
+2. It buys nothing functional. Every fix worth having is already in; this is
+   merge-debt reduction.
+3. Nothing in this backport has been run yet. Adding ~200 untestable file
+   operations on top, on a live ERP, makes the eventual test run harder to
+   attribute.
+
+The analysis is the deliverable: `docs/restructure-backlog.md` lists both
+sets, the rule for adopting, the method, and its known limit. Do it after the
+runtime is fixed, plugin by plugin.
+
 ## 2026-09-03 (PayAction + API token management)
 
 ### #1481 Pay modal - fixed properly, scoping kept
