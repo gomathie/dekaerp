@@ -8,6 +8,129 @@ for the task/question log this change log is paired with.
 
 ---
 
+## 2026-09-03 (SupportFeature complete - 335 passed overall)
+
+Full `SupportFeature` suite: **115 passed, 720 assertions**, 1042s. Every file.
+
+This is the plugin the backport touched hardest, and the suite covers it:
+
+- `CurrencyTest`, `CurrencyRateTest` - the `Currency` additions
+  (`getCodeAttribute`, `findByCode`, `resolveDefault`) behind
+  `default_currency_code()`.
+- `ResourceGlobalSearchSmokeTest` - every support resource still constructs,
+  which is what exercises the `Table`/`Schema` `configureUsing` defaults added
+  to `HasFilamentDefaults`.
+- `CompanyIsolationTest`, `CompanyScopingInvariantsTest`,
+  `PortalCompanyScopeTest` - all three company scopes and `CompanyContext`.
+- `SetLocaleMiddlewareTest`, `ProfileLanguageUpdateTest` - untouched, but they
+  confirm nothing in the port disturbed locale handling.
+
+### Session total
+
+**335 tests passed, 1195 assertions, one failure found and fixed.**
+
+Every file changed by the backport now sits behind at least one passing test,
+except the three gaps recorded earlier: the untested `sharesBatch()` branches,
+the sequence seed migration against real data, and the old portal code path.
+
+## 2026-09-03 (logging fixed in production)
+
+`LOG_CHANNEL` pointed at `nightwatch`, a channel with no package behind it
+since Nightwatch was dropped. Laravel does not error on an undefined channel -
+`LogManager::get()` catches and falls back to the emergency logger, which
+writes to `storage/logs/laravel.log`. On Cloud that file is ephemeral and
+feeds nothing, so every `Log::` call had been going nowhere readable.
+
+Applied on Laravel Cloud, and mirrored into `.env.laravel-cloud`:
+
+```
+SENTRY_LARAVEL_DSN=<dsn>
+SENTRY_TRACES_SAMPLE_RATE=0.1
+SENTRY_PROFILES_SAMPLE_RATE=0.1
+SENTRY_ENABLE_LOGS=true
+SENTRY_SEND_DEFAULT_PII=false
+LOG_CHANNEL=stack
+LOG_STACK=laravel-cloud-socket,sentry_logs
+LOG_LEVEL=info
+```
+
+`laravel-cloud-socket` is first in the stack deliberately - it is what feeds
+the platform Logs tab, per the warning in `config/logging.php`. Nightwatch
+vars and token removed from Cloud and from the mirror.
+
+**Trailing comments had to come out of the values.** An earlier hand-off block
+carried explanatory `#` comments on the same line as the value, and they were
+pasted into Cloud. `SENTRY_ENABLE_LOGS` is the one that breaks: the SDK
+compares `enable_logs === true`
+(`sentry-laravel/src/Sentry/Laravel/ServiceProvider.php:172`) and Laravel's
+`Env` only converts the exact string `'true'`
+(`Illuminate/Support/Env.php:257`). With a comment appended, the value is a
+longer string, the strict comparison fails, and Sentry logs are off while the
+config reads as though they are on. The sample rates survived only because
+`(float)` takes the leading numeric. Lesson: never put a comment on the same
+line as a value in a block meant for copy-paste.
+
+**Still to verify** (needs a redeploy, cannot be checked from here): one
+`Log::info('logging check')` should appear in both the Cloud Logs tab and
+Sentry Logs. Reaching Sentry but not the Logs tab means
+`laravel-cloud-socket` is not resolving; the reverse means
+`SENTRY_ENABLE_LOGS` still is not parsing as a boolean.
+
+`SENTRY_PROFILES_SAMPLE_RATE` remains inert on Cloud - profiling needs
+Excimer, which only the Dockerfile installs, and Cloud does not build from it.
+
+## 2026-09-03 (verification complete: 220 passed, 475 assertions)
+
+Final run - `sales/OneStepSaleOrderTest`,
+`manufacturing/ManufacturingOrderTest`, and the whole `partners` feature
+directory: **111 passed, 250 assertions**, 2792s. All green, including
+partners' own company isolation and scoping invariants.
+
+### Totals across the session
+
+| Run | Result |
+| --- | --- |
+| `BalanceSheetTest` | 6 passed |
+| `TaxGroupTest` + `InvoiceSequenceTest` | 7 passed |
+| `InvoiceTest` + `CreditNoteTest` + `CurrencyTest` | 48 passed |
+| Company scoping (support + accounts) | 14 passed, **1 failed** |
+| Invariants re-run + `PortalCompanyScopeTest` | 6 passed |
+| `ScrapTest` + inventories invariants + `PurchaseOrderTest` | 42 passed |
+| sales + manufacturing + partners | 111 passed |
+| **Total** | **220 passed, 475 assertions, 1 failure found and fixed** |
+
+Every sequence consumer is now exercised: accounts (`Move`), sales and
+purchases (`Order`), inventories (`Scrap`), manufacturing (`Order`).
+
+### What remains unverified, and why tests here cannot reach it
+
+1. **`sharesBatch()` branches.** Every tax test uses one configuration. A line
+   mixing tax-inclusive and tax-exclusive taxes, or using
+   `include_base_amount`, is untested. This is the one that moves money.
+2. **The sequence seed migration against real data.** A fresh database cannot
+   hold invoices numbered under the old scheme, which is precisely what
+   `initialFromNames()` has to read. Run it against a copy of production.
+3. **The old portal code path.** Demonstrating the bug needs the guard
+   reverted; that edit was blocked, so it stays an inference from reading.
+4. **The untouched suites** - most of AccountFeature, and the project, product
+   and website suites. Not run for time, not for any other reason.
+
+## 2026-09-03 (inventories + purchases verified)
+
+`inventories/ScrapTest`, `inventories/CompanyScopingInvariantsTest`,
+`purchases/PurchaseOrderTest`: **42 passed, 93 assertions**, 1113s.
+
+Covers the scrap and purchase-order sequence consumers, and the purchase-order
+workflow the vendor-email change sits in.
+
+`inventories/CompanyScopingInvariantsTest` **passed**, which is the useful
+signal: the gap that failed in the support plugin does not repeat here.
+`Sequence` lives in support, and the inventories scoped models
+(`Scrap`, `Operation`, `OperationType`) all stamp a company normally, so
+nothing needed declaring.
+
+**Running total: 109 passed, 225 assertions, one failure found and fixed.**
+
 ## 2026-09-03 (the suite caught a gap in the sequence port)
 
 `CompanyScopingInvariantsTest` **failed** on the first company-scoping run:
