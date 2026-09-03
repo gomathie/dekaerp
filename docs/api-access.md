@@ -72,7 +72,15 @@ throttle automatically, and no route file can forget it.
 
 ## Revoking access
 
-There is no admin screen for this yet. To revoke:
+**Settings -> API Tokens** issues and revokes them. Issuing asks which user the
+token acts as, a label to recognise it by, and its scopes; the token is shown
+once, because Sanctum stores only a hash. The table shows every live token,
+which user it speaks for, when it was last used and when it expires.
+
+The page is gated on `view_any_security_user` - whoever administers users
+administers their tokens.
+
+Revoking is also possible without the screen:
 
 - the client's own `POST /admin/api/v1/logout` drops the token it presented;
 - deleting the row in `personal_access_tokens` kills a specific token;

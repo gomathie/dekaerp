@@ -8,6 +8,56 @@ for the task/question log this change log is paired with.
 
 ---
 
+## 2026-09-03 (PayAction + API token management)
+
+### #1481 Pay modal - fixed properly, scoping kept
+
+The earlier pass fixed the root cause inside
+`PaymentRegister::getBatchAvailablePartnerBanks()` but left the action alone,
+because upstream's rework looked like it would drop this fork's company
+filter. Reading the fork's filter properly showed the opposite:
+
+```php
+$bankAccountIds = Journal::where('type', JournalType::BANK)
+    ->where('company_id', $companyId)->pluck('bank_account_id');
+```
+
+That restricts the dropdown to bank accounts attached to **the company's own
+BANK journals** - correct when a customer pays you, wrong when you pay a
+vendor, where the recipient is the *vendor's* account and appears on none of
+your journals. Hence the blank field.
+
+Upstream's version resolves both directions through
+`getBatchAvailablePartnerBanks()`: the journal's account for RECEIVE, the
+partner's accounts filtered to the batch's company for SEND. So it is still
+company-scoped - by the **invoice's** company, which is more accurate than the
+UI's current one. It also adds `withTrashed()`, a null-safe `bank?->name`, and
+resolves a default so the field is not blank. Adopted, with the label rename
+to `recipient-bank-account` across four locales.
+
+### API token management screen
+
+`Settings -> API Tokens`
+(`Webkul\Security\Filament\Clusters\Settings\Pages\ManageApiTokens`), matching
+the convention of the other pages in that cluster - they live under
+`Security\Filament\Clusters\Settings\Pages` while referencing the support
+plugin's `Settings` cluster.
+
+Issues a token against a chosen user with a label and scopes
+(`read`/`write`/`*`), lists live tokens with the user each acts as, last-used
+and expiry, and revokes singly or in bulk. The plaintext token renders once in
+a warning panel, because Sanctum stores only a hash.
+
+Gated on `view_any_security_user` - the same permission as user
+administration, since a token is only ever as powerful as the user behind it.
+Deliberately a Page, not a Resource: a new Resource needs Shield permissions
+generated before anyone can reach it, and `shield:generate` cannot be run here.
+
+Verified against the installed Sanctum: `abilities` casts to json,
+`expires_at` to datetime, `createToken(string, array)` takes abilities, and no
+custom token model is registered. Strings in four locales, parity checked.
+`docs/api-access.md` updated - it previously said no such screen existed.
+
 ## 2026-09-03 (sequences + tax formulas ported from v1.6.0)
 
 Two feature ports the user asked for, plus #1500 which turned up along the way.
