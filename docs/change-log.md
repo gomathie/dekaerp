@@ -8,6 +8,132 @@ for the task/question log this change log is paired with.
 
 ---
 
+## 2026-09-04 (verification finished - 2098 tests passed)
+
+`InventoryFeature`, `SaleFeature`, `PurchaseFeature`, `ManufacturingFeature`
+in one sequential run: **1243 passed, 3374 assertions, zero failures**,
+15699s.
+
+That completes coverage of every plugin the backport touched. These four hold
+the scrap, sales-order, purchase-order and manufacturing-order sequence
+consumers, both `OrderSummary` currency fixes, the vendor-email behaviour
+change, the `late` preset view and the dashboard widget.
+
+### Session totals
+
+| Suite / run | Passed |
+| --- | --- |
+| Inventory + Sale + Purchase + Manufacturing | 1243 |
+| `AccountFeature` (full) | 517 |
+| `SupportFeature` (full) | 115 |
+| sales + manufacturing + partners (targeted) | 111 |
+| accounts workflows (targeted) | 48 |
+| inventories + purchases (targeted) | 42 |
+| tax + sequence (targeted) | 7 |
+| scoping + portal re-run | 6 |
+| `BalanceSheetTest` | 6 |
+| `TaxInclusiveBatchTest` | 3 |
+| **Total** | **2098 passed, one failure found and fixed** |
+
+Six plugins are now green across every file: accounts, support, inventories,
+sales, purchases, manufacturing - plus partners in full and targeted files
+elsewhere.
+
+### The three gaps that remain, unchanged
+
+1. **The sequence seed migration against real data** - the deploy gate. A
+   fresh database holds no invoices numbered under the old scheme.
+2. **`include_base_amount`** - no helper affordance; only matters if invoices
+   use the flag.
+3. **The old customer-portal path** - the fix is verified, the bug it fixes
+   stays an inference.
+
+## 2026-09-03 (tax-inclusive branch verified - verification complete)
+
+`TaxInclusiveBatchTest`: **3 passed, 7 assertions**.
+
+```
+✓ it keeps a tax-inclusive line total equal to the price entered
+✓ it batches two tax-inclusive taxes against one shared base
+✓ it does not mix inclusive and exclusive taxes into one batch
+```
+
+The `price_include` branch of `sharesBatch()` behaves correctly after the
+rework: inclusive tax is carved out of the entered price rather than added,
+two inclusive taxes share one base, and inclusive and exclusive taxes are kept
+in separate batches. That was the last item on the unverified list that could
+be closed from here, and it removes the manual staging check for
+tax-inclusive pricing.
+
+**Session total: 855 tests passed, 2572 assertions, one failure found and
+fixed.**
+
+### What remains genuinely unverifiable here
+
+1. **The sequence seed migration against real data.** A fresh test database
+   holds no invoices numbered under the old scheme, which is exactly what
+   `initialFromNames()` must read. This is the one remaining deploy gate.
+2. **`include_base_amount`.** The tax helper has no affordance for it, and
+   adding one risks testing the scaffolding rather than the behaviour. Only
+   matters if invoices use that flag.
+3. **The old customer-portal code path.** Demonstrating the bug needs the
+   guard reverted, which was blocked. The fix is verified; the bug it fixes
+   remains an inference from reading.
+
+## 2026-09-03 (full AccountFeature green)
+
+**517 passed, 1370 assertions, zero failures**, 4791s. All 38 files.
+
+This is the plugin the backport changed most consequentially - the
+`TaxComputer` batching rework and the `#1478` payment-state enum fix - and the
+whole suite now exercises them across invoice, bill, credit-note, refund and
+payment workflows rather than the handful of files targeted earlier.
+
+### Session total
+
+**852 tests passed, 2565 assertions, one failure found and fixed.**
+
+| Suite / run | Passed |
+| --- | --- |
+| `AccountFeature` (full) | 517 |
+| `SupportFeature` (full) | 115 |
+| sales + manufacturing + partners | 111 |
+| inventories + purchases (targeted) | 42 |
+| accounts workflows (targeted, earlier) | 48 |
+| tax + sequence (targeted) | 7 |
+| scoping + portal re-run | 6 |
+| `BalanceSheetTest` | 6 |
+
+## 2026-09-03 (closing the last untested tax branch)
+
+`TaxInclusiveBatchTest` - three tests over the `sharesBatch()` branch nothing
+else reached.
+
+`TaxGroupTest` only ever exercises tax-*exclusive* taxes, so how the rework
+batches **tax-inclusive** ones was unverified - and that is arithmetic which
+lands on customer invoices. This was recorded as the item needing a manual
+staging check; the tests replace it.
+
+- A tax-inclusive line totals exactly the price entered: 100 on an inclusive
+  10% tax means the customer pays 100, the tax carved out rather than added.
+- Two inclusive taxes share one base - both carved out of the same 100, total
+  still exactly 100. Had batching regressed so one compounded onto the other,
+  this fails.
+- Inclusive and exclusive taxes are **not** batched together: `sharesBatch()`
+  refuses to group taxes whose `price_include` differs, so the exclusive one
+  adds on top while the inclusive one is carved out.
+
+They assert **invariants** - total equals the entered price, and untaxed + tax
+reconciles to total - rather than hardcoded figures. A regression in batching
+breaks those relationships regardless of rounding, which cannot be predicted
+from here with confidence.
+
+Queued behind the full `AccountFeature` run; suites share one database.
+
+`include_base_amount` remains uncovered - the helper has no affordance for it,
+and inventing one risks testing my own scaffolding rather than the behaviour.
+If invoices use that flag, it still wants a look on staging.
+
 ## 2026-09-03 (SupportFeature complete - 335 passed overall)
 
 Full `SupportFeature` suite: **115 passed, 720 assertions**, 1042s. Every file.

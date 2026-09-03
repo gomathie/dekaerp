@@ -37,7 +37,7 @@ exact match and never matches a real request such as
 `/rest/v1/password_reset_tokens`. Use *contains*, or filter by the Postgrest
 log type alone.
 
-## 2. Rotate the Nightwatch token
+## 2. Rotate the Nightwatch token - DONE (2026-09-03)
 
 Deleted from Cloud, but it is still a live credential for a service you no
 longer run, and it appeared in a chat transcript. Rotate or revoke it at
@@ -69,21 +69,24 @@ That is what silently disabled `SENTRY_ENABLE_LOGS` before.
 
 Two things no test here can reach.
 
-**4a. Multi-tax invoices - this one moves money.**
+**4a. Multi-tax invoices - now covered by tests, except one flag.**
 
-`TaxComputer` now batches taxes that share characteristics, where before each
-was its own batch. `TaxGroupTest` proves a group tax with 10% + 5% children on
-a 200 base still yields 30.00, but `sharesBatch()` also branches on
-`price_include` and `include_base_amount`, and no test covers those.
+`TaxInclusiveBatchTest` (added 2026-09-03, passing) covers the `price_include`
+branch of `sharesBatch()`: an inclusive tax is carved out of the entered price,
+two inclusive taxes share one base, and inclusive and exclusive taxes stay in
+separate batches. The manual staging check for tax-inclusive pricing is no
+longer needed.
 
-If your invoices use tax-inclusive pricing, or a tax with "include base
-amount", build one such invoice on staging and compare the tax total against
-the same invoice before the change. If they do not, this does not apply.
+**Still worth a look only if your invoices use `include_base_amount`**
+(a tax that compounds onto the base of the next). The test helper has no
+affordance for it, so it is untested. If you use it, build one such invoice on
+staging and compare the tax total against the same invoice before the change.
 
-**4b. Sequence numbering against real data.**
+**4b. Sequence numbering against real data - the remaining deploy gate.**
 
 Numbering moves from `{prefix}/{database id}` to a sequence. Continuity relies
 on `initialFromNames()` reading existing names and starting above the highest.
+
 A fresh test database has no historical invoices, so this is untestable here.
 
 Restore a copy of production, run `php artisan migrate`, then check:
