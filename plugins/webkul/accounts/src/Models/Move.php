@@ -31,6 +31,7 @@ use Webkul\Support\Models\Currency;
 use Webkul\Support\Models\UtmCampaign;
 use Webkul\Support\Models\UTMMedium;
 use Webkul\Support\Models\UTMSource;
+use Webkul\Support\Services\SequenceService;
 use Webkul\Support\Traits\BelongsToCompany;
 use Webkul\Support\Traits\ChecksCompanyConsistency;
 
@@ -307,6 +308,19 @@ class Move extends Model implements Sortable
         return in_array($this->move_type, $this->getInboundTypes($includeReceipts));
     }
 
+    public static function resolveBankPartnerId($moveType, ?int $companyId, ?int $partnerId): ?int
+    {
+        if (is_string($moveType)) {
+            $moveType = MoveType::tryFrom($moveType);
+        }
+
+        if (! in_array($moveType, (new static)->getInboundTypes(true))) {
+            return $partnerId;
+        }
+
+        return Company::find($companyId ?? current_company_id())?->partner_id;
+    }
+
     public function getInboundTypes($includeReceipts = true): array
     {
         $types = [MoveType::OUT_INVOICE, MoveType::IN_REFUND];
@@ -492,22 +506,28 @@ class Move extends Model implements Sortable
 
     public function computeName()
     {
+        if (filled($this->name)) {
+            return;
+        }
+
         if (! $this->journal) {
             return;
         }
 
-        $prefix = '';
+        $variants = [];
 
         if (
             $this->journal->refund_sequence
             && in_array($this->move_type, [MoveType::OUT_REFUND, MoveType::IN_REFUND])
         ) {
-            $prefix .= 'R';
+            $variants[] = 'refund';
         }
 
         if ($this->journal->payment_sequence && $this->origin_payment_id) {
-            $prefix .= 'P';
+            $variants[] = 'payment';
         }
+
+        $prefix = implode('', array_map(fn (string $variant): string => strtoupper($variant[0]), $variants));
 
         $this->sequence_prefix = sprintf(
             '%s%s/%s',
@@ -516,7 +536,15 @@ class Move extends Model implements Sortable
             $this->date?->format('Y') ?? now()->format('Y'),
         );
 
-        $this->name = $this->sequence_prefix.'/'.$this->id;
+        $variant = implode('-', $variants);
+
+        $this->name = SequenceService::nextFor(
+            $this->journal,
+            $variant,
+            $this->company_id,
+            $this->journal->sequenceDefaults($variant),
+            $this->date,
+        );
     }
 
     public function computeCurrencyId()

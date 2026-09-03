@@ -26,6 +26,7 @@ use Webkul\Purchase\Livewire\Customer\ListProducts;
 use Webkul\Purchase\Livewire\OrderSummary;
 use Webkul\Purchase\Models\Order;
 use Webkul\Purchase\Models\Requisition;
+use Webkul\Support\Services\SequenceService;
 
 class PurchaseServiceProvider extends PackageServiceProvider
 {
@@ -59,6 +60,7 @@ class PurchaseServiceProvider extends PackageServiceProvider
                 '2026_04_22_115707_create_purchases_order_line_moves_table_from_purchases',
                 '2026_04_23_043411_add_procurement_group_id_column_in_purchases_orders_table_from_purchases',
                 '2026_04_23_043412_add_procurement_group_id_column_in_purchases_order_lines_table_from_purchases',
+                '2026_08_03_130000_seed_purchases_sequences',
             ])
             ->runsMigrations()
             ->hasSettings([
@@ -77,6 +79,8 @@ class PurchaseServiceProvider extends PackageServiceProvider
             ->hasUninstallCommand(function (UninstallCommand $command) {
                 $command->endWith(function () {
                     ChatterCleanupService::purgeForModels([Order::class, Requisition::class]);
+
+                    SequenceService::purge(['purchases.order']);
                 });
             })
             ->icon('purchases');

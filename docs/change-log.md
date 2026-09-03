@@ -8,6 +8,82 @@ for the task/question log this change log is paired with.
 
 ---
 
+## 2026-09-03 (sequences + tax formulas ported from v1.6.0)
+
+Two feature ports the user asked for, plus #1500 which turned up along the way.
+
+### Document sequences (#792)
+
+Numbering was `{prefix}{journal code}/{year}/{database id}` - gaps whenever a
+row was deleted or a create failed, no yearly reset, nothing configurable.
+Now driven by a `sequences` table with prefix, padding, step and reset
+frequency, editable in a new admin screen.
+
+Ported: the `sequences` migration, `Sequence`, `SequenceService`,
+`SequenceResetFrequency`, `SequenceResource` + `ManageSequences`, and lang for
+all four locales (upstream shipped all four). Consumers: accounts (`Move`,
+`Journal`), sales and purchases (`Order`), inventories (`Scrap`, `Operation`,
+`OperationType`, `Warehouse`), manufacturing (`Order`, `Warehouse`), plus the
+`Company` force-delete hook that releases a deleted tenant's sequences.
+
+**Numbering continuity.** `SequenceService::initialFromNames()` reads existing
+names, takes the trailing digits and starts the counter at max+1, so existing
+documents keep their numbers and new ones continue the run. The shape is
+unchanged - `CODE/YEAR/N` before and after.
+
+**One visible change: padding defaults to 5.** `INV/2026/42` becomes
+`INV/2026/00043`. Structure is identical, but the zero-padding is new. It is a
+per-sequence column editable in the admin screen, so it can be set to 1 to
+keep the old look - no code change needed. Flagged for the user to decide.
+
+**Seed-migration ordering was checked per plugin, not assumed.** Two landed in
+the wrong place when inserted and were moved: purchases (mid-list, would have
+run before later schema migrations) and inventories (before the fork-only
+`provision_company_virtual_locations`). Both now run last, as upstream does.
+
+Service providers were **edited, not copied** - each also carries the
+product-usage registry, which is still deliberately not ported. Only the
+sequence hunks were taken. An `OperationType` import was missing in the
+inventories provider; without it `OperationType::class` would have resolved to
+a non-existent class in the provider's own namespace and the uninstall purge
+would have silently matched nothing.
+
+### #1500 - found after all
+
+Earlier this was recorded as "could not be located in the v1.6.0 source". That
+was wrong: it is not a `disabled()` on the currency field, it is
+`Webkul\Account\Observers\CompanyObserver`, which throws a ValidationException
+when `currency_id` changes while journal items exist. Ported with its lang
+strings and registered via a `registerObservers()` guarded by
+`Package::isPluginInstalled`.
+
+### Tax formulas (#153) - and a money-math change to validate
+
+The `formula` column already existed in this fork's create migration, so no
+schema change was needed. Ported `TaxFormulaEvaluator`,
+`InvalidTaxFormulaException`, the `Tax` model, `TaxRequest` validation, the V1
+API resource, and the resource UI with its `Schemas/`/`Tables/` classes and
+four locales.
+
+The evaluator was security-checked before adoption: user-entered formulas are
+parsed by a hand-written tokenizer with a whitelist of three variables
+(`price_unit`, `quantity`, `price_subtotal`) and two functions (`min`, `max`).
+**No `eval`, no dynamic invocation** - which is the only acceptable design for
+a user-supplied expression field.
+
+**`TaxComputer` changes computed tax on multi-tax lines.** Two things:
+
+- *Deterministic ordering* - `sortBy([sort, id])` and `orderBy('sort')
+  ->orderBy('id')`. Without the id tiebreaker, taxes sharing a `sort` value
+  computed in whatever order the database returned them. An unambiguous fix.
+- *Batching* - previously every tax was its own batch of one; taxes sharing
+  amount type, price-include and base-affected characteristics are now grouped.
+  This alters how the base is derived when several taxes apply to one line.
+
+**This is the highest-risk change in the whole backport and it is untested
+here.** It affects money on new invoices. It wants the Pest suite plus a
+deliberate check against known multi-tax scenarios before production.
+
 ## 2026-09-03 (v1.6.0 audit completed - the 11 plugins missed earlier)
 
 The earlier passes worked from an incomplete plugin list. These eleven were

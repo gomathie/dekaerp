@@ -24,6 +24,7 @@ use Webkul\Sale\Listeners\SendSMSNotificationListener;
 use Webkul\Sale\Livewire\QuotationSummary;
 use Webkul\Sale\Models\Order;
 use Webkul\Sale\Models\Team;
+use Webkul\Support\Services\SequenceService;
 
 class SaleServiceProvider extends PackageServiceProvider
 {
@@ -63,6 +64,7 @@ class SaleServiceProvider extends PackageServiceProvider
                 '2026_04_08_043411_add_procurement_group_id_column_in_sales_orders_table_from_sales',
                 '2026_04_08_043511_add_sale_order_id_column_in_inventories_procurement_groups_table_from_sales',
                 '2026_08_21_000000_drop_sale_source_from_sales_orders_table',
+                '2026_08_03_130000_seed_sales_sequences',
             ])
             ->runsMigrations()
             ->hasSettings([
@@ -86,6 +88,8 @@ class SaleServiceProvider extends PackageServiceProvider
             ->hasUninstallCommand(function (UninstallCommand $command) {
                 $command->endWith(function () {
                     ChatterCleanupService::purgeForModels([Order::class, Team::class]);
+
+                    SequenceService::purge(['sales.order']);
                 });
             })
             ->icon('sales');
