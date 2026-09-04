@@ -1,3 +1,43 @@
+# 🚀 CHANGELOG — v1.6.0
+
+### 🧩 Features
+
+* Added document sequences for invoices, sales orders, purchase orders, scraps and manufacturing orders — configurable prefix, padding, step and reset frequency, managed under Settings → Sequences. Numbering previously derived from the database id, which left gaps and could not be reset or controlled
+* Added custom tax formulas: a tax can compute from an arithmetic expression over `price_unit`, `quantity` and `price_subtotal`, with `min()` and `max()` for capping
+* Added API token management (Settings → API Tokens) — issue a token against a specific user, scope it read-only or read/write, see when it was last used, and revoke it
+* Added an in-app "What's New" page rendering the release notes, under Help
+* Added a "Late" view to inventory operations, listing everything past its deadline or scheduled date
+* Added Employee / Customer / Vendor filters to partner-based lists
+* Added Sentry error monitoring, with performance tracing and optional log forwarding
+* Added a public branding asset route so custom logos render on the login and password-reset pages
+
+### ✨ Improvements
+
+* API endpoints are now rate limited per token, so one client integration cannot exhaust another's budget
+* API tokens can be scoped: a read-only token cannot POST, PATCH or DELETE
+* API errors now return JSON on every endpoint rather than depending on the client sending an `Accept` header
+* Money columns default to the configured company currency instead of a fixed default
+* Password fields in the user form can be revealed while typing
+* Sending a purchase order now warns when vendors have no email address, instead of reporting success while sending nothing
+* Raised the Livewire nesting limit, fixing errors in deeply nested repeaters
+* Multi-company: a new company's journals no longer inherit another company's bank account, and copied records are aligned to the owning company's currency
+* Variant generation failures are now reported to the log rather than silently swallowed
+
+### 🐛 Fixes
+
+* [Security] Escaped field values in chatter change summaries and notifications, which could execute markup entered elsewhere in the application
+* [Security] Constrained the branding asset route to a filename, closing a path that could return other stored files
+* #1478 [fixed] - Payment state never updated after an invoice was paid; the check compared two different enum types and could never be true
+* #1481 [fixed] - Recipient bank account was blank in the Pay modal when paying a vendor
+* #1490 [fixed] - Saved filter views threw a LogicException across list resources
+* #1491 [fixed] - Foreign key violation when editing an employee, caused by copying an employee id into a partner reference
+* #1497 [fixed] - Currency conversion not applied in RFQ, purchase order and quotation summaries
+* #1500 [fixed] - Prevented changing a company's currency once journal items exist for it
+* #1514 [fixed] - Exception when deleting a currency still in use; now reports why
+* [fixed] - Invoice print returned a server error when object storage was in use
+* [fixed] - Applicant categories list failed when ordering by a column the table does not have
+* [fixed] - Company records with no currency no longer error on save
+
 # 🚀 CHANGELOG — v1.5.0
 
 ### 🧩 Features
