@@ -86,28 +86,77 @@ staging and compare the tax total against the same invoice before the change.
 
 Numbering moves from `{prefix}/{database id}` to a sequence. Continuity relies
 on `initialFromNames()` reading existing names and starting above the highest.
+A fresh database has no such history, so this cannot be tested by the suite.
 
-A fresh test database has no historical invoices, so this is untestable here.
+There is no staging environment, but this does not need one - only a throwaway
+database, and the local Docker Postgres already running is enough. Rehearse
+there, never against production.
 
-Restore a copy of production, run `php artisan migrate`, then check:
+**Step 1 - dump production.** Session pooler on 5432; the transaction pooler
+on 6543 will not produce a clean dump.
+
+```bash
+docker run --rm -v "C:\Users\gomat\Downloads:/backup" postgres:17-alpine \
+  pg_dump "postgresql://postgres.<ref>:<pw>@aws-0-eu-central-1.pooler.supabase.com:5432/postgres" \
+  --no-owner --no-acl -Fc -f /backup/prod.dump
+```
+
+**Step 2 - restore into a throwaway local database.** Name it something that
+could never be confused with the dev or test database.
+
+```bash
+docker exec dekaerp-pgsql-1 psql -U sail -d postgres \
+  -c "CREATE DATABASE seq_rehearsal OWNER sail;"
+
+docker run --rm --network dekaerp_sail -v "C:\Users\gomat\Downloads:/backup" \
+  postgres:17-alpine pg_restore --no-owner --no-acl \
+  -d "postgresql://sail:password@pgsql:5432/seq_rehearsal" /backup/prod.dump
+```
+
+**Step 3 - note the numbers the old scheme produced**, before migrating.
 
 ```sql
-select name from accounts_account_moves
-where name is not null order by id desc limit 5;
+select journal_id, max(name) from accounts_account_moves
+where name is not null group by journal_id;
+```
 
+**Step 4 - run the migration against the copy.** Every DB_* value is passed
+explicitly so nothing can fall back to the production connection in `.env`.
+
+```bash
+docker compose run --rm --no-deps \
+  -e DB_URL= -e DATABASE_URL= -e DB_CONNECTION=pgsql -e DB_HOST=pgsql \
+  -e DB_PORT=5432 -e DB_DATABASE=seq_rehearsal -e DB_USERNAME=sail \
+  -e DB_PASSWORD=password \
+  laravel.test php artisan migrate --force
+```
+
+**Step 5 - check continuity.** This is the whole point of the exercise.
+
+```sql
 select code, scope_type, scope_id, company_id, prefix, next_number, padding
 from sequences order by id;
 ```
 
-`next_number` must be **above** the highest existing number for that journal.
-Then post one invoice on the restored copy and confirm the number continues
-rather than colliding.
+For each journal, `next_number` must be **greater than** the highest number
+already used by that journal in step 3. If it comes back 1 while invoices
+exist, `initialFromNames()` did not read the existing names and deploying
+would reissue numbers already on real documents. Stop and say so if that
+happens.
 
-Expect the format to gain zero-padding: `INV/2026/42` becomes
-`INV/2026/00043`. That was your decision; `padding` is editable per sequence
-in Settings -> Sequences if you change your mind.
+**Step 6 - post one invoice on the copy** through the UI or tinker, and
+confirm the number continues the run rather than colliding. Expect the
+zero-padded form: `INV/2026/00043`.
 
----
+**Step 7 - drop the rehearsal database.**
+
+```bash
+docker exec dekaerp-pgsql-1 psql -U sail -d postgres \
+  -c "DROP DATABASE seq_rehearsal;"
+```
+
+Do not paste the production connection string into a chat - it carries the
+database password.
 
 ## 5. Optional, no urgency
 

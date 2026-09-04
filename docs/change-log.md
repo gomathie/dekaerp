@@ -8,6 +8,44 @@ for the task/question log this change log is paired with.
 
 ---
 
+## 2026-09-04 (every suite run - 2479 tests passed)
+
+`AccountingFeature`, `ProjectFeature`, `ProductFeature`: **381 passed, 805
+assertions, zero failures**, 4792s.
+
+Run despite those plugins being barely touched, because three of the backport's
+changes are global rather than local:
+
+- the four company-scope classes apply to every scoped model in the app;
+- `HasFilamentDefaults` now calls `Table::configureUsing()` and
+  `Schema::configureUsing()`, which reaches **every** Filament table and form;
+- `Currency::getCodeAttribute()` feeds `default_currency_code()`, which those
+  defaults call.
+
+Collateral damage from any of those would surface in plugins never edited -
+which is exactly the shape of the one failure this session did find. None
+appeared. `ProductFeature` also covers the `report($e)` added to
+`GenerateVariantsAction`.
+
+### Final tally
+
+**2479 tests passed across all ten suites. One failure, found and fixed.**
+
+| Run | Passed |
+| --- | --- |
+| Inventory + Sale + Purchase + Manufacturing | 1243 |
+| `AccountFeature` | 517 |
+| Accounting + Project + Product | 381 |
+| `SupportFeature` | 115 |
+| Targeted runs (partners, workflows, tax, sequences, scoping, portal) | 223 |
+
+Every plugin the backport touched, and every plugin it could have reached
+through shared code, is green.
+
+The three gaps stated earlier are unchanged and structural: the sequence seed
+migration against real invoice history, `include_base_amount`, and the old
+customer-portal path.
+
 ## 2026-09-04 (verification finished - 2098 tests passed)
 
 `InventoryFeature`, `SaleFeature`, `PurchaseFeature`, `ManufacturingFeature`
