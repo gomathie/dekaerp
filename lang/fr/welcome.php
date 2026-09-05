@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'title'            => 'AureusERP - Planification des ressources de l’entreprise',
-    'meta_description' => 'AureusERP - Système moderne de planification des ressources de l’entreprise',
+    'title'            => 'AureusERP - Progiciel de gestion intégré',
+    'meta_description' => 'AureusERP - Système moderne de progiciel de gestion intégré',
 
     'nav' => [
         'dashboard' => 'Tableau de bord',
         'login'     => 'Connexion',
-        'register'  => 'Inscription',
+        'register'  => "S'inscrire",
     ],
 
     'hero' => [
         'title'         => 'Bienvenue sur AureusERP',
-        'subtitle'      => 'Une solution moderne de gestion des ressources de l’entreprise',
-        'description'   => 'Optimisez les opérations de votre entreprise grâce à notre système ERP complet. Gérez les ventes, les achats, les stocks, la comptabilité et bien plus encore depuis une seule plateforme.',
+        'subtitle'      => 'Une solution moderne de progiciel de gestion intégré',
+        'description'   => "Simplifiez vos opérations commerciales avec notre système ERP complet. Gérez les ventes, les achats, l'inventaire, la comptabilité et bien plus depuis une seule plateforme.",
         'cta_primary'   => 'Commencer',
         'cta_secondary' => 'En savoir plus',
     ],
@@ -22,15 +22,15 @@ return [
         'title' => 'Fonctionnalités',
         'sales' => [
             'title'       => 'Gestion des ventes',
-            'description' => 'Gérez votre pipeline de ventes, vos devis et vos commandes efficacement. Suivez les relations clients et augmentez vos revenus.',
+            'description' => 'Gérez efficacement votre pipeline de ventes, vos devis et vos commandes. Suivez vos relations clients et augmentez votre chiffre d\'affaires.',
         ],
         'purchases' => [
             'title'       => 'Gestion des achats',
-            'description' => 'Optimisez votre processus d’approvisionnement. Gérez les fournisseurs, les commandes d’achat et les relations avec les fournisseurs en toute simplicité.',
+            'description' => 'Simplifiez votre processus d\'approvisionnement. Gérez vos fournisseurs, bons de commande et relations fournisseurs en toute fluidité.',
         ],
         'inventory' => [
-            'title'       => 'Gestion des stocks',
-            'description' => 'Suivez vos niveaux de stock, gérez les entrepôts et optimisez votre chaîne d’approvisionnement.',
+            'title'       => 'Contrôle des stocks',
+            'description' => "Suivez vos niveaux de stock, gérez vos entrepôts et optimisez les opérations de votre chaîne d'approvisionnement.",
         ],
         'accounting' => [
             'title'       => 'Comptabilité financière',
@@ -38,11 +38,11 @@ return [
         ],
         'hr' => [
             'title'       => 'Ressources humaines',
-            'description' => 'Gérez les employés, les présences, les demandes de congés et les processus de recrutement efficacement.',
+            'description' => 'Gérez efficacement les employés, la présence, les demandes de congé et les processus de recrutement.',
         ],
         'projects' => [
             'title'       => 'Gestion de projets',
-            'description' => 'Planifiez, suivez et livrez vos projets à temps grâce à nos outils intégrés de gestion de projet.',
+            'description' => 'Planifiez, suivez et livrez vos projets dans les délais grâce à nos outils intégrés de gestion de projets.',
         ],
     ],
 
@@ -55,8 +55,8 @@ return [
 
     'cta' => [
         'title'       => 'Prêt à transformer votre entreprise ?',
-        'description' => 'Rejoignez des milliers d’entreprises qui font confiance à AureusERP pour leurs opérations quotidiennes.',
-        'button'      => 'Essai gratuit',
+        'description' => 'Rejoignez des milliers d\'entreprises qui font confiance à AureusERP pour leurs opérations quotidiennes.',
+        'button'      => "Démarrer l'essai gratuit",
     ],
 
     'footer' => [
@@ -64,8 +64,8 @@ return [
         'powered_by' => 'Propulsé par Laravel',
         'links'      => [
             'privacy' => 'Politique de confidentialité',
-            'terms'   => 'Conditions d’utilisation',
-            'contact' => 'Nous contacter',
+            'terms'   => "Conditions d'utilisation",
+            'contact' => 'Contactez-nous',
         ],
     ],
 ];

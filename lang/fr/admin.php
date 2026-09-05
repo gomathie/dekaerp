@@ -3,7 +3,7 @@
 return [
     'navigation' => [
         'dashboard'     => 'Tableau de bord',
-        'contact'       => 'Contacts',
+        'contact'       => 'Contact',
         'sale'          => 'Ventes',
         'purchase'      => 'Achats',
         'invoice'       => 'Factures',
@@ -14,7 +14,7 @@ return [
         'project'       => 'Projet',
         'employee'      => 'Employés',
         'time-off'      => 'Congés',
-        'recruitment'   => 'Recrutement',
+        'recruitment'   => 'Recrutements',
         'website'       => 'Site web',
         'plugin'        => 'Plugins',
         'setting'       => 'Paramètres',
