@@ -19,3 +19,142 @@
 .fi-page-sub-navigation-sidebar-ctn {
     width: 200px;
 }
+
+.deka-guide-category {
+    @apply overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xs dark:border-white/10 dark:bg-gray-900;
+}
+
+.deka-guide-category__summary {
+    @apply flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-sm font-semibold text-gray-950 transition hover:bg-gray-50 dark:text-white dark:hover:bg-white/5;
+}
+
+.deka-guide-category__summary::-webkit-details-marker,
+.deka-guide-page__summary::-webkit-details-marker {
+    display: none;
+}
+
+.deka-guide-category__summary > span:last-child,
+.deka-guide-page__meta {
+    @apply shrink-0 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-500 dark:bg-white/5 dark:text-gray-400;
+}
+
+.deka-guide-category__body {
+    @apply space-y-3 border-t border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-gray-950/40;
+}
+
+.deka-guide-page {
+    @apply rounded-lg border border-gray-200 bg-white dark:border-white/10 dark:bg-gray-900;
+}
+
+.deka-guide-page__summary {
+    @apply flex cursor-pointer list-none items-start justify-between gap-4 px-4 py-3 transition hover:bg-gray-50 dark:hover:bg-white/5;
+}
+
+.deka-guide-page__title {
+    @apply block text-sm font-semibold text-gray-950 dark:text-white;
+}
+
+.deka-guide-page__summary-text {
+    @apply mt-1 block text-sm font-normal text-gray-500 dark:text-gray-400;
+}
+
+.deka-guide-page__body {
+    @apply space-y-5 border-t border-gray-200 px-4 py-5 dark:border-white/10;
+}
+
+.deka-guide-workflow {
+    @apply flex flex-wrap gap-2;
+}
+
+.deka-guide-workflow span {
+    @apply rounded-full bg-primary-500/10 px-3 py-1 text-xs font-semibold text-primary-600 dark:text-primary-400;
+}
+
+.deka-guide-step {
+    @apply space-y-3 rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-white/5;
+}
+
+.deka-guide-step h4,
+.deka-guide-content h2,
+.deka-guide-content h3,
+.deka-guide-content h4 {
+    @apply font-semibold text-gray-950 dark:text-white;
+}
+
+.deka-guide-step h4,
+.deka-guide-content h2 {
+    @apply text-base;
+}
+
+.deka-guide-content h3,
+.deka-guide-content h4 {
+    @apply text-sm;
+}
+
+.deka-guide-step p,
+.deka-guide-content p,
+.deka-guide-content li {
+    @apply text-sm leading-6 text-gray-600 dark:text-gray-300;
+}
+
+.deka-guide-step ol,
+.deka-guide-content ol {
+    @apply ms-5 list-decimal space-y-2;
+}
+
+.deka-guide-content ul {
+    @apply ms-5 list-disc space-y-2;
+}
+
+.deka-guide-step strong,
+.deka-guide-content strong {
+    @apply font-semibold text-gray-950 dark:text-white;
+}
+
+.deka-guide-content a {
+    @apply font-medium text-primary-600 hover:underline dark:text-primary-400;
+}
+
+.deka-guide-content code,
+.deka-guide-content kbd {
+    @apply rounded bg-gray-100 px-1.5 py-0.5 text-xs font-semibold text-gray-700 dark:bg-white/10 dark:text-gray-200;
+}
+
+.deka-guide-content pre {
+    @apply overflow-x-auto rounded-lg bg-gray-950 p-4 text-sm text-gray-100;
+}
+
+.deka-guide-content table {
+    @apply min-w-full border-collapse text-sm;
+}
+
+.deka-guide-content th,
+.deka-guide-content td {
+    @apply border border-gray-200 px-3 py-2 text-left dark:border-white/10;
+}
+
+.deka-guide-content th {
+    @apply bg-gray-50 font-semibold text-gray-950 dark:bg-white/5 dark:text-white;
+}
+
+.deka-guide-content .doc-anchor {
+    @apply ms-2 text-xs opacity-50;
+}
+
+.deka-guide-content .doc-callout,
+.deka-guide-callout {
+    @apply rounded-lg border border-primary-200 bg-primary-50 p-3 text-sm dark:border-primary-500/30 dark:bg-primary-500/10;
+}
+
+.deka-guide-content .doc-callout__label,
+.deka-guide-callout span {
+    @apply mb-1 block text-xs font-semibold uppercase tracking-wide text-primary-600 dark:text-primary-400;
+}
+
+.deka-guide-callout p {
+    @apply text-sm text-gray-600 dark:text-gray-300;
+}
+
+.deka-guide-content .doc-table-wrap {
+    @apply overflow-x-auto;
+}

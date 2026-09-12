@@ -9,6 +9,82 @@ return [
     'heading'    => 'Help & Resources',
     'subheading' => 'Everything you need to get the most out of :app.',
 
+    'guides' => [
+        'group' => 'Guides',
+
+        'admin' => [
+            'title'       => 'Admin Guide',
+            'description' => 'Set up :app for your company, teams, modules and controls before daily work begins.',
+            'button'      => 'Admin setup checklist',
+            'sections'    => [
+                [
+                    'title' => 'Set up the company',
+                    'items' => [
+                        'Create or review companies, warehouses, currencies, taxes and fiscal settings.',
+                        'Assign users to the companies they can access and confirm the active company switcher.',
+                        'Configure sequences, payment terms, products, units of measure and document templates before transactions begin.',
+                    ],
+                ],
+                [
+                    'title' => 'Control access',
+                    'items' => [
+                        'Create roles for finance, sales, inventory, HR, project and management teams.',
+                        'Grant module permissions only to the users who need them.',
+                        'Review custom fields, imports, exports and API tokens before giving broad access.',
+                    ],
+                ],
+                [
+                    'title' => 'Operate and maintain',
+                    'items' => [
+                        'Install only the modules the business uses, then hide or remove unused modules.',
+                        'Monitor discussions, attachments, approvals and record ownership during rollout.',
+                        'Keep email, PDF, backup and update settings aligned with the deployment policy.',
+                    ],
+                ],
+            ],
+        ],
+
+        'user' => [
+            'title'          => 'User Guide',
+            'description'    => 'Use the built-in user guide for DEKA walkthroughs and module-reference pages for daily work in :app.',
+            'button'         => 'Open User Guide',
+            'full_heading'   => 'Full User Guide',
+            'count'          => '{0} No guide pages|{1} 1 guide page|[2,*] :count guide pages',
+            'category_count' => '{0} No pages|{1} 1 page|[2,*] :count pages',
+            'callouts'       => [
+                'tip'       => 'Tip',
+                'note'      => 'Note',
+                'important' => 'Important',
+            ],
+            'sections'    => [
+                [
+                    'title' => 'Getting started',
+                    'items' => [
+                        'Platform Overview & Navigation',
+                        'Multi-Company Setup & Switcher',
+                    ],
+                ],
+                [
+                    'title' => 'Core workflows',
+                    'items' => [
+                        'Sell: Sales & Invoicing',
+                        'Buy: Purchasing & Accounting',
+                        'Make & Move: Inventory & Production',
+                        'Run: Projects, HR & Maintenance',
+                        'Platform, API & Self-Hosting',
+                    ],
+                ],
+                [
+                    'title' => 'Module reference: 12 modules / 69 pages',
+                    'items' => [
+                        'Invoices, Sales, Purchase, Inventory, Manufacturing, Maintenance',
+                        'Contacts, Project, Website, Employees, Recruitments, Time Off',
+                    ],
+                ],
+            ],
+        ],
+    ],
+
     'services' => [
         'group' => 'Services',
 

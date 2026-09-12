@@ -67,6 +67,89 @@ class Help extends Page
         ]);
     }
 
+    /**
+     * @return array<int, array{
+     *     icon: string,
+     *     title: string,
+     *     description: string,
+     *     button: string,
+     *     sections: array<int, array{title: string, items: array<int, string>}>
+     * }>
+     */
+    public function guides(): array
+    {
+        $guides = [];
+
+        if ($this->canViewAdminGuide()) {
+            $guides[] = [
+                'icon'        => 'heroicon-o-shield-check',
+                'title'       => __('support::filament/pages/help.guides.admin.title'),
+                'description' => __('support::filament/pages/help.guides.admin.description', ['app' => $this->appName()]),
+                'button'      => __('support::filament/pages/help.guides.admin.button'),
+                'sections'    => $this->guideSections('admin'),
+            ];
+        }
+
+        $guides[] = [
+            'icon'        => 'heroicon-o-book-open',
+            'title'       => __('support::filament/pages/help.guides.user.title'),
+            'description' => __('support::filament/pages/help.guides.user.description', ['app' => $this->appName()]),
+            'button'      => __('support::filament/pages/help.guides.user.button'),
+            'sections'    => $this->guideSections('user'),
+        ];
+
+        return $guides;
+    }
+
+    public function guideCategories(): array
+    {
+        static $categories = null;
+
+        if ($categories !== null) {
+            return $categories;
+        }
+
+        $path = dirname(__DIR__, 3).'/resources/data/guide.json';
+
+        if (! file_exists($path)) {
+            return $categories = [];
+        }
+
+        $decoded = json_decode((string) file_get_contents($path), true);
+
+        return $categories = is_array($decoded) ? $decoded : [];
+    }
+
+    public function guidePageCount(): int
+    {
+        return array_reduce(
+            $this->guideCategories(),
+            fn (int $total, array $category): int => $total + count($category['items'] ?? []),
+            0,
+        );
+    }
+
+    public function canViewAdminGuide(): bool
+    {
+        $user = auth()->user();
+
+        if (! $user || ! method_exists($user, 'hasRole')) {
+            return false;
+        }
+
+        return $user->hasRole(array_filter([
+            config('filament-shield.super_admin.name'),
+            'super_admin',
+        ]));
+    }
+
+    protected function guideSections(string $guide): array
+    {
+        $sections = trans("support::filament/pages/help.guides.{$guide}.sections");
+
+        return is_array($sections) ? $sections : [];
+    }
+
     protected function cardsGrid(array $cards): Grid
     {
         return Grid::make([
@@ -95,6 +178,16 @@ class Help extends Page
         return $this->services() !== [];
     }
 
+    public function hasGuides(): bool
+    {
+        return $this->guides() !== [];
+    }
+
+    public function hasUserGuide(): bool
+    {
+        return $this->guideCategories() !== [];
+    }
+
     public function hasResources(): bool
     {
         return $this->resources() !== [];
@@ -114,7 +207,7 @@ class Help extends Page
      */
     public function hasAnyContent(): bool
     {
-        return $this->hasServices() || $this->hasResources() || filled($this->contactUrl());
+        return $this->hasGuides() || $this->hasServices() || $this->hasResources() || filled($this->contactUrl());
     }
 
     protected function services(): array
