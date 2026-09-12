@@ -50,6 +50,7 @@ class AdminPanelProvider extends PanelProvider
             ->unsavedChangesAlerts()
             ->topNavigation()
             ->maxContentWidth(Width::Full)
+            ->simplePageMaxContentWidth(Width::Medium)
             ->databaseNotifications()
             ->databaseNotificationsPolling('30s')
             ->userMenuItems([
