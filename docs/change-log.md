@@ -8,6 +8,75 @@ for the task/question log this change log is paired with.
 
 ---
 
+## 2026-09-14 (mobile experience, steps 1-3)
+
+A static audit (the app could not be opened at phone width here) found three
+causes. What was already fine was left alone: table repeaters already turn into
+cards, report tables already scroll, and form grids already stack.
+
+### 1. Grid cards jumped when tapped
+
+`support/resources/css/grid-layout.css` - card lift, image zoom and icon scale
+were bare `:hover` rules. Touch browsers apply `:hover` on tap and keep it
+applied, so a tapped card jumped 4px and stayed lifted. The rules now sit inside
+`@media (hover: hover) and (pointer: fine)`. There is no change on desktop.
+
+`support.css` was rebuilt with the project-root command. **The committed
+`resources/dist/support.css` was itself a broken plugin-directory build (238
+selectors, 56KB)**; the rebuild has 505. `public/css/support/support.css` (the
+copy actually served) was compared selector-by-selector against the one in git:
+the only two classes it lost, `border-white/40` and `hover:bg-white/10`, occur
+nowhere in current source.
+
+### 2. Installable from the home screen
+
+- `public/manifest.webmanifest`, plus icons in `public/images/icons/`
+  (192/512 "any", 512 "maskable" with safe-zone padding, 180 apple-touch),
+  rendered from `public/images/logo.svg` with `rsvg-convert`/Imagick in the
+  Sail image.
+- `resources/views/filament/components/web-app-meta.blade.php`, injected at
+  `PanelsRenderHook::HEAD_END` in `AdminPanelProvider` (so it covers the login page).
+- `display` is **`minimal-ui`, not `standalone`**, on purpose: this panel opens
+  PDFs and downloads, and a chromeless app has no back button to leave them.
+  For the same reason there is no `apple-mobile-web-app-capable` tag. On iOS
+  the icon opens a Safari tab.
+- Admin panel only. The customer portal has a different start URL and was not
+  changed.
+
+### 3. List tables showed 9-11 columns on a phone
+
+None of the 221 tables used responsive visibility. For the 13 widest lists,
+3-4 key columns (number, partner, total/qty, status) always show; the rest
+get `->visibleFrom('sm'|'md'|'lg')`. **Every column is visible from 1024px up, so
+desktop is unchanged.** Columns hidden by default were not touched.
+Files: accounts `InvoiceResource` (covers invoices and credit notes in every
+cluster), `BillResource` (bills and refunds), `PaymentResource`; accounting
+`JournalItemResource`; inventories `QuantityResource`, `ScrapResource`,
+`OperationsTable`, and both `ManageMoves` pages; purchases `OrderResource`;
+sales `QuotationResource`; manufacturing `ManufacturingOrderResource`;
+projects `TaskResource`.
+
+**Root-cause fix that step 3 depends on:** Filament's summary (totals) row does
+not apply `visibleFrom`/`hiddenFrom` to its cells, and folds leading columns
+into its heading colspan, so on tables with totals the sums would have landed
+under the wrong columns. Overridden in
+`resources/views/vendor/filament-tables/components/summary/row.blade.php`
+(copied from Filament v5.7.3, changes marked `DEKA`): cells carry their
+column's responsive classes, and the colspan stops at the first responsive
+column. **Re-diff this file when upgrading Filament.**
+
+### Verification
+
+- `php -l` on all 13 edited PHP files (Sail image): clean.
+- New test `InvoiceResourceTest` › "hides summary cells together with the columns
+  hidden on narrow screens". It asserts the summary row has no colspan and
+  carries `md:`/`lg:fi-visible`; against the vendor view it would fail.
+- Passed: that test, plus the invoice, bill and quotation list tests (4/4).
+- Not verified: rendering on a real phone. Check at 390px in devtools and
+  install from Android Chrome after deploy.
+
+---
+
 ## 2026-09-04 (every suite run - 2479 tests passed)
 
 `AccountingFeature`, `ProjectFeature`, `ProductFeature`: **381 passed, 805

@@ -30,6 +30,7 @@ class OperationsTable
             ->columns([
                 IconColumn::make('is_favorite')
                     ->label(__('inventories::filament/clusters/operations/resources/operation.table.columns.favorite'))
+                    ->visibleFrom('md')
                     ->icon(fn (Operation $record): string => $record->is_favorite ? 'heroicon-s-star' : 'heroicon-o-star')
                     ->color(fn (Operation $record): string => $record->is_favorite ? 'warning' : 'gray')
                     ->action(function (Operation $record): void {
@@ -63,6 +64,7 @@ class OperationsTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('scheduled_at')
                     ->label(__('inventories::filament/clusters/operations/resources/operation.table.columns.scheduled-at'))
+                    ->visibleFrom('md')
                     ->placeholder('—')
                     ->dateTime()
                     ->sortable(),
@@ -80,6 +82,7 @@ class OperationsTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('origin')
                     ->label(__('inventories::filament/clusters/operations/resources/operation.table.columns.source-document'))
+                    ->visibleFrom('lg')
                     ->placeholder('—')
                     ->searchable()
                     ->sortable(),
@@ -89,6 +92,7 @@ class OperationsTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('company.name')
                     ->label(__('inventories::filament/clusters/operations/resources/operation.table.columns.company'))
+                    ->visibleFrom('lg')
                     ->placeholder('—')
                     ->sortable(),
                 TextColumn::make('state')

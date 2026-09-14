@@ -30,12 +30,31 @@
         transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
         box-shadow 0.2s ease,
         border-color 0.2s ease;
+}
 
-    &:hover {
+/*
+ * Hover feedback only for devices that can actually hover. Touch browsers
+ * emulate :hover on tap and keep it applied until the next tap elsewhere, so
+ * unguarded, a tapped card jumps 4px and stays lifted and zoomed while the
+ * record page loads - or indefinitely if the tap opened a modal instead.
+ */
+@media (hover: hover) and (pointer: fine) {
+    .fi-ta-record.fi-clickable:hover {
         @apply border-primary-600 dark:border-primary-400;
 
         transform: translateY(-4px);
         box-shadow: 0 12px 24px -10px rgb(0 0 0 / 0.1);
+    }
+
+    .fi-ta-record.fi-clickable:hover img,
+    .fi-ta-record.fi-clickable:hover .fi-ta-image img,
+    .fi-ta-record.fi-clickable:hover [class*="avatar"] img,
+    .fi-ta-record.fi-clickable:hover [class*="thumbnail"] img {
+        transform: scale(1.05);
+    }
+
+    .fi-ta-record.fi-clickable:hover .fi-ta-icon svg {
+        transform: scale(1.05);
     }
 }
 

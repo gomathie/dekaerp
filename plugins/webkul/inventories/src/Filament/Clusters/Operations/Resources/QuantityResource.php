@@ -148,6 +148,7 @@ class QuantityResource extends Resource
             ->columns([
                 TextColumn::make('location.full_name')
                     ->label(__('inventories::filament/clusters/operations/resources/quantity.table.columns.location'))
+                    ->visibleFrom('sm')
                     ->searchable()
                     ->sortable()
                     ->visible(static::getWarehouseSettings()->enable_locations),
@@ -169,12 +170,14 @@ class QuantityResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('lot.name')
                     ->label(__('inventories::filament/clusters/operations/resources/quantity.table.columns.lot'))
+                    ->visibleFrom('md')
                     ->searchable()
                     ->sortable()
                     ->placeholder('—')
                     ->visible(static::getTraceabilitySettings()->enable_lots_serial_numbers),
                 TextColumn::make('package.name')
                     ->label(__('inventories::filament/clusters/operations/resources/quantity.table.columns.package'))
+                    ->visibleFrom('md')
                     ->searchable()
                     ->sortable()
                     ->placeholder('—')
@@ -189,6 +192,7 @@ class QuantityResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('product.uom.name')
                     ->label(__('inventories::filament/clusters/operations/resources/quantity.table.columns.uom'))
+                    ->visibleFrom('sm')
                     ->sortable()
                     ->placeholder('—')
                     ->toggleable(isToggledHiddenByDefault: false)
@@ -213,16 +217,19 @@ class QuantityResource extends Resource
                     }),
                 TextColumn::make('inventory_diff_quantity')
                     ->label(__('inventories::filament/clusters/operations/resources/quantity.table.columns.difference'))
+                    ->visibleFrom('sm')
                     ->sortable()
                     ->formatStateUsing(fn ($record) => $record->inventory_quantity_set ? $record->inventory_diff_quantity : '')
                     ->color(fn ($record) => $record->inventory_diff_quantity > 0 ? 'success' : 'danger'),
                 TextColumn::make('scheduled_at')
                     ->label(__('inventories::filament/clusters/operations/resources/quantity.table.columns.scheduled-at'))
+                    ->visibleFrom('lg')
                     ->sortable()
                     ->date()
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('user.name')
                     ->label(__('inventories::filament/clusters/operations/resources/quantity.table.columns.user'))
+                    ->visibleFrom('lg')
                     ->sortable()
                     ->placeholder('—')
                     ->toggleable(isToggledHiddenByDefault: false),

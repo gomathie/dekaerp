@@ -287,6 +287,7 @@ class PaymentResource extends Resource
             ->columns(static::mergeCustomTableColumns([
                 TextColumn::make('date')
                     ->label(__('accounts::filament/resources/payment.table.columns.date'))
+                    ->visibleFrom('sm')
                     ->placeholder('-')
                     ->date()
                     ->sortable(),
@@ -297,10 +298,12 @@ class PaymentResource extends Resource
                     ->sortable(),
                 TextColumn::make('journal.name')
                     ->label(__('accounts::filament/resources/payment.table.columns.journal'))
+                    ->visibleFrom('md')
                     ->placeholder('-')
                     ->sortable(),
                 TextColumn::make('paymentMethod.name')
                     ->label(__('accounts::filament/resources/payment.table.columns.payment-method'))
+                    ->visibleFrom('lg')
                     ->placeholder('-')
                     ->sortable(),
                 TextColumn::make('partner.name')
@@ -309,6 +312,7 @@ class PaymentResource extends Resource
                     ->sortable(),
                 TextColumn::make('amount_company_currency_signed')
                     ->label(__('accounts::filament/resources/payment.table.columns.amount-currency'))
+                    ->visibleFrom('lg')
                     ->placeholder('-')
                     ->sortable()
                     ->money(fn (Payment $record) => $record->company?->currency_code, true),

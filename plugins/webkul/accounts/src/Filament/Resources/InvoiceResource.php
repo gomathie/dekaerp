@@ -454,12 +454,14 @@ class InvoiceResource extends Resource
                 TextColumn::make('state')
                     ->placeholder('-')
                     ->label(__('accounts::filament/resources/invoice.table.columns.state'))
+                    ->visibleFrom('sm')
                     ->sortable()
                     ->badge()
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('creator.name')
                     ->placeholder('-')
                     ->label(__('accounts::filament/resources/invoice.table.columns.created-by'))
+                    ->visibleFrom('lg')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('invoice_partner_display_name')
@@ -471,6 +473,7 @@ class InvoiceResource extends Resource
                     ->date()
                     ->placeholder('-')
                     ->label(__('accounts::filament/resources/invoice.table.columns.invoice-date'))
+                    ->visibleFrom('md')
                     ->sortable(),
                 TextColumn::make('invoice_date_due')
                     ->state(function ($record) {
@@ -509,9 +512,11 @@ class InvoiceResource extends Resource
                     })
                     ->placeholder('-')
                     ->label(__('accounts::filament/resources/invoice.table.columns.due-date'))
+                    ->visibleFrom('sm')
                     ->sortable(),
                 TextColumn::make('amount_untaxed_in_currency_signed')
                     ->label(__('accounts::filament/resources/invoice.table.columns.tax-excluded'))
+                    ->visibleFrom('lg')
                     ->searchable()
                     ->placeholder('-')
                     ->sortable()
@@ -520,6 +525,7 @@ class InvoiceResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('amount_tax_signed')
                     ->label(__('accounts::filament/resources/invoice.table.columns.tax'))
+                    ->visibleFrom('lg')
                     ->searchable()
                     ->placeholder('-')
                     ->sortable()
@@ -536,6 +542,7 @@ class InvoiceResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('amount_residual_signed')
                     ->label(__('accounts::filament/resources/invoice.table.columns.amount-due'))
+                    ->visibleFrom('md')
                     ->searchable()
                     ->placeholder('-')
                     ->sortable()

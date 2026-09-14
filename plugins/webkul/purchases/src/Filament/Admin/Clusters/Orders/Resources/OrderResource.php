@@ -365,6 +365,7 @@ class OrderResource extends Resource
             ->columns(static::mergeCustomTableColumns([
                 IconColumn::make('priority')
                     ->label(__('purchases::filament/admin/clusters/orders/resources/order.table.columns.favorite'))
+                    ->visibleFrom('md')
                     ->icon(fn (Order $record): string => $record->priority ? 'heroicon-s-star' : 'heroicon-o-star')
                     ->color(fn (Order $record): string => $record->priority ? 'warning' : 'gray')
                     ->action(function (Order $record): void {
@@ -391,27 +392,32 @@ class OrderResource extends Resource
                     ->toggleable(),
                 TextColumn::make('company.name')
                     ->label(__('purchases::filament/admin/clusters/orders/resources/order.table.columns.company'))
+                    ->visibleFrom('lg')
                     ->sortable()
                     ->placeholder('—')
                     ->toggleable(),
                 TextColumn::make('user.name')
                     ->label(__('purchases::filament/admin/clusters/orders/resources/order.table.columns.buyer'))
+                    ->visibleFrom('lg')
                     ->sortable()
                     ->placeholder('—')
                     ->toggleable(),
                 TextColumn::make('ordered_at')
                     ->label(__('purchases::filament/admin/clusters/orders/resources/order.table.columns.order-deadline'))
+                    ->visibleFrom('md')
                     ->sortable()
                     ->placeholder('—')
                     ->toggleable(),
                 TextColumn::make('origin')
                     ->label(__('purchases::filament/admin/clusters/orders/resources/order.table.columns.source-document'))
+                    ->visibleFrom('lg')
                     ->searchable()
                     ->sortable()
                     ->placeholder('—')
                     ->toggleable(),
                 TextColumn::make('untaxed_amount')
                     ->label(__('purchases::filament/admin/clusters/orders/resources/order.table.columns.untaxed-amount'))
+                    ->visibleFrom('lg')
                     ->sortable()
                     ->money(fn (Order $record) => $record->currency?->name)
                     ->toggleable(),

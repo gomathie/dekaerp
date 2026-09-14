@@ -15,6 +15,7 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -53,6 +54,10 @@ class AdminPanelProvider extends PanelProvider
             ->simplePageMaxContentWidth(Width::Medium)
             ->databaseNotifications()
             ->databaseNotificationsPolling('30s')
+            ->renderHook(
+                PanelsRenderHook::HEAD_END,
+                fn () => view('filament.components.web-app-meta'),
+            )
             ->userMenuItems([
                 'profile' => Action::make('profile')
                     ->label(fn () => Auth::user()?->name)

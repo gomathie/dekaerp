@@ -290,6 +290,7 @@ class TaskResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('priority')
                     ->label(__('projects::filament/resources/task.table.columns.priority'))
+                    ->visibleFrom('md')
                     ->icon(fn (Task $record): string => $record->priority ? 'heroicon-s-star' : 'heroicon-o-star')
                     ->color(fn (Task $record): string => $record->priority ? 'warning' : 'gray')
                     ->action(function (Task $record): void {
@@ -329,6 +330,7 @@ class TaskResource extends Resource
                     ->toggleable(),
                 TextColumn::make('project.name')
                     ->label(__('projects::filament/resources/task.table.columns.project'))
+                    ->visibleFrom('sm')
                     ->hiddenOn(ManageTasks::class)
                     ->searchable()
                     ->sortable()
@@ -347,6 +349,7 @@ class TaskResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('users.name')
                     ->label(__('projects::filament/resources/task.table.columns.assignees'))
+                    ->visibleFrom('md')
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
@@ -374,6 +377,7 @@ class TaskResource extends Resource
                     ->visible(static::getTimeSettings()->enable_timesheets),
                 TextColumn::make('total_hours_spent')
                     ->label(__('projects::filament/resources/task.table.columns.time-spent'))
+                    ->visibleFrom('lg')
                     ->sortable()
                     ->toggleable()
                     ->numeric()
@@ -420,16 +424,19 @@ class TaskResource extends Resource
                     ->visible(static::getTimeSettings()->enable_timesheets),
                 ProgressBarEntry::make('progress')
                     ->label(__('projects::filament/resources/task.table.columns.progress'))
+                    ->visibleFrom('md')
                     ->sortable()
                     ->toggleable()
                     ->color(fn (Task $record): string => $record->progress > 100 ? 'danger' : ($record->progress < 100 ? 'warning' : 'success'))
                     ->visible(static::getTimeSettings()->enable_timesheets),
                 TextColumn::make('deadline')
                     ->label(__('projects::filament/resources/task.table.columns.deadline'))
+                    ->visibleFrom('sm')
                     ->sortable()
                     ->toggleable(),
                 TextColumn::make('tags.name')
                     ->label(__('projects::filament/resources/task.table.columns.tags'))
+                    ->visibleFrom('lg')
                     ->badge()
                     ->state(function (Task $record): array {
                         return $record->tags->map(fn ($tag) => [

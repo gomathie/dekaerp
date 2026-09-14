@@ -434,6 +434,7 @@ class ManufacturingOrderResource extends Resource
                     ->searchable(),
                 TextColumn::make('started_at')
                     ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.start'))
+                    ->visibleFrom('md')
                     ->dateTime()
                     ->placeholder('—'),
                 TextColumn::make('finished_at')
@@ -460,6 +461,7 @@ class ManufacturingOrderResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('origin')
                     ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.source'))
+                    ->visibleFrom('lg')
                     ->placeholder('—')
                     ->searchable(),
                 TextColumn::make('assignedUser.name')
@@ -468,6 +470,7 @@ class ManufacturingOrderResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('reservation_state')
                     ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.mo-readiness'))
+                    ->visibleFrom('md')
                     ->badge()
                     ->placeholder('—'),
                 TextColumn::make('components_availability')
@@ -485,9 +488,11 @@ class ManufacturingOrderResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('quantity')
                     ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.quantity'))
+                    ->visibleFrom('sm')
                     ->numeric(decimalPlaces: 4),
                 TextColumn::make('uom.name')
                     ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.uom'))
+                    ->visibleFrom('sm')
                     ->placeholder('—'),
                 TextColumn::make('consumption_efficiency')
                     ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.consumption-efficiency'))
@@ -503,6 +508,7 @@ class ManufacturingOrderResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('company.name')
                     ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.company'))
+                    ->visibleFrom('lg')
                     ->placeholder('—'),
                 TextColumn::make('state')
                     ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.state'))

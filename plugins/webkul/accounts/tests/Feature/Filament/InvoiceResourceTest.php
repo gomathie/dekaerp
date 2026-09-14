@@ -51,6 +51,25 @@ it('lists invoices with their key columns for authorized users', function () {
         ->assertCanRenderTableColumn('state');
 });
 
+it('hides summary cells together with the columns hidden on narrow screens', function () {
+    FilamentHelper::actingAs(['view_any_account_invoice']);
+
+    $invoice = AccountHelper::invoice(MoveType::OUT_INVOICE);
+    AccountHelper::productLine($invoice, AccountHelper::account('income'), qty: 2, priceUnit: 100);
+    AccountHelper::compute($invoice);
+
+    $html = Livewire::test(ListInvoices::class)->assertOk()->html();
+
+    expect(preg_match('/<tr[^>]*fi-ta-summary-row[^>]*>(.*?)<\/tr>/s', $html, $summaryRow))->toBe(1);
+
+    // State, created-by and the dates hide on phones, so the "Summary" heading must not span
+    // them; and the totals of amount due (md) and untaxed/tax (lg) must hide with their columns.
+    expect($summaryRow[1])
+        ->not->toContain('colspan')
+        ->toContain('md:fi-visible')
+        ->toContain('lg:fi-visible');
+});
+
 it('renders the invoice create page', function () {
     FilamentHelper::actingAs(['view_any_account_invoice', 'create_account_invoice']);
 

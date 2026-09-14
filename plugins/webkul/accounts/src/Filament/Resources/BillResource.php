@@ -425,6 +425,7 @@ class BillResource extends Resource
                 TextColumn::make('state')
                     ->placeholder('-')
                     ->label(__('accounts::filament/resources/bill.table.columns.state'))
+                    ->visibleFrom('sm')
                     ->sortable()
                     ->badge()
                     ->toggleable(isToggledHiddenByDefault: false),
@@ -437,6 +438,7 @@ class BillResource extends Resource
                     ->date()
                     ->placeholder('-')
                     ->label(__('accounts::filament/resources/bill.table.columns.bill-date'))
+                    ->visibleFrom('md')
                     ->sortable(),
                 TextColumn::make('invoice_date_due')
                     ->state(function ($record) {
@@ -475,9 +477,11 @@ class BillResource extends Resource
                     })
                     ->placeholder('-')
                     ->label(__('accounts::filament/resources/bill.table.columns.due-date'))
+                    ->visibleFrom('sm')
                     ->sortable(),
                 TextColumn::make('amount_untaxed_in_currency_signed')
                     ->label(__('accounts::filament/resources/bill.table.columns.tax-excluded'))
+                    ->visibleFrom('lg')
                     ->searchable()
                     ->placeholder('-')
                     ->sortable()
@@ -486,6 +490,7 @@ class BillResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('amount_tax_signed')
                     ->label(__('accounts::filament/resources/bill.table.columns.tax'))
+                    ->visibleFrom('lg')
                     ->searchable()
                     ->placeholder('-')
                     ->sortable()
@@ -502,6 +507,7 @@ class BillResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('amount_residual_signed')
                     ->label(__('accounts::filament/resources/bill.table.columns.amount-due'))
+                    ->visibleFrom('md')
                     ->searchable()
                     ->placeholder('-')
                     ->sortable()

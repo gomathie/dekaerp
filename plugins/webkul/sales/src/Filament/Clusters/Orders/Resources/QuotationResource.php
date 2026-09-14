@@ -374,6 +374,7 @@ class QuotationResource extends Resource
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label(__('sales::filament/clusters/orders/resources/quotation.table.columns.creation-date'))
+                    ->visibleFrom('md')
                     ->placeholder('-')
                     ->date()
                     ->toggleable()
@@ -386,6 +387,7 @@ class QuotationResource extends Resource
                     ->sortable(),
                 TextColumn::make('user.name')
                     ->label(__('sales::filament/clusters/orders/resources/quotation.table.columns.sales-person'))
+                    ->visibleFrom('lg')
                     ->placeholder('-')
                     ->toggleable()
                     ->sortable(),

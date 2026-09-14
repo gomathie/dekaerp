@@ -32,6 +32,12 @@ data, a public repo. Nothing here is a sandbox.
    The app cannot be exercised locally (PHP 8.4 / database), so static
    verification and the Pest suite are the only gates before live data.
 
+**Vendor view overrides to re-diff on every Filament upgrade:**
+`resources/views/vendor/filament-panels/livewire/{sidebar,topbar}.blade.php`
+and `resources/views/vendor/filament-tables/components/summary/row.blade.php`
+(responsive summary cells - see `docs/change-log.md`, 2026-09-14). A stale
+override silently keeps old vendor markup.
+
 ---
 
 ---

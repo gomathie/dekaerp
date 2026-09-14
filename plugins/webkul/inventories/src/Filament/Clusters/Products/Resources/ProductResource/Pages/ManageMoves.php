@@ -82,11 +82,13 @@ class ManageMoves extends ManageRelatedRecords
             ->columns([
                 TextColumn::make('product.name')
                     ->label(__('inventories::filament/clusters/products/resources/product/pages/manage-moves.table.columns.product'))
+                    ->visibleFrom('md')
                     ->sortable()
                     ->placeholder('—')
                     ->visible((bool) $this->getOwnerRecord()->is_configurable),
                 TextColumn::make('scheduled_at')
                     ->label(__('inventories::filament/clusters/products/resources/product/pages/manage-moves.table.columns.date'))
+                    ->visibleFrom('sm')
                     ->sortable()
                     ->dateTime(),
                 TextColumn::make('reference')
@@ -95,19 +97,23 @@ class ManageMoves extends ManageRelatedRecords
                     ->sortable(),
                 TextColumn::make('lot.name')
                     ->label(__('inventories::filament/clusters/products/resources/product/pages/manage-moves.table.columns.lot'))
+                    ->visibleFrom('lg')
                     ->sortable()
                     ->placeholder('—')
                     ->visible(static::getTraceabilitySettings()->enable_lots_serial_numbers && $this->getOwnerRecord()->tracking != ProductTracking::QTY),
                 TextColumn::make('resultPackage.name')
                     ->label(__('inventories::filament/clusters/products/resources/product/pages/manage-moves.table.columns.package'))
+                    ->visibleFrom('lg')
                     ->sortable()
                     ->placeholder('—')
                     ->visible(static::getOperationSettings()->enable_packages),
                 TextColumn::make('sourceLocation.full_name')
                     ->label(__('inventories::filament/clusters/products/resources/product/pages/manage-moves.table.columns.source-location'))
+                    ->visibleFrom('lg')
                     ->visible(static::getWarehouseSettings()->enable_locations),
                 TextColumn::make('destinationLocation.full_name')
                     ->label(__('inventories::filament/clusters/products/resources/product/pages/manage-moves.table.columns.destination-location'))
+                    ->visibleFrom('lg')
                     ->visible(static::getWarehouseSettings()->enable_locations),
                 TextColumn::make('uom_qty')
                     ->label(__('inventories::filament/clusters/products/resources/product/pages/manage-moves.table.columns.quantity'))
@@ -125,6 +131,7 @@ class ManageMoves extends ManageRelatedRecords
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('creator.name')
                     ->label(__('inventories::filament/clusters/products/resources/product/pages/manage-moves.table.columns.done-by'))
+                    ->visibleFrom('lg')
                     ->sortable(),
             ])
             ->recordActions([

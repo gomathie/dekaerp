@@ -300,6 +300,7 @@ class ScrapResource extends Resource
             ->columns([
                 TextColumn::make('closed_at')
                     ->label(__('inventories::filament/clusters/operations/resources/scrap.table.columns.date'))
+                    ->visibleFrom('sm')
                     ->sortable()
                     ->date(),
                 TextColumn::make('name')
@@ -312,22 +313,26 @@ class ScrapResource extends Resource
                     ->sortable(),
                 TextColumn::make('lot.name')
                     ->label(__('inventories::filament/clusters/operations/resources/scrap.table.columns.lot'))
+                    ->visibleFrom('md')
                     ->searchable()
                     ->sortable()
                     ->placeholder('—')
                     ->visible(static::getTraceabilitySettings()->enable_lots_serial_numbers),
                 TextColumn::make('package.name')
                     ->label(__('inventories::filament/clusters/operations/resources/scrap.table.columns.package'))
+                    ->visibleFrom('lg')
                     ->searchable()
                     ->sortable()
                     ->placeholder('—')
                     ->visible(static::getOperationSettings()->enable_packages),
                 TextColumn::make('sourceLocation.full_name')
                     ->label(__('inventories::filament/clusters/operations/resources/scrap.table.columns.source-location'))
+                    ->visibleFrom('lg')
                     ->sortable()
                     ->visible(static::getWarehouseSettings()->enable_locations),
                 TextColumn::make('destinationLocation.full_name')
                     ->label(__('inventories::filament/clusters/operations/resources/scrap.table.columns.scrap-location'))
+                    ->visibleFrom('lg')
                     ->sortable()
                     ->visible(static::getWarehouseSettings()->enable_locations),
                 TextColumn::make('qty')
