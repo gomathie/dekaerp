@@ -30,6 +30,19 @@
         transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
         box-shadow 0.2s ease,
         border-color 0.2s ease;
+
+    /*
+     * The hover lift below uses `transform`, which makes the card a stacking
+     * context: the record-actions dropdown inside it (Filament's
+     * `.fi-dropdown-panel`, z-index 20) can then only stack within the card,
+     * and the neighbouring card painted after it covers the open menu. Raising
+     * the card itself keeps the menu on top. `:focus-within` covers the menu
+     * being open from the keyboard or after the pointer has left the card.
+     */
+    &:hover,
+    &:focus-within {
+        z-index: 10;
+    }
 }
 
 /*
