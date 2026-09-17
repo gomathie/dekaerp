@@ -8,6 +8,113 @@ for the task/question log this change log is paired with.
 
 ---
 
+## 2026-09-17 (Logistics plugin: plan, starter kit, Foundation)
+
+Branch `feature/logistics`. Plan, decisions and handoffs: `docs/logistics-plan.md`.
+
+### Planning
+- Reviewed the user's Logistics prompt against the codebase, then wrote the
+  Phase 0 report and a package plan agents can work on in parallel.
+- Research refined the decisions: Odoo dispatch, fleet, expenses and freight
+  add-ons; ePOD practice; ERP cutover practice. All D1–D15 recommendations
+  were accepted.
+- Adoption design: install is global, so the plugin has its own per-company
+  switch.
+
+### WP-1a starter kit and WP-12 enum translations (weaker agent, reviewed)
+- `plugins/webkul/logistics/composer.json`, 10 enums with English labels, the
+  menu icon (`resources/svg/logistics.svg`, `public/svg/logistics.svg`), and
+  ar/es/fr/pt_BR translations of the enum labels.
+- Verified with host PHP: lint, a script checking enum values, transitions and
+  colours, and a translation parity script. The icon was reviewed from source
+  only.
+
+### WP-1 Foundation
+- **Tables (19, all new, `logistics_*`):** service/vehicle/package types and
+  expense categories (shared); company settings; drivers; vehicles; shipments
+  and lines; trips and the trip↔shipment pivot; stops; shipment events
+  (append-only); delivery proofs; stop links (token hash only); charges and
+  the charge↔tax pivot; expenses; the shipment↔invoice pivot. The only
+  foreign keys to other plugins' tables point at partners, employees,
+  products, currencies, units, users, companies and the accounts tables.
+  Optional integrations (sales order, maintenance equipment) are plain
+  indexed columns.
+- **Models (16)** use `BelongsToCompany`. Shared configuration models don't
+  auto-assign a company. Child rows use `InheritsParentCompany`: the company
+  comes from the parent on `saving`, and a mismatch throws. `Expense` refuses
+  links to another company's shipment, trip or vehicle. Shipment and trip
+  numbers come from per-company sequences (`LogisticsSequences` ensures the
+  company counter first).
+- **Per-company switch:** `logistics_company_settings.is_enabled`,
+  `LogisticsAccess` (a scoped singleton; `enabledFor`, `enabledForCurrent`,
+  `ensureEnabled`), and `CompanyProvisioner` (readiness report, sequences,
+  LOG-* service products, default journals; enable and disable, safe to
+  repeat).
+  - **Why not Spatie settings:** `CompanyAwareSettingsRepository` falls back to
+    the default company's row, which would have enabled Logistics for every
+    company without its own row.
+- **Policies:** `LogisticsPolicy` requires the permission and the switch
+  (listing and creating check the user's active companies; changes check the
+  record's company). `ConfigurationPolicy` doesn't depend on the switch, and
+  shared rows can only be changed by users who see all companies. Shipment
+  child records follow shipment permissions. The Shield config holds every
+  permission for later packages, with custom abilities inside
+  `resources.manage`.
+- **Uninstall:** `UninstallGuard` runs in `startWith` and refuses while any
+  shipment exists, unless `LOGISTICS_ALLOW_UNINSTALL_WITH_DATA=true`. It runs
+  in both the console command and the Plugins page. Chatter and sequences are
+  purged afterwards.
+- **UI:** a Logistics menu group, five clusters (the operational ones stay
+  hidden unless the switch is on), four configuration screens with a
+  shared-or-company field, and the settings page (Enable and Disable actions
+  with a readiness report).
+- **Seeders:** shared rows only, keyed by `code`, no fixed ids. Nothing is
+  created per company at install.
+- **Existing files changed:**
+  - `bootstrap/providers.php`: registers the provider.
+  - `phpunit.xml`: adds the `LogisticsFeature` suite.
+  - `plugins/webkul/support/src/Enums/NavigationGroup.php`: adds the Logistics
+    case and icon.
+  - `lang/{en,ar,es,fr,pt_BR}/admin.php`: menu label.
+- **Planned changes not needed:** `UninstallCommand`,
+  `CompanyAwareSettingsRepository`.
+
+### Verification
+- `php -l` is clean on all 191 plugin PHP files and the changed core files.
+- Autoloader regenerated in the Sail image (`--no-scripts`).
+- **`LogisticsFeature`: 30 passed (160 assertions)**, covering:
+  - install;
+  - migrations only create `logistics_*` tables;
+  - seeders can run twice;
+  - the uninstall guard and how it is wired;
+  - company-scoping invariants (16 models);
+  - policies and the switch;
+  - per-company numbering;
+  - child-company inheritance and mismatch refusal;
+  - append-only events;
+  - the adoption scenarios.
+- Screen render tests and the `SupportFeature` and `AccountFeature` regression
+  runs are recorded in the WP-1 handoff in `docs/logistics-plan.md`.
+
+### Environment fixes found while verifying
+- Port 5433 was held by another local project, so `docker compose up`
+  couldn't recreate pgsql and tests hung. Fix: `FORWARD_PGSQL_PORT=5436`.
+- `composer dump-autoload` with scripts hangs in a network-less container.
+  Fix: `--no-scripts`.
+
+---
+
+## 2026-09-17 (card-grid menus behind the next card)
+
+`plugins/webkul/support/resources/css/grid-layout.css`: the hover lift uses
+`transform`, which makes the hovered card its own stacking context. Filament
+cards are `position: relative` and paint in document order, so the next card
+covered the open "⋮" dropdown (z-index 20 only counts inside the card). A
+hovered or focused card now gets `z-index: 10`. `support.css` was rebuilt
+from the project root (506 selectors), and the public copy was updated.
+
+---
+
 ## 2026-09-14 (mobile experience, steps 1-3)
 
 A static audit (the app could not be opened at phone width here) found three

@@ -345,7 +345,7 @@ you claim a package, finish it, or get blocked.
 | WP-9b | Customer page integration (per D11) | WP-7 | WP-10 | todo (extension point only, else ask) | |
 | WP-10 | Dashboard widgets | WP-4, WP-5 | WP-9, WP-11 | todo | |
 | WP-11 | Reports | WP-4, WP-5, WP-7, WP-8b | WP-10 | todo | |
-| WP-12 | Translations ar/es/fr/pt_BR | each finished package | anything | in progress (foundation) | Codex 2026-09-17 |
+| WP-12 | Translations ar/es/fr/pt_BR | each finished package | anything | review (enums + foundation; rest waits for other packages) | Codex 2026-09-17 |
 | WP-13 | Hardening and release | all | — (runs alone) | todo | |
 
 ```
@@ -905,3 +905,92 @@ Requests for other packages:
 
 Unsure terms:
 - None.
+
+### WP-12 (foundation slice) - 2026-09-17 - Codex
+
+Files created:
+- 100 files: each of the following 25 paths was created under `plugins/webkul/logistics/resources/lang/{ar,es,fr,pt_BR}/`:
+  - `enums/capacity-check.php`
+  - `enums/expense-paid-by.php`
+  - `enums/proof-capture-channel.php`
+  - `exceptions.php`
+  - `filament/clusters/configurations.php`
+  - `filament/clusters/finance.php`
+  - `filament/clusters/fleet.php`
+  - `filament/clusters/operations.php`
+  - `filament/clusters/reporting.php`
+  - `filament/clusters/configurations/pages/manage-company-settings.php`
+  - `filament/clusters/configurations/resources/common.php`
+  - `filament/clusters/configurations/resources/expense-category.php`
+  - `filament/clusters/configurations/resources/package-type.php`
+  - `filament/clusters/configurations/resources/service-type.php`
+  - `filament/clusters/configurations/resources/vehicle-type.php`
+  - `models/driver.php`
+  - `models/expense-category.php`
+  - `models/expense.php`
+  - `models/package-type.php`
+  - `models/service-type.php`
+  - `models/shipment.php`
+  - `models/trip.php`
+  - `models/vehicle-type.php`
+  - `models/vehicle.php`
+  - `services/company-provisioner.php`
+
+Files modified:
+- `docs/logistics-plan.md`
+
+Migrations / tables:
+- None.
+
+Reused components:
+- Reused the WP-12 enum-slice terminology for shipment, trip, stop, delivery, pickup, transport and status labels.
+- Reused Accounting and Inventories terminology for company, settings, journal, account, vendor bill, customer, status, code and name.
+- Applied the supplied foundation glossary for clusters, configuration records, readiness and Logistics enable/disable actions.
+
+Tests added / results (command + pass count):
+- None added.
+- A) `Get-ChildItem plugins/webkul/logistics/resources/lang -Recurse -Filter *.php | ForEach-Object { php -l $_.FullName } | Select-String -NotMatch "^No syntax errors"; "lint-done"`
+  - Full output:
+    ```text
+    lint-done
+    ```
+- B) `php storage/app/wp12-lang-check.php`
+  - Full output:
+    ```text
+    English files: 35
+    warning: plugins/webkul/logistics/resources/lang/es/enums/shipment-priority.php: 'normal' identical to English ('Normal')
+    warning: plugins/webkul/logistics/resources/lang/pt_BR/enums/shipment-priority.php: 'normal' identical to English ('Normal')
+    warning: plugins/webkul/logistics/resources/lang/es/enums/transport-mode.php: 'multimodal' identical to English ('Multimodal')
+    warning: plugins/webkul/logistics/resources/lang/fr/enums/transport-mode.php: 'multimodal' identical to English ('Multimodal')
+    warning: plugins/webkul/logistics/resources/lang/pt_BR/enums/transport-mode.php: 'multimodal' identical to English ('Multimodal')
+    warning: plugins/webkul/logistics/resources/lang/pt_BR/filament/clusters/configurations/pages/manage-company-settings.php: 'sections.status' identical to English ('Status')
+    warning: plugins/webkul/logistics/resources/lang/fr/filament/clusters/configurations/resources/common.php: 'fields.code' identical to English ('Code')
+    warning: plugins/webkul/logistics/resources/lang/fr/filament/clusters/configurations/resources/common.php: 'columns.code' identical to English ('Code')
+    warning: plugins/webkul/logistics/resources/lang/fr/filament/clusters/configurations.php: 'navigation.title' identical to English ('Configuration')
+    warning: plugins/webkul/logistics/resources/lang/fr/filament/clusters/finance.php: 'navigation.title' identical to English ('Finance')
+    warning: plugins/webkul/logistics/resources/lang/pt_BR/models/expense.php: 'log-attributes.state' identical to English ('Status')
+    warning: plugins/webkul/logistics/resources/lang/pt_BR/models/shipment.php: 'log-attributes.state' identical to English ('Status')
+    warning: plugins/webkul/logistics/resources/lang/pt_BR/models/trip.php: 'log-attributes.state' identical to English ('Status')
+    OK (13 warnings)
+    ```
+  - Cleanup: deleted `storage/app/wp12-lang-check.php`.
+
+Warnings kept as-is:
+- Spanish and Brazilian Portuguese `Normal`, and Spanish, French and Brazilian Portuguese `Multimodal`, are the correct terms from the enum slice.
+- Brazilian Portuguese uses `Status`, matching the existing application terminology.
+- French uses `Code`, `Configuration` and `Finance`; these are the correct French terms and match the supplied glossary where applicable.
+
+Existing suites run / results:
+- None. This slice explicitly permits only `php -l` and the supplied standalone check script.
+
+Deviations from the plan:
+- The prompt expected `English files: 38`, but the source tree contains the 25 listed foundation files plus the 10 earlier enum files, for 35 total. No additional English source files exist to mirror. The supplied script reported `English files: 35` and exited successfully with `OK (13 warnings)`.
+
+Risks:
+- WP-1 remains in progress. Any English language files added after this handoff will need a later WP-12 slice.
+
+Requests for other packages:
+- Notify WP-12 if WP-1 adds English language files beyond the 25 translated here.
+
+Unsure terms:
+- `Dispatcher` had no supplied glossary entry. It was translated using transport-domain wording: `مسؤول الإرسال`, `Responsable de despacho`, `Agent d’exploitation` and `Responsável pelo despacho`; a native domain reviewer may standardize these if the product has a preferred role title.

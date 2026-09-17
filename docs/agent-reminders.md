@@ -38,7 +38,52 @@ and `resources/views/vendor/filament-tables/components/summary/row.blade.php`
 (responsive summary cells - see `docs/change-log.md`, 2026-09-14). A stale
 override silently keeps old vendor markup.
 
+**Project memory for agents** (traps, multi-company facts, recent work,
+references) is kept at the end of `AGENTS.md` under "DEKA ERP — PROJECT
+MEMORY". Update it when a session finds a new trap or finishes a significant
+piece of work.
+
+**Logistics plugin** work follows `docs/logistics-plan.md`: claim a package on
+its status board, touch only the files that package owns, and fill in the
+handoff log.
+
 ---
+
+## 2026-09-14 → 2026-09-17
+
+**Requested, in order:**
+- Mobile experience: what can be done, then steps 1-3 (details in
+  `docs/change-log.md`, 2026-09-14).
+- A prompt to build more languages, and a question about how French works.
+- Merge to production and push (done by fast-forward; see the
+  git-in-parallel lesson in `AGENTS.md`).
+- Fix the Plugins page "⋮" menu opening behind the next card.
+- Build a new plugin: review a Logistics prompt, produce a Phase 0 plan (page
+  and `docs/logistics-plan.md`), split it into packages for several agents,
+  consider companies that adopt Logistics later, refine the recommendations
+  with research, write prompts for a weaker agent (WP-1a, WP-12 enums, WP-12
+  foundation), accept all decisions D1–D15, then build WP-1 Foundation.
+- Record what was done, the fixes and the references in `AGENTS.md` and the docs.
+
+**Answers and decisions worth keeping:**
+- Plugin installation is global. Per-company use of Logistics is a switch in the
+  plugin's own `logistics_company_settings` table (default off), not a Spatie
+  settings group, because that repository falls back to the default company's
+  values.
+- The uninstall guard lives in the plugin (`UninstallGuard` via
+  `UninstallCommand::startWith`); no plugin-manager change was needed.
+  Override: `LOGISTICS_ALLOW_UNINSTALL_WITH_DATA=true`.
+- Service types store a product *reference* (`LOG-*`), and expense categories
+  carry no account; the expense account is per company in the settings table.
+- Branch for the plugin: `feature/logistics`. The user commits each package
+  after review.
+
+**Open items:**
+- WP-1 regression runs (`SupportFeature`, `AccountFeature`) and the WP-1
+  handoff; see the status board in `docs/logistics-plan.md`.
+- The Logistics icon has never been rendered in the browser; check it on the
+  Plugins page after installing.
+- The WP-12 foundation-slice translations were handed to the weaker agent.
 
 ---
 
