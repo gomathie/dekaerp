@@ -331,7 +331,7 @@ you claim a package, finish it, or get blocked.
 | --- | --- | --- | --- | --- | --- |
 | WP-0 | Decisions D1–D15 | — | — | done | user (all recommendations accepted 2026-09-17) |
 | WP-1a | Starter kit: composer.json, enums, icon (easy) | — | WP-0 | review | Codex 2026-09-17 |
-| WP-1 | Foundation | WP-0, WP-1a | — (runs alone) | in progress | Claude 2026-09-17 |
+| WP-1 | Foundation | WP-0, WP-1a | — (runs alone) | review (regression run pending) | Claude 2026-09-17 |
 | WP-2 | Shipments and workflow | WP-1 | WP-3, WP-8a | todo | |
 | WP-3 | Vehicles and drivers | WP-1 | WP-2, WP-8a | todo | |
 | WP-4 | Trips and dispatch board | WP-2, WP-3 | WP-5, WP-6, WP-7 | todo | |
@@ -994,3 +994,80 @@ Requests for other packages:
 
 Unsure terms:
 - `Dispatcher` had no supplied glossary entry. It was translated using transport-domain wording: `مسؤول الإرسال`, `Responsable de despacho`, `Agent d’exploitation` and `Responsável pelo despacho`; a native domain reviewer may standardize these if the product has a preferred role title.
+
+> Reviewer note (Claude, 2026-09-17): the "English files: 38" expectation in the
+> foundation-slice prompt was my counting error; 35 (25 + 10 enums) is correct.
+
+### WP-1 - Foundation - 2026-09-17 - Claude
+
+Files created (plugins/webkul/logistics/):
+- `config/logistics.php`, `config/filament-shield.php`
+- `database/migrations/2026_10_01_000001` … `000019` (19 `create_logistics_*_table`)
+- `database/seeders/` (DatabaseSeeder + service, vehicle, package types, expense categories)
+- `database/factories/` (12 factories)
+- `src/LogisticsServiceProvider.php`, `src/LogisticsPlugin.php`
+- `src/Enums/{ExpensePaidBy,ProofCaptureChannel,CapacityCheck}.php`
+- `src/Exceptions/{LogisticsNotEnabledException,CompanyMismatchException,UninstallBlockedException}.php`
+- `src/Models/` (16 models + `Concerns/InheritsParentCompany.php`)
+- `src/Policies/` (LogisticsPolicy, ConfigurationPolicy, ShipmentChildPolicy + 15 model policies)
+- `src/Services/CompanyProvisioner.php`
+- `src/Support/{LogisticsAccess,LogisticsSequences,UninstallGuard}.php`
+- `src/Filament/Clusters/{Operations,Fleet,Finance,Reporting,Configurations}.php`
+- `src/Filament/Clusters/Configurations/Resources/` (4 resources + manage pages + `Concerns/ConfiguresCompanyScope.php`)
+- `src/Filament/Clusters/Configurations/Pages/ManageCompanySettings.php`
+- `resources/lang/en/` (exceptions, 3 enums, 9 models, 5 clusters, 5 configuration resources, settings page, provisioner), `resources/views/.gitkeep`
+- `tests/Helpers/LogisticsHelper.php`, `tests/Feature/Foundation/{Install,CompanyScopingInvariants,Policy,RecordIntegrity,Screens}Test.php`, `tests/Feature/Adoption/AdoptionTest.php`
+
+Files modified:
+- `bootstrap/providers.php` (register the provider)
+- `phpunit.xml` (`LogisticsFeature` suite)
+- `plugins/webkul/support/src/Enums/NavigationGroup.php` (`Logistics` case + `icon-logistics`)
+- `lang/{en,ar,es,fr,pt_BR}/admin.php` (`navigation.logistics`)
+- `docs/logistics-plan.md`, `docs/change-log.md`, `docs/agent-reminders.md`, `AGENTS.md`
+
+Migrations / tables: the 19 `logistics_*` tables in section 2. No existing table is altered.
+
+Reused components: BelongsToCompany/CompanyScope/CompanyContext, SequenceService,
+HasChatter/HasLogActivity, HasCustomFields, Shield + PermissionManager naming,
+PackageServiceProvider install/uninstall hooks, Partner/Employee/Product/Journal/
+Account/Tax/Move models, test helpers (TestBootstrapHelper, CompanyHelper,
+FilamentHelper, CompanyScopeHelper).
+
+Tests added / results:
+- `php artisan test --testsuite=LogisticsFeature`: **30 passed (160 assertions)**
+- `--filter=ScreensTest` (added after): **8 passed (21 assertions)**
+- `php -l`: clean on all plugin PHP files and the changed core files.
+
+Existing suites run / results: `SupportFeature` and `AccountFeature` are running;
+results will be added below.
+
+Deviations from the plan (all documented in sections 2, 2a and 3.3):
+- The per-company switch and settings are a plugin table
+  (`logistics_company_settings`), not a company-scoped Spatie group
+  (CompanyAwareSettingsRepository falls back to the default company).
+  `CompanyAwareSettingsRepository` is unchanged.
+- The uninstall guard uses the existing `startWith` hook; `UninstallCommand`
+  is unchanged. Override: `LOGISTICS_ALLOW_UNINSTALL_WITH_DATA`.
+- `service_types.product_reference` replaces `default_product_id`. Expense
+  categories have no account (`default_expense_account_id` is in company
+  settings). `expense_categories.is_subcontracting` was added.
+- New enum `CapacityCheck`. The menu label lives in `lang/*/admin.php`, not a
+  support enum language file.
+- No `CompanyObserver`, because D12 = off.
+- Operational clusters exist but stay out of the menu until their packages add
+  screens (Filament hides clusters with no accessible components).
+
+Risks:
+- The super-admin `Gate::before` bypass skips policies. WP-2+ services must call
+  `LogisticsAccess::ensureEnabled()` themselves.
+- Shield permission rows for later resources are generated when those resources
+  exist (install or `shield:generate`), not now.
+- Production: deploy, then install from the Plugins page, then run the Supabase
+  advisor on the new `public.logistics_*` tables (section 2a checklist).
+
+Requests for other packages:
+- WP-12: new English files added after this handoff need translating (none
+  beyond the 25 so far).
+- WP-2 onward: use `LogisticsHelper` (install, company, enable, disable,
+  shipment) in tests, and put resources under the FQCNs already listed in
+  `config/filament-shield.php`.
