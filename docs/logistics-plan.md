@@ -503,8 +503,10 @@ the query count in a test).
 
 **Depends on:** WP-1. **Can run alongside:** WP-2, WP-8a.
 
-**Owns:** `src/Filament/Clusters/Fleet/Resources/{VehicleResource,DriverResource}/**`,
-the matching `resources/lang/en/...` files, `tests/Feature/Fleet/*`.
+**Owns:** `src/Filament/Clusters/Fleet/Resources/{VehicleResource,DriverResource}.php`,
+`src/Filament/Clusters/Fleet/Resources/{VehicleResource,DriverResource}/**`,
+`src/Services/FleetImporter.php`,
+`resources/lang/en/filament/clusters/fleet/**`, `tests/Feature/Fleet/*`.
 
 **Steps**
 1. Vehicle resource: ownership, type, capacity, carrier (for third-party ownership), optional Maintenance equipment select shown only when `Package::isPluginInstalled('maintenance')`, and the telematics device reference.
