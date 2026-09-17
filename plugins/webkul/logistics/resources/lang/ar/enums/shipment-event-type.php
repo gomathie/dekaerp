@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'created'             => 'تم الإنشاء',
+    'confirmed'           => 'مؤكد',
+    'driver_assigned'     => 'تم تعيين السائق',
+    'vehicle_assigned'    => 'تم تعيين المركبة',
+    'trip_assigned'       => 'تم تعيين الرحلة',
+    'dispatched'          => 'تم الإرسال',
+    'pickup_started'      => 'بدأ الاستلام',
+    'picked_up'           => 'تم الاستلام',
+    'departed_origin'     => 'غادرت نقطة الانطلاق',
+    'in_transit'          => 'قيد النقل',
+    'arrived_destination' => 'وصلت إلى الوجهة',
+    'out_for_delivery'    => 'خرجت للتسليم',
+    'delivered'           => 'تم التسليم',
+    'delivery_failed'     => 'فشل التسليم',
+    'delivery_retried'    => 'تمت إعادة محاولة التسليم',
+    'returned'            => 'مُرتجع',
+    'put_on_hold'         => 'تم التعليق',
+    'released'            => 'تم رفع التعليق',
+    'cancelled'           => 'ملغى',
+    'pod_captured'        => 'تم التقاط إثبات التسليم',
+    'invoice_created'     => 'تم إنشاء الفاتورة',
+    'position_update'     => 'تحديث الموقع',
+];

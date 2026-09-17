@@ -9,6 +9,7 @@ return [
         'invoice'       => 'Facturas',
         'accounting'    => 'Contabilidad',
         'inventory'     => 'Inventario',
+        'logistics'     => 'Logística',
         'maintenance'   => 'Mantenimiento',
         'manufacturing' => 'Fabricación',
         'project'       => 'Proyecto',

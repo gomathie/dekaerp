@@ -9,6 +9,7 @@ return [
         'invoice'       => 'Invoices',
         'accounting'    => 'Accounting',
         'inventory'     => 'Inventory',
+        'logistics'     => 'Logistics',
         'maintenance'   => 'Maintenance',
         'manufacturing' => 'Manufacturing',
         'project'       => 'Project',

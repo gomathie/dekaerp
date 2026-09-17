@@ -9,6 +9,7 @@ return [
         'invoice'       => 'الفواتير',
         'accounting'    => 'المحاسبة',
         'inventory'     => 'المخزون',
+        'logistics'     => 'اللوجستيات',
         'maintenance'   => 'الصيانة',
         'manufacturing' => 'التصنيع',
         'project'       => 'المشاريع',
