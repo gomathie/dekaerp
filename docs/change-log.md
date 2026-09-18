@@ -93,8 +93,22 @@ Branch `feature/logistics`. Plan, decisions and handoffs: `docs/logistics-plan.m
   - child-company inheritance and mismatch refusal;
   - append-only events;
   - the adoption scenarios.
-- Screen render tests and the `SupportFeature` and `AccountFeature` regression
-  runs are recorded in the WP-1 handoff in `docs/logistics-plan.md`.
+- Screen render tests: **8 passed** (the four configuration lists, permission
+  refusals, shared types visible to a company user, and enabling plus saving
+  from the settings page).
+- Regression: **`AccountFeature` 521 passed**, **`SupportFeature` 115 passed**
+  on a clean test database.
+
+### Test-harness finding (not a Logistics defect, left unfixed)
+
+Running `SupportFeature` straight after a suite that installs Products fails 3
+`UOMTest` cases. The app boots and reads the `plugins` table left behind by the
+previous suite, so Products looks installed and its `UOMObserver` is registered;
+`migrate:fresh` then drops `products_products`, which that observer queries, and
+the delete endpoint returns 500. Dropping and recreating `aureuserp_testing`
+first makes all 115 pass. The fix belongs in `TestBootstrapHelper` (reload
+`Package::$plugins` after `migrate:fresh`, and register plugin observers only for
+plugins installed in the current database). Recorded in the WP-1 handoff.
 
 ### Environment fixes found while verifying
 - Port 5433 was held by another local project, so `docker compose up`

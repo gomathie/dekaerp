@@ -331,8 +331,8 @@ you claim a package, finish it, or get blocked.
 | --- | --- | --- | --- | --- | --- |
 | WP-0 | Decisions D1–D15 | — | — | done | user (all recommendations accepted 2026-09-17) |
 | WP-1a | Starter kit: composer.json, enums, icon (easy) | — | WP-0 | review | Codex 2026-09-17 |
-| WP-1 | Foundation | WP-0, WP-1a | — (runs alone) | review (regression run pending) | Claude 2026-09-17 |
-| WP-2 | Shipments and workflow | WP-1 | WP-3, WP-8a | todo | |
+| WP-1 | Foundation | WP-0, WP-1a | — (runs alone) | review (verified: 38 plugin tests, AccountFeature 521, SupportFeature 115) | Claude 2026-09-18 |
+| WP-2 | Shipments and workflow | WP-1 | WP-3, WP-8a | in progress | Claude 2026-09-18 |
 | WP-3 | Vehicles and drivers | WP-1 | WP-2, WP-8a | todo | |
 | WP-4 | Trips and dispatch board | WP-2, WP-3 | WP-5, WP-6, WP-7 | todo | |
 | WP-5 | Delivery and POD | WP-2 | WP-4, WP-6, WP-7 | todo | |
@@ -1040,8 +1040,19 @@ Tests added / results:
 - `--filter=ScreensTest` (added after): **8 passed (21 assertions)**
 - `php -l`: clean on all plugin PHP files and the changed core files.
 
-Existing suites run / results: `SupportFeature` and `AccountFeature` are running;
-results will be added below.
+Existing suites run / results:
+- `AccountFeature`: **521 passed** (1,382 assertions), 0 failed.
+- `SupportFeature` on a clean test database: **115 passed** (720 assertions), 0 failed.
+- `SupportFeature` run straight after the Logistics suite: 112 passed, 3 failed
+  (`UOMTest` delete/restore/force-delete). **Not caused by Logistics**: the app
+  boots and reads the `plugins` table left by the previous suite, so the Products
+  plugin looks installed and its `UOMObserver` is registered; `migrate:fresh`
+  then drops `products_products`, which that observer queries. Dropping and
+  recreating `aureuserp_testing` first makes the suite pass. Any suite that runs
+  after a Products-installing suite hits this.
+  **Suggested fix, outside this package:** `TestBootstrapHelper` should reload
+  `Package::$plugins` after `migrate:fresh` (and only register plugin observers
+  for plugins installed in the current database).
 
 Deviations from the plan (all documented in sections 2, 2a and 3.3):
 - The per-company switch and settings are a plugin table
