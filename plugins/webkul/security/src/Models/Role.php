@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Role as BaseRole;
 use Spatie\Permission\PermissionRegistrar;
+use Webkul\Security\PermissionRegistrar as ForkPermissionRegistrar;
 
 class Role extends BaseRole
 {
@@ -263,5 +264,11 @@ class Role extends BaseRole
         }
 
         $this->forgetCachedPermissions();
+
+        // forgetCachedPermissions() above clears Spatie's registrar. The fork
+        // binds its own (SecurityServiceProvider), and that is the one
+        // Permission::getPermissions() reads, so it has to be cleared too or the
+        // rows just attached stay invisible for the rest of the request.
+        app(ForkPermissionRegistrar::class)->forgetCachedPermissions();
     }
 }

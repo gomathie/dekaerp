@@ -468,7 +468,10 @@ it('cannot assign the Multi-Company Admin role', function () {
 
 it('cannot assign a company role containing permissions it does not possess', function () {
     $company = multiCompanyAdminTestCompany();
-    $elevatedRole = multiCompanyAdminTestRole(['update_support_currency']);
+
+    // A Multi-Company Admin holds everything the denylist allows, so a role is
+    // out of reach only when it grants something denied.
+    $elevatedRole = multiCompanyAdminTestRole(['view_any_role']);
     $administrator = multiCompanyAdminTestAdministrator($company);
 
     expect(fn () => app(MultiCompanyAdminService::class)->assertUserAssignment(
@@ -478,6 +481,57 @@ it('cannot assign a company role containing permissions it does not possess', fu
         [$company->getKey()],
         $company->getKey(),
     ))->toThrow(ValidationException::class);
+});
+
+it('can assign a company role whose permissions it holds itself', function () {
+    $company = multiCompanyAdminTestCompany();
+    $ordinaryRole = multiCompanyAdminTestRole(['update_support_currency']);
+    $administrator = multiCompanyAdminTestAdministrator($company);
+    multiCompanyAdminTestAuthenticate($administrator, [$company->getKey()]);
+
+    app(MultiCompanyAdminService::class)->assertUserAssignment(
+        $administrator,
+        null,
+        [$ordinaryRole->getKey()],
+        [$company->getKey()],
+        $company->getKey(),
+    );
+
+    expect(true)->toBeTrue();
+});
+
+it('holds every ability the denylist does not block, without being granted it', function () {
+    $company = multiCompanyAdminTestCompany();
+    $administrator = multiCompanyAdminTestAdministrator($company);
+    multiCompanyAdminTestAuthenticate($administrator, [$company->getKey()]);
+
+    expect($administrator->can('update_support_currency'))->toBeTrue()
+        ->and($administrator->can('view_any_security_user'))->toBeTrue()
+        ->and($administrator->can('bypass_company_scope'))->toBeFalse()
+        ->and($administrator->can('view_any_role'))->toBeFalse()
+        ->and($administrator->can('force_delete_security_user'))->toBeFalse();
+});
+
+it('grants nothing to a deactivated administrator', function () {
+    $company = multiCompanyAdminTestCompany();
+    $administrator = multiCompanyAdminTestAdministrator($company, attributes: ['is_active' => false]);
+    multiCompanyAdminTestAuthenticate($administrator, [$company->getKey()]);
+
+    expect($administrator->can('update_support_currency'))->toBeFalse()
+        ->and($administrator->can('view_any_security_user'))->toBeFalse();
+});
+
+it('is still refused a user of an unassigned company through the gate', function () {
+    $assigned = multiCompanyAdminTestCompany();
+    $unassigned = multiCompanyAdminTestCompany();
+    $administrator = multiCompanyAdminTestAdministrator($assigned);
+    $target = multiCompanyAdminTestUser($unassigned);
+    multiCompanyAdminTestAuthenticate($administrator, [$assigned->getKey()]);
+
+    // Checks that carry a record fall through to the policy rather than being
+    // granted wholesale, which is what keeps one tenant out of another's data.
+    expect($administrator->can('view', $target))->toBeFalse()
+        ->and($administrator->can('update', $target))->toBeFalse();
 });
 
 it('cannot modify a Super Admin', function () {

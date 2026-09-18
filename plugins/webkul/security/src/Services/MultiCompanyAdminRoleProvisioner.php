@@ -4,6 +4,7 @@ namespace Webkul\Security\Services;
 
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\PermissionRegistrar;
+use Webkul\Security\PermissionRegistrar as ForkPermissionRegistrar;
 use Webkul\Security\Models\Permission;
 use Webkul\Security\Models\Role;
 
@@ -44,6 +45,12 @@ class MultiCompanyAdminRoleProvisioner
             $role->permissions()->syncWithoutDetaching($permissions->map->getKey()->all());
 
             app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+            // Permission::getPermissions() reads from the fork's registrar, which
+            // holds its own in-memory collection; without this the permissions
+            // just created above stay invisible to findByName() for the rest of
+            // the request, and checks against them return false.
+            app(ForkPermissionRegistrar::class)->forgetCachedPermissions();
 
             return $role->refresh();
         });

@@ -332,7 +332,7 @@ you claim a package, finish it, or get blocked.
 | WP-0 | Decisions D1–D15 | — | — | done | user (all recommendations accepted 2026-09-17) |
 | WP-1a | Starter kit: composer.json, enums, icon (easy) | — | WP-0 | review | Codex 2026-09-17 |
 | WP-1 | Foundation | WP-0, WP-1a | — (runs alone) | review (verified: 38 plugin tests, AccountFeature 521, SupportFeature 115) | Claude 2026-09-18 |
-| WP-2 | Shipments and workflow | WP-1 | WP-3, WP-8a | in progress (blocked, see 7.3) | Claude 2026-09-18 |
+| WP-2 | Shipments and workflow | WP-1 | WP-3, WP-8a | review (52/52 pass) | Claude 2026-09-18 |
 | WP-3 | Vehicles and drivers | WP-1 | WP-2, WP-8a | todo | |
 | WP-4 | Trips and dispatch board | WP-2, WP-3 | WP-5, WP-6, WP-7 | todo | |
 | WP-5 | Delivery and POD | WP-2 | WP-4, WP-6, WP-7 | todo | |
@@ -1085,43 +1085,61 @@ Requests for other packages:
   shipment) in tests, and put resources under the FQCNs already listed in
   `config/filament-shield.php`.
 
-### WP-2 - Shipments and workflow - 2026-09-18 - Claude (BLOCKED, not yet review)
+### WP-2 - Shipments and workflow - 2026-09-18 - Claude
 
-Status: code complete, **one test unverified**. Do not mark `review` until the
-suite runs clean.
+Status: `review`. `--testsuite=LogisticsFeature` = **52 passed** (237 assertions).
 
-Blocker (7.3): a second worker is rewriting the security and support plugins in
-the same working tree, uncommitted, while this package is being tested. Files
-touched today include `CompanyContext` (`allowedIds`, `setActive`, `bypassed`),
-`Security\Models\User`, `Role`, `Scopes\OwnershipScope`, `Policies\UserPolicy`,
-`Policies\RolePolicy`, `Bouncer`, plus four new untracked files:
+Files created: `Services/ShipmentWorkflow.php`, `Services/ShipmentTotals.php`,
+`Exceptions/InvalidShipmentTransition.php`, the `ShipmentResource` with its
+General / Route & stops / Cargo / Assignment tabs, pages (List, Create, Edit,
+View, ManageTimeline), actions (Confirm, Hold, Release, Cancel), the English
+language file, and `tests/Feature/Shipments/{ShipmentWorkflowTest,
+ShipmentResourceTest}.php`.
 
-- `security/database/migrations/2026_09_18_000001_add_administration_context_to_user_invitations_table.php`
-- `security/database/migrations/2026_09_18_000002_provision_multi_company_admin_role.php`
-- `security/src/Services/MultiCompanyAdminRoleProvisioner.php`
-- `support/src/Http/Requests/SetCompanyContextRequest.php`
+Reused: `LogisticsAccess` for the per-company switch, `LogisticsSequences` for
+numbering, chatter via `HasChatter`/`HasLogActivity`, `LogisticsHelper` in tests.
 
-Every logistics test sits on that foundation, so a failure cannot be attributed
-to this package while those edits are in flight. Three runs of the same single
-test gave three different failures as the tree moved underneath them.
+Design notes for later packages:
 
-Fix made outside this package (root cause, one line):
-`MultiCompanyAdminRoleProvisioner::provision()` called `modelKeys()` on the
-result of `collect()->map()`. That method exists only on Eloquent collections,
-so the new migration threw `BadMethodCallException` on every `migrate:fresh` -
-i.e. it broke every test suite in the repo, not just Logistics. Changed to
-`$permissions->map->getKey()->all()`.
+- `ShipmentWorkflow` is the only place `state` changes. It calls
+  `LogisticsAccess::ensureEnabled()` and `Gate::authorize()` itself, because the
+  super-admin `Gate::before` bypass skips policies. Dispatch, POD and telematics
+  must go through it rather than assigning `state`.
+- Filament actions carry **no** policy check of their own, and
+  `Action::authorize()` takes ability names, not closures. Each action therefore
+  repeats the check in `visible()` while the workflow authorises server-side.
+- Action names must not contain dots — Filament reads a dot as a nested action
+  path. Hence `confirmShipment`, not `confirm.shipment`.
+- Global search drops any result whose URL cannot be built, which needs `view`
+  as well as `view_any`. The search test grants both.
+- A file that runs alone needs `URL::resolveMissingNamedRoutesUsing(fn () => '#')`
+  because the panel boots before the plugin is installed in tests.
+- The list-page query-count test asserts per-table counts, not a total:
+  `HasCustomFields` loads per record by design.
 
-Open item: `ShipmentResourceTest` -> "it confirms a shipment from the view page
-and refuses without the permission". Last run failed at the first
-`Livewire::test(ViewShipment::class)` with "Attempt to read property
-`mountedActions` on null" (Filament `TestsActions::parseNestedActions`), which
-means the component did not mount - consistent with the company-context rewrite
-landing mid-run. The test carries a diagnostic that compares permission, switch,
-policy and state as one array; keep it until the test is green, then remove it.
+Three bugs outside this package were found and fixed while getting the suite
+green. All three broke far more than Logistics; see `docs/change-log.md`
+(2026-09-18) for the reasoning:
 
-Requests:
-- Run the two streams in separate worktrees, or serialise them. They share one
-  test database (`aureuserp_testing`) and one working tree.
-- Re-run `--testsuite=LogisticsFeature` once the security/support work is
-  committed and stable, before moving WP-2 to `review`.
+1. `MultiCompanyAdminRoleProvisioner` called `modelKeys()` on a plain support
+   collection, so its migration threw on every `migrate:fresh` — every suite in
+   the repo failed.
+2. `User::hasPermissionTo()` denies when `is_active` is falsy, but the attribute
+   is filled by a **column default**, so a model created in memory carried null
+   and lost every permission. 19 Logistics tests failed on this. Fixed with a
+   model-level `$attributes` default matching the schema.
+3. Permission name lookups read the fork's `Webkul\Security\PermissionRegistrar`
+   while every flush site cleared Spatie's — two unrelated classes, two caches.
+   A permission created after the cache warmed was invisible and `can()`
+   returned false. This was the last failing test, which is the only one that
+   authenticates twice. Flushes now clear both.
+
+Requests for other packages:
+
+- WP-12: the English file `filament/clusters/operations/resources/shipment.php`
+  needs translating.
+- WP-4/5/6/7: call `ShipmentWorkflow`, never assign `state`.
+- Recommended, not done: make `Webkul\Security\PermissionRegistrar` extend
+  Spatie's and alias the container binding, so one instance serves both names.
+  Not done here because `AssignRoleCommand` and `CreateRoleCommand` type-hint
+  Spatie's class, so it needs a full-suite run behind it.

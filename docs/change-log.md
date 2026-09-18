@@ -30,15 +30,200 @@ $role->permissions()->syncWithoutDetaching($permissions->modelKeys());
 $role->permissions()->syncWithoutDetaching($permissions->map->getKey()->all());
 ```
 
-### Logistics WP-2 (Shipments and workflow) — not verified
+### Upstream review against aureuserp v1.6.0
 
-Code is complete; one test is still unproven. Testing is blocked because the
-security and support plugins (`CompanyContext`, `User`, `Role`,
-`OwnershipScope`, `UserPolicy`, `RolePolicy`, `Bouncer`) are being rewritten
-uncommitted in the same working tree, and every logistics test sits on that
-foundation. Three runs of one test produced three different failures as the
-tree changed underneath them. Details and the re-run instruction are in
-`docs/logistics-plan.md` §7, WP-2 block.
+We are 215 commits / 1935 files behind `aureus/master`. A blanket sync is not
+viable: a large share of that is an upstream refactor of resource structure
+across 13 plugins, which would collide with nearly everything this fork has
+added. Reviewed for *fixes that affect us* instead.
+
+**Already fixed here, no action:** `8552c0cc4` "Escape HTML entities in change
+summaries" — a stored XSS in chatter, where user-controlled old/new field values
+were rendered with `{!! !!}` in the activity log and unescaped in notification
+mail. Our copy already escapes (`content-text-entry.blade.php` lines 164 and
+181) and `ChatterNotificationService` already calls `e()`, at four call sites to
+upstream's two. Relevant because every plugin including Logistics logs through
+chatter.
+
+**Backported:** `631dbcdfb` "Fix Plugins installation in windows".
+`Package::phpBinaryPath()` used `shell_exec('which php')`, which does not exist
+on Windows and is disabled on some hosts, so installing a plugin from the
+Plugins page could not find a binary — the same path Logistics installs through.
+
+Checked the php-fpm regression risk before taking it, because the old code
+hand-rolled a `str_contains(PHP_BINARY, 'fpm')` guard and a candidate list:
+`PhpExecutableFinder::find()` returns `PHP_BINARY` only when `PHP_SAPI` is
+`cli`, `cli-server` or `phpdbg`, so under fpm it falls through to `PHP_BINDIR`
+instead of returning the fpm binary. It covers the case the old list existed
+for. Verified in the container: returns `/usr/bin/php8.4`, `is_file` true.
+
+One deliberate deviation from upstream: `find(false)`, not `find()`. The result
+is passed through `escapeshellarg()`, and appended SAPI arguments would be
+quoted into a single unusable token. Upstream's `is_file()` check hides this by
+falling back to `'php'`.
+
+Nothing else upstream is security- or data-integrity-critical for us: the rest
+is feature work (sales price lists), translation keys, product soft-delete
+visibility, and the refactor. A 1935-file divergence means low-severity fixes
+are certainly going unnoticed; real coverage needs a dedicated sync pass.
+
+### Multi-Company Admin is now "super admin minus a denylist"
+
+Goal (user): DEKA ERP staff administer tenant companies without full super-admin
+rights, and creating one must not mean ticking hundreds of permissions.
+
+The role previously carried an enumerated grant list (8 `BASE_PERMISSIONS`) with
+the denylist applied on top in `User::hasPermissionTo()`. That is subtractive:
+it grants almost nothing, and adding the role to an existing admin *removes*
+rights rather than adding them — the opposite of the goal. Inverted to grant by
+default:
+
+```php
+// SecurityServiceProvider::packageBooted()
+Gate::before(function ($user, string $ability, array $arguments = []) {
+    if (! $user instanceof User || ! $user->is_active || ! $user->isMultiCompanyAdmin()) {
+        return null;
+    }
+
+    if (app(MultiCompanyAdminService::class)->deniesAbility($ability)) {
+        return false;   // denylist wins over every other role
+    }
+
+    return $arguments === [] ? true : null;
+});
+```
+
+Three details carry the security of this:
+
+- **Policies are not bypassed.** A blanket `true` from `Gate::before` skips
+  policies, which is where per-company containment lives. Only bare permission
+  checks (empty `$arguments`) are granted; a check carrying a model or class
+  returns `null` and its policy decides, so `UserPolicy::canManageUser()`,
+  `CompanyPolicy::isCompanyAssigned()` and the Logistics policies still apply.
+- **`is_active` is re-checked.** The callback runs before
+  `User::hasPermissionTo()`, which is where a deactivated user is normally
+  stopped, so omitting it would re-admit deactivated staff.
+- **Row visibility is unchanged.** `bypass_company_scope` is denied, so the
+  company scope still limits every query to assigned tenants.
+
+`deniesAbility()` is now the security boundary, so it matches on pattern rather
+than on the names known today — anything ending in `_role(s)`/`_permission(s)`,
+any `bypass_*`, `force_delete_*`, `page_security_*`, `impersonate`,
+`plugin_manager`, `_security_team`. A future plugin's permission touching those
+is denied by default.
+
+`MultiCompanyAdminService::scopeAssignableRoles()` gained a Multi-Company Admin
+branch. It previously derived assignable roles from the actor's *granted*
+permissions, which under the new model would leave a staff admin able to do
+nearly everything but assign almost nothing. They may now assign any non-system
+role that grants nothing they are themselves denied — which is exactly the
+"cannot create an admin with more rights than himself" rule, since they hold
+everything the denylist allows. System roles (`Admin`, `super_admin`,
+`Multi-Company Admin`) stay excluded, so only a super admin can mint another
+staff admin.
+
+**Test impact, not yet run:** `MultiCompanyAdminTest` line ~469, "cannot assign
+a company role containing permissions it does not possess", builds its elevated
+role from `update_support_currency`. That is no longer a permission the staff
+admin lacks, so the case must be rebuilt on a *denied* ability (e.g.
+`view_any_role`) to keep testing what it means to test.
+
+### Narrowed: super-admin role identity no longer reads `panel_user.name`
+
+`Role::getSuperAdminRoleNames()` merged `config('filament-shield.panel_user.name')`
+into the super-admin list. The fork's own super-admin gate
+(`SecurityServiceProvider::packageBooted()`, `Gate::before`) consults only
+`filament-shield.super_admin.name` and `'super_admin'`, so reading `panel_user`
+here widened super-admin identity beyond what the rest of the codebase
+recognises. `isSuperAdmin()` is now an unconditional allow in `UserPolicy`
+(view/update/delete/restore), `CompanyPolicy` (all companies) and
+`MultiCompanyAdminService::scopeManageableUsers()`, so the blast radius is large.
+
+No behaviour change today: `panel_user.name` is `'Admin'` in
+`config/filament-shield.php`, and `'Admin'` is already a literal entry in
+`SUPER_ADMIN_ROLE_FALLBACKS`. The change removes the trap where editing that
+config later would silently promote whatever role it names.
+
+**Not changed (already correct):** `User::isSuperAdmin()` and
+`isMultiCompanyAdmin()` use spatie's `getRoleNames()`, which calls
+`loadMissing('roles')` and reads the cached relation — so they cost one query
+per user instance, not one per permission check. A memoised boolean was
+considered and rejected: `hasPermissionTo()` runs on every Gate check, and
+spatie invalidates the `roles` relation via `unsetRelation()` on
+`assignRole`/`syncRoles`/`removeRole`, which a cached bool would not honour
+when roles change mid-request.
+
+### Fixed: every permission check failed for a model created in memory
+
+`User::hasPermissionTo()` now opens with `if (! $this->is_active) return false;`.
+But `users.is_active` gets its `true` from a **column default**, which the
+database applies to the written row and never reads back, and `UserFactory` does
+not set the attribute. So `User::factory()->create()` returned an instance with
+`is_active === null`, and every permission check on it denied. 19 Logistics
+tests failed this way; `MultiCompanyAdminTest` passed only because its helper
+sets `'is_active' => true` explicitly.
+
+Not test-only: `canAccessPanel()` reads the same attribute, so in production any
+`User::create([...])` that omits `is_active` yields an instance treated as
+suspended until it is reloaded. Fixed at the root, in the model:
+
+```php
+protected $attributes = [
+    'is_active' => true,
+];
+```
+
+`App\Models\User` declares no `$attributes`, so nothing is clobbered, and a row
+hydrated from the database still overrides it through `setRawAttributes()` —
+genuinely deactivated users stay deactivated.
+
+### Fixed: two PermissionRegistrar instances, so permission caches never cleared
+
+`Webkul\Security\Models\Permission::getPermissions()` reads through the fork's
+`Webkul\Security\PermissionRegistrar` — bound as a singleton in
+`SecurityServiceProvider`, where the unqualified `PermissionRegistrar::class`
+resolves to the fork's class. Every flush site (`SecurityHelper`, `Role`,
+`ShieldSeeder`, `MultiCompanyAdminRoleProvisioner`) instead called
+`forgetCachedPermissions()` on `Spatie\Permission\PermissionRegistrar`, an
+unrelated class holding its own in-memory collection.
+
+So the cache that name lookups actually read was never cleared. A `Permission`
+row created after that collection warmed stayed invisible to `findByName()`,
+`checkPermissionTo()` swallowed the `PermissionDoesNotExist`, and `can()`
+returned false for a permission that existed and was attached to the user.
+
+This was the last failing Logistics test — the only one that authenticates
+twice, so its third permission is created after the cache warmed. It also hits
+production: `MultiCompanyAdminRoleProvisioner::provision()` creates permissions
+and then flushes the wrong registrar, so during install or seeding they can be
+unusable for the rest of that request.
+
+All four flush sites now clear both registrars.
+
+**Recommended, not done:** make `Webkul\Security\PermissionRegistrar` extend
+Spatie's and alias the container binding so a single instance serves both names.
+Rejected for now because `AssignRoleCommand` and `CreateRoleCommand` type-hint
+`Spatie\Permission\PermissionRegistrar`, and the fork's class does not extend
+it, so an alias would TypeError those commands. It is the right long-term fix
+but needs a full-suite run behind it.
+
+### Logistics WP-2 (Shipments and workflow) — verified, 52/52
+
+`--testsuite=LogisticsFeature` = 52 passed (237 assertions). Status `review`.
+
+Getting there took four runs and turned up the three bugs above, none of them
+in Logistics. Worth recording why it looked like a Logistics problem for so
+long: the first three runs each failed differently, because the security and
+support rewrite was landing in the same working tree while the tests ran, so
+the tree moved between runs. The signal only became trustworthy once those
+edits stopped. Two streams sharing one working tree and one test database
+(`aureuserp_testing`) cannot be debugged concurrently — separate worktrees, or
+serialise them.
+
+The shipment Confirm test keeps a four-way precondition assertion (permission,
+switch, policy, state) compared as one array. It is what finally identified the
+registrar bug, and it is cheap to keep: a future failure names the broken link
+instead of reporting only that the action was hidden.
 
 ---
 

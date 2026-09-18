@@ -115,9 +115,9 @@ it('confirms a shipment from the view page and refuses without the permission', 
 
     $user = FilamentHelper::actingAsCompanyUser($company, ['view_logistics_shipment', 'view_any_logistics_shipment', 'confirm_logistics_shipment']);
 
-    // Narrow down where a failure comes from: the permission, the policy, the
-    // switch, or the action's own visibility rule. Compared as one array so a
-    // failure names the link that broke.
+    // The four preconditions the Confirm action depends on, compared as one
+    // array so a failure names which one broke rather than just reporting that
+    // the action was hidden.
     expect([
         'permission' => $user->can('confirm_logistics_shipment'),
         'enabled'    => LogisticsAccess::enabledFor($shipment->company_id),

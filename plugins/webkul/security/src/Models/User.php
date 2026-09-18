@@ -41,6 +41,22 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
         InteractsWithEmailAuthentication,
         SoftDeletes;
 
+    /**
+     * Matches the `users.is_active` column default.
+     *
+     * Without it, a model built in memory (User::factory()->create(),
+     * User::create(...)) carries a null is_active while the row it just wrote
+     * is true, because a column default is applied by the database and not
+     * read back. Everything that reads the attribute then treats the user as
+     * suspended until the model is reloaded — hasPermissionTo() denies every
+     * ability and canAccessPanel() returns false.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'is_active' => true,
+    ];
+
     public function __construct(array $attributes = [])
     {
         $this->mergeFillable([

@@ -27,10 +27,27 @@ data, a public repo. Nothing here is a sandbox.
 4. **Do not undo this fork's design.** Company scoping is a security boundary.
    Upstream code that scans across tenant prefixes, drops a company filter, or
    assumes a single company is a regression here regardless of how it is
-   labelled upstream. When a new release is brought in to compare and check, always look to apply the improvements, feautures and verify needed fixes.
+   labelled upstream. When a new release is brought in to compare and check,
+   assess every improvement, feature, and claimed fix against the local fork.
 5. **Apply carefully and verify.** Diff against the source after each edit.
-   The app cannot be exercised locally (PHP 8.4 / database), so static
-   verification and the Pest suite are the only gates before live data.
+   Use the Sail PostgreSQL test environment documented in `docs/running-tests.md`;
+   never point tests at a managed database. Static review does not replace an
+   available focused Pest or browser test.
+6. **Read all project documentation.** At the start of a new workstream,
+   inventory and read every project-owned Markdown document, excluding
+   dependency/generated trees. On continuation, re-read the controlling plans,
+   recent relevant change-log entries, documents changed since handoff, and
+   scan the inventory for new files. Do not rely on another agent's memory.
+7. **Document the work, not just the result.** Update the owning plan and record
+   root cause, decisions, changed behavior, verification actually executed,
+   failures, risks, and handoff. Route user-visible released behavior to root
+   `CHANGELOG.md`; route engineering history to `docs/change-log.md`.
+8. **Review upstream on a trigger-based cadence.** Follow
+   `docs/upstream-fix-adoption-plan.md`. The first active agent after its
+   seven-day due date, and every agent preparing a release, dependency refresh,
+   or major change in an upstream-modified plugin, must review new upstream
+   commits. Update the SHA/date and tell the user what changed, why it is or is
+   not needed, benefits, risks, and priority. Never copy upstream wholesale.
 
 **Vendor view overrides to re-diff on every Filament upgrade:**
 `resources/views/vendor/filament-panels/livewire/{sidebar,topbar}.blade.php`
@@ -46,6 +63,32 @@ piece of work.
 **Logistics plugin** work follows `docs/logistics-plan.md`: claim a package on
 its status board, touch only the files that package owns, and fill in the
 handoff log.
+
+**Whole-application upstream work** follows
+`docs/upstream-fix-adoption-plan.md`. It is the decision register for fixes
+already present, required gaps, optional product features, explicit rejects,
+and the next review date.
+
+---
+
+## 2026-09-18
+
+**Requested:** Turn the upstream failing-test comparison into a whole-app
+implementation plan; explain what DEKA ERP still needs and the benefit of each
+new item; establish a recurring rule for agents to check upstream, notify the
+user, read all project docs, and keep documentation current.
+
+**Done:** Created `docs/upstream-fix-adoption-plan.md`. The initial register
+prioritizes CI/runtime alignment and Employee factory coverage, then missing
+accounting regressions, locale persistence, Website E2E hardening, translation
+reference checking, and documentation consistency. Installer localization,
+Sales price lists, translatable public content, and resume attachments are kept
+as separate product decisions. Committed `.env.pgtest` and permanent test debug
+mode are explicitly rejected for this fork.
+
+**Important:** This session created the plan and agent rules only. It did not
+implement the listed runtime/test packages and did not alter the concurrently
+dirty Security, plugin-manager, or `docs/change-log.md` work.
 
 ---
 

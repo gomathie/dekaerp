@@ -1065,7 +1065,20 @@ MULTI-COMPANY FACTS THAT BITE
   event fires before creating, so set company_id there (Logistics
   `InheritsParentCompany`).
 • The super-admin `Gate::before` skips policies, so services must repeat
-  business guards.
+  business guards. The same is true of any new `Gate::before` that returns
+  `true`: grant only bare permission checks (empty `$arguments`) and return
+  `null` when a model or class is passed, or per-record containment is lost.
+• There are two `PermissionRegistrar` classes. `Permission::getPermissions()`
+  reads `Webkul\Security\PermissionRegistrar` (the singleton bound in
+  `SecurityServiceProvider`); most code flushes
+  `Spatie\Permission\PermissionRegistrar`. They hold separate in-memory caches,
+  so **flush both** after creating permissions, or the new rows are invisible to
+  `findByName()` for the rest of the request and `can()` silently returns false.
+• `users.is_active` is filled by a column default, so a model created in memory
+  carries `null` until it is reloaded. `hasPermissionTo()` and
+  `canAccessPanel()` both read it. The model now declares
+  `protected $attributes = ['is_active' => true]` to match the schema; keep any
+  new default-bearing column in step the same way.
 • `UninstallCommand` drops a plugin's tables. `startWith` runs first, from the
   console and the Plugins page, and can refuse by throwing.
 • Shield: only `resources.manage` and the exclude lists are merged from a plugin
@@ -1073,6 +1086,27 @@ MULTI-COMPANY FACTS THAT BITE
   permissions are `page_<plugin>_<page_snake>`. Resource permissions are
   `<affix>_<plugin>_<model>` (multi-word models use `::`, e.g.
   `view_any_logistics_service::type`).
+
+DOCUMENTATION AND UPSTREAM REVIEW (ALL AGENTS)
+
+• At the start of a new workstream, inventory and read every project-owned
+  Markdown document. Exclude dependency/generated trees (`vendor`,
+  `node_modules`, build output), not application or plugin documentation. On a
+  resumed workstream, re-read the controlling plans, the latest relevant change
+  log entries, every document changed since handoff, and scan the full inventory
+  for new documents. Do not rely on memory from an earlier agent.
+• Documentation is part of the implementation. Record root cause, decisions,
+  changed behavior, verification actually run, failures, risks, and handoff in
+  the owning documents. Keep historical records; mark stale statements as
+  superseded instead of silently rewriting history.
+• `docs/upstream-fix-adoption-plan.md` is the whole-application upstream review
+  register. The first active agent after its review due date must inspect new
+  upstream changes. Also review before a release, dependency refresh, or major
+  work in an upstream-changed plugin.
+• After each upstream review, update the recorded SHA/date and tell the user
+  what is new, whether DEKA ERP needs it, the benefit, risk/dependencies, and
+  recommended priority. Report a brief "no actionable changes" result when
+  applicable. Never merge or cherry-pick upstream wholesale.
 
 DONE RECENTLY (newest first; details in docs/change-log.md)
 
@@ -1100,12 +1134,20 @@ REFERENCES
 
 • docs/agent-reminders.md — standing instructions and task log (read first).
 • docs/change-log.md — what changed and why, per session.
+• docs/upstream-fix-adoption-plan.md — whole-app upstream fix decisions,
+  implementation order, review cadence, and review log.
 • docs/logistics-plan.md — Logistics plan, decisions D1–D15, status board, work
   packages, handoff log.
+• docs/unified-product-resource-plan.md — cross-plugin product-resource plan.
+• docs/landing-page-brief.md — public landing-page scope and constraints.
 • docs/running-tests.md — how to run tests.
 • docs/api-access.md — client API tokens and abilities.
 • docs/supabase-database.md — database hardening and the Data API.
 • docs/handover-actions.md — actions the user must take in the dashboards.
 • docs/restructure-backlog.md — deferred upstream restructures.
+• README.md — repository setup and product overview.
+• docker/production/README.md — production image and deployment operation.
+• plugins/webkul/barcode/README.md — barcode plugin operation.
+• CODE_OF_CONDUCT.md — contributor conduct.
 • CHANGELOG.md — user-facing release notes; the in-app What's New page reads it.
 • Plan page (private artifact): https://claude.ai/artifact/2zJ4K1thSS6n1Qdt592wTN

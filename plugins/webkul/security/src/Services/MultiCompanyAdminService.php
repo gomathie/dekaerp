@@ -6,6 +6,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Webkul\Security\Models\Permission;
 use Webkul\Security\Models\Role;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
@@ -30,6 +31,13 @@ class MultiCompanyAdminService
         'view_role',
     ];
 
+    /**
+     * A Multi-Company Admin holds every ability except these (see the Gate::before
+     * in SecurityServiceProvider), so this list is the security boundary and is
+     * written to fail closed: it matches on pattern, not only on the names known
+     * today, so a permission added by a future plugin is denied by default if it
+     * touches roles, permissions, scope bypasses or the plugin manager.
+     */
     public function deniesAbility(string $ability): bool
     {
         $ability = mb_strtolower(trim($ability));
@@ -37,7 +45,12 @@ class MultiCompanyAdminService
         return in_array($ability, self::DENIED_ABILITIES, true)
             || str_starts_with($ability, 'page_security_')
             || str_starts_with($ability, 'force_delete_')
-            || str_contains($ability, '_plugin_manager_plugin')
+            // Granting roles or permissions is how a staff admin would escalate.
+            || preg_match('/(^|_)(roles?|permissions?)$/', $ability) === 1
+            // Any current or future scope bypass.
+            || str_starts_with($ability, 'bypass_')
+            || str_contains($ability, 'impersonate')
+            || str_contains($ability, 'plugin_manager')
             || str_contains($ability, '_security_team');
     }
 
@@ -120,6 +133,26 @@ class MultiCompanyAdminService
         }
 
         $query->whereNotIn(DB::raw('LOWER(roles.name)'), Role::getSystemRoleNames());
+
+        // A Multi-Company Admin holds everything the denylist allows, so the
+        // subset rule below would be read from the handful of permissions the
+        // role carries and leave them able to assign almost nothing. What they
+        // may hand out is instead "any non-system role that grants nothing they
+        // are themselves denied".
+        if ($actor->isMultiCompanyAdmin()) {
+            $deniedNames = Permission::query()
+                ->pluck('name')
+                ->filter(fn (string $permission): bool => $this->deniesAbility($permission))
+                ->values()
+                ->all();
+
+            return $deniedNames === []
+                ? $query
+                : $query->whereDoesntHave(
+                    'permissions',
+                    fn (Builder $permissions) => $permissions->whereIn('permissions.name', $deniedNames),
+                );
+        }
 
         $permissionNames = $actor->getAllPermissions()
             ->pluck('name')

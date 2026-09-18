@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Spatie\LaravelPackageTools\Package as BasePackage;
+use Symfony\Component\Process\PhpExecutableFinder;
 use Throwable;
 use Webkul\PluginManager\Console\Commands\InstallCommand;
 use Webkul\PluginManager\Console\Commands\UninstallCommand;
@@ -224,29 +225,24 @@ class Package extends BasePackage
         exec($command);
     }
 
+    /**
+     * Backported from upstream aureuserp (631dbcdfb, "Fix Plugins installation
+     * in windows"): `which php` does not exist on Windows, and shell_exec is
+     * disabled on some hosts, so installing a plugin from the Plugins page
+     * could not find a binary. PhpExecutableFinder also covers the php-fpm case
+     * the old hand-rolled candidate list existed for: it only returns PHP_BINARY
+     * when PHP_SAPI is cli/cli-server/phpdbg, so under fpm it falls through to
+     * PHP_BINDIR instead of handing back the fpm binary.
+     *
+     * find(false) because the result is passed through escapeshellarg(), which
+     * would quote any appended SAPI arguments into a single unusable token.
+     */
     public static function phpBinaryPath(): string
     {
-        $php = trim((string) @shell_exec('which php 2>/dev/null'));
+        $php = (new PhpExecutableFinder)->find(false);
 
-        if ($php !== '' && is_file($php)) {
+        if ($php && is_file($php)) {
             return $php;
-        }
-
-        if (! str_contains(PHP_BINARY, 'fpm') && is_file(PHP_BINARY)) {
-            return PHP_BINARY;
-        }
-
-        $candidates = [
-            '/usr/local/bin/php',
-            '/usr/bin/php',
-            '/opt/homebrew/bin/php',
-            '/Users/'.get_current_user().'/Library/Application Support/Herd/bin/php',
-        ];
-
-        foreach ($candidates as $path) {
-            if (is_file($path)) {
-                return $path;
-            }
         }
 
         return 'php';
