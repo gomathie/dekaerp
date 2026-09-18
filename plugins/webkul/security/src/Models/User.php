@@ -23,6 +23,8 @@ use Webkul\Employee\Models\Department;
 use Webkul\Employee\Models\Employee;
 use Webkul\Partner\Models\Partner;
 use Webkul\Security\Enums\PermissionType;
+use Webkul\Security\Services\MultiCompanyAdminService;
+use Webkul\Security\Services\SecurityAuditLogger;
 use Webkul\Security\Support\OwnerSource;
 use Webkul\Security\Traits\HasOwnershipScope;
 use Webkul\Support\Models\Company;
@@ -30,9 +32,11 @@ use Webkul\Support\Models\Scopes\CompanyScope;
 
 class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, HasEmailAuthentication
 {
-    use HasOwnershipScope,
-        HasRoles,
-        InteractsWithAppAuthentication,
+    use HasOwnershipScope;
+    use HasRoles {
+        hasPermissionTo as protected hasPermissionToWithoutMultiCompanyRestrictions;
+    }
+    use InteractsWithAppAuthentication,
         InteractsWithAppAuthenticationRecovery,
         InteractsWithEmailAuthentication,
         SoftDeletes;
@@ -77,6 +81,45 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
     public function canAccessPanel(Panel $panel): bool
     {
         return $this->is_active;
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        $roleNames = $this->getRoleNames()
+            ->map(fn (string $name): string => mb_strtolower(trim($name)))
+            ->all();
+
+        return count(array_intersect($roleNames, Role::getSuperAdminRoleNames())) > 0;
+    }
+
+    public function isMultiCompanyAdmin(): bool
+    {
+        return $this->getRoleNames()
+            ->contains(fn (string $name): bool => mb_strtolower(trim($name)) === mb_strtolower(Role::MULTI_COMPANY_ADMIN));
+    }
+
+    public function hasPermissionTo($permission, ?string $guardName = null): bool
+    {
+        if (! $this->is_active) {
+            return false;
+        }
+
+        $permissionName = match (true) {
+            $permission instanceof \BackedEnum => (string) $permission->value,
+            is_object($permission) && isset($permission->name) => (string) $permission->name,
+            is_string($permission) => $permission,
+            default => null,
+        };
+
+        if (
+            $permissionName !== null
+            && $this->isMultiCompanyAdmin()
+            && app(MultiCompanyAdminService::class)->deniesAbility($permissionName)
+        ) {
+            return false;
+        }
+
+        return $this->hasPermissionToWithoutMultiCompanyRestrictions($permission, $guardName);
     }
 
     public function creator(): BelongsTo
@@ -139,6 +182,40 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
             } else {
                 $user->handlePartnerUpdation($user);
             }
+        });
+
+        static::updated(function (self $user): void {
+            if (! $user->wasChanged('is_active')) {
+                return;
+            }
+
+            if (! $user->is_active) {
+                $user->tokens()->delete();
+            }
+
+            app(SecurityAuditLogger::class)->record(
+                $user->is_active ? 'security.user.activated' : 'security.user.deactivated',
+                $user,
+                companyId: $user->default_company_id,
+                before: ['is_active' => (bool) $user->getOriginal('is_active')],
+                after: ['is_active' => (bool) $user->is_active],
+            );
+        });
+
+        static::deleted(function (self $user): void {
+            app(SecurityAuditLogger::class)->record(
+                $user->isForceDeleting() ? 'security.user.force_deleted' : 'security.user.deleted',
+                $user,
+                companyId: $user->default_company_id,
+            );
+        });
+
+        static::restored(function (self $user): void {
+            app(SecurityAuditLogger::class)->record(
+                'security.user.restored',
+                $user,
+                companyId: $user->default_company_id,
+            );
         });
     }
 

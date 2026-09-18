@@ -49,7 +49,9 @@ class ManageApiTokens extends Page implements HasTable
 
     public static function canAccess(): bool
     {
-        return Auth::user()?->can('view_any_security_user') ?? false;
+        $user = Auth::user();
+
+        return $user?->is_active && $user->isSuperAdmin();
     }
 
     public static function getNavigationLabel(): string

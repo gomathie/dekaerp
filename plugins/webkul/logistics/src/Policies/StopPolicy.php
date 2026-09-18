@@ -2,6 +2,4 @@
 
 namespace Webkul\Logistics\Policies;
 
-class StopPolicy extends ShipmentChildPolicy
-{
-}
+class StopPolicy extends ShipmentChildPolicy {}

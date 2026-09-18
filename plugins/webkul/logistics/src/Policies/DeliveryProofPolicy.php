@@ -2,6 +2,4 @@
 
 namespace Webkul\Logistics\Policies;
 
-class DeliveryProofPolicy extends ShipmentChildPolicy
-{
-}
+class DeliveryProofPolicy extends ShipmentChildPolicy {}

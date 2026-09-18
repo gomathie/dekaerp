@@ -2,6 +2,4 @@
 
 namespace Webkul\Logistics\Policies;
 
-class ShipmentEventPolicy extends ShipmentChildPolicy
-{
-}
+class ShipmentEventPolicy extends ShipmentChildPolicy {}

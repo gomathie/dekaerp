@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
 use Webkul\Logistics\Enums\ShipmentEventSource;
 use Webkul\Logistics\Enums\ShipmentEventType;
@@ -40,7 +41,8 @@ it('moves a shipment through every valid transition and records each one', funct
         ->and($shipment->actual_pickup_at)->not->toBeNull()
         ->and($shipment->actual_delivery_at)->not->toBeNull()
         ->and($shipment->events()->count())->toBe(count($path))
-        ->and($shipment->events()->latest('occurred_at')->first()->type)->toBe(ShipmentEventType::DELIVERED);
+        // Ordered by id: a whole path runs inside one second, so occurred_at ties.
+        ->and($shipment->events()->orderByDesc('id')->first()->type)->toBe(ShipmentEventType::DELIVERED);
 });
 
 it('refuses a transition the state machine does not allow', function () {
@@ -71,7 +73,7 @@ it('refuses to confirm for a user without the confirm permission', function () {
     CompanyHelper::actingAsCompanyUser($company, ['view_any_logistics_shipment']);
 
     expect(fn () => app(ShipmentWorkflow::class)->confirm($shipment))
-        ->toThrow(Illuminate\Auth\Access\AuthorizationException::class);
+        ->toThrow(AuthorizationException::class);
 
     expect($shipment->refresh()->state)->toBe(ShipmentState::DRAFT);
 });

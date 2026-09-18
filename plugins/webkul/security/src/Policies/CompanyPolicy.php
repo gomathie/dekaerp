@@ -5,10 +5,13 @@ namespace Webkul\Security\Policies;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Webkul\Security\Models\Company;
 use Webkul\Security\Models\User;
+use Webkul\Security\Services\MultiCompanyAdminService;
 
 class CompanyPolicy
 {
     use HandlesAuthorization;
+
+    public function __construct(protected MultiCompanyAdminService $administration) {}
 
     /**
      * Determine whether the user can view any models.
@@ -23,7 +26,8 @@ class CompanyPolicy
      */
     public function view(User $user, Company $company): bool
     {
-        return $user->can('view_security_company');
+        return $user->can('view_security_company')
+            && ($user->isSuperAdmin() || $this->administration->isCompanyAssigned($user, $company->getKey()));
     }
 
     /**
@@ -39,7 +43,8 @@ class CompanyPolicy
      */
     public function update(User $user, Company $company): bool
     {
-        return $user->can('update_security_company');
+        return $user->can('update_security_company')
+            && ($user->isSuperAdmin() || $this->administration->isCompanyAssigned($user, $company->getKey()));
     }
 
     /**
@@ -47,6 +52,7 @@ class CompanyPolicy
      */
     public function delete(User $user, Company $company): bool
     {
-        return $user->can('delete_security_company');
+        return $user->can('delete_security_company')
+            && ($user->isSuperAdmin() || $this->administration->isCompanyAssigned($user, $company->getKey()));
     }
 }

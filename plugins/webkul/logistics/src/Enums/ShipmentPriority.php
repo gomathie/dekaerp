@@ -18,9 +18,9 @@ enum ShipmentPriority: string implements HasColor, HasLabel
     public static function options(): array
     {
         return [
-            self::LOW->value => __('logistics::enums/shipment-priority.low'),
+            self::LOW->value    => __('logistics::enums/shipment-priority.low'),
             self::NORMAL->value => __('logistics::enums/shipment-priority.normal'),
-            self::HIGH->value => __('logistics::enums/shipment-priority.high'),
+            self::HIGH->value   => __('logistics::enums/shipment-priority.high'),
             self::URGENT->value => __('logistics::enums/shipment-priority.urgent'),
         ];
     }
@@ -33,9 +33,9 @@ enum ShipmentPriority: string implements HasColor, HasLabel
     public function getColor(): string
     {
         return match ($this) {
-            self::LOW => 'gray',
+            self::LOW    => 'gray',
             self::NORMAL => 'info',
-            self::HIGH => 'warning',
+            self::HIGH   => 'warning',
             self::URGENT => 'danger',
         };
     }

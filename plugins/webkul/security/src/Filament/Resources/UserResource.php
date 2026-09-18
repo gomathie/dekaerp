@@ -38,15 +38,15 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use Spatie\Permission\Models\Role;
 use Webkul\Security\Enums\PermissionType;
 use Webkul\Security\Filament\Resources\UserResource\Pages\CreateUser;
 use Webkul\Security\Filament\Resources\UserResource\Pages\EditUser;
 use Webkul\Security\Filament\Resources\UserResource\Pages\ListUsers;
 use Webkul\Security\Filament\Resources\UserResource\Pages\ViewUsers;
 use Webkul\Security\Models\User;
+use Webkul\Security\Models\Role;
+use Webkul\Security\Services\MultiCompanyAdminService;
 use Webkul\Security\Settings\UserSettings;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Models\Company;
@@ -62,7 +62,14 @@ class UserResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->ownership();
+        $user = Auth::user();
+        $query = parent::getEloquentQuery();
+
+        if (! $user instanceof User) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        return app(MultiCompanyAdminService::class)->scopeManageableUsers($query, $user);
     }
 
     public static function getNavigationLabel(): string
@@ -130,7 +137,11 @@ class UserResource extends Resource
                                     ->schema([
                                         Select::make('roles')
                                             ->label(__('security::filament/resources/user.form.sections.permissions.fields.roles'))
-                                            ->relationship('roles', 'name')
+                                            ->relationship(
+                                                'roles',
+                                                'name',
+                                                fn (Builder $query): Builder => self::scopeAssignableRoles($query),
+                                            )
                                             ->multiple()
                                             ->required()
                                             ->preload()
@@ -219,7 +230,11 @@ class UserResource extends Resource
                                     ->schema([
                                         Select::make('allowed_companies')
                                             ->label(__('security::filament/resources/user.form.sections.multi-company.allowed-companies'))
-                                            ->relationship('allowedCompanies', 'name', fn (Builder $query) => $query->withoutGlobalScope(AllowedCompanyScope::class))
+                                            ->relationship(
+                                                'allowedCompanies',
+                                                'name',
+                                                fn (Builder $query): Builder => self::scopeAssignableCompanies($query),
+                                            )
                                             ->multiple()
                                             ->preload()
                                             ->searchable(),
@@ -228,7 +243,7 @@ class UserResource extends Resource
                                             ->relationship(
                                                 'defaultCompany',
                                                 'name',
-                                                modifyQueryUsing: fn (Builder $query) => $query->withTrashed()->withoutGlobalScope(AllowedCompanyScope::class),
+                                                modifyQueryUsing: fn (Builder $query): Builder => self::scopeAssignableCompanies($query)->withTrashed(),
                                             )
                                             ->getOptionLabelFromRecordUsing(function ($record): string {
                                                 return $record->name.($record->trashed() ? ' (Deleted)' : '');
@@ -246,6 +261,7 @@ class UserResource extends Resource
                                             ->createOptionForm(fn (Schema $schema) => CompanyResource::form($schema))
                                             ->createOptionAction(function (Action $action) {
                                                 $action
+                                                    ->visible(fn (): bool => Auth::user()?->isSuperAdmin() ?? false)
                                                     ->fillForm(function (array $arguments): array {
                                                         return [
                                                             'user_id' => Auth::id(),
@@ -334,12 +350,12 @@ class UserResource extends Resource
                     ->options(PermissionType::class)
                     ->preload(),
                 SelectFilter::make('default_company')
-                    ->relationship('defaultCompany', 'name', fn (Builder $query) => $query->withoutGlobalScope(AllowedCompanyScope::class))
+                    ->relationship('defaultCompany', 'name', fn (Builder $query): Builder => self::scopeAssignableCompanies($query))
                     ->label(__('security::filament/resources/user.table.filters.default-company'))
                     ->searchable()
                     ->preload(),
                 SelectFilter::make('allowed_companies')
-                    ->relationship('allowedCompanies', 'name', fn (Builder $query) => $query->withoutGlobalScope(AllowedCompanyScope::class))
+                    ->relationship('allowedCompanies', 'name', fn (Builder $query): Builder => self::scopeAssignableCompanies($query))
                     ->label(__('security::filament/resources/user.table.filters.allowed-companies'))
                     ->multiple()
                     ->searchable()
@@ -353,8 +369,8 @@ class UserResource extends Resource
                     ->preload(),
                 SelectFilter::make('roles')
                     ->label(__('security::filament/resources/user.table.filters.roles'))
-                    ->relationship('roles', 'name')
-                    ->options(fn (): array => Role::query()->pluck('name', 'id')->all())
+                    ->relationship('roles', 'name', fn (Builder $query): Builder => self::scopeAssignableRoles($query))
+                    ->options(fn (): array => self::scopeAssignableRoles(Role::query())->pluck('name', 'id')->all())
                     ->multiple()
                     ->searchable()
                     ->preload(),
@@ -411,6 +427,7 @@ class UserResource extends Resource
                                 ->body(__('security::filament/resources/user.table.bulk-actions.delete.notification.body')),
                         ),
                     ForceDeleteBulkAction::make()
+                        ->visible(fn (): bool => ! (Auth::user()?->isMultiCompanyAdmin() ?? false))
                         ->action(function (Collection $records) {
                             try {
                                 $records->each(fn (Model $record) => $record->forceDelete());
@@ -540,7 +557,18 @@ class UserResource extends Resource
 
     public static function canDeleteUser(User $record): bool
     {
-        return ! $record->is_default && $record->id !== Auth::id();
+        $actor = Auth::user();
+
+        if (! $actor instanceof User || $record->is_default || $record->id === $actor->id) {
+            return false;
+        }
+
+        if (! $actor->isSuperAdmin() && ($record->isSuperAdmin() || $record->isMultiCompanyAdmin())) {
+            return false;
+        }
+
+        return ! $actor->isMultiCompanyAdmin()
+            || app(MultiCompanyAdminService::class)->canManageUser($actor, $record);
     }
 
     public static function ensureAdminRoleConstraints(?User $record, array $roleIds): void
@@ -585,27 +613,9 @@ class UserResource extends Resource
     {
         $defaultRoleId = settings(UserSettings::class)->default_role_id;
 
-        $candidateNames = array_values(array_filter([
-            config('filament-shield.panel_user.name'),
-            config('filament-shield.super_admin.name'),
-            'admin',
-            'Admin',
-            'panel_user',
-            'super_admin',
-        ]));
-
-        $normalizedCandidateNames = array_unique(
-            array_map(static fn (string $name): string => Str::lower(trim($name)), $candidateNames)
-        );
-
         $roleIdsFromNames = Role::query()
             ->get(['id', 'name'])
-            ->filter(function (Role $role) use ($normalizedCandidateNames) {
-                $normalizedRoleName = Str::lower($role->name);
-
-                return in_array($normalizedRoleName, $normalizedCandidateNames, true)
-                    || str_contains($normalizedRoleName, 'admin');
-            })
+            ->filter(fn (Role $role): bool => $role->isSuperAdminRole())
             ->pluck('id')
             ->map(static fn ($id) => (int) $id)
             ->values()
@@ -616,6 +626,47 @@ class UserResource extends Resource
             ->unique()
             ->values()
             ->all();
+    }
+
+    public static function ensureUserAssignmentConstraints(
+        ?User $record,
+        array $roleIds,
+        array $companyIds,
+        ?int $defaultCompanyId,
+    ): void {
+        $actor = Auth::user();
+
+        abort_unless($actor instanceof User, 403);
+
+        app(MultiCompanyAdminService::class)->assertUserAssignment(
+            $actor,
+            $record,
+            $roleIds,
+            $companyIds,
+            $defaultCompanyId,
+        );
+    }
+
+    protected static function scopeAssignableCompanies(Builder $query): Builder
+    {
+        $actor = Auth::user();
+
+        if (! $actor instanceof User) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        return app(MultiCompanyAdminService::class)->scopeAssignableCompanies($query, $actor);
+    }
+
+    protected static function scopeAssignableRoles(Builder $query): Builder
+    {
+        $actor = Auth::user();
+
+        if (! $actor instanceof User) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        return app(MultiCompanyAdminService::class)->scopeAssignableRoles($query, $actor);
     }
 
     public static function getPages(): array

@@ -5,6 +5,7 @@ namespace Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResour
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Livewire;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource;
 use Webkul\Support\Traits\HasRecordNavigationTabs;
@@ -76,7 +77,7 @@ class ManageTimeline extends ManageRelatedRecords
             ->toolbarActions([]);
     }
 
-    public function getRelationshipQuery(): \Illuminate\Database\Eloquent\Builder
+    public function getRelationshipQuery(): Builder
     {
         return parent::getRelationshipQuery()->with('user:id,name');
     }

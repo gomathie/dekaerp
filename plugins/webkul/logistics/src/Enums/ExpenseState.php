@@ -20,28 +20,28 @@ enum ExpenseState: string implements HasColor, HasLabel
     public static function options(): array
     {
         return [
-            self::DRAFT->value => __('logistics::enums/expense-state.draft'),
+            self::DRAFT->value     => __('logistics::enums/expense-state.draft'),
             self::SUBMITTED->value => __('logistics::enums/expense-state.submitted'),
-            self::APPROVED->value => __('logistics::enums/expense-state.approved'),
-            self::REJECTED->value => __('logistics::enums/expense-state.rejected'),
-            self::BILLED->value => __('logistics::enums/expense-state.billed'),
+            self::APPROVED->value  => __('logistics::enums/expense-state.approved'),
+            self::REJECTED->value  => __('logistics::enums/expense-state.rejected'),
+            self::BILLED->value    => __('logistics::enums/expense-state.billed'),
         ];
     }
 
     public static function transitions(): array
     {
         return [
-            self::DRAFT->value => [self::SUBMITTED],
+            self::DRAFT->value     => [self::SUBMITTED],
             self::SUBMITTED->value => [self::APPROVED, self::REJECTED],
-            self::APPROVED->value => [self::BILLED],
-            self::REJECTED->value => [self::DRAFT],
-            self::BILLED->value => [],
+            self::APPROVED->value  => [self::BILLED],
+            self::REJECTED->value  => [self::DRAFT],
+            self::BILLED->value    => [],
         ];
     }
 
     public function canTransitionTo(self $to): bool
     {
-        return in_array($to, static::transitions()[$this->value], true);
+        return in_array($to, self::transitions()[$this->value], true);
     }
 
     public function getLabel(): string
@@ -52,11 +52,11 @@ enum ExpenseState: string implements HasColor, HasLabel
     public function getColor(): string
     {
         return match ($this) {
-            self::DRAFT => 'gray',
+            self::DRAFT     => 'gray',
             self::SUBMITTED => 'info',
-            self::APPROVED => 'success',
-            self::REJECTED => 'danger',
-            self::BILLED => 'primary',
+            self::APPROVED  => 'success',
+            self::REJECTED  => 'danger',
+            self::BILLED    => 'primary',
         };
     }
 }

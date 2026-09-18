@@ -4,11 +4,14 @@ namespace Webkul\Security\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Webkul\Security\Models\User;
+use Webkul\Security\Services\MultiCompanyAdminService;
 use Webkul\Security\Traits\HasScopedPermissions;
 
 class UserPolicy
 {
     use HandlesAuthorization, HasScopedPermissions;
+
+    public function __construct(protected MultiCompanyAdminService $administration) {}
 
     /**
      * Determine whether the user can view any models.
@@ -24,6 +27,18 @@ class UserPolicy
     public function view(User $user, User $record): bool
     {
         if (! $user->can('view_security_user')) {
+            return false;
+        }
+
+        if ($user->isSuperAdmin()) {
+            return true;
+        }
+
+        if ($user->isMultiCompanyAdmin()) {
+            return $this->administration->canManageUser($user, $record);
+        }
+
+        if ($this->isProtectedAdministrator($record)) {
             return false;
         }
 
@@ -47,6 +62,18 @@ class UserPolicy
             return false;
         }
 
+        if ($user->isSuperAdmin()) {
+            return true;
+        }
+
+        if ($user->isMultiCompanyAdmin()) {
+            return $this->administration->canManageUser($user, $record);
+        }
+
+        if ($this->isProtectedAdministrator($record)) {
+            return false;
+        }
+
         return $this->hasAccess($user, $record, 'creator');
     }
 
@@ -56,6 +83,18 @@ class UserPolicy
     public function delete(User $user, User $record): bool
     {
         if (! $user->can('delete_security_user')) {
+            return false;
+        }
+
+        if ($user->isSuperAdmin()) {
+            return true;
+        }
+
+        if ($user->isMultiCompanyAdmin()) {
+            return $this->administration->canManageUser($user, $record);
+        }
+
+        if ($this->isProtectedAdministrator($record)) {
             return false;
         }
 
@@ -75,11 +114,19 @@ class UserPolicy
      */
     public function forceDelete(User $user, User $record): bool
     {
+        if ($user->isMultiCompanyAdmin()) {
+            return false;
+        }
+
         if (! $user->can('force_delete_security_user')) {
             return false;
         }
 
         if ($user->id === $record->id) {
+            return false;
+        }
+
+        if (! $user->isSuperAdmin() && $this->isProtectedAdministrator($record)) {
             return false;
         }
 
@@ -91,6 +138,10 @@ class UserPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
+        if ($user->isMultiCompanyAdmin()) {
+            return false;
+        }
+
         return $user->can('force_delete_any_security_user');
     }
 
@@ -103,6 +154,18 @@ class UserPolicy
             return false;
         }
 
+        if ($user->isSuperAdmin()) {
+            return true;
+        }
+
+        if ($user->isMultiCompanyAdmin()) {
+            return $this->administration->canManageUser($user, $record);
+        }
+
+        if ($this->isProtectedAdministrator($record)) {
+            return false;
+        }
+
         return $this->hasAccess($user, $record, 'creator');
     }
 
@@ -112,5 +175,10 @@ class UserPolicy
     public function restoreAny(User $user): bool
     {
         return $user->can('restore_any_security_user');
+    }
+
+    protected function isProtectedAdministrator(User $record): bool
+    {
+        return $record->isSuperAdmin() || $record->isMultiCompanyAdmin();
     }
 }

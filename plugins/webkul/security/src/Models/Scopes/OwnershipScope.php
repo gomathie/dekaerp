@@ -24,7 +24,7 @@ class OwnershipScope implements Scope
             return;
         }
 
-        if (Gate::allows('bypass_ownership_scope')) {
+        if (! $user->isMultiCompanyAdmin() && Gate::allows('bypass_ownership_scope')) {
             return;
         }
 

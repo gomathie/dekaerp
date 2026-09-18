@@ -14,7 +14,14 @@ return [
     'form' => [
         'validation' => [
             'cannot-remove-last-admin'   => 'Cannot remove the admin role from the last admin user.',
+            'company-invalid'            => 'One or more selected companies are invalid.',
+            'company-not-assigned'       => 'You may assign users only to companies assigned to your account.',
+            'company-required'           => 'Select at least one company.',
             'first-user-must-be-admin'   => 'The first user in the system must be assigned an admin role.',
+            'role-invalid'               => 'Select at least one valid role.',
+            'role-not-assignable'        => 'You may assign only non-protected roles whose permissions you possess.',
+            'self-administration-forbidden'   => 'You cannot change your own roles or company assignments.',
+            'target-administration-forbidden' => 'Only a Super Admin may modify a protected administrator.',
         ],
 
         'sections' => [

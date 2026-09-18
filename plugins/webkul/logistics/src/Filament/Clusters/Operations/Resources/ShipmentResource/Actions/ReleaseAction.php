@@ -4,6 +4,7 @@ namespace Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResour
 
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Auth;
 use Webkul\Logistics\Enums\ShipmentState;
 use Webkul\Logistics\Models\Shipment;
 use Webkul\Logistics\Services\ShipmentWorkflow;
@@ -14,7 +15,7 @@ class ReleaseAction extends Action
 
     public static function getDefaultName(): ?string
     {
-        return 'logistics.shipment.release';
+        return 'releaseShipment';
     }
 
     protected function setUp(): void
@@ -27,8 +28,8 @@ class ReleaseAction extends Action
             ->requiresConfirmation()
             ->modalHeading(__($this->lang.'.heading'))
             ->modalDescription(__($this->lang.'.description'))
-            ->visible(fn (Shipment $record): bool => $record->state === ShipmentState::ON_HOLD)
-            ->authorize(fn (Shipment $record): bool => auth()->user()?->can('update', $record) ?? false)
+            ->visible(fn (Shipment $record): bool => $record->state === ShipmentState::ON_HOLD
+                && (Auth::user()?->can('update', $record) ?? false))
             ->action(function (Shipment $record): void {
                 app(ShipmentWorkflow::class)->release($record);
 

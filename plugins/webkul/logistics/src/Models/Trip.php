@@ -66,10 +66,10 @@ class Trip extends Model
     protected function getLogAttributeLabels(): array
     {
         return [
-            'state'            => __('logistics::models/trip.log-attributes.state'),
+            'state'                   => __('logistics::models/trip.log-attributes.state'),
             'vehicle.registration_no' => __('logistics::models/trip.log-attributes.vehicle'),
-            'driver.name'      => __('logistics::models/trip.log-attributes.driver'),
-            'planned_start_at' => __('logistics::models/trip.log-attributes.planned-start-at'),
+            'driver.name'             => __('logistics::models/trip.log-attributes.driver'),
+            'planned_start_at'        => __('logistics::models/trip.log-attributes.planned-start-at'),
         ];
     }
 

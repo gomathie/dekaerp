@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\URL;
 use Livewire\Livewire;
 use Webkul\Logistics\Filament\Clusters\Configurations\Pages\ManageCompanySettings;
 use Webkul\Logistics\Filament\Clusters\Configurations\Resources\ExpenseCategoryResource\Pages\ManageExpenseCategories;
@@ -14,6 +15,9 @@ require_once __DIR__.'/../../Helpers/LogisticsHelper.php';
 
 beforeEach(function () {
     LogisticsHelper::install();
+
+    // See ShipmentResourceTest: panel routes are missing when a file runs alone.
+    URL::resolveMissingNamedRoutesUsing(fn (): string => '#');
 });
 
 it('renders the configuration lists for users with permission', function (string $page, string $subject) {

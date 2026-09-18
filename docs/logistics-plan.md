@@ -332,7 +332,7 @@ you claim a package, finish it, or get blocked.
 | WP-0 | Decisions D1–D15 | — | — | done | user (all recommendations accepted 2026-09-17) |
 | WP-1a | Starter kit: composer.json, enums, icon (easy) | — | WP-0 | review | Codex 2026-09-17 |
 | WP-1 | Foundation | WP-0, WP-1a | — (runs alone) | review (verified: 38 plugin tests, AccountFeature 521, SupportFeature 115) | Claude 2026-09-18 |
-| WP-2 | Shipments and workflow | WP-1 | WP-3, WP-8a | in progress | Claude 2026-09-18 |
+| WP-2 | Shipments and workflow | WP-1 | WP-3, WP-8a | in progress (blocked, see 7.3) | Claude 2026-09-18 |
 | WP-3 | Vehicles and drivers | WP-1 | WP-2, WP-8a | todo | |
 | WP-4 | Trips and dispatch board | WP-2, WP-3 | WP-5, WP-6, WP-7 | todo | |
 | WP-5 | Delivery and POD | WP-2 | WP-4, WP-6, WP-7 | todo | |
@@ -1084,3 +1084,44 @@ Requests for other packages:
 - WP-2 onward: use `LogisticsHelper` (install, company, enable, disable,
   shipment) in tests, and put resources under the FQCNs already listed in
   `config/filament-shield.php`.
+
+### WP-2 - Shipments and workflow - 2026-09-18 - Claude (BLOCKED, not yet review)
+
+Status: code complete, **one test unverified**. Do not mark `review` until the
+suite runs clean.
+
+Blocker (7.3): a second worker is rewriting the security and support plugins in
+the same working tree, uncommitted, while this package is being tested. Files
+touched today include `CompanyContext` (`allowedIds`, `setActive`, `bypassed`),
+`Security\Models\User`, `Role`, `Scopes\OwnershipScope`, `Policies\UserPolicy`,
+`Policies\RolePolicy`, `Bouncer`, plus four new untracked files:
+
+- `security/database/migrations/2026_09_18_000001_add_administration_context_to_user_invitations_table.php`
+- `security/database/migrations/2026_09_18_000002_provision_multi_company_admin_role.php`
+- `security/src/Services/MultiCompanyAdminRoleProvisioner.php`
+- `support/src/Http/Requests/SetCompanyContextRequest.php`
+
+Every logistics test sits on that foundation, so a failure cannot be attributed
+to this package while those edits are in flight. Three runs of the same single
+test gave three different failures as the tree moved underneath them.
+
+Fix made outside this package (root cause, one line):
+`MultiCompanyAdminRoleProvisioner::provision()` called `modelKeys()` on the
+result of `collect()->map()`. That method exists only on Eloquent collections,
+so the new migration threw `BadMethodCallException` on every `migrate:fresh` -
+i.e. it broke every test suite in the repo, not just Logistics. Changed to
+`$permissions->map->getKey()->all()`.
+
+Open item: `ShipmentResourceTest` -> "it confirms a shipment from the view page
+and refuses without the permission". Last run failed at the first
+`Livewire::test(ViewShipment::class)` with "Attempt to read property
+`mountedActions` on null" (Filament `TestsActions::parseNestedActions`), which
+means the component did not mount - consistent with the company-context rewrite
+landing mid-run. The test carries a diagnostic that compares permission, switch,
+policy and state as one array; keep it until the test is green, then remove it.
+
+Requests:
+- Run the two streams in separate worktrees, or serialise them. They share one
+  test database (`aureuserp_testing`) and one working tree.
+- Re-run `--testsuite=LogisticsFeature` once the security/support work is
+  committed and stable, before moving WP-2 to `review`.

@@ -12,8 +12,8 @@ use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
@@ -47,6 +47,7 @@ use Webkul\Logistics\Support\LogisticsAccess;
 use Webkul\Partner\Enums\AccountType;
 use Webkul\Partner\Models\Partner;
 use Webkul\PluginManager\Package;
+use Webkul\Sale\Models\Order;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Currency;
 use Webkul\Support\Services\CompanyContext;
@@ -448,7 +449,7 @@ class ShipmentResource extends Resource
             return [];
         }
 
-        return \Webkul\Sale\Models\Order::query()
+        return Order::query()
             ->when($companyId, fn (Builder $query) => $query->where('company_id', $companyId))
             ->where('partner_id', $customerId)
             ->orderByDesc('id')
@@ -463,7 +464,7 @@ class ShipmentResource extends Resource
             return;
         }
 
-        $order = \Webkul\Sale\Models\Order::query()->find($orderId);
+        $order = Order::query()->find($orderId);
 
         if (! $order) {
             return;

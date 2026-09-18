@@ -5,6 +5,7 @@ namespace Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResour
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Auth;
 use Webkul\Logistics\Enums\ShipmentState;
 use Webkul\Logistics\Models\Shipment;
 use Webkul\Logistics\Services\ShipmentWorkflow;
@@ -15,7 +16,7 @@ class CancelAction extends Action
 
     public static function getDefaultName(): ?string
     {
-        return 'logistics.shipment.cancel';
+        return 'cancelShipment';
     }
 
     protected function setUp(): void
@@ -32,8 +33,8 @@ class CancelAction extends Action
                     ->label(__($this->lang.'.reason'))
                     ->rows(3),
             ])
-            ->visible(fn (Shipment $record): bool => $record->state->canTransitionTo(ShipmentState::CANCELLED))
-            ->authorize(fn (Shipment $record): bool => auth()->user()?->can('cancel', $record) ?? false)
+            ->visible(fn (Shipment $record): bool => $record->state->canTransitionTo(ShipmentState::CANCELLED)
+                && (Auth::user()?->can('cancel', $record) ?? false))
             ->action(function (Shipment $record, array $data): void {
                 app(ShipmentWorkflow::class)->cancel($record, ['notes' => $data['notes'] ?? null]);
 

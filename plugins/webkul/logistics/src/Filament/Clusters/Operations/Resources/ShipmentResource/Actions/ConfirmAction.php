@@ -4,6 +4,7 @@ namespace Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResour
 
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Auth;
 use Webkul\Logistics\Enums\ShipmentState;
 use Webkul\Logistics\Models\Shipment;
 use Webkul\Logistics\Services\ShipmentWorkflow;
@@ -14,7 +15,7 @@ class ConfirmAction extends Action
 
     public static function getDefaultName(): ?string
     {
-        return 'logistics.shipment.confirm';
+        return 'confirmShipment';
     }
 
     protected function setUp(): void
@@ -26,8 +27,10 @@ class ConfirmAction extends Action
             ->color('primary')
             ->requiresConfirmation()
             ->modalHeading(__($this->lang.'.heading'))
-            ->visible(fn (Shipment $record): bool => $record->state === ShipmentState::DRAFT)
-            ->authorize(fn (Shipment $record): bool => auth()->user()?->can('confirm', $record) ?? false)
+            // Filament actions carry no policy check of their own, so the ability is
+            // checked here; ShipmentWorkflow authorises again server-side.
+            ->visible(fn (Shipment $record): bool => $record->state === ShipmentState::DRAFT
+                && (Auth::user()?->can('confirm', $record) ?? false))
             ->action(function (Shipment $record): void {
                 app(ShipmentWorkflow::class)->confirm($record);
 

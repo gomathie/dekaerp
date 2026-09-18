@@ -8,6 +8,40 @@ for the task/question log this change log is paired with.
 
 ---
 
+## 2026-09-18 (Logistics WP-2 in progress; security provisioner fix)
+
+Branch `feature/logistics`. Plan and handoff: `docs/logistics-plan.md` §7.
+
+### Fixed: new multi-company admin migration broke every test suite
+
+`MultiCompanyAdminRoleProvisioner::provision()` (new, untracked, written by
+another worker today) called `modelKeys()` on the result of `collect()->map()`.
+`modelKeys()` is defined on `Illuminate\Database\Eloquent\Collection` only —
+`map()` returns a plain `Illuminate\Support\Collection` — so the call always
+threw `BadMethodCallException`. Its migration
+(`2026_09_18_000002_provision_multi_company_admin_role.php`) runs on every
+`migrate:fresh`, so this failed the whole repo's tests, not just Logistics.
+
+```php
+// before
+$role->permissions()->syncWithoutDetaching($permissions->modelKeys());
+
+// after
+$role->permissions()->syncWithoutDetaching($permissions->map->getKey()->all());
+```
+
+### Logistics WP-2 (Shipments and workflow) — not verified
+
+Code is complete; one test is still unproven. Testing is blocked because the
+security and support plugins (`CompanyContext`, `User`, `Role`,
+`OwnershipScope`, `UserPolicy`, `RolePolicy`, `Bouncer`) are being rewritten
+uncommitted in the same working tree, and every logistics test sits on that
+foundation. Three runs of one test produced three different failures as the
+tree changed underneath them. Details and the re-run instruction are in
+`docs/logistics-plan.md` §7, WP-2 block.
+
+---
+
 ## 2026-09-17 (Logistics plugin: plan, starter kit, Foundation)
 
 Branch `feature/logistics`. Plan, decisions and handoffs: `docs/logistics-plan.md`.

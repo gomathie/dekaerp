@@ -18,10 +18,10 @@ enum StopState: string implements HasColor, HasLabel
     public static function options(): array
     {
         return [
-            self::PENDING->value => __('logistics::enums/stop-state.pending'),
-            self::ARRIVED->value => __('logistics::enums/stop-state.arrived'),
+            self::PENDING->value  => __('logistics::enums/stop-state.pending'),
+            self::ARRIVED->value  => __('logistics::enums/stop-state.arrived'),
             self::DEPARTED->value => __('logistics::enums/stop-state.departed'),
-            self::SKIPPED->value => __('logistics::enums/stop-state.skipped'),
+            self::SKIPPED->value  => __('logistics::enums/stop-state.skipped'),
         ];
     }
 
@@ -33,10 +33,10 @@ enum StopState: string implements HasColor, HasLabel
     public function getColor(): string
     {
         return match ($this) {
-            self::PENDING => 'gray',
-            self::ARRIVED => 'info',
+            self::PENDING  => 'gray',
+            self::ARRIVED  => 'info',
             self::DEPARTED => 'success',
-            self::SKIPPED => 'warning',
+            self::SKIPPED  => 'warning',
         };
     }
 }

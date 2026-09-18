@@ -47,8 +47,8 @@ class ShipmentWorkflow
 
     /**
      * @param  array<string, mixed>  $context  ability, notes, source, user_id, occurred_at,
-     *                                        trip_id, stop_id, location_label, latitude,
-     *                                        longitude, metadata
+     *                                         trip_id, stop_id, location_label, latitude,
+     *                                         longitude, metadata
      */
     public function transition(Shipment $shipment, ShipmentState $to, array $context = []): Shipment
     {
