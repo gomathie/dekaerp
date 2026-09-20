@@ -142,8 +142,20 @@ class PluginResource extends Resource
                         ->modalDescription(fn ($record) => __('plugin-manager::filament/resources/plugin.actions.install.description', ['name' => $record->name]))
                         ->modalSubmitActionLabel(__('plugin-manager::filament/resources/plugin.actions.install.submit'))
                         ->action(function ($record) {
-                            DB::beginTransaction();
-
+                            // No transaction around the install.
+                            //
+                            // `{plugin}:install` runs as a separate PHP process on its
+                            // own database connection, so its migrations and permission
+                            // rows commit independently: a rollback here could never
+                            // undo them, it only ever reverted the local `plugins` row.
+                            // What the transaction did do was hold this request's
+                            // connection open, idle in transaction, for as long as the
+                            // child ran (up to the 300s timeout). Against a pooled
+                            // managed database that is long enough to hit an
+                            // idle-in-transaction timeout, or to block the child's own
+                            // DDL on locks this connection still held - which surfaced
+                            // as an install that failed once and then succeeded on a
+                            // later attempt.
                             try {
                                 $phpPath = self::getPhpExecutablePath();
 
@@ -179,16 +191,12 @@ class PluginResource extends Resource
                                     'is_active'    => true,
                                 ]);
 
-                                DB::commit();
-
                                 Notification::make()
                                     ->title(__('plugin-manager::filament/resources/plugin.notifications.installed.title'))
                                     ->body(__('plugin-manager::filament/resources/plugin.notifications.installed.body', ['name' => $record->name]))
                                     ->success()
                                     ->send();
                             } catch (Throwable $e) {
-                                DB::rollBack();
-
                                 logger()->error('Plugin installation failed', [
                                     'plugin' => $record->name,
                                     'error'  => $e->getMessage(),

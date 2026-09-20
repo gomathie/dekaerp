@@ -8,6 +8,60 @@ for the task/question log this change log is paired with.
 
 ---
 
+## 2026-09-20 (plugin install: intermittent failures that succeed on retry)
+
+Branch `feature/logistics`. Reported symptom: installing a plugin sometimes
+errors, then works on a later attempt.
+
+### Fixed: an open transaction wrapped a 300-second external process
+
+`PluginResource`'s install action opened `DB::beginTransaction()`, then `exec()`ed
+`{plugin}:install` as a **separate PHP process** on its own database connection,
+and only committed afterwards.
+
+The transaction bought nothing: the child process's migrations and permission
+rows commit independently, so `DB::rollBack()` could never undo an install — it
+only ever reverted the local `plugins` row. What it did do was hold this
+request's connection open, *idle in transaction*, for as long as the child ran,
+up to the 300s timeout. Against a pooled managed database (Supabase) that is
+long enough to trip an idle-in-transaction timeout, and long enough for the
+locks this connection still held to block the child's own DDL — which is
+precisely an install that fails once and then succeeds when retried.
+
+Removed the transaction; `$record->update()` is a single statement and needs
+none. The rollback in the `catch` went with it, since it was rolling back work
+that had already committed elsewhere.
+
+### Fixed: the cache rebuild raced with the post-install redirect
+
+`Package::refreshPluginCaches()` ran `optimize:clear` synchronously and then
+fired a **detached** `php artisan optimize > /dev/null 2>&1 &`, returning
+immediately. The redirect straight after an install could therefore reach the
+app while that background process was still writing
+`bootstrap/cache/config.php` and `routes-v7.php`. Laravel writes those with
+`file_put_contents`, which is not atomic, so a concurrent request could
+`require` a half-written file and fatal — an error that fixed itself a moment
+later once the rebuild completed. The detached command also discarded its own
+failures into `/dev/null`.
+
+Now rebuilt in-process with `Artisan::call('optimize')`, so the caches are whole
+before anyone is redirected and a failure is reportable. Costs the install
+action a few seconds. `rebuildCachesInBackground()` was removed as dead code.
+
+### Already fixed on this branch, listed for the record
+
+- `Role::first()` in `InstallCommand` (unordered, so permissions were synced to
+  an arbitrary role) now resolves the panel role by name.
+- `Package::phpBinaryPath()` uses `PhpExecutableFinder` (upstream `631dbcdfb`).
+
+### Not verified by tests
+
+Neither path is exercised by the suites: the Filament action is not covered, and
+the `optimize` rebuild is guarded by `app()->isProduction()`. `php -l` clean.
+This needs confirming on a real install.
+
+---
+
 ## 2026-09-19 to 2026-09-20 (Upstream Package A: verified runtime baseline)
 
 Branch `feature/logistics`. Whole-application plan:

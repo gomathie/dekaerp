@@ -203,26 +203,22 @@ class Package extends BasePackage
             Artisan::call('optimize:clear');
 
             if (app()->isProduction()) {
-                static::rebuildCachesInBackground();
+                // Rebuilt in-process, on purpose. This used to fire a detached
+                // `php artisan optimize &`, which returned immediately: the
+                // redirect straight after an install could then reach the app
+                // while that background process was still writing
+                // bootstrap/cache/config.php and routes-v7.php. Those are
+                // written with file_put_contents, so a concurrent request could
+                // `require` a half-written file and fatal - an error that fixed
+                // itself once the rebuild finished. The detached command also
+                // sent its own failures to /dev/null. Rebuilding here costs the
+                // install action a few seconds and leaves the caches whole
+                // before anyone is redirected.
+                Artisan::call('optimize');
             }
         } catch (Throwable $e) {
             report($e);
         }
-    }
-
-    protected static function rebuildCachesInBackground(): void
-    {
-        if (! app()->isProduction() || PHP_OS_FAMILY === 'Windows') {
-            return;
-        }
-
-        $command = sprintf(
-            '%s %s optimize > /dev/null 2>&1 &',
-            escapeshellarg(static::phpBinaryPath()),
-            escapeshellarg(base_path('artisan'))
-        );
-
-        exec($command);
     }
 
     /**
