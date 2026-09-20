@@ -71,6 +71,61 @@ and the next review date.
 
 ---
 
+## 2026-09-20
+
+**Requested:** Continue Package A through full-suite investigation, fixes,
+verification, and documentation.
+
+**Done:** The initial serial PostgreSQL suite completed with 2 failures, 2,422
+passes, and 6,783 assertions. Plugin installation and fresh ERP setup were
+using `Role::first()`, so the earlier-created protected `Multi-Company Admin`
+role could receive every generated permission and become
+`general.default_role_id`. Both paths now resolve the configured `Admin` role
+by name and guard. The protected provisioner now removes stale grants, and an
+idempotent migration repairs affected installations. The Filament promotion
+fixture now restores its normal partner invariant before editing.
+
+**Verified:** Pint passed. The post-fix Security suite passed 41 tests and 121
+assertions, including fresh install, migration repair, Filament promotion, and
+a real `contacts:install` permission refresh. The initial full run took more
+than ten hours and was not repeated after the focused fixes; remote CI remains
+the whole-suite confirmation. The translation command still has the 15
+pre-existing locale failures listed below.
+
+**Deployment note:** Run migrations before allowing plugin installation or
+legacy invitation acceptance. Do not manually grant broad permissions to
+`Multi-Company Admin`; its protected baseline is intentionally exactly the
+eight permissions in `MultiCompanyAdminRoleProvisioner::BASE_PERMISSIONS`.
+
+## 2026-09-19
+
+**Requested:** Continue the approved whole-application upstream-fix adoption
+work by implementing Package A, the verification baseline.
+
+**Done:** Raised the application contract to PHP `^8.4.1`; aligned GitHub Pest,
+Playwright, and translation jobs on PHP 8.4; aligned database-backed CI on
+PostgreSQL 17; and added a locked dependency audit to CI. The narrowly scoped
+Composer refresh also patched Filament 5.7.6, Livewire 4.3.4, and Laravel Excel
+3.1.70 after the previous lock exposed four security advisories. Composer
+installation, validation, locked audit, generated-asset provenance, and the
+three Filament view overrides were checked. All workflow YAML parsed, and the
+Playwright project discovered 220 tests after a clean locked install. The full
+Pest result and resulting authorization repair are recorded in the 2026-09-20
+entry, `docs/change-log.md`, and the owning plan.
+
+**Important findings:** `translations:check --details` currently passes 93 of
+108 locale sets. The 15 existing failures are in Accounts (fr), Employees
+(fr), Logistics (ar/es/fr/pt_BR), Products (fr), Security (ar/es/fr/pt_BR), and
+Support (ar/es/fr/pt_BR). Keep those failures with the translation work package;
+do not mix broad locale repairs into dependency upgrades.
+
+**Dependency-update rule:** Inspect Composer dry runs before applying them. For
+a security patch, update the smallest explicit package set and review the
+resulting lock delta; `--with-all-dependencies` attempted 74 unrelated updates
+here. After a Filament update, expect `filament:upgrade` to republish tracked
+assets, prove those files match package sources, and re-diff every local vendor
+view override listed above.
+
 ## 2026-09-18
 
 **Requested:** Turn the upstream failing-test comparison into a whole-app

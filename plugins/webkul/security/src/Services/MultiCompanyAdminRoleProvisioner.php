@@ -41,8 +41,8 @@ class MultiCompanyAdminRoleProvisioner
                     'guard_name' => 'web',
                 ]));
 
-            // map() gives a plain support collection, which has no modelKeys().
-            $role->permissions()->syncWithoutDetaching($permissions->map->getKey()->all());
+            // This protected role must keep its narrow baseline even after permission regeneration.
+            $role->permissions()->sync($permissions->map->getKey()->all());
 
             app(PermissionRegistrar::class)->forgetCachedPermissions();
 

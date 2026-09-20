@@ -206,10 +206,20 @@ class InstallERP extends Command
     {
         $this->info('🛡 Generating roles and permissions...');
 
-        $adminRole = Role::firstOrCreate([
+        $adminRole = Role::query()
+            ->where('guard_name', 'web')
+            ->whereRaw('LOWER(name) = ?', [mb_strtolower($this->getAdminRoleName())])
+            ->first();
+
+        $adminRole ??= Role::query()->create([
             'name'       => $this->getAdminRoleName(),
+            'guard_name' => 'web',
             'is_default' => true,
         ]);
+
+        if (! $adminRole->is_default) {
+            $adminRole->forceFill(['is_default' => true])->save();
+        }
 
         Artisan::call('shield:generate', [
             '--all'    => true,
@@ -390,8 +400,13 @@ class InstallERP extends Command
     /**
      * Resolve default settings for the user.
      */
-    private function syncDefaultSettings($user)
+    private function syncDefaultSettings(Model $user): void
     {
+        $adminRoleId = Role::query()
+            ->where('guard_name', 'web')
+            ->whereRaw('LOWER(name) = ?', [mb_strtolower($this->getAdminRoleName())])
+            ->value('id');
+
         $settings = [
             [
                 'group'   => 'general',
@@ -401,7 +416,7 @@ class InstallERP extends Command
             [
                 'group'   => 'general',
                 'name'    => 'default_role_id',
-                'payload' => Role::first()?->id,
+                'payload' => $adminRoleId,
             ],
             [
                 'group'   => 'currency',

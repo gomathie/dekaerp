@@ -6,6 +6,7 @@
 > **Local baseline:** `feature/logistics` at `e0ce9f6a8467`  
 > **Common v1.5 baseline:** `8409fde`  
 > **Upstream reviewed:** `aureus/master` at `d7d471894`  
+> **Package A implemented:** 2026-09-20; focused local verification complete, first remote CI run pending
 > **Next review due:** 2026-09-25, or earlier when a trigger below occurs
 
 ## Purpose
@@ -83,11 +84,12 @@ run its focused suites, then run the affected regression suites.
 ### UF-001 - CI Runtime and Lockfile Contract
 
 **Decision:** Required, P0  
-**Local state:** Open
+**Local state:** Implemented locally on 2026-09-20; first remote CI run pending
 
-The repository declares PHP `^8.3` in `composer.json`, and the Pest,
-Playwright, and translation workflows provision PHP 8.3. The committed
-`composer.lock` contains at least these packages requiring PHP `>=8.4.1`:
+Before Package A, the repository declared PHP `^8.3` in `composer.json`, and
+the Pest, Playwright, and translation workflows provisioned PHP 8.3. The
+committed `composer.lock` already contained at least these packages requiring
+PHP `>=8.4.1`:
 
 | Package | Locked version | PHP requirement |
 |---|---:|---:|
@@ -95,10 +97,10 @@ Playwright, and translation workflows provision PHP 8.3. The committed
 | `symfony/options-resolver` | `v8.1.0` | `>=8.4.1` |
 | `symfony/psr-http-message-bridge` | `v8.1.0` | `>=8.4.1` |
 
-Local Sail and the production image use PHP 8.4, while local and production
-PostgreSQL use version 17. The Pest and Playwright workflows still use
-PostgreSQL 16. This is a deterministic configuration incompatibility; it is not
-a claim that a specific remote Actions run was observed failing.
+Local Sail and the production image used PHP 8.4, while local and production
+PostgreSQL used version 17. The Pest and Playwright workflows still used
+PostgreSQL 16. This was a deterministic configuration incompatibility; it is
+not a claim that a specific remote Actions run was observed failing.
 
 **Why DEKA ERP needs it:** A CI job that cannot install the committed lockfile
 cannot validate any later test fix. Testing a different PostgreSQL major than
@@ -130,6 +132,69 @@ dependency failures, and closer production parity.
 
 **Acceptance:** A clean CI runner installs the lockfile without platform
 ignores, and the PostgreSQL 17 lanes reach and execute their test commands.
+
+**Implementation record (2026-09-19 to 2026-09-20):**
+
+- Raised the root PHP contract from `^8.3` to `^8.4.1`, provisioned PHP 8.4
+  in all three workflows, and aligned the Pest and Playwright PostgreSQL lanes
+  with PostgreSQL 17.
+- Added `composer audit --locked --no-interaction` to the push/pull-request
+  translation workflow so a vulnerable committed lockfile fails CI once,
+  rather than once per database or browser shard.
+- A lock refresh exposed four advisories in three direct dependencies. Applied
+  only the patched releases: all twelve Filament split packages from 5.7.3 to
+  5.7.6, Livewire from 4.3.3 to 4.3.4, and Laravel Excel from 3.1.69 to
+  3.1.70. The root constraints now preserve those minimum patched versions.
+- The addressed advisories are Filament MFA code replay
+  ([CVE-2026-84306](https://github.com/advisories/GHSA-r3j6-gpjw-qfjr)),
+  Filament password-validity disclosure
+  ([CVE-2026-84307](https://github.com/advisories/GHSA-xwpv-pqxp-5v36)),
+  Livewire DOM XSS
+  ([CVE-2026-81887](https://github.com/advisories/GHSA-g3hc-697w-wm82)),
+  and Laravel Excel export path traversal outside the configured disk
+  ([CVE-2026-84374](https://github.com/advisories/GHSA-c7r6-vx3h-w5g2)).
+- Rejected dry runs that would have refreshed 50-74 unrelated packages.
+  The committed lock delta is limited to the 14 package patches above plus a
+  metadata-only canonical repository URL change for the same locked Guava icon
+  picker release.
+- Composer's `filament:upgrade` hook republished five tracked frontend assets.
+  Each public file hashes exactly to its installed Filament or Website package
+  source. The three local Filament Blade overrides were re-diffed against
+  5.7.6; none of their upstream source views changed from 5.7.3.
+- The first full Pest run exposed an existing order-dependent authorization
+  bug: plugin installation and fresh-install defaults selected `Role::first()`,
+  which now resolves to the protected `Multi-Company Admin` role. Both paths
+  now select the configured `Admin` role by name and guard. An idempotent
+  Security migration restores the protected role's exact eight-permission
+  baseline and repairs an affected global default role setting.
+
+**Local verification so far:**
+
+- `composer validate --no-check-publish` passed, with only the existing exact
+  `filament-shield` constraint warning.
+- A clean `composer install --no-interaction --prefer-dist
+  --optimize-autoloader` completed under Sail PHP 8.4.23, including package
+  discovery and Filament asset publication.
+- `composer audit --locked --no-interaction` reports no advisories.
+- Symfony YAML parsed all four workflow files successfully under PHP 8.4.
+- The Playwright lock installed with no npm advisories, and
+  `playwright test --list` discovered all 220 Chromium tests in 19 files.
+- `translations:check --details` executed fully: 93 of 108 locale sets pass.
+  The 15 failures are existing key/structure drift in Accounts (fr), Employees
+  (fr), Logistics (all four non-English locales), Products (fr), Security (all
+  four), and Support (all four). They are not caused by this dependency patch
+  and remain tracked under the translation work package.
+- The initial full serial PostgreSQL Pest run completed with 2 failures, 2,422
+  passes, and 6,783 assertions in 38,339.61 seconds. Both failures were
+  investigated: the role-ordering defect above and a user fixture that skipped
+  its normal partner-creation event.
+- After the fixes, the focused Security suite passed all 41 tests and 121
+  assertions in 410.53 seconds. It covers fresh ERP installation, the repair
+  migration, Filament user promotion, exact protected-role permissions, and a
+  real `contacts:install` permission refresh.
+- The 10-hour full serial suite was not repeated after the focused repairs.
+  Remote GitHub Actions and the Playwright matrix remain the final
+  whole-application acceptance signal.
 
 ### UF-002 - Employee Factories and Missing Test Suite
 
@@ -563,6 +628,8 @@ Other v1.6 backports and fork-specific security fixes remain documented in
 ### Package A - Verification Baseline
 
 **Contains:** UF-001  
+**Status:** Implemented locally 2026-09-20; focused verification complete,
+remote CI confirmation pending
 **Dependencies:** Confirm deployment PHP patch version  
 **Risk:** Medium, because Composer metadata and CI are shared infrastructure  
 **Verification:** Composer validation/install, translation command, Pest matrix,

@@ -1,6 +1,7 @@
 <?php
 
 use AnourValar\EloquentSerialize\Facades\EloquentSerializeFacade;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Facades\Filament;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
@@ -157,12 +158,71 @@ it('provisions the Multi-Company Admin role exactly once', function () {
 it('can rerun provisioning without duplicate roles or permissions', function () {
     $provisioner = app(MultiCompanyAdminRoleProvisioner::class);
     $first = $provisioner->provision();
+    $unexpectedPermission = Permission::query()->firstOrCreate([
+        'name'       => 'unexpected_multi_company_admin_permission',
+        'guard_name' => 'web',
+    ]);
+    $first->givePermissionTo($unexpectedPermission);
     $second = $provisioner->provision();
 
     expect($second->is($first))->toBeTrue()
         ->and($second->permissions()->whereIn('name', MultiCompanyAdminRoleProvisioner::BASE_PERMISSIONS)->count())
         ->toBe(count(MultiCompanyAdminRoleProvisioner::BASE_PERMISSIONS))
         ->and(DB::table('role_has_permissions')->where('role_id', $second->getKey())->count())
+        ->toBe(count(MultiCompanyAdminRoleProvisioner::BASE_PERMISSIONS));
+});
+
+it('uses the configured Admin role as the installation default', function () {
+    $adminRole = Role::query()
+        ->where('guard_name', 'web')
+        ->whereRaw('LOWER(name) = ?', [mb_strtolower(Utils::getPanelUserRoleName())])
+        ->firstOrFail();
+    $multiCompanyAdminRole = app(MultiCompanyAdminRoleProvisioner::class)->provision();
+    $defaultRoleId = json_decode(
+        DB::table('settings')
+            ->where('group', 'general')
+            ->where('name', 'default_role_id')
+            ->value('payload'),
+        true,
+    );
+
+    expect($adminRole->is($multiCompanyAdminRole))->toBeFalse()
+        ->and($defaultRoleId)->toBe($adminRole->getKey())
+        ->and(DB::table('role_has_permissions')->where('role_id', $multiCompanyAdminRole->getKey())->count())
+        ->toBe(count(MultiCompanyAdminRoleProvisioner::BASE_PERMISSIONS));
+});
+
+it('repairs a protected role selected as the installation default', function () {
+    $adminRole = Role::query()
+        ->where('guard_name', 'web')
+        ->whereRaw('LOWER(name) = ?', [mb_strtolower(Utils::getPanelUserRoleName())])
+        ->firstOrFail();
+    $multiCompanyAdminRole = app(MultiCompanyAdminRoleProvisioner::class)->provision();
+    $unexpectedPermission = Permission::query()->firstOrCreate([
+        'name'       => 'unexpected_install_permission',
+        'guard_name' => 'web',
+    ]);
+
+    $multiCompanyAdminRole->givePermissionTo($unexpectedPermission);
+
+    DB::table('settings')
+        ->where('group', 'general')
+        ->where('name', 'default_role_id')
+        ->update(['payload' => json_encode($multiCompanyAdminRole->getKey())]);
+
+    $migration = require __DIR__.'/../../../database/migrations/2026_09_20_150533_repair_multi_company_admin_install_state.php';
+    $migration->up();
+
+    $defaultRoleId = json_decode(
+        DB::table('settings')
+            ->where('group', 'general')
+            ->where('name', 'default_role_id')
+            ->value('payload'),
+        true,
+    );
+
+    expect($defaultRoleId)->toBe($adminRole->getKey())
+        ->and(DB::table('role_has_permissions')->where('role_id', $multiCompanyAdminRole->getKey())->count())
         ->toBe(count(MultiCompanyAdminRoleProvisioner::BASE_PERMISSIONS));
 });
 
@@ -374,6 +434,10 @@ it('lets a Super Admin promote a user and assign multiple companies through Fila
     $multiCompanyRole = app(MultiCompanyAdminRoleProvisioner::class)->provision();
     $superAdmin = multiCompanyAdminTestSuperAdmin();
     multiCompanyAdminTestAuthenticate($superAdmin, [$companyA->getKey()]);
+    $target->save();
+    $target->refresh();
+
+    expect($target->partner_id)->not->toBeNull();
 
     Livewire::test(EditUser::class, ['record' => $target->getKey()])
         ->fillForm([
@@ -388,7 +452,10 @@ it('lets a Super Admin promote a user and assign multiple companies through Fila
 
     expect($target->isMultiCompanyAdmin())->toBeTrue()
         ->and($target->resource_permission)->toBe(PermissionType::GLOBAL)
-        ->and($target->allowedCompanies()->pluck('companies.id')->all())
+        ->and(DB::table('user_allowed_companies')
+            ->where('user_id', $target->getKey())
+            ->pluck('company_id')
+            ->all())
         ->toEqualCanonicalizing([$companyA->getKey(), $companyB->getKey()]);
 });
 
@@ -788,4 +855,20 @@ it('preserves tenant isolation for ordinary company users', function () {
     expect($ordinary->isMultiCompanyAdmin())->toBeFalse()
         ->and(UtmCampaign::query()->pluck('id')->all())->toContain($campaignA->getKey())
         ->not->toContain($campaignB->getKey());
+});
+
+it('syncs newly installed plugin permissions only to the configured Admin role', function () {
+    $multiCompanyAdminRole = app(MultiCompanyAdminRoleProvisioner::class)->provision();
+
+    TestBootstrapHelper::ensurePluginInstalled('contacts');
+
+    $adminRole = Role::query()
+        ->where('guard_name', 'web')
+        ->whereRaw('LOWER(name) = ?', [mb_strtolower(Utils::getPanelUserRoleName())])
+        ->firstOrFail();
+
+    expect(DB::table('role_has_permissions')->where('role_id', $multiCompanyAdminRole->getKey())->count())
+        ->toBe(count(MultiCompanyAdminRoleProvisioner::BASE_PERMISSIONS))
+        ->and(DB::table('role_has_permissions')->where('role_id', $adminRole->getKey())->count())
+        ->toBe(Permission::query()->count());
 });

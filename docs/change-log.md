@@ -8,6 +8,99 @@ for the task/question log this change log is paired with.
 
 ---
 
+## 2026-09-19 to 2026-09-20 (Upstream Package A: verified runtime baseline)
+
+Branch `feature/logistics`. Whole-application plan:
+`docs/upstream-fix-adoption-plan.md`, Package A / UF-001.
+
+### Fixed: the declared PHP/CI contract did not match the lockfile or production
+
+The root package claimed PHP `^8.3`, and all GitHub workflows provisioned PHP
+8.3, while the committed lockfile already contained Symfony packages requiring
+PHP 8.4.1 or newer. The PostgreSQL CI lanes also used PostgreSQL 16 while Sail
+and production use PostgreSQL 17.
+
+The root contract is now PHP `^8.4.1`; Pest, Playwright, and translation CI use
+PHP 8.4; and both database-backed workflows use PostgreSQL 17. MySQL remains as
+the existing compatibility lane.
+
+### Security patches found while refreshing the lock contract
+
+`composer audit --locked` exposed four advisories in direct dependencies. The
+minimum constraints and lockfile now require:
+
+- Filament 5.7.6, fixing MFA code replay (CVE-2026-84306) and a
+  password-validity disclosure for panel-denied accounts (CVE-2026-84307).
+- Livewire 4.3.4, fixing client-side state handling that could permit DOM XSS
+  (CVE-2026-81887).
+- Laravel Excel 3.1.70, preventing a caller-controlled export path from writing
+  outside the configured filesystem disk (CVE-2026-84374).
+
+Two broad Composer dry runs were rejected because they would have updated 74
+or 50 packages. The applied update changes exactly 14 packages: the twelve
+Filament split packages plus Livewire and Laravel Excel. A metadata-only Guava
+repository URL canonicalization is the only other lock entry change. The
+translation workflow now runs a locked Composer audit on every push and pull
+request, without multiplying the audit across database/browser matrix jobs.
+
+Composer's normal `filament:upgrade` script republished five tracked CSS/JS
+assets. All five match their installed package source byte-for-byte. The local
+sidebar, topbar, and table-summary Blade overrides were compared with Filament
+5.7.6; their upstream templates did not change from 5.7.3.
+
+### Full-suite finding: plugin installation widened the wrong role
+
+The first complete serial PostgreSQL run finished with 2 failures and 2,422
+passes (6,783 assertions) after 38,339.61 seconds. Both failures exposed one
+order-dependent authorization defect plus one incomplete test fixture:
+
+- Plugin permission regeneration selected `Role::first()`. The new protected
+  `Multi-Company Admin` role is created before `Admin`, so installing a plugin
+  could replace its intended eight permissions with every application
+  permission. Fresh ERP installation also used `Role::first()` for
+  `general.default_role_id`, making the protected role the invitation default.
+- The Super Admin promotion test created a user with events disabled and
+  therefore without the partner record that every normal user save creates.
+  Filament correctly reached the singular relationship and then attempted to
+  create a blank partner.
+
+Both installer paths now resolve the configured panel `Admin` role explicitly
+by case-insensitive name and `web` guard. The protected-role provisioner uses an
+exact sync so stale grants are removed. Migration
+`2026_09_20_150533_repair_multi_company_admin_install_state` normalizes that
+permission baseline and changes a global default role from `Multi-Company
+Admin` to the distinct configured `Admin` role when needed; rollback is
+deliberately non-destructive. Regression coverage now exercises fresh install,
+repair, Filament promotion, and a real lightweight `contacts:install` run.
+
+### Verification
+
+- `composer validate --no-check-publish`: passed; existing exact Shield
+  constraint warning only.
+- Clean optimized Composer install under Sail PHP 8.4.23: passed, including
+  package discovery and asset publication.
+- `composer audit --locked --no-interaction`: no advisories.
+- Symfony YAML parse of all four GitHub workflow files: passed under PHP 8.4.
+- Playwright locked install and test discovery: passed; npm reported no
+  advisories and Playwright listed 220 Chromium tests across 19 files.
+- Published asset SHA-256 comparisons: all five match package sources.
+- Filament vendor override comparison, 5.7.3 to 5.7.6: no upstream changes.
+- `translations:check --details`: command completed; 93/108 locale sets pass.
+  Existing translation drift leaves 15 failures across Accounts, Employees,
+  Logistics, Products, Security, and Support. No translation files were changed
+  in this package.
+- Initial full serial PostgreSQL Pest suite: 2 failed, 2,422 passed (6,783
+  assertions). Those two failures led to the installer and fixture fixes above.
+- Post-fix focused Security suite: 41 passed (121 assertions), including an
+  actual plugin permission regeneration; duration 410.53 seconds.
+- `vendor/bin/pint --dirty --format agent`: passed after the PHP changes.
+
+Remote GitHub Actions and the Playwright shards have not yet run against this
+uncommitted branch. The full 10-hour serial suite was not repeated after the
+focused fixes; the remote matrix is the remaining whole-suite confirmation.
+Deployment must run the new idempotent Security migration before plugin
+installation or invitation workflows resume.
+
 ## 2026-09-18 (Logistics WP-2 in progress; security provisioner fix)
 
 Branch `feature/logistics`. Plan and handoff: `docs/logistics-plan.md` §7.
