@@ -1087,6 +1087,14 @@ MULTI-COMPANY FACTS THAT BITE
   new default-bearing column in step the same way.
 • `UninstallCommand` drops a plugin's tables. `startWith` runs first, from the
   console and the Plugins page, and can refuse by throwing.
+• New Filament resources split form, infolist and table into
+  `XResource/Schemas/XForm.php`, `XResource/Schemas/XInfolist.php` and
+  `XResource/Tables/XsTable.php`, with the resource class only delegating.
+  That is what Filament's own `MakeResourceCommand` generates, and what
+  upstream moved every resource to in v1.6 - so an inline resource cannot take
+  an upstream patch as a patch. Do not retrofit existing monolithic resources
+  as a side effect of other work; convert one only as its own change with its
+  own test run.
 • Shield: only `resources.manage` and the exclude lists are merged from a plugin
   config; `pages.manage` and `custom_permissions` there are ignored. Page
   permissions are `page_<plugin>_<page_snake>`. Resource permissions are
@@ -1149,6 +1157,12 @@ REFERENCES
 • docs/change-log.md — what changed and why, per session.
 • docs/upstream-fix-adoption-plan.md — whole-app upstream fix decisions,
   implementation order, review cadence, and review log.
+• Package F, resource structure alignment — the plan lives on the
+  `chore/resource-structure` branch, not on main:
+  `git show chore/resource-structure:docs/upstream-structure-alignment-plan.md`.
+  Do that work only on that branch, in its own worktree, and only after
+  Logistics is merged. The layout rule itself is in project memory above and in
+  docs/logistics-plan.md, so new resources follow it everywhere meanwhile.
 • docs/logistics-plan.md — Logistics plan, decisions D1–D15, status board, work
   packages, handoff log.
 • docs/unified-product-resource-plan.md — cross-plugin product-resource plan.

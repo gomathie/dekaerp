@@ -6,6 +6,59 @@ Supabase's dashboard, Laravel Cloud, or production data. Ordered by urgency.
 ---
 ---
 
+## 0. Point production Sentry at the DEKA ERP project (2026-09-20)
+
+**You must do this in the Laravel Cloud dashboard.** Editing
+`.env.laravel-cloud` locally changes nothing in production; that file is a
+gitignored local copy, not the deployed environment.
+
+Set, for the `production` environment:
+
+```
+SENTRY_LARAVEL_DSN=https://63cac95eb616de29acc760043c3d4288@o4511967103811584.ingest.de.sentry.io/4512018100322384
+```
+
+Verified, not assumed: `php artisan sentry:test` with this DSN produced event
+`06dcfd82e8dd4b1caf3e51c2dc013e5f`, and the Sentry MCP then found it in
+`365-s3/dekaerp` as `DEKAERP-1`. So this DSN provably reaches the DEKA ERP
+project.
+
+**Why it needs changing.** Production was configured with a different project
+(id `4512018098815056`; the DEKA ERP project is `4512018100322384`). The
+organisation holds only two projects, `dekaerp` and `osworksheet`, so
+production has most likely been reporting into `osworksheet`. That matches what
+the review found: `dekaerp` had **zero events in ninety days** for a live ERP
+with real customers.
+
+Not fully proven, and worth thirty seconds of your time: the MCP exposes issues
+and events but not project keys, so compare the two ids under **Settings →
+Client Keys (DSN)** in Sentry, or simply set this DSN and watch `dekaerp` start
+receiving events.
+
+Leave the other Sentry values in Laravel Cloud as they are - they are already
+correct for production, and the local ones must **not** be copied over them:
+
+| Key | Production | Local | Note |
+|---|---|---|---|
+| `SENTRY_TRACES_SAMPLE_RATE` | `0.1` | `1.0` | 1.0 would trace every request |
+| `SENTRY_PROFILES_SAMPLE_RATE` | `0.1` | `1.0` | same |
+| `SENTRY_SEND_DEFAULT_PII` | `false` | `false` | keep false |
+| `SENTRY_ENABLE_LOGS` | `true` | `true` | keep - it is the only reason the plugin-install `logger()->error()` reaches Sentry at all |
+
+`SENTRY_ENVIRONMENT` is optional. When empty the SDK falls back to
+`$this->app->environment()`
+(`vendor/sentry/sentry-laravel/src/Sentry/Laravel/ServiceProvider.php:301-303`),
+which is already `production` there.
+
+Afterwards: resolve `DEKAERP-1`, which is the test exception sent from here.
+
+Still open even once the DSN is right - the intermittent plugin-install
+failures will **not** appear as Sentry issues, because those catch blocks do not
+report. See `docs/change-log.md` (2026-09-20) for the two `report($e)` lines
+that would fix it.
+
+---
+
 ## 1. Supabase - DONE (2026-09-03)
 
 Closed out. For the record, what was done and what it means:

@@ -671,6 +671,34 @@ targeted Website Playwright specs
 **Verification:** command tests, current translation parity, false-positive
 review, and CI artifact inspection
 
+### Package F - Resource Structure Alignment
+
+**Contains:** the Filament resource file layout only (no upstream features or
+fixes)
+**Dependencies:** Package A, and the Logistics plugin finished and merged
+**Risk:** Medium by volume (227 resource classes, 139 of them with inline
+schemas), low by nature - the refactor is meant to change no behaviour, and is
+verified against that
+**Plan:** `docs/upstream-structure-alignment-plan.md`, which lives on the
+**`chore/resource-structure`** branch, not here. Read it there before doing any
+of this work:
+
+```bash
+git show chore/resource-structure:docs/upstream-structure-alignment-plan.md
+```
+
+Do not start Package F on `feature/logistics` or `main`. It has its own branch
+so a 400-file mechanical refactor never mixes with feature work, and so it can
+be reverted as one merge. The scope decision is recorded there: **all 227
+resources**, not only the 139 with inline schemas.
+
+Recorded here because it is upstream-driven: upstream v1.6 moved every resource
+to `Schemas/`+`Tables/`, and while ours stay monolithic, every future upstream
+fix touching a form or table must be re-implemented by hand rather than applied
+as a patch. The governing rule is that our files are **restructured**, never
+replaced with upstream's - 59 of our resources carry company scoping, 33 carry
+custom fields and 14 carry responsive columns that upstream's versions do not.
+
 ### Separate Product Proposals
 
 Create independent plans and approval points for UF-009, UF-010, UF-011, and

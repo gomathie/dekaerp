@@ -161,6 +161,46 @@ Installing Logistics adds it for **all** companies (section 1), while each compa
 decides for itself whether to use it, possibly years after its other data exists.
 This section is binding for WP-1, WP-2, WP-3, WP-9, WP-10, WP-11 and WP-13.
 
+### Resource file layout
+
+New Filament resources split their form, infolist and table into their own
+classes, and the resource class only delegates:
+
+```
+XResource.php                    // thin: navigation, policy, getPages, delegation
+XResource/Schemas/XForm.php      // public static function configure(Schema $schema): Schema
+XResource/Schemas/XInfolist.php
+XResource/Tables/XsTable.php     // plural
+XResource/Pages/...
+```
+
+```php
+public static function form(Schema $schema): Schema
+{
+    return VehicleForm::configure($schema);
+}
+```
+
+This is not a style preference. Filament's own generator produces exactly these
+FQCNs - see `MakeResourceCommand` in the installed package, which builds
+`{namespace}\Schemas\{Model}Form`, `{namespace}\Schemas\{Model}Infolist` and
+`{namespace}\Tables\{Plural}Table`. Upstream aureuserp moved every resource to
+the same layout in v1.6.
+
+Two reasons it is binding here:
+
+1. Anything generated with `make:filament-resource` already lands in this
+   shape, so writing resources any other way guarantees the plugin disagrees
+   with its own generated code.
+2. Upstream now keeps form and table code in those files. A resource that
+   holds everything inline cannot take an upstream patch as a patch - every
+   future fix has to be re-implemented by hand. Matching the layout keeps the
+   backport cost near zero.
+
+`ShipmentResource` (WP-2) is monolithic and is **not** to be retrofitted as
+part of another package: converting it is its own change with its own test run.
+New resources from WP-3 onward use the layout above.
+
 ### Per-company switch
 
 - The switch is `logistics_company_settings.is_enabled`, one row per company,
@@ -504,7 +544,9 @@ the query count in a test).
 **Depends on:** WP-1. **Can run alongside:** WP-2, WP-8a.
 
 **Owns:** `src/Filament/Clusters/Fleet/Resources/{VehicleResource,DriverResource}.php`,
-`src/Filament/Clusters/Fleet/Resources/{VehicleResource,DriverResource}/**`,
+`src/Filament/Clusters/Fleet/Resources/{VehicleResource,DriverResource}/**`
+(including `Schemas/` and `Tables/` - see "Resource file layout" above; this is
+the first package to use it),
 `src/Services/FleetImporter.php`,
 `resources/lang/en/filament/clusters/fleet/**`, `tests/Feature/Fleet/*`.
 
