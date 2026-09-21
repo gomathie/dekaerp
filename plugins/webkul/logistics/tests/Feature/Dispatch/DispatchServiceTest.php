@@ -9,8 +9,10 @@ use Webkul\Logistics\Exceptions\InvalidTripTransition;
 use Webkul\Logistics\Exceptions\TripNotDispatchable;
 use Webkul\Logistics\Models\CompanySetting;
 use Webkul\Logistics\Models\Driver;
+use Webkul\Logistics\Models\Stop;
 use Webkul\Logistics\Models\Trip;
 use Webkul\Logistics\Models\Vehicle;
+use Webkul\Support\Models\Scopes\CompanyScope;
 use Webkul\Logistics\Services\DispatchService;
 use Webkul\Logistics\Services\ShipmentWorkflow;
 
@@ -99,7 +101,19 @@ it('gives every stop the shipment’s company, not the session’s', function ()
 
     app(DispatchService::class)->assign($trip, [$shipment]);
 
-    expect($trip->stops()->pluck('company_id')->unique()->all())->toBe([$company->id]);
+    // Two things at once. Through the company scope the stops are invisible,
+    // because the user is active in the other company - that is the scope
+    // doing its job. Reading without the scope shows what was actually
+    // written: the shipment's company, never the session's.
+    expect($trip->stops()->count())->toBe(0);
+
+    $written = Stop::withoutGlobalScope(CompanyScope::class)
+        ->where('trip_id', $trip->getKey())
+        ->pluck('company_id')
+        ->unique()
+        ->all();
+
+    expect($written)->toBe([$company->id]);
 });
 
 it('refuses to attach a shipment that is not confirmed', function () {
