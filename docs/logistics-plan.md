@@ -373,11 +373,11 @@ you claim a package, finish it, or get blocked.
 | WP-1a | Starter kit: composer.json, enums, icon (easy) | — | WP-0 | review | Codex 2026-09-17 |
 | WP-1 | Foundation | WP-0, WP-1a | — (runs alone) | review (verified: 38 plugin tests, AccountFeature 521, SupportFeature 115) | Claude 2026-09-18 |
 | WP-2 | Shipments and workflow | WP-1 | WP-3, WP-8a | review (52/52 pass) | Claude 2026-09-18 |
-| WP-3 | Vehicles and drivers | WP-1 | WP-2, WP-8a | todo | |
+| WP-3 | Vehicles and drivers | WP-1 | WP-2, WP-8a | review | Codex 2026-09-21 |
 | WP-4 | Trips and dispatch board | WP-2, WP-3 | WP-5, WP-6, WP-7 | todo | |
 | WP-5 | Delivery and POD | WP-2 | WP-4, WP-6, WP-7 | todo | |
 | WP-5b | Stop link for POD capture (optional, D15) | WP-5 | WP-6, WP-7, WP-8b | todo | |
-| WP-6 | Waybill and delivery-note PDF | WP-2 | WP-4, WP-5, WP-7 | todo | |
+| WP-6 | Waybill and delivery-note PDF | WP-2 | WP-4, WP-5, WP-7 | review | Codex 2026-09-21 |
 | WP-7 | Charges and shipment invoicing | WP-2 | WP-4, WP-5, WP-6, WP-8b | todo | |
 | WP-8a | Expense records and approval | WP-1 | WP-2, WP-3 | todo | |
 | WP-8b | Expense and carrier bills | WP-8a, WP-2 | WP-7 | todo | |
@@ -772,6 +772,124 @@ Deviations from the plan:
 Risks:
 Requests for other packages:
 ```
+
+### WP-6 - Waybill and delivery-note PDF - 2026-09-21 - Codex
+
+Files created:
+- `plugins/webkul/logistics/src/Filament/Clusters/Operations/Resources/ShipmentResource/Actions/PrintWaybillAction.php`
+- `plugins/webkul/logistics/resources/views/pdf/waybill.blade.php`
+- `plugins/webkul/logistics/resources/lang/en/documents/waybill.php`
+- `plugins/webkul/logistics/tests/Feature/Documents/WaybillTest.php`
+
+Files modified:
+- `docs/logistics-plan.md`
+- `docs/change-log.md`
+
+Migrations / tables:
+- None. Uses the existing nullable `logistics_shipments.waybill_no` column and
+  existing per-company `logistics.waybill` sequence.
+
+Reused components:
+- `Webkul\Support\Traits\PDFHandler` and Dompdf, matching the Accounts invoice
+  print path.
+- `Webkul\Logistics\Support\LogisticsSequences` for company-scoped numbering.
+- Existing `ShipmentPolicy::view` / `view_logistics_shipment` permission.
+
+Design notes for later packages:
+- The action name is `printWaybill` because dots are parsed as nested Filament
+  action paths.
+- `visible()` checks `view`, and `download()` repeats authorization before any
+  number is assigned or PDF content is rendered.
+- First print locks the shipment row, explicitly ensures the shipment company's
+  waybill sequence, consumes one number, and saves it. Repeat or concurrent
+  prints reuse the stored number.
+- Letterhead and address data come from `$shipment->company` and its partner;
+  the session's current company is never used to render the document.
+- The latest linked trip supplies the displayed driver and vehicle.
+
+Tests added / results (command + pass count):
+- `docker compose run --rm --no-deps -e DB_DATABASE=aureuserp_testing_wp6 laravel.test php artisan test --testsuite=LogisticsFeature --filter=WaybillTest`: **4 passed** (11 assertions).
+
+Existing suites run / results:
+- `docker compose run --rm --no-deps -e DB_DATABASE=aureuserp_testing_wp6 laravel.test php artisan test --testsuite=LogisticsFeature`: **60 passed** (293 assertions).
+- `docker compose run --rm --no-deps laravel.test vendor/bin/pint --dirty --format agent`: passed.
+- `docker compose run --rm --no-deps laravel.test vendor/bin/pint --format agent plugins/webkul/logistics/src/Filament/Clusters/Operations/Resources/ShipmentResource/Actions/PrintWaybillAction.php plugins/webkul/logistics/resources/lang/en/documents/waybill.php plugins/webkul/logistics/tests/Feature/Documents/WaybillTest.php`: passed.
+- Dedicated local database: `aureuserp_testing_wp6`; no test run used the
+  parallel agent's database.
+
+Deviations from the plan:
+- None. Page wiring is intentionally left to the WP-2 owner as required by the
+  package boundary.
+
+Risks:
+- The action exists and is directly tested, but is not visible in the shipment
+  UI until the WP-2-owned view page is wired as requested below.
+
+Requests for other packages:
+- WP-2 owner: in
+  `ShipmentResource/Pages/ViewShipment.php`, add this import:
+  `use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\PrintWaybillAction;`
+- WP-2 owner: add this exact line to `getHeaderActions()`:
+  `PrintWaybillAction::make(),`
+- WP-12: translate `resources/lang/en/documents/waybill.php`.
+
+### WP-3 - Vehicles and drivers - 2026-09-21 - Codex
+
+Files created:
+- `plugins/webkul/logistics/src/Filament/Clusters/Fleet/Resources/VehicleResource.php`
+- `plugins/webkul/logistics/src/Filament/Clusters/Fleet/Resources/VehicleResource/Pages/{ListVehicles,CreateVehicle,ViewVehicle,EditVehicle}.php`
+- `plugins/webkul/logistics/src/Filament/Clusters/Fleet/Resources/VehicleResource/Schemas/{VehicleForm,VehicleInfolist}.php`
+- `plugins/webkul/logistics/src/Filament/Clusters/Fleet/Resources/VehicleResource/Tables/VehiclesTable.php`
+- `plugins/webkul/logistics/src/Filament/Clusters/Fleet/Resources/DriverResource.php`
+- `plugins/webkul/logistics/src/Filament/Clusters/Fleet/Resources/DriverResource/Pages/{ListDrivers,CreateDriver,ViewDriver,EditDriver}.php`
+- `plugins/webkul/logistics/src/Filament/Clusters/Fleet/Resources/DriverResource/Schemas/{DriverForm,DriverInfolist}.php`
+- `plugins/webkul/logistics/src/Filament/Clusters/Fleet/Resources/DriverResource/Tables/DriversTable.php`
+- `plugins/webkul/logistics/src/Services/FleetImporter.php`
+- `plugins/webkul/logistics/resources/lang/en/filament/clusters/fleet/resources/{vehicle,driver}.php`
+- `plugins/webkul/logistics/tests/Feature/Fleet/{FleetResourceTest,FleetImporterTest}.php`
+
+Files modified:
+- `docs/logistics-plan.md`
+- `docs/change-log.md`
+
+Migrations / tables:
+- None. WP-1 already created `logistics_vehicles` and `logistics_drivers`; WP-3 uses the existing `unique(company_id, registration_no)` index.
+
+Model and permission names:
+- Models: `Webkul\Logistics\Models\Vehicle`, `Webkul\Logistics\Models\Driver`.
+- Resources: `Webkul\Logistics\Filament\Clusters\Fleet\Resources\VehicleResource`, `Webkul\Logistics\Filament\Clusters\Fleet\Resources\DriverResource`.
+- Permissions reused from WP-1 Shield config: `view_any/view/create/update/delete/delete_any/restore/restore_any/force_delete/force_delete_any_logistics_vehicle` and the same affixes for `logistics_driver`.
+
+Reused components:
+- `LogisticsAccess` for per-company enablement checks.
+- Existing `VehiclePolicy` and `DriverPolicy`.
+- Existing `Vehicle`, `Driver`, `VehicleType`, `VehicleOwnership`, `Employee`, `Partner`, and Maintenance `Equipment` models.
+- Existing split resource layout used by upstream and the Partner resource.
+
+Design notes for later packages:
+- `FleetImporter` is safe to run twice. Driver import skips employees that already have a driver profile; Maintenance import skips equipment already linked through `equipment_id`.
+- The importer calls `LogisticsAccess::ensureEnabled($source->company_id)` per source record, so super-admin Gate bypass cannot create fleet rows for disabled companies.
+- Imported vehicles use `serial_no`, then `partner_ref`, then `EQ-{id}` as the registration number.
+- Driver licence numbers are hidden in the driver table and infolist unless the user has `update_logistics_driver`.
+- Driver licence expiry uses the existing model helpers: expired dates are danger, dates up to and including 30 days ahead are warning.
+
+Tests added / results (command + pass count):
+- Added `tests/Feature/Fleet/FleetResourceTest.php` and `tests/Feature/Fleet/FleetImporterTest.php`.
+- `docker compose run --rm --no-deps laravel.test php artisan test --testsuite=LogisticsFeature --filter=Fleet`: **4 passed** (45 assertions).
+- `docker compose run --rm --no-deps laravel.test php artisan test --testsuite=LogisticsFeature`: **56 passed** (282 assertions).
+- `docker compose run --rm --no-deps laravel.test vendor/bin/pint --dirty --format agent`: passed.
+
+Existing suites run / results:
+- The full `LogisticsFeature` suite above includes the existing Adoption, Foundation and Shipment tests plus the new Fleet tests.
+
+Deviations from the plan:
+- The adoption helpers are implemented as list-page header actions with multi-select forms, backed by `FleetImporter`, rather than as record-selection bulk actions. There are no existing employee or equipment rows in the Fleet table to select; the actions still perform bulk creation and are idempotent.
+
+Risks:
+- Maintenance equipment has no guaranteed registration field. If `serial_no` and `partner_ref` are both blank, the importer falls back to `EQ-{equipment id}`.
+
+Requests for other packages:
+- WP-12: translate the new English files under `resources/lang/en/filament/clusters/fleet/resources/`.
 
 ### WP-1a - Starter kit - 2026-09-17 - Codex
 

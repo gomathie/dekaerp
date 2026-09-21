@@ -14,6 +14,7 @@ use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\CancelAction;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\ConfirmAction;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\HoldAction;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\PrintWaybillAction;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\ReleaseAction;
 use Webkul\Support\Traits\HasRecordNavigationTabs;
 
@@ -32,6 +33,7 @@ class ViewShipment extends ViewRecord
             ReleaseAction::make(),
             HoldAction::make(),
             CancelAction::make(),
+            PrintWaybillAction::make(),
             ChatterAction::make()
                 ->resource(static::$resource)
                 ->activityPlans($this->getRecord()->activityPlans()),
