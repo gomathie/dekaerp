@@ -8,6 +8,88 @@ for the task/question log this change log is paired with.
 
 ---
 
+## 2026-09-21 (Logistics WP-6: waybill PDF)
+
+Branch `feature/logistics`. Work package WP-6 added a printable shipment
+waybill without changing the WP-2-owned shipment view page.
+
+### Added: tenant-correct waybill generation
+
+`PrintWaybillAction` follows the existing Accounts Dompdf/PDF handler pattern
+and renders shipment number, customer, sender and recipient, route, cargo,
+driver and vehicle, dates, instructions, and a receipt signature area. The
+document's letterhead is loaded from the shipment's own company relation, not
+from the session's current company.
+
+The action checks the shipment `view` policy both for visibility and again in
+the download operation. The execution path re-queries through normal company
+scoping before rendering, so passing an arbitrary out-of-scope model instance
+cannot bypass the tenant boundary.
+
+### Added: idempotent first-print numbering
+
+The first print locks the shipment row, explicitly ensures the
+`logistics.waybill` sequence for that shipment's company, consumes one number,
+and saves it to `waybill_no`. Later and concurrent prints reuse the saved value
+instead of burning another sequence number.
+
+### Verification
+
+Verified in the Sail container against the dedicated local PostgreSQL database
+`aureuserp_testing_wp6`:
+
+- Focused WP-6 tests: 4 passed, 11 assertions.
+- Full `LogisticsFeature` suite: 60 passed, 293 assertions.
+- Pint was run on the new WP-6 PHP paths and fixed only formatting; final dirty
+  and explicit-path checks are recorded in the WP-6 handoff.
+
+The shipment view page was deliberately not edited because WP-2 owns it and
+WP-4 may be changing it concurrently. The exact import and header-action line
+needed to expose the tested action are in the WP-6 handoff request.
+
+---
+
+## 2026-09-21 (Logistics WP-3: vehicles and drivers)
+
+Branch `feature/logistics`. Work package WP-3 added Fleet resources and
+adoption import helpers on top of the WP-1 fleet models.
+
+### Added: fleet resources using the upstream split layout
+
+Vehicle and Driver resources now live under the Fleet cluster at the exact
+FQCNs already present in `config/filament-shield.php`. The resource classes are
+thin and delegate forms, infolists and tables to `Schemas/*` and `Tables/*`
+classes, matching Filament's generator and the upstream AureusERP resource
+layout. This avoids creating inline resources that future upstream fixes cannot
+patch cleanly.
+
+Vehicles expose registration number, ownership, vehicle type, capacity,
+third-party carrier, optional Maintenance equipment linkage, telematics device
+reference and active status. Drivers expose either an employee or carrier
+contact, licence fields, active status and expiry badges. Licence numbers are
+hidden unless the user has `update_logistics_driver`.
+
+### Added: idempotent adoption imports
+
+`FleetImporter` bulk-creates driver profiles from selected employees and
+vehicles from selected Maintenance equipment. Each method skips rows already
+linked by `employee_id` or `equipment_id`, so running the import twice is safe.
+Both methods call `LogisticsAccess::ensureEnabled($source->company_id)` before
+creating records, because super-admin Gate bypass can skip policies.
+
+Maintenance equipment does not have a guaranteed vehicle registration field, so
+imported vehicles use `serial_no`, then `partner_ref`, then `EQ-{equipment id}`.
+
+### Verification
+
+Verified in the Sail container:
+
+- `docker compose run --rm --no-deps laravel.test php artisan test --testsuite=LogisticsFeature --filter=Fleet`: 4 passed, 45 assertions.
+- `docker compose run --rm --no-deps laravel.test php artisan test --testsuite=LogisticsFeature`: 56 passed, 282 assertions.
+- `docker compose run --rm --no-deps laravel.test vendor/bin/pint --dirty --format agent`: passed.
+
+---
+
 ## 2026-09-20 (plugin install: intermittent failures that succeed on retry)
 
 Branch `feature/logistics`. Reported symptom: installing a plugin sometimes

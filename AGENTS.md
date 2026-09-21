@@ -1028,8 +1028,21 @@ WORKING RULES LEARNED THE HARD WAY
 • Host PHP is too old. Run tests, artisan and composer in the Sail image:
     docker compose up -d pgsql
     docker compose run --rm --no-deps laravel.test php artisan test --testsuite=SUITE_NAME
-• Test suites share one database: run one suite at a time. An interrupted run
-  poisons `aureuserp_testing`; drop and recreate it before re-running.
+• Test suites share one database: run one suite at a time **per database**. An
+  interrupted run poisons `aureuserp_testing`; drop and recreate it before
+  re-running.
+• When two agents are working at once, give each its own test database instead
+  of taking turns. `phpunit.xml` sets `DB_DATABASE` without `force="true"`, so
+  a real environment variable wins and no shared file has to change:
+    docker compose exec -T pgsql psql -U sail -d postgres -c "CREATE DATABASE aureuserp_testing_2 OWNER sail;"
+    docker compose run --rm --no-deps -e DB_DATABASE=aureuserp_testing_2 laravel.test php artisan test --testsuite=SUITE
+  Confirm the split with
+  `SELECT datname, count(*) FROM pg_stat_activity WHERE datname LIKE 'aureuserp_testing%' GROUP BY datname;`
+  Two `migrate:fresh` runs interleaving on one schema produce errors that look
+  like broken code but are not - "relation X does not exist" on a table the
+  migration just created, or "relation Y already exists". Four runs were lost to
+  this before the cause was identified; waiting for the other container to exit
+  is **not** enough, because a new run can start on top of yours mid-suite.
 • If `docker compose up -d pgsql` fails with "port 5433 already allocated",
   another local project holds the port. Use
   `FORWARD_PGSQL_PORT=5436 docker compose up -d pgsql`; don't stop the other
