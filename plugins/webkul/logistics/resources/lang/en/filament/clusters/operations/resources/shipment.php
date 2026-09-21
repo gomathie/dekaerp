@@ -86,14 +86,14 @@ return [
     ],
 
     'infolist' => [
-        'summary'           => 'Shipment',
-        'route'             => 'Route',
-        'cargo'             => 'Cargo',
-        'assignment'        => 'Assignment',
-        'actual-pickup-at'  => 'Actual pickup',
+        'summary'            => 'Shipment',
+        'route'              => 'Route',
+        'cargo'              => 'Cargo',
+        'assignment'         => 'Assignment',
+        'actual-pickup-at'   => 'Actual pickup',
         'actual-delivery-at' => 'Actual delivery',
-        'total-weight'      => 'Total weight',
-        'total-volume'      => 'Total volume',
+        'total-weight'       => 'Total weight',
+        'total-volume'       => 'Total volume',
     ],
 
     'timeline' => [

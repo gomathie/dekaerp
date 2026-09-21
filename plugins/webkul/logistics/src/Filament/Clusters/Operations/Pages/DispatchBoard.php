@@ -9,6 +9,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Webkul\Logistics\Enums\ShipmentState;
+use Webkul\Logistics\Filament\Clusters\Operations;
 use Webkul\Logistics\Models\Shipment;
 use Webkul\Logistics\Support\LogisticsAccess;
 
@@ -31,7 +32,7 @@ class DispatchBoard extends Page implements HasTable
 
     protected static ?int $navigationSort = 3;
 
-    protected static ?string $cluster = \Webkul\Logistics\Filament\Clusters\Operations::class;
+    protected static ?string $cluster = Operations::class;
 
     protected static string $lang = 'logistics::filament/clusters/operations/pages/dispatch-board';
 
