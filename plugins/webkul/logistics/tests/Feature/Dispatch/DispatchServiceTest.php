@@ -1,7 +1,9 @@
 <?php
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
 use Webkul\Logistics\Enums\CapacityCheck;
+use Webkul\Logistics\Enums\ShipmentEventSource;
 use Webkul\Logistics\Enums\ShipmentState;
 use Webkul\Logistics\Enums\StopType;
 use Webkul\Logistics\Enums\TripState;
@@ -9,12 +11,13 @@ use Webkul\Logistics\Exceptions\InvalidTripTransition;
 use Webkul\Logistics\Exceptions\TripNotDispatchable;
 use Webkul\Logistics\Models\CompanySetting;
 use Webkul\Logistics\Models\Driver;
+use Webkul\Logistics\Models\Shipment;
 use Webkul\Logistics\Models\Stop;
 use Webkul\Logistics\Models\Trip;
 use Webkul\Logistics\Models\Vehicle;
-use Webkul\Support\Models\Scopes\CompanyScope;
 use Webkul\Logistics\Services\DispatchService;
 use Webkul\Logistics\Services\ShipmentWorkflow;
+use Webkul\Support\Models\Scopes\CompanyScope;
 
 require_once __DIR__.'/../../Helpers/LogisticsHelper.php';
 
@@ -53,7 +56,7 @@ function confirmedShipment($company, array $overrides = [])
     $shipment = LogisticsHelper::shipment($company, $overrides);
 
     app(ShipmentWorkflow::class)->transition($shipment, ShipmentState::CONFIRMED, [
-        'source' => Webkul\Logistics\Enums\ShipmentEventSource::SYSTEM,
+        'source' => ShipmentEventSource::SYSTEM,
     ]);
 
     return $shipment->refresh();
@@ -220,7 +223,7 @@ it('refuses to dispatch for a user without the dispatch permission', function ()
     CompanyHelper::actingAsCompanyUser($company, ['view_any_logistics_trip']);
 
     expect(fn () => app(DispatchService::class)->dispatch($trip))
-        ->toThrow(Illuminate\Auth\Access\AuthorizationException::class);
+        ->toThrow(AuthorizationException::class);
 
     expect($trip->refresh()->state)->toBe(TripState::ASSIGNED);
 });
@@ -238,7 +241,7 @@ it('never lets one company’s trip take another company’s shipment', function
     ]);
 
     // The company scope hides it entirely: it cannot even be read to attach.
-    expect(Webkul\Logistics\Models\Shipment::query()->whereKey($theirs->id)->exists())->toBeFalse();
+    expect(Shipment::query()->whereKey($theirs->id)->exists())->toBeFalse();
 });
 
 it('builds the dispatch board with a fixed number of queries', function () {
@@ -256,7 +259,7 @@ it('builds the dispatch board with a fixed number of queries', function () {
         $statements[] = $query->sql;
     });
 
-    $board = Webkul\Logistics\Models\Shipment::query()
+    $board = Shipment::query()
         ->with(['customer:id,name'])
         ->where('state', ShipmentState::CONFIRMED)
         ->whereDoesntHave('trips')

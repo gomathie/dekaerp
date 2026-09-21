@@ -8,6 +8,60 @@ for the task/question log this change log is paired with.
 
 ---
 
+## 2026-09-21 (Logistics WP-4: trips and dispatch board)
+
+Branch `feature/logistics`. Plan and handoff: `docs/logistics-plan.md` §7.
+
+### Added: DispatchService, trip resource, dispatch board
+
+`DispatchService` is the only place a trip's state changes and the only place
+shipments are put onto a trip. `assign()`, `dispatch()`, `start()` and
+`complete()` are each wrapped in a transaction and each call
+`LogisticsAccess::ensureEnabled()` and `Gate::authorize()` themselves, because
+the super-admin `Gate::before` bypass skips policies and the board and future
+telematics callers reach the service directly.
+
+Attaching a shipment goes through the service rather than the plain relation.
+A bare attach would link the records but leave the shipment `CONFIRMED` and the
+trip with no stops - a silently half-assigned trip.
+
+**Refusals and warnings are deliberately different.** No vehicle, no driver, an
+archived vehicle, an archived driver or an expired licence all block. Over
+capacity only warns and the dispatch still proceeds (D5). Blocking on capacity
+would strand real deliveries over an estimate, so it is advisory by design and
+the class docblock says so - the instinct on review is to "fix" it into a
+refusal.
+
+**Stops take the shipment's company, not the session's.** A dispatcher working
+across companies would otherwise stamp their own company onto another company's
+stop.
+
+### Fixed during development: a permission substitution in DispatchBoard
+
+`canAccess()` first gated the board on `view_any_logistics_shipment` alone.
+Shield generates `page_logistics_dispatch_board` automatically and that is what
+grants the screen, so this was substituting a different rule than the plan's
+conventions specify. It now requires **both**: the page permission and the
+shipment permission. Either alone is wrong - the page permission by itself would
+leak customer names and destinations to a user denied the shipment list.
+
+### Verification
+
+- `--testsuite=LogisticsFeature` on `aureuserp_testing_claude`: **76 passed,
+  348 assertions**, zero failures. WP-4's own contribution is the 10 tests in
+  `tests/Feature/Dispatch/`; the total also includes WP-5's in-progress tests,
+  which landed in the tree in parallel.
+- Pint: reformatted 15 files (import order, operator alignment) after that run.
+  Style only, no behaviour change.
+
+One test failed first time and it was the test, not the code: it read
+`$trip->stops()` while the user was active in another company, so the company
+scope correctly returned nothing. Rewritten to assert both halves - invisible
+through the scope, and carrying the shipment's company when read without it.
+That is a stronger assertion than the original.
+
+---
+
 ## 2026-09-21 (Logistics WP-6: waybill PDF)
 
 Branch `feature/logistics`. Work package WP-6 added a printable shipment

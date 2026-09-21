@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'low' => 'Low',
+    'low'    => 'Low',
     'normal' => 'Normal',
-    'high' => 'High',
+    'high'   => 'High',
     'urgent' => 'Urgent',
 ];

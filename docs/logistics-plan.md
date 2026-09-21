@@ -374,7 +374,7 @@ you claim a package, finish it, or get blocked.
 | WP-1 | Foundation | WP-0, WP-1a | — (runs alone) | review (verified: 38 plugin tests, AccountFeature 521, SupportFeature 115) | Claude 2026-09-18 |
 | WP-2 | Shipments and workflow | WP-1 | WP-3, WP-8a | review (52/52 pass) | Claude 2026-09-18 |
 | WP-3 | Vehicles and drivers | WP-1 | WP-2, WP-8a | review | Codex 2026-09-21 |
-| WP-4 | Trips and dispatch board | WP-2, WP-3 | WP-5, WP-6, WP-7 | todo | |
+| WP-4 | Trips and dispatch board | WP-2, WP-3 | WP-5, WP-6, WP-7 | review (76/348 pass) | Claude 2026-09-21 |
 | WP-5 | Delivery and POD | WP-2 | WP-4, WP-6, WP-7 | in progress | Codex 2026-09-21 |
 | WP-5b | Stop link for POD capture (optional, D15) | WP-5 | WP-6, WP-7, WP-8b | todo | |
 | WP-6 | Waybill and delivery-note PDF | WP-2 | WP-4, WP-5, WP-7 | review | Codex 2026-09-21 |
@@ -401,6 +401,9 @@ exists". Four runs were lost to this on 2026-09-18 before the cause was found.
 | `aureuserp_testing_claude` | review/verification runs across packages | Not for package work |
 | `aureuserp_testing_wp5` | WP-5 | |
 | `aureuserp_testing_wp6` | WP-6 | Free once WP-6 is merged |
+
+WP-4 used `aureuserp_testing_claude` (review/verification database) because the
+same agent was also verifying WP-3 and WP-6 across packages.
 
 Claim a name before your first run, add a row here, and state it in your
 handoff:
@@ -1333,3 +1336,69 @@ Requests for other packages:
   Spatie's and alias the container binding, so one instance serves both names.
   Not done here because `AssignRoleCommand` and `CreateRoleCommand` type-hint
   Spatie's class, so it needs a full-suite run behind it.
+
+### WP-4 - Trips and dispatch board - 2026-09-21 - Claude
+
+Status: `review`. `--testsuite=LogisticsFeature` = **76 passed, 348 assertions**,
+zero failures, on `aureuserp_testing_claude`. Pint clean (it reformatted 15
+files for import order and operator alignment after that run; style only).
+
+That 76 includes WP-5's in-progress tests, which landed in the tree in parallel.
+WP-4's own contribution is the 10 tests in `tests/Feature/Dispatch/`.
+
+Files created:
+
+- `src/Services/DispatchService.php`
+- `src/Exceptions/{InvalidTripTransition,TripNotDispatchable}.php`
+- `src/Filament/Clusters/Operations/Resources/TripResource.php` and its
+  `Schemas/{TripForm,TripInfolist}.php`, `Tables/TripsTable.php`,
+  `Pages/{ListTrips,CreateTrip,EditTrip,ViewTrip}.php`,
+  `RelationManagers/ShipmentsRelationManager.php`
+- `src/Filament/Clusters/Operations/Pages/DispatchBoard.php` and
+  `resources/views/filament/pages/dispatch-board.blade.php`
+- `resources/lang/en/dispatch.php`,
+  `resources/lang/en/filament/clusters/operations/resources/trip.php`,
+  `resources/lang/en/filament/clusters/operations/pages/dispatch-board.php`,
+  new keys in `resources/lang/en/exceptions.php`
+- `tests/Feature/Dispatch/DispatchServiceTest.php`
+
+Nothing in WP-1's files changed: `config/filament-shield.php` already declared
+`TripResource` with `dispatch` and `complete`, and `TripPolicy` already
+implemented both.
+
+Design notes for later packages:
+
+- **`DispatchService` is the only place a trip's state changes, and the only
+  place shipments go onto a trip.** WP-10 and WP-11 must call it rather than
+  assigning `state` or attaching the relation directly. A bare attach leaves the
+  shipment `CONFIRMED` and the trip without stops - a silently half-assigned
+  trip. The relation manager's attach action goes through the service for
+  exactly this reason.
+- **Refusals and warnings are different on purpose.** No vehicle, no driver, an
+  archived vehicle, an archived driver or an expired licence all block
+  (`assertDispatchable()` throws). Over capacity only warns and the dispatch
+  proceeds (D5). Do not "fix" the capacity case into a refusal: blocking there
+  strands real deliveries over an estimate.
+- **Stops take the shipment's company, never the session's.** A dispatcher
+  working across companies would otherwise stamp their own company on another
+  company's stop. `DispatchServiceTest` asserts both halves: invisible through
+  the scope, correct in the row.
+- `DispatchBoard::canAccess()` requires **both** `page_logistics_dispatch_board`
+  and `view_any_logistics_shipment`. The page permission alone would leak
+  customer names and destinations to a user denied the shipment list. WP-10
+  widgets over the same data should follow this, not the page permission alone.
+- The board is paginated tables per tab, not drag and drop: a company with
+  thousands of open shipments cannot render them all.
+- The vehicle and driver selects only offer **active** records of the trip's own
+  company, so the form and the service agree on what can be dispatched.
+- `company_id` is locked after creation (`disabledOn('edit')`): the vehicle,
+  driver and stops are all scoped to it.
+
+Requests for other packages:
+
+- WP-12: translate `resources/lang/en/dispatch.php`,
+  `.../resources/trip.php`, `.../pages/dispatch-board.php`, and the new
+  `exceptions.php` keys (`invalid-trip-transition`, `trip-*`).
+- WP-5: `DeliveryService` should move stop actual times through the same stops
+  WP-4 creates; one pickup and one delivery stop per shipment, ordered by
+  `sequence`.

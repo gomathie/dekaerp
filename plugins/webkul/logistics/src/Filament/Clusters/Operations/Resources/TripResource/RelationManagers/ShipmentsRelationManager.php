@@ -10,6 +10,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Webkul\Logistics\Enums\ShipmentState;
 use Webkul\Logistics\Models\Shipment;
@@ -22,7 +23,7 @@ class ShipmentsRelationManager extends RelationManager
 
     protected static string $lang = 'logistics::filament/clusters/operations/resources/trip';
 
-    public static function getTitle(\Illuminate\Database\Eloquent\Model $ownerRecord, string $pageClass): string
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
         return __(static::$lang.'.relations.shipments.title');
     }

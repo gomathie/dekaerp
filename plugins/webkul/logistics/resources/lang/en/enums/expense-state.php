@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'draft' => 'Draft',
+    'draft'     => 'Draft',
     'submitted' => 'Submitted',
-    'approved' => 'Approved',
-    'rejected' => 'Rejected',
-    'billed' => 'Billed',
+    'approved'  => 'Approved',
+    'rejected'  => 'Rejected',
+    'billed'    => 'Billed',
 ];
