@@ -1031,6 +1031,18 @@ WORKING RULES LEARNED THE HARD WAY
 • Test suites share one database: run one suite at a time **per database**. An
   interrupted run poisons `aureuserp_testing`; drop and recreate it before
   re-running.
+• **Which database to use.** One per work package, never share:
+    aureuserp_testing          default from phpunit.xml. This is what you get
+                               if you FORGET the -e flag, so treat it as the
+                               collision trap, not as "yours". Only safe when
+                               you are certain no one else is working.
+    aureuserp_testing_wp<N>    your work package, e.g. aureuserp_testing_wp5.
+                               Create it once; reuse it for every run.
+    aureuserp_testing_claude   reserved for review/verification runs that span
+                               packages. Do not use it for package work.
+  State the database you used in your handoff, so the next agent can see which
+  names are taken. List them with:
+    docker compose exec -T pgsql psql -U sail -d postgres -c "SELECT datname FROM pg_database WHERE datname LIKE 'aureuserp%';"
 • When two agents are working at once, give each its own test database instead
   of taking turns. `phpunit.xml` sets `DB_DATABASE` without `force="true"`, so
   a real environment variable wins and no shared file has to change:
