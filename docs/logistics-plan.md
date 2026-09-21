@@ -375,7 +375,7 @@ you claim a package, finish it, or get blocked.
 | WP-2 | Shipments and workflow | WP-1 | WP-3, WP-8a | review (52/52 pass) | Claude 2026-09-18 |
 | WP-3 | Vehicles and drivers | WP-1 | WP-2, WP-8a | review | Codex 2026-09-21 |
 | WP-4 | Trips and dispatch board | WP-2, WP-3 | WP-5, WP-6, WP-7 | todo | |
-| WP-5 | Delivery and POD | WP-2 | WP-4, WP-6, WP-7 | todo | |
+| WP-5 | Delivery and POD | WP-2 | WP-4, WP-6, WP-7 | in progress | Codex 2026-09-21 |
 | WP-5b | Stop link for POD capture (optional, D15) | WP-5 | WP-6, WP-7, WP-8b | todo | |
 | WP-6 | Waybill and delivery-note PDF | WP-2 | WP-4, WP-5, WP-7 | review | Codex 2026-09-21 |
 | WP-7 | Charges and shipment invoicing | WP-2 | WP-4, WP-5, WP-6, WP-8b | todo | |
@@ -387,6 +387,36 @@ you claim a package, finish it, or get blocked.
 | WP-11 | Reports | WP-4, WP-5, WP-7, WP-8b | WP-10 | todo | |
 | WP-12 | Translations ar/es/fr/pt_BR | each finished package | anything | review (enums + foundation; rest waits for other packages) | Codex 2026-09-17 |
 | WP-13 | Hardening and release | all | — (runs alone) | todo | |
+
+### Test database per package - claim yours before running
+
+Every suite runs `migrate:fresh`, so two agents on one database corrupt each
+other's schema. The errors look like broken code but are not: "relation X does
+not exist" for a table the migration just created, or "relation Y already
+exists". Four runs were lost to this on 2026-09-18 before the cause was found.
+
+| Database | Owner | Notes |
+|---|---|---|
+| `aureuserp_testing` | **nobody - do not use** | The phpunit.xml default, i.e. what you get when you forget the `-e` flag. Treat it as the collision trap. |
+| `aureuserp_testing_claude` | review/verification runs across packages | Not for package work |
+| `aureuserp_testing_wp5` | WP-5 | |
+| `aureuserp_testing_wp6` | WP-6 | Free once WP-6 is merged |
+
+Claim a name before your first run, add a row here, and state it in your
+handoff:
+
+```bash
+docker compose exec -T pgsql psql -U sail -d postgres -c "CREATE DATABASE aureuserp_testing_wp7 OWNER sail;"
+docker compose run --rm --no-deps -e DB_DATABASE=aureuserp_testing_wp7 \
+  laravel.test php artisan test --testsuite=LogisticsFeature
+```
+
+`phpunit.xml` sets `DB_DATABASE` without `force="true"`, so the `-e` override
+wins and no shared file changes. Check who is running right now with:
+
+```bash
+docker compose exec -T pgsql psql -U sail -d postgres -c "SELECT datname, count(*) FROM pg_stat_activity WHERE datname LIKE 'aureuserp%' GROUP BY datname;"
+```
 
 ```
 WP-0 → WP-1 ─┬─ WP-2 ─┬─ WP-4 ──┬─ WP-10

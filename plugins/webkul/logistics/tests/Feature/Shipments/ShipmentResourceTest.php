@@ -104,6 +104,30 @@ it('shows the shipment and its timeline', function () {
         ->assertCanSeeTableRecords($shipment->events()->get());
 });
 
+it('offers the waybill action on the shipment view page', function () {
+    // WP-6 built PrintWaybillAction but could not register it: ViewShipment is
+    // a WP-2 file. This asserts the wiring, which its own tests cannot reach.
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+    $shipment = LogisticsHelper::shipment($company);
+
+    FilamentHelper::actingAsCompanyUser($company, ['view_any_logistics_shipment', 'view_logistics_shipment']);
+
+    Livewire::test(ViewShipment::class, ['record' => $shipment->id])
+        ->assertActionVisible('printWaybill');
+});
+
+it('forbids the shipment view page, and so the waybill action, without the view permission', function () {
+    // Not assertActionHidden: without `view` the page itself is forbidden, so
+    // the component never mounts and there is no action to inspect. Being
+    // unreachable is the stronger guarantee, so that is what is asserted.
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+    $shipment = LogisticsHelper::shipment($company);
+
+    FilamentHelper::actingAsCompanyUser($company, ['view_any_logistics_shipment']);
+
+    Livewire::test(ViewShipment::class, ['record' => $shipment->id])->assertForbidden();
+});
+
 it('confirms a shipment from the view page and refuses without the permission', function () {
     $company = LogisticsHelper::enable(LogisticsHelper::company());
     $shipment = LogisticsHelper::shipment($company);
