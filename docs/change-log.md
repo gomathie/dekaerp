@@ -8,6 +8,85 @@ for the task/question log this change log is paired with.
 
 ---
 
+## 2026-09-22 (Logistics WP-7 invoicing, and WP-5 finished)
+
+Branch `feature/logistics`. Handoffs: `docs/logistics-plan.md` §7.
+
+### WP-7: charges and shipment invoicing
+
+`ShipmentInvoicer` turns a shipment's billable charges into a customer invoice
+by creating the same `Account\Models\Move` that Sales creates and handing it to
+`AccountFacade::computeAccountMove()`. Logistics owns no part of invoicing:
+numbering, journals, posting and payment state stay in Accounting.
+
+**Two bugs in the hand-off to accounting, found by the tests:**
+
+1. `Move`'s saving hook computes currency *before* journal, so a move created
+   with neither dereferences a null journal and dies. Sales never hits it
+   because orders always carry a currency; shipments do not. Fixed by supplying
+   `$shipment->currency_id ?? $shipment->company?->currency_id` and leaving the
+   journal to accounting's own `computeJournalId()`.
+2. The scoped re-read ran *after* the charges were loaded, so invoicing another
+   company's shipment reported "nothing to invoice" rather than refusing it -
+   the charges were scoped out too. The guard now runs first.
+
+**Two ways to silently under-bill a customer**, both closed in the UI:
+
+- A charge with no product yields a move line with no account, which accounting
+  treats as a non-product line and computes **untaxed**, with no error. The
+  product is now `required()`.
+- A tax with no repartition lines contributes nothing, also silently. The tax
+  select only offers taxes that have `invoiceRepartitionLines`.
+
+Neither of those is a defect in the invoicer - both are configuration mistakes
+that produce a plausible-looking invoice with money missing from it, which is
+why they are prevented at entry rather than validated at invoice time.
+
+Waiting time (D14) is deliberately two methods: `waitingTimeSuggestions()`
+computes and creates nothing, `addWaitingTimeCharge()` is what a confirmed
+suggestion calls. A long wait is often the carrier's own fault, so automatic
+detention billing would put invented charges on real invoices.
+
+### WP-5: finished and integrated
+
+Codex built the delivery package and stopped without integrating it. The three
+delivery actions are now registered on `ViewShipment` and
+`DeliveryProofsRelationManager` on `ShipmentResource` - both WP-2 files, which
+is why Codex was asked to request the change rather than make it.
+
+`DeliveryProofsRelationManager::objectKey()` was extracted and made public so
+the test derives the storage key from the same code the UI links with. It
+previously hand-built `companies/{id}/{path}`, omitting the `root` prefix
+`fileUrl()` adds; the two could have drifted apart with every test still
+passing, leaving the file present and the link pointing elsewhere.
+
+**Known coverage gap, recorded not fixed:** `phpunit.xml` does not set
+`FILESYSTEM_PUBLIC_DRIVER`, so tests always run the `local` driver and the
+`tenant-s3` paths - `fileUrl()`'s secure-storage branch and all of
+`withShipmentDisk()` - never execute. The driver builds a real S3 driver, so it
+cannot be faked cheaply.
+
+### A guard every Logistics service needs
+
+`LogisticsPolicy::recordAbility()` grants on permission plus the per-company
+switch. It never checks that the record belongs to a company the user can see -
+normally the company scope makes that moot, but a model obtained another way
+passes authorisation. Both `DeliveryService` and `ShipmentInvoicer` now re-read
+the record under the scope before writing. WP-8a and WP-8b need the same.
+
+### Verification
+
+- `--testsuite=LogisticsFeature`: **88 passed, 408 assertions**
+- `--testsuite=AccountFeature`: **521 passed, 1382 assertions** - identical to
+  the WP-1 baseline, so writing invoices from Logistics disturbed nothing
+- Pint clean
+
+**Not verified:** WP-7's UI layer has no tests of its own. Both relation
+managers, `CreateInvoiceAction` and `UnbilledCharges` are exercised only to the
+extent that the suite loads them.
+
+---
+
 ## 2026-09-21 (Logistics WP-4: trips and dispatch board)
 
 Branch `feature/logistics`. Plan and handoff: `docs/logistics-plan.md` §7.
