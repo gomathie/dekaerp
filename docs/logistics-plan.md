@@ -1508,10 +1508,20 @@ knowing about:
 - A tax with **no repartition lines** contributes nothing, also silently. The
   tax select only offers taxes with `invoiceRepartitionLines` for that company.
 
-**Not yet tested.** The UI layer - both relation managers, `CreateInvoiceAction`
-and `UnbilledCharges` - has no tests of its own. The suite proves the classes
-load and break nothing; nothing exercises them. The `UnbilledCharges` permission
-pairing in particular is an assumption of mine that deserves a test.
+UI coverage: `tests/Feature/Invoicing/InvoicingScreensTest.php` covers the
+invoice action (visible with the permission, hidden without, creating a real
+invoice through the page, and reporting "nothing to invoice" as a notification
+rather than an error), plus `UnbilledCharges` (the permission pairing asserted
+all three ways, the uninvoiced-only filter, and company isolation).
+
+Writing those found a crash in `UnbilledCharges` that the service tests could
+never have caught: the currency filter used `->relationship('currency', 'code')`,
+but **`currencies` has no `code` column** - `Currency::code` is an accessor over
+`name`. The filter pushed it into SQL and the page threw `Undefined column` on
+every open. The `money()` column may still use `->code` because that evaluates
+in PHP. The two usages look identical; only one is safe.
+
+Still not covered: the two relation managers have no tests of their own.
 
 Requests for other packages:
 
