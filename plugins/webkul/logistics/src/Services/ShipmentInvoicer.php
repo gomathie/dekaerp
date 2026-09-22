@@ -41,6 +41,15 @@ class ShipmentInvoicer
 
         $this->authorize($shipment);
 
+        // Re-read under the company scope before anything else. The policy
+        // grants on permission plus the per-company switch, so a shipment
+        // obtained another way - held from before the active company changed,
+        // or passed straight in - would otherwise pass authorisation. Doing
+        // this first also keeps the error honest: loading charges first would
+        // find none (they are scoped out too) and report "nothing to invoice"
+        // for a shipment that simply is not ours.
+        $shipment = Shipment::query()->whereKey($shipment->getKey())->firstOrFail();
+
         $charges = $shipment->charges()->uninvoiced()->orderBy('sort')->get();
 
         if ($charges->isEmpty()) {
@@ -48,6 +57,12 @@ class ShipmentInvoicer
         }
 
         return DB::transaction(function () use ($shipment, $charges): AccountMove {
+            // Locked for the write, as DeliveryService does.
+            $shipment = Shipment::query()
+                ->whereKey($shipment->getKey())
+                ->lockForUpdate()
+                ->firstOrFail();
+
             $accountMove = AccountMove::create([
                 'move_type'      => AccountEnums\MoveType::OUT_INVOICE,
                 'invoice_origin' => $shipment->name,
