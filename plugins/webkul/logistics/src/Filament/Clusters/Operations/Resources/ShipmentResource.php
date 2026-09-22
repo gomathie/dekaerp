@@ -41,6 +41,7 @@ use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Pag
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Pages\ManageTimeline;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Pages\ViewShipment;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\RelationManagers\ChargesRelationManager;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\RelationManagers\DeliveryProofsRelationManager;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\RelationManagers\InvoicesRelationManager;
 use Webkul\Logistics\Models\PackageType;
 use Webkul\Logistics\Models\ServiceType;
@@ -392,9 +393,8 @@ class ShipmentResource extends Resource
 
     public static function getRelations(): array
     {
-        // WP-5's DeliveryProofsRelationManager joins this list once that
-        // package is finished and files its request.
         return [
+            DeliveryProofsRelationManager::class,
             ChargesRelationManager::class,
             InvoicesRelationManager::class,
         ];
