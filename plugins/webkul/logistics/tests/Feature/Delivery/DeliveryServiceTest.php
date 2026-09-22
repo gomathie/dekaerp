@@ -10,6 +10,7 @@ use Webkul\Logistics\Exceptions\InvalidShipmentTransition;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\DeliverAction;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\FailDeliveryAction;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\PickupAction;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\RelationManagers\DeliveryProofsRelationManager;
 use Webkul\Logistics\Models\CompanySetting;
 use Webkul\Logistics\Models\Stop;
 use Webkul\Logistics\Services\DeliveryService;
@@ -124,7 +125,12 @@ it('does not serve a POD file to a user from another company', function () {
     ));
 
     $proof = $shipment->deliveryProofs()->firstOrFail();
-    $objectKey = "companies/{$ownerCompany->id}/{$proof->photo_path}";
+
+    // Derived from the same code the UI links with, not hand-built. A literal
+    // string here would still pass if objectKey() and the storage path drifted
+    // apart - the file present, the link pointing elsewhere, and nobody the
+    // wiser until a customer asks for proof of delivery.
+    $objectKey = DeliveryProofsRelationManager::objectKey($proof, (string) $proof->photo_path);
 
     Storage::disk('s3')->put($objectKey, Storage::disk('public')->get($proof->photo_path));
 
