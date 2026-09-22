@@ -14,7 +14,10 @@ use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\CancelAction;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\ConfirmAction;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\CreateInvoiceAction;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\DeliverAction;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\FailDeliveryAction;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\HoldAction;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\PickupAction;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\PrintWaybillAction;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\ReleaseAction;
 use Webkul\Support\Traits\HasRecordNavigationTabs;
@@ -34,6 +37,12 @@ class ViewShipment extends ViewRecord
             ReleaseAction::make(),
             HoldAction::make(),
             CancelAction::make(),
+            // WP-5's delivery actions, in the order a shipment moves through
+            // them. Each hides itself on state and policy, so only the step
+            // that is actually available shows.
+            PickupAction::make(),
+            DeliverAction::make(),
+            FailDeliveryAction::make(),
             PrintWaybillAction::make(),
             CreateInvoiceAction::make(),
             ChatterAction::make()
