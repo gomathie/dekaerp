@@ -36,6 +36,22 @@ return [
         ],
     ],
 
+    'unbilled' => [
+        'title'   => 'Unbilled charges',
+        'columns' => [
+            'shipment'    => 'Shipment',
+            'customer'    => 'Customer',
+            'description' => 'Charge',
+            'quantity'    => 'Qty',
+            'subtotal'    => 'Amount',
+            'total'       => 'Total',
+        ],
+        'filters' => [
+            'currency' => 'Currency',
+            'shipment' => 'Shipment',
+        ],
+    ],
+
     'actions' => [
         'create-invoice' => [
             'label'              => 'Create invoice',
