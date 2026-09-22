@@ -40,6 +40,8 @@ use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Pag
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Pages\ListShipments;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Pages\ManageTimeline;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Pages\ViewShipment;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\RelationManagers\ChargesRelationManager;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\RelationManagers\InvoicesRelationManager;
 use Webkul\Logistics\Models\PackageType;
 use Webkul\Logistics\Models\ServiceType;
 use Webkul\Logistics\Models\Shipment;
@@ -386,6 +388,16 @@ class ShipmentResource extends Resource
         return parent::getEloquentQuery()
             ->withoutGlobalScopes([SoftDeletingScope::class])
             ->with(['customer:id,name', 'serviceType:id,name', 'dispatcher:id,name', 'company:id,name']);
+    }
+
+    public static function getRelations(): array
+    {
+        // WP-5's DeliveryProofsRelationManager joins this list once that
+        // package is finished and files its request.
+        return [
+            ChargesRelationManager::class,
+            InvoicesRelationManager::class,
+        ];
     }
 
     public static function getRecordSubNavigation(Page $page): array
