@@ -17,6 +17,7 @@ use Webkul\Logistics\Enums\ShipmentEventType;
 use Webkul\Logistics\Enums\ShipmentState;
 use Webkul\Logistics\Enums\StopState;
 use Webkul\Logistics\Enums\StopType;
+use Webkul\Logistics\Exceptions\InvalidShipmentTransition;
 use Webkul\Logistics\Models\CompanySetting;
 use Webkul\Logistics\Models\DeliveryProof;
 use Webkul\Logistics\Models\Shipment;
@@ -87,10 +88,10 @@ class DeliveryService
 
     public function deliver(Shipment $shipment, ?PodData $podData = null): Shipment
     {
-        $this->guard($shipment, 'markDelivered');
+        $shipment = $this->guard($shipment, 'markDelivered');
 
         $settings = CompanySetting::forCompany((int) $shipment->company_id);
-        $stop = $this->deliveryStop($shipment, $podData?->stopId);
+        $stop = $this->deliveryStop($shipment, $podData?->stopId, $podData !== null);
 
         if ($settings->require_pod_for_delivery && $podData === null) {
             throw ValidationException::withMessages([
@@ -122,20 +123,36 @@ class DeliveryService
             'reason' => ['required', 'string', 'max:2000'],
         ])->validate();
 
-        return $this->transitionWithStops(
-            $shipment,
-            ShipmentState::FAILED_DELIVERY,
-            'markDelivered',
-            function (Shipment $shipment, CarbonInterface $occurredAt): void {
-                $this->stops($shipment, StopType::DELIVERY)->each(function (Stop $stop) use ($occurredAt): void {
-                    $stop->forceFill([
-                        'state'             => StopState::ARRIVED,
-                        'actual_arrival_at' => $stop->actual_arrival_at ?? $occurredAt,
-                    ])->save();
-                });
-            },
-            ['notes' => $reason],
-        );
+        $shipment = $this->guard($shipment, 'markDelivered');
+
+        return DB::transaction(function () use ($shipment, $reason): Shipment {
+            $shipment = Shipment::query()
+                ->whereKey($shipment->getKey())
+                ->lockForUpdate()
+                ->firstOrFail();
+            $stop = $shipment->stops()
+                ->where('type', StopType::DELIVERY)
+                ->whereNotIn('state', [StopState::DEPARTED->value, StopState::SKIPPED->value])
+                ->lockForUpdate()
+                ->first();
+            $occurredAt = now();
+
+            $result = $this->workflow->transition($shipment, ShipmentState::FAILED_DELIVERY, [
+                'ability'     => 'markDelivered',
+                'occurred_at' => $occurredAt,
+                'notes'       => $reason,
+                'stop_id'     => $stop?->getKey(),
+            ]);
+
+            if ($stop) {
+                $stop->forceFill([
+                    'state'             => StopState::ARRIVED,
+                    'actual_arrival_at' => $stop->actual_arrival_at ?? $occurredAt,
+                ])->save();
+            }
+
+            return $result;
+        });
     }
 
     public function retry(Shipment $shipment): Shipment
@@ -146,13 +163,15 @@ class DeliveryService
                 ShipmentState::OUT_FOR_DELIVERY,
                 'markDelivered',
                 function (Shipment $shipment): void {
-                    $this->stops($shipment, StopType::DELIVERY)->each(function (Stop $stop): void {
-                        $stop->forceFill([
-                            'state'               => StopState::PENDING,
-                            'actual_arrival_at'   => null,
-                            'actual_departure_at' => null,
-                        ])->save();
-                    });
+                    $this->stops($shipment, StopType::DELIVERY)
+                        ->filter(fn (Stop $stop): bool => ! in_array($stop->state, [StopState::DEPARTED, StopState::SKIPPED], true))
+                        ->each(function (Stop $stop): void {
+                            $stop->forceFill([
+                                'state'               => StopState::PENDING,
+                                'actual_arrival_at'   => null,
+                                'actual_departure_at' => null,
+                            ])->save();
+                        });
                 },
             );
 
@@ -169,12 +188,14 @@ class DeliveryService
             ShipmentState::RETURNED,
             'markDelivered',
             function (Shipment $shipment, CarbonInterface $occurredAt): void {
-                $this->stops($shipment, StopType::DELIVERY)->each(function (Stop $stop) use ($occurredAt): void {
-                    $stop->forceFill([
-                        'state'               => StopState::SKIPPED,
-                        'actual_departure_at' => $stop->actual_departure_at ?? $occurredAt,
-                    ])->save();
-                });
+                $this->stops($shipment, StopType::DELIVERY)
+                    ->filter(fn (Stop $stop): bool => ! in_array($stop->state, [StopState::DEPARTED, StopState::SKIPPED], true))
+                    ->each(function (Stop $stop) use ($occurredAt): void {
+                        $stop->forceFill([
+                            'state'               => StopState::SKIPPED,
+                            'actual_departure_at' => $stop->actual_departure_at ?? $occurredAt,
+                        ])->save();
+                    });
             },
         );
     }
@@ -182,6 +203,30 @@ class DeliveryService
     protected function completeDelivery(Shipment $shipment, ?Stop $stop, ?PodData $podData, array $storedPaths): Shipment
     {
         return DB::transaction(function () use ($shipment, $stop, $podData, $storedPaths): Shipment {
+            $shipment = Shipment::query()
+                ->whereKey($shipment->getKey())
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if ($shipment->state !== ShipmentState::OUT_FOR_DELIVERY) {
+                throw InvalidShipmentTransition::between($shipment->state, ShipmentState::DELIVERED);
+            }
+
+            if ($stop) {
+                $stop = $shipment->stops()
+                    ->whereKey($stop->getKey())
+                    ->where('type', StopType::DELIVERY)
+                    ->whereNotIn('state', [StopState::DEPARTED->value, StopState::SKIPPED->value])
+                    ->lockForUpdate()
+                    ->first();
+
+                if (! $stop) {
+                    throw ValidationException::withMessages([
+                        'stop_id' => __('logistics::delivery.validation.stop-unavailable'),
+                    ]);
+                }
+            }
+
             $occurredAt = $podData?->receivedAt ?? now();
 
             if ($stop) {
@@ -210,20 +255,31 @@ class DeliveryService
                 ]);
             }
 
-            $result = $this->workflow->transition($shipment, ShipmentState::DELIVERED, [
-                'ability'     => 'markDelivered',
-                'occurred_at' => $occurredAt,
-                'stop_id'     => $stop?->id,
-            ]);
-
             if ($podData) {
-                $this->workflow->recordEvent($result, ShipmentEventType::POD_CAPTURED, [
+                $this->workflow->recordEvent($shipment, ShipmentEventType::POD_CAPTURED, [
                     'occurred_at' => $occurredAt,
                     'stop_id'     => $stop?->id,
                     'latitude'    => $podData->latitude,
                     'longitude'   => $podData->longitude,
                 ]);
             }
+
+            $hasRemainingStops = $shipment->stops()
+                ->where('type', StopType::DELIVERY)
+                ->whereNotIn('state', [StopState::DEPARTED->value, StopState::SKIPPED->value])
+                ->exists();
+
+            if ($hasRemainingStops) {
+                return $shipment->refresh();
+            }
+
+            $shipment->actual_delivery_at ??= $occurredAt;
+
+            $result = $this->workflow->transition($shipment, ShipmentState::DELIVERED, [
+                'ability'     => 'markDelivered',
+                'occurred_at' => $occurredAt,
+                'stop_id'     => $stop?->id,
+            ]);
 
             return $result;
         });
@@ -236,9 +292,14 @@ class DeliveryService
         ?callable $updateStops = null,
         array $context = [],
     ): Shipment {
-        $this->guard($shipment, $ability);
+        $shipment = $this->guard($shipment, $ability);
 
         return DB::transaction(function () use ($shipment, $state, $ability, $updateStops, $context): Shipment {
+            $shipment = Shipment::query()
+                ->whereKey($shipment->getKey())
+                ->lockForUpdate()
+                ->firstOrFail();
+
             $occurredAt = now();
 
             $result = $this->workflow->transition($shipment, $state, $context + [
@@ -252,23 +313,37 @@ class DeliveryService
         });
     }
 
-    protected function guard(Shipment $shipment, string $ability): void
+    protected function guard(Shipment $shipment, string $ability): Shipment
     {
+        $shipment = Shipment::query()->findOrFail($shipment->getKey());
+
         LogisticsAccess::ensureEnabled((int) $shipment->company_id);
         Gate::authorize($ability, $shipment);
+
+        return $shipment;
     }
 
-    protected function deliveryStop(Shipment $shipment, ?int $stopId): ?Stop
+    protected function deliveryStop(Shipment $shipment, ?int $stopId, bool $requireSelection): ?Stop
     {
-        $query = $shipment->stops()->where('type', StopType::DELIVERY);
+        $query = $shipment->stops()
+            ->where('type', StopType::DELIVERY)
+            ->whereNotIn('state', [StopState::DEPARTED->value, StopState::SKIPPED->value]);
 
         if ($stopId) {
-            return $query->whereKey($stopId)->firstOrFail();
+            $stop = $query->whereKey($stopId)->first();
+
+            if (! $stop) {
+                throw ValidationException::withMessages([
+                    'stop_id' => __('logistics::delivery.validation.stop-unavailable'),
+                ]);
+            }
+
+            return $stop;
         }
 
         $stops = $query->limit(2)->get();
 
-        if ($stops->count() > 1) {
+        if ($requireSelection && $stops->count() > 1) {
             throw ValidationException::withMessages([
                 'stop_id' => __('logistics::delivery.validation.stop-required'),
             ]);
@@ -282,11 +357,13 @@ class DeliveryService
         Validator::make([
             'recipient_name' => $podData->recipientName,
             'received_at'    => $podData->receivedAt,
+            'reference'      => $podData->reference,
             'photo'          => $podData->photo,
             'signature'      => $podData->signature,
         ], [
             'recipient_name' => ['required', 'string', 'max:255'],
             'received_at'    => ['required', 'date'],
+            'reference'      => ['nullable', 'string', 'max:255'],
             'photo'          => [$photoRequired ? 'required' : 'nullable', 'file', 'mimetypes:image/jpeg,image/png,image/webp', 'max:5120'],
             'signature'      => ['nullable', 'file', 'mimetypes:image/jpeg,image/png,image/webp', 'max:5120'],
         ])->validate();
@@ -296,16 +373,42 @@ class DeliveryService
     {
         return $this->withShipmentDisk($shipment, function () use ($shipment, $podData): array {
             $directory = 'logistics/delivery-proofs/'.$shipment->getKey();
+            $paths = [];
 
-            return array_filter([
-                'photo'     => $podData->photo?->store($directory, 'public'),
-                'signature' => $podData->signature?->store($directory, 'public'),
-            ]);
+            try {
+                foreach (['photo' => $podData->photo, 'signature' => $podData->signature] as $field => $file) {
+                    if (! $file) {
+                        continue;
+                    }
+
+                    $path = $file->store($directory, 'public');
+
+                    if (! is_string($path) || blank($path)) {
+                        throw ValidationException::withMessages([
+                            $field => __('logistics::delivery.validation.upload-failed'),
+                        ]);
+                    }
+
+                    $paths[$field] = $path;
+                }
+            } catch (Throwable $exception) {
+                if ($paths !== []) {
+                    Storage::disk('public')->delete(array_values($paths));
+                }
+
+                throw $exception;
+            }
+
+            return $paths;
         });
     }
 
     protected function deletePodFiles(Shipment $shipment, array $paths): void
     {
+        if ($paths === []) {
+            return;
+        }
+
         $this->withShipmentDisk($shipment, function () use ($paths): void {
             Storage::disk('public')->delete(array_values($paths));
         });
@@ -317,16 +420,26 @@ class DeliveryService
         $activeIds = $context->activeIds();
         $currentId = $context->currentId();
         $shipmentCompanyId = (int) $shipment->company_id;
+        $usesTenantDisk = config('filesystems.disks.public.driver') === 'tenant-s3';
 
         $context->setActive(array_values(array_unique([...$activeIds, $shipmentCompanyId])), $shipmentCompanyId);
-        Storage::forgetDisk('public');
+
+        if ($usesTenantDisk) {
+            Storage::forgetDisk('public');
+        }
 
         try {
             return $callback();
         } finally {
-            Storage::forgetDisk('public');
+            if ($usesTenantDisk) {
+                Storage::forgetDisk('public');
+            }
+
             $context->setActive($activeIds, $currentId);
-            Storage::forgetDisk('public');
+
+            if ($usesTenantDisk) {
+                Storage::forgetDisk('public');
+            }
         }
     }
 

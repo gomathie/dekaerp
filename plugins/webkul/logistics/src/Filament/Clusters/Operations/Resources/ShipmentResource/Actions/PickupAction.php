@@ -22,16 +22,26 @@ class PickupAction extends Action
     {
         parent::setUp();
 
-        $this->label(__($this->lang.'.label'))
-            ->icon('heroicon-o-truck')
+        $this->label(fn (?Shipment $record): string => __($this->lang.($record?->state === ShipmentState::PICKED_UP ? '.transit-label' : '.label')))
+            ->icon(fn (?Shipment $record): string => $record?->state === ShipmentState::PICKED_UP ? 'heroicon-o-play' : 'heroicon-o-truck')
             ->color('primary')
             ->requiresConfirmation()
-            ->visible(fn (Shipment $record): bool => $record->state === ShipmentState::AWAITING_PICKUP
+            ->visible(fn (Shipment $record): bool => in_array($record->state, [ShipmentState::AWAITING_PICKUP, ShipmentState::PICKED_UP], true)
                 && (Auth::user()?->can('markPickedUp', $record) ?? false))
             ->action(function (Shipment $record): void {
-                app(DeliveryService::class)->markPickedUp($record);
+                $startsTransit = $record->state === ShipmentState::PICKED_UP;
+                $service = app(DeliveryService::class);
 
-                Notification::make()->success()->title(__($this->lang.'.notification'))->send();
+                if ($startsTransit) {
+                    $service->markInTransit($record);
+                } else {
+                    $service->markPickedUp($record);
+                }
+
+                Notification::make()
+                    ->success()
+                    ->title(__($this->lang.($startsTransit ? '.transit-notification' : '.notification')))
+                    ->send();
             });
     }
 }
