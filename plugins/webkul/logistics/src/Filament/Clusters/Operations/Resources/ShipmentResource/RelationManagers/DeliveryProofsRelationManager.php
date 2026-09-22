@@ -69,13 +69,26 @@ class DeliveryProofsRelationManager extends RelationManager
             return Storage::disk('public')->url($path);
         }
 
+        return route('secure-storage', ['path' => static::objectKey($proof, (string) $path)]);
+    }
+
+    /**
+     * The object key a stored proof lives at under the tenant-s3 driver.
+     *
+     * Public so tests can assert the round trip - store, build the URL, fetch -
+     * against the same key the UI produces. A test that hand-builds this string
+     * would still pass if this method and the storage path drifted apart, which
+     * is the failure that matters: the file exists, the link points elsewhere,
+     * and nobody notices until a customer asks for proof of delivery.
+     */
+    public static function objectKey(DeliveryProof $proof, string $path): string
+    {
         $root = trim((string) config('filesystems.disks.public.root'), '/');
-        $objectKey = implode('/', array_filter([
+
+        return implode('/', array_filter([
             $root,
             'companies/'.(int) $proof->company_id,
-            ltrim((string) $path, '/'),
+            ltrim($path, '/'),
         ], fn (string $segment): bool => $segment !== ''));
-
-        return route('secure-storage', ['path' => $objectKey]);
     }
 }
