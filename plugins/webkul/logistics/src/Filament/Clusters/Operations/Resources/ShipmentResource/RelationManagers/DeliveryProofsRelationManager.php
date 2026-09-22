@@ -8,6 +8,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Webkul\Logistics\Models\DeliveryProof;
 
 class DeliveryProofsRelationManager extends RelationManager
 {
@@ -43,11 +45,37 @@ class DeliveryProofsRelationManager extends RelationManager
                     ->badge(),
                 IconColumn::make('photo_path')
                     ->label(__('logistics::delivery.relation-manager.columns.photo'))
-                    ->boolean(),
+                    ->boolean()
+                    ->url(fn (DeliveryProof $record): ?string => static::fileUrl($record, 'photo_path'))
+                    ->openUrlInNewTab(),
                 IconColumn::make('signature_path')
                     ->label(__('logistics::delivery.relation-manager.columns.signature'))
-                    ->boolean(),
+                    ->boolean()
+                    ->url(fn (DeliveryProof $record): ?string => static::fileUrl($record, 'signature_path'))
+                    ->openUrlInNewTab(),
             ])
             ->defaultSort('received_at', 'desc');
+    }
+
+    protected static function fileUrl(DeliveryProof $proof, string $attribute): ?string
+    {
+        $path = $proof->getAttribute($attribute);
+
+        if (blank($path)) {
+            return null;
+        }
+
+        if (config('filesystems.disks.public.driver') !== 'tenant-s3') {
+            return Storage::disk('public')->url($path);
+        }
+
+        $root = trim((string) config('filesystems.disks.public.root'), '/');
+        $objectKey = implode('/', array_filter([
+            $root,
+            'companies/'.(int) $proof->company_id,
+            ltrim((string) $path, '/'),
+        ], fn (string $segment): bool => $segment !== ''));
+
+        return route('secure-storage', ['path' => $objectKey]);
     }
 }

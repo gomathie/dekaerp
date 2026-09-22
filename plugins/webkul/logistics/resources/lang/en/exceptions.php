@@ -14,4 +14,6 @@ return [
     'trip-inactive-driver'         => 'Driver :driver is archived and cannot be dispatched.',
     'trip-expired-license'         => 'Driver :driver’s licence expired on :date.',
     'trip-shipment-not-confirmed'  => 'Shipment :shipment must be confirmed before it can be added to a trip.',
+
+    'nothing-to-invoice' => 'Shipment :shipment has no billable charges left to invoice.',
 ];
