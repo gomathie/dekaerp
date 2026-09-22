@@ -99,9 +99,12 @@ class UnbilledCharges extends Page implements HasTable
                     ->summarize(Sum::make()->label(__(static::$lang.'.columns.total'))),
             ])
             ->filters([
+                // `name`, not `code`: Currency::code is an accessor, not a
+                // column, so filtering or sorting on it fails in SQL. The money
+                // column above can still use ->code because that runs in PHP.
                 SelectFilter::make('currency')
                     ->label(__(static::$lang.'.filters.currency'))
-                    ->relationship('currency', 'code')
+                    ->relationship('currency', 'name')
                     ->preload(),
 
                 SelectFilter::make('shipment')
