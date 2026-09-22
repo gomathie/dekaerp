@@ -1120,6 +1120,11 @@ MULTI-COMPANY FACTS THAT BITE
   an upstream patch as a patch. Do not retrofit existing monolithic resources
   as a side effect of other work; convert one only as its own change with its
   own test run.
+• `Currency::code` is an **accessor**, not a column - `currencies` has `name`,
+  `symbol`, `iso_numeric`, no `code`. Using it in PHP (`->money(fn ($r) =>
+  $r->currency?->code)`) is fine; pushing it into SQL is not. A Filament filter
+  or sort like `->relationship('currency', 'code')` throws `Undefined column`
+  and 500s the page on every open. The two usages look identical.
 • Shield: only `resources.manage` and the exclude lists are merged from a plugin
   config; `pages.manage` and `custom_permissions` there are ignored. Page
   permissions are `page_<plugin>_<page_snake>`. Resource permissions are
