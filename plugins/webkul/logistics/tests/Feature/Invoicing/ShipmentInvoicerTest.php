@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Webkul\Account\Enums\AccountType;
 use Webkul\Account\Enums\AmountType;
 use Webkul\Account\Enums\DocumentType;
@@ -11,7 +13,10 @@ use Webkul\Account\Models\Account;
 use Webkul\Account\Models\Journal;
 use Webkul\Account\Models\Tax;
 use Webkul\Account\Models\TaxPartition;
+use Webkul\Logistics\Enums\StopState;
+use Webkul\Logistics\Enums\StopType;
 use Webkul\Logistics\Exceptions\NothingToInvoice;
+use Webkul\Logistics\Models\CompanySetting;
 use Webkul\Logistics\Models\Shipment;
 use Webkul\Logistics\Models\ShipmentCharge;
 use Webkul\Logistics\Services\ShipmentInvoicer;
@@ -237,7 +242,7 @@ it('refuses to invoice without the create_invoice permission', function () {
     CompanyHelper::actingAsCompanyUser($company, ['view_any_logistics_shipment']);
 
     expect(fn () => app(ShipmentInvoicer::class)->createInvoice($shipment))
-        ->toThrow(Illuminate\Auth\Access\AuthorizationException::class);
+        ->toThrow(AuthorizationException::class);
 
     expect($shipment->invoices()->count())->toBe(0);
 });
@@ -259,7 +264,7 @@ it('refuses to invoice a shipment of a company the user is not in', function () 
     // authorisation alone would let this through - the service re-reads under
     // the scope and finds nothing.
     expect(fn () => app(ShipmentInvoicer::class)->createInvoice($theirs))
-        ->toThrow(Illuminate\Database\Eloquent\ModelNotFoundException::class);
+        ->toThrow(ModelNotFoundException::class);
 
     expect($theirs->invoices()->count())->toBe(0);
 });
@@ -267,15 +272,15 @@ it('refuses to invoice a shipment of a company the user is not in', function () 
 it('suggests waiting time only past the free allowance, and creates nothing on its own', function () {
     $company = billableCompany();
 
-    Webkul\Logistics\Models\CompanySetting::forCompany($company->id)
+    CompanySetting::forCompany($company->id)
         ->forceFill(['free_waiting_minutes' => 30])->save();
 
     $shipment = LogisticsHelper::shipment($company);
 
     // Within the allowance: 20 minutes.
     $shipment->stops()->create([
-        'type'                 => Webkul\Logistics\Enums\StopType::PICKUP,
-        'state'                => Webkul\Logistics\Enums\StopState::DEPARTED,
+        'type'                 => StopType::PICKUP,
+        'state'                => StopState::DEPARTED,
         'sequence'             => 1,
         'actual_arrival_at'    => now()->subMinutes(20),
         'actual_departure_at'  => now(),
@@ -287,8 +292,8 @@ it('suggests waiting time only past the free allowance, and creates nothing on i
 
     // Over it: 90 minutes, so 60 billable.
     $shipment->stops()->create([
-        'type'                => Webkul\Logistics\Enums\StopType::DELIVERY,
-        'state'               => Webkul\Logistics\Enums\StopState::DEPARTED,
+        'type'                => StopType::DELIVERY,
+        'state'               => StopState::DEPARTED,
         'sequence'            => 2,
         'actual_arrival_at'   => now()->subMinutes(90),
         'actual_departure_at' => now(),

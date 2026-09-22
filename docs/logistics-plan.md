@@ -375,10 +375,10 @@ you claim a package, finish it, or get blocked.
 | WP-2 | Shipments and workflow | WP-1 | WP-3, WP-8a | review (52/52 pass) | Claude 2026-09-18 |
 | WP-3 | Vehicles and drivers | WP-1 | WP-2, WP-8a | review | Codex 2026-09-21 |
 | WP-4 | Trips and dispatch board | WP-2, WP-3 | WP-5, WP-6, WP-7 | review (76/348 pass) | Claude 2026-09-21 |
-| WP-5 | Delivery and POD | WP-2 | WP-4, WP-6, WP-7 | in progress | Codex 2026-09-21 |
+| WP-5 | Delivery and POD | WP-2 | WP-4, WP-6, WP-7 | review (88/408 pass) | Codex + Claude 2026-09-22 |
 | WP-5b | Stop link for POD capture (optional, D15) | WP-5 | WP-6, WP-7, WP-8b | todo | |
 | WP-6 | Waybill and delivery-note PDF | WP-2 | WP-4, WP-5, WP-7 | review | Codex 2026-09-21 |
-| WP-7 | Charges and shipment invoicing | WP-2 | WP-4, WP-5, WP-6, WP-8b | todo | |
+| WP-7 | Charges and shipment invoicing | WP-2 | WP-4, WP-5, WP-6, WP-8b | review (88/408 + AccountFeature 521) | Claude 2026-09-22 |
 | WP-8a | Expense records and approval | WP-1 | WP-2, WP-3 | todo | |
 | WP-8b | Expense and carrier bills | WP-8a, WP-2 | WP-7 | todo | |
 | WP-9 | Sales quotation link (per D1) | WP-7 | WP-10 | todo | |
@@ -1402,3 +1402,120 @@ Requests for other packages:
 - WP-5: `DeliveryService` should move stop actual times through the same stops
   WP-4 creates; one pickup and one delivery stop per shipment, ordered by
   `sequence`.
+
+### WP-5 - Delivery and proof of delivery - 2026-09-22 - Codex, finished by Claude
+
+Status: `review`. `--testsuite=LogisticsFeature` = **88 passed, 408 assertions**
+on `aureuserp_testing_claude`. Pint clean.
+
+Codex built the package and stopped without integrating it. Claude wired it in
+and closed one test gap; the code below is Codex's unless noted.
+
+Files created (Codex): `src/Services/DeliveryService.php` (with the `PodData`
+readonly DTO in the same file), the Pickup/Deliver/FailDelivery actions,
+`DeliveryProofsRelationManager`, `resources/lang/en/delivery.php`,
+`tests/Feature/Delivery/DeliveryServiceTest.php`.
+
+Finished by Claude:
+
+- The three actions are registered on `ViewShipment` in workflow order, and
+  `DeliveryProofsRelationManager` is first in `ShipmentResource::getRelations()`.
+  Both are WP-2 files, which is why Codex was told to request the change rather
+  than make it.
+- `DeliveryProofsRelationManager::objectKey()` extracted and made public, so the
+  test derives the storage key from the same code the UI links with. It
+  previously hand-built `companies/{id}/{path}`, omitting the `root` prefix
+  `fileUrl()` adds - the two could drift apart with every test still passing.
+
+Design notes for later packages:
+
+- `DeliveryService` is the only place delivery state changes, and every
+  transition goes through `ShipmentWorkflow`. It re-reads the shipment under the
+  company scope before writing, which is what stops a model held from before the
+  active company changed being acted on. WP-7 adopted the same guard; **any
+  service taking a model and acting on it needs it**, because
+  `LogisticsPolicy::recordAbility()` grants on permission plus the per-company
+  switch and never checks that the record is one the user can see.
+- POD files go on the `public` disk, which resolves to `tenant-s3` in
+  production. `withShipmentDisk()` re-resolves that disk under the shipment's
+  company so the object lands in the right tenant prefix. Do not build paths
+  with `storage_path()`.
+
+**Known limitation, not covered by tests.** `phpunit.xml` does not set
+`FILESYSTEM_PUBLIC_DRIVER`, so every test runs the `local` driver. The
+`tenant-s3` branch of `fileUrl()` and the whole of `withShipmentDisk()`'s
+tenant handling therefore never execute under test, and the `tenant-s3` driver
+builds a real S3 driver so it cannot be faked cheaply. `objectKey()` is now
+locked by a test; the driver behaviour around it is not. Closing this properly
+means either a test that sets the driver with a fake S3, or accepting it as a
+manual pre-deploy check. Recorded in `docs/upstream-fix-adoption-plan.md`
+terms: this is a coverage gap, not a known defect.
+
+Requests for other packages:
+
+- WP-12: translate `resources/lang/en/delivery.php`.
+- WP-5b (optional, D15): the stop link for POD capture is still `todo`.
+
+### WP-7 - Charges and shipment invoicing - 2026-09-22 - Claude
+
+Status: `review`. `--testsuite=LogisticsFeature` = **88 passed, 408
+assertions**; `--testsuite=AccountFeature` = **521 passed, 1382 assertions**,
+identical to the WP-1 baseline, so nothing in accounting moved. Pint clean.
+
+Files created: `src/Services/ShipmentInvoicer.php`,
+`src/Exceptions/NothingToInvoice.php`, `ChargesRelationManager`,
+`InvoicesRelationManager`, `CreateInvoiceAction`,
+`src/Filament/Clusters/Finance/Pages/UnbilledCharges.php` and its view,
+`resources/lang/en/invoicing.php`, new `exceptions.php` key,
+`tests/Feature/Invoicing/ShipmentInvoicerTest.php` (8 tests).
+
+Design notes for later packages:
+
+- **Logistics does not own invoices.** `ShipmentInvoicer` creates the same
+  `Account\Models\Move` that Sales creates and hands it to
+  `AccountFacade::computeAccountMove()` for totals and taxes. Numbering,
+  journals, payment state and posting all stay in Accounting. WP-8b must follow
+  the same rule for vendor bills.
+- Each invoiced charge keeps its `move_line_id`, which is the whole mechanism
+  behind "a second invoice picks up only new charges"
+  (`ShipmentCharge::scopeUninvoiced`).
+- Waiting time is split into `waitingTimeSuggestions()`, which creates nothing,
+  and `addWaitingTimeCharge()`, which a confirmed suggestion calls. D14 requires
+  a person to confirm detention; a long wait is often the carrier's own fault,
+  so auto-billing it would put invented charges on real customer invoices.
+- `UnbilledCharges` requires **both** `page_logistics_unbilled_charges` and
+  `view_financials_logistics_shipment`, as `DispatchBoard` requires both of its
+  permissions. The page permission alone would expose charge amounts and
+  customer names to a user denied shipment financials.
+
+Two bugs found in the hand-off to accounting, both fixed here:
+
+1. `Move` computes currency before journal in its saving hook, so a move created
+   with neither dereferences a null journal. Sales never hits this because
+   orders always carry a currency; shipments do not. The invoicer now supplies
+   `$shipment->currency_id ?? $shipment->company?->currency_id` and lets
+   accounting pick its own journal.
+2. The scoped re-read originally ran after the charges were loaded, so
+   invoicing another company's shipment reported "nothing to invoice" instead of
+   refusing it. The guard now runs first.
+
+Two ways to silently under-bill a customer, both closed in the UI and worth
+knowing about:
+
+- A charge with **no product** produces a move line with no account, which
+  accounting treats as a non-product line and computes **untaxed**, with no
+  error. `ChargesRelationManager` marks the product `required()`.
+- A tax with **no repartition lines** contributes nothing, also silently. The
+  tax select only offers taxes with `invoiceRepartitionLines` for that company.
+
+**Not yet tested.** The UI layer - both relation managers, `CreateInvoiceAction`
+and `UnbilledCharges` - has no tests of its own. The suite proves the classes
+load and break nothing; nothing exercises them. The `UnbilledCharges` permission
+pairing in particular is an assumption of mine that deserves a test.
+
+Requests for other packages:
+
+- WP-12: translate `resources/lang/en/invoicing.php` and the new
+  `exceptions.php` key (`nothing-to-invoice`).
+- WP-8b: reuse `ShipmentInvoicer`'s shape for vendor bills - same delegation to
+  Accounting, same scoped re-read guard.
