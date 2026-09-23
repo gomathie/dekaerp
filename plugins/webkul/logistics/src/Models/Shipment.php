@@ -35,6 +35,32 @@ class Shipment extends Model
 
     protected $table = 'logistics_shipments';
 
+    /**
+     * Mirrors the column defaults in the shipments migration.
+     *
+     * Postgres fills these in on insert, but the model in memory does not know
+     * that, so a shipment created without them reads back null until it is
+     * reloaded - `$shipment->state` on the record ShipmentFromOrder just
+     * returned would be null rather than DRAFT, and any `->state->value` on it
+     * a fatal error. Same trap as `users.is_active`. Keep this list in step
+     * with the migration.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'transport_mode'  => 'road',
+        'priority'        => 'normal',
+        'state'           => 'draft',
+        'is_fragile'      => false,
+        'is_hazardous'    => false,
+        'is_opening'      => false,
+        'total_packages'  => 0,
+        'total_weight_kg' => 0,
+        'total_volume_m3' => 0,
+        'total_charges'   => 0,
+        'total_costs'     => 0,
+    ];
+
     protected $fillable = [
         'name',
         'customer_reference',

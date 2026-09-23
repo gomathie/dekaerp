@@ -2,12 +2,13 @@
 
 namespace Webkul\Logistics\Services;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
-use Webkul\Logistics\Models\CompanySetting;
 use Webkul\Logistics\Models\Shipment;
 use Webkul\Logistics\Support\LogisticsAccess;
 use Webkul\Product\Models\Product;
 use Webkul\Sale\Models\Order;
+use Webkul\Sale\Models\OrderLine;
 
 /**
  * Turns a confirmed sales order into a draft shipment (D1).
@@ -84,14 +85,19 @@ class ShipmentFromOrder
             return false;
         }
 
-        // Never backfill. An order confirmed before the company switched
-        // Logistics on belongs to however that company worked at the time;
-        // converting it now would invent operational history.
-        $enabledAt = CompanySetting::forCompany((int) $order->company_id)->enabled_at;
-
-        if ($enabledAt && $order->updated_at && $order->updated_at->lt($enabledAt)) {
-            return false;
-        }
+        // There is deliberately no guard on the order's own dates. The rule is
+        // "no shipment for an order confirmed before the company enabled
+        // Logistics", and that is enforced by *when* this runs: the listener
+        // fires on confirmation, so the switch checked above is the switch as
+        // it stood at that moment. An order confirmed while the company was
+        // off never fires the event again.
+        //
+        // Testing date_order instead would block the opposite case - a
+        // quotation drafted last month and confirmed today, the day after the
+        // company adopted Logistics - which is precisely the work a company
+        // adopting Logistics has in hand. Orders already confirmed before
+        // adoption are converted deliberately, through the "From sales order"
+        // picker on the shipment form.
 
         if ($this->existingShipment($order)) {
             return false;
@@ -113,8 +119,10 @@ class ShipmentFromOrder
 
     /**
      * Order lines whose product is one of this company's logistics services.
+     *
+     * @return Collection<int, OrderLine>
      */
-    protected function serviceLines(Order $order)
+    protected function serviceLines(Order $order): Collection
     {
         $serviceProductIds = Product::withoutGlobalScopes()
             ->where('company_id', $order->company_id)
@@ -122,10 +130,17 @@ class ShipmentFromOrder
             ->pluck('id');
 
         if ($serviceProductIds->isEmpty()) {
-            return collect();
+            return new Collection;
         }
 
-        return $order->lines()
+        // Scope-free for the same reason as existingShipment(): the order's own
+        // lines decide this, not whichever company the session that confirmed
+        // the order happens to be looking at. OrderLine is company-scoped, so
+        // reading through $order->lines() would silently find nothing whenever
+        // the two differ - a queued confirmation, a console script - and the
+        // order would look like it had no logistics services at all.
+        return OrderLine::withoutGlobalScopes()
+            ->where('order_id', $order->getKey())
             ->whereIn('product_id', $serviceProductIds)
             ->get();
     }

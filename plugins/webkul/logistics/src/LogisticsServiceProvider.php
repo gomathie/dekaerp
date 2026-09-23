@@ -3,7 +3,9 @@
 namespace Webkul\Logistics;
 
 use Filament\Panel;
+use Illuminate\Support\Facades\Event;
 use Webkul\Chatter\Services\ChatterCleanupService;
+use Webkul\Logistics\Listeners\CreateShipmentFromOrder;
 use Webkul\Logistics\Models\Expense;
 use Webkul\Logistics\Models\Shipment;
 use Webkul\Logistics\Models\Trip;
@@ -14,6 +16,7 @@ use Webkul\PluginManager\Console\Commands\InstallCommand;
 use Webkul\PluginManager\Console\Commands\UninstallCommand;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
+use Webkul\Sale\Events\OrderConfirmed;
 use Webkul\Support\Services\SequenceService;
 
 class LogisticsServiceProvider extends PackageServiceProvider
@@ -88,20 +91,29 @@ class LogisticsServiceProvider extends PackageServiceProvider
     }
 
     /**
-     * Listen for confirmed sales orders, when Sales is installed (D1).
+     * Listen for confirmed sales orders (D1).
      *
-     * Guarded by class_exists rather than Package::isPluginInstalled(): this
-     * runs at register time, before the database is necessarily reachable, and
-     * the plugins table is not something to query while booting. If the Sales
-     * package is not present the event class does not exist and there is
-     * nothing to listen for.
+     * Registration is unconditional on purpose, and deliberately does NOT try
+     * to decide here whether Sales is in use:
+     *
+     *  - Plugin installation is global, not per company. Sales being installed
+     *    says nothing about whether *this* company sells, and Logistics being
+     *    installed says nothing about whether this company ships.
+     *  - `Package::isPluginInstalled()` reads the database. This runs at
+     *    register time, before the database is necessarily reachable, and a
+     *    boot-time query against the plugins table is what made
+     *    `package:discover` hang for five minutes once already.
+     *  - class_exists() would be no help either: every plugin's files are
+     *    present in this monorepo whether or not it is installed.
+     *
+     * Nothing is needed. If Sales is not installed its tables do not exist, no
+     * order can be confirmed, and the event never fires. If Sales is installed
+     * but a company does not use Logistics, ShipmentFromOrder::shouldConvert()
+     * declines on the per-company switch. The decision belongs there, once, in
+     * a place that can be tested - not spread across boot.
      */
     protected function registerSalesIntegration(): void
     {
-        if (! class_exists(OrderConfirmed::class)) {
-            return;
-        }
-
         Event::listen(OrderConfirmed::class, CreateShipmentFromOrder::class);
     }
 }

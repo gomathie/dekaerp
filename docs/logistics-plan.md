@@ -381,7 +381,7 @@ you claim a package, finish it, or get blocked.
 | WP-7 | Charges and shipment invoicing | WP-2 | WP-4, WP-5, WP-6, WP-8b | review (95/430 + AccountFeature 521) | Claude 2026-09-22 |
 | WP-8a | Expense records and approval | WP-1 | WP-2, WP-3 | in progress | Copilot 2026-09-23 |
 | WP-8b | Expense and carrier bills | WP-8a, WP-2 | WP-7 | todo | |
-| WP-9 | Sales quotation link (per D1) | WP-7 | WP-10 | todo | |
+| WP-9 | Sales quotation link (per D1) | WP-7 | WP-10 | in progress | Claude 2026-09-23, db `aureuserp_testing_wp9` |
 | WP-9b | Customer page integration (per D11) | WP-7 | WP-10 | todo (extension point only, else ask) | |
 | WP-10 | Dashboard widgets | WP-4, WP-5 | WP-9, WP-11 | todo | |
 | WP-11 | Reports | WP-4, WP-5, WP-7, WP-8b | WP-10 | todo | |
@@ -402,6 +402,7 @@ exists". Four runs were lost to this on 2026-09-18 before the cause was found.
 | `aureuserp_testing_wp5` | WP-5 | |
 | `aureuserp_testing_wp6` | WP-6 | Free once WP-6 is merged |
 | `aureuserp_testing_wp8a` | WP-8a | Reserved 2026-09-23 |
+| `aureuserp_testing_wp9` | WP-9 | Reserved 2026-09-23 |
 
 WP-4 used `aureuserp_testing_claude` (review/verification database) because the
 same agent was also verifying WP-3 and WP-6 across packages.
