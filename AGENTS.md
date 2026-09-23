@@ -1095,6 +1095,14 @@ MULTI-COMPANY FACTS THAT BITE
 • Child rows must take their parent's company, not the session's. The saving
   event fires before creating, so set company_id there (Logistics
   `InheritsParentCompany`).
+• An event listener runs under whoever acted, not under the record's company.
+  Reading a company-scoped model through a relation there (`$order->lines()`)
+  silently returns nothing whenever the two differ - a queued job, a console
+  command, another company's user - and the work looks like it was simply not
+  needed. In a listener or a cross-plugin service, read with
+  `withoutGlobalScopes()` filtered explicitly by the parent's key, as
+  `Logistics\Services\ShipmentFromOrder` does. This is the read side; the write
+  side still stamps the parent's company (`InheritsParentCompany`).
 • The super-admin `Gate::before` skips policies, so services must repeat
   business guards. The same is true of any new `Gate::before` that returns
   `true`: grant only bare permission checks (empty `$arguments`) and return

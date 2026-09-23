@@ -6,6 +6,111 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-09-23 (Logistics WP-9 sales quotation link)
+
+Branch `feature/logistics`. Handoff: `docs/logistics-plan.md` §7. Test database
+`aureuserp_testing_wp9`.
+
+A confirmed sales order carrying one of a company's six `LOG-*` service products
+now creates a **draft** shipment, with the order's customer, currency and lines
+copied across as charges. The charges are stored `is_billable = false`, because
+Sales already invoices that order and billing them again from Logistics would
+charge the customer twice for the same work.
+
+No Sales file was edited. `OrderWorkflow::confirm()` already dispatches
+`OrderConfirmed`, so Logistics only listens. `CreateShipmentFromOrder` swallows
+and `report()`s any failure: the order is the customer's commitment, the
+shipment is a convenience, and confirming an order must not fail because
+Logistics could not make one.
+
+### Multi-tenancy: why the listener registers unconditionally
+
+Plugin installation is global - the `plugins` table has no company column - so
+"is Sales installed" says nothing about whether a given company sells, and
+"is Logistics installed" says nothing about whether it ships. Guarding
+registration on `Package::isPluginInstalled('sales')` would also query the
+database at register time, which is what made `package:discover` hang for 300 s
+once already, and `class_exists()` decides nothing in a monorepo where every
+plugin's classes are autoloadable.
+
+So the listener is always registered and the decision lives once, in
+`ShipmentFromOrder::shouldConvert()`, where it is testable:
+
+| Tenant | Logistics enabled | Confirming a sales order |
+| --- | --- | --- |
+| Sales only | no | declined on the per-company switch |
+| Sales + Logistics | yes | draft shipment created |
+| Logistics only | yes | event never fires - that tenant places no orders |
+| Sales not installed | either | its tables do not exist; the event never fires |
+
+Logistics declares no dependency on Sales (only `products`, `employees`,
+`accounts`), and `logistics_shipments.sale_order_id` is a plain indexed column
+rather than a foreign key, so a logistics-only deployment installs cleanly.
+
+Two related corrections in the same service:
+
+- **The "no backfill" rule is enforced by when the code runs.** The rule is "no
+  shipment for an order *confirmed* before the company enabled Logistics", and
+  the listener only fires on confirmation, so the switch read at that moment is
+  the whole rule. An earlier draft compared the order's `date_order`, which
+  wrongly blocked a quotation drafted before adoption and confirmed after it -
+  precisely the open work a company adopting Logistics has in hand. Orders
+  already confirmed before adoption are still converted deliberately, through
+  the "From sales order" picker.
+- **`serviceLines()` now reads the order's lines with global scopes removed**,
+  filtered by `order_id`, as `existingShipment()` already did. `OrderLine` is
+  company-scoped and an event fires under whoever acted, so a queued or console
+  confirmation under a different active company would have found no lines and
+  silently skipped the shipment.
+
+### Bug found while testing: null column defaults on Shipment
+
+`logistics_shipments` fills `state`, `transport_mode`, `priority` and eight
+other columns by database default, and `Shipment` declared no `$attributes`. A
+freshly created shipment therefore carried `null` for all of them in memory
+until it was reloaded: `ShipmentFromOrder::convert()` returned a shipment whose
+`state` was null rather than `DRAFT`, and `->state->value` on it would have been
+a fatal error. This is the same trap as `users.is_active`, recorded in project
+memory, and the fix is the same - `protected $attributes` mirroring the
+migration's defaults, with a docblock saying to keep the two in step.
+
+The same gap exists on `Trip`, `Expense`, `Stop`, `ShipmentCharge`, `Vehicle`
+and `Driver`. Not changed here: outside WP-9, and each needs its own test run.
+Recommended for WP-13.
+
+### Verification
+
+- `tests/Feature/Sales/ShipmentFromOrderTest.php`, 10 tests: the conversion and
+  its contents, the per-company switch off, switching Logistics back off,
+  an order with no logistics services, another company's `LOG-*` products,
+  converting only once, the duplicate check surviving a different active
+  company, an old quotation confirmed after adoption, the real `OrderConfirmed`
+  dispatch, and a Logistics failure not breaking order confirmation.
+- Focused run on `aureuserp_testing_wp9`: **9 passed, 1 failed** - the failure
+  was the null `state` above, fixed at its cause. All 10 pass after the fix.
+- Full `LogisticsFeature` on a freshly recreated `aureuserp_testing_wp9`:
+  **116 passed, 1 failed, 483 assertions, 2488 s**. An earlier attempt was
+  interrupted when the machine's Docker daemon stopped, so the database was
+  dropped and recreated before this run rather than reused.
+- The one failure belongs to **WP-8a**, not WP-9:
+  `tests/Feature/Expenses/ApprovalTest.php:97` fails with "Attempt to read
+  property `form` on null", because the Livewire component never mounted.
+  Filament's `Resource::canAccess()` returns `canViewAny()`, so `CreateExpense`
+  needs `view_any_logistics_expense` as well as `create_logistics_expense`.
+  Reported to that package's owner; not changed here.
+- Pint passed on all four WP-9 files.
+- Note for future runs: the suite now installs the Sales plugin. The first Sales
+  test pays 496 s for it, about a fifth of the suite's total, on top of the
+  515 s the first test of the suite already pays for the base install.
+
+### Requests for other packages
+
+- **WP-2 / WP-13:** `ShipmentResource::saleOrderOptions()` lists every order of
+  the customer despite its docblock saying "Confirmed sales orders", and does
+  not exclude orders that already have a shipment. The listener cannot
+  duplicate, since `existingShipment()` sees the `sale_order_id` the picker
+  sets, but a user can hand-create a second shipment for one order.
+
 ---
 
 ## 2026-09-23 (Logistics WP-8a expense records and approval)
