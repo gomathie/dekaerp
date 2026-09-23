@@ -379,7 +379,7 @@ you claim a package, finish it, or get blocked.
 | WP-5b | Stop link for POD capture (optional, D15) | WP-5 | WP-6, WP-7, WP-8b | todo | |
 | WP-6 | Waybill and delivery-note PDF | WP-2 | WP-4, WP-5, WP-7 | review | Codex 2026-09-21 |
 | WP-7 | Charges and shipment invoicing | WP-2 | WP-4, WP-5, WP-6, WP-8b | review (95/430 + AccountFeature 521) | Claude 2026-09-22 |
-| WP-8a | Expense records and approval | WP-1 | WP-2, WP-3 | in progress | Copilot 2026-09-23 |
+| WP-8a | Expense records and approval | WP-1 | WP-2, WP-3 | review (121/500 pass, whole suite green) | Copilot 2026-09-23, finished by Claude 2026-09-23 |
 | WP-8b | Expense and carrier bills | WP-8a, WP-2 | WP-7 | todo | |
 | WP-9 | Sales quotation link (per D1) | WP-7 | WP-10 | review | Claude 2026-09-23, db `aureuserp_testing_wp9` |
 | WP-9b | Customer page integration (per D11) | WP-7 | WP-10 | todo (extension point only, else ask) | |
@@ -403,6 +403,7 @@ exists". Four runs were lost to this on 2026-09-18 before the cause was found.
 | `aureuserp_testing_wp6` | WP-6 | Free once WP-6 is merged |
 | `aureuserp_testing_wp8a` | WP-8a | Reserved 2026-09-23. Taken over by Claude 2026-09-23 when WP-8a's owner became unavailable; dropped and recreated first, because the previous owner's run had stalled on it. |
 | `aureuserp_testing_wp9` | WP-9 | Reserved 2026-09-23 |
+| `aureuserp_testing_wp10` | WP-10 | Reserved 2026-09-23 |
 
 WP-4 used `aureuserp_testing_claude` (review/verification database) because the
 same agent was also verifying WP-3 and WP-6 across packages.
@@ -1661,3 +1662,79 @@ Requests for other packages:
   the picker. Filter the options by confirmed state and by
   `whereDoesntHave`/`whereNotIn` on existing shipments.
 - **WP-12:** nothing. WP-9 adds no user-facing strings.
+
+### WP-8a - Expense records and approval - completion - 2026-09-23 - Claude
+
+Status: `review`. Test database `aureuserp_testing_wp8a` (dropped and recreated;
+the previous owner's run had stalled on it).
+
+This block completes the `in progress` block above rather than replacing it.
+That block's own summary of what it built still stands; what follows is the
+verification it could not run, plus two defects that verification exposed.
+WP-8a's owner became unavailable, so the user asked for it to be finished here.
+
+Files modified:
+- `plugins/webkul/logistics/src/Services/ExpenseApproval.php`
+- `plugins/webkul/logistics/src/Filament/Clusters/Finance/Resources/ExpenseResource/Pages/ViewExpense.php`
+- `plugins/webkul/logistics/tests/Feature/Expenses/ApprovalTest.php`
+- `plugins/webkul/logistics/resources/lang/en/exceptions.php`
+- `plugins/webkul/logistics/resources/lang/en/filament/clusters/finance/resources/expense.php`
+
+Files created:
+- `plugins/webkul/logistics/src/Exceptions/ReceiptRequired.php`
+
+Defect 1 - the approval test could never have passed.
+`ApprovalTest`'s form test granted only `create_logistics_expense`. Filament's
+`Resource::canAccess()` returns `canViewAny()`
+(`vendor/filament/filament/src/Resources/Resource/Concerns/HasAuthorization.php:28`),
+so `CreateExpense` never mounted and every form assertion failed on a null
+component - "Attempt to read property `form` on null" - rather than on the form.
+Added `view_any_logistics_expense`, with a comment saying why.
+
+Defect 2 - `requires_receipt` was enforced only by the form.
+`ExpenseForm` marks the upload required when the category demands it, but the
+form is not the boundary: an API write, an import or a direct service call
+walked an unevidenced expense through to `approved`, which is where the company
+agrees to pay it. `ExpenseApproval` now refuses the move to `submitted` **and**
+to `approved`:
+- Both points, because an expense can reach `submitted` without passing through
+  `submit()` - a seeded record, an import, an API write.
+- Rejection is deliberately not blocked; a missing receipt is often the reason
+  for rejecting.
+- The category is read `withoutGlobalScopes()` by key. Through the relation, a
+  queued job or console command running outside the expense's company would see
+  no category and read that as "no receipt needed" - the rule failing open.
+- Refusal is a `ReceiptRequired` exception following the `NothingToInvoice`
+  pattern, caught in `ViewExpense` and shown as a warning notification naming
+  the category, not an error page.
+
+Defect 3 - a test that asserted nothing.
+The receipt test read `FileUpload::make('receipt_path')->getAcceptedFileTypes()`
+on a freshly constructed component, which carries none of the resource's
+configuration and returns null. It now asserts against the component the page
+actually mounts, via `assertSchemaComponentExists`, covering the MIME
+allowlist, the 10 MB cap and the `public` disk - all three claimed in the block
+above and none previously tested.
+
+Tests added / results:
+- Four new tests: refusal on submit, refusal on approve for an expense that
+  never passed through `submit()`, success once a receipt is attached, and
+  rejection still going through without one.
+- `ApprovalTest` now 9 tests. Pint passed on every changed file.
+
+Existing suites run / results:
+- Full `LogisticsFeature` on `aureuserp_testing_wp8a`:
+  **121 passed, 0 failed, 500 assertions, 2161 s.** No failures anywhere in the
+  plugin.
+
+Risks:
+- `Shipment::$attributes` aside (see WP-9), the `logistics_expenses` defaults
+  have the same null-in-memory gap: `Expense` declares no `$attributes`.
+  Not changed here. WP-13.
+
+Requests for other packages:
+- **WP-8b:** the "at least one of shipment, trip or vehicle" rule is form-only,
+  like `requires_receipt` was. It is a data-shape rule rather than an evidence
+  control, so it was left alone here, but WP-8b needs every expense to point at
+  something billable before it can post a vendor bill. Enforce it where the bill
+  is built, or in `ExpenseApproval` alongside the receipt check.

@@ -6,6 +6,76 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-09-23 (Logistics WP-8a finished: receipt enforcement and two broken tests)
+
+Branch `feature/logistics`. Handoff: `docs/logistics-plan.md` §7. Test database
+`aureuserp_testing_wp8a`, dropped and recreated because the previous owner's run
+had stalled on it.
+
+WP-8a's owner became unavailable partway through the package, so the user asked
+for it to be finished here. The resource, service and state machine that owner
+built are unchanged; what follows is the verification they could not run and the
+three defects it exposed.
+
+### `requires_receipt` was enforced only by the form
+
+`ExpenseForm` marks the receipt upload required when the selected category
+demands one, but a form is not a boundary. An API write, an import or a direct
+call to `ExpenseApproval` walked an unevidenced expense straight through to
+`approved` - the point at which the company agrees to pay it. For an evidence
+control on money, that is the wrong place to stop.
+
+`ExpenseApproval` now refuses the move to `submitted` **and** to `approved`:
+
+- Both points, because an expense can reach `submitted` without passing through
+  `submit()`: a seeded record, an import, an API write.
+- Rejection is deliberately still allowed without a receipt. A missing receipt
+  is often the reason for rejecting a claim.
+- The category is read `withoutGlobalScopes()` by key. Read through the
+  relation, a queued job or console command running outside the expense's
+  company would see no category at all and treat that as "no receipt needed" -
+  the rule failing open, which is the wrong way round.
+- The refusal is a `ReceiptRequired` exception, following the existing
+  `NothingToInvoice` pattern, caught in `ViewExpense` and shown as a warning
+  notification naming the category rather than an error page.
+
+### Two tests that could not have passed
+
+`ApprovalTest`'s form test granted only `create_logistics_expense`. Filament's
+`Resource::canAccess()` returns `canViewAny()`, so `CreateExpense` never
+mounted, and every assertion in that test failed on a null component -
+"Attempt to read property `form` on null" - rather than on the form it meant to
+check. Added `view_any_logistics_expense`, with a comment so it does not get
+re-broken.
+
+The same test then asserted on
+`FileUpload::make('receipt_path')->getAcceptedFileTypes()` - a freshly
+constructed component carrying none of the resource's configuration, which
+returns null. It asserted nothing. It now checks the component the page actually
+mounts, through `assertSchemaComponentExists`, covering the MIME allowlist, the
+10 MB cap and the `public` disk: all three claimed in the original handoff and
+none of them previously tested.
+
+### Verification
+
+- Four new tests: refusal on submit, refusal on approve for an expense that
+  never passed through `submit()`, success once a receipt is attached, and
+  rejection still going through without one.
+- Full `LogisticsFeature` on `aureuserp_testing_wp8a`: **121 passed, 0 failed,
+  500 assertions, 2161 s**. No failures anywhere in the plugin.
+- Pint passed on every changed file.
+
+### Requests for other packages
+
+- **WP-8b:** the "at least one of shipment, trip or vehicle" rule is form-only,
+  as `requires_receipt` was. It is a data-shape rule rather than an evidence
+  control, so it was left alone here, but WP-8b cannot post a vendor bill for an
+  expense that points at nothing.
+- **WP-13:** `Expense` declares no `$attributes`, so it has the same
+  null-in-memory gap for database-default columns that `Shipment` had.
+
+---
+
 ## 2026-09-23 (Logistics WP-9 sales quotation link)
 
 Branch `feature/logistics`. Handoff: `docs/logistics-plan.md` §7. Test database
@@ -98,6 +168,9 @@ Recommended for WP-13.
   Filament's `Resource::canAccess()` returns `canViewAny()`, so `CreateExpense`
   needs `view_any_logistics_expense` as well as `create_logistics_expense`.
   Reported to that package's owner; not changed here.
+  **Superseded the same day** - WP-8a's owner became unavailable and the user
+  asked for it to be finished here. See the WP-8a entry above: the suite is now
+  121 passed, 0 failed.
 - Pint passed on all four WP-9 files.
 - Note for future runs: the suite now installs the Sales plugin. The first Sales
   test pays 496 s for it, about a fifth of the suite's total, on top of the

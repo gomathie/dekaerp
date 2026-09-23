@@ -1,8 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\DB;
+use Livewire\Livewire;
 use Webkul\Logistics\Enums\ShipmentState;
 use Webkul\Logistics\Enums\TripState;
+use Webkul\Logistics\Filament\Pages\Dashboard as LogisticsDashboard;
 use Webkul\Logistics\Filament\Widgets\FleetStatsWidget;
 use Webkul\Logistics\Filament\Widgets\ShipmentStatsWidget;
 use Webkul\Logistics\Filament\Widgets\UnbilledRevenueWidget;
@@ -188,4 +190,51 @@ it('hides every widget from a company that has not enabled Logistics', function 
     expect(ShipmentStatsWidget::canView())->toBeFalse()
         ->and(FleetStatsWidget::canView())->toBeFalse()
         ->and(UnbilledRevenueWidget::canView())->toBeFalse();
+});
+
+it('opens the Logistics dashboard for a permitted user of an enabled company', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+
+    CompanyHelper::actingAsCompanyUser($company, [
+        'page_logistics_dashboard',
+        'view_any_logistics_shipment',
+        'view_any_logistics_trip',
+    ]);
+
+    expect(LogisticsDashboard::canAccess())->toBeTrue();
+
+    Livewire::test(LogisticsDashboard::class)->assertOk();
+});
+
+it('forbids the Logistics dashboard without its page permission', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+
+    // Permission to see shipments is not permission to open the dashboard.
+    CompanyHelper::actingAsCompanyUser($company, ['view_any_logistics_shipment']);
+
+    expect(LogisticsDashboard::canAccess())->toBeFalse();
+
+    Livewire::test(LogisticsDashboard::class)->assertForbidden();
+});
+
+it('forbids the Logistics dashboard for a company that has not enabled Logistics', function () {
+    $company = LogisticsHelper::company();
+
+    // The page permission alone is not enough: the company switch decides
+    // whether this company does logistics at all.
+    CompanyHelper::actingAsCompanyUser($company, [
+        'page_logistics_dashboard',
+        'view_any_logistics_shipment',
+    ]);
+
+    expect(LogisticsDashboard::canAccess())->toBeFalse();
+});
+
+it('lists the three Logistics widgets on its own dashboard', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+
+    CompanyHelper::actingAsCompanyUser($company, ['page_logistics_dashboard']);
+
+    expect(app(LogisticsDashboard::class)->getWidgets())
+        ->toBe([ShipmentStatsWidget::class, FleetStatsWidget::class, UnbilledRevenueWidget::class]);
 });
