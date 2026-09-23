@@ -8,6 +8,29 @@ for the task/question log this change log is paired with.
 
 ---
 
+## 2026-09-23 (Logistics WP-8a expense records and approval)
+
+WP-8a is implemented on `feature/logistics`: the new `ExpenseApproval` service
+owns draft-to-submitted-to-approved/rejected transitions, re-reads the expense
+under the company scope before loading or changing it, checks the Logistics
+switch itself, and authorises the requested ability. The Finance
+`ExpenseResource` follows the split Schemas/Tables/Pages layout, links expenses
+to a shipment, trip or vehicle, and stores receipts through the `public` disk
+with an allowlisted MIME set, a 10 MB limit, and generated filenames. Receipt
+requiredness is read from the selected category in the current company scope.
+
+Added `ApprovalTest.php` for both approval outcomes, missing approve permission,
+company isolation, and conditional receipt validation. Syntax checks passed and
+Pint passed on the nine new PHP files. The focused Pest run used the dedicated
+`aureuserp_testing_wp8a` database, but did not reach assertions: the existing
+plugin-install bootstrap remained in `shield:generate` permission generation.
+The database was reset after the stalled run; no test result is claimed.
+
+The WP-8a status remains `in progress` until the required focused and full
+LogisticsFeature runs complete. No Requests for other packages.
+
+---
+
 ## 2026-09-22 (Logistics WP-7 invoicing, and WP-5 finished)
 
 Branch `feature/logistics`. Handoffs: `docs/logistics-plan.md` §7.
