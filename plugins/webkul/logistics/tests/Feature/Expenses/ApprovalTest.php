@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\URL;
 use Livewire\Livewire;
 use Webkul\Logistics\Enums\ExpensePaidBy;
 use Webkul\Logistics\Enums\ExpenseState;
+use Webkul\Logistics\Exceptions\ReceiptRequired;
 use Webkul\Logistics\Filament\Clusters\Finance\Resources\ExpenseResource\Pages\CreateExpense;
 use Webkul\Logistics\Models\Expense;
 use Webkul\Logistics\Models\ExpenseCategory;
@@ -91,7 +92,13 @@ it('requires a receipt only for categories that demand one', function () {
     $required = ExpenseCategory::factory()->create(['requires_receipt' => true]);
     $optional = ExpenseCategory::factory()->create(['requires_receipt' => false]);
 
-    FilamentHelper::actingAsCompanyUser($company, ['create_logistics_expense']);
+    // view_any as well as create: Filament's Resource::canAccess() returns
+    // canViewAny(), so without it the page never mounts and every form
+    // assertion below fails on a null component instead of on the form.
+    FilamentHelper::actingAsCompanyUser($company, [
+        'view_any_logistics_expense',
+        'create_logistics_expense',
+    ]);
 
     Livewire::test(CreateExpense::class)
         ->fillForm([
@@ -117,6 +124,93 @@ it('requires a receipt only for categories that demand one', function () {
         ->call('create')
         ->assertHasNoFormErrors([], 'form');
 
-    expect(FileUpload::make('receipt_path')->getAcceptedFileTypes())
-        ->toContain('application/pdf', 'image/jpeg', 'image/png', 'image/webp');
+    // Asserted against the component the page actually mounts. A freshly made
+    // FileUpload::make('receipt_path') carries none of this configuration, so
+    // asking it what it accepts tests nothing and returns null.
+    Livewire::test(CreateExpense::class)
+        ->assertSchemaComponentExists(
+            'receipt_path',
+            'form',
+            fn (FileUpload $field): bool => $field->getAcceptedFileTypes() === ['application/pdf', 'image/jpeg', 'image/png', 'image/webp']
+                && $field->getMaxSize() === 10240
+                && $field->getDiskName() === 'public',
+        );
+});
+
+it('refuses to submit an unevidenced expense whose category demands a receipt', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+    $category = ExpenseCategory::factory()->create([
+        'name'             => 'Fuel',
+        'requires_receipt' => true,
+    ]);
+
+    $expense = approvalExpense($company->id, ['category_id' => $category->id]);
+
+    FilamentHelper::actingAsCompanyUser($company, ['update_logistics_expense']);
+
+    // The form marks the upload required, but the form is not the boundary.
+    // An API write or a console command reaches the service directly.
+    expect(fn () => app(ExpenseApproval::class)->submit($expense))
+        ->toThrow(ReceiptRequired::class)
+        ->and($expense->refresh()->state)->toBe(ExpenseState::DRAFT);
+});
+
+it('refuses to approve an unevidenced expense that never passed through submit', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+    $category = ExpenseCategory::factory()->create([
+        'name'             => 'Fuel',
+        'requires_receipt' => true,
+    ]);
+
+    // Straight to submitted, as an import or an API write would create it -
+    // so the submit-time check never ran. Approval is where the company
+    // agrees to pay, so the rule is enforced again here.
+    $expense = approvalExpense($company->id, [
+        'category_id' => $category->id,
+        'state'       => ExpenseState::SUBMITTED,
+    ]);
+
+    FilamentHelper::actingAsCompanyUser($company, ['approve_logistics_expense']);
+
+    expect(fn () => app(ExpenseApproval::class)->approve($expense))
+        ->toThrow(ReceiptRequired::class)
+        ->and($expense->refresh()->state)->toBe(ExpenseState::SUBMITTED);
+});
+
+it('submits and approves once the receipt is attached', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+    $category = ExpenseCategory::factory()->create(['requires_receipt' => true]);
+
+    $expense = approvalExpense($company->id, [
+        'category_id'  => $category->id,
+        'receipt_path' => 'logistics/expenses/receipt.pdf',
+    ]);
+
+    FilamentHelper::actingAsCompanyUser($company, [
+        'update_logistics_expense',
+        'approve_logistics_expense',
+    ]);
+
+    app(ExpenseApproval::class)->submit($expense);
+    app(ExpenseApproval::class)->approve($expense);
+
+    expect($expense->refresh()->state)->toBe(ExpenseState::APPROVED);
+});
+
+it('still lets a rejection through without a receipt', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+    $category = ExpenseCategory::factory()->create(['requires_receipt' => true]);
+
+    $expense = approvalExpense($company->id, [
+        'category_id' => $category->id,
+        'state'       => ExpenseState::SUBMITTED,
+    ]);
+
+    FilamentHelper::actingAsCompanyUser($company, ['approve_logistics_expense']);
+
+    // Rejecting a claim with no receipt is the correct outcome, not something
+    // to block - the missing receipt is often the reason for rejecting.
+    app(ExpenseApproval::class)->reject($expense);
+
+    expect($expense->refresh()->state)->toBe(ExpenseState::REJECTED);
 });

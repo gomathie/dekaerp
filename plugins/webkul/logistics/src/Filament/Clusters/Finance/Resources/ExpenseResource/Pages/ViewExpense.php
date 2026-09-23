@@ -9,6 +9,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Facades\Auth;
 use Webkul\Logistics\Enums\ExpenseState;
+use Webkul\Logistics\Exceptions\ReceiptRequired;
 use Webkul\Logistics\Filament\Clusters\Finance\Resources\ExpenseResource;
 use Webkul\Logistics\Models\Expense;
 use Webkul\Logistics\Services\ExpenseApproval;
@@ -46,11 +47,24 @@ class ViewExpense extends ViewRecord
             ->action(function (Expense $record) use ($name): void {
                 $service = app(ExpenseApproval::class);
 
-                match ($name) {
-                    'submitExpense'  => $service->submit($record),
-                    'approveExpense' => $service->approve($record),
-                    'rejectExpense'  => $service->reject($record),
-                };
+                try {
+                    match ($name) {
+                        'submitExpense'  => $service->submit($record),
+                        'approveExpense' => $service->approve($record),
+                        'rejectExpense'  => $service->reject($record),
+                    };
+                } catch (ReceiptRequired $e) {
+                    // Expected, not exceptional: the category demands a receipt
+                    // and this expense has none. Say which category and why,
+                    // rather than surfacing an error page.
+                    Notification::make()
+                        ->warning()
+                        ->title(__(static::$lang.'.actions.receipt-required'))
+                        ->body($e->getMessage())
+                        ->send();
+
+                    return;
+                }
 
                 Notification::make()
                     ->success()

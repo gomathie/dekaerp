@@ -401,7 +401,7 @@ exists". Four runs were lost to this on 2026-09-18 before the cause was found.
 | `aureuserp_testing_claude` | review/verification runs across packages | Not for package work |
 | `aureuserp_testing_wp5` | WP-5 | |
 | `aureuserp_testing_wp6` | WP-6 | Free once WP-6 is merged |
-| `aureuserp_testing_wp8a` | WP-8a | Reserved 2026-09-23 |
+| `aureuserp_testing_wp8a` | WP-8a | Reserved 2026-09-23. Taken over by Claude 2026-09-23 when WP-8a's owner became unavailable; dropped and recreated first, because the previous owner's run had stalled on it. |
 | `aureuserp_testing_wp9` | WP-9 | Reserved 2026-09-23 |
 
 WP-4 used `aureuserp_testing_claude` (review/verification database) because the
