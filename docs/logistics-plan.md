@@ -378,8 +378,8 @@ you claim a package, finish it, or get blocked.
 | WP-5 | Delivery and POD | WP-2 | WP-4, WP-6, WP-7 | review (88/408 pass) | Codex + Claude 2026-09-22 |
 | WP-5b | Stop link for POD capture (optional, D15) | WP-5 | WP-6, WP-7, WP-8b | todo | |
 | WP-6 | Waybill and delivery-note PDF | WP-2 | WP-4, WP-5, WP-7 | review | Codex 2026-09-21 |
-| WP-7 | Charges and shipment invoicing | WP-2 | WP-4, WP-5, WP-6, WP-8b | review (88/408 + AccountFeature 521) | Claude 2026-09-22 |
-| WP-8a | Expense records and approval | WP-1 | WP-2, WP-3 | todo | |
+| WP-7 | Charges and shipment invoicing | WP-2 | WP-4, WP-5, WP-6, WP-8b | review (95/430 + AccountFeature 521) | Claude 2026-09-22 |
+| WP-8a | Expense records and approval | WP-1 | WP-2, WP-3 | in progress | Copilot 2026-09-23 |
 | WP-8b | Expense and carrier bills | WP-8a, WP-2 | WP-7 | todo | |
 | WP-9 | Sales quotation link (per D1) | WP-7 | WP-10 | todo | |
 | WP-9b | Customer page integration (per D11) | WP-7 | WP-10 | todo (extension point only, else ask) | |
@@ -401,6 +401,7 @@ exists". Four runs were lost to this on 2026-09-18 before the cause was found.
 | `aureuserp_testing_claude` | review/verification runs across packages | Not for package work |
 | `aureuserp_testing_wp5` | WP-5 | |
 | `aureuserp_testing_wp6` | WP-6 | Free once WP-6 is merged |
+| `aureuserp_testing_wp8a` | WP-8a | Reserved 2026-09-23 |
 
 WP-4 used `aureuserp_testing_claude` (review/verification database) because the
 same agent was also verifying WP-3 and WP-6 across packages.
@@ -1458,9 +1459,10 @@ Requests for other packages:
 
 ### WP-7 - Charges and shipment invoicing - 2026-09-22 - Claude
 
-Status: `review`. `--testsuite=LogisticsFeature` = **88 passed, 408
-assertions**; `--testsuite=AccountFeature` = **521 passed, 1382 assertions**,
-identical to the WP-1 baseline, so nothing in accounting moved. Pint clean.
+Status: `review`. `--testsuite=LogisticsFeature` = **95 passed, 430
+assertions** (88 when the service landed, plus the 7 UI tests below);
+`--testsuite=AccountFeature` = **521 passed, 1382 assertions**, identical to
+the WP-1 baseline, so nothing in accounting moved. Pint clean.
 
 Files created: `src/Services/ShipmentInvoicer.php`,
 `src/Exceptions/NothingToInvoice.php`, `ChargesRelationManager`,
@@ -1529,3 +1531,28 @@ Requests for other packages:
   `exceptions.php` key (`nothing-to-invoice`).
 - WP-8b: reuse `ShipmentInvoicer`'s shape for vendor bills - same delegation to
   Accounting, same scoped re-read guard.
+
+### WP-8a - Expense records and approval - 2026-09-23 - Copilot
+
+Status: `in progress`. The package is claimed and the dedicated test database
+is `aureuserp_testing_wp8a`.
+
+Implemented `ExpenseApproval` with submit, approve and reject methods. Each
+transition re-reads the expense through the company scope with a row lock before
+loading or changing related data, calls `LogisticsAccess::ensureEnabled()`,
+re-checks the policy ability, validates `ExpenseState` transitions, and records
+the approver and timestamp for approvals. The new Finance resource uses the
+required split `Schemas/`, `Tables/` and `Pages/` layout. Receipt uploads use
+`Storage::disk('public')` through Filament, generated filenames, MIME
+allowlisting and a 10 MB limit; category `requires_receipt` is evaluated per
+selected category.
+
+Tests added in `tests/Feature/Expenses/ApprovalTest.php` cover the approval and
+rejection flows, missing approval permission, company isolation and conditional
+receipt validation. Sail PHP syntax checks passed, and Pint passed for all nine
+new PHP files. The focused Pest run was attempted on
+`aureuserp_testing_wp8a`, but the existing install bootstrap stalled in
+`shield:generate` before assertions; the database was reset and no test count
+is claimed.
+
+Requests: none.

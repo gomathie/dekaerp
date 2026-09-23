@@ -7,6 +7,7 @@ use Webkul\Account\Models\Journal;
 use Webkul\Logistics\Filament\Clusters\Finance\Pages\UnbilledCharges;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Pages\ViewShipment;
 use Webkul\Logistics\Models\Shipment;
+use Webkul\Logistics\Services\ShipmentInvoicer;
 use Webkul\Product\Models\Product;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Currency;
@@ -168,7 +169,7 @@ it('lists only billable charges that have not been invoiced', function () {
         'create_invoice_logistics_shipment',
     ]);
 
-    app(Webkul\Logistics\Services\ShipmentInvoicer::class)->createInvoice($shipment);
+    app(ShipmentInvoicer::class)->createInvoice($shipment);
 
     // Added after the invoice, so this is the only one still outstanding.
     $open = invoiceScreenCharge($shipment, priceUnit: 100);

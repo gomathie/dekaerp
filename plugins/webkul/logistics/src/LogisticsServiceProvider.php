@@ -83,5 +83,25 @@ class LogisticsServiceProvider extends PackageServiceProvider
         Panel::configureUsing(function (Panel $panel): void {
             $panel->plugin(LogisticsPlugin::make());
         });
+
+        $this->registerSalesIntegration();
+    }
+
+    /**
+     * Listen for confirmed sales orders, when Sales is installed (D1).
+     *
+     * Guarded by class_exists rather than Package::isPluginInstalled(): this
+     * runs at register time, before the database is necessarily reachable, and
+     * the plugins table is not something to query while booting. If the Sales
+     * package is not present the event class does not exist and there is
+     * nothing to listen for.
+     */
+    protected function registerSalesIntegration(): void
+    {
+        if (! class_exists(OrderConfirmed::class)) {
+            return;
+        }
+
+        Event::listen(OrderConfirmed::class, CreateShipmentFromOrder::class);
     }
 }
