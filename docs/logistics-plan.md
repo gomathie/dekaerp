@@ -381,7 +381,7 @@ you claim a package, finish it, or get blocked.
 | WP-7 | Charges and shipment invoicing | WP-2 | WP-4, WP-5, WP-6, WP-8b | review (95/430 + AccountFeature 521) | Claude 2026-09-22 |
 | WP-8a | Expense records and approval | WP-1 | WP-2, WP-3 | in progress | Copilot 2026-09-23 |
 | WP-8b | Expense and carrier bills | WP-8a, WP-2 | WP-7 | todo | |
-| WP-9 | Sales quotation link (per D1) | WP-7 | WP-10 | in progress | Claude 2026-09-23, db `aureuserp_testing_wp9` |
+| WP-9 | Sales quotation link (per D1) | WP-7 | WP-10 | review | Claude 2026-09-23, db `aureuserp_testing_wp9` |
 | WP-9b | Customer page integration (per D11) | WP-7 | WP-10 | todo (extension point only, else ask) | |
 | WP-10 | Dashboard widgets | WP-4, WP-5 | WP-9, WP-11 | todo | |
 | WP-11 | Reports | WP-4, WP-5, WP-7, WP-8b | WP-10 | todo | |
@@ -1557,3 +1557,107 @@ new PHP files. The focused Pest run was attempted on
 is claimed.
 
 Requests: none.
+
+### WP-9 - Sales quotation link - 2026-09-23 - Claude
+
+Status: `review`. Test database `aureuserp_testing_wp9`.
+
+Files created:
+- `plugins/webkul/logistics/tests/Feature/Sales/ShipmentFromOrderTest.php`
+
+Files modified:
+- `plugins/webkul/logistics/src/Services/ShipmentFromOrder.php`
+- `plugins/webkul/logistics/src/LogisticsServiceProvider.php`
+- `plugins/webkul/logistics/src/Models/Shipment.php`
+- `docs/logistics-plan.md`, `docs/change-log.md`
+
+(`src/Services/ShipmentFromOrder.php` and `src/Listeners/CreateShipmentFromOrder.php`
+were committed earlier in 09037a641; this block covers the whole package.)
+
+Migrations / tables:
+- None. `logistics_shipments.sale_order_id` already exists from WP-1, as a plain
+  indexed column rather than a foreign key, precisely so Logistics installs on a
+  deployment that has no Sales.
+
+Reused components:
+- `Webkul\Sale\Events\OrderConfirmed`, already dispatched by
+  `OrderWorkflow::confirm()`. **No Sales file was edited.**
+- `LogisticsAccess::enabledFor()` for the per-company switch.
+- `InheritsParentCompany` on the charges, so each charge takes the shipment's
+  company rather than the session's.
+
+Tests added / results:
+- 10 tests in `tests/Feature/Sales/ShipmentFromOrderTest.php`.
+- Focused run (`--filter=ShipmentFromOrder`, db `aureuserp_testing_wp9`):
+  **9 passed, 1 failed** before the model fix below. After the fix, all 10 pass
+  as part of the full run.
+- Pint on the four WP-9 files: passed.
+
+Existing suites run / results:
+- Full `LogisticsFeature` on a freshly recreated `aureuserp_testing_wp9`
+  (an earlier run was interrupted, so the database was dropped and recreated
+  first): **116 passed, 1 failed, 483 assertions, 2488 s**.
+- The single failure is **WP-8a's**, not WP-9's:
+  `tests/Feature/Expenses/ApprovalTest.php:97` fails with "Attempt to read
+  property `form` on null" - the Livewire component never mounted. Cause:
+  Filament's `Resource::canAccess()` returns `canViewAny()`
+  (`vendor/filament/filament/src/Resources/Resource/Concerns/HasAuthorization.php:28`),
+  so `CreateExpense` needs `view_any_logistics_expense` as well as
+  `create_logistics_expense`. Reported to WP-8a's owner; not changed here.
+- Everything WP-9 could plausibly have broken passed, including the whole
+  `Shipments` group - the group most exposed to the `Shipment::$attributes`
+  change below.
+
+Decisions and deviations from the plan:
+- **The listener registers unconditionally**, rather than being guarded by
+  `Package::isPluginInstalled('sales')` or `class_exists()`. Install is global,
+  so neither question is the one that matters; `isPluginInstalled()` queries the
+  database at register time, which is what made `package:discover` hang for
+  300 s; and every plugin's classes are autoloadable in this monorepo whether or
+  not the plugin is installed. The decision lives once, in
+  `ShipmentFromOrder::shouldConvert()`, where a test can reach it.
+- **The "no backfill" rule is enforced by when the code runs, not by a date
+  comparison.** The plan's wording is "orders *confirmed* before the company was
+  enabled", and the listener only fires on confirmation, so the switch read at
+  that moment is the whole rule. An earlier draft compared `date_order`, which
+  wrongly blocked a quotation drafted before adoption and confirmed after it -
+  exactly the open work a company adopting Logistics has in hand. Orders already
+  confirmed before adoption are still converted deliberately, through the "From
+  sales order" picker (WP-2).
+- **`serviceLines()` reads the order's lines with global scopes removed**, filtered
+  by `order_id`, the same way `existingShipment()` does. `OrderLine` is
+  company-scoped, and an event fires under whoever acted; a queued or console
+  confirmation under a different active company would otherwise have found no
+  lines and silently skipped the shipment.
+
+Bug found and fixed while testing (root cause, not the assertion):
+- `logistics_shipments` fills `state`, `transport_mode`, `priority` and eight
+  other columns by database default, and `Shipment` declared no `$attributes`.
+  A freshly created shipment therefore carried `null` for all of them in memory
+  until reloaded, so `ShipmentFromOrder::convert()` returned a shipment whose
+  `state` was null rather than `DRAFT`, and `->state->value` on it would have
+  been a fatal error. This is the same trap as `users.is_active` in project
+  memory; the fix is the same, `protected $attributes` mirroring the migration.
+
+Risks:
+- The suite now installs the Sales plugin (`TestBootstrapHelper::ensurePluginInstalled('sales')`),
+  which the first Sales test pays for: 496 s on the clean run, 507 s and 1212 s
+  on earlier ones. That is roughly a fifth of the suite's 2488 s, on top of the
+  515 s the first test already pays for the base install. Paid once per suite,
+  but worth revisiting in WP-13 if suite time becomes a problem.
+- `Shipment::$attributes` must be kept in step with the shipments migration. The
+  docblock says so; a column added later with a default and not listed there
+  reintroduces the same null-in-memory bug.
+- The same gap exists on `Trip`, `Expense`, `Stop`, `ShipmentCharge`, `Vehicle`
+  and `Driver`, none of which declare `$attributes`. Not changed here - it is
+  outside WP-9 and each needs its own test run. Recommended for WP-13.
+
+Requests for other packages:
+- **WP-2 / WP-13:** `ShipmentResource::saleOrderOptions()` lists every order of
+  the customer although its docblock says "Confirmed sales orders", and it does
+  not exclude orders that already have a shipment. The listener cannot create a
+  duplicate, because `existingShipment()` sees the `sale_order_id` the picker
+  sets, but a user can still hand-create a second shipment for one order through
+  the picker. Filter the options by confirmed state and by
+  `whereDoesntHave`/`whereNotIn` on existing shipments.
+- **WP-12:** nothing. WP-9 adds no user-facing strings.
