@@ -77,5 +77,6 @@ return [
             'heading'      => 'Reject this expense?',
             'notification' => 'Expense rejected.',
         ],
+        'receipt-required' => 'A receipt is needed first',
     ],
 ];

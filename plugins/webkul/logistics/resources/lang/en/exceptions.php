@@ -16,4 +16,6 @@ return [
     'trip-shipment-not-confirmed'  => 'Shipment :shipment must be confirmed before it can be added to a trip.',
 
     'nothing-to-invoice' => 'Shipment :shipment has no billable charges left to invoice.',
+
+    'receipt-required' => 'Expenses in the “:category” category need a receipt attached before they can be submitted or approved.',
 ];
