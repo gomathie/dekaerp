@@ -1229,6 +1229,11 @@ REFERENCES
   Do that work only on that branch, in its own worktree, and only after
   Logistics is merged. The layout rule itself is in project memory above and in
   docs/logistics-plan.md, so new resources follow it everywhere meanwhile.
+• docs/company-admin-role-plan.md — the "Company Admin" request, and the tenant
+  leak found while investigating it: the Users list is company-scoped only for
+  Multi-Company Admins, so a customer admin with Resource Permission `Global`
+  can see and edit other tenants' users. Mitigation available today; fix planned
+  after Logistics.
 • docs/logistics-plan.md — Logistics plan, decisions D1–D15, status board, work
   packages, handoff log.
 • docs/unified-product-resource-plan.md — cross-plugin product-resource plan.

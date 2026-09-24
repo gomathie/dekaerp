@@ -22,8 +22,11 @@ class DepartureReasonFactory extends Factory
     public function definition(): array
     {
         return [
-            'sequence'    => fake()->randomNumber(),
-            'reason_code' => fake()->word,
+            // The column is `sort`, not `sequence`: inserting the old name fails
+            // with "column sequence does not exist". reason_code is an integer
+            // column, so a word cannot go in it either.
+            'sort'        => fake()->numberBetween(1, 100),
+            'reason_code' => fake()->numberBetween(1, 9999),
             'name'        => fake()->word,
         ];
     }

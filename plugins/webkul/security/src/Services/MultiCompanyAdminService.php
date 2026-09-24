@@ -60,29 +60,75 @@ class MultiCompanyAdminService
             return $query;
         }
 
-        if (! $actor->isMultiCompanyAdmin()) {
-            return $query
-                ->ownership()
-                ->whereDoesntHave('roles', function (Builder $roles): void {
-                    $roles->whereIn(DB::raw('LOWER(roles.name)'), Role::getSystemRoleNames());
-                });
-        }
-
         $assignedCompanyIds = $this->assignedCompanyIds($actor);
         $activeCompanyIds = array_values(array_intersect(
             app(CompanyContext::class)->activeIds(),
             $assignedCompanyIds,
         ));
 
+        $query->whereDoesntHave('roles', function (Builder $roles): void {
+            $roles->whereIn(DB::raw('LOWER(roles.name)'), Role::getSystemRoleNames());
+        });
+
+        // Users are not company-scoped rows - one user belongs to many companies
+        // through user_allowed_companies - so CompanyScope does not reach them
+        // and the boundary has to be written here. Until 2026-09-24 it was
+        // written for Multi-Company Admins only, and everyone else got
+        // ownership() alone: a customer's administrator whose resource
+        // permission is "global" has no ownership restriction at all, so they
+        // listed, opened and edited every user in the installation, including
+        // other tenants'. See docs/company-admin-role-plan.md.
+        if (! $actor->isMultiCompanyAdmin()) {
+            // ownership() still applies on top, so "individual" and "group"
+            // users see no more of their own company than they did before: this
+            // only ever narrows what was visible.
+            return $query
+                ->ownership()
+                ->where(function (Builder $scoped) use ($actor, $assignedCompanyIds, $activeCompanyIds): void {
+                    // Their own row, so someone whose companies were removed does
+                    // not vanish from their own Users page. It reveals no other
+                    // tenant. Only reached where ownership() already allows it:
+                    // for an "individual" permission, ownership matches on
+                    // creator_id/user_id, not on the row's own id, so such a
+                    // user sees what they created and nothing more - unchanged
+                    // by this filter.
+                    $scoped->whereKey($actor->getKey());
+
+                    if ($assignedCompanyIds === [] || $activeCompanyIds === []) {
+                        return;
+                    }
+
+                    $scoped->orWhere(function (Builder $sameCompany) use ($assignedCompanyIds, $activeCompanyIds): void {
+                        $this->whereCompaniesContainedBy($sameCompany, $assignedCompanyIds, $activeCompanyIds);
+                    });
+                });
+        }
+
         if ($assignedCompanyIds === [] || $activeCompanyIds === []) {
             return $query->whereRaw('1 = 0');
         }
 
+        return $this->whereCompaniesContainedBy(
+            $query->whereKeyNot($actor->getKey()),
+            $assignedCompanyIds,
+            $activeCompanyIds,
+        );
+    }
+
+    /**
+     * Users who share an active company with the actor and hold no company the
+     * actor does not.
+     *
+     * The second half is what keeps the boundary honest: a user who also belongs
+     * to a company the actor cannot see would, if listed, name that company on
+     * the row.
+     *
+     * @param  array<int, int>  $assignedCompanyIds
+     * @param  array<int, int>  $activeCompanyIds
+     */
+    protected function whereCompaniesContainedBy(Builder $query, array $assignedCompanyIds, array $activeCompanyIds): Builder
+    {
         return $query
-            ->whereKeyNot($actor->getKey())
-            ->whereDoesntHave('roles', function (Builder $roles): void {
-                $roles->whereIn(DB::raw('LOWER(roles.name)'), Role::getSystemRoleNames());
-            })
             ->whereHas('allowedCompanies', function (Builder $companies) use ($activeCompanyIds): void {
                 $companies
                     ->withoutGlobalScope(AllowedCompanyScope::class)
@@ -93,6 +139,36 @@ class MultiCompanyAdminService
                     ->withoutGlobalScope(AllowedCompanyScope::class)
                     ->whereNotIn('companies.id', $assignedCompanyIds);
             });
+    }
+
+    /**
+     * Whether the actor may reach this user at all, by company.
+     *
+     * Deliberately the same query the list is built from, so the policy and the
+     * Users page cannot drift apart - a record that is invisible in the list
+     * must not be openable by its URL.
+     */
+    public function sharesAssignedCompanies(User $actor, User $target): bool
+    {
+        if ($actor->isSuperAdmin() || $actor->is($target)) {
+            return true;
+        }
+
+        $assignedCompanyIds = $this->assignedCompanyIds($actor);
+        $activeCompanyIds = array_values(array_intersect(
+            app(CompanyContext::class)->activeIds(),
+            $assignedCompanyIds,
+        ));
+
+        if ($assignedCompanyIds === [] || $activeCompanyIds === []) {
+            return false;
+        }
+
+        return $this->whereCompaniesContainedBy(
+            User::query()->whereKey($target->getKey()),
+            $assignedCompanyIds,
+            $activeCompanyIds,
+        )->exists();
     }
 
     public function canManageUser(User $actor, User $target): bool
