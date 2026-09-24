@@ -3,7 +3,10 @@
 namespace Webkul\Logistics;
 
 use Filament\Panel;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\RateLimiter;
 use Webkul\Chatter\Services\ChatterCleanupService;
 use Webkul\Logistics\Listeners\CreateShipmentFromOrder;
 use Webkul\Logistics\Models\Expense;
@@ -53,6 +56,7 @@ class LogisticsServiceProvider extends PackageServiceProvider
                 '2026_10_01_000019_create_logistics_shipment_invoices_table',
             ])
             ->runsMigrations()
+            ->hasRoutes(['web'])
             ->hasDependencies([
                 'products',
                 'employees',
@@ -77,6 +81,27 @@ class LogisticsServiceProvider extends PackageServiceProvider
                     });
             })
             ->icon('logistics');
+    }
+
+    public function packageBooted(): void
+    {
+        $this->registerStopLinkRateLimiter();
+    }
+
+    /**
+     * Throttle for the public POD capture route (WP-5b).
+     *
+     * Defined in this plugin rather than in AppServiceProvider so it goes away
+     * with the plugin, and keyed on the IP because there is no authenticated
+     * user to key on. Tight on purpose: a driver opens one link and submits it
+     * once, so anything beyond a handful a minute from one address is either a
+     * mistake or someone guessing tokens.
+     */
+    protected function registerStopLinkRateLimiter(): void
+    {
+        RateLimiter::for('logistics-stop-link', function (Request $request): Limit {
+            return Limit::perMinute(20)->by('ip:'.$request->ip());
+        });
     }
 
     public function packageRegistered(): void

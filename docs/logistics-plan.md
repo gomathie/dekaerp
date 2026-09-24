@@ -376,14 +376,14 @@ you claim a package, finish it, or get blocked.
 | WP-3 | Vehicles and drivers | WP-1 | WP-2, WP-8a | review | Codex 2026-09-21 |
 | WP-4 | Trips and dispatch board | WP-2, WP-3 | WP-5, WP-6, WP-7 | review (76/348 pass) | Claude 2026-09-21 |
 | WP-5 | Delivery and POD | WP-2 | WP-4, WP-6, WP-7 | review (88/408 pass) | Codex + Claude 2026-09-22 |
-| WP-5b | Stop link for POD capture (optional, D15) | WP-5 | WP-6, WP-7, WP-8b | todo | |
+| WP-5b | Stop link for POD capture (optional, D15) | WP-5 | WP-6, WP-7, WP-8b | review (140/551 pass; security review still required) | Claude 2026-09-24, db `aureuserp_testing_wp5b` |
 | WP-6 | Waybill and delivery-note PDF | WP-2 | WP-4, WP-5, WP-7 | review | Codex 2026-09-21 |
 | WP-7 | Charges and shipment invoicing | WP-2 | WP-4, WP-5, WP-6, WP-8b | review (95/430 + AccountFeature 521) | Claude 2026-09-22 |
 | WP-8a | Expense records and approval | WP-1 | WP-2, WP-3 | review (121/500 pass, whole suite green) | Copilot 2026-09-23, finished by Claude 2026-09-23 |
 | WP-8b | Expense and carrier bills | WP-8a, WP-2 | WP-7 | todo | |
 | WP-9 | Sales quotation link (per D1) | WP-7 | WP-10 | review | Claude 2026-09-23, db `aureuserp_testing_wp9` |
 | WP-9b | Customer page integration (per D11) | WP-7 | WP-10 | todo (extension point only, else ask) | |
-| WP-10 | Dashboard widgets | WP-4, WP-5 | WP-9, WP-11 | todo | |
+| WP-10 | Dashboard widgets | WP-4, WP-5 | WP-9, WP-11 | review (125/506 pass, whole suite green) | Claude 2026-09-24, db `aureuserp_testing_wp10` |
 | WP-11 | Reports | WP-4, WP-5, WP-7, WP-8b | WP-10 | todo | |
 | WP-12 | Translations ar/es/fr/pt_BR | each finished package | anything | review (enums + foundation; rest waits for other packages) | Codex 2026-09-17 |
 | WP-13 | Hardening and release | all | — (runs alone) | todo | |
@@ -404,6 +404,7 @@ exists". Four runs were lost to this on 2026-09-18 before the cause was found.
 | `aureuserp_testing_wp8a` | WP-8a | Reserved 2026-09-23. Taken over by Claude 2026-09-23 when WP-8a's owner became unavailable; dropped and recreated first, because the previous owner's run had stalled on it. |
 | `aureuserp_testing_wp9` | WP-9 | Reserved 2026-09-23 |
 | `aureuserp_testing_wp10` | WP-10 | Reserved 2026-09-23 |
+| `aureuserp_testing_wp5b` | WP-5b | Reserved 2026-09-24 |
 
 WP-4 used `aureuserp_testing_claude` (review/verification database) because the
 same agent was also verifying WP-3 and WP-6 across packages.
@@ -1738,3 +1739,180 @@ Requests for other packages:
   control, so it was left alone here, but WP-8b needs every expense to point at
   something billable before it can post a vendor bill. Enforce it where the bill
   is built, or in `ExpenseApproval` alongside the receipt check.
+
+### WP-10 - Dashboard widgets - 2026-09-24 - Claude
+
+Status: `review`. Test database `aureuserp_testing_wp10`.
+
+Files created:
+- `plugins/webkul/logistics/src/Filament/Pages/Dashboard.php`
+- `plugins/webkul/logistics/resources/lang/en/filament/pages/dashboard.php`
+
+Files modified:
+- `plugins/webkul/logistics/tests/Feature/Dashboard/WidgetsTest.php`
+- `docs/logistics-plan.md`, `docs/change-log.md`, `AGENTS.md`
+
+(The three widgets and their seven tests were built earlier on this branch;
+this block covers the whole package.)
+
+Migrations / tables:
+- None.
+
+Reused components:
+- `Webkul\Project\Filament\Pages\Dashboard` as the pattern: `BaseDashboard`,
+  `HasPageShield`, `$routePath`, `NavigationGroup::Dashboard`, `getWidgets()`.
+- `LogisticsAccess::enabledForCurrent()` for the per-company switch.
+- Each widget's own `canView()`, so the page never decides which widgets a
+  given user may see - the finance widget hides itself from anyone without
+  `view_financials`, here as on the main dashboard.
+
+Steps against the spec:
+- Stat widgets: created today, awaiting pickup, in transit, out for delivery,
+  delivered today, overdue, failed delivery (ShipmentStatsWidget); vehicles and
+  drivers available, on the road, planned trips (FleetStatsWidget).
+- Finance widget behind `view_financials_logistics_shipment`
+  (UnbilledRevenueWidget), totalled per currency rather than summed across
+  currencies, which would be a meaningless figure that looks authoritative.
+- One grouped query per widget, asserted by a test that counts the statements
+  a widget issues.
+- The page itself, which was the missing part: the widgets are discovered by
+  the plugin, so they also reach the panel's main dashboard, but a company that
+  runs logistics wants them together in one place.
+
+Tests added / results:
+- Four new tests for the page: it opens for a permitted user of an enabled
+  company, it is forbidden without `page_logistics_dashboard`, it is forbidden
+  for a company that has not enabled Logistics, and it lists its three widgets.
+- `tests/Feature/Dashboard/WidgetsTest.php` now 11 tests, all passing.
+- Pint passed on every changed file.
+
+Existing suites run / results:
+- Full `LogisticsFeature` on `aureuserp_testing_wp10`:
+  **125 passed, 0 failed, 506 assertions, 2625 s.** That is the 121 of WP-8a
+  plus these four. Wall time was far longer because Docker was frozen across
+  the machine's sleep; Pest's own 2625 s is the run.
+
+Bug found and fixed during the package (mine, and a security hole):
+- The first version of `Dashboard::canAccess()` returned
+  `parent::canAccess() && LogisticsAccess::enabledForCurrent()`. A `canAccess()`
+  written on the class **replaces** the one `HasPageShield` provides, because a
+  class method beats a trait method, so `parent::` reached Filament's
+  `Page::canAccess()`, which returns true. The page permission was never checked
+  and the dashboard opened for any authenticated user of an enabled company.
+  The test written for exactly that case caught it. Fixed by checking the
+  permission explicitly, as `UnbilledCharges` already does. A grep over the
+  whole repository confirms no other page combines `HasPageShield` with its own
+  `canAccess()`, so this was the only instance. Recorded in `AGENTS.md`.
+
+Risks:
+- The widgets appear on the panel's main dashboard as well as on this page,
+  because `LogisticsPlugin` discovers them. That is what the Projects plugin
+  does too, and each widget guards itself with the switch and a permission, so
+  a company without Logistics sees nothing. Change it only if the main
+  dashboard becomes crowded.
+
+Requests for other packages:
+- **WP-11:** the `Reporting` cluster already exists and is excluded from Shield
+  page permissions in `config/filament-shield.php`; reports belong there rather
+  than on this dashboard.
+- **WP-12:** translate `resources/lang/en/filament/pages/dashboard.php` and the
+  three widget files in `resources/lang/en/filament/widgets/`.
+
+### WP-5b - Stop link for POD capture - 2026-09-24 - Claude
+
+Status: `review`. **The security review this package's spec requires has not
+been done.** It is the only public entry point in the plugin, and the build
+below should be what that review examines, not a substitute for it.
+Test database `aureuserp_testing_wp5b`.
+
+Files created:
+- `plugins/webkul/logistics/src/Services/StopLinkService.php`
+- `plugins/webkul/logistics/src/Http/Controllers/StopLinkController.php`
+- `plugins/webkul/logistics/src/Exceptions/StopLinkUnavailable.php`
+- `plugins/webkul/logistics/routes/web.php`
+- `plugins/webkul/logistics/resources/views/stop-link/{layout,show,done,expired}.blade.php`
+- `plugins/webkul/logistics/resources/lang/en/stop-link.php`
+- `.../ShipmentResource/Actions/SendStopLinkAction.php`
+- `plugins/webkul/logistics/tests/Feature/StopLinks/StopLinkTest.php`
+
+Files modified:
+- `plugins/webkul/logistics/src/LogisticsServiceProvider.php` (hasRoutes, rate limiter)
+- `.../ShipmentResource/Pages/ViewShipment.php` (the action)
+- `plugins/webkul/support/tests/Helpers/TestBootstrapHelper.php` (see below)
+
+Migrations / tables:
+- None. `logistics_stop_links` was created in WP-1.
+
+How an unauthenticated request is authorised (the central decision):
+- The token is the credential. `capture()` exchanges it for the identity of the
+  dispatcher who issued the link, through `Auth::guard('web')->onceUsingId()`,
+  which does not touch the session.
+- **Nothing in `DeliveryService` is relaxed.** Its `ensureEnabled()`, both
+  `Gate::authorize()` calls, the company scope and the POD validation run
+  exactly as they do for a user in the panel.
+- The alternative - a "skip the checks when there is no user" path through
+  `DeliveryService` - was rejected: it would leave a second, weaker way into the
+  same service for the next caller to find. This way also gives the right
+  failure modes, since deactivating the dispatcher or removing their
+  `capture_pod` permission kills their outstanding links.
+- The guard is named rather than taken from `Auth::`'s default on purpose. Which
+  guard is default depends on what ran earlier in the process, and the API's
+  token guard has no `onceUsingId()` at all - that is a real
+  `BadMethodCallException`, which the test run produced before the fix.
+
+Other decisions:
+- **Re-issuing revokes any earlier unused link for the stop.** Not in the spec.
+  Without it a shipment accumulates live URLs, and one already sent or leaked
+  stays valid.
+- **One exception for all four refusal reasons** (unknown, expired, used,
+  revoked), carrying no detail. Saying which one tells a caller whether a token
+  ever existed, turning the endpoint into an oracle for guessing.
+- **The link is consumed only on success**, inside the transaction that locks
+  its row. A rejected photo leaves it usable, so a driver is not locked out at
+  a customer's gate.
+- **Middleware is declared in the route file.** `PackageServiceProvider` loads
+  plugin web routes with a bare `loadRoutesFrom()`, which applies no group at
+  all: without this the form would have had no session and therefore no CSRF
+  protection, and no throttling on an unauthenticated upload endpoint.
+- The rate limiter (20/min per IP) is registered in the plugin's provider, not
+  `AppServiceProvider`, so it goes away with the plugin.
+- The page is `noindex` and `no-referrer`, and its CSS is inline: it opens on a
+  driver's phone and must not depend on the admin asset pipeline.
+
+Bug found in shared test infrastructure:
+- `TestBootstrapHelper::loadPluginRoutes()` only ever loaded `routes/api.php`.
+  No plugin had web routes before, so every `route()` call in a test threw
+  `RouteNotFoundException`. It now loads both files. This affects every suite,
+  so `SupportFeature` was run as well as `LogisticsFeature`.
+
+Tests added / results:
+- 15 tests in `tests/Feature/StopLinks/StopLinkTest.php`: the token stored only
+  as a hash, refusal without `send_pod_link`, refusal for another company's
+  stop, re-issue revoking the earlier link, the page opening with no login,
+  identical 404s for all four refusal reasons, nothing leaked on the refusal
+  page, capture marking the link used, no session left behind, single use, the
+  link surviving a rejected submission, files under the right company prefix,
+  a canvas signature accepted as a real image, junk in the signature field
+  ignored rather than blocking, and the throttle.
+- **15 passed, 45 assertions.** Pint passed on every changed file.
+
+Existing suites run / results:
+- Full `LogisticsFeature` on `aureuserp_testing_wp5b`:
+  **140 passed, 0 failed, 551 assertions** (125 from WP-10 plus these 15).
+
+Risks for the security review to weigh:
+- **The token travels in the URL path**, so it can reach web-server access logs,
+  proxy logs and browser history. Mitigated by single use, the TTL, the
+  `no-referrer` meta and revocation on re-issue, but not eliminated. Moving it
+  to a POST body or a fragment would break the "send a link by WhatsApp" use
+  case the decision is built on.
+- The capture runs as the issuing dispatcher, so the delivery is attributed to
+  them (`captured_by_id`). `captured_via = stop_link` records that it came from
+  the field, but a reviewer should confirm that attribution is what the business
+  wants on an audit trail.
+- 20 requests a minute per IP may be tight where a fleet shares one mobile NAT
+  address.
+
+Requests for other packages:
+- **WP-12:** translate `resources/lang/en/stop-link.php`.
+- **WP-13:** the security review, before this leaves `review`.
