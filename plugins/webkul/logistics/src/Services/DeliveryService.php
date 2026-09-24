@@ -39,6 +39,17 @@ final readonly class PodData
         public ?float $latitude = null,
         public ?float $longitude = null,
         public ?float $accuracyM = null,
+        /**
+         * Whatever identity reference the recipient gave, when the company asks
+         * for one. Free text on purpose: what counts as ID differs by country,
+         * and this must not become a national-ID field by assumption.
+         */
+        public ?string $recipientIdReference = null,
+        /**
+         * Who was at the door. Resolved from the stop's trip rather than taken
+         * from the request, so it cannot be claimed by whoever holds the link.
+         */
+        public ?int $driverId = null,
     ) {}
 }
 
@@ -104,7 +115,7 @@ class DeliveryService
         }
 
         Gate::authorize('capturePod', $shipment);
-        $this->validatePod($podData, $settings->require_pod_photo);
+        $this->validatePod($podData, $settings->require_pod_photo, $settings->capture_recipient_id);
 
         $storedPaths = $this->storePodFiles($shipment, $podData);
 
@@ -238,6 +249,8 @@ class DeliveryService
             }
 
             if ($podData) {
+                $settings = CompanySetting::forCompany((int) $shipment->company_id);
+
                 DeliveryProof::create([
                     'shipment_id'    => $shipment->id,
                     'stop_id'        => $stop?->id,
@@ -249,6 +262,10 @@ class DeliveryService
                     'signature_path' => $storedPaths['signature'] ?? null,
                     'captured_via'   => $podData->capturedVia,
                     'captured_by_id' => Auth::id(),
+                    // Only when the company asked for them, so turning an option
+                    // off stops collecting rather than silently keeping it.
+                    'recipient_id_reference' => $settings->capture_recipient_id ? $podData->recipientIdReference : null,
+                    'driver_id'              => $settings->capture_driver_on_pod ? $podData->driverId : null,
                     'latitude'       => $podData->latitude,
                     'longitude'      => $podData->longitude,
                     'accuracy_m'     => $podData->accuracyM,
@@ -352,20 +369,25 @@ class DeliveryService
         return $stops->first();
     }
 
-    protected function validatePod(PodData $podData, bool $photoRequired): void
+    protected function validatePod(PodData $podData, bool $photoRequired, bool $recipientIdRequired = false): void
     {
         Validator::make([
-            'recipient_name' => $podData->recipientName,
-            'received_at'    => $podData->receivedAt,
-            'reference'      => $podData->reference,
-            'photo'          => $podData->photo,
-            'signature'      => $podData->signature,
+            'recipient_name'         => $podData->recipientName,
+            'received_at'            => $podData->receivedAt,
+            'reference'              => $podData->reference,
+            'photo'                  => $podData->photo,
+            'signature'              => $podData->signature,
+            'recipient_id_reference' => $podData->recipientIdReference,
         ], [
             'recipient_name' => ['required', 'string', 'max:255'],
             'received_at'    => ['required', 'date'],
             'reference'      => ['nullable', 'string', 'max:255'],
             'photo'          => [$photoRequired ? 'required' : 'nullable', 'file', 'mimetypes:image/jpeg,image/png,image/webp', 'max:5120'],
             'signature'      => ['nullable', 'file', 'mimetypes:image/jpeg,image/png,image/webp', 'max:5120'],
+            // Required here, not only on the capture page: a company that asks
+            // for an identity reference is asking for evidence, and the form is
+            // not the boundary.
+            'recipient_id_reference' => [$recipientIdRequired ? 'required' : 'nullable', 'string', 'max:100'],
         ])->validate();
     }
 

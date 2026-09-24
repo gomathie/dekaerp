@@ -2,17 +2,20 @@
 
 namespace Webkul\Logistics\Services;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Webkul\Logistics\Enums\StopState;
 use Webkul\Logistics\Enums\StopType;
+use Webkul\Logistics\Exceptions\InvalidShipmentTransition;
 use Webkul\Logistics\Exceptions\StopLinkUnavailable;
 use Webkul\Logistics\Models\CompanySetting;
 use Webkul\Logistics\Models\Shipment;
 use Webkul\Logistics\Models\Stop;
 use Webkul\Logistics\Models\StopLink;
+use Webkul\Logistics\Models\Trip;
 use Webkul\Logistics\Support\LogisticsAccess;
 use Webkul\Support\Models\Scopes\CompanyScope;
 use Webkul\Support\Services\CompanyContext;
@@ -45,6 +48,53 @@ class StopLinkService
      * Tokens are 64 random characters, stored only as a SHA-256 hash.
      */
     protected const TOKEN_BYTES = 64;
+
+    /**
+     * How long a link may live, in hours.
+     *
+     * A fixed set rather than any number: this is how long a credential that
+     * travels in a URL stays usable, so it is a choice between considered
+     * options rather than a free-text field someone can fat-finger into weeks.
+     *
+     * @return array<int, string>
+     */
+    public static function ttlOptions(): array
+    {
+        return [
+            4  => __('logistics::stop-link.ttl.4'),
+            8  => __('logistics::stop-link.ttl.8'),
+            16 => __('logistics::stop-link.ttl.16'),
+            24 => __('logistics::stop-link.ttl.24'),
+            48 => __('logistics::stop-link.ttl.48'),
+        ];
+    }
+
+    /**
+     * The per-token, per-minute limit that applies to a given token.
+     *
+     * Resolved from the token's own company so one tenant cannot be throttled by
+     * another's traffic, falling back to the application default for a token
+     * that does not resolve - which is what a guess looks like, and what should
+     * get the tightest treatment rather than a lookup per attempt.
+     */
+    public static function rateLimitFor(?string $token): int
+    {
+        $default = (int) config('logistics.stop_link.per_token_per_minute', 12);
+
+        if (blank($token)) {
+            return $default;
+        }
+
+        $companyId = StopLink::withoutGlobalScope(CompanyScope::class)
+            ->where('token_hash', hash('sha256', $token))
+            ->value('company_id');
+
+        if (! $companyId) {
+            return $default;
+        }
+
+        return (int) (CompanySetting::forCompany((int) $companyId)->stop_link_rate_limit ?: $default);
+    }
 
     public function __construct(protected DeliveryService $delivery) {}
 
@@ -109,6 +159,39 @@ class StopLinkService
     }
 
     /**
+     * Revoke every live link on a shipment, whichever stop it belongs to.
+     *
+     * @return int how many were revoked
+     */
+    public function revokeForShipment(Shipment $shipment): int
+    {
+        // Re-read under the company scope before authorising, as everywhere
+        // else: the ability grants on permission plus the switch.
+        $shipment = Shipment::query()->whereKey($shipment->getKey())->firstOrFail();
+
+        Gate::authorize('sendPodLink', $shipment);
+
+        return $this->liveLinks($shipment)->update(['revoked_at' => now()]);
+    }
+
+    public function hasLiveLink(Shipment $shipment): bool
+    {
+        return $this->liveLinks($shipment)->exists();
+    }
+
+    /**
+     * Links on this shipment that would still work if someone opened them.
+     */
+    protected function liveLinks(Shipment $shipment): Builder
+    {
+        return StopLink::query()
+            ->whereIn('stop_id', $shipment->stops()->select('id'))
+            ->whereNull('used_at')
+            ->whereNull('revoked_at')
+            ->where('expires_at', '>', now());
+    }
+
+    /**
      * Resolve a plaintext token to its link, or refuse.
      *
      * Scopes are removed because there is no session here at all - the token is
@@ -158,6 +241,25 @@ class StopLinkService
         $link = $this->resolve($token);
         $stop = $this->stopFor($link);
 
+        // The driver comes from the stop's trip, never from the request. Whoever
+        // holds the link is not necessarily the driver, and a field they could
+        // fill in would be a claim rather than a record.
+        $podData = new PodData(
+            recipientName: $podData->recipientName,
+            receivedAt: $podData->receivedAt,
+            stopId: $stop->getKey(),
+            reference: $podData->reference,
+            notes: $podData->notes,
+            photo: $podData->photo,
+            signature: $podData->signature,
+            capturedVia: $podData->capturedVia,
+            latitude: $podData->latitude,
+            longitude: $podData->longitude,
+            accuracyM: $podData->accuracyM,
+            recipientIdReference: $podData->recipientIdReference,
+            driverId: $this->driverIdFor($stop),
+        );
+
         return $this->asIssuer($link, fn (): Shipment => DB::transaction(function () use ($link, $stop, $podData): Shipment {
             $locked = StopLink::withoutGlobalScope(CompanyScope::class)
                 ->whereKey($link->getKey())
@@ -170,7 +272,19 @@ class StopLinkService
 
             $shipment = Shipment::query()->whereKey($stop->shipment_id)->firstOrFail();
 
-            $result = $this->delivery->deliver($shipment, $podData);
+            try {
+                $result = $this->delivery->deliver($shipment, $podData);
+            } catch (InvalidShipmentTransition) {
+                // The shipment left OUT_FOR_DELIVERY after the link was issued -
+                // put on hold, cancelled, or delivered by someone else. That is
+                // an ordinary sequence, not a fault, and it must not reach the
+                // driver as a 500 or the team as a Sentry alert.
+                //
+                // Reported as the same refusal as an expired link, which is also
+                // the right answer for an unauthenticated caller: whether a
+                // shipment was cancelled is not theirs to learn.
+                throw StopLinkUnavailable::make();
+            }
 
             $locked->forceFill(['used_at' => now()])->save();
 
@@ -226,6 +340,27 @@ class StopLinkService
 
             $context->setActive($activeIds, $currentId);
         }
+    }
+
+    /**
+     * The driver assigned to this stop's trip, if any.
+     *
+     * Scope-free by key, like everything else reached from a public request:
+     * there is no session company here. A stop with no trip, or a trip with no
+     * driver, simply records nothing - the option is evidence when available,
+     * not a reason to refuse a delivery at the door.
+     */
+    protected function driverIdFor(Stop $stop): ?int
+    {
+        if (! $stop->trip_id) {
+            return null;
+        }
+
+        $driverId = Trip::withoutGlobalScope(CompanyScope::class)
+            ->whereKey($stop->trip_id)
+            ->value('driver_id');
+
+        return $driverId ? (int) $driverId : null;
     }
 
     protected function hash(string $token): string

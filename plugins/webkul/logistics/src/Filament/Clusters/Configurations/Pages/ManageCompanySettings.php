@@ -24,6 +24,7 @@ use Webkul\Logistics\Filament\Clusters\Configurations;
 use Webkul\Logistics\Models\CompanySetting;
 use Webkul\Logistics\Models\ServiceType;
 use Webkul\Logistics\Services\CompanyProvisioner;
+use Webkul\Logistics\Services\StopLinkService;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Services\CompanyContext;
 
@@ -110,13 +111,31 @@ class ManageCompanySettings extends Page
                             ->label(__(static::$lang.'.fields.require-pod-for-delivery')),
                         Toggle::make('require_pod_photo')
                             ->label(__(static::$lang.'.fields.require-pod-photo')),
-                        TextInput::make('stop_link_ttl_hours')
+                        Toggle::make('capture_driver_on_pod')
+                            ->label(__(static::$lang.'.fields.capture-driver-on-pod'))
+                            ->helperText(__(static::$lang.'.fields.capture-driver-on-pod-help')),
+                        Toggle::make('capture_recipient_id')
+                            ->label(__(static::$lang.'.fields.capture-recipient-id'))
+                            ->helperText(__(static::$lang.'.fields.capture-recipient-id-help')),
+                        // A fixed set rather than free text: the value is how
+                        // long a credential that travels in a URL stays usable,
+                        // so it is a deliberate choice from sensible options,
+                        // not a number to mistype.
+                        Select::make('stop_link_ttl_hours')
                             ->label(__(static::$lang.'.fields.stop-link-ttl-hours'))
+                            ->helperText(__(static::$lang.'.fields.stop-link-ttl-hours-help'))
+                            ->options(StopLinkService::ttlOptions())
+                            ->default(24)
+                            ->selectablePlaceholder(false)
+                            ->required(),
+                        TextInput::make('stop_link_rate_limit')
+                            ->label(__(static::$lang.'.fields.stop-link-rate-limit'))
+                            ->helperText(__(static::$lang.'.fields.stop-link-rate-limit-help'))
                             ->numeric()
                             ->integer()
                             ->minValue(1)
-                            ->maxValue(168)
-                            ->required(),
+                            ->maxValue(600)
+                            ->placeholder((string) config('logistics.stop_link.per_token_per_minute')),
                     ]),
 
                 Section::make(__(static::$lang.'.sections.operations'))
@@ -255,6 +274,9 @@ class ManageCompanySettings extends Page
             'require_pod_for_delivery',
             'require_pod_photo',
             'stop_link_ttl_hours',
+            'stop_link_rate_limit',
+            'capture_driver_on_pod',
+            'capture_recipient_id',
             'default_service_type_id',
             'capacity_check',
             'overdue_grace_minutes',

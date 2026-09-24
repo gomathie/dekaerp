@@ -9,9 +9,11 @@ use Webkul\Logistics\Enums\ShipmentState;
 use Webkul\Logistics\Enums\StopState;
 use Webkul\Logistics\Enums\StopType;
 use Webkul\Logistics\Models\CompanySetting;
+use Webkul\Logistics\Models\Driver;
 use Webkul\Logistics\Models\Shipment;
 use Webkul\Logistics\Models\Stop;
 use Webkul\Logistics\Models\StopLink;
+use Webkul\Logistics\Models\Trip;
 use Webkul\Logistics\Services\StopLinkService;
 use Webkul\Support\Models\Scopes\CompanyScope;
 
@@ -335,17 +337,231 @@ it('ignores a signature field that is not a PNG data URL', function () {
     expect($proof->signature_path)->toBeNull();
 });
 
-it('throttles the public route', function () {
+it('throttles a link on its own token and says when to retry', function () {
     $company = LogisticsHelper::enable(LogisticsHelper::company());
+
+    CompanySetting::forCompany($company->id)->forceFill(['stop_link_rate_limit' => 3])->save();
 
     [, , $url] = issuedLink($company);
 
     asGuest();
 
-    // The limiter allows 20 a minute from one address.
-    foreach (range(1, 20) as $ignored) {
-        $this->get($url);
+    foreach (range(1, 3) as $ignored) {
+        $this->get($url)->assertOk();
     }
 
-    $this->get($url)->assertStatus(429);
+    $this->get($url)
+        ->assertStatus(429)
+        // A driver whose phone retried needs to know how long to wait.
+        ->assertHeader('Retry-After');
+});
+
+it('does not let one company’s link spend another’s rate limit', function () {
+    $a = LogisticsHelper::enable(LogisticsHelper::company());
+    $b = LogisticsHelper::enable(LogisticsHelper::company());
+
+    CompanySetting::forCompany($a->id)->forceFill(['stop_link_rate_limit' => 2])->save();
+    CompanySetting::forCompany($b->id)->forceFill(['stop_link_rate_limit' => 2])->save();
+
+    [, , $urlA] = issuedLink($a);
+    [, , $urlB] = issuedLink($b);
+
+    asGuest();
+
+    // Company A exhausts its own budget. Drivers share mobile carrier NAT
+    // addresses, so if the limit were keyed on the IP this would also lock out
+    // company B - which is the whole reason it is keyed on the token.
+    $this->get($urlA)->assertOk();
+    $this->get($urlA)->assertOk();
+    $this->get($urlA)->assertStatus(429);
+
+    $this->get($urlB)->assertOk();
+});
+
+it('records the driver on the proof only when the company asks for it', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+
+    [$stop, , $url] = issuedLink($company);
+
+    $driver = Driver::factory()->create(['company_id' => $company->id]);
+    $trip = Trip::create(['company_id' => $company->id, 'driver_id' => $driver->id]);
+
+    $stop->forceFill(['trip_id' => $trip->id])->save();
+
+    asGuest();
+
+    $this->post($url, [
+        'recipient_name' => 'Ama Mensah',
+        'photo'          => UploadedFile::fake()->image('door.jpg'),
+    ])->assertOk();
+
+    $proof = Shipment::withoutGlobalScopes()->whereKey($stop->shipment_id)->sole()->deliveryProofs()->sole();
+
+    // Off by default, so an existing company's proofs are unchanged.
+    expect($proof->driver_id)->toBeNull();
+});
+
+it('records the driver from the trip when the option is on', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+
+    CompanySetting::forCompany($company->id)->forceFill(['capture_driver_on_pod' => true])->save();
+
+    [$stop, , $url] = issuedLink($company);
+
+    $driver = Driver::factory()->create(['company_id' => $company->id]);
+    $trip = Trip::create(['company_id' => $company->id, 'driver_id' => $driver->id]);
+
+    $stop->forceFill(['trip_id' => $trip->id])->save();
+
+    asGuest();
+
+    $this->post($url, [
+        'recipient_name' => 'Ama Mensah',
+        'photo'          => UploadedFile::fake()->image('door.jpg'),
+        // Sent by whoever holds the link, and ignored: the driver is taken from
+        // the trip, so this cannot be claimed from the request.
+        'driver_id'      => 999999,
+    ])->assertOk();
+
+    $proof = Shipment::withoutGlobalScopes()->whereKey($stop->shipment_id)->sole()->deliveryProofs()->sole();
+
+    expect($proof->driver_id)->toBe($driver->id);
+});
+
+it('requires the recipient’s ID when the company asks for one', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+
+    CompanySetting::forCompany($company->id)->forceFill(['capture_recipient_id' => true])->save();
+
+    [$stop, , $url] = issuedLink($company);
+
+    asGuest();
+
+    // Enforced by DeliveryService, not only by the page: the form is not the
+    // boundary, and a company that asks for evidence is asking for evidence.
+    $this->post($url, ['recipient_name' => 'Ama Mensah'])
+        ->assertSessionHasErrors('recipient_id_reference');
+
+    $this->post($url, [
+        'recipient_name'         => 'Ama Mensah',
+        'recipient_id_reference' => 'GHA-0123456789',
+    ])->assertOk();
+
+    $proof = Shipment::withoutGlobalScopes()->whereKey($stop->shipment_id)->sole()->deliveryProofs()->sole();
+
+    expect($proof->recipient_id_reference)->toBe('GHA-0123456789');
+});
+
+it('does not keep a recipient ID that was not asked for', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+
+    [$stop, , $url] = issuedLink($company);
+
+    asGuest();
+
+    // The option is off, so the field is not on the page - but a crafted post
+    // could still send it. Nothing is stored: turning the option off means the
+    // company has decided not to hold this.
+    $this->post($url, [
+        'recipient_name'         => 'Ama Mensah',
+        'recipient_id_reference' => 'GHA-0123456789',
+    ])->assertOk();
+
+    $proof = Shipment::withoutGlobalScopes()->whereKey($stop->shipment_id)->sole()->deliveryProofs()->sole();
+
+    expect($proof->recipient_id_reference)->toBeNull();
+});
+
+it('offers only the sanctioned link lifetimes', function () {
+    expect(array_keys(StopLinkService::ttlOptions()))->toBe([4, 8, 16, 24, 48]);
+});
+
+it('issues a link that expires after the company’s chosen lifetime', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+
+    CompanySetting::forCompany($company->id)->forceFill(['stop_link_ttl_hours' => 4])->save();
+
+    issuedLink($company);
+
+    $link = StopLink::withoutGlobalScope(CompanyScope::class)->sole();
+
+    expect($link->expires_at->diffInHours(now()->addHours(4), absolute: true))->toBeLessThan(1);
+});
+
+it('cancels a live link without having to issue a replacement', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+
+    [$stop, , $url] = issuedLink($company);
+
+    $shipment = Shipment::withoutGlobalScopes()->whereKey($stop->shipment_id)->sole();
+
+    expect(app(StopLinkService::class)->hasLiveLink($shipment))->toBeTrue();
+
+    // The case this exists for: the URL went to the wrong number, and the
+    // dispatcher wants it dead rather than replaced.
+    expect(app(StopLinkService::class)->revokeForShipment($shipment))->toBe(1)
+        ->and(app(StopLinkService::class)->hasLiveLink($shipment))->toBeFalse();
+
+    asGuest();
+
+    $this->get($url)->assertNotFound();
+});
+
+it('refuses to cancel links on a shipment the user cannot see', function () {
+    $a = LogisticsHelper::enable(LogisticsHelper::company());
+    $b = LogisticsHelper::enable(LogisticsHelper::company());
+
+    [$stop, , $url] = issuedLink($b);
+
+    $shipment = Shipment::withoutGlobalScopes()->whereKey($stop->shipment_id)->sole();
+
+    CompanyHelper::actingAsCompanyUser($a, ['send_pod_link_logistics_shipment']);
+
+    expect(fn () => app(StopLinkService::class)->revokeForShipment($shipment))
+        ->toThrow(Illuminate\Database\Eloquent\ModelNotFoundException::class);
+
+    asGuest();
+
+    // Still usable: another company's attempt to revoke it did nothing.
+    $this->get($url)->assertOk();
+});
+
+it('treats an expired link as nothing left to cancel', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+
+    [$stop] = issuedLink($company);
+
+    StopLink::withoutGlobalScope(CompanyScope::class)->sole()
+        ->forceFill(['expires_at' => now()->subMinute()])->save();
+
+    $shipment = Shipment::withoutGlobalScopes()->whereKey($stop->shipment_id)->sole();
+
+    expect(app(StopLinkService::class)->hasLiveLink($shipment))->toBeFalse();
+});
+
+it('refuses cleanly when the shipment stopped being deliverable', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+
+    [$stop, , $url] = issuedLink($company);
+
+    // Ordinary sequence: the link was issued, then the shipment was put on hold
+    // or cancelled, or someone else delivered it.
+    Shipment::withoutGlobalScopes()->whereKey($stop->shipment_id)->sole()
+        ->forceFill(['state' => ShipmentState::ON_HOLD])->save();
+
+    asGuest();
+
+    // The driver gets the same refusal as an expired link, not a 500 - and is
+    // not told the shipment was withdrawn, which is not theirs to learn.
+    $this->post($url, [
+        'recipient_name' => 'Ama Mensah',
+        'photo'          => UploadedFile::fake()->image('door.jpg'),
+    ])->assertNotFound();
+
+    $link = StopLink::withoutGlobalScope(CompanyScope::class)->sole();
+
+    // Nothing was recorded and the link was not spent, so it still works if the
+    // shipment goes back out for delivery.
+    expect($link->used_at)->toBeNull()
+        ->and(Shipment::withoutGlobalScopes()->whereKey($stop->shipment_id)->sole()->deliveryProofs()->count())->toBe(0);
 });

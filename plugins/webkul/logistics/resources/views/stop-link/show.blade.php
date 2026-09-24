@@ -41,6 +41,20 @@
                            required>
                 </div>
 
+                @if ($askForRecipientId)
+                    <div class="field">
+                        <label for="recipient_id_reference">{{ __('logistics::stop-link.form.recipient-id') }}</label>
+                        <p class="help">{{ __('logistics::stop-link.form.recipient-id-help') }}</p>
+                        <input type="text"
+                               id="recipient_id_reference"
+                               name="recipient_id_reference"
+                               value="{{ old('recipient_id_reference') }}"
+                               maxlength="100"
+                               autocomplete="off"
+                               required>
+                    </div>
+                @endif
+
                 <div class="field">
                     <label for="photo">{{ __('logistics::stop-link.form.photo') }}</label>
                     <p class="help">{{ __('logistics::stop-link.form.photo-help') }}</p>
@@ -48,7 +62,8 @@
                            id="photo"
                            name="photo"
                            accept="image/jpeg,image/png,image/webp"
-                           capture="environment">
+                           capture="environment"
+                           @if ($photoRequired) required @endif>
                 </div>
 
                 <div class="field">

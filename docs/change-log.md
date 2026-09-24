@@ -6,6 +6,110 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-09-24 (Logistics WP-5b: security review, and the four decisions it produced)
+
+Branch `feature/logistics`. Review and decisions: `docs/logistics-plan.md` §7.
+Test database `aureuserp_testing_wp5b`.
+
+WP-5b's spec requires a security review before the package leaves `review`,
+because it is the only public entry point in the plugin. The review was done by
+the agent that wrote the package, which the user chose knowingly. It raised four
+risks; the user decided each one, and the pass then found four defects.
+
+### What the user decided
+
+- **Attribution.** Record the driver *and* ask for the recipient's ID, both
+  optional per company, both off by default.
+- **Token in the URL.** Accept, but let each company choose how long a link
+  lives.
+- **Throttling.** Key on the token, not the IP: this is a multi-tenant
+  application and drivers share carrier NAT addresses, so one company's drivers
+  must not spend another's budget. Keep a per-IP layer for abuse, make the limit
+  configurable per tenant, answer with 429 and Retry-After.
+- **Review.** A fresh adversarial pass by the authoring agent.
+
+### What that changed
+
+`logistics_company_settings` gains `capture_driver_on_pod`,
+`capture_recipient_id` and `stop_link_rate_limit`; `logistics_delivery_proofs`
+gains `driver_id` and `recipient_id_reference`. The migration is additive rather
+than folded into WP-1's, which have already run, and every option is off by
+default so an existing company's proofs are unchanged.
+
+The driver is taken from the **stop's trip**, never from the request: whoever
+holds the link is not necessarily the driver, and a field they could fill in
+would be a claim rather than a record. A test posts a forged `driver_id` and
+asserts it is ignored. The recipient ID is required by `DeliveryService` when
+the company asks for one - the page is not the boundary - and when the option is
+off, a crafted post carrying the field stores nothing. The column is free text
+named `recipient_id_reference`, deliberately not ID-specific: what counts as
+identification differs by country, and it must not become a national-ID field by
+assumption.
+
+The throttle now applies two limits at once, per token and per IP, with the
+token **hashed into the cache key** - keying on the plaintext would put a live
+credential into the cache store.
+
+### Four defects the pass found
+
+1. **The signature temp file was never deleted.** Decoded to `tempnam()`, and
+   storing copies rather than moves, so every capture with a signature left a
+   file behind: unbounded growth driven by an unauthenticated endpoint.
+2. **Revocation was unreachable.** `revoke()` existed but nothing called it, so
+   the only way to kill a link was to issue a replacement - wrong for the case
+   that matters, a URL sent to the wrong number.
+3. **A shipment leaving OUT_FOR_DELIVERY gave the driver a 500.** Link issued,
+   shipment then held or cancelled or delivered by someone else, driver submits:
+   `InvalidShipmentTransition` is a plain RuntimeException with no status and
+   the app's generic handler only answers JSON. An ordinary operational sequence
+   produced a server error at a customer's door and a false Sentry alert. It now
+   reports the same refusal as an expired link, which is also the right answer
+   for an unauthenticated caller: whether a shipment was cancelled is not theirs
+   to learn. The link is not spent, so it works again if the shipment goes back
+   out.
+4. **`CompanySetting` had no `$attributes`.** `forCompany()` returns an unsaved
+   instance for a company with no row, so `require_pod_for_delivery` read falsy
+   although the schema defaults it to true - quietly dropping a delivery control.
+   Same trap as `users.is_active` and `logistics_shipments.state`.
+
+### A migration invariant, tightened rather than relaxed
+
+WP-1's `InstallTest` asserted that every migration contains no `Schema::table(`
+and exactly one `Schema::create('logistics_*')`. The additive migration failed
+it. The rule protects something real - `UninstallCommand` drops `logistics_*`
+and nothing else, so a column added to another plugin's table would survive
+uninstall - but it could not tell "altering a table I own", which is safe
+because the column goes away with the table, from "altering someone else's",
+which is the actual danger.
+
+The test now asserts the real property: every table named in any
+`Schema::create|table|rename|drop` call starts with `logistics_`, and no raw
+`DB::`. That rejects things the old rule allowed, such as `Schema::rename` or
+`dropIfExists` on a foreign table, while permitting the one case that is safe by
+construction.
+
+### Verification
+
+- `StopLinkTest` is now 26 tests. Full `LogisticsFeature` on
+  `aureuserp_testing_wp5b`: **161 passed, 0 failed, 629 assertions**.
+- Pint passed on every changed file.
+
+### Residual risks, accepted and recorded
+
+The token travels in the URL path, so it reaches web-server and proxy logs and
+browser history, and anyone the message is forwarded to can complete the
+delivery; single use, the chosen TTL, `no-referrer` and revoke-on-reissue reduce
+this but do not remove it, and the paths are worth scrubbing from log retention
+at the edge. A forwarded link also exposes the shipment reference and the stop's
+contact name. `rateLimitFor()` costs one indexed query per request including for
+tokens that do not exist, bounded by the per-IP limit.
+
+An independent review before release would still be worth having: three of these
+four defects were things the authoring agent had looked straight past while
+writing the original tests.
+
+---
+
 ## 2026-09-24 (Logistics WP-5b: one-time POD capture links)
 
 Branch `feature/logistics`. Handoff: `docs/logistics-plan.md` §7. Test database

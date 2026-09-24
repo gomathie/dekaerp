@@ -33,6 +33,8 @@ class DeliveryProof extends Model
         'photo_path',
         'signature_path',
         'captured_via',
+        'recipient_id_reference',
+        'driver_id',
         'latitude',
         'longitude',
         'accuracy_m',

@@ -59,14 +59,33 @@ it('can run the seeders again without duplicating shared rows', function () {
     expect(ServiceType::withoutGlobalScopes()->count())->toBe($before);
 });
 
-it('only creates logistics tables in its migrations', function () {
+it('only touches logistics tables in its migrations', function () {
     foreach (glob(base_path('plugins/webkul/logistics/database/migrations/*.php')) as $file) {
         $source = file_get_contents($file);
 
-        expect($source)->not->toContain('Schema::table(')
-            ->and($source)->not->toContain('DB::')
-            ->and(preg_match_all("/Schema::create\('([^']+)'/", $source, $matches))->toBe(1)
-            ->and($matches[1][0])->toStartWith('logistics_');
+        // Raw queries would bypass the schema builder entirely and could reach
+        // any table in the database.
+        expect($source)->not->toContain('DB::');
+
+        // Every table this plugin touches must be its own, because uninstall
+        // drops logistics_* and nothing else: a column added to a table owned
+        // by another plugin would survive uninstall and be left behind.
+        // Schema::table() is allowed for exactly that reason - an additive
+        // migration on a logistics table (..._000020) goes away with the table.
+        preg_match_all("/Schema::(?:create|table|rename|drop|dropIfExists)\('([^']+)'/", $source, $touched, PREG_SET_ORDER);
+
+        expect($touched)->not->toBeEmpty();
+
+        foreach ($touched as $match) {
+            expect($match[1])->toStartWith('logistics_');
+        }
+
+        // A migration that creates a table creates one, as the WP-1 set does.
+        $creates = preg_match_all("/Schema::create\('/", $source);
+
+        if ($creates > 0) {
+            expect($creates)->toBe(1);
+        }
     }
 });
 
