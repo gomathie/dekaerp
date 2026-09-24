@@ -18,4 +18,10 @@ return [
     'nothing-to-invoice' => 'Shipment :shipment has no billable charges left to invoice.',
 
     'receipt-required' => 'Expenses in the “:category” category need a receipt attached before they can be submitted or approved.',
+
+    'nothing-to-bill'           => 'Shipment :shipment has no approved expenses left to bill.',
+    'missing-partner'           => 'Expense “:expense” has no payee, so there is nobody to make the bill out to.',
+    'missing-employee-contact'  => ':employee has no contact record, so a reimbursement cannot be billed to them. Add a contact on the employee first.',
+    'missing-bill-journal'      => 'This company has no vendor bill journal set. Choose one under Logistics > Configuration > Settings.',
+    'missing-expense-account'   => 'This company has no default expense account set. Choose one under Logistics > Configuration > Settings.',
 ];
