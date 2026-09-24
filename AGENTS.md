@@ -1133,6 +1133,34 @@ MULTI-COMPANY FACTS THAT BITE
   $r->currency?->code)`) is fine; pushing it into SQL is not. A Filament filter
   or sort like `->relationship('currency', 'code')` throws `Undefined column`
   and 500s the page on every open. The two usages look identical.
+• Building an `Account\Models\Move` line by hand: **set `display_type`
+  explicitly** (`DisplayType::PRODUCT` for a normal costed line). `MoveLine`'s
+  saving hook calls `computeAccountId()` *before* `computeDisplayType()`, so a
+  line created without one is costed through the `default:` branch, which
+  replaces an explicitly set `account_id` with the journal's default account;
+  and `MoveCalculator::recomputeLine()` zeroes `price_subtotal`/`price_total` on
+  any line that is not PRODUCT or COGS. Both failures are silent - the document
+  looks finished, on the wrong account, for nothing. Lines that carry a product
+  escape this because the product supplies the account. Logistics'
+  `ExpensePoster` has no product, which is how it was found.
+• Also remember `$move->lines` is **every** line, including the balancing
+  payment-term line and tax lines `computeAccountMove()` adds. Never count or
+  `first()` them as if they were only yours.
+• `Auth::` acts on whichever guard is **default at that moment**, and that is not
+  always `web`: Sanctum's token guard (`RequestGuard`) can be the default, and it
+  has neither `onceUsingId()` nor `logout()` - both throw
+  `BadMethodCallException`. It also caches the user it resolved, so `Auth::check()`
+  can stay true after the session guard has been cleared. Name the guard
+  (`Auth::guard('web')`) in any code that logs a user in or out, or that asserts
+  nobody is logged in. This bit both `Logistics\Services\StopLinkService` and its
+  tests.
+• A `canAccess()` written on a page class **replaces** `HasPageShield`'s, because
+  a class method beats a trait method. `parent::canAccess()` inside it then
+  reaches Filament's `Page::canAccess()`, which returns true - so the page's
+  permission is never checked and it opens for everyone. Adding one extra
+  condition to a Shield-guarded page is exactly when this happens. Check the
+  permission explicitly instead (`auth()->user()?->can('page_<plugin>_<page>')`),
+  as `Logistics\...\Pages\UnbilledCharges` and `...\Pages\Dashboard` do.
 • Shield: only `resources.manage` and the exclude lists are merged from a plugin
   config; `pages.manage` and `custom_permissions` there are ignored. Page
   permissions are `page_<plugin>_<page_snake>`. Resource permissions are

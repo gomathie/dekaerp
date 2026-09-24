@@ -206,12 +206,27 @@ class TestBootstrapHelper
         }
     }
 
+    /**
+     * Load a plugin's route files, the way PackageServiceProvider does at boot.
+     *
+     * Both api.php and web.php: a plugin's provider registers its routes while
+     * booting, which happens before the test bootstrap marks the plugin
+     * installed, so nothing is registered and every route() call in a test
+     * throws RouteNotFoundException. Each web route file declares its own
+     * middleware, so requiring it here gives the same stack as production.
+     */
     private static function loadPluginRoutes(string $pluginName): void
     {
-        $routeFile = base_path("plugins/webkul/{$pluginName}/routes/api.php");
+        if (app()->routesAreCached()) {
+            return;
+        }
 
-        if (file_exists($routeFile) && ! app()->routesAreCached()) {
-            require $routeFile;
+        foreach (['api', 'web'] as $routeFileName) {
+            $routeFile = base_path("plugins/webkul/{$pluginName}/routes/{$routeFileName}.php");
+
+            if (file_exists($routeFile)) {
+                require $routeFile;
+            }
         }
     }
 

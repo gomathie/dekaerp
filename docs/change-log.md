@@ -6,6 +6,164 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-09-24 (Logistics WP-5b: one-time POD capture links)
+
+Branch `feature/logistics`. Handoff: `docs/logistics-plan.md` §7. Test database
+`aureuserp_testing_wp5b`.
+
+Drivers have no logins (D6), so proof of delivery is captured through a
+single-stop URL the dispatcher sends by SMS or WhatsApp (D15). No messaging
+provider is built in: the action shows the link to copy and share, which also
+keeps the credential out of a third-party message log this application would
+then be responsible for.
+
+Only a SHA-256 hash of the token is stored. A link expires after the company's
+`stop_link_ttl_hours`, works once, and can be revoked; issuing a new link for a
+stop revokes any earlier unused one, so a URL already sent or leaked stops
+working.
+
+### How an unauthenticated request is authorised
+
+The token is the credential, and `capture()` exchanges it for the identity of
+the dispatcher who issued the link, through `Auth::guard('web')->onceUsingId()`,
+which does not touch the session. **Nothing in `DeliveryService` is relaxed** -
+its switch check, both `Gate::authorize()` calls, the company scope and the POD
+validation all run exactly as they do for a user in the panel.
+
+The alternative, a "skip the checks when there is no user" path through
+`DeliveryService`, was rejected: it would leave a second and weaker way into the
+same service, and the next caller to forget a flag gets it for free. Borrowing
+the issuer's identity also gives the right failure modes - deactivate the
+dispatcher, or take away their `capture_pod` permission, and their outstanding
+links stop working.
+
+The guard is named rather than taken from `Auth::`'s default deliberately. Which
+guard is default depends on what ran earlier in the process, and the API's token
+guard has no `onceUsingId()` at all; the test run produced exactly that
+`BadMethodCallException` before the fix, on seven of fifteen tests.
+
+### Refusals say nothing
+
+Unknown, expired, used and revoked tokens all produce the same 404 carrying no
+detail, because saying which one tells a caller whether a token ever existed and
+turns the endpoint into an oracle for guessing. The refusal page names neither
+the shipment nor the company, which is asserted.
+
+The link is consumed only once the delivery has succeeded, inside the
+transaction that locks its row, so two simultaneous submissions cannot both
+spend it and a rejected photo leaves the driver able to retry rather than locked
+out at a customer's gate.
+
+### Session, CSRF and throttling
+
+Middleware is declared in the plugin's route file, not inherited:
+`PackageServiceProvider` loads plugin web routes with a bare `loadRoutesFrom()`
+that applies no group at all. Without it the form would have had no session and
+therefore **no CSRF protection**, and no throttling on an unauthenticated
+endpoint that accepts file uploads. The limiter (20 a minute per IP) lives in
+the plugin's provider so it goes away with the plugin.
+
+The capture page is `noindex` and `no-referrer`, since the URL is a credential,
+and its CSS is inline because it opens on a driver's phone and must not depend
+on the admin asset pipeline.
+
+### A gap in shared test infrastructure
+
+`TestBootstrapHelper::loadPluginRoutes()` only ever loaded `routes/api.php`. No
+plugin had web routes before, so a plugin's routes were never registered in
+tests and every `route()` call threw `RouteNotFoundException`. It now loads both
+files. That helper is shared by every suite, so `SupportFeature` was run as well
+as `LogisticsFeature`.
+
+### Verification
+
+- 15 tests in `tests/Feature/StopLinks/StopLinkTest.php`: **15 passed, 45
+  assertions**.
+- Full `LogisticsFeature` on `aureuserp_testing_wp5b`: **140 passed, 0 failed,
+  551 assertions** - the 125 from WP-10 plus these 15.
+- Pint passed on every changed file.
+
+### Not done
+
+**The security review this package's spec requires has not been done.** WP-5b is
+the only public entry point in the plugin, and what is described here is the
+build to be reviewed, not the review. The residual risk to put first: the token
+travels in the URL path, so it can reach web-server logs, proxy logs and browser
+history. Single use, the TTL, `no-referrer` and revocation on re-issue reduce
+that, but do not remove it, and moving the token out of the URL would break the
+"send a link by WhatsApp" use case D15 is built on.
+
+---
+
+## 2026-09-24 (Logistics WP-10 dashboard: the page, and a Shield bypass I wrote)
+
+Branch `feature/logistics`. Handoff: `docs/logistics-plan.md` §7. Test database
+`aureuserp_testing_wp10`.
+
+WP-10's three widgets and their seven tests were already on the branch. What was
+missing was the first thing the package's spec names: the Logistics dashboard
+page. Without it the widgets were reachable only through panel-wide widget
+discovery, which drops them onto the main dashboard with no page of their own.
+
+`Webkul\Logistics\Filament\Pages\Dashboard` follows the Projects dashboard
+already in this repo - `BaseDashboard`, `HasPageShield`, a `$routePath`,
+`NavigationGroup::Dashboard`, `getWidgets()` - with one addition: access needs
+the page permission **and** `LogisticsAccess::enabledForCurrent()`, so a company
+that has not switched Logistics on never sees it. The page does not decide which
+widgets a user may see; each widget keeps its own `canView()`, so the finance
+widget hides itself from anyone without `view_financials` here exactly as it does
+on the main dashboard.
+
+### A Shield bypass, written and then caught by its own test
+
+The first version of `canAccess()` read:
+
+```php
+return parent::canAccess() && LogisticsAccess::enabledForCurrent();
+```
+
+A `canAccess()` written on the class **replaces** the one `HasPageShield`
+provides, because a class method beats a trait method. `parent::canAccess()`
+therefore reached Filament's `Page::canAccess()`, which returns true. The page
+permission was never checked: the dashboard opened for any authenticated user of
+an enabled company, whatever their role.
+
+The test written for that case - "it forbids the Logistics dashboard without its
+page permission" - failed with "Failed asserting that true is false", which is
+what a test is for. The fix checks the permission explicitly, as the
+`UnbilledCharges` page already does:
+
+```php
+return (auth()->user()?->can('page_logistics_dashboard') ?? false)
+    && LogisticsAccess::enabledForCurrent();
+```
+
+A grep over the whole repository confirms no other page combines `HasPageShield`
+with its own `canAccess()`, so this was the only instance. The trap is now in
+`AGENTS.md`, because it will come up again the next time someone adds one
+condition to a Shield-guarded page.
+
+### Verification
+
+- Four new page tests: opens for a permitted user of an enabled company,
+  forbidden without `page_logistics_dashboard`, forbidden for a company that has
+  not enabled Logistics, and lists its three widgets.
+  `tests/Feature/Dashboard/WidgetsTest.php` now 11 tests, all passing.
+- Full `LogisticsFeature` on `aureuserp_testing_wp10`: **125 passed, 0 failed,
+  506 assertions, 2625 s** - the 121 of WP-8a plus these four. The run's wall
+  time was much longer because Docker was frozen across the machine's sleep;
+  Pest's own 2625 s is the run, and the summary line confirms it completed.
+- Pint passed on every changed file.
+
+### Note
+
+The widgets appear on the panel's main dashboard as well, because
+`LogisticsPlugin` discovers them - the same as the Projects plugin. Each widget
+guards itself with the company switch and a permission, so a company without
+Logistics sees nothing there.
+
+---
+
 ## 2026-09-23 (Logistics WP-8a finished: receipt enforcement and two broken tests)
 
 Branch `feature/logistics`. Handoff: `docs/logistics-plan.md` §7. Test database
