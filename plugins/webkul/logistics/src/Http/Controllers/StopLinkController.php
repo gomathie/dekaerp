@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Controller;
 use Webkul\Logistics\Enums\ProofCaptureChannel;
+use Webkul\Logistics\Models\CompanySetting;
 use Webkul\Logistics\Services\PodData;
 use Webkul\Logistics\Services\StopLinkService;
 
@@ -30,18 +31,22 @@ class StopLinkController extends Controller
     public function show(string $token, StopLinkService $links): View
     {
         $link = $links->resolve($token);
+        $settings = CompanySetting::forCompany((int) $link->company_id);
 
         return view('logistics::stop-link.show', [
-            'token' => $token,
-            'stop'  => $links->stopFor($link),
+            'token'              => $token,
+            'stop'               => $links->stopFor($link),
+            'askForRecipientId'  => (bool) $settings->capture_recipient_id,
+            'photoRequired'      => (bool) $settings->require_pod_photo,
         ]);
     }
 
     public function store(Request $request, string $token): RedirectResponse|View
     {
         $validated = $request->validate([
-            'recipient_name' => ['required', 'string', 'max:255'],
-            'notes'          => ['nullable', 'string', 'max:2000'],
+            'recipient_name'         => ['required', 'string', 'max:255'],
+            'recipient_id_reference' => ['nullable', 'string', 'max:100'],
+            'notes'                  => ['nullable', 'string', 'max:2000'],
             'photo'          => ['nullable', 'file', 'mimetypes:image/jpeg,image/png,image/webp', 'max:5120'],
             'signature'      => ['nullable', 'string', 'max:2000000'],
             'latitude'       => ['nullable', 'numeric', 'between:-90,90'],
@@ -49,17 +54,30 @@ class StopLinkController extends Controller
             'accuracy_m'     => ['nullable', 'numeric', 'min:0', 'max:100000'],
         ]);
 
-        $this->links->capture($token, new PodData(
-            recipientName: $validated['recipient_name'],
-            receivedAt: now(),
-            notes: $validated['notes'] ?? null,
-            photo: $request->file('photo'),
-            signature: $this->signatureFile($validated['signature'] ?? null),
-            capturedVia: ProofCaptureChannel::STOP_LINK,
-            latitude: isset($validated['latitude']) ? (float) $validated['latitude'] : null,
-            longitude: isset($validated['longitude']) ? (float) $validated['longitude'] : null,
-            accuracyM: isset($validated['accuracy_m']) ? (float) $validated['accuracy_m'] : null,
-        ));
+        $signature = $this->signatureFile($validated['signature'] ?? null);
+
+        try {
+            $this->links->capture($token, new PodData(
+                recipientName: $validated['recipient_name'],
+                receivedAt: now(),
+                notes: $validated['notes'] ?? null,
+                photo: $request->file('photo'),
+                signature: $signature,
+                capturedVia: ProofCaptureChannel::STOP_LINK,
+                recipientIdReference: $validated['recipient_id_reference'] ?? null,
+                latitude: isset($validated['latitude']) ? (float) $validated['latitude'] : null,
+                longitude: isset($validated['longitude']) ? (float) $validated['longitude'] : null,
+                accuracyM: isset($validated['accuracy_m']) ? (float) $validated['accuracy_m'] : null,
+            ));
+        } finally {
+            // The signature is decoded to a temp file, and storing it copies
+            // rather than moves, so without this every capture leaves one
+            // behind. On a public endpoint that is a slow way to fill a disk,
+            // and in the finally so a rejected submission cleans up too.
+            if ($signature && is_file($signature->getPathname())) {
+                @unlink($signature->getPathname());
+            }
+        }
 
         // No redirect back to the link: it has just been spent, so following it
         // again would show the "no longer valid" page and read as a failure.

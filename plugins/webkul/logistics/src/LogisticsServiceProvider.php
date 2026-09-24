@@ -13,6 +13,7 @@ use Webkul\Logistics\Models\Expense;
 use Webkul\Logistics\Models\Shipment;
 use Webkul\Logistics\Models\Trip;
 use Webkul\Logistics\Support\LogisticsAccess;
+use Webkul\Logistics\Services\StopLinkService;
 use Webkul\Logistics\Support\LogisticsSequences;
 use Webkul\Logistics\Support\UninstallGuard;
 use Webkul\PluginManager\Console\Commands\InstallCommand;
@@ -54,6 +55,7 @@ class LogisticsServiceProvider extends PackageServiceProvider
                 '2026_10_01_000017_create_logistics_shipment_charge_taxes_table',
                 '2026_10_01_000018_create_logistics_expenses_table',
                 '2026_10_01_000019_create_logistics_shipment_invoices_table',
+                '2026_10_01_000020_add_pod_capture_options_to_logistics_tables',
             ])
             ->runsMigrations()
             ->hasRoutes(['web'])
@@ -92,15 +94,35 @@ class LogisticsServiceProvider extends PackageServiceProvider
      * Throttle for the public POD capture route (WP-5b).
      *
      * Defined in this plugin rather than in AppServiceProvider so it goes away
-     * with the plugin, and keyed on the IP because there is no authenticated
-     * user to key on. Tight on purpose: a driver opens one link and submits it
-     * once, so anything beyond a handful a minute from one address is either a
-     * mistake or someone guessing tokens.
+     * with the plugin. Two limits apply at once, and Laravel enforces both:
+     *
+     *  - **Per token**, the primary one. This is a multi-tenant application and
+     *    drivers share mobile carrier NAT addresses, so keying only on the IP
+     *    would let one company's drivers spend another company's budget. Each
+     *    company can set its own limit; the default covers a driver opening one
+     *    link and submitting it once, with room for a retry.
+     *  - **Per IP**, much higher, as a second layer against someone walking the
+     *    token space from one address.
+     *
+     * The token is hashed into the cache key. Keying on the plaintext would put
+     * a live credential into the cache store, where it does not belong.
+     *
+     * Laravel's ThrottleRequests answers a breach with 429 and a Retry-After
+     * header of its own, so nothing here has to build that response.
+     *
+     * @return array<int, Limit>
      */
     protected function registerStopLinkRateLimiter(): void
     {
-        RateLimiter::for('logistics-stop-link', function (Request $request): Limit {
-            return Limit::perMinute(20)->by('ip:'.$request->ip());
+        RateLimiter::for('logistics-stop-link', function (Request $request): array {
+            $token = (string) $request->route('token');
+
+            return [
+                Limit::perMinute(StopLinkService::rateLimitFor($token))
+                    ->by('logistics-stop-link:token:'.hash('sha256', $token)),
+                Limit::perMinute((int) config('logistics.stop_link.per_ip_per_minute', 120))
+                    ->by('logistics-stop-link:ip:'.$request->ip()),
+            ];
         });
     }
 

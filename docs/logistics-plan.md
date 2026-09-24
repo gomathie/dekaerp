@@ -376,7 +376,7 @@ you claim a package, finish it, or get blocked.
 | WP-3 | Vehicles and drivers | WP-1 | WP-2, WP-8a | review | Codex 2026-09-21 |
 | WP-4 | Trips and dispatch board | WP-2, WP-3 | WP-5, WP-6, WP-7 | review (76/348 pass) | Claude 2026-09-21 |
 | WP-5 | Delivery and POD | WP-2 | WP-4, WP-6, WP-7 | review (88/408 pass) | Codex + Claude 2026-09-22 |
-| WP-5b | Stop link for POD capture (optional, D15) | WP-5 | WP-6, WP-7, WP-8b | review (140/551 pass; security review still required) | Claude 2026-09-24, db `aureuserp_testing_wp5b` |
+| WP-5b | Stop link for POD capture (optional, D15) | WP-5 | WP-6, WP-7, WP-8b | review (161/629 pass; security review done, independent pass recommended) | Claude 2026-09-24, db `aureuserp_testing_wp5b` |
 | WP-6 | Waybill and delivery-note PDF | WP-2 | WP-4, WP-5, WP-7 | review | Codex 2026-09-21 |
 | WP-7 | Charges and shipment invoicing | WP-2 | WP-4, WP-5, WP-6, WP-8b | review (95/430 + AccountFeature 521) | Claude 2026-09-22 |
 | WP-8a | Expense records and approval | WP-1 | WP-2, WP-3 | review (121/500 pass, whole suite green) | Copilot 2026-09-23, finished by Claude 2026-09-23 |
@@ -1916,3 +1916,100 @@ Risks for the security review to weigh:
 Requests for other packages:
 - **WP-12:** translate `resources/lang/en/stop-link.php`.
 - **WP-13:** the security review, before this leaves `review`.
+
+### WP-5b - security review and follow-up decisions - 2026-09-24 - Claude
+
+The review WP-5b's spec requires, plus the four decisions the user made on the
+risks it raised. Done by the same agent that wrote the package, which the user
+chose knowingly; an independent pass would still be worth having before release.
+
+#### Decisions (user, 2026-09-24)
+
+| Risk | Decision |
+| --- | --- |
+| POD attributed to the dispatcher, driver not identified | Record the driver **and** ask for the recipient's ID, both optional per company |
+| Token travels in the URL | Accept, but let each company choose the lifetime |
+| Throttle keyed on IP, shared by drivers behind carrier NAT | Key on the **token**, keep per-IP as a secondary abuse layer, make it configurable per tenant, answer with 429 + Retry-After |
+| Who reviews | A fresh adversarial pass by the authoring agent |
+
+#### What the decisions changed
+
+- `logistics_company_settings` gains `capture_driver_on_pod`,
+  `capture_recipient_id` and `stop_link_rate_limit`;
+  `logistics_delivery_proofs` gains `driver_id` and `recipient_id_reference`
+  (migration `..._000020`, added rather than folded into WP-1's, which have
+  already run). Every option is off by default, so an existing company's proofs
+  are unchanged.
+- The driver is taken from the **stop's trip**, never from the request: whoever
+  holds the link is not necessarily the driver, and a field they could fill in
+  would be a claim rather than a record. A test posts a forged `driver_id` and
+  asserts it is ignored.
+- The recipient ID is required by `DeliveryService` when the company asks for
+  one, not only by the page; and when the option is **off**, a crafted post
+  carrying the field stores nothing. Both directions are tested. The column is
+  free text named `recipient_id_reference`, deliberately not ID-specific: what
+  counts as identification differs by country and this must not become a
+  national-ID field by assumption. It is personal data; the setting says to
+  collect it only where there is a reason to.
+- The link lifetime is a select of 4/8/16/24/48 hours, replacing a 1-168
+  free-text field. A credential's lifetime should be chosen from considered
+  options, not typed.
+- The throttle applies two limits at once: per token (primary, per-tenant
+  configurable, default 12/min) and per IP (secondary, 120/min). The token is
+  **hashed into the cache key** - keying on the plaintext would put a live
+  credential into the cache store. Laravel's throttle supplies 429 and
+  Retry-After, asserted by a test.
+
+#### Findings from the adversarial pass, all fixed
+
+1. **The signature temp file was never deleted.** `signatureFile()` decodes to
+   `tempnam()` and storing copies rather than moves, so every capture with a
+   signature left a file behind - unbounded growth driven by an unauthenticated
+   endpoint. Now removed in a `finally`, so a rejected submission cleans up too.
+2. **Revocation existed but was unreachable.** `revoke()` was never called;
+   only issuing a replacement killed a link. That is wrong for the case that
+   matters - a URL sent to the wrong number should be able to die rather than be
+   replaced. Added `revokeForShipment()`, `hasLiveLink()` and a
+   `RevokeStopLinkAction` shown only while there is something to cancel.
+3. **A shipment leaving OUT_FOR_DELIVERY gave the driver a 500.** Link issued,
+   shipment then held, cancelled or delivered by someone else, driver submits:
+   `InvalidShipmentTransition` is a plain RuntimeException with no status, and
+   the app's generic handler only answers JSON requests. An ordinary sequence
+   produced a server error for the driver and a false Sentry alert. It is now
+   reported as the same refusal as an expired link - which is also the right
+   answer for an unauthenticated caller, since whether a shipment was cancelled
+   is not theirs to learn. The link is not spent, so it works again if the
+   shipment goes back out.
+4. **`CompanySetting` had no `$attributes`.** `forCompany()` returns an unsaved
+   instance for a company with no row, so every default-bearing column read as
+   null: `require_pod_for_delivery` was falsy although the schema defaults it to
+   true, quietly dropping a delivery control. Same trap as `users.is_active` and
+   `logistics_shipments.state`.
+
+#### Checked and found sound
+
+Token entropy (64 chars of CSPRNG) and hash-only lookup; uniform refusals with
+no oracle, asserted for all four reasons and for leaking neither shipment nor
+company on the refusal page; CSRF genuinely enforced (the route declares the
+`web` group and nothing exempts these paths); `StopLinkUnavailable::render()`
+correctly taking precedence over the application's global 404 callback
+(`method_exists($e, 'render')` is checked first, and that callback answers only
+JSON requests); replay and concurrent submission (row lock inside the
+transaction, consumed only on success); the cache key holding a hash rather than
+a live token; signature polyglot and SVG upload (only a PNG data URL is accepted
+and the result is re-validated by content); proof files landing under the
+shipment's own company prefix.
+
+#### Residual risks, accepted and recorded
+
+- **The token is in the URL path**, so it reaches web-server and proxy logs and
+  browser history, and anyone the message is forwarded to can complete the
+  delivery. Single use, the chosen TTL, `no-referrer` and revoke-on-reissue
+  reduce this; they do not remove it. Worth scrubbing these paths from log
+  retention at the edge.
+- **A forwarded link exposes** the shipment reference and the stop's contact
+  name. The driver needs both, but it is PII reaching whoever holds the URL.
+- **`rateLimitFor()` costs one indexed query per request**, including for tokens
+  that do not exist - mild amplification, bounded by the per-IP limit.
+- **The TTL select will not show a pre-existing out-of-range value** (the old
+  field allowed 1-168). Unreachable in practice: Logistics is not released.

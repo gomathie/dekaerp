@@ -20,6 +20,7 @@ use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Act
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\PickupAction;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\PrintWaybillAction;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\ReleaseAction;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\RevokeStopLinkAction;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\SendStopLinkAction;
 use Webkul\Support\Traits\HasRecordNavigationTabs;
 
@@ -45,6 +46,7 @@ class ViewShipment extends ViewRecord
             DeliverAction::make(),
             FailDeliveryAction::make(),
             SendStopLinkAction::make(),
+            RevokeStopLinkAction::make(),
             PrintWaybillAction::make(),
             CreateInvoiceAction::make(),
             ChatterAction::make()
