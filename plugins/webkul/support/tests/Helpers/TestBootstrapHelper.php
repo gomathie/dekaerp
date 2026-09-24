@@ -26,6 +26,7 @@ class TestBootstrapHelper
         'accounts'      => 'accounts_account_moves',
         'products'      => 'products_products',
         'manufacturing' => 'manufacturing_orders',
+        'employees'     => 'employees_employees',
     ];
 
     public static function ensureAllPluginsInstalled(): void

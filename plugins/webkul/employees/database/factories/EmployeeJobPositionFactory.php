@@ -33,10 +33,13 @@ class EmployeeJobPositionFactory extends Factory
             'requirements'       => fake()->text,
             'expected_employees' => fake()->randomNumber(),
             'no_of_employee'     => fake()->randomNumber(),
-            'status'             => true,
+            // The column is `is_active`. Neither `status` nor `open_date`, which
+            // this factory used to set, exists on employees_job_positions - in
+            // the employees schema or in the columns the recruitments plugin adds
+            // - so creating a job position failed outright.
+            'is_active'          => true,
             'no_of_recruitment'  => fake()->randomNumber(),
             'department_id'      => Department::factory(),
-            'open_date'          => fake()->date(),
             'creator_id'         => User::query()->value('id') ?? User::factory(),
         ];
     }

@@ -6,6 +6,117 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-09-24 (Tenant isolation in the Users list, and four broken employee factories)
+
+Raised by the user: *"when I create a user for a new company I onboard, I give
+them a role like Admin2, but they tend to see other companies."* Investigated,
+and the reason turned out to be a defect rather than a missing role. Full
+write-up and the plan for the "Company Admin" role itself:
+`docs/company-admin-role-plan.md`.
+
+### The leak
+
+`UserResource::getEloquentQuery()` routes through
+`MultiCompanyAdminService::scopeManageableUsers()`, which company-scoped its
+query for **Multi-Company Admins only**. Every other actor got `->ownership()`
+and no company filter at all - and `ownership()` is not about companies. For a
+user whose resource permission is `global`, `Bouncer::getAuthorizedUserIds()`
+returns null and `OwnershipScope` returns early with no restriction whatsoever.
+
+So a customer's administrator with a custom role listed every user in the
+installation, across every tenant, with those tenants' companies named in the
+"Allowed Company" column. `UserPolicy::view()` and `::update()` fell through to
+`hasAccess()`, whose first clause is `hasGlobalAccess()`, so they could open and
+edit those users as well.
+
+Users are the one place this had to be written by hand: a user belongs to many
+companies through `user_allowed_companies`, so they are not company-scoped rows
+and `CompanyScope` never reached them.
+
+### The fix
+
+The non-Multi-Company-Admin branch now gets the same containment the other
+branch always had - the target must share an active company with the actor and
+hold no company the actor does not. It is applied **on top of** `ownership()`,
+never instead of it, so this can only narrow what someone sees.
+
+`UserPolicy` applies the same rule in `view`, `update`, `delete`, `forceDelete`
+and `restore`, through one helper so it cannot be forgotten in one method, and
+built from the same query as the list: a record hidden from the list is not
+reachable by its URL either.
+
+Two judgement calls, both recorded in the plan: a user who belongs to the
+actor's company *and* another is hidden, because listing them would name the
+other tenant on the row; and an actor can always see their own row, which
+reveals nothing.
+
+### Found while fixing it: ownership rules are untested everywhere
+
+`OwnershipScope::apply()` returns early on `app()->runningInConsole()`, and
+`artisan test` is the console. `AllowedCompanyScope` guards the same line with
+`&& ! app()->runningUnitTests()`; `OwnershipScope` has no such exemption, so the
+ownership scope is **inert in every test in this repository** and no test proves
+that `individual` or `group` restricts anything. A test of this package first
+appeared to prove ownership stayed narrow when the reason was elsewhere. Not
+changed here - switching it on would alter the data every existing test sees.
+Recorded for WP-13.
+
+### Employee factories: four defects, none reachable before
+
+`Employee::factory()->create()` could not complete anywhere in this repository,
+which is why nothing had noticed:
+
+- `DepartmentFactory` defaulted `manager_id` to `Employee::factory()`, while
+  `EmployeeFactory` defaults `department_id` to `Department::factory()`. Each
+  employee made a department that made an employee, until PHP's stack ran out.
+- `WorkLocationFactory` set `location_type` to a random word although the model
+  casts it to an enum, plus a `user_id` column that does not exist and `active`
+  where the column is `is_active`.
+- `DepartureReasonFactory` inserted `sequence` (the column is `sort`) and a word
+  into the integer `reason_code`.
+- `EmployeeJobPositionFactory` set `status` and `open_date`, neither of which
+  exists in the employees schema or in the columns the recruitments plugin adds.
+
+A new `EmployeeFeature` suite holds five guard tests naming each defect, so they
+fail loudly rather than lurking. CI runs `vendor/bin/pest` with no suite filter,
+so it is picked up without a workflow change.
+
+### Sentry: POD tokens redacted before events leave
+
+Sentry records the request URL regardless of `send_default_pii`, which governs
+cookies, the client IP and the body. A stop link's token is in the URL path, so
+any exception on that route sent a live credential to a third party.
+`AppServiceProvider::redactStopLinkTokensFromSentry()` rewrites it, chained onto
+the existing before_send rather than replacing it, and registered in
+`booted()` because the Sentry client does not exist until its own provider runs.
+It is not in `config/sentry.php`: a closure there would break `config:cache`.
+
+### The broken avatars in the Users table
+
+Not a storage problem - the symlink, APP_URL and disk config were all fine, and
+no partner has ever had an avatar (`count(avatar) = 0`). `defaultImageUrl`, which
+is what Filament renders when the state is empty, was pointed at
+`$record->avatar_url`: the same null it was meant to replace. Filament emitted an
+`<img>` with no usable src, and the browser drew a broken-image icon. It now
+falls back to `Filament::getUserAvatarUrl()`, the avatar the panel already shows
+for the signed-in user.
+
+**Note for the user:** that provider is Filament's `UiAvatarsProvider`, which
+builds the initials image by calling ui-avatars.com with the user's name in the
+URL. Today that is one request per page for the signed-in user; with this fix it
+is one per row. A local provider rendering initials as inline SVG would avoid
+sending names to a third party, and is a small change if wanted.
+
+### Verification
+
+- `SecurityFeature`: **50 passed, 141 assertions** - 9 new isolation tests plus
+  every pre-existing Security test, including the Multi-Company Admin suite.
+- `EmployeeFeature`: **5 passed, 8 assertions**.
+- `LogisticsFeature` after the factory changes: **161 passed, 629 assertions**.
+- Pint passed on every changed file.
+
+---
+
 ## 2026-09-24 (Logistics WP-5b: security review, and the four decisions it produced)
 
 Branch `feature/logistics`. Review and decisions: `docs/logistics-plan.md` §7.

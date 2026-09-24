@@ -5,6 +5,7 @@ namespace Webkul\Security\Filament\Resources;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Facades\Filament;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -302,7 +303,15 @@ class UserResource extends Resource
             ->reorderableColumns()
             ->columns([
                 ImageColumn::make('partner.avatar')
-                    ->defaultImageUrl(fn ($record) => $record->avatar_url)
+                    // defaultImageUrl is what shows when there is no uploaded
+                    // avatar, so pointing it at $record->avatar_url made it the
+                    // same nothing it was meant to replace: that accessor
+                    // returns null when the partner has no avatar, and Filament
+                    // then rendered an <img> with no usable src - the broken
+                    // image icon in the Users table. Fall back to the avatar
+                    // Filament already shows for the signed-in user, so the
+                    // table and the user menu agree.
+                    ->defaultImageUrl(fn ($record): string => Filament::getUserAvatarUrl($record))
                     ->imageSize(50)
                     ->label(__('security::filament/resources/user.table.columns.avatar')),
                 TextColumn::make('name')

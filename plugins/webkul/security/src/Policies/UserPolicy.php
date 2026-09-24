@@ -42,7 +42,7 @@ class UserPolicy
             return false;
         }
 
-        return $this->hasAccess($user, $record, 'creator');
+        return $this->sharesCompanies($user, $record) && $this->hasAccess($user, $record, 'creator');
     }
 
     /**
@@ -74,7 +74,7 @@ class UserPolicy
             return false;
         }
 
-        return $this->hasAccess($user, $record, 'creator');
+        return $this->sharesCompanies($user, $record) && $this->hasAccess($user, $record, 'creator');
     }
 
     /**
@@ -98,7 +98,7 @@ class UserPolicy
             return false;
         }
 
-        return $this->hasAccess($user, $record, 'creator');
+        return $this->sharesCompanies($user, $record) && $this->hasAccess($user, $record, 'creator');
     }
 
     /**
@@ -130,7 +130,7 @@ class UserPolicy
             return false;
         }
 
-        return $this->hasAccess($user, $record, 'creator');
+        return $this->sharesCompanies($user, $record) && $this->hasAccess($user, $record, 'creator');
     }
 
     /**
@@ -166,7 +166,7 @@ class UserPolicy
             return false;
         }
 
-        return $this->hasAccess($user, $record, 'creator');
+        return $this->sharesCompanies($user, $record) && $this->hasAccess($user, $record, 'creator');
     }
 
     /**
@@ -175,6 +175,23 @@ class UserPolicy
     public function restoreAny(User $user): bool
     {
         return $user->can('restore_any_security_user');
+    }
+
+    /**
+     * The company boundary, applied to every per-record decision here.
+     *
+     * `hasAccess()` answers "does your resource permission reach this record",
+     * which for a `global` permission is always yes - it knows nothing about
+     * companies. That is what let a customer's administrator open and edit
+     * another tenant's users. This is the same rule the Users list is built
+     * from (`MultiCompanyAdminService::scopeManageableUsers`), so a record that
+     * is invisible in the list cannot be reached by its URL either.
+     *
+     * See docs/company-admin-role-plan.md.
+     */
+    protected function sharesCompanies(User $user, User $record): bool
+    {
+        return $this->administration->sharesAssignedCompanies($user, $record);
     }
 
     protected function isProtectedAdministrator(User $record): bool

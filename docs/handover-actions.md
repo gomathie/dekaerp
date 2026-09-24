@@ -6,6 +6,47 @@ Supabase's dashboard, Laravel Cloud, or production data. Ordered by urgency.
 ---
 ---
 
+## 0b. Stop POD link tokens being retained in edge logs (2026-09-24)
+
+**You must do this wherever requests reach the app before Laravel sees them -
+the Laravel Cloud router, and any CDN or proxy in front of it.**
+
+Logistics WP-5b captures proof of delivery through a one-time link whose token
+is part of the URL path:
+
+    https://<host>/logistics/pod/<64-character-token>
+
+That token is a credential. Anyone holding it can complete that one delivery
+until it is used, expires or is revoked. Because it is in the path rather than a
+header or a body, every layer that logs request paths keeps a copy.
+
+What the application already handles:
+
+- The token is stored only as a SHA-256 hash, never in plaintext.
+- Each link works once, expires after the company's chosen lifetime (4, 8, 16,
+  24 or 48 hours), and can be revoked from the shipment page.
+- The capture page sends `noindex` and `no-referrer`, so the URL reaches neither
+  a search engine nor a Referer header.
+- Sentry events have the token redacted before they leave
+  (`AppServiceProvider::redactStopLinkTokensFromSentry`). Sentry records the
+  request URL regardless of `send_default_pii`, which covers cookies, the client
+  IP and the body but not the URL.
+
+What needs you:
+
+1. In Laravel Cloud, check whether HTTP access logs retain full request paths,
+   and for how long. If they do, either shorten retention for them or scrub the
+   path segment after `/logistics/pod/`.
+2. If a CDN or proxy sits in front - Cloudflare or similar - do the same there.
+   Cloudflare's HTTP request logs keep the full URI by default.
+3. If neither can scrub, record that here as accepted risk. The mitigation is
+   then the link lifetime, which a company can set as low as 4 hours.
+
+Worth doing before the first customer uses stop links. Not urgent before that:
+no tokens exist yet, because Logistics is not released.
+
+---
+
 ## 0. Point production Sentry at the DEKA ERP project (2026-09-20)
 
 **You must do this in the Laravel Cloud dashboard.** Editing
