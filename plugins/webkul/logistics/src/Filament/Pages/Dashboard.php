@@ -39,9 +39,19 @@ class Dashboard extends BaseDashboard
         return 'page_logistics_dashboard';
     }
 
+    /**
+     * The page permission is checked here explicitly, not by delegating to
+     * HasPageShield.
+     *
+     * A canAccess() defined on the class wins over the one the trait provides,
+     * so `parent::canAccess()` here reaches Filament's Page::canAccess(), which
+     * returns true - the Shield check would be skipped and the page would open
+     * for anyone. Same shape as the UnbilledCharges page for the same reason.
+     */
     public static function canAccess(): bool
     {
-        return parent::canAccess() && LogisticsAccess::enabledForCurrent();
+        return (auth()->user()?->can('page_logistics_dashboard') ?? false)
+            && LogisticsAccess::enabledForCurrent();
     }
 
     public static function getNavigationLabel(): string
