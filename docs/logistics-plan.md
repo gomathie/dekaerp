@@ -384,7 +384,7 @@ you claim a package, finish it, or get blocked.
 | WP-9 | Sales quotation link (per D1) | WP-7 | WP-10 | review | Claude 2026-09-23, db `aureuserp_testing_wp9` |
 | WP-9b | Customer page integration (per D11) | WP-7 | WP-10 | todo (extension point only, else ask) | |
 | WP-10 | Dashboard widgets | WP-4, WP-5 | WP-9, WP-11 | review (125/506 pass, whole suite green) | Claude 2026-09-24, db `aureuserp_testing_wp10` |
-| WP-11 | Reports | WP-4, WP-5, WP-7, WP-8b | WP-10 | todo | |
+| WP-11 | Reports | WP-4, WP-5, WP-7, WP-8b | WP-10 | review (176/676 pass, whole suite green) | Claude 2026-09-25, db `aureuserp_testing_wp11` |
 | WP-12 | Translations ar/es/fr/pt_BR | each finished package | anything | review (enums + foundation; rest waits for other packages) | Codex 2026-09-17 |
 | WP-13 | Hardening and release | all | — (runs alone) | todo | |
 
@@ -405,6 +405,7 @@ exists". Four runs were lost to this on 2026-09-18 before the cause was found.
 | `aureuserp_testing_wp9` | WP-9 | Reserved 2026-09-23 |
 | `aureuserp_testing_wp10` | WP-10 | Reserved 2026-09-23 |
 | `aureuserp_testing_wp5b` | WP-5b | Reserved 2026-09-24 |
+| `aureuserp_testing_wp11` | WP-11 | Reserved 2026-09-25 |
 
 WP-4 used `aureuserp_testing_claude` (review/verification database) because the
 same agent was also verifying WP-3 and WP-6 across packages.
@@ -2013,3 +2014,163 @@ shipment's own company prefix.
   that do not exist - mild amplification, bounded by the per-IP limit.
 - **The TTL select will not show a pre-existing out-of-range value** (the old
   field allowed 1-168). Unreachable in practice: Logistics is not released.
+
+### WP-11 - Reports - 2026-09-25 - Claude
+
+Status: `review`. Test database `aureuserp_testing_wp11`.
+
+Files created:
+- `plugins/webkul/logistics/src/Filament/Clusters/Reporting/Pages/ReportPage.php`
+- `plugins/webkul/logistics/src/Filament/Clusters/Reporting/Pages/DateRange.php`
+- `plugins/webkul/logistics/src/Filament/Clusters/Reporting/Pages/ShipmentRegister.php`
+- `plugins/webkul/logistics/src/Filament/Clusters/Reporting/Pages/DeliveryPerformance.php`
+- `plugins/webkul/logistics/src/Filament/Clusters/Reporting/Pages/ShipmentProfitability.php`
+- `plugins/webkul/logistics/src/Filament/Clusters/Reporting/Pages/TripHistory.php`
+- `plugins/webkul/logistics/src/Filament/Clusters/Reporting/Pages/VehicleTripHistory.php`
+- `plugins/webkul/logistics/src/Filament/Clusters/Reporting/Pages/DriverTripHistory.php`
+- `plugins/webkul/logistics/src/Filament/Exports/ShipmentRegisterExporter.php`
+- `plugins/webkul/logistics/src/Filament/Exports/DeliveryPerformanceExporter.php`
+- `plugins/webkul/logistics/src/Filament/Exports/ShipmentProfitabilityExporter.php`
+- `plugins/webkul/logistics/src/Filament/Exports/TripHistoryExporter.php`
+- `plugins/webkul/logistics/resources/lang/en/reports.php`
+- `plugins/webkul/logistics/resources/views/filament/pages/report.blade.php`
+- `plugins/webkul/logistics/tests/Feature/Reports/ReportsTest.php`
+
+Already present, reused unchanged:
+- `plugins/webkul/logistics/src/Filament/Clusters/Reporting.php` and
+  `resources/lang/en/filament/clusters/reporting.php`. The cluster was created
+  with the other four clusters in WP-1; this package only filled it.
+
+Files modified:
+- `AGENTS.md`, `docs/logistics-plan.md`, `docs/change-log.md`
+
+Migrations / tables:
+- None. Reports read what the other packages already store.
+
+Reused components:
+- The existing cluster pattern (`Finance`, `Operations`): slug, navigation sort,
+  `NavigationGroup::Logistics`, and `LogisticsAccess::enabledForCurrent()` as
+  the cluster's `canAccess()`.
+- Filament's `ExportAction` + `Exporter` for the files, so exports go through
+  the same queued-export machinery and notifications as the rest of the panel
+  rather than a hand-rolled CSV writer.
+- `FilamentHelper::bootAdminPanel()` in the new test rather than a second copy
+  of the panel setup.
+- One `DateRange` helper for the from/until filter all five reports share, so
+  "until" means the whole of that day everywhere. Written once because five
+  copies is how one of them ends up off by a day.
+
+Steps against the spec:
+- Five pages: Shipment register, Delivery performance, Shipment profitability,
+  Vehicle trip history, Driver trip history. Filters: dates, customer, status,
+  vehicle, driver, plus "late only", "failed only" and "loss-making only".
+- Vehicle and driver trip history are one abstract `TripHistory` with a subclass
+  each, differing only in which relationship they filter on.
+- Profitability is behind `view_financials_logistics_shipment` **as well as** its
+  page permission, per D2. An operations user who may read a register has no
+  business reading margins.
+- Both profitability figures come from `withSum` aggregate subqueries, not from
+  loading charges and expenses into memory: a quarter's register would otherwise
+  pull tens of thousands of rows to add up two columns.
+
+Decisions worth knowing:
+- **Costs count approved and billed expenses only.** A draft or submitted
+  expense is a claim someone has made; counting it would let the margin move on
+  paperwork rather than on work. Asserted by a test.
+- **"Carrier cost" in the spec is not a third term.** There is no carrier amount
+  field: carrier spend is an expense in the `SUBCONTRACTOR` category
+  (`is_subcontracting`), which is what the shipment form already tells the user
+  ("Carrier costs are recorded as expenses"). Charges minus expenses therefore
+  already covers it, and adding a separate carrier term would double-count.
+  `logistics_shipments.total_costs` exists as a column but nothing writes it -
+  see "Left for later".
+- **No currency conversion.** Figures are in each shipment's own currency and
+  the currency is a named column, because a column silently adding several
+  currencies together would look authoritative while being meaningless. The
+  page says so in its subheading.
+- **Delivered with no expected date is "No date promised", not "on time".**
+  Scoring it would invent a commitment nobody made, and it would flatter the
+  numbers. The page's subheading states the exclusion so the percentage cannot
+  be read as covering everything.
+- **Distance is blank unless both odometer readings exist.** One reading tells
+  you nothing about distance, and showing it as one would be worse than nothing.
+
+Tests added / results:
+- `tests/Feature/Reports/ReportsTest.php`, 9 tests: profitability sums; drafts
+  excluded from cost; no other company's shipments in either register or
+  profitability; profitability needs `view_financials` and not the page
+  permission alone; all five reports hidden from a company that has not enabled
+  Logistics; delivery scored against the promised date including the
+  not-measured branch; trips filtered by vehicle and by driver; the export reads
+  the filtered query; and Shield generates the five page permission names the
+  pages check for.
+- Focused run, `aureuserp_testing_wp11`: **9 passed, 38 assertions, 608 s.**
+- Pint passed on every changed file.
+
+Existing suites run / results:
+- Full `LogisticsFeature` on `aureuserp_testing_wp11`:
+  **176 passed, 0 failed, 676 assertions, 3354 s.** No regression anywhere,
+  including `Foundation\CompanyScopingInvariantsTest` and `Foundation\PolicyTest`.
+- That full run predates the last two edits to `ReportsTest.php` (the export
+  assertion moving to `getTableQueryForExport()` and the new permission test),
+  which is why the focused run above was done afterwards. Nothing outside
+  `tests/Feature/Reports/` changed between the two, so the 176 still stands.
+- Note for the next agent: `--filter="Reports\\\\ReportsTest"` matched nothing
+  and **still exited 0** - "No tests found" is not a pass. Use
+  `--filter=ReportsTest`, and check the test count, not the exit code.
+
+Three defects found and fixed during the package, all mine:
+- The "no date promised" case could never have failed: `ShipmentFactory` fills
+  `expected_delivery_at` with now + 2 days, so the shipment under test had a
+  promise after all and was scored `on-time`. The branch the test exists for was
+  never reached. Fixed by nulling the column explicitly. **A factory default is
+  enough to make a test assert the opposite of what it claims** - worth checking
+  whenever a test turns on a column being absent.
+- The export test read `getTable()->getQuery()`, which is the *unfiltered* base
+  query, so it would have passed whatever the filters did. It now reads
+  `getTableQueryForExport()`, which is the exact method Filament's
+  `CanExportRecords` calls, and which applies filters, search and sorting.
+- The profitability "loss-making only" filter's raw SQL referenced
+  `logistics_shipment_charges.deleted_at`. That model does not soft-delete;
+  `logistics_expenses` does. Caught by reading before running. The two
+  subqueries are deliberately asymmetrical and now say so in a comment.
+
+A gap this package closed that was not its own:
+- Nothing anywhere proved Shield **generates** the `page_logistics_*` permission
+  names that pages check. Every test grants them by name, so a page that checked
+  a name Shield never generates would pass every test and be unopenable in
+  production - `canAccess()` false for everyone, including a role with every box
+  ticked. The names come from `PermissionManager`'s `buildPermissionKeyUsing`
+  (page + plugin + class), not Shield's default `view_<class>`, so they are worth
+  pinning. The new test pins the five report pages. **The other Logistics pages
+  (`page_logistics_dashboard`, `dispatch_board`, `unbilled_charges`,
+  `manage_company_settings`) are still unpinned** - recommended for WP-13.
+
+Risks:
+- Exports run through Filament's queued export jobs. On Laravel Cloud that means
+  the queue must be running for a large export to complete; a small one finishes
+  in the request. This is the same machinery the rest of the panel uses, so it is
+  not new behaviour, but it is the first place in Logistics that depends on it.
+- `ShipmentProfitability` adds two aggregate subqueries per page of rows. Fine at
+  the row counts a page shows; the "loss-making only" filter runs the same two
+  subqueries again in the WHERE clause, which is the one place a very large
+  register could feel slow. Measure before adding an index; the shipment_id
+  foreign keys are already indexed.
+
+Left for later (not changed here):
+- `logistics_shipments.total_costs` and `total_charges` are columns nothing
+  writes. Either populate them or drop them; a denormalised money column that is
+  always zero is the same trap WP-8b hit with `subtotal`. **Recommended for
+  WP-13** - dropping is safest before release, since no data depends on them.
+- `FilamentShield::getEntitiesPermissions()` in Shield 4.2.0 reads
+  `->map->permission` while `transformPages()` writes `permissions`. Nothing in
+  this application calls it, so it is dead upstream code, but do not build on it.
+
+Requests for other packages:
+- **WP-12:** translate `resources/lang/en/reports.php` and
+  `resources/lang/en/filament/clusters/reporting.php`. Note that `reports.php`
+  shares one `$tripColumns`/`$tripFilters` set between `vehicle-trips` and
+  `driver-trips`, and that `TripHistoryExporter` labels its file from the
+  `vehicle-trips` keys whichever page started it - keep the two sets identical.
+- **WP-13:** the two items under "Left for later", and pinning the remaining
+  page permissions.

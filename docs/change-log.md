@@ -6,6 +6,84 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-09-25 (Logistics WP-11: reports)
+
+Five report pages in a new `Reporting` cluster, each a filtered Filament table
+with an export: shipment register, delivery performance, shipment profitability,
+and trip history by vehicle and by driver. No migrations - reports read what the
+other packages already store.
+
+### What the numbers are allowed to say
+
+The judgement calls here are all about not producing a figure that looks
+authoritative and is not.
+
+- **Costs are approved and billed expenses only.** A draft or submitted expense
+  is a claim someone has made. Counting it would let a margin move on paperwork
+  rather than on work.
+- **"Carrier cost" is not a separate term.** Carrier spend is already an expense
+  in the `SUBCONTRACTOR` category, which is what the shipment form tells the user
+  ("Carrier costs are recorded as expenses"). Charges minus expenses covers it;
+  a third term would double-count.
+- **Nothing is converted between currencies.** Each figure is in the shipment's
+  own currency and the currency is a named column. A column that silently added
+  several currencies would be meaningless while looking exact.
+- **A delivery with no promised date is "No date promised", not "on time".**
+  Scoring it would invent a commitment nobody made - and it would flatter the
+  statistic, which is the direction these mistakes always run. The page's
+  subheading states the exclusion so the percentage cannot be misread as
+  covering everything.
+- **Distance is blank unless both odometer readings exist.** One reading says
+  nothing about distance; printing it as one is worse than printing nothing.
+
+Profitability sits behind `view_financials_logistics_shipment` as well as its
+page permission: an operations user who may read a register has no business
+reading margins. Both its figures come from `withSum` subqueries rather than
+loading charges and expenses into memory, because a quarter's register would
+otherwise pull tens of thousands of rows to add up two columns.
+
+### A test that could not have failed
+
+The test for "delivered, but nobody promised a date" passed for the wrong
+reason. `ShipmentFactory` fills `expected_delivery_at` with now + 2 days, so the
+shipment under test *had* a promised date and was scored `on-time` - the branch
+the test existed for was never reached. The fix is one explicit `null`, but the
+general lesson is worth keeping: **a factory default is enough to make a test
+assert the opposite of what its name claims.** Worth checking whenever a test
+turns on a column being absent.
+
+A second test in the same file had the same shape of defect: it read
+`getTable()->getQuery()`, the *unfiltered* base query, while claiming to prove
+the export respects the filters. It would have passed whatever the filters did.
+It now reads `getTableQueryForExport()`, which is the exact method Filament's
+`CanExportRecords` calls.
+
+### A permission nobody was checking
+
+Nothing in the application proved that Shield **generates** the `page_logistics_*`
+permission names the pages check for. Every test grants them by name, so a page
+naming a permission Shield never generates would pass every test and be
+impossible to open in production - `canAccess()` false for everyone, including a
+role with every box ticked.
+
+The names are not Shield's defaults. Shield would produce `view_<class>`; this
+application installs its own key builder in `Webkul\PluginManager\PermissionManager`
+that produces `page_<plugin>_<class>`. Two independent things have to agree, and
+nothing was holding them together. A new test pins the five report pages. The
+other Logistics pages are still unpinned and are noted for WP-13.
+
+### Verified
+
+Full `LogisticsFeature` suite on `aureuserp_testing_wp11`: **176 passed, 676
+assertions**, no failures. Then the reports file alone at **9 passed, 38
+assertions**, run afterwards because the last two edits to the test file landed
+after the full run had already collected its tests. Pint clean on every changed
+file.
+
+One thing to watch when reproducing this: `--filter="Reports\\\\ReportsTest"`
+matched nothing and **exited 0** anyway. "No tests found" is not a pass - check
+the test count rather than the exit status.
+
 ## 2026-09-25 (Company Admin role, and avatars without a third party)
 
 Two decisions the user made after the tenant-isolation fix landed

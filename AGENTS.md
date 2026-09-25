@@ -1166,6 +1166,28 @@ MULTI-COMPANY FACTS THAT BITE
   permissions are `page_<plugin>_<page_snake>`. Resource permissions are
   `<affix>_<plugin>_<model>` (multi-word models use `::`, e.g.
   `view_any_logistics_service::type`).
+• That page permission name is written **twice**, and until WP-11 nothing held
+  the two together. The page names one (`getPagePermission()`, or an explicit
+  `can()`), while `Webkul\PluginManager\PermissionManager::managePermissions()`
+  generates the other through Shield's `buildPermissionKeyUsing` - which is why
+  the name is `page_<plugin>_<class>` and **not** Shield's own default
+  `view_<class>`. If the two disagree, the page is unopenable in production for
+  everyone, `canAccess()` false even for a role with every box ticked, while
+  every test still passes, because tests grant the name by hand. Assert the
+  generated set (`FilamentShield::getPages()`, each entry's `permissions` keys)
+  for any new page. Example: Logistics `tests/Feature/Reports/ReportsTest.php`.
+  Cluster classes get no permission of their own - Filament clusters extend
+  `Page`, and Shield rejects any page that is some page's cluster.
+• A Filament table's `getTable()->getQuery()` is the **unfiltered** base query.
+  The filtered ones are `getFilteredTableQuery()` and - the one `ExportAction`
+  actually runs, via `CanExportRecords` - `getTableQueryForExport()`, which
+  applies filters, search and sort. A test that asserts filtering or export
+  scope against `getTable()->getQuery()` passes regardless and proves nothing.
+• A factory default can make a test assert the **opposite** of what its name
+  claims. `ShipmentFactory` fills `expected_delivery_at`, so a WP-11 test for
+  "delivered with no promised date" silently exercised the promised-date branch
+  and passed green. Whenever a test turns on a column being **absent**, set it
+  to null explicitly rather than trusting the factory to leave it alone.
 
 DOCUMENTATION AND UPSTREAM REVIEW (ALL AGENTS)
 
