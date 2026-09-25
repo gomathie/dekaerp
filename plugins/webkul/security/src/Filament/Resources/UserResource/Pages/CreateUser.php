@@ -30,7 +30,15 @@ class CreateUser extends CreateRecord
 
         $roleIds = (array) ($data['roles'] ?? $this->form->getRawState()['roles'] ?? []);
 
-        if (app(MultiCompanyAdminService::class)->includesMultiCompanyAdminRole($roleIds)) {
+        $administration = app(MultiCompanyAdminService::class);
+
+        // Both administration roles need `global`: ownership on the User model
+        // matches creator_id and id, so anything narrower would show an
+        // administrator only themselves and the users they personally created,
+        // never the colleagues already there. For a Company Admin that is bounded
+        // to their own companies by scopeManageableUsers() and UserPolicy.
+        if ($administration->includesMultiCompanyAdminRole($roleIds)
+            || $administration->includesCompanyAdminRole($roleIds)) {
             $data['resource_permission'] = PermissionType::GLOBAL;
         }
 

@@ -6,6 +6,76 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-09-25 (Company Admin role, and avatars without a third party)
+
+Two decisions the user made after the tenant-isolation fix landed
+(`docs/company-admin-role-plan.md` §4b).
+
+### Company Admin, provisioned
+
+A role to assign when onboarding a tenant, so it no longer means hand-ticking
+permissions each time. It is an ordinary role: it holds seven permissions and
+gets **no** `Gate::before` bypass, unlike Multi-Company Admin.
+
+Deliberately **not** a system role. System roles can be assigned by nobody but a
+super admin, which would stop DEKA staff handing this out while onboarding - the
+one job it exists for. What contains it is machinery that already applies to
+every non-super actor:
+
+- the company scoping added on 2026-09-24, so it sees only its own company's
+  users;
+- `scopeAssignableRoles()`, which lets an actor assign only roles whose
+  permissions are a subset of their own, so it cannot create someone more
+  powerful than itself;
+- `scopeAssignableCompanies()`, so it cannot grant a company it does not hold
+  and therefore cannot grow its own reach by creating a user.
+
+It can view, create and update users, and archive one at a time. It has no
+`delete_any`, no `force_delete`, no role or permission management, no
+`page_security_*` and no scope bypasses.
+
+**No business permissions.** A role enumerating every resource would grow
+silently into a near-super-admin each time a plugin is installed, and what a
+given customer's administrator should be able to *do* differs per customer.
+Assign business roles alongside this one.
+
+`CreateUser` gives the role `global` resource permission, as it already did for
+Multi-Company Admin: ownership on the User model matches `creator_id` and `id`,
+so anything narrower would show an administrator only themselves and the users
+they personally created - never the colleagues already there.
+
+### Avatars: no names sent to ui-avatars.com
+
+Filament's default `UiAvatarsProvider` builds the initials image by requesting
+ui-avatars.com **with the person's name in the URL**. That was one request per
+page for the signed-in user; after the Users table began falling back to it, one
+per row. A page of fifty would have sent fifty customer employee names to a
+third party, and rendered nothing offline.
+
+`Webkul\Support\Filament\AvatarProviders\DefaultAvatarProvider` serves one local
+SVG instead, registered on **both** panels - fixing only the table would have
+left the user menu still calling out. Everyone without an uploaded picture looks
+the same, which was the accepted trade.
+
+### A mistake worth recording
+
+The seeder call was added with a shell one-liner, which silently dropped the
+`use` statement because of the namespace backslashes - the trap already in
+AGENTS.md, hit for the third time in one session. `CompanyAdminRoleProvisioner`
+then resolved inside the seeder's own namespace and **every test in the Security
+suite failed at once**, because the seeder runs during install. The body of the
+change had been checked; the import had not. Write PHP with the editor, and
+verify the part that is easy to miss.
+
+### Verification
+
+- `SecurityFeature`: **55 passed, 158 assertions** - five new Company Admin
+  tests covering the permission baseline, idempotent provisioning, company
+  containment, and the two escalation boundaries.
+- Pint passed on every changed file.
+
+---
+
 ## 2026-09-24 (Tenant isolation in the Users list, and four broken employee factories)
 
 Raised by the user: *"when I create a user for a new company I onboard, I give

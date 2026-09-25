@@ -3,6 +3,7 @@
 namespace Webkul\Security\Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Webkul\Security\Services\CompanyAdminRoleProvisioner;
 use Webkul\Security\Services\MultiCompanyAdminRoleProvisioner;
 
 class DatabaseSeeder extends Seeder
@@ -16,5 +17,7 @@ class DatabaseSeeder extends Seeder
     public function run($parameters = []): void
     {
         app(MultiCompanyAdminRoleProvisioner::class)->provision();
+
+        app(CompanyAdminRoleProvisioner::class)->provision();
     }
 }
