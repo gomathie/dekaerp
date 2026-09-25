@@ -18,6 +18,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Webkul\Support\Filament\AvatarProviders\DefaultAvatarProvider;
 
 class CustomerPanelProvider extends PanelProvider
 {
@@ -31,6 +32,9 @@ class CustomerPanelProvider extends PanelProvider
             ->profile(isSimple: false)
             ->favicon(asset('images/favicon.ico'))
             ->brandLogo(asset('images/logo.svg'))
+            // Same reason as the admin panel: no customer name in a URL to a
+            // third party just to draw a placeholder.
+            ->defaultAvatarProvider(DefaultAvatarProvider::class)
             ->darkMode(false)
             ->brandLogoHeight('2rem')
             ->colors([

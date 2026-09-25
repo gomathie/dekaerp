@@ -16,6 +16,19 @@ class Role extends BaseRole
 {
     public const MULTI_COMPANY_ADMIN = 'Multi-Company Admin';
 
+    /**
+     * A customer's own administrator, for one company.
+     *
+     * Deliberately **not** in SYSTEM_ROLE_FALLBACKS. A system role can be
+     * assigned by nobody but a super admin, which would mean DEKA staff could
+     * not hand this out while onboarding a tenant - the one job it exists for.
+     * It is contained instead by the two rules that already apply to every
+     * ordinary role: an actor may only assign roles whose permissions are a
+     * subset of their own, and may only grant companies they themselves hold.
+     * It gets no Gate::before bypass of any kind.
+     */
+    public const COMPANY_ADMIN = 'Company Admin';
+
     protected const SYSTEM_ROLE_FALLBACKS = [
         'admin',
         'super_admin',

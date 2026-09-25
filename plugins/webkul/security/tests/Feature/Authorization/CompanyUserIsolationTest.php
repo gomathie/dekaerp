@@ -6,8 +6,12 @@ use Spatie\Permission\PermissionRegistrar;
 use Webkul\Security\Enums\PermissionType;
 use Webkul\Security\Filament\Resources\UserResource;
 use Webkul\Security\Models\User;
+use Webkul\Security\Models\Role;
 use Webkul\Security\Policies\UserPolicy;
+use Webkul\Security\Services\CompanyAdminRoleProvisioner;
 use Webkul\Security\Services\MultiCompanyAdminRoleProvisioner;
+use Webkul\Security\Services\MultiCompanyAdminService;
+use Webkul\Support\Models\Company;
 use Webkul\Support\Services\CompanyContext;
 
 require_once __DIR__.'/MultiCompanyAdminTest.php';
@@ -236,4 +240,108 @@ it('leaves a multi-company admin scoped to its assigned companies', function () 
     expect($visible)->toContain($inFirst->getKey())
         ->and($visible)->not->toContain($inOutside->getKey())
         ->and($visible)->not->toContain($administrator->getKey());
+});
+
+/**
+ * The provisioned Company Admin role (4b).
+ *
+ * The role itself is ordinary - its whole containment comes from the company
+ * scoping above plus the two rules that apply to every non-super actor. These
+ * tests are about the boundaries, not the happy path.
+ */
+it('provisions a Company Admin role that cannot touch roles or permissions', function () {
+    $role = app(CompanyAdminRoleProvisioner::class)->provision();
+
+    $granted = $role->permissions->pluck('name');
+
+    expect($granted)->toContain('view_any_security_user')
+        ->and($granted)->toContain('create_security_user')
+        // Handing out roles is how an administrator escalates, and this role
+        // goes to people outside DEKA ERP.
+        ->and($granted)->not->toContain('view_any_role')
+        ->and($granted)->not->toContain('update_role')
+        ->and($granted)->not->toContain('create_role')
+        // Bulk and permanent deletion of user records stay with staff.
+        ->and($granted)->not->toContain('delete_any_security_user')
+        ->and($granted)->not->toContain('force_delete_security_user')
+        ->and($granted)->not->toContain('bypass_company_scope');
+});
+
+it('provisions the Company Admin role idempotently', function () {
+    $first = app(CompanyAdminRoleProvisioner::class)->provision();
+    $second = app(CompanyAdminRoleProvisioner::class)->provision();
+
+    expect($second->getKey())->toBe($first->getKey())
+        ->and(Role::query()->whereRaw('LOWER(name) = ?', [mb_strtolower(Role::COMPANY_ADMIN)])->count())->toBe(1);
+});
+
+it('keeps a Company Admin inside their own company', function () {
+    $role = app(CompanyAdminRoleProvisioner::class)->provision();
+
+    $mine = multiCompanyAdminTestCompany('Mine');
+    $theirs = multiCompanyAdminTestCompany('Theirs');
+
+    // Global, as CreateUser sets for this role: ownership on User matches
+    // creator_id and id, so anything narrower would hide the colleagues who
+    // were already there.
+    $actor = multiCompanyAdminTestUser($mine, $role, [
+        'resource_permission' => PermissionType::GLOBAL,
+    ]);
+
+    $colleague = multiCompanyAdminTestUser($mine);
+    $stranger = multiCompanyAdminTestUser($theirs);
+
+    multiCompanyAdminTestAuthenticate($actor, [$mine->getKey()]);
+
+    $visible = visibleUserIds();
+
+    expect($visible)->toContain($colleague->getKey())
+        ->and($visible)->not->toContain($stranger->getKey())
+        ->and(app(UserPolicy::class)->view($actor, $colleague))->toBeTrue()
+        ->and(app(UserPolicy::class)->view($actor, $stranger))->toBeFalse();
+});
+
+it('does not let a Company Admin reach another company’s companies', function () {
+    $role = app(CompanyAdminRoleProvisioner::class)->provision();
+
+    $mine = multiCompanyAdminTestCompany('Mine');
+    $theirs = multiCompanyAdminTestCompany('Theirs');
+
+    $actor = multiCompanyAdminTestUser($mine, $role, [
+        'resource_permission' => PermissionType::GLOBAL,
+    ]);
+
+    multiCompanyAdminTestAuthenticate($actor, [$mine->getKey()]);
+
+    $assignable = app(MultiCompanyAdminService::class)
+        ->scopeAssignableCompanies(Company::query(), $actor)
+        ->pluck('id')
+        ->all();
+
+    // They cannot hand a user a company they do not hold themselves, so they
+    // cannot grow their own reach by creating someone.
+    expect($assignable)->toBe([$mine->getKey()])
+        ->and($assignable)->not->toContain($theirs->getKey());
+});
+
+it('does not let a Company Admin assign a role beyond their own permissions', function () {
+    $role = app(CompanyAdminRoleProvisioner::class)->provision();
+
+    $mine = multiCompanyAdminTestCompany('Mine');
+
+    $actor = multiCompanyAdminTestUser($mine, $role, [
+        'resource_permission' => PermissionType::GLOBAL,
+    ]);
+
+    // A role holding something the Company Admin does not.
+    $powerful = multiCompanyAdminTestRole(['update_role', 'view_any_role'], 'Powerful Role');
+
+    multiCompanyAdminTestAuthenticate($actor, [$mine->getKey()]);
+
+    $assignable = app(MultiCompanyAdminService::class)
+        ->scopeAssignableRoles(Role::query(), $actor)
+        ->pluck('id')
+        ->all();
+
+    expect($assignable)->not->toContain($powerful->getKey());
 });

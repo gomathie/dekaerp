@@ -364,6 +364,29 @@ class MultiCompanyAdminService
         return in_array($companyId, $this->assignedCompanyIds($user), true);
     }
 
+    /**
+     * Whether these roles include Company Admin.
+     *
+     * Used to give such a user `global` resource permission on creation.
+     * Ownership for the User model matches on creator_id and id, so an
+     * `individual` permission would show a company administrator only themselves
+     * and the users they personally created - not the colleagues who were
+     * already there, which is the whole job. `global` is safe here because
+     * scopeManageableUsers() and UserPolicy bound it to their own companies.
+     *
+     * @param  array<int, mixed>  $roleIds
+     */
+    public function includesCompanyAdminRole(array $roleIds): bool
+    {
+        $roleIds = $this->normalizeIds($roleIds);
+
+        return $roleIds !== []
+            && Role::query()
+                ->whereIn('id', $roleIds)
+                ->whereRaw('LOWER(name) = ?', [mb_strtolower(Role::COMPANY_ADMIN)])
+                ->exists();
+    }
+
     public function includesMultiCompanyAdminRole(array $roleIds): bool
     {
         $roleIds = $this->normalizeIds($roleIds);
