@@ -24,6 +24,20 @@ class Vehicle extends Model
 
     protected $table = 'logistics_vehicles';
 
+    /**
+     * Mirrors the column defaults in the vehicles migration. See Trip for why.
+     *
+     * `is_active` matters most here: DispatchService refuses to dispatch an
+     * archived vehicle, and a freshly created one reading back null would be
+     * treated as archived until reloaded.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'ownership' => 'owned',
+        'is_active' => true,
+    ];
+
     protected $fillable = [
         'registration_no',
         'name',

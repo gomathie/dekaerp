@@ -9,8 +9,10 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Facades\Auth;
 use Webkul\Logistics\Enums\ExpenseState;
+use Webkul\Logistics\Exceptions\ExpenseNotAttributable;
 use Webkul\Logistics\Exceptions\ReceiptRequired;
 use Webkul\Logistics\Filament\Clusters\Finance\Resources\ExpenseResource;
+use Webkul\Logistics\Filament\Clusters\Finance\Resources\ExpenseResource\Actions\PostBillAction;
 use Webkul\Logistics\Models\Expense;
 use Webkul\Logistics\Services\ExpenseApproval;
 use Webkul\Support\Traits\HasRecordNavigationTabs;
@@ -29,6 +31,7 @@ class ViewExpense extends ViewRecord
             static::stateAction('submitExpense', ExpenseState::DRAFT, 'update', 'heroicon-o-paper-airplane'),
             static::stateAction('approveExpense', ExpenseState::SUBMITTED, 'approve', 'heroicon-o-check-circle'),
             static::stateAction('rejectExpense', ExpenseState::SUBMITTED, 'approve', 'heroicon-o-x-circle'),
+            PostBillAction::make(),
             EditAction::make(),
             DeleteAction::make(),
         ];
@@ -53,13 +56,14 @@ class ViewExpense extends ViewRecord
                         'approveExpense' => $service->approve($record),
                         'rejectExpense'  => $service->reject($record),
                     };
-                } catch (ReceiptRequired $e) {
+                } catch (ReceiptRequired|ExpenseNotAttributable $e) {
                     // Expected, not exceptional: the category demands a receipt
-                    // and this expense has none. Say which category and why,
-                    // rather than surfacing an error page.
+                    // and this expense has none, or it is linked to nothing that
+                    // could be billed. Both are ordinary: the exception message
+                    // names what to fix, so it is the body.
                     Notification::make()
                         ->warning()
-                        ->title(__(static::$lang.'.actions.receipt-required'))
+                        ->title(__(static::$lang.'.actions.cannot-proceed'))
                         ->body($e->getMessage())
                         ->send();
 

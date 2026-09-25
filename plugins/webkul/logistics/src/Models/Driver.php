@@ -27,6 +27,18 @@ class Driver extends Model
 
     protected $table = 'logistics_drivers';
 
+    /**
+     * Mirrors the column defaults in the drivers migration. See Trip for why.
+     *
+     * As with Vehicle, `is_active` decides whether DispatchService will dispatch
+     * them at all.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'is_active' => true,
+    ];
+
     protected $fillable = [
         'name',
         'phone',
