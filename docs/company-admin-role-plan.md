@@ -185,9 +185,21 @@ Consequences:
 
 Not changed here. Adding the `runningUnitTests()` exemption would switch
 ownership on for every existing test at once and change the data each one sees -
-that is its own piece of work, with its own full-suite run, and it belongs with
-WP-13 hardening or a dedicated task. Worth doing: until then, ownership is a
-production behaviour with no automated cover at all.
+that is its own piece of work, with its own full-suite run. Until then, ownership
+is a production behaviour with no automated cover at all.
+
+**Decided (user, 2026-09-25):**
+
+- **Timing:** after WP-11, with the release hardening.
+- **Fallout:** if enabling it fails tests in suites unrelated to this, triage
+  each one as a genuine bug or a test that assumed it could see everything, and
+  bring the list back **before** changing anything beyond the scope itself.
+- **Queued jobs:** investigate and report first. A job runs "in console" and can
+  have a user set, so the guard may be hiding a production question and not only
+  a testing one. Note that the scope already returns early when there is no
+  authenticated user, which is the normal console case - so the
+  `runningInConsole()` guard may be broader than whatever it was added for.
+  Do not change queue behaviour without saying what would change.
 
 ## 5. Notes for whoever picks this up
 
