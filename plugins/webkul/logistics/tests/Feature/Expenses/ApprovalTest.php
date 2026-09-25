@@ -7,11 +7,14 @@ use Illuminate\Support\Facades\URL;
 use Livewire\Livewire;
 use Webkul\Logistics\Enums\ExpensePaidBy;
 use Webkul\Logistics\Enums\ExpenseState;
+use Webkul\Logistics\Exceptions\ExpenseNotAttributable;
 use Webkul\Logistics\Exceptions\ReceiptRequired;
 use Webkul\Logistics\Filament\Clusters\Finance\Resources\ExpenseResource\Pages\CreateExpense;
 use Webkul\Logistics\Models\Expense;
 use Webkul\Logistics\Models\ExpenseCategory;
+use Webkul\Logistics\Models\Vehicle;
 use Webkul\Logistics\Services\ExpenseApproval;
+use Webkul\Support\Models\Company;
 
 require_once __DIR__.'/../../Helpers/LogisticsHelper.php';
 
@@ -23,10 +26,26 @@ beforeEach(function () {
 
 function approvalExpense(int $companyId, array $overrides = []): Expense
 {
-    return Expense::factory()->create(array_merge([
+    $attributes = array_merge([
         'company_id'  => $companyId,
         'category_id' => ExpenseCategory::factory()->create()->id,
-    ], $overrides));
+    ], $overrides);
+
+    // Every cost has to hang off a shipment, a trip or a vehicle - the form has
+    // always required it and ExpenseApproval now enforces it - so the default
+    // here is a shipment. A test that wants the unattributable case passes
+    // 'shipment_id' => null explicitly.
+    $linked = array_key_exists('shipment_id', $overrides)
+        || array_key_exists('trip_id', $overrides)
+        || array_key_exists('vehicle_id', $overrides);
+
+    if (! $linked) {
+        $attributes['shipment_id'] = LogisticsHelper::shipment(
+            Company::query()->findOrFail($companyId),
+        )->id;
+    }
+
+    return Expense::factory()->create($attributes);
 }
 
 it('moves an expense through submission and approval', function () {
@@ -213,4 +232,51 @@ it('still lets a rejection through without a receipt', function () {
     app(ExpenseApproval::class)->reject($expense);
 
     expect($expense->refresh()->state)->toBe(ExpenseState::REJECTED);
+});
+
+it('refuses to submit an expense that is linked to nothing', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+
+    // No shipment, trip or vehicle. The form requires one of the three, but an
+    // API write or an import reaches the service directly - and a cost that
+    // points at nothing cannot be put on a margin or billed on.
+    $expense = approvalExpense($company->id, ['shipment_id' => null]);
+
+    FilamentHelper::actingAsCompanyUser($company, ['update_logistics_expense']);
+
+    expect(fn () => app(ExpenseApproval::class)->submit($expense))
+        ->toThrow(ExpenseNotAttributable::class)
+        ->and($expense->refresh()->state)->toBe(ExpenseState::DRAFT);
+});
+
+it('submits an expense linked to a vehicle, not only a shipment', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+
+    $vehicle = Vehicle::factory()->create(['company_id' => $company->id]);
+
+    // Any of the three satisfies it: fleet costs belong to a vehicle rather
+    // than to any one job.
+    $expense = approvalExpense($company->id, ['vehicle_id' => $vehicle->id]);
+
+    FilamentHelper::actingAsCompanyUser($company, ['update_logistics_expense']);
+
+    app(ExpenseApproval::class)->submit($expense);
+
+    expect($expense->refresh()->state)->toBe(ExpenseState::SUBMITTED);
+});
+
+it('refuses to approve an unattributable expense that reached submitted', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+
+    $expense = approvalExpense($company->id, [
+        'state'       => ExpenseState::SUBMITTED,
+        'shipment_id' => null,
+    ]);
+
+    FilamentHelper::actingAsCompanyUser($company, ['approve_logistics_expense']);
+
+    // Checked again at approval, because an expense can reach submitted without
+    // passing through submit() - a seeded row, an import, an API write.
+    expect(fn () => app(ExpenseApproval::class)->approve($expense))
+        ->toThrow(ExpenseNotAttributable::class);
 });

@@ -22,6 +22,7 @@ use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Act
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\ReleaseAction;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\RevokeStopLinkAction;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\SendStopLinkAction;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Widgets\ShipmentMarginWidget;
 use Webkul\Support\Traits\HasRecordNavigationTabs;
 
 class ViewShipment extends ViewRecord
@@ -31,6 +32,15 @@ class ViewShipment extends ViewRecord
     protected static string $resource = ShipmentResource::class;
 
     protected static string $lang = 'logistics::filament/clusters/operations/resources/shipment';
+
+    protected function getHeaderWidgets(): array
+    {
+        // Filament hands the record to page widgets (InteractsWithRecord::
+        // getWidgetData), and the widget hides itself without view_financials.
+        return [
+            ShipmentMarginWidget::class,
+        ];
+    }
 
     protected function getHeaderActions(): array
     {

@@ -10,6 +10,9 @@ use Webkul\Employee\Models\Employee;
 use Webkul\Logistics\Enums\ExpensePaidBy;
 use Webkul\Logistics\Enums\ExpenseState;
 use Webkul\Logistics\Exceptions\CannotPostBill;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Pages\ViewShipment;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\RelationManagers\ExpensesRelationManager;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Widgets\ShipmentMarginWidget;
 use Webkul\Logistics\Models\CompanySetting;
 use Webkul\Logistics\Models\Expense;
 use Webkul\Logistics\Models\ExpenseCategory;
@@ -327,4 +330,132 @@ it('never bills another company’s expenses', function () {
     expect(fn () => app(ExpensePoster::class)->postForShipment($shipment))
         ->toThrow(Illuminate\Database\Eloquent\ModelNotFoundException::class)
         ->and(Move::withoutGlobalScopes()->where('move_type', MoveType::IN_INVOICE)->count())->toBe(0);
+});
+
+it('shows revenue less approved costs, ignoring drafts', function () {
+    $company = billingCompany();
+    $shipment = LogisticsHelper::shipment($company);
+    $payee = vendor($company, 'Kumasi Haulage');
+
+    $shipment->charges()->create([
+        'description' => 'Freight',
+        'quantity'    => 1,
+        'price_unit'  => 1000,
+        'is_billable' => true,
+        'currency_id' => $company->currency_id,
+    ]);
+
+    postableExpense($company, ['shipment_id' => $shipment->id, 'payee_id' => $payee->id, 'amount' => 300]);
+
+    // Draft and rejected costs are claims, not money the company has agreed to,
+    // so the margin must not move on them.
+    postableExpense($company, [
+        'shipment_id' => $shipment->id,
+        'payee_id'    => $payee->id,
+        'amount'      => 500,
+        'state'       => ExpenseState::DRAFT,
+    ]);
+
+    CompanyHelper::actingAsCompanyUser($company, ['view_financials_logistics_shipment', 'view_logistics_shipment']);
+
+    $widget = new ShipmentMarginWidget;
+    $widget->record = $shipment;
+
+    $figures = [];
+
+    $method = new ReflectionMethod($widget, 'getStats');
+    $method->setAccessible(true);
+
+    foreach ($method->invoke($widget) as $stat) {
+        $figures[(string) $stat->getLabel()] = (string) $stat->getValue();
+    }
+
+    expect($figures['Revenue'])->toBe('1,000.00')
+        ->and($figures['Costs'])->toBe('300.00')
+        ->and($figures['Margin'])->toBe('700.00');
+});
+
+it('hides the margin and the cost list from a user without view_financials', function () {
+    $company = billingCompany();
+    $shipment = LogisticsHelper::shipment($company);
+
+    CompanyHelper::actingAsCompanyUser($company, ['view_any_logistics_shipment', 'view_logistics_shipment']);
+
+    // An operations user may see the shipment and still have no business
+    // seeing what it earns or costs.
+    expect(ShipmentMarginWidget::canView())->toBeFalse()
+        ->and(ExpensesRelationManager::canViewForRecord($shipment, ViewShipment::class))->toBeFalse();
+
+    CompanyHelper::actingAsCompanyUser($company, [
+        'view_financials_logistics_shipment',
+        'view_logistics_shipment',
+    ]);
+
+    expect(ShipmentMarginWidget::canView())->toBeTrue()
+        ->and(ExpensesRelationManager::canViewForRecord($shipment, ViewShipment::class))->toBeTrue();
+});
+
+it('shows a negative margin when a shipment cost more than it earned', function () {
+    $company = billingCompany();
+    $shipment = LogisticsHelper::shipment($company);
+
+    $shipment->charges()->create([
+        'description' => 'Freight',
+        'quantity'    => 1,
+        'price_unit'  => 100,
+        'is_billable' => true,
+        'currency_id' => $company->currency_id,
+    ]);
+
+    postableExpense($company, [
+        'shipment_id' => $shipment->id,
+        'payee_id'    => vendor($company, 'Kumasi Haulage')->id,
+        'amount'      => 250,
+    ]);
+
+    CompanyHelper::actingAsCompanyUser($company, ['view_financials_logistics_shipment', 'view_logistics_shipment']);
+
+    $widget = new ShipmentMarginWidget;
+    $widget->record = $shipment;
+
+    $method = new ReflectionMethod($widget, 'getStats');
+    $method->setAccessible(true);
+
+    $stats = $method->invoke($widget);
+    $margin = end($stats);
+
+    expect((string) $margin->getValue())->toBe('-150.00');
+});
+
+it('computes a charge subtotal from quantity, price and discount', function () {
+    $company = billingCompany();
+    $shipment = LogisticsHelper::shipment($company);
+
+    // Nothing computed subtotal before, so it stayed at its default of 0 while
+    // the unbilled charges page, the unbilled revenue widget and the shipment
+    // margin all read it as money. Every one of them showed zero.
+    $plain = $shipment->charges()->create([
+        'description' => 'Freight',
+        'quantity'    => 3,
+        'price_unit'  => 250,
+        'currency_id' => $company->currency_id,
+    ]);
+
+    $discounted = $shipment->charges()->create([
+        'description' => 'Handling',
+        'quantity'    => 2,
+        'price_unit'  => 100,
+        'discount'    => 10,
+        'currency_id' => $company->currency_id,
+    ]);
+
+    expect((float) $plain->refresh()->subtotal)->toBe(750.0)
+        // Discount is a percentage, as on the charge form and on the sales
+        // order lines ShipmentFromOrder copies from.
+        ->and((float) $discounted->refresh()->subtotal)->toBe(180.0);
+
+    // And it follows an edit, rather than being right only at creation.
+    $plain->update(['quantity' => 4]);
+
+    expect((float) $plain->refresh()->subtotal)->toBe(1000.0);
 });

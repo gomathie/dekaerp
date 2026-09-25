@@ -29,6 +29,16 @@ class Stop extends Model
 
     protected $table = 'logistics_stops';
 
+    /**
+     * Mirrors the column defaults in the stops migration. See Trip for why.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'sequence' => 1,
+        'state'    => 'pending',
+    ];
+
     protected $fillable = [
         'sequence',
         'type',

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use LogicException;
 use Webkul\Logistics\Enums\ExpenseState;
+use Webkul\Logistics\Exceptions\ExpenseNotAttributable;
 use Webkul\Logistics\Exceptions\ReceiptRequired;
 use Webkul\Logistics\Models\Expense;
 use Webkul\Logistics\Models\ExpenseCategory;
@@ -46,6 +47,8 @@ class ExpenseApproval
                 throw new LogicException("Expense cannot transition from {$from->value} to {$to->value}.");
             }
 
+            $this->ensureAttributable($expense, $to);
+
             $this->ensureReceiptAttached($expense, $to);
 
             $expense->state = $to;
@@ -64,6 +67,28 @@ class ExpenseApproval
 
             return $expense->refresh();
         });
+    }
+
+    /**
+     * Every cost must hang off a shipment, a trip or a vehicle.
+     *
+     * The expense form already requires one of the three, but the form is not
+     * the boundary. An unattributable cost cannot be put on a shipment's margin
+     * and cannot be billed on (WP-8b), so it is stopped at the same two points
+     * as the receipt rule rather than discovered later by whoever tries to post
+     * the bill.
+     */
+    protected function ensureAttributable(Expense $expense, ExpenseState $to): void
+    {
+        if (! in_array($to, [ExpenseState::SUBMITTED, ExpenseState::APPROVED], true)) {
+            return;
+        }
+
+        if ($expense->shipment_id || $expense->trip_id || $expense->vehicle_id) {
+            return;
+        }
+
+        throw ExpenseNotAttributable::make();
     }
 
     /**

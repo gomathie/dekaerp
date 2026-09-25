@@ -29,6 +29,21 @@ class Trip extends Model
 
     protected $table = 'logistics_trips';
 
+    /**
+     * Mirrors the column defaults in the trips migration.
+     *
+     * Postgres fills these on insert, but a model created in memory does not
+     * know that and reads them back as null until it is reloaded - so a trip
+     * returned straight from create() would have a null state, and
+     * `$trip->state->value` a fatal error. Same trap as `users.is_active` and
+     * `logistics_shipments.state`. Keep in step with the migration.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'state' => 'planned',
+    ];
+
     protected $fillable = [
         'name',
         'state',

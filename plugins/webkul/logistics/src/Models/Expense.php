@@ -34,6 +34,19 @@ class Expense extends Model
 
     protected $table = 'logistics_expenses';
 
+    /**
+     * Mirrors the column defaults in the expenses migration. See Trip for why.
+     *
+     * `paid_by` is also set by the creating hook below; declared here as well so
+     * the value is right on the instance before it is saved, not only after.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'paid_by' => 'company',
+        'state'   => 'draft',
+    ];
+
     protected $fillable = [
         'date',
         'amount',
