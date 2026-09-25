@@ -14,7 +14,13 @@ class OwnershipScope implements Scope
 {
     public function apply(Builder $builder, Model $model): void
     {
-        if (app()->runningInConsole()) {
+        /*
+         * `&& ! runningUnitTests()` matches CompanyScope, CompaniesScope and
+         * AllowedCompanyScope. Without it this scope was inert under `artisan
+         * test`, so no test in the application could show that ownership
+         * restricts anything - or that it does not over-restrict.
+         */
+        if (app()->runningInConsole() && ! app()->runningUnitTests()) {
             return;
         }
 

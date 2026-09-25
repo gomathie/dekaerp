@@ -201,6 +201,188 @@ is a production behaviour with no automated cover at all.
   `runningInConsole()` guard may be broader than whatever it was added for.
   Do not change queue behaviour without saying what would change.
 
+### 4d. Enabled in tests, and what it found - 2026-09-25 - Claude
+
+The exemption was added, and nothing else:
+
+```php
+if (app()->runningInConsole() && ! app()->runningUnitTests()) {
+    return;
+}
+```
+
+`runningUnitTests()` is `$this['env'] === 'testing'`, so this is a **test-only**
+change: a production queue worker or artisan command is still `runningInConsole()`
+with `env !== testing`, and still skips the scope. No production behaviour moves.
+
+Databases used: `aureuserp_testing_own1/2/3`, three suites at a time, one suite
+per database.
+
+#### Results
+
+| Suite | Result |
+|---|---|
+| SecurityFeature | 55 passed |
+| SupportFeature | 115 passed |
+| EmployeeFeature | 5 passed |
+| PartnerFeature | 74 passed |
+| PurchaseFeature | 178 passed |
+| AccountingFeature | 54 passed |
+| **ProjectFeature** | **1 failed**, 76 passed |
+| **AccountFeature** | **2 failed**, 519 passed |
+| **SaleFeature** | **17 failed**, 126 passed |
+| InventoryFeature | 884 passed |
+| ManufacturingFeature | 38 passed |
+| ProductFeature | 250 passed |
+| LogisticsFeature | 177 passed |
+
+**All thirteen suites run: 20 failed, 2,551 passed.** The failures are two
+families and sit in three suites; the other ten are untouched. Notably
+`InventoryFeature` (884 tests, the largest) and `ManufacturingFeature` pass
+despite `Operation` and `Manufacturing\Models\Order` both being ownership-scoped,
+so the scope being live is not inherently disruptive - what breaks is narrower
+than that.
+
+A note on the run itself, so the next agent does not misread it: `InventoryFeature`
+appeared to hang for 1h43m - the container was up but Postgres showed both of its
+connections `idle / ClientRead` with no query for that entire time. It was **not**
+a hang. Docker had frozen (the same thing recorded against WP-10's run), and the
+suite resumed on its own and kept passing. `OneStepDeliveryTest`, the file it
+looked stuck on, was run separately and passed all 65 of its tests. Check
+`pg_stat_activity` query age before concluding a suite is stuck, and never conclude
+it from the log alone, because `--compact` output is buffered and flushes in chunks.
+
+#### First: which models this actually governs
+
+Not all of them. `User`, `Company`, `Team` and `Partner` override
+`ownershipScopeIsGlobal()` to `false` - they carry the trait only for the explicit
+`ownership()` query scope, which is why a company switcher is not ownership
+filtered. The models with a **global** ownership scope are exactly eight:
+
+| Model | Ownership sources |
+|---|---|
+| `Account\Models\Move` | `creator_id`, `invoice_user_id` |
+| `Sale\Models\Order` | `creator_id`, `user_id` |
+| `Purchase\Models\Order` | `creator_id`, `user_id` |
+| `Inventory\Models\Operation` | `creator_id`, `user_id` |
+| `Maintenance\Models\MaintenanceRequest` | `creator_id`, `user_id` |
+| `Manufacturing\Models\Order` | `creator_id`, `assigned_user_id` |
+| `Project\Models\Project` | `creator_id`, `user_id`, followers |
+| `Project\Models\Task` | `creator_id`, `users` relation, followers |
+
+And this matters more than it looks: `users.resource_permission` defaults to
+**`individual`** at the column level, and `UserInvitationService` sets
+`INDIVIDUAL` explicitly for everyone who is not a Multi-Company Admin. Only the
+two administration roles get `GLOBAL`. So for most real users these eight models
+*are* filtered to what they created or were assigned, in production, today - with
+no automated cover until now.
+
+#### Family 1 - fixtures nobody owns (17 in SaleFeature, all benign)
+
+`OrderDeliveryTest`, `OrderInvoiceTest`, `OrderLineTest`. Every failure is the
+same: **404 where 200 or 403 was expected.** The parent `Order` is created by
+`createOrderWithDeliveries()` *before* the acting user exists, and `OrderFactory`
+sets `creator_id` to `User::query()->value('id')` - the first user in the table,
+not the actor. So route-model binding cannot find the order and returns 404.
+
+This is correct product behaviour: an `individual` user has no business seeing a
+stranger's order, and 404 rather than 403 is the better answer because it does not
+confirm the record exists. These are **test-data defects, not product defects**.
+The fix is per-test: create the fixture as the acting user, or set
+`resource_permission => GLOBAL` as the other API tests in the same directories
+already do.
+
+One nuance worth keeping: `it('forbids listing order deliveries without
+permission')` expected 403 and got 404, so ownership now masks the permission
+check that test exists to prove. Whoever fixes it should keep the order owned by
+the actor so the test still tests permissions.
+
+#### Family 2 - reading an ownership-scoped parent in a model hook (3, real)
+
+These are **not** test-data problems. They are the same defect already recorded in
+project memory for `CompanyScope` ("an event listener runs under whoever acted"),
+now showing up through `OwnershipScope`.
+
+**`MoveLine::inheritFromMove()`** - `AccountFeature`, 2 failures, a hard crash:
+
+```php
+$this->move_name = $this->move->name;        // ErrorException: property "name" on null
+$this->company_id = $this->move->company_id; // the tenant boundary, from the same null
+```
+
+`$this->move` is a `BelongsTo` on `Move`, which carries **both** `BelongsToCompany`
+and `HasOwnershipScope`. When the actor does not own the move, the relation
+resolves to null and the saving hook dies. Note this is fragile to *any* global
+scope on `Move`, not just this one - `CompanyScope` simply happened not to bite in
+these two tests, because both companies are allowed to the actor. The failing
+tests are the two that deliberately set the active company to something other than
+the invoice's company.
+
+**`TaskStage::creating()`** - `ProjectFeature`, 1 failure, and this one fails
+*silently*:
+
+```php
+$taskStage->company_id ??= $taskStage->project?->company_id;
+```
+
+`Project` is globally ownership-scoped, so `?->` swallows the miss and
+`company_id` stays **null**. `CompanyScope` treats a null `company_id` as *shared*
+- visible to every company. So the silent path here ends in a row that crosses
+the tenant boundary, which is worse than the crash in `MoveLine`.
+
+Neither is changed yet, per the instruction to bring the list back first. The fix
+for both is the one already established by `Logistics\Services\ShipmentFromOrder`:
+read the parent with `withoutGlobalScopes()` filtered explicitly by the parent
+key. Both also deserve a test that pins the derived `company_id`.
+
+Production reachability is narrow but real: it needs an actor who is `individual`,
+does not own the parent, and still reaches the child write - most likely through
+the API or a service that loaded the parent unscoped and then wrote children. It
+is not reachable for `GLOBAL` users or super admins, because the scope returns
+early for them.
+
+#### Queued jobs - investigated, nothing to change
+
+The question was whether the console guard hides a production problem as well as a
+testing one. It does not, and the reason is worth writing down.
+
+- **Filament's queued exports are safe.** `CanExportRecords` serializes the query
+  with `EloquentSerializeFacade::serialize()`, and `eloquent-serialize`'s `pack()`
+  calls `$builder->applyScopes()` **before** serializing, then strips the global
+  scopes so they are not applied twice. The company and ownership constraints are
+  therefore evaluated in the web request, where both scopes are live, and frozen
+  into the payload as ordinary where clauses. `PrepareCsvExport` rebuilds that
+  query in the worker, where the scopes would be inert - but they have already
+  been applied. This matters because WP-11 added exports to Logistics, and because
+  `CompanyScope` carries the same console guard: a naive re-query in the worker
+  would have crossed tenants.
+- **The application owns no queued jobs that read a scoped model.** The only
+  `ShouldQueue` class in application code is
+  `Chatter\Notifications\ChatterDatabaseNotification`, which carries five scalars
+  and runs no query. Every `::dispatch()` call in the plugins is an *event*, not a
+  job, and no listener is queued - so they run inside the acting request, where
+  the scopes are live. There are no importers at all.
+
+So the console guard is currently only a testing question. It is worth re-checking
+the moment a real queued job is added that reads one of the eight models above:
+such a job would see every company's and every user's rows.
+
+#### Recommendation
+
+0. **Awaiting the user's decision.** Nothing below is done; the triage was brought
+   back first, as asked. The only change made is the guard itself.
+1. Keep the exemption. It costs nothing in production and it is the only way any
+   ownership rule can ever be tested.
+2. Fix the two hook defects (`MoveLine::inheritFromMove()`,
+   `TaskStage::creating()`) with `withoutGlobalScopes()` plus a test each. These
+   are the only genuine bugs found.
+3. Fix the 17 SaleFeature fixtures by owning them, not by disabling the scope.
+4. Then add the tests this whole exercise was for: that `individual` and `group`
+   actually restrict, on at least one of the eight models.
+5. Audit the remaining `->relation?->column` reads inside `creating`/`saving`
+   hooks on the eight scoped models; these two were found by tests, and the
+   pattern is likely not limited to them.
+
 ## 5. Notes for whoever picks this up
 
 - `assignedCompanyIds()` is simply the actor's `user_allowed_companies` rows and
