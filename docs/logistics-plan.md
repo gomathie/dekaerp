@@ -406,6 +406,9 @@ exists". Four runs were lost to this on 2026-09-18 before the cause was found.
 | `aureuserp_testing_wp10` | WP-10 | Reserved 2026-09-23 |
 | `aureuserp_testing_wp5b` | WP-5b | Reserved 2026-09-24 |
 | `aureuserp_testing_wp11` | WP-11 | Reserved 2026-09-25 |
+| `aureuserp_testing_own1` | OwnershipScope work (not a Logistics package) | Reserved 2026-09-25. Three databases so three suites could run at once; see `docs/company-admin-role-plan.md` §4d. |
+| `aureuserp_testing_own2` | OwnershipScope work | Reserved 2026-09-25 |
+| `aureuserp_testing_own3` | OwnershipScope work | Reserved 2026-09-25 |
 
 WP-4 used `aureuserp_testing_claude` (review/verification database) because the
 same agent was also verifying WP-3 and WP-6 across packages.
