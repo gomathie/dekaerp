@@ -50,3 +50,29 @@ it('derives a task stage company from its project', function () {
 
     expect($stage->company_id)->toBe($companyB->id);
 });
+
+it('derives a task stage company from a project the actor does not own', function () {
+    $company = CompanyHelper::company();
+
+    // The project belongs to somebody else. Project carries a global
+    // OwnershipScope, so reading `$stage->project` here resolves to null for this
+    // actor - which used to leave company_id null, and CompanyScope reads a null
+    // company as *shared*, i.e. visible to every company on the installation.
+    // The stage saved and looked correct, which is what made it dangerous.
+    $owner = SecurityHelper::authenticateWithPermissions([]);
+
+    $project = Project::factory()->create([
+        'company_id' => $company->id,
+        'creator_id' => $owner->getKey(),
+        'user_id'    => $owner->getKey(),
+    ]);
+
+    $actor = CompanyHelper::actingAsCompanyUser($company);
+
+    expect($actor->getKey())->not->toBe($owner->getKey())
+        ->and(Project::query()->whereKey($project->getKey())->exists())->toBeFalse();
+
+    $stage = TaskStage::factory()->create(['project_id' => $project->id]);
+
+    expect($stage->company_id)->toBe($company->id);
+});

@@ -81,8 +81,34 @@ class TaskStage extends Model implements Sortable
         static::creating(function ($taskStage) {
             $taskStage->creator_id ??= Auth::id();
 
-            $taskStage->company_id ??= $taskStage->project?->company_id;
+            $taskStage->company_id ??= static::parentProjectCompanyId($taskStage->project_id);
         });
+    }
+
+    /**
+     * The owning project's company, read without global scopes.
+     *
+     * `$taskStage->project` cannot be used here. `Project` carries both
+     * `CompanyScope` and a global `OwnershipScope`, so the relation resolves to
+     * null for anyone who does not own the project - which for an `individual`
+     * user is most projects - and `??=` then leaves `company_id` **null**.
+     * `CompanyScope` reads a null company as *shared*, so the stage would be
+     * visible to every company on the installation. The failure is silent, which
+     * is what makes it dangerous: the stage saves and looks correct.
+     *
+     * The project's own row decides which company this stage belongs to, not
+     * whether the actor is allowed to see that project. Authorization for
+     * creating the stage belongs to the policy, before this point.
+     */
+    protected static function parentProjectCompanyId(?int $projectId): ?int
+    {
+        if ($projectId === null) {
+            return null;
+        }
+
+        return Project::withoutGlobalScopes()
+            ->whereKey($projectId)
+            ->value('company_id');
     }
 
     protected static function newFactory(): TaskStageFactory

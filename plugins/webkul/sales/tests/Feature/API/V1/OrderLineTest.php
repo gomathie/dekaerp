@@ -2,6 +2,7 @@
 
 use Webkul\Sale\Models\Order;
 use Webkul\Sale\Models\OrderLine;
+use Webkul\Security\Enums\PermissionType;
 
 require_once __DIR__.'/../../../../../support/tests/Helpers/SecurityHelper.php';
 require_once __DIR__.'/../../../../../support/tests/Helpers/TestBootstrapHelper.php';
@@ -22,9 +23,16 @@ beforeEach(function () {
 
 afterEach(fn () => SecurityHelper::restoreUserEvents());
 
+/**
+ * `global` resource permission - see the note in `OrderDeliveryTest`. Without it
+ * the order these tests hang off belongs to another user, `OwnershipScope` hides
+ * it, and every case answers 404.
+ */
 function actingAsSalesOrderLineApiUser(array $permissions = []): void
 {
-    SecurityHelper::authenticateWithPermissions($permissions);
+    SecurityHelper::authenticateWithPermissions($permissions)
+        ->forceFill(['resource_permission' => PermissionType::GLOBAL])
+        ->saveQuietly();
 }
 
 function salesOrderLineRoute(string $action, mixed $order, mixed $line = null): string

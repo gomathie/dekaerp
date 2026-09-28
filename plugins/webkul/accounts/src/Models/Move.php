@@ -357,33 +357,56 @@ class Move extends Model implements Sortable
         return -1;
     }
 
+    /**
+     * chaperone() sets each line's `move` relation back to this move.
+     *
+     * Without it, code handed a line out of `$move->lines` and then reading
+     * `$line->move` re-queries `Move` - which carries `CompanyScope` and a global
+     * `OwnershipScope`, so it comes back **null** for an actor who does not own
+     * the document, and `users.resource_permission` defaults to `individual`.
+     * `MoveCalculator::productBaseLine()` then died on
+     * `$line->move->isInvoice(true)` while posting.
+     *
+     * The lines came from this move, so the inverse is a fact, not a lookup. It
+     * also saves one query per line.
+     *
+     * All five line relations below carry it, not just this one: they are the
+     * same `hasMany` with a `display_type` filter, so a line is equally
+     * parentless whichever of them produced it. Fixing only `lines()` moved the
+     * same crash from `roundedBaseAndTaxLines()` to `recompute()`, which reads
+     * `invoiceLines`. Add `->chaperone()` to any further line relation.
+     */
     public function lines()
     {
-        return $this->hasMany(MoveLine::class, 'move_id');
+        return $this->hasMany(MoveLine::class, 'move_id')->chaperone();
     }
 
     public function invoiceLines()
     {
         return $this->hasMany(MoveLine::class, 'move_id')
-            ->where('display_type', DisplayType::PRODUCT);
+            ->where('display_type', DisplayType::PRODUCT)
+            ->chaperone();
     }
 
     public function taxLines()
     {
         return $this->hasMany(MoveLine::class, 'move_id')
-            ->where('display_type', DisplayType::TAX);
+            ->where('display_type', DisplayType::TAX)
+            ->chaperone();
     }
 
     public function paymentTermLines()
     {
         return $this->hasMany(MoveLine::class, 'move_id')
-            ->where('display_type', DisplayType::PAYMENT_TERM);
+            ->where('display_type', DisplayType::PAYMENT_TERM)
+            ->chaperone();
     }
 
     public function roundingLines()
     {
         return $this->hasMany(MoveLine::class, 'move_id')
-            ->where('display_type', DisplayType::ROUNDING);
+            ->where('display_type', DisplayType::ROUNDING)
+            ->chaperone();
     }
 
     public function matchedPayments()

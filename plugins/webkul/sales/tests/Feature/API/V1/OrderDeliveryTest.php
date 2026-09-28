@@ -3,6 +3,7 @@
 use Webkul\Inventory\Models\Operation;
 use Webkul\PluginManager\Package;
 use Webkul\Sale\Models\Order;
+use Webkul\Security\Enums\PermissionType;
 
 require_once __DIR__.'/../../../../../support/tests/Helpers/SecurityHelper.php';
 require_once __DIR__.'/../../../../../support/tests/Helpers/TestBootstrapHelper.php';
@@ -19,9 +20,22 @@ beforeEach(function () {
 
 afterEach(fn () => SecurityHelper::restoreUserEvents());
 
+/**
+ * `global` resource permission, as `OrderTest` does for the same reason.
+ *
+ * These fixtures are built before the actor exists, and `OrderFactory` attributes
+ * the order to the first user in the table - so without this the actor does not
+ * own the order, `Sale\Models\Order`'s global `OwnershipScope` hides it, and route
+ * binding answers 404 for every case below. That 404 is correct product
+ * behaviour; it just is not what these tests are about. They cover the delivery
+ * sub-resource and its permission check, so the actor is given the same
+ * unrestricted view the sibling order tests use.
+ */
 function actingAsSalesOrderDeliveryApiUser(array $permissions = []): void
 {
-    SecurityHelper::authenticateWithPermissions($permissions);
+    SecurityHelper::authenticateWithPermissions($permissions)
+        ->forceFill(['resource_permission' => PermissionType::GLOBAL])
+        ->saveQuietly();
 }
 
 function salesOrderDeliveryRoute(string $action, mixed $order): string
