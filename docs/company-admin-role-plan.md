@@ -369,8 +369,9 @@ such a job would see every company's and every user's rows.
 
 #### Recommendation
 
-0. **Awaiting the user's decision.** Nothing below is done; the triage was brought
-   back first, as asked. The only change made is the guard itself.
+0. ~~Awaiting the user's decision.~~ **Superseded: all five approved and done on
+   2026-09-25. See §4e below for what was changed and what the audit in step 5
+   turned up.**
 1. Keep the exemption. It costs nothing in production and it is the only way any
    ownership rule can ever be tested.
 2. Fix the two hook defects (`MoveLine::inheritFromMove()`,
@@ -382,7 +383,6 @@ such a job would see every company's and every user's rows.
 5. Audit the remaining `->relation?->column` reads inside `creating`/`saving`
    hooks on the eight scoped models; these two were found by tests, and the
    pattern is likely not limited to them.
-
 
 ### 4e. Fixed - 2026-09-25 - Claude
 

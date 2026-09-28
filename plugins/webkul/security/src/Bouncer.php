@@ -36,6 +36,27 @@ class Bouncer
             $authorizedUserIds = null;
         } elseif ($user->resource_permission == PermissionType::GROUP) {
             $authorizedUserIds = $this->getCurrentAccessibleUserIds($user);
+
+            /*
+             * A group user with no team can only be themselves.
+             *
+             * getCurrentAccessibleUserIds() resolves through
+             * `whereIn('teams.id', $user->teams()->pluck('id'))`, so a user in no
+             * team matches nothing and this comes back empty - and
+             * OwnershipScope treats an empty list as **no restriction** and skips
+             * itself entirely. The effect was that a `group` user without a team
+             * saw everything, exactly as if they were `global`, silently.
+             *
+             * The form requires a team when `group` is chosen, so this is not
+             * reachable by creating a user through the panel. It is reachable by
+             * the team being deleted afterwards, or the user being removed from
+             * it - neither of which should hand them a wider view than they had.
+             * Fails closed to their own rows, which is what `group` degrades to
+             * when the group is empty.
+             */
+            if (empty($authorizedUserIds)) {
+                $authorizedUserIds = [$user->id];
+            }
         } else {
             $authorizedUserIds = [$user->id];
         }
