@@ -363,7 +363,9 @@ class Move extends Model implements Sortable
      * Without it, code handed a line out of `$move->lines` and then reading
      * `$line->move` re-queries `Move` - which carries `CompanyScope` and a global
      * `OwnershipScope`, so it comes back **null** for an actor who does not own
-     * the document, and `users.resource_permission` defaults to `individual`.
+     * the document. `users.resource_permission` now defaults to `global`, so the
+     * common case no longer triggers it, but `individual` and `group` users still
+     * do and the fix is what stops it being a crash.
      * `MoveCalculator::productBaseLine()` then died on
      * `$line->move->isInvoice(true)` while posting.
      *

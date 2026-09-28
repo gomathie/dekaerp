@@ -324,8 +324,9 @@ class Move extends Model
      *
      * `Operation` carries a global `OwnershipScope`, so `$this->operation`
      * resolved to null for any actor who does not own it - and
-     * `users.resource_permission` defaults to `individual`, so that is the common
-     * case, not an edge one. Two consequences, both silent:
+     * that is any `individual` or `group` user. (The column default became
+     * `global` on 2026-09-28, so this is no longer the *common* case, but it is
+     * still a supported one.) Two consequences, both silent:
      *
      *  - `company_id` was left null when there was no operation type to fall back
      *    on, and `CompanyScope` reads a null company as *shared*, so the move

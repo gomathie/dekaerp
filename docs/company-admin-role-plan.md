@@ -508,8 +508,8 @@ Purchase 178, Manufacturing 38, Product 250, Logistics 177.
 
 #### Still open
 
-- The positive ownership coverage exists for `Project` and `Task` only. The other
-  six globally scoped models have none. ~~`group` (team-based) ownership is still
+- The positive ownership coverage exists for `Project`, `Task` and `Move` only. The other
+  five globally scoped models have none. ~~`group` (team-based) ownership is still
   untested entirely.~~ **Closed by §4f, which found a privilege escalation in that
   branch while covering it.**
 - The two `CompanyScope`-only sibling reads noted above
@@ -685,11 +685,12 @@ a test for it would be covering a path no model reaches. **Recommendation: delet
 it in a cleanup pass, or use it in place of `relation('users')` on `Task` - but
 pick one, rather than leaving two mechanisms for one job.**
 
-### 4g. OPEN QUESTION: is `individual` the right default? - 2026-09-26
+### 4g. RESOLVED: is `individual` the right default? - 2026-09-26
 
-**Status: awaiting the user's decision.** They asked to see the impact before
-choosing (2026-09-26). Nothing is changed. This section is the impact analysis and
-the queries that finish it.
+**Status: decided 2026-09-28 - see section 4h.** The user asked to see the impact
+before choosing (2026-09-26), and then chose company-wide visibility. This section
+is kept as the analysis that informed it; the "what the code does today" below
+describes the state *before* 4h, not now.
 
 #### What the code does today
 
@@ -751,6 +752,29 @@ plugin already has the pattern for it (`logistics_company_settings`, per
 `Bouncer`, and a decision about what happens to users whose explicit permission
 disagrees with their company's default. Worth scoping separately rather than
 bolting on.
+
+#### Now demonstrated, not inferred
+
+`accounts/tests/Feature/Workflows/OwnershipScopeTest.php` was added on 2026-09-26
+and pins the behaviour on the money documents, which had no ownership coverage at
+all. Three tests, all passing:
+
+- **an `individual` user cannot see a colleague's invoice** - same company, so it
+  is ownership doing it and not `CompanyScope`;
+- an `individual` user *can* see an invoice raised by someone else and assigned to
+  them via `invoice_user_id`, `Move`'s second ownership source, which nothing had
+  exercised;
+- a `global` user sees both.
+
+So the first bullet is the production behaviour as of today, for every user created
+without an administration role. It is no longer a reading of the code.
+
+Full `AccountFeature` on `aureuserp_testing_own2`: **525 passed, 0 failed** (522
+before, plus these three).
+
+The tests set `resource_permission` explicitly, so they stay valid whichever way
+this question is decided - they describe what each setting *does*, not what the
+default ought to be.
 
 #### Queries to answer it
 
@@ -822,6 +846,162 @@ will surface as "why can't my new colleague see our invoices?" as tenants grow. 
 that is what the numbers show, **default to `global` and let customers who want
 tighter visibility opt into `group` or `individual` per user** - the narrow setting
 is then a deliberate choice rather than an accident of a column default.
+
+
+### 4h. DECIDED: company-wide visibility is the default - 2026-09-28 - Claude
+
+**User decision (2026-09-28):** "all users in the same company should be able to see
+each others invoices and details in the company."
+
+Clarified by the user in the same exchange: *"if its currently individual, and can
+be given as rights then its also good"* - so the narrow setting should **remain
+available to grant**, it just must not be what everyone gets by accident.
+
+That settles §4g. `CompanyScope` is the boundary. `OwnershipScope` is not removed or
+disabled; it becomes an opt-in narrowing instead of the silent default.
+
+**What stays grantable.** Nothing about the feature is taken away:
+
+- `PermissionType` keeps all three cases - `global`, `group`, `individual`;
+- the Users page still offers all three (`->options(PermissionType::class)`), so an
+  administrator can set any user to `individual` or `group` at any time;
+- `EditUser` can change it on an existing user, with the existing guard that stops
+  someone editing their own;
+- every rule those settings drive still works and is covered by tests
+  (`accounts/.../OwnershipScopeTest.php`, `projects/.../OwnershipScopeTest.php`).
+
+The only things that changed are the **default** for a new user and the **existing
+`individual` rows**. "Individual" is now a deliberate choice someone makes, which is
+what it should always have been.
+
+#### What the old value actually came from
+
+Worth recording, because it was not one setting in one place, and the panel was
+never the problem:
+
+| Path | Before | Now |
+|---|---|---|
+| Users page form (`UserResource`) | already `->default(PermissionType::GLOBAL->value)` | unchanged |
+| `CreateUser` | forces `global` for the two administration roles | unchanged |
+| `UserInvitationService::accept()` | hard-coded `INDIVIDUAL` for everyone who was not a Multi-Company Admin | `GLOBAL` for everyone |
+| `users.resource_permission` column default | `individual` | `global` |
+| Existing `individual` rows | - | updated to `global` by migration |
+
+So a user created through the Users page was already company-wide. The ones that
+were not were **invited** users - which is the onboarding path - and anything
+created without the field, which includes seeders and factories. That is why the
+complaint was about onboarded users specifically.
+
+#### Changed
+
+- `database/migrations/2026_09_28_090000_default_users_to_company_wide_visibility.php`
+  - column default `individual` -> `global`, and existing `individual` rows updated.
+- `Webkul\Security\Services\UserInvitationService::accept()` - writes `GLOBAL`. The
+  Multi-Company Admin lookup that used to choose between the two values is gone
+  along with its now-unused `Role` import, since the role no longer changes the
+  outcome here.
+- Docblocks in `Account\Models\Move`, `Account\Models\MoveLine` and
+  `Inventory\Models\Move` said "defaults to `individual`" as the reason their
+  scoped-parent reads mattered. Corrected: the default is `global`, but
+  `individual` and `group` users still exist, so those fixes are still load-bearing
+  and must not be reverted on the strength of the new default.
+
+#### `group` rows are deliberately left alone
+
+The migration updates `individual` only. Nobody ever *chose* `individual` - it was a
+column default and a hard-coded service value - whereas `group` has to be selected
+in the form (which defaults to `global`) **and** given a team, so it is a real
+decision by whoever configured that user. Widening it would silently override them.
+
+If any exist, they keep a narrower view than their colleagues. Find them with:
+
+```sql
+select u.id, u.email, u.resource_permission
+from users u
+where u.resource_permission <> 'global';
+```
+
+Anything that comes back is now a deliberate exception rather than an accident.
+Decide per user whether it should stay.
+
+#### The `down()` migration restores the default but not the rows
+
+Stated explicitly because it is asymmetric on purpose. Once everyone is `global`
+there is no way to tell which users were `individual` because a customer wanted
+them narrow and which were `individual` only because of the old default. Reverting
+every row would be a guess, and a guess in the direction of hiding records from
+people who can currently see them. The rollback therefore restores the column
+default only; anyone who needs a narrower view is set back per user.
+
+#### Before deploying
+
+1. This **widens** visibility. Every current `individual` user will see their
+   colleagues' invoices, bills, sales and purchase orders, stock operations,
+   manufacturing orders, projects and tasks within their own companies. Tenant
+   isolation is untouched - `CompanyScope` is a separate scope and no part of this
+   changes it.
+2. Run the query above afterwards and confirm the remaining non-`global` users are
+   intended.
+3. Nothing needs re-provisioning. Roles, permissions and company assignments are
+   unaffected.
+
+#### A migration trap, recorded
+
+The first version of the migration used the project's usual convention -
+`$table->enum('resource_permission', [...])->default('global')->change()` - and it
+**cannot work on PostgreSQL**. Laravel renders an enum change as a single statement
+containing an inline check constraint:
+
+```sql
+alter table "users" alter column "resource_permission" type varchar(255)
+  check ("resource_permission" in ('group','individual','global')), ...
+```
+
+Postgres rejects it with `syntax error at or near "check"`. The failure mode is
+what makes it worth writing down: **every test in the suite fails with 0
+assertions**, because the migration dies during `migrate:fresh` and no test ever
+runs. That reads like catastrophic breakage rather than one bad DDL statement - 55
+failures in Security, 47 and counting in Account, all from one line.
+
+The column's type and constraint were never changing here, only its default, so the
+fix is the narrow statement:
+
+```php
+DB::statement("ALTER TABLE users ALTER COLUMN resource_permission SET DEFAULT '...'");
+```
+
+Valid on Postgres and on MySQL 8. Both test databases were dropped and recreated
+before re-running, because an interrupted `migrate:fresh` leaves a half-built
+schema.
+
+#### Tests
+
+`accounts/tests/Feature/Workflows/OwnershipScopeTest.php` gains
+**"it lets a colleague see the company invoices by default"**, which creates a user
+with no explicit `resource_permission`, asserts it resolves to `global`, and asserts
+that user can see an invoice a colleague raised. Under the old default that test
+fails - it is precisely the reported complaint, written down.
+
+The three tests already in that file set the permission explicitly, so they keep
+describing what `individual`, `invoice_user_id` and `global` each do. Same for the
+six in `projects`. Ownership is still fully covered as a *feature*; it is just no
+longer the default.
+
+Both halves of the requirement are therefore pinned by passing tests side by side:
+
+- **"it lets a colleague see the company invoices by default"** - the new behaviour;
+- **"it hides a colleagues invoice from an individual user"** - `individual` still
+  works when granted.
+
+#### Verification
+
+| Suite | Result |
+|---|---|
+| AccountFeature | **526 passed, 0 failed** (523 + 3; includes the new default test) |
+| SecurityFeature | **55 passed, 0 failed** - the invitation change breaks nothing |
+
+Databases `aureuserp_testing_own1` and `own2`, both dropped and recreated after the
+bad first migration. Pint and `php -l` clean.
 
 ## 5. Notes for whoever picks this up
 

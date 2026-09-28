@@ -294,8 +294,9 @@ class MoveLine extends Model implements Sortable
      *
      * Everything in the saving chain below reads `$this->move` - around forty
      * times - and `Move` carries both `BelongsToCompany` and a global
-     * `OwnershipScope`. So for an actor who does not own the move, and
-     * `individual` is the column default for `users.resource_permission`, the
+     * `OwnershipScope`. So for an actor who does not own the move - an
+     * `individual` or `group` user; the column default is `global` since
+     * 2026-09-28, but neither of the other two is rare - the
      * relation resolves to **null** and `inheritFromMove()` dies on
      * `$this->move->name`. It also takes `company_id` from that same null, which
      * is the tenant boundary for the line.
