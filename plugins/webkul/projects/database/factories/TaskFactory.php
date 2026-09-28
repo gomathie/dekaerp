@@ -34,7 +34,6 @@ class TaskFactory extends Factory
         return [
             'title'               => fake()->name(),
             'description'         => fake()->sentence(),
-            'visibility'          => 'public',
             'color'               => fake()->hexColor(),
             'priority'            => fake()->boolean(),
             'state'               => 'in_progress',

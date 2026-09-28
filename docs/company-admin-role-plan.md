@@ -508,15 +508,320 @@ Purchase 178, Manufacturing 38, Product 250, Logistics 177.
 
 #### Still open
 
-- The positive ownership coverage exists for `Project` only. The other seven
-  globally scoped models have none. `group` (team-based) ownership is still
-  untested entirely - `OwnershipScopeTest` covers `individual` and `global`.
+- The positive ownership coverage exists for `Project` and `Task` only. The other
+  six globally scoped models have none. ~~`group` (team-based) ownership is still
+  untested entirely.~~ **Closed by §4f, which found a privilege escalation in that
+  branch while covering it.**
 - The two `CompanyScope`-only sibling reads noted above
   (`ProductQuantity::saving()`, `Inventory\Models\MoveLine::creating()`).
 - Whether `individual` is the right default for `users.resource_permission` at
-  all is a product question, not a code one, and has not been asked. It is the
-  column default *and* what `UserInvitationService` sets, so every ordinary user
-  gets it; the eight models above are filtered for them in production today.
+  all is a product question, not a code one. **Now asked, and open: see §4g for the
+  impact analysis and the queries that decide it.** It is the column default *and*
+  what `UserInvitationService` sets, so every ordinary user gets it; the eight
+  models above are filtered for them in production today.
+
+### 4f. A group user with no team saw everything - 2026-09-26 - Claude
+
+Found while closing the coverage gap §4e left open (`group` was untested
+entirely). This is a **silent privilege escalation**, not a coverage problem.
+
+#### The hole
+
+Two pieces of code, each reasonable alone:
+
+```php
+// Bouncer::getCurrentAccessibleUserIds() - every user sharing a team with this one
+->whereIn('teams.id', $user->teams()->pluck('id'))   // no teams -> matches nothing -> []
+
+// OwnershipScope::apply()
+if (empty($userIds)) {
+    return;                                          // empty -> no restriction at all
+}
+```
+
+A user with `resource_permission = group` and **no team** therefore resolved to an
+empty authorized-id list, which `OwnershipScope` read as "do not filter". They saw
+every row of all eight globally scoped models across their companies - exactly as
+if they were `global`. No error, no log, nothing on screen to indicate it.
+
+`CompanyScope` still applied, so this was not cross-tenant. It was a full
+within-tenant escalation: every colleague's invoices, orders, projects and tasks.
+
+#### Reachability
+
+Not reachable by creating a user through the panel: `UserResource` makes the teams
+field `->required(fn (Get $get) => $get('resource_permission') == PermissionType::GROUP)`.
+
+Reachable afterwards, and this is the realistic path:
+
+- the user is removed from their team;
+- or the team is deleted;
+- or `resource_permission` is set to `group` by anything that does not go through
+  that form - the API, a seeder, a direct update.
+
+In each case the user's view silently **widens**. That is the wrong direction for
+a permission to fail in.
+
+#### Fixed
+
+`Bouncer::getAuthorizedUserIds()`, group branch:
+
+```php
+$authorizedUserIds = $this->getCurrentAccessibleUserIds($user);
+
+if (empty($authorizedUserIds)) {
+    $authorizedUserIds = [$user->id];
+}
+```
+
+Fails closed to the user's own rows, which is what `group` degrades to when the
+group is empty. Deliberately fixed in `Bouncer` rather than by changing
+`OwnershipScope`'s `empty()` guard: that guard is also what makes the scope skip
+cheaply, and repurposing "empty" to mean "show nothing" would change behaviour for
+any future caller that legitimately returns an empty list.
+
+**Behaviour change to be aware of:** any existing `group` user who currently has no
+team will see less after this ships than before - specifically, only their own
+records. That is the intended correction, but it will look like a regression to
+anyone who had grown used to the wider view. Worth checking before deploy:
+
+```sql
+select u.id, u.email
+from users u
+left join user_team ut on ut.user_id = u.id
+where u.resource_permission = 'group' and ut.user_id is null;
+```
+
+If that returns rows, those users need a team assigned (or a different resource
+permission) rather than the old behaviour back.
+
+#### Tests added
+
+Three more in `projects/tests/Feature/Workflows/OwnershipScopeTest.php`:
+
+- a `group` user sees a teammate's project and not a stranger's - the ordinary
+  case, and the first test of the `group` branch anywhere in the application;
+- a `group` user with **no team** sees only their own - the hole above, pinned;
+- an `individual` user sees a task assigned to them through `Task`'s
+  `OwnerSource::relation('users')` pivot. That exercises
+  `OwnershipScope::applyRelation()`, which nothing had reached before, and is the
+  case that matters most for not *over*-restricting: an assignee who cannot open
+  their own work would be a support ticket a day.
+
+#### A broken factory found on the way
+
+The task test above would not run: `TaskFactory` declared
+`'visibility' => 'public'`, and `projects_tasks` has **no such column** - it never
+did in this fork. Any `Task::factory()->create()` threw
+`SQLSTATE[42703] Undefined column: visibility`.
+
+It had been noticed and worked around rather than fixed. `TaskTest` carried
+`unset($payload['visibility'])` in `taskPayload()` and an `afterMaking()` hook
+doing the same in `createTaskRecord()` - two workarounds keeping a broken factory
+usable for one test file, and leaving it unusable for every other. The field is
+removed from the factory and both workarounds with it.
+
+This is the third factory defect found this way (after the five in `employees`,
+and `ShipmentFactory`'s `expected_delivery_at` in WP-11). **A factory that no
+test outside one file uses is not known to work.** Worth a pass over the factories
+of any model that has no direct factory test.
+
+#### Verification
+
+| Suite | Result |
+|---|---|
+| ProjectFeature | **86 passed** (4 new tests; was 82) |
+| SecurityFeature | **55 passed** - the `Bouncer` change breaks nothing |
+
+Databases `aureuserp_testing_own1` and `own2`. Pint and `php -l` clean.
+
+No existing test anywhere created a `group` user, which is why this survived: the
+whole branch had no coverage, so there was nothing to fail. That is also why the
+blast radius of the `Bouncer` change is small - the only behaviour that moves is
+the case that was broken.
+
+#### Followers, and why that branch was unreachable in tests
+
+`OwnerSource::followers()` (`applyFollowers()`) is now covered too: an
+`individual` user sees a project they follow and not one they do not.
+
+It needed a detour worth recording. `applyFollowers()` matches on the follower's
+**partner**, not the user:
+
+```php
+$partnerIds = User::whereIn('id', $userIds)->pluck('partner_id')->filter()->all();
+
+if (empty($partnerIds)) {
+    return;                 // no partner -> following never counts as ownership
+}
+```
+
+In production every user has a `partner_id`, because `User::saved()` creates a
+Partner for them. But `SecurityHelper::createUser()` builds users inside
+`User::withoutEvents()`, and these suites call `SecurityHelper::disableUserEvents()`
+in `beforeEach`, so that hook never fires and every test user has
+`partner_id = null`. The branch was therefore unreachable by construction - it
+would have returned early in any test that tried. The new test attaches a Partner
+explicitly.
+
+Two things follow from that. First, **disabling model events in a helper silently
+disables the behaviour those events provide**, and a test can then only prove
+things about a model that production never produces. Second, anything else keyed
+on `users.partner_id` is equally untested for the same reason - worth a look if a
+partner-keyed rule ever misbehaves.
+
+#### Dead code, reported not removed
+
+`OwnerSource::pivot()` and `OwnershipScope::applyPivot()` are **unreachable**: a
+repository-wide search finds the factory method, the `KIND_PIVOT` constant and the
+`match` arm, and **no caller anywhere**. `Task::users()` - a `belongsToMany` over
+`projects_task_users` - is exactly the shape `pivot()` was written for, but `Task`
+declares `OwnerSource::relation('users')` instead and gets the same result through
+`whereHas`. So `pivot` is a redundant second way to say the same thing.
+
+Left in place deliberately: removing it is a cleanup with no functional benefit,
+and `OwnerSource` is a support class a future plugin could reasonably use. Writing
+a test for it would be covering a path no model reaches. **Recommendation: delete
+it in a cleanup pass, or use it in place of `relation('users')` on `Task` - but
+pick one, rather than leaving two mechanisms for one job.**
+
+### 4g. OPEN QUESTION: is `individual` the right default? - 2026-09-26
+
+**Status: awaiting the user's decision.** They asked to see the impact before
+choosing (2026-09-26). Nothing is changed. This section is the impact analysis and
+the queries that finish it.
+
+#### What the code does today
+
+`users.resource_permission` is `individual` by default - both the column default in
+`2024_11_26_053234_add_resource_permission_column_to_users_table.php` and what
+`UserInvitationService` writes for everyone who is not a Multi-Company Admin. Only
+two paths set anything wider: `CreateUser` sets `global` when the new user gets the
+Multi-Company Admin or Company Admin role, and the same for MCA on invitation.
+
+So, by default, a user sees only rows where they are the creator or the assignee on
+these eight tables:
+
+| Table | Visible to an `individual` user when |
+|---|---|
+| `accounts_account_moves` | `creator_id` or `invoice_user_id` is them |
+| `sales_orders` | `creator_id` or `user_id` is them |
+| `purchases_orders` | `creator_id` or `user_id` is them |
+| `inventories_operations` | `creator_id` or `user_id` is them |
+| `maintenance_requests` | `creator_id` or `user_id` is them |
+| `manufacturing_orders` | `creator_id` or `assigned_user_id` is them |
+| `projects_projects` | `creator_id`, `user_id`, or they follow it |
+| `projects_tasks` | `creator_id`, assigned via `projects_task_users`, or they follow it |
+
+Everything else in the application is unaffected - products, partners, companies,
+settings, all the configuration resources. This is not a general read restriction;
+it is these eight document types.
+
+**Who escapes it entirely:**
+
+- `resource_permission = global` - `Bouncer` returns `null` and the scope skips;
+- **super admins** - `SecurityServiceProvider` has a `Gate::before` granting
+  `bypass_ownership_scope` to the super-admin role;
+- Multi-Company Admins, but only because `CreateUser` gives them `global`. They are
+  on `MultiCompanyAdminService::DENIED_ABILITIES` for `bypass_ownership_scope`
+  itself, so the permission route is closed to them.
+
+`CompanyScope` is a separate and stricter boundary that applies regardless. Nothing
+in this question touches tenant isolation.
+
+#### The three options, and what each would change
+
+**Keep `individual`.** Staff see their own work; a manager needs `group` (with a
+team) or `global`. Costs nothing to leave. The risk is the one that motivated this
+whole thread: it is a *silent* restriction. A user who cannot find last month's
+invoice has no indication why, and neither does whoever they ask. If this is the
+intent, the product should say so on screen somewhere.
+
+**Default to `global`.** Everyone sees their company's documents; `CompanyScope`
+remains the boundary. This is the behaviour most small-business users expect, and
+it removes a class of confusing support tickets. It is a **widening** change, so it
+needs saying plainly: every existing `individual` user would gain visibility of
+every colleague's invoices, bills, orders and stock moves in their companies.
+Whether that is acceptable is a per-customer policy question, which is why the
+third option exists.
+
+**Per-company setting.** Correct in principle for a multi-tenant product, and the
+plugin already has the pattern for it (`logistics_company_settings`, per
+`docs/logistics-plan.md`). It is real work: a setting, a resolution point in
+`Bouncer`, and a decision about what happens to users whose explicit permission
+disagrees with their company's default. Worth scoping separately rather than
+bolting on.
+
+#### Queries to answer it
+
+Read-only. Run against production (Supabase SQL editor). No credentials are in this
+repository and none were used to write these.
+
+```sql
+-- 1. The headline: how is resource_permission actually distributed?
+select coalesce(resource_permission, '(null)') as permission,
+       count(*) as users,
+       count(*) filter (where is_active) as active
+from users
+group by 1
+order by 2 desc;
+
+-- 2. Which tenants this affects, and how unevenly.
+select c.id, c.name,
+       count(*) filter (where u.resource_permission = 'individual') as individual,
+       count(*) filter (where u.resource_permission = 'group')      as "group",
+       count(*) filter (where u.resource_permission = 'global')     as global
+from users u
+join companies c on c.id = u.default_company_id
+where u.is_active
+group by c.id, c.name
+order by individual desc;
+
+-- 3. The population already exempt, so not affected by any option.
+select r.name as role, count(distinct mhr.model_id) as users
+from roles r
+join model_has_roles mhr on mhr.role_id = r.id
+where lower(r.name) in ('super_admin', 'multi company admin', 'company admin')
+group by r.name;
+
+-- 4. Group users with no team. These see LESS once the 4f fix ships
+--    (own rows only, instead of everything). Assign a team or change
+--    their permission - do not restore the old behaviour.
+select u.id, u.email
+from users u
+left join user_team ut on ut.user_id = u.id
+where u.resource_permission = 'group' and ut.user_id is null;
+
+-- 5. What is actually hidden: the share of documents an average individual
+--    user cannot see. Run per table; invoices are the one people notice.
+select count(*)                                            as total,
+       count(distinct creator_id)                          as distinct_creators,
+       round(100.0 * count(*) / greatest(count(distinct creator_id), 1), 1)
+         as rows_per_creator
+from accounts_account_moves
+where deleted_at is null;
+```
+
+Query 5 is the one that makes it concrete. If `distinct_creators` is 1 or 2 -
+everything entered by one bookkeeper - then `individual` is harmless today and will
+bite the moment a second person is hired. If it is spread across many users, the
+restriction is already active and people are already living with it.
+
+Substitute the other seven table names into query 5 as needed:
+`sales_orders`, `purchases_orders`, `inventories_operations`,
+`maintenance_requests`, `manufacturing_orders`, `projects_projects`,
+`projects_tasks` (the last two also count followers, so their visible share is
+wider than the query suggests).
+
+#### Recommendation
+
+Run 1, 2 and 5 first; they are enough to decide. My expectation, stated so it can be
+checked rather than trusted: most DEKA ERP tenants are small enough that documents
+cluster on one or two creators, which means `individual` is currently invisible and
+will surface as "why can't my new colleague see our invoices?" as tenants grow. If
+that is what the numbers show, **default to `global` and let customers who want
+tighter visibility opt into `group` or `individual` per user** - the narrow setting
+is then a deliberate choice rather than an accident of a column default.
 
 ## 5. Notes for whoever picks this up
 
