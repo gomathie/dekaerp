@@ -1,5 +1,6 @@
 <?php
 
+use Webkul\Partner\Models\Partner;
 use Webkul\Project\Models\Project;
 use Webkul\Project\Models\Task;
 use Webkul\Security\Enums\PermissionType;
@@ -170,6 +171,32 @@ it('shows an individual user a task assigned to them through the users relation'
 
     expect($visible)->toContain($mine->id)
         ->not->toContain($theirs->id);
+});
+
+it('shows an individual user a project they follow', function () {
+    $company = CompanyHelper::company();
+
+    $owner = SecurityHelper::authenticateWithPermissions([]);
+    $followed = ownershipProject($company, $owner);
+    $unfollowed = ownershipProject($company, $owner);
+
+    $actor = ownershipActor($company, PermissionType::INDIVIDUAL);
+
+    // `OwnershipScope::applyFollowers()` matches on the follower's *partner*, not
+    // the user, and gives up when the actor has no `partner_id`. Production users
+    // always have one - `User::saved()` creates a Partner for them - but
+    // SecurityHelper builds users with `withoutEvents()`, so that hook never
+    // fires in tests and the partner has to be attached by hand. That gap is why
+    // this branch had never been exercised.
+    $partner = Partner::factory()->create(['company_id' => $company->id]);
+    $actor->forceFill(['partner_id' => $partner->getKey()])->saveQuietly();
+
+    $followed->followers()->create(['partner_id' => $partner->getKey()]);
+
+    $visible = Project::query()->pluck('id');
+
+    expect($visible)->toContain($followed->id)
+        ->not->toContain($unfollowed->id);
 });
 
 it('still keeps the company boundary for a global user', function () {
