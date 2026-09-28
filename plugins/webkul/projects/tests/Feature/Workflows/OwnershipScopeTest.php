@@ -1,7 +1,9 @@
 <?php
 
 use Webkul\Project\Models\Project;
+use Webkul\Project\Models\Task;
 use Webkul\Security\Enums\PermissionType;
+use Webkul\Security\Models\Team;
 use Webkul\Security\Models\User;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/CompanyHelper.php';
@@ -99,6 +101,75 @@ it('shows a global user every project in the company', function () {
 
     expect($visible)->toContain($mine->id)
         ->and($visible)->toContain($theirs->id);
+});
+
+it('shows a group user their teammates projects but not a stranger from another team', function () {
+    $company = CompanyHelper::company();
+
+    $teammate = SecurityHelper::authenticateWithPermissions([]);
+    $theirs = ownershipProject($company, $teammate);
+
+    $stranger = SecurityHelper::authenticateWithPermissions([]);
+    $strangersProject = ownershipProject($company, $stranger);
+
+    $actor = ownershipActor($company, PermissionType::GROUP);
+
+    // The team is what `group` means: Bouncer resolves it to every user who
+    // shares a team with the actor.
+    $team = Team::query()->create(['name' => 'Delivery '.uniqid()]);
+    $team->users()->sync([$actor->getKey(), $teammate->getKey()]);
+    $actor->unsetRelation('teams');
+
+    $visible = Project::query()->pluck('id');
+
+    expect($visible)->toContain($theirs->id)
+        ->not->toContain($strangersProject->id);
+});
+
+it('does not turn a group user with no team into a global one', function () {
+    $company = CompanyHelper::company();
+
+    $stranger = SecurityHelper::authenticateWithPermissions([]);
+    $theirs = ownershipProject($company, $stranger);
+
+    // No team attached. Bouncer's group branch resolves through
+    // `whereIn('teams.id', $user->teams()->pluck('id'))`, which matches nothing
+    // and used to hand back an empty array - and OwnershipScope reads an empty
+    // array as *no restriction*, so a group user who had lost their team, or
+    // never been given one, silently saw everything. Fails closed now: no team
+    // means only your own rows.
+    $actor = ownershipActor($company, PermissionType::GROUP);
+    $mine = ownershipProject($company, $actor);
+
+    expect($actor->teams()->count())->toBe(0);
+
+    $visible = Project::query()->pluck('id');
+
+    expect($visible)->toContain($mine->id)
+        ->not->toContain($theirs->id);
+});
+
+it('shows an individual user a task assigned to them through the users relation', function () {
+    $company = CompanyHelper::company();
+
+    $creator = SecurityHelper::authenticateWithPermissions([]);
+    $project = ownershipProject($company, $creator);
+
+    $actor = ownershipActor($company, PermissionType::INDIVIDUAL);
+
+    $mine = Task::factory()->create(['project_id' => $project->id, 'creator_id' => $creator->getKey()]);
+    $theirs = Task::factory()->create(['project_id' => $project->id, 'creator_id' => $creator->getKey()]);
+
+    // Task's second ownership source is OwnerSource::relation('users') - a
+    // many-to-many, exercised by OwnershipScope::applyRelation(), which nothing
+    // tested before. Assignment through a pivot has to count as ownership or an
+    // assignee cannot open their own work.
+    $mine->users()->sync([$actor->getKey()]);
+
+    $visible = Task::query()->pluck('id');
+
+    expect($visible)->toContain($mine->id)
+        ->not->toContain($theirs->id);
 });
 
 it('still keeps the company boundary for a global user', function () {
