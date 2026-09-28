@@ -383,6 +383,141 @@ such a job would see every company's and every user's rows.
    hooks on the eight scoped models; these two were found by tests, and the
    pattern is likely not limited to them.
 
+
+### 4e. Fixed - 2026-09-25 - Claude
+
+All five steps above carried out (user approved, 2026-09-25). The audit in step 5
+found **two more instances of the same defect**, which are fixed here too.
+
+#### The defect, stated once
+
+A model hook derives a child's `company_id` by reading its parent **through the
+relation**. The parent carries a global scope, so for an actor who is not entitled
+to see that parent the relation resolves to `null`. Two outcomes, both bad:
+
+- `??=` or `?->` swallows it and `company_id` stays **null** - and `CompanyScope`
+  reads a null company as *shared*, so the row becomes visible to **every
+  company** on the installation. Silent.
+- or a `?? current_company_id()` fallback files the row under the **actor's**
+  company instead of the parent's. Also silent, and also wrong.
+- or nothing swallows it and the save dies on `->name`. Loud, and the least
+  harmful of the three.
+
+Which company a row belongs to is a fact about its parent document. It is not a
+question about what the actor may look at - that is the policy's job, and it has
+already run by the time a saving hook fires.
+
+#### Fixed
+
+| Where | Was | Now |
+|---|---|---|
+| `Project\Models\TaskStage::creating()` | `$taskStage->project?->company_id` - null company, shared row | `parentProjectCompanyId()`, reads `Project::withoutGlobalScopes()` |
+| `Account\Models\MoveLine` saving chain | `$this->move->name` - fatal, and `company_id` from the same null | `loadParentMoveWithoutScopes()` resolves the move onto the relation once, before the chain runs |
+| `Project\Models\Task::creating()` | `Project::withoutGlobalScope(CompanyScope::class)` - dropped **only** the company scope, so ownership still hid the project and the task fell back to the actor's company | `withoutGlobalScopes()` |
+| `Inventory\Models\Move` creating + saving | `$move->operation?->company_id` - `Operation` is ownership-scoped; null company, shared row | `loadParentOperationWithoutScopes()` |
+| `Account\Models\Move` - **all five** line relations (`lines`, `invoiceLines`, `taxLines`, `paymentTermLines`, `roundingLines`) | lines handed out of these relations re-queried their own parent, so `MoveCalculator::productBaseLine()` died on `$line->move->isInvoice(true)` when posting | `->chaperone()` on each |
+
+The `chaperone()` one is worth dwelling on, because it took **three** runs to
+land and each run moved the same crash somewhere else:
+
+1. Fixing the model hook (`loadParentMoveWithoutScopes()`) made the new
+   regression test pass but left the suite at 2 failures. The hook only helps a
+   line that is *being saved*; the crash reappeared in `MoveCalculator`, a
+   **service**, reading `$line->move` on lines it had been handed.
+2. `->chaperone()` on `lines()` fixed the `roundedBaseAndTaxLines()` path. Still
+   2 failures - the stack frame had simply moved from `MoveCalculator:160` to
+   `:119`, because `recompute()` reads `invoiceLines`, a *different* relation.
+3. `->chaperone()` on all five.
+
+Two lessons, and the second is the one worth keeping:
+
+- **A scoped-parent read is not one bug in one hook.** It recurs anywhere a child
+  is handed around without its parent; the model layer is just where it surfaces
+  first.
+- **When a fix leaves the failure count unchanged, read the stack frame, not the
+  count.** Runs 2 and 3 both reported "2 failed, 520 passed" - identical numbers -
+  while the defect had actually moved. Taking the count at face value would have
+  read as "the fix did nothing".
+
+`chaperone()` is right here rather than defensive null handling: the lines came
+out of that move, so the inverse is a fact. It also removes one query per line.
+
+`Task` is the instructive one: whoever wrote it knew a parent read had to escape
+`CompanyScope` and said so explicitly - they simply did not know `Project` carries
+a *second* global scope. `withoutGlobalScope(CompanyScope::class)` reads as
+careful and is not. Prefer `withoutGlobalScopes()` for a parent read in a hook
+unless there is a reason to keep one.
+
+`MoveLine` and `Inventory\Models\Move` are resolved onto the relation rather than
+read field by field, because their hook chains read the parent many times - about
+forty in `MoveLine`, seven in `Move`'s `applyDefaults()`. Fixing only the
+`company_id` line would have left the rest fragile. The relation **definition** is
+deliberately untouched in both: it is what Filament and every read path use, and
+widening it would show a parent to anyone who can see one of its children.
+
+#### Not fixed, deliberately
+
+- `Inventory\Models\ProductQuantity::saving()` reads `$stock->location?->company_id`
+  and `Inventory\Models\MoveLine::creating()` reads `$line->move?->company_id`.
+  Neither parent (`Location`, `Inventory\Models\Move`) carries `OwnershipScope`, so
+  only `CompanyScope` applies and the existing behaviour is unchanged by this work.
+  They have the same shape and are worth revisiting, but changing them here would
+  be scope creep with no failing test behind it.
+- `time-off\LeaveAllocation` and `products\ProductSupplier` use
+  `withoutGlobalScope(CompanyScope::class)` on `Employee` and `Product`; neither
+  target is ownership-scoped, so they are correct as written.
+
+#### Tests added
+
+- `projects/tests/Feature/Workflows/OwnershipScopeTest.php` - **the coverage this
+  whole exercise existed for.** Four tests on `Project`: an `individual` user does
+  not see a stranger's project; does see one they were *assigned* (`user_id`, so
+  "individual" is not "only what I created"); a `global` user sees both; and
+  `global` still does not cross the **company** boundary, because confusing
+  ownership with tenancy is how a tenant boundary gets dropped.
+- `projects/.../CompanyIsolationTest.php` - a task stage derived from a project the
+  actor does not own. It asserts the actor genuinely cannot see that project
+  first, so the test cannot pass for the wrong reason if ownership is ever
+  switched off again.
+- `accounts/.../DocumentCompanyResolutionTest.php` - a move line on an invoice the
+  actor does not own, asserting `company_id`, `move_name` and `journal_id` are all
+  inherited. Same "prove the actor cannot see it" guard.
+- The 17 `SaleFeature` fixtures now give their actor `global`, matching the
+  `actingAsSalesOrderApiUser()` helper that `OrderTest` in the same directory
+  already used. Their 404s were correct behaviour; those tests are about the
+  delivery, invoice and line sub-resources, not about ownership.
+
+#### Verification
+
+| Suite | Before the fixes | After |
+|---|---|---|
+| ProjectFeature | 1 failed, 76 passed | **82 passed** (5 new tests) |
+| AccountFeature | 2 failed, 519 passed | **522 passed** (1 new test) |
+| SaleFeature | 17 failed, 126 passed | **143 passed** |
+| InventoryFeature | 884 passed | **884 passed** (re-run for the `Move` change) |
+| AccountingFeature | 54 passed | **54 passed** |
+
+**Nothing outstanding: 0 failed across all five.** ProjectFeature and
+InventoryFeature were re-run after their models changed, because the first run of
+each had started before the edit landed and a mid-run edit is not reliably picked
+up. Databases `aureuserp_testing_own1/2/3`.
+
+The other eight suites are unaffected by these fixes and were already green with
+the scope live (§4d): Security 55, Support 115, Employee 5, Partner 74,
+Purchase 178, Manufacturing 38, Product 250, Logistics 177.
+
+#### Still open
+
+- The positive ownership coverage exists for `Project` only. The other seven
+  globally scoped models have none. `group` (team-based) ownership is still
+  untested entirely - `OwnershipScopeTest` covers `individual` and `global`.
+- The two `CompanyScope`-only sibling reads noted above
+  (`ProductQuantity::saving()`, `Inventory\Models\MoveLine::creating()`).
+- Whether `individual` is the right default for `users.resource_permission` at
+  all is a product question, not a code one, and has not been asked. It is the
+  column default *and* what `UserInvitationService` sets, so every ordinary user
+  gets it; the eight models above are filtered for them in production today.
+
 ## 5. Notes for whoever picks this up
 
 - `assignedCompanyIds()` is simply the actor's `user_allowed_companies` rows and

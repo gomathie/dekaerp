@@ -319,12 +319,50 @@ class Move extends Model
         return MoveFactory::new();
     }
 
+    /**
+     * Put the owning operation on the relation, read without global scopes.
+     *
+     * `Operation` carries a global `OwnershipScope`, so `$this->operation`
+     * resolved to null for any actor who does not own it - and
+     * `users.resource_permission` defaults to `individual`, so that is the common
+     * case, not an edge one. Two consequences, both silent:
+     *
+     *  - `company_id` was left null when there was no operation type to fall back
+     *    on, and `CompanyScope` reads a null company as *shared*, so the move
+     *    became visible to every company on the installation;
+     *  - `applyDefaults()` reads the same relation six more times, for the
+     *    reference, partner, operation type, both locations and the schedule, and
+     *    quietly defaulted all of them.
+     *
+     * What a move inherits is a fact about its parent document, not a question
+     * about what the actor may look at. Resolved here rather than by loosening
+     * `operation()`, which every read path and Filament also use.
+     */
+    protected function loadParentOperationWithoutScopes(): void
+    {
+        if ($this->relationLoaded('operation') && $this->getRelation('operation') !== null) {
+            return;
+        }
+
+        if (! $this->operation_id) {
+            return;
+        }
+
+        $operation = Operation::withoutGlobalScopes()->find($this->operation_id);
+
+        if ($operation !== null) {
+            $this->setRelation('operation', $operation);
+        }
+    }
+
     protected static function boot()
     {
         parent::boot();
 
         static::creating(function (Move $move) {
             $move->creator_id ??= Auth::id();
+
+            $move->loadParentOperationWithoutScopes();
 
             $move->company_id ??= $move->operation?->company_id ?? $move->operationType?->company_id;
 
@@ -348,6 +386,8 @@ class Move extends Model
         });
 
         static::saving(function (Move $move) {
+            $move->loadParentOperationWithoutScopes();
+
             $move->applyDefaults();
         });
 
