@@ -1188,6 +1188,42 @@ MULTI-COMPANY FACTS THAT BITE
   "delivered with no promised date" silently exercised the promised-date branch
   and passed green. Whenever a test turns on a column being **absent**, set it
   to null explicitly rather than trusting the factory to leave it alone.
+• **Never read a parent through a relation inside a model hook.** The parent is
+  almost always globally scoped, so for an actor not entitled to see it the
+  relation returns **null**, and then: `??=`/`?->` leaves `company_id` null, which
+  `CompanyScope` reads as *shared* (visible to every company); a
+  `?? current_company_id()` fallback files the row under the **actor's** company;
+  a bare `=` **overwrites a stored value with null**; or the save dies. All silent
+  but the last. Use `Webkul\Support\Traits\InheritsParentCompany`, which hooks
+  `saving` (before `creating`, so it beats `BelongsToCompany`) and reads the parent
+  with `withoutGlobalScopes()`. For any other field, read the parent scope-free the
+  same way. Fixed in `TaskStage`, `Task`, `Account\MoveLine`, `Inventory\MoveLine`,
+  `Inventory\ProductQuantity` and `Manufacturing\Move`; details in
+  docs/company-admin-role-plan.md §4e/§4i/§4j.
+• `withoutGlobalScope(CompanyScope::class)` **reads as careful and is not.** Several
+  parents carry a global `OwnershipScope` too - `Account\Move`,
+  `Inventory\Operation`, `Manufacturing\Order`, `Sale\Order`, `Project`, `Task` -
+  so dropping one scope still hides them. Prefer `withoutGlobalScopes()` for a
+  parent read. This is exactly the bug `Project\Models\Task` shipped with.
+• `Builder::value()` **applies the model's casts** - it resolves through `first()`.
+  `Move::withoutGlobalScopes()->value('state')` returns a `MoveState`, not a
+  string, so a helper typed `?string` throws a TypeError. Type it to the cast.
+• `$table->enum(...)->change()` **cannot work on PostgreSQL**: Laravel renders it
+  as one `ALTER COLUMN ... type varchar(255) check (...)`, which Postgres rejects
+  with `syntax error at or near "check"`. To change only a default use
+  `DB::statement("ALTER TABLE t ALTER COLUMN c SET DEFAULT '...'")` (also valid on
+  MySQL 8). Watch the failure mode: `migrate:fresh` dies, so **every** test in the
+  suite fails with 0 assertions, which looks like catastrophe rather than one line.
+• When a change produces many failures sharing a theme, **run one of them alone and
+  read the exception** before theorising about the theme. 13 failures all named
+  after action visibility ("hides the validate and cancel actions on a done
+  receipt") were one wrong return type; the theme was noise.
+• `users.resource_permission` defaults to **`global`** since 2026-09-28 (user
+  decision): everyone in a company sees that company's records, and `CompanyScope`
+  is the boundary. `individual` and `group` remain grantable per user and are fully
+  tested, they are just no longer what people get by accident. A `group` user with
+  no team used to resolve to an empty id list, which `OwnershipScope` read as *no
+  restriction* - `Bouncer` now fails closed to their own rows.
 
 DOCUMENTATION AND UPSTREAM REVIEW (ALL AGENTS)
 
@@ -1212,6 +1248,16 @@ DOCUMENTATION AND UPSTREAM REVIEW (ALL AGENTS)
 
 DONE RECENTLY (newest first; details in docs/change-log.md)
 
+• 2026-09-29 — Company-wide visibility is now the default
+  (`users.resource_permission` → `global`, with `individual`/`group` still
+  grantable), plus the scoped-parent-read bug family it exposed: six models fixed,
+  `InheritsParentCompany` promoted from Logistics to `Webkul\Support`, a `group`
+  user with no team no longer sees everything, and `OwnershipScope` is finally
+  testable at all. 13 suites, 2,500+ tests, zero failures. Details in
+  docs/change-log.md and docs/company-admin-role-plan.md §4d–§4j.
+• 2026-09-25 — Logistics WP-11 Reports: five filtered table pages with export in a
+  Reporting cluster, behind their own Shield page permissions, plus a test pinning
+  that those permission names are actually generated. LogisticsFeature 177 passed.
 • 2026-09-20 — Full-suite follow-up: plugin installs and fresh-install defaults
   now target the configured Admin role instead of the first database role; an
   idempotent migration repairs protected Multi-Company Admin permissions and
