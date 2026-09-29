@@ -1125,7 +1125,11 @@ the old inventories code silently overwrote, and 884 + 177 tests show no legitim
 path reaching it. That is the point of the change: a child that disagrees with its
 parent about which tenant it belongs to is a bug to surface, not to paper over.
 
-#### Still open, deliberately
+#### Was left open here, closed in section 4j
+
+**Resolved 2026-09-29: the saving hook was confirmed by test and fixed; the
+`creating` hook suspicion was disproved. See section 4j.** The reasoning below is
+what it looked like before the test existed.
 
 `manufacturing\Models\Move::saving()` is the same family but the **destructive**
 variant - it uses `=`, not `??=`:
@@ -1145,6 +1149,100 @@ reads manufacturing `Order`, one of the eight ownership-scoped models, and mis-b
 Verified by reading; reachability not yet proven, since it needs a cross-company save.
 Not changed here - it needs its own test first, and guessing is what checking
 `MoveLine` saved me from.
+
+### 4j. The destructive variant, tested and fixed - 2026-09-29 - Claude
+
+§4i left `Manufacturing\Models\Move` alone on the grounds that it needed a test
+first. That test now exists, and it settled the question in both directions - one
+suspicion confirmed, one disproved.
+
+#### Confirmed: the saving hook wiped `warehouse_id`
+
+```php
+$move->warehouse_id    = $move->operationType?->warehouse_id;   // = , not ??=
+$move->mo_operation_id = $move->bomLine?->operation_id;
+```
+
+`OperationType` carries `CompanyScope`, so a save made while a different company was
+active resolved it to null - and because the assignment is unconditional it did not
+merely fail to populate the field, it **overwrote the stored value**. Eloquent fires
+`saving` on every `save()`, dirty or not, so a plain re-save was enough.
+
+The test named it exactly:
+
+```
+it keeps the warehouse when the operation type is outside the active companies
+Failed asserting that null is identical to 22.
+```
+
+`warehouse_id` 22 -> null, from nothing but `$move->save()` under another company.
+This is the only member of this family found in the whole audit that **destroys**
+data rather than failing to populate it; every other case used `??=` and could only
+leave a field unset.
+
+Fixed with the same scope-free parent read, and with `?? $move->warehouse_id` so the
+stored value survives when the parent genuinely cannot be found:
+
+```php
+$move->warehouse_id    = $move->parentOperationTypeWarehouseId() ?? $move->warehouse_id;
+$move->mo_operation_id = $move->parentBomLineOperationId() ?? $move->mo_operation_id;
+```
+
+The helpers return null only when there is no `operation_type_id` / `bom_line_id` at
+all, so the caller can tell "no parent" from "parent not visible from here" and keep
+what it has in the second case.
+
+#### Disproved: the creating hook's mis-branch
+
+§4i also suspected the `creating` hook, which reads
+`$move->rawMaterialOrder ?? $move->order` - manufacturing `Order` carries
+`OwnershipScope` - and returns early when that is null, skipping the name, origin,
+procurement group, locations, schedule and deadline it derives.
+
+**Not reachable on this path, and the test says so.** `it derives a component move
+from an order the actor does not own` passes: it asserts the actor genuinely cannot
+see the order (so the early return really is taken) and yet the move still comes out
+named, because `Order::getMoveRawValues()` supplies those values to
+`Move::create()` independently of the hook. The hook's derivation is redundant on
+this route rather than load-bearing.
+
+Left alone deliberately. Guessing is what this test was written to avoid, and the
+guess would have been wrong: "fixing" the creating hook would have changed working
+code on the strength of a misreading. The early return remains a latent oddity - a
+route that reached `Move::create()` *without* pre-computed values would hit it - but
+nothing demonstrates such a route today, and there is now a test standing where the
+question was.
+
+#### Verification
+
+`ManufacturingFeature`: **41 passed, 0 failed** (38 before, plus these three), on a
+freshly recreated `aureuserp_testing_own1`. The previously failing test passes.
+
+`InventoryFeature` was deliberately **not** re-run for this change. The hook lives in
+`Manufacturing\Models\Move::boot()`, and Eloquent registers model events per class,
+so inventories `Move` instances are untouched; no inventories file changed either.
+Its 884 from §4i stands.
+
+Pint and `php -l` clean.
+
+#### The family, closed
+
+Every instance found by the audit is now either fixed or explained:
+
+| Where | Shape | Outcome |
+|---|---|---|
+| `Project\Models\TaskStage` | `?->` -> null company -> shared row | fixed (§4e) |
+| `Project\Models\Task` | dropped only `CompanyScope` -> actor's company | fixed (§4e) |
+| `Account\Models\MoveLine` + `Move::lines()` etc. | null parent -> crash | fixed (§4e) |
+| `Inventory\Models\MoveLine` | session's company; null `state` | fixed (§4i) |
+| `Inventory\Models\ProductQuantity` | null company -> shared row | fixed (§4i) |
+| `Manufacturing\Models\Move` saving | **overwrote** stored values with null | fixed here |
+| `Manufacturing\Models\Move` creating | suspected mis-branch | **disproved**, test added |
+| `time-off\LeaveAllocation`, `products\ProductSupplier` | `withoutGlobalScope(CompanyScope::class)` | correct as written - neither parent is ownership-scoped |
+
+The rule they all now follow lives in one place,
+`Webkul\Support\Traits\InheritsParentCompany`, so the next child model gets it for
+free rather than re-deriving it.
 
 ## 5. Notes for whoever picks this up
 

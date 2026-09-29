@@ -6,6 +6,52 @@ Supabase's dashboard, Laravel Cloud, or production data. Ordered by urgency.
 ---
 ---
 
+## 0a. Check who is left narrower than their colleagues (2026-09-29)
+
+**Do this after deploying the company-wide visibility change**
+(`2026_09_28_090000_default_users_to_company_wide_visibility`).
+
+That migration set `users.resource_permission` to `global` for everyone who was
+`individual`, so people in a company now see that company's invoices, bills,
+orders, stock moves, projects and tasks. It deliberately left `group` rows alone:
+nobody ever *chose* `individual` - it was a column default and a hard-coded value in
+`UserInvitationService` - whereas `group` had to be selected in the form **and**
+given a team, so it is somebody's real decision.
+
+Run this and look at what comes back:
+
+```sql
+select id, email, resource_permission
+from users
+where resource_permission <> 'global'
+order by resource_permission, email;
+```
+
+Every row is now a deliberate exception rather than an accident. For each one,
+decide whether that narrower view is still wanted; if it is not, change it on the
+user's record in the admin panel. An empty result is the expected outcome for most
+installations.
+
+Two related notes:
+
+- **Tenant isolation is not affected.** `CompanyScope` is a separate scope and this
+  change does not touch it. Nobody can see another company's data as a result.
+- A `group` user with **no team** used to see everything, because an empty
+  authorized-id list was read as "no restriction". That is fixed in code, but such a
+  user now sees only their own rows - so if the query above returns `group` users,
+  confirm each still has a team, or the fix will look like a regression to them:
+
+```sql
+select u.id, u.email
+from users u
+left join user_team ut on ut.user_id = u.id
+where u.resource_permission = 'group' and ut.user_id is null;
+```
+
+Background: `docs/company-admin-role-plan.md` sections 4f-4h.
+
+---
+
 ## 0b. Stop POD link tokens being retained in edge logs (2026-09-24)
 
 **You must do this wherever requests reach the app before Laravel sees them -

@@ -370,23 +370,51 @@ you claim a package, finish it, or get blocked.
 | Package | Title | Depends on | Can run alongside | Status | Owner |
 | --- | --- | --- | --- | --- | --- |
 | WP-0 | Decisions D1–D15 | — | — | done | user (all recommendations accepted 2026-09-17) |
-| WP-1a | Starter kit: composer.json, enums, icon (easy) | — | WP-0 | review | Codex 2026-09-17 |
-| WP-1 | Foundation | WP-0, WP-1a | — (runs alone) | review (verified: 38 plugin tests, AccountFeature 521, SupportFeature 115) | Claude 2026-09-18 |
-| WP-2 | Shipments and workflow | WP-1 | WP-3, WP-8a | review (52/52 pass) | Claude 2026-09-18 |
-| WP-3 | Vehicles and drivers | WP-1 | WP-2, WP-8a | review | Codex 2026-09-21 |
-| WP-4 | Trips and dispatch board | WP-2, WP-3 | WP-5, WP-6, WP-7 | review (76/348 pass) | Claude 2026-09-21 |
-| WP-5 | Delivery and POD | WP-2 | WP-4, WP-6, WP-7 | review (88/408 pass) | Codex + Claude 2026-09-22 |
+| WP-1a | Starter kit: composer.json, enums, icon (easy) | — | WP-0 | done | Codex 2026-09-17 |
+| WP-1 | Foundation | WP-0, WP-1a | — (runs alone) | done (verified: 38 plugin tests, AccountFeature 521, SupportFeature 115) | Claude 2026-09-18 |
+| WP-2 | Shipments and workflow | WP-1 | WP-3, WP-8a | done (52/52 pass) | Claude 2026-09-18 |
+| WP-3 | Vehicles and drivers | WP-1 | WP-2, WP-8a | done | Codex 2026-09-21 |
+| WP-4 | Trips and dispatch board | WP-2, WP-3 | WP-5, WP-6, WP-7 | done (76/348 pass) | Claude 2026-09-21 |
+| WP-5 | Delivery and POD | WP-2 | WP-4, WP-6, WP-7 | done (88/408 pass) | Codex + Claude 2026-09-22 |
 | WP-5b | Stop link for POD capture (optional, D15) | WP-5 | WP-6, WP-7, WP-8b | review (161/629 pass; security review done, independent pass recommended) | Claude 2026-09-24, db `aureuserp_testing_wp5b` |
-| WP-6 | Waybill and delivery-note PDF | WP-2 | WP-4, WP-5, WP-7 | review | Codex 2026-09-21 |
-| WP-7 | Charges and shipment invoicing | WP-2 | WP-4, WP-5, WP-6, WP-8b | review (95/430 + AccountFeature 521) | Claude 2026-09-22 |
-| WP-8a | Expense records and approval | WP-1 | WP-2, WP-3 | review (121/500 pass, whole suite green) | Copilot 2026-09-23, finished by Claude 2026-09-23 |
-| WP-8b | Expense and carrier bills | WP-8a, WP-2 | WP-7 | todo | |
-| WP-9 | Sales quotation link (per D1) | WP-7 | WP-10 | review | Claude 2026-09-23, db `aureuserp_testing_wp9` |
+| WP-6 | Waybill and delivery-note PDF | WP-2 | WP-4, WP-5, WP-7 | done | Codex 2026-09-21 |
+| WP-7 | Charges and shipment invoicing | WP-2 | WP-4, WP-5, WP-6, WP-8b | done (95/430 + AccountFeature 521) | Claude 2026-09-22 |
+| WP-8a | Expense records and approval | WP-1 | WP-2, WP-3 | done (121/500 pass, whole suite green) | Copilot 2026-09-23, finished by Claude 2026-09-23 |
+| WP-8b | Expense and carrier bills | WP-8a, WP-2 | WP-7 | done (implemented in 1047b1a71 and ef810923a; PostingTest green) | |
+| WP-9 | Sales quotation link (per D1) | WP-7 | WP-10 | done | Claude 2026-09-23, db `aureuserp_testing_wp9` |
 | WP-9b | Customer page integration (per D11) | WP-7 | WP-10 | todo (extension point only, else ask) | |
-| WP-10 | Dashboard widgets | WP-4, WP-5 | WP-9, WP-11 | review (125/506 pass, whole suite green) | Claude 2026-09-24, db `aureuserp_testing_wp10` |
-| WP-11 | Reports | WP-4, WP-5, WP-7, WP-8b | WP-10 | review (176/676 pass, whole suite green) | Claude 2026-09-25, db `aureuserp_testing_wp11` |
+| WP-10 | Dashboard widgets | WP-4, WP-5 | WP-9, WP-11 | done (125/506 pass, whole suite green) | Claude 2026-09-24, db `aureuserp_testing_wp10` |
+| WP-11 | Reports | WP-4, WP-5, WP-7, WP-8b | WP-10 | done (176/676 pass, whole suite green) | Claude 2026-09-25, db `aureuserp_testing_wp11` |
 | WP-12 | Translations ar/es/fr/pt_BR | each finished package | anything | review (enums + foundation; rest waits for other packages) | Codex 2026-09-17 |
 | WP-13 | Hardening and release | all | — (runs alone) | todo | |
+
+**Promotions to `done` on 2026-09-29** (user: *"promote all green to done as
+needed"*). The basis is a full `LogisticsFeature` run at **177 passed, 0 failed**
+on that date, which covers WP-1 through WP-11, taken together with the
+cross-plugin suites those packages touch (AccountFeature 526, InventoryFeature 884,
+SaleFeature 143, SecurityFeature 55, SupportFeature 115 — all green the same day).
+The per-package figures kept in the Status column are the original verification from
+each handoff; they are history, not the current count.
+
+Three packages were **not** promoted, each for a stated reason:
+
+- **WP-5b — held at `review` on purpose.** It is green, but its own spec requires a
+  security review of the only public entry point in the plugin, and the user chose
+  to do *"a fresh adversarial pass by me"* (2026-09-24). Marking it `done` would
+  quietly close a security gate somebody is still holding open. It moves to `done`
+  when that pass happens, not before.
+- **WP-9b — still `todo`.** Genuinely unimplemented; the plan says extension point
+  only, otherwise ask.
+- **WP-12 — still rolling.** Later packages added English strings that have no
+  ar/es/fr/pt_BR yet: `reports.php`, `filament/clusters/reporting.php`,
+  `stop-link.php`, `expenses.php`, `filament/pages/dashboard.php` and the three
+  widget files. It cannot be `done` while those are outstanding.
+
+**WP-8b was recorded as `todo` and was not.** It shipped in `1047b1a71` (approved
+expenses become draft vendor bills) and `ef810923a` (the charge-subtotal fix and the
+remaining UI), and `tests/Feature/Expenses/PostingTest.php` covers it and is green.
+It has no handoff block, which is why the board drifted — the status was corrected
+here rather than left to mislead the next agent.
 
 ### Test database per package - claim yours before running
 
@@ -793,6 +821,92 @@ companies were never affected → uninstall guard. Check the Supabase advisor
 for the new tables.
 
 **Definition of done:** the prompt's list, plus every row in section 5 marked `done`.
+
+#### WP-13 progress - migration review - 2026-09-29 - Claude
+
+First WP-13 item attempted: *"migration review (every `down()` works)"*. Result:
+**all 20 logistics migrations reverse correctly**, with three findings about the
+lifecycle that change what this item even means.
+
+**The audit.** 19 of the 20 are matched `Schema::create` / `dropIfExists` pairs, each
+dropping exactly the table it creates. The 20th
+(`add_pod_capture_options_to_logistics_tables`) is an *alter*, which is where this
+usually goes wrong, and it is correct: it reverses both tables in the reverse order
+of `up()`, and uses `dropConstrainedForeignId('driver_id')` rather than a bare
+`dropColumn`, which is the right call - on PostgreSQL a plain `dropColumn` would
+leave the constraint behind.
+
+Rollback **order** is sound too: the `000001`-`000020` numbering happens to match
+dependency order, so reversing it drops children before parents and no foreign key
+blocks the teardown (`shipment_lines` before `shipments`, `trip_shipments` before
+both `trips` and `shipments`, and so on).
+
+**Finding 1: `migrate:rollback` is not the lifecycle that matters.**
+`PackageServiceProvider` loads a non-core plugin's migrations only when the plugin
+is installed:
+
+```php
+if ($this->package->runsMigrations) {
+    if ($this->package->isCore) { $this->loadMigrationsFrom($filePath); }
+    elseif ($this->package->isInstalled()) { $this->loadMigrationsFrom($filePath); }
+}
+```
+
+So a bare `migrate:fresh` never sees them - confirmed: 0 logistics migrations ran
+and 0 logistics tables existed afterwards. The teardown that actually happens in
+production is `UninstallCommand`, which drops the plugin's tables directly. The
+`down()` methods are correct and worth keeping correct, but the **install ->
+uninstall rehearsal in this package's spec is the real test**, not
+`migrate:rollback`.
+
+**Finding 2: the schema-level dependency on accounts is declared, and needed.**
+Attempting to run the logistics migrations alone fails at migration 5:
+
+```
+SQLSTATE[42P01]: relation "accounts_journals" does not exist
+```
+
+`LogisticsServiceProvider` declares `->hasDependencies(['products', 'employees',
+'accounts'])`, so a real install brings accounts up first and the foreign key
+resolves. **That failure was the test method, not a defect** - it came from flipping
+the `plugins` row by hand to force the migrations to load, which bypasses the
+dependency chain. Recorded because the shortcut looks like a bug and is not.
+
+**Finding 3: the company-wide visibility migration runs clean on PostgreSQL.**
+Incidental but useful confirmation from the same run:
+`2026_09_28_090000_default_users_to_company_wide_visibility .... 13.26ms DONE`. That
+is the `ALTER COLUMN ... SET DEFAULT` rewrite, after the first attempt using
+`$table->enum(...)->change()` proved impossible on Postgres (see section 4h).
+
+**Outstanding housekeeping:** `aureuserp_testing_own1` was left holding a
+half-migrated logistics schema and a hand-inserted `plugins` row from the experiment
+above, and the tool that runs shell commands stopped responding before it could be
+dropped. **Drop and recreate it before using it**, per the rule at the head of the
+database table in section 5:
+
+```sql
+DROP DATABASE IF EXISTS aureuserp_testing_own1;
+CREATE DATABASE aureuserp_testing_own1 OWNER sail;
+```
+
+**Still to do in WP-13,** in rough order of what is provable here versus what needs
+production access:
+
+- `docs/logistics.md` - does not exist yet; setup, usage, permissions, uninstall
+  behaviour. Fully doable here.
+- authorisation audit (every action and policy) and company-isolation audit - partly
+  covered already by `Foundation/PolicyTest`, `CompanyScopingInvariantsTest` and the
+  per-resource screen tests; needs a systematic pass.
+- N+1 review.
+- `translations:check` (the command exists:
+  `plugin-manager/src/Console/Commands/FindMissingTranslations.php`) - expect it to
+  report the WP-12 gaps listed under section 5.
+- phone-width check - needs a browser.
+- **install -> enable -> use -> disable -> uninstall rehearsal on a copy of the
+  production database**, and the Supabase advisor for the new tables. **User-owned:**
+  no production access from this session, and the Supabase connector is not
+  authorised here.
+- CHANGELOG.md release notes.
 
 ---
 

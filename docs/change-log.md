@@ -6,6 +6,144 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-09-29 (Everyone in a company sees the company's records, and the scoped-parent family)
+
+One decision and one bug family, connected: switching the ownership scope on in
+tests exposed both. Full detail and the decision trail in
+[`docs/company-admin-role-plan.md`](company-admin-role-plan.md) sections 4d-4j.
+
+### The decision: company-wide visibility is the default
+
+**User, 2026-09-28:** *"all users in the same company should be able to see each
+others invoices and details in the company"*, and *"if its currently individual, and
+can be given as rights then its also good"*.
+
+`users.resource_permission` defaulted to `individual`, which makes `OwnershipScope`
+filter eight document models - invoices, bills, sales and purchase orders, stock
+operations, manufacturing orders, projects, tasks - down to rows the user created or
+was assigned. Colleagues in the same company could not see each other's invoices.
+
+The old value arrived by two routes, and **the admin panel was never one of them**:
+the Users page form already defaulted to `global`. What produced `individual` was
+`UserInvitationService::accept()`, which hard-coded it for every non-Multi-Company
+Admin - the onboarding path - plus the column default for anything created without
+the field.
+
+Both changed, and existing `individual` rows were migrated. `group` rows were left
+alone: nobody ever *chose* `individual`, but `group` has to be picked in the form
+**and** given a team, so it is a real decision by whoever configured that user.
+
+Nothing was taken away. `PermissionType` keeps all three cases, the Users page still
+offers them, and every rule they drive still works and is tested. "Individual" is now
+a deliberate choice rather than an accident of a column default.
+
+**Before deploying:** this *widens* visibility. Tenant isolation is untouched -
+`CompanyScope` is a separate scope. Afterwards, confirm the remaining exceptions are
+intended: `select id, email, resource_permission from users where resource_permission <> 'global'`.
+
+### Why ownership was never tested, and what happened when it was
+
+`OwnershipScope::apply()` began with a bare `app()->runningInConsole()`, and
+`artisan test` **is** the console - so the scope was inert in every test in the
+repository. `CompanyScope`, `CompaniesScope` and `AllowedCompanyScope` all guard that
+line with `&& ! runningUnitTests()`; this one was the outlier. No test could show
+that `individual` restricted anything, or that it did not over-restrict.
+
+Adding the exemption is test-only (`runningUnitTests()` is `env === 'testing'`, so
+production console still skips it). With it live: **2,551 passed, 20 failed** across
+all thirteen suites. 17 were fixtures owned by the wrong user - correct product
+behaviour, fixed by owning them. 3 were real defects, and they opened the family
+below.
+
+Also fixed while covering the branch nobody had tested: a `group` user with **no
+team** resolved to an empty authorized-id list, which `OwnershipScope` read as *no
+restriction* - so they saw everything, exactly as if they were `global`, silently.
+`Bouncer` now fails closed to their own rows.
+
+### The family: reading a scoped parent inside a model hook
+
+Six models derived a child's `company_id` (or state) by reading the parent **through
+a relation**. The parent carries a global scope, so for an actor not entitled to see
+it the relation returns null, and then one of three things happens - all silent bar
+the last:
+
+- `??=` or `?->` swallows it and `company_id` stays **null**, which `CompanyScope`
+  reads as *shared*: the row becomes visible to every company;
+- a `?? current_company_id()` fallback files the row under the **actor's** company;
+- or nothing swallows it and the save dies.
+
+Fixed: `Project\Models\TaskStage`, `Project\Models\Task`,
+`Account\Models\MoveLine` (plus `chaperone()` on all five of `Move`'s line
+relations), `Inventory\Models\MoveLine`, `Inventory\Models\ProductQuantity`,
+`Manufacturing\Models\Move`.
+
+`Task` is the instructive one: its author *knew* the parent read had to escape
+`CompanyScope` and said so - they just did not know `Project` carries a **second**
+global scope. `withoutGlobalScope(CompanyScope::class)` reads as careful and is not.
+
+`Manufacturing\Models\Move` was the only **destructive** member: `=` rather than
+`??=`, so an unreadable operation type overwrote a stored `warehouse_id` with null on
+every save. A test caught it going from 22 to null on a plain `save()`.
+
+### The rule now lives in one place
+
+`InheritsParentCompany` already stated the rule - *child rows take their parent's
+company, never the session's* - but lived in **Logistics**, an optional plugin. Core
+`inventories` cannot depend on that. It moved to
+`Webkul\Support\Traits\InheritsParentCompany` with its exception and five
+translations; the Logistics trait is now a one-line alias and the Logistics exception
+extends the Support one, so the six models using it were untouched.
+
+Corrected while moving: it read parents with `withoutGlobalScope(CompanyScope::class)`
+- the `Task` trap exactly. Now `withoutGlobalScopes()`, a no-op for existing callers
+but it stops the shared rule carrying a known trap forward.
+
+### Three mistakes of mine, each with a transferable lesson
+
+- **A factory default can make a test assert the opposite of its name.**
+  `ShipmentFactory` fills `expected_delivery_at`, so a WP-11 test for "delivered with
+  no promised date" silently exercised the promised-date branch and passed green.
+  Null the column explicitly whenever a test turns on its absence.
+- **`->change()` on an enum column cannot work on PostgreSQL.** Laravel emits an
+  inline `check (...)`, which Postgres rejects. The failure mode is the danger:
+  `migrate:fresh` dies, so **every** test fails with 0 assertions - 55 in one suite,
+  47 in another, from one line. Use `ALTER COLUMN ... SET DEFAULT` when only the
+  default changes.
+- **`Builder::value()` applies the model's casts.** I typed a helper `?string` and
+  got a `MoveState` enum, breaking 13 tests - all of which surfaced as
+  *action-visibility* failures, which reads like a state-machine regression. Running
+  **one** of them alone gave the TypeError in a single line. When many failures share
+  a theme, get the exception from one before theorising about the theme.
+
+And twice, writing the test first stopped me changing working code: `Inventory\MoveLine`'s
+company derivation and `Manufacturing\Move`'s creating hook both turned out not to be
+broken the way reading suggested.
+
+### Verified
+
+| Suite | Result |
+|---|---|
+| InventoryFeature | 884 passed |
+| AccountFeature | 526 passed |
+| ProductFeature | 250 passed |
+| PurchaseFeature | 178 passed |
+| LogisticsFeature | 177 passed |
+| SaleFeature | 143 passed |
+| SupportFeature | 115 passed |
+| ProjectFeature | 86 passed |
+| SecurityFeature | 55 passed |
+| AccountingFeature | 54 passed |
+| ManufacturingFeature | 41 passed |
+| PartnerFeature | 74 passed |
+| EmployeeFeature | 5 passed |
+
+Zero failures. New coverage: `projects/.../OwnershipScopeTest.php` (6),
+`accounts/.../OwnershipScopeTest.php` (4),
+`manufacturing/.../ScopedParentReadTest.php` (3), plus regression tests in
+`CompanyIsolationTest`, `DocumentCompanyResolutionTest` and `RecordIntegrityTest`.
+Ownership is now covered as a *feature* - `individual`, `group`, `global`, column
+sources, the `users` pivot and followers - rather than being the untested default.
+
 ## 2026-09-25 (Logistics WP-11: reports)
 
 Five report pages in a new `Reporting` cluster, each a filtered Filament table
