@@ -9,6 +9,7 @@ use Webkul\Inventory\Enums\MoveState;
 use Webkul\Inventory\Facades\Inventory as InventoryFacade;
 use Webkul\Inventory\Models\Location;
 use Webkul\Inventory\Models\Move as BaseMove;
+use Webkul\Inventory\Models\OperationType;
 use Webkul\Inventory\Support\ProcurementOptions;
 use Webkul\Manufacturing\Enums\ManufacturingOrderState;
 
@@ -143,6 +144,39 @@ class Move extends BaseMove
         return 1.0;
     }
 
+    /**
+     * The warehouse of this move's operation type, read without global scopes.
+     *
+     * Null only when there is no operation type at all, so the caller can tell
+     * "no parent" apart from "parent not visible from here" and keep the stored
+     * value in the second case.
+     */
+    protected function parentOperationTypeWarehouseId(): ?int
+    {
+        if (! $this->operation_type_id) {
+            return null;
+        }
+
+        return OperationType::withoutGlobalScopes()
+            ->whereKey($this->operation_type_id)
+            ->value('warehouse_id');
+    }
+
+    /**
+     * The operation of this move's bill-of-material line, read without global
+     * scopes. Same reasoning as above.
+     */
+    protected function parentBomLineOperationId(): ?int
+    {
+        if (! $this->bom_line_id) {
+            return null;
+        }
+
+        return BillOfMaterialLine::withoutGlobalScopes()
+            ->whereKey($this->bom_line_id)
+            ->value('operation_id');
+    }
+
     protected static function boot()
     {
         parent::boot();
@@ -192,10 +226,29 @@ class Move extends BaseMove
             }
         });
 
+        /*
+         * Both parents are read without global scopes, and each field keeps its
+         * existing value when the parent cannot be found at all.
+         *
+         * This used to be a bare `=` on the relations:
+         *
+         *     $move->warehouse_id = $move->operationType?->warehouse_id;
+         *
+         * `OperationType` carries `CompanyScope`, and `BillOfMaterialLine` is
+         * company-scoped too, so a save made while a different company was active
+         * resolved them to null - and because the assignment was unconditional it
+         * did not merely fail to populate the field, it **overwrote the stored
+         * value with null on every save**. Confirmed by `ScopedParentReadTest`:
+         * warehouse_id went from 22 to null on a plain `save()` under another
+         * company.
+         *
+         * Which warehouse a move belongs to is a fact about its operation type, not
+         * a question about who is looking.
+         */
         static::saving(function ($move) {
-            $move->warehouse_id = $move->operationType?->warehouse_id;
+            $move->warehouse_id = $move->parentOperationTypeWarehouseId() ?? $move->warehouse_id;
 
-            $move->mo_operation_id = $move->bomLine?->operation_id;
+            $move->mo_operation_id = $move->parentBomLineOperationId() ?? $move->mo_operation_id;
         });
 
         static::created(function ($move) {

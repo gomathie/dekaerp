@@ -1003,6 +1003,149 @@ Both halves of the requirement are therefore pinned by passing tests side by sid
 Databases `aureuserp_testing_own1` and `own2`, both dropped and recreated after the
 bad first migration. Pint and `php -l` clean.
 
+### 4i. The parent-company rule promoted out of Logistics - 2026-09-29 - Claude
+
+**User direction (2026-09-29):** use this codebase's own rule rather than a new
+helper.
+
+The rule already existed, written for Logistics: *child rows take their parent's
+company, never the session's* - `InheritsParentCompany`, recorded in project
+memory. It is the right rule for the two inventories defects found in §4f/§4h
+follow-up. But it could not simply be reused, and the reason is worth recording.
+
+#### Why it had to move first
+
+`Webkul\Logistics\Models\Concerns\InheritsParentCompany` lives in an **optional**
+plugin. Logistics is installable and uninstallable; `inventories` is core. Having a
+core model `use` a Logistics trait inverts the dependency and breaks the moment
+somebody uninstalls Logistics.
+
+So "reuse the rule" meant promoting it to the package both sides already depend on,
+next to `BelongsToCompany`:
+
+| Moved to | From |
+|---|---|
+| `Webkul\Support\Traits\InheritsParentCompany` | `Webkul\Logistics\Models\Concerns\InheritsParentCompany` |
+| `Webkul\Support\Exceptions\CompanyMismatchException` | `Webkul\Logistics\Exceptions\CompanyMismatchException` |
+| `support::exceptions.company-mismatch` (en, ar, es, fr, pt_BR) | `logistics::exceptions.company-mismatch` |
+
+Nothing on the Logistics side was rewritten mid-review:
+
+- the old trait is now a one-line alias that `use`s the Support one. Laravel's
+  `bootTraits()` walks `class_uses_recursive()` and de-duplicates by method name,
+  so `bootInheritsParentCompany` still registers exactly once for the six Logistics
+  models that use it. They were left untouched.
+- the old exception now **extends** the Support one, overriding `between()` only to
+  keep the Logistics wording and its four translations, which `Expense` still
+  raises from its own check. One hierarchy instead of two unrelated classes with
+  the same name.
+- `RecordIntegrityTest` asserted on the Logistics class. `ShipmentLine` goes through
+  the trait and now raises the Support type, while `Expense` raises the Logistics
+  subclass, so the assertion moved up to the parent class, which covers both.
+
+#### One correction made while promoting it
+
+The trait read the parent with `withoutGlobalScope(CompanyScope::class)` - only the
+company scope. That is exactly the trap `Project\Models\Task` fell into (§4e): several
+plausible parents also carry a global `OwnershipScope` - accounts `Move`,
+inventories `Operation`, manufacturing and sales `Order`, `Project` - and dropping
+one scope leaves the parent invisible to anyone who does not own it, at which point
+`company_id` comes from the actor instead of the parent.
+
+Now `withoutGlobalScopes()`. This is a no-op for the existing Logistics callers,
+whose parents (`Shipment`, `Trip`) are not ownership-scoped, so promoting it changes
+nothing there - but it stops the shared rule carrying a known trap into whatever
+uses it next.
+
+#### Applied to the two inventories defects
+
+**`Inventory\Models\ProductQuantity`** - stock rows. Was
+`company_id = $stock->location?->company_id ?? $stock->company_id`. `Location` is
+company-scoped, and `autoAssignsCompany()` returns **false** here, so a location
+outside the session's active companies left `company_id` **null** - and
+`CompanyScope` reads null as *shared*, making that stock row visible to every
+company on the installation. The bespoke `?? $stock->company_id` fallback could not
+save it because there was nothing to fall back to.
+
+**`Inventory\Models\MoveLine`** - two separate problems in one hook:
+
+- `company_id ??= $line->move?->company_id` was **dead code whenever a company was
+  active**. `boot()` calls `parent::boot()` first, so `BelongsToCompany`'s creating
+  hook had already filled `company_id` from `CompanyContext`, and `??=` then did
+  nothing. Lines took the *session's* company, so a line could sit under a move
+  belonging to a different company. The trait fixes this properly by hooking
+  "saving", which fires before "creating".
+- `state ??= $line->move?->state` is **not** covered by the trait and nothing else
+  backfills it. The same scoped read left new lines with **no state at all**, and
+  `inventories_move_lines.state` is `nullable()`, so they saved silently. Fixed with
+  `parentMoveState()`, a scope-free read, for the same reason the trait reads the
+  parent scope-free.
+
+#### `Builder::value()` applies the model's casts
+
+Mine, caught by the suite. `parentMoveState()` was typed `?string`, on the
+assumption that `value('state')` returns the raw column:
+
+```
+TypeError: MoveLine::parentMoveState(): Return value must be of type ?string,
+Webkul\Inventory\Enums\MoveState returned
+```
+
+`Builder::value()` resolves through `first()` and therefore through the model, so
+the `state` cast is applied and a `MoveState` enum comes back. Typed `?MoveState`
+now.
+
+Worth knowing because the failure was **loud but mislabelled**: 13 tests failing
+across deliveries, receipts and dropships, all named after *action visibility*
+("hides the validate and cancel actions on a done receipt"), which reads like a
+state-machine regression rather than a return type. Running one of them alone gave
+the TypeError in one line. **When a change produces many failures with a common
+theme, run a single one for the exception before theorising about the theme** - the
+theme was a red herring, the cause was one type hint.
+
+The other helpers written in this workstream are unaffected: they read `company_id`,
+which has no cast.
+
+#### Verification
+
+`LogisticsFeature`: **177 passed, 0 failed** - the trait move and the alias are
+transparent to the six Logistics models, and the two `RecordIntegrityTest`
+mismatch tests pass against the parent exception class, confirming the hierarchy
+works for both the trait's throw and `Expense`'s own.
+
+`InventoryFeature`: **884 passed, 0 failed** - the guard for the two changed models,
+clean through the region where the type error had produced 13 failures. Plus a
+focused run of the 20 action tests that had failed: all 20 pass.
+
+Databases `aureuserp_testing_own1` and `own2`, `own2` dropped and recreated after
+the interrupted run. Pint and `php -l` clean on all eight changed files.
+
+Notably the trait now **throws** on a genuine parent/child company mismatch where
+the old inventories code silently overwrote, and 884 + 177 tests show no legitimate
+path reaching it. That is the point of the change: a child that disagrees with its
+parent about which tenant it belongs to is a bug to surface, not to paper over.
+
+#### Still open, deliberately
+
+`manufacturing\Models\Move::saving()` is the same family but the **destructive**
+variant - it uses `=`, not `??=`:
+
+```php
+$move->warehouse_id    = $move->operationType?->warehouse_id;
+$move->mo_operation_id = $move->bomLine?->operation_id;
+```
+
+`manufacturing\Models\Move extends Inventory\Models\Move`, so `operationType`
+resolves to the company-scoped `Inventory\Models\OperationType`. Because the
+assignment is unconditional, an unreadable parent does not merely fail to populate -
+it **overwrites an existing value with null on every save**. Its `creating` hook also
+reads manufacturing `Order`, one of the eight ownership-scoped models, and mis-branches
+(`if (! $mo || ...)`) when that is hidden.
+
+Verified by reading; reachability not yet proven, since it needs a cross-company save.
+Not changed here - it needs its own test first, and guessing is what checking
+`MoveLine` saved me from.
+
 ## 5. Notes for whoever picks this up
 
 - `assignedCompanyIds()` is simply the actor's `user_allowed_companies` rows and
