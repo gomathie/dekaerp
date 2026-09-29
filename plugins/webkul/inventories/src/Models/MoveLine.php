@@ -17,11 +17,28 @@ use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\UOM;
 use Webkul\Support\Traits\BelongsToCompany;
+use Webkul\Support\Traits\InheritsParentCompany;
 
 class MoveLine extends Model
 {
     use BelongsToCompany;
     use HasFactory;
+    use InheritsParentCompany;
+
+    /**
+     * A move line belongs to its move's company, not the session's.
+     *
+     * `BelongsToCompany` fills company_id from `CompanyContext` on "creating", and
+     * because `boot()` calls `parent::boot()` first that hook was registered before
+     * this model's own - so `company_id ??= $line->move?->company_id` below could
+     * never fire while a company was active, and a line could be filed under the
+     * actor's company rather than its move's. `InheritsParentCompany` hooks
+     * "saving", which runs first, so the parent wins and a genuine mismatch is
+     * refused instead of silently mis-filed.
+     */
+    protected static string $parentCompanyModel = Move::class;
+
+    protected static string $parentCompanyKey = 'move_id';
 
     protected $table = 'inventories_move_lines';
 
@@ -122,6 +139,28 @@ class MoveLine extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * The owning move's state, read without global scopes.
+     *
+     * Same reasoning as `InheritsParentCompany`: which state a new line starts in
+     * follows from its move, and is not a question about what the actor is allowed
+     * to see. `Move` carries `CompanyScope`, so the relation alone is not reliable
+     * here.
+     *
+     * Returns `MoveState`, not a string: `Builder::value()` resolves through the
+     * model, so the `state` cast is applied and an enum comes back.
+     */
+    protected function parentMoveState(): ?MoveState
+    {
+        if (! $this->move_id) {
+            return null;
+        }
+
+        return Move::withoutGlobalScopes()
+            ->whereKey($this->move_id)
+            ->value('state');
+    }
+
     protected static function newFactory(): MoveLineFactory
     {
         return MoveLineFactory::new();
@@ -134,9 +173,17 @@ class MoveLine extends Model
         static::creating(function (MoveLine $line) {
             $line->creator_id ??= Auth::id();
 
-            $line->company_id ??= $line->move?->company_id;
-
-            $line->state ??= $line->move?->state;
+            // company_id is handled by InheritsParentCompany, which runs on
+            // "saving" and therefore before this hook and before
+            // BelongsToCompany's.
+            //
+            // `state` is not, and nothing else backfills it: `$line->move` is
+            // company-scoped, so for a save whose session does not include the
+            // move's company the relation returned null and the line was stored
+            // with **no state at all** - the column is nullable, so it saved
+            // without complaint. Read scope-free for the same reason the trait
+            // does: the parent's state is a fact about the document.
+            $line->state ??= $line->parentMoveState();
         });
 
         static::saving(function (MoveLine $line) {
