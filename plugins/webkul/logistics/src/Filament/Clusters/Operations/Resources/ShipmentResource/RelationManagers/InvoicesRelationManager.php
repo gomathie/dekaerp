@@ -6,6 +6,7 @@ use Filament\Actions\Action;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Webkul\Account\Filament\Resources\InvoiceResource;
@@ -31,6 +32,7 @@ class InvoicesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->with('currency:id,name'))
             ->columns([
                 TextColumn::make('name')
                     ->label(__(static::$lang.'.columns.number'))

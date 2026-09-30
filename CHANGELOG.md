@@ -1,3 +1,23 @@
+# CHANGELOG - v1.7.0
+
+### Features
+
+* Added a multi-company Logistics module for shipments, fleet records, trip dispatch, delivery tracking, proof of delivery, waybills, customer invoicing, operating expenses, dashboards, and reports
+* Added per-company Logistics settings, numbering sequences, service products, capacity warnings, delivery requirements, and accounting defaults
+* Added one-time, expiring driver links for mobile proof-of-delivery capture without requiring a driver login
+* Added shipment register, delivery performance, profitability, vehicle trip history, and driver trip history reports with filtered exports
+
+### Improvements
+
+* Logistics can be enabled or disabled independently for each company while preserving its existing records
+* POD files use tenant-prefixed private object storage and authenticated company-aware downloads
+* Sales orders containing Logistics service products can create draft shipments without automatically committing operations to a route or delivery date
+
+### Fixes
+
+* [Security] Enforced company isolation and server-side authorization across Logistics actions, reports, exports, widgets, documents, and delivery files
+* [Security] Added hashed, single-use, revocable, expiring, and rate-limited public delivery links
+
 # 🚀 CHANGELOG — v1.6.0
 
 ### 🧩 Features

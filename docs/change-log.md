@@ -6,6 +6,50 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-09-30 (Logistics WP-13 hardening and release preparation)
+
+WP-13 completed the locally provable release work and moved to `review`; the
+production-copy rehearsal, Supabase advisor, independent stop-link review,
+customer-page decision and translation package remain explicit release gates.
+
+### Review fixes
+
+- Audited action/policy authorisation and every tenant-facing list, view, search,
+  widget, report, export and file path. Waybill printing, stop-link revocation and
+  charge creation now repeat their company-switch/ability checks where work is
+  performed.
+- Added a shared owning-company storage context for POD files and expense
+  receipts. Tenant-S3 URLs now use the authenticated secure-storage route and
+  receipt uploads retain random names, MIME/size validation and Filament's
+  existing-path tampering protection.
+- Fixed the unbilled currency eager load, added missing table eager loads,
+  removed an unsafe generic trip detach that left stops and shipment state
+  behind, dropped two unused pre-release shipment total columns, and pinned all
+  Logistics page permission names.
+- Added `docs/logistics.md` and v1.7.0 user-facing release notes.
+
+### Verification
+
+The same-day inherited release matrix was green before WP-13 (Logistics 177;
+Account 526; Inventory 884; Sale 143; Security 55; Support 115; Project 86;
+Manufacturing 41; Product 250; Purchase 178; Partner 74; Accounting 54;
+Employee 5). A post-edit full Logistics rerun was attempted but interrupted and
+is not claimed: 25 tests displayed green before cancellation. Eight directly
+affected regressions subsequently passed across two commands with 27 assertions;
+the split run followed correction of two test-fixture API errors. Pint passed on
+tracked changes and explicit new PHP paths. The final Filament
+`preventFilePathTampering()` guard was source-reviewed against the installed
+vendor code and formatted, but its added schema assertion was not rerun in Pest.
+
+The rendered public POD form was exercised in installed Chrome at 320x568 and
+390x844. Both had zero horizontal overflow, nonblank screenshots, correctly sized
+canvas pixels, signature capture and disabled repeat submission.
+
+`translations:check --plugin=logistics --details` was also run. It correctly
+failed, but found more than the old WP-12 note: ar, es, fr and pt_BR each have 17
+missing files, 23 missing keys and 2 structural mismatches. Those language-owned
+files were not changed in WP-13.
+
 ## 2026-09-29 (Everyone in a company sees the company's records, and the scoped-parent family)
 
 One decision and one bug family, connected: switching the ownership scope on in

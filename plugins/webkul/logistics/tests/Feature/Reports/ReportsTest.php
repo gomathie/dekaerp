@@ -283,6 +283,10 @@ it('generates the page permission each report asks for', function () {
         ->all();
 
     expect($generated)
+        ->toContain('page_logistics_dashboard')
+        ->toContain('page_logistics_dispatch_board')
+        ->toContain('page_logistics_unbilled_charges')
+        ->toContain('page_logistics_manage_company_settings')
         ->toContain('page_logistics_shipment_register')
         ->toContain('page_logistics_delivery_performance')
         ->toContain('page_logistics_shipment_profitability')

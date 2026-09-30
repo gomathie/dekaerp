@@ -3,7 +3,6 @@
 namespace Webkul\Logistics\Filament\Clusters\Operations\Resources\TripResource\RelationManagers;
 
 use Filament\Actions\AttachAction;
-use Filament\Actions\DetachAction;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -31,6 +30,7 @@ class ShipmentsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->with('customer:id,name'))
             ->columns([
                 TextColumn::make('name')
                     ->label(__(static::$lang.'.relations.shipments.columns.number'))
@@ -84,10 +84,6 @@ class ShipmentsRelationManager extends RelationManager
                             ->body($warnings === [] ? null : implode(' ', $warnings))
                             ->send();
                     }),
-            ])
-            ->recordActions([
-                DetachAction::make()
-                    ->visible(fn (): bool => Auth::user()?->can('update', $this->getOwnerRecord()) ?? false),
             ]);
     }
 

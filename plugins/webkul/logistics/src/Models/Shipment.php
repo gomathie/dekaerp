@@ -57,8 +57,6 @@ class Shipment extends Model
         'total_packages'  => 0,
         'total_weight_kg' => 0,
         'total_volume_m3' => 0,
-        'total_charges'   => 0,
-        'total_costs'     => 0,
     ];
 
     protected $fillable = [
@@ -83,8 +81,6 @@ class Shipment extends Model
         'total_packages',
         'total_weight_kg',
         'total_volume_m3',
-        'total_charges',
-        'total_costs',
         'sale_order_id',
         'customer_id',
         'pickup_address_id',
@@ -112,8 +108,6 @@ class Shipment extends Model
         'total_packages'       => 'integer',
         'total_weight_kg'      => 'decimal:3',
         'total_volume_m3'      => 'decimal:3',
-        'total_charges'        => 'decimal:4',
-        'total_costs'          => 'decimal:4',
     ];
 
     public string $recordTitleAttribute = 'name';

@@ -201,3 +201,18 @@ it('never shows another company’s unbilled charges', function () {
         ->assertCanSeeTableRecords([$mine])
         ->assertCanNotSeeTableRecords([$theirs]);
 });
+
+it('renders a populated currency on the unbilled charges table', function () {
+    $company = invoiceScreenCompany();
+    $shipment = LogisticsHelper::shipment($company, ['currency_id' => $company->currency_id]);
+    $charge = invoiceScreenCharge($shipment);
+
+    FilamentHelper::actingAsCompanyUser($company, [
+        'page_logistics_unbilled_charges',
+        'view_financials_logistics_shipment',
+    ]);
+
+    Livewire::test(UnbilledCharges::class)
+        ->assertOk()
+        ->assertCanSeeTableRecords([$charge]);
+});
