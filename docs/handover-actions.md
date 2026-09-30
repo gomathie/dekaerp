@@ -6,6 +6,55 @@ Supabase's dashboard, Laravel Cloud, or production data. Ordered by urgency.
 ---
 ---
 
+## 0c. Set TRUSTED_PROXIES, or the POD throttle is one shared bucket (2026-09-30)
+
+**Found by the second WP-5b security pass** (`docs/logistics-plan.md`, handoff log).
+
+`bootstrap/app.php` calls `trustProxies()` only when `TRUSTED_PROXIES` is non-empty,
+and `.env.example` ships it **empty**. With nothing trusted, `$request->ip()` returns
+the address of whatever connected - on Laravel Cloud, the platform's proxy - for
+every request.
+
+The public POD capture route is throttled on two keys. The token key is fine. The
+second one:
+
+```php
+Limit::perMinute(config('logistics.stop_link.per_ip_per_minute', 120))
+    ->by('logistics-stop-link:ip:'.$request->ip()),
+```
+
+becomes **a single 120-per-minute bucket shared by every driver on every tenant**.
+
+Why it matters:
+
+- 120 unauthenticated requests a minute - one script, or one busy tenant - returns
+  429 to every driver on the platform. POD capture is the step a driver cannot skip
+  at the door.
+- It contradicts the design. The token limiter is keyed on the token precisely so one
+  tenant cannot spend another's budget, but the per-IP limiter sits alongside it and
+  lets exactly that happen, at 120/min instead of the tenant's own limit.
+- The config comment claims this limit exists "to blunt someone walking the token
+  space from one address". When every address is the same address, it cannot tell that
+  attacker from the drivers.
+
+This is an availability problem, not a confidentiality one: the token is 64 random
+characters and cannot be walked at any rate.
+
+**What to do.** Set `TRUSTED_PROXIES` to the proxy range Laravel Cloud puts in front
+of the app, so `$request->ip()` is the real client again.
+
+**Do not reach for `TRUSTED_PROXIES=*` as a shortcut** unless you have confirmed that
+the platform overwrites client-supplied `X-Forwarded-For`. If it does not, `*` makes
+the header attacker-controlled: every request can present a fresh address and the
+per-IP limit is bypassed entirely, which is worse than the shared bucket.
+
+Two follow-ups for whoever holds the code, once the value is known: add a test for
+the per-IP limiter (both throttle tests currently exercise only the token key), and
+either key that limit on something sturdier or say plainly in
+`plugins/webkul/logistics/config/logistics.php` that it is best-effort.
+
+---
+
 ## 0a. Check who is left narrower than their colleagues (2026-09-29)
 
 **Do this after deploying the company-wide visibility change**

@@ -331,8 +331,16 @@ class StopLinkService
 
         try {
             if (! $guard->onceUsingId($link->created_by_id)) {
-                // The issuing user is gone or deactivated, so the link no
-                // longer has an authority behind it.
+                // The issuing user's record is gone, so the link has no authority
+                // behind it.
+                //
+                // This does *not* catch a deactivated user: onceUsingId() fails
+                // only when the record cannot be retrieved, and a deactivated one
+                // still can be. What stops them is `User::hasPermissionTo()`,
+                // which returns false while `is_active` is false, so the
+                // `markDelivered` and `capturePod` gates in DeliveryService refuse.
+                // Do not drop those checks on the assumption that this line has
+                // already screened the issuer - it has not.
                 throw StopLinkUnavailable::make();
             }
 

@@ -2367,3 +2367,157 @@ before the run and left empty afterwards.
 - After those gates, rerun the complete release matrix on fresh isolated
   databases. The inherited matrix is green, but the post-WP-13 full Logistics
   rerun did not complete and is deliberately not claimed.
+
+### WP-5b - second security pass - 2026-09-30 - Claude
+
+The user granted permission for me to do the adversarial pass they had reserved for
+themselves (2026-09-30).
+
+**Read this caveat first: I finished WP-5b, so this is self-review.** The value of
+the pass the user originally reserved was that it would come from someone who had not
+written the code. That property is not recoverable by me trying harder. What follows
+is an honest attempt to break it, plus an explicit list of what an outside reviewer
+should still look at.
+
+Approach: rather than re-walk the first pass's checklist, this one attacked what that
+list did **not** cover, and tried to falsify the security claims written in the code's
+own comments.
+
+#### One finding worth acting on
+
+**The per-IP half of the POD throttle is probably keyed on the load balancer, not the
+visitor - and that defeats the tenant isolation the design claims.**
+
+`bootstrap/app.php` trusts proxies only when an env var is non-empty:
+
+```php
+$trustedProxies = array_filter(array_map('trim', explode(',', (string) env('TRUSTED_PROXIES', ''))));
+
+if (! empty($trustedProxies)) {
+    $middleware->trustProxies(at: $trustedProxies);
+}
+```
+
+`.env.example` ships `TRUSTED_PROXIES=` **empty**. With nothing trusted,
+`$request->ip()` returns the address of whatever connected - on Laravel Cloud, the
+platform's proxy - for every request. So this limiter:
+
+```php
+Limit::perMinute(config('logistics.stop_link.per_ip_per_minute', 120))
+    ->by('logistics-stop-link:ip:'.$request->ip()),
+```
+
+collapses to **one 120/min bucket shared by every driver on every tenant**.
+
+Consequences:
+
+- **Availability.** 120 unauthenticated requests a minute - one script, or one busy
+  tenant - return 429 to every driver on the platform. Cheap, needs no token, and
+  POD capture is the step a driver cannot skip at the door.
+- **The stated control does not do what it says.** `config/logistics.php` says the
+  per-IP limit is there "to blunt someone walking the token space from one address".
+  When every address is the same address, it cannot distinguish that attacker from
+  the drivers; it throttles both.
+- **It contradicts the token limiter's whole rationale.** `StopLinkTest` says, of the
+  token-keyed limit: *"Drivers share mobile carrier NAT addresses, so if the limit
+  were keyed on the IP this would also lock out company B - which is the whole reason
+  it is keyed on the token."* Correct for that limiter - but the per-IP limiter still
+  exists alongside it, so **one tenant can still lock out another**, just at 120/min
+  rather than 2/min. The isolation is weaker than the comment implies.
+
+Not a confidentiality problem: 64 random characters cannot be walked at any rate, so
+the token itself is safe. This is availability plus a misleading claim.
+
+The opposite misconfiguration is worse for the control, and is the obvious quick
+"fix": `TRUSTED_PROXIES=*` makes `X-Forwarded-For` attacker-supplied, so every guess
+can present a fresh address and the per-IP limit is bypassed outright. Only use `*`
+if Laravel Cloud is confirmed to overwrite client-supplied `X-Forwarded-For` - and
+confirmed, not assumed.
+
+**Also untested.** Both throttle tests exercise the token key; nothing exercises the
+per-IP key or the proxy behaviour. The untested half is the half whose effectiveness
+depends on an unset env var.
+
+Recommended: set `TRUSTED_PROXIES` to the platform's proxy range, add a test for the
+per-IP limiter, and either key the second limit on something sturdier or state
+plainly in the config comment that it is best-effort. Logged for the user as
+`docs/handover-actions.md` section 0c, because the value itself is an ops decision.
+
+#### One inaccuracy that could cause a future bug
+
+`StopLinkService::asIssuer()` says:
+
+```php
+if (! $guard->onceUsingId($link->created_by_id)) {
+    // The issuing user is gone or deactivated, so the link no longer has an
+    // authority behind it.
+```
+
+`onceUsingId()` returns false only when the user cannot be **retrieved**. It does not
+consult `is_active`; a deactivated user is still retrievable, so this branch does not
+fire for them.
+
+The security outcome is nevertheless correct, by a different route:
+`User::hasPermissionTo()` returns false when `! $this->is_active`, so
+`Gate::authorize('markDelivered')` and `Gate::authorize('capturePod')` inside
+`DeliveryService` refuse. I checked for a blanket super-admin `Gate::before` that
+might skip those policies and **there is none** - the only two in the application are
+scoped to single abilities (`bypass_ownership_scope`, `bypass_company_scope`), and
+Shield registers none in this version. A deactivated issuer's links are genuinely
+dead.
+
+Severity is low, but it is a maintenance hazard rather than nothing: somebody who
+believes `onceUsingId` already screens deactivated users could "simplify" the
+permission checks and silently reopen the hole. The comment should say that the
+permission check is what stops a deactivated issuer.
+
+#### Verified sound (tried to break, could not)
+
+- **Token.** `Str::random(64)` is CSPRNG-backed; stored only as SHA-256; every lookup
+  is by hash. The plaintext is returned once by `issue()` and never persisted.
+- **No id from the request, anywhere.** The stop and shipment come from the link.
+  There is no parameter to tamper with to reach another company's record, and the
+  route treats the token as a credential matched on shape, not as a lookup key.
+- **`isUsable()`** checks all three of `used_at`, `revoked_at` and future
+  `expires_at`.
+- **No oracle.** Expired, used, revoked, wrong stop type, departed/skipped stop, and
+  a shipment that has left `OUT_FOR_DELIVERY` all surface as the same
+  `StopLinkUnavailable`. Whether a shipment was cancelled is not the caller's to
+  learn, and the `InvalidShipmentTransition` catch keeps that out of Sentry too.
+- **Replay and concurrency.** The row is re-read `lockForUpdate()` inside the
+  transaction and `used_at` is set only after `deliver()` succeeds - so two
+  simultaneous submissions cannot both spend it, and a rejected photo leaves the link
+  usable rather than stranding the driver.
+- **Tenant setting enforced server-side.** `require_pod_photo` reaches
+  `DeliveryService::validatePod()`; the controller's `photoRequired` is only for the
+  view. I specifically checked this because a tenant toggle enforced only in HTML
+  would be trivially bypassable - it is not.
+- **Signature handling.** Strict `data:image/png;base64,` prefix, strict base64, a
+  2MB cap on the string *before* decoding, and the result handed to `DeliveryService`
+  as a real file so its mimetype and size rules apply. The temp file is removed in a
+  `finally`, so a rejected submission does not leak disk either.
+- **CSRF** is real: the route group declares `web`, not inherited.
+- **`asIssuer` restores state in `finally`** - the previous user and the previous
+  company context - so an admin who opens a stop link in their own browser is not
+  logged out and does not have their active company changed underneath them.
+
+#### Still wants outside eyes
+
+Being explicit, since this pass was not independent:
+
+1. The production `TRUSTED_PROXIES` value, and whether Laravel Cloud strips
+   client-supplied `X-Forwarded-For`. Neither is knowable from the repository.
+2. A live per-IP throttle test against the deployed environment.
+3. The residual risks the first pass accepted, which remain true and are design
+   choices rather than defects: the token travels in the URL path (so it reaches
+   web-server and proxy logs, browser history, and anyone the message is forwarded
+   to), and a forwarded link discloses the shipment reference and the stop contact's
+   name. Single use, the chosen TTL, `no-referrer` and revoke-on-reissue reduce these;
+   they do not remove them.
+
+#### Status
+
+Left at `review`. The finding above is an ops action, not a code defect, and the
+inaccuracy is a comment - neither is a reason to hold the package, but the user asked
+for the gate and it is theirs to close. Move it to `done` once
+`docs/handover-actions.md` section 0c is settled.
