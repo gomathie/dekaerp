@@ -69,6 +69,12 @@ data, a public repo. Nothing here is a sandbox.
     Clear both web and Sanctum guards, restore the web default guard, and forget
     `CompanyContext`. WP-5b's tests passed while a real anonymous POD request failed
     because the fixture retained the issuer's allowed company.
+12. **Use quoted numeric keys in translation arrays.** The translation checker
+    normalizes quoted keys but treats a bare numeric-key line as literal source,
+    so a valid translation such as `4 => '4 horas'` is falsely reported as a
+    structure mismatch against `4 => '4 hours'`. Write both canonical and locale
+    keys as `'4' =>`; PHP still exposes the runtime key as integer `4`. Do not
+    leave user-facing values in English merely to satisfy the checker.
 
 **Vendor view overrides to re-diff on every Filament upgrade:**
 `resources/views/vendor/filament-panels/livewire/{sidebar,topbar}.blade.php`
@@ -115,6 +121,9 @@ security pass.** Detail in `docs/change-log.md` (2026-09-29) and
   identity, plus issuance concurrency and response-hardening gaps. Those are fixed;
   all 34 WP-5b tests passed in the integrated run. Full details and the exact suite
   caveat are in the newest WP-5b handoff and `docs/change-log.md`.
+- *"fix this"* for WP-12 (2026-09-30). The 68 missing locale files and all
+  later exception/company-setting keys were translated. The focused checker now
+  passes ar/es/fr/pt_BR **4/4**, and the quoted-TTL-key runtime regression passes.
 
 **Asked and answered**
 

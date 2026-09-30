@@ -1028,6 +1028,9 @@ WORKING RULES LEARNED THE HARD WAY
 • Host PHP is too old. Run tests, artisan and composer in the Sail image:
     docker compose up -d pgsql
     docker compose run --rm --no-deps laravel.test php artisan test --testsuite=SUITE_NAME
+• Translation source structure is checked line by line. Use quoted numeric keys
+  (`'4' =>`) in both English and locale arrays: PHP casts them back to integers,
+  while bare numeric keys make translated values look like structure changes.
 • Test suites share one database: run one suite at a time **per database**. An
   interrupted run poisons `aureuserp_testing`; drop and recreate it before
   re-running.

@@ -382,10 +382,10 @@ you claim a package, finish it, or get blocked.
 | WP-8a | Expense records and approval | WP-1 | WP-2, WP-3 | done (121/500 pass, whole suite green) | Copilot 2026-09-23, finished by Claude 2026-09-23 |
 | WP-8b | Expense and carrier bills | WP-8a, WP-2 | WP-7 | done (implemented in 1047b1a71 and ef810923a; PostingTest green) | |
 | WP-9 | Sales quotation link (per D1) | WP-7 | WP-10 | done | Claude 2026-09-23, db `aureuserp_testing_wp9` |
-| WP-9b | Customer page integration (per D11) | WP-7 | WP-10 | todo (extension point only, else ask) | |
+| WP-9b | Customer page integration (per D11) | WP-7 | WP-10 | deferred (no safe extension point; see handoff 2026-09-30) | |
 | WP-10 | Dashboard widgets | WP-4, WP-5 | WP-9, WP-11 | done (125/506 pass, whole suite green) | Claude 2026-09-24, db `aureuserp_testing_wp10` |
 | WP-11 | Reports | WP-4, WP-5, WP-7, WP-8b | WP-10 | done (176/676 pass, whole suite green) | Claude 2026-09-25, db `aureuserp_testing_wp11` |
-| WP-12 | Translations ar/es/fr/pt_BR | each finished package | anything | review (`translations:check`: each locale has 17 missing files, 23 missing keys and 2 structure issues) | Codex 2026-09-17 |
+| WP-12 | Translations ar/es/fr/pt_BR | each finished package | anything | done (`translations:check`: 4/4 pass; TTL regression 1/1 pass) | Codex 2026-09-30, db `aureuserp_testing_wp12` |
 | WP-13 | Hardening and release | all | — (runs alone) | review (local hardening complete; release gates remain below) | Codex 2026-09-30, db `aureuserp_testing_own1` |
 
 **Promotions to `done` on 2026-09-29** (user: *"promote all green to done as
@@ -396,7 +396,8 @@ SaleFeature 143, SecurityFeature 55, SupportFeature 115 — all green the same d
 The per-package figures kept in the Status column are the original verification from
 each handoff; they are history, not the current count.
 
-Three packages were **not** promoted, each for a stated reason:
+Three packages were **not** promoted on 2026-09-29, each for a stated reason;
+WP-12 has since been completed:
 
 - **WP-5b - held at `review` for deployment gates.** Codex completed the independent
   adversarial application-code review on 2026-09-30, found and fixed the fresh-request
@@ -406,10 +407,9 @@ Three packages were **not** promoted, each for a stated reason:
   the package remains `review` until those deployment risks are settled.
 - **WP-9b — still `todo`.** Genuinely unimplemented; the plan says extension point
   only, otherwise ask.
-- **WP-12 — still rolling.** Later packages added English strings that have no
-  ar/es/fr/pt_BR yet: `reports.php`, `filament/clusters/reporting.php`,
-  `stop-link.php`, `expenses.php`, `filament/pages/dashboard.php` and the three
-  widget files. It cannot be `done` while those are outstanding.
+- **WP-12 — completed 2026-09-30.** All 17 later English files now have
+  ar/es/fr/pt_BR translations, and the stale exception and company-settings
+  arrays are synchronized. The focused checker passes all four locale sets.
 
 **WP-8b was recorded as `todo` and was not.** It shipped in `1047b1a71` (approved
 expenses become draft vendor bills) and `ef810923a` (the charge-subtotal fix and the
@@ -2587,3 +2587,158 @@ tenant storage, upload validation, throttling, response caching and concurrent u
 
 Independent application-code review complete. WP-5b remains `review`, not `done`,
 because production actions 0b and 0c are still open.
+
+### WP-12 (completion slice) - 2026-09-30 - Codex
+
+Status: `done`. Focused test database: `aureuserp_testing_wp12`.
+
+#### Delivered
+
+- Added the 17 files introduced after the foundation slice under each of
+  `resources/lang/{ar,es,fr,pt_BR}`: `delivery.php`, `dispatch.php`,
+  `documents/waybill.php`, `expenses.php`,
+  `filament/clusters/finance/resources/expense.php`, the driver and vehicle
+  resources, dispatch board, shipment and trip resources, dashboard, all three
+  widgets, `invoicing.php`, `reports.php` and `stop-link.php` (68 files total).
+- Added the 16 later exception messages and seven later company-setting labels
+  and help texts to every locale, preserving all placeholders and canonical key
+  order.
+- Kept established transport terminology in each locale and preserved the
+  shared report arrays. Arabic uses Arabic-script values throughout the new
+  files; the existing stop-link and waybill layouts already derive RTL direction
+  and alignment from the active locale.
+- Expressed the five canonical stop-link TTL keys as quoted numeric strings in
+  all locales. PHP retains integer runtime keys, while the checker can now
+  normalize the keys instead of mistaking translated hour labels for structural
+  changes.
+
+#### Verification actually run
+
+- `php artisan translations:check --plugin=logistics --details` in Sail:
+  **4 locale sets passed, 0 failed**. The first complete run exposed only the
+  numeric-key checker edge in `stop-link.php`; after normalizing those key
+  declarations, the authoritative rerun was clean.
+- Existing `StopLinkTest` case `offers only the sanctioned link lifetimes` on
+  `aureuserp_testing_wp12`: **1 passed, 1 assertion**. This proves runtime keys
+  remain `[4, 8, 16, 24, 48]`.
+- Explicit Pint run over all four locale directories plus English
+  `stop-link.php`: passed. Final `vendor/bin/pint --dirty --format agent`:
+  passed.
+- Static RTL review: the public stop-link layout sets `dir="rtl"` for Arabic;
+  the waybill sets RTL document direction and right-aligns cells. No browser or
+  rendered-PDF linguistic review was performed in this slice.
+- The full `LogisticsFeature` suite was not run for this translation-only slice;
+  the focused runtime regression and purpose-built translation checker were run.
+
+#### Requests
+
+- **WP-13/release owner:** the WP-12 translation gate is closed. Include the
+  clean focused checker in the final release matrix after the remaining
+  production gates are resolved.
+
+### WP-9b - deferred: no safe extension point exists - 2026-09-30 - Claude
+
+The spec for this package says: *"Look for a Partners extension point first. If none
+exists, report instead of editing."* There is none. Reporting, as instructed, with a
+concrete proposal so the decision is actionable rather than just a refusal.
+
+#### What was inspected
+
+`Webkul\Partner\Filament\Resources\PartnerResource` is a base resource:
+`$shouldRegisterNavigation = false`, no `getRelations()` of its own, and **no
+registry, hook or static collection** through which another plugin could contribute a
+relation manager.
+
+The established pattern for adding tabs to a customer page is **subclassing**. Three
+plugins already do it, each declaring its own resource extending the base and
+overriding `getRelations()`:
+
+| Plugin | Adds |
+|---|---|
+| `contacts` | addresses, contacts |
+| `accounts` | bank accounts (`...parent::getRelations()` plus its own `RelationGroup`) |
+| `website` | addresses, contacts |
+
+Subclassing is an extension mechanism for a plugin that owns its own customer page.
+It is not an extension point for contributing a tab to somebody else's.
+
+#### Why the two available routes are both wrong here
+
+**Route 1 - add the relation manager to `accounts` or `contacts`
+`PartnerResource::getRelations()`.** Requires editing a file another package owns,
+which the plan forbids. Worse, it inverts the dependency direction: `accounts` and
+`contacts` are core, **Logistics is optional and uninstallable**. A static reference
+to a logistics relation manager from a core resource breaks the customer page the
+moment Logistics is uninstalled - the class is gone and its table is dropped. This is
+the same mistake as having core `inventories` depend on a Logistics trait, corrected
+in section 4i.
+
+It would also need `Partner::shipments()`, which does not exist (`Shipment` has
+`customer()`, but there is no reverse relation). A Filament relation manager needs a
+relationship method on the record's model, so this route additionally means editing
+the **partners** plugin's model to reference an optional plugin's class and a table
+that may not exist.
+
+**Route 2 - a fourth `PartnerResource` subclass inside Logistics.** Technically clean
+and owned by this package, but it does not deliver D11. It produces a *separate*
+Customers page under the Logistics menu, not a Shipments tab on the customer page
+people already use. It also duplicates a resource, and duplicate customer lists across
+menus is a worse product than no tab at all.
+
+#### What a safe extension point would look like
+
+Small, and it belongs to the **partners** plugin, so it needs the user's approval -
+which is exactly the second half of D11 (*"only via an extension point or with
+approval"*).
+
+Add a registry to the base resource, contributed to from a service provider:
+
+```php
+// Webkul\Partner\Filament\Resources\PartnerResource
+protected static array $contributedRelations = [];
+
+public static function contributeRelation(string|RelationGroup $relation): void
+{
+    static::$contributedRelations[] = $relation;
+}
+
+public static function getRelations(): array
+{
+    return static::$contributedRelations;
+}
+```
+
+Subclasses keep working unchanged, because they already call
+`...parent::getRelations()`. Logistics would then register from
+`LogisticsServiceProvider` only when installed and enabled, so uninstalling removes
+the tab cleanly instead of breaking the page:
+
+```php
+if (Package::isPluginInstalled('logistics')) {
+    PartnerResource::contributeRelation(
+        RelationGroup::make(__('logistics::...shipments'), [ShipmentsRelationManager::class])
+            ->icon('heroicon-o-truck'),
+    );
+}
+```
+
+`Partner::shipments()` is still needed and still lives in the partners plugin. The
+honest options are a small guarded relation there, or having the relation manager
+resolve shipments by `customer_id` without a model relation - the second keeps
+partners free of any logistics reference and is probably the right trade.
+
+Either way the tab must also respect what the rest of the plugin does: the per-company
+Logistics switch (`LogisticsAccess`), `view_any_logistics_shipment`, and the company
+scope - a customer visible in two companies must not show another company's shipments
+on their page.
+
+#### Recommendation
+
+Leave WP-9b `todo` and **do not ship a tab by editing another plugin**. It is the only
+outstanding item on the board that is a product addition rather than a release gate,
+so it is also the safest thing to defer past the first release.
+
+Raise it as its own small piece of work when wanted, scoped as: registry on the
+partners base resource, a guarded contribution from Logistics, a relation manager that
+filters by `customer_id` with the switch and permission applied, and a test that a
+customer shared between two companies sees only the active company's shipments.
