@@ -6,11 +6,11 @@ return [
     'stop'     => 'Stop',
 
     'ttl' => [
-        4  => '4 hours',
-        8  => '8 hours',
-        16 => '16 hours',
-        24 => '24 hours (1 day)',
-        48 => '48 hours (2 days)',
+        '4'  => '4 hours',
+        '8'  => '8 hours',
+        '16' => '16 hours',
+        '24' => '24 hours (1 day)',
+        '48' => '48 hours (2 days)',
     ],
 
     'form' => [
