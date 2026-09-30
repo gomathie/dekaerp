@@ -6,6 +6,29 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-09-30 (Logistics WP-12 translation completion)
+
+Completed the Logistics interface and document translations for Arabic,
+Spanish, French and Brazilian Portuguese. Each locale gained the 17 files added
+after WP-12's foundation slice, while `exceptions.php` gained 16 messages and
+the company-settings page gained seven fields/help texts. The new values reuse
+the existing Logistics vocabulary, preserve interpolation and pluralization
+tokens, and mirror English key order and structure.
+
+The first post-translation checker run revealed a checker/source interaction not
+present in the original backlog: bare numeric TTL keys made the checker compare
+the entire translated source line. The five TTL keys are now written as quoted
+numeric strings in English and all four locales. PHP still exposes integer keys,
+confirmed by the existing stop-link regression, while translated hour labels no
+longer produce false structure mismatches.
+
+Verification: the Sail Logistics translation checker passed **4/4 locale sets**
+with zero issues; the focused TTL regression passed **1 test / 1 assertion** on
+`aureuserp_testing_wp12`; explicit-path Pint and final dirty Pint both passed.
+The Arabic stop-link and waybill RTL wiring was reviewed statically. No browser,
+rendered-PDF linguistic review or full LogisticsFeature run was performed for
+this translation-only slice.
+
 ## 2026-09-30 (Logistics WP-5b: independent adversarial security review)
 
 The independent pass found that the public POD flow only worked in tests because
