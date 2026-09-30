@@ -4,6 +4,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Permission\PermissionRegistrar;
 use Webkul\Logistics\Enums\ProofCaptureChannel;
 use Webkul\Logistics\Enums\ShipmentState;
 use Webkul\Logistics\Enums\StopState;
@@ -16,7 +17,10 @@ use Webkul\Logistics\Models\Stop;
 use Webkul\Logistics\Models\StopLink;
 use Webkul\Logistics\Models\Trip;
 use Webkul\Logistics\Services\StopLinkService;
+use Webkul\Security\Models\Permission;
+use Webkul\Security\PermissionRegistrar as ForkPermissionRegistrar;
 use Webkul\Support\Models\Scopes\CompanyScope;
+use Webkul\Support\Services\CompanyContext;
 
 require_once __DIR__.'/../../Helpers/LogisticsHelper.php';
 
@@ -56,8 +60,12 @@ function deliverableStop($company): Stop
 function asGuest(): void
 {
     Auth::guard('web')->logout();
+    Auth::guard('web')->forgetUser();
+    Auth::guard('sanctum')->forgetUser();
+    Auth::shouldUse('web');
 
     session()->flush();
+    app()->forgetInstance(CompanyContext::class);
 }
 
 /**
@@ -137,6 +145,21 @@ it('revokes an earlier unused link when a new one is issued', function () {
     $this->get($secondUrl)->assertOk();
 });
 
+it('refuses to issue a link until the shipment is out for delivery', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+    $stop = deliverableStop($company);
+
+    Shipment::withoutGlobalScopes()->whereKey($stop->shipment_id)->update([
+        'state' => ShipmentState::IN_TRANSIT,
+    ]);
+
+    CompanyHelper::actingAsCompanyUser($company, ['send_pod_link_logistics_shipment']);
+
+    expect(fn () => app(StopLinkService::class)->issue($stop))
+        ->toThrow(Webkul\Logistics\Exceptions\StopLinkUnavailable::class)
+        ->and(StopLink::withoutGlobalScope(CompanyScope::class)->count())->toBe(0);
+});
+
 it('refuses to revoke links after the shipment company disables Logistics', function () {
     $company = LogisticsHelper::enable(LogisticsHelper::company());
 
@@ -159,6 +182,9 @@ it('opens the capture page for a valid token with no login', function () {
 
     $this->get($url)
         ->assertOk()
+        ->assertHeader('Cache-Control', 'no-store, private')
+        ->assertHeader('Referrer-Policy', 'no-referrer')
+        ->assertHeader('X-Frame-Options', 'DENY')
         ->assertSee($stop->shipment->name)
         ->assertSee('recipient_name', false);
 });
@@ -200,16 +226,20 @@ it('leaks nothing about the shipment on the refusal page', function () {
 
     $this->get($url)
         ->assertNotFound()
+        ->assertHeader('Cache-Control', 'no-store, private')
+        ->assertHeader('X-Frame-Options', 'DENY')
         ->assertDontSee($stop->shipment->name)
         ->assertDontSee($company->name);
 });
 
-it('captures proof of delivery through the link and marks it used', function () {
+it('captures proof of delivery from a fresh anonymous context and marks the link used', function () {
     $company = LogisticsHelper::enable(LogisticsHelper::company());
 
     [$stop, , $url] = issuedLink($company);
 
     asGuest();
+
+    expect(app(CompanyContext::class)->allowedIds())->toBe([]);
 
     $response = $this->post($url, [
         'recipient_name' => 'Ama Mensah',
@@ -232,6 +262,79 @@ it('captures proof of delivery through the link and marks it used', function () 
         ->and(StopLink::withoutGlobalScope(CompanyScope::class)->sole()->used_at)->not->toBeNull();
 });
 
+it('refuses a link after the issuing user is deactivated without exposing why', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+
+    [, , $url] = issuedLink($company);
+    $issuer = Auth::guard('web')->user();
+
+    $issuer->forceFill(['is_active' => false])->save();
+
+    asGuest();
+
+    $this->post($url, [
+        'recipient_name' => 'Ama Mensah',
+        'photo'          => UploadedFile::fake()->image('door.jpg'),
+    ])->assertNotFound();
+
+    expect(StopLink::withoutGlobalScope(CompanyScope::class)->sole()->used_at)->toBeNull()
+        ->and(Shipment::withoutGlobalScopes()->sole()->deliveryProofs()->count())->toBe(0);
+});
+
+it('refuses a link after the issuer loses the capture permission', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+
+    [, , $url] = issuedLink($company);
+    $issuer = Auth::guard('web')->user();
+    $permission = Permission::findByName('capture_pod_logistics_shipment', 'web');
+
+    $issuer->revokePermissionTo($permission);
+    app(PermissionRegistrar::class)->forgetCachedPermissions();
+    app(ForkPermissionRegistrar::class)->forgetCachedPermissions();
+
+    asGuest();
+
+    $this->post($url, [
+        'recipient_name' => 'Ama Mensah',
+        'photo'          => UploadedFile::fake()->image('door.jpg'),
+    ])->assertNotFound();
+
+    expect(StopLink::withoutGlobalScope(CompanyScope::class)->sole()->used_at)->toBeNull()
+        ->and(Shipment::withoutGlobalScopes()->sole()->deliveryProofs()->count())->toBe(0);
+});
+
+it('refuses a link after the issuer loses access to its company', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+
+    [, , $url] = issuedLink($company);
+    $issuer = Auth::guard('web')->user();
+
+    $issuer->allowedCompanies()->detach($company->id);
+
+    asGuest();
+
+    $this->post($url, [
+        'recipient_name' => 'Ama Mensah',
+        'photo'          => UploadedFile::fake()->image('door.jpg'),
+    ])->assertNotFound();
+
+    expect(StopLink::withoutGlobalScope(CompanyScope::class)->sole()->used_at)->toBeNull()
+        ->and(Shipment::withoutGlobalScopes()->sole()->deliveryProofs()->count())->toBe(0);
+});
+
+it('refuses a link after its company disables Logistics', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+
+    [, , $url] = issuedLink($company);
+
+    LogisticsHelper::disable($company);
+    asGuest();
+
+    $this->get($url)->assertNotFound();
+
+    expect(StopLink::withoutGlobalScope(CompanyScope::class)->sole()->used_at)->toBeNull();
+});
+
 it('does not leave the capturing request logged in as the issuing user', function () {
     $company = LogisticsHelper::enable(LogisticsHelper::company());
 
@@ -252,6 +355,22 @@ it('does not leave the capturing request logged in as the issuing user', functio
     // behind. The web guard is the one the service borrows an identity from,
     // so it is the one that could strand a login.
     $this->assertGuest('web');
+});
+
+it('restores an authenticated visitor and their company context after capture', function () {
+    $issuerCompany = LogisticsHelper::enable(LogisticsHelper::company());
+    $visitorCompany = LogisticsHelper::enable(LogisticsHelper::company());
+
+    [, , $url] = issuedLink($issuerCompany);
+    $visitor = CompanyHelper::actingAsCompanyUser($visitorCompany);
+
+    $this->post($url, [
+        'recipient_name' => 'Ama Mensah',
+        'photo'          => UploadedFile::fake()->image('door.jpg'),
+    ])->assertOk();
+
+    expect(Auth::guard('web')->id())->toBe($visitor->id)
+        ->and(app(CompanyContext::class)->currentId())->toBe($visitorCompany->id);
 });
 
 it('cannot be used twice', function () {
@@ -390,6 +509,29 @@ it('does not let one company’s link spend another’s rate limit', function ()
     $this->get($urlA)->assertStatus(429);
 
     $this->get($urlB)->assertOk();
+});
+
+it('enforces the best-effort per-IP limit across different tokens', function () {
+    config()->set('logistics.stop_link.per_ip_per_minute', 2);
+
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+
+    [, , $firstUrl] = issuedLink($company);
+    [, , $secondUrl] = issuedLink($company);
+    [, , $thirdUrl] = issuedLink($company);
+
+    asGuest();
+
+    $this->withServerVariables(['REMOTE_ADDR' => '203.0.113.77'])
+        ->get($firstUrl)
+        ->assertOk();
+    $this->withServerVariables(['REMOTE_ADDR' => '203.0.113.77'])
+        ->get($secondUrl)
+        ->assertOk();
+    $this->withServerVariables(['REMOTE_ADDR' => '203.0.113.77'])
+        ->get($thirdUrl)
+        ->assertStatus(429)
+        ->assertHeader('Retry-After');
 });
 
 it('records the driver on the proof only when the company asks for it', function () {

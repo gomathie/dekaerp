@@ -48,10 +48,12 @@ the platform overwrites client-supplied `X-Forwarded-For`. If it does not, `*` m
 the header attacker-controlled: every request can present a fresh address and the
 per-IP limit is bypassed entirely, which is worse than the shared bucket.
 
-Two follow-ups for whoever holds the code, once the value is known: add a test for
-the per-IP limiter (both throttle tests currently exercise only the token key), and
-either key that limit on something sturdier or say plainly in
-`plugins/webkul/logistics/config/logistics.php` that it is best-effort.
+Code follow-ups completed in the independent WP-5b review on 2026-09-30: a test now
+proves the per-IP limit applies across distinct tokens, and
+`plugins/webkul/logistics/config/logistics.php` calls that layer best-effort and names
+its `TRUSTED_PROXIES` dependency. What remains here is the production proxy value and
+a live check that Laravel Cloud reports the real client address without trusting a
+caller-supplied one.
 
 ---
 

@@ -2,14 +2,17 @@
 
 namespace Webkul\Logistics\Services;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
+use Webkul\Logistics\Enums\ShipmentState;
 use Webkul\Logistics\Enums\StopState;
 use Webkul\Logistics\Enums\StopType;
 use Webkul\Logistics\Exceptions\InvalidShipmentTransition;
+use Webkul\Logistics\Exceptions\LogisticsNotEnabledException;
 use Webkul\Logistics\Exceptions\StopLinkUnavailable;
 use Webkul\Logistics\Models\CompanySetting;
 use Webkul\Logistics\Models\Shipment;
@@ -108,23 +111,31 @@ class StopLinkService
      */
     public function issue(Stop $stop): string
     {
-        // Read back under the company scope: the ability check below grants on
-        // permission plus the switch, so without this a user could issue a link
-        // for a stop belonging to a company they cannot see.
-        $stop = Stop::query()->whereKey($stop->getKey())->firstOrFail();
-        $shipment = Shipment::query()->whereKey($stop->shipment_id)->firstOrFail();
-
-        LogisticsAccess::ensureEnabled((int) $shipment->company_id);
-        Gate::authorize('sendPodLink', $shipment);
-
-        if ($stop->type !== StopType::DELIVERY) {
-            throw StopLinkUnavailable::make();
-        }
-
         $token = Str::random(self::TOKEN_BYTES);
-        $ttlHours = max(1, (int) CompanySetting::forCompany((int) $shipment->company_id)->stop_link_ttl_hours);
 
-        DB::transaction(function () use ($stop, $token, $ttlHours): void {
+        DB::transaction(function () use ($stop, $token): void {
+            // The shipment is the common lock for issue and capture. Besides
+            // making two simultaneous issues revoke each other deterministically,
+            // this keeps the lock order the same as capture and state changes.
+            $shipment = Shipment::query()
+                ->whereHas('stops', fn (Builder $query): Builder => $query->whereKey($stop->getKey()))
+                ->lockForUpdate()
+                ->firstOrFail();
+            $stop = $shipment->stops()->whereKey($stop->getKey())->firstOrFail();
+
+            LogisticsAccess::ensureEnabled((int) $shipment->company_id);
+            Gate::authorize('sendPodLink', $shipment);
+
+            if (
+                $shipment->state !== ShipmentState::OUT_FOR_DELIVERY
+                || $stop->type !== StopType::DELIVERY
+                || in_array($stop->state, [StopState::DEPARTED, StopState::SKIPPED], true)
+            ) {
+                throw StopLinkUnavailable::make();
+            }
+
+            $ttlHours = max(1, (int) CompanySetting::forCompany((int) $shipment->company_id)->stop_link_ttl_hours);
+
             StopLink::query()
                 ->where('stop_id', $stop->getKey())
                 ->whereNull('used_at')
@@ -210,6 +221,10 @@ class StopLinkService
             throw StopLinkUnavailable::make();
         }
 
+        if (! LogisticsAccess::enabledFor((int) $link->company_id)) {
+            throw StopLinkUnavailable::make();
+        }
+
         return $link;
     }
 
@@ -263,6 +278,14 @@ class StopLinkService
         );
 
         return $this->asIssuer($link, fn (): Shipment => DB::transaction(function () use ($link, $stop, $podData): Shipment {
+            // Lock the parent first. issue() uses the same order before it
+            // revokes or creates a link, so issuing and spending cannot deadlock
+            // or leave two live credentials for one stop.
+            $shipment = Shipment::query()
+                ->whereKey($stop->shipment_id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
             $locked = StopLink::withoutGlobalScope(CompanyScope::class)
                 ->whereKey($link->getKey())
                 ->lockForUpdate()
@@ -271,8 +294,6 @@ class StopLinkService
             if (! $locked?->isUsable()) {
                 throw StopLinkUnavailable::make();
             }
-
-            $shipment = Shipment::query()->whereKey($stop->shipment_id)->firstOrFail();
 
             try {
                 $result = $this->delivery->deliver($shipment, $podData);
@@ -309,10 +330,11 @@ class StopLinkService
             throw StopLinkUnavailable::make();
         }
 
-        $context = app(CompanyContext::class);
-        $activeIds = $context->activeIds();
-        $currentId = $context->currentId();
+        $previousContext = app(CompanyContext::class);
+        $activeIds = $previousContext->activeIds();
+        $currentId = $previousContext->currentId();
         $companyId = (int) $link->company_id;
+        $previousDefaultGuard = Auth::getDefaultDriver();
 
         // The web guard by name, not the default one. onceUsingId() exists on
         // the session guard but not on every guard Laravel can have as its
@@ -327,9 +349,12 @@ class StopLinkService
         // admin who happened to open a stop link in their own browser.
         $previousUser = $guard->user();
 
-        $context->setActive([$companyId], $companyId);
-
         try {
+            // CompanyContext and Gate both resolve the user from the default
+            // guard. Establish the issuer first, then discard any context that
+            // was cached while this public request was still anonymous.
+            Auth::shouldUse('web');
+
             if (! $guard->onceUsingId($link->created_by_id)) {
                 // The issuing user's record is gone, so the link has no authority
                 // behind it.
@@ -344,11 +369,21 @@ class StopLinkService
                 throw StopLinkUnavailable::make();
             }
 
+            app()->forgetInstance(CompanyContext::class);
+            app(CompanyContext::class)->setActive([$companyId], $companyId);
+
             return $callback();
+        } catch (AuthorizationException|LogisticsNotEnabledException) {
+            // A removed company assignment, deactivated issuer, revoked
+            // permission or disabled module all invalidate the credential. A
+            // public caller gets the same answer as for an expired token.
+            throw StopLinkUnavailable::make();
         } finally {
             $previousUser ? $guard->setUser($previousUser) : $guard->forgetUser();
+            Auth::shouldUse($previousDefaultGuard);
 
-            $context->setActive($activeIds, $currentId);
+            app()->forgetInstance(CompanyContext::class);
+            app(CompanyContext::class)->setActive($activeIds, $currentId);
         }
     }
 

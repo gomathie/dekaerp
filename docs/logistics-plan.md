@@ -376,7 +376,7 @@ you claim a package, finish it, or get blocked.
 | WP-3 | Vehicles and drivers | WP-1 | WP-2, WP-8a | done | Codex 2026-09-21 |
 | WP-4 | Trips and dispatch board | WP-2, WP-3 | WP-5, WP-6, WP-7 | done (76/348 pass) | Claude 2026-09-21 |
 | WP-5 | Delivery and POD | WP-2 | WP-4, WP-6, WP-7 | done (88/408 pass) | Codex + Claude 2026-09-22 |
-| WP-5b | Stop link for POD capture (optional, D15) | WP-5 | WP-6, WP-7, WP-8b | review (161/629 pass; security review done, independent pass recommended) | Claude 2026-09-24, db `aureuserp_testing_wp5b` |
+| WP-5b | Stop link for POD capture (optional, D15) | WP-5 | WP-6, WP-7, WP-8b | review (independent pass complete; 34/34 WP-5b pass; ops 0b/0c remain) | Claude 2026-09-24; Codex review 2026-09-30, db `aureuserp_testing_own1` |
 | WP-6 | Waybill and delivery-note PDF | WP-2 | WP-4, WP-5, WP-7 | done | Codex 2026-09-21 |
 | WP-7 | Charges and shipment invoicing | WP-2 | WP-4, WP-5, WP-6, WP-8b | done (95/430 + AccountFeature 521) | Claude 2026-09-22 |
 | WP-8a | Expense records and approval | WP-1 | WP-2, WP-3 | done (121/500 pass, whole suite green) | Copilot 2026-09-23, finished by Claude 2026-09-23 |
@@ -398,11 +398,12 @@ each handoff; they are history, not the current count.
 
 Three packages were **not** promoted, each for a stated reason:
 
-- **WP-5b — held at `review` on purpose.** It is green, but its own spec requires a
-  security review of the only public entry point in the plugin, and the user chose
-  to do *"a fresh adversarial pass by me"* (2026-09-24). Marking it `done` would
-  quietly close a security gate somebody is still holding open. It moves to `done`
-  when that pass happens, not before.
+- **WP-5b - held at `review` for deployment gates.** Codex completed the independent
+  adversarial application-code review on 2026-09-30, found and fixed the fresh-request
+  company-context failure plus issuance concurrency and response-hardening gaps, and
+  all 34 stop-link tests passed. `docs/handover-actions.md` 0b (edge-log token
+  retention) and 0c (trusted proxy configuration) still need production access, so
+  the package remains `review` until those deployment risks are settled.
 - **WP-9b — still `todo`.** Genuinely unimplemented; the plan says extension point
   only, otherwise ask.
 - **WP-12 — still rolling.** Later packages added English strings that have no
@@ -2521,3 +2522,68 @@ Left at `review`. The finding above is an ops action, not a code defect, and the
 inaccuracy is a comment - neither is a reason to hold the package, but the user asked
 for the gate and it is theirs to close. Move it to `done` once
 `docs/handover-actions.md` section 0c is settled.
+
+### WP-5b - independent adversarial security review - 2026-09-30 - Codex
+
+The user explicitly authorized an independent review after the earlier same-author
+pass. This pass tested the public route as a genuinely fresh anonymous request and
+then traced token lookup, issuer authority, company context, workflow authorization,
+tenant storage, upload validation, throttling, response caching and concurrent use.
+
+#### Findings fixed
+
+1. **Critical: real public capture requests could not switch into the shipment
+   company.** `asIssuer()` called `CompanyContext::setActive()` while the request was
+   still anonymous. A fresh context therefore had no allowed companies and threw
+   before `onceUsingId()` authenticated the issuer. The old tests kept both a cached
+   `CompanyContext` and a Sanctum user from link issuance, so they masked the
+   production failure. The service now selects the web guard, authenticates first,
+   discards the anonymous context, validates the issuer's company assignment, and
+   restores the prior guard, user and company context in `finally`.
+2. **High: simultaneous reissue could leave two live credentials.** Revoking the old
+   link and creating its replacement were transactional but did not serialize on a
+   parent row. Issue and capture now lock the shipment first and use the same lock
+   order. Issuance also enforces `OUT_FOR_DELIVERY` and an open delivery stop inside
+   that transaction, not only in Filament visibility.
+3. **Medium: authority failures were distinguishable and disabled-company links
+   still opened.** Deactivation, permission removal, company-access removal and a
+   disabled Logistics switch now invalidate the public credential with the same 404
+   used for unknown, expired, used and revoked tokens.
+4. **Medium: credential pages were storable and frameable.** Success and refusal
+   responses now send `no-store`, `no-referrer`, `DENY` framing and `nosniff`
+   headers. The prior HTML meta tags alone did not control intermediary caches or
+   framing.
+5. **Low: the per-IP half of the limiter had no test and its comment overstated the
+   guarantee.** A regression now proves one source address is limited across distinct
+   tokens, and the config calls it best-effort unless `TRUSTED_PROXIES` is correct.
+
+#### Verification
+
+- Focused `StopLinkTest`: **33 passed, 104 assertions** before the final per-IP case
+  was added; the full suite subsequently ran all **34/34 stop-link tests green**.
+- Complete `LogisticsFeature` on freshly recreated
+  `aureuserp_testing_own1`: **190 passed, 1 failed, 734 assertions**. The sole failure
+  was outside WP-5b: `ShipmentWorkflowTest` appends `orderByDesc('id')` to the
+  relationship's existing `occurred_at ASC`, so a slow run selected
+  `OUT_FOR_DELIVERY` instead of the later `DELIVERED` event. The exact case then
+  passed alone: **1 passed, 5 assertions**. The complete run is therefore not claimed
+  green.
+- Pint: final `vendor/bin/pint --dirty --format agent` passed after all executable
+  review changes.
+
+#### Requests
+
+- **Shipment workflow owner:** in
+  `tests/Feature/Shipments/ShipmentWorkflowTest.php`, replace
+  `$shipment->events()->orderByDesc('id')` with
+  `$shipment->events()->reorder()->orderByDesc('id')`. This removes the inherited
+  `occurred_at ASC` order and the false assumption that every transition finishes in
+  one timestamp tick. This review did not edit that outside-owned file.
+- **User / production owner:** complete `docs/handover-actions.md` 0b and 0c. The
+  application cannot determine Laravel Cloud/CDN path-log retention or the correct
+  trusted proxy range from repository code.
+
+#### Status
+
+Independent application-code review complete. WP-5b remains `review`, not `done`,
+because production actions 0b and 0c are still open.

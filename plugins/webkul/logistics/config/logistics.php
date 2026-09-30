@@ -25,9 +25,10 @@ return [
     | company's drivers spend another's budget. A company can raise or lower its
     | own limit (logistics_company_settings.stop_link_rate_limit).
     |
-    | The per-IP limit stays as a second layer, set much higher: it is there to
-    | blunt someone walking the token space from one address, not to police a
-    | driver filling in one form.
+    | The per-IP limit stays as a best-effort second layer, set much higher: it
+    | is there to blunt someone walking the token space from one address, not to
+    | police a driver filling in one form. Its key is trustworthy only when
+    | TRUSTED_PROXIES matches the platform proxy configuration.
     |
     */
 
