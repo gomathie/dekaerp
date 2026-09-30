@@ -6,10 +6,11 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Webkul\Logistics\Models\DeliveryProof;
+use Webkul\Logistics\Support\CompanyStorage;
 
 class DeliveryProofsRelationManager extends RelationManager
 {
@@ -28,6 +29,7 @@ class DeliveryProofsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->with('stop:id,sequence'))
             ->columns([
                 TextColumn::make('recipient_name')
                     ->label(__('logistics::delivery.relation-manager.columns.recipient'))
@@ -65,11 +67,7 @@ class DeliveryProofsRelationManager extends RelationManager
             return null;
         }
 
-        if (config('filesystems.disks.public.driver') !== 'tenant-s3') {
-            return Storage::disk('public')->url($path);
-        }
-
-        return route('secure-storage', ['path' => static::objectKey($proof, (string) $path)]);
+        return CompanyStorage::url((int) $proof->company_id, (string) $path);
     }
 
     /**
@@ -83,12 +81,6 @@ class DeliveryProofsRelationManager extends RelationManager
      */
     public static function objectKey(DeliveryProof $proof, string $path): string
     {
-        $root = trim((string) config('filesystems.disks.public.root'), '/');
-
-        return implode('/', array_filter([
-            $root,
-            'companies/'.(int) $proof->company_id,
-            ltrim($path, '/'),
-        ], fn (string $segment): bool => $segment !== ''));
+        return CompanyStorage::objectKey((int) $proof->company_id, $path);
     }
 }

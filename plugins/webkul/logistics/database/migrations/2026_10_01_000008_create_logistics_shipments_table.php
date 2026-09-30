@@ -31,8 +31,6 @@ return new class extends Migration
             $table->unsignedInteger('total_packages')->default(0);
             $table->decimal('total_weight_kg', 15, 3)->default(0);
             $table->decimal('total_volume_m3', 15, 3)->default(0);
-            $table->decimal('total_charges', 15, 4)->default(0);
-            $table->decimal('total_costs', 15, 4)->default(0);
 
             // Sales is optional, so this is a plain indexed column, not a foreign key.
             $table->unsignedBigInteger('sale_order_id')->nullable()->index();

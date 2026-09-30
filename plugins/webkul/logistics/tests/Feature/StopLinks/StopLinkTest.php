@@ -8,6 +8,7 @@ use Webkul\Logistics\Enums\ProofCaptureChannel;
 use Webkul\Logistics\Enums\ShipmentState;
 use Webkul\Logistics\Enums\StopState;
 use Webkul\Logistics\Enums\StopType;
+use Webkul\Logistics\Exceptions\LogisticsNotEnabledException;
 use Webkul\Logistics\Models\CompanySetting;
 use Webkul\Logistics\Models\Driver;
 use Webkul\Logistics\Models\Shipment;
@@ -134,6 +135,19 @@ it('revokes an earlier unused link when a new one is issued', function () {
         ->assertNotFound();
 
     $this->get($secondUrl)->assertOk();
+});
+
+it('refuses to revoke links after the shipment company disables Logistics', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+
+    [$stop] = issuedLink($company);
+
+    LogisticsHelper::disable($company);
+
+    expect(fn () => app(StopLinkService::class)->revoke($stop))
+        ->toThrow(LogisticsNotEnabledException::class);
+
+    expect(StopLink::withoutGlobalScope(CompanyScope::class)->sole()->revoked_at)->toBeNull();
 });
 
 it('opens the capture page for a valid token with no login', function () {

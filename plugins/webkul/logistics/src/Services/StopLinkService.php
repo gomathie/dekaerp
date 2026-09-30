@@ -149,6 +149,7 @@ class StopLinkService
         $stop = Stop::query()->whereKey($stop->getKey())->firstOrFail();
         $shipment = Shipment::query()->whereKey($stop->shipment_id)->firstOrFail();
 
+        LogisticsAccess::ensureEnabled((int) $shipment->company_id);
         Gate::authorize('sendPodLink', $shipment);
 
         StopLink::query()
@@ -169,6 +170,7 @@ class StopLinkService
         // else: the ability grants on permission plus the switch.
         $shipment = Shipment::query()->whereKey($shipment->getKey())->firstOrFail();
 
+        LogisticsAccess::ensureEnabled((int) $shipment->company_id);
         Gate::authorize('sendPodLink', $shipment);
 
         return $this->liveLinks($shipment)->update(['revoked_at' => now()]);

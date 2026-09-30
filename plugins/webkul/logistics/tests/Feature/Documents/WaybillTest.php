@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Auth\Access\AuthorizationException;
+use Webkul\Logistics\Exceptions\LogisticsNotEnabledException;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\PrintWaybillAction;
 use Webkul\Logistics\Models\ShipmentLine;
 use Webkul\Logistics\Support\LogisticsSequences;
@@ -95,6 +96,19 @@ it('authorizes the download where the PDF work happens', function () {
 
     expect(fn () => PrintWaybillAction::make()->download($shipment))
         ->toThrow(AuthorizationException::class);
+
+    expect($shipment->refresh()->waybill_no)->toBeNull();
+});
+
+it('refuses to print after the shipment company disables Logistics', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+    $shipment = LogisticsHelper::shipment($company);
+
+    FilamentHelper::actingAsCompanyUser($company, ['view_logistics_shipment']);
+    LogisticsHelper::disable($company);
+
+    expect(fn () => PrintWaybillAction::make()->download($shipment))
+        ->toThrow(LogisticsNotEnabledException::class);
 
     expect($shipment->refresh()->waybill_no)->toBeNull();
 });

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Webkul\Logistics\Models\Shipment;
+use Webkul\Logistics\Support\LogisticsAccess;
 use Webkul\Logistics\Support\LogisticsSequences;
 use Webkul\Support\Traits\PDFHandler;
 
@@ -31,6 +32,8 @@ class PrintWaybillAction extends Action
                 ->whereKey($record->getKey())
                 ->lockForUpdate()
                 ->firstOrFail();
+
+            LogisticsAccess::ensureEnabled((int) $shipment->company_id);
 
             if (blank($shipment->waybill_no)) {
                 LogisticsSequences::ensure(LogisticsSequences::WAYBILL, (int) $shipment->company_id);

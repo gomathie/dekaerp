@@ -5,6 +5,7 @@ namespace Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResour
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Webkul\Logistics\Enums\ExpenseState;
@@ -40,6 +41,12 @@ class ExpensesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->with([
+                'category:id,name',
+                'payee:id,name',
+                'currency:id,name',
+                'billMove:id,name',
+            ]))
             ->columns([
                 TextColumn::make('date')
                     ->label(__(static::$lang.'.fields.date'))

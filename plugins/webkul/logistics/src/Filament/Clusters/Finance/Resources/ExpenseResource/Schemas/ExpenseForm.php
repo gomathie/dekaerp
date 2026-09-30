@@ -11,8 +11,12 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Webkul\Logistics\Enums\ExpensePaidBy;
 use Webkul\Logistics\Models\ExpenseCategory;
+use Webkul\Logistics\Support\CompanyStorage;
 use Webkul\Logistics\Support\LogisticsAccess;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Services\CompanyContext;
@@ -109,12 +113,59 @@ class ExpenseForm
                             ->disk('public')
                             ->directory('logistics/expenses')
                             ->preserveFilenames(false)
+                            ->preventFilePathTampering()
+                            ->fetchFileInformation(false)
+                            ->saveUploadedFileUsing(fn (TemporaryUploadedFile $file, Get $get): string => static::storeReceipt(
+                                $file,
+                                (int) $get('company_id'),
+                            ))
+                            ->getUploadedFileUsing(fn (string $file, string|array|null $storedFileNames, Get $get): array => static::receiptInfo(
+                                $file,
+                                $storedFileNames,
+                                (int) $get('company_id'),
+                            ))
+                            ->deleteUploadedFileUsing(fn (string $file, Get $get): bool => CompanyStorage::run(
+                                (int) $get('company_id'),
+                                fn (): bool => Storage::disk('public')->delete($file),
+                            ))
                             ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png', 'image/webp'])
                             ->maxSize(10240)
                             ->required(fn (Get $get): bool => (bool) ExpenseCategory::query()->whereKey($get('category_id'))->value('requires_receipt'))
                             ->columnSpanFull(),
                     ]),
             ]);
+    }
+
+    protected static function storeReceipt(TemporaryUploadedFile $file, int $companyId): string
+    {
+        LogisticsAccess::ensureEnabled($companyId);
+
+        $path = CompanyStorage::run(
+            $companyId,
+            fn (): string|false => $file->store('logistics/expenses', 'public'),
+        );
+
+        if (! is_string($path) || blank($path)) {
+            throw ValidationException::withMessages([
+                'receipt_path' => __('logistics::expenses.validation.upload-failed'),
+            ]);
+        }
+
+        return $path;
+    }
+
+    /**
+     * @param  string|array<string, string>|null  $storedFileNames
+     * @return array{name: string, size: int, type: null, url: string}
+     */
+    protected static function receiptInfo(string $file, string|array|null $storedFileNames, int $companyId): array
+    {
+        return [
+            'name' => (is_array($storedFileNames) ? ($storedFileNames[$file] ?? null) : $storedFileNames) ?? basename($file),
+            'size' => 0,
+            'type' => null,
+            'url'  => CompanyStorage::url($companyId, $file),
+        ];
     }
 
     /**

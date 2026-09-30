@@ -22,8 +22,8 @@ use Webkul\Logistics\Models\CompanySetting;
 use Webkul\Logistics\Models\DeliveryProof;
 use Webkul\Logistics\Models\Shipment;
 use Webkul\Logistics\Models\Stop;
+use Webkul\Logistics\Support\CompanyStorage;
 use Webkul\Logistics\Support\LogisticsAccess;
-use Webkul\Support\Services\CompanyContext;
 
 final readonly class PodData
 {
@@ -438,31 +438,7 @@ class DeliveryService
 
     protected function withShipmentDisk(Shipment $shipment, callable $callback): mixed
     {
-        $context = app(CompanyContext::class);
-        $activeIds = $context->activeIds();
-        $currentId = $context->currentId();
-        $shipmentCompanyId = (int) $shipment->company_id;
-        $usesTenantDisk = config('filesystems.disks.public.driver') === 'tenant-s3';
-
-        $context->setActive(array_values(array_unique([...$activeIds, $shipmentCompanyId])), $shipmentCompanyId);
-
-        if ($usesTenantDisk) {
-            Storage::forgetDisk('public');
-        }
-
-        try {
-            return $callback();
-        } finally {
-            if ($usesTenantDisk) {
-                Storage::forgetDisk('public');
-            }
-
-            $context->setActive($activeIds, $currentId);
-
-            if ($usesTenantDisk) {
-                Storage::forgetDisk('public');
-            }
-        }
+        return CompanyStorage::run((int) $shipment->company_id, $callback);
     }
 
     /**

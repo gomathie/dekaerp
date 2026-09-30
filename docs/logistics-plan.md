@@ -113,7 +113,7 @@ array, `company_id` nullable.
 | `logistics_expense_categories` | Shared | name, code, requires_receipt, **is_subcontracting**, is_active, sort. **No expense account**: accounts belong to one company, so the account comes from `default_expense_account_id` in company settings |
 | `logistics_vehicles` | Company, soft deletes, custom fields | registration_no (unique per company), vehicle_type_id, ownership, carrier_id?, capacity_kg, capacity_m3, equipment_id?, telematics_device_ref?, default_driver_id?, is_active |
 | `logistics_drivers` | Company, soft deletes | employee_id? / partner_id?, license_number, license_class, license_expires_at, is_active |
-| `logistics_shipments` | Company, chatter, log activity, custom fields, soft deletes | name (sequence), customer_id, customer_reference, sale_order_id?, service_type_id, transport_mode, priority, state, pickup_address_id, delivery_address_id, origin_label, destination_label, planned_pickup_at, actual_pickup_at, expected_delivery_at, actual_delivery_at, declared_value, currency_id, is_fragile, is_hazardous, instructions, dispatcher_id, carrier_id?, carrier_reference, waybill_no, is_opening (bool, D13), total_packages, total_weight_kg, total_volume_m3, total_charges, total_costs, creator_id. **There's no `carrier_cost` column: subcontractor costs are expense rows (category Subcontractor, payee = carrier). See D2.** |
+| `logistics_shipments` | Company, chatter, log activity, custom fields, soft deletes | name (sequence), customer_id, customer_reference, sale_order_id?, service_type_id, transport_mode, priority, state, pickup_address_id, delivery_address_id, origin_label, destination_label, planned_pickup_at, actual_pickup_at, expected_delivery_at, actual_delivery_at, declared_value, currency_id, is_fragile, is_hazardous, instructions, dispatcher_id, carrier_id?, carrier_reference, waybill_no, is_opening (bool, D13), total_packages, total_weight_kg, total_volume_m3, creator_id. **There's no `carrier_cost` column: subcontractor costs are expense rows (category Subcontractor, payee = carrier). See D2.** |
 | `logistics_shipment_lines` | Company | shipment_id, sort, description, package_type_id, quantity, weight_kg, length_cm, width_cm, height_cm, volume_m3, declared_value, handling_instructions |
 | `logistics_trips` | Company, chatter, soft deletes | name (sequence), vehicle_id, driver_id, dispatcher_id, state, planned_start_at, actual_start_at, planned_end_at, actual_end_at, odometer_start, odometer_end, notes |
 | `logistics_trip_shipments` | Pivot | trip_id, shipment_id, leg_sequence; unique(trip_id, shipment_id) |
@@ -385,8 +385,8 @@ you claim a package, finish it, or get blocked.
 | WP-9b | Customer page integration (per D11) | WP-7 | WP-10 | todo (extension point only, else ask) | |
 | WP-10 | Dashboard widgets | WP-4, WP-5 | WP-9, WP-11 | done (125/506 pass, whole suite green) | Claude 2026-09-24, db `aureuserp_testing_wp10` |
 | WP-11 | Reports | WP-4, WP-5, WP-7, WP-8b | WP-10 | done (176/676 pass, whole suite green) | Claude 2026-09-25, db `aureuserp_testing_wp11` |
-| WP-12 | Translations ar/es/fr/pt_BR | each finished package | anything | review (enums + foundation; rest waits for other packages) | Codex 2026-09-17 |
-| WP-13 | Hardening and release | all | — (runs alone) | todo | |
+| WP-12 | Translations ar/es/fr/pt_BR | each finished package | anything | review (`translations:check`: each locale has 17 missing files, 23 missing keys and 2 structure issues) | Codex 2026-09-17 |
+| WP-13 | Hardening and release | all | — (runs alone) | review (local hardening complete; release gates remain below) | Codex 2026-09-30, db `aureuserp_testing_own1` |
 
 **Promotions to `done` on 2026-09-29** (user: *"promote all green to done as
 needed"*). The basis is a full `LogisticsFeature` run at **177 passed, 0 failed**
@@ -434,7 +434,7 @@ exists". Four runs were lost to this on 2026-09-18 before the cause was found.
 | `aureuserp_testing_wp10` | WP-10 | Reserved 2026-09-23 |
 | `aureuserp_testing_wp5b` | WP-5b | Reserved 2026-09-24 |
 | `aureuserp_testing_wp11` | WP-11 | Reserved 2026-09-25 |
-| `aureuserp_testing_own1` | OwnershipScope work (not a Logistics package) | Reserved 2026-09-25. Three databases so three suites could run at once; see `docs/company-admin-role-plan.md` §4d. |
+| `aureuserp_testing_own1` | WP-13 | Reassigned 2026-09-29 after the OwnershipScope work. Dropped and recreated before testing, then reset empty again after the phone-width fixture. |
 | `aureuserp_testing_own2` | OwnershipScope work | Reserved 2026-09-25 |
 | `aureuserp_testing_own3` | OwnershipScope work | Reserved 2026-09-25 |
 
@@ -2291,3 +2291,79 @@ Requests for other packages:
   `vehicle-trips` keys whichever page started it - keep the two sets identical.
 - **WP-13:** the two items under "Left for later", and pinning the remaining
   page permissions.
+
+### WP-13 - Hardening and release - 2026-09-30 - Codex
+
+Status: `review`. Test database: `aureuserp_testing_own1`, dropped and recreated
+before the run and left empty afterwards.
+
+#### Delivered
+
+- Added `docs/logistics.md`: installation, per-company enablement, operational
+  workflow, exact permission names, tenant storage/queue prerequisites, disable
+  behaviour and guarded uninstall.
+- Added the v1.7.0 Logistics release notes to root `CHANGELOG.md`.
+- Audited every Logistics policy, custom action, resource query, global-search
+  path, widget, report, export and file path. Company scopes remain intact;
+  services and action work re-authorise server-side.
+- Closed three action-boundary gaps: printing a waybill and revoking a stop link
+  now enforce the shipment company's enable switch where the work occurs, and
+  charge creation repeats update authorisation in its execution callback.
+- Added `CompanyStorage`, shared by POD and expense receipts, so tenant-S3 work
+  runs under the record's owning company and secure URLs contain the same tenant
+  object key read by `SecureStorageController`. Expense uploads keep generated
+  names, MIME/size validation, existing-path tampering protection and
+  authenticated reads.
+- Fixed the unbilled-charge currency eager load (`currencies.code` is not a
+  column), and eager-loaded displayed relations in charge, expense, invoice,
+  delivery-proof and trip-shipment tables.
+- Removed the generic trip-shipment detach action: it deleted only the pivot,
+  leaving stops and `awaiting_pickup` state behind. No reverse workflow exists,
+  so silently corrupting dispatch state is worse than omitting the command.
+- Removed the unused pre-release `total_charges` and `total_costs` shipment
+  columns, and pinned all nine Logistics page permission names in the Shield
+  generation regression.
+
+#### Verification actually run
+
+- Same-day inherited baseline from the handoff, before these WP-13 edits:
+  LogisticsFeature 177, AccountFeature 526, InventoryFeature 884, SaleFeature
+  143, SecurityFeature 55, SupportFeature 115, ProjectFeature 86,
+  ManufacturingFeature 41, ProductFeature 250, PurchaseFeature 178,
+  PartnerFeature 74, AccountingFeature 54 and EmployeeFeature 5; zero failures.
+- A fresh full LogisticsFeature rerun was attempted. Adoption (6), Dashboard and
+  widgets (11), and Delivery (8) displayed green before the run was stopped: an
+  earlier cancelled Sail container had survived and both runners were sharing
+  the database. This is **not** recorded as a full-suite pass.
+- Eight new or directly affected regressions ultimately passed across two
+  commands, **27 assertions**. The first command had six passes and two fixture
+  errors caused by a nonexistent helper named argument; after correcting those
+  fixtures, the remaining **2 passed, 8 assertions**.
+- The final `preventFilePathTampering()` guard and its schema assertion were
+  added during vendor-source review after those Pest runs. They are Pint-clean
+  and match Filament's local API, but that assertion was not rerun under Pest.
+- `vendor/bin/pint --dirty --format agent` passed, followed by an explicit Pint
+  pass on both new PHP files.
+- Chrome phone-width check of the rendered POD view passed at `320x568` and
+  `390x844`: no horizontal overflow, nonblank screenshots, responsive nonzero
+  canvas dimensions, signature capture and double-submit disabling all passed.
+- `translations:check --plugin=logistics --details` ran and exited 1 as expected
+  for unfinished WP-12, but the backlog is larger than the earlier handoff:
+  **each** of ar/es/fr/pt_BR reports 17 missing files, 23 missing keys and 2
+  structure issues. No translation-owned file was changed here.
+
+#### Requests / release gates
+
+- **User:** perform the independent WP-5b adversarial review; keep WP-5b at
+  `review` until that is complete.
+- **WP-9b/user:** decide and implement the customer-page integration; it remains
+  genuinely `todo`.
+- **WP-12:** resolve the complete checker output, including the 17 missing files
+  per locale plus `exceptions.php` and company-settings key/structure drift.
+- **User:** rehearse install -> enable one company -> use -> disable -> verify
+  isolation -> uninstall guard on a production database copy, and run the
+  Supabase advisor. These were not attempted from an agent session.
+- **User:** complete `docs/handover-actions.md` sections 0a and 0b.
+- After those gates, rerun the complete release matrix on fresh isolated
+  databases. The inherited matrix is green, but the post-WP-13 full Logistics
+  rerun did not complete and is deliberately not claimed.

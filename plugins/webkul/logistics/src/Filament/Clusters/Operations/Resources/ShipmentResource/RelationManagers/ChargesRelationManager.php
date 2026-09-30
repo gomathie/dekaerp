@@ -14,10 +14,13 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Webkul\Account\Enums\TypeTaxUse;
 use Webkul\Logistics\Models\Shipment;
+use Webkul\Logistics\Support\LogisticsAccess;
 use Webkul\Product\Models\Product;
 
 class ChargesRelationManager extends RelationManager
@@ -105,6 +108,7 @@ class ChargesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->with('currency:id,name'))
             ->columns([
                 TextColumn::make('description')
                     ->label(__(static::$lang.'.fields.description'))
@@ -132,6 +136,13 @@ class ChargesRelationManager extends RelationManager
             ])
             ->headerActions([
                 CreateAction::make()
+                    ->before(function (): void {
+                        /** @var Shipment $shipment */
+                        $shipment = $this->getOwnerRecord();
+
+                        LogisticsAccess::ensureEnabled((int) $shipment->company_id);
+                        Gate::authorize('update', $shipment);
+                    })
                     ->visible(fn (): bool => Auth::user()?->can('update', $this->getOwnerRecord()) ?? false),
             ])
             ->recordActions([

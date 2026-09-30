@@ -69,7 +69,7 @@ class UnbilledCharges extends Page implements HasTable
         return $table
             ->query(fn (): Builder => ShipmentCharge::query()
                 ->uninvoiced()
-                ->with(['shipment:id,name,customer_id', 'shipment.customer:id,name', 'currency:id,code']))
+                ->with(['shipment:id,name,customer_id', 'shipment.customer:id,name', 'currency:id,name']))
             ->columns([
                 TextColumn::make('shipment.name')
                     ->label(__(static::$lang.'.columns.shipment'))

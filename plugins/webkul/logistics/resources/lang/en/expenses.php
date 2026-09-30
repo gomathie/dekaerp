@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'validation' => [
+        'upload-failed' => 'The receipt file could not be stored. Please try again.',
+    ],
     'relation-manager' => [
         'title' => 'Costs',
 

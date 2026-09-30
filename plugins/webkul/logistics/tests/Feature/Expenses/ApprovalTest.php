@@ -3,6 +3,8 @@
 use Filament\Forms\Components\FileUpload;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Livewire\Livewire;
 use Webkul\Logistics\Enums\ExpensePaidBy;
@@ -152,8 +154,46 @@ it('requires a receipt only for categories that demand one', function () {
             'form',
             fn (FileUpload $field): bool => $field->getAcceptedFileTypes() === ['application/pdf', 'image/jpeg', 'image/png', 'image/webp']
                 && $field->getMaxSize() === 10240
-                && $field->getDiskName() === 'public',
+                && $field->getDiskName() === 'public'
+                && $field->shouldPreventFilePathTampering(),
         );
+});
+
+it('stores a receipt while another allowed company is current', function () {
+    Storage::fake('public');
+
+    $current = LogisticsHelper::enable(LogisticsHelper::company());
+    $owner = LogisticsHelper::enable(LogisticsHelper::company());
+    $shipment = LogisticsHelper::shipment($owner);
+    $category = ExpenseCategory::factory()->create([
+        'company_id'       => null,
+        'requires_receipt' => true,
+    ]);
+
+    FilamentHelper::actingAsCompanyUser(
+        [$current, $owner],
+        ['view_any_logistics_expense', 'create_logistics_expense'],
+    );
+
+    Livewire::test(CreateExpense::class)
+        ->fillForm([
+            'company_id'  => $owner->id,
+            'date'        => now()->toDateString(),
+            'amount'      => 25,
+            'category_id' => $category->id,
+            'paid_by'     => ExpensePaidBy::COMPANY->value,
+            'shipment_id' => $shipment->id,
+            'receipt_path' => UploadedFile::fake()->image('attacker-name.jpg'),
+        ], 'form')
+        ->call('create')
+        ->assertHasNoFormErrors([], 'form');
+
+    $expense = Expense::query()->where('company_id', $owner->id)->latest('id')->firstOrFail();
+
+    expect(current_company_id())->toBe($current->id)
+        ->and($expense->receipt_path)->not->toContain('attacker-name');
+
+    Storage::disk('public')->assertExists($expense->receipt_path);
 });
 
 it('refuses to submit an unevidenced expense whose category demands a receipt', function () {
