@@ -63,6 +63,12 @@ data, a public repo. Nothing here is a sandbox.
     that share a theme, run a single one and read its error before theorising.
     Thirteen failures all named after action visibility looked like a
     state-machine regression and were one wrong return type.
+11. **A public-route test needs a fresh request identity and scoped context.** Logging
+    out and flushing the session are not enough in this test harness:
+    `SecurityHelper` also leaves a cached Sanctum user and `CompanyContext` instance.
+    Clear both web and Sanctum guards, restore the web default guard, and forget
+    `CompanyContext`. WP-5b's tests passed while a real anonymous POD request failed
+    because the fixture retained the issuer's allowed company.
 
 **Vendor view overrides to re-diff on every Filament upgrade:**
 `resources/views/vendor/filament-panels/livewire/{sidebar,topbar}.blade.php`
@@ -103,11 +109,12 @@ security pass.** Detail in `docs/change-log.md` (2026-09-29) and
 - *"promote all green to done as needed"* (2026-09-29). WP-1 through WP-11 moved to
   `done` on the strength of that day's full runs. WP-5b, WP-9b and WP-12 were held,
   each with the reason recorded on the board.
-- *"you have my permission to review the WP-5b"* (2026-09-30). The adversarial
-  security pass the user had reserved for themselves was delegated. **Done, with the
-  caveat recorded in the handoff log that it is self-review** — the same agent
-  finished WP-5b, so the independence the user originally wanted is not recoverable
-  by me. What an outside reviewer should still check is listed explicitly.
+- *"you have my permission to review the WP-5b"* (2026-09-30). Claude's delegated
+  pass was same-author review; Codex then completed the independent adversarial pass.
+  It found a production-only anonymous `CompanyContext` failure hidden by cached test
+  identity, plus issuance concurrency and response-hardening gaps. Those are fixed;
+  all 34 WP-5b tests passed in the integrated run. Full details and the exact suite
+  caveat are in the newest WP-5b handoff and `docs/change-log.md`.
 
 **Asked and answered**
 
@@ -120,17 +127,20 @@ security pass.** Detail in `docs/change-log.md` (2026-09-29) and
 
 - `docs/handover-actions.md` 0a (who is left narrower than their colleagues),
   0b (POD tokens in edge logs), and new **0c (set `TRUSTED_PROXIES`)**.
-- WP-5b stays at `review` until 0c is settled; the gate is the user's to close.
-- WP-13 is part-started: the migration review is complete, `docs/logistics.md` does
-  not exist yet, and the production-copy install rehearsal plus the Supabase advisor
-  need access no agent session has.
+- WP-5b stays at `review` until 0b and 0c are settled; its independent application
+  review is complete, but edge-log retention and trusted proxy configuration need
+  production access.
+- WP-13 is at `review`; local hardening and `docs/logistics.md` are complete. The
+  production-copy install rehearsal and Supabase advisor still need access no agent
+  session has.
 
 **Housekeeping left behind**
 
-`aureuserp_testing_own1` holds a half-migrated logistics schema and a hand-inserted
-`plugins` row from a rollback experiment; the shell tool stopped responding before it
-could be dropped. Drop and recreate it before the next run, or it produces
-"relation already exists" errors that read like broken code.
+`aureuserp_testing_own1` was dropped and recreated for this review. The complete
+Logistics run ended **190 passed, 1 failed / 734 assertions** because an outside-owned
+workflow test cumulatively ordered by `occurred_at ASC, id DESC`; that exact case
+then passed alone (**1 / 5**). The requested one-line test correction is in the
+WP-5b handoff. The database is no longer held by a running test process.
 
 ---
 

@@ -2,9 +2,8 @@
 
 namespace Webkul\Logistics\Http\Controllers;
 
-use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Controller;
 use Webkul\Logistics\Enums\ProofCaptureChannel;
@@ -28,12 +27,12 @@ class StopLinkController extends Controller
 {
     public function __construct(protected StopLinkService $links) {}
 
-    public function show(string $token, StopLinkService $links): View
+    public function show(string $token, StopLinkService $links): Response
     {
         $link = $links->resolve($token);
         $settings = CompanySetting::forCompany((int) $link->company_id);
 
-        return view('logistics::stop-link.show', [
+        return $this->secureView('logistics::stop-link.show', [
             'token'              => $token,
             'stop'               => $links->stopFor($link),
             'askForRecipientId'  => (bool) $settings->capture_recipient_id,
@@ -41,7 +40,7 @@ class StopLinkController extends Controller
         ]);
     }
 
-    public function store(Request $request, string $token): RedirectResponse|View
+    public function store(Request $request, string $token): Response
     {
         $validated = $request->validate([
             'recipient_name'         => ['required', 'string', 'max:255'],
@@ -81,7 +80,24 @@ class StopLinkController extends Controller
 
         // No redirect back to the link: it has just been spent, so following it
         // again would show the "no longer valid" page and read as a failure.
-        return view('logistics::stop-link.done');
+        return $this->secureView('logistics::stop-link.done');
+    }
+
+    /**
+     * The URL is a credential and the page contains shipment details. Keep it
+     * out of browser/proxy caches and prevent UI-redress capture in a frame.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    protected function secureView(string $view, array $data = []): Response
+    {
+        return response()->view($view, $data)->withHeaders([
+            'Cache-Control'           => 'no-store, private',
+            'Pragma'                  => 'no-cache',
+            'Referrer-Policy'         => 'no-referrer',
+            'X-Content-Type-Options'  => 'nosniff',
+            'X-Frame-Options'         => 'DENY',
+        ]);
     }
 
     /**

@@ -29,6 +29,12 @@ class StopLinkUnavailable extends NotFoundHttpException
      */
     public function render(): Response
     {
-        return response()->view('logistics::stop-link.expired', [], 404);
+        return response()->view('logistics::stop-link.expired', [], 404)->withHeaders([
+            'Cache-Control'          => 'no-store, private',
+            'Pragma'                 => 'no-cache',
+            'Referrer-Policy'        => 'no-referrer',
+            'X-Content-Type-Options' => 'nosniff',
+            'X-Frame-Options'        => 'DENY',
+        ]);
     }
 }

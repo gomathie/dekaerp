@@ -6,6 +6,36 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-09-30 (Logistics WP-5b: independent adversarial security review)
+
+The independent pass found that the public POD flow only worked in tests because
+the test process retained the issuing user's scoped company context and Sanctum
+identity. A real anonymous request had neither: `asIssuer()` tried to activate the
+link company before authenticating its issuer and failed authorization before it
+could capture anything.
+
+The service now authenticates on the web guard first, rebuilds `CompanyContext` for
+that issuer, validates the tenant assignment, and restores the prior guard, user and
+company context afterward. Issuance and capture serialize on the shipment before the
+link row, issuance enforces an out-for-delivery shipment and open delivery stop, and
+lost issuer authority or a disabled company produces the same public 404 as every
+other unusable token. Public success/refusal pages now send no-store, no-referrer,
+anti-framing and nosniff headers. A cross-token per-IP throttle regression was added
+and its config now states the `TRUSTED_PROXIES` dependency plainly.
+
+Focused `StopLinkTest` passed **33 tests / 104 assertions** before the last limiter
+case; the complete Logistics run then passed all **34 stop-link tests**. The complete
+suite reported **190 passed, 1 failed / 734 assertions**. Its only failure was an
+outside-WP-5b timing-sensitive assertion in `ShipmentWorkflowTest`: an inherited
+`occurred_at ASC` relationship order outranked its appended `id DESC`. The exact case
+reran green at **1 test / 5 assertions**. The full suite is not claimed green. The
+outside-owner one-line correction is in the WP-5b handoff request. Final
+`vendor/bin/pint --dirty --format agent` passed after all executable review changes.
+
+WP-5b stays at `review`: independent application-code review is complete, while
+`docs/handover-actions.md` 0b (edge logs) and 0c (trusted proxies) still require
+production access.
+
 ## 2026-09-30 (Logistics WP-13 hardening and release preparation)
 
 WP-13 completed the locally provable release work and moved to `review`; the
