@@ -49,6 +49,21 @@ data, a public repo. Nothing here is a sandbox.
    commits. Update the SHA/date and tell the user what changed, why it is or is
    not needed, benefits, risks, and priority. Never copy upstream wholesale.
 
+9. **Prove it before you fix it, and prove it before you trust a comment.** Two
+   rules that earned their place on 2026-09-29/30. First: when reading suggests a
+   defect, write the failing test before the fix. Twice in one session a
+   plausible-looking "bug" turned out to be working code
+   (`Inventory\MoveLine`'s company derivation, `Manufacturing\Move`'s creating
+   hook), and the fix would have changed behaviour for no reason. Second: a
+   comment asserting a security property is a claim, not evidence. `asIssuer()`
+   said `onceUsingId()` rejects deactivated users; it does not - the protection
+   came from somewhere else entirely. Check the mechanism, then correct the
+   comment.
+10. **Read the exception, not the pattern.** When a change produces many failures
+    that share a theme, run a single one and read its error before theorising.
+    Thirteen failures all named after action visibility looked like a
+    state-machine regression and were one wrong return type.
+
 **Vendor view overrides to re-diff on every Filament upgrade:**
 `resources/views/vendor/filament-panels/livewire/{sidebar,topbar}.blade.php`
 and `resources/views/vendor/filament-tables/components/summary/row.blade.php`
@@ -68,6 +83,54 @@ handoff log.
 `docs/upstream-fix-adoption-plan.md`. It is the decision register for fixes
 already present, required gaps, optional product features, explicit rejects,
 and the next review date.
+
+---
+
+## 2026-09-29 → 2026-09-30
+
+**Company-wide visibility, the scoped-parent bug family, and WP-5b's second
+security pass.** Detail in `docs/change-log.md` (2026-09-29) and
+`docs/company-admin-role-plan.md` sections 4d–4j.
+
+**User decisions this session**
+
+- *"all users in the same company should be able to see each others invoices and
+  details in the company"*, clarified with *"if its currently individual, and can be
+  given as rights then its also good"* (2026-09-28). `users.resource_permission` now
+  defaults to `global`; `individual` and `group` stay grantable per user. The old
+  value came from `UserInvitationService` hard-coding it and from the column default
+  — **not** from the Users page, which already defaulted to `global`.
+- *"promote all green to done as needed"* (2026-09-29). WP-1 through WP-11 moved to
+  `done` on the strength of that day's full runs. WP-5b, WP-9b and WP-12 were held,
+  each with the reason recorded on the board.
+- *"you have my permission to review the WP-5b"* (2026-09-30). The adversarial
+  security pass the user had reserved for themselves was delegated. **Done, with the
+  caveat recorded in the handoff log that it is self-review** — the same agent
+  finished WP-5b, so the independence the user originally wanted is not recoverable
+  by me. What an outside reviewer should still check is listed explicitly.
+
+**Asked and answered**
+
+- Whether `individual` was the right default: the user asked to see the impact first,
+  so the analysis and the queries went into section 4g before the decision. Worth
+  repeating as a pattern — the question was a product one, not a code one, and
+  guessing it would have been the wrong kind of initiative.
+
+**Open, and owned by the user**
+
+- `docs/handover-actions.md` 0a (who is left narrower than their colleagues),
+  0b (POD tokens in edge logs), and new **0c (set `TRUSTED_PROXIES`)**.
+- WP-5b stays at `review` until 0c is settled; the gate is the user's to close.
+- WP-13 is part-started: the migration review is complete, `docs/logistics.md` does
+  not exist yet, and the production-copy install rehearsal plus the Supabase advisor
+  need access no agent session has.
+
+**Housekeeping left behind**
+
+`aureuserp_testing_own1` holds a half-migrated logistics schema and a hand-inserted
+`plugins` row from a rollback experiment; the shell tool stopped responding before it
+could be dropped. Drop and recreate it before the next run, or it produces
+"relation already exists" errors that read like broken code.
 
 ---
 
