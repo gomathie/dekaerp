@@ -386,7 +386,7 @@ you claim a package, finish it, or get blocked.
 | WP-10 | Dashboard widgets | WP-4, WP-5 | WP-9, WP-11 | done (125/506 pass, whole suite green) | Claude 2026-09-24, db `aureuserp_testing_wp10` |
 | WP-11 | Reports | WP-4, WP-5, WP-7, WP-8b | WP-10 | done (176/676 pass, whole suite green) | Claude 2026-09-25, db `aureuserp_testing_wp11` |
 | WP-12 | Translations ar/es/fr/pt_BR | each finished package | anything | done (`translations:check`: 4/4 pass; TTL regression 1/1 pass) | Codex 2026-09-30, db `aureuserp_testing_wp12` |
-| WP-13 | Hardening and release | all | — (runs alone) | review (local hardening complete; release gates remain below) | Codex 2026-09-30, db `aureuserp_testing_own1` |
+| WP-13 | Hardening and release | all | — (runs alone) | review (local hardening complete, LogisticsFeature 191/191 green; release gates remain below) | Codex 2026-09-30 + Claude 2026-09-30, db `aureuserp_testing_own1` |
 
 **Promotions to `done` on 2026-09-29** (user: *"promote all green to done as
 needed"*). The basis is a full `LogisticsFeature` run at **177 passed, 0 failed**
@@ -436,6 +436,9 @@ exists". Four runs were lost to this on 2026-09-18 before the cause was found.
 | `aureuserp_testing_wp5b` | WP-5b | Reserved 2026-09-24 |
 | `aureuserp_testing_wp11` | WP-11 | Reserved 2026-09-25 |
 | `aureuserp_testing_own1` | WP-13 | Reassigned 2026-09-29 after the OwnershipScope work. Dropped and recreated before testing, then reset empty again after the phone-width fixture. |
+| `aureuserp_testing_wp13_manufacturing` | WP-13 release matrix | Reserved 2026-10-01; recreate immediately before `ManufacturingFeature`. |
+| `aureuserp_testing_wp13_product` | WP-13 release matrix | Reserved 2026-10-01; recreate immediately before `ProductFeature`. |
+| `aureuserp_testing_wp13_inventory` | WP-13 release matrix | Reserved 2026-10-01; recreate immediately before `InventoryFeature`. |
 | `aureuserp_testing_own2` | OwnershipScope work | Reserved 2026-09-25 |
 | `aureuserp_testing_own3` | OwnershipScope work | Reserved 2026-09-25 |
 
@@ -2742,3 +2745,25 @@ Raise it as its own small piece of work when wanted, scoped as: registry on the
 partners base resource, a guarded contribution from Logistics, a relation manager that
 filters by `customer_id` with the switch and permission applied, and a test that a
 customer shared between two companies sees only the active company's shipments.
+
+### WP-13 - flaky workflow assertion closed - 2026-09-30 - Claude
+
+Codex's independent WP-5b review reported the complete `LogisticsFeature` run as
+**190 passed, 1 failed** and, correctly, declined to call it green. The single failure
+was the `ShipmentWorkflowTest` ordering assumption, handed to this file's owner rather
+than edited from inside that review.
+
+Fixed as requested: `$shipment->events()->reorder()->orderByDesc('id')`.
+
+Why it mattered, since the one-word change looks cosmetic: `Shipment::events()` is
+declared `->orderBy('occurred_at')`, so appending `orderByDesc('id')` produced
+`ORDER BY occurred_at ASC, id DESC`. That passes only while every event in the path
+shares one timestamp - the assumption the old comment stated out loud. On a slow run
+the path straddles a second, `occurred_at ASC` dominates, and `first()` returns the
+*earliest* event, so the assertion read `OUT_FOR_DELIVERY` instead of `DELIVERED`.
+`reorder()` clears the inherited order so `id DESC` governs, which removes the
+dependence on the assumption rather than trusting it.
+
+**Verification:** complete `LogisticsFeature` on a freshly dropped and recreated
+`aureuserp_testing_own1`: **191 passed, 0 failed, 734 assertions.** This is the first
+genuinely green full run of the suite since that review, and it supersedes the 190/1.
