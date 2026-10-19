@@ -6,6 +6,164 @@ Supabase's dashboard, Laravel Cloud, or production data. Ordered by urgency.
 ---
 ---
 
+
+### How to complete 0b and 0c, step by step (added 2026-09-30)
+
+Both gates need a running environment, so neither can be settled from the
+repository. What follows is written to be executed in order, and to **measure**
+rather than assume - the one thing nobody can tell you from here is how Laravel
+Cloud's edge actually behaves with `X-Forwarded-For`.
+
+---
+
+#### 0c. TRUSTED_PROXIES - do this one first
+
+0c is first because 0b's verification step is easier once you can see real client
+addresses.
+
+**Step 1 - add a temporary diagnostic route.**
+
+In `routes/web.php`, and remove it again at step 6:
+
+```php
+Route::get('/__proxy-check/{secret}', function (\Illuminate\Http\Request $request, string $secret) {
+    abort_unless($secret === env('PROXY_CHECK_SECRET'), 404);
+
+    return response()->json([
+        'remote_addr'     => $request->server('REMOTE_ADDR'),
+        'x_forwarded_for' => $request->header('X-Forwarded-For'),
+        'laravel_ip'      => $request->ip(),
+    ]);
+});
+```
+
+Set `PROXY_CHECK_SECRET` to a long random string in the Laravel Cloud environment
+variables, and deploy. The secret is in the path only so the route is not
+guessable; it returns no customer data either way.
+
+**Step 2 - see what the app currently receives.**
+
+From your own machine:
+
+```
+curl https://<your-host>/__proxy-check/<secret>
+```
+
+Read the result:
+
+- `remote_addr` is the address that actually connected - the Laravel Cloud load
+  balancer or router. **Write it down; this is the value 0c needs.**
+- `laravel_ip` will currently equal `remote_addr`. That is the bug: every visitor
+  looks like the balancer, so the POD throttle's per-IP limit is one bucket shared
+  by every driver on every tenant.
+- `x_forwarded_for` shows what the edge passes through. Your real address should
+  appear in it.
+
+**Step 3 - find out whether the edge lets clients forge that header.** This is the
+question that decides whether `*` is safe, and the only way to know is to try:
+
+```
+curl -H 'X-Forwarded-For: 1.2.3.4' https://<your-host>/__proxy-check/<secret>
+```
+
+Look at `x_forwarded_for` in the response:
+
+- If it reads `1.2.3.4, <your real address>` the edge **appends**. Good - a forged
+  value can be told apart from the real one by position.
+- If it reads only `<your real address>` the edge **overwrites**. Also good.
+- If it reads only `1.2.3.4`, the edge passes client input through untouched.
+  **Do not use `*` in step 4** - it would let anyone claim any address and the
+  per-IP limit would stop existing.
+
+**Step 4 - set the value.**
+
+In Laravel Cloud's environment variables for the production environment:
+
+```
+TRUSTED_PROXIES=<the remote_addr from step 2>
+```
+
+Prefer the specific address or CIDR you measured. With a specific proxy trusted,
+Laravel walks the `X-Forwarded-For` chain from the right and stops at the first
+entry that is not a trusted proxy - which is the real client, and which a forged
+left-hand entry cannot displace.
+
+Use `TRUSTED_PROXIES=*` only if step 3 showed appending or overwriting **and** the
+balancer's address is not stable enough to pin. If `remote_addr` varies between
+requests, capture several and use the covering CIDR, or ask Laravel Cloud support
+for the range rather than guessing it.
+
+Deploy after changing the variable - environment changes do not take effect until
+the next deploy.
+
+**Step 5 - verify, twice.**
+
+Re-run both curls from step 2 and step 3:
+
+- Plain request: `laravel_ip` must now be **your** address, not the balancer's.
+- Forged-header request: `laravel_ip` must **still** be your address. If it has
+  become `1.2.3.4`, the configuration is unsafe - go back to step 4 and pin the
+  specific proxy instead of `*`.
+
+Then confirm the throttle actually separates clients: open a stop link repeatedly
+from two different networks (office wifi and a phone on mobile data). Exhausting
+the limit on one must not return 429 on the other.
+
+**Step 6 - remove the diagnostic route**, delete `PROXY_CHECK_SECRET`, and deploy
+again. Leaving it costs nothing in data terms but it is one more public route than
+the application needs.
+
+**Step 7 - close the gate.** Note the value you set and the date in this file, and
+move WP-5b to `done` on the board in `docs/logistics-plan.md` if 0b is also
+settled.
+
+---
+
+#### 0b. POD tokens in edge logs
+
+**Step 1 - list the layers that see the URL.** At minimum Laravel Cloud itself.
+Check whether anything sits in front: look up your production hostname
+(`nslookup` or `dig`) and see whether it resolves to Laravel Cloud directly or to
+a CDN such as Cloudflare. If a CDN is in the path, it logs request URIs too.
+
+**Step 2 - for each layer, answer two questions.** Does it store the full request
+path, and for how long? Laravel Cloud's HTTP access logs and Cloudflare's HTTP
+request logs both keep the full URI by default.
+
+**Step 3 - apply whichever of these the layer supports**, in order of preference:
+
+1. Scrub the path segment after `/logistics/pod/` before the entry is stored.
+   Cloudflare can do this with a Transform Rule or Logpush field redaction.
+2. Shorten retention for access logs to the minimum the platform allows.
+3. If neither is possible, record it here as accepted risk. The compensating
+   control is the link lifetime: set the company's stop-link TTL to 4 hours, the
+   shortest option, under Logistics > Configuration > Settings.
+
+**Step 4 - verify with a real link.** In a test company: issue a stop link from a
+shipment, open it, then search that layer's logs for the path. You are looking to
+confirm the token is absent, shortened, or that the entry ages out when you
+expect. Revoke the link afterwards from the shipment page.
+
+**Step 5 - record the outcome here** - which layers scrub, which retain, what
+retention window, and the date.
+
+---
+
+#### If the log gates cannot be met
+
+The durable fix is to stop putting the credential in the path at all: serve the
+capture page at a static URL and carry the token in the URL **fragment**
+(`/logistics/pod#<token>`), which browsers never send to the server, with a small
+amount of JavaScript reading `location.hash` and posting it. No layer that logs
+request lines would ever see it.
+
+That is a real change to WP-5b - new page flow, new tests, and it breaks any link
+already issued - so it is not worth doing pre-emptively. It is the right answer if
+you find you cannot scrub logs and the 4-hour lifetime is not acceptable to a
+customer.
+
+---
+
 ## 0c. Set TRUSTED_PROXIES, or the POD throttle is one shared bucket (2026-09-30)
 
 **Found by the second WP-5b security pass** (`docs/logistics-plan.md`, handoff log).
@@ -144,7 +302,7 @@ no tokens exist yet, because Logistics is not released.
 
 ---
 
-## 0. Point production Sentry at the DEKA ERP project (2026-09-20)
+## 0. Point production Sentry at the DEKA ERP project DONE (2026-09-20)
 
 **You must do this in the Laravel Cloud dashboard.** Editing
 `.env.laravel-cloud` locally changes nothing in production; that file is a
