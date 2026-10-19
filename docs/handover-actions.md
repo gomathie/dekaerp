@@ -47,6 +47,24 @@ From your own machine:
 
 ```
 curl https://<your-host>/__proxy-check/<secret>
+
+reponse :
+PS C:\WINDOWS\system32> curl.exe -sS "https://cloud.dekaerp.com/__proxy-check/46900fb2557524b1104039985510740ded5d14b9be33c7be75c53474a8cc679d"
+{"remote_addr":"2a05:d014:145b:561c:1fa3::42","x_forwarded_for":"154.161.102.55","laravel_ip":"154.161.102.55"}
+PS C:\WINDOWS\system32>
+
+PS C:\WINDOWS\system32> curl.exe -sS -H "X-Forwarded-For: 1.2.3.4" "https://cloud.dekaerp.com/__proxy-check/46900fb2557524b1104039985510740ded5d14b9be33c7be75c53474a8cc679d"
+{"remote_addr":"2a05:d014:145b:561c:1fa3::42","x_forwarded_for":"154.161.102.55","laravel_ip":"154.161.102.55"}
+PS C:\WINDOWS\system32>
+
+TRUSTED_PROXIES=*
+
+mobile test confirms that Laravel correctly identifies a different client IP when connecting through mobile data.
+DekaERP proxy verification results
+Field	Computer	Mobile LTE
+remote_addr	2a05:d014:145b:561c:1fa3::42	2a05:d014:145b:561d:496f::1b
+x_forwarded_for	154.161.102.55	154.161.118.242
+laravel_ip	154.161.102.55	154.161.118.242
 ```
 
 Read the result:
