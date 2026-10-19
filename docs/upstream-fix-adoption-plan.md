@@ -5,9 +5,9 @@
 > **Initial review:** 2026-09-18  
 > **Local baseline:** `feature/logistics` at `e0ce9f6a8467`  
 > **Common v1.5 baseline:** `8409fde`  
-> **Upstream reviewed:** `aureus/master` at `d7d471894`  
+> **Upstream reviewed:** `aureus/master` at `36744b597`  
 > **Package A implemented:** 2026-09-20; focused local verification complete, first remote CI run pending
-> **Next review due:** 2026-09-25, or earlier when a trigger below occurs
+> **Next review due:** 2026-10-26, or earlier when a trigger below occurs
 
 ## Purpose
 

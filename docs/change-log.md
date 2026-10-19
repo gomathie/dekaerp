@@ -6,6 +6,27 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-10-19 (development-tool review)
+
+Reviewed Agent Skills, Context7, Graphify, 21st MCP and Strix against the actual
+DEKA ERP stack, repository rules and current Codex client. Added Context7's
+read-only HTTP MCP endpoint to `.mcp.json` and an ignored, project-scoped Codex
+configuration at `.codex/config.toml`. No API key is stored; anonymous access is
+used, with an optional user-held key only if higher rate limits are later needed.
+
+The remaining tools were not installed. Addy Osmani's general lifecycle skills
+repeat the repository's existing inspection, testing, review and security rules,
+and its git workflow conflicts with the user-owned commit process. 21st MCP is a
+React component service and does not match Filament/Livewire/Blade. Graphify's
+official local PHP-capable engine is useful at this repository's size, but this
+machine has no usable Python/uv runtime and the current Codex installer has open
+project-mutation/path defects; hosted Graphify additionally needs OAuth and an
+indexed repository. Strix requires Python 3.12, Docker and an LLM login/key, while
+active testing also needs an explicitly authorized isolated target and synthetic
+credentials.
+
+Verification and rollback details are recorded in the handoff for this session.
+
 ## 2026-09-30 (Logistics WP-12 translation completion)
 
 Completed the Logistics interface and document translations for Arabic,
