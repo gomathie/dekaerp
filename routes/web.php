@@ -30,3 +30,14 @@ Route::middleware('auth')
     ->get('/secure-storage/{path}', SecureStorageController::class)
     ->where('path', '.*')
     ->name('secure-storage');
+
+
+    Route::get('/__proxy-check/{secret}', function (\Illuminate\Http\Request $request, string $secret) {
+    abort_unless($secret === env('PROXY_CHECK_SECRET'), 404);
+
+    return response()->json([
+        'remote_addr'     => $request->server('REMOTE_ADDR'),
+        'x_forwarded_for' => $request->header('X-Forwarded-For'),
+        'laravel_ip'      => $request->ip(),
+    ]);
+});
