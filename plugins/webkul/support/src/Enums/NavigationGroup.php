@@ -21,6 +21,8 @@ enum NavigationGroup: string implements HasIcon, HasLabel
 
     case Inventory = 'inventory';
 
+    case Logistics = 'logistics';
+
     case Invoice = 'invoice';
 
     case Accounting = 'accounting';
@@ -58,6 +60,7 @@ enum NavigationGroup: string implements HasIcon, HasLabel
             self::Maintenance   => 'icon-maintenance',
             self::Manufacturing => 'icon-manufacturing',
             self::Inventory     => 'icon-inventories',
+            self::Logistics     => 'icon-logistics',
             self::Invoice       => 'icon-invoices',
             self::Accounting    => 'icon-accounting',
             self::Project       => 'icon-projects',

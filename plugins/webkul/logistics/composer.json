@@ -1,0 +1,30 @@
+{
+    "name": "webkul/logistics",
+    "description": "Logistics management",
+    "authors": [
+        {
+            "name": "Aureus ERP",
+            "email": "support@aureuserp.in"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Webkul\\Logistics\\LogisticsServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Webkul\\Logistics\\": "src/",
+            "Webkul\\Logistics\\Database\\Factories\\": "database/factories/",
+            "Webkul\\Logistics\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Webkul\\Logistics\\Tests\\": "tests/"
+        }
+    }
+}

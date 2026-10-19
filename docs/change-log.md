@@ -6,6 +6,1686 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-10-19 (development-tool review)
+
+Reviewed Agent Skills, Context7, Graphify, 21st MCP and Strix against the actual
+DEKA ERP stack, repository rules and current Codex client. Added Context7's
+read-only HTTP MCP endpoint to `.mcp.json` and an ignored, project-scoped Codex
+configuration at `.codex/config.toml`. No API key is stored; anonymous access is
+used, with an optional user-held key only if higher rate limits are later needed.
+
+The remaining tools were not installed. Addy Osmani's general lifecycle skills
+repeat the repository's existing inspection, testing, review and security rules,
+and its git workflow conflicts with the user-owned commit process. 21st MCP is a
+React component service and does not match Filament/Livewire/Blade. Graphify's
+official local PHP-capable engine is useful at this repository's size, but this
+machine has no usable Python/uv runtime and the current Codex installer has open
+project-mutation/path defects; hosted Graphify additionally needs OAuth and an
+indexed repository. Strix requires Python 3.12, Docker and an LLM login/key, while
+active testing also needs an explicitly authorized isolated target and synthetic
+credentials.
+
+Verification and rollback details are recorded in the handoff for this session.
+
+## 2026-09-30 (Logistics WP-12 translation completion)
+
+Completed the Logistics interface and document translations for Arabic,
+Spanish, French and Brazilian Portuguese. Each locale gained the 17 files added
+after WP-12's foundation slice, while `exceptions.php` gained 16 messages and
+the company-settings page gained seven fields/help texts. The new values reuse
+the existing Logistics vocabulary, preserve interpolation and pluralization
+tokens, and mirror English key order and structure.
+
+The first post-translation checker run revealed a checker/source interaction not
+present in the original backlog: bare numeric TTL keys made the checker compare
+the entire translated source line. The five TTL keys are now written as quoted
+numeric strings in English and all four locales. PHP still exposes integer keys,
+confirmed by the existing stop-link regression, while translated hour labels no
+longer produce false structure mismatches.
+
+Verification: the Sail Logistics translation checker passed **4/4 locale sets**
+with zero issues; the focused TTL regression passed **1 test / 1 assertion** on
+`aureuserp_testing_wp12`; explicit-path Pint and final dirty Pint both passed.
+The Arabic stop-link and waybill RTL wiring was reviewed statically. No browser,
+rendered-PDF linguistic review or full LogisticsFeature run was performed for
+this translation-only slice.
+
+## 2026-09-30 (Logistics WP-5b: independent adversarial security review)
+
+The independent pass found that the public POD flow only worked in tests because
+the test process retained the issuing user's scoped company context and Sanctum
+identity. A real anonymous request had neither: `asIssuer()` tried to activate the
+link company before authenticating its issuer and failed authorization before it
+could capture anything.
+
+The service now authenticates on the web guard first, rebuilds `CompanyContext` for
+that issuer, validates the tenant assignment, and restores the prior guard, user and
+company context afterward. Issuance and capture serialize on the shipment before the
+link row, issuance enforces an out-for-delivery shipment and open delivery stop, and
+lost issuer authority or a disabled company produces the same public 404 as every
+other unusable token. Public success/refusal pages now send no-store, no-referrer,
+anti-framing and nosniff headers. A cross-token per-IP throttle regression was added
+and its config now states the `TRUSTED_PROXIES` dependency plainly.
+
+Focused `StopLinkTest` passed **33 tests / 104 assertions** before the last limiter
+case; the complete Logistics run then passed all **34 stop-link tests**. The complete
+suite reported **190 passed, 1 failed / 734 assertions**. Its only failure was an
+outside-WP-5b timing-sensitive assertion in `ShipmentWorkflowTest`: an inherited
+`occurred_at ASC` relationship order outranked its appended `id DESC`. The exact case
+reran green at **1 test / 5 assertions**. The full suite is not claimed green. The
+outside-owner one-line correction is in the WP-5b handoff request. Final
+`vendor/bin/pint --dirty --format agent` passed after all executable review changes.
+
+WP-5b stays at `review`: independent application-code review is complete, while
+`docs/handover-actions.md` 0b (edge logs) and 0c (trusted proxies) still require
+production access.
+
+## 2026-09-30 (Logistics WP-13 hardening and release preparation)
+
+WP-13 completed the locally provable release work and moved to `review`; the
+production-copy rehearsal, Supabase advisor, independent stop-link review,
+customer-page decision and translation package remain explicit release gates.
+
+### Review fixes
+
+- Audited action/policy authorisation and every tenant-facing list, view, search,
+  widget, report, export and file path. Waybill printing, stop-link revocation and
+  charge creation now repeat their company-switch/ability checks where work is
+  performed.
+- Added a shared owning-company storage context for POD files and expense
+  receipts. Tenant-S3 URLs now use the authenticated secure-storage route and
+  receipt uploads retain random names, MIME/size validation and Filament's
+  existing-path tampering protection.
+- Fixed the unbilled currency eager load, added missing table eager loads,
+  removed an unsafe generic trip detach that left stops and shipment state
+  behind, dropped two unused pre-release shipment total columns, and pinned all
+  Logistics page permission names.
+- Added `docs/logistics.md` and v1.7.0 user-facing release notes.
+
+### Verification
+
+The same-day inherited release matrix was green before WP-13 (Logistics 177;
+Account 526; Inventory 884; Sale 143; Security 55; Support 115; Project 86;
+Manufacturing 41; Product 250; Purchase 178; Partner 74; Accounting 54;
+Employee 5). A post-edit full Logistics rerun was attempted but interrupted and
+is not claimed: 25 tests displayed green before cancellation. Eight directly
+affected regressions subsequently passed across two commands with 27 assertions;
+the split run followed correction of two test-fixture API errors. Pint passed on
+tracked changes and explicit new PHP paths. The final Filament
+`preventFilePathTampering()` guard was source-reviewed against the installed
+vendor code and formatted, but its added schema assertion was not rerun in Pest.
+
+The rendered public POD form was exercised in installed Chrome at 320x568 and
+390x844. Both had zero horizontal overflow, nonblank screenshots, correctly sized
+canvas pixels, signature capture and disabled repeat submission.
+
+`translations:check --plugin=logistics --details` was also run. It correctly
+failed, but found more than the old WP-12 note: ar, es, fr and pt_BR each have 17
+missing files, 23 missing keys and 2 structural mismatches. Those language-owned
+files were not changed in WP-13.
+
+## 2026-09-29 (Everyone in a company sees the company's records, and the scoped-parent family)
+
+One decision and one bug family, connected: switching the ownership scope on in
+tests exposed both. Full detail and the decision trail in
+[`docs/company-admin-role-plan.md`](company-admin-role-plan.md) sections 4d-4j.
+
+### The decision: company-wide visibility is the default
+
+**User, 2026-09-28:** *"all users in the same company should be able to see each
+others invoices and details in the company"*, and *"if its currently individual, and
+can be given as rights then its also good"*.
+
+`users.resource_permission` defaulted to `individual`, which makes `OwnershipScope`
+filter eight document models - invoices, bills, sales and purchase orders, stock
+operations, manufacturing orders, projects, tasks - down to rows the user created or
+was assigned. Colleagues in the same company could not see each other's invoices.
+
+The old value arrived by two routes, and **the admin panel was never one of them**:
+the Users page form already defaulted to `global`. What produced `individual` was
+`UserInvitationService::accept()`, which hard-coded it for every non-Multi-Company
+Admin - the onboarding path - plus the column default for anything created without
+the field.
+
+Both changed, and existing `individual` rows were migrated. `group` rows were left
+alone: nobody ever *chose* `individual`, but `group` has to be picked in the form
+**and** given a team, so it is a real decision by whoever configured that user.
+
+Nothing was taken away. `PermissionType` keeps all three cases, the Users page still
+offers them, and every rule they drive still works and is tested. "Individual" is now
+a deliberate choice rather than an accident of a column default.
+
+**Before deploying:** this *widens* visibility. Tenant isolation is untouched -
+`CompanyScope` is a separate scope. Afterwards, confirm the remaining exceptions are
+intended: `select id, email, resource_permission from users where resource_permission <> 'global'`.
+
+### Why ownership was never tested, and what happened when it was
+
+`OwnershipScope::apply()` began with a bare `app()->runningInConsole()`, and
+`artisan test` **is** the console - so the scope was inert in every test in the
+repository. `CompanyScope`, `CompaniesScope` and `AllowedCompanyScope` all guard that
+line with `&& ! runningUnitTests()`; this one was the outlier. No test could show
+that `individual` restricted anything, or that it did not over-restrict.
+
+Adding the exemption is test-only (`runningUnitTests()` is `env === 'testing'`, so
+production console still skips it). With it live: **2,551 passed, 20 failed** across
+all thirteen suites. 17 were fixtures owned by the wrong user - correct product
+behaviour, fixed by owning them. 3 were real defects, and they opened the family
+below.
+
+Also fixed while covering the branch nobody had tested: a `group` user with **no
+team** resolved to an empty authorized-id list, which `OwnershipScope` read as *no
+restriction* - so they saw everything, exactly as if they were `global`, silently.
+`Bouncer` now fails closed to their own rows.
+
+### The family: reading a scoped parent inside a model hook
+
+Six models derived a child's `company_id` (or state) by reading the parent **through
+a relation**. The parent carries a global scope, so for an actor not entitled to see
+it the relation returns null, and then one of three things happens - all silent bar
+the last:
+
+- `??=` or `?->` swallows it and `company_id` stays **null**, which `CompanyScope`
+  reads as *shared*: the row becomes visible to every company;
+- a `?? current_company_id()` fallback files the row under the **actor's** company;
+- or nothing swallows it and the save dies.
+
+Fixed: `Project\Models\TaskStage`, `Project\Models\Task`,
+`Account\Models\MoveLine` (plus `chaperone()` on all five of `Move`'s line
+relations), `Inventory\Models\MoveLine`, `Inventory\Models\ProductQuantity`,
+`Manufacturing\Models\Move`.
+
+`Task` is the instructive one: its author *knew* the parent read had to escape
+`CompanyScope` and said so - they just did not know `Project` carries a **second**
+global scope. `withoutGlobalScope(CompanyScope::class)` reads as careful and is not.
+
+`Manufacturing\Models\Move` was the only **destructive** member: `=` rather than
+`??=`, so an unreadable operation type overwrote a stored `warehouse_id` with null on
+every save. A test caught it going from 22 to null on a plain `save()`.
+
+### The rule now lives in one place
+
+`InheritsParentCompany` already stated the rule - *child rows take their parent's
+company, never the session's* - but lived in **Logistics**, an optional plugin. Core
+`inventories` cannot depend on that. It moved to
+`Webkul\Support\Traits\InheritsParentCompany` with its exception and five
+translations; the Logistics trait is now a one-line alias and the Logistics exception
+extends the Support one, so the six models using it were untouched.
+
+Corrected while moving: it read parents with `withoutGlobalScope(CompanyScope::class)`
+- the `Task` trap exactly. Now `withoutGlobalScopes()`, a no-op for existing callers
+but it stops the shared rule carrying a known trap forward.
+
+### Three mistakes of mine, each with a transferable lesson
+
+- **A factory default can make a test assert the opposite of its name.**
+  `ShipmentFactory` fills `expected_delivery_at`, so a WP-11 test for "delivered with
+  no promised date" silently exercised the promised-date branch and passed green.
+  Null the column explicitly whenever a test turns on its absence.
+- **`->change()` on an enum column cannot work on PostgreSQL.** Laravel emits an
+  inline `check (...)`, which Postgres rejects. The failure mode is the danger:
+  `migrate:fresh` dies, so **every** test fails with 0 assertions - 55 in one suite,
+  47 in another, from one line. Use `ALTER COLUMN ... SET DEFAULT` when only the
+  default changes.
+- **`Builder::value()` applies the model's casts.** I typed a helper `?string` and
+  got a `MoveState` enum, breaking 13 tests - all of which surfaced as
+  *action-visibility* failures, which reads like a state-machine regression. Running
+  **one** of them alone gave the TypeError in a single line. When many failures share
+  a theme, get the exception from one before theorising about the theme.
+
+And twice, writing the test first stopped me changing working code: `Inventory\MoveLine`'s
+company derivation and `Manufacturing\Move`'s creating hook both turned out not to be
+broken the way reading suggested.
+
+### Verified
+
+| Suite | Result |
+|---|---|
+| InventoryFeature | 884 passed |
+| AccountFeature | 526 passed |
+| ProductFeature | 250 passed |
+| PurchaseFeature | 178 passed |
+| LogisticsFeature | 177 passed |
+| SaleFeature | 143 passed |
+| SupportFeature | 115 passed |
+| ProjectFeature | 86 passed |
+| SecurityFeature | 55 passed |
+| AccountingFeature | 54 passed |
+| ManufacturingFeature | 41 passed |
+| PartnerFeature | 74 passed |
+| EmployeeFeature | 5 passed |
+
+Zero failures. New coverage: `projects/.../OwnershipScopeTest.php` (6),
+`accounts/.../OwnershipScopeTest.php` (4),
+`manufacturing/.../ScopedParentReadTest.php` (3), plus regression tests in
+`CompanyIsolationTest`, `DocumentCompanyResolutionTest` and `RecordIntegrityTest`.
+Ownership is now covered as a *feature* - `individual`, `group`, `global`, column
+sources, the `users` pivot and followers - rather than being the untested default.
+
+## 2026-09-25 (Logistics WP-11: reports)
+
+Five report pages in a new `Reporting` cluster, each a filtered Filament table
+with an export: shipment register, delivery performance, shipment profitability,
+and trip history by vehicle and by driver. No migrations - reports read what the
+other packages already store.
+
+### What the numbers are allowed to say
+
+The judgement calls here are all about not producing a figure that looks
+authoritative and is not.
+
+- **Costs are approved and billed expenses only.** A draft or submitted expense
+  is a claim someone has made. Counting it would let a margin move on paperwork
+  rather than on work.
+- **"Carrier cost" is not a separate term.** Carrier spend is already an expense
+  in the `SUBCONTRACTOR` category, which is what the shipment form tells the user
+  ("Carrier costs are recorded as expenses"). Charges minus expenses covers it;
+  a third term would double-count.
+- **Nothing is converted between currencies.** Each figure is in the shipment's
+  own currency and the currency is a named column. A column that silently added
+  several currencies would be meaningless while looking exact.
+- **A delivery with no promised date is "No date promised", not "on time".**
+  Scoring it would invent a commitment nobody made - and it would flatter the
+  statistic, which is the direction these mistakes always run. The page's
+  subheading states the exclusion so the percentage cannot be misread as
+  covering everything.
+- **Distance is blank unless both odometer readings exist.** One reading says
+  nothing about distance; printing it as one is worse than printing nothing.
+
+Profitability sits behind `view_financials_logistics_shipment` as well as its
+page permission: an operations user who may read a register has no business
+reading margins. Both its figures come from `withSum` subqueries rather than
+loading charges and expenses into memory, because a quarter's register would
+otherwise pull tens of thousands of rows to add up two columns.
+
+### A test that could not have failed
+
+The test for "delivered, but nobody promised a date" passed for the wrong
+reason. `ShipmentFactory` fills `expected_delivery_at` with now + 2 days, so the
+shipment under test *had* a promised date and was scored `on-time` - the branch
+the test existed for was never reached. The fix is one explicit `null`, but the
+general lesson is worth keeping: **a factory default is enough to make a test
+assert the opposite of what its name claims.** Worth checking whenever a test
+turns on a column being absent.
+
+A second test in the same file had the same shape of defect: it read
+`getTable()->getQuery()`, the *unfiltered* base query, while claiming to prove
+the export respects the filters. It would have passed whatever the filters did.
+It now reads `getTableQueryForExport()`, which is the exact method Filament's
+`CanExportRecords` calls.
+
+### A permission nobody was checking
+
+Nothing in the application proved that Shield **generates** the `page_logistics_*`
+permission names the pages check for. Every test grants them by name, so a page
+naming a permission Shield never generates would pass every test and be
+impossible to open in production - `canAccess()` false for everyone, including a
+role with every box ticked.
+
+The names are not Shield's defaults. Shield would produce `view_<class>`; this
+application installs its own key builder in `Webkul\PluginManager\PermissionManager`
+that produces `page_<plugin>_<class>`. Two independent things have to agree, and
+nothing was holding them together. A new test pins the five report pages. The
+other Logistics pages are still unpinned and are noted for WP-13.
+
+### Verified
+
+Full `LogisticsFeature` suite on `aureuserp_testing_wp11`: **176 passed, 676
+assertions**, no failures. Then the reports file alone at **9 passed, 38
+assertions**, run afterwards because the last two edits to the test file landed
+after the full run had already collected its tests. Pint clean on every changed
+file.
+
+One thing to watch when reproducing this: `--filter="Reports\\\\ReportsTest"`
+matched nothing and **exited 0** anyway. "No tests found" is not a pass - check
+the test count rather than the exit status.
+
+## 2026-09-25 (Company Admin role, and avatars without a third party)
+
+Two decisions the user made after the tenant-isolation fix landed
+(`docs/company-admin-role-plan.md` §4b).
+
+### Company Admin, provisioned
+
+A role to assign when onboarding a tenant, so it no longer means hand-ticking
+permissions each time. It is an ordinary role: it holds seven permissions and
+gets **no** `Gate::before` bypass, unlike Multi-Company Admin.
+
+Deliberately **not** a system role. System roles can be assigned by nobody but a
+super admin, which would stop DEKA staff handing this out while onboarding - the
+one job it exists for. What contains it is machinery that already applies to
+every non-super actor:
+
+- the company scoping added on 2026-09-24, so it sees only its own company's
+  users;
+- `scopeAssignableRoles()`, which lets an actor assign only roles whose
+  permissions are a subset of their own, so it cannot create someone more
+  powerful than itself;
+- `scopeAssignableCompanies()`, so it cannot grant a company it does not hold
+  and therefore cannot grow its own reach by creating a user.
+
+It can view, create and update users, and archive one at a time. It has no
+`delete_any`, no `force_delete`, no role or permission management, no
+`page_security_*` and no scope bypasses.
+
+**No business permissions.** A role enumerating every resource would grow
+silently into a near-super-admin each time a plugin is installed, and what a
+given customer's administrator should be able to *do* differs per customer.
+Assign business roles alongside this one.
+
+`CreateUser` gives the role `global` resource permission, as it already did for
+Multi-Company Admin: ownership on the User model matches `creator_id` and `id`,
+so anything narrower would show an administrator only themselves and the users
+they personally created - never the colleagues already there.
+
+### Avatars: no names sent to ui-avatars.com
+
+Filament's default `UiAvatarsProvider` builds the initials image by requesting
+ui-avatars.com **with the person's name in the URL**. That was one request per
+page for the signed-in user; after the Users table began falling back to it, one
+per row. A page of fifty would have sent fifty customer employee names to a
+third party, and rendered nothing offline.
+
+`Webkul\Support\Filament\AvatarProviders\DefaultAvatarProvider` serves one local
+SVG instead, registered on **both** panels - fixing only the table would have
+left the user menu still calling out. Everyone without an uploaded picture looks
+the same, which was the accepted trade.
+
+### A mistake worth recording
+
+The seeder call was added with a shell one-liner, which silently dropped the
+`use` statement because of the namespace backslashes - the trap already in
+AGENTS.md, hit for the third time in one session. `CompanyAdminRoleProvisioner`
+then resolved inside the seeder's own namespace and **every test in the Security
+suite failed at once**, because the seeder runs during install. The body of the
+change had been checked; the import had not. Write PHP with the editor, and
+verify the part that is easy to miss.
+
+### Verification
+
+- `SecurityFeature`: **55 passed, 158 assertions** - five new Company Admin
+  tests covering the permission baseline, idempotent provisioning, company
+  containment, and the two escalation boundaries.
+- Pint passed on every changed file.
+
+---
+
+## 2026-09-24 (Tenant isolation in the Users list, and four broken employee factories)
+
+Raised by the user: *"when I create a user for a new company I onboard, I give
+them a role like Admin2, but they tend to see other companies."* Investigated,
+and the reason turned out to be a defect rather than a missing role. Full
+write-up and the plan for the "Company Admin" role itself:
+`docs/company-admin-role-plan.md`.
+
+### The leak
+
+`UserResource::getEloquentQuery()` routes through
+`MultiCompanyAdminService::scopeManageableUsers()`, which company-scoped its
+query for **Multi-Company Admins only**. Every other actor got `->ownership()`
+and no company filter at all - and `ownership()` is not about companies. For a
+user whose resource permission is `global`, `Bouncer::getAuthorizedUserIds()`
+returns null and `OwnershipScope` returns early with no restriction whatsoever.
+
+So a customer's administrator with a custom role listed every user in the
+installation, across every tenant, with those tenants' companies named in the
+"Allowed Company" column. `UserPolicy::view()` and `::update()` fell through to
+`hasAccess()`, whose first clause is `hasGlobalAccess()`, so they could open and
+edit those users as well.
+
+Users are the one place this had to be written by hand: a user belongs to many
+companies through `user_allowed_companies`, so they are not company-scoped rows
+and `CompanyScope` never reached them.
+
+### The fix
+
+The non-Multi-Company-Admin branch now gets the same containment the other
+branch always had - the target must share an active company with the actor and
+hold no company the actor does not. It is applied **on top of** `ownership()`,
+never instead of it, so this can only narrow what someone sees.
+
+`UserPolicy` applies the same rule in `view`, `update`, `delete`, `forceDelete`
+and `restore`, through one helper so it cannot be forgotten in one method, and
+built from the same query as the list: a record hidden from the list is not
+reachable by its URL either.
+
+Two judgement calls, both recorded in the plan: a user who belongs to the
+actor's company *and* another is hidden, because listing them would name the
+other tenant on the row; and an actor can always see their own row, which
+reveals nothing.
+
+### Found while fixing it: ownership rules are untested everywhere
+
+`OwnershipScope::apply()` returns early on `app()->runningInConsole()`, and
+`artisan test` is the console. `AllowedCompanyScope` guards the same line with
+`&& ! app()->runningUnitTests()`; `OwnershipScope` has no such exemption, so the
+ownership scope is **inert in every test in this repository** and no test proves
+that `individual` or `group` restricts anything. A test of this package first
+appeared to prove ownership stayed narrow when the reason was elsewhere. Not
+changed here - switching it on would alter the data every existing test sees.
+Recorded for WP-13.
+
+### Employee factories: four defects, none reachable before
+
+`Employee::factory()->create()` could not complete anywhere in this repository,
+which is why nothing had noticed:
+
+- `DepartmentFactory` defaulted `manager_id` to `Employee::factory()`, while
+  `EmployeeFactory` defaults `department_id` to `Department::factory()`. Each
+  employee made a department that made an employee, until PHP's stack ran out.
+- `WorkLocationFactory` set `location_type` to a random word although the model
+  casts it to an enum, plus a `user_id` column that does not exist and `active`
+  where the column is `is_active`.
+- `DepartureReasonFactory` inserted `sequence` (the column is `sort`) and a word
+  into the integer `reason_code`.
+- `EmployeeJobPositionFactory` set `status` and `open_date`, neither of which
+  exists in the employees schema or in the columns the recruitments plugin adds.
+
+A new `EmployeeFeature` suite holds five guard tests naming each defect, so they
+fail loudly rather than lurking. CI runs `vendor/bin/pest` with no suite filter,
+so it is picked up without a workflow change.
+
+### Sentry: POD tokens redacted before events leave
+
+Sentry records the request URL regardless of `send_default_pii`, which governs
+cookies, the client IP and the body. A stop link's token is in the URL path, so
+any exception on that route sent a live credential to a third party.
+`AppServiceProvider::redactStopLinkTokensFromSentry()` rewrites it, chained onto
+the existing before_send rather than replacing it, and registered in
+`booted()` because the Sentry client does not exist until its own provider runs.
+It is not in `config/sentry.php`: a closure there would break `config:cache`.
+
+### The broken avatars in the Users table
+
+Not a storage problem - the symlink, APP_URL and disk config were all fine, and
+no partner has ever had an avatar (`count(avatar) = 0`). `defaultImageUrl`, which
+is what Filament renders when the state is empty, was pointed at
+`$record->avatar_url`: the same null it was meant to replace. Filament emitted an
+`<img>` with no usable src, and the browser drew a broken-image icon. It now
+falls back to `Filament::getUserAvatarUrl()`, the avatar the panel already shows
+for the signed-in user.
+
+**Note for the user:** that provider is Filament's `UiAvatarsProvider`, which
+builds the initials image by calling ui-avatars.com with the user's name in the
+URL. Today that is one request per page for the signed-in user; with this fix it
+is one per row. A local provider rendering initials as inline SVG would avoid
+sending names to a third party, and is a small change if wanted.
+
+### Verification
+
+- `SecurityFeature`: **50 passed, 141 assertions** - 9 new isolation tests plus
+  every pre-existing Security test, including the Multi-Company Admin suite.
+- `EmployeeFeature`: **5 passed, 8 assertions**.
+- `LogisticsFeature` after the factory changes: **161 passed, 629 assertions**.
+- Pint passed on every changed file.
+
+---
+
+## 2026-09-24 (Logistics WP-5b: security review, and the four decisions it produced)
+
+Branch `feature/logistics`. Review and decisions: `docs/logistics-plan.md` §7.
+Test database `aureuserp_testing_wp5b`.
+
+WP-5b's spec requires a security review before the package leaves `review`,
+because it is the only public entry point in the plugin. The review was done by
+the agent that wrote the package, which the user chose knowingly. It raised four
+risks; the user decided each one, and the pass then found four defects.
+
+### What the user decided
+
+- **Attribution.** Record the driver *and* ask for the recipient's ID, both
+  optional per company, both off by default.
+- **Token in the URL.** Accept, but let each company choose how long a link
+  lives.
+- **Throttling.** Key on the token, not the IP: this is a multi-tenant
+  application and drivers share carrier NAT addresses, so one company's drivers
+  must not spend another's budget. Keep a per-IP layer for abuse, make the limit
+  configurable per tenant, answer with 429 and Retry-After.
+- **Review.** A fresh adversarial pass by the authoring agent.
+
+### What that changed
+
+`logistics_company_settings` gains `capture_driver_on_pod`,
+`capture_recipient_id` and `stop_link_rate_limit`; `logistics_delivery_proofs`
+gains `driver_id` and `recipient_id_reference`. The migration is additive rather
+than folded into WP-1's, which have already run, and every option is off by
+default so an existing company's proofs are unchanged.
+
+The driver is taken from the **stop's trip**, never from the request: whoever
+holds the link is not necessarily the driver, and a field they could fill in
+would be a claim rather than a record. A test posts a forged `driver_id` and
+asserts it is ignored. The recipient ID is required by `DeliveryService` when
+the company asks for one - the page is not the boundary - and when the option is
+off, a crafted post carrying the field stores nothing. The column is free text
+named `recipient_id_reference`, deliberately not ID-specific: what counts as
+identification differs by country, and it must not become a national-ID field by
+assumption.
+
+The throttle now applies two limits at once, per token and per IP, with the
+token **hashed into the cache key** - keying on the plaintext would put a live
+credential into the cache store.
+
+### Four defects the pass found
+
+1. **The signature temp file was never deleted.** Decoded to `tempnam()`, and
+   storing copies rather than moves, so every capture with a signature left a
+   file behind: unbounded growth driven by an unauthenticated endpoint.
+2. **Revocation was unreachable.** `revoke()` existed but nothing called it, so
+   the only way to kill a link was to issue a replacement - wrong for the case
+   that matters, a URL sent to the wrong number.
+3. **A shipment leaving OUT_FOR_DELIVERY gave the driver a 500.** Link issued,
+   shipment then held or cancelled or delivered by someone else, driver submits:
+   `InvalidShipmentTransition` is a plain RuntimeException with no status and
+   the app's generic handler only answers JSON. An ordinary operational sequence
+   produced a server error at a customer's door and a false Sentry alert. It now
+   reports the same refusal as an expired link, which is also the right answer
+   for an unauthenticated caller: whether a shipment was cancelled is not theirs
+   to learn. The link is not spent, so it works again if the shipment goes back
+   out.
+4. **`CompanySetting` had no `$attributes`.** `forCompany()` returns an unsaved
+   instance for a company with no row, so `require_pod_for_delivery` read falsy
+   although the schema defaults it to true - quietly dropping a delivery control.
+   Same trap as `users.is_active` and `logistics_shipments.state`.
+
+### A migration invariant, tightened rather than relaxed
+
+WP-1's `InstallTest` asserted that every migration contains no `Schema::table(`
+and exactly one `Schema::create('logistics_*')`. The additive migration failed
+it. The rule protects something real - `UninstallCommand` drops `logistics_*`
+and nothing else, so a column added to another plugin's table would survive
+uninstall - but it could not tell "altering a table I own", which is safe
+because the column goes away with the table, from "altering someone else's",
+which is the actual danger.
+
+The test now asserts the real property: every table named in any
+`Schema::create|table|rename|drop` call starts with `logistics_`, and no raw
+`DB::`. That rejects things the old rule allowed, such as `Schema::rename` or
+`dropIfExists` on a foreign table, while permitting the one case that is safe by
+construction.
+
+### Verification
+
+- `StopLinkTest` is now 26 tests. Full `LogisticsFeature` on
+  `aureuserp_testing_wp5b`: **161 passed, 0 failed, 629 assertions**.
+- Pint passed on every changed file.
+
+### Residual risks, accepted and recorded
+
+The token travels in the URL path, so it reaches web-server and proxy logs and
+browser history, and anyone the message is forwarded to can complete the
+delivery; single use, the chosen TTL, `no-referrer` and revoke-on-reissue reduce
+this but do not remove it, and the paths are worth scrubbing from log retention
+at the edge. A forwarded link also exposes the shipment reference and the stop's
+contact name. `rateLimitFor()` costs one indexed query per request including for
+tokens that do not exist, bounded by the per-IP limit.
+
+An independent review before release would still be worth having: three of these
+four defects were things the authoring agent had looked straight past while
+writing the original tests.
+
+---
+
+## 2026-09-24 (Logistics WP-5b: one-time POD capture links)
+
+Branch `feature/logistics`. Handoff: `docs/logistics-plan.md` §7. Test database
+`aureuserp_testing_wp5b`.
+
+Drivers have no logins (D6), so proof of delivery is captured through a
+single-stop URL the dispatcher sends by SMS or WhatsApp (D15). No messaging
+provider is built in: the action shows the link to copy and share, which also
+keeps the credential out of a third-party message log this application would
+then be responsible for.
+
+Only a SHA-256 hash of the token is stored. A link expires after the company's
+`stop_link_ttl_hours`, works once, and can be revoked; issuing a new link for a
+stop revokes any earlier unused one, so a URL already sent or leaked stops
+working.
+
+### How an unauthenticated request is authorised
+
+The token is the credential, and `capture()` exchanges it for the identity of
+the dispatcher who issued the link, through `Auth::guard('web')->onceUsingId()`,
+which does not touch the session. **Nothing in `DeliveryService` is relaxed** -
+its switch check, both `Gate::authorize()` calls, the company scope and the POD
+validation all run exactly as they do for a user in the panel.
+
+The alternative, a "skip the checks when there is no user" path through
+`DeliveryService`, was rejected: it would leave a second and weaker way into the
+same service, and the next caller to forget a flag gets it for free. Borrowing
+the issuer's identity also gives the right failure modes - deactivate the
+dispatcher, or take away their `capture_pod` permission, and their outstanding
+links stop working.
+
+The guard is named rather than taken from `Auth::`'s default deliberately. Which
+guard is default depends on what ran earlier in the process, and the API's token
+guard has no `onceUsingId()` at all; the test run produced exactly that
+`BadMethodCallException` before the fix, on seven of fifteen tests.
+
+### Refusals say nothing
+
+Unknown, expired, used and revoked tokens all produce the same 404 carrying no
+detail, because saying which one tells a caller whether a token ever existed and
+turns the endpoint into an oracle for guessing. The refusal page names neither
+the shipment nor the company, which is asserted.
+
+The link is consumed only once the delivery has succeeded, inside the
+transaction that locks its row, so two simultaneous submissions cannot both
+spend it and a rejected photo leaves the driver able to retry rather than locked
+out at a customer's gate.
+
+### Session, CSRF and throttling
+
+Middleware is declared in the plugin's route file, not inherited:
+`PackageServiceProvider` loads plugin web routes with a bare `loadRoutesFrom()`
+that applies no group at all. Without it the form would have had no session and
+therefore **no CSRF protection**, and no throttling on an unauthenticated
+endpoint that accepts file uploads. The limiter (20 a minute per IP) lives in
+the plugin's provider so it goes away with the plugin.
+
+The capture page is `noindex` and `no-referrer`, since the URL is a credential,
+and its CSS is inline because it opens on a driver's phone and must not depend
+on the admin asset pipeline.
+
+### A gap in shared test infrastructure
+
+`TestBootstrapHelper::loadPluginRoutes()` only ever loaded `routes/api.php`. No
+plugin had web routes before, so a plugin's routes were never registered in
+tests and every `route()` call threw `RouteNotFoundException`. It now loads both
+files. That helper is shared by every suite, so `SupportFeature` was run as well
+as `LogisticsFeature`.
+
+### Verification
+
+- 15 tests in `tests/Feature/StopLinks/StopLinkTest.php`: **15 passed, 45
+  assertions**.
+- Full `LogisticsFeature` on `aureuserp_testing_wp5b`: **140 passed, 0 failed,
+  551 assertions** - the 125 from WP-10 plus these 15.
+- Pint passed on every changed file.
+
+### Not done
+
+**The security review this package's spec requires has not been done.** WP-5b is
+the only public entry point in the plugin, and what is described here is the
+build to be reviewed, not the review. The residual risk to put first: the token
+travels in the URL path, so it can reach web-server logs, proxy logs and browser
+history. Single use, the TTL, `no-referrer` and revocation on re-issue reduce
+that, but do not remove it, and moving the token out of the URL would break the
+"send a link by WhatsApp" use case D15 is built on.
+
+---
+
+## 2026-09-24 (Logistics WP-10 dashboard: the page, and a Shield bypass I wrote)
+
+Branch `feature/logistics`. Handoff: `docs/logistics-plan.md` §7. Test database
+`aureuserp_testing_wp10`.
+
+WP-10's three widgets and their seven tests were already on the branch. What was
+missing was the first thing the package's spec names: the Logistics dashboard
+page. Without it the widgets were reachable only through panel-wide widget
+discovery, which drops them onto the main dashboard with no page of their own.
+
+`Webkul\Logistics\Filament\Pages\Dashboard` follows the Projects dashboard
+already in this repo - `BaseDashboard`, `HasPageShield`, a `$routePath`,
+`NavigationGroup::Dashboard`, `getWidgets()` - with one addition: access needs
+the page permission **and** `LogisticsAccess::enabledForCurrent()`, so a company
+that has not switched Logistics on never sees it. The page does not decide which
+widgets a user may see; each widget keeps its own `canView()`, so the finance
+widget hides itself from anyone without `view_financials` here exactly as it does
+on the main dashboard.
+
+### A Shield bypass, written and then caught by its own test
+
+The first version of `canAccess()` read:
+
+```php
+return parent::canAccess() && LogisticsAccess::enabledForCurrent();
+```
+
+A `canAccess()` written on the class **replaces** the one `HasPageShield`
+provides, because a class method beats a trait method. `parent::canAccess()`
+therefore reached Filament's `Page::canAccess()`, which returns true. The page
+permission was never checked: the dashboard opened for any authenticated user of
+an enabled company, whatever their role.
+
+The test written for that case - "it forbids the Logistics dashboard without its
+page permission" - failed with "Failed asserting that true is false", which is
+what a test is for. The fix checks the permission explicitly, as the
+`UnbilledCharges` page already does:
+
+```php
+return (auth()->user()?->can('page_logistics_dashboard') ?? false)
+    && LogisticsAccess::enabledForCurrent();
+```
+
+A grep over the whole repository confirms no other page combines `HasPageShield`
+with its own `canAccess()`, so this was the only instance. The trap is now in
+`AGENTS.md`, because it will come up again the next time someone adds one
+condition to a Shield-guarded page.
+
+### Verification
+
+- Four new page tests: opens for a permitted user of an enabled company,
+  forbidden without `page_logistics_dashboard`, forbidden for a company that has
+  not enabled Logistics, and lists its three widgets.
+  `tests/Feature/Dashboard/WidgetsTest.php` now 11 tests, all passing.
+- Full `LogisticsFeature` on `aureuserp_testing_wp10`: **125 passed, 0 failed,
+  506 assertions, 2625 s** - the 121 of WP-8a plus these four. The run's wall
+  time was much longer because Docker was frozen across the machine's sleep;
+  Pest's own 2625 s is the run, and the summary line confirms it completed.
+- Pint passed on every changed file.
+
+### Note
+
+The widgets appear on the panel's main dashboard as well, because
+`LogisticsPlugin` discovers them - the same as the Projects plugin. Each widget
+guards itself with the company switch and a permission, so a company without
+Logistics sees nothing there.
+
+---
+
+## 2026-09-23 (Logistics WP-8a finished: receipt enforcement and two broken tests)
+
+Branch `feature/logistics`. Handoff: `docs/logistics-plan.md` §7. Test database
+`aureuserp_testing_wp8a`, dropped and recreated because the previous owner's run
+had stalled on it.
+
+WP-8a's owner became unavailable partway through the package, so the user asked
+for it to be finished here. The resource, service and state machine that owner
+built are unchanged; what follows is the verification they could not run and the
+three defects it exposed.
+
+### `requires_receipt` was enforced only by the form
+
+`ExpenseForm` marks the receipt upload required when the selected category
+demands one, but a form is not a boundary. An API write, an import or a direct
+call to `ExpenseApproval` walked an unevidenced expense straight through to
+`approved` - the point at which the company agrees to pay it. For an evidence
+control on money, that is the wrong place to stop.
+
+`ExpenseApproval` now refuses the move to `submitted` **and** to `approved`:
+
+- Both points, because an expense can reach `submitted` without passing through
+  `submit()`: a seeded record, an import, an API write.
+- Rejection is deliberately still allowed without a receipt. A missing receipt
+  is often the reason for rejecting a claim.
+- The category is read `withoutGlobalScopes()` by key. Read through the
+  relation, a queued job or console command running outside the expense's
+  company would see no category at all and treat that as "no receipt needed" -
+  the rule failing open, which is the wrong way round.
+- The refusal is a `ReceiptRequired` exception, following the existing
+  `NothingToInvoice` pattern, caught in `ViewExpense` and shown as a warning
+  notification naming the category rather than an error page.
+
+### Two tests that could not have passed
+
+`ApprovalTest`'s form test granted only `create_logistics_expense`. Filament's
+`Resource::canAccess()` returns `canViewAny()`, so `CreateExpense` never
+mounted, and every assertion in that test failed on a null component -
+"Attempt to read property `form` on null" - rather than on the form it meant to
+check. Added `view_any_logistics_expense`, with a comment so it does not get
+re-broken.
+
+The same test then asserted on
+`FileUpload::make('receipt_path')->getAcceptedFileTypes()` - a freshly
+constructed component carrying none of the resource's configuration, which
+returns null. It asserted nothing. It now checks the component the page actually
+mounts, through `assertSchemaComponentExists`, covering the MIME allowlist, the
+10 MB cap and the `public` disk: all three claimed in the original handoff and
+none of them previously tested.
+
+### Verification
+
+- Four new tests: refusal on submit, refusal on approve for an expense that
+  never passed through `submit()`, success once a receipt is attached, and
+  rejection still going through without one.
+- Full `LogisticsFeature` on `aureuserp_testing_wp8a`: **121 passed, 0 failed,
+  500 assertions, 2161 s**. No failures anywhere in the plugin.
+- Pint passed on every changed file.
+
+### Requests for other packages
+
+- **WP-8b:** the "at least one of shipment, trip or vehicle" rule is form-only,
+  as `requires_receipt` was. It is a data-shape rule rather than an evidence
+  control, so it was left alone here, but WP-8b cannot post a vendor bill for an
+  expense that points at nothing.
+- **WP-13:** `Expense` declares no `$attributes`, so it has the same
+  null-in-memory gap for database-default columns that `Shipment` had.
+
+---
+
+## 2026-09-23 (Logistics WP-9 sales quotation link)
+
+Branch `feature/logistics`. Handoff: `docs/logistics-plan.md` §7. Test database
+`aureuserp_testing_wp9`.
+
+A confirmed sales order carrying one of a company's six `LOG-*` service products
+now creates a **draft** shipment, with the order's customer, currency and lines
+copied across as charges. The charges are stored `is_billable = false`, because
+Sales already invoices that order and billing them again from Logistics would
+charge the customer twice for the same work.
+
+No Sales file was edited. `OrderWorkflow::confirm()` already dispatches
+`OrderConfirmed`, so Logistics only listens. `CreateShipmentFromOrder` swallows
+and `report()`s any failure: the order is the customer's commitment, the
+shipment is a convenience, and confirming an order must not fail because
+Logistics could not make one.
+
+### Multi-tenancy: why the listener registers unconditionally
+
+Plugin installation is global - the `plugins` table has no company column - so
+"is Sales installed" says nothing about whether a given company sells, and
+"is Logistics installed" says nothing about whether it ships. Guarding
+registration on `Package::isPluginInstalled('sales')` would also query the
+database at register time, which is what made `package:discover` hang for 300 s
+once already, and `class_exists()` decides nothing in a monorepo where every
+plugin's classes are autoloadable.
+
+So the listener is always registered and the decision lives once, in
+`ShipmentFromOrder::shouldConvert()`, where it is testable:
+
+| Tenant | Logistics enabled | Confirming a sales order |
+| --- | --- | --- |
+| Sales only | no | declined on the per-company switch |
+| Sales + Logistics | yes | draft shipment created |
+| Logistics only | yes | event never fires - that tenant places no orders |
+| Sales not installed | either | its tables do not exist; the event never fires |
+
+Logistics declares no dependency on Sales (only `products`, `employees`,
+`accounts`), and `logistics_shipments.sale_order_id` is a plain indexed column
+rather than a foreign key, so a logistics-only deployment installs cleanly.
+
+Two related corrections in the same service:
+
+- **The "no backfill" rule is enforced by when the code runs.** The rule is "no
+  shipment for an order *confirmed* before the company enabled Logistics", and
+  the listener only fires on confirmation, so the switch read at that moment is
+  the whole rule. An earlier draft compared the order's `date_order`, which
+  wrongly blocked a quotation drafted before adoption and confirmed after it -
+  precisely the open work a company adopting Logistics has in hand. Orders
+  already confirmed before adoption are still converted deliberately, through
+  the "From sales order" picker.
+- **`serviceLines()` now reads the order's lines with global scopes removed**,
+  filtered by `order_id`, as `existingShipment()` already did. `OrderLine` is
+  company-scoped and an event fires under whoever acted, so a queued or console
+  confirmation under a different active company would have found no lines and
+  silently skipped the shipment.
+
+### Bug found while testing: null column defaults on Shipment
+
+`logistics_shipments` fills `state`, `transport_mode`, `priority` and eight
+other columns by database default, and `Shipment` declared no `$attributes`. A
+freshly created shipment therefore carried `null` for all of them in memory
+until it was reloaded: `ShipmentFromOrder::convert()` returned a shipment whose
+`state` was null rather than `DRAFT`, and `->state->value` on it would have been
+a fatal error. This is the same trap as `users.is_active`, recorded in project
+memory, and the fix is the same - `protected $attributes` mirroring the
+migration's defaults, with a docblock saying to keep the two in step.
+
+The same gap exists on `Trip`, `Expense`, `Stop`, `ShipmentCharge`, `Vehicle`
+and `Driver`. Not changed here: outside WP-9, and each needs its own test run.
+Recommended for WP-13.
+
+### Verification
+
+- `tests/Feature/Sales/ShipmentFromOrderTest.php`, 10 tests: the conversion and
+  its contents, the per-company switch off, switching Logistics back off,
+  an order with no logistics services, another company's `LOG-*` products,
+  converting only once, the duplicate check surviving a different active
+  company, an old quotation confirmed after adoption, the real `OrderConfirmed`
+  dispatch, and a Logistics failure not breaking order confirmation.
+- Focused run on `aureuserp_testing_wp9`: **9 passed, 1 failed** - the failure
+  was the null `state` above, fixed at its cause. All 10 pass after the fix.
+- Full `LogisticsFeature` on a freshly recreated `aureuserp_testing_wp9`:
+  **116 passed, 1 failed, 483 assertions, 2488 s**. An earlier attempt was
+  interrupted when the machine's Docker daemon stopped, so the database was
+  dropped and recreated before this run rather than reused.
+- The one failure belongs to **WP-8a**, not WP-9:
+  `tests/Feature/Expenses/ApprovalTest.php:97` fails with "Attempt to read
+  property `form` on null", because the Livewire component never mounted.
+  Filament's `Resource::canAccess()` returns `canViewAny()`, so `CreateExpense`
+  needs `view_any_logistics_expense` as well as `create_logistics_expense`.
+  Reported to that package's owner; not changed here.
+  **Superseded the same day** - WP-8a's owner became unavailable and the user
+  asked for it to be finished here. See the WP-8a entry above: the suite is now
+  121 passed, 0 failed.
+- Pint passed on all four WP-9 files.
+- Note for future runs: the suite now installs the Sales plugin. The first Sales
+  test pays 496 s for it, about a fifth of the suite's total, on top of the
+  515 s the first test of the suite already pays for the base install.
+
+### Requests for other packages
+
+- **WP-2 / WP-13:** `ShipmentResource::saleOrderOptions()` lists every order of
+  the customer despite its docblock saying "Confirmed sales orders", and does
+  not exclude orders that already have a shipment. The listener cannot
+  duplicate, since `existingShipment()` sees the `sale_order_id` the picker
+  sets, but a user can hand-create a second shipment for one order.
+
+---
+
+## 2026-09-23 (Logistics WP-8a expense records and approval)
+
+WP-8a is implemented on `feature/logistics`: the new `ExpenseApproval` service
+owns draft-to-submitted-to-approved/rejected transitions, re-reads the expense
+under the company scope before loading or changing it, checks the Logistics
+switch itself, and authorises the requested ability. The Finance
+`ExpenseResource` follows the split Schemas/Tables/Pages layout, links expenses
+to a shipment, trip or vehicle, and stores receipts through the `public` disk
+with an allowlisted MIME set, a 10 MB limit, and generated filenames. Receipt
+requiredness is read from the selected category in the current company scope.
+
+Added `ApprovalTest.php` for both approval outcomes, missing approve permission,
+company isolation, and conditional receipt validation. Syntax checks passed and
+Pint passed on the nine new PHP files. The focused Pest run used the dedicated
+`aureuserp_testing_wp8a` database, but did not reach assertions: the existing
+plugin-install bootstrap remained in `shield:generate` permission generation.
+The database was reset after the stalled run; no test result is claimed.
+
+The WP-8a status remains `in progress` until the required focused and full
+LogisticsFeature runs complete. No Requests for other packages.
+
+---
+
+## 2026-09-22 (Logistics WP-7 invoicing, and WP-5 finished)
+
+Branch `feature/logistics`. Handoffs: `docs/logistics-plan.md` §7.
+
+### WP-7: charges and shipment invoicing
+
+`ShipmentInvoicer` turns a shipment's billable charges into a customer invoice
+by creating the same `Account\Models\Move` that Sales creates and handing it to
+`AccountFacade::computeAccountMove()`. Logistics owns no part of invoicing:
+numbering, journals, posting and payment state stay in Accounting.
+
+**Two bugs in the hand-off to accounting, found by the tests:**
+
+1. `Move`'s saving hook computes currency *before* journal, so a move created
+   with neither dereferences a null journal and dies. Sales never hits it
+   because orders always carry a currency; shipments do not. Fixed by supplying
+   `$shipment->currency_id ?? $shipment->company?->currency_id` and leaving the
+   journal to accounting's own `computeJournalId()`.
+2. The scoped re-read ran *after* the charges were loaded, so invoicing another
+   company's shipment reported "nothing to invoice" rather than refusing it -
+   the charges were scoped out too. The guard now runs first.
+
+**Two ways to silently under-bill a customer**, both closed in the UI:
+
+- A charge with no product yields a move line with no account, which accounting
+  treats as a non-product line and computes **untaxed**, with no error. The
+  product is now `required()`.
+- A tax with no repartition lines contributes nothing, also silently. The tax
+  select only offers taxes that have `invoiceRepartitionLines`.
+
+Neither of those is a defect in the invoicer - both are configuration mistakes
+that produce a plausible-looking invoice with money missing from it, which is
+why they are prevented at entry rather than validated at invoice time.
+
+Waiting time (D14) is deliberately two methods: `waitingTimeSuggestions()`
+computes and creates nothing, `addWaitingTimeCharge()` is what a confirmed
+suggestion calls. A long wait is often the carrier's own fault, so automatic
+detention billing would put invented charges on real invoices.
+
+### WP-5: finished and integrated
+
+Codex built the delivery package and stopped without integrating it. The three
+delivery actions are now registered on `ViewShipment` and
+`DeliveryProofsRelationManager` on `ShipmentResource` - both WP-2 files, which
+is why Codex was asked to request the change rather than make it.
+
+`DeliveryProofsRelationManager::objectKey()` was extracted and made public so
+the test derives the storage key from the same code the UI links with. It
+previously hand-built `companies/{id}/{path}`, omitting the `root` prefix
+`fileUrl()` adds; the two could have drifted apart with every test still
+passing, leaving the file present and the link pointing elsewhere.
+
+**Known coverage gap, recorded not fixed:** `phpunit.xml` does not set
+`FILESYSTEM_PUBLIC_DRIVER`, so tests always run the `local` driver and the
+`tenant-s3` paths - `fileUrl()`'s secure-storage branch and all of
+`withShipmentDisk()` - never execute. The driver builds a real S3 driver, so it
+cannot be faked cheaply.
+
+### A guard every Logistics service needs
+
+`LogisticsPolicy::recordAbility()` grants on permission plus the per-company
+switch. It never checks that the record belongs to a company the user can see -
+normally the company scope makes that moot, but a model obtained another way
+passes authorisation. Both `DeliveryService` and `ShipmentInvoicer` now re-read
+the record under the scope before writing. WP-8a and WP-8b need the same.
+
+### Verification
+
+- `--testsuite=LogisticsFeature`: **88 passed, 408 assertions**
+- `--testsuite=AccountFeature`: **521 passed, 1382 assertions** - identical to
+  the WP-1 baseline, so writing invoices from Logistics disturbed nothing
+- Pint clean
+
+**Not verified:** WP-7's UI layer has no tests of its own. Both relation
+managers, `CreateInvoiceAction` and `UnbilledCharges` are exercised only to the
+extent that the suite loads them.
+
+---
+
+## 2026-09-21 (Logistics WP-4: trips and dispatch board)
+
+Branch `feature/logistics`. Plan and handoff: `docs/logistics-plan.md` §7.
+
+### Added: DispatchService, trip resource, dispatch board
+
+`DispatchService` is the only place a trip's state changes and the only place
+shipments are put onto a trip. `assign()`, `dispatch()`, `start()` and
+`complete()` are each wrapped in a transaction and each call
+`LogisticsAccess::ensureEnabled()` and `Gate::authorize()` themselves, because
+the super-admin `Gate::before` bypass skips policies and the board and future
+telematics callers reach the service directly.
+
+Attaching a shipment goes through the service rather than the plain relation.
+A bare attach would link the records but leave the shipment `CONFIRMED` and the
+trip with no stops - a silently half-assigned trip.
+
+**Refusals and warnings are deliberately different.** No vehicle, no driver, an
+archived vehicle, an archived driver or an expired licence all block. Over
+capacity only warns and the dispatch still proceeds (D5). Blocking on capacity
+would strand real deliveries over an estimate, so it is advisory by design and
+the class docblock says so - the instinct on review is to "fix" it into a
+refusal.
+
+**Stops take the shipment's company, not the session's.** A dispatcher working
+across companies would otherwise stamp their own company onto another company's
+stop.
+
+### Fixed during development: a permission substitution in DispatchBoard
+
+`canAccess()` first gated the board on `view_any_logistics_shipment` alone.
+Shield generates `page_logistics_dispatch_board` automatically and that is what
+grants the screen, so this was substituting a different rule than the plan's
+conventions specify. It now requires **both**: the page permission and the
+shipment permission. Either alone is wrong - the page permission by itself would
+leak customer names and destinations to a user denied the shipment list.
+
+### Verification
+
+- `--testsuite=LogisticsFeature` on `aureuserp_testing_claude`: **76 passed,
+  348 assertions**, zero failures. WP-4's own contribution is the 10 tests in
+  `tests/Feature/Dispatch/`; the total also includes WP-5's in-progress tests,
+  which landed in the tree in parallel.
+- Pint: reformatted 15 files (import order, operator alignment) after that run.
+  Style only, no behaviour change.
+
+One test failed first time and it was the test, not the code: it read
+`$trip->stops()` while the user was active in another company, so the company
+scope correctly returned nothing. Rewritten to assert both halves - invisible
+through the scope, and carrying the shipment's company when read without it.
+That is a stronger assertion than the original.
+
+---
+
+## 2026-09-21 (Logistics WP-6: waybill PDF)
+
+Branch `feature/logistics`. Work package WP-6 added a printable shipment
+waybill without changing the WP-2-owned shipment view page.
+
+### Added: tenant-correct waybill generation
+
+`PrintWaybillAction` follows the existing Accounts Dompdf/PDF handler pattern
+and renders shipment number, customer, sender and recipient, route, cargo,
+driver and vehicle, dates, instructions, and a receipt signature area. The
+document's letterhead is loaded from the shipment's own company relation, not
+from the session's current company.
+
+The action checks the shipment `view` policy both for visibility and again in
+the download operation. The execution path re-queries through normal company
+scoping before rendering, so passing an arbitrary out-of-scope model instance
+cannot bypass the tenant boundary.
+
+### Added: idempotent first-print numbering
+
+The first print locks the shipment row, explicitly ensures the
+`logistics.waybill` sequence for that shipment's company, consumes one number,
+and saves it to `waybill_no`. Later and concurrent prints reuse the saved value
+instead of burning another sequence number.
+
+### Verification
+
+Verified in the Sail container against the dedicated local PostgreSQL database
+`aureuserp_testing_wp6`:
+
+- Focused WP-6 tests: 4 passed, 11 assertions.
+- Full `LogisticsFeature` suite: 60 passed, 293 assertions.
+- Pint was run on the new WP-6 PHP paths and fixed only formatting; final dirty
+  and explicit-path checks are recorded in the WP-6 handoff.
+
+The shipment view page was deliberately not edited because WP-2 owns it and
+WP-4 may be changing it concurrently. The exact import and header-action line
+needed to expose the tested action are in the WP-6 handoff request.
+
+---
+
+## 2026-09-21 (Logistics WP-3: vehicles and drivers)
+
+Branch `feature/logistics`. Work package WP-3 added Fleet resources and
+adoption import helpers on top of the WP-1 fleet models.
+
+### Added: fleet resources using the upstream split layout
+
+Vehicle and Driver resources now live under the Fleet cluster at the exact
+FQCNs already present in `config/filament-shield.php`. The resource classes are
+thin and delegate forms, infolists and tables to `Schemas/*` and `Tables/*`
+classes, matching Filament's generator and the upstream AureusERP resource
+layout. This avoids creating inline resources that future upstream fixes cannot
+patch cleanly.
+
+Vehicles expose registration number, ownership, vehicle type, capacity,
+third-party carrier, optional Maintenance equipment linkage, telematics device
+reference and active status. Drivers expose either an employee or carrier
+contact, licence fields, active status and expiry badges. Licence numbers are
+hidden unless the user has `update_logistics_driver`.
+
+### Added: idempotent adoption imports
+
+`FleetImporter` bulk-creates driver profiles from selected employees and
+vehicles from selected Maintenance equipment. Each method skips rows already
+linked by `employee_id` or `equipment_id`, so running the import twice is safe.
+Both methods call `LogisticsAccess::ensureEnabled($source->company_id)` before
+creating records, because super-admin Gate bypass can skip policies.
+
+Maintenance equipment does not have a guaranteed vehicle registration field, so
+imported vehicles use `serial_no`, then `partner_ref`, then `EQ-{equipment id}`.
+
+### Verification
+
+Verified in the Sail container:
+
+- `docker compose run --rm --no-deps laravel.test php artisan test --testsuite=LogisticsFeature --filter=Fleet`: 4 passed, 45 assertions.
+- `docker compose run --rm --no-deps laravel.test php artisan test --testsuite=LogisticsFeature`: 56 passed, 282 assertions.
+- `docker compose run --rm --no-deps laravel.test vendor/bin/pint --dirty --format agent`: passed.
+
+---
+
+## 2026-09-20 (plugin install: intermittent failures that succeed on retry)
+
+Branch `feature/logistics`. Reported symptom: installing a plugin sometimes
+errors, then works on a later attempt.
+
+### Fixed: an open transaction wrapped a 300-second external process
+
+`PluginResource`'s install action opened `DB::beginTransaction()`, then `exec()`ed
+`{plugin}:install` as a **separate PHP process** on its own database connection,
+and only committed afterwards.
+
+The transaction bought nothing: the child process's migrations and permission
+rows commit independently, so `DB::rollBack()` could never undo an install — it
+only ever reverted the local `plugins` row. What it did do was hold this
+request's connection open, *idle in transaction*, for as long as the child ran,
+up to the 300s timeout. Against a pooled managed database (Supabase) that is
+long enough to trip an idle-in-transaction timeout, and long enough for the
+locks this connection still held to block the child's own DDL — which is
+precisely an install that fails once and then succeeds when retried.
+
+Removed the transaction; `$record->update()` is a single statement and needs
+none. The rollback in the `catch` went with it, since it was rolling back work
+that had already committed elsewhere.
+
+### Fixed: the cache rebuild raced with the post-install redirect
+
+`Package::refreshPluginCaches()` ran `optimize:clear` synchronously and then
+fired a **detached** `php artisan optimize > /dev/null 2>&1 &`, returning
+immediately. The redirect straight after an install could therefore reach the
+app while that background process was still writing
+`bootstrap/cache/config.php` and `routes-v7.php`. Laravel writes those with
+`file_put_contents`, which is not atomic, so a concurrent request could
+`require` a half-written file and fatal — an error that fixed itself a moment
+later once the rebuild completed. The detached command also discarded its own
+failures into `/dev/null`.
+
+Now rebuilt in-process with `Artisan::call('optimize')`, so the caches are whole
+before anyone is redirected and a failure is reportable. Costs the install
+action a few seconds. `rebuildCachesInBackground()` was removed as dead code.
+
+### Already fixed on this branch, listed for the record
+
+- `Role::first()` in `InstallCommand` (unordered, so permissions were synced to
+  an arbitrary role) now resolves the panel role by name.
+- `Package::phpBinaryPath()` uses `PhpExecutableFinder` (upstream `631dbcdfb`).
+
+### Not verified by tests
+
+Neither path is exercised by the suites: the Filament action is not covered, and
+the `optimize` rebuild is guarded by `app()->isProduction()`. `php -l` clean.
+This needs confirming on a real install.
+
+---
+
+## 2026-09-19 to 2026-09-20 (Upstream Package A: verified runtime baseline)
+
+Branch `feature/logistics`. Whole-application plan:
+`docs/upstream-fix-adoption-plan.md`, Package A / UF-001.
+
+### Fixed: the declared PHP/CI contract did not match the lockfile or production
+
+The root package claimed PHP `^8.3`, and all GitHub workflows provisioned PHP
+8.3, while the committed lockfile already contained Symfony packages requiring
+PHP 8.4.1 or newer. The PostgreSQL CI lanes also used PostgreSQL 16 while Sail
+and production use PostgreSQL 17.
+
+The root contract is now PHP `^8.4.1`; Pest, Playwright, and translation CI use
+PHP 8.4; and both database-backed workflows use PostgreSQL 17. MySQL remains as
+the existing compatibility lane.
+
+### Security patches found while refreshing the lock contract
+
+`composer audit --locked` exposed four advisories in direct dependencies. The
+minimum constraints and lockfile now require:
+
+- Filament 5.7.6, fixing MFA code replay (CVE-2026-84306) and a
+  password-validity disclosure for panel-denied accounts (CVE-2026-84307).
+- Livewire 4.3.4, fixing client-side state handling that could permit DOM XSS
+  (CVE-2026-81887).
+- Laravel Excel 3.1.70, preventing a caller-controlled export path from writing
+  outside the configured filesystem disk (CVE-2026-84374).
+
+Two broad Composer dry runs were rejected because they would have updated 74
+or 50 packages. The applied update changes exactly 14 packages: the twelve
+Filament split packages plus Livewire and Laravel Excel. A metadata-only Guava
+repository URL canonicalization is the only other lock entry change. The
+translation workflow now runs a locked Composer audit on every push and pull
+request, without multiplying the audit across database/browser matrix jobs.
+
+Composer's normal `filament:upgrade` script republished five tracked CSS/JS
+assets. All five match their installed package source byte-for-byte. The local
+sidebar, topbar, and table-summary Blade overrides were compared with Filament
+5.7.6; their upstream templates did not change from 5.7.3.
+
+### Full-suite finding: plugin installation widened the wrong role
+
+The first complete serial PostgreSQL run finished with 2 failures and 2,422
+passes (6,783 assertions) after 38,339.61 seconds. Both failures exposed one
+order-dependent authorization defect plus one incomplete test fixture:
+
+- Plugin permission regeneration selected `Role::first()`. The new protected
+  `Multi-Company Admin` role is created before `Admin`, so installing a plugin
+  could replace its intended eight permissions with every application
+  permission. Fresh ERP installation also used `Role::first()` for
+  `general.default_role_id`, making the protected role the invitation default.
+- The Super Admin promotion test created a user with events disabled and
+  therefore without the partner record that every normal user save creates.
+  Filament correctly reached the singular relationship and then attempted to
+  create a blank partner.
+
+Both installer paths now resolve the configured panel `Admin` role explicitly
+by case-insensitive name and `web` guard. The protected-role provisioner uses an
+exact sync so stale grants are removed. Migration
+`2026_09_20_150533_repair_multi_company_admin_install_state` normalizes that
+permission baseline and changes a global default role from `Multi-Company
+Admin` to the distinct configured `Admin` role when needed; rollback is
+deliberately non-destructive. Regression coverage now exercises fresh install,
+repair, Filament promotion, and a real lightweight `contacts:install` run.
+
+### Verification
+
+- `composer validate --no-check-publish`: passed; existing exact Shield
+  constraint warning only.
+- Clean optimized Composer install under Sail PHP 8.4.23: passed, including
+  package discovery and asset publication.
+- `composer audit --locked --no-interaction`: no advisories.
+- Symfony YAML parse of all four GitHub workflow files: passed under PHP 8.4.
+- Playwright locked install and test discovery: passed; npm reported no
+  advisories and Playwright listed 220 Chromium tests across 19 files.
+- Published asset SHA-256 comparisons: all five match package sources.
+- Filament vendor override comparison, 5.7.3 to 5.7.6: no upstream changes.
+- `translations:check --details`: command completed; 93/108 locale sets pass.
+  Existing translation drift leaves 15 failures across Accounts, Employees,
+  Logistics, Products, Security, and Support. No translation files were changed
+  in this package.
+- Initial full serial PostgreSQL Pest suite: 2 failed, 2,422 passed (6,783
+  assertions). Those two failures led to the installer and fixture fixes above.
+- Post-fix focused Security suite: 41 passed (121 assertions), including an
+  actual plugin permission regeneration; duration 410.53 seconds.
+- `vendor/bin/pint --dirty --format agent`: passed after the PHP changes.
+
+Remote GitHub Actions and the Playwright shards have not yet run against this
+uncommitted branch. The full 10-hour serial suite was not repeated after the
+focused fixes; the remote matrix is the remaining whole-suite confirmation.
+Deployment must run the new idempotent Security migration before plugin
+installation or invitation workflows resume.
+
+## 2026-09-18 (Logistics WP-2 in progress; security provisioner fix)
+
+Branch `feature/logistics`. Plan and handoff: `docs/logistics-plan.md` §7.
+
+### Fixed: new multi-company admin migration broke every test suite
+
+`MultiCompanyAdminRoleProvisioner::provision()` (new, untracked, written by
+another worker today) called `modelKeys()` on the result of `collect()->map()`.
+`modelKeys()` is defined on `Illuminate\Database\Eloquent\Collection` only —
+`map()` returns a plain `Illuminate\Support\Collection` — so the call always
+threw `BadMethodCallException`. Its migration
+(`2026_09_18_000002_provision_multi_company_admin_role.php`) runs on every
+`migrate:fresh`, so this failed the whole repo's tests, not just Logistics.
+
+```php
+// before
+$role->permissions()->syncWithoutDetaching($permissions->modelKeys());
+
+// after
+$role->permissions()->syncWithoutDetaching($permissions->map->getKey()->all());
+```
+
+### Upstream review against aureuserp v1.6.0
+
+We are 215 commits / 1935 files behind `aureus/master`. A blanket sync is not
+viable: a large share of that is an upstream refactor of resource structure
+across 13 plugins, which would collide with nearly everything this fork has
+added. Reviewed for *fixes that affect us* instead.
+
+**Already fixed here, no action:** `8552c0cc4` "Escape HTML entities in change
+summaries" — a stored XSS in chatter, where user-controlled old/new field values
+were rendered with `{!! !!}` in the activity log and unescaped in notification
+mail. Our copy already escapes (`content-text-entry.blade.php` lines 164 and
+181) and `ChatterNotificationService` already calls `e()`, at four call sites to
+upstream's two. Relevant because every plugin including Logistics logs through
+chatter.
+
+**Backported:** `631dbcdfb` "Fix Plugins installation in windows".
+`Package::phpBinaryPath()` used `shell_exec('which php')`, which does not exist
+on Windows and is disabled on some hosts, so installing a plugin from the
+Plugins page could not find a binary — the same path Logistics installs through.
+
+Checked the php-fpm regression risk before taking it, because the old code
+hand-rolled a `str_contains(PHP_BINARY, 'fpm')` guard and a candidate list:
+`PhpExecutableFinder::find()` returns `PHP_BINARY` only when `PHP_SAPI` is
+`cli`, `cli-server` or `phpdbg`, so under fpm it falls through to `PHP_BINDIR`
+instead of returning the fpm binary. It covers the case the old list existed
+for. Verified in the container: returns `/usr/bin/php8.4`, `is_file` true.
+
+One deliberate deviation from upstream: `find(false)`, not `find()`. The result
+is passed through `escapeshellarg()`, and appended SAPI arguments would be
+quoted into a single unusable token. Upstream's `is_file()` check hides this by
+falling back to `'php'`.
+
+Nothing else upstream is security- or data-integrity-critical for us: the rest
+is feature work (sales price lists), translation keys, product soft-delete
+visibility, and the refactor. A 1935-file divergence means low-severity fixes
+are certainly going unnoticed; real coverage needs a dedicated sync pass.
+
+### Multi-Company Admin is now "super admin minus a denylist"
+
+Goal (user): DEKA ERP staff administer tenant companies without full super-admin
+rights, and creating one must not mean ticking hundreds of permissions.
+
+The role previously carried an enumerated grant list (8 `BASE_PERMISSIONS`) with
+the denylist applied on top in `User::hasPermissionTo()`. That is subtractive:
+it grants almost nothing, and adding the role to an existing admin *removes*
+rights rather than adding them — the opposite of the goal. Inverted to grant by
+default:
+
+```php
+// SecurityServiceProvider::packageBooted()
+Gate::before(function ($user, string $ability, array $arguments = []) {
+    if (! $user instanceof User || ! $user->is_active || ! $user->isMultiCompanyAdmin()) {
+        return null;
+    }
+
+    if (app(MultiCompanyAdminService::class)->deniesAbility($ability)) {
+        return false;   // denylist wins over every other role
+    }
+
+    return $arguments === [] ? true : null;
+});
+```
+
+Three details carry the security of this:
+
+- **Policies are not bypassed.** A blanket `true` from `Gate::before` skips
+  policies, which is where per-company containment lives. Only bare permission
+  checks (empty `$arguments`) are granted; a check carrying a model or class
+  returns `null` and its policy decides, so `UserPolicy::canManageUser()`,
+  `CompanyPolicy::isCompanyAssigned()` and the Logistics policies still apply.
+- **`is_active` is re-checked.** The callback runs before
+  `User::hasPermissionTo()`, which is where a deactivated user is normally
+  stopped, so omitting it would re-admit deactivated staff.
+- **Row visibility is unchanged.** `bypass_company_scope` is denied, so the
+  company scope still limits every query to assigned tenants.
+
+`deniesAbility()` is now the security boundary, so it matches on pattern rather
+than on the names known today — anything ending in `_role(s)`/`_permission(s)`,
+any `bypass_*`, `force_delete_*`, `page_security_*`, `impersonate`,
+`plugin_manager`, `_security_team`. A future plugin's permission touching those
+is denied by default.
+
+`MultiCompanyAdminService::scopeAssignableRoles()` gained a Multi-Company Admin
+branch. It previously derived assignable roles from the actor's *granted*
+permissions, which under the new model would leave a staff admin able to do
+nearly everything but assign almost nothing. They may now assign any non-system
+role that grants nothing they are themselves denied — which is exactly the
+"cannot create an admin with more rights than himself" rule, since they hold
+everything the denylist allows. System roles (`Admin`, `super_admin`,
+`Multi-Company Admin`) stay excluded, so only a super admin can mint another
+staff admin.
+
+**Test impact, not yet run:** `MultiCompanyAdminTest` line ~469, "cannot assign
+a company role containing permissions it does not possess", builds its elevated
+role from `update_support_currency`. That is no longer a permission the staff
+admin lacks, so the case must be rebuilt on a *denied* ability (e.g.
+`view_any_role`) to keep testing what it means to test.
+
+### Narrowed: super-admin role identity no longer reads `panel_user.name`
+
+`Role::getSuperAdminRoleNames()` merged `config('filament-shield.panel_user.name')`
+into the super-admin list. The fork's own super-admin gate
+(`SecurityServiceProvider::packageBooted()`, `Gate::before`) consults only
+`filament-shield.super_admin.name` and `'super_admin'`, so reading `panel_user`
+here widened super-admin identity beyond what the rest of the codebase
+recognises. `isSuperAdmin()` is now an unconditional allow in `UserPolicy`
+(view/update/delete/restore), `CompanyPolicy` (all companies) and
+`MultiCompanyAdminService::scopeManageableUsers()`, so the blast radius is large.
+
+No behaviour change today: `panel_user.name` is `'Admin'` in
+`config/filament-shield.php`, and `'Admin'` is already a literal entry in
+`SUPER_ADMIN_ROLE_FALLBACKS`. The change removes the trap where editing that
+config later would silently promote whatever role it names.
+
+**Not changed (already correct):** `User::isSuperAdmin()` and
+`isMultiCompanyAdmin()` use spatie's `getRoleNames()`, which calls
+`loadMissing('roles')` and reads the cached relation — so they cost one query
+per user instance, not one per permission check. A memoised boolean was
+considered and rejected: `hasPermissionTo()` runs on every Gate check, and
+spatie invalidates the `roles` relation via `unsetRelation()` on
+`assignRole`/`syncRoles`/`removeRole`, which a cached bool would not honour
+when roles change mid-request.
+
+### Fixed: every permission check failed for a model created in memory
+
+`User::hasPermissionTo()` now opens with `if (! $this->is_active) return false;`.
+But `users.is_active` gets its `true` from a **column default**, which the
+database applies to the written row and never reads back, and `UserFactory` does
+not set the attribute. So `User::factory()->create()` returned an instance with
+`is_active === null`, and every permission check on it denied. 19 Logistics
+tests failed this way; `MultiCompanyAdminTest` passed only because its helper
+sets `'is_active' => true` explicitly.
+
+Not test-only: `canAccessPanel()` reads the same attribute, so in production any
+`User::create([...])` that omits `is_active` yields an instance treated as
+suspended until it is reloaded. Fixed at the root, in the model:
+
+```php
+protected $attributes = [
+    'is_active' => true,
+];
+```
+
+`App\Models\User` declares no `$attributes`, so nothing is clobbered, and a row
+hydrated from the database still overrides it through `setRawAttributes()` —
+genuinely deactivated users stay deactivated.
+
+### Fixed: two PermissionRegistrar instances, so permission caches never cleared
+
+`Webkul\Security\Models\Permission::getPermissions()` reads through the fork's
+`Webkul\Security\PermissionRegistrar` — bound as a singleton in
+`SecurityServiceProvider`, where the unqualified `PermissionRegistrar::class`
+resolves to the fork's class. Every flush site (`SecurityHelper`, `Role`,
+`ShieldSeeder`, `MultiCompanyAdminRoleProvisioner`) instead called
+`forgetCachedPermissions()` on `Spatie\Permission\PermissionRegistrar`, an
+unrelated class holding its own in-memory collection.
+
+So the cache that name lookups actually read was never cleared. A `Permission`
+row created after that collection warmed stayed invisible to `findByName()`,
+`checkPermissionTo()` swallowed the `PermissionDoesNotExist`, and `can()`
+returned false for a permission that existed and was attached to the user.
+
+This was the last failing Logistics test — the only one that authenticates
+twice, so its third permission is created after the cache warmed. It also hits
+production: `MultiCompanyAdminRoleProvisioner::provision()` creates permissions
+and then flushes the wrong registrar, so during install or seeding they can be
+unusable for the rest of that request.
+
+All four flush sites now clear both registrars.
+
+**Recommended, not done:** make `Webkul\Security\PermissionRegistrar` extend
+Spatie's and alias the container binding so a single instance serves both names.
+Rejected for now because `AssignRoleCommand` and `CreateRoleCommand` type-hint
+`Spatie\Permission\PermissionRegistrar`, and the fork's class does not extend
+it, so an alias would TypeError those commands. It is the right long-term fix
+but needs a full-suite run behind it.
+
+### Logistics WP-2 (Shipments and workflow) — verified, 52/52
+
+`--testsuite=LogisticsFeature` = 52 passed (237 assertions). Status `review`.
+
+Getting there took four runs and turned up the three bugs above, none of them
+in Logistics. Worth recording why it looked like a Logistics problem for so
+long: the first three runs each failed differently, because the security and
+support rewrite was landing in the same working tree while the tests ran, so
+the tree moved between runs. The signal only became trustworthy once those
+edits stopped. Two streams sharing one working tree and one test database
+(`aureuserp_testing`) cannot be debugged concurrently — separate worktrees, or
+serialise them.
+
+The shipment Confirm test keeps a four-way precondition assertion (permission,
+switch, policy, state) compared as one array. It is what finally identified the
+registrar bug, and it is cheap to keep: a future failure names the broken link
+instead of reporting only that the action was hidden.
+
+---
+
+## 2026-09-17 (Logistics plugin: plan, starter kit, Foundation)
+
+Branch `feature/logistics`. Plan, decisions and handoffs: `docs/logistics-plan.md`.
+
+### Planning
+- Reviewed the user's Logistics prompt against the codebase, then wrote the
+  Phase 0 report and a package plan agents can work on in parallel.
+- Research refined the decisions: Odoo dispatch, fleet, expenses and freight
+  add-ons; ePOD practice; ERP cutover practice. All D1–D15 recommendations
+  were accepted.
+- Adoption design: install is global, so the plugin has its own per-company
+  switch.
+
+### WP-1a starter kit and WP-12 enum translations (weaker agent, reviewed)
+- `plugins/webkul/logistics/composer.json`, 10 enums with English labels, the
+  menu icon (`resources/svg/logistics.svg`, `public/svg/logistics.svg`), and
+  ar/es/fr/pt_BR translations of the enum labels.
+- Verified with host PHP: lint, a script checking enum values, transitions and
+  colours, and a translation parity script. The icon was reviewed from source
+  only.
+
+### WP-1 Foundation
+- **Tables (19, all new, `logistics_*`):** service/vehicle/package types and
+  expense categories (shared); company settings; drivers; vehicles; shipments
+  and lines; trips and the trip↔shipment pivot; stops; shipment events
+  (append-only); delivery proofs; stop links (token hash only); charges and
+  the charge↔tax pivot; expenses; the shipment↔invoice pivot. The only
+  foreign keys to other plugins' tables point at partners, employees,
+  products, currencies, units, users, companies and the accounts tables.
+  Optional integrations (sales order, maintenance equipment) are plain
+  indexed columns.
+- **Models (16)** use `BelongsToCompany`. Shared configuration models don't
+  auto-assign a company. Child rows use `InheritsParentCompany`: the company
+  comes from the parent on `saving`, and a mismatch throws. `Expense` refuses
+  links to another company's shipment, trip or vehicle. Shipment and trip
+  numbers come from per-company sequences (`LogisticsSequences` ensures the
+  company counter first).
+- **Per-company switch:** `logistics_company_settings.is_enabled`,
+  `LogisticsAccess` (a scoped singleton; `enabledFor`, `enabledForCurrent`,
+  `ensureEnabled`), and `CompanyProvisioner` (readiness report, sequences,
+  LOG-* service products, default journals; enable and disable, safe to
+  repeat).
+  - **Why not Spatie settings:** `CompanyAwareSettingsRepository` falls back to
+    the default company's row, which would have enabled Logistics for every
+    company without its own row.
+- **Policies:** `LogisticsPolicy` requires the permission and the switch
+  (listing and creating check the user's active companies; changes check the
+  record's company). `ConfigurationPolicy` doesn't depend on the switch, and
+  shared rows can only be changed by users who see all companies. Shipment
+  child records follow shipment permissions. The Shield config holds every
+  permission for later packages, with custom abilities inside
+  `resources.manage`.
+- **Uninstall:** `UninstallGuard` runs in `startWith` and refuses while any
+  shipment exists, unless `LOGISTICS_ALLOW_UNINSTALL_WITH_DATA=true`. It runs
+  in both the console command and the Plugins page. Chatter and sequences are
+  purged afterwards.
+- **UI:** a Logistics menu group, five clusters (the operational ones stay
+  hidden unless the switch is on), four configuration screens with a
+  shared-or-company field, and the settings page (Enable and Disable actions
+  with a readiness report).
+- **Seeders:** shared rows only, keyed by `code`, no fixed ids. Nothing is
+  created per company at install.
+- **Existing files changed:**
+  - `bootstrap/providers.php`: registers the provider.
+  - `phpunit.xml`: adds the `LogisticsFeature` suite.
+  - `plugins/webkul/support/src/Enums/NavigationGroup.php`: adds the Logistics
+    case and icon.
+  - `lang/{en,ar,es,fr,pt_BR}/admin.php`: menu label.
+- **Planned changes not needed:** `UninstallCommand`,
+  `CompanyAwareSettingsRepository`.
+
+### Verification
+- `php -l` is clean on all 191 plugin PHP files and the changed core files.
+- Autoloader regenerated in the Sail image (`--no-scripts`).
+- **`LogisticsFeature`: 30 passed (160 assertions)**, covering:
+  - install;
+  - migrations only create `logistics_*` tables;
+  - seeders can run twice;
+  - the uninstall guard and how it is wired;
+  - company-scoping invariants (16 models);
+  - policies and the switch;
+  - per-company numbering;
+  - child-company inheritance and mismatch refusal;
+  - append-only events;
+  - the adoption scenarios.
+- Screen render tests: **8 passed** (the four configuration lists, permission
+  refusals, shared types visible to a company user, and enabling plus saving
+  from the settings page).
+- Regression: **`AccountFeature` 521 passed**, **`SupportFeature` 115 passed**
+  on a clean test database.
+
+### Test-harness finding (not a Logistics defect, left unfixed)
+
+Running `SupportFeature` straight after a suite that installs Products fails 3
+`UOMTest` cases. The app boots and reads the `plugins` table left behind by the
+previous suite, so Products looks installed and its `UOMObserver` is registered;
+`migrate:fresh` then drops `products_products`, which that observer queries, and
+the delete endpoint returns 500. Dropping and recreating `aureuserp_testing`
+first makes all 115 pass. The fix belongs in `TestBootstrapHelper` (reload
+`Package::$plugins` after `migrate:fresh`, and register plugin observers only for
+plugins installed in the current database). Recorded in the WP-1 handoff.
+
+### Environment fixes found while verifying
+- Port 5433 was held by another local project, so `docker compose up`
+  couldn't recreate pgsql and tests hung. Fix: `FORWARD_PGSQL_PORT=5436`.
+- `composer dump-autoload` with scripts hangs in a network-less container.
+  Fix: `--no-scripts`.
+
+---
+
+## 2026-09-17 (card-grid menus behind the next card)
+
+`plugins/webkul/support/resources/css/grid-layout.css`: the hover lift uses
+`transform`, which makes the hovered card its own stacking context. Filament
+cards are `position: relative` and paint in document order, so the next card
+covered the open "⋮" dropdown (z-index 20 only counts inside the card). A
+hovered or focused card now gets `z-index: 10`. `support.css` was rebuilt
+from the project root (506 selectors), and the public copy was updated.
+
 ---
 
 ## 2026-09-14 (mobile experience, steps 1-3)

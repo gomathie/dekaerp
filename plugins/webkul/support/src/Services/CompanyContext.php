@@ -19,6 +19,10 @@ class CompanyContext
 
     public function bypassed(): bool
     {
+        if ($this->internalUser()?->isMultiCompanyAdmin()) {
+            return false;
+        }
+
         return Gate::allows('bypass_company_scope');
     }
 
@@ -91,7 +95,10 @@ class CompanyContext
 
     public function currentCompany(): ?Company
     {
-        if ($this->currentCompanyResolved) {
+        if (
+            $this->currentCompanyResolved
+            && (! $this->currentCompany || in_array($this->currentCompany->getKey(), $this->allowedIds(), true))
+        ) {
             return $this->currentCompany;
         }
 
@@ -121,7 +128,15 @@ class CompanyContext
 
     public function setActive(array $ids, ?int $current = null): void
     {
-        $valid = array_values(array_unique(array_intersect($ids, $this->allowedIds())));
+        $requested = array_values(array_unique(array_map('intval', $ids)));
+        $allowed = $this->allowedIds();
+        $unauthorized = array_diff($requested, $allowed);
+
+        if ($unauthorized !== [] || ($current && ! in_array($current, $allowed, true))) {
+            throw new \Illuminate\Auth\Access\AuthorizationException;
+        }
+
+        $valid = array_values(array_intersect($requested, $allowed));
 
         $current ??= $this->activeIds()[0] ?? null;
 
@@ -130,5 +145,20 @@ class CompanyContext
         }
 
         session([self::SESSION_KEY => $valid]);
+
+        $this->forgetCurrentCompany();
+    }
+
+    public function reset(): void
+    {
+        session()->forget(self::SESSION_KEY);
+
+        $this->forgetCurrentCompany();
+    }
+
+    protected function forgetCurrentCompany(): void
+    {
+        $this->currentCompany = null;
+        $this->currentCompanyResolved = false;
     }
 }

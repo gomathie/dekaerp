@@ -1,5 +1,5 @@
 <div>
-    @if ($companies->count() > 1)
+    @if ($companies->isNotEmpty())
         <x-filament::dropdown placement="bottom-end" width="xs" teleport>
             <x-slot name="trigger">
                 <x-filament::link tag="button" size="sm" color="gray" style="text-decoration:none;">
@@ -8,7 +8,9 @@
 
                         <span>{{ $companies->firstWhere('id', $active[0] ?? null)?->name }}</span>
 
-                        <x-filament::icon icon="heroicon-m-chevron-down" style="width:1rem;height:1rem;flex-shrink:0;" />
+                        @if ($companies->count() > 1)
+                            <x-filament::icon icon="heroicon-m-chevron-down" style="width:1rem;height:1rem;flex-shrink:0;" />
+                        @endif
                     </span>
                 </x-filament::link>
             </x-slot>

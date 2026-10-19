@@ -7,35 +7,85 @@ use Webkul\Security\Models\User;
 
 class Bouncer
 {
-    /**
-     * Cached authorized user IDs.
-     */
-    protected static ?array $authorizedUserIdsCache = null;
+    protected ?string $authorizedUserIdsCacheKey = null;
+
+    protected ?array $authorizedUserIdsCache = null;
+
+    protected bool $hasAuthorizedUserIdsCache = false;
 
     /**
      * Return user IDs authorized for the current user.
      */
     public function getAuthorizedUserIds(): ?array
     {
-        if (static::$authorizedUserIdsCache !== null) {
-            return static::$authorizedUserIdsCache;
-        }
-
         $user = auth()->user();
 
         if (! $user) {
-            return static::$authorizedUserIdsCache = null;
+            $this->clearCache();
+
+            return null;
+        }
+
+        $cacheKey = $this->cacheKey($user);
+
+        if ($this->hasAuthorizedUserIdsCache && $this->authorizedUserIdsCacheKey === $cacheKey) {
+            return $this->authorizedUserIdsCache;
         }
 
         if ($user->resource_permission == PermissionType::GLOBAL) {
-            static::$authorizedUserIdsCache = null;
+            $authorizedUserIds = null;
         } elseif ($user->resource_permission == PermissionType::GROUP) {
-            static::$authorizedUserIdsCache = $this->getCurrentAccessibleUserIds($user);
+            $authorizedUserIds = $this->getCurrentAccessibleUserIds($user);
+
+            /*
+             * A group user with no team can only be themselves.
+             *
+             * getCurrentAccessibleUserIds() resolves through
+             * `whereIn('teams.id', $user->teams()->pluck('id'))`, so a user in no
+             * team matches nothing and this comes back empty - and
+             * OwnershipScope treats an empty list as **no restriction** and skips
+             * itself entirely. The effect was that a `group` user without a team
+             * saw everything, exactly as if they were `global`, silently.
+             *
+             * The form requires a team when `group` is chosen, so this is not
+             * reachable by creating a user through the panel. It is reachable by
+             * the team being deleted afterwards, or the user being removed from
+             * it - neither of which should hand them a wider view than they had.
+             * Fails closed to their own rows, which is what `group` degrades to
+             * when the group is empty.
+             */
+            if (empty($authorizedUserIds)) {
+                $authorizedUserIds = [$user->id];
+            }
         } else {
-            static::$authorizedUserIdsCache = [$user->id];
+            $authorizedUserIds = [$user->id];
         }
 
-        return static::$authorizedUserIdsCache;
+        $this->authorizedUserIdsCacheKey = $cacheKey;
+        $this->authorizedUserIdsCache = $authorizedUserIds;
+        $this->hasAuthorizedUserIdsCache = true;
+
+        return $authorizedUserIds;
+    }
+
+    protected function cacheKey(User $user): string
+    {
+        $permission = $user->resource_permission instanceof PermissionType
+            ? $user->resource_permission->value
+            : (string) $user->resource_permission;
+
+        $teamIds = $permission === PermissionType::GROUP->value
+            ? $user->teams()->orderBy('teams.id')->pluck('teams.id')->implode(',')
+            : '';
+
+        return implode(':', [$user->getKey(), $permission, $teamIds]);
+    }
+
+    protected function clearCache(): void
+    {
+        $this->authorizedUserIdsCacheKey = null;
+        $this->authorizedUserIdsCache = null;
+        $this->hasAuthorizedUserIdsCache = false;
     }
 
     /**

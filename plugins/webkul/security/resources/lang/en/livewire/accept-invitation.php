@@ -11,6 +11,8 @@ return [
 
     'heading' => 'Sign up',
 
+    'invitation-no-longer-authorized' => 'This invitation is no longer authorized. Ask an administrator to send a new invitation.',
+
     'actions' => [
 
         'login' => [

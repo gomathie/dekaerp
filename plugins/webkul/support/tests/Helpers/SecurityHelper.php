@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\Sanctum;
 use Spatie\Permission\PermissionRegistrar;
+use Webkul\Security\PermissionRegistrar as ForkPermissionRegistrar;
 use Webkul\Security\Enums\PermissionType;
 use Webkul\Security\Models\Permission;
 use Webkul\Security\Models\User;
@@ -112,5 +113,12 @@ class SecurityHelper
     private static function flushPermissionCache(): void
     {
         app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+        // Permission::getPermissions() reads from the fork's own registrar
+        // (bound as a singleton in SecurityServiceProvider), which keeps its own
+        // in-memory collection. Flushing only Spatie's leaves that stale, so a
+        // permission row created after the first lookup is invisible to
+        // findByName() and every can() against it returns false.
+        app(ForkPermissionRegistrar::class)->forgetCachedPermissions();
     }
 }

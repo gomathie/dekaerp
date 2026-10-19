@@ -15,6 +15,10 @@ class RolePolicy
      */
     public function viewAny(User $user): bool
     {
+        if ($user->isMultiCompanyAdmin()) {
+            return false;
+        }
+
         return $user->can('view_any_role');
     }
 
@@ -23,6 +27,10 @@ class RolePolicy
      */
     public function view(User $user, Role $role): bool
     {
+        if ($user->isMultiCompanyAdmin() || ($role->isSystemRole() && ! $user->isSuperAdmin())) {
+            return false;
+        }
+
         return $user->can('view_role');
     }
 
@@ -31,6 +39,10 @@ class RolePolicy
      */
     public function create(User $user): bool
     {
+        if ($user->isMultiCompanyAdmin()) {
+            return false;
+        }
+
         return $user->can('create_role');
     }
 
@@ -39,6 +51,10 @@ class RolePolicy
      */
     public function update(User $user, Role $role): bool
     {
+        if ($user->isMultiCompanyAdmin() || ($role->isSystemRole() && ! $user->isSuperAdmin())) {
+            return false;
+        }
+
         return $user->can('update_role');
     }
 
@@ -47,6 +63,10 @@ class RolePolicy
      */
     public function delete(User $user, Role $role): bool
     {
+        if ($user->isMultiCompanyAdmin() || $role->isSystemRole()) {
+            return false;
+        }
+
         return $user->can('delete_role');
     }
 
@@ -55,6 +75,10 @@ class RolePolicy
      */
     public function deleteAny(User $user): bool
     {
+        if ($user->isMultiCompanyAdmin()) {
+            return false;
+        }
+
         return $user->can('delete_any_role');
     }
 

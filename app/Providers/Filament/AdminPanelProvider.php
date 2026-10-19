@@ -25,6 +25,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Filament\AvatarProviders\DefaultAvatarProvider;
 use Webkul\Support\Filament\Pages\Profile;
 use Webkul\Support\GlobalSearchProvider;
 
@@ -42,6 +43,11 @@ class AdminPanelProvider extends PanelProvider
             ->favicon(asset('images/favicon.ico'))
             ->brandLogo(asset('images/logo.svg'))
             ->brandLogoHeight('2rem')
+            // Replaces Filament's UiAvatarsProvider, which puts the person's
+            // name in a URL to ui-avatars.com - one request per avatar, so a
+            // users table sends a page of customer employee names to a third
+            // party, and nothing renders offline.
+            ->defaultAvatarProvider(DefaultAvatarProvider::class)
             ->passwordReset()
             ->emailVerification()
             ->profile()

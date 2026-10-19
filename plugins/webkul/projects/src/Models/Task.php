@@ -21,7 +21,6 @@ use Webkul\Security\Models\User;
 use Webkul\Security\Support\OwnerSource;
 use Webkul\Security\Traits\HasOwnershipScope;
 use Webkul\Support\Models\Company;
-use Webkul\Support\Models\Scopes\CompanyScope;
 use Webkul\Support\Traits\BelongsToCompany;
 
 class Task extends Model implements Sortable
@@ -192,7 +191,12 @@ class Task extends Model implements Sortable
 
             $task->creator_id ??= $authUser->id;
 
-            $task->company_id = Project::withoutGlobalScope(CompanyScope::class)->find($task->project_id)?->company_id ?? current_company_id();
+            // All global scopes, not just the company one: Project carries a
+            // global OwnershipScope too, so dropping only CompanyScope still hid
+            // the project from anyone who does not own it, and the task then fell
+            // back to the *actor's* active company instead of the project's -
+            // filing it under the wrong company.
+            $task->company_id = Project::withoutGlobalScopes()->find($task->project_id)?->company_id ?? current_company_id();
         });
 
         static::updated(function ($task) {

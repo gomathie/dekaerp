@@ -1,0 +1,322 @@
+<?php
+
+use Filament\Forms\Components\FileUpload;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
+use Livewire\Livewire;
+use Webkul\Logistics\Enums\ExpensePaidBy;
+use Webkul\Logistics\Enums\ExpenseState;
+use Webkul\Logistics\Exceptions\ExpenseNotAttributable;
+use Webkul\Logistics\Exceptions\ReceiptRequired;
+use Webkul\Logistics\Filament\Clusters\Finance\Resources\ExpenseResource\Pages\CreateExpense;
+use Webkul\Logistics\Models\Expense;
+use Webkul\Logistics\Models\ExpenseCategory;
+use Webkul\Logistics\Models\Vehicle;
+use Webkul\Logistics\Services\ExpenseApproval;
+use Webkul\Support\Models\Company;
+
+require_once __DIR__.'/../../Helpers/LogisticsHelper.php';
+
+beforeEach(function () {
+    LogisticsHelper::install();
+
+    URL::resolveMissingNamedRoutesUsing(fn (): string => '#');
+});
+
+function approvalExpense(int $companyId, array $overrides = []): Expense
+{
+    $attributes = array_merge([
+        'company_id'  => $companyId,
+        'category_id' => ExpenseCategory::factory()->create()->id,
+    ], $overrides);
+
+    // Every cost has to hang off a shipment, a trip or a vehicle - the form has
+    // always required it and ExpenseApproval now enforces it - so the default
+    // here is a shipment. A test that wants the unattributable case passes
+    // 'shipment_id' => null explicitly.
+    $linked = array_key_exists('shipment_id', $overrides)
+        || array_key_exists('trip_id', $overrides)
+        || array_key_exists('vehicle_id', $overrides);
+
+    if (! $linked) {
+        $attributes['shipment_id'] = LogisticsHelper::shipment(
+            Company::query()->findOrFail($companyId),
+        )->id;
+    }
+
+    return Expense::factory()->create($attributes);
+}
+
+it('moves an expense through submission and approval', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+    $expense = approvalExpense($company->id);
+
+    $user = FilamentHelper::actingAsCompanyUser($company, [
+        'view_logistics_expense',
+        'update_logistics_expense',
+        'approve_logistics_expense',
+    ]);
+
+    app(ExpenseApproval::class)->submit($expense);
+
+    expect($expense->refresh()->state)->toBe(ExpenseState::SUBMITTED);
+
+    app(ExpenseApproval::class)->approve($expense);
+
+    expect($expense->refresh()->state)->toBe(ExpenseState::APPROVED)
+        ->and($expense->approved_by_id)->toBe($user->id)
+        ->and($expense->approved_at)->not->toBeNull();
+});
+
+it('moves a submitted expense to rejected', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+    $expense = approvalExpense($company->id, ['state' => ExpenseState::SUBMITTED]);
+
+    FilamentHelper::actingAsCompanyUser($company, ['approve_logistics_expense']);
+
+    app(ExpenseApproval::class)->reject($expense);
+
+    expect($expense->refresh()->state)->toBe(ExpenseState::REJECTED)
+        ->and($expense->approved_by_id)->toBeNull()
+        ->and($expense->approved_at)->toBeNull();
+});
+
+it('does not let a submitter without approve permission approve their own expense', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+    $expense = approvalExpense($company->id);
+
+    FilamentHelper::actingAsCompanyUser($company, ['update_logistics_expense']);
+
+    app(ExpenseApproval::class)->submit($expense);
+
+    expect(fn () => app(ExpenseApproval::class)->approve($expense))
+        ->toThrow(AuthorizationException::class);
+});
+
+it('cannot approve an expense outside the active company scope', function () {
+    $companyA = LogisticsHelper::enable(LogisticsHelper::company());
+    $companyB = LogisticsHelper::enable(LogisticsHelper::company());
+    $expense = approvalExpense($companyB->id, ['state' => ExpenseState::SUBMITTED]);
+
+    FilamentHelper::actingAsCompanyUser($companyA, ['approve_logistics_expense']);
+
+    expect(fn () => app(ExpenseApproval::class)->approve($expense))
+        ->toThrow(ModelNotFoundException::class);
+});
+
+it('requires a receipt only for categories that demand one', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+    $shipment = LogisticsHelper::shipment($company);
+    $required = ExpenseCategory::factory()->create(['requires_receipt' => true]);
+    $optional = ExpenseCategory::factory()->create(['requires_receipt' => false]);
+
+    // view_any as well as create: Filament's Resource::canAccess() returns
+    // canViewAny(), so without it the page never mounts and every form
+    // assertion below fails on a null component instead of on the form.
+    FilamentHelper::actingAsCompanyUser($company, [
+        'view_any_logistics_expense',
+        'create_logistics_expense',
+    ]);
+
+    Livewire::test(CreateExpense::class)
+        ->fillForm([
+            'company_id'  => $company->id,
+            'date'        => now()->toDateString(),
+            'amount'      => 25,
+            'category_id' => $required->id,
+            'paid_by'     => ExpensePaidBy::COMPANY->value,
+            'shipment_id' => $shipment->id,
+        ], 'form')
+        ->call('create')
+        ->assertHasFormErrors(['receipt_path'], 'form');
+
+    Livewire::test(CreateExpense::class)
+        ->fillForm([
+            'company_id'  => $company->id,
+            'date'        => now()->toDateString(),
+            'amount'      => 25,
+            'category_id' => $optional->id,
+            'paid_by'     => ExpensePaidBy::COMPANY->value,
+            'shipment_id' => $shipment->id,
+        ], 'form')
+        ->call('create')
+        ->assertHasNoFormErrors([], 'form');
+
+    // Asserted against the component the page actually mounts. A freshly made
+    // FileUpload::make('receipt_path') carries none of this configuration, so
+    // asking it what it accepts tests nothing and returns null.
+    Livewire::test(CreateExpense::class)
+        ->assertSchemaComponentExists(
+            'receipt_path',
+            'form',
+            fn (FileUpload $field): bool => $field->getAcceptedFileTypes() === ['application/pdf', 'image/jpeg', 'image/png', 'image/webp']
+                && $field->getMaxSize() === 10240
+                && $field->getDiskName() === 'public'
+                && $field->shouldPreventFilePathTampering(),
+        );
+});
+
+it('stores a receipt while another allowed company is current', function () {
+    Storage::fake('public');
+
+    $current = LogisticsHelper::enable(LogisticsHelper::company());
+    $owner = LogisticsHelper::enable(LogisticsHelper::company());
+    $shipment = LogisticsHelper::shipment($owner);
+    $category = ExpenseCategory::factory()->create([
+        'company_id'       => null,
+        'requires_receipt' => true,
+    ]);
+
+    FilamentHelper::actingAsCompanyUser(
+        [$current, $owner],
+        ['view_any_logistics_expense', 'create_logistics_expense'],
+    );
+
+    Livewire::test(CreateExpense::class)
+        ->fillForm([
+            'company_id'  => $owner->id,
+            'date'        => now()->toDateString(),
+            'amount'      => 25,
+            'category_id' => $category->id,
+            'paid_by'     => ExpensePaidBy::COMPANY->value,
+            'shipment_id' => $shipment->id,
+            'receipt_path' => UploadedFile::fake()->image('attacker-name.jpg'),
+        ], 'form')
+        ->call('create')
+        ->assertHasNoFormErrors([], 'form');
+
+    $expense = Expense::query()->where('company_id', $owner->id)->latest('id')->firstOrFail();
+
+    expect(current_company_id())->toBe($current->id)
+        ->and($expense->receipt_path)->not->toContain('attacker-name');
+
+    Storage::disk('public')->assertExists($expense->receipt_path);
+});
+
+it('refuses to submit an unevidenced expense whose category demands a receipt', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+    $category = ExpenseCategory::factory()->create([
+        'name'             => 'Fuel',
+        'requires_receipt' => true,
+    ]);
+
+    $expense = approvalExpense($company->id, ['category_id' => $category->id]);
+
+    FilamentHelper::actingAsCompanyUser($company, ['update_logistics_expense']);
+
+    // The form marks the upload required, but the form is not the boundary.
+    // An API write or a console command reaches the service directly.
+    expect(fn () => app(ExpenseApproval::class)->submit($expense))
+        ->toThrow(ReceiptRequired::class)
+        ->and($expense->refresh()->state)->toBe(ExpenseState::DRAFT);
+});
+
+it('refuses to approve an unevidenced expense that never passed through submit', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+    $category = ExpenseCategory::factory()->create([
+        'name'             => 'Fuel',
+        'requires_receipt' => true,
+    ]);
+
+    // Straight to submitted, as an import or an API write would create it -
+    // so the submit-time check never ran. Approval is where the company
+    // agrees to pay, so the rule is enforced again here.
+    $expense = approvalExpense($company->id, [
+        'category_id' => $category->id,
+        'state'       => ExpenseState::SUBMITTED,
+    ]);
+
+    FilamentHelper::actingAsCompanyUser($company, ['approve_logistics_expense']);
+
+    expect(fn () => app(ExpenseApproval::class)->approve($expense))
+        ->toThrow(ReceiptRequired::class)
+        ->and($expense->refresh()->state)->toBe(ExpenseState::SUBMITTED);
+});
+
+it('submits and approves once the receipt is attached', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+    $category = ExpenseCategory::factory()->create(['requires_receipt' => true]);
+
+    $expense = approvalExpense($company->id, [
+        'category_id'  => $category->id,
+        'receipt_path' => 'logistics/expenses/receipt.pdf',
+    ]);
+
+    FilamentHelper::actingAsCompanyUser($company, [
+        'update_logistics_expense',
+        'approve_logistics_expense',
+    ]);
+
+    app(ExpenseApproval::class)->submit($expense);
+    app(ExpenseApproval::class)->approve($expense);
+
+    expect($expense->refresh()->state)->toBe(ExpenseState::APPROVED);
+});
+
+it('still lets a rejection through without a receipt', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+    $category = ExpenseCategory::factory()->create(['requires_receipt' => true]);
+
+    $expense = approvalExpense($company->id, [
+        'category_id' => $category->id,
+        'state'       => ExpenseState::SUBMITTED,
+    ]);
+
+    FilamentHelper::actingAsCompanyUser($company, ['approve_logistics_expense']);
+
+    // Rejecting a claim with no receipt is the correct outcome, not something
+    // to block - the missing receipt is often the reason for rejecting.
+    app(ExpenseApproval::class)->reject($expense);
+
+    expect($expense->refresh()->state)->toBe(ExpenseState::REJECTED);
+});
+
+it('refuses to submit an expense that is linked to nothing', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+
+    // No shipment, trip or vehicle. The form requires one of the three, but an
+    // API write or an import reaches the service directly - and a cost that
+    // points at nothing cannot be put on a margin or billed on.
+    $expense = approvalExpense($company->id, ['shipment_id' => null]);
+
+    FilamentHelper::actingAsCompanyUser($company, ['update_logistics_expense']);
+
+    expect(fn () => app(ExpenseApproval::class)->submit($expense))
+        ->toThrow(ExpenseNotAttributable::class)
+        ->and($expense->refresh()->state)->toBe(ExpenseState::DRAFT);
+});
+
+it('submits an expense linked to a vehicle, not only a shipment', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+
+    $vehicle = Vehicle::factory()->create(['company_id' => $company->id]);
+
+    // Any of the three satisfies it: fleet costs belong to a vehicle rather
+    // than to any one job.
+    $expense = approvalExpense($company->id, ['vehicle_id' => $vehicle->id]);
+
+    FilamentHelper::actingAsCompanyUser($company, ['update_logistics_expense']);
+
+    app(ExpenseApproval::class)->submit($expense);
+
+    expect($expense->refresh()->state)->toBe(ExpenseState::SUBMITTED);
+});
+
+it('refuses to approve an unattributable expense that reached submitted', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+
+    $expense = approvalExpense($company->id, [
+        'state'       => ExpenseState::SUBMITTED,
+        'shipment_id' => null,
+    ]);
+
+    FilamentHelper::actingAsCompanyUser($company, ['approve_logistics_expense']);
+
+    // Checked again at approval, because an expense can reach submitted without
+    // passing through submit() - a seeded row, an import, an API write.
+    expect(fn () => app(ExpenseApproval::class)->approve($expense))
+        ->toThrow(ExpenseNotAttributable::class);
+});

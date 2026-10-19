@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Gate;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
 use Webkul\Security\Facades\Bouncer as BouncerFacade;
+use Webkul\Security\Models\User;
+use Webkul\Security\Services\MultiCompanyAdminService;
 
 class SecurityServiceProvider extends PackageServiceProvider
 {
@@ -35,6 +37,9 @@ class SecurityServiceProvider extends PackageServiceProvider
                 '2025_08_21_082229_alter_roles_table',
                 '2025_08_21_101646_alter_users_table',
                 '2026_01_23_074142_add_multi_factor_auth_columns_in_users_table',
+                '2026_09_18_000001_add_administration_context_to_user_invitations_table',
+                '2026_09_18_000002_provision_multi_company_admin_role',
+                '2026_09_20_150533_repair_multi_company_admin_install_state',
             ])
             ->hasSettings([
                 '2024_11_05_042358_create_user_settings',
@@ -46,6 +51,32 @@ class SecurityServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         require_once __DIR__.'/Helpers/helpers.php';
+
+        // A Multi-Company Admin (DEKA staff administering tenants) is granted every
+        // ability except the ones MultiCompanyAdminService denies, so a staff admin
+        // is created by assigning one role and picking companies, with no permission
+        // ticking. Two limits keep that from becoming a super admin:
+        //
+        //  - Only bare permission checks are granted here. A check that carries a
+        //    model or class ($arguments) falls through to its policy, so the
+        //    per-company containment in UserPolicy, CompanyPolicy and the
+        //    Logistics policies still decides those.
+        //  - Row visibility is unchanged: bypass_company_scope is denied, so the
+        //    company scope still limits every query to their assigned tenants.
+        Gate::before(function ($user, string $ability, array $arguments = []) {
+            // is_active is checked here too: this callback runs before
+            // User::hasPermissionTo(), which is where a deactivated user is
+            // normally stopped, so granting without it would re-admit them.
+            if (! $user instanceof User || ! $user->is_active || ! $user->isMultiCompanyAdmin()) {
+                return null;
+            }
+
+            if (app(MultiCompanyAdminService::class)->deniesAbility($ability)) {
+                return false;
+            }
+
+            return $arguments === [] ? true : null;
+        });
 
         Gate::before(function ($user, string $ability) {
             if ($ability !== 'bypass_ownership_scope') {

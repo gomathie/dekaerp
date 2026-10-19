@@ -6,6 +6,7 @@ use Webkul\Account\Enums\DisplayType;
 use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Models\Account;
 use Webkul\Account\Models\Category;
+use Webkul\Account\Models\Move;
 use Webkul\Account\Models\MoveLine;
 use Webkul\Account\Models\Partner;
 use Webkul\Account\Models\Product;
@@ -176,4 +177,37 @@ it('falls back to the default account of the invoice company when nothing else i
     $product = Product::query()->findOrFail($this->product->id);
 
     expect($product->getAccounts($this->companyB->id)['income']?->id)->toBe($equivalent->id);
+});
+it('inherits from an invoice the actor does not own', function () {
+    // Move carries a global OwnershipScope as well as CompanyScope, and
+    // MoveFactory attributes the invoice to the first user in the table - here
+    // the installation's admin, not this test's actor. So `$line->move` used to
+    // resolve to null and the saving chain died on `$this->move->name`, taking
+    // the line's company_id from the same null. Every compute* method in that
+    // chain reads $this->move, around forty times, so the parent is now resolved
+    // once without global scopes before any of them run.
+    $invoice = AccountHelper::invoice(MoveType::OUT_INVOICE, $this->partner, null, [
+        'company_id' => $this->companyB->id,
+    ]);
+
+    // Proof the actor really cannot see it, so this test cannot pass for the
+    // wrong reason if ownership is ever switched off again.
+    expect(Move::query()->whereKey($invoice->getKey())->exists())->toBeFalse()
+        ->and(Move::withoutGlobalScopes()->whereKey($invoice->getKey())->exists())->toBeTrue();
+
+    $line = MoveLine::factory()->create([
+        'move_id'      => $invoice->id,
+        'display_type' => DisplayType::PRODUCT,
+        'account_id'   => $this->incomeB->id,
+        'uom_id'       => AccountHelper::unitsUom()->id,
+        'quantity'     => 1,
+        'price_unit'   => 100,
+        'currency_id'  => $invoice->currency_id,
+    ]);
+
+    // company_id is the tenant boundary for the line; move_name and journal_id
+    // are the other things inheritFromMove() copies and would have nulled.
+    expect($line->company_id)->toBe($this->companyB->id)
+        ->and($line->move_name)->toBe($invoice->name)
+        ->and($line->journal_id)->toBe($invoice->journal_id);
 });

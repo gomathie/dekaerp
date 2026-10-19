@@ -4,11 +4,14 @@ namespace Webkul\Support\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Webkul\Security\Models\User;
+use Webkul\Security\Services\MultiCompanyAdminService;
 use Webkul\Support\Models\Company;
 
 class CompanyPolicy
 {
     use HandlesAuthorization;
+
+    public function __construct(protected MultiCompanyAdminService $administration) {}
 
     /**
      * Determine whether the user can view any models.
@@ -23,7 +26,8 @@ class CompanyPolicy
      */
     public function view(User $user, Company $company): bool
     {
-        return $user->can('view_support_company');
+        return $user->can('view_support_company')
+            && ($user->isSuperAdmin() || $this->administration->isCompanyAssigned($user, $company->getKey()));
     }
 
     /**
@@ -39,7 +43,8 @@ class CompanyPolicy
      */
     public function update(User $user, Company $company): bool
     {
-        return $user->can('update_support_company');
+        return $user->can('update_support_company')
+            && ($user->isSuperAdmin() || $this->administration->isCompanyAssigned($user, $company->getKey()));
     }
 
     /**
@@ -47,7 +52,8 @@ class CompanyPolicy
      */
     public function delete(User $user, Company $company): bool
     {
-        return $user->can('delete_support_company');
+        return $user->can('delete_support_company')
+            && ($user->isSuperAdmin() || $this->administration->isCompanyAssigned($user, $company->getKey()));
     }
 
     /**
@@ -63,6 +69,10 @@ class CompanyPolicy
      */
     public function forceDelete(User $user, Company $company): bool
     {
+        if ($user->isMultiCompanyAdmin()) {
+            return false;
+        }
+
         return $user->can('force_delete_support_company');
     }
 
@@ -71,6 +81,10 @@ class CompanyPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
+        if ($user->isMultiCompanyAdmin()) {
+            return false;
+        }
+
         return $user->can('force_delete_any_support_company');
     }
 
@@ -79,7 +93,8 @@ class CompanyPolicy
      */
     public function restore(User $user, Company $company): bool
     {
-        return $user->can('restore_support_company');
+        return $user->can('restore_support_company')
+            && ($user->isSuperAdmin() || $this->administration->isCompanyAssigned($user, $company->getKey()));
     }
 
     /**

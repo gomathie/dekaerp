@@ -9,11 +9,11 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
 use Webkul\Project\Filament\Pages\Dashboard;
 use Webkul\Security\Models\Invitation;
-use Webkul\Security\Models\User;
-use Webkul\Security\Settings\UserSettings;
+use Webkul\Security\Services\UserInvitationService;
 
 class AcceptInvitation extends SimplePage
 {
@@ -67,24 +67,16 @@ class AcceptInvitation extends SimplePage
 
     public function create(): void
     {
-        $this->invitationModel = Invitation::find($this->invitation);
+        $this->invitationModel = Invitation::findOrFail($this->invitation);
+        $state = $this->form->getState();
 
-        $defaultCompanyId = settings(UserSettings::class)->default_company_id;
+        $user = app(UserInvitationService::class)->accept(
+            $this->invitationModel,
+            $state['name'],
+            $state['password'],
+        );
 
-        $user = User::create([
-            'name'               => $this->form->getState()['name'],
-            'password'           => $this->form->getState()['password'],
-            'email'              => $this->invitationModel->email,
-            'default_company_id' => $defaultCompanyId,
-        ]);
-
-        if ($defaultCompanyId) {
-            $user->allowedCompanies()->syncWithoutDetaching([$defaultCompanyId]);
-        }
-
-        $user->assignRole(settings(UserSettings::class)->default_role_id);
-
-        $this->invitationModel->delete();
+        Auth::guard('web')->login($user);
 
         $this->redirect(Dashboard::getUrl());
     }

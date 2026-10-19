@@ -26,8 +26,14 @@ class DepartmentFactory extends Factory
     public function definition(): array
     {
         return [
-            'name'       => fake()->name,
-            'manager_id' => Employee::factory(),
+            'name' => fake()->name,
+            // Not Employee::factory(): EmployeeFactory defaults department_id to
+            // this factory, so a manager here makes an employee, which makes a
+            // department, which makes a manager, until PHP's stack runs out -
+            // Employee::factory()->create() could never complete. The column is
+            // nullable; use the ->for()/->state() you need when a department
+            // must have a manager.
+            'manager_id' => null,
             'color'      => fake()->hexColor,
         ];
     }

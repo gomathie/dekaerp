@@ -35,6 +35,15 @@
         <testsuite name="SupportFeature">
             <directory>plugins/webkul/support/tests/Feature</directory>
         </testsuite>
+        <testsuite name="SecurityFeature">
+            <directory>plugins/webkul/security/tests/Feature</directory>
+        </testsuite>
+        <testsuite name="LogisticsFeature">
+            <directory>plugins/webkul/logistics/tests/Feature</directory>
+        </testsuite>
+        <testsuite name="EmployeeFeature">
+            <directory>plugins/webkul/employees/tests/Feature</directory>
+        </testsuite>
     </testsuites>
     <source>
         <include>

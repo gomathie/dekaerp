@@ -4,12 +4,15 @@ namespace Webkul\Security\Filament\Resources;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Webkul\Security\Filament\Resources\CompanyResource\Pages\CreateCompany;
 use Webkul\Security\Filament\Resources\CompanyResource\Pages\EditCompany;
 use Webkul\Security\Filament\Resources\CompanyResource\Pages\ListCompanies;
 use Webkul\Security\Filament\Resources\CompanyResource\Pages\ViewCompany;
 use Webkul\Security\Filament\Resources\CompanyResource\RelationManagers\BranchesRelationManager;
 use Webkul\Security\Models\Company;
+use Webkul\Security\Models\User;
+use Webkul\Security\Services\MultiCompanyAdminService;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Filament\Resources\CompanyResource as BaseCompanyResource;
 use Webkul\Support\Models\Scopes\AllowedCompanyScope;
@@ -26,9 +29,25 @@ class CompanyResource extends BaseCompanyResource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
+        $query = parent::getEloquentQuery()
             ->ownership()
             ->withoutGlobalScope(AllowedCompanyScope::class);
+
+        $user = Auth::user();
+
+        if (! $user instanceof User) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        if ($user->isSuperAdmin()) {
+            return $query;
+        }
+
+        $companyIds = app(MultiCompanyAdminService::class)->assignedCompanyIds($user);
+
+        return $companyIds === []
+            ? $query->whereRaw('1 = 0')
+            : $query->whereIn('companies.id', $companyIds);
     }
 
     public static function getNavigationLabel(): string

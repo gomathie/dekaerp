@@ -16,6 +16,7 @@ use Webkul\Field\FieldServiceProvider;
 use Webkul\FullCalendar\FullCalendarServiceProvider;
 use Webkul\Inventory\InventoryServiceProvider;
 use Webkul\Invoice\InvoiceServiceProvider;
+use Webkul\Logistics\LogisticsServiceProvider;
 use Webkul\Maintenance\MaintenanceServiceProvider;
 use Webkul\Manufacturing\ManufacturingServiceProvider;
 use Webkul\Partner\PartnerServiceProvider;
@@ -49,6 +50,7 @@ return [
     FieldServiceProvider::class,
     InventoryServiceProvider::class,
     InvoiceServiceProvider::class,
+    LogisticsServiceProvider::class,
     MaintenanceServiceProvider::class,
     ManufacturingServiceProvider::class,
     PartnerServiceProvider::class,

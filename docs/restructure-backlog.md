@@ -33,9 +33,10 @@ screens may reorder.
 
 ## Recommendation
 
-Do this after the PHP 8.4 runtime is fixed and the Pest suite can run, and go
-plugin by plugin so a regression is attributable to one batch. Doing 70
-resources blind, on a production ERP, buys nothing that cannot wait.
+The PHP 8.4/Sail prerequisite was satisfied by upstream-adoption Package A on
+2026-09-19. This remains a separate merge-debt project: go plugin by plugin so
+a regression is attributable to one batch. Doing 70 resources blind, on a
+production ERP, buys nothing that cannot wait.
 
 SAFE (pure relocation, adopting cannot change behaviour): 70
   plugins/webkul/accounting/src/Filament/Clusters/Accounting/Resources/JournalItemResource.php

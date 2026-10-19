@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'created'             => 'Criado',
+    'confirmed'           => 'Confirmado',
+    'driver_assigned'     => 'Motorista atribuído',
+    'vehicle_assigned'    => 'Veículo atribuído',
+    'trip_assigned'       => 'Viagem atribuída',
+    'dispatched'          => 'Despachado',
+    'pickup_started'      => 'Coleta iniciada',
+    'picked_up'           => 'Coletado',
+    'departed_origin'     => 'Saiu da origem',
+    'in_transit'          => 'Em trânsito',
+    'arrived_destination' => 'Chegou ao destino',
+    'out_for_delivery'    => 'Saiu para entrega',
+    'delivered'           => 'Entregue',
+    'delivery_failed'     => 'Falha na entrega',
+    'delivery_retried'    => 'Nova tentativa de entrega',
+    'returned'            => 'Devolvido',
+    'put_on_hold'         => 'Colocado em espera',
+    'released'            => 'Retomado',
+    'cancelled'           => 'Cancelado',
+    'pod_captured'        => 'Comprovante de entrega capturado',
+    'invoice_created'     => 'Fatura criada',
+    'position_update'     => 'Atualização de posição',
+];

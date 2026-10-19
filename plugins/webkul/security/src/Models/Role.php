@@ -7,12 +7,36 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Role as BaseRole;
 use Spatie\Permission\PermissionRegistrar;
+use Webkul\Security\PermissionRegistrar as ForkPermissionRegistrar;
 
 class Role extends BaseRole
 {
+    public const MULTI_COMPANY_ADMIN = 'Multi-Company Admin';
+
+    /**
+     * A customer's own administrator, for one company.
+     *
+     * Deliberately **not** in SYSTEM_ROLE_FALLBACKS. A system role can be
+     * assigned by nobody but a super admin, which would mean DEKA staff could
+     * not hand this out while onboarding a tenant - the one job it exists for.
+     * It is contained instead by the two rules that already apply to every
+     * ordinary role: an actor may only assign roles whose permissions are a
+     * subset of their own, and may only grant companies they themselves hold.
+     * It gets no Gate::before bypass of any kind.
+     */
+    public const COMPANY_ADMIN = 'Company Admin';
+
     protected const SYSTEM_ROLE_FALLBACKS = [
+        'admin',
+        'super_admin',
+        self::MULTI_COMPANY_ADMIN,
+    ];
+
+    protected const SUPER_ADMIN_ROLE_FALLBACKS = [
+        'Admin',
         'admin',
         'super_admin',
     ];
@@ -24,6 +48,32 @@ class Role extends BaseRole
 
     protected static function booted(): void
     {
+        static::creating(function (self $role): void {
+            if (! $role->isSystemRole()) {
+                return;
+            }
+
+            $user = auth()->user();
+
+            if ($user instanceof User && ! $user->isSuperAdmin()) {
+                throw new AuthorizationException(__('You are not allowed to create this system role.'));
+            }
+
+            $name = $role->getRawOriginal('name') ?: $role->attributes['name'] ?? '';
+
+            if (
+                is_string($name)
+                && static::query()
+                    ->where('guard_name', $role->guard_name ?: 'web')
+                    ->whereRaw('LOWER(name) = ?', [static::normalizeRoleName($name)])
+                    ->exists()
+            ) {
+                throw ValidationException::withMessages([
+                    'name' => __('This system role already exists.'),
+                ]);
+            }
+        });
+
         static::updating(function (self $role): void {
             if (! $role->isSystemRole()) {
                 return;
@@ -58,6 +108,22 @@ class Role extends BaseRole
         return in_array(static::normalizeRoleName($name), static::getSystemRoleNames(), true);
     }
 
+    public function isSuperAdminRole(): bool
+    {
+        $name = $this->getRawOriginal('name') ?: $this->attributes['name'] ?? '';
+
+        return is_string($name)
+            && in_array(static::normalizeRoleName($name), static::getSuperAdminRoleNames(), true);
+    }
+
+    public function isMultiCompanyAdminRole(): bool
+    {
+        $name = $this->getRawOriginal('name') ?: $this->attributes['name'] ?? '';
+
+        return is_string($name)
+            && static::normalizeRoleName($name) === static::normalizeRoleName(self::MULTI_COMPANY_ADMIN);
+    }
+
     public static function getSystemRoleNames(): array
     {
         $configuredNames = [
@@ -66,6 +132,22 @@ class Role extends BaseRole
         ];
 
         return collect(array_merge(static::SYSTEM_ROLE_FALLBACKS, $configuredNames))
+            ->filter(fn ($name) => is_string($name) && $name !== '')
+            ->map(fn (string $name) => static::normalizeRoleName($name))
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    public static function getSuperAdminRoleNames(): array
+    {
+        // Only the super-admin role names, to stay in step with the Gate::before
+        // in SecurityServiceProvider. The panel_user name is deliberately not
+        // read here: it is "Admin" in this fork by configuration, and reading it
+        // would silently promote whatever that setting is later changed to.
+        return collect(array_merge(static::SUPER_ADMIN_ROLE_FALLBACKS, [
+            config('filament-shield.super_admin.name'),
+        ]))
             ->filter(fn ($name) => is_string($name) && $name !== '')
             ->map(fn (string $name) => static::normalizeRoleName($name))
             ->unique()
@@ -195,5 +277,11 @@ class Role extends BaseRole
         }
 
         $this->forgetCachedPermissions();
+
+        // forgetCachedPermissions() above clears Spatie's registrar. The fork
+        // binds its own (SecurityServiceProvider), and that is the one
+        // Permission::getPermissions() reads, so it has to be cleared too or the
+        // rows just attached stay invisible for the rest of the request.
+        app(ForkPermissionRegistrar::class)->forgetCachedPermissions();
     }
 }
