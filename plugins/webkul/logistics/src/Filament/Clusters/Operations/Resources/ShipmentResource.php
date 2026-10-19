@@ -40,6 +40,10 @@ use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Pag
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Pages\ListShipments;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Pages\ManageTimeline;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Pages\ViewShipment;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\RelationManagers\ChargesRelationManager;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\RelationManagers\DeliveryProofsRelationManager;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\RelationManagers\ExpensesRelationManager;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\RelationManagers\InvoicesRelationManager;
 use Webkul\Logistics\Models\PackageType;
 use Webkul\Logistics\Models\ServiceType;
 use Webkul\Logistics\Models\Shipment;
@@ -47,6 +51,7 @@ use Webkul\Logistics\Support\LogisticsAccess;
 use Webkul\Partner\Enums\AccountType;
 use Webkul\Partner\Models\Partner;
 use Webkul\PluginManager\Package;
+use Webkul\Sale\Enums\OrderState;
 use Webkul\Sale\Models\Order;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Currency;
@@ -388,6 +393,16 @@ class ShipmentResource extends Resource
             ->with(['customer:id,name', 'serviceType:id,name', 'dispatcher:id,name', 'company:id,name']);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            DeliveryProofsRelationManager::class,
+            ChargesRelationManager::class,
+            ExpensesRelationManager::class,
+            InvoicesRelationManager::class,
+        ];
+    }
+
     public static function getRecordSubNavigation(Page $page): array
     {
         return $page->generateNavigationItems([
@@ -452,6 +467,15 @@ class ShipmentResource extends Resource
         return Order::query()
             ->when($companyId, fn (Builder $query) => $query->where('company_id', $companyId))
             ->where('partner_id', $customerId)
+            // Confirmed only, as the docblock always claimed. A quotation is not
+            // yet work anyone agreed to, and picking one here would pre-fill a
+            // shipment from figures the customer has not accepted.
+            ->where('state', OrderState::SALE)
+            // And not one that already has a shipment. The D1 listener cannot
+            // create a duplicate, because it checks sale_order_id, but nothing
+            // stopped a person making a second shipment for the same order from
+            // this picker.
+            ->whereNotIn('id', Shipment::query()->whereNotNull('sale_order_id')->select('sale_order_id'))
             ->orderByDesc('id')
             ->limit(50)
             ->pluck('name', 'id')

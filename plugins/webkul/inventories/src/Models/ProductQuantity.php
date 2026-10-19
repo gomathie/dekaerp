@@ -21,11 +21,27 @@ use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\UOM;
 use Webkul\Support\Traits\BelongsToCompany;
+use Webkul\Support\Traits\InheritsParentCompany;
 
 class ProductQuantity extends Model
 {
     use BelongsToCompany;
     use HasFactory;
+    use InheritsParentCompany;
+
+    /**
+     * Stock belongs to its location's company.
+     *
+     * The saving hook below derived this as `$stock->location?->company_id`, and
+     * `Location` is company-scoped - so a location outside the session's active
+     * companies made the relation null. `autoAssignsCompany()` is false here, so
+     * nothing backfilled it either and `company_id` was left **null**, which
+     * `CompanyScope` reads as *shared*: that stock row became visible to every
+     * company on the installation.
+     */
+    protected static string $parentCompanyModel = Location::class;
+
+    protected static string $parentCompanyKey = 'location_id';
 
     protected $table = 'inventories_product_quantities';
 
@@ -122,8 +138,6 @@ class ProductQuantity extends Model
 
         static::saving(function (ProductQuantity $stock) {
             $stock->refreshCountSchedule();
-
-            $stock->company_id = $stock->location?->company_id ?? $stock->company_id;
         });
 
         static::created(function (ProductQuantity $stock) {

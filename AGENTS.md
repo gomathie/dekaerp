@@ -321,6 +321,14 @@ Filament admin panel (`users`) with Shield roles and permissions (global roles, 
 External services / APIs:
 Sentry, Supabase, Laravel Cloud, S3-compatible storage. Future telematics integration: PILOT (see `docs/logistics-plan.md`).
 
+Development documentation:
+Use Laravel Boost's `search-docs` first for Laravel ecosystem questions when it
+is available. If Boost is unavailable or its coverage is missing, use the
+project's Context7 MCP server and name the exact locked package version in the
+query. Prefer the package's official documentation or source when results
+conflict. Never include secrets, customer data or environment-file contents in
+a documentation query.
+
 ━━━━━━━━━━━━━━━━━━
 BEFORE WRITING CODE
 ━━━━━━━━━━━━━━━━━━
@@ -1028,8 +1036,36 @@ WORKING RULES LEARNED THE HARD WAY
 • Host PHP is too old. Run tests, artisan and composer in the Sail image:
     docker compose up -d pgsql
     docker compose run --rm --no-deps laravel.test php artisan test --testsuite=SUITE_NAME
-• Test suites share one database: run one suite at a time. An interrupted run
-  poisons `aureuserp_testing`; drop and recreate it before re-running.
+• Translation source structure is checked line by line. Use quoted numeric keys
+  (`'4' =>`) in both English and locale arrays: PHP casts them back to integers,
+  while bare numeric keys make translated values look like structure changes.
+• Test suites share one database: run one suite at a time **per database**. An
+  interrupted run poisons `aureuserp_testing`; drop and recreate it before
+  re-running.
+• **Which database to use.** One per work package, never share:
+    aureuserp_testing          default from phpunit.xml. This is what you get
+                               if you FORGET the -e flag, so treat it as the
+                               collision trap, not as "yours". Only safe when
+                               you are certain no one else is working.
+    aureuserp_testing_wp<N>    your work package, e.g. aureuserp_testing_wp5.
+                               Create it once; reuse it for every run.
+    aureuserp_testing_claude   reserved for review/verification runs that span
+                               packages. Do not use it for package work.
+  State the database you used in your handoff, so the next agent can see which
+  names are taken. List them with:
+    docker compose exec -T pgsql psql -U sail -d postgres -c "SELECT datname FROM pg_database WHERE datname LIKE 'aureuserp%';"
+• When two agents are working at once, give each its own test database instead
+  of taking turns. `phpunit.xml` sets `DB_DATABASE` without `force="true"`, so
+  a real environment variable wins and no shared file has to change:
+    docker compose exec -T pgsql psql -U sail -d postgres -c "CREATE DATABASE aureuserp_testing_2 OWNER sail;"
+    docker compose run --rm --no-deps -e DB_DATABASE=aureuserp_testing_2 laravel.test php artisan test --testsuite=SUITE
+  Confirm the split with
+  `SELECT datname, count(*) FROM pg_stat_activity WHERE datname LIKE 'aureuserp_testing%' GROUP BY datname;`
+  Two `migrate:fresh` runs interleaving on one schema produce errors that look
+  like broken code but are not - "relation X does not exist" on a table the
+  migration just created, or "relation Y already exists". Four runs were lost to
+  this before the cause was identified; waiting for the other container to exit
+  is **not** enough, because a new run can start on top of yours mid-suite.
 • If `docker compose up -d pgsql` fails with "port 5433 already allocated",
   another local project holds the port. Use
   `FORWARD_PGSQL_PORT=5436 docker compose up -d pgsql`; don't stop the other
@@ -1070,6 +1106,14 @@ MULTI-COMPANY FACTS THAT BITE
 • Child rows must take their parent's company, not the session's. The saving
   event fires before creating, so set company_id there (Logistics
   `InheritsParentCompany`).
+• An event listener runs under whoever acted, not under the record's company.
+  Reading a company-scoped model through a relation there (`$order->lines()`)
+  silently returns nothing whenever the two differ - a queued job, a console
+  command, another company's user - and the work looks like it was simply not
+  needed. In a listener or a cross-plugin service, read with
+  `withoutGlobalScopes()` filtered explicitly by the parent's key, as
+  `Logistics\Services\ShipmentFromOrder` does. This is the read side; the write
+  side still stamps the parent's company (`InheritsParentCompany`).
 • The super-admin `Gate::before` skips policies, so services must repeat
   business guards. The same is true of any new `Gate::before` that returns
   `true`: grant only bare permission checks (empty `$arguments`) and return
@@ -1095,11 +1139,102 @@ MULTI-COMPANY FACTS THAT BITE
   an upstream patch as a patch. Do not retrofit existing monolithic resources
   as a side effect of other work; convert one only as its own change with its
   own test run.
+• `Currency::code` is an **accessor**, not a column - `currencies` has `name`,
+  `symbol`, `iso_numeric`, no `code`. Using it in PHP (`->money(fn ($r) =>
+  $r->currency?->code)`) is fine; pushing it into SQL is not. A Filament filter
+  or sort like `->relationship('currency', 'code')` throws `Undefined column`
+  and 500s the page on every open. The two usages look identical.
+• Building an `Account\Models\Move` line by hand: **set `display_type`
+  explicitly** (`DisplayType::PRODUCT` for a normal costed line). `MoveLine`'s
+  saving hook calls `computeAccountId()` *before* `computeDisplayType()`, so a
+  line created without one is costed through the `default:` branch, which
+  replaces an explicitly set `account_id` with the journal's default account;
+  and `MoveCalculator::recomputeLine()` zeroes `price_subtotal`/`price_total` on
+  any line that is not PRODUCT or COGS. Both failures are silent - the document
+  looks finished, on the wrong account, for nothing. Lines that carry a product
+  escape this because the product supplies the account. Logistics'
+  `ExpensePoster` has no product, which is how it was found.
+• Also remember `$move->lines` is **every** line, including the balancing
+  payment-term line and tax lines `computeAccountMove()` adds. Never count or
+  `first()` them as if they were only yours.
+• `Auth::` acts on whichever guard is **default at that moment**, and that is not
+  always `web`: Sanctum's token guard (`RequestGuard`) can be the default, and it
+  has neither `onceUsingId()` nor `logout()` - both throw
+  `BadMethodCallException`. It also caches the user it resolved, so `Auth::check()`
+  can stay true after the session guard has been cleared. Name the guard
+  (`Auth::guard('web')`) in any code that logs a user in or out, or that asserts
+  nobody is logged in. This bit both `Logistics\Services\StopLinkService` and its
+  tests.
+• A `canAccess()` written on a page class **replaces** `HasPageShield`'s, because
+  a class method beats a trait method. `parent::canAccess()` inside it then
+  reaches Filament's `Page::canAccess()`, which returns true - so the page's
+  permission is never checked and it opens for everyone. Adding one extra
+  condition to a Shield-guarded page is exactly when this happens. Check the
+  permission explicitly instead (`auth()->user()?->can('page_<plugin>_<page>')`),
+  as `Logistics\...\Pages\UnbilledCharges` and `...\Pages\Dashboard` do.
 • Shield: only `resources.manage` and the exclude lists are merged from a plugin
   config; `pages.manage` and `custom_permissions` there are ignored. Page
   permissions are `page_<plugin>_<page_snake>`. Resource permissions are
   `<affix>_<plugin>_<model>` (multi-word models use `::`, e.g.
   `view_any_logistics_service::type`).
+• That page permission name is written **twice**, and until WP-11 nothing held
+  the two together. The page names one (`getPagePermission()`, or an explicit
+  `can()`), while `Webkul\PluginManager\PermissionManager::managePermissions()`
+  generates the other through Shield's `buildPermissionKeyUsing` - which is why
+  the name is `page_<plugin>_<class>` and **not** Shield's own default
+  `view_<class>`. If the two disagree, the page is unopenable in production for
+  everyone, `canAccess()` false even for a role with every box ticked, while
+  every test still passes, because tests grant the name by hand. Assert the
+  generated set (`FilamentShield::getPages()`, each entry's `permissions` keys)
+  for any new page. Example: Logistics `tests/Feature/Reports/ReportsTest.php`.
+  Cluster classes get no permission of their own - Filament clusters extend
+  `Page`, and Shield rejects any page that is some page's cluster.
+• A Filament table's `getTable()->getQuery()` is the **unfiltered** base query.
+  The filtered ones are `getFilteredTableQuery()` and - the one `ExportAction`
+  actually runs, via `CanExportRecords` - `getTableQueryForExport()`, which
+  applies filters, search and sort. A test that asserts filtering or export
+  scope against `getTable()->getQuery()` passes regardless and proves nothing.
+• A factory default can make a test assert the **opposite** of what its name
+  claims. `ShipmentFactory` fills `expected_delivery_at`, so a WP-11 test for
+  "delivered with no promised date" silently exercised the promised-date branch
+  and passed green. Whenever a test turns on a column being **absent**, set it
+  to null explicitly rather than trusting the factory to leave it alone.
+• **Never read a parent through a relation inside a model hook.** The parent is
+  almost always globally scoped, so for an actor not entitled to see it the
+  relation returns **null**, and then: `??=`/`?->` leaves `company_id` null, which
+  `CompanyScope` reads as *shared* (visible to every company); a
+  `?? current_company_id()` fallback files the row under the **actor's** company;
+  a bare `=` **overwrites a stored value with null**; or the save dies. All silent
+  but the last. Use `Webkul\Support\Traits\InheritsParentCompany`, which hooks
+  `saving` (before `creating`, so it beats `BelongsToCompany`) and reads the parent
+  with `withoutGlobalScopes()`. For any other field, read the parent scope-free the
+  same way. Fixed in `TaskStage`, `Task`, `Account\MoveLine`, `Inventory\MoveLine`,
+  `Inventory\ProductQuantity` and `Manufacturing\Move`; details in
+  docs/company-admin-role-plan.md §4e/§4i/§4j.
+• `withoutGlobalScope(CompanyScope::class)` **reads as careful and is not.** Several
+  parents carry a global `OwnershipScope` too - `Account\Move`,
+  `Inventory\Operation`, `Manufacturing\Order`, `Sale\Order`, `Project`, `Task` -
+  so dropping one scope still hides them. Prefer `withoutGlobalScopes()` for a
+  parent read. This is exactly the bug `Project\Models\Task` shipped with.
+• `Builder::value()` **applies the model's casts** - it resolves through `first()`.
+  `Move::withoutGlobalScopes()->value('state')` returns a `MoveState`, not a
+  string, so a helper typed `?string` throws a TypeError. Type it to the cast.
+• `$table->enum(...)->change()` **cannot work on PostgreSQL**: Laravel renders it
+  as one `ALTER COLUMN ... type varchar(255) check (...)`, which Postgres rejects
+  with `syntax error at or near "check"`. To change only a default use
+  `DB::statement("ALTER TABLE t ALTER COLUMN c SET DEFAULT '...'")` (also valid on
+  MySQL 8). Watch the failure mode: `migrate:fresh` dies, so **every** test in the
+  suite fails with 0 assertions, which looks like catastrophe rather than one line.
+• When a change produces many failures sharing a theme, **run one of them alone and
+  read the exception** before theorising about the theme. 13 failures all named
+  after action visibility ("hides the validate and cancel actions on a done
+  receipt") were one wrong return type; the theme was noise.
+• `users.resource_permission` defaults to **`global`** since 2026-09-28 (user
+  decision): everyone in a company sees that company's records, and `CompanyScope`
+  is the boundary. `individual` and `group` remain grantable per user and are fully
+  tested, they are just no longer what people get by accident. A `group` user with
+  no team used to resolve to an empty id list, which `OwnershipScope` read as *no
+  restriction* - `Bouncer` now fails closed to their own rows.
 
 DOCUMENTATION AND UPSTREAM REVIEW (ALL AGENTS)
 
@@ -1124,6 +1259,16 @@ DOCUMENTATION AND UPSTREAM REVIEW (ALL AGENTS)
 
 DONE RECENTLY (newest first; details in docs/change-log.md)
 
+• 2026-09-29 — Company-wide visibility is now the default
+  (`users.resource_permission` → `global`, with `individual`/`group` still
+  grantable), plus the scoped-parent-read bug family it exposed: six models fixed,
+  `InheritsParentCompany` promoted from Logistics to `Webkul\Support`, a `group`
+  user with no team no longer sees everything, and `OwnershipScope` is finally
+  testable at all. 13 suites, 2,500+ tests, zero failures. Details in
+  docs/change-log.md and docs/company-admin-role-plan.md §4d–§4j.
+• 2026-09-25 — Logistics WP-11 Reports: five filtered table pages with export in a
+  Reporting cluster, behind their own Shield page permissions, plus a test pinning
+  that those permission names are actually generated. LogisticsFeature 177 passed.
 • 2026-09-20 — Full-suite follow-up: plugin installs and fresh-install defaults
   now target the configured Admin role instead of the first database role; an
   idempotent migration repairs protected Multi-Company Admin permissions and
@@ -1163,6 +1308,11 @@ REFERENCES
   Do that work only on that branch, in its own worktree, and only after
   Logistics is merged. The layout rule itself is in project memory above and in
   docs/logistics-plan.md, so new resources follow it everywhere meanwhile.
+• docs/company-admin-role-plan.md — the "Company Admin" request, and the tenant
+  leak found while investigating it: the Users list is company-scoped only for
+  Multi-Company Admins, so a customer admin with Resource Permission `Global`
+  can see and edit other tenants' users. Mitigation available today; fix planned
+  after Logistics.
 • docs/logistics-plan.md — Logistics plan, decisions D1–D15, status board, work
   packages, handoff log.
 • docs/unified-product-resource-plan.md — cross-plugin product-resource plan.

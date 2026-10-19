@@ -33,6 +33,26 @@ class ShipmentCharge extends Model
 
     protected $table = 'logistics_shipment_charges';
 
+    /**
+     * Mirrors the column defaults in the shipment charges migration. See Trip
+     * for why.
+     *
+     * `is_billable` is the one that would bite: a charge created without it
+     * reads back null, which is falsy, so code deciding what to invoice would
+     * skip a charge the database considers billable.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'sort'        => 0,
+        'quantity'    => 1,
+        'price_unit'  => 0,
+        'discount'    => 0,
+        'subtotal'    => 0,
+        'total'       => 0,
+        'is_billable' => true,
+    ];
+
     protected $fillable = [
         'sort',
         'description',
@@ -115,6 +135,24 @@ class ShipmentCharge extends Model
     {
         static::creating(function (self $charge): void {
             $charge->creator_id ??= Auth::id();
+        });
+
+        // Nothing computed this before, so the column sat at its default of 0
+        // for every charge ever created - while three places read it as money:
+        // the Unbilled charges page, the unbilled revenue widget on the
+        // dashboard, and the shipment margin. All three showed zero, always.
+        //
+        // Pre-tax, like sales_order_lines.price_subtotal, and discount is a
+        // percentage, as it is on the charge form and on the order lines
+        // ShipmentFromOrder copies from. Tax belongs to accounting and is
+        // computed when the charge becomes an invoice line, so `total` is
+        // deliberately left alone rather than guessed at here.
+        static::saving(function (self $charge): void {
+            $quantity = (float) ($charge->quantity ?? 0);
+            $priceUnit = (float) ($charge->price_unit ?? 0);
+            $discount = (float) ($charge->discount ?? 0);
+
+            $charge->subtotal = round($quantity * $priceUnit * (1 - $discount / 100), 4);
         });
     }
 }

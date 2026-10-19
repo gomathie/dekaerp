@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Component;
 use Livewire\Livewire;
+use Sentry\Event as SentryEvent;
+use Sentry\EventHint;
+use Sentry\SentrySdk;
 use Sentry\State\Scope;
 use Throwable;
 use Webkul\Security\Models\User;
@@ -53,6 +56,8 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->tagSentryWithTenantContext();
+
+        $this->redactStopLinkTokensFromSentry();
 
         $this->refreshTenantDiskOnLogin();
 
@@ -109,6 +114,63 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(Authenticated::class, function (): void {
             Storage::forgetDisk('public');
         });
+    }
+
+    /**
+     * Keep POD capture tokens out of Sentry.
+     *
+     * The token is the credential for a stop link (Logistics WP-5b) and it
+     * travels in the URL path. `send_default_pii` governs cookies, the client IP
+     * and the request body - not the URL - so any exception on that route would
+     * send a live, usable token to a third party, where it sits in an issue for
+     * as long as Sentry retains it.
+     *
+     * Registered after every provider has booted, because the Sentry client does
+     * not exist until its own provider has run, and chained onto whatever
+     * callback is already set rather than replacing it.
+     */
+    protected function redactStopLinkTokensFromSentry(): void
+    {
+        $this->app->booted(function (): void {
+            $client = SentrySdk::getCurrentHub()->getClient();
+
+            if (! $client) {
+                return;
+            }
+
+            $options = $client->getOptions();
+            $previous = $options->getBeforeSendCallback();
+
+            $options->setBeforeSendCallback(function (SentryEvent $event, ?EventHint $hint = null) use ($previous): ?SentryEvent {
+                $request = $event->getRequest();
+
+                foreach (['url', 'query_string'] as $key) {
+                    if (is_string($request[$key] ?? null)) {
+                        $request[$key] = static::withoutStopLinkToken($request[$key]);
+                    }
+                }
+
+                $event->setRequest($request);
+
+                // The transaction is normally the route pattern, so it carries
+                // no token - cleaned anyway, because it is set from the real
+                // path in some code paths.
+                if (is_string($transaction = $event->getTransaction())) {
+                    $event->setTransaction(static::withoutStopLinkToken($transaction));
+                }
+
+                return $previous($event, $hint);
+            });
+        });
+    }
+
+    protected static function withoutStopLinkToken(string $value): string
+    {
+        return (string) preg_replace(
+            '#(logistics/pod/)[A-Za-z0-9]{16,128}#',
+            '$1[redacted]',
+            $value,
+        );
     }
 
     protected function tagSentryWithTenantContext(): void

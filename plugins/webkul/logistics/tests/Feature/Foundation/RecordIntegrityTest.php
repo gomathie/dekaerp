@@ -1,7 +1,11 @@
 <?php
 
 use Webkul\Logistics\Enums\ShipmentEventType;
-use Webkul\Logistics\Exceptions\CompanyMismatchException;
+// The Support type, not the Logistics one: `InheritsParentCompany` moved to
+// Support on 2026-09-29 and raises the shared exception, while `Expense` still
+// raises the Logistics subclass from its own check. Asserting the parent class
+// covers both, and would keep covering them if either side moved again.
+use Webkul\Support\Exceptions\CompanyMismatchException;
 use Webkul\Logistics\Models\Expense;
 use Webkul\Logistics\Models\ShipmentEvent;
 use Webkul\Logistics\Models\ShipmentLine;

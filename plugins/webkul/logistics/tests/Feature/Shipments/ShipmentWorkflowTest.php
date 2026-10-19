@@ -42,7 +42,7 @@ it('moves a shipment through every valid transition and records each one', funct
         ->and($shipment->actual_delivery_at)->not->toBeNull()
         ->and($shipment->events()->count())->toBe(count($path))
         // Ordered by id: a whole path runs inside one second, so occurred_at ties.
-        ->and($shipment->events()->orderByDesc('id')->first()->type)->toBe(ShipmentEventType::DELIVERED);
+        ->and($shipment->events()->reorder()->orderByDesc('id')->first()->type)->toBe(ShipmentEventType::DELIVERED);
 });
 
 it('refuses a transition the state machine does not allow', function () {

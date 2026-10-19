@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Webkul\Security\Enums\PermissionType;
 use Webkul\Security\Models\Invitation;
-use Webkul\Security\Models\Role;
 use Webkul\Security\Models\User;
 use Webkul\Security\Settings\UserSettings;
 
@@ -68,20 +67,24 @@ class UserInvitationService
         [$actor, $companyIds, $defaultCompanyId, $roleIds] = $this->resolveContext($invitation);
 
         return DB::transaction(function () use ($invitation, $name, $password, $actor, $companyIds, $defaultCompanyId, $roleIds): User {
-            $isMultiCompanyAdmin = Role::query()
-                ->whereIn('id', $roleIds)
-                ->whereRaw('LOWER(name) = ?', [mb_strtolower(Role::MULTI_COMPANY_ADMIN)])
-                ->exists();
-
             $user = User::query()->create([
                 'creator_id'         => $actor?->getKey(),
                 'name'               => $name,
                 'password'           => $password,
                 'email'              => $invitation->email,
                 'default_company_id' => $defaultCompanyId,
-                'resource_permission' => $isMultiCompanyAdmin
-                    ? PermissionType::GLOBAL
-                    : PermissionType::INDIVIDUAL,
+                /*
+                 * Company-wide for everyone, not only Multi-Company Admins: people
+                 * in the same company are meant to see that company's records, and
+                 * `CompanyScope` is what keeps tenants apart. This used to write
+                 * `INDIVIDUAL` for anyone who was not a Multi-Company Admin, which
+                 * left an invited colleague unable to see any invoice they had not
+                 * raised themselves.
+                 *
+                 * The Multi-Company Admin lookup that used to pick between the two
+                 * values went with it - the role no longer changes the outcome here.
+                 */
+                'resource_permission' => PermissionType::GLOBAL,
             ]);
 
             $user->allowedCompanies()->sync($companyIds);
