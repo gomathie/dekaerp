@@ -82,6 +82,12 @@ and `resources/views/vendor/filament-tables/components/summary/row.blade.php`
 (responsive summary cells - see `docs/change-log.md`, 2026-09-14). A stale
 override silently keeps old vendor markup.
 
+**Development documentation fallback:** this project configures Context7 as a
+read-only MCP server. Use Laravel Boost `search-docs` first when available; use
+Context7 only when Boost is unavailable or missing coverage, always naming the
+locked package version. Confirm conflicts against official package docs/source,
+and never send secrets, customer data or environment-file contents.
+
 **Project memory for agents** (traps, multi-company facts, recent work,
 references) is kept at the end of `AGENTS.md` under "DEKA ERP — PROJECT
 MEMORY". Update it when a session finds a new trap or finishes a significant
@@ -97,6 +103,23 @@ already present, required gaps, optional product features, explicit rejects,
 and the next review date.
 
 ---
+
+## 2026-10-19
+
+**Requested:** Review Agent Skills, Context7, Graphify, 21st MCP and Strix, then
+selectively configure useful development tooling without adding production
+dependencies.
+
+**Done:** Added anonymous, read-only Context7 configuration for Codex and the
+existing portable MCP manifest. The other four candidates were deliberately not
+installed: the generic Agent Skills pack duplicates/conflicts with project rules;
+21st targets React UI; local Graphify needs a missing Python/uv toolchain and its
+Codex installer has open mutation/path defects; Strix needs credentials/login and
+an explicitly authorized isolated target before active security testing.
+
+**Usage:** Ask for the exact locked version, for example, "Use Context7 to find
+Laravel 13.21.1 middleware configuration guidance." Do not put application data
+or credentials in the query.
 
 ## 2026-09-29 → 2026-09-30
 

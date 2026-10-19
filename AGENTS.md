@@ -321,6 +321,14 @@ Filament admin panel (`users`) with Shield roles and permissions (global roles, 
 External services / APIs:
 Sentry, Supabase, Laravel Cloud, S3-compatible storage. Future telematics integration: PILOT (see `docs/logistics-plan.md`).
 
+Development documentation:
+Use Laravel Boost's `search-docs` first for Laravel ecosystem questions when it
+is available. If Boost is unavailable or its coverage is missing, use the
+project's Context7 MCP server and name the exact locked package version in the
+query. Prefer the package's official documentation or source when results
+conflict. Never include secrets, customer data or environment-file contents in
+a documentation query.
+
 ━━━━━━━━━━━━━━━━━━
 BEFORE WRITING CODE
 ━━━━━━━━━━━━━━━━━━
