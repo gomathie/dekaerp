@@ -70,14 +70,10 @@ function asGuest(): void
 
 /**
  * The token out of a URL that issue() returned.
- *
- * issue() now returns a fragment URL (/logistics/pod#TOKEN), so the token is
- * in the fragment, not the path. parse_url returns null when there is no
- * fragment, so we cast to string for a blank fallback.
  */
 function tokenFrom(string $url): string
 {
-    return (string) parse_url($url, PHP_URL_FRAGMENT);
+    return basename(parse_url($url, PHP_URL_PATH));
 }
 
 function issuedLink($company, array $permissions = ['send_pod_link', 'mark_delivered', 'capture_pod']): array
@@ -143,14 +139,10 @@ it('revokes an earlier unused link when a new one is issued', function () {
     asGuest();
 
     // The first URL, which may already have been sent or leaked, is dead.
-    // The old path-based route is used here intentionally: it tests the
-    // backward-compatible GET endpoint still enforces revocation.
     $this->get(route('logistics.stop-link.show', ['token' => $firstToken]))
         ->assertNotFound();
 
-    // The second link works via the new exchange endpoint.
-    $this->post(route('logistics.stop-link.exchange'), ['token' => tokenFrom($secondUrl)])
-        ->assertOk();
+    $this->get($secondUrl)->assertOk();
 });
 
 it('refuses to issue a link until the shipment is out for delivery', function () {
@@ -184,11 +176,11 @@ it('refuses to revoke links after the shipment company disables Logistics', func
 it('opens the capture page for a valid token with no login', function () {
     $company = LogisticsHelper::enable(LogisticsHelper::company());
 
-    [$stop, $token] = issuedLink($company);
+    [$stop, $token, $url] = issuedLink($company);
 
     asGuest();
 
-    $this->post(route('logistics.stop-link.exchange'), ['token' => $token])
+    $this->get($url)
         ->assertOk()
         ->assertHeader('Cache-Control', 'no-store, private')
         ->assertHeader('Referrer-Policy', 'no-referrer')
@@ -200,39 +192,39 @@ it('opens the capture page for a valid token with no login', function () {
 it('gives the same 404 for an unknown, expired, used or revoked token', function () {
     $company = LogisticsHelper::enable(LogisticsHelper::company());
 
-    [$stop, $token] = issuedLink($company);
+    [, , $url] = issuedLink($company);
     $link = StopLink::withoutGlobalScope(CompanyScope::class)->sole();
 
     asGuest();
 
-    // Unknown - tested via the old path-based route for backward compat.
+    // Unknown.
     $this->get(route('logistics.stop-link.show', ['token' => str_repeat('a', 64)]))
         ->assertNotFound();
 
-    // Expired - tested via the exchange endpoint.
+    // Expired.
     $link->forceFill(['expires_at' => now()->subMinute()])->save();
-    $this->post(route('logistics.stop-link.exchange'), ['token' => $token])->assertNotFound();
+    $this->get($url)->assertNotFound();
 
     // Used.
     $link->forceFill(['expires_at' => now()->addDay(), 'used_at' => now()])->save();
-    $this->post(route('logistics.stop-link.exchange'), ['token' => $token])->assertNotFound();
+    $this->get($url)->assertNotFound();
 
     // Revoked.
     $link->forceFill(['used_at' => null, 'revoked_at' => now()])->save();
-    $this->post(route('logistics.stop-link.exchange'), ['token' => $token])->assertNotFound();
+    $this->get($url)->assertNotFound();
 });
 
 it('leaks nothing about the shipment on the refusal page', function () {
     $company = LogisticsHelper::enable(LogisticsHelper::company());
 
-    [$stop, $token] = issuedLink($company);
+    [$stop, , $url] = issuedLink($company);
 
     StopLink::withoutGlobalScope(CompanyScope::class)->sole()
         ->forceFill(['revoked_at' => now()])->save();
 
     asGuest();
 
-    $this->post(route('logistics.stop-link.exchange'), ['token' => $token])
+    $this->get($url)
         ->assertNotFound()
         ->assertHeader('Cache-Control', 'no-store, private')
         ->assertHeader('X-Frame-Options', 'DENY')
@@ -243,14 +235,13 @@ it('leaks nothing about the shipment on the refusal page', function () {
 it('captures proof of delivery from a fresh anonymous context and marks the link used', function () {
     $company = LogisticsHelper::enable(LogisticsHelper::company());
 
-    [$stop, $token] = issuedLink($company);
+    [$stop, , $url] = issuedLink($company);
 
     asGuest();
 
     expect(app(CompanyContext::class)->allowedIds())->toBe([]);
 
-    $response = $this->post(route('logistics.stop-link.submit'), [
-        'token'          => $token,
+    $response = $this->post($url, [
         'recipient_name' => 'Ama Mensah',
         'notes'          => 'Left with the security desk.',
         'photo'          => UploadedFile::fake()->image('door.jpg'),
@@ -274,15 +265,14 @@ it('captures proof of delivery from a fresh anonymous context and marks the link
 it('refuses a link after the issuing user is deactivated without exposing why', function () {
     $company = LogisticsHelper::enable(LogisticsHelper::company());
 
-    [, $token] = issuedLink($company);
+    [, , $url] = issuedLink($company);
     $issuer = Auth::guard('web')->user();
 
     $issuer->forceFill(['is_active' => false])->save();
 
     asGuest();
 
-    $this->post(route('logistics.stop-link.submit'), [
-        'token'          => $token,
+    $this->post($url, [
         'recipient_name' => 'Ama Mensah',
         'photo'          => UploadedFile::fake()->image('door.jpg'),
     ])->assertNotFound();
@@ -294,7 +284,7 @@ it('refuses a link after the issuing user is deactivated without exposing why', 
 it('refuses a link after the issuer loses the capture permission', function () {
     $company = LogisticsHelper::enable(LogisticsHelper::company());
 
-    [, $token] = issuedLink($company);
+    [, , $url] = issuedLink($company);
     $issuer = Auth::guard('web')->user();
     $permission = Permission::findByName('capture_pod_logistics_shipment', 'web');
 
@@ -304,8 +294,7 @@ it('refuses a link after the issuer loses the capture permission', function () {
 
     asGuest();
 
-    $this->post(route('logistics.stop-link.submit'), [
-        'token'          => $token,
+    $this->post($url, [
         'recipient_name' => 'Ama Mensah',
         'photo'          => UploadedFile::fake()->image('door.jpg'),
     ])->assertNotFound();
@@ -317,15 +306,14 @@ it('refuses a link after the issuer loses the capture permission', function () {
 it('refuses a link after the issuer loses access to its company', function () {
     $company = LogisticsHelper::enable(LogisticsHelper::company());
 
-    [, $token] = issuedLink($company);
+    [, , $url] = issuedLink($company);
     $issuer = Auth::guard('web')->user();
 
     $issuer->allowedCompanies()->detach($company->id);
 
     asGuest();
 
-    $this->post(route('logistics.stop-link.submit'), [
-        'token'          => $token,
+    $this->post($url, [
         'recipient_name' => 'Ama Mensah',
         'photo'          => UploadedFile::fake()->image('door.jpg'),
     ])->assertNotFound();
@@ -337,12 +325,12 @@ it('refuses a link after the issuer loses access to its company', function () {
 it('refuses a link after its company disables Logistics', function () {
     $company = LogisticsHelper::enable(LogisticsHelper::company());
 
-    [, $token] = issuedLink($company);
+    [, , $url] = issuedLink($company);
 
     LogisticsHelper::disable($company);
     asGuest();
 
-    $this->post(route('logistics.stop-link.exchange'), ['token' => $token])->assertNotFound();
+    $this->get($url)->assertNotFound();
 
     expect(StopLink::withoutGlobalScope(CompanyScope::class)->sole()->used_at)->toBeNull();
 });
@@ -350,12 +338,11 @@ it('refuses a link after its company disables Logistics', function () {
 it('does not leave the capturing request logged in as the issuing user', function () {
     $company = LogisticsHelper::enable(LogisticsHelper::company());
 
-    [, $token] = issuedLink($company);
+    [, , $url] = issuedLink($company);
 
     asGuest();
 
-    $this->post(route('logistics.stop-link.submit'), [
-        'token'          => $token,
+    $this->post($url, [
         'recipient_name' => 'Ama Mensah',
         'photo'          => UploadedFile::fake()->image('door.jpg'),
     ])->assertOk();
@@ -374,11 +361,10 @@ it('restores an authenticated visitor and their company context after capture', 
     $issuerCompany = LogisticsHelper::enable(LogisticsHelper::company());
     $visitorCompany = LogisticsHelper::enable(LogisticsHelper::company());
 
-    [, $token] = issuedLink($issuerCompany);
+    [, , $url] = issuedLink($issuerCompany);
     $visitor = CompanyHelper::actingAsCompanyUser($visitorCompany);
 
-    $this->post(route('logistics.stop-link.submit'), [
-        'token'          => $token,
+    $this->post($url, [
         'recipient_name' => 'Ama Mensah',
         'photo'          => UploadedFile::fake()->image('door.jpg'),
     ])->assertOk();
@@ -390,18 +376,17 @@ it('restores an authenticated visitor and their company context after capture', 
 it('cannot be used twice', function () {
     $company = LogisticsHelper::enable(LogisticsHelper::company());
 
-    [, $token] = issuedLink($company);
+    [, , $url] = issuedLink($company);
 
     asGuest();
 
     $payload = [
-        'token'          => $token,
         'recipient_name' => 'Ama Mensah',
         'photo'          => UploadedFile::fake()->image('door.jpg'),
     ];
 
-    $this->post(route('logistics.stop-link.submit'), $payload)->assertOk();
-    $this->post(route('logistics.stop-link.submit'), $payload)->assertNotFound();
+    $this->post($url, $payload)->assertOk();
+    $this->post($url, $payload)->assertNotFound();
 
     expect(Shipment::withoutGlobalScopes()->sole()->deliveryProofs()->count())->toBe(1);
 });
@@ -409,14 +394,14 @@ it('cannot be used twice', function () {
 it('leaves the link usable when the submission is rejected', function () {
     $company = LogisticsHelper::enable(LogisticsHelper::company());
 
-    [$stop, $token] = issuedLink($company);
+    [$stop, , $url] = issuedLink($company);
 
     // This company insists on a photo, and none is sent.
     CompanySetting::forCompany($company->id)->forceFill(['require_pod_photo' => true])->save();
 
     asGuest();
 
-    $this->post(route('logistics.stop-link.submit'), ['token' => $token, 'recipient_name' => 'Ama Mensah'])
+    $this->post($url, ['recipient_name' => 'Ama Mensah'])
         ->assertSessionHasErrors('photo');
 
     $link = StopLink::withoutGlobalScope(CompanyScope::class)->sole();
@@ -431,12 +416,11 @@ it('leaves the link usable when the submission is rejected', function () {
 it('stores the proof under the shipment’s own company, not the session’s', function () {
     $company = LogisticsHelper::enable(LogisticsHelper::company());
 
-    [$stop, $token] = issuedLink($company);
+    [$stop, , $url] = issuedLink($company);
 
     asGuest();
 
-    $this->post(route('logistics.stop-link.submit'), [
-        'token'          => $token,
+    $this->post($url, [
         'recipient_name' => 'Ama Mensah',
         'photo'          => UploadedFile::fake()->image('door.jpg'),
     ])->assertOk();
@@ -450,15 +434,14 @@ it('stores the proof under the shipment’s own company, not the session’s', f
 it('accepts a canvas signature as a real image file', function () {
     $company = LogisticsHelper::enable(LogisticsHelper::company());
 
-    [$stop, $token] = issuedLink($company);
+    [$stop, , $url] = issuedLink($company);
 
     // A 1x1 transparent PNG, the shape a canvas toDataURL() produces.
     $png = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8AAAwAB/wFrqAAAAABJRU5ErkJggg==';
 
     asGuest();
 
-    $this->post(route('logistics.stop-link.submit'), [
-        'token'          => $token,
+    $this->post($url, [
         'recipient_name' => 'Ama Mensah',
         'signature'      => $png,
     ])->assertOk();
@@ -471,14 +454,13 @@ it('accepts a canvas signature as a real image file', function () {
 it('ignores a signature field that is not a PNG data URL', function () {
     $company = LogisticsHelper::enable(LogisticsHelper::company());
 
-    [$stop, $token] = issuedLink($company);
+    [$stop, , $url] = issuedLink($company);
 
     asGuest();
 
     // Not an error: the signature is optional, so junk is treated as absent
     // rather than blocking a delivery at the door.
-    $this->post(route('logistics.stop-link.submit'), [
-        'token'          => $token,
+    $this->post($url, [
         'recipient_name' => 'Ama Mensah',
         'signature'      => 'data:text/html;base64,PHNjcmlwdD4=',
     ])->assertOk();
@@ -493,15 +475,15 @@ it('throttles a link on its own token and says when to retry', function () {
 
     CompanySetting::forCompany($company->id)->forceFill(['stop_link_rate_limit' => 3])->save();
 
-    [, $token] = issuedLink($company);
+    [, , $url] = issuedLink($company);
 
     asGuest();
 
     foreach (range(1, 3) as $ignored) {
-        $this->post(route('logistics.stop-link.exchange'), ['token' => $token])->assertOk();
+        $this->get($url)->assertOk();
     }
 
-    $this->post(route('logistics.stop-link.exchange'), ['token' => $token])
+    $this->get($url)
         ->assertStatus(429)
         // A driver whose phone retried needs to know how long to wait.
         ->assertHeader('Retry-After');
@@ -514,19 +496,19 @@ it('does not let one company’s link spend another’s rate limit', function ()
     CompanySetting::forCompany($a->id)->forceFill(['stop_link_rate_limit' => 2])->save();
     CompanySetting::forCompany($b->id)->forceFill(['stop_link_rate_limit' => 2])->save();
 
-    [, $tokenA] = issuedLink($a);
-    [, $tokenB] = issuedLink($b);
+    [, , $urlA] = issuedLink($a);
+    [, , $urlB] = issuedLink($b);
 
     asGuest();
 
     // Company A exhausts its own budget. Drivers share mobile carrier NAT
     // addresses, so if the limit were keyed on the IP this would also lock out
     // company B - which is the whole reason it is keyed on the token.
-    $this->post(route('logistics.stop-link.exchange'), ['token' => $tokenA])->assertOk();
-    $this->post(route('logistics.stop-link.exchange'), ['token' => $tokenA])->assertOk();
-    $this->post(route('logistics.stop-link.exchange'), ['token' => $tokenA])->assertStatus(429);
+    $this->get($urlA)->assertOk();
+    $this->get($urlA)->assertOk();
+    $this->get($urlA)->assertStatus(429);
 
-    $this->post(route('logistics.stop-link.exchange'), ['token' => $tokenB])->assertOk();
+    $this->get($urlB)->assertOk();
 });
 
 it('enforces the best-effort per-IP limit across different tokens', function () {
@@ -534,20 +516,20 @@ it('enforces the best-effort per-IP limit across different tokens', function () 
 
     $company = LogisticsHelper::enable(LogisticsHelper::company());
 
-    [, $firstToken] = issuedLink($company);
-    [, $secondToken] = issuedLink($company);
-    [, $thirdToken] = issuedLink($company);
+    [, , $firstUrl] = issuedLink($company);
+    [, , $secondUrl] = issuedLink($company);
+    [, , $thirdUrl] = issuedLink($company);
 
     asGuest();
 
     $this->withServerVariables(['REMOTE_ADDR' => '203.0.113.77'])
-        ->post(route('logistics.stop-link.exchange'), ['token' => $firstToken])
+        ->get($firstUrl)
         ->assertOk();
     $this->withServerVariables(['REMOTE_ADDR' => '203.0.113.77'])
-        ->post(route('logistics.stop-link.exchange'), ['token' => $secondToken])
+        ->get($secondUrl)
         ->assertOk();
     $this->withServerVariables(['REMOTE_ADDR' => '203.0.113.77'])
-        ->post(route('logistics.stop-link.exchange'), ['token' => $thirdToken])
+        ->get($thirdUrl)
         ->assertStatus(429)
         ->assertHeader('Retry-After');
 });
@@ -555,7 +537,7 @@ it('enforces the best-effort per-IP limit across different tokens', function () 
 it('records the driver on the proof only when the company asks for it', function () {
     $company = LogisticsHelper::enable(LogisticsHelper::company());
 
-    [$stop, $token] = issuedLink($company);
+    [$stop, , $url] = issuedLink($company);
 
     $driver = Driver::factory()->create(['company_id' => $company->id]);
     $trip = Trip::create(['company_id' => $company->id, 'driver_id' => $driver->id]);
@@ -564,8 +546,7 @@ it('records the driver on the proof only when the company asks for it', function
 
     asGuest();
 
-    $this->post(route('logistics.stop-link.submit'), [
-        'token'          => $token,
+    $this->post($url, [
         'recipient_name' => 'Ama Mensah',
         'photo'          => UploadedFile::fake()->image('door.jpg'),
     ])->assertOk();
@@ -581,7 +562,7 @@ it('records the driver from the trip when the option is on', function () {
 
     CompanySetting::forCompany($company->id)->forceFill(['capture_driver_on_pod' => true])->save();
 
-    [$stop, $token] = issuedLink($company);
+    [$stop, , $url] = issuedLink($company);
 
     $driver = Driver::factory()->create(['company_id' => $company->id]);
     $trip = Trip::create(['company_id' => $company->id, 'driver_id' => $driver->id]);
@@ -590,8 +571,7 @@ it('records the driver from the trip when the option is on', function () {
 
     asGuest();
 
-    $this->post(route('logistics.stop-link.submit'), [
-        'token'          => $token,
+    $this->post($url, [
         'recipient_name' => 'Ama Mensah',
         'photo'          => UploadedFile::fake()->image('door.jpg'),
         // Sent by whoever holds the link, and ignored: the driver is taken from
@@ -609,17 +589,16 @@ it('requires the recipient’s ID when the company asks for one', function () {
 
     CompanySetting::forCompany($company->id)->forceFill(['capture_recipient_id' => true])->save();
 
-    [$stop, $token] = issuedLink($company);
+    [$stop, , $url] = issuedLink($company);
 
     asGuest();
 
     // Enforced by DeliveryService, not only by the page: the form is not the
     // boundary, and a company that asks for evidence is asking for evidence.
-    $this->post(route('logistics.stop-link.submit'), ['token' => $token, 'recipient_name' => 'Ama Mensah'])
+    $this->post($url, ['recipient_name' => 'Ama Mensah'])
         ->assertSessionHasErrors('recipient_id_reference');
 
-    $this->post(route('logistics.stop-link.submit'), [
-        'token'                  => $token,
+    $this->post($url, [
         'recipient_name'         => 'Ama Mensah',
         'recipient_id_reference' => 'GHA-0123456789',
     ])->assertOk();
@@ -632,15 +611,14 @@ it('requires the recipient’s ID when the company asks for one', function () {
 it('does not keep a recipient ID that was not asked for', function () {
     $company = LogisticsHelper::enable(LogisticsHelper::company());
 
-    [$stop, $token] = issuedLink($company);
+    [$stop, , $url] = issuedLink($company);
 
     asGuest();
 
     // The option is off, so the field is not on the page - but a crafted post
     // could still send it. Nothing is stored: turning the option off means the
     // company has decided not to hold this.
-    $this->post(route('logistics.stop-link.submit'), [
-        'token'                  => $token,
+    $this->post($url, [
         'recipient_name'         => 'Ama Mensah',
         'recipient_id_reference' => 'GHA-0123456789',
     ])->assertOk();
@@ -669,7 +647,7 @@ it('issues a link that expires after the company’s chosen lifetime', function 
 it('cancels a live link without having to issue a replacement', function () {
     $company = LogisticsHelper::enable(LogisticsHelper::company());
 
-    [$stop, $token] = issuedLink($company);
+    [$stop, , $url] = issuedLink($company);
 
     $shipment = Shipment::withoutGlobalScopes()->whereKey($stop->shipment_id)->sole();
 
@@ -682,14 +660,14 @@ it('cancels a live link without having to issue a replacement', function () {
 
     asGuest();
 
-    $this->post(route('logistics.stop-link.exchange'), ['token' => $token])->assertNotFound();
+    $this->get($url)->assertNotFound();
 });
 
 it('refuses to cancel links on a shipment the user cannot see', function () {
     $a = LogisticsHelper::enable(LogisticsHelper::company());
     $b = LogisticsHelper::enable(LogisticsHelper::company());
 
-    [$stop, $token] = issuedLink($b);
+    [$stop, , $url] = issuedLink($b);
 
     $shipment = Shipment::withoutGlobalScopes()->whereKey($stop->shipment_id)->sole();
 
@@ -701,7 +679,7 @@ it('refuses to cancel links on a shipment the user cannot see', function () {
     asGuest();
 
     // Still usable: another company's attempt to revoke it did nothing.
-    $this->post(route('logistics.stop-link.exchange'), ['token' => $token])->assertOk();
+    $this->get($url)->assertOk();
 });
 
 it('treats an expired link as nothing left to cancel', function () {
@@ -720,7 +698,7 @@ it('treats an expired link as nothing left to cancel', function () {
 it('refuses cleanly when the shipment stopped being deliverable', function () {
     $company = LogisticsHelper::enable(LogisticsHelper::company());
 
-    [$stop, $token] = issuedLink($company);
+    [$stop, , $url] = issuedLink($company);
 
     // Ordinary sequence: the link was issued, then the shipment was put on hold
     // or cancelled, or someone else delivered it.
@@ -731,8 +709,7 @@ it('refuses cleanly when the shipment stopped being deliverable', function () {
 
     // The driver gets the same refusal as an expired link, not a 500 - and is
     // not told the shipment was withdrawn, which is not theirs to learn.
-    $this->post(route('logistics.stop-link.submit'), [
-        'token'          => $token,
+    $this->post($url, [
         'recipient_name' => 'Ama Mensah',
         'photo'          => UploadedFile::fake()->image('door.jpg'),
     ])->assertNotFound();
@@ -743,57 +720,4 @@ it('refuses cleanly when the shipment stopped being deliverable', function () {
     // shipment goes back out for delivery.
     expect($link->used_at)->toBeNull()
         ->and(Shipment::withoutGlobalScopes()->whereKey($stop->shipment_id)->sole()->deliveryProofs()->count())->toBe(0);
-});
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Fragment-based flow (WP-5b)
-// ─────────────────────────────────────────────────────────────────────────────
-
-it('issue() returns a fragment URL so the token never appears in the request line', function () {
-    $company = LogisticsHelper::enable(LogisticsHelper::company());
-
-    [$stop, $token, $url] = issuedLink($company);
-
-    // The token is in the fragment, not the path.
-    expect(parse_url($url, PHP_URL_FRAGMENT))->toBe($token)
-        ->and(parse_url($url, PHP_URL_PATH))->toBe('/logistics/pod')
-        ->and(str_contains(parse_url($url, PHP_URL_PATH) ?? '', $token))->toBeFalse();
-});
-
-it('landing page returns 200 with security headers and no shipment data', function () {
-    asGuest();
-
-    $this->get(route('logistics.stop-link.landing'))
-        ->assertOk()
-        ->assertHeader('Cache-Control', 'no-store, private')
-        ->assertHeader('Referrer-Policy', 'no-referrer')
-        ->assertHeader('X-Frame-Options', 'DENY');
-});
-
-it('exchange endpoint returns the capture form for a valid token', function () {
-    $company = LogisticsHelper::enable(LogisticsHelper::company());
-
-    [$stop, $token] = issuedLink($company);
-
-    asGuest();
-
-    $this->post(route('logistics.stop-link.exchange'), ['token' => $token])
-        ->assertOk()
-        ->assertHeader('Cache-Control', 'no-store, private')
-        ->assertSee($stop->shipment->name)
-        ->assertSee('recipient_name', false);
-});
-
-it('old path-based GET route still works for previously issued links', function () {
-    $company = LogisticsHelper::enable(LogisticsHelper::company());
-
-    // Simulate a pre-WP-5b link stored as a path-based token reference.
-    [$stop, $token] = issuedLink($company);
-
-    asGuest();
-
-    // The show route (old path-based format) must still resolve for backward compat.
-    $this->get(route('logistics.stop-link.show', ['token' => $token]))
-        ->assertOk()
-        ->assertSee($stop->shipment->name);
 });

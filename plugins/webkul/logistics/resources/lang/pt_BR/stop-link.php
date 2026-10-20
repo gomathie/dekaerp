@@ -31,12 +31,6 @@ return [
         'submitting'          => 'Confirmando…',
     ],
 
-    'landing' => [
-        'loading'       => 'Abrindo seu link de entrega…',
-        'invalid-title' => 'Nenhum link encontrado',
-        'invalid-body'  => 'Este não parece ser um link de entrega válido. Verifique o link que foi enviado a você ou peça um novo ao escritório.',
-    ],
-
     'done' => [
         'title'   => 'Entrega confirmada',
         'message' => 'Obrigado. A entrega foi registrada e este link agora está encerrado.',

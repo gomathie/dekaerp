@@ -31,12 +31,6 @@ return [
         'submitting'          => 'Confirmation…',
     ],
 
-    'landing' => [
-        'loading'       => 'Ouverture de votre lien de livraison…',
-        'invalid-title' => 'Lien introuvable',
-        'invalid-body'  => 'Ce lien ne semble pas être un lien de livraison valide. Vérifiez le lien qui vous a été envoyé ou demandez un nouveau lien au bureau.',
-    ],
-
     'done' => [
         'title'   => 'Livraison confirmée',
         'message' => 'Merci. La livraison a été enregistrée et ce lien est désormais fermé.',
