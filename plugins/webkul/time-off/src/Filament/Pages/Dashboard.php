@@ -4,6 +4,7 @@ namespace Webkul\TimeOff\Filament\Pages;
 
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+use Filament\Panel;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Webkul\TimeOff\Filament\Clusters\MyTime;
 use Webkul\TimeOff\Filament\Widgets\CalendarWidget;
@@ -15,7 +16,7 @@ class Dashboard extends BaseDashboard
 
     protected static string $routePath = 'time-off';
 
-    public static function getRouteName(?string $panel = null): string
+    public static function getRouteName(?Panel $panel = null): string
     {
         return 'filament.admin.pages.time-off-dashboard';
     }
