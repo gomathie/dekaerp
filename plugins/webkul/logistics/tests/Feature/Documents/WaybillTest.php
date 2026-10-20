@@ -27,9 +27,45 @@ it('renders a waybill PDF for a shipment', function () {
 
     $response = PrintWaybillAction::make()->download($shipment);
 
+    // A StreamedResponse holds a callback, not bytes: getContent() returns
+    // false, so the PDF only exists once the stream has been sent.
+    ob_start();
+    $response->sendContent();
+    $content = ob_get_clean();
+
     expect($response->headers->get('content-type'))->toBe('application/pdf')
-        ->and($response->getContent())->toStartWith('%PDF-')
+        ->and($content)->toStartWith('%PDF-')
         ->and($shipment->refresh()->waybill_no)->not->toBeNull();
+});
+
+it('builds a download filename that Symfony will accept', function () {
+    // The waybill sequence prefix contains slashes (WB/2026/00001) and Symfony
+    // rejects a Content-Disposition filename holding a path separator, so every
+    // print threw InvalidArgumentException after rendering the PDF. Asserted on
+    // the pure helper so the regression is pinned without paying for dompdf.
+    expect(PrintWaybillAction::fileName('WB/2026/00001'))->toBe('waybill-WB-2026-00001.pdf')
+        ->and(PrintWaybillAction::fileName('WB\\2026\\00002'))->toBe('waybill-WB-2026-00002.pdf')
+        ->and(PrintWaybillAction::fileName(null))->toBe('waybill-.pdf');
+
+    foreach (['WB/2026/00001', 'WB\\2026\\00002', null] as $number) {
+        expect(PrintWaybillAction::fileName($number))
+            ->not->toContain('/')
+            ->not->toContain('\\');
+    }
+});
+
+it('sets a Content-Disposition the browser can act on', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+    $shipment = LogisticsHelper::shipment($company);
+
+    FilamentHelper::actingAsCompanyUser($company, ['view_logistics_shipment']);
+
+    $response = PrintWaybillAction::make()->download($shipment);
+
+    $disposition = (string) $response->headers->get('content-disposition');
+
+    expect($disposition)->toContain('attachment')
+        ->and($disposition)->toContain(str_replace('/', '-', (string) $shipment->refresh()->waybill_no));
 });
 
 it('uses the shipment company letterhead when another company is current', function () {

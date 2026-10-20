@@ -3,10 +3,10 @@
 namespace Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions;
 
 use Filament\Actions\Action;
-use Illuminate\Http\StreamedResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\Logistics\Models\Shipment;
 use Webkul\Logistics\Support\LogisticsAccess;
 use Webkul\Logistics\Support\LogisticsSequences;
@@ -73,9 +73,20 @@ class PrintWaybillAction extends Action
             function () use ($pdf): void {
                 echo $pdf->output();
             },
-            'waybill-'.$shipment->waybill_no.'.pdf',
+            static::fileName($shipment->waybill_no),
             ['Content-Type' => 'application/pdf'],
         );
+    }
+
+    /**
+     * Waybill numbers carry their sequence prefix, which contains slashes
+     * (WB/2026/00001). Symfony refuses a Content-Disposition filename holding
+     * a path separator, so those become hyphens; without this every print
+     * threw InvalidArgumentException after the PDF had already been rendered.
+     */
+    public static function fileName(?string $waybillNumber): string
+    {
+        return 'waybill-'.str_replace(['/', '\\'], '-', (string) $waybillNumber).'.pdf';
     }
 
     protected function setUp(): void
