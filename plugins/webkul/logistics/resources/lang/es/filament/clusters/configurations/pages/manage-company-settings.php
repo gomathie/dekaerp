@@ -10,10 +10,12 @@ return [
     'no-company' => 'Seleccione primero una empresa: la configuración de Logística se guarda por empresa.',
 
     'sections' => [
-        'status'     => 'Estado',
-        'delivery'   => 'Comprobante de entrega',
-        'operations' => 'Operaciones',
-        'accounting' => 'Contabilidad',
+        'status'                   => 'Estado',
+        'delivery'                 => 'Comprobante de entrega',
+        'operations'               => 'Operaciones',
+        'accounting'               => 'Contabilidad',
+        'integrations'             => 'Integraciones de telemática',
+        'integrations-description' => 'Conecte proveedores de seguimiento GPS para importar su flota.',
     ],
 
     'status' => [
@@ -46,6 +48,13 @@ return [
         'bill-journal'                => 'Diario para facturas de proveedor',
         'default-expense-account'     => 'Cuenta de gastos predeterminada',
         'expense-approval-required'   => 'Los gastos necesitan aprobación antes de facturarse',
+        'pilot-enabled'               => 'PILOT Telemática',
+        'pilot-enabled-helper'        => 'Importar vehículos y datos de flota desde su cuenta PILOT GPS.',
+        'pilot-server'                => 'URL del servidor',
+        'pilot-server-helper'         => 'URL base de su servidor PILOT, p.ej. https://africa.pilot-gps.com',
+        'pilot-node'                  => 'Nodo',
+        'pilot-username'              => 'Usuario',
+        'pilot-password'              => 'Contraseña',
     ],
 
     'actions' => [
@@ -64,6 +73,14 @@ return [
             'heading'      => '¿Desactivar Logística para esta empresa?',
             'description'  => 'Logística se oculta y no se pueden crear nuevos registros para esta empresa. Los datos existentes se conservan y, al activarla de nuevo, se restaura el acceso.',
             'notification' => 'Logística desactivada',
+        ],
+
+        'pilot-sync' => [
+            'label'        => 'Sincronizar flota PILOT',
+            'heading'      => '¿Sincronizar flota desde PILOT?',
+            'description'  => 'Los vehículos encontrados en PILOT se crearán o actualizarán en la flota de esta empresa.',
+            'notification' => ':created creados, :updated actualizados, :skipped omitidos.',
+            'error'        => 'Error al sincronizar con PILOT',
         ],
     ],
 
