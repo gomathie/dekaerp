@@ -123,6 +123,16 @@
         .note { color: var(--muted); font-size: 13px; }
         .ok { color: var(--ok); }
 
+        .confidential-notice {
+            margin: 8px 0 0;
+            padding: 6px 10px;
+            border-radius: 6px;
+            background: #fef9c3;
+            color: #92400e;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
         .centred { padding: 48px 16px; text-align: center; }
         .centred h2 { margin: 0 0 8px; font-size: 20px; }
     </style>

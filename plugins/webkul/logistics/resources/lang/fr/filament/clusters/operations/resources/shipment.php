@@ -13,10 +13,11 @@ return [
 
     'form' => [
         'tabs' => [
-            'general'    => 'Général',
-            'route'      => 'Itinéraire et arrêts',
-            'cargo'      => 'Cargaison',
-            'assignment' => 'Affectation',
+            'general'      => 'Général',
+            'route'        => 'Itinéraire et arrêts',
+            'cargo'        => 'Cargaison',
+            'assignment'   => 'Affectation',
+            'confidential' => 'Confidentiel',
         ],
 
         'fields' => [
@@ -59,7 +60,15 @@ return [
             'carrier'                => 'Transporteur',
             'carrier-helper'         => 'Pour le transport sous-traité. Les coûts du transporteur sont enregistrés comme dépenses.',
             'carrier-reference'      => 'Référence du transporteur',
-            'waybill-no'             => 'Numéro de lettre de voiture',
+            'waybill-no'                      => 'Numéro de lettre de voiture',
+            'line-type'                       => 'Type de ligne',
+            'line-product'                    => 'Produit',
+            'is-confidential'                 => 'Expédition confidentielle',
+            'is-confidential-helper'          => 'Cache les détails de la cargaison sur la lettre de voiture et le formulaire du chauffeur.',
+            'confidential-description'        => 'Description de la cargaison pour la lettre de voiture',
+            'confidential-description-helper' => 'Ce texte apparaît sur la lettre de voiture à la place de la liste complète.',
+            'consignor'                       => 'Expédié pour le compte de',
+            'consignor-helper'                => "L'entreprise dont les marchandises sont transportées (3PL / marque blanche).",
         ],
     ],
 

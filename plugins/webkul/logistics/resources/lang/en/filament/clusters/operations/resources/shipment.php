@@ -13,10 +13,11 @@ return [
 
     'form' => [
         'tabs' => [
-            'general'    => 'General',
-            'route'      => 'Route & stops',
-            'cargo'      => 'Cargo',
-            'assignment' => 'Assignment',
+            'general'       => 'General',
+            'route'         => 'Route & stops',
+            'cargo'         => 'Cargo',
+            'assignment'    => 'Assignment',
+            'confidential'  => 'Confidential',
         ],
 
         'fields' => [
@@ -59,7 +60,15 @@ return [
             'carrier'                => 'Carrier',
             'carrier-helper'         => 'For subcontracted transport. Carrier costs are recorded as expenses.',
             'carrier-reference'      => 'Carrier reference',
-            'waybill-no'             => 'Waybill number',
+            'waybill-no'                      => 'Waybill number',
+            'line-type'                       => 'Line type',
+            'line-product'                    => 'Product',
+            'is-confidential'                 => 'Confidential shipment',
+            'is-confidential-helper'          => 'Conceals cargo details on the waybill and the driver\'s delivery form.',
+            'confidential-description'        => 'Cargo description for waybill',
+            'confidential-description-helper' => 'This text appears on the waybill in place of the full cargo list.',
+            'consignor'                       => 'Shipped on behalf of',
+            'consignor-helper'                => 'The company whose goods are being transported (3PL / white-label).',
         ],
     ],
 
