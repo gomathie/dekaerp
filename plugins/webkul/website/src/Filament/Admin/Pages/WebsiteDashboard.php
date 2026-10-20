@@ -27,6 +27,11 @@ class WebsiteDashboard extends BaseDashboard
 
     protected static string $routePath = 'website';
 
+    public static function getRouteName(?string $panel = null): string
+    {
+        return 'filament.admin.pages.website-dashboard';
+    }
+
     protected static string|BackedEnum|null $navigationIcon = null;
 
     public static function getNavigationIcon(): string|BackedEnum|null

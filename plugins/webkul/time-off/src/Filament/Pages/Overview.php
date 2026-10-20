@@ -15,6 +15,11 @@ class Overview extends BaseDashboard
 
     protected static string $routePath = 'time-off';
 
+    public static function getRouteName(?string $panel = null): string
+    {
+        return 'filament.admin.pages.time-off-overview';
+    }
+
     protected static ?int $navigationSort = 2;
 
     protected static function getPagePermission(): ?string

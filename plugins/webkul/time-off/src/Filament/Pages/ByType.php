@@ -14,6 +14,11 @@ class ByType extends BaseDashboard
 
     protected static string $routePath = 'reporting/by-type';
 
+    public static function getRouteName(?string $panel = null): string
+    {
+        return 'filament.admin.pages.time-off-by-type';
+    }
+
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-folder';
 
     protected static ?int $navigationSort = 2;

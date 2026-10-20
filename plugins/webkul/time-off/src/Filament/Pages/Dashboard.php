@@ -15,6 +15,11 @@ class Dashboard extends BaseDashboard
 
     protected static string $routePath = 'time-off';
 
+    public static function getRouteName(?string $panel = null): string
+    {
+        return 'filament.admin.pages.time-off-dashboard';
+    }
+
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-squares-2x2';
 
     protected static ?string $cluster = MyTime::class;
