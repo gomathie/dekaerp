@@ -2,8 +2,10 @@
 
 namespace Webkul\Logistics\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Crypt;
 use Webkul\Account\Models\Account;
 use Webkul\Account\Models\Journal;
 use Webkul\Logistics\Enums\CapacityCheck;
@@ -91,10 +93,27 @@ class CompanySetting extends Model
         'capture_recipient_id'      => 'boolean',
         'capacity_check'            => CapacityCheck::class,
         'pilot_enabled'             => 'boolean',
-        'pilot_username'            => 'encrypted',
-        'pilot_password'            => 'encrypted',
         'pilot_node'                => 'integer',
     ];
+
+    // Custom accessors so that null values (columns absent before migration,
+    // or credentials never set) do not crash Laravel's built-in encrypted cast,
+    // which calls Crypt::decrypt(null) and throws DecryptException.
+    protected function pilotUsername(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value) => $value ? Crypt::decryptString($value) : null,
+            set: fn (?string $value) => $value ? Crypt::encryptString($value) : null,
+        );
+    }
+
+    protected function pilotPassword(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value) => $value ? Crypt::decryptString($value) : null,
+            set: fn (?string $value) => $value ? Crypt::encryptString($value) : null,
+        );
+    }
 
     /**
      * The settings row of a given company, whether or not that company is active in
