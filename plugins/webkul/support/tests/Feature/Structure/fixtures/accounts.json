@@ -1,0 +1,479 @@
+{
+    "Webkul\\Account\\Filament\\Resources\\AccountResource": {
+        "model": "Webkul\\Account\\Models\\Account",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    },
+    "Webkul\\Account\\Filament\\Resources\\AccountTagResource": {
+        "model": "Webkul\\Account\\Models\\Tag",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Grid",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    },
+    "Webkul\\Account\\Filament\\Resources\\BankAccountResource": {
+        "model": "Webkul\\Partner\\Models\\BankAccount",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "account_number",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "bank_id",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "partner_id",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": []
+    },
+    "Webkul\\Account\\Filament\\Resources\\BillResource": {
+        "model": "Webkul\\Account\\Models\\Bill",
+        "form": [
+            {
+                "type": "Webkul\\Field\\Filament\\Forms\\Components\\ProgressStepper",
+                "name": "state",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Tabs",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Webkul\\Field\\Filament\\Infolists\\Components\\ProgressStepper",
+                "name": "state",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Tabs",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    },
+    "Webkul\\Account\\Filament\\Resources\\CashRoundingResource": {
+        "model": "Webkul\\Account\\Models\\CashRounding",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    },
+    "Webkul\\Account\\Filament\\Resources\\CreditNoteResource": {
+        "model": "Webkul\\Account\\Models\\CreditNote",
+        "form": [
+            {
+                "type": "Webkul\\Field\\Filament\\Forms\\Components\\ProgressStepper",
+                "name": "state",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Tabs",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Webkul\\Field\\Filament\\Infolists\\Components\\ProgressStepper",
+                "name": "state",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Tabs",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    },
+    "Webkul\\Account\\Filament\\Resources\\CustomerResource": {
+        "model": "Webkul\\Account\\Models\\Customer",
+        "form": {
+            "__error": "Illuminate\\Database\\QueryException"
+        },
+        "infolist": {
+            "__error": "Illuminate\\Database\\QueryException"
+        }
+    },
+    "Webkul\\Account\\Filament\\Resources\\FiscalPositionResource": {
+        "model": "Webkul\\Account\\Models\\FiscalPosition",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Tabs",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Tabs",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    },
+    "Webkul\\Account\\Filament\\Resources\\IncotermResource": {
+        "model": "Webkul\\Account\\Models\\Incoterm",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\Hidden",
+                "name": "creator_id",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "code",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "code",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "name",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    },
+    "Webkul\\Account\\Filament\\Resources\\InvoiceResource": {
+        "model": "Webkul\\Account\\Models\\Invoice",
+        "form": {
+            "__error": "Illuminate\\Database\\QueryException"
+        },
+        "infolist": {
+            "__error": "Illuminate\\Database\\QueryException"
+        }
+    },
+    "Webkul\\Account\\Filament\\Resources\\JournalResource": {
+        "model": "Webkul\\Account\\Models\\Journal",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Grid",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    },
+    "Webkul\\Account\\Filament\\Resources\\PartnerResource": {
+        "model": "Webkul\\Account\\Models\\Partner",
+        "form": {
+            "__error": "Illuminate\\Database\\QueryException"
+        },
+        "infolist": {
+            "__error": "Illuminate\\Database\\QueryException"
+        }
+    },
+    "Webkul\\Account\\Filament\\Resources\\PaymentResource": {
+        "model": "Webkul\\Account\\Models\\Payment",
+        "form": {
+            "__error": "Illuminate\\Database\\QueryException"
+        },
+        "infolist": {
+            "__error": "Illuminate\\Database\\QueryException"
+        }
+    },
+    "Webkul\\Account\\Filament\\Resources\\PaymentTermResource": {
+        "model": "Webkul\\Account\\Models\\PaymentTerm",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Tabs",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Tabs",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    },
+    "Webkul\\Account\\Filament\\Resources\\ProductCategoryResource": {
+        "model": "Webkul\\Account\\Models\\Category",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    },
+    "Webkul\\Account\\Filament\\Resources\\ProductResource": {
+        "model": "Webkul\\Account\\Models\\Product",
+        "form": {
+            "__error": "Illuminate\\Database\\QueryException"
+        },
+        "infolist": {
+            "__error": "Illuminate\\Database\\QueryException"
+        }
+    },
+    "Webkul\\Account\\Filament\\Resources\\RefundResource": {
+        "model": "Webkul\\Account\\Models\\Refund",
+        "form": {
+            "__error": "Illuminate\\Database\\QueryException"
+        },
+        "infolist": {
+            "__error": "Illuminate\\Database\\QueryException"
+        }
+    },
+    "Webkul\\Account\\Filament\\Resources\\TaxGroupResource": {
+        "model": "Webkul\\Account\\Models\\TaxGroup",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    },
+    "Webkul\\Account\\Filament\\Resources\\TaxResource": {
+        "model": "Webkul\\Account\\Models\\Tax",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Tabs",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Grid",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    },
+    "Webkul\\Account\\Filament\\Resources\\VendorResource": {
+        "model": "Webkul\\Account\\Models\\Vendor",
+        "form": {
+            "__error": "Illuminate\\Database\\QueryException"
+        },
+        "infolist": {
+            "__error": "Illuminate\\Database\\QueryException"
+        }
+    }
+}
