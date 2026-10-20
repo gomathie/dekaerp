@@ -4,8 +4,8 @@ namespace Webkul\Logistics\Filament\Pages;
 
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
-use Filament\Panel;
 use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Panel;
 use Illuminate\Contracts\Support\Htmlable;
 use Webkul\Logistics\Filament\Widgets\FleetStatsWidget;
 use Webkul\Logistics\Filament\Widgets\ShipmentStatsWidget;
@@ -30,6 +30,8 @@ class Dashboard extends BaseDashboard
     use HasPageShield;
 
     protected static string $routePath = 'logistics';
+
+    protected static ?string $slug = 'logistics-dashboard';
 
     public static function getRouteName(?Panel $panel = null): string
     {
