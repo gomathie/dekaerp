@@ -84,11 +84,12 @@ class VehicleForm
                 TextInput::make('telematics_device_ref')
                     ->label(__(static::$lang.'.form.fields.telematics-device-ref'))
                     ->maxLength(255),
-                TextInput::make('pilot_agent_id')
-                    ->label(__(static::$lang.'.form.fields.pilot-agent-id'))
+                TextInput::make('telematics_agent_id')
+                    ->label(__(static::$lang.'.form.fields.telematics-agent-id'))
+                    ->helperText(__(static::$lang.'.form.fields.telematics-agent-id-helper'))
                     ->maxLength(255)
                     ->visible(fn (Get $get): bool => $get('company_id')
-                        ? (bool) CompanySetting::forCompany((int) $get('company_id'))?->pilot_enabled
+                        ? CompanySetting::forCompany((int) $get('company_id'))->telematics_provider !== null
                         : false),
                 TextInput::make('capacity_kg')
                     ->label(__(static::$lang.'.form.fields.capacity-kg'))

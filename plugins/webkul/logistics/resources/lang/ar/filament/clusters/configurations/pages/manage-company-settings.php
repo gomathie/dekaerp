@@ -48,13 +48,14 @@ return [
         'bill-journal'                => 'دفتر اليومية لفواتير الموردين',
         'default-expense-account'     => 'حساب المصروف الافتراضي',
         'expense-approval-required'   => 'تحتاج المصروفات إلى الموافقة قبل الفوترة',
-        'pilot-enabled'               => 'PILOT للتتبع',
-        'pilot-enabled-helper'        => 'استيراد المركبات وبيانات الأسطول من حساب PILOT GPS.',
-        'pilot-server'                => 'رابط الخادم',
-        'pilot-server-helper'         => 'الرابط الأساسي لخادم PILOT، مثال: https://africa.pilot-gps.com',
-        'pilot-node'                  => 'العقدة',
-        'pilot-username'              => 'اسم المستخدم',
-        'pilot-password'              => 'كلمة المرور',
+        'telematics-provider'         => 'منصة التتبع',
+        'telematics-provider-helper'  => 'منصة تتبع GPS التي تستخدمها هذه الشركة. اتركه فارغًا إن لم تستخدم أي منصة.',
+        'telematics-server'           => 'رابط الخادم',
+        'telematics-server-helper'    => 'الرابط الأساسي لخادم التتبع الخاص بك.',
+        'telematics-node'             => 'العقدة',
+        'telematics-node-helper'      => 'خاص بـ PILOT فقط. اتركه على 1 إلا إذا كان حسابك يستخدم عقدة أخرى.',
+        'telematics-username'         => 'اسم المستخدم',
+        'telematics-password'         => 'كلمة المرور',
     ],
 
     'actions' => [
@@ -75,7 +76,7 @@ return [
             'notification' => 'تم تعطيل اللوجستيات',
         ],
 
-        'pilot-sync' => [
+        'telematics-sync' => [
             'label'        => 'مزامنة أسطول PILOT',
             'heading'      => 'مزامنة الأسطول من PILOT؟',
             'description'  => 'سيتم إنشاء أو تحديث المركبات الموجودة في PILOT في أسطول هذه الشركة.',
