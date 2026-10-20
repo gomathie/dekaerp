@@ -3,7 +3,7 @@
 namespace Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions;
 
 use Filament\Actions\Action;
-use Illuminate\Http\Response;
+use Illuminate\Http\StreamedResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -23,7 +23,7 @@ class PrintWaybillAction extends Action
         return 'printWaybill';
     }
 
-    public function download(Shipment $record): Response
+    public function download(Shipment $record): StreamedResponse
     {
         Gate::authorize('view', $record);
 
@@ -63,9 +63,14 @@ class PrintWaybillAction extends Action
             'trips' => fn ($query) => $query->with(['driver', 'vehicle'])->orderByDesc('logistics_trips.id'),
         ]);
 
-        return $this->downloadPDF(
-            view('logistics::pdf.waybill', ['record' => $shipment])->render(),
-            'waybill-'.$shipment->waybill_no,
+        $pdf = $this->generatePDF(view('logistics::pdf.waybill', ['record' => $shipment])->render());
+
+        return response()->streamDownload(
+            function () use ($pdf): void {
+                echo $pdf->output();
+            },
+            'waybill-'.$shipment->waybill_no.'.pdf',
+            ['Content-Type' => 'application/pdf'],
         );
     }
 
@@ -78,6 +83,6 @@ class PrintWaybillAction extends Action
             ->icon('heroicon-o-printer')
             ->color('gray')
             ->visible(fn (Shipment $record): bool => Auth::user()?->can('view', $record) ?? false)
-            ->action(fn (Shipment $record): Response => $this->download($record));
+            ->action(fn (Shipment $record): StreamedResponse => $this->download($record));
     }
 }
