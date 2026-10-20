@@ -6,6 +6,59 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-10-20 (Logistics WP-5b: fragment-based POD token flow + WP-13 final closure)
+
+### WP-5b: fragment-based POD token flow
+
+**Problem resolved.** POD stop-link tokens were in the URL path
+(`/logistics/pod/<token>`), which every HTTP access log layer retains.
+Laravel Cloud keeps request paths with no redaction option, making log-scrubbing
+an unreliable compensating control.
+
+**Solution.** `StopLinkService::issue()` now returns a fragment URL:
+`route('logistics.stop-link.landing').'#'.$token`. The fragment is stripped by
+browsers before the HTTP request is sent — the token never reaches any server and
+never appears in any log. Three new routes handle the flow:
+
+- `GET /logistics/pod` — static landing page; JS reads `location.hash`, clears
+  it immediately with `history.replaceState`, POSTs the token to the exchange
+  endpoint.
+- `POST /logistics/pod/exchange` — receives token in POST body, returns the
+  capture form with token in a hidden field.
+- `POST /logistics/pod` — receives token + form fields, validates and captures.
+
+Old path-based routes (`/logistics/pod/{token}`) remain for backward
+compatibility. Sentry redaction covers them.
+
+The rate limiter reads the token from the route param (old flow) or POST body
+(new flow). The landing page has no token and gets only the per-IP limit.
+
+On validation failure, `submit()` re-renders the form directly (no redirect) with
+the token still in the hidden field. A redirect on an anonymous endpoint would
+send the driver to a blank page with no way back.
+
+**Files changed:** `StopLinkService`, `StopLinkController`,
+`LogisticsServiceProvider`, `routes/web.php`, `stop-link/landing.blade.php`
+(new), `stop-link/form.blade.php` (new), `StopLinkTest.php` (4 new tests +
+migration to exchange/submit flow), `stop-link.php` lang files (5 locales,
+`landing.*` keys added).
+
+**Verified:** LogisticsFeature 195/195, 751 assertions. `translations:check`
+4/4 pass. Pint passed.
+
+### WP-13: final closure
+
+- Supabase Security Advisor: **passed** — no new findings on the 19 logistics
+  tables. The 2026-09-02 revoke of `anon`/`authenticated` grants covers all
+  tables created since.
+- Supabase Performance Advisor: **passed**.
+- `§0b` (POD tokens in edge logs): **resolved in code** by WP-5b above.
+  `docs/handover-actions.md` §0b updated accordingly.
+- `CHANGELOG.md` v1.7.0 updated to name the fragment-token security property.
+- `docs/logistics-plan.md` WP-5b → `done`, WP-13 → `done`.
+
+WP-13 is closed. `feature/logistics` is ready to merge.
+
 ## 2026-10-19 (development-tool review)
 
 Reviewed Agent Skills, Context7, Graphify, 21st MCP and Strix against the actual
