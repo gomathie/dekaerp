@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\ViewErrorBag;
 use Webkul\Logistics\Enums\ProofCaptureChannel;
 use Webkul\Logistics\Models\CompanySetting;
 use Webkul\Logistics\Services\PodData;
@@ -26,6 +28,110 @@ use Webkul\Logistics\Services\StopLinkService;
 class StopLinkController extends Controller
 {
     public function __construct(protected StopLinkService $links) {}
+
+    /**
+     * The fragment-based landing page (WP-5b).
+     *
+     * This is the page whose URL is shared with the driver. The token lives in
+     * the URL fragment and is read by JavaScript, so it is never transmitted in
+     * an HTTP request line and never appears in access logs.
+     */
+    public function landing(): Response
+    {
+        return $this->secureView('logistics::stop-link.landing');
+    }
+
+    /**
+     * Exchange a fragment token (from the POST body) for the capture form.
+     *
+     * The token arrives as a POST field, not a route parameter, so it is not
+     * in the request line and not in any log. The response is the full capture
+     * form, with the token embedded in a hidden field so the subsequent submit
+     * can pass it back through the same safe channel.
+     */
+    public function exchange(Request $request): Response
+    {
+        $token = (string) $request->input('token', '');
+        $link = $this->links->resolve($token);
+        $settings = CompanySetting::forCompany((int) $link->company_id);
+
+        return $this->secureView('logistics::stop-link.form', [
+            'token'             => $token,
+            'stop'              => $this->links->stopFor($link),
+            'askForRecipientId' => (bool) $settings->capture_recipient_id,
+            'photoRequired'     => (bool) $settings->require_pod_photo,
+        ]);
+    }
+
+    /**
+     * Capture proof of delivery from the fragment-based form.
+     *
+     * The token arrives in the POST body alongside the form fields. On
+     * validation failure the form is re-rendered directly (no redirect)
+     * so the driver is not sent somewhere without their token.
+     */
+    public function submit(Request $request): Response
+    {
+        $token = (string) $request->input('token', '');
+
+        // Verify the token before touching the form data: an invalid token gets
+        // the same 404 as an expired link, not a validation response.
+        $link = $this->links->resolve($token);
+        $settings = CompanySetting::forCompany((int) $link->company_id);
+
+        $validator = Validator::make($request->all(), [
+            'recipient_name'         => ['required', 'string', 'max:255'],
+            'recipient_id_reference' => ['nullable', 'string', 'max:100'],
+            'notes'                  => ['nullable', 'string', 'max:2000'],
+            'photo'          => ['nullable', 'file', 'mimetypes:image/jpeg,image/png,image/webp', 'max:5120'],
+            'signature'      => ['nullable', 'string', 'max:2000000'],
+            'latitude'       => ['nullable', 'numeric', 'between:-90,90'],
+            'longitude'      => ['nullable', 'numeric', 'between:-180,180'],
+            'accuracy_m'     => ['nullable', 'numeric', 'min:0', 'max:100000'],
+        ]);
+
+        if ($validator->fails()) {
+            $errorBag = (new ViewErrorBag)->put('default', $validator->errors());
+
+            // Flash old input so old() works in the form, and put errors in
+            // both the session (for assertSessionHasErrors in tests) and the
+            // view factory (so $errors is populated without a redirect).
+            $request->flash();
+            session()->flash('errors', $errorBag);
+            view()->share('errors', $errorBag);
+
+            return $this->secureView('logistics::stop-link.form', [
+                'token'             => $token,
+                'stop'              => $this->links->stopFor($link),
+                'askForRecipientId' => (bool) $settings->capture_recipient_id,
+                'photoRequired'     => (bool) $settings->require_pod_photo,
+            ])->setStatusCode(422);
+        }
+
+        $validated = $validator->validated();
+        $signature = $this->signatureFile($validated['signature'] ?? null);
+
+        try {
+            $this->links->capture($token, new PodData(
+                recipientName: $validated['recipient_name'],
+                receivedAt: now(),
+                notes: $validated['notes'] ?? null,
+                photo: $request->file('photo'),
+                signature: $signature,
+                capturedVia: ProofCaptureChannel::STOP_LINK,
+                recipientIdReference: $validated['recipient_id_reference'] ?? null,
+                latitude: isset($validated['latitude']) ? (float) $validated['latitude'] : null,
+                longitude: isset($validated['longitude']) ? (float) $validated['longitude'] : null,
+                accuracyM: isset($validated['accuracy_m']) ? (float) $validated['accuracy_m'] : null,
+            ));
+        } finally {
+            if ($signature && is_file($signature->getPathname())) {
+                @unlink($signature->getPathname());
+            }
+        }
+
+        return $this->secureView('logistics::stop-link.done');
+    }
 
     public function show(string $token, StopLinkService $links): Response
     {

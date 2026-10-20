@@ -115,13 +115,22 @@ class LogisticsServiceProvider extends PackageServiceProvider
     protected function registerStopLinkRateLimiter(): void
     {
         RateLimiter::for('logistics-stop-link', function (Request $request): array {
-            $token = (string) $request->route('token');
+            // Fragment-based routes (exchange, submit) carry the token in the
+            // POST body; path-based backward-compat routes carry it as a route
+            // parameter. An empty string means this is the landing page, which
+            // carries no token and gets only the per-IP limit.
+            $token = (string) ($request->route('token') ?: $request->input('token', ''));
+            $perIp = Limit::perMinute((int) config('logistics.stop_link.per_ip_per_minute', 120))
+                ->by('logistics-stop-link:ip:'.$request->ip());
+
+            if (blank($token)) {
+                return [$perIp];
+            }
 
             return [
                 Limit::perMinute(StopLinkService::rateLimitFor($token))
                     ->by('logistics-stop-link:token:'.hash('sha256', $token)),
-                Limit::perMinute((int) config('logistics.stop_link.per_ip_per_minute', 120))
-                    ->by('logistics-stop-link:ip:'.$request->ip()),
+                $perIp,
             ];
         });
     }
