@@ -16,7 +16,7 @@
 ### Fixes
 
 * [Security] Enforced company isolation and server-side authorization across Logistics actions, reports, exports, widgets, documents, and delivery files
-* [Security] Added hashed, single-use, revocable, expiring, and rate-limited public delivery links
+* [Security] Added hashed, single-use, revocable, expiring, and rate-limited public delivery links whose token travels in the URL fragment so it never appears in HTTP access logs, edge CDN logs, or any other layer that records request paths
 
 # 🚀 CHANGELOG — v1.6.0
 
