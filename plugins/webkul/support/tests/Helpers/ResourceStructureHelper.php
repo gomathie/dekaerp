@@ -10,9 +10,12 @@ require_once __DIR__.'/FilamentHelper.php';
  * alignment work (docs/upstream-structure-alignment-plan.md, Phase 0).
  *
  * Forms and infolists are built standalone: Schema::make() accepts a null
- * livewire, so the declared tree is reachable without mounting a page. Tables
- * are not - Table::make() requires a HasTable component - so a table is
- * described only where the caller supplies a mounted List page.
+ * livewire, so the declared tree is reachable without mounting a page.
+ *
+ * Tables are NOT covered yet. Table::make() requires a HasTable component, so
+ * capturing columns means mounting each resource's List page - the next piece
+ * of Phase 0, and the one that matters for a dropped column or a lost
+ * visibleFrom().
  */
 class ResourceStructureHelper
 {
@@ -73,25 +76,6 @@ class ResourceStructureHelper
     }
 
     /**
-     * Columns of a table taken from a mounted List page, in order.
-     *
-     * @return array<int, array<string, mixed>>
-     */
-    public static function describeTableColumns(Filament\Tables\Table $table): array
-    {
-        $described = [];
-
-        foreach ($table->getColumns() as $column) {
-            $described[] = [
-                'name' => $column->getName(),
-                'type' => $column::class,
-            ];
-        }
-
-        return $described;
-    }
-
-    /**
      * @return array<string, mixed>
      */
     private static function describeComponent(object $component): array
@@ -106,12 +90,24 @@ class ResourceStructureHelper
             }
         }
 
-        if (method_exists($component, 'getChildSchemas')) {
+        // getDefaultChildComponents() returns the declared children directly.
+        // getChildSchemas() would build Schema containers instead, which needs
+        // a livewire context Schema::make() cannot supply - that threw, the
+        // error was swallowed, and the snapshot came out flat.
+        if (method_exists($component, 'getDefaultChildComponents')) {
             $children = self::guard(function () use ($component): array {
+                $declared = $component->getDefaultChildComponents();
+
+                if ($declared instanceof Schema) {
+                    return self::describeSchema($declared);
+                }
+
                 $nested = [];
 
-                foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
-                    $nested[] = self::describeSchema($childSchema);
+                foreach ($declared as $child) {
+                    if (is_object($child)) {
+                        $nested[] = self::describeComponent($child);
+                    }
                 }
 
                 return $nested;
@@ -135,7 +131,9 @@ class ResourceStructureHelper
         try {
             return $callback();
         } catch (Throwable $exception) {
-            return ['__error' => $exception::class];
+            // The message is recorded, not just the class: a swallowed message
+            // once hid the reason the whole snapshot came out flat.
+            return ['__error' => $exception::class, '__message' => $exception->getMessage()];
         }
     }
 }
