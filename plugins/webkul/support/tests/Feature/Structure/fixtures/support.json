@@ -1,0 +1,154 @@
+{
+    "Webkul\\Support\\Filament\\Resources\\ActivityTypeResource": {
+        "model": "Webkul\\Support\\Models\\ActivityType",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Grid",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    },
+    "Webkul\\Support\\Filament\\Resources\\BankResource": {
+        "model": "Webkul\\Support\\Models\\Bank",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": []
+    },
+    "Webkul\\Support\\Filament\\Resources\\CalendarResource": {
+        "model": "Webkul\\Support\\Models\\Calendar",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Grid",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    },
+    "Webkul\\Support\\Filament\\Resources\\CompanyResource": {
+        "model": "Webkul\\Support\\Models\\Company",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Grid",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    },
+    "Webkul\\Support\\Filament\\Resources\\CountryResource": {
+        "model": "Webkul\\Support\\Models\\Country",
+        "form": [],
+        "infolist": []
+    },
+    "Webkul\\Support\\Filament\\Resources\\CurrencyResource": {
+        "model": "Webkul\\Support\\Models\\Currency",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Grid",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    },
+    "Webkul\\Support\\Filament\\Resources\\SequenceResource": {
+        "model": "Webkul\\Support\\Models\\Sequence",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": []
+    },
+    "Webkul\\Support\\Filament\\Resources\\StateResource": {
+        "model": "Webkul\\Support\\Models\\State",
+        "form": [],
+        "infolist": []
+    },
+    "Webkul\\Support\\Filament\\Resources\\UOMCategoryResource": {
+        "model": "Webkul\\Support\\Models\\UOMCategory",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": []
+    }
+}

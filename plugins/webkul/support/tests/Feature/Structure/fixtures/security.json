@@ -1,0 +1,79 @@
+{
+    "Webkul\\Security\\Filament\\Resources\\CompanyResource": {
+        "model": "Webkul\\Security\\Models\\Company",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Grid",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    },
+    "Webkul\\Security\\Filament\\Resources\\RoleResource": {
+        "model": "Webkul\\Security\\Models\\Role",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Grid",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Tabs",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": []
+    },
+    "Webkul\\Security\\Filament\\Resources\\TeamResource": {
+        "model": "Webkul\\Security\\Models\\Team",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "name",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    },
+    "Webkul\\Security\\Filament\\Resources\\UserResource": {
+        "model": "Webkul\\Security\\Models\\User",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Grid",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    }
+}

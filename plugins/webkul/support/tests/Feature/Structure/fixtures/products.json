@@ -1,0 +1,132 @@
+{
+    "Webkul\\Product\\Filament\\Resources\\AttributeResource": {
+        "model": "Webkul\\Product\\Models\\Attribute",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    },
+    "Webkul\\Product\\Filament\\Resources\\CategoryResource": {
+        "model": "Webkul\\Product\\Models\\Category",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    },
+    "Webkul\\Product\\Filament\\Resources\\PackagingResource": {
+        "model": "Webkul\\Product\\Models\\Packaging",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "barcode",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "product_id",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "qty",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "company_id",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    },
+    "Webkul\\Product\\Filament\\Resources\\PriceListResource": {
+        "model": "Webkul\\Product\\Models\\PriceList",
+        "form": [],
+        "infolist": []
+    },
+    "Webkul\\Product\\Filament\\Resources\\ProductResource": {
+        "model": "Webkul\\Product\\Models\\Product",
+        "form": {
+            "__error": "Illuminate\\Database\\QueryException"
+        },
+        "infolist": {
+            "__error": "Illuminate\\Database\\QueryException"
+        }
+    }
+}

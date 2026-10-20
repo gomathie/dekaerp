@@ -1,0 +1,452 @@
+{
+    "Webkul\\Logistics\\Filament\\Clusters\\Configurations\\Resources\\ExpenseCategoryResource": {
+        "model": "Webkul\\Logistics\\Models\\ExpenseCategory",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "code",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Toggle",
+                "name": "requires_receipt",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Toggle",
+                "name": "is_subcontracting",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "company_id",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Toggle",
+                "name": "is_active",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": []
+    },
+    "Webkul\\Logistics\\Filament\\Clusters\\Configurations\\Resources\\PackageTypeResource": {
+        "model": "Webkul\\Logistics\\Models\\PackageType",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "code",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "company_id",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Toggle",
+                "name": "is_active",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": []
+    },
+    "Webkul\\Logistics\\Filament\\Clusters\\Configurations\\Resources\\ServiceTypeResource": {
+        "model": "Webkul\\Logistics\\Models\\ServiceType",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "code",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "transport_mode",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "product_reference",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "company_id",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Toggle",
+                "name": "is_active",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": []
+    },
+    "Webkul\\Logistics\\Filament\\Clusters\\Configurations\\Resources\\VehicleTypeResource": {
+        "model": "Webkul\\Logistics\\Models\\VehicleType",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "code",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "capacity_kg",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "capacity_m3",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "company_id",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Toggle",
+                "name": "is_active",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": []
+    },
+    "Webkul\\Logistics\\Filament\\Clusters\\Finance\\Resources\\ExpenseResource": {
+        "model": "Webkul\\Logistics\\Models\\Expense",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    },
+    "Webkul\\Logistics\\Filament\\Clusters\\Fleet\\Resources\\DriverResource": {
+        "model": "Webkul\\Logistics\\Models\\Driver",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "company_id",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "employee_id",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "partner_id",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "phone",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "license_number",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "license_class",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\DatePicker",
+                "name": "license_expires_at",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Toggle",
+                "name": "is_active",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    },
+    "Webkul\\Logistics\\Filament\\Clusters\\Fleet\\Resources\\VehicleResource": {
+        "model": "Webkul\\Logistics\\Models\\Vehicle",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "registration_no",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "company_id",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "vehicle_type_id",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "ownership",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "carrier_id",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "default_driver_id",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "equipment_id",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "telematics_device_ref",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "telematics_agent_id",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "capacity_kg",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "capacity_m3",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Toggle",
+                "name": "is_active",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    },
+    "Webkul\\Logistics\\Filament\\Clusters\\Operations\\Resources\\ShipmentResource": {
+        "model": "Webkul\\Logistics\\Models\\Shipment",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Tabs",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": []
+    },
+    "Webkul\\Logistics\\Filament\\Clusters\\Operations\\Resources\\TripResource": {
+        "model": "Webkul\\Logistics\\Models\\Trip",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": {
+                    "__error": "TypeError"
+                }
+            }
+        ]
+    }
+}
