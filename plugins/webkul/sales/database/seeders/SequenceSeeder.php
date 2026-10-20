@@ -15,7 +15,7 @@ class SequenceSeeder extends Seeder
     {
         SequenceService::ensure('sales.order', null, [
             'name'         => 'Sales Order',
-            'prefix'       => 'SO/',
+            'prefix'       => 'SO-',
             'initial_from' => Order::withoutGlobalScopes(),
         ]);
     }
