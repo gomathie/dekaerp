@@ -30,6 +30,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Webkul\Logistics\Enums\LineType;
 use Webkul\Logistics\Enums\ShipmentPriority;
 use Webkul\Logistics\Enums\ShipmentState;
 use Webkul\Logistics\Enums\StopType;
@@ -50,6 +51,7 @@ use Webkul\Logistics\Models\Shipment;
 use Webkul\Logistics\Support\LogisticsAccess;
 use Webkul\Partner\Enums\AccountType;
 use Webkul\Partner\Models\Partner;
+use Webkul\Product\Models\Product;
 use Webkul\PluginManager\Package;
 use Webkul\Sale\Enums\OrderState;
 use Webkul\Sale\Models\Order;
@@ -240,6 +242,38 @@ class ShipmentResource extends Resource
                             ->defaultItems(0)
                             ->itemLabel(fn (array $state): ?string => $state['description'] ?? null)
                             ->schema([
+                                Select::make('line_type')
+                                    ->label(__(static::$lang.'.form.fields.line-type'))
+                                    ->options(LineType::class)
+                                    ->default(LineType::External)
+                                    ->required()
+                                    ->native(false)
+                                    ->live()
+                                    ->afterStateUpdated(function (Set $set, string $state): void {
+                                        if ($state === LineType::External->value) {
+                                            $set('product_id', null);
+                                        }
+                                    }),
+                                Select::make('product_id')
+                                    ->label(__(static::$lang.'.form.fields.line-product'))
+                                    ->options(fn (): array => Product::query()->orderBy('name')->pluck('name', 'id')->all())
+                                    ->searchable()
+                                    ->visible(fn (Get $get): bool => $get('line_type') === LineType::Internal->value)
+                                    ->required(fn (Get $get): bool => $get('line_type') === LineType::Internal->value)
+                                    ->live()
+                                    ->afterStateUpdated(function (Set $set, ?int $state): void {
+                                        if ($state === null) {
+                                            return;
+                                        }
+                                        $product = Product::find($state);
+                                        if (! $product) {
+                                            return;
+                                        }
+                                        $set('description', $product->name);
+                                        if ($product->weight) {
+                                            $set('weight_kg', (float) $product->weight);
+                                        }
+                                    }),
                                 TextInput::make('description')
                                     ->label(__(static::$lang.'.form.fields.line-description'))
                                     ->required()
@@ -294,6 +328,30 @@ class ShipmentResource extends Resource
                             ->maxLength(64)
                             ->disabled()
                             ->dehydrated(false),
+                    ])
+                    ->columns(2),
+
+                Tab::make(__(static::$lang.'.form.tabs.confidential'))
+                    ->icon('heroicon-o-lock-closed')
+                    ->schema([
+                        Toggle::make('is_confidential')
+                            ->label(__(static::$lang.'.form.fields.is-confidential'))
+                            ->helperText(__(static::$lang.'.form.fields.is-confidential-helper'))
+                            ->live(),
+                        Textarea::make('confidential_description')
+                            ->label(__(static::$lang.'.form.fields.confidential-description'))
+                            ->helperText(__(static::$lang.'.form.fields.confidential-description-helper'))
+                            ->rows(3)
+                            ->maxLength(1000)
+                            ->columnSpanFull()
+                            ->visible(fn (Get $get): bool => (bool) $get('is_confidential')),
+                        Select::make('consignor_partner_id')
+                            ->label(__(static::$lang.'.form.fields.consignor'))
+                            ->helperText(__(static::$lang.'.form.fields.consignor-helper'))
+                            ->relationship('consignor', 'name', fn (Builder $query) => $query->where('account_type', '!=', AccountType::ADDRESS))
+                            ->searchable()
+                            ->preload()
+                            ->visible(fn (Get $get): bool => (bool) $get('is_confidential')),
                     ])
                     ->columns(2),
             ]),

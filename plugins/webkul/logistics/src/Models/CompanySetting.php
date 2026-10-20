@@ -45,6 +45,8 @@ class CompanySetting extends Model
         'capacity_check'            => 'warn',
         'capture_driver_on_pod'     => false,
         'capture_recipient_id'      => false,
+        'pilot_enabled'             => false,
+        'pilot_node'                => 1,
     ];
 
     protected $fillable = [
@@ -67,6 +69,11 @@ class CompanySetting extends Model
         'invoice_journal_id',
         'bill_journal_id',
         'default_expense_account_id',
+        'pilot_enabled',
+        'pilot_server',
+        'pilot_username',
+        'pilot_password',
+        'pilot_node',
     ];
 
     protected $casts = [
@@ -83,6 +90,10 @@ class CompanySetting extends Model
         'capture_driver_on_pod'     => 'boolean',
         'capture_recipient_id'      => 'boolean',
         'capacity_check'            => CapacityCheck::class,
+        'pilot_enabled'             => 'boolean',
+        'pilot_username'            => 'encrypted',
+        'pilot_password'            => 'encrypted',
+        'pilot_node'                => 'integer',
     ];
 
     /**

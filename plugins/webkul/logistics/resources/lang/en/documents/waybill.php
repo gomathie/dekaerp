@@ -7,6 +7,8 @@ return [
 
     'title' => 'Waybill',
 
+    'confidential-goods' => 'Concealed goods — details not disclosed',
+
     'labels' => [
         'waybill-number'       => 'Waybill number',
         'shipment-number'      => 'Shipment number',
@@ -15,6 +17,7 @@ return [
         'sender'               => 'Sender',
         'recipient'            => 'Recipient',
         'route'                => 'Route',
+        'consignor'            => 'Shipped on behalf of',
         'origin'               => 'Origin',
         'destination'          => 'Destination',
         'planned-pickup'       => 'Planned pickup',

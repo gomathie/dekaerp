@@ -10,10 +10,12 @@ return [
     'no-company' => 'Select a company first: Logistics settings are kept per company.',
 
     'sections' => [
-        'status'     => 'Status',
-        'delivery'   => 'Proof of delivery',
-        'operations' => 'Operations',
-        'accounting' => 'Accounting',
+        'status'                   => 'Status',
+        'delivery'                 => 'Proof of delivery',
+        'operations'               => 'Operations',
+        'accounting'               => 'Accounting',
+        'integrations'             => 'Telematics integrations',
+        'integrations-description' => 'Connect GPS tracking providers to import your fleet and pull live vehicle data.',
     ],
 
     'status' => [
@@ -46,6 +48,13 @@ return [
         'bill-journal'                => 'Journal for vendor bills',
         'default-expense-account'     => 'Default expense account',
         'expense-approval-required'   => 'Expenses need approval before billing',
+        'pilot-enabled'               => 'PILOT Telematics',
+        'pilot-enabled-helper'        => 'Pull vehicles and fleet data from your PILOT GPS account.',
+        'pilot-server'                => 'Server URL',
+        'pilot-server-helper'         => 'The base URL of your PILOT server, e.g. https://africa.pilot-gps.com',
+        'pilot-node'                  => 'Node',
+        'pilot-username'              => 'Username',
+        'pilot-password'              => 'Password',
     ],
 
     'actions' => [
@@ -64,6 +73,14 @@ return [
             'heading'      => 'Disable Logistics for this company?',
             'description'  => 'Logistics is hidden and no new records can be created for this company. Existing data is kept, and enabling it again restores access.',
             'notification' => 'Logistics disabled',
+        ],
+
+        'pilot-sync' => [
+            'label'        => 'Sync PILOT fleet',
+            'heading'      => 'Sync fleet from PILOT?',
+            'description'  => 'Vehicles found in PILOT will be created or updated in this company\'s fleet. Existing vehicles that are not in PILOT are not touched.',
+            'notification' => ':created created, :updated updated, :skipped skipped.',
+            'error'        => 'PILOT sync failed',
         ],
     ],
 

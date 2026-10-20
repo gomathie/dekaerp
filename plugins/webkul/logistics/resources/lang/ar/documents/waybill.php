@@ -7,6 +7,8 @@ return [
 
     'title' => 'بوليصة الشحن',
 
+    'confidential-goods' => 'بضاعة سرية — لا تُكشف التفاصيل',
+
     'labels' => [
         'waybill-number'       => 'رقم بوليصة الشحن',
         'shipment-number'      => 'رقم الشحنة',
@@ -15,6 +17,7 @@ return [
         'sender'               => 'المرسل',
         'recipient'            => 'المستلم',
         'route'                => 'المسار',
+        'consignor'            => 'شُحن بالنيابة عن',
         'origin'               => 'نقطة الانطلاق',
         'destination'          => 'الوجهة',
         'planned-pickup'       => 'الاستلام المخطط',

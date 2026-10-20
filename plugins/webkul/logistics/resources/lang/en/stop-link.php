@@ -1,9 +1,10 @@
 <?php
 
 return [
-    'title'    => 'Confirm delivery',
-    'shipment' => 'Shipment',
-    'stop'     => 'Stop',
+    'title'                  => 'Confirm delivery',
+    'shipment'               => 'Shipment',
+    'stop'                   => 'Stop',
+    'confidential-shipment'  => 'Confidential shipment — cargo details not disclosed.',
 
     'ttl' => [
         '4'  => '4 hours',
