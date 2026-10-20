@@ -28,6 +28,11 @@ class Dashboard extends BaseDashboard
 
     protected static string $routePath = 'project';
 
+    public static function getRouteName(?string $panel = null): string
+    {
+        return 'filament.admin.pages.project-dashboard';
+    }
+
     protected static function getPagePermission(): ?string
     {
         return 'page_project_dashboard';
