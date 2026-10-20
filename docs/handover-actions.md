@@ -534,3 +534,398 @@ database password.
   by hand. Pure merge-debt reduction; nothing breaks by leaving it.
 - **Remaining suites** - most of `AccountFeature`, plus project, product and
   website. The harness works; see `docs/running-tests.md`.
+
+
+# DekaERP — Production POD Security Verification & Handover Report
+
+**Date:** 20 October 2026  
+**Application:** DekaERP  
+**Production URL:** https://cloud.dekaerp.com  
+**Infrastructure:** Laravel Cloud, Supabase PostgreSQL  
+**DNS Provider:** Cloudflare  
+**Module:** Logistics — Proof of Delivery (POD)  
+**References:** `docs/handover-actions.md` §§0b–0c, `docs/logistics-plan.md` WP-5b
+
+**Overall Status: PROXY DIAGNOSTICS COMPLETED — POD TOKEN REMEDIATION REQUIRED**
+
+---
+
+## 1. Executive Summary
+
+A production security review was completed to verify Laravel's trusted proxy behavior and investigate possible exposure of sensitive Proof of Delivery tokens in infrastructure access logs.
+
+The review confirmed that:
+
+1. Laravel correctly resolves client IP addresses through Laravel Cloud's proxy infrastructure.
+2. The tested forged `X-Forwarded-For` header was rejected or sanitized before reaching Laravel.
+3. Clients connecting from separate desktop and mobile networks were identified by different IP addresses.
+4. The temporary diagnostic route and environment variable were removed, and the cleanup deployed.
+5. The diagnostic endpoint was confirmed inaccessible with HTTP 404.
+6. Laravel Cloud Access Logs retain complete HTTP request paths, including token-bearing URLs.
+7. Laravel Cloud support confirmed that path redaction and configurable log retention are unavailable.
+8. Laravel Cloud's internal Cloudflare edge logs can retain request-path metadata for up to 90 days.
+
+**Security decision:** Retain the current working proxy configuration provisionally and migrate the POD workflow to fragment-based token URLs before customer release.
+
+## 2. Production Network Architecture
+
+The production application's DNS configuration was verified as follows:
+
+| Property | Verified value |
+|---|---|
+| Hostname | cloud.dekaerp.com |
+| DNS target | to.laravel.cloud |
+| Resolved IPv4 addresses | 103.133.1.1, 103.133.1.2 |
+| HTTP response | 302 Found |
+| Redirect destination | /admin/login |
+| HTTP server header | cloudflare |
+| Cloudflare edge header | CF-RAY present |
+
+The `server: cloudflare` header confirms Cloudflare infrastructure participates in serving the application. It does not, by itself, establish that the customer's own Cloudflare zone is proxying HTTP traffic.
+
+The DNS results were consistent with a DNS-only CNAME pointing to Laravel Cloud. The Cloudflare DNS proxy status was not independently confirmed in the dashboard.
+
+## 3. TRUSTED_PROXIES Verification — §0c
+
+**Status: DIAGNOSTIC TESTS PASSED; CLEANUP COMPLETED**
+
+### Production configuration
+
+```env
+TRUSTED_PROXIES=*
+```
+
+Laravel Cloud's observed proxy behavior was tested before making any change to this configuration.
+
+### Test 1 — Desktop network
+
+**Result: PASS**
+
+```json
+{
+  "remote_addr": "2a05:d014:145b:561c:1fa3::42",
+  "x_forwarded_for": "154.161.102.55",
+  "laravel_ip": "154.161.102.55"
+}
+```
+
+Laravel correctly identified the forwarded client IP rather than the connecting proxy IP.
+
+### Test 2 — Forged X-Forwarded-For header
+
+**Result: PASS**
+
+The following header was supplied manually:
+
+```http
+X-Forwarded-For: 1.2.3.4
+```
+
+The application returned:
+
+```json
+{
+  "remote_addr": "2a05:d014:145b:561c:1fa3::42",
+  "x_forwarded_for": "154.161.102.55",
+  "laravel_ip": "154.161.102.55"
+}
+```
+
+The forged IP address was not propagated to Laravel.
+
+This confirms the tested request path prevented that specific forwarded-header spoofing attempt.
+
+### Test 3 — Mobile LTE network
+
+**Result: PASS**
+
+```json
+{
+  "remote_addr": "2a05:d014:145b:561d:496f::1b",
+  "x_forwarded_for": "154.161.118.242",
+  "laravel_ip": "154.161.118.242"
+}
+```
+
+The mobile request used a separate client IP and reached a different Laravel Cloud IPv6 proxy endpoint.
+
+### Consolidated proxy test results
+
+| Test | Result |
+|---|---|
+| Diagnostic endpoint operational | PASS |
+| Desktop client IP resolution | PASS |
+| Forged X-Forwarded-For rejection | PASS |
+| Mobile network IP resolution | PASS |
+| Different networks identified separately | PASS |
+| Multiple infrastructure proxy endpoints observed | CONFIRMED |
+| Actual POD rate-limit isolation | NOT YET TESTED |
+| Direct-origin bypass protection | NOT YET VERIFIED |
+
+### Configuration decision
+
+The existing `TRUSTED_PROXIES=*` configuration was retained because it produced correct results through the tested request paths.
+
+No specific proxy address was hardcoded because multiple Laravel Cloud proxy endpoints were observed.
+
+Wildcard trust remains conditional on the infrastructure preventing untrusted direct-origin access and sanitizing forwarded headers.
+
+## 4. Temporary Diagnostic Cleanup
+
+**Status: COMPLETED**
+
+The following cleanup actions were completed:
+
+- Removed `/__proxy-check/{secret}` from `routes/web.php`.
+- Removed `PROXY_CHECK_SECRET` from Laravel Cloud environment variables.
+- Deployed the cleanup to production.
+- Executed a follow-up diagnostic URL request.
+
+### Final cleanup verification
+
+Command:
+
+```powershell
+curl.exe -sS -o NUL -w "%{http_code}`n" "https://cloud.dekaerp.com/__proxy-check/test"
+```
+
+Actual result:
+
+```text
+404
+```
+
+**Outcome: PASS**
+
+The temporary diagnostic endpoint is no longer accessible at the tested location.
+
+Historical access-log entries still contain the diagnostic secret, but the route and configured secret have been removed.
+
+## 5. POD Token Exposure Investigation — §0b
+
+**Status: INVESTIGATION COMPLETED — VULNERABILITY CONFIRMED IN CURRENT URL DESIGN**
+
+### Existing POD URL format
+
+The existing Logistics module generates Proof of Delivery links using:
+
+```text
+https://cloud.dekaerp.com/logistics/pod/<64-character-token>
+```
+
+The token acts as a temporary bearer credential granting access to the associated delivery confirmation workflow.
+
+### Laravel Cloud access-log findings
+
+Production Access Logs were inspected.
+
+The logs contained complete request paths for the temporary proxy diagnostic endpoint, including its 64-character secret.
+
+Observed log format:
+
+```text
+[200] GET /__proxy-check/<REDACTED_SECRET> HTTP/1.1
+```
+
+This demonstrates that Laravel Cloud records secret-bearing URL paths without automatically removing the secret segment.
+
+Consequently, POD credentials placed in equivalent URL-path positions would be exposed to infrastructure access logging.
+
+No real POD token was used for this verification.
+
+## 6. Official Laravel Cloud Support Findings
+
+A support inquiry was submitted to Laravel Cloud concerning access-log redaction, retention and sensitive URL tokens.
+
+Laravel Cloud support confirmed the following:
+
+| Question | Confirmed response |
+|---|---|
+| Can path segments be redacted before storage? | No |
+| Can access-log retention be shortened per application? | No |
+| Application/access-log storage retention | Up to 30 days |
+| Starter plan dashboard/API visibility | 1 day |
+| Growth plan dashboard/API visibility | 7 days |
+| Business/Enterprise dashboard/API visibility | 30 days |
+| Internal Cloudflare edge-log retention | Up to 90 days |
+| Are full request paths retained at the edge? | Yes |
+| Are edge logs accessible through the customer dashboard? | No |
+
+Support also confirmed that the Laravel Cloud edge can record requests blocked before reaching the Laravel application.
+
+### Security implication
+
+Application-side logging redaction alone cannot eliminate the exposure because infrastructure layers retain the original HTTP request path before Laravel processes the request.
+
+Reducing the POD token lifetime mitigates exposure but cannot prevent the token from entering these logs.
+
+## 7. Recommended Security Remediation
+
+**Status: REQUIRED — IMPLEMENTATION PENDING**
+
+### Approved technical direction for implementation
+
+Replace the current token-in-path design:
+
+```text
+/logistics/pod/<token>
+```
+
+With a fragment-based design:
+
+```text
+/logistics/pod#<token>
+```
+
+URL fragments are not transmitted in HTTP request lines.
+
+Therefore, the token will not appear in access or edge logs solely because the landing-page URL was requested.
+
+### Required implementation behavior
+
+1. Generate new POD links using a URL fragment.
+2. Serve a token-free public capture page at `/logistics/pod`.
+3. Read the fragment using client-side JavaScript.
+4. Immediately clear the fragment from the visible browser URL.
+5. Exchange the token through a secure POST request body.
+6. Validate the token through the existing Laravel Logistics token services.
+7. Preserve expiry, revocation, company isolation and one-time completion rules.
+8. Establish a short-lived, scoped authorization session for the delivery capture process.
+9. Preserve IP-based and token-based throttling.
+10. Prevent token exposure through application logs, Sentry, analytics, JavaScript error reporting and third-party scripts.
+11. Apply `Referrer-Policy: no-referrer` and `Cache-Control: no-store`.
+12. Update all POD link-generation and sharing mechanisms.
+13. Implement compatibility handling for previously issued token-in-path links.
+14. Extend automated security and regression tests.
+
+### Alternative identified by Laravel Cloud support
+
+The existing token-in-path URL can be exchanged for a short-lived session and redirected to a token-free URL.
+
+However, the initial request would still expose the token to infrastructure logs. For this reason, the fragment-based approach is preferred for new POD links.
+
+## 8. Current POD Security Controls
+
+The existing implementation and original handover documentation describe the following controls:
+
+- Tokens generated with high entropy.
+- Only SHA-256 token hashes stored in the application database.
+- One-time POD completion.
+- Token expiry and revocation support.
+- Company-configurable stop-link lifetime.
+- `noindex` and `no-referrer` behavior.
+- Application-side Sentry token redaction.
+- Token-based and IP-based throttling.
+
+These controls should be retained during the migration.
+
+The fragment-based approach is an additional protection against infrastructure URL logging and should not replace existing server-side authorization controls.
+
+## 9. Outstanding Actions
+
+| Action | Status |
+|---|---|
+| Desktop proxy verification | COMPLETED |
+| Forged-header verification | COMPLETED |
+| Mobile proxy verification | COMPLETED |
+| Diagnostic endpoint removal | COMPLETED |
+| Diagnostic secret removal | COMPLETED |
+| Cleanup deployment | COMPLETED |
+| HTTP 404 cleanup verification | COMPLETED |
+| Laravel Cloud access-log inspection | COMPLETED |
+| Laravel Cloud support inquiry | COMPLETED |
+| Infrastructure retention confirmed | COMPLETED |
+| Fragment-based POD implementation | PENDING |
+| POD security regression testing | PENDING |
+| Existing POD link compatibility review | PENDING |
+| Actual rate-limit isolation test | PENDING |
+| Final origin trust-boundary confirmation | PENDING |
+| Production rollout of revised POD flow | PENDING |
+
+## 10. Final Handover Decision
+
+**Section 0c — TRUSTED_PROXIES**
+
+Status: **DIAGNOSTIC VERIFICATION AND CLEANUP COMPLETED**
+
+The production infrastructure correctly identified separate client IPs and rejected the tested forged-header request.
+
+The existing wildcard trust configuration remains in place provisionally, subject to final origin-access verification.
+
+**Section 0b — POD TOKEN LOGGING**
+
+Status: **INVESTIGATION COMPLETED — REMEDIATION OPEN**
+
+The exposure mechanism was confirmed through actual Laravel Cloud access-log entries.
+
+Laravel Cloud support confirmed that neither URL-path redaction nor reduced infrastructure log retention is available.
+
+The recommended remediation is to move POD credentials from the HTTP request path into a browser URL fragment and exchange them using a secure POST request.
+
+**Production release decision:** New customer-facing POD stop links should remain disabled until the revised flow has been implemented, tested and approved.
+
+**Next responsible party:** DekaERP Development Team / Coding Agent
+
+**Next milestone:** Implement and test fragment-based POD tokens, then update `docs/handover-actions.md` and the WP-5b release status.
+
+---
+
+**Report conclusion:** The production proxy diagnostic work is complete. The POD logging investigation has identified a confirmed architectural risk and a defined remediation approach. No further Laravel Cloud logging configuration is expected to resolve the issue; remediation must be implemented in the application.
+
+---
+
+## §4b Rehearsal — COMPLETED 2026-10-20
+
+**Performed by:** Claude Sonnet 4.6  
+**Database:** `seq_rehearsal` (local Sail pgsql) — dropped after verification.
+
+### Procedure
+
+1. Production Supabase dumped to scratchpad via `rehearsal.ps1`.
+2. Restored into `seq_rehearsal` using `pg_restore` within the `dekaerp_sail` network.
+3. Ran `php artisan migrate --force` against `seq_rehearsal`, passing all `DB_*` overrides explicitly. No production connection was used at any point.
+
+### Migration batch 24 — first run
+
+The first `migrate` run executed 15 migrations (batch 24). The two migrations below were **absent** — they did not appear in `migrate:status` at all, as Pending or Ran:
+
+- `2026_08_04_100000_share_default_time_off_leave_types` (time-off plugin)
+- `2026_09_24_000001_provision_company_admin_role` (security plugin)
+
+**Root cause:** Both migrations were written to disk but never added to their plugin's `hasMigrations([...])` list in the respective `PackageServiceProvider`. The `PackageServiceProvider` base class uses `hasMigrations()` as an explicit whitelist; files not listed are invisible to the migration runner regardless of whether the plugin is installed.
+
+**Fix applied:** Both migration names were appended to their providers:
+- `plugins/webkul/time-off/src/TimeOffServiceProvider.php`
+- `plugins/webkul/security/src/SecurityServiceProvider.php`
+
+After the fix, both appeared as `Pending` in `migrate:status` and ran cleanly against `seq_rehearsal` (batch 25). `migrate:status` then showed zero pending migrations.
+
+### Sequence continuity — PASS
+
+Post-migration sequences table (key rows):
+
+| scope | journal_id | company_id | prefix | next_number | verdict |
+|---|---|---|---|---|---|
+| Journal | 7 | 2 | INV/%(year)/ | 2 | **OK** — `INV/2026/1` exists; next is 2 |
+| Journal | 7 | 2 | RINV/%(year)/ | 2 | OK |
+| (global) | — | — | SO/ | 3 | OK — two sales orders exist |
+| (global) | — | — | PO/ | 1 | OK — no purchase orders |
+| All other journals | — | 1 or 2 | various | 1 | OK (no existing documents) |
+
+`initialFromNames()` correctly read the highest document name for each journal and set `next_number = highest + 1`. No collision risk was found.
+
+### Deployment verdict
+
+**SAFE TO DEPLOY** — with the `hasMigrations` fix committed. All 17 pending migrations (15 original + the 2 now registered) will run in order. Sequence numbering is continuous: the single in-use journal (`INV/2026/1`) will continue from `/2` as expected.
+
+### What `provision_company_admin_role` does on production
+
+`CompanyAdminRoleProvisioner::provision()` creates a `Company Admin` role for each company that does not already have one, assigns it the same permissions as the existing Admin role, and wires it to the company settings as the default. It is idempotent. On production this is a first-time run, so it will create one role per company.
+
+### What `share_default_time_off_leave_types` does on production
+
+Sets `company_id = NULL` on the six default leave-type names (`Paid Time Off`, `Sick Time Off`, etc.), making them shared across all companies rather than company-owned. This is a simple UPDATE with no risk of data loss; names not in the list are untouched.
+
+### Rehearsal database
+
+`seq_rehearsal` was dropped after the report was written.
