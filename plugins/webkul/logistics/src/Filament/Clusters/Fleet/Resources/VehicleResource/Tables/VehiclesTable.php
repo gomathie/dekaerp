@@ -60,8 +60,8 @@ class VehiclesTable
                     ->visibleFrom('xl')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('pilot_agent_id')
-                    ->label(__(static::$lang.'.table.columns.pilot-agent-id'))
+                TextColumn::make('telematics_agent_id')
+                    ->label(__(static::$lang.'.table.columns.telematics-agent-id'))
                     ->placeholder('—')
                     ->visibleFrom('xl')
                     ->searchable()

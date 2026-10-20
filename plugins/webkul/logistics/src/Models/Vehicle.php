@@ -46,7 +46,7 @@ class Vehicle extends Model
         'capacity_m3',
         'equipment_id',
         'telematics_device_ref',
-        'pilot_agent_id',
+        'telematics_agent_id',
         'last_latitude',
         'last_longitude',
         'last_located_at',

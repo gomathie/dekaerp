@@ -43,8 +43,8 @@ class VehicleInfolist
                     TextEntry::make('telematics_device_ref')
                         ->label(__(static::$lang.'.form.fields.telematics-device-ref'))
                         ->placeholder('—'),
-                    TextEntry::make('pilot_agent_id')
-                        ->label(__(static::$lang.'.form.fields.pilot-agent-id'))
+                    TextEntry::make('telematics_agent_id')
+                        ->label(__(static::$lang.'.form.fields.telematics-agent-id'))
                         ->placeholder('—'),
                 ]),
         ]);
