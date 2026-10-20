@@ -938,12 +938,20 @@ parallel isolation.
 
 ## Recurring Upstream Review Rule
 
+> **Superseded on 2026-10-21, user decision.** The seven-day due date below no
+> longer applies. This document was briefly deleted (commit ca1ff8905) to reduce
+> scope, then restored because it is the only record of eight open findings,
+> including UF-017, an unfixed P0 XSS. It is kept as a **bug register, not a
+> schedule**: the calendar trigger is dropped, the event-driven triggers below
+> still stand, and no agent owes a review merely because time has passed.
+
 Agents cannot monitor the repository while no session is active. Therefore,
 the first active agent after the due date owns the review.
 
 Perform an upstream review when any of these triggers occurs:
 
-- Seven calendar days have passed since `Last reviewed` below.
+- ~~Seven calendar days have passed since `Last reviewed` below.~~ (dropped
+  2026-10-21; see the note above)
 - Before a production release or dependency refresh.
 - Before substantial work in a plugin that upstream changed since the recorded
   SHA.

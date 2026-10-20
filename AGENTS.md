@@ -1248,14 +1248,20 @@ DOCUMENTATION AND UPSTREAM REVIEW (ALL AGENTS)
   changed behavior, verification actually run, failures, risks, and handoff in
   the owning documents. Keep historical records; mark stale statements as
   superseded instead of silently rewriting history.
-• `docs/upstream-fix-adoption-plan.md` is the whole-application upstream review
-  register. The first active agent after its review due date must inspect new
-  upstream changes. Also review before a release, dependency refresh, or major
-  work in an upstream-changed plugin.
-• After each upstream review, update the recorded SHA/date and tell the user
-  what is new, whether DEKA ERP needs it, the benefit, risk/dependencies, and
-  recommended priority. Report a brief "no actionable changes" result when
-  applicable. Never merge or cherry-pick upstream wholesale.
+• `docs/upstream-fix-adoption-plan.md` is the register of known upstream findings
+  (UF-001..UF-024) and what was decided about each. Treat it as a bug list, not a
+  schedule: the recurring seven-day review cadence was dropped on 2026-10-21 to
+  keep focus. Eight findings are still open, including UF-017, an unfixed P0 XSS
+  in Chatter change summaries, and UF-018/UF-021/UF-022 (financial correctness and
+  data integrity). Consult it when working in an affected plugin, and update a
+  finding's Local state when you touch one.
+• `docs/restructure-backlog.md` is the resource-restructure analysis: which
+  resources adopt upstream's split layout mechanically and which carry local
+  changes that must be moved by hand.
+• When you do review upstream, tell the user what is new, whether DEKA ERP needs
+  it, the benefit, risk/dependencies, and recommended priority. Report a brief
+  "no actionable changes" result when applicable. Never merge or cherry-pick
+  upstream wholesale.
 
 DONE RECENTLY (newest first; details in docs/change-log.md)
 
@@ -1300,8 +1306,9 @@ REFERENCES
 
 • docs/agent-reminders.md — standing instructions and task log (read first).
 • docs/change-log.md — what changed and why, per session.
-• docs/upstream-fix-adoption-plan.md — whole-app upstream fix decisions,
-  implementation order, review cadence, and review log.
+• docs/upstream-fix-adoption-plan.md — register of upstream findings UF-001..024
+  and the decision on each. Eight still open, UF-017 a P0 XSS. No review cadence.
+• docs/restructure-backlog.md — deferred upstream restructures.
 • Package F, resource structure alignment — the plan lives on the
   `chore/resource-structure` branch, not on main:
   `git show chore/resource-structure:docs/upstream-structure-alignment-plan.md`.
@@ -1321,7 +1328,6 @@ REFERENCES
 • docs/api-access.md — client API tokens and abilities.
 • docs/supabase-database.md — database hardening and the Data API.
 • docs/handover-actions.md — actions the user must take in the dashboards.
-• docs/restructure-backlog.md — deferred upstream restructures.
 • README.md — repository setup and product overview.
 • docker/production/README.md — production image and deployment operation.
 • plugins/webkul/barcode/README.md — barcode plugin operation.
