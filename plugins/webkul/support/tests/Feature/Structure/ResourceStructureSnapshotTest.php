@@ -104,7 +104,7 @@ it('keeps nesting instead of flattening it', function () {
     ]));
 
     expect($described)->toHaveCount(1)
-        ->and($described[0]['children'][0][0]['name'] ?? null)->toBe('inner');
+        ->and($described[0]['children'][0]['name'] ?? null)->toBe('inner');
 });
 
 it('records hidden components so losing one shows up as a diff', function () {
