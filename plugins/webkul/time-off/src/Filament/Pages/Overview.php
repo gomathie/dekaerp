@@ -4,8 +4,8 @@ namespace Webkul\TimeOff\Filament\Pages;
 
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
-use Filament\Panel;
 use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Panel;
 use Illuminate\Contracts\Support\Htmlable;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\TimeOff\Filament\Widgets\OverviewCalendarWidget;
@@ -15,6 +15,8 @@ class Overview extends BaseDashboard
     use HasPageShield;
 
     protected static string $routePath = 'time-off';
+
+    protected static ?string $slug = 'time-off-overview';
 
     public static function getRouteName(?Panel $panel = null): string
     {

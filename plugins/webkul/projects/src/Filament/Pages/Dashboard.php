@@ -5,8 +5,8 @@ namespace Webkul\Project\Filament\Pages;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms\Components\Select;
-use Filament\Panel;
 use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Panel;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
@@ -28,6 +28,8 @@ class Dashboard extends BaseDashboard
     use HasPageShield;
 
     protected static string $routePath = 'project';
+
+    protected static ?string $slug = 'project-dashboard';
 
     public static function getRouteName(?Panel $panel = null): string
     {
