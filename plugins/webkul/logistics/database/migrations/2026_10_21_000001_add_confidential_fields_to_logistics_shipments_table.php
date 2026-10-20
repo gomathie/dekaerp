@@ -14,7 +14,7 @@ return new class extends Migration
 
             $table->foreignId('consignor_partner_id')
                 ->nullable()
-                ->constrained('partners')
+                ->constrained('partners_partners')
                 ->nullOnDelete();
         });
     }
