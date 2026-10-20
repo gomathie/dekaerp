@@ -307,6 +307,9 @@ Sentry redaction (`AppServiceProvider::redactStopLinkTokensFromSentry`) remains
 in place as defence-in-depth; it now covers the path-based backward-compat
 URLs rather than the primary flow.
 
+**Supabase Security + Performance advisors: passed 2026-10-20.** The 19 new
+logistics tables produced no new findings.
+
 ---
 
 ## 0. Point production Sentry at the DEKA ERP project DONE (2026-09-20)
@@ -917,4 +920,4 @@ Sets `company_id = NULL` on the six default leave-type names (`Paid Time Off`, `
 
 ### Rehearsal database
 
-`seq_rehearsal` was dropped after the report was written.
+`seq_rehearsal` was dropped after the report was written.yes

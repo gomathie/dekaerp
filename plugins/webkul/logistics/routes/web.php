@@ -18,18 +18,6 @@ use Webkul\Logistics\Http\Controllers\StopLinkController;
 Route::middleware(['web', 'throttle:logistics-stop-link'])
     ->prefix('logistics/pod')
     ->group(function (): void {
-        // Fragment-based routes (WP-5b): the token arrives in the POST body,
-        // never in the URL, so it does not appear in access or edge logs.
-        Route::get('', [StopLinkController::class, 'landing'])
-            ->name('logistics.stop-link.landing');
-
-        Route::post('exchange', [StopLinkController::class, 'exchange'])
-            ->name('logistics.stop-link.exchange');
-
-        Route::post('', [StopLinkController::class, 'submit'])
-            ->name('logistics.stop-link.submit');
-
-        // Backward-compatible path-based routes for links issued before WP-5b.
         Route::get('{token}', [StopLinkController::class, 'show'])
             ->where('token', '[A-Za-z0-9]{32,128}')
             ->name('logistics.stop-link.show');
