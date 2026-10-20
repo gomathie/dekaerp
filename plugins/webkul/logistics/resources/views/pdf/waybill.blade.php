@@ -86,6 +86,11 @@
             <td><span class="label">{{ __('logistics::documents/waybill.labels.origin') }}:</span> {{ $record->origin_label ?: $empty }}</td>
             <td><span class="label">{{ __('logistics::documents/waybill.labels.destination') }}:</span> {{ $record->destination_label ?: $empty }}</td>
         </tr>
+        @if ($record->is_confidential && $record->consignor)
+        <tr>
+            <td colspan="2"><span class="label">{{ __('logistics::documents/waybill.labels.consignor') }}:</span> {{ $record->consignor->name }}</td>
+        </tr>
+        @endif
     </table>
 
     <table class="meta">
@@ -110,18 +115,24 @@
             </tr>
         </thead>
         <tbody>
-            @forelse ($record->lines as $line)
+            @if ($record->is_confidential)
                 <tr>
-                    <td>{{ $line->description }}</td>
-                    <td>{{ $line->packageType?->name ?? $empty }}</td>
-                    <td>{{ number_format((float) $line->quantity, 3) }}</td>
-                    <td>{{ number_format((float) $line->weight_kg, 3) }}</td>
-                    <td>{{ number_format((float) $line->volume_m3, 3) }}</td>
-                    <td>{{ $line->handling_instructions ?: $empty }}</td>
+                    <td colspan="6">{{ $record->confidential_description ?: __('logistics::documents/waybill.confidential-goods') }}</td>
                 </tr>
-            @empty
-                <tr><td colspan="6" class="muted">{{ $empty }}</td></tr>
-            @endforelse
+            @else
+                @forelse ($record->lines as $line)
+                    <tr>
+                        <td>{{ $line->description }}</td>
+                        <td>{{ $line->packageType?->name ?? $empty }}</td>
+                        <td>{{ number_format((float) $line->quantity, 3) }}</td>
+                        <td>{{ number_format((float) $line->weight_kg, 3) }}</td>
+                        <td>{{ number_format((float) $line->volume_m3, 3) }}</td>
+                        <td>{{ $line->handling_instructions ?: $empty }}</td>
+                    </tr>
+                @empty
+                    <tr><td colspan="6" class="muted">{{ $empty }}</td></tr>
+                @endforelse
+            @endif
         </tbody>
     </table>
 

@@ -9,6 +9,9 @@
                 &middot; {{ $stop->contact_name }}
             @endif
         </p>
+        @if ($stop->shipment?->is_confidential)
+            <p class="confidential-notice">{{ __('logistics::stop-link.confidential-shipment') }}</p>
+        @endif
     </header>
 
     <main>

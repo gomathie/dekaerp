@@ -6,7 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Webkul\Logistics\Database\Factories\ShipmentLineFactory;
+use Webkul\Logistics\Enums\LineType;
 use Webkul\Logistics\Models\Concerns\InheritsParentCompany;
+use Webkul\Product\Models\Product;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Traits\BelongsToCompany;
 
@@ -26,6 +28,8 @@ class ShipmentLine extends Model
 
     protected $fillable = [
         'sort',
+        'line_type',
+        'product_id',
         'description',
         'quantity',
         'weight_kg',
@@ -42,6 +46,7 @@ class ShipmentLine extends Model
 
     protected $casts = [
         'sort'           => 'integer',
+        'line_type'      => LineType::class,
         'quantity'       => 'decimal:3',
         'weight_kg'      => 'decimal:3',
         'length_cm'      => 'decimal:2',
@@ -54,6 +59,11 @@ class ShipmentLine extends Model
     public function shipment(): BelongsTo
     {
         return $this->belongsTo(Shipment::class);
+    }
+
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class);
     }
 
     public function packageType(): BelongsTo

@@ -1,9 +1,10 @@
 <?php
 
 return [
-    'title'    => 'Confirmar entrega',
-    'shipment' => 'Envío',
-    'stop'     => 'Parada',
+    'title'                  => 'Confirmar entrega',
+    'shipment'               => 'Envío',
+    'stop'                   => 'Parada',
+    'confidential-shipment'  => 'Envío confidencial — detalles de la carga no divulgados.',
 
     'ttl' => [
         '4'  => '4 horas',

@@ -13,10 +13,11 @@ return [
 
     'form' => [
         'tabs' => [
-            'general'    => 'General',
-            'route'      => 'Ruta y paradas',
-            'cargo'      => 'Carga',
-            'assignment' => 'Asignación',
+            'general'      => 'General',
+            'route'        => 'Ruta y paradas',
+            'cargo'        => 'Carga',
+            'assignment'   => 'Asignación',
+            'confidential' => 'Confidencial',
         ],
 
         'fields' => [
@@ -59,7 +60,15 @@ return [
             'carrier'                => 'Transportista',
             'carrier-helper'         => 'Para transporte subcontratado. Los costes del transportista se registran como gastos.',
             'carrier-reference'      => 'Referencia del transportista',
-            'waybill-no'             => 'Número de carta de porte',
+            'waybill-no'                      => 'Número de carta de porte',
+            'line-type'                       => 'Tipo de línea',
+            'line-product'                    => 'Producto',
+            'is-confidential'                 => 'Envío confidencial',
+            'is-confidential-helper'          => 'Oculta los detalles de la carga en la carta de porte y el formulario del conductor.',
+            'confidential-description'        => 'Descripción de carga para carta de porte',
+            'confidential-description-helper' => 'Este texto aparece en la carta de porte en lugar de la lista completa de carga.',
+            'consignor'                       => 'Enviado en nombre de',
+            'consignor-helper'                => 'La empresa cuyas mercancías se están transportando (3PL / marca blanca).',
         ],
     ],
 
