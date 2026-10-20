@@ -4,6 +4,7 @@ namespace Webkul\TimeOff\Filament\Pages;
 
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+use Filament\Panel;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Webkul\TimeOff\Filament\Clusters\Reporting;
 use Webkul\TimeOff\Filament\Widgets\LeaveTypeWidget;
@@ -14,7 +15,7 @@ class ByType extends BaseDashboard
 
     protected static string $routePath = 'reporting/by-type';
 
-    public static function getRouteName(?string $panel = null): string
+    public static function getRouteName(?Panel $panel = null): string
     {
         return 'filament.admin.pages.time-off-by-type';
     }
