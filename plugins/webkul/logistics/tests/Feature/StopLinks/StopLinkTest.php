@@ -428,17 +428,17 @@ it('leaves the link usable when the submission is rejected', function () {
         ->toBe(ShipmentState::OUT_FOR_DELIVERY);
 });
 
-it('stores the proof under the shipment’s own company, not the session’s’, function () {
+it('stores the proof under the shipment’s own company, not the session’s', function () {
     $company = LogisticsHelper::enable(LogisticsHelper::company());
 
     [$stop, $token] = issuedLink($company);
 
     asGuest();
 
-    $this->post(route(‘logistics.stop-link.submit’), [
-        ‘token’          => $token,
-        ‘recipient_name’ => ‘Ama Mensah’,
-        ‘photo’          => UploadedFile::fake()->image(‘door.jpg’),
+    $this->post(route('logistics.stop-link.submit'), [
+        'token'          => $token,
+        'recipient_name' => 'Ama Mensah',
+        'photo'          => UploadedFile::fake()->image('door.jpg'),
     ])->assertOk();
 
     $proof = Shipment::withoutGlobalScopes()->whereKey($stop->shipment_id)->sole()->deliveryProofs()->sole();
@@ -507,12 +507,12 @@ it('throttles a link on its own token and says when to retry', function () {
         ->assertHeader('Retry-After');
 });
 
-it('does not let one company’s link spend another’s rate limit’, function () {
+it('does not let one company’s link spend another’s rate limit', function () {
     $a = LogisticsHelper::enable(LogisticsHelper::company());
     $b = LogisticsHelper::enable(LogisticsHelper::company());
 
-    CompanySetting::forCompany($a->id)->forceFill([‘stop_link_rate_limit’ => 2])->save();
-    CompanySetting::forCompany($b->id)->forceFill([‘stop_link_rate_limit’ => 2])->save();
+    CompanySetting::forCompany($a->id)->forceFill(['stop_link_rate_limit' => 2])->save();
+    CompanySetting::forCompany($b->id)->forceFill(['stop_link_rate_limit' => 2])->save();
 
     [, $tokenA] = issuedLink($a);
     [, $tokenB] = issuedLink($b);
@@ -522,11 +522,11 @@ it('does not let one company’s link spend another’s rate limit’, function 
     // Company A exhausts its own budget. Drivers share mobile carrier NAT
     // addresses, so if the limit were keyed on the IP this would also lock out
     // company B - which is the whole reason it is keyed on the token.
-    $this->post(route(‘logistics.stop-link.exchange’), [‘token’ => $tokenA])->assertOk();
-    $this->post(route(‘logistics.stop-link.exchange’), [‘token’ => $tokenA])->assertOk();
-    $this->post(route(‘logistics.stop-link.exchange’), [‘token’ => $tokenA])->assertStatus(429);
+    $this->post(route('logistics.stop-link.exchange'), ['token' => $tokenA])->assertOk();
+    $this->post(route('logistics.stop-link.exchange'), ['token' => $tokenA])->assertOk();
+    $this->post(route('logistics.stop-link.exchange'), ['token' => $tokenA])->assertStatus(429);
 
-    $this->post(route(‘logistics.stop-link.exchange’), [‘token’ => $tokenB])->assertOk();
+    $this->post(route('logistics.stop-link.exchange'), ['token' => $tokenB])->assertOk();
 });
 
 it('enforces the best-effort per-IP limit across different tokens', function () {
@@ -604,10 +604,10 @@ it('records the driver from the trip when the option is on', function () {
     expect($proof->driver_id)->toBe($driver->id);
 });
 
-it('requires the recipient’s ID when the company asks for one’, function () {
+it('requires the recipient’s ID when the company asks for one', function () {
     $company = LogisticsHelper::enable(LogisticsHelper::company());
 
-    CompanySetting::forCompany($company->id)->forceFill([‘capture_recipient_id’ => true])->save();
+    CompanySetting::forCompany($company->id)->forceFill(['capture_recipient_id' => true])->save();
 
     [$stop, $token] = issuedLink($company);
 
@@ -615,13 +615,13 @@ it('requires the recipient’s ID when the company asks for one’, function () 
 
     // Enforced by DeliveryService, not only by the page: the form is not the
     // boundary, and a company that asks for evidence is asking for evidence.
-    $this->post(route(‘logistics.stop-link.submit’), [‘token’ => $token, ‘recipient_name’ => ‘Ama Mensah’])
-        ->assertSessionHasErrors(‘recipient_id_reference’);
+    $this->post(route('logistics.stop-link.submit'), ['token' => $token, 'recipient_name' => 'Ama Mensah'])
+        ->assertSessionHasErrors('recipient_id_reference');
 
-    $this->post(route(‘logistics.stop-link.submit’), [
-        ‘token’                  => $token,
-        ‘recipient_name’         => ‘Ama Mensah’,
-        ‘recipient_id_reference’ => ‘GHA-0123456789’,
+    $this->post(route('logistics.stop-link.submit'), [
+        'token'                  => $token,
+        'recipient_name'         => 'Ama Mensah',
+        'recipient_id_reference' => 'GHA-0123456789',
     ])->assertOk();
 
     $proof = Shipment::withoutGlobalScopes()->whereKey($stop->shipment_id)->sole()->deliveryProofs()->sole();
