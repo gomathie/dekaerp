@@ -7,7 +7,7 @@
 > **Common v1.5 baseline:** `8409fde`  
 > **Upstream reviewed:** `aureus/master` at `36744b597`  
 > **Package A implemented:** 2026-09-20; focused local verification complete, first remote CI run pending
-> **Next review due:** 2026-10-26, or earlier when a trigger below occurs
+> **Next review due:** 2026-10-27, or earlier when a trigger below occurs
 
 ## Purpose
 
@@ -609,6 +609,205 @@ handoff between agents.
 status document whose statement became false. Do not rewrite historical
 records; mark them superseded and link to the current source of truth.
 
+---
+
+*The following UF entries (UF-017 through UF-024) were identified during the
+v1.6.0 release review on 2026-10-20. They were not captured in the initial
+audit because the initial pass focused on failing-test commits rather than
+the full feature and fix set. Upstream commit SHAs must be confirmed during
+implementation by searching the aureuserp/aureuserp master history.*
+
+### UF-017 - XSS in Chatter Change Summaries
+
+**Decision:** Required, P0 — security  
+**Upstream reference:** v1.6.0 release note: "[Security] Escaped HTML entities
+in chatter change summaries to prevent XSS." Issue/commit TBD.  
+**Local state:** Open — not investigated
+
+Upstream escaped HTML entities written into chatter change-summary strings.
+Unescaped user-controlled content rendered as HTML in the activity log can
+allow stored XSS against any user who views a record's chatter.
+
+**Why DEKA ERP needs it:** DEKA ERP uses the chatter on shipments, trips,
+expenses, invoices, and most entity types. An unescaped string is a stored
+XSS vector for every tenant.
+
+**Benefits:** Eliminates a stored-XSS surface in one of the most-visited
+parts of the UI.
+
+**Implementation:**
+
+1. Find the upstream commit, identify the exact escaping change, and
+   determine which chatter helper or observer is the entry point.
+2. Check local `ChatterCleanupService` and any chatter-writing path in
+   `Webkul\Chatter` for the same unescaped write.
+3. Apply the equivalent escaping. Do not break Markdown or rich-text that is
+   legitimately rendered.
+4. Add a test that injects an HTML payload via a model update and asserts the
+   rendered chatter entry is escaped.
+
+**Acceptance:** A `<script>` or `<img onerror>` payload in a tracked field
+value appears in the chatter as literal text, not as executable HTML.
+
+### UF-018 - Payment State Not Updating After Invoice is Paid
+
+**Decision:** Required, P1 — financial correctness  
+**Upstream reference:** v1.6.0 issue #1478. Commit TBD.  
+**Local state:** Open — not investigated
+
+Upstream fixed a defect where paying an invoice did not advance its state
+field, leaving paid invoices still showing as "open" or "draft".
+
+**Why DEKA ERP needs it:** Payment state drives invoice filtering, aging
+reports, and the Logistics invoicing screen. A stale state can re-queue
+already-paid shipment invoices for billing.
+
+**Benefits:** Correct invoice lifecycle state for every payment path.
+
+**Implementation:**
+
+1. Find the upstream commit and the state-machine path it repairs.
+2. Check local `Account\Models\Move` state transitions and the payment
+   registration flow for the same defect.
+3. If already fixed locally (it may be part of the v1.5 backport), add a
+   regression test that pays an invoice and asserts `state === 'posted'` +
+   `payment_state === 'paid'`.
+
+### UF-019 - Livewire max_nesting_depth 10 → 30
+
+**Decision:** Required, P1 — reliability  
+**Upstream reference:** v1.6.0 release note. Config location TBD.  
+**Local state:** Open — not investigated
+
+Upstream increased Livewire's `max_nesting_depth` from 10 to 30 to fix
+crashes in deeply nested repeater components.
+
+**Why DEKA ERP needs it:** Logistics stops, trip forms, and shipment line
+repeaters are multi-level. Any user who adds enough nested components will
+hit the current limit silently (Livewire renders an error without a useful
+message).
+
+**Benefits:** Prevents cryptic repeater failures on complex forms without
+architectural changes.
+
+**Implementation:**
+
+1. Find the upstream config change (likely `config/livewire.php` or a
+   `Livewire::configure()` call in a service provider).
+2. Apply the same change locally. Check whether DEKA ERP already publishes
+   a `config/livewire.php`; if not, publish it first.
+3. Add a smoke test or note in manual QA that a five-stop trip with line items
+   renders without a nesting error.
+
+### UF-020 - Saved Filter Views Throw LogicException
+
+**Decision:** Required, P1 — UX correctness  
+**Upstream reference:** v1.6.0 issue #1490. Commit TBD.  
+**Local state:** Open — not investigated
+
+Saved Filter Views across list resources threw a `LogicException`. This
+makes any saved filter unusable for the session.
+
+**Why DEKA ERP needs it:** Power users and operations staff rely on saved
+filters to segment shipments, expenses, and trips by company, driver, or
+state. A runtime crash blocks those workflows.
+
+**Benefits:** Reliable filter state across every list resource.
+
+**Implementation:**
+
+1. Find the upstream fix and the exception trigger (likely a null state or
+   missing key during filter hydration).
+2. Reproduce locally if possible (create a saved filter, navigate away, return).
+3. Port the minimal fix. Do not restructure the filter pipeline.
+4. Add a test that saves and reloads a filter without throwing.
+
+### UF-021 - FK Violation on partners_partners.parent_id Editing an Employee
+
+**Decision:** Required, P1 — data integrity  
+**Upstream reference:** v1.6.0 issue #1491. Commit TBD.  
+**Local state:** Open — not investigated
+
+Editing an employee could trigger a foreign key violation on
+`partners_partners.parent_id`. The defect likely arises from the Employee
+observer or partner-sync code writing a User ID into a column that expects a
+Partner ID.
+
+**Why DEKA ERP needs it:** Saving an employee with a manager selection
+currently risks a FK constraint error that aborts the save silently or with
+a 500.
+
+**Benefits:** Reliable employee editing across all HR workflows.
+
+**Implementation:**
+
+1. Trace the upstream commit to identify which column receives the wrong ID type.
+2. Check local `Employee` model, its observer, and any
+   `partner_id` / `parent_id` assignment path.
+3. Apply the fix and add a factory test that creates an employee with a manager
+   and persists without a FK error.
+
+### UF-022 - Currency Conversion Not Working in RFQ / Purchase Order
+
+**Decision:** Required, P1 — financial correctness  
+**Upstream reference:** v1.6.0 issue #1497. Commit TBD.  
+**Local state:** Open — not investigated
+
+Currency conversion was not applied when creating or editing an RFQ or
+Purchase Order in a currency different from the company's base currency.
+
+**Why DEKA ERP needs it:** DEKA ERP companies can operate in multiple
+currencies. Incorrect conversion produces wrong committed costs and payable
+amounts.
+
+**Benefits:** Correct multi-currency RFQ and PO line totals.
+
+**Implementation:**
+
+1. Find the upstream fix and identify the conversion call that was missing
+   or bypassed.
+2. Check local `Purchase\Models\Order` / `OrderLine` and the currency-rate
+   resolution path.
+3. Port the fix and add a test that creates a PO in a non-base currency and
+   asserts converted totals.
+
+### UF-023 - Exception Deleting an Active Currency
+
+**Decision:** Recommended, P2  
+**Upstream reference:** v1.6.0 issue #1514. Commit TBD.  
+**Local state:** Open — not investigated
+
+Deleting a currency that is still marked active (or still in use) threw an
+unhandled exception instead of returning a validation error.
+
+**Why DEKA ERP needs it:** An admin who tries to remove a redundant currency
+currently gets a 500. The correct behavior is a user-facing error.
+
+**Benefits:** Graceful error handling for an infrequent but legitimate
+administrative action.
+
+**Implementation:** Locate the upstream guard, apply it locally, and add a
+test that attempts deletion of an active currency and asserts the error
+message.
+
+### UF-024 - Product Name Replaced by Variant ID After Creating Variants
+
+**Decision:** Recommended, P2  
+**Upstream reference:** v1.6.0 issue #1187. Commit TBD.  
+**Local state:** Open — not investigated
+
+After creating product variants, the product name field was overwritten with
+the variant's internal ID.
+
+**Why DEKA ERP needs it:** Affects the Products plugin used by Logistics
+service products and any catalog item with variants.
+
+**Benefits:** Correct product display names in all downstream resources.
+
+**Implementation:** Find the upstream fix, check local `Product` attribute
+write path, port the fix, and add a test that creates a variant and asserts
+the parent product name is unchanged.
+
 ## Already Present Locally
 
 The following upstream runtime work does not need to be reimplemented:
@@ -802,6 +1001,7 @@ They must not claim tests or production checks that were not executed.
 | Last reviewed | Upstream SHA | Local SHA | Outcome | Next due |
 |---|---|---|---|---|
 | 2026-09-18 | `d7d471894` | `e0ce9f6a8467` | Initial whole-app test-fix audit. P0 CI/Employee gaps, P1 accounting/locale/E2E gaps, optional product initiatives, and explicit rejects recorded. | 2026-09-25 or earlier trigger |
+| 2026-10-20 | v1.6.0 release | `d66a7f0e1` | v1.6.0 full changelog review. Eight gaps not captured by the initial failing-test pass added as UF-017 through UF-024: XSS in chatter (P0 security), payment state bug (P1), Livewire nesting depth (P1), saved filter crash (P1), Employee parent_id FK (P1), RFQ/PO currency conversion (P1), active-currency delete error (P2), product variant name bug (P2). Upstream commit SHAs TBD during implementation. | 2026-10-27 or earlier trigger |
 
 ## Completion Criteria for This Plan
 
