@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Gate;
 use Webkul\Logistics\Models\Shipment;
 use Webkul\Logistics\Support\LogisticsAccess;
 use Webkul\Logistics\Support\LogisticsSequences;
+use Webkul\Support\SupportServiceProvider;
 use Webkul\Support\Traits\PDFHandler;
 
 class PrintWaybillAction extends Action
@@ -63,7 +64,10 @@ class PrintWaybillAction extends Action
             'trips' => fn ($query) => $query->with(['driver', 'vehicle'])->orderByDesc('logistics_trips.id'),
         ]);
 
-        $pdf = $this->generatePDF(view('logistics::pdf.waybill', ['record' => $shipment])->render());
+        $pdf = $this->generatePDF(view('logistics::pdf.waybill', [
+            'record' => $shipment,
+            'isRtl'  => SupportServiceProvider::isRtl(),
+        ])->render());
 
         return response()->streamDownload(
             function () use ($pdf): void {

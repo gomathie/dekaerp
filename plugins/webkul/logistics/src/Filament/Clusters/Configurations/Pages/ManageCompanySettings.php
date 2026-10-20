@@ -89,6 +89,7 @@ class ManageCompanySettings extends Page
             ->disabled(! $companyId)
             ->components([
                 Section::make(__(static::$lang.'.sections.status'))
+                    ->compact()
                     ->schema([
                         TextEntry::make('status')
                             ->hiddenLabel()
@@ -106,6 +107,7 @@ class ManageCompanySettings extends Page
                     ]),
 
                 Section::make(__(static::$lang.'.sections.delivery'))
+                    ->compact()
                     ->columns(2)
                     ->schema([
                         Toggle::make('require_pod_for_delivery')
@@ -140,6 +142,7 @@ class ManageCompanySettings extends Page
                     ]),
 
                 Section::make(__(static::$lang.'.sections.operations'))
+                    ->compact()
                     ->columns(2)
                     ->schema([
                         Select::make('default_service_type_id')
@@ -166,6 +169,7 @@ class ManageCompanySettings extends Page
                     ]),
 
                 Section::make(__(static::$lang.'.sections.accounting'))
+                    ->compact()
                     ->columns(2)
                     ->schema([
                         Select::make('invoice_journal_id')
@@ -187,6 +191,7 @@ class ManageCompanySettings extends Page
                 Section::make(__(static::$lang.'.sections.integrations'))
                     ->description(__(static::$lang.'.sections.integrations-description'))
                     ->icon('heroicon-o-signal')
+                    ->compact()
                     ->columns(2)
                     ->schema([
                         Toggle::make('pilot_enabled')

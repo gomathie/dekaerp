@@ -55,6 +55,7 @@ it('uses the shipment company letterhead when another company is current', funct
             'trips.driver',
             'trips.vehicle',
         ]),
+        'isRtl' => false,
     ])->render();
 
     expect(current_company_id())->toBe($currentCompany->id)
