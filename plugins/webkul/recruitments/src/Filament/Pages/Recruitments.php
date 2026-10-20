@@ -26,6 +26,11 @@ class Recruitments extends BaseDashboard
 
     protected static string $routePath = 'recruitment';
 
+    public static function getRouteName(?string $panel = null): string
+    {
+        return 'filament.admin.pages.recruitments';
+    }
+
     protected static function getPagePermission(): ?string
     {
         return 'page_recruitment_recruitments';

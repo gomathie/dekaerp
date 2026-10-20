@@ -30,6 +30,11 @@ class Dashboard extends BaseDashboard
 
     protected static string $routePath = 'logistics';
 
+    public static function getRouteName(?string $panel = null): string
+    {
+        return 'filament.admin.pages.logistics-dashboard';
+    }
+
     protected static ?int $navigationSort = 10;
 
     protected static string $lang = 'logistics::filament/pages/dashboard';
