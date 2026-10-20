@@ -10,10 +10,12 @@ return [
     'no-company' => 'اختر شركة أولاً: يتم الاحتفاظ بإعدادات اللوجستيات لكل شركة على حدة.',
 
     'sections' => [
-        'status'     => 'الحالة',
-        'delivery'   => 'إثبات التسليم',
-        'operations' => 'العمليات',
-        'accounting' => 'المحاسبة',
+        'status'                   => 'الحالة',
+        'delivery'                 => 'إثبات التسليم',
+        'operations'               => 'العمليات',
+        'accounting'               => 'المحاسبة',
+        'integrations'             => 'تكاملات التتبع',
+        'integrations-description' => 'ربط مزودي تتبع GPS لاستيراد أسطولك.',
     ],
 
     'status' => [
@@ -46,6 +48,13 @@ return [
         'bill-journal'                => 'دفتر اليومية لفواتير الموردين',
         'default-expense-account'     => 'حساب المصروف الافتراضي',
         'expense-approval-required'   => 'تحتاج المصروفات إلى الموافقة قبل الفوترة',
+        'pilot-enabled'               => 'PILOT للتتبع',
+        'pilot-enabled-helper'        => 'استيراد المركبات وبيانات الأسطول من حساب PILOT GPS.',
+        'pilot-server'                => 'رابط الخادم',
+        'pilot-server-helper'         => 'الرابط الأساسي لخادم PILOT، مثال: https://africa.pilot-gps.com',
+        'pilot-node'                  => 'العقدة',
+        'pilot-username'              => 'اسم المستخدم',
+        'pilot-password'              => 'كلمة المرور',
     ],
 
     'actions' => [
@@ -64,6 +73,14 @@ return [
             'heading'      => 'تعطيل اللوجستيات لهذه الشركة؟',
             'description'  => 'سيتم إخفاء اللوجستيات ولن يمكن إنشاء سجلات جديدة لهذه الشركة. ستبقى البيانات الحالية محفوظة، وسيؤدي تفعيلها مجدداً إلى استعادة الوصول.',
             'notification' => 'تم تعطيل اللوجستيات',
+        ],
+
+        'pilot-sync' => [
+            'label'        => 'مزامنة أسطول PILOT',
+            'heading'      => 'مزامنة الأسطول من PILOT؟',
+            'description'  => 'سيتم إنشاء أو تحديث المركبات الموجودة في PILOT في أسطول هذه الشركة.',
+            'notification' => ':created تم إنشاؤها، :updated تم تحديثها، :skipped تم تخطيها.',
+            'error'        => 'فشل مزامنة PILOT',
         ],
     ],
 

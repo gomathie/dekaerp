@@ -24,6 +24,7 @@ use Webkul\Logistics\Filament\Clusters\Configurations;
 use Webkul\Logistics\Models\CompanySetting;
 use Webkul\Logistics\Models\ServiceType;
 use Webkul\Logistics\Services\CompanyProvisioner;
+use Webkul\Logistics\Services\PilotClient;
 use Webkul\Logistics\Services\StopLinkService;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Services\CompanyContext;
@@ -182,6 +183,44 @@ class ManageCompanySettings extends Page
                         Toggle::make('expense_approval_required')
                             ->label(__(static::$lang.'.fields.expense-approval-required')),
                     ]),
+
+                Section::make(__(static::$lang.'.sections.integrations'))
+                    ->description(__(static::$lang.'.sections.integrations-description'))
+                    ->icon('heroicon-o-signal')
+                    ->columns(2)
+                    ->schema([
+                        Toggle::make('pilot_enabled')
+                            ->label(__(static::$lang.'.fields.pilot-enabled'))
+                            ->helperText(__(static::$lang.'.fields.pilot-enabled-helper'))
+                            ->live()
+                            ->columnSpanFull(),
+                        TextInput::make('pilot_server')
+                            ->label(__(static::$lang.'.fields.pilot-server'))
+                            ->helperText(__(static::$lang.'.fields.pilot-server-helper'))
+                            ->placeholder('https://africa.pilot-gps.com')
+                            ->url()
+                            ->maxLength(500)
+                            ->visible(fn ($get): bool => (bool) $get('pilot_enabled')),
+                        TextInput::make('pilot_node')
+                            ->label(__(static::$lang.'.fields.pilot-node'))
+                            ->numeric()
+                            ->integer()
+                            ->minValue(1)
+                            ->default(1)
+                            ->visible(fn ($get): bool => (bool) $get('pilot_enabled')),
+                        TextInput::make('pilot_username')
+                            ->label(__(static::$lang.'.fields.pilot-username'))
+                            ->autocomplete('off')
+                            ->maxLength(255)
+                            ->visible(fn ($get): bool => (bool) $get('pilot_enabled')),
+                        TextInput::make('pilot_password')
+                            ->label(__(static::$lang.'.fields.pilot-password'))
+                            ->password()
+                            ->revealable()
+                            ->autocomplete('new-password')
+                            ->maxLength(255)
+                            ->visible(fn ($get): bool => (bool) $get('pilot_enabled')),
+                    ]),
             ]);
     }
 
@@ -213,6 +252,17 @@ class ManageCompanySettings extends Page
         $data = $this->form->getState();
 
         $setting = CompanySetting::forCompany($company->id);
+
+        // Credential fields are not pre-filled for security. Preserve the
+        // stored value when the user submits without entering a new one.
+        if (blank($data['pilot_username'] ?? null) && $setting->exists) {
+            unset($data['pilot_username']);
+        }
+
+        if (blank($data['pilot_password'] ?? null) && $setting->exists) {
+            unset($data['pilot_password']);
+        }
+
         $setting->fill(collect($data)->only(static::editableFields())->all());
         $setting->save();
 
@@ -225,6 +275,41 @@ class ManageCompanySettings extends Page
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('pilot_sync')
+                ->label(__(static::$lang.'.actions.pilot-sync.label'))
+                ->icon('heroicon-o-arrow-path')
+                ->color('info')
+                ->visible(fn (): bool => (bool) $this->setting()?->pilot_enabled
+                    && filled($this->setting()?->pilot_server)
+                    && filled($this->setting()?->pilot_username))
+                ->requiresConfirmation()
+                ->modalHeading(__(static::$lang.'.actions.pilot-sync.heading'))
+                ->modalDescription(__(static::$lang.'.actions.pilot-sync.description'))
+                ->action(function (): void {
+                    $company = $this->company();
+
+                    if (! $company) {
+                        return;
+                    }
+
+                    $settings = CompanySetting::forCompany($company->id);
+
+                    try {
+                        $result = app(PilotClient::class)->syncFleet($company, $settings);
+
+                        Notification::make()
+                            ->success()
+                            ->title(__(static::$lang.'.actions.pilot-sync.notification', $result))
+                            ->send();
+                    } catch (\Throwable $e) {
+                        Notification::make()
+                            ->danger()
+                            ->title(__(static::$lang.'.actions.pilot-sync.error'))
+                            ->body($e->getMessage())
+                            ->send();
+                    }
+                }),
+
             Action::make('enable')
                 ->label(__(static::$lang.'.actions.enable.label'))
                 ->icon('heroicon-o-power')
@@ -285,6 +370,11 @@ class ManageCompanySettings extends Page
             'bill_journal_id',
             'default_expense_account_id',
             'expense_approval_required',
+            'pilot_enabled',
+            'pilot_server',
+            'pilot_username',
+            'pilot_password',
+            'pilot_node',
         ];
     }
 

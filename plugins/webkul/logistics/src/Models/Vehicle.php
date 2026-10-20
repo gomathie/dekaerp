@@ -46,6 +46,9 @@ class Vehicle extends Model
         'capacity_m3',
         'equipment_id',
         'telematics_device_ref',
+        'last_latitude',
+        'last_longitude',
+        'last_located_at',
         'is_active',
         'vehicle_type_id',
         'carrier_id',
@@ -55,10 +58,13 @@ class Vehicle extends Model
     ];
 
     protected $casts = [
-        'ownership'   => VehicleOwnership::class,
-        'capacity_kg' => 'decimal:3',
-        'capacity_m3' => 'decimal:3',
-        'is_active'   => 'boolean',
+        'ownership'      => VehicleOwnership::class,
+        'capacity_kg'    => 'decimal:3',
+        'capacity_m3'    => 'decimal:3',
+        'last_latitude'  => 'decimal:7',
+        'last_longitude' => 'decimal:7',
+        'last_located_at' => 'datetime',
+        'is_active'      => 'boolean',
     ];
 
     public function scopeActive(Builder $query): Builder

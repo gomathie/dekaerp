@@ -10,10 +10,12 @@ return [
     'no-company' => 'Sélectionnez d’abord une société : les paramètres de logistique sont conservés par société.',
 
     'sections' => [
-        'status'     => 'Statut',
-        'delivery'   => 'Preuve de livraison',
-        'operations' => 'Opérations',
-        'accounting' => 'Comptabilité',
+        'status'                   => 'Statut',
+        'delivery'                 => 'Preuve de livraison',
+        'operations'               => 'Opérations',
+        'accounting'               => 'Comptabilité',
+        'integrations'             => 'Intégrations télématiques',
+        'integrations-description' => 'Connectez des fournisseurs GPS pour importer votre flotte.',
     ],
 
     'status' => [
@@ -46,6 +48,13 @@ return [
         'bill-journal'                => 'Journal des factures fournisseurs',
         'default-expense-account'     => 'Compte de dépenses par défaut',
         'expense-approval-required'   => 'Les dépenses doivent être approuvées avant facturation',
+        'pilot-enabled'               => 'PILOT Télématique',
+        'pilot-enabled-helper'        => 'Importer véhicules et données de flotte depuis votre compte PILOT GPS.',
+        'pilot-server'                => 'URL du serveur',
+        'pilot-server-helper'         => 'URL de base de votre serveur PILOT, ex. https://africa.pilot-gps.com',
+        'pilot-node'                  => 'Nœud',
+        'pilot-username'              => 'Identifiant',
+        'pilot-password'              => 'Mot de passe',
     ],
 
     'actions' => [
@@ -64,6 +73,14 @@ return [
             'heading'      => 'Désactiver la logistique pour cette société ?',
             'description'  => 'La logistique est masquée et aucun nouvel enregistrement ne peut être créé pour cette société. Les données existantes sont conservées et une nouvelle activation rétablit l’accès.',
             'notification' => 'Logistique désactivée',
+        ],
+
+        'pilot-sync' => [
+            'label'        => 'Synchroniser la flotte PILOT',
+            'heading'      => 'Synchroniser la flotte depuis PILOT ?',
+            'description'  => 'Les véhicules trouvés dans PILOT seront créés ou mis à jour dans la flotte de cette société.',
+            'notification' => ':created créés, :updated mis à jour, :skipped ignorés.',
+            'error'        => 'Échec de la synchronisation PILOT',
         ],
     ],
 

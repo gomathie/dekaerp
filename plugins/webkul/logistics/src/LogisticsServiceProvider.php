@@ -58,6 +58,8 @@ class LogisticsServiceProvider extends PackageServiceProvider
                 '2026_10_01_000020_add_pod_capture_options_to_logistics_tables',
                 '2026_10_21_000001_add_confidential_fields_to_logistics_shipments_table',
                 '2026_10_21_000002_add_product_fields_to_logistics_shipment_lines_table',
+                '2026_10_21_000003_add_pilot_telematics_to_logistics_company_settings_table',
+                '2026_10_21_000004_add_location_to_logistics_vehicles_table',
             ])
             ->runsMigrations()
             ->hasRoutes(['web'])
