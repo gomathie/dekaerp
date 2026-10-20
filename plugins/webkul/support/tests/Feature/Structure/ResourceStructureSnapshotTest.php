@@ -4,6 +4,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
+require_once __DIR__.'/../../Helpers/TestBootstrapHelper.php';
 require_once __DIR__.'/../../Helpers/ResourceStructureHelper.php';
 
 /**
