@@ -13,10 +13,11 @@ return [
 
     'form' => [
         'tabs' => [
-            'general'    => 'عام',
-            'route'      => 'المسار ومحطات التوقف',
-            'cargo'      => 'الحمولة',
-            'assignment' => 'التعيين',
+            'general'      => 'عام',
+            'route'        => 'المسار ومحطات التوقف',
+            'cargo'        => 'الحمولة',
+            'assignment'   => 'التعيين',
+            'confidential' => 'سري',
         ],
 
         'fields' => [
@@ -59,7 +60,15 @@ return [
             'carrier'                => 'الناقل',
             'carrier-helper'         => 'للنقل المتعاقد عليه من الباطن. تُسجل تكاليف الناقل كمصروفات.',
             'carrier-reference'      => 'مرجع الناقل',
-            'waybill-no'             => 'رقم بوليصة الشحن',
+            'waybill-no'                      => 'رقم بوليصة الشحن',
+            'line-type'                       => 'نوع السطر',
+            'line-product'                    => 'المنتج',
+            'is-confidential'                 => 'شحنة سرية',
+            'is-confidential-helper'          => 'يخفي تفاصيل الحمولة في بوليصة الشحن واستمارة السائق.',
+            'confidential-description'        => 'وصف الحمولة لبوليصة الشحن',
+            'confidential-description-helper' => 'يظهر هذا النص في البوليصة بدلاً من قائمة الحمولة الكاملة.',
+            'consignor'                       => 'شُحن بالنيابة عن',
+            'consignor-helper'                => 'الشركة التي تُنقل بضاعتها (3PL / علامة تجارية بيضاء).',
         ],
     ],
 

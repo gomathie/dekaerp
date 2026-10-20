@@ -7,6 +7,8 @@ return [
 
     'title' => 'Carta de porte',
 
+    'confidential-goods' => 'Mercancía confidencial — detalles no divulgados',
+
     'labels' => [
         'waybill-number'       => 'Número de carta de porte',
         'shipment-number'      => 'Número de envío',
@@ -15,6 +17,7 @@ return [
         'sender'               => 'Remitente',
         'recipient'            => 'Destinatario',
         'route'                => 'Ruta',
+        'consignor'            => 'Enviado en nombre de',
         'origin'               => 'Origen',
         'destination'          => 'Destino',
         'planned-pickup'       => 'Recogida planificada',

@@ -51,9 +51,10 @@ class Shipment extends Model
         'transport_mode'  => 'road',
         'priority'        => 'normal',
         'state'           => 'draft',
-        'is_fragile'      => false,
-        'is_hazardous'    => false,
-        'is_opening'      => false,
+        'is_fragile'       => false,
+        'is_hazardous'     => false,
+        'is_opening'       => false,
+        'is_confidential'  => false,
         'total_packages'  => 0,
         'total_weight_kg' => 0,
         'total_volume_m3' => 0,
@@ -78,6 +79,8 @@ class Shipment extends Model
         'carrier_reference',
         'waybill_no',
         'is_opening',
+        'is_confidential',
+        'confidential_description',
         'total_packages',
         'total_weight_kg',
         'total_volume_m3',
@@ -89,6 +92,7 @@ class Shipment extends Model
         'service_type_id',
         'currency_id',
         'dispatcher_id',
+        'consignor_partner_id',
         'company_id',
         'creator_id',
     ];
@@ -105,6 +109,7 @@ class Shipment extends Model
         'is_fragile'           => 'boolean',
         'is_hazardous'         => 'boolean',
         'is_opening'           => 'boolean',
+        'is_confidential'      => 'boolean',
         'total_packages'       => 'integer',
         'total_weight_kg'      => 'decimal:3',
         'total_volume_m3'      => 'decimal:3',
@@ -133,6 +138,11 @@ class Shipment extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Partner::class, 'customer_id');
+    }
+
+    public function consignor(): BelongsTo
+    {
+        return $this->belongsTo(Partner::class, 'consignor_partner_id');
     }
 
     public function pickupAddress(): BelongsTo

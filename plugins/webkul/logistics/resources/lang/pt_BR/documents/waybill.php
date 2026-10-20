@@ -7,6 +7,8 @@ return [
 
     'title' => 'Conhecimento de transporte',
 
+    'confidential-goods' => 'Mercadoria confidencial — detalhes não divulgados',
+
     'labels' => [
         'waybill-number'       => 'Número do conhecimento de transporte',
         'shipment-number'      => 'Número da remessa',
@@ -15,6 +17,7 @@ return [
         'sender'               => 'Remetente',
         'recipient'            => 'Destinatário',
         'route'                => 'Rota',
+        'consignor'            => 'Enviado em nome de',
         'origin'               => 'Origem',
         'destination'          => 'Destino',
         'planned-pickup'       => 'Coleta planejada',

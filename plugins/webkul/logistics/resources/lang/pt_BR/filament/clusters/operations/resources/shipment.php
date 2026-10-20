@@ -13,10 +13,11 @@ return [
 
     'form' => [
         'tabs' => [
-            'general'    => 'Geral',
-            'route'      => 'Rota e paradas',
-            'cargo'      => 'Carga',
-            'assignment' => 'Atribuição',
+            'general'      => 'Geral',
+            'route'        => 'Rota e paradas',
+            'cargo'        => 'Carga',
+            'assignment'   => 'Atribuição',
+            'confidential' => 'Confidencial',
         ],
 
         'fields' => [
@@ -59,7 +60,15 @@ return [
             'carrier'                => 'Transportadora',
             'carrier-helper'         => 'Para transporte subcontratado. Os custos da transportadora são registrados como despesas.',
             'carrier-reference'      => 'Referência da transportadora',
-            'waybill-no'             => 'Número do conhecimento de transporte',
+            'waybill-no'                      => 'Número do conhecimento de transporte',
+            'line-type'                       => 'Tipo de linha',
+            'line-product'                    => 'Produto',
+            'is-confidential'                 => 'Remessa confidencial',
+            'is-confidential-helper'          => 'Oculta os detalhes da carga no conhecimento e no formulário do motorista.',
+            'confidential-description'        => 'Descrição da carga para o conhecimento',
+            'confidential-description-helper' => 'Este texto aparece no conhecimento no lugar da lista completa de carga.',
+            'consignor'                       => 'Enviado em nome de',
+            'consignor-helper'                => 'A empresa cujas mercadorias estão sendo transportadas (3PL / marca branca).',
         ],
     ],
 
