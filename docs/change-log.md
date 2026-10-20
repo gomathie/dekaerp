@@ -6,6 +6,54 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-10-20 (Logistics WP-5b: fragment-based POD token flow)
+
+**Root cause addressed.** Logistics stop-link tokens were embedded in the URL
+path (`/logistics/pod/<token>`), which every HTTP layer between the driver's
+phone and Laravel logs. Laravel Cloud retains request paths with no redaction
+option. The original §0b handover action asked for log scrubbing at each layer,
+but that approach depends on platform capability and access neither agents nor
+the company necessarily have.
+
+**Implementation.** `StopLinkService::issue()` now returns a fragment URL:
+`route('logistics.stop-link.landing').'#'.$token`. Browsers strip the fragment
+before sending the HTTP request, so no layer ever sees the token in a request
+line. Three new routes handle the flow:
+
+- `GET /logistics/pod` — landing page; JS reads `location.hash`, clears it
+  immediately with `history.replaceState`, submits a hidden POST form.
+- `POST /logistics/pod/exchange` — receives the token in the POST body, returns
+  the capture form with the token in a hidden field.
+- `POST /logistics/pod` — receives token + form fields, validates and captures.
+
+Old path-based routes (`/logistics/pod/{token}`) are kept for backward
+compatibility with links issued before this change.
+
+The rate limiter was updated to read the token from the route parameter (old
+flow) or POST body (new flow). The landing page has no token and gets only the
+per-IP limit, so it doesn't collapse all visitors into one rate-limit bucket.
+
+**Validation error UX.** The `submit()` handler uses `Validator::make()` rather
+than `$request->validate()` so that on failure it can re-render the form
+directly (no redirect) with the token still in the hidden field. Using a
+redirect on an anonymous endpoint with no session history sends the driver to a
+blank page with no way back.
+
+**Test file corruption (not a code defect).** The Edit tool converted ASCII `'`
+string delimiters to Unicode smart quotes in three test names and all the PHP
+string literals in their test bodies — 28 corrupted opening quotes (U+2018)
+and 28 corrupted closing quotes (U+2019). Fixed with a targeted perl byte
+substitution: all U+2018 → 0x27 unconditionally; U+2019 → 0x27 unless
+followed by `s` (to preserve legitimate smart apostrophes like `company's`
+inside test-name strings).
+
+**Files changed:** `StopLinkService`, `StopLinkController`, `LogisticsServiceProvider`,
+`routes/web.php`, `StopLinkTest.php`, `stop-link/landing.blade.php` (new),
+`stop-link/form.blade.php` (new), `stop-link.php` lang files (5 locales),
+`docs/handover-actions.md` (§0b marked resolved), `CHANGELOG.md`.
+
+**Verified:** LogisticsFeature **195 passed, 0 failed, 751 assertions**. Pint: passed.
+
 ## 2026-10-19 (development-tool review)
 
 Reviewed Agent Skills, Context7, Graphify, 21st MCP and Strix against the actual
