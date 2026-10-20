@@ -31,6 +31,12 @@ return [
         'submitting'          => 'Confirming…',
     ],
 
+    'landing' => [
+        'loading'       => 'Opening your delivery link…',
+        'invalid-title' => 'No link found',
+        'invalid-body'  => 'This does not appear to be a valid delivery link. Check the link you were sent, or ask the office for a new one.',
+    ],
+
     'done' => [
         'title'   => 'Delivery confirmed',
         'message' => 'Thank you. The delivery has been recorded and this link is now closed.',

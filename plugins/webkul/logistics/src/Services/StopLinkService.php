@@ -152,7 +152,11 @@ class StopLinkService
             ]);
         });
 
-        return route('logistics.stop-link.show', ['token' => $token]);
+        // The token is in the fragment, not the path. Fragments are stripped by
+        // every HTTP layer before the request is forwarded, so the token does
+        // not appear in access logs at the app server, the edge CDN, or any
+        // load balancer between them.
+        return route('logistics.stop-link.landing').'#'.$token;
     }
 
     public function revoke(Stop $stop): void
