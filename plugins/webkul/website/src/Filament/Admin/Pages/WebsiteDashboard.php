@@ -6,6 +6,7 @@ use App\Models\User;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms\Components\Select;
+use Filament\Panel;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Filament\Pages\Dashboard\Concerns\HasFiltersForm;
 use Filament\Schemas\Schema;
@@ -27,7 +28,7 @@ class WebsiteDashboard extends BaseDashboard
 
     protected static string $routePath = 'website';
 
-    public static function getRouteName(?string $panel = null): string
+    public static function getRouteName(?Panel $panel = null): string
     {
         return 'filament.admin.pages.website-dashboard';
     }
