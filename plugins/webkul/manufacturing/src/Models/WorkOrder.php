@@ -295,7 +295,7 @@ class WorkOrder extends Model implements Sortable
         static::created(function ($workOrder) {
             $workOrder->updateQuietly([
                 'name'    => $workOrder->name,
-                'barcode' => 'MO/'.$workOrder->manufacturingOrder->id.'/'.$workOrder->id,
+                'barcode' => 'MO-'.$workOrder->manufacturingOrder->id.'-'.$workOrder->id,
             ]);
         });
 

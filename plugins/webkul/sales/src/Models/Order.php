@@ -253,7 +253,7 @@ class Order extends Model
 
         $this->name = SequenceService::next('sales.order', $this->company_id, [
             'name'         => 'Sales Order',
-            'prefix'       => 'SO/',
+            'prefix'       => 'SO-',
             'initial_from' => static::withoutGlobalScopes(),
         ]);
     }

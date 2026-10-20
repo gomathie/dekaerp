@@ -15,7 +15,7 @@ class SequenceSeeder extends Seeder
     {
         SequenceService::ensure('manufacturing.order', null, [
             'name'         => 'Manufacturing Order',
-            'prefix'       => 'MO/',
+            'prefix'       => 'MO-',
             'initial_from' => Order::withoutGlobalScopes(),
         ]);
     }

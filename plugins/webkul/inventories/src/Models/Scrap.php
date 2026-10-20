@@ -159,7 +159,7 @@ class Scrap extends Model
 
         $this->name = SequenceService::next('inventories.scrap', $this->company_id, [
             'name'         => 'Scrap',
-            'prefix'       => 'SP/',
+            'prefix'       => 'SP-',
             'initial_from' => static::withoutGlobalScopes(),
         ]);
     }

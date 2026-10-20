@@ -16,7 +16,7 @@ class SequenceSeeder extends Seeder
     {
         SequenceService::ensure('inventories.scrap', null, [
             'name'         => 'Scrap',
-            'prefix'       => 'SP/',
+            'prefix'       => 'SP-',
             'initial_from' => Scrap::withoutGlobalScopes(),
         ]);
 
