@@ -261,44 +261,31 @@ Background: `docs/company-admin-role-plan.md` sections 4f-4h.
 
 ---
 
-## 0b. Stop POD link tokens being retained in edge logs (2026-09-24)
+## 0b. Stop POD link tokens being retained in edge logs — RESOLVED 2026-10-20
 
-**You must do this wherever requests reach the app before Laravel sees them -
-the Laravel Cloud router, and any CDN or proxy in front of it.**
+**Resolved in code. No production log-scrubbing configuration needed.**
 
-Logistics WP-5b captures proof of delivery through a one-time link whose token
-is part of the URL path:
+The original concern (2026-09-24) was that `/logistics/pod/<token>` put a
+credential in the HTTP request path, where every log layer would retain it.
 
-    https://<host>/logistics/pod/<64-character-token>
+**How it was resolved (WP-5b, 2026-10-20).** The link issued to dispatchers
+now uses a URL fragment:
 
-That token is a credential. Anyone holding it can complete that one delivery
-until it is used, expires or is revoked. Because it is in the path rather than a
-header or a body, every layer that logs request paths keeps a copy.
+    https://<host>/logistics/pod#<64-character-token>
 
-What the application already handles:
+Browsers strip the fragment before sending the HTTP request — the token is
+never transmitted to the server and never appears in any access log, edge CDN
+log, or load-balancer log at any layer. The landing page (`GET /logistics/pod`)
+reads `location.hash`, immediately clears it via `history.replaceState`, and
+POSTs the token to the exchange endpoint as a form body field. All subsequent
+requests carry the token only in POST bodies.
 
-- The token is stored only as a SHA-256 hash, never in plaintext.
-- Each link works once, expires after the company's chosen lifetime (4, 8, 16,
-  24 or 48 hours), and can be revoked from the shipment page.
-- The capture page sends `noindex` and `no-referrer`, so the URL reaches neither
-  a search engine nor a Referer header.
-- Sentry events have the token redacted before they leave
-  (`AppServiceProvider::redactStopLinkTokensFromSentry`). Sentry records the
-  request URL regardless of `send_default_pii`, which covers cookies, the client
-  IP and the body but not the URL.
+Old path-based links (`/logistics/pod/{token}`) remain routed for backward
+compatibility, and the Sentry redaction (`redactStopLinkTokensFromSentry`)
+covers them. No new links use that pattern.
 
-What needs you:
-
-1. In Laravel Cloud, check whether HTTP access logs retain full request paths,
-   and for how long. If they do, either shorten retention for them or scrub the
-   path segment after `/logistics/pod/`.
-2. If a CDN or proxy sits in front - Cloudflare or similar - do the same there.
-   Cloudflare's HTTP request logs keep the full URI by default.
-3. If neither can scrub, record that here as accepted risk. The mitigation is
-   then the link lifetime, which a company can set as low as 4 hours.
-
-Worth doing before the first customer uses stop links. Not urgent before that:
-no tokens exist yet, because Logistics is not released.
+**Supabase Security + Performance advisors: passed 2026-10-20.** The 19 new
+logistics tables produced no new findings.
 
 ---
 
