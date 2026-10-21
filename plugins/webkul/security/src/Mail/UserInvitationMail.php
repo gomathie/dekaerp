@@ -8,7 +8,6 @@ use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\URL;
 use Webkul\Security\Models\Invitation;
 
 class UserInvitationMail extends Mailable
@@ -45,11 +44,9 @@ class UserInvitationMail extends Mailable
         return new Content(
             markdown: 'security::emails.user-invitation',
             with: [
-                'acceptUrl' => URL::temporarySignedRoute(
-                    'security.invitation.accept',
-                    now()->addDays(7),
-                    ['invitation' => $this->invitation]
-                ),
+                // One definition, shared with the UI that shows the link when
+                // this mail could not be sent, so the two cannot drift apart.
+                'acceptUrl' => $this->invitation->acceptUrl(),
             ]
         );
     }
