@@ -24,7 +24,7 @@ it('defaults to false on a user built in memory, matching the column default', f
 });
 
 it('sends a flagged user to the profile page instead of where they asked to go', function () {
-    $user = multiCompanyAdminTestUser();
+    $user = multiCompanyAdminTestUser(multiCompanyAdminTestCompany());
     $user->forceFill(['must_change_password' => true])->save();
 
     multiCompanyAdminTestAuthenticate($user, []);
@@ -39,7 +39,7 @@ it('sends a flagged user to the profile page instead of where they asked to go',
 });
 
 it('lets the profile page itself through, or the user could never comply', function () {
-    $user = multiCompanyAdminTestUser();
+    $user = multiCompanyAdminTestUser(multiCompanyAdminTestCompany());
     $user->forceFill(['must_change_password' => true])->save();
 
     multiCompanyAdminTestAuthenticate($user, []);
@@ -52,7 +52,7 @@ it('lets the profile page itself through, or the user could never comply', funct
 });
 
 it('does not interfere with a user who is not flagged', function () {
-    $user = multiCompanyAdminTestUser();
+    $user = multiCompanyAdminTestUser(multiCompanyAdminTestCompany());
 
     multiCompanyAdminTestAuthenticate($user, []);
 
@@ -65,7 +65,7 @@ it('does not interfere with a user who is not flagged', function () {
 });
 
 it('clears the requirement once the password is changed', function () {
-    $user = multiCompanyAdminTestUser();
+    $user = multiCompanyAdminTestUser(multiCompanyAdminTestCompany());
     $user->forceFill(['must_change_password' => true])->save();
 
     $user->update(['password' => 'a-brand-new-secret']);
@@ -76,7 +76,7 @@ it('clears the requirement once the password is changed', function () {
 it('keeps the requirement when an administrator sets a password and flags it at once', function () {
     // Otherwise the auto-clear would cancel the very thing being asked for:
     // setting someone's password and requiring them to replace it is one save.
-    $user = multiCompanyAdminTestUser();
+    $user = multiCompanyAdminTestUser(multiCompanyAdminTestCompany());
 
     $user->update([
         'password'             => 'temporary-handover-secret',
