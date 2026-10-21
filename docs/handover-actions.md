@@ -501,5 +501,6 @@ database password.
 - **Restructure backlog** - `docs/restructure-backlog.md`. 70 resources are
   mechanically safe to adopt, 51 hold local changes that must be carried over
   by hand. Pure merge-debt reduction; nothing breaks by leaving it.
-- **Remaining suites** - most of `AccountFeature`, plus project, product and
-  website. The harness works; see `docs/running-tests.md`.
+- **Remaining suites** - most of `AccountFeature`, plus project and product.
+  (Website is no longer one of them: the Website and Blogs plugins were removed
+  on 2026-10-21.) The harness works; see `docs/running-tests.md`.
