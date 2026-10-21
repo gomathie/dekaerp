@@ -27,6 +27,7 @@ use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema as DBSchema;
 use RuntimeException;
 use Throwable;
@@ -262,7 +263,21 @@ class PluginResource extends Resource
                             return view('plugin-manager::uninstall-modal', compact('record', 'dependents', 'installedDependents', 'tables'));
                         })
                         ->action(fn ($record) => self::uninstallPlugin($record))
-                        ->after(fn () => redirect(self::getUrl('index'))),
+                        // Guarded: this redirects to the page the user is
+                        // already on, and it runs immediately after the caches
+                        // were cleared. When the rebuild fails the route is
+                        // momentarily unresolvable and getUrl() throws
+                        // RouteNotFoundException, turning a completed uninstall
+                        // into an unhandled error (2026-10-21). Skipping the
+                        // redirect loses nothing: Livewire re-renders the table
+                        // either way.
+                        ->after(function () {
+                            if (! Route::has(self::getRouteBaseName().'.index')) {
+                                return null;
+                            }
+
+                            return redirect(self::getUrl('index'));
+                        }),
                 ]),
             ], position: RecordActionsPosition::BeforeColumns)
             ->recordActionsAlignment('end')
@@ -423,7 +438,18 @@ class PluginResource extends Resource
                 }
             });
 
-        Package::refreshPluginCaches();
+        // A false return means the caches were cleared but not rebuilt, so the
+        // application is now running uncached. Said out loud rather than only
+        // reported: on 2026-10-21 this failed on production in silence, and the
+        // only visible sign was an unrelated-looking RouteNotFoundException.
+        if (! Package::refreshPluginCaches()) {
+            Notification::make()
+                ->title(__('plugin-manager::filament/resources/plugin.notifications.cache-rebuild-failed.title'))
+                ->body(__('plugin-manager::filament/resources/plugin.notifications.cache-rebuild-failed.body'))
+                ->warning()
+                ->persistent()
+                ->send();
+        }
 
         if (empty($errors)) {
             Notification::make()

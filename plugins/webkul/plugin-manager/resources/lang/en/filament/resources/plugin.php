@@ -52,6 +52,11 @@ return [
             'title' => 'Plugin Uninstalled Successfully',
             'body'  => "The ':name' plugin has been uninstalled.",
         ],
+
+        'cache-rebuild-failed' => [
+            'title' => 'Caches were cleared but not rebuilt',
+            'body'  => 'The plugin change itself finished. The application is now running without cached config and routes, which is slower but correct. Run "php artisan optimize" and read its output to find out why it failed; the error has also been reported.',
+        ],
         'uninstalled-failed' => [
             'title' => 'Uninstallation Failed',
         ],
