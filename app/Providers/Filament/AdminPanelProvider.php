@@ -114,6 +114,10 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                // After Authenticate, so there is a user to inspect: holds
+                // anyone with must_change_password on the profile page until
+                // they replace a password an administrator set for them.
+                RequirePasswordChange::class,
             ])
             ->multiFactorAuthentication([
                 AppAuthentication::make()
