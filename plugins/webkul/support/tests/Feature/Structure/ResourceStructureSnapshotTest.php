@@ -21,6 +21,14 @@ require_once __DIR__.'/../../Helpers/ResourceStructureHelper.php';
  *
  * Fixtures are per plugin so converting one plugin re-runs only that plugin,
  * matching the plan's one-plugin-per-commit rule.
+ *
+ * CAVEAT, and it limits what this proves today: a resource is only reachable
+ * here when its plugin is installed in the run, and this suite's bootstrap
+ * does not install them all - most fixtures therefore record
+ * `__not_installed` rather than a structure. Before relying on this as the net
+ * for a plugin's conversion, run it in a context where that plugin is
+ * installed, so its fixture holds a real tree. Tables are not captured at all
+ * yet; see ResourceStructureHelper.
  */
 beforeEach(function () {
     FilamentHelper::actingAs();
@@ -40,11 +48,14 @@ it('sees registered resources at all', function () {
 it('records the declared structure of a plugin’s resources', function (string $plugin, string $namespace) {
     $resources = ResourceStructureHelper::resources($namespace);
 
-    if ($resources === []) {
-        $this->markTestSkipped($plugin.' registers no admin panel resources.');
-    }
-
-    $snapshot = [];
+    // Never skipped. Which plugins the test bootstrap installs varies between
+    // runs, so one run captured 7 plugins and the next only 3 - and a skip
+    // reported that as success. Recording the absence puts it in the fixture,
+    // where a later run that does see the plugin fails loudly on the diff
+    // instead of quietly baselining less than before.
+    $snapshot = $resources === []
+        ? ['__not_installed' => 'No '.$namespace.' resources are registered in the admin panel for this run.']
+        : [];
 
     foreach ($resources as $resource) {
         $snapshot[$resource] = ResourceStructureHelper::describeResource($resource);

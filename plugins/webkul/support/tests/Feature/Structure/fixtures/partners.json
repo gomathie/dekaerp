@@ -1,0 +1,462 @@
+{
+    "Webkul\\Partner\\Filament\\Resources\\AddressResource": {
+        "model": "Webkul\\Partner\\Models\\Address",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\Radio",
+                "name": "sub_type"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "parent_id"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "email"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "phone"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "mobile"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "street1"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "street2"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "city"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "zip"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "country_id"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "state_id"
+            }
+        ],
+        "infolist": []
+    },
+    "Webkul\\Partner\\Filament\\Resources\\BankAccountResource": {
+        "model": "Webkul\\Partner\\Models\\BankAccount",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "account_number"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Toggle",
+                "name": "can_send_money"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "bank_id"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "partner_id"
+            }
+        ],
+        "infolist": []
+    },
+    "Webkul\\Partner\\Filament\\Resources\\BankResource": {
+        "model": "Webkul\\Partner\\Models\\Bank",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "name"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "code"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "email"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "phone"
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "country_id"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "state_id"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "street1"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "street2"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "city"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "zip"
+                    }
+                ]
+            }
+        ],
+        "infolist": []
+    },
+    "Webkul\\Partner\\Filament\\Resources\\IndustryResource": {
+        "model": "Webkul\\Partner\\Models\\Industry",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "description"
+            }
+        ],
+        "infolist": []
+    },
+    "Webkul\\Partner\\Filament\\Resources\\PartnerResource": {
+        "model": "Webkul\\Partner\\Models\\Partner",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Group",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Radio",
+                                        "name": "account_type"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "parent_id"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Group",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\FileUpload",
+                                        "name": "avatar"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "tax_id"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "job_title"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "phone"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "mobile"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "email"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "website"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "title_id"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "tags"
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "street1"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "street2"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "city"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "zip"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "country_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "state_id"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Tabs",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "user_id"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "company_registry"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "reference"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "industry_id"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section"
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Group",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "account_type"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "parent.name"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Group",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\ImageEntry",
+                                        "name": "avatar"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Grid",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "tax_id"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "job_title"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "phone"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "mobile"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "email"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "website"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "title.name"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "tags.name"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Fieldset",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "street1"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "street2"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "city"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "zip"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "country.name"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "state.name"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Tabs",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "user.name"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "company_registry"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "reference"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "industry.name"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Webkul\\Partner\\Filament\\Resources\\TagResource": {
+        "model": "Webkul\\Partner\\Models\\Tag",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\ColorPicker",
+                "name": "color"
+            }
+        ],
+        "infolist": []
+    },
+    "Webkul\\Partner\\Filament\\Resources\\TitleResource": {
+        "model": "Webkul\\Partner\\Models\\Title",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "short_name"
+            }
+        ],
+        "infolist": []
+    }
+}
