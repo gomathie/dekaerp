@@ -1,5 +1,12 @@
 # v1.6.0 restructure backlog
 
+> **Note, 2026-10-21.** The Website and Blogs plugins were removed from the
+> product. Four entries below belong to them and are now moot: blogs
+> `CategoryResource` and `TagResource` in SAFE, and blogs `PostResource` and
+> website `PageResource` in REVIEW. That takes the real totals to 68 safe and
+> 49 review. The lists are left as they were recorded rather than edited, so
+> the counts above still match the analysis that produced them.
+
 Upstream v1.6.0 moved every Filament resource's `form()`, `table()` and
 `infolist()` body out into `Schemas/XxxForm.php`, `Schemas/XxxInfolist.php`
 and `Tables/XxxTable.php` classes. The body is copied verbatim - **no
