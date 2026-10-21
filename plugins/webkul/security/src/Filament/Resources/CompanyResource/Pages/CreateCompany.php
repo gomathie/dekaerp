@@ -5,6 +5,7 @@ namespace Webkul\Security\Filament\Resources\CompanyResource\Pages;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
 use Webkul\Security\Filament\Resources\CompanyResource;
+use Webkul\Security\Models\Invitation;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\CompanyAdministratorInviter;
 use Webkul\Support\Filament\Resources\CompanyResource\Pages\CreateCompany as BaseCreateCompany;
@@ -48,7 +49,18 @@ class CreateCompany extends BaseCreateCompany
         // that needs to survive the page transition to be acted on.
         Notification::make('companyAdministratorNotInvited')
             ->title(__(static::$lang.'.skipped.title'))
-            ->body(__(static::$lang.'.skipped.'.$reason))
+            ->body(__(static::$lang.'.skipped.'.$reason, [
+                // Only MAIL_FAILED's message uses this. The invitation exists
+                // but its link was only ever inside the email that failed, so
+                // without showing it here the tenant cannot be onboarded at all.
+                'link' => $reason === CompanyAdministratorInviter::MAIL_FAILED
+                    ? (Invitation::query()
+                        ->where('email', $this->getRecord()->email)
+                        ->latest('id')
+                        ->first()
+                        ?->acceptUrl() ?? '')
+                    : '',
+            ]))
             ->warning()
             ->persistent()
             ->send();

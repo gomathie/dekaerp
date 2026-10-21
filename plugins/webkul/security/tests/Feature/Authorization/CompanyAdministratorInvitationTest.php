@@ -101,6 +101,28 @@ it('reports a failure rather than throwing when the email already belongs to a u
         ->and(Invitation::query()->where('default_company_id', $company->getKey())->exists())->toBeFalse();
 });
 
+it('keeps the invitation and its link usable when the email cannot be sent', function () {
+    // The reason this matters: before acceptUrl() existed on the model, the
+    // link lived only inside the email. A failed send left the invitation in
+    // the database but unreachable, so the tenant could never be onboarded.
+    Mail::shouldReceive('to')->andThrow(new RuntimeException('smtp down'));
+
+    $superAdmin = multiCompanyAdminTestSuperAdmin();
+    multiCompanyAdminTestAuthenticate($superAdmin, []);
+
+    $company = multiCompanyAdminTestCompany();
+    $company->forceFill(['email' => 'admin@tenant-nomail.test'])->save();
+
+    $reason = app(CompanyAdministratorInviter::class)->invite($company, $superAdmin);
+
+    $invitation = Invitation::query()->where('email', 'admin@tenant-nomail.test')->firstOrFail();
+
+    expect($reason)->toBe(CompanyAdministratorInviter::MAIL_FAILED)
+        // The row survives, so the link can still be handed over.
+        ->and($invitation->acceptUrl())->toContain('signature=')
+        ->and($invitation->acceptUrl())->toContain('expires=');
+});
+
 it('does nothing when invitations are switched off', function () {
     settings(UserSettings::class)->enable_user_invitation = false;
     settings(UserSettings::class)->save();
