@@ -16,7 +16,6 @@ return [
         'employee'      => 'Employees',
         'time-off'      => 'Time Off',
         'recruitment'   => 'Recruitments',
-        'website'       => 'Website',
         'plugin'        => 'Plugins',
         'setting'       => 'Settings',
         'help'          => 'Help',

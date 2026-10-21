@@ -78,7 +78,7 @@ return [
                     'title' => 'Module reference: 12 modules / 69 pages',
                     'items' => [
                         'Invoices, Sales, Purchase, Inventory, Manufacturing, Maintenance',
-                        'Contacts, Project, Website, Employees, Recruitments, Time Off',
+                        'Contacts, Project, Employees, Recruitments, Time Off',
                     ],
                 ],
             ],

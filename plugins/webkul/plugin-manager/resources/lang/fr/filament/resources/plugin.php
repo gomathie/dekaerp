@@ -52,6 +52,11 @@ return [
             'title' => 'Plugin désinstallé avec succès',
             'body'  => "Le plugin ':name' a été désinstallé.",
         ],
+
+        'cache-rebuild-failed' => [
+            'title' => 'Les caches ont été vidés mais non reconstruits',
+            'body'  => 'La modification du plugin a bien abouti. L’application fonctionne désormais sans cache de configuration ni de routes, ce qui est plus lent mais correct. Exécutez « php artisan optimize » et lisez sa sortie pour comprendre l’échec ; l’erreur a également été signalée.',
+        ],
         'uninstalled-failed' => [
             'title' => 'Échec de la désinstallation',
         ],

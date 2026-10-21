@@ -8,7 +8,6 @@ use Webkul\Account\AccountServiceProvider;
 use Webkul\Accounting\AccountingServiceProvider;
 use Webkul\Analytic\AnalyticServiceProvider;
 use Webkul\Barcode\BarcodeServiceProvider;
-use Webkul\Blog\BlogServiceProvider;
 use Webkul\Chatter\ChatterServiceProvider;
 use Webkul\Contact\ContactServiceProvider;
 use Webkul\Employee\EmployeeServiceProvider;
@@ -32,7 +31,6 @@ use Webkul\Support\SupportServiceProvider;
 use Webkul\TableViews\TableViewsServiceProvider;
 use Webkul\TimeOff\TimeOffServiceProvider;
 use Webkul\Timesheet\TimesheetServiceProvider;
-use Webkul\Website\WebsiteServiceProvider;
 
 return [
     AppServiceProvider::class,
@@ -43,7 +41,6 @@ return [
     AccountServiceProvider::class,
     AnalyticServiceProvider::class,
     BarcodeServiceProvider::class,
-    BlogServiceProvider::class,
     ChatterServiceProvider::class,
     ContactServiceProvider::class,
     EmployeeServiceProvider::class,
@@ -66,6 +63,5 @@ return [
     TimeOffServiceProvider::class,
     FullCalendarServiceProvider::class,
     TimesheetServiceProvider::class,
-    WebsiteServiceProvider::class,
     PluginManagerServiceProvider::class,
 ];
