@@ -21,10 +21,12 @@ return [
             'general-information' => [
                 'title'  => 'Informações gerais',
                 'fields' => [
-                    'name'                  => 'Nome',
-                    'email'                 => 'E-mail',
-                    'password'              => 'Senha',
-                    'password-confirmation' => 'Confirmação de senha',
+                    'name'                        => 'Nome',
+                    'email'                       => 'E-mail',
+                    'password'                    => 'Senha',
+                    'password-confirmation'       => 'Confirmação de senha',
+                    'must-change-password'        => 'Exigir uma nova senha no próximo acesso',
+                    'must-change-password-helper' => 'Use quando você mesmo definir a senha e a repassar. A pessoa ficará na página de perfil até substituí-la, e a exigência é removida assim que isso acontecer.',
                 ],
             ],
 
