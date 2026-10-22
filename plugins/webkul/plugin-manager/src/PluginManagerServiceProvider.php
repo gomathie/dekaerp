@@ -8,6 +8,9 @@ use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\Facades\Event;
 use Webkul\PluginManager\Console\Commands\FindMissingTranslations;
 use Webkul\PluginManager\Console\Commands\InstallERP;
+use Webkul\PluginManager\Services\CompanyPluginProvisioner;
+use Webkul\PluginManager\Support\PluginAccess;
+use Webkul\Support\Models\Company;
 
 class PluginManagerServiceProvider extends PackageServiceProvider
 {
@@ -23,6 +26,7 @@ class PluginManagerServiceProvider extends PackageServiceProvider
             ->hasTranslations()
             ->hasMigrations([
                 '2024_11_05_105102_create_plugins_table',
+                '2026_10_22_000001_create_company_plugin_table',
             ])
             ->hasSeeder('Webkul\\PluginManager\\Database\\Seeders\\PluginSeeder')
             ->runsMigrations()
@@ -40,6 +44,15 @@ class PluginManagerServiceProvider extends PackageServiceProvider
         $this->app->make(PermissionManager::class)->managePermissions();
 
         Event::listen('aureus.installed', 'Webkul\PluginManager\Listeners\Installer@installed');
+
+        // A new company starts with the plugins every existing company has, so
+        // introducing per-company availability changes nothing by itself and
+        // removing access stays the deliberate act. On the model event rather
+        // than the create page so seeders, factories and console commands
+        // behave the same as the UI.
+        Company::created(function (Company $company): void {
+            app(CompanyPluginProvisioner::class)->grantInstalledPlugins($company);
+        });
     }
 
     public function packageRegistered(): void
@@ -49,6 +62,11 @@ class PluginManagerServiceProvider extends PackageServiceProvider
         });
 
         $this->app->singleton(PermissionManager::class, fn () => new PermissionManager);
+
+        // Scoped, not singleton: the grants are read once per request or queued
+        // job and must not outlive it, or a job would act on another request's
+        // view of who may use what.
+        $this->app->scoped(PluginAccess::class);
     }
 
     public function registerCustomCss()

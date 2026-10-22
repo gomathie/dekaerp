@@ -44,6 +44,9 @@
         <testsuite name="EmployeeFeature">
             <directory>plugins/webkul/employees/tests/Feature</directory>
         </testsuite>
+        <testsuite name="PluginManagerFeature">
+            <directory>plugins/webkul/plugin-manager/tests/Feature</directory>
+        </testsuite>
     </testsuites>
     <source>
         <include>

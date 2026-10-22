@@ -9,6 +9,7 @@ use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
+use Webkul\Support\Models\Company;
 
 class Plugin extends Model implements Sortable
 {
@@ -34,6 +35,20 @@ class Plugin extends Model implements Sortable
         'order_column_name'  => 'sort',
         'sort_when_creating' => true,
     ];
+
+    /**
+     * The companies allowed to use this plugin.
+     *
+     * Read without AllowedCompanyScope on purpose: this is the grant list
+     * itself, so scoping it to the acting user's companies would make the
+     * answer depend on who is asking.
+     */
+    public function companies(): BelongsToMany
+    {
+        return $this->belongsToMany(Company::class, 'company_plugin', 'plugin_id', 'company_id')
+            ->withoutGlobalScopes()
+            ->withTimestamps();
+    }
 
     public function dependencies(): BelongsToMany
     {
