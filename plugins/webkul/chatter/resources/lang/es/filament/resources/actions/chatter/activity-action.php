@@ -15,6 +15,7 @@ return [
                 'summary'       => 'Resumen',
                 'assigned-to'   => 'Asignado a',
                 'log-note'      => 'Registrar nota',
+                'body'          => 'Escriba su mensaje aquí',
             ],
         ],
 

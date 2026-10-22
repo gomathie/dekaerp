@@ -31,6 +31,7 @@ return [
                     'interviewers'               => 'المحاورون',
                     'recruiter'                  => 'المسؤول عن التوظيف',
                     'manager'                    => 'المدير',
+                    'company-modal-title'        => 'إنشاء شركة',
                 ],
             ],
 
