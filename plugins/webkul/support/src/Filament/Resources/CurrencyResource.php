@@ -28,6 +28,7 @@ use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Collection;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Filament\Forms\Components\Repeater;
 use Webkul\Support\Filament\Forms\Components\Repeater\TableColumn;
@@ -298,6 +299,17 @@ class CurrencyResource extends Resource
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
+                        ->action(function (Collection $records): void {
+                            try {
+                                $records->each(fn (Currency $record): ?bool => $record->delete());
+                            } catch (QueryException) {
+                                Notification::make()
+                                    ->danger()
+                                    ->title(__('support::filament/resources/currency.table.actions.delete.notification.error.title'))
+                                    ->body(__('support::filament/resources/currency.table.actions.delete.notification.error.body'))
+                                    ->send();
+                            }
+                        })
                         ->successNotification(
                             Notification::make()
                                 ->success()
