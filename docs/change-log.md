@@ -6,6 +6,47 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-10-22 (Per-company plugin availability)
+
+Installing a plugin was global, so enabling one for a single customer enabled it
+for every customer (user request, 2026-10-21: availability should follow each
+company's subscription).
+
+**Built and tested.** `company_plugin` pivot, where a row means that company may
+use that plugin and no row means it may not — no boolean, because that adds a
+third state ("row saying false" versus "no row") nothing needs. Read through
+`PluginManager\Support\PluginAccess`, modelled on `LogisticsAccess`: scoped
+singleton, read without the company scope so a record's own company can be
+checked when it is not the active one, `Schema::hasTable` guard for boot before
+migration, and only booleans leaving the class. `CompanyPluginProvisioner` grants
+the installed set on `Company::created`. A "Companies" action on the Plugins page
+manages grants; before it, they could only be changed with SQL.
+
+The migration backfills every existing company × installed plugin, and new
+companies are granted the same set, so **this changes nothing on deploy** —
+removing access is the deliberate act. `PluginManagerFeature`: 8 tests, 18
+assertions.
+
+**Not done: the gating itself.** Nothing calls `PluginAccess` yet, so grants are
+recorded but do not affect what anyone sees. Two findings shaped how that must be
+done, both now in AGENTS.md:
+
+1. Gating inside `Plugin::register()` is the obvious one-liner and is wrong.
+   Production runs `Artisan::call('optimize')`, which caches routes, so the
+   company active when the cache was built would decide the routes for everyone.
+   `LogisticsPlugin::register()` checks only `isPluginInstalled` for this reason.
+   Per-company gating has to sit where it is evaluated per request: cluster and
+   page `canAccess()`, widget `canView()`, resource `canViewAny()`, the policies,
+   and any service that re-checks because the super-admin `Gate::before` skips
+   policies.
+2. It is all-or-nothing per plugin. Hiding navigation while policies still allow
+   access leaves records reachable by direct URL and through the API — it looks
+   gated and is not, which is worse than not having started.
+
+Surveyed as a pilot, the Projects plugin alone is 2 clusters, 3 pages, 5 widgets,
+8 policies and its resources: roughly 20 files. Deliberately left unstarted
+rather than shipped half-gated.
+
 ## 2026-10-22 (Upstream findings UF-020–UF-024)
 
 Investigated the four stale v1.6.0 upstream findings assigned for local adoption.

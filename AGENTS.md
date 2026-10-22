@@ -1102,7 +1102,26 @@ MULTI-COMPANY FACTS THAT BITE
   company has none. Call `SequenceService::ensure($code, $companyId)` first for
   per-company numbering.
 • Installing a plugin is global (the `plugins` table has no company column).
-  Per-company availability must be built in the plugin.
+  Per-company availability lives in `company_plugin` (2026-10-22): a row means
+  that company may use that plugin, no row means it may not. Read it through
+  `Webkul\PluginManager\Support\PluginAccess` — `enabledForCurrent($name)` for
+  navigation and `enabledFor($name, $record->company_id)` per record. Grants are
+  managed by the "Companies" action on the Plugins page. The creating migration
+  backfills every existing company and `CompanyPluginProvisioner` grants the
+  installed set to each new one, so the feature changes nothing until access is
+  deliberately removed.
+• **Never gate a plugin inside `Plugin::register()`.** It is the obvious
+  one-liner and it is wrong: production runs `Artisan::call('optimize')`, which
+  caches routes, so whichever company happened to be active when the cache was
+  built decides the registered routes for everyone. `LogisticsPlugin::register()`
+  therefore checks only `isPluginInstalled`. Per-company gating belongs where it
+  is evaluated per request: cluster and page `canAccess()`, widget `canView()`,
+  resource `canViewAny()`, and the policies - plus any service that re-checks
+  because the super-admin `Gate::before` skips policies. Logistics shows the
+  full five-layer shape.
+• Gating a plugin is all-or-nothing. Hiding its navigation while its policies
+  still allow access leaves records reachable by direct URL and through the API,
+  which is a worse position than not having started: it looks gated and is not.
 • Child rows must take their parent's company, not the session's. The saving
   event fires before creating, so set company_id there (Logistics
   `InheritsParentCompany`).
