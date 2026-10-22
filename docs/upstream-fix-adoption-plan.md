@@ -199,7 +199,14 @@ ignores, and the PostgreSQL 17 lanes reach and execute their test commands.
 ### UF-002 - Employee Factories and Missing Test Suite
 
 **Decision:** Required, P0  
-**Local state:** Open
+**Local state:** **Fixed 2026-10-22**
+
+> SetLocale now applies the precedence query language, session language,
+> authenticated user preference, then application fallback. Valid explicit
+> query choices persist in the session without changing the user's profile
+> language; invalid query and session values are ignored. The focused locale
+> coverage passed: 21 tests, 35 assertions, including profile update
+> compatibility.
 
 DEKA ERP has no `plugins/webkul/employees/tests` directory and no
 `EmployeeFeature` suite in `phpunit.xml`. The local employee factories contain
@@ -344,7 +351,15 @@ test relies on an unspecified first-row order.
 ### UF-005 - Payment Register Bank Account Coverage
 
 **Decision:** Recommended, P1  
-**Local state:** Runtime fix already backported; tests missing
+**Local state:** **Fixed 2026-10-22**
+
+> Added the five final payment-register bank-account scenarios in
+> plugins/webkul/accounts/tests/Feature/Workflows/PaymentRegisterBankAccountTest.php:
+> inbound journal account selection and empty-journal behavior, outbound vendor
+> account selection, inbound batch-account resolution, and bill-preferred bank
+> account resolution. The earlier upstream cross-company bank-account case was
+> not ported because this fork's BankAccount schema has no company_id contract.
+> The focused test passed: 5 tests, 11 assertions.
 
 The local Pay/PaymentRegister behavior contains the root fix documented in
 `docs/change-log.md`, but it lacks the final upstream tests from
