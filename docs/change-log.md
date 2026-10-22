@@ -104,9 +104,24 @@ reuse when it is done.
 ### Verification
 
 - `plugins/webkul/plugin-manager/tests/Feature/TranslationReferenceCommandTest.php`
-  on isolated database `aureuserp_testing_uf1316`: **6 passed, 15 assertions**
-  (3 existing + 3 new: root key present, root key missing, framework-provided
-  root file).
+  on isolated database `aureuserp_testing_uf1316`: **6 passed, 12 assertions** —
+  the 3 existing tests plus 3 new ones (root key present, root key missing,
+  framework-provided root file).
+
+Two defects in that file were found only because it had never run on its own,
+and were fixed rather than worked around:
+
+- It never required `TestBootstrapHelper`, so `php artisan test <this file>`
+  died in `TestCase::setUp()` with `Class "TestBootstrapHelper" not found`; it
+  passed only when another file in `PluginManagerFeature` loaded the helper
+  first. The `require_once` now matches `PluginAccessTest.php`.
+- `expectsOutputToContain('messages.missing')` could never pass. A reference
+  line reads `- path:3 ns::messages.missing`, and PendingCommand hands each
+  `doWrite` call to the **first** registered substring expectation it matches,
+  so `src/Reference.php:3` consumed that line and `messages.missing` never saw
+  it. The assertions are now one per output line (`:3`, the key message, `:4`,
+  the missing-file message), which asserts the same facts.
+
 - `php artisan translations:check --references` and `--references --details`
   run in Sail: 29 groups, 16 pass, 13 fail, 84 invalid references. Both runs
   were read-only against the local Sail database.

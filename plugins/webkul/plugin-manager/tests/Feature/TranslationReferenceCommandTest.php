@@ -48,14 +48,19 @@ __('translation-reference-fixture::messages.missing');
 __('translation-reference-fixture::absent.value');
 PHP);
 
+    // One expectation per output line. A reference line reads
+    // "- path:3 ns::messages.missing", and PendingCommand matches each
+    // doWrite call against the first expectation whose substring fits, so two
+    // expectations aimed at the same line can never both be satisfied.
     $this->artisan('translations:check', [
         '--plugin'     => TRANSLATION_REFERENCE_FIXTURE,
         '--references' => true,
         '--details'    => true,
     ])
         ->expectsOutputToContain('src/Reference.php:3')
-        ->expectsOutputToContain('messages.missing')
-        ->expectsOutputToContain('absent.value')
+        ->expectsOutputToContain('canonical key does not exist: missing')
+        ->expectsOutputToContain('src/Reference.php:4')
+        ->expectsOutputToContain('canonical file does not exist: absent.php')
         ->assertFailed();
 });
 
