@@ -302,7 +302,15 @@ and API agree, with production data accounted for before deployment.
 ### UF-004 - Company Currency Guard Coverage
 
 **Decision:** Required regression coverage, P1  
-**Local state:** Runtime fix already present; tests missing
+**Local state:** **Fixed 2026-10-22**
+
+> Added plugins/webkul/accounts/tests/Feature/Workflows/CompanyCurrencyGuardTest.php
+> with coverage for permitted changes, blocked changes after journal entries,
+> preserved currencies, validation field errors, unrelated edits, parent/branch
+> hierarchies, and unrelated-company isolation. AccountHelper::company() now
+> orders by ID so hierarchy tests consistently select the seeded baseline
+> company. The existing CompanyObserver required no runtime change. The
+> focused test passed: 8 tests, 8 assertions.
 
 The local `CompanyObserver` matches the upstream guard that blocks a company
 currency change after accounting entries exist. The final upstream coverage is

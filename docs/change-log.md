@@ -24,6 +24,10 @@ Investigated the four stale v1.6.0 upstream findings assigned for local adoption
 - UF-024 was already handled. Variant generation already derives names from
   the parent name and does not mutate the parent, so no product code was
   changed.
+- UF-004 was completed as the next accounting regression package. The existing
+  company-currency observer now has coverage for normal changes, blocked
+  changes after journal entries, hierarchy propagation, and unrelated-company
+  isolation. The account test helper now selects its baseline company by ID.
 
 Verification on the isolated Sail PostgreSQL database
 `aureuserp_testing_uf2`: `SavedViewTest.php` passed 1 test / 2 assertions;
@@ -31,6 +35,10 @@ Verification on the isolated Sail PostgreSQL database
 `ProductVariantNameTest.php` passed 1 / 2. The table-views plugin was added to
 `phpunit.xml` because it previously had no test suite. No production or
 managed database was used.
+
+UF-004 verification used isolated database aureuserp_testing_uf4:
+CompanyCurrencyGuardTest.php passed 8 tests / 8 assertions. No production
+database was used.
 
 ## 2026-10-20 (Logistics WP-5b: fragment-based POD token flow + WP-13 final closure)
 
