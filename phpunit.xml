@@ -47,6 +47,9 @@
         <testsuite name="PluginManagerFeature">
             <directory>plugins/webkul/plugin-manager/tests/Feature</directory>
         </testsuite>
+        <testsuite name="ChatterFeature">
+            <directory>plugins/webkul/chatter/tests/Feature</directory>
+        </testsuite>
     </testsuites>
     <source>
         <include>
