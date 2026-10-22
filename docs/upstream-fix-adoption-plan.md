@@ -384,7 +384,13 @@ test because the current BankAccount model has no `company_id` contract.
 ### UF-006 - Authenticated Locale Persistence
 
 **Decision:** Recommended product fix, P1  
-**Local state:** Open
+**Local state:** **Fixed 2026-10-22**
+
+> SetLocale now applies query language, session language, authenticated user
+> preference, then application fallback. Valid explicit query choices persist
+> in the session without changing the user's profile language; invalid query
+> and session values are ignored. Focused locale coverage passed 21 tests and
+> 35 assertions, including profile update compatibility.
 
 The topbar locale switcher sends `?lang=...`. For authenticated users, the local
 `SetLocale` middleware applies that language only for the current request, then
@@ -417,7 +423,12 @@ of an explicit user choice.
 ### UF-007 - Website Publish/Draft E2E Assertions
 
 **Decision:** Recommended test hardening, P1  
-**Local state:** Open
+**Local state:** **Implemented 2026-10-22; browser execution pending**
+
+> Website page and blog publish/draft helpers now assert the edit URL and
+> required action visibility before clicking. Playwright discovery passed and
+> found all 18 targeted tests. A browser run was not executed because the
+> configured local application at 127.0.0.1:8000 was unavailable.
 
 The local Website page object conditionally skips publish and draft actions
 when their buttons are not visible. That can turn a broken route, missing
