@@ -299,7 +299,7 @@ return [
                         'disabled'                => 'معطل',
                         'disabled-dates'          => 'تواريخ معطلة',
                         'display-format'          => 'تنسيق العرض',
-                        'first-fay-of-week'       => 'أول يوم في الأسبوع',
+                        'first-day-of-week'       => 'أول يوم في الأسبوع',
                         'format'                  => 'التنسيق',
                         'helper-text'             => 'نص مساعد',
                         'hint'                    => 'تلميح',

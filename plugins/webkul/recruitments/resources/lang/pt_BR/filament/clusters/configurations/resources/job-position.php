@@ -31,6 +31,7 @@ return [
                     'interviewers'               => 'Entrevistadores',
                     'recruiter'                  => 'Recrutador',
                     'manager'                    => 'Gerente',
+                    'company-modal-title'        => 'Criar empresa',
                 ],
             ],
 
