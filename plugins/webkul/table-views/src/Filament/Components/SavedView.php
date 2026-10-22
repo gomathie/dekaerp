@@ -19,7 +19,13 @@ class SavedView extends PresetView
 
     public function getModel(): ?string
     {
-        return $this->model;
+        $model = $this->evaluate($this->model);
+
+        if ($model instanceof Model) {
+            return $model::class;
+        }
+
+        return is_string($model) ? $model : null;
     }
 
     public function isFavorite(string|int|null $id = null): bool
