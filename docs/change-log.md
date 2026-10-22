@@ -28,6 +28,15 @@ Investigated the four stale v1.6.0 upstream findings assigned for local adoption
   company-currency observer now has coverage for normal changes, blocked
   changes after journal entries, hierarchy propagation, and unrelated-company
   isolation. The account test helper now selects its baseline company by ID.
+- UF-005 was completed with five payment-register bank-account regression
+  scenarios. The tests cover inbound journal accounts, missing inbound
+  accounts, outbound vendor accounts, and preferred bill bank accounts. The
+  upstream cross-company bank-account scenario was intentionally excluded
+  because this fork's BankAccount schema has no company_id contract.
+- UF-006 was completed by persisting valid locale-switcher choices in the
+  session and defining the precedence as query, session, user preference,
+  then application fallback. Profile language updates continue to update both
+  the stored preference and session.
 
 Verification on the isolated Sail PostgreSQL database
 `aureuserp_testing_uf2`: `SavedViewTest.php` passed 1 test / 2 assertions;
@@ -39,6 +48,14 @@ managed database was used.
 UF-004 verification used isolated database aureuserp_testing_uf4:
 CompanyCurrencyGuardTest.php passed 8 tests / 8 assertions. No production
 database was used.
+
+UF-005 verification used isolated database aureuserp_testing_uf5:
+PaymentRegisterBankAccountTest.php passed 5 tests / 11 assertions. No
+production database was used.
+
+UF-006 verification used isolated database aureuserp_testing_uf6:
+SetLocaleMiddlewareTest.php and ProfileLanguageUpdateTest.php passed 21 tests /
+35 assertions. No production database was used.
 
 ## 2026-10-20 (Logistics WP-5b: fragment-based POD token flow + WP-13 final closure)
 
