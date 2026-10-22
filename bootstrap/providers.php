@@ -31,6 +31,7 @@ use Webkul\Support\SupportServiceProvider;
 use Webkul\TableViews\TableViewsServiceProvider;
 use Webkul\TimeOff\TimeOffServiceProvider;
 use Webkul\Timesheet\TimesheetServiceProvider;
+use Webkul\Website\WebsiteServiceProvider;
 
 return [
     AppServiceProvider::class,
@@ -63,5 +64,10 @@ return [
     TimeOffServiceProvider::class,
     FullCalendarServiceProvider::class,
     TimesheetServiceProvider::class,
+    // Still named "website" but now only the customer/vendor portal: the CMS
+    // and blog were removed on 2026-10-22. It owns the `customer` guard's
+    // Partner model and the portal's login and password-reset pages, so the
+    // customer panel cannot register its routes without it.
+    WebsiteServiceProvider::class,
     PluginManagerServiceProvider::class,
 ];

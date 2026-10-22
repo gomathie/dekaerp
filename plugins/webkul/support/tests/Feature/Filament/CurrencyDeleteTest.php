@@ -11,8 +11,6 @@ use Webkul\Support\Filament\Resources\CurrencyResource\Pages\ListCurrencies;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Currency;
 
-use function Pest\Laravel\assertDatabaseHas;
-
 require_once __DIR__.'/../../Helpers/FilamentHelper.php';
 require_once __DIR__.'/../../Helpers/TestBootstrapHelper.php';
 
@@ -40,6 +38,6 @@ it('reports a bulk currency delete query failure instead of throwing', function 
         ->callAction(TestAction::make(DeleteBulkAction::class)->table()->bulk())
         ->assertNotified();
 
-    assertDatabaseHas('currencies', ['id' => $currency->id]);
-    assertDatabaseHas('companies', ['id' => $company->id, 'currency_id' => $currency->id]);
+    $this->assertDatabaseHas('currencies', ['id' => $currency->id]);
+    $this->assertDatabaseHas('companies', ['id' => $company->id, 'currency_id' => $currency->id]);
 });

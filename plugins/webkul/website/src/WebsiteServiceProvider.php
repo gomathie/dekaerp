@@ -25,23 +25,26 @@ class WebsiteServiceProvider extends PackageServiceProvider
         $package->name(static::$name)
             ->hasViews()
             ->hasTranslations()
+            // Both remaining migrations are what makes the portal possible, not
+            // website content: one adds password, remember_token,
+            // email_verified_at and is_active to partners_partners so a partner
+            // can authenticate at all, the other records last_login_at.
+            // create_website_pages_table went with the CMS on 2026-10-22, and
+            // the table itself is dropped by
+            // database/migrations/2026_10_21_100000_drop_website_and_blogs_tables.php.
             ->hasMigrations([
-                '2025_03_10_094011_create_website_pages_table',
                 '2025_03_10_064655_alter_partners_partners_table',
                 '2026_08_03_100000_add_last_login_at_to_partners_partners_table',
             ])
             ->runsMigrations()
-            ->hasSeeder('Webkul\\Website\\Database\Seeders\\DatabaseSeeder')
+            // No seeder and no settings any more: the seeder only created
+            // website pages, and the settings held the public site's contact
+            // details and social links.
             ->hasInstallCommand(function (InstallCommand $command) {
                 $command
                     ->installDependencies()
-                    ->runsMigrations()
-                    ->runsSeeders();
+                    ->runsMigrations();
             })
-            ->hasSettings([
-                '2025_03_10_094021_create_website_contact_settings',
-            ])
-            ->runsSettings()
             ->hasUninstallCommand(function (UninstallCommand $command) {})
             ->icon('website');
     }
