@@ -262,6 +262,8 @@ class FindMissingTranslations extends Command
             return null;
         }
 
+        $namespace = null;
+
         if (Str::contains($reference, '::')) {
             [$namespace, $reference] = explode('::', $reference, 2);
 
@@ -270,6 +272,8 @@ class FindMissingTranslations extends Command
             }
 
             $langPath = $catalogs[$namespace];
+        } elseif (isset($catalogs[''])) {
+            $langPath = $catalogs[''];
         } else {
             return null;
         }
@@ -283,7 +287,11 @@ class FindMissingTranslations extends Command
         $translationFile = $langPath.'/'.$fileReference.'.php';
 
         if (! File::exists($translationFile)) {
-            return "canonical file does not exist: {$fileReference}.php";
+            // Laravel ships auth, validation, pagination and password messages
+            // inside the framework, so a root reference can be valid with no
+            // file of ours behind it. A namespaced reference has no such
+            // fallback: a missing file there is always a defect.
+            return $namespace === null ? null : "canonical file does not exist: {$fileReference}.php";
         }
 
         if (! isset($this->translationKeyCache[$translationFile])) {

@@ -450,7 +450,44 @@ action is unavailable and pass through the real state transition.
 ### UF-008 - Translation Key Reference Audit
 
 **Decision:** Recommended local improvement, P2  
-**Local state:** Partial tooling only
+**Local state:** **Scanner already delivered; its audit reports 84 broken references, deliberately not fixed in this pass — 2026-10-22**
+
+> **Already present.** The scanner is a `--references` mode on the existing
+> command, not a second command:
+> `plugins/webkul/plugin-manager/src/Console/Commands/FindMissingTranslations.php`
+> — `processTranslationReferences()` :134, `findInvalidTranslationReferences()`
+> :228, `validateTranslationReference()` :259. It resolves `__()`, `trans()`,
+> `trans_choice()` and `@lang` literals, skips dynamic keys (`$`, `{`, `}`), and
+> checks the flattened key against the plugin's canonical EN file. Command tests:
+> `plugins/webkul/plugin-manager/tests/Feature/TranslationReferenceCommandTest.php`,
+> run by the `PluginManagerFeature` suite (registered in `phpunit.xml`).
+>
+> **Extended 2026-10-22.** Root-scope references (`__('admin.key')`, no `::`)
+> were skipped outright; they now resolve against `lang/en` and are reported
+> when the key is missing. A missing root *file* stays silent on purpose:
+> `auth`, `validation`, `pagination` and `passwords` are translated inside the
+> framework, so reporting them would be a false positive. Three tests pin the
+> new behaviour. CI runs `translations:check --details`
+> (`translations_check.yml:44`), which is the locale-parity mode and is
+> unaffected by this change.
+>
+> **The audit result is the real finding.** `translations:check --references
+> --details` reports 13 of 29 groups failing, **84 invalid references**:
+> accounts 27, support 14, employees 7, purchases 6, recruitments 6, time-off 5,
+> fields 4, inventories 4, manufacturing 4, accounting 2, partners 2, projects 2,
+> chatter 1. Spot-checked as genuine, not scanner noise:
+> `accounts::enums/display-type.*` has no
+> `plugins/webkul/accounts/resources/lang/en/enums/display-type.php` at all;
+> `chatter::app.*` has no `resources/lang/en/app.php`; the
+> `fields::...settings.textarea.helper-text` key exists at a different depth.
+> Upstream `33ed6ac32` fixed ~48 of these across accounts, employees, fields and
+> support, and that commit is **not** ported here.
+>
+> **Deliberately not fixed now.** Each fix means adding or moving keys in five
+> locales per plugin, and this project checks translation source structure line
+> by line (numeric keys must stay quoted or a translation looks like a structure
+> change). That is its own change with its own full run, at P2 — see the change
+> log entry for 2026-10-22, which carries the per-plugin work list.
 
 The local `translations:check` command compares each locale with canonical
 English. It cannot detect a key that is missing from English too, or a literal
@@ -476,7 +513,41 @@ making it a required CI gate.
 ### UF-009 - Installer Country and Currency Resolution
 
 **Decision:** Optional feature with practical value, P2  
-**Local state:** Not implemented
+**Local state:** **Not implemented; investigated 2026-10-22 — recommendation below, installer not modified**
+
+> **Real here.** `plugins/webkul/plugin-manager/src/Console/Commands/InstallERP.php:30`
+> declares `--force`, `--admin-name`, `--admin-email`, `--admin-password` and
+> nothing else. There is no `configureLocalisation()`, no `--country`, no
+> `--currency`; the default currency is whatever `Currency::active()->first()`
+> returns when the `default_currency_id` setting is written
+> (`InstallERP.php:422`). The plumbing upstream relies on is already local:
+> `Currency::findByCode()` :41 and `Currency::resolveDefault()` :50 in
+> `plugins/webkul/support/src/Models/Currency.php`.
+>
+> **What the two commits contain.** `98b870ad7` adds `--country`, a
+> `configureLocalisation()` step after seeding that writes the first company's
+> `country_id`/`currency_id`, and feeds the resolved currency into
+> `default_currency_id`; it also touches `CompanySeeder`, `CompanyForm` and adds
+> `DefaultCurrencyResolutionTest`. `fa033899f` adds `--currency` plus a
+> `canPrompt()` guard built on `stream_isatty(STDIN)` — its commit message is
+> "Fixed failing test", which is the warning that matters.
+>
+> **Why it is not a drop-in.** `erp:install --force` bootstraps every test run
+> (`plugins/webkul/support/tests/Helpers/TestBootstrapHelper.php:248`), both CI
+> workflows (`pest_tests.yml:85`, `playwright_tests.yml:168`) and the production
+> image (`docker/production/README.md:234`, which passes `--no-interaction`). A
+> prompt that fires without the `isInteractive()`/`stream_isatty()` guard hangs
+> a bootstrap instead of failing it.
+>
+> **Recommendation.** Take the pair as one change: `--country` and `--currency`
+> options; resolution order `--currency` → the country's currency →
+> `Currency::resolveDefault()` → today's seeded default; prompt only when
+> `canPrompt()`; non-zero exit on an unknown code. Test matrix: known country,
+> known currency, both (currency wins), unknown country, unknown currency, and
+> a non-interactive install with neither option keeping current behaviour. Then
+> re-run the install path in `PluginManagerFeature`, the CI bootstrap step and a
+> `docker/production` build before calling it done.
+> **Nothing of that was exercised here — the installer was left untouched.**
 
 Upstream's failing-test commit
 [`fa033899f`](https://github.com/aureuserp/aureuserp/commit/fa033899f)
@@ -565,7 +636,27 @@ commits as one migration project with backups and rehearsal.
 ### UF-012 - Employee Resume Attachments
 
 **Decision:** Optional feature, defer  
-**Local state:** Not implemented
+**Local state:** **Deferral confirmed 2026-10-22 — no attachment path exists and nothing depends on one**
+
+> **Confirmed absent.** `employees_employee_resumes`
+> (`plugins/webkul/employees/database/migrations/2024_12_16_070029_create_employees_employee_resumes_table.php`)
+> is a structured record — title, resume type, duration, display type,
+> description — with no file, path, disk, size or MIME column. The employees
+> plugin contains no `FileUpload`, `Storage::` or attachment code at all, and
+> `EmployeeResumeRelation` / `ManageResume` are text-only forms and tables.
+>
+> **Nothing depends on it.** No migration, model, policy, translation tree or
+> test references a resume file; the `employees::...resume.*` keys describe the
+> structured record.
+>
+> **Why the deferral still holds.** The upload widget is the small part. The work
+> is tenant-S3 disk choice, MIME and size validation, cross-company authorization
+> on download, retention and deletion. This fork already has the pieces to reuse
+> instead of inventing — Logistics' `DeliveryProofsRelationManager` tenant-S3
+> path and Chatter attachments — and a known trap to remember: `phpunit.xml` does
+> not set `FILESYSTEM_PUBLIC_DRIVER`, so `tenant-s3` branches never execute in
+> tests (already recorded in the change log for Logistics). Reviewed as its own
+> security-reviewed feature, not as part of a register pass.
 
 Upstream commit
 [`3bfe42832`](https://github.com/aureuserp/aureuserp/commit/3bfe42832)
@@ -623,7 +714,46 @@ tests.
 ### UF-016 - Documentation Drift
 
 **Decision:** Required maintenance, P1  
-**Local state:** Open
+**Local state:** **Reconciled 2026-10-22 — the four known statements; drift is now a standing rule, not a one-off**
+
+> Reconciled on 2026-10-22, marking superseded claims rather than deleting them:
+>
+> - `AGENTS.md` — the generated Laravel Boost block still lists Laravel 11 /
+>   Filament 4 / Livewire 3 / PHP 8.3.21. A dated banner now sits above it
+>   pointing at the lockfile and the project-memory line
+>   (`AGENTS.md:301`): Laravel 13.21.1, Filament 5.7.6, Shield 4.2.0,
+>   Livewire 4.3.4, Pest 4.7.5, PHPUnit 12.5.30, PHP >= 8.4.1 (verified against
+>   `composer.lock` and `composer.json` this session).
+> - `docs/handover-actions.md` §5 — "Filament 5.7.6 needs a composer update" is
+>   marked DONE (it is locked); the restructure totals are corrected to the
+>   post-removal 68 safe / 49 review; "remaining suites: most of AccountFeature,
+>   plus project and product" is marked SUPERSEDED, pointing at the
+>   2026-09-29 all-thirteen-suites table in `docs/change-log.md` (AccountFeature
+>   526, ProjectFeature 86, ProductFeature 250, zero failures).
+> - `docs/restructure-backlog.md` — already carried the 2026-10-21 removal note
+>   and the Package A PHP 8.4 statement; the four dead entries are now marked
+>   `REMOVED 2026-10-21, moot` inline so nobody adopts a resource that no longer
+>   exists.
+> - `docs/running-tests.md` — said one shared `aureuserp_testing` and serial runs
+>   only. Now documents the per-work-package database and the `-e DB_DATABASE`
+>   override, and keeps the interleaving warning scoped to one database.
+> - `docs/landing-page-brief.md` — "Website and blog pages managed from the same
+>   admin" was false: the Blogs plugin and the CMS pages were removed on
+>   2026-10-21 and `plugins/webkul/website` has no admin resources. Replaced with
+>   the customer-portal line, with the correction dated inline.
+>
+> Checked and left alone because they are still true: `unified-product-resource-plan.md`
+> ("Contacts/Website partner screens" — the website plugin contributes its portal
+> actions and column to the partner resource through `PartnerSchemaRegistry`),
+> and the historical Website references in `docs/change-log.md` and
+> `docs/upstream-fix-adoption-plan.md`, which record what happened rather than
+> what is.
+>
+> Also corrected while checking: `docs/logistics-plan.md` listed `website` as one
+> of three plugins that subclass `PartnerResource` to add a customer tab. It no
+> longer does — since the CMS removal it contributes only registry entries
+> (`plugins/webkul/website/src/PortalContributions.php`). The argument that table
+> supports still holds.
 
 The audit found status drift between project documents. For example,
 `docs/handover-actions.md` still describes remaining optional suites while

@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\File;
 
+require_once __DIR__.'/../../../support/tests/Helpers/TestBootstrapHelper.php';
+
 const TRANSLATION_REFERENCE_FIXTURE = 'translation-reference-fixture';
 
 function translationReferenceFixture(string $source): void
@@ -69,4 +71,35 @@ PHP);
         '--plugin'     => TRANSLATION_REFERENCE_FIXTURE,
         '--references' => true,
     ])->assertSuccessful();
+});
+
+/**
+ * Root-scope references resolve against lang/en. They are checked through the
+ * command itself rather than through `artisan translations:check --references`,
+ * because that mode scans every plugin in the repository and takes minutes.
+ */
+function validateRootReference(string $reference): ?string
+{
+    $command = app(Webkul\PluginManager\Console\Commands\FindMissingTranslations::class);
+
+    $catalogs = (new ReflectionMethod($command, 'getTranslationCatalogs'))->invoke($command);
+
+    return (new ReflectionMethod($command, 'validateTranslationReference'))->invoke($command, $reference, $catalogs);
+}
+
+it('accepts a root reference whose key exists in lang/en', function () {
+    expect(validateRootReference('welcome.title'))->toBeNull()
+        ->and(validateRootReference('welcome.nav.dashboard'))->toBeNull();
+});
+
+it('reports a root reference whose key is missing from lang/en', function () {
+    expect(validateRootReference('welcome.not_a_real_key'))
+        ->toBe('canonical key does not exist: not_a_real_key');
+});
+
+it('does not report root references that Laravel itself translates', function () {
+    // validation.php, auth.php and pagination.php live inside the framework, so
+    // these resolve without a file of ours and must not be reported as missing.
+    expect(validateRootReference('validation.required'))->toBeNull()
+        ->and(validateRootReference('auth.failed'))->toBeNull();
 });
