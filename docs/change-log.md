@@ -6,6 +6,32 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-10-22 (Upstream findings UF-020–UF-024)
+
+Investigated the four stale v1.6.0 upstream findings assigned for local adoption.
+
+- UF-020 was real in the table-views plugin: `SavedView::getModel()` returned
+  an Eloquent record from a method whose Filament contract requires a model
+  class string. The method now honours that contract, and the table-view action
+  uses `getRecord()` when it needs the saved record.
+- UF-021 was real in the employee factory path: `parent_id` and `coach_id`
+  defaulted to user IDs even though both foreign keys reference employees.
+  The defaults are now nullable; explicit managers remain employee records.
+- UF-023 was real for bulk currency deletion: the default bulk action had no
+  local error notification for a database restriction, while individual
+  delete paths already handled it. The bulk action now catches the query error
+  and sends the existing currency-in-use notification.
+- UF-024 was already handled. Variant generation already derives names from
+  the parent name and does not mutate the parent, so no product code was
+  changed.
+
+Verification on the isolated Sail PostgreSQL database
+`aureuserp_testing_uf2`: `SavedViewTest.php` passed 1 test / 2 assertions;
+`FactoryTest.php` passed 6 / 10; `CurrencyDeleteTest.php` passed 1 / 7; and
+`ProductVariantNameTest.php` passed 1 / 2. The table-views plugin was added to
+`phpunit.xml` because it previously had no test suite. No production or
+managed database was used.
+
 ## 2026-10-20 (Logistics WP-5b: fragment-based POD token flow + WP-13 final closure)
 
 ### WP-5b: fragment-based POD token flow

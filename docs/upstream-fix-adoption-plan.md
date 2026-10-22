@@ -766,7 +766,15 @@ architectural changes.
 
 **Decision:** Required, P1 — UX correctness  
 **Upstream reference:** v1.6.0 issue #1490. Commit TBD.  
-**Local state:** Open — not investigated
+**Local state:** **Fixed 2026-10-22**
+
+> `SavedView::getModel()` now honours Filament's `?string` model contract in
+> `plugins/webkul/table-views/src/Filament/Components/SavedView.php:20-29`,
+> while `HasTableViews.php:464` passes the saved record through
+> `getRecord()`. The previous implementation returned a `TableView` object
+> from a `?string` method while rendering the edit action, which made saved
+> views fail during hydration. `SavedViewTest.php` pins the contract: 1 test,
+> 2 assertions passed.
 
 Saved Filter Views across list resources threw a `LogicException`. This
 makes any saved filter unusable for the session.
@@ -789,7 +797,15 @@ state. A runtime crash blocks those workflows.
 
 **Decision:** Required, P1 — data integrity  
 **Upstream reference:** v1.6.0 issue #1491. Commit TBD.  
-**Local state:** Open — not investigated
+**Local state:** **Fixed 2026-10-22**
+
+> `plugins/webkul/employees/database/migrations/2024_12_12_063353_create_employees_employees_table.php:101`
+> constrains `parent_id` to `employees_employees.id`, and
+> `plugins/webkul/employees/src/Models/Employee.php:169-172` defines the same
+> employee-to-employee relation. `EmployeeFactory.php:43-44` was instead
+> assigning user IDs; its defaults now use `null`, while an explicit manager
+> uses an employee ID. The complete `FactoryTest.php` passed: 6 tests,
+> 10 assertions.
 
 Editing an employee could trigger a foreign key violation on
 `partners_partners.parent_id`. The defect likely arises from the Employee
@@ -838,7 +854,14 @@ amounts.
 
 **Decision:** Recommended, P2  
 **Upstream reference:** v1.6.0 issue #1514. Commit TBD.  
-**Local state:** Open — not investigated
+**Local state:** **Fixed 2026-10-22**
+
+> Individual currency delete actions already caught `QueryException` in
+> `plugins/webkul/support/src/Filament/Resources/CurrencyResource.php:272-295`
+> and the edit/view pages. The remaining unhandled path was the default bulk
+> delete action at `CurrencyResource.php:300`; it now catches the same database
+> failure and sends the existing user-facing error notification. The
+> `CurrencyDeleteTest.php` bulk-action regression passed: 1 test, 7 assertions.
 
 Deleting a currency that is still marked active (or still in use) threw an
 unhandled exception instead of returning a validation error.
@@ -857,7 +880,14 @@ message.
 
 **Decision:** Recommended, P2  
 **Upstream reference:** v1.6.0 issue #1187. Commit TBD.  
-**Local state:** Open — not investigated
+**Local state:** **Already handled — confirmed 2026-10-22**
+
+> `Product::generateVariants()` at
+> `plugins/webkul/products/src/Models/Product.php:194-282` derives each
+> variant name from `$this->name` and only writes variant records; it never
+> assigns a variant ID to the parent name. `ProductVariantNameTest.php` ran
+> generation twice and passed: 1 test, 2 assertions. No product code change
+> was necessary.
 
 After creating product variants, the product name field was overwritten with
 the variant's internal ID.
