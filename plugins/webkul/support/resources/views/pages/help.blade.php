@@ -53,91 +53,36 @@
         @endif
 
         @if ($this->hasUserGuide())
+            {{-- Was the whole guide inlined here as nested accordions: 82
+                 articles rendered into every response, navigated by scrolling.
+                 It lives on its own page now, which renders one article at a
+                 time and can be searched and linked to. --}}
             <div class="flex flex-col gap-4">
-                <div class="flex flex-wrap items-center justify-between gap-3">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                        {{ __('support::filament/pages/help.guides.user.full_heading') }}
-                    </span>
+                <span class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                    {{ __('support::filament/pages/help.guides.user.full_heading') }}
+                </span>
 
-                    <span class="text-xs font-medium text-gray-500 dark:text-gray-400">
-                        {{ trans_choice('support::filament/pages/help.guides.user.count', $this->guidePageCount(), ['count' => $this->guidePageCount()]) }}
-                    </span>
-                </div>
+                <x-filament::section>
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <div class="min-w-0">
+                            <h3 class="text-base font-semibold text-gray-950 dark:text-white">
+                                {{ __('support::filament/pages/guide.heading') }}
+                            </h3>
 
-                <div class="space-y-3">
-                    @foreach ($this->guideCategories() as $category)
-                        <details @class(['deka-guide-category', 'deka-guide-category--open' => $loop->first]) @if ($loop->first) open @endif>
-                            <summary class="deka-guide-category__summary">
-                                <span>{{ $category['name'] }}</span>
-                                <span>{{ trans_choice('support::filament/pages/help.guides.user.category_count', count($category['items'] ?? []), ['count' => count($category['items'] ?? [])]) }}</span>
-                            </summary>
+                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                {{ trans_choice('support::filament/pages/guide.subheading', $this->guidePageCount(), ['count' => $this->guidePageCount()]) }}
+                            </p>
+                        </div>
 
-                            <div class="deka-guide-category__body">
-                                @foreach (($category['items'] ?? []) as $item)
-                                    <details class="deka-guide-page">
-                                        <summary class="deka-guide-page__summary">
-                                            <span>
-                                                <span class="deka-guide-page__title">{{ $item['title'] }}</span>
-
-                                                @if (filled($item['summary'] ?? null))
-                                                    <span class="deka-guide-page__summary-text">{{ $item['summary'] }}</span>
-                                                @endif
-                                            </span>
-
-                                            @if (filled($item['readTime'] ?? null))
-                                                <span class="deka-guide-page__meta">{{ $item['readTime'] }}</span>
-                                            @endif
-                                        </summary>
-
-                                        <div class="deka-guide-page__body">
-                                            @if (! empty($item['workflow']))
-                                                <div class="deka-guide-workflow">
-                                                    @foreach ($item['workflow'] as $workflowStep)
-                                                        <span>{{ $workflowStep }}</span>
-                                                    @endforeach
-                                                </div>
-                                            @endif
-
-                                            @if (! empty($item['htmlContent']))
-                                                <div class="deka-guide-content">
-                                                    {!! $item['htmlContent'] !!}
-                                                </div>
-                                            @endif
-
-                                            @if (! empty($item['steps']))
-                                                <div class="space-y-5">
-                                                    @foreach ($item['steps'] as $step)
-                                                        <section class="deka-guide-step">
-                                                            <h4>{{ $step['title'] }}</h4>
-                                                            <p>{{ $step['description'] }}</p>
-
-                                                            @if (! empty($step['instructions']))
-                                                                <ol>
-                                                                    @foreach ($step['instructions'] as $instruction)
-                                                                        <li>{!! $instruction !!}</li>
-                                                                    @endforeach
-                                                                </ol>
-                                                            @endif
-
-                                                            @foreach (['tip', 'note', 'important'] as $callout)
-                                                                @if (filled($step[$callout] ?? null))
-                                                                    <div class="deka-guide-callout deka-guide-callout--{{ $callout }}">
-                                                                        <span>{{ __('support::filament/pages/help.guides.user.callouts.'.$callout) }}</span>
-                                                                        <p>{{ $step[$callout] }}</p>
-                                                                    </div>
-                                                                @endif
-                                                            @endforeach
-                                                        </section>
-                                                    @endforeach
-                                                </div>
-                                            @endif
-                                        </div>
-                                    </details>
-                                @endforeach
-                            </div>
-                        </details>
-                    @endforeach
-                </div>
+                        <x-filament::button
+                            tag="a"
+                            :href="\Webkul\Support\Filament\Pages\Guide::getUrl()"
+                            icon="heroicon-m-book-open"
+                        >
+                            {{ __('support::filament/pages/help.guides.user.button') }}
+                        </x-filament::button>
+                    </div>
+                </x-filament::section>
             </div>
         @endif
 
