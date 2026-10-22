@@ -6,6 +6,118 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-10-22 (Register close-out: UF-008, UF-009, UF-012, UF-016)
+
+The last four open entries in `docs/upstream-fix-adoption-plan.md`. Each got a
+verdict with file:line evidence before any change; two produced work, two
+produced a recommendation and were deliberately left alone.
+
+### UF-016 — documentation drift (fixed)
+
+Reconciled by marking superseded claims, not deleting them:
+
+- **`AGENTS.md`** — the `boost:install` version block still reads Laravel 11 /
+  Filament 4 / Livewire 3 / PHP 8.3.21. It now carries a dated banner at the top
+  pointing at `composer.lock` and the project-memory line: Laravel 13.21.1,
+  Filament 5.7.6, Shield 4.2.0, Livewire 4.3.4, Pest 4.7.5, PHPUnit 12.5.30,
+  PHP >= 8.4.1 — all re-read from `composer.lock` / `composer.json` today.
+- **`docs/handover-actions.md` §5** — three false statements: "Filament 5.7.6
+  needs `composer update`" (it is locked), restructure totals of 70/51 (the
+  backlog's own 2026-10-21 note makes them 68/49), and "remaining suites: most
+  of `AccountFeature`, plus project and product" (superseded 2026-09-29, when
+  all thirteen suites ran green together — AccountFeature 526, ProjectFeature
+  86, ProductFeature 250, zero failures).
+- **`docs/restructure-backlog.md`** — already reconciled on 2026-10-21; the four
+  dead entries are now also marked `REMOVED 2026-10-21, moot` inline, because a
+  header note is easy to skim past when the list is the thing being worked from.
+- **`docs/running-tests.md`** — documented one shared database and serial runs
+  only. Now documents the per-work-package database and the `-e DB_DATABASE`
+  override (`phpunit.xml` sets it without `force="true"`, so the env var wins),
+  and keeps the interleaving warning scoped to one database.
+- **`docs/landing-page-brief.md`** — "Website and blog pages managed from the
+  same admin" was false: Blogs and the CMS pages were removed 2026-10-21 and
+  `plugins/webkul/website` has no admin resources, only portal actions/pages.
+  Replaced with the customer-portal line, correction dated inline.
+- **`docs/logistics-plan.md`** — found while checking, not in the original list:
+  its table of plugins that subclass `PartnerResource` still credited `website`
+  with "addresses, contacts". The plugin no longer subclasses anything; it
+  contributes registry entries from `website/src/PortalContributions.php`. The
+  argument the table supports is unaffected.
+
+Left alone as still true: `unified-product-resource-plan.md`'s
+"Contacts/Website partner screens", and the historical Website references in
+this file and in the adoption plan.
+
+### UF-008 — translation reference audit (scanner existed; extended; audit not fixed)
+
+The scanner was already there as `--references` on the existing command
+(`plugin-manager/src/Console/Commands/FindMissingTranslations.php:259`), with
+three command tests under `PluginManagerFeature` — so the register's "partial
+tooling" line was stale.
+
+**Extended:** root-scope references (`__('admin.key')`, no `::`) were skipped
+outright. They now resolve against `lang/en` and are reported when the key is
+missing. A missing root *file* is still not an error, because `auth`,
+`validation`, `pagination` and `passwords` are translated inside the framework —
+reporting those would be a false positive that makes the mode unusable. Three
+tests pin it. CI runs `translations:check --details` (locale parity, no
+`--references`), so this changes nothing in CI.
+
+**The audit result is the finding.** `translations:check --references` reports
+13 of 29 groups failing — **84 invalid references**: accounts 27, support 14,
+employees 7, purchases 6, recruitments 6, time-off 5, fields 4, inventories 4,
+manufacturing 4, accounting 2, partners 2, projects 2, chatter 1. Spot-checked
+as genuine: `accounts::enums/display-type.*` has no EN file at all,
+`chatter::app.*` has no `resources/lang/en/app.php`, and
+`fields::...textarea.helper-text` exists at a different depth. Upstream
+`33ed6ac32` fixed ~48 of these across accounts, employees, fields and support;
+that commit is not ported.
+
+Not fixed here on purpose: each fix adds or moves keys in five locales per
+plugin, and this project checks translation source structure line by line, so a
+mis-shaped edit looks like a structure change. Own change, own run.
+
+### UF-009 — installer country/currency (recommended, not implemented)
+
+`erp:install` has no `--country`/`--currency` and no `configureLocalisation()`;
+the default currency is `Currency::active()->first()`
+(`InstallERP.php:422`). The helpers upstream relies on are already local
+(`Currency::findByCode()` :41, `resolveDefault()` :50).
+
+`erp:install --force` bootstraps every test run
+(`TestBootstrapHelper.php:248`), both CI workflows and the production image —
+which is why upstream's second commit is titled "Fixed failing test": an
+unguarded interactive prompt hangs a bootstrap rather than failing it. The port
+sketch, resolution order and six-case test matrix are recorded in the plan.
+Nothing was changed and **no reinstall path was exercised**.
+
+### UF-012 — employee resume attachments (deferral confirmed)
+
+`employees_employee_resumes` has no file, path, disk, size or MIME column and
+the plugin has no upload code; `ManageResume` is a text-only form. Nothing in
+migrations, models, policies, translations or tests references a resume file.
+Deferral stands: the work is the security review (tenant-S3 disk choice, MIME
+and size validation, cross-company authorization on download, retention), and
+the fork already has `DeliveryProofsRelationManager` and Chatter attachments to
+reuse when it is done.
+
+### Verification
+
+- `plugins/webkul/plugin-manager/tests/Feature/TranslationReferenceCommandTest.php`
+  on isolated database `aureuserp_testing_uf1316`: **6 passed, 15 assertions**
+  (3 existing + 3 new: root key present, root key missing, framework-provided
+  root file).
+- `php artisan translations:check --references` and `--references --details`
+  run in Sail: 29 groups, 16 pass, 13 fail, 84 invalid references. Both runs
+  were read-only against the local Sail database.
+- `php -l` on both changed PHP files; Pint clean; `git diff --check` clean.
+- No production or managed database was used.
+
+Also corrected in this file: the UF-006 verification line says 21 tests / 35
+assertions. The suite as committed — including the four tests added after that
+run — was re-run on `aureuserp_testing_uf006` and passed **25 tests / 43
+assertions**. That line is superseded, not wrong at the time.
+
 ## 2026-10-22 (Per-company plugin availability)
 
 Installing a plugin was global, so enabling one for a single customer enabled it
