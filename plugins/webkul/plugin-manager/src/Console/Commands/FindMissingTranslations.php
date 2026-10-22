@@ -258,6 +258,10 @@ class FindMissingTranslations extends Command
 
     protected function validateTranslationReference(string $reference, array $catalogs): ?string
     {
+        if (Str::contains($reference, ['$', '{', '}'])) {
+            return null;
+        }
+
         if (Str::contains($reference, '::')) {
             [$namespace, $reference] = explode('::', $reference, 2);
 
@@ -267,11 +271,7 @@ class FindMissingTranslations extends Command
 
             $langPath = $catalogs[$namespace];
         } else {
-            if (! isset($catalogs['']) || ! Str::contains($reference, '.')) {
-                return null;
-            }
-
-            $langPath = $catalogs[''];
+            return null;
         }
 
         if (! Str::contains($reference, '.')) {
@@ -1018,7 +1018,7 @@ class FindMissingTranslations extends Command
             $fullKey = $prefix === '' ? (string) $key : "{$prefix}.{$key}";
 
             return is_array($value)
-                ? $this->flattenArray($value, $fullKey)
+                ? [$fullKey => true, ...$this->flattenArray($value, $fullKey)]
                 : [$fullKey => true];
         })->all();
     }

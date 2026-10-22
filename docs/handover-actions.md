@@ -496,11 +496,18 @@ database password.
 
 ## 5. Optional, no urgency
 
-- **Filament 5.7.6** - needs `composer update`, so it needs the container:
-  `docker compose run --rm --no-deps laravel.test composer update filament/filament`.
-- **Restructure backlog** - `docs/restructure-backlog.md`. 70 resources are
-  mechanically safe to adopt, 51 hold local changes that must be carried over
-  by hand. Pure merge-debt reduction; nothing breaks by leaving it.
-- **Remaining suites** - most of `AccountFeature`, plus project and product.
-  (Website is no longer one of them: the Website and Blogs plugins were removed
-  on 2026-10-21.) The harness works; see `docs/running-tests.md`.
+- ~~**Filament 5.7.6** - needs `composer update`~~ - **DONE (2026-09-19).**
+  `composer.lock` holds Filament `v5.7.6`; see upstream-adoption Package A in
+  `docs/upstream-fix-adoption-plan.md`.
+- **Restructure backlog** - `docs/restructure-backlog.md`. After the Website and
+  Blogs removal on 2026-10-21 the real totals are 68 mechanically safe to adopt
+  and 49 that hold local changes to carry over by hand (the lists themselves
+  predate the removal and still count those four entries). Pure merge-debt
+  reduction; nothing breaks by leaving it.
+- ~~**Remaining suites** - most of `AccountFeature`, plus project and product.~~
+  **SUPERSEDED 2026-09-29.** All thirteen suites have run green together since
+  then - `AccountFeature` 526, `ProjectFeature` 86, `ProductFeature` 250, zero
+  failures across 2,551+ tests; the table is in `docs/change-log.md` under the
+  company-wide visibility entry. Website and Blogs were removed on 2026-10-21.
+  What remains is running the suite you touched, not a backlog of unrun suites;
+  see `docs/running-tests.md`.
