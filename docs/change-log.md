@@ -40,6 +40,13 @@ Investigated the four stale v1.6.0 upstream findings assigned for local adoption
 - UF-007 was implemented by making Website page and blog publish/draft helpers
   assert their edit URL and required action visibility instead of silently
   skipping unavailable actions.
+- UF-018 was pinned with an invoice payment regression test asserting that the
+  normal payment registrar leaves the invoice posted, paid, and fully
+  reconciled.
+- UF-022 was completed by adopting the upstream purchase-form conversion fix
+  and persisting the order currency rate used for company-currency totals.
+  Regression coverage verifies fallback costs, vendor prices, vendor
+  filtering, UOM conversion, and exact converted values.
 
 Verification on the isolated Sail PostgreSQL database
 `aureuserp_testing_uf2`: `SavedViewTest.php` passed 1 test / 2 assertions;
@@ -63,6 +70,14 @@ SetLocaleMiddlewareTest.php and ProfileLanguageUpdateTest.php passed 21 tests /
 UF-007 Playwright discovery passed for the two Website spec files and listed
 18 tests. Browser execution remains pending because the configured local app
 at 127.0.0.1:8000 was unavailable.
+
+UF-018 verification used isolated database aureuserp_testing_uf18:
+InvoiceTest.php passed 1 focused test / 3 assertions. No production database
+was used.
+
+UF-022 verification used isolated database aureuserp_testing_uf22:
+OrderCurrencyConversionTest.php passed 8 tests / 8 assertions. No production
+database was used.
 
 ## 2026-10-20 (Logistics WP-5b: fragment-based POD token flow + WP-13 final closure)
 
