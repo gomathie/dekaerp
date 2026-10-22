@@ -75,6 +75,7 @@ use Webkul\Support\Filament\Forms\Components\Repeater;
 use Webkul\Support\Filament\Forms\Components\Repeater\TableColumn;
 use Webkul\Support\Filament\Infolists\Components\RepeatableEntry;
 use Webkul\Support\Filament\Infolists\Components\Repeater\TableColumn as InfolistTableColumn;
+use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Currency;
 use Webkul\Support\Models\UOM;
 
@@ -202,6 +203,8 @@ class OrderResource extends Resource
                                     ->searchable()
                                     ->preload()
                                     ->default(current_company()?->currency_id)
+                                    ->live()
+                                    ->afterStateUpdated(fn (Set $set, Get $get) => static::updateProductPricesForVendor($get('partner_id'), $set, $get))
                                     ->disabled(fn ($record): bool => $record && ! in_array($record?->state, [OrderState::DRAFT, OrderState::SENT])),
                             ]),
 
@@ -1391,6 +1394,37 @@ class OrderResource extends Resource
         return $fromUom->computeQuantity((float) ($quantity ?? 0), $toUom, false);
     }
 
+    private static function convertPrice($amount, ?int $fromCurrencyId, ?int $toCurrencyId, ?int $companyId): float
+    {
+        if (! $amount || ! $fromCurrencyId || ! $toCurrencyId || $fromCurrencyId === $toCurrencyId) {
+            return (float) $amount;
+        }
+
+        $fromCurrency = Currency::find($fromCurrencyId);
+
+        $toCurrency = Currency::find($toCurrencyId);
+
+        if (! $fromCurrency || ! $toCurrency) {
+            return (float) $amount;
+        }
+
+        return $fromCurrency->convert($amount, $toCurrency, Company::find($companyId), round: false);
+    }
+
+    private static function resolveVendorPrice($product, $seller, ?int $currencyId, ?int $companyId): float
+    {
+        if ($seller) {
+            return static::convertPrice($seller->price, $seller->currency_id, $currencyId, $companyId);
+        }
+
+        return static::convertPrice(
+            $product->cost ?: $product->price,
+            Company::find($companyId)?->currency_id,
+            $currencyId,
+            $companyId
+        );
+    }
+
     private static function calculateUnitPrice($get)
     {
         $product = Product::find($get('product_id'));
@@ -1401,13 +1435,12 @@ class OrderResource extends Resource
             $vendorPrices = $vendorPrices->where('partner_id', $get('../../partner_id'));
         }
 
-        $vendorPrices = $vendorPrices->where('min_qty', '<=', $get('product_qty') ?? 1)->where('currency_id', $get('../../currency_id'));
-
-        if (! $vendorPrices->isEmpty()) {
-            $vendorPrice = $vendorPrices->first()->price;
-        } else {
-            $vendorPrice = $product->cost ?: $product->price;
-        }
+        $vendorPrice = static::resolveVendorPrice(
+            $product,
+            $vendorPrices->where('min_qty', '<=', $get('product_qty') ?? 1)->first(),
+            $get('../../currency_id'),
+            $get('../../company_id') ?? current_company_id()
+        );
 
         if (! $get('uom_id') || ! $product->uom) {
             return $vendorPrice;
@@ -1489,6 +1522,7 @@ class OrderResource extends Resource
             'subtotal'         => 0,
             'totalTax'         => 0,
             'grandTotal'       => 0,
+            'currency_id'      => $get('currency_id'),
         ];
 
         $products = $get('products') ?? [];
@@ -1517,6 +1551,7 @@ class OrderResource extends Resource
             'subtotal'         => round($subtotal, 2),
             'totalTax'         => round($totalTax, 2),
             'grandTotal'       => round($grandTotal, 2),
+            'currency_id'      => $get('currency_id'),
         ];
 
         $livewire->dispatch('itemUpdated', $totals);
@@ -1643,17 +1678,18 @@ class OrderResource extends Resource
                 continue;
             }
 
-            $vendorPrices = $productModel->sellers
+            $seller = $productModel->sellers
                 ->where('partner_id', $partnerId)
-                ->where('currency_id', $get('currency_id'))
                 ->where('min_qty', '<=', $product['product_qty'] ?? 1)
-                ->sortByDesc('sort');
+                ->sortByDesc('sort')
+                ->first();
 
-            if ($vendorPrices->isNotEmpty()) {
-                $vendorPrice = $vendorPrices->first()->price;
-            } else {
-                $vendorPrice = $productModel->cost ?? $productModel->price;
-            }
+            $vendorPrice = static::resolveVendorPrice(
+                $productModel,
+                $seller,
+                $get('currency_id'),
+                $get('company_id') ?? current_company_id()
+            );
 
             $set("products.$key.price_unit", round($vendorPrice, 2));
 

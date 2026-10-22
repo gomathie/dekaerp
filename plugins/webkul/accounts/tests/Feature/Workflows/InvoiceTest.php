@@ -246,6 +246,25 @@ it('marks a fully paid invoice as paid with zero residual', function () {
         ->and((float) abs($invoice->amount_residual))->toBe(0.0);
 });
 
+it('leaves a paid invoice posted with a paid payment state', function () {
+    // UF-018. Payment goes through PaymentRegistrar::register(), which
+    // reconciles and then recomputes payment_state from the matchings. Both
+    // fields belong in one assertion: an earlier upstream defect paid the
+    // invoice but left the state behind, and a paid invoice that is not
+    // posted would be re-queued by the billing screens.
+    $invoice = AccountHelper::invoice(MoveType::OUT_INVOICE, $this->partner);
+    AccountHelper::productLine($invoice, $this->income, qty: 2, priceUnit: 100);
+    AccountHelper::post($invoice);
+
+    AccountHelper::pay($invoice);
+
+    $invoice->refresh();
+
+    expect($invoice->state)->toBe(MoveState::POSTED)
+        ->and($invoice->payment_state)->toBe(PaymentState::PAID)
+        ->and((float) abs($invoice->amount_residual))->toBe(0.0);
+});
+
 it('marks a partially paid invoice as partial with a remaining residual', function () {
     $invoice = AccountHelper::invoice(MoveType::OUT_INVOICE, $this->partner);
     AccountHelper::productLine($invoice, $this->income, qty: 2, priceUnit: 100);
