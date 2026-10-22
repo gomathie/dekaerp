@@ -29,10 +29,6 @@ require_once __DIR__.'/../../Helpers/TestBootstrapHelper.php';
  * instead of fixed here. Remove an entry as it is resolved; do not add one
  * without a reason.
  *
- * - accounts/2025_11_21_100010_create_accounts_account_companies_table:
- *   a dead duplicate. It runs the same Schema::create('accounts_account_companies')
- *   as the registered 2025_01_30_054955. Registering it would break
- *   migrate:fresh with "relation already exists", so it wants deleting.
  * - support/2026_03_09_000001_add_unique_index_to_companies_name:
  *   adds a UNIQUE index on companies.name. Applying it now would fail on any
  *   installation that already holds two companies with the same name, so it
@@ -41,7 +37,6 @@ require_once __DIR__.'/../../Helpers/TestBootstrapHelper.php';
  *   not yet examined. Each may be needed, superseded, or dead.
  */
 const KNOWN_UNREGISTERED_MIGRATIONS = [
-    'accounts: 2025_11_21_100010_create_accounts_account_companies_table',
     'employees: 2024_12_11_100426_create_employees_calendars_table',
     'employees: 2024_12_11_100435_create_employees_calendar_attendances_table',
     'employees: 2024_12_11_100442_create_employees_calendar_leaves_table',
