@@ -622,7 +622,39 @@ implementation by searching the aureuserp/aureuserp master history.*
 **Decision:** Required, P0 — security  
 **Upstream reference:** v1.6.0 release note: "[Security] Escaped HTML entities
 in chatter change summaries to prevent XSS." Issue/commit TBD.  
-**Local state:** Open — not investigated
+**Local state:** **Not applicable — investigated 2026-10-22, this fork was
+never exposed.** Guarded by a regression test rather than a code change; see
+below.
+
+### UF-017 investigation, 2026-10-22
+
+Every chatter rendering surface was traced. None of them puts user-controlled
+text into unescaped HTML:
+
+| Surface | How it renders | Verdict |
+|---|---|---|
+| `old_value`, `new_value`, field name in change summaries | `{{ }}` | Escaped |
+| Step `$icon` | hardcoded `match()` over static SVG path data, keyed on `$change['type']` | No user input reaches it |
+| Activity bodies | translation strings with `getModelTitle()` interpolated; all 37 implementations return a literal or a `match()` over an enum, never a model attribute | No user text reaches them |
+| Message `body` and `subject` | `sanitizeHtml()`, or Filament's `RichContentRenderer` for rich-editor documents | Sanitised; the renderer is the legitimate rich text the upstream note warns against breaking |
+
+Because there is nothing to fix, the risk is that someone reintroduces it. A
+test asserting "Blade escapes `{{ }}`" would be tautological, so
+`plugins/webkul/chatter/tests/Feature/ChatterEscapingTest.php` pins the
+decision instead:
+
+1. Every `{!! !!}` in a chatter view must match an allowlisted sink
+   (`sanitizeHtml()`, `ChatterMentions::render(`, `$icon`). A new unescaped
+   sink fails until it is justified and added.
+2. The three change-summary expressions are asserted to still use `{{ }}`, so
+   switching one to `{!! !!}` fails with a message saying why it matters.
+3. No `getModelTitle()` may `return $this->someAttribute;`, which is the one
+   way user text could reach the unescaped activity-body sink.
+
+Verified against 12 chatter views and 37 `getModelTitle()` implementations
+across 324 model files. A `ChatterFeature` suite was added to `phpunit.xml`;
+the plugin had tests nowhere before, so anything written here would never have
+run.
 
 Upstream escaped HTML entities written into chatter change-summary strings.
 Unescaped user-controlled content rendered as HTML in the activity log can
@@ -651,6 +683,25 @@ value appears in the chatter as literal text, not as executable HTML.
 
 ### UF-018 - Payment State Not Updating After Invoice is Paid
 
+> **Already handled — confirmed 2026-10-22.** `Move::computePaymentState()`
+> (`Models/Move.php:675`) derives `payment_state` from the reconciliation
+> matchings and `amount_residual`, and it is called after a payment is
+> registered (`Services/PaymentRegistrar.php:342`) as well as from the move's
+> own recompute path (`Move.php:510`). Paying an invoice therefore advances
+> the state. `BLOCKED` is deliberately preserved rather than reset to
+> `NOT_PAID`.
+>
+> **A warning for whoever audits this next.** A grep for writes to
+> `payment_state` using array-key patterns (`'payment_state' =>`) finds only
+> factories and API resources, which makes it look as though nothing in
+> application code ever sets it - a false positive that reads like a P1
+> financial bug. The real assignments are object-property writes
+> (`$this->payment_state = ...`) inside `computePaymentState()`. Search for
+> the method, not the column.
+>
+> Still worth adding the regression test the implementation notes below ask
+> for; the behaviour is currently unpinned.
+
 **Decision:** Required, P1 — financial correctness  
 **Upstream reference:** v1.6.0 issue #1478. Commit TBD.  
 **Local state:** Open — not investigated
@@ -674,6 +725,18 @@ already-paid shipment invoices for billing.
    `payment_state === 'paid'`.
 
 ### UF-019 - Livewire max_nesting_depth 10 → 30
+
+> **Already implemented — confirmed 2026-10-22.** `config/livewire.php:295`
+> already sets `'max_nesting_depth' => 30` inside the `payload` block. The
+> key is real in the installed Livewire 4.3.4 and is read as
+> `livewire.payload.max_nesting_depth` by
+> `HandleComponents::updateProperty()`, so the published value takes effect.
+> Nothing to do. The "Local state" line below was stale.
+>
+> Two details worth keeping: the key is nested under `payload`, not top level,
+> so setting a top-level `max_nesting_depth` would silently do nothing; and
+> the guard is `if ($maxDepth !== null && ...)`, so a published config that
+> omits the key disables the limit entirely rather than falling back to 10.
 
 **Decision:** Required, P1 — reliability  
 **Upstream reference:** v1.6.0 release note. Config location TBD.  
