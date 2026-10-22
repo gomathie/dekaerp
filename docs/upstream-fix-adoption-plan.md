@@ -775,8 +775,11 @@ already-paid shipment invoices for billing.
 > omits the key disables the limit entirely rather than falling back to 10.
 
 **Decision:** Required, P1 — reliability  
-**Upstream reference:** v1.6.0 release note. Config location TBD.  
-**Local state:** Open — not investigated
+**Upstream reference:** v1.6.0 release note. Config location is
+`livewire.payload.max_nesting_depth`.  
+**Local state:** Already implemented — confirmed 2026-10-22 (see the note
+above; this line previously still read "Open — not investigated" after the
+investigation, which is the staleness this register keeps producing).
 
 Upstream increased Livewire's `max_nesting_depth` from 10 to 30 to fix
 crashes in deeply nested repeater components.

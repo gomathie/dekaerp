@@ -6,6 +6,7 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -35,7 +36,9 @@ use Webkul\PluginManager\Console\Commands\UninstallCommand;
 use Webkul\PluginManager\Filament\Resources\PluginResource\Pages\ListPlugins;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Package;
+use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Models\Company;
 
 class PluginResource extends Resource
 {
@@ -132,6 +135,49 @@ class PluginResource extends Resource
             ->recordActions([
                 ActionGroup::make([
                     ViewAction::make()->icon('heroicon-o-eye'),
+
+                    // Installing a plugin is global; this is which companies may
+                    // use it. Without this the company_plugin grants could only
+                    // be changed with SQL, which makes the feature unusable.
+                    Action::make('companies')
+                        ->label(__('plugin-manager::filament/resources/plugin.actions.companies.title'))
+                        ->icon('heroicon-o-building-office-2')
+                        ->color('info')
+                        ->visible(fn ($record): bool => (bool) $record->is_installed)
+                        ->modalHeading(fn ($record): string => __('plugin-manager::filament/resources/plugin.actions.companies.heading', [
+                            'name' => ucfirst($record->name),
+                        ]))
+                        ->modalDescription(__('plugin-manager::filament/resources/plugin.actions.companies.description'))
+                        ->schema([
+                            CheckboxList::make('company_ids')
+                                ->label(__('plugin-manager::filament/resources/plugin.actions.companies.field'))
+                                ->options(fn (): array => Company::query()
+                                    ->withoutGlobalScopes()
+                                    ->orderBy('name')
+                                    ->pluck('name', 'id')
+                                    ->all())
+                                ->bulkToggleable()
+                                ->columns(2),
+                        ])
+                        ->fillForm(fn ($record): array => [
+                            'company_ids' => $record->companies()->pluck('companies.id')->all(),
+                        ])
+                        ->action(function ($record, array $data): void {
+                            $record->companies()->sync($data['company_ids'] ?? []);
+
+                            // The grants are cached per request, so a stale read
+                            // would otherwise survive until the next one.
+                            PluginAccess::flush();
+
+                            Notification::make()
+                                ->success()
+                                ->title(__('plugin-manager::filament/resources/plugin.actions.companies.notification.title'))
+                                ->body(__('plugin-manager::filament/resources/plugin.actions.companies.notification.body', [
+                                    'count' => count($data['company_ids'] ?? []),
+                                    'name'  => ucfirst($record->name),
+                                ]))
+                                ->send();
+                        }),
 
                     Action::make('install')
                         ->label(__('plugin-manager::filament/resources/plugin.actions.install.title'))

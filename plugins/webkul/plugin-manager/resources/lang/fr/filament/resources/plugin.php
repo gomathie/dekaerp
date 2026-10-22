@@ -33,6 +33,18 @@ return [
             'description' => "Êtes-vous sûr de vouloir installer le plugin ':name' ? Ceci exécutera les migrations et les seeders.",
             'submit'      => 'Installer le plugin',
         ],
+
+        'companies' => [
+            'title'       => 'Sociétés',
+            'heading'     => 'Quelles sociétés peuvent utiliser :name ?',
+            'description' => 'Installer un plugin rend son code disponible pour toute l’installation. Ceci décide quelles sociétés peuvent réellement l’utiliser : accordez-le aux sociétés dont l’abonnement l’inclut. Retirer une société masque le plugin pour tous ses utilisateurs.',
+            'field'       => 'Sociétés',
+
+            'notification' => [
+                'title' => 'Disponibilité du plugin mise à jour',
+                'body'  => ':name est maintenant disponible pour :count société(s).',
+            ],
+        ],
         'uninstall' => [
             'title'      => 'Désinstaller',
             'heading'    => 'Désinstaller le plugin',
