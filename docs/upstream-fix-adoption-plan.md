@@ -733,12 +733,14 @@ value appears in the chatter as literal text, not as executable HTML.
 > (`$this->payment_state = ...`) inside `computePaymentState()`. Search for
 > the method, not the column.
 >
-> Still worth adding the regression test the implementation notes below ask
-> for; the behaviour is currently unpinned.
+> The regression is now pinned by `InvoiceTest.php`: it pays an invoice through
+> the normal registrar and asserts both `state === posted` and
+> `payment_state === paid`, plus a zero residual. The focused test passed on
+> `aureuserp_testing_uf18` (1 test, 3 assertions).
 
 **Decision:** Required, P1 — financial correctness  
 **Upstream reference:** v1.6.0 issue #1478. Commit TBD.  
-**Local state:** Open — not investigated
+**Local state:** **Covered 2026-10-22**
 
 Upstream fixed a defect where paying an invoice did not advance its state
 field, leaving paid invoices still showing as "open" or "draft".
@@ -863,8 +865,8 @@ a 500.
 ### UF-022 - Currency Conversion Not Working in RFQ / Purchase Order
 
 **Decision:** Required, P1 — financial correctness  
-**Upstream reference:** v1.6.0 issue #1497. Commit TBD.  
-**Local state:** Open — not investigated
+**Upstream reference:** v1.6.0 issue #1497, commit `a1b4679eb`.
+**Local state:** **Fixed 2026-10-22**
 
 Currency conversion was not applied when creating or editing an RFQ or
 Purchase Order in a currency different from the company's base currency.
@@ -883,6 +885,15 @@ amounts.
    resolution path.
 3. Port the fix and add a test that creates a PO in a non-base currency and
    asserts converted totals.
+
+> The upstream form fix is applied in the monolithic local `OrderResource`:
+> vendor prices and product fallback prices are converted into the selected
+> order currency, and changing the order currency refreshes existing lines.
+> The local `OrderCalculator` now persists the company-to-order conversion
+> rate before calculating `total_cc_amount`. `OrderCurrencyConversionTest.php`
+> covers company fallback, vendor prices, vendor filtering, UOM conversion,
+> and the exact converted totals; it passed with 8 tests and 8 assertions on
+> `aureuserp_testing_uf22`.
 
 ### UF-023 - Exception Deleting an Active Currency
 
