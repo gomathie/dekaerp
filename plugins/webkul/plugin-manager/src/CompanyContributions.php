@@ -27,8 +27,25 @@ use Webkul\Support\Models\Company;
  */
 class CompanyContributions
 {
+    /**
+     * Contributions accumulate, so this must only ever land once.
+     *
+     * packageBooted() is not guaranteed to run a single time per process: the
+     * install flow and the test bootstrapper both re-boot plugin providers, and
+     * the schema registry is static with no reset. Without this guard the
+     * section is contributed again on each boot and the company form grows a
+     * duplicate copy of it.
+     */
+    protected static bool $registered = false;
+
     public static function register(): void
     {
+        if (static::$registered) {
+            return;
+        }
+
+        static::$registered = true;
+
         CompanySchemaRegistry::form('main.after', fn () => [static::modulesSection()]);
     }
 
