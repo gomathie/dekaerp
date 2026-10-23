@@ -1262,6 +1262,17 @@ parallel isolation.
 > including UF-017, an unfixed P0 XSS. It is kept as a **bug register, not a
 > schedule**: the calendar trigger is dropped, the event-driven triggers below
 > still stand, and no agent owes a review merely because time has passed.
+>
+> **The "eight open findings" count above is itself superseded (2026-10-23).**
+> It was accurate on 2026-10-21 and was overtaken by the 2026-10-22 work the
+> same document records. Every Local state was re-read on 2026-10-23: UF-017 is
+> *not applicable* (this fork was never exposed; `ChatterEscapingTest` pins the
+> decision), UF-018/020/021/022/023 are fixed, UF-019/024 were already handled.
+> **No P0 or P1 is open.** Still live: UF-003 (open, not fixed upstream either),
+> UF-009 (needs an install-flow decision), UF-010 (partial), plus UF-001 and
+> UF-007 awaiting a remote CI run and browser execution respectively. The
+> restored-because-of-a-P0 rationale above is kept as the historical reason the
+> document survived deletion, not as a current risk statement.
 
 Agents cannot monitor the repository while no session is active. Therefore,
 the first active agent after the due date owns the review.
