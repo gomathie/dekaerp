@@ -472,6 +472,15 @@
                                         "name": "founded_date"
                                     }
                                 ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                        "name": "company_modules"
+                                    }
+                                ]
                             }
                         ]
                     },
