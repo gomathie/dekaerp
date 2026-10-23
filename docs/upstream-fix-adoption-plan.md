@@ -450,7 +450,54 @@ action is unavailable and pass through the real state transition.
 ### UF-008 - Translation Key Reference Audit
 
 **Decision:** Recommended local improvement, P2  
-**Local state:** **Scanner already delivered; its audit reports 84 broken references, deliberately not fixed in this pass — 2026-10-22**
+**Local state:** **Scanner delivered; all 84 broken references fixed 2026-10-22 — `translations:check --references` now reports 29/29 passing**
+
+> **Fixed 2026-10-22.** The 84 invalid references are all resolved and the
+> scanner reports `29 check(s), Passed: 29, Failed: 0`. Two distinct classes, and
+> the class decided the fix:
+>
+> - **Missing file or key — created.** `accounts::enums/display-type.*` (18 refs,
+>   no `resources/lang/en/enums/display-type.php` at all);
+>   `accounts::system.tax-formula.*` (9, keys absent from `system.php`);
+>   `support::enums/company-status.*`; the three `manufacturing::models/work-center-*`
+>   files; plus scalar keys in support `company.php`/`bank.php`, employees
+>   `employee.php`, chatter `activity-action.php`, accounting
+>   `journal-entry.php`, partners `industry.php`/`tag.php`, projects
+>   `view-task.php`, time-off filters and recruitments `job-position.php` /
+>   `edit-applicant.php`.
+> - **Wrong path — the reference was fixed, the lang files were left alone.**
+>   `accounting`'s vendor bank-account relation manager pointed at a
+>   `bank-account-relation-manager.php` that only exists under `accounts::`;
+>   `purchases`' ViewOrder pointed at `inventories::…/view-order.php` when the
+>   purchases plugin has its own copy; `inventories`' PackageResource referenced
+>   `receipt…delete.notification.title` when the file has `success`/`error`;
+>   `recruitments`' CandidateResource omitted `actions.` from
+>   `table.actions.empty-state-actions`; `fields` referenced kebab-case
+>   `textarea.helper-text`/`hint-color`/`hint-icon` where the file uses
+>   camelCase; `purchases` Requisition asked for `starts-at` where the key is
+>   `starts_at`; `chatter`'s `ChatterPanel` asked for a phantom `chatter::app.*`
+>   file.
+> - **Two keys were typos, not absences.** `fields`
+>   `datetime.first-fay-of-week` → `first-day-of-week` (5 locales);
+>   `inventories` `edit-product…error.available-quantity` had a never-referenced
+>   `qty-not-zero` sibling already translated in all five locales, so the
+>   reference was pointed at it instead of duplicating the string.
+>
+> Every new key exists in `en`, `ar`, `es`, `fr` and `pt_BR` with identical
+> structure; every lang file this fix touched is parity-clean. Two touched
+> plugins still fail the locale-parity check for reasons that predate it and are
+> unrelated to these keys (support and employees — see the drift note below).
+> Wording for keys upstream also had was taken from upstream rather than
+> invented.
+>
+> **Separate pre-existing drift, not part of this fix:** support
+> `filament/pages/help.php` is 147 lines in EN and 71 in each locale (the Help
+> page feature expanded EN without updating translations) and French
+> `currency.php` carries two extra `bulk-actions.delete.notification.error.*`
+> keys, so `translations:check --plugin=support` fails on those two files.
+> Employees French `employee.php` and `relation-manager/resume.php` carry
+> resume-attachment keys that English does not. Nothing to do with the reference
+> scanner, which ignores all of them.
 
 > **Already present.** The scanner is a `--references` mode on the existing
 > command, not a second command:

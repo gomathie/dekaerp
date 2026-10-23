@@ -50,6 +50,10 @@ this file and in the adoption plan.
 
 ### UF-008 — translation reference audit (scanner existed; extended; audit not fixed)
 
+> **Superseded later the same day.** The 84 references this entry left broken
+> were fixed; see "UF-008 follow-up: the 84 broken translation references
+> fixed" below. The scanner work described here is unchanged.
+
 The scanner was already there as `--references` on the existing command
 (`plugin-manager/src/Console/Commands/FindMissingTranslations.php:259`), with
 three command tests under `PluginManagerFeature` — so the register's "partial
@@ -132,6 +136,123 @@ Also corrected in this file: the UF-006 verification line says 21 tests / 35
 assertions. The suite as committed — including the four tests added after that
 run — was re-run on `aureuserp_testing_uf006` and passed **25 tests / 43
 assertions**. That line is superseded, not wrong at the time.
+
+## 2026-10-22 (UF-008 follow-up: the 84 broken translation references fixed)
+
+The scanner added earlier today reported 84 invalid translation references
+across 13 plugins. Each one renders as a raw key on screen, because Laravel
+returns the key when a translation is missing. All 84 are now resolved and
+`php artisan translations:check --references` reports **29 checks, 29 passed,
+0 failed**.
+
+### The classification mattered more than the edits
+
+Every reference was decided **before** anything was written. Creating a lang
+file for a reference that was merely misspelled makes the scanner go green
+while the text sits in the wrong place and the real file is still unused, so
+the two cases were separated first:
+
+- **Missing file or key (created).** `accounts::enums/display-type.*` - no
+  `accounts/resources/lang/en/enums/display-type.php` existed at all (18 refs);
+  `accounts::system.tax-formula.*` - keys absent from `system.php` (9 refs);
+  `support::enums/company-status.*`; the three
+  `manufacturing::models/work-center-*` files; scalar keys in support
+  `company.php` and `bank.php`, employees `employee.php`, chatter
+  `activity-action.php`, accounting `journal-entry.php`, partners
+  `industry.php`/`tag.php`, projects `view-task.php`, the time-off
+  `leave-type`/`mandatory-days` filters, and recruitments `job-position.php`.
+- **Wrong path (the reference was fixed, lang files untouched).** accounting's
+  `BankAccountsRelationManager` pointed at a `bank-account-relation-manager.php`
+  that exists only under `accounts::`; `purchases`' `ViewOrder` pointed at
+  `inventories::.../view-order.php` although purchases has its own copy;
+  `inventories`' `ManageOperations` asked for `delete.notification.title` where
+  the file has `success`/`error`; `inventories`' `EditProduct` asked for
+  `error.available-quantity`; `recruitments`' `CandidateResource` omitted the
+  `actions.` segment of `table.actions.empty-state-actions`; `fields`
+  `FieldResource` used kebab-case `textarea.helper-text`/`hint-color`/`hint-icon`
+  where the lang file uses camelCase; `purchases` `Requisition` asked for
+  `starts-at`/`ends-at` where the log-attribute keys are `starts_at`/`ends_at`;
+  chatter's `ChatterPanel` asked for a `chatter::app.*` file that does not exist.
+- **Typo'd key names (fixed in the lang files, 5 locales).** `fields`
+  `datetime.first-fay-of-week` -> `first-day-of-week`. `inventories`
+  `edit-product` referenced `error.available-quantity`, while a translated
+  `error.qty-not-zero` sibling sat unreferenced in all five locales - the
+  reference was pointed at the existing string rather than a duplicate created.
+
+Root cause of the whole family: references are plain strings, so nothing checks
+them at build time, and the `--references` mode that now does was added today.
+
+### Wording chosen rather than derived
+
+Upstream commit `33ed6ac32` had already fixed about 48 of these, so its wording
+was reused wherever a key matched. Where no source existed, the wording is the
+obvious reading of the key and is worth a native-speaker pass:
+
+- `accounts` `enums/display-type.php` - Product / COGS / Tax / Payment term /
+  Account / Category / Rounding / Deposit / Deduction.
+- `support` `enums/company-status.php` - Active / Inactive.
+- `manufacturing` `models/work-center-loss-type|productivity-log|productivity-loss`
+  - field labels derived from the model columns.
+- chatter `activity-action.setup.form.fields.body` - "Body".
+- support `company.php` bulk force-delete error - "Some companies could not be
+  force deleted." / "No companies were force deleted."
+- employees `categories` - "Categories"; the six `*-copy-message` strings -
+  "Copy of ...".
+
+### Task 2 - dead accounts migration deleted
+
+`plugins/webkul/accounts/database/migrations/2025_11_21_100010_create_accounts_account_companies_table.php`
+duplicated the registered `2025_01_30_054955_create_accounts_account_companies_table.php`
+(same `Schema::create('accounts_account_companies')`), so registering it would
+have broken `migrate:fresh` with "relation already exists". It is deleted, not
+registered. The registered version is the one that matches real usage -
+`Account::companies()` declares no `withTimestamps()` and
+`AccountingSetupService` inserts no timestamps - so the surviving migration is
+the correct one. Its entry and docblock bullet were pruned from
+`KNOWN_UNREGISTERED_MIGRATIONS` in
+`plugins/webkul/support/tests/Feature/Plugins/MigrationRegistrationTest.php`,
+whose second test fails when an allowlist entry has been resolved. The other
+allowlist entries are untouched; in particular
+`support/2026_03_09_000001_add_unique_index_to_companies_name` adds a UNIQUE
+index on `companies.name` and needs a production data check before anyone
+registers it.
+
+### Verification (actually run)
+
+- `php artisan translations:check --references` in Sail on
+  `aureuserp_testing_uf4`: **29 checks, 29 passed, 0 failed**, "All translations
+  are synchronized with EN!".
+- `php artisan translations:check --details` (locale parity, whole repo, all
+  plugins): 104 checks, 93 passed, 11 failed - all pre-existing, detailed below.
+- `MigrationRegistrationTest` on `aureuserp_testing_uf4`:
+  **2 passed, 4 assertions**, 486s (the first test runs `migrate:fresh`, which
+  succeeded without the deleted migration).
+- `php -l` on the 10 changed PHP files outside `resources/lang`, and on all 105
+  referenced PHP files (lang included) for BOM: clean, no BOM. Every
+  `resources/lang` file in the repo also lints clean except one pre-existing
+  failure (below). A PowerShell `Set-Content -Encoding UTF8` rewrite of
+  `ViewOrder.php` had introduced a BOM; it was stripped and re-verified.
+- Pint clean, `git diff --check` clean. Local Sail database only; no managed or
+  production database was touched.
+
+### Pre-existing drift found, deliberately not fixed
+
+- **`plugins/webkul/logistics/resources/lang/fr/documents/waybill.php` does not
+  parse.** It uses typographic quotes (`U+2018`/`U+2019`) as PHP string
+  delimiters, so `php -l` fails at line 10 - and any load of
+  `logistics::documents/waybill` in French fatals. Introduced by `a3eec3a10`
+  (2026-10-20). Out of scope here (logistics lang files were excluded from this
+  pass); one-line fix per string.
+- Locale parity gaps, all older than today: support `filament/pages/help.php`
+  (EN 147 lines, locales 71), support `fr/filament/resources/currency.php` (two
+  extra `bulk-actions.delete.notification.error.*` keys), employees
+  `fr/filament/resources/employee.php` + `relation-manager/resume.php` (French
+  resume-attachment keys with no EN counterpart), products `fr` (two extra
+  `exceptions/*-in-use.php` files and three `attribute.php` keys), security
+  `user.php` (7 `form.validation.*` keys) and `livewire/accept-invitation.php`
+  (1 key) missing in all four locales.
+- `recruitments` `job-position.php` `company-modal-title` is also used for the
+  recruiter (User) modal that reuses the same action.
 
 ## 2026-10-22 (Per-company plugin availability)
 
