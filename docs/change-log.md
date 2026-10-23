@@ -58,6 +58,33 @@ The third-party Filament plugins (`filament-shield` 4.2.0,
    overrides all depend on internal behaviour, so three minor versions is a
    real surface and needs all thirteen suites rather than a spot check.
 
+### The view overrides, measured rather than assumed
+
+Point 2 above was checked rather than left as a worry. There are exactly three
+local Filament view overrides, and their package sources are **not** where the
+published path suggests - the panels views live in `filament/filament`, not a
+`filament/panels` package:
+
+| Override | Package source | Changed hunks at v5.7.6 |
+|---|---|---|
+| `filament-tables/components/summary/row.blade.php` | `filament/tables/resources/views/components/summary/row.blade.php` | 5 |
+| `filament-panels/livewire/topbar.blade.php` | `filament/filament/resources/views/livewire/topbar.blade.php` | 8 |
+| `filament-panels/livewire/sidebar.blade.php` | `filament/filament/resources/views/livewire/sidebar.blade.php` | 4 |
+
+The v5.7.6 baseline diff was captured before the upgrade so the post-upgrade
+diff can be compared against a known starting point rather than judged from
+scratch.
+
+The summary-row override is a narrow, well-commented change (responsive classes
+on summary cells). **The sidebar and topbar overrides are not**: they are
+substantial rewrites that drop `PanelsRenderHook::SIDEBAR_START`, the
+`id="fi-main-sidebar"` anchor and both sidebar collapse buttons, and branch on
+`getCurrentPanel()->getId() === 'admin'`. That is the real upgrade risk here,
+and it is a silent one - a Blade override keeps rendering the version it was
+forked from, so anything Filament changes in those two views across three minor
+versions simply does not appear, with no error anywhere. Re-diffing these two is
+a required step of the upgrade, not a tidy-up afterwards.
+
 **Decision:** do it as its own change, after the day's fixes are verified and
 deployed. Awaiting the user's go-ahead before `composer.lock` moves.
 
