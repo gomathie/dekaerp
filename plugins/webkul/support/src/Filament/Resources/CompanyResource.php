@@ -50,6 +50,7 @@ use Webkul\Support\Filament\Resources\CompanyResource\Pages\EditCompany;
 use Webkul\Support\Filament\Resources\CompanyResource\Pages\ListCompanies;
 use Webkul\Support\Filament\Resources\CompanyResource\Pages\ViewCompany;
 use Webkul\Support\Filament\Resources\CompanyResource\RelationManagers\BranchesRelationManager;
+use Webkul\Support\Filament\Resources\CompanyResource\Support\CompanySchemaRegistry;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Currency;
 use Webkul\Support\Models\Scopes\AllowedCompanyScope;
@@ -250,6 +251,7 @@ class CompanyResource extends Resource
                                             ->label(__('support::filament/resources/company.form.sections.additional-information.fields.company-foundation-date')),
                                         ...static::getCustomFormFields(),
                                     ])->columns(2),
+                                ...CompanySchemaRegistry::renderForm('main.after'),
                             ])
                             ->columnSpan(['lg' => 2]),
                         Group::make()

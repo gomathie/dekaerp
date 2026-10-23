@@ -45,6 +45,11 @@ class PluginManagerServiceProvider extends PackageServiceProvider
 
         Event::listen('aureus.installed', 'Webkul\PluginManager\Listeners\Installer@installed');
 
+        // Adds the per-company module grants to the company form. Contributed
+        // rather than edited into support's CompanyResource, so the base plugin
+        // never has to reference this one.
+        CompanyContributions::register();
+
         // A new company starts with the plugins every existing company has, so
         // introducing per-company availability changes nothing by itself and
         // removing access stays the deliberate act. On the model event rather
