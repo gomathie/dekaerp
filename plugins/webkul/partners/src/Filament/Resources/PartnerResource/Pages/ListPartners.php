@@ -76,6 +76,15 @@ class ListPartners extends ListRecords
                         'text/plain',
                         'application/csv',
                     ])
+                    // acceptedFileTypes() above is only a browser hint and is
+                    // trivially bypassed, so the type and size are enforced
+                    // again server-side. Laravel's `mimes` rule sniffs the
+                    // file's actual contents rather than trusting its
+                    // extension, which is what catches a renamed file; `txt`
+                    // is listed because a CSV written by Excel frequently
+                    // sniffs as text/plain.
+                    ->rules(['file', 'mimes:xlsx,xls,csv,txt', 'max:10240'])
+                    ->maxSize(10240)
                     ->required(),
             ])
             // Two templates from one export class, because the staff filling

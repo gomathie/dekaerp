@@ -28,11 +28,37 @@ class ContactImporter
     protected array $stateCache = [];
 
     /**
+     * Characters that make a spreadsheet application treat a cell as a
+     * formula. A value starting with one of these is refused rather than
+     * rewritten, because this app renders contact names as HTML: the usual
+     * "prefix the value with an apostrophe" trick is invisible in Excel but
+     * would show up as a literal apostrophe on every screen in the ERP, and
+     * silently editing a customer's name is worse than reporting the row.
+     *
+     * `+` and `-` are deliberately NOT here. Every international phone number
+     * in this importer's own template starts with `+`, so guarding them would
+     * reject ordinary contact data.
+     *
+     * Formulas are not a server-side execution risk in any case: Laravel Excel
+     * reads with setReadDataOnly() by default, so a formula arrives as its
+     * cached value and is never calculated. The risk this guards is the next
+     * step - a value like `=cmd|...` stored here, exported to CSV later, and
+     * opened in Excel by a colleague.
+     */
+    public const FORMULA_TRIGGERS = ['=', '@', "\t", "\r", "\n"];
+
+    /**
      * The spreadsheet columns, in the order the template writes them.
      *
      * This is the single source of truth for the feature: the template export
      * builds its heading row from it and the importer maps uploaded columns
      * with it, so a column cannot be added to one and forgotten in the other.
+     *
+     * The rules mirror Webkul\Partner\Http\Requests\PartnerRequest - the one
+     * place in this application that declares validation for a partner - so an
+     * imported contact is held to the same standard as one created through the
+     * API. Note the tight max:20 on phone, mobile and zip, which comes from
+     * there rather than from the (wider) column definitions.
      *
      * `example` supplies the two sample rows in the downloadable template.
      *
@@ -44,20 +70,42 @@ class ContactImporter
             'name'         => ['required' => true,  'rules' => 'required|string|max:255', 'example' => ['Acme Industries Ltd', 'Ama Mensah']],
             'account_type' => ['required' => false, 'rules' => 'nullable|string|in:individual,company', 'example' => ['company', 'individual']],
             'email'        => ['required' => false, 'rules' => 'nullable|email|max:255', 'example' => ['accounts@acme.test', 'ama.mensah@acme.test']],
-            'phone'        => ['required' => false, 'rules' => 'nullable|string|max:255', 'example' => ['+233 30 123 4567', '']],
-            'mobile'       => ['required' => false, 'rules' => 'nullable|string|max:255', 'example' => ['', '+233 24 765 4321']],
+            'phone'        => ['required' => false, 'rules' => 'nullable|string|max:20', 'example' => ['+233 30 123 4567', '']],
+            'mobile'       => ['required' => false, 'rules' => 'nullable|string|max:20', 'example' => ['', '+233 24 765 4321']],
             'job_title'    => ['required' => false, 'rules' => 'nullable|string|max:255', 'example' => ['', 'Procurement Officer']],
-            'website'      => ['required' => false, 'rules' => 'nullable|string|max:255', 'example' => ['https://acme.test', '']],
+            'website'      => ['required' => false, 'rules' => 'nullable|url|max:255', 'example' => ['https://acme.test', '']],
             'tax_id'       => ['required' => false, 'rules' => 'nullable|string|max:255', 'example' => ['C0001234567', '']],
             'reference'    => ['required' => false, 'rules' => 'nullable|string|max:255', 'example' => ['CUST-0001', 'CUST-0002']],
             'street1'      => ['required' => false, 'rules' => 'nullable|string|max:255', 'example' => ['12 Independence Avenue', '12 Independence Avenue']],
             'street2'      => ['required' => false, 'rules' => 'nullable|string|max:255', 'example' => ['', 'Suite 4']],
             'city'         => ['required' => false, 'rules' => 'nullable|string|max:255', 'example' => ['Accra', 'Accra']],
-            'zip'          => ['required' => false, 'rules' => 'nullable|string|max:255', 'example' => ['GA-145-0001', 'GA-145-0001']],
+            'zip'          => ['required' => false, 'rules' => 'nullable|string|max:20', 'example' => ['GA-145-0001', 'GA-145-0001']],
             'country'      => ['required' => false, 'rules' => 'nullable|string|max:255', 'example' => ['Ghana', 'GH']],
             'state'        => ['required' => false, 'rules' => 'nullable|string|max:255', 'example' => ['Greater Accra', '']],
             'parent'       => ['required' => false, 'rules' => 'nullable|string|max:255', 'example' => ['', 'Acme Industries Ltd']],
         ];
+    }
+
+    /**
+     * The first column whose value would be read as a formula, if any.
+     */
+    public static function formulaColumnIn(array $attributes): ?string
+    {
+        foreach ($attributes as $column => $value) {
+            $value = (string) $value;
+
+            if ($value === '') {
+                continue;
+            }
+
+            foreach (static::FORMULA_TRIGGERS as $trigger) {
+                if (str_starts_with($value, $trigger)) {
+                    return $column;
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -137,6 +185,16 @@ class ContactImporter
             }
 
             $attributes = $this->extract($row, $map);
+
+            if (($formulaColumn = static::formulaColumnIn($attributes)) !== null) {
+                $skipped++;
+                $errors[] = __('partners::services/contact-importer.errors.formula', [
+                    'row'    => $rowNumber,
+                    'column' => $formulaColumn,
+                ]);
+
+                continue;
+            }
 
             $validator = Validator::make(
                 $attributes,

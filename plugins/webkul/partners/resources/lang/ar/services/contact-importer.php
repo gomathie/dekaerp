@@ -2,14 +2,15 @@
 
 return [
     'errors' => [
-        'empty'           => 'The file has no rows.',
-        'no-columns'      => 'No recognised columns were found in the heading row. Expected columns: :columns.',
-        'missing-name'    => 'The file must have a "name" column.',
-        'max-rows'        => 'Only the first :max rows were imported. Split the file and upload the rest.',
-        'row'             => 'Row :row: :reason',
-        'duplicate-email' => 'Row :row: a contact with the email :email already exists.',
-        'unknown-country' => 'Row :row: no country matches ":country".',
-        'unknown-state'   => 'Row :row: no state matches ":state".',
-        'unknown-parent'  => 'Row :row: no existing contact matches the company ":parent".',
+        'empty'           => 'الملف لا يحتوي على أي صفوف.',
+        'no-columns'      => 'لم يتم العثور على أي عمود معروف في صف العناوين. الأعمدة المتوقعة: :columns.',
+        'missing-name'    => 'يجب أن يحتوي الملف على عمود باسم "name".',
+        'max-rows'        => 'تم استيراد أول :max صف فقط. قسّم الملف وارفع الباقي.',
+        'row'             => 'الصف :row: :reason',
+        'formula'         => 'الصف :row: القيمة ":column" تبدأ بحرف تعتبره برامج الجدولة صيغة حسابية. أزِله ثم أعد الرفع.',
+        'duplicate-email' => 'الصف :row: توجد بالفعل جهة اتصال بالبريد الإلكتروني :email.',
+        'unknown-country' => 'الصف :row: لا يوجد بلد مطابق لـ ":country".',
+        'unknown-state'   => 'الصف :row: لا توجد منطقة مطابقة لـ ":state".',
+        'unknown-parent'  => 'الصف :row: لا توجد جهة اتصال قائمة مطابقة للشركة ":parent".',
     ],
 ];
