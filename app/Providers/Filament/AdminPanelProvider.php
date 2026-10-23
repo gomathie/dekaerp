@@ -24,6 +24,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Webkul\Security\Http\Middleware\RequirePasswordChange;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Filament\AvatarProviders\DefaultAvatarProvider;
 use Webkul\Support\Filament\Pages\Profile;
