@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\App;
 use Webkul\Logistics\Exceptions\LogisticsNotEnabledException;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\PrintWaybillAction;
 use Webkul\Logistics\Models\ShipmentLine;
@@ -148,4 +149,29 @@ it('refuses to print after the shipment company disables Logistics', function ()
         ->toThrow(LogisticsNotEnabledException::class);
 
     expect($shipment->refresh()->waybill_no)->toBeNull();
+});
+
+it('loads the waybill translations in every supported locale', function () {
+    // The French file shipped with typographic quotes as PHP string delimiters,
+    // so it did not parse and printing a waybill in French was a fatal error.
+    // Loading the group in each locale is what proves the file parses at all.
+    $titles = [];
+
+    foreach (['en', 'ar', 'es', 'fr', 'pt_BR'] as $locale) {
+        App::setLocale($locale);
+
+        $labels = trans('logistics::documents/waybill.labels');
+
+        expect($labels)->toBeArray()
+            ->toHaveKeys(['waybill-number', 'shipment-number', 'consignor', 'date']);
+
+        $titles[$locale] = trans('logistics::documents/waybill.title');
+
+        expect($titles[$locale])->not->toBe('logistics::documents/waybill.title');
+    }
+
+    App::setLocale('en');
+
+    expect($titles)->toHaveKeys(['en', 'ar', 'es', 'fr', 'pt_BR'])
+        ->and(array_unique($titles))->toHaveCount(5);
 });
