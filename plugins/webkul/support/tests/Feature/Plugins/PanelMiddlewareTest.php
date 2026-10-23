@@ -1,6 +1,8 @@
 <?php
 
 use Filament\Facades\Filament;
+use Filament\Http\Middleware\Authenticate;
+use Webkul\Security\Http\Middleware\RequirePasswordChange;
 
 require_once __DIR__.'/../../Helpers/TestBootstrapHelper.php';
 require_once __DIR__.'/../../Helpers/FilamentHelper.php';
@@ -67,10 +69,17 @@ it('registers only middleware classes that exist, on every panel', function () {
 it('registers the password-change middleware by its real class name', function () {
     FilamentHelper::bootAdminPanel();
 
-    $middleware = Filament::getPanel('admin')->getMiddleware();
+    // It belongs to authMiddleware, not middleware: it inspects the signed-in
+    // user, so it has to run after Authenticate has resolved one. Asserting the
+    // bucket and the order together is what makes this a real pin - the first
+    // version of this test looked only at getMiddleware() and failed against
+    // correct code.
+    $authMiddleware = Filament::getPanel('admin')->getAuthMiddleware();
 
-    // Pins the specific regression: the admin panel must carry the middleware,
-    // and under the namespace it is actually declared in.
-    expect($middleware)->toContain(\Webkul\Security\Http\Middleware\RequirePasswordChange::class)
-        ->and($middleware)->not->toContain('App\Providers\Filament\RequirePasswordChange');
+    expect($authMiddleware)->toContain(RequirePasswordChange::class)
+        ->and($authMiddleware)->not->toContain('App\Providers\Filament\RequirePasswordChange')
+        ->and($authMiddleware)->toContain(Authenticate::class);
+
+    expect(array_search(RequirePasswordChange::class, $authMiddleware, true))
+        ->toBeGreaterThan(array_search(Authenticate::class, $authMiddleware, true));
 });
