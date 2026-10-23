@@ -461,7 +461,13 @@ trait HasTableViews
             ($this->removeTableViewFromFavoritesAction())($args)
                 ->visible(fn () => $tableView->isFavorite($key)),
 
-            ($this->editTableViewAction(['view_model' => $tableView->getRecord()]))($args)
+            // editTableViewAction() takes no parameters, so PHP discarded this
+            // argument - but $tableView->getRecord() was still evaluated, and a
+            // preset view component has no schema container, so getRecord()
+            // threw "Component::$container must not be accessed before
+            // initialization" and fataled the whole page. 'view_model' was read
+            // nowhere in the codebase.
+            ($this->editTableViewAction())($args)
                 ->visible(fn () => $tableView->isEditable()),
 
             ActionGroup::make([
