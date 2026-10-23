@@ -11,6 +11,40 @@
     <div class="grid gap-6 lg:grid-cols-4">
         {{-- Navigation --}}
         <div class="flex flex-col gap-4 lg:col-span-1">
+            {{--
+                Audience switch. Hidden for a viewer with only one guide, which
+                is every ordinary user: a single-choice control is noise.
+            --}}
+            @php($audiences = $this->audiences())
+
+            @if (count($audiences) > 1)
+                <div
+                    class="flex flex-col gap-1 rounded-xl bg-gray-50 p-1 dark:bg-white/5"
+                    role="tablist"
+                    aria-label="{{ __('support::filament/pages/guide.audience.label') }}"
+                >
+                    @foreach ($audiences as $audience)
+                        @php($isCurrent = $audience === $this->currentAudience())
+
+                        <button
+                            type="button"
+                            role="tab"
+                            aria-selected="{{ $isCurrent ? 'true' : 'false' }}"
+                            wire:click="selectAudience('{{ $audience->value }}')"
+                            @class([
+                                'flex items-center gap-2 rounded-lg px-3 py-2 text-left text-sm',
+                                'bg-white font-semibold text-primary-600 shadow-sm dark:bg-gray-900 dark:text-primary-400' => $isCurrent,
+                                'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white' => ! $isCurrent,
+                            ])
+                        >
+                            <x-filament::icon :icon="$audience->getIcon()" class="size-4 shrink-0" />
+
+                            <span class="truncate">{{ $audience->getLabel() }}</span>
+                        </button>
+                    @endforeach
+                </div>
+            @endif
+
             <x-filament::input.wrapper
                 prefix-icon="heroicon-m-magnifying-glass"
                 :valid="true"

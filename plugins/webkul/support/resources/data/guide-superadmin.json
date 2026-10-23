@@ -1,0 +1,82 @@
+[
+  {
+    "id": "installation-administration",
+    "audience": "superadmin",
+    "name": "Installation Administration",
+    "icon": "<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14.7 6.3a4 4 0 0 0 5 5l-9 9a2.8 2.8 0 0 1-4-4l9-9z\"></path><path d=\"M16 3l5 5\"></path></svg>",
+    "source": "authored",
+    "items": [
+      {
+        "id": "superadmin-roles",
+        "title": "The Three Administrator Roles",
+        "group": null,
+        "module": "Installation",
+        "readTime": "4 min read",
+        "summary": "Super admin, Multi-Company Admin and Company Admin are three different jobs with three different reaches. Knowing which one to hand out is the single most important access decision in the system.",
+        "toc": [
+          { "id": "super-admin", "text": "Super admin" },
+          { "id": "multi-company-admin", "text": "Multi-Company Admin" },
+          { "id": "company-admin", "text": "Company Admin" },
+          { "id": "which-to-grant", "text": "Which to grant" }
+        ],
+        "htmlContent": "<h2 id=\"super-admin\" class=\"doc-heading doc-heading--h2\">Super admin<a class=\"doc-anchor\" href=\"#super-admin\" aria-label=\"Link to Super admin\">#</a></h2>\n<p>Unrestricted. A super admin passes every permission check without a role granting it, which also means per-record rules do not narrow what they can reach. Keep the number of super admins as small as the business can tolerate, and do day-to-day work under an ordinary account.</p>\n<p>Because permission checks are skipped rather than satisfied, a super admin is the wrong account to test permissions with. Everything will appear to work. Test with a real account holding the role in question.</p>\n<h2 id=\"multi-company-admin\" class=\"doc-heading doc-heading--h2\">Multi-Company Admin<a class=\"doc-anchor\" href=\"#multi-company-admin\" aria-label=\"Link to Multi-Company Admin\">#</a></h2>\n<p>For staff who administer several tenants - onboarding a customer, fixing a configuration, investigating a report. It reaches across companies by design, so it belongs to your own people and never to a customer.</p>\n<h2 id=\"company-admin\" class=\"doc-heading doc-heading--h2\">Company Admin<a class=\"doc-anchor\" href=\"#company-admin\" aria-label=\"Link to Company Admin\">#</a></h2>\n<p>The customer's own administrator, for one company. They add and remove their own users, create roles and run their own configuration without needing you.</p>\n<p>It is deliberately not a protected system role, so your staff can hand it out while onboarding a tenant without being a super admin. It is held in check by the two rules that apply to every ordinary role: an administrator may only assign roles whose permissions are a subset of their own, and may only grant companies they hold themselves. It gets no bypass of any kind.</p>\n<h2 id=\"which-to-grant\" class=\"doc-heading doc-heading--h2\">Which to grant<a class=\"doc-anchor\" href=\"#which-to-grant\" aria-label=\"Link to Which to grant\">#</a></h2>\n<ul>\n<li>A customer asking to manage their own users - <strong>Company Admin</strong>.</li>\n<li>Your own support or onboarding staff - <strong>Multi-Company Admin</strong>.</li>\n<li>Installing modules, upgrades, anything installation-wide - <strong>super admin</strong>.</li>\n</ul>"
+      },
+      {
+        "id": "superadmin-companies",
+        "title": "Creating a Company and Its Administrator",
+        "group": null,
+        "module": "Installation",
+        "readTime": "4 min read",
+        "summary": "A new company gets its own administrator so the customer can start work without waiting on you. This covers what happens on create, and what to do when the invitation email does not arrive.",
+        "toc": [
+          { "id": "creating-the-company", "text": "Creating the company" },
+          { "id": "when-mail-fails", "text": "When the invitation does not arrive" },
+          { "id": "company-separation", "text": "How company separation works" }
+        ],
+        "htmlContent": "<h2 id=\"creating-the-company\" class=\"doc-heading doc-heading--h2\">Creating the company<a class=\"doc-anchor\" href=\"#creating-the-company\" aria-label=\"Link to Creating the company\">#</a></h2>\n<ol>\n<li><p>Go to <strong><span class=\"doc-path\">Settings &rarr; Companies &rarr; New</span></strong>.</p></li>\n<li><p>Fill in the company details, including the <strong>email address of the person who will administer it</strong>.</p></li>\n<li><p>Save. The system creates the company and invites that person as its <strong>Company Admin</strong>, so they can sign in and add their own users straight away.</p></li>\n<li><p>Check the numbering, currency and tax configuration for the new company before the customer issues their first document.</p></li>\n</ol>\n<h2 id=\"when-mail-fails\" class=\"doc-heading doc-heading--h2\">When the invitation does not arrive<a class=\"doc-anchor\" href=\"#when-mail-fails\" aria-label=\"Link to When the invitation does not arrive\">#</a></h2>\n<p>The administrator account is created whether or not the email goes out. If sending fails, the notification shows you the invitation link so you can pass it on yourself.</p>\n<p>You can also set the person's password directly on their user record and tell them over a channel you trust. Turn on <strong>Must change password</strong> when you do, so the password you issued stops working as soon as they choose their own.</p>\n<h2 id=\"company-separation\" class=\"doc-heading doc-heading--h2\">How company separation works<a class=\"doc-anchor\" href=\"#company-separation\" aria-label=\"Link to How company separation works\">#</a></h2>\n<p>Nearly every record belongs to exactly one company, and users only see records belonging to the companies they hold. This is the boundary between tenants.</p>\n<p>A small set of records belongs to no company and is shared by all of them - countries, currencies and units of measure, for example. Treat shared records as installation-wide configuration: editing one changes it for every customer.</p>"
+      },
+      {
+        "id": "superadmin-plugins",
+        "title": "Installing and Removing Modules",
+        "group": null,
+        "module": "Installation",
+        "readTime": "4 min read",
+        "summary": "Modules are installed for the whole installation. Uninstalling one removes its database tables, so it is a destructive operation and not a way to hide a feature.",
+        "toc": [
+          { "id": "installing", "text": "Installing a module" },
+          { "id": "uninstalling", "text": "Uninstalling a module" },
+          { "id": "hiding-instead", "text": "Hiding rather than removing" }
+        ],
+        "htmlContent": "<h2 id=\"installing\" class=\"doc-heading doc-heading--h2\">Installing a module<a class=\"doc-anchor\" href=\"#installing\" aria-label=\"Link to Installing a module\">#</a></h2>\n<ol>\n<li><p>Go to <strong><span class=\"doc-path\">Settings &rarr; Plugins</span></strong>.</p></li>\n<li><p>Find the module and install it. Its database tables are created, its permissions are generated and its starting configuration is seeded.</p></li>\n<li><p>Modules that depend on others pull those in automatically - installing Time Off also installs Employees.</p></li>\n<li><p>Afterwards, grant the new module's permissions to the roles that need them. Installing a module does not give anybody access to it.</p></li>\n</ol>\n<p>Installation is installation-wide: a module is either present in this deployment or it is not. It is not installed per customer.</p>\n<h2 id=\"uninstalling\" class=\"doc-heading doc-heading--h2\">Uninstalling a module<a class=\"doc-anchor\" href=\"#uninstalling\" aria-label=\"Link to Uninstalling a module\">#</a></h2>\n<p><strong>Uninstalling drops the module's tables and the data in them.</strong> It is not reversible from the interface. Before uninstalling anything on a live installation:</p>\n<ol>\n<li><p>Confirm no customer is using it. The data belongs to them, not to you.</p></li>\n<li><p>Take a database backup you have actually checked you can restore.</p></li>\n<li><p>Export anything that must be kept for tax or audit purposes.</p></li>\n</ol>\n<p>Some modules refuse to uninstall while records still depend on them. Treat that refusal as the system protecting a customer's data, not as an obstacle to work around.</p>\n<h2 id=\"hiding-instead\" class=\"doc-heading doc-heading--h2\">Hiding rather than removing<a class=\"doc-anchor\" href=\"#hiding-instead\" aria-label=\"Link to Hiding rather than removing\">#</a></h2>\n<p>If the goal is that one customer should not see a module, uninstalling is the wrong tool - it would remove it for everyone. Use per-company availability instead; see the next page.</p>"
+      },
+      {
+        "id": "superadmin-company-plugins",
+        "title": "Choosing Which Companies May Use a Module",
+        "group": null,
+        "module": "Installation",
+        "readTime": "3 min read",
+        "summary": "Installing a module makes it present in the deployment; a separate per-company grant records which customers are entitled to it, so availability can follow each customer's subscription.",
+        "toc": [
+          { "id": "granting", "text": "Granting and removing access" },
+          { "id": "defaults", "text": "What existing companies have" },
+          { "id": "status", "text": "Current status" }
+        ],
+        "htmlContent": "<h2 id=\"granting\" class=\"doc-heading doc-heading--h2\">Granting and removing access<a class=\"doc-anchor\" href=\"#granting\" aria-label=\"Link to Granting and removing access\">#</a></h2>\n<ol>\n<li><p>Go to <strong><span class=\"doc-path\">Settings &rarr; Plugins</span></strong>.</p></li>\n<li><p>Use the <strong>Companies</strong> action on the module's row.</p></li>\n<li><p>Tick the companies entitled to it and save.</p></li>\n</ol>\n<p>A ticked company is entitled to the module; an unticked one is not. There is no third state - absence of a grant is the refusal.</p>\n<h2 id=\"defaults\" class=\"doc-heading doc-heading--h2\">What existing companies have<a class=\"doc-anchor\" href=\"#defaults\" aria-label=\"Link to What existing companies have\">#</a></h2>\n<p>Every company that existed when this was introduced was granted every installed module, and each newly created company is granted the installed set as well. Nothing was taken away by the change: <strong>removing access is always a deliberate act</strong>.</p>\n<p>That also means a new module is not automatically withheld from existing customers. If a module is part of a paid tier, review its grants after installing it.</p>\n<h2 id=\"status\" class=\"doc-heading doc-heading--h2\">Current status<a class=\"doc-anchor\" href=\"#status\" aria-label=\"Link to Current status\">#</a></h2>\n<p>Grants are recorded and managed here now. Enforcement - actually hiding a module from a company that is not entitled to it - is being applied module by module, because a module has to be withheld from its menus, its pages and its permission checks together. Withholding it from the menu alone would leave it reachable by direct link, which looks restricted without being restricted.</p>\n<p>Until a given module has been through that work, treat its grants as a record of entitlement rather than as an access control, and keep using roles and permissions to decide what people can open.</p>"
+      },
+      {
+        "id": "superadmin-maintenance",
+        "title": "Upgrades, Caches and Maintenance",
+        "group": null,
+        "module": "Installation",
+        "readTime": "3 min read",
+        "summary": "What to do after a deployment, which caches matter, and how to tell a configuration problem from a code problem.",
+        "toc": [
+          { "id": "after-a-deployment", "text": "After a deployment" },
+          { "id": "caches", "text": "Caches" },
+          { "id": "when-something-breaks", "text": "When something breaks" }
+        ],
+        "htmlContent": "<h2 id=\"after-a-deployment\" class=\"doc-heading doc-heading--h2\">After a deployment<a class=\"doc-anchor\" href=\"#after-a-deployment\" aria-label=\"Link to After a deployment\">#</a></h2>\n<ol>\n<li><p>Confirm database migrations ran. A missing column usually shows up later as an unrelated-looking error, not at the point of the mistake.</p></li>\n<li><p>Check that the application caches were rebuilt.</p></li>\n<li><p>Sign in and open a few pages from different modules, ideally as an ordinary user rather than a super admin, so permission problems are visible.</p></li>\n<li><p>Check the error tracker for anything new.</p></li>\n</ol>\n<h2 id=\"caches\" class=\"doc-heading doc-heading--h2\">Caches<a class=\"doc-anchor\" href=\"#caches\" aria-label=\"Link to Caches\">#</a></h2>\n<p>Routes, configuration and views are cached for speed. The cache is built once per deployment, which matters for anything that varies per user or per company: a value captured while the cache was built would otherwise be served to everybody.</p>\n<p>If a change to configuration appears to have no effect, a stale cache is the first thing to rule out. Clear and rebuild rather than guessing.</p>\n<h2 id=\"when-something-breaks\" class=\"doc-heading doc-heading--h2\">When something breaks<a class=\"doc-anchor\" href=\"#when-something-breaks\" aria-label=\"Link to When something breaks\">#</a></h2>\n<ul>\n<li><strong>One user affected</strong> - look at their roles, their companies and their record visibility setting before anything else.</li>\n<li><strong>One company affected</strong> - look at that company's configuration: numbering, currency, taxes, module grants.</li>\n<li><strong>Everybody affected</strong> - look at the deployment: migrations, caches and the error tracker.</li>\n</ul>\n<p>Resist the urge to switch a check off to make a page load. A permission or validation error is usually reporting something true.</p>"
+      }
+    ]
+  }
+]

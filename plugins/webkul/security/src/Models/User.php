@@ -117,6 +117,20 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
             ->contains(fn (string $name): bool => mb_strtolower(trim($name)) === mb_strtolower(Role::MULTI_COMPANY_ADMIN));
     }
 
+    /**
+     * A customer's own administrator for their company.
+     *
+     * Deliberately only the role itself, with no super-admin or multi-company
+     * fallback: callers that mean "this person administers something" compose
+     * the three predicates themselves, so neither of the wider roles can be
+     * mistaken for a tenant-scoped one. See Role::COMPANY_ADMIN.
+     */
+    public function isCompanyAdmin(): bool
+    {
+        return $this->getRoleNames()
+            ->contains(fn (string $name): bool => mb_strtolower(trim($name)) === mb_strtolower(Role::COMPANY_ADMIN));
+    }
+
     public function hasPermissionTo($permission, ?string $guardName = null): bool
     {
         if (! $this->is_active) {

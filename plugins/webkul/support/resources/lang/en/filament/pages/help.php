@@ -12,6 +12,12 @@ return [
     'guides' => [
         'group' => 'Guides',
 
+        'superadmin' => [
+            'title'       => 'Superadmin Guide',
+            'description' => 'Administer the :app installation itself: modules, companies, administrator roles, upgrades and maintenance.',
+            'button'      => 'Open Superadmin Guide',
+        ],
+
         'admin' => [
             'title'       => 'Admin Guide',
             'description' => 'Set up :app for your company, teams, modules and controls before daily work begins.',
