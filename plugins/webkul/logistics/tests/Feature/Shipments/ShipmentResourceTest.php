@@ -116,6 +116,23 @@ it('offers the waybill action on the shipment view page', function () {
         ->assertActionVisible('printWaybill');
 });
 
+it('streams the waybill so livewire can deliver it as a download', function () {
+    // A dompdf download() response is an Illuminate\Http\Response holding the
+    // PDF bytes. Livewire only intercepts StreamedResponse and
+    // BinaryFileResponse, so that response was JSON-encoded into the update
+    // payload and failed with "Malformed UTF-8 characters".
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+    $shipment = LogisticsHelper::shipment($company);
+
+    FilamentHelper::actingAsCompanyUser($company, ['view_any_logistics_shipment', 'view_logistics_shipment']);
+
+    Livewire::test(ViewShipment::class, ['record' => $shipment->id])
+        ->callAction('printWaybill')
+        ->assertFileDownloaded(contentType: 'application/pdf');
+
+    expect($shipment->refresh()->waybill_no)->not->toBeNull();
+});
+
 it('forbids the shipment view page, and so the waybill action, without the view permission', function () {
     // Not assertActionHidden: without `view` the page itself is forbidden, so
     // the component never mounts and there is no action to inspect. Being

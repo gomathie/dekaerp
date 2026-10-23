@@ -5,12 +5,12 @@ use Webkul\Logistics\Enums\ShipmentEventType;
 // Support on 2026-09-29 and raises the shared exception, while `Expense` still
 // raises the Logistics subclass from its own check. Asserting the parent class
 // covers both, and would keep covering them if either side moved again.
-use Webkul\Support\Exceptions\CompanyMismatchException;
 use Webkul\Logistics\Models\Expense;
 use Webkul\Logistics\Models\ShipmentEvent;
 use Webkul\Logistics\Models\ShipmentLine;
 use Webkul\Logistics\Models\Stop;
 use Webkul\Logistics\Models\Trip;
+use Webkul\Support\Exceptions\CompanyMismatchException;
 
 require_once __DIR__.'/../../Helpers/LogisticsHelper.php';
 
@@ -27,10 +27,12 @@ it('numbers shipments and trips per company, each starting at one', function () 
     $a2 = LogisticsHelper::shipment($a);
     $b1 = LogisticsHelper::shipment($b);
 
-    expect($a1->name)->toBe("SHP/{$year}/00001")
-        ->and($a2->name)->toBe("SHP/{$year}/00002")
-        ->and($b1->name)->toBe("SHP/{$year}/00001")
-        ->and(Trip::factory()->create(['company_id' => $a->id])->name)->toBe("TRP/{$year}/00001");
+    // Hyphenated since 2026-10-21: a document number travels into filenames,
+    // URLs and barcodes, and a slash is invalid in all three.
+    expect($a1->name)->toBe("SHP-{$year}-00001")
+        ->and($a2->name)->toBe("SHP-{$year}-00002")
+        ->and($b1->name)->toBe("SHP-{$year}-00001")
+        ->and(Trip::factory()->create(['company_id' => $a->id])->name)->toBe("TRP-{$year}-00001");
 });
 
 it('gives child records the company of their shipment, not the session company', function () {

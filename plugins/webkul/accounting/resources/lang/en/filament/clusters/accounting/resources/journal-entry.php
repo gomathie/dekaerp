@@ -72,6 +72,7 @@ return [
                     'checked'         => 'Checked',
                     'company'         => 'Company',
                     'fiscal-position' => 'Fiscal Position',
+                    'fiscal-position-tooltip' => 'Fiscal positions are used to adapt taxes and accounts based on the customer location.',
                 ],
             ],
 

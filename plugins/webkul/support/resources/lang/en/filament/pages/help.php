@@ -12,6 +12,12 @@ return [
     'guides' => [
         'group' => 'Guides',
 
+        'superadmin' => [
+            'title'       => 'Superadmin Guide',
+            'description' => 'Administer the :app installation itself: modules, companies, administrator roles, upgrades and maintenance.',
+            'button'      => 'Open Superadmin Guide',
+        ],
+
         'admin' => [
             'title'       => 'Admin Guide',
             'description' => 'Set up :app for your company, teams, modules and controls before daily work begins.',
@@ -78,7 +84,7 @@ return [
                     'title' => 'Module reference: 12 modules / 69 pages',
                     'items' => [
                         'Invoices, Sales, Purchase, Inventory, Manufacturing, Maintenance',
-                        'Contacts, Project, Website, Employees, Recruitments, Time Off',
+                        'Contacts, Project, Employees, Recruitments, Time Off',
                     ],
                 ],
             ],

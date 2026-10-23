@@ -21,10 +21,12 @@ return [
             'general-information' => [
                 'title'  => 'Información general',
                 'fields' => [
-                    'name'                  => 'Nombre',
-                    'email'                 => 'Correo electrónico',
-                    'password'              => 'Contraseña',
-                    'password-confirmation' => 'Confirmación de contraseña',
+                    'name'                        => 'Nombre',
+                    'email'                       => 'Correo electrónico',
+                    'password'                    => 'Contraseña',
+                    'password-confirmation'       => 'Confirmación de contraseña',
+                    'must-change-password'        => 'Exigir una contraseña nueva en el próximo inicio de sesión',
+                    'must-change-password-helper' => 'Úselo cuando establezca la contraseña usted mismo y la comunique. La persona permanecerá en su página de perfil hasta que la reemplace, y el requisito se borra en cuanto lo hace.',
                 ],
             ],
 

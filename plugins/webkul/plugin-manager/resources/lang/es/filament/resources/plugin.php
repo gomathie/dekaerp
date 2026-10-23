@@ -33,6 +33,18 @@ return [
             'description' => "¿Está seguro de que desea instalar el plugin ':name'? Esto ejecutará migraciones y seeders.",
             'submit'      => 'Instalar plugin',
         ],
+
+        'companies' => [
+            'title'       => 'Empresas',
+            'heading'     => '¿Qué empresas pueden usar :name?',
+            'description' => 'Instalar un plugin pone su código a disposición de toda la instalación. Esto decide qué empresas pueden usarlo realmente: concédalo a las empresas cuya suscripción lo incluya. Quitar una empresa oculta el plugin a todos sus usuarios.',
+            'field'       => 'Empresas',
+
+            'notification' => [
+                'title' => 'Disponibilidad del plugin actualizada',
+                'body'  => ':name ahora está disponible para :count empresa(s).',
+            ],
+        ],
         'uninstall' => [
             'title'      => 'Desinstalar',
             'heading'    => 'Desinstalar plugin',
@@ -51,6 +63,11 @@ return [
         'uninstalled' => [
             'title' => 'Plugin desinstalado correctamente',
             'body'  => "El plugin ':name' se ha desinstalado.",
+        ],
+
+        'cache-rebuild-failed' => [
+            'title' => 'Las cachés se vaciaron pero no se reconstruyeron',
+            'body'  => 'El cambio del plugin sí terminó. La aplicación ahora funciona sin caché de configuración ni de rutas, lo cual es más lento pero correcto. Ejecute "php artisan optimize" y lea su salida para saber por qué falló; el error también se ha reportado.',
         ],
         'uninstalled-failed' => [
             'title' => 'Error en la desinstalación',

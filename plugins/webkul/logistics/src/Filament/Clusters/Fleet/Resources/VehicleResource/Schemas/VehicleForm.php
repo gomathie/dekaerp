@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Unique;
 use Webkul\Logistics\Enums\VehicleOwnership;
+use Webkul\Logistics\Models\CompanySetting;
 use Webkul\Logistics\Models\Driver;
 use Webkul\Logistics\Models\Vehicle;
 use Webkul\Logistics\Models\VehicleType;
@@ -83,6 +84,13 @@ class VehicleForm
                 TextInput::make('telematics_device_ref')
                     ->label(__(static::$lang.'.form.fields.telematics-device-ref'))
                     ->maxLength(255),
+                TextInput::make('telematics_agent_id')
+                    ->label(__(static::$lang.'.form.fields.telematics-agent-id'))
+                    ->helperText(__(static::$lang.'.form.fields.telematics-agent-id-helper'))
+                    ->maxLength(255)
+                    ->visible(fn (Get $get): bool => $get('company_id')
+                        ? CompanySetting::forCompany((int) $get('company_id'))->telematics_provider !== null
+                        : false),
                 TextInput::make('capacity_kg')
                     ->label(__(static::$lang.'.form.fields.capacity-kg'))
                     ->numeric()

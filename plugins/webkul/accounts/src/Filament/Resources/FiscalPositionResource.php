@@ -286,8 +286,8 @@ class FiscalPositionResource extends Resource
                     ->successNotification(
                         Notification::make()
                             ->success()
-                            ->title(__('accounts::filament/resources/fiscal-position.table.columns.actions.delete.notification.title'))
-                            ->body(__('accounts::filament/resources/fiscal-position.table.columns.actions.delete.notification.body'))
+                            ->title(__('accounts::filament/resources/fiscal-position.table.actions.delete.notification.title'))
+                            ->body(__('accounts::filament/resources/fiscal-position.table.actions.delete.notification.body'))
                     ),
             ])
             ->toolbarActions([
@@ -296,8 +296,8 @@ class FiscalPositionResource extends Resource
                         ->successNotification(
                             Notification::make()
                                 ->success()
-                                ->title(__('accounts::filament/resources/fiscal-position.table.columns.bulk-actions.delete.notification.title'))
-                                ->body(__('accounts::filament/resources/fiscal-position.table.columns.bulk-actions.delete.notification.body'))
+                                ->title(__('accounts::filament/resources/fiscal-position.table.bulk-actions.delete.notification.title'))
+                                ->body(__('accounts::filament/resources/fiscal-position.table.bulk-actions.delete.notification.body'))
                         ),
                 ]),
             ]);

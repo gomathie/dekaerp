@@ -3,6 +3,7 @@
 namespace Webkul\Logistics\Services;
 
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -20,6 +21,10 @@ use Webkul\Support\Models\Company;
  *
  * Credentials are stored encrypted in logistics_company_settings; they are
  * decrypted by Eloquent before reaching this class and must never be logged.
+ *
+ * This is the driver for TelematicsProvider::PILOT. Connection settings are
+ * provider-agnostic columns; `node` is a PILOT-specific value read from
+ * telematics_options.
  */
 class PilotClient
 {
@@ -145,16 +150,16 @@ class PilotClient
      * any log (HTTP client logging must be disabled or redacted at the app
      * level for production).
      */
-    private function post(CompanySetting $settings, string $functionName): \Illuminate\Http\Client\Response
+    private function post(CompanySetting $settings, string $functionName): Response
     {
-        $server = rtrim((string) $settings->pilot_server, '/');
-        $node   = (int) ($settings->pilot_node ?: 1);
+        $server = rtrim((string) $settings->telematics_server, '/');
+        $node = (int) (($settings->telematics_options['node'] ?? 1) ?: 1);
 
         return Http::timeout(15)
             ->asMultipart()
             ->post("{$server}/api/CRIT/api.php?node={$node}", [
-                ['name' => 'username',     'contents' => (string) $settings->pilot_username],
-                ['name' => 'password',     'contents' => (string) $settings->pilot_password],
+                ['name' => 'username',     'contents' => (string) $settings->telematics_username],
+                ['name' => 'password',     'contents' => (string) $settings->telematics_password],
                 ['name' => 'functionName', 'contents' => $functionName],
             ]);
     }

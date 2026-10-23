@@ -461,7 +461,7 @@ trait HasTableViews
             ($this->removeTableViewFromFavoritesAction())($args)
                 ->visible(fn () => $tableView->isFavorite($key)),
 
-            ($this->editTableViewAction(['view_model' => $tableView->getModel()]))($args)
+            ($this->editTableViewAction(['view_model' => $tableView->getRecord()]))($args)
                 ->visible(fn () => $tableView->isEditable()),
 
             ActionGroup::make([

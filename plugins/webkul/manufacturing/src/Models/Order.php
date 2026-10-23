@@ -440,7 +440,7 @@ class Order extends Model
 
         $this->name = SequenceService::next('manufacturing.order', $this->company_id, [
             'name'         => 'Manufacturing Order',
-            'prefix'       => 'MO/',
+            'prefix'       => 'MO-',
             'initial_from' => static::withoutGlobalScopes(),
         ]);
     }

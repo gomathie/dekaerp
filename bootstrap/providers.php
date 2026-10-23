@@ -8,7 +8,6 @@ use Webkul\Account\AccountServiceProvider;
 use Webkul\Accounting\AccountingServiceProvider;
 use Webkul\Analytic\AnalyticServiceProvider;
 use Webkul\Barcode\BarcodeServiceProvider;
-use Webkul\Blog\BlogServiceProvider;
 use Webkul\Chatter\ChatterServiceProvider;
 use Webkul\Contact\ContactServiceProvider;
 use Webkul\Employee\EmployeeServiceProvider;
@@ -43,7 +42,6 @@ return [
     AccountServiceProvider::class,
     AnalyticServiceProvider::class,
     BarcodeServiceProvider::class,
-    BlogServiceProvider::class,
     ChatterServiceProvider::class,
     ContactServiceProvider::class,
     EmployeeServiceProvider::class,
@@ -66,6 +64,10 @@ return [
     TimeOffServiceProvider::class,
     FullCalendarServiceProvider::class,
     TimesheetServiceProvider::class,
+    // Still named "website" but now only the customer/vendor portal: the CMS
+    // and blog were removed on 2026-10-22. It owns the `customer` guard's
+    // Partner model and the portal's login and password-reset pages, so the
+    // customer panel cannot register its routes without it.
     WebsiteServiceProvider::class,
     PluginManagerServiceProvider::class,
 ];

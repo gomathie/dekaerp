@@ -42,12 +42,14 @@ data, a public repo. Nothing here is a sandbox.
    root cause, decisions, changed behavior, verification actually executed,
    failures, risks, and handoff. Route user-visible released behavior to root
    `CHANGELOG.md`; route engineering history to `docs/change-log.md`.
-8. **Review upstream on a trigger-based cadence.** Follow
-   `docs/upstream-fix-adoption-plan.md`. The first active agent after its
-   seven-day due date, and every agent preparing a release, dependency refresh,
-   or major change in an upstream-modified plugin, must review new upstream
-   commits. Update the SHA/date and tell the user what changed, why it is or is
-   not needed, benefits, risks, and priority. Never copy upstream wholesale.
+8. **Treat the upstream register as a bug list, not a schedule.**
+   `docs/upstream-fix-adoption-plan.md` holds findings UF-001..UF-024 and the
+   decision on each. The recurring seven-day review due date was dropped on
+   2026-10-21 to keep focus, so there is no cadence to satisfy. Consult it when
+   you work in an affected plugin, and update a finding's Local state when you
+   touch one. Eight are still open; UF-017 is an unfixed P0 XSS in Chatter change
+   summaries. When you do review upstream, tell the user what changed, why it is
+   or is not needed, benefits, risks, and priority. Never copy upstream wholesale.
 
 9. **Prove it before you fix it, and prove it before you trust a comment.** Two
    rules that earned their place on 2026-09-29/30. First: when reading suggests a
@@ -99,8 +101,9 @@ handoff log.
 
 **Whole-application upstream work** follows
 `docs/upstream-fix-adoption-plan.md`. It is the decision register for fixes
-already present, required gaps, optional product features, explicit rejects,
-and the next review date.
+already present, required gaps, optional product features and explicit
+rejects. Its recurring review due date was dropped on 2026-10-21; the register
+itself stands.
 
 ---
 

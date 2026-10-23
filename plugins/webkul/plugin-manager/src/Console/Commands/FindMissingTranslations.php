@@ -14,6 +14,7 @@ class FindMissingTranslations extends Command
     protected $signature = 'translations:check
                             {--locale= : Check only a specific locale against EN.}
                             {--plugin= : Check only a specific plugin.}
+                            {--references : Check literal translation references against EN.}
                             {--details : Show detailed error information.}';
 
     protected $description = 'Check translation files consistency across all plugins (EN is canonical).';
@@ -27,6 +28,19 @@ class FindMissingTranslations extends Command
     ];
 
     protected const ROOT_LANG_DIRECTORY = 'lang';
+
+    protected const ROOT_SOURCE_DIRECTORIES = [
+        'app',
+        'bootstrap',
+        'config',
+        'resources/views',
+        'routes',
+    ];
+
+    protected const PLUGIN_SOURCE_DIRECTORIES = [
+        'src',
+        'resources/views',
+    ];
 
     protected const PLUGIN_LANG_PATHS = [
         '/src/Resources/lang',
@@ -44,6 +58,8 @@ class FindMissingTranslations extends Command
 
     protected Collection $results;
 
+    protected array $translationKeyCache = [];
+
     public function __construct()
     {
         parent::__construct();
@@ -51,6 +67,8 @@ class FindMissingTranslations extends Command
         $this->errors = collect();
 
         $this->results = collect();
+
+        $this->translationKeyCache = [];
     }
 
     public function handle(): int
@@ -61,7 +79,23 @@ class FindMissingTranslations extends Command
 
         $showDetails = $this->option('details');
 
-        $this->displayHeader($targetLocale, $targetPlugin);
+        $checkReferences = (bool) $this->option('references');
+
+        $this->hasError = false;
+
+        $this->errors = collect();
+
+        $this->results = collect();
+
+        $this->displayHeader($targetLocale, $targetPlugin, $checkReferences);
+
+        if ($checkReferences) {
+            $this->processTranslationReferences($targetPlugin);
+
+            $this->displayResults($showDetails);
+
+            return $this->hasError ? self::FAILURE : self::SUCCESS;
+        }
 
         if (! $targetPlugin) {
             $this->processLangFolder('Root', base_path(self::ROOT_LANG_DIRECTORY), $targetLocale);
@@ -74,7 +108,7 @@ class FindMissingTranslations extends Command
         return $this->hasError ? self::FAILURE : self::SUCCESS;
     }
 
-    protected function displayHeader(?string $targetLocale, ?string $targetPlugin): void
+    protected function displayHeader(?string $targetLocale, ?string $targetPlugin, bool $checkReferences): void
     {
         $this->newLine();
 
@@ -90,7 +124,191 @@ class FindMissingTranslations extends Command
             $this->line("   Filter Plugin: <fg=yellow>{$targetPlugin}</>");
         }
 
+        if ($checkReferences) {
+            $this->line('   Mode: <fg=yellow>Literal EN references</>');
+        }
+
         $this->newLine();
+    }
+
+    protected function processTranslationReferences(?string $targetPlugin): void
+    {
+        $catalogs = $this->getTranslationCatalogs();
+
+        $sourceGroups = collect();
+
+        if (! $targetPlugin) {
+            $rootSources = collect(self::ROOT_SOURCE_DIRECTORIES)
+                ->map(fn (string $directory): string => base_path($directory))
+                ->filter(fn (string $directory): bool => File::isDirectory($directory))
+                ->values()
+                ->all();
+
+            if ($rootSources !== []) {
+                $sourceGroups->put('Root', $rootSources);
+            }
+        }
+
+        collect(self::PLUGIN_DIRECTORIES)
+            ->map(fn (string $directory): string => base_path($directory))
+            ->filter(fn (string $directory): bool => File::isDirectory($directory))
+            ->flatMap(fn (string $directory): array => File::directories($directory))
+            ->when($targetPlugin, fn (Collection $plugins): Collection => $plugins->filter(
+                fn (string $directory): bool => Str::lower(basename($directory)) === Str::lower($targetPlugin)
+            ))
+            ->each(function (string $pluginDirectory) use ($sourceGroups): void {
+                $sourceDirectories = collect(self::PLUGIN_SOURCE_DIRECTORIES)
+                    ->map(fn (string $directory): string => $pluginDirectory.'/'.$directory)
+                    ->filter(fn (string $directory): bool => File::isDirectory($directory))
+                    ->values()
+                    ->all();
+
+                if ($sourceDirectories !== []) {
+                    $sourceGroups->put(basename($pluginDirectory), $sourceDirectories);
+                }
+            });
+
+        $sourceGroups->each(function (array $directories, string $name) use ($catalogs): void {
+            $issues = collect($directories)
+                ->flatMap(fn (string $directory): Collection => $this->getPhpFiles($directory))
+                ->unique()
+                ->flatMap(fn (string $file): array => $this->findInvalidTranslationReferences($file, $catalogs))
+                ->values()
+                ->all();
+
+            $this->results->push([
+                'plugin' => $name,
+                'locale' => 'EN references',
+                'status' => $issues === [] ? 'pass' : 'fail',
+                'issues' => $issues === [] ? '-' : count($issues).' invalid reference(s)',
+            ]);
+
+            if ($issues === []) {
+                return;
+            }
+
+            $this->hasError = true;
+
+            $this->errors->push([
+                'plugin' => $name,
+                'locale' => 'EN references',
+                'type'   => 'reference_issues',
+                'data'   => $issues,
+            ]);
+        });
+    }
+
+    protected function getTranslationCatalogs(): array
+    {
+        $catalogs = [];
+
+        $rootPath = base_path(self::ROOT_LANG_DIRECTORY.'/'.self::BASE_LOCALE);
+
+        if (File::isDirectory($rootPath)) {
+            $catalogs[''] = $rootPath;
+        }
+
+        collect(self::PLUGIN_DIRECTORIES)
+            ->map(fn (string $directory): string => base_path($directory))
+            ->filter(fn (string $directory): bool => File::isDirectory($directory))
+            ->flatMap(fn (string $directory): array => File::directories($directory))
+            ->each(function (string $pluginDirectory) use (&$catalogs): void {
+                $langPath = collect(self::PLUGIN_LANG_PATHS)
+                    ->map(fn (string $path): string => $pluginDirectory.$path.'/'.self::BASE_LOCALE)
+                    ->first(fn (string $path): bool => File::isDirectory($path));
+
+                if ($langPath) {
+                    $catalogs[basename($pluginDirectory)] = str_replace('\\', '/', $langPath);
+                }
+            });
+
+        return $catalogs;
+    }
+
+    protected function findInvalidTranslationReferences(string $file, array $catalogs): array
+    {
+        $contents = File::get($file);
+
+        preg_match_all(
+            '/(?:\\b(?:__|trans|trans_choice)|@lang)\\(\\s*([\'\"])([^\'\"]+)\\1\\s*[,)]/',
+            $contents,
+            $matches,
+            PREG_OFFSET_CAPTURE,
+        );
+
+        $issues = [];
+
+        foreach ($matches[2] as [$reference, $offset]) {
+            $issue = $this->validateTranslationReference($reference, $catalogs);
+
+            if ($issue === null) {
+                continue;
+            }
+
+            $issues[] = [
+                'file'      => Str::after(str_replace('\\', '/', $file), str_replace('\\', '/', base_path()).'/'),
+                'line'      => substr_count(substr($contents, 0, $offset), "\n") + 1,
+                'reference' => $reference,
+                'message'   => $issue,
+            ];
+        }
+
+        return $issues;
+    }
+
+    protected function validateTranslationReference(string $reference, array $catalogs): ?string
+    {
+        if (Str::contains($reference, ['$', '{', '}'])) {
+            return null;
+        }
+
+        $namespace = null;
+
+        if (Str::contains($reference, '::')) {
+            [$namespace, $reference] = explode('::', $reference, 2);
+
+            if (! isset($catalogs[$namespace])) {
+                return null;
+            }
+
+            $langPath = $catalogs[$namespace];
+        } elseif (isset($catalogs[''])) {
+            $langPath = $catalogs[''];
+        } else {
+            return null;
+        }
+
+        if (! Str::contains($reference, '.')) {
+            return null;
+        }
+
+        [$fileReference, $key] = explode('.', $reference, 2);
+
+        $translationFile = $langPath.'/'.$fileReference.'.php';
+
+        if (! File::exists($translationFile)) {
+            // Laravel ships auth, validation, pagination and password messages
+            // inside the framework, so a root reference can be valid with no
+            // file of ours behind it. A namespaced reference has no such
+            // fallback: a missing file there is always a defect.
+            return $namespace === null ? null : "canonical file does not exist: {$fileReference}.php";
+        }
+
+        if (! isset($this->translationKeyCache[$translationFile])) {
+            try {
+                $translations = $this->parseTranslationFile($translationFile);
+            } catch (Throwable $exception) {
+                return $exception->getMessage();
+            }
+
+            $this->translationKeyCache[$translationFile] = $this->flattenArray($translations);
+        }
+
+        if (! array_key_exists($key, $this->translationKeyCache[$translationFile])) {
+            return "canonical key does not exist: {$key}";
+        }
+
+        return null;
     }
 
     protected function processPlugins(?string $targetPlugin, ?string $targetLocale): void
@@ -447,7 +665,7 @@ class FindMissingTranslations extends Command
 
         $total = $passCount + $failCount;
 
-        $this->line("Summary: {$total} locale(s) checked");
+        $this->line("Summary: {$total} check(s)");
 
         $this->line("   <fg=green>Passed:</> {$passCount}");
 
@@ -506,8 +724,27 @@ class FindMissingTranslations extends Command
             'extra_keys'       => $this->displayExtraKeys($error['data']),
             'order_issues'     => $this->displayOrderIssues($error['data']),
             'structure_issues' => $this->displayStructureIssues($error['data']),
+            'reference_issues' => $this->displayReferenceIssues($error['data']),
             default            => null,
         };
+    }
+
+    protected function displayReferenceIssues(array $issues): void
+    {
+        $this->line('  <fg=red>Invalid literal references:</>');
+
+        collect($issues)->take(self::MAX_DISPLAY_ITEMS)->each(function (array $issue): void {
+            $this->line("    - {$issue['file']}:{$issue['line']} {$issue['reference']}");
+            $this->line("      {$issue['message']}");
+        });
+
+        if (count($issues) > self::MAX_DISPLAY_ITEMS) {
+            $remaining = count($issues) - self::MAX_DISPLAY_ITEMS;
+
+            $this->line("    ... and {$remaining} more");
+        }
+
+        $this->newLine();
     }
 
     protected function displayMissingFiles(array $files): void
@@ -789,7 +1026,7 @@ class FindMissingTranslations extends Command
             $fullKey = $prefix === '' ? (string) $key : "{$prefix}.{$key}";
 
             return is_array($value)
-                ? $this->flattenArray($value, $fullKey)
+                ? [$fullKey => true, ...$this->flattenArray($value, $fullKey)]
                 : [$fullKey => true];
         })->all();
     }

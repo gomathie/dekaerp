@@ -25,9 +25,9 @@ class LogisticsSequences
     public static function defaults(string $code): array
     {
         return match ($code) {
-            self::SHIPMENT => ['name' => 'Logistics Shipment', 'prefix' => 'SHP/%(year)/', 'padding' => 5, 'reset_frequency' => SequenceResetFrequency::YEARLY],
-            self::TRIP     => ['name' => 'Logistics Trip', 'prefix' => 'TRP/%(year)/', 'padding' => 5, 'reset_frequency' => SequenceResetFrequency::YEARLY],
-            self::WAYBILL  => ['name' => 'Logistics Waybill', 'prefix' => 'WB/%(year)/', 'padding' => 5, 'reset_frequency' => SequenceResetFrequency::YEARLY],
+            self::SHIPMENT => ['name' => 'Logistics Shipment', 'prefix' => 'SHP-%(year)-', 'padding' => 5, 'reset_frequency' => SequenceResetFrequency::YEARLY],
+            self::TRIP     => ['name' => 'Logistics Trip', 'prefix' => 'TRP-%(year)-', 'padding' => 5, 'reset_frequency' => SequenceResetFrequency::YEARLY],
+            self::WAYBILL  => ['name' => 'Logistics Waybill', 'prefix' => 'WB-%(year)-', 'padding' => 5, 'reset_frequency' => SequenceResetFrequency::YEARLY],
         };
     }
 

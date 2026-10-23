@@ -889,6 +889,6 @@ class WorkOrderResource extends Resource
             return '—';
         }
 
-        return $order->reference ?: $order->name ?: 'MO/'.$order->getKey();
+        return $order->reference ?: $order->name ?: 'MO-'.$order->getKey();
     }
 }

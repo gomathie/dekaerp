@@ -31,6 +31,7 @@ return [
                     'interviewers'               => 'Interviewers',
                     'recruiter'                  => 'Recruiter',
                     'manager'                    => 'Manager',
+                    'company-modal-title'        => 'Create Company',
                 ],
             ],
 

@@ -35,6 +35,9 @@
         <testsuite name="SupportFeature">
             <directory>plugins/webkul/support/tests/Feature</directory>
         </testsuite>
+        <testsuite name="TableViewsFeature">
+            <directory>plugins/webkul/table-views/tests/Feature</directory>
+        </testsuite>
         <testsuite name="SecurityFeature">
             <directory>plugins/webkul/security/tests/Feature</directory>
         </testsuite>
@@ -43,6 +46,12 @@
         </testsuite>
         <testsuite name="EmployeeFeature">
             <directory>plugins/webkul/employees/tests/Feature</directory>
+        </testsuite>
+        <testsuite name="PluginManagerFeature">
+            <directory>plugins/webkul/plugin-manager/tests/Feature</directory>
+        </testsuite>
+        <testsuite name="ChatterFeature">
+            <directory>plugins/webkul/chatter/tests/Feature</directory>
         </testsuite>
     </testsuites>
     <source>

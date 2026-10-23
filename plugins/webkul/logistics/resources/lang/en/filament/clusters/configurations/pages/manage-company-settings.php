@@ -48,13 +48,14 @@ return [
         'bill-journal'                => 'Journal for vendor bills',
         'default-expense-account'     => 'Default expense account',
         'expense-approval-required'   => 'Expenses need approval before billing',
-        'pilot-enabled'               => 'PILOT Telematics',
-        'pilot-enabled-helper'        => 'Pull vehicles and fleet data from your PILOT GPS account.',
-        'pilot-server'                => 'Server URL',
-        'pilot-server-helper'         => 'The base URL of your PILOT server, e.g. https://africa.pilot-gps.com',
-        'pilot-node'                  => 'Node',
-        'pilot-username'              => 'Username',
-        'pilot-password'              => 'Password',
+        'telematics-provider'         => 'Telematics platform',
+        'telematics-provider-helper'  => 'The GPS tracking platform this company uses. Leave empty if it does not use one.',
+        'telematics-server'           => 'Server URL',
+        'telematics-server-helper'    => 'The base URL of your telematics server.',
+        'telematics-node'             => 'Node',
+        'telematics-node-helper'      => 'PILOT only. Leave at 1 unless your account uses another node.',
+        'telematics-username'         => 'Username',
+        'telematics-password'         => 'Password',
     ],
 
     'actions' => [
@@ -75,7 +76,7 @@ return [
             'notification' => 'Logistics disabled',
         ],
 
-        'pilot-sync' => [
+        'telematics-sync' => [
             'label'        => 'Sync PILOT fleet',
             'heading'      => 'Sync fleet from PILOT?',
             'description'  => 'Vehicles found in PILOT will be created or updated in this company\'s fleet. Existing vehicles that are not in PILOT are not touched.',

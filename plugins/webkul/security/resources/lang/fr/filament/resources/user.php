@@ -21,10 +21,12 @@ return [
             'general-information' => [
                 'title'  => 'Informations générales',
                 'fields' => [
-                    'name'                  => 'Nom',
-                    'email'                 => 'E-mail',
-                    'password'              => 'Mot de passe',
-                    'password-confirmation' => 'Confirmation du mot de passe',
+                    'name'                        => 'Nom',
+                    'email'                       => 'E-mail',
+                    'password'                    => 'Mot de passe',
+                    'password-confirmation'       => 'Confirmation du mot de passe',
+                    'must-change-password'        => 'Exiger un nouveau mot de passe à la prochaine connexion',
+                    'must-change-password-helper' => 'À utiliser lorsque vous définissez vous-même le mot de passe et le transmettez. La personne restera sur sa page de profil jusqu’à ce qu’elle le remplace, et l’exigence disparaît dès qu’elle le fait.',
                 ],
             ],
 

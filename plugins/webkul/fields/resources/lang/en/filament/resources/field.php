@@ -299,7 +299,7 @@ return [
                         'disabled'                => 'Disabled',
                         'disabled-dates'          => 'Disabled Dates',
                         'display-format'          => 'Display Format',
-                        'first-fay-of-week'       => 'First Day of Week',
+                        'first-day-of-week'       => 'First Day of Week',
                         'format'                  => 'Format',
                         'helper-text'             => 'Helper Text',
                         'hint'                    => 'Hint',

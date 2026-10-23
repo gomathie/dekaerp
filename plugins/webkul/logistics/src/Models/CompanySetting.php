@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Crypt;
 use Webkul\Account\Models\Account;
 use Webkul\Account\Models\Journal;
 use Webkul\Logistics\Enums\CapacityCheck;
+use Webkul\Logistics\Enums\TelematicsProvider;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Scopes\CompanyScope;
@@ -47,8 +48,6 @@ class CompanySetting extends Model
         'capacity_check'            => 'warn',
         'capture_driver_on_pod'     => false,
         'capture_recipient_id'      => false,
-        'pilot_enabled'             => false,
-        'pilot_node'                => 1,
     ];
 
     protected $fillable = [
@@ -71,11 +70,11 @@ class CompanySetting extends Model
         'invoice_journal_id',
         'bill_journal_id',
         'default_expense_account_id',
-        'pilot_enabled',
-        'pilot_server',
-        'pilot_username',
-        'pilot_password',
-        'pilot_node',
+        'telematics_provider',
+        'telematics_server',
+        'telematics_username',
+        'telematics_password',
+        'telematics_options',
     ];
 
     protected $casts = [
@@ -92,14 +91,14 @@ class CompanySetting extends Model
         'capture_driver_on_pod'     => 'boolean',
         'capture_recipient_id'      => 'boolean',
         'capacity_check'            => CapacityCheck::class,
-        'pilot_enabled'             => 'boolean',
-        'pilot_node'                => 'integer',
+        'telematics_provider'       => TelematicsProvider::class,
+        'telematics_options'        => 'array',
     ];
 
     // Custom accessors so that null values (columns absent before migration,
     // or credentials never set) do not crash Laravel's built-in encrypted cast,
     // which calls Crypt::decrypt(null) and throws DecryptException.
-    protected function pilotUsername(): Attribute
+    protected function telematicsUsername(): Attribute
     {
         return Attribute::make(
             get: fn (?string $value) => $value ? Crypt::decryptString($value) : null,
@@ -107,12 +106,24 @@ class CompanySetting extends Model
         );
     }
 
-    protected function pilotPassword(): Attribute
+    protected function telematicsPassword(): Attribute
     {
         return Attribute::make(
             get: fn (?string $value) => $value ? Crypt::decryptString($value) : null,
             set: fn (?string $value) => $value ? Crypt::encryptString($value) : null,
         );
+    }
+
+    /**
+     * A telematics platform is connected when a provider is selected and the
+     * connection has somewhere to go. Replaces the former pilot_enabled flag,
+     * which could be true with no server configured.
+     */
+    public function hasTelematics(): bool
+    {
+        return $this->telematics_provider !== null
+            && filled($this->telematics_server)
+            && filled($this->telematics_username);
     }
 
     /**

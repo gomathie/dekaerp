@@ -1,6 +1,7 @@
 [
   {
     "id": "getting-started",
+    "audience": "user",
     "name": "Getting Started",
     "icon": "<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"></circle><polygon points=\"10 8 16 12 10 16 10 8\"></polygon></svg>",
     "items": [
@@ -151,6 +152,7 @@
   },
   {
     "id": "sales-invoicing",
+    "audience": "user",
     "name": "Sell: Sales & Invoicing",
     "icon": "<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><line x1=\"12\" y1=\"1\" x2=\"12\" y2=\"23\"></line><path d=\"M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\"></path></svg>",
     "items": [
@@ -267,6 +269,7 @@
   },
   {
     "id": "purchasing-accounting",
+    "audience": "user",
     "name": "Buy: Purchasing & Accounting",
     "icon": "<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"9\" cy=\"21\" r=\"1\"></circle><circle cx=\"20\" cy=\"21\" r=\"1\"></circle><path d=\"M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6\"></path></svg>",
     "items": [
@@ -401,6 +404,7 @@
   },
   {
     "id": "inventory-manufacturing",
+    "audience": "user",
     "name": "Make & Move: Inventory & Production",
     "icon": "<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"1\" y=\"3\" width=\"15\" height=\"13\"></rect><polygon points=\"16 8 20 8 23 11 23 16 16 16 16 8\"></polygon><circle cx=\"5.5\" cy=\"18.5\" r=\"2.5\"></circle><circle cx=\"18.5\" cy=\"18.5\" r=\"2.5\"></circle></svg>",
     "items": [
@@ -540,6 +544,7 @@
   },
   {
     "id": "business-operations",
+    "audience": "user",
     "name": "Run: Projects, HR & Maintenance",
     "icon": "<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2\"></path><circle cx=\"9\" cy=\"7\" r=\"4\"></circle><path d=\"M23 21v-2a4 4 0 0 0-3-3.87\"></path><path d=\"M16 3.13a4 4 0 0 1 0 7.75\"></path></svg>",
     "items": [
@@ -651,6 +656,7 @@
   },
   {
     "id": "collaboration-developer",
+    "audience": "user",
     "name": "Platform, API & Self-Hosting",
     "icon": "<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 17l6-6-6-6\"></path><path d=\"M12 19h8\"></path></svg>",
     "items": [
@@ -726,6 +732,7 @@
   },
   {
     "id": "invoices",
+    "audience": "user",
     "name": "Invoices",
     "icon": "<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z\"></path><polyline points=\"14 2 14 8 20 8\"></polyline><line x1=\"16\" y1=\"13\" x2=\"8\" y2=\"13\"></line><line x1=\"16\" y1=\"17\" x2=\"8\" y2=\"17\"></line></svg>",
     "source": "reference",
@@ -1066,6 +1073,7 @@
   },
   {
     "id": "sales",
+    "audience": "user",
     "name": "Sales",
     "icon": "<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"9\" cy=\"21\" r=\"1\"></circle><circle cx=\"20\" cy=\"21\" r=\"1\"></circle><path d=\"M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6\"></path></svg>",
     "source": "reference",
@@ -1279,6 +1287,7 @@
   },
   {
     "id": "purchase",
+    "audience": "user",
     "name": "Purchase",
     "icon": "<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"1\" y=\"3\" width=\"15\" height=\"13\"></rect><polygon points=\"16 8 20 8 23 11 23 16 16 16 16 8\"></polygon><circle cx=\"5.5\" cy=\"18.5\" r=\"2.5\"></circle><circle cx=\"18.5\" cy=\"18.5\" r=\"2.5\"></circle></svg>",
     "source": "reference",
@@ -1500,6 +1509,7 @@
   },
   {
     "id": "inventory",
+    "audience": "user",
     "name": "Inventory",
     "icon": "<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z\"></path><polyline points=\"3.27 6.96 12 12.01 20.73 6.96\"></polyline><line x1=\"12\" y1=\"22.08\" x2=\"12\" y2=\"12\"></line></svg>",
     "source": "reference",
@@ -1735,6 +1745,7 @@
   },
   {
     "id": "manufacturing",
+    "audience": "user",
     "name": "Manufacturing",
     "icon": "<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M2 20h20\"></path><path d=\"M4 20V9l5 3.5V9l5 3.5V9l5 3.5V20\"></path><path d=\"M4 9 3 4h3l-1 5\"></path></svg>",
     "source": "reference",
@@ -1935,6 +1946,7 @@
   },
   {
     "id": "maintenance",
+    "audience": "user",
     "name": "Maintenance",
     "icon": "<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z\"></path></svg>",
     "source": "reference",
@@ -2093,6 +2105,7 @@
   },
   {
     "id": "contacts",
+    "audience": "user",
     "name": "Contacts",
     "icon": "<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2\"></path><circle cx=\"9\" cy=\"7\" r=\"4\"></circle><path d=\"M23 21v-2a4 4 0 0 0-3-3.87\"></path><path d=\"M16 3.13a4 4 0 0 1 0 7.75\"></path></svg>",
     "source": "reference",
@@ -2167,6 +2180,7 @@
   },
   {
     "id": "project",
+    "audience": "user",
     "name": "Project",
     "icon": "<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2\"></path><rect x=\"8\" y=\"2\" width=\"8\" height=\"4\" rx=\"1\"></rect><path d=\"M9 14l2 2 4-4\"></path></svg>",
     "source": "reference",
@@ -2282,142 +2296,8 @@
     ]
   },
   {
-    "id": "website",
-    "name": "Website",
-    "icon": "<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"></circle><line x1=\"2\" y1=\"12\" x2=\"22\" y2=\"12\"></line><path d=\"M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z\"></path></svg>",
-    "source": "reference",
-    "items": [
-      {
-        "id": "website-blog-posts",
-        "title": "Blog Posts",
-        "group": null,
-        "module": "Website",
-        "readTime": "2 min read",
-        "summary": "The Blog Posts module in the Website Plugin of DEKA ERP allows users to create, manage, and publish content to the website. Blog posts help your organization share updates, educational content, or promotional…",
-        "toc": [
-          {
-            "id": "creating-a-new-blog-post",
-            "text": "Creating a New Blog Post"
-          },
-          {
-            "id": "after-creating-a-blog-post",
-            "text": "After Creating a Blog Post"
-          },
-          {
-            "id": "publishing-the-blog-post",
-            "text": "Publishing the Blog Post"
-          },
-          {
-            "id": "how-to-publish-the-blog-post",
-            "text": "How to Publish the Blog Post"
-          },
-          {
-            "id": "summary",
-            "text": "Summary"
-          }
-        ],
-        "htmlContent": "<p>The <strong>Blog Posts</strong> module in the <strong>Website Plugin</strong> of <strong>DEKA ERP</strong> allows users to create, manage, and publish content to the website. Blog posts help your organization share updates, educational content, or promotional material with website visitors. Each post can include content, images, metadata, and SEO tags for better visibility. This guide covers the step-by-step process of creating a blog post and making it live on your site.</p>\n<h2 id=\"creating-a-new-blog-post\" class=\"doc-heading doc-heading--h2\">Creating a New Blog Post<a class=\"doc-anchor\" href=\"#creating-a-new-blog-post\" aria-label=\"Link to Creating a New Blog Post\">#</a></h2>\n<h3 id=\"steps-to-create-a-new-blog-post\" class=\"doc-heading doc-heading--h3\">Steps to Create a New Blog Post<a class=\"doc-anchor\" href=\"#steps-to-create-a-new-blog-post\" aria-label=\"Link to Steps to Create a New Blog Post\">#</a></h3>\n<ol>\n<li><p>Navigate to <strong><span class=\"doc-path\">Website → Blog Posts → New Post</span></strong>.</p>\n</li>\n<li><p>Fill in the form as per the following sections:</p>\n<h4>General Section</h4>\n<ul>\n<li><strong><em>Title:</em></strong> Enter a clear and attractive title for your blog post. This is the main heading displayed to users.</li>\n<li><strong><em>Slug:</em></strong> Auto-generated based on the title. This is the URL path of the blog post.</li>\n<li><strong><em>Sub Title:</em></strong> A short subtitle that appears below the main title on the blog post.</li>\n<li><strong><em>Content:</em></strong> Add the main content of your blog post. You can use formatting (bold, italics, lists, etc.) for better readability.</li>\n<li><strong><em>Banner:</em></strong> Upload an image that will be used as the banner or featured image for the blog post.</li>\n</ul>\n<h4>Settings Section</h4>\n<ul>\n<li><strong><em>Category:</em></strong> Select the category under which this blog post should be listed (e.g., News, Updates, Tutorials).</li>\n<li><strong><em>Tags:</em></strong> Assign relevant keywords or topics. Tags help in organizing and filtering blog posts.</li>\n</ul>\n<h4>SEO Section</h4>\n<p>These fields are important for search engine visibility.</p>\n<ul>\n<li><strong><em>Meta Title:</em></strong> The title shown on search engine result pages (SERPs). It should be concise and descriptive.</li>\n<li><strong><em>Meta Keywords:</em></strong> A comma-separated list of keywords relevant to the blog post.</li>\n<li><strong><em>Meta Description:</em></strong> A brief summary that appears in search results under the title. It should be within 150–160 characters.</li>\n</ul>\n</li>\n<li><p>Action Buttons</p>\n<ul>\n<li><strong><em>Create:</em></strong> Save and publish the blog post as a draft.</li>\n<li><strong><em>Create &amp; Create Another:</em></strong> Save current blog and open a new post form.</li>\n<li><strong><em>Cancel:</em></strong> Exit without saving.</li>\n</ul>\n</li>\n</ol>\n<h2 id=\"after-creating-a-blog-post\" class=\"doc-heading doc-heading--h2\">After Creating a Blog Post<a class=\"doc-anchor\" href=\"#after-creating-a-blog-post\" aria-label=\"Link to After Creating a Blog Post\">#</a></h2>\n<p>Once the blog is created, the system redirects you to the <strong>View Blog Post</strong> page.</p>\n<p>From here, you can:</p>\n<ul>\n<li><strong>Edit Post:</strong> Make changes to the blog&#39;s content, settings, or SEO metadata.</li>\n<li><strong>Delete Post:</strong> Permanently remove the blog post.</li>\n</ul>\n<h2 id=\"publishing-the-blog-post\" class=\"doc-heading doc-heading--h2\">Publishing the Blog Post<a class=\"doc-anchor\" href=\"#publishing-the-blog-post\" aria-label=\"Link to Publishing the Blog Post\">#</a></h2>\n<div class=\"doc-callout doc-callout--important\"><span class=\"doc-callout__label\">Important</span><div class=\"doc-callout__body\"><p><strong>Note:</strong> Creating a blog post does <strong>not</strong> automatically publish it on the website.</p></div></div>\n<h2 id=\"how-to-publish-the-blog-post\" class=\"doc-heading doc-heading--h2\">How to Publish the Blog Post<a class=\"doc-anchor\" href=\"#how-to-publish-the-blog-post\" aria-label=\"Link to How to Publish the Blog Post\">#</a></h2>\n<ol>\n<li><p>Click on <strong>Edit Post</strong> from the <strong>View Blog</strong> page.</p>\n</li>\n<li><p>On the top-right corner of the <strong>Edit Blog Post</strong> page, click on <strong>Publish</strong>.</p>\n</li>\n<li><p>After enabling publish, click <strong>Save</strong> to apply the changes.</p>\n</li>\n</ol>\n<p>Once published, the blog post becomes visible on the website&#39;s frontend under the appropriate category.</p>\n<div class=\"doc-callout doc-callout--quote\"><div class=\"doc-callout__body\"><p>Frontend Example:</p></div></div>\n<h2 id=\"summary\" class=\"doc-heading doc-heading--h2\">Summary<a class=\"doc-anchor\" href=\"#summary\" aria-label=\"Link to Summary\">#</a></h2>\n<p>Managing blog posts with the <strong>Website Plugin</strong> in <strong>DEKA ERP</strong> enables your organization to effectively share content and engage with your audience, enhancing your online presence and communication strategy.</p>"
-      },
-      {
-        "id": "website-pages",
-        "title": "Pages",
-        "group": null,
-        "module": "Website",
-        "readTime": "2 min read",
-        "summary": "The Pages module in the Website plugin of DEKA ERP allows users to create, manage, and publish static pages on their ERP-powered website. These pages can include content like About Us, Privacy Policy, Contact, or any custom informational content.",
-        "toc": [
-          {
-            "id": "creating-a-new-page",
-            "text": "Creating a New Page"
-          },
-          {
-            "id": "after-page-creation",
-            "text": "After Page Creation"
-          },
-          {
-            "id": "publishing-the-page",
-            "text": "Publishing the Page"
-          },
-          {
-            "id": "summary",
-            "text": "Summary"
-          }
-        ],
-        "htmlContent": "<h2 id=\"creating-a-new-page\" class=\"doc-heading doc-heading--h2\">Creating a New Page<a class=\"doc-anchor\" href=\"#creating-a-new-page\" aria-label=\"Link to Creating a New Page\">#</a></h2>\n<h3 id=\"steps-to-create-a-new-page\" class=\"doc-heading doc-heading--h3\">Steps to Create a New Page<a class=\"doc-anchor\" href=\"#steps-to-create-a-new-page\" aria-label=\"Link to Steps to Create a New Page\">#</a></h3>\n<ol>\n<li><p>Navigate to <strong><span class=\"doc-path\">Website → Pages → New Page</span></strong>.</p>\n<div class=\"doc-callout doc-callout--quote\"><div class=\"doc-callout__body\"><p>By default, four pages are already created:</p></div></div>\n<ul>\n<li><strong>Home</strong></li>\n<li><strong>Blogs</strong></li>\n<li><strong>Privacy Policy</strong></li>\n<li><strong>Terms &amp; Conditions</strong></li>\n</ul>\n</li>\n<li><p>Fill in the form as per the following sections:</p>\n<h4>General Section</h4>\n<ul>\n<li><strong><em>Title:</em></strong> The main name of the page that will appear on the frontend (e.g., About Us, Terms &amp; Conditions).</li>\n<li><strong><em>Slug:</em></strong> Auto-generated based on the title. This becomes the URL path of your page.</li>\n<li><strong><em>Content:</em></strong> Add the main body content of your page. It supports rich text formatting, embedded links, and media.</li>\n</ul>\n<h4>Settings Section</h4>\n<ul>\n<li><strong><em>Is Visible Header Menu:</em></strong> Toggle ON if the page should be shown in the website’s top menu.</li>\n<li><strong><em>Is Visible Footer Menu:</em></strong> Toggle ON if the page should be listed in the website footer.</li>\n</ul>\n<h4>SEO Section</h4>\n<ul>\n<li><strong><em>Meta Title:</em></strong> This appears on search engine results as the clickable headline.</li>\n<li><strong><em>Meta Keywords:</em></strong> Keywords relevant to your page (comma-separated).</li>\n<li><strong><em>Meta Description:</em></strong> A short summary of the page content for SEO. Keep it under 160 characters.</li>\n</ul>\n</li>\n<li><p>Action Buttons</p>\n<ul>\n<li><strong><em>Create:</em></strong> Save and create the page.</li>\n<li><strong><em>Create &amp; Create Another:</em></strong> Save and open a new blank form.</li>\n<li><strong><em>Cancel:</em></strong> Exit without saving.</li>\n</ul>\n</li>\n</ol>\n<h2 id=\"after-page-creation\" class=\"doc-heading doc-heading--h2\">After Page Creation<a class=\"doc-anchor\" href=\"#after-page-creation\" aria-label=\"Link to After Page Creation\">#</a></h2>\n<p>After clicking <strong>Create</strong>, the system redirects you to the <strong>View Page</strong> screen.</p>\n<p>From here, you can:</p>\n<ul>\n<li><strong>Edit Post:</strong> Update the page content, settings, or SEO information.</li>\n<li><strong>Delete:</strong> Permanently remove the page.</li>\n</ul>\n<h2 id=\"publishing-the-page\" class=\"doc-heading doc-heading--h2\">Publishing the Page<a class=\"doc-anchor\" href=\"#publishing-the-page\" aria-label=\"Link to Publishing the Page\">#</a></h2>\n<div class=\"doc-callout doc-callout--important\"><span class=\"doc-callout__label\">Important</span><div class=\"doc-callout__body\"><p><strong>Note:</strong> Creating a page does <strong>not</strong> publish it immediately on the live website.</p></div></div>\n<h3 id=\"how-to-publish-the-page\" class=\"doc-heading doc-heading--h3\">How to publish the page<a class=\"doc-anchor\" href=\"#how-to-publish-the-page\" aria-label=\"Link to How to publish the page\">#</a></h3>\n<ol>\n<li><p>Click on <strong>Edit Post</strong> from the <strong>View Page</strong> screen.</p>\n</li>\n<li><p>On the top-right corner of the <strong>Edit Page</strong> screen, click on <strong>Publish</strong>.</p>\n</li>\n<li><p>Click <strong>Save</strong> to apply your changes.</p>\n</li>\n</ol>\n<p>Once published, the page will become visible in either the <strong>header</strong> or <strong>footer</strong> section depending on the toggles selected during creation.</p>\n<div class=\"doc-callout doc-callout--quote\"><div class=\"doc-callout__body\"><p>Frontend Example:</p></div></div>\n<h2 id=\"summary\" class=\"doc-heading doc-heading--h2\">Summary<a class=\"doc-anchor\" href=\"#summary\" aria-label=\"Link to Summary\">#</a></h2>\n<p>Managing pages with the <strong>Website plugin</strong> in <strong>DEKA ERP</strong> makes it easy for any business to build and maintain their online presence without any technical skills.</p>"
-      },
-      {
-        "id": "website-customers",
-        "title": "Customers",
-        "group": null,
-        "module": "Website",
-        "readTime": "2 min read",
-        "summary": "The Customers module in the Website Plugin of DEKA ERP allows you to manage both frontend-registered and backend-created customers. Customers are essential stakeholders in the system, and their data includes personal details, addresses, contact info, and other business-related metadata.",
-        "toc": [
-          {
-            "id": "customer-registration-from-frontend",
-            "text": "Customer Registration from Frontend"
-          },
-          {
-            "id": "creating-a-customer-from-admin-panel",
-            "text": "Creating a Customer from Admin Panel"
-          },
-          {
-            "id": "after-customer-creation",
-            "text": "After Customer Creation"
-          },
-          {
-            "id": "summary",
-            "text": "Summary"
-          }
-        ],
-        "htmlContent": "<h2 id=\"customer-registration-from-frontend\" class=\"doc-heading doc-heading--h2\">Customer Registration from Frontend<a class=\"doc-anchor\" href=\"#customer-registration-from-frontend\" aria-label=\"Link to Customer Registration from Frontend\">#</a></h2>\n<p>Customers can self-register directly from the website interface.</p>\n<h3 id=\"steps-to-register-as-a-customer\" class=\"doc-heading doc-heading--h3\">Steps to Register as a Customer<a class=\"doc-anchor\" href=\"#steps-to-register-as-a-customer\" aria-label=\"Link to Steps to Register as a Customer\">#</a></h3>\n<ol>\n<li><p>Navigate to the <strong>Frontend Website</strong> and click on <strong>Register</strong>.</p>\n</li>\n<li><p>Fill out the required registration form fields:</p>\n<ul>\n<li><strong><em>Name:</em></strong> Full name of the customer.</li>\n<li><strong><em>Email Address:</em></strong> Valid email for login and communication.</li>\n<li><strong><em>Password:</em></strong> Create a secure password.</li>\n<li><strong><em>Confirm Password:</em></strong> Re-enter the password.</li>\n</ul>\n</li>\n<li><p>Click on <strong>Create Account</strong>. The user is now logged in and the customer entry is recorded in the admin panel.</p>\n</li>\n<li><p>Log into the admin dashboard, go to <strong><span class=\"doc-path\">Website → Customers</span></strong>, and verify the newly registered customer.</p>\n</li>\n</ol>\n<h3 id=\"admin-view-and-edit\" class=\"doc-heading doc-heading--h3\">Admin View and Edit<a class=\"doc-anchor\" href=\"#admin-view-and-edit\" aria-label=\"Link to Admin View and Edit\">#</a></h3>\n<p>From the admin panel, you can now:</p>\n<ul>\n<li><strong>Edit</strong> the customer profile.</li>\n<li>Add additional data like avatar, contacts, addresses, and tags.</li>\n</ul>\n<div class=\"doc-callout doc-callout--important\"><span class=\"doc-callout__label\">Important</span><div class=\"doc-callout__body\"><p>Customers registered from the frontend <strong>can log in</strong>, while customers created from the admin <strong>cannot log in to the frontend</strong>.</p></div></div>\n<h2 id=\"creating-a-customer-from-admin-panel\" class=\"doc-heading doc-heading--h2\">Creating a Customer from Admin Panel<a class=\"doc-anchor\" href=\"#creating-a-customer-from-admin-panel\" aria-label=\"Link to Creating a Customer from Admin Panel\">#</a></h2>\n<h3 id=\"steps-to-create-a-customer\" class=\"doc-heading doc-heading--h3\">Steps to Create a Customer<a class=\"doc-anchor\" href=\"#steps-to-create-a-customer\" aria-label=\"Link to Steps to Create a Customer\">#</a></h3>\n<ol>\n<li><p>Navigate to <strong><span class=\"doc-path\">Website → Customers → New Customer</span></strong>.</p>\n<h3 id=\"general-section\" class=\"doc-heading doc-heading--h3\">General Section<a class=\"doc-anchor\" href=\"#general-section\" aria-label=\"Link to General Section\">#</a></h3>\n<ul>\n<li><strong><em>Individual or Company:</em></strong> Toggle to specify if the customer is a person or a business.</li>\n<li><strong><em>Name:</em></strong> Full name or contact person.</li>\n<li><strong><em>Company:</em></strong> Select or create a company name.</li>\n<li><strong><em>Tax ID:</em></strong> Government-issued tax identification number.</li>\n<li><strong><em>Job Title:</em></strong> Professional title of the contact.</li>\n<li><strong><em>Phone / Mobile:</em></strong> Communication contact numbers.</li>\n<li><strong><em>Email:</em></strong> For system-generated communication and invoices.</li>\n<li><strong><em>Website:</em></strong> Link to their business website.</li>\n<li><strong><em>Title:</em></strong> Prefix like Mr., Ms., Dr., etc.</li>\n<li><strong><em>Tags:</em></strong> Helps group customers using labels or categories.</li>\n<li><strong><em>Address:</em></strong> Fill in the street, city, postal code, state, and country.</li>\n</ul>\n<h3 id=\"sales-and-purchase-section\" class=\"doc-heading doc-heading--h3\">Sales and Purchase Section<a class=\"doc-anchor\" href=\"#sales-and-purchase-section\" aria-label=\"Link to Sales and Purchase Section\">#</a></h3>\n<ul>\n<li><strong><em>Responsible:</em></strong> Assign an internal sales rep.</li>\n<li><strong><em>Company ID:</em></strong> Internal identifier for tracking.</li>\n<li><strong><em>Reference:</em></strong> External ID or vendor code.</li>\n<li><strong><em>Industry:</em></strong> Select the customer’s business domain.</li>\n</ul>\n</li>\n</ol>\n<h2 id=\"after-customer-creation\" class=\"doc-heading doc-heading--h2\">After Customer Creation<a class=\"doc-anchor\" href=\"#after-customer-creation\" aria-label=\"Link to After Customer Creation\">#</a></h2>\n<p>Clicking <strong>Create</strong> redirects to the <strong>View Partner</strong> page.</p>\n<h3 id=\"edit-partner\" class=\"doc-heading doc-heading--h3\">Edit Partner<a class=\"doc-anchor\" href=\"#edit-partner\" aria-label=\"Link to Edit Partner\">#</a></h3>\n<p>Click on <strong>Edit Partner</strong> to update general or fiscal information.</p>\n<h3 id=\"manage-contacts\" class=\"doc-heading doc-heading--h3\">Manage Contacts<a class=\"doc-anchor\" href=\"#manage-contacts\" aria-label=\"Link to Manage Contacts\">#</a></h3>\n<ul>\n<li>Go to the <strong>Contacts</strong> tab.</li>\n<li>Click <strong>Add Contact</strong> to open a modal.</li>\n<li>Add additional contact persons with details like name, email, title, etc.</li>\n</ul>\n<div class=\"doc-callout doc-callout--quote\"><div class=\"doc-callout__body\"><p>Useful for organizations with multiple representatives.</p></div></div>\n<h3 id=\"manage-address\" class=\"doc-heading doc-heading--h3\">Manage Address<a class=\"doc-anchor\" href=\"#manage-address\" aria-label=\"Link to Manage Address\">#</a></h3>\n<ul>\n<li><p>Click the <strong>Address</strong> tab.</p>\n</li>\n<li><p>Use <strong>Add Address</strong> to define:</p>\n<ul>\n<li><strong><em>Address Types:</em></strong> Permanent, Present, Invoice, Delivery, Other.</li>\n<li><strong><em>Details:</em></strong> Full name, email, phone, mobile, complete address.</li>\n</ul>\n</li>\n</ul>\n<h2 id=\"summary\" class=\"doc-heading doc-heading--h2\">Summary<a class=\"doc-anchor\" href=\"#summary\" aria-label=\"Link to Summary\">#</a></h2>\n<p>Managing customers in <strong>DEKA ERP</strong> allows your organization to handle leads, communications, and fulfillments efficiently, while also keeping customer records centralized and structured.</p>"
-      },
-      {
-        "id": "website-configurations",
-        "title": "Configurations",
-        "group": null,
-        "module": "Website",
-        "readTime": "2 min read",
-        "summary": "The Configurations section of the Website Plugin in DEKA ERP allows users to manage global settings like Categories and Tags. These configurations are essential for organizing content such as blog posts and pages in a structured and searchable way.",
-        "toc": [
-          {
-            "id": "category",
-            "text": "Category"
-          },
-          {
-            "id": "tags",
-            "text": "Tags"
-          },
-          {
-            "id": "summary",
-            "text": "Summary"
-          }
-        ],
-        "htmlContent": "<h2 id=\"category\" class=\"doc-heading doc-heading--h2\">Category<a class=\"doc-anchor\" href=\"#category\" aria-label=\"Link to Category\">#</a></h2>\n<div class=\"doc-callout doc-callout--note\"><span class=\"doc-callout__label\">Why it&#39;s used</span><div class=\"doc-callout__body\"><p>Categories help group blog posts under common topics. Every blog post should be assigned to a category to maintain a clear content hierarchy.</p></div></div>\n<h3 id=\"category-creation-steps\" class=\"doc-heading doc-heading--h3\">Category Creation Steps<a class=\"doc-anchor\" href=\"#category-creation-steps\" aria-label=\"Link to Category Creation Steps\">#</a></h3>\n<ol>\n<li><p>Navigate to <strong><span class=\"doc-path\">Website → Configurations → Categories</span></strong>.</p>\n</li>\n<li><p>Click on <strong>New Category</strong>. A modal form will appear with the following fields:</p>\n<ul>\n<li><strong><em>Name:</em></strong> Enter a unique name for the category (e.g., News, Updates, Tutorials).</li>\n<li><strong><em>Slug:</em></strong> Auto-generated based on the name; used in the blog post URL.</li>\n<li><strong><em>Sub Title:</em></strong> Optional subtitle for the category.</li>\n</ul>\n<div class=\"doc-callout doc-callout--note\"><span class=\"doc-callout__label\">Note</span><div class=\"doc-callout__body\"><p>Category names must be <strong>unique</strong> to avoid conflicts.</p></div></div>\n</li>\n<li><p>Action Buttons</p>\n<ul>\n<li><strong><em>Create:</em></strong> Save the category and close the modal.</li>\n<li><strong><em>Create &amp; Create Another:</em></strong> Save current category and open a new form.</li>\n<li><strong><em>Cancel:</em></strong> Exit without saving changes.</li>\n</ul>\n</li>\n</ol>\n<h2 id=\"tags\" class=\"doc-heading doc-heading--h2\">Tags<a class=\"doc-anchor\" href=\"#tags\" aria-label=\"Link to Tags\">#</a></h2>\n<div class=\"doc-callout doc-callout--note\"><span class=\"doc-callout__label\">Why it&#39;s used</span><div class=\"doc-callout__body\"><p>Tags help in filtering and organizing blog posts based on specific keywords or topics. They are useful for search and categorization.</p></div></div>\n<h3 id=\"tag-creation-steps\" class=\"doc-heading doc-heading--h3\">Tag Creation Steps<a class=\"doc-anchor\" href=\"#tag-creation-steps\" aria-label=\"Link to Tag Creation Steps\">#</a></h3>\n<ol>\n<li><p>Navigate to <strong><span class=\"doc-path\">Website → Configurations → Tags</span></strong>.</p>\n</li>\n<li><p>Click on <strong>New Tag</strong>. A modal will open with the following fields:</p>\n<ul>\n<li><strong><em>Name:</em></strong> Enter a relevant tag name (e.g., HR, Sales, Launch).</li>\n<li><strong><em>Color:</em></strong> Pick a color to visually represent this tag.</li>\n</ul>\n</li>\n<li><p>Action Buttons</p>\n<ul>\n<li><strong><em>Create:</em></strong> Save the tag and close the modal.</li>\n<li><strong><em>Create &amp; Create Another:</em></strong> Save the tag and open a new form.</li>\n<li><strong><em>Cancel:</em></strong> Exit without saving changes.</li>\n</ul>\n</li>\n</ol>\n<h2 id=\"summary\" class=\"doc-heading doc-heading--h2\">Summary<a class=\"doc-anchor\" href=\"#summary\" aria-label=\"Link to Summary\">#</a></h2>\n<ul>\n<li><strong>Categories</strong> are used to group blog posts into structured topics.</li>\n<li><strong>Tags</strong> help label and filter posts for better organization and searchability.</li>\n</ul>\n<p>Both configurations improve the <strong>frontend display</strong> and <strong>backend management</strong> of content in the <strong>Website Plugin</strong> of <strong>DEKA ERP</strong>.</p>"
-      },
-      {
-        "id": "website-settings",
-        "title": "Settings",
-        "group": null,
-        "module": "Website",
-        "readTime": "2 min read",
-        "summary": "The Settings section in the Website Plugin of DEKA ERP allows you to control what contact information and social media links are displayed on your website. These settings help visitors get in touch with you or follow your business on different platforms. This guide explains how to update the contact details and manage access permissions.",
-        "toc": [
-          {
-            "id": "manage-contact",
-            "text": "Manage Contact"
-          },
-          {
-            "id": "summary",
-            "text": "Summary"
-          }
-        ],
-        "htmlContent": "<h2 id=\"manage-contact\" class=\"doc-heading doc-heading--h2\">Manage Contact<a class=\"doc-anchor\" href=\"#manage-contact\" aria-label=\"Link to Manage Contact\">#</a></h2>\n<p>This section lets you set up your official contact information and social media links that will be visible on your website.</p>\n<h3 id=\"steps-to-access\" class=\"doc-heading doc-heading--h3\">Steps to Access<a class=\"doc-anchor\" href=\"#steps-to-access\" aria-label=\"Link to Steps to Access\">#</a></h3>\n<ol>\n<li><p>Navigate to <strong><span class=\"doc-path\">Settings → Settings → Website → Manage Contact</span></strong>.</p>\n</li>\n<li><p>Update Contact Details and Social Links</p>\n<h4>Contact Section</h4>\n<p>This section lets you add or update your official contact details:</p>\n<ul>\n<li><strong><em>Email:</em></strong> The email address shown under the <strong><em>Contact Us</em></strong> section on the website.</li>\n<li><strong><em>Phone:</em></strong> The phone number displayed to users for support or inquiries.</li>\n</ul>\n<div class=\"doc-callout doc-callout--quote\"><div class=\"doc-callout__body\"><p>These contact details will be directly visible to visitors at the bottom of your website.</p></div></div>\n<h4>Social Links Section</h4>\n<p>You can connect your website to social media accounts by entering only the <strong>username</strong> of each account. The system automatically attaches the proper social media domain (e.g., facebook.com/username).</p>\n<p>The available platforms include:</p>\n<ul>\n<li><strong>Twitter</strong></li>\n<li><strong>Facebook</strong></li>\n<li><strong>Instagram</strong></li>\n<li><strong>WhatsApp</strong></li>\n<li><strong>YouTube</strong></li>\n<li><strong>LinkedIn</strong></li>\n<li><strong>Pinterest</strong></li>\n<li><strong>TikTok</strong></li>\n<li><strong>GitHub</strong></li>\n<li><strong>Slack</strong></li>\n</ul>\n<div class=\"doc-callout doc-callout--quote\"><div class=\"doc-callout__body\"><p>These social media icons appear under the <strong>Follow Us</strong> section on your website. Clicking an icon will redirect users to the corresponding social media page.</p></div></div>\n</li>\n<li><p><strong>Save Changes</strong></p>\n</li>\n</ol>\n<p>Click <strong>Save Changes</strong> after updating your contact details and social links. The changes are reflected immediately on the website frontend.</p>\n<h2 id=\"summary\" class=\"doc-heading doc-heading--h2\">Summary<a class=\"doc-anchor\" href=\"#summary\" aria-label=\"Link to Summary\">#</a></h2>\n<p>The <strong>Manage Contact</strong> setting in the <strong>Website Plugin</strong> allows you to easily update your official contact information and social media links. This ensures that visitors can reach out to you and follow your business on various platforms, enhancing engagement and communication.</p>"
-      }
-    ]
-  },
-  {
     "id": "employees",
+    "audience": "user",
     "name": "Employees",
     "icon": "<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2\"></path><circle cx=\"12\" cy=\"7\" r=\"4\"></circle></svg>",
     "source": "reference",
@@ -2519,6 +2399,7 @@
   },
   {
     "id": "recruitments",
+    "audience": "user",
     "name": "Recruitments",
     "icon": "<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2\"></path><circle cx=\"8.5\" cy=\"7\" r=\"4\"></circle><line x1=\"20\" y1=\"8\" x2=\"20\" y2=\"14\"></line><line x1=\"23\" y1=\"11\" x2=\"17\" y2=\"11\"></line></svg>",
     "source": "reference",
@@ -2617,6 +2498,7 @@
   },
   {
     "id": "time-off",
+    "audience": "user",
     "name": "Time Off",
     "icon": "<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"4\" width=\"18\" height=\"18\" rx=\"2\"></rect><line x1=\"16\" y1=\"2\" x2=\"16\" y2=\"6\"></line><line x1=\"8\" y1=\"2\" x2=\"8\" y2=\"6\"></line><line x1=\"3\" y1=\"10\" x2=\"21\" y2=\"10\"></line><path d=\"M9 16l2 2 4-4\"></path></svg>",
     "source": "reference",
