@@ -1297,6 +1297,32 @@ MULTI-COMPANY FACTS THAT BITE
   reference - `support` is the base plugin, so `support` referencing
   `plugin-manager` or `partners` would invert the dependency. Slots are splatted
   into the schema: `...CompanySchemaRegistry::renderForm('main.after')`.
+• **`companies.company_id` is a unique `character varying`**, not a tenant
+  foreign key: it is the company's own registration identifier, a text input on
+  the company form. Any "find every table that references a company" query
+  matched on column name alone pulls `companies` in, and a UNION over the
+  results then dies with "bigint and character varying cannot be matched".
+  Filter on `data_type IN ('bigint','integer','smallint')`, which excludes it on
+  principle rather than by naming it. `Partner\Console\Commands\ContactCompanyReport`
+  shows the shape.
+• **Contacts (partners) are shared across companies by upstream design, not by
+  accident.** Commit `57e234223` ("Fixed shared partner issue", 2026-07-30)
+  added `Partner::autoAssignsCompany()` returning false, nulled `company_id` on
+  every partner not tied to a user, and removed the `?? current_company_id()`
+  fallback from `AddressResource` and `ManageContacts` - because that fallback
+  filed a shared parent's child address under **whoever created it**.
+  `CompanyIsolationTest` pins the shared behaviour. Scoping partners per company
+  is therefore a fork: it needs those three upstream files re-patched on every
+  merge, `InheritsParentCompany` applied to `Partner`, and a check that no
+  contact is referenced by two companies, since a scoped relation read returns
+  null silently. Run `php artisan partners:company-report` before touching it.
+• **Regenerate a structure-snapshot fixture only from the full suite that will
+  compare it.** A `--filter`ed run installs a different set of plugins, so
+  regenerating `security.json` that way recorded 50 resource keys instead of 30
+  - Employee and TimeOff permission trees the full suite never sees - which
+  would have broken the next full run with a 20-resource phantom diff.
+  `ResourceStructureSnapshotTest`'s own CAVEAT warns about this. Delete the
+  fixture and re-record; never hand-edit it to match.
 • In Bash, a backslash-escaped grep pattern for a PHP namespace
   (`grep -c "use Webkul\\\\Security\\\\..."`) silently returns **0 even when the
   line is present** - it bit twice in one session, once nearly producing a false
@@ -1338,6 +1364,17 @@ DOCUMENTATION AND UPSTREAM REVIEW (ALL AGENTS)
   upstream wholesale.
 
 DONE RECENTLY (newest first; details in docs/change-log.md)
+
+• 2026-10-23 — Contacts import from a spreadsheet (CSV and Excel, with a
+  downloadable example): `Partner\Services\ContactImporter`, whose `columns()`
+  drives both the template and the validation, plus server-side file
+  validation and a formula-injection guard that deliberately does not fire on
+  `+` (phone numbers). 11 tests, PartnerFeature 85 passed. Per-company
+  contacts was investigated and **not** applied: it is a fork from upstream
+  (see the partners note above), and `php artisan partners:company-report`
+  exists to decide it. Also corrected: the per-company plugins entry had
+  overstated its verification; its missing structure-snapshot fixtures are
+  regenerated and SupportFeature is 173 passed, zero failures.
 
 • 2026-10-23 — Two production 500s fixed (a discarded-but-evaluated argument in
   `HasTableViews`, and hardcoded `getRouteName()` on two clustered time-off

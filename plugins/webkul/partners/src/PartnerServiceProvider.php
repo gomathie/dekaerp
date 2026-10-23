@@ -3,6 +3,7 @@
 namespace Webkul\Partner;
 
 use Filament\Panel;
+use Webkul\Partner\Console\Commands\ContactCompanyReport;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
 
@@ -26,6 +27,7 @@ class PartnerServiceProvider extends PackageServiceProvider
                 '2025_03_28_115218_add_address_columns_in_partners_partners_table',
                 '2026_07_30_100000_null_company_on_non_user_partners',
             ])
+            ->hasCommand(ContactCompanyReport::class)
             ->runsMigrations();
     }
 
