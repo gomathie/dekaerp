@@ -6,6 +6,78 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-10-23 (Company administrator: an address of its own, and visible on edit)
+
+Asked for two things: a new company should be created with its administrator at
+once, "whether it's the company email or not", and editing a company should show
+its administrator so support can act.
+
+### Most of this already existed
+
+`Security\Services\CompanyAdministratorInviter` has invited a Company Admin on
+company creation since 2026-10-21, and its docblock named the exact gap:
+
+> The company's own address is the only one this form collects. A dedicated
+> administrator field would be better, but the company form is inherited and
+> monolithic, so adding one belongs in its own change.
+
+That obstacle is gone - `CompanySchemaRegistry` (2026-10-23) lets another plugin
+contribute into the company form without `support` referencing it. So this is
+that deferred change rather than a new build.
+
+### What changed
+
+* `CompanyAdministratorInviter::invite()` takes an optional `$email`. It falls
+  back to the company's address, so every existing caller is unaffected.
+* `Security\CompanyAdminContributions` contributes an "Administrator" section
+  into the company form through `CompanySchemaRegistry`, with the same static
+  `$registered` guard as `PluginManager\CompanyContributions` - contributions
+  accumulate and `packageBooted()` can run twice.
+  * On **create**: an `Administrator email` field, `dehydrated(false)` because
+    it is not a company column, with the company email as its placeholder.
+  * On **edit/view**: each Company Admin with name, address, a deactivated
+    marker and a direct link to that user, plus any **pending invitation**.
+* `Security\...\Pages\CreateCompany::afterCreate()` reads the field from the raw
+  form state and passes it through; the notification and the mail-failure
+  recovery link now use the invited address rather than the company's.
+
+Visible only to a super admin or Multi-Company Admin. A company's own
+administrator has no business reading the other administrators of their company
+through this section.
+
+### Password changes: a link, not a second set of fields
+
+The request included changing the administrator's password here. The section
+links to the user instead, deliberately:
+
+1. `UserResource` already implements this completely - confirmation field,
+   `min:8`, and the `must_change_password` toggle wired to `User::updating()`,
+   which clears the flag when a password changes unless the flag is set in the
+   same save. A second set of password fields would be a second place to get
+   credential handling right, and the two would drift.
+2. The existing flow deliberately never mints or emails a password: the invitee
+   sets their own through `AcceptInvitation`. Adding support-set passwords to
+   the company form would reverse that quietly.
+
+Open with the user: whether to put the password fields inline anyway.
+
+### Two bugs avoided by checking the schema rather than assuming
+
+* The first draft queried `invitations.company_id` and `accepted_at`. Neither
+  exists: `user_invitations` has `default_company_id` and `company_ids`, and
+  `UserInvitationService` **deletes** the row on acceptance, so a surviving row
+  *is* a pending invitation. Left unchecked, the edit panel would have thrown.
+* The administrator lookup reads `withoutGlobalScopes()`. `User` is both
+  company- and ownership-scoped, so a scoped read would have shown **nothing**
+  in exactly the support scenario the section exists for.
+
+### Verification
+
+`php -l` clean on 9 files; Pint passed; three tests appended to
+`CompanyAdministratorInvitationTest` (an administrator address preferred over
+the company's, the fallback when none is given, and a blank address with no
+company email reported as `MISSING_EMAIL`).
+
 ## 2026-10-23 (Contacts: import from a spreadsheet)
 
 Asked for an upload option on Contacts, with a downloadable example to fill in

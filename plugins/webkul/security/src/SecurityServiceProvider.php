@@ -96,6 +96,12 @@ class SecurityServiceProvider extends PackageServiceProvider
 
             return null;
         });
+
+        // The "Administrator" section on the company form. Contributed through
+        // CompanySchemaRegistry because `support` is the base plugin and must
+        // not reference `security`; the register() call is idempotent because
+        // packageBooted() can run more than once.
+        CompanyAdminContributions::register();
     }
 
     public function packageRegistered(): void

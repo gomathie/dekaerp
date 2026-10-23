@@ -43,18 +43,22 @@ class CompanyAdministratorInviter
     public function __construct(protected UserInvitationService $invitations) {}
 
     /**
+     * @param  string|null  $email  The administrator's own address. Falls back
+     *                              to the company's address when not given, so
+     *                              existing callers behave exactly as before.
      * @return self::INVITED|self::DISABLED|self::MISSING_EMAIL|self::MISSING_ROLE|self::INVITE_FAILED|self::MAIL_FAILED
      */
-    public function invite(Company $company, User $actor): string
+    public function invite(Company $company, User $actor, ?string $email = null): string
     {
         if (! settings(UserSettings::class)->enable_user_invitation) {
             return self::DISABLED;
         }
 
-        // The company's own address is the only one this form collects. A
-        // dedicated administrator field would be better, but the company form
-        // is inherited and monolithic, so adding one belongs in its own change.
-        $email = trim((string) $company->email);
+        // The administrator is usually a person, not the company's shared
+        // mailbox, so the company form now collects an address of its own
+        // (CompanyAdminContributions). The company's address remains the
+        // default, which is what this service used to assume outright.
+        $email = trim((string) ($email ?? $company->email));
 
         if ($email === '') {
             return self::MISSING_EMAIL;

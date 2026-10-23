@@ -177,3 +177,56 @@ it('grants the administrator their own company only, and no way to escalate', fu
         ->and($granted)->not->toContain('create_security_role')
         ->and($granted)->not->toContain('update_security_role');
 });
+
+/**
+ * The administrator is usually a person, not the company's shared mailbox
+ * (user, 2026-10-23). The company form now collects an address of its own
+ * through CompanyAdminContributions, and the company's address stays the
+ * default so every existing caller behaves as before.
+ */
+it('invites an administrator address of its own in preference to the company email', function () {
+    $superAdmin = multiCompanyAdminTestSuperAdmin();
+    multiCompanyAdminTestAuthenticate($superAdmin, []);
+
+    $company = multiCompanyAdminTestCompany();
+    $company->forceFill(['email' => 'accounts@tenant-two.test'])->save();
+
+    $reason = app(CompanyAdministratorInviter::class)
+        ->invite($company, $superAdmin, 'ama.mensah@tenant-two.test');
+
+    expect($reason)->toBe(CompanyAdministratorInviter::INVITED);
+
+    $invitation = Invitation::query()->where('email', 'ama.mensah@tenant-two.test')->firstOrFail();
+
+    expect((int) $invitation->default_company_id)->toBe((int) $company->getKey())
+        ->and(array_map('intval', $invitation->role_ids))->toBe([CompanyAdministratorInviter::companyAdminRoleId()]);
+
+    // The company's own mailbox must not also be invited.
+    expect(Invitation::query()->where('email', 'accounts@tenant-two.test')->exists())->toBeFalse();
+});
+
+it('falls back to the company email when no administrator address is given', function () {
+    $superAdmin = multiCompanyAdminTestSuperAdmin();
+    multiCompanyAdminTestAuthenticate($superAdmin, []);
+
+    $company = multiCompanyAdminTestCompany();
+    $company->forceFill(['email' => 'fallback@tenant-three.test'])->save();
+
+    // Blank, not absent: the create page passes null for an empty field, and a
+    // blank string must not be treated as a deliberate address.
+    $reason = app(CompanyAdministratorInviter::class)->invite($company, $superAdmin, null);
+
+    expect($reason)->toBe(CompanyAdministratorInviter::INVITED)
+        ->and(Invitation::query()->where('email', 'fallback@tenant-three.test')->exists())->toBeTrue();
+});
+
+it('reports a missing address when neither the administrator nor the company has one', function () {
+    $superAdmin = multiCompanyAdminTestSuperAdmin();
+    multiCompanyAdminTestAuthenticate($superAdmin, []);
+
+    $company = multiCompanyAdminTestCompany();
+    $company->forceFill(['email' => null])->save();
+
+    expect(app(CompanyAdministratorInviter::class)->invite($company, $superAdmin, '   '))
+        ->toBe(CompanyAdministratorInviter::MISSING_EMAIL);
+});
