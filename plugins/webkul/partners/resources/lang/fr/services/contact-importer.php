@@ -2,14 +2,15 @@
 
 return [
     'errors' => [
-        'empty'           => 'The file has no rows.',
-        'no-columns'      => 'No recognised columns were found in the heading row. Expected columns: :columns.',
-        'missing-name'    => 'The file must have a "name" column.',
-        'max-rows'        => 'Only the first :max rows were imported. Split the file and upload the rest.',
-        'row'             => 'Row :row: :reason',
-        'duplicate-email' => 'Row :row: a contact with the email :email already exists.',
-        'unknown-country' => 'Row :row: no country matches ":country".',
-        'unknown-state'   => 'Row :row: no state matches ":state".',
-        'unknown-parent'  => 'Row :row: no existing contact matches the company ":parent".',
+        'empty'           => 'Le fichier ne contient aucune ligne.',
+        'no-columns'      => 'Aucune colonne reconnue dans la ligne d’en-tête. Colonnes attendues : :columns.',
+        'missing-name'    => 'Le fichier doit comporter une colonne « name ».',
+        'max-rows'        => 'Seules les :max premières lignes ont été importées. Divisez le fichier et importez le reste.',
+        'row'             => 'Ligne :row : :reason',
+        'formula'         => 'Ligne :row : la valeur « :column » commence par un caractère qu’un tableur interprète comme une formule. Supprimez-le et importez à nouveau.',
+        'duplicate-email' => 'Ligne :row : un contact avec l’adresse :email existe déjà.',
+        'unknown-country' => 'Ligne :row : aucun pays ne correspond à « :country ».',
+        'unknown-state'   => 'Ligne :row : aucune région ne correspond à « :state ».',
+        'unknown-parent'  => 'Ligne :row : aucun contact existant ne correspond à la société « :parent ».',
     ],
 ];
