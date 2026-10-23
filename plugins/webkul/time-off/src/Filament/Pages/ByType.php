@@ -4,7 +4,6 @@ namespace Webkul\TimeOff\Filament\Pages;
 
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
-use Filament\Panel;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Webkul\TimeOff\Filament\Clusters\Reporting;
 use Webkul\TimeOff\Filament\Widgets\LeaveTypeWidget;
@@ -15,10 +14,12 @@ class ByType extends BaseDashboard
 
     protected static string $routePath = 'reporting/by-type';
 
-    public static function getRouteName(?Panel $panel = null): string
-    {
-        return 'filament.admin.pages.time-off-by-type';
-    }
+    /*
+     * getRouteName() is deliberately NOT overridden - same latent bug as the
+     * MyTime dashboard. This page is in the Reporting cluster, so the hardcoded
+     * 'filament.admin.pages.time-off-by-type' was never a registered route
+     * name. It had not surfaced yet only because nobody had opened the page.
+     */
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-folder';
 

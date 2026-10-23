@@ -1262,6 +1262,47 @@ MULTI-COMPANY FACTS THAT BITE
   no team used to resolve to an empty id list, which `OwnershipScope` read as *no
   restriction* - `Bouncer` now fails closed to their own rows.
 
+• **`X::class` on an unimported name is not an error.** It silently yields the
+  current namespace's name. `AdminPanelProvider` registered
+  `RequirePasswordChange::class` without a `use`, so it produced
+  `App\Providers\Filament\RequirePasswordChange`; the container could not build
+  it and **every `/admin` request 500'd**. Pint, `php -l` and the middleware's
+  own tests all passed, because the class was fine - only the registration
+  pointed at nothing. `support` `PanelMiddlewareTest` now asserts every
+  panel-registered middleware is a class that exists, across all panels.
+• **Never hardcode a page's `getRouteName()`.** Registration and URL generation
+  are different code paths: Filament registers a page under its own relative
+  name, while `Page::getUrl()` calls `route(static::getRouteName($panel))`. A
+  hardcoded string works only by coincidence, and **never** for a page in a
+  cluster, because Filament prefixes the cluster
+  (`filament.admin.time-off.dashboard.pages.dashboard`, not
+  `filament.admin.pages.time-off-dashboard`). Building a cluster's
+  sub-navigation calls `getUrl()` on every sibling, so one wrong string takes
+  the page down. Three such overrides outside clusters are correct only by
+  luck - adding a cluster to any of them breaks it silently. `support`
+  `PageRouteNameTest` pins this.
+• A Filament schema **component with no container** throws on `getRecord()`
+  (`Component::$container must not be accessed before initialization`). Also
+  remember PHP silently discards extra arguments to a userland function but
+  **still evaluates them**: `editTableViewAction(['view_model' => $x->getRecord()])`
+  passed an argument the method does not declare, and the evaluation alone
+  fataled the page.
+• **Schema-registry contributions accumulate, and `packageBooted()` can run
+  more than once** - the install flow and the test bootstrapper both re-boot
+  plugin providers, and `SchemaRegistry` is static with no reset. Guard any
+  `register()` with a static flag or the contributed section is rendered twice.
+  `PluginManager\CompanyContributions` shows the shape.
+• A plugin contributing UI into another plugin's resource goes through a
+  `*SchemaRegistry` (`AbstractSchemaRegistry` in `support`), **not** a direct
+  reference - `support` is the base plugin, so `support` referencing
+  `plugin-manager` or `partners` would invert the dependency. Slots are splatted
+  into the schema: `...CompanySchemaRegistry::renderForm('main.after')`.
+• In Bash, a backslash-escaped grep pattern for a PHP namespace
+  (`grep -c "use Webkul\\\\Security\\\\..."`) silently returns **0 even when the
+  line is present** - it bit twice in one session, once nearly producing a false
+  "the fix is missing" report. Use `grep -nF` or the Grep tool for anything
+  containing backslashes.
+
 DOCUMENTATION AND UPSTREAM REVIEW (ALL AGENTS)
 
 • At the start of a new workstream, inventory and read every project-owned
@@ -1297,6 +1338,17 @@ DOCUMENTATION AND UPSTREAM REVIEW (ALL AGENTS)
   upstream wholesale.
 
 DONE RECENTLY (newest first; details in docs/change-log.md)
+
+• 2026-10-23 — Two production 500s fixed (a discarded-but-evaluated argument in
+  `HasTableViews`, and hardcoded `getRouteName()` on two clustered time-off
+  pages), plus the `/admin` outage from an unimported middleware. Three guides
+  (user/admin/superadmin) behind `GuideAudience` with `GuideLibrary::visible()`
+  as the single boundary; per-company plugin grants reachable from the company
+  form via a new `CompanySchemaRegistry`; the last four migration-allowlist
+  entries resolved, one of which was a live defect. Three new guard tests:
+  `PanelMiddlewareTest`, `PageRouteNameTest`, `SharedTimeOffLeaveTypesTest`.
+  Filament 5.10.3 investigated and deliberately deferred. Details in
+  docs/change-log.md.
 
 • 2026-09-29 — Company-wide visibility is now the default
   (`users.resource_permission` → `global`, with `individual`/`group` still

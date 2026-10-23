@@ -107,6 +107,49 @@ itself stands.
 
 ---
 
+## 2026-10-23
+
+- Resolved the last four `KNOWN_UNREGISTERED_MIGRATIONS` entries. Three
+  `employees` calendar migrations deleted as superseded by
+  `support/2026_04_02_000001_create_calendars_table`;
+  `time-off/2026_08_04_100000_share_default_time_off_leave_types` registered -
+  it was a **live defect**, not dead code, so on any database seeded before
+  2026-08-04 the default leave types were owned by the first company and
+  invisible to the others. One entry left (`companies.name` unique index),
+  pending a production duplicate-name check.
+- Corrected a false claim of my own: I said the SupportFeature run exercised
+  that registration. It did not - plugin migrations load only when the package
+  `isCore` or `isInstalled()`, and `time-off` is neither in tests. Verified by
+  installing the plugin and running the migration against dirtied data instead.
+- Built the three guides (user/admin/superadmin) and the per-company plugin
+  section on the company form. Found and fixed two bugs in the existing Help
+  page while doing it: `canViewAdminGuide()` was super-admin-only (hiding the
+  admin guide from Company Admins) and `guideCategories()` was a second copy of
+  the guide-file decode that bypassed the audience filter.
+- Fixed three production 500s: the `/admin` outage (unimported middleware), the
+  `view_model` crash in `HasTableViews`, and the time-off clustered-page route
+  names. Added `PanelMiddlewareTest`, `PageRouteNameTest` and
+  `SharedTimeOffLeaveTypesTest` as guards, all in `SupportFeature` because
+  `time-off` has no suite of its own.
+- Corrected `AGENTS.md`, which told every agent there was an unfixed P0 Chatter
+  XSS and open financial bugs. Re-read all 24 UF Local states: no P0 or P1 is
+  open.
+- Resolved a conflicted merge of `develop` into `production` found mid-session,
+  on the deploy branch, with a non-parsing `SecurityServiceProvider.php` that
+  made every artisan command fail. Also recorded that **production is 16 commits
+  ahead of develop**, including the logistics POD-token and stop-link security
+  work, so develop holds the older version of those views until it is
+  back-merged.
+- Investigated the Filament 5.7.6 → 5.10.3 upgrade (13 explicit packages,
+  Livewire 4.3.4 → 4.4.8 is the unlock). **Not applied** - deferred to its own
+  change so a regression stays bisectable, and because it republishes assets and
+  the three local Filament view overrides need re-diffing.
+- Not fixed, flagged only: `employees`' `CalendarFactory` (stale columns, would
+  throw if used) and its two calendar seeders (write to renamed-away tables);
+  the doubled `reporting/reporting` segment in the time-off ByType URL; and the
+  three non-clustered `getRouteName()` overrides that are correct only by
+  coincidence.
+
 ## 2026-10-19
 
 **Requested:** Review Agent Skills, Context7, Graphify, 21st MCP and Strix, then
