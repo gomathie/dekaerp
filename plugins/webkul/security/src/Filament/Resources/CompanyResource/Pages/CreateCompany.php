@@ -29,16 +29,30 @@ class CreateCompany extends BaseCreateCompany
             return;
         }
 
-        $reason = app(CompanyAdministratorInviter::class)->invite($this->getRecord(), $actor);
+        // The administrator's own address, from the contributed "Administrator"
+        // section. It is dehydrated(false) - not a company column - so it is
+        // read from the raw form state. Blank falls back to the company's
+        // address inside the inviter, which is what it always used.
+        $administratorEmail = trim((string) ($this->data['administrator_email'] ?? ''));
+
+        $reason = app(CompanyAdministratorInviter::class)->invite(
+            $this->getRecord(),
+            $actor,
+            $administratorEmail === '' ? null : $administratorEmail,
+        );
 
         if ($reason === CompanyAdministratorInviter::DISABLED) {
             return;
         }
 
+        $invitedEmail = $administratorEmail === ''
+            ? (string) $this->getRecord()->email
+            : $administratorEmail;
+
         if ($reason === CompanyAdministratorInviter::INVITED) {
             Notification::make('companyAdministratorInvited')
                 ->title(__(static::$lang.'.invited.title'))
-                ->body(__(static::$lang.'.invited.body', ['email' => $this->getRecord()->email]))
+                ->body(__(static::$lang.'.invited.body', ['email' => $invitedEmail]))
                 ->success()
                 ->send();
 
@@ -55,7 +69,7 @@ class CreateCompany extends BaseCreateCompany
                 // without showing it here the tenant cannot be onboarded at all.
                 'link' => $reason === CompanyAdministratorInviter::MAIL_FAILED
                     ? (Invitation::query()
-                        ->where('email', $this->getRecord()->email)
+                        ->where('email', $invitedEmail)
                         ->latest('id')
                         ->first()
                         ?->acceptUrl() ?? '')

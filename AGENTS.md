@@ -1365,6 +1365,16 @@ DOCUMENTATION AND UPSTREAM REVIEW (ALL AGENTS)
 
 DONE RECENTLY (newest first; details in docs/change-log.md)
 
+• 2026-10-23 — Company administrator: an "Administrator" section on the company
+  form, contributed from `security` through `CompanySchemaRegistry`. On create it
+  collects the administrator's own address (the inviter now takes an optional
+  email and still falls back to the company's); on edit it lists each Company
+  Admin plus any pending invitation, for support. Password changes link to the
+  user rather than repeating password fields - `UserResource` already owns that,
+  and the invitation flow deliberately never mints a password. Note
+  `user_invitations` has **no** `accepted_at`: acceptance deletes the row, so a
+  surviving row is a pending invitation.
+
 • 2026-10-23 — Contacts import from a spreadsheet (CSV and Excel, with a
   downloadable example): `Partner\Services\ContactImporter`, whose `columns()`
   drives both the template and the validation, plus server-side file
