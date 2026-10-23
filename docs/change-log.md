@@ -6,6 +6,394 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-10-23 (Filament 5.10.3 upgrade: investigated, not applied)
+
+Asked whether Filament can be updated. Answer: yes, cleanly, but it was
+deliberately not done in the same working tree as the day's fixes.
+
+### What is available
+
+Locked at `v5.7.6`; `v5.10.3` is released. Filament is a monorepo of
+version-locked sibling packages, so a partial update of `filament/filament`
+alone cannot resolve - composer reports each sibling "fixed to v5.7.6 by a
+partial update".
+
+Listing the twelve `filament/*` packages explicitly resolves only to **v5.8.4**.
+The cap is `livewire/livewire`, locked at `v4.3.4` and not in the set. Adding it
+reaches the full target, and **nothing outside Filament and Livewire moves**:
+
+| Packages | From | To |
+|---|---|---|
+| 12 × `filament/*` | v5.7.6 | v5.10.3 |
+| `livewire/livewire` | v4.3.4 | v4.4.8 |
+
+The command, as a smallest-explicit-set update with no `--with-all-dependencies`
+(per the dependency rule in AGENTS.md):
+
+```
+composer update filament/actions filament/filament filament/forms \
+  filament/infolists filament/notifications filament/query-builder \
+  filament/schemas filament/spatie-laravel-settings-plugin filament/support \
+  filament/tables filament/upgrade filament/widgets livewire/livewire
+```
+
+The third-party Filament plugins (`filament-shield` 4.2.0,
+`filament-language-switch`, `filament-icon-picker`,
+`filament-daterangepicker-filter`) all declare `^5.0` and do not constrain it.
+
+### Why it was not applied in this tree
+
+1. The working tree already held the day's two production crash fixes, the
+   three-audience guides, the per-company plugin section and three new guard
+   tests. A 13-package bump on top makes any later regression impossible to
+   bisect to one cause or the other.
+2. `composer install` runs Filament's upgrade hook and may republish tracked
+   files under `public/`. The three local Filament view overrides - the
+   summary-row one among them - have to be re-diffed against the new package
+   sources afterwards.
+3. This application reaches into Filament internals more than most. Three
+   separate internals surfaced in this one session: `getMiddleware()` versus
+   `getAuthMiddleware()`, `Component::$container` initialisation, and cluster
+   route-name generation. `HasTableViews`, the schema registries and the page
+   overrides all depend on internal behaviour, so three minor versions is a
+   real surface and needs all thirteen suites rather than a spot check.
+
+**Decision:** do it as its own change, after the day's fixes are verified and
+deployed. Awaiting the user's go-ahead before `composer.lock` moves.
+
+## 2026-10-23 (Two production crashes: a dead argument and hardcoded route names)
+
+Two unrelated 500s reported from production within eleven seconds of each other,
+both pre-existing and both the same shape: code that referenced something
+nothing answered to.
+
+### Crash 1 - `view_model`, an argument that was discarded but still evaluated
+
+`/admin/recruitments/applications/job-by-positions` fataled with
+`Typed property Filament\Schemas\Components\Component::$container must not be
+accessed before initialization`, from
+`table-views/src/Filament/Concerns/HasTableViews.php:464`:
+
+```php
+($this->editTableViewAction(['view_model' => $tableView->getRecord()]))($args)
+```
+
+`editTableViewAction()` declares **no parameters**. PHP does not error on extra
+arguments to a userland function, so the array was silently thrown away - but
+`$tableView->getRecord()` was still evaluated first, and a preset view component
+has no schema container, so `getRecord()` reached an uninitialised typed
+property and took the whole page down.
+
+`view_model` occurred **exactly once** in the repository: at the point it was
+passed. Nothing ever read it. The argument was removed, which fixes the crash
+and deletes the dead code in one line. It had already been noted as dead earlier
+in the day ("set once, read nowhere") - it was not merely dead, it was fatal.
+
+### Crash 2 - hardcoded route names on clustered pages
+
+`/admin/time-off/dashboard` threw
+`Route [filament.admin.pages.time-off-dashboard] not defined.`
+
+Five pages override `getRouteName()` with a hardcoded string.
+`Page::getUrl()` calls `route(static::getRouteName($panel))`, while route
+*registration* uses Filament's own relative name - two different code paths, so
+a hardcoded string only works when it happens to coincide. From the live route
+table:
+
+| Path | Registered name | Hardcoded | |
+|---|---|---|---|
+| `admin/project` | `filament.admin.pages.project-dashboard` | same | ok |
+| `admin/recruitment` | `filament.admin.pages.recruitments` | same | ok |
+| `admin/time-off` | `filament.admin.pages.time-off-overview` | same | ok |
+| `admin/time-off/dashboard/time-off` | `filament.admin.time-off.dashboard.pages.dashboard` | `filament.admin.pages.time-off-dashboard` | **broken** |
+| `admin/time-off/reporting/reporting/by-type` | `filament.admin.time-off.reporting.pages.by-type` | `filament.admin.pages.time-off-by-type` | **broken** |
+
+The two broken ones are the two inside a **cluster**: Filament prefixes a
+clustered page's route name with the cluster, so the hardcoded names could never
+match. `ByType` had the identical bug and had simply never been opened.
+
+The overrides were deleted from both so Filament answers with the name it
+registered; the now-unused `Filament\Panel` imports went with them. The three
+non-clustered pages were left alone - their names are verified correct, and
+changing a working URL carries risk for no gain. They remain a trap: correct
+only by coincidence, and adding a cluster to any of them would break it
+silently. The hardcoded strings were referenced nowhere else in the codebase, so
+removal changes no other call site.
+
+An external analysis of this crash suggested the page was not registered in the
+panel and proposed guarding the cluster sub-navigation with
+`->visible(fn () => Route::has(...))`. Both were wrong: the route table shows the
+page registered, with `Webkul\TimeOff\Filament\Pages\Dashboard` as its action,
+and that guard would have **hidden a working page** to silence the symptom.
+
+### Guard added
+
+`support/tests/Feature/Plugins/PageRouteNameTest.php`: for every page the admin
+panel registers, assert `Route::has(static::getRouteName($panel))`, and that
+`getUrl()` does not throw - the latter being the exact call the cluster
+sub-navigation makes. Both assertions count what they checked and fail on zero,
+so neither can pass vacuously. It lives in `SupportFeature` because
+**`time-off` has no test suite at all**, which is why both of its route bugs
+reached production; anything placed in that plugin would never run.
+
+## 2026-10-23 (/admin returned 500 for every user: an unimported middleware)
+
+### Root cause
+
+`app/Providers/Filament/AdminPanelProvider.php` registered the password-change
+middleware in `->authMiddleware([...])` as an unqualified
+`RequirePasswordChange::class`, with no `use` statement. PHP resolves an
+unqualified name against the file's own namespace, so `::class` produced the
+string `App\Providers\Filament\RequirePasswordChange`, which does not exist. The
+container could not build it and every `/admin` request failed.
+
+`::class` on an unimported name is **not** a compile error - it simply yields
+the wrong string. Pint passed, `php -l` passed, and the middleware's own tests
+passed, because the middleware class itself was correct. Only the registration
+pointed at nothing. Introduced by the must-change-password work earlier the same
+day.
+
+### Fix
+
+Added `use Webkul\Security\Http\Middleware\RequirePasswordChange;`. Verified in
+the container that the real class resolves and that the wrongly-namespaced one
+does not exist.
+
+### Guard added
+
+`support/tests/Feature/Plugins/PanelMiddlewareTest.php` resolves what the panels
+actually report - `getMiddleware()` plus `getAuthMiddleware()`, across every
+panel - and asserts each namespaced entry is a class that exists, skipping
+router aliases such as `auth` and stripping parameters such as `throttle:60,1`.
+
+The first version of the second test asserted against `getMiddleware()` alone
+and **failed against correct code**: this middleware belongs to
+`authMiddleware`, because it inspects the signed-in user and must run after
+`Authenticate` has resolved one. It now pins the bucket *and* the ordering,
+which is the property that actually matters.
+
+## 2026-10-23 (Three guides, and per-company plugins from the company side)
+
+### Guides for user, admin and superadmin
+
+Requested: the in-app guide should live in Help, cover what the system can do
+including how-tos, and come in three audiences - user, admin, superadmin -
+English only until translation is approved.
+
+What was already there: `Guide` (17 categories, 77 imported reference articles,
+search, deep links) and a `Help` page whose "Admin Guide" card was **not a guide
+at all** - nine static bullet points in `lang/en/filament/pages/help.php` that
+linked nowhere. There was no superadmin guide.
+
+- **`Webkul\Support\Enums\GuideAudience`** (`user` / `admin` / `superadmin`),
+  mapped onto roles that already exist rather than onto a new concept:
+  `Role::COMPANY_ADMIN` administers one tenant, while super admin and
+  `Role::MULTI_COMPANY_ADMIN` administer the installation. Access is cumulative
+  upward, since an administrator also needs the end-user pages. An unmarked
+  category defaults to `user`, the narrowest audience, so it can never leak
+  administrative content.
+- **`GuideLibrary::visible()` is the entire access boundary.** The guide has no
+  policy and no API of its own, so every public accessor - `index`, `category`,
+  `articleList`, `article`, `search`, `articleCount`, `firstCategoryId` - was
+  routed through it. Documented in the method, so a future accessor reaching for
+  `categories()` directly is recognisable as a mistake.
+- **Content split across three files.** `guide.json` keeps the 77 imported
+  articles, now tagged `audience: user`; `guide-admin.json` and
+  `guide-superadmin.json` hold 10 new hand-written English articles. Authored
+  content stays out of the generated reference file, so a hand edit never has to
+  find its place inside 2,600 lines of machine-shaped HTML, and re-importing the
+  reference content cannot silently drop the authored guides.
+- **Audience tabs** on the Guide page, deep-linkable via `?audience=`, hidden
+  for a viewer with only one guide. An audience or article the viewer is not
+  entitled to is **discarded rather than honoured**, so an administrator's
+  shared link cannot open the installation guide for an ordinary user.
+- **Help page**: one card per entitled guide, each linking into its own tab.
+
+Every claim in the authored articles was checked against the code before being
+written. The per-company plugin article states plainly that grants are recorded
+but enforcement is applied per plugin as it is rolled out - documenting that
+feature as working would have been false.
+
+Two fixes this forced:
+
+- `Help::canViewAdminGuide()` checked **super admin only**, hiding the admin
+  guide from `Role::COMPANY_ADMIN` - the people it is written for.
+- `Help::guideCategories()` was a **second** copy of the 620KB file read and
+  decode. Two readers of one asset meant the Help page silently missed anything
+  the library learned to do, the audience filter included. It now uses
+  `GuideLibrary`.
+
+Also removed the guide's stale `website` category - five articles (Blog Posts,
+Pages, Customers, Configurations, Settings) documenting the CMS removed on
+2026-10-21. Verified no dangling links to those five article ids anywhere, and
+that `GuideTest` is data-agnostic. 19 categories / 87 articles after the change.
+
+### Per-company plugins, from the company side
+
+Requested: as a super admin, editing a company should show its plugins and let
+them be enabled or disabled there - compared to modules on a PILOT account. The
+label was kept as "Plugins" rather than "Modules" for consistency with the
+existing Plugins page.
+
+- **`CompanySchemaRegistry`** (new, in `support`, beside `CompanyResource`), a
+  concrete `AbstractSchemaRegistry` like `PartnerSchemaRegistry` and
+  `ProductSchemaRegistry`. `support/CompanyResource::form()` splats
+  `renderForm('main.after')` in the main column; `security/CompanyResource`
+  extends it, so the section appears in the company edit screen that is actually
+  in the menu.
+- **`PluginManager\CompanyContributions`** contributes the section. This
+  direction matters: `support` is the base plugin and `plugin-manager` depends on
+  it, so putting `Plugin` into the company form directly would have created a
+  backwards dependency. Neither `support` nor `security` referenced
+  `PluginManager` before, and neither does now.
+- It writes the **same `company_plugin` rows** as the Companies action on the
+  Plugins page. One pivot, two views, deliberately not a second mechanism.
+- **`CompanyContributions::syncGrants()` is public and carries its own
+  authorization check.** Filament does not save a hidden component, but the
+  write re-checks regardless, because the super-admin `Gate::before` skips
+  policies and a forged form payload must not land.
+- **`register()` is idempotent.** Its own test caught this: the section was
+  contributed **twice**, because `packageBooted()` is not guaranteed to run once
+  per process - the install flow and the test bootstrapper both re-boot plugin
+  providers, and the schema registry is static with no reset. Without the guard
+  the company form grows a duplicate copy of the section in production too.
+- `User::isCompanyAdmin()` added, mirroring `isMultiCompanyAdmin()`, with no
+  super-admin fallback so neither wider role can be mistaken for a tenant-scoped
+  one.
+
+This still **does not gate anything** - it is a better surface onto the same
+recorded entitlement, and the UI description says so.
+
+### English only
+
+Per instruction, no guide content was translated. The new `guide-audience`
+labels and the company section labels ship in all five locales with English
+values, which keeps key parity green. The `help.php` `guides` tree was already
+English-only (en 146 lines against 70 elsewhere) and passes via Laravel's
+fallback, so the new superadmin strings follow that existing shape.
+
+## 2026-10-23 (Migration registration: the last four allowlist entries)
+
+`KNOWN_UNREGISTERED_MIGRATIONS` in
+`support/tests/Feature/Plugins/MigrationRegistrationTest.php` had five entries.
+Four were resolved; the fifth needs production data checked first.
+
+### The three employees calendar migrations - deleted as superseded
+
+`support/2026_04_02_000001_create_calendars_table` owns these tables now: it
+renames the legacy `employees_calendar*` tables where they exist and creates
+`calendars`, `calendar_attendances` and `calendar_leaves` where they do not.
+Confirmed against the live schema - the migrations table shows
+`create_calendars_table` ran and no `employees_calendar%` migration appears at
+all. The three `employees` files only ever duplicated that work, so they were
+deleted. `Webkul\Employee\Models\Calendar` and its siblings stay: they are thin
+back-compat subclasses of the `Webkul\Support` models.
+
+### The time-off leave-type share - registered, and it was a live defect
+
+`time-off/2026_08_04_100000_share_default_time_off_leave_types` is the companion
+repair to the seeder change in the **same commit** (`b9ac266e6`, 2026-08-04):
+the seeder began inserting the default leave types with a null `company_id` so
+every company sees them under `CompanyScope`'s NULL-is-shared rule, and the
+migration nulls `company_id` on databases seeded before that.
+
+Left out of `hasMigrations()`, it never ran. So on any database seeded before
+2026-08-04, "Paid Time Off", "Sick Time Off", "Unpaid" and "Compensatory Days
+test" stayed owned by the first company and **no other company could see them**.
+Now registered. It is a no-op on a fresh install, and `2026_08_04` sorts after
+the table-creating migrations so ordering is safe.
+
+### Verified by execution, not by reasoning
+
+An initial claim that the SupportFeature run exercised the new registration was
+**wrong**: `PackageServiceProvider` loads a plugin's migrations only when the
+package `isCore` or `isInstalled()`, and `time-off` is neither in the test
+environment - `time_off_leave_types` does not exist there at all.
+
+`support/tests/Feature/Workflows/SharedTimeOffLeaveTypesTest.php` therefore
+installs the plugin, asserts the defaults are shared, then **dirties them to a
+company id to reproduce a pre-2026-08-04 database and runs the migration** to
+prove the repair, and checks the two deliberately company-owned types
+("Training Time Off", "Parental Leaves") are left alone. It asserts the rows
+exist first, so a "company_id is null" check cannot pass by counting nothing.
+4 passed, 12 assertions.
+
+It lives in the support suite because `time-off` has no tests and no
+`phpunit.xml` testsuite - anything placed there would never execute, which is
+how the migration went unnoticed in the first place.
+
+### Related, found and deliberately not changed
+
+- `employees/database/factories/CalendarFactory.php` is broken, not merely
+  redundant: its model resolves to the `calendars` table but it fills `tz`,
+  `status` and `user_id`, columns that do not exist and never did in that
+  migration either. `support`'s own `CalendarFactory` has the correct ones.
+  Unreferenced, so inert until someone writes an employees calendar test.
+- `employees/database/seeders/CalendarSeeder.php` and
+  `CalendarAttendanceSeeder.php` write to `employees_calendars` and
+  `employees_calendar_attendances`, which do not exist after the rename. Not in
+  `employees`' `DatabaseSeeder`, and `support` has registered equivalents.
+
+### Still allowlisted
+
+`support/2026_03_09_000001_add_unique_index_to_companies_name` - adds a UNIQUE
+index on `companies.name`, which would fail on any installation already holding
+two companies with the same name. Needs checking against production data.
+
+## 2026-10-23 (AGENTS.md claimed an unfixed P0 that is not open)
+
+`AGENTS.md` told every new agent that "eight findings are still open, including
+UF-017, an unfixed P0 XSS in Chatter change summaries, and UF-018/UF-021/UF-022
+(financial correctness and data integrity)".
+
+All 24 Local states were re-read. **No P0 or P1 is open.** UF-017 is *not
+applicable* - this fork was never exposed, and `ChatterEscapingTest` pins that
+decision. UF-018/020/021/022/023 are fixed; UF-019 and UF-024 were already
+handled; UF-011 to UF-015 were rejected or deferred. What remains is UF-003
+(open, and not fixed upstream either), UF-009 (investigated, needs an
+install-flow decision), UF-010 (partial), plus UF-001 and UF-007 awaiting a
+first remote CI run and browser execution.
+
+The wording predated the 2026-10-22 work recorded in this same change log. It
+would have sent the next agent hunting a P0 XSS that does not exist and treating
+fixed financial bugs as live in production. Corrected in both places in
+`AGENTS.md`. In the register itself the count was marked superseded with a date
+rather than rewritten, per the keep-history rule.
+
+## 2026-10-23 (Merge of develop into production: two conflicts)
+
+A conflicted merge of `develop` into `production` was found mid-session, with
+`.git/MERGE_HEAD` present and HEAD on `production` - the deploy branch - while a
+test suite was running against the same tree. One conflicted file,
+`SecurityServiceProvider.php`, carried live `<<<<<<<` markers and therefore did
+not parse, so **every** artisan command and test run failed with
+`syntax error, unexpected token "<<"`. A `View [pages.guide] not found` failure
+seen in a suite around this time was caused by the merge landing underneath a
+running run, not by the code under test; a later clean run passed every guide
+test.
+
+Resolutions:
+
+- `SecurityServiceProvider.php`: took develop's side, a strict superset. Both
+  sides register `provision_company_admin_role`; develop also registers
+  `2026_10_21_000002_add_must_change_password_to_users_table`. Taking the other
+  side would have silently un-registered that migration - and an unregistered
+  migration never runs.
+- `docs/handover-actions.md`: kept develop's three corrected "Optional, no
+  urgency" bullets **and** production's ~395 extra lines (the 20 October POD
+  security verification report). Neither side was a superset.
+
+### Branch divergence worth knowing
+
+`production..develop` is empty, so nothing on develop is missing from
+production. But production is **16 commits ahead**, including
+`84bf3fe55 feat(logistics): implement fragment-based POD token flow`,
+`b76bdc8c3 ...stop link flow (WP-5b)` and two proxy-check-route commits -
+security work that exists only on production, showing up as +216 and +54 lines
+in the two `stop-link` views. Anyone doing logistics work on `develop` is
+editing the older, token-leaking version of those views until production is
+back-merged.
+
 ## 2026-10-23 (French waybill lang file did not parse)
 
 The one actionable item left from the 2026-10-22 investigation, recorded there
