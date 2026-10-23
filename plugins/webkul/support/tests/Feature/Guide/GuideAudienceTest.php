@@ -35,19 +35,49 @@ function guideCategoryIds(): array
     return array_column(app(GuideLibrary::class)->visible(), 'id');
 }
 
+/**
+ * Give the user the installation's super-admin role, whatever it is called.
+ *
+ * There is no role literally named "super_admin": the seeded one is "Admin",
+ * and Role::getSuperAdminRoleNames() is the list that actually decides. Looking
+ * it up by a hardcoded name found nothing, and the precondition below is what
+ * caught that rather than the test quietly asserting against a user who was
+ * never a super admin at all.
+ */
+function makeSuperAdmin(object $user): void
+{
+    $role = null;
+
+    foreach (Role::getSuperAdminRoleNames() as $name) {
+        $role = Role::query()->whereRaw('LOWER(name) = ?', [mb_strtolower($name)])->first();
+
+        if ($role) {
+            break;
+        }
+    }
+
+    expect($role)->not->toBeNull('no super-admin role exists, so this test would prove nothing');
+
+    assignRole($user, $role);
+
+    expect(auth()->user()?->isSuperAdmin())->toBeTrue();
+}
+
 function assignRoleByName(object $user, string $name): void
 {
     // Company Admin is deliberately not a protected system role, so it can be
-    // created here. super_admin is, and creating one would throw, so it must
-    // already exist - which the assertion makes explicit rather than skipping.
-    $role = Role::query()->whereRaw('LOWER(name) = ?', [mb_strtolower($name)])->first();
+    // created here when an install has not provisioned it.
+    $role = Role::query()->whereRaw('LOWER(name) = ?', [mb_strtolower($name)])->first()
+        ?? Role::create(['name' => $name, 'guard_name' => 'web']);
 
-    if (! $role && mb_strtolower($name) === mb_strtolower(Role::COMPANY_ADMIN)) {
-        $role = Role::create(['name' => Role::COMPANY_ADMIN, 'guard_name' => 'web']);
-    }
+    assignRole($user, $role);
 
-    expect($role)->not->toBeNull("the '{$name}' role does not exist, so this test would prove nothing");
+    expect(auth()->user()?->getRoleNames()->map(fn (string $n): string => mb_strtolower($n))->all())
+        ->toContain(mb_strtolower($name));
+}
 
+function assignRole(object $user, object $role): void
+{
     $user->assignRole($role);
     $user->unsetRelation('roles');
 
@@ -57,9 +87,6 @@ function assignRoleByName(object $user, string $name): void
     // looked gated only because the role had not landed would be a false pass.
     Auth::guard('web')->setUser($user);
     Auth::guard('sanctum')->setUser($user);
-
-    expect(auth()->user()?->getRoleNames()->map(fn (string $n): string => mb_strtolower($n))->all())
-        ->toContain(mb_strtolower($name));
 }
 
 it('ships all three guides, so the tests below are not asserting against absence', function () {
@@ -119,7 +146,7 @@ it('offers a company admin the user and admin guides but not the superadmin one'
 
 it('offers a super admin every guide', function () {
     $user = FilamentHelper::actingAs();
-    assignRoleByName($user, 'super_admin');
+    makeSuperAdmin($user);
 
     $library = app(GuideLibrary::class);
 
