@@ -33,15 +33,23 @@ require_once __DIR__.'/../../Helpers/TestBootstrapHelper.php';
  *   adds a UNIQUE index on companies.name. Applying it now would fail on any
  *   installation that already holds two companies with the same name, so it
  *   needs checking against production data first.
- * - the three employees calendar tables and the time-off leave-type share:
- *   not yet examined. Each may be needed, superseded, or dead.
+ *
+ * Resolved on 2026-10-23:
+ * - the three employees calendar migrations were superseded by support's
+ *   2026_04_02_000001_create_calendars_table, which renames the legacy
+ *   employees_calendar* tables where they exist and creates calendars,
+ *   calendar_attendances and calendar_leaves where they do not. The three
+ *   files were deleted; Webkul\Employee\Models\Calendar and its siblings stay
+ *   as back-compat subclasses of the Webkul\Support models.
+ * - time-off/2026_08_04_100000_share_default_time_off_leave_types was
+ *   registered. It is the companion repair to the seeder change in the same
+ *   commit (b9ac266e6): the seeder now inserts the default leave types with a
+ *   null company_id so every company sees them, and the migration nulls the
+ *   company_id on databases seeded before that. Unregistered it never ran, so
+ *   on an older database those defaults stayed owned by the first company.
  */
 const KNOWN_UNREGISTERED_MIGRATIONS = [
-    'employees: 2024_12_11_100426_create_employees_calendars_table',
-    'employees: 2024_12_11_100435_create_employees_calendar_attendances_table',
-    'employees: 2024_12_11_100442_create_employees_calendar_leaves_table',
     'support: 2026_03_09_000001_add_unique_index_to_companies_name',
-    'time-off: 2026_08_04_100000_share_default_time_off_leave_types',
 ];
 
 it('names every plugin migration in that plugin’s hasMigrations list', function () {

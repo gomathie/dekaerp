@@ -31,6 +31,7 @@ class TimeOffServiceProvider extends PackageServiceProvider
                 '2025_01_22_101656_create_time_off_leave_allocations_table',
                 '2025_08_13_120000_alter_private_name_column_in_time_off_leaves_table',
                 '2026_07_22_120000_add_company_id_to_time_off_leave_allocations_table',
+                '2026_08_04_100000_share_default_time_off_leave_types',
             ])
             ->hasDependencies([
                 'employees',

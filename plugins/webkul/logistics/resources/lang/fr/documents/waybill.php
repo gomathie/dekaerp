@@ -7,18 +7,18 @@ return [
 
     'title' => 'Lettre de voiture',
 
-    ‘confidential-goods’ => ‘Marchandise confidentielle — détails non divulgués’,
+    'confidential-goods' => 'Marchandise confidentielle — détails non divulgués',
 
-    ‘labels’ => [
-        ‘waybill-number’       => ‘Numéro de lettre de voiture’,
-        ‘shipment-number’      => "Numéro d’expédition",
-        ‘customer-reference’   => ‘Référence client’,
-        ‘customer’             => ‘Client’,
-        ‘sender’               => ‘Expéditeur’,
-        ‘recipient’            => ‘Destinataire’,
-        ‘route’                => ‘Itinéraire’,
-        ‘consignor’            => ‘Expédié pour le compte de’,
-        ‘origin’               => ‘Origine’,
+    'labels' => [
+        'waybill-number'       => 'Numéro de lettre de voiture',
+        'shipment-number'      => 'Numéro d’expédition',
+        'customer-reference'   => 'Référence client',
+        'customer'             => 'Client',
+        'sender'               => 'Expéditeur',
+        'recipient'            => 'Destinataire',
+        'route'                => 'Itinéraire',
+        'consignor'            => 'Expédié pour le compte de',
+        'origin'               => 'Origine',
         'destination'          => 'Destination',
         'planned-pickup'       => 'Enlèvement planifié',
         'actual-pickup'        => 'Enlèvement réel',
