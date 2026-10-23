@@ -6,6 +6,69 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-10-23 (French waybill lang file did not parse)
+
+The one actionable item left from the 2026-10-22 investigation, recorded there
+under "Pre-existing drift found, deliberately not fixed". Found while running
+`php -l` over every `resources/lang` file in the repo.
+
+### Root cause
+
+`plugins/webkul/logistics/resources/lang/fr/documents/waybill.php` used
+typographic quotes (`U+2018` / `U+2019`, i.e. `‘` and `’`) as PHP **string
+delimiters** on 11 key/value lines — `confidential-goods`, the `labels` array
+opener, and nine label entries. PHP only accepts `'`, `"`, and the heredoc
+forms, so the file did not parse at all: `php -l` reported
+`syntax error, unexpected identifier "confidentielle", expecting "]"` on line 10.
+
+Consequences, all silent until something touched French:
+
+- Any load of the `logistics::documents/waybill` group with the locale set to
+  `fr` is a fatal PHP parse error, so printing a waybill in French returned a
+  500. Every other locale was unaffected, which is why it survived review.
+- `php artisan translations:check` counted it as `1 parse error(s)`, so the
+  Translations Check workflow — which runs `translations:check --details` and
+  exits non-zero on any failure — has been red on every push since the file
+  landed in `a3eec3a10` (2026-10-20, "add confidential shipment fields and
+  product line types"). It was one of eleven pre-existing parity failures, not
+  the only one, so CI staying red was not itself a signal.
+
+The typographic quotes almost certainly came from writing French prose into the
+file through an editor with smart-quote substitution; the *content* was already
+correct.
+
+### Fix
+
+Only the delimiters changed — 11 lines, ASCII `'` on both sides. The single
+surviving `U+2019` is inside the string `'Numéro d’expédition'`, where it is
+legitimate content and parses fine. No wording was touched in any locale.
+
+Fixed in commit `6f827a879`.
+
+### Regression test
+
+`plugins/webkul/logistics/tests/Feature/Documents/WaybillTest.php` gained
+`it('loads the waybill translations in every supported locale')`. It sets the
+locale to each of `en`, `ar`, `es`, `fr`, `pt_BR` in turn and loads
+`logistics::documents/waybill.labels`, asserting the group is an array holding
+`waybill-number`, `shipment-number`, `consignor` and `date`; that `title`
+resolves to something other than the raw key (which is what Laravel returns
+when a file is missing or unloadable); and that the five titles are distinct.
+
+Loading the group is the point: a parse error in one locale file makes
+`trans()` throw, so this test fails for exactly the failure that shipped. It
+also pins that no locale is left behind when the group is extended, which is
+the more common way this file will break next.
+
+### Verification
+
+- `php -l` on all five `documents/waybill.php` locale files: parse OK.
+- Structural check that the four asserted label keys exist in all five locales:
+  4/4 each.
+- `title` values are distinct across the five locales (`Waybill` / `بوليصة الشحن`
+  / `Carta de porte` / `Lettre de voiture` / `Conhecimento de transporte`), so
+  the uniqueness assertion is a real assertion and not a tautology.
+
 ## 2026-10-22 (Register close-out: UF-008, UF-009, UF-012, UF-016)
 
 The last four open entries in `docs/upstream-fix-adoption-plan.md`. Each got a
@@ -243,6 +306,8 @@ registers it.
   `logistics::documents/waybill` in French fatals. Introduced by `a3eec3a10`
   (2026-10-20). Out of scope here (logistics lang files were excluded from this
   pass); one-line fix per string.
+  **Superseded 2026-10-23 — fixed, with a regression test; see the 2026-10-23
+  entry above.**
 - Locale parity gaps, all older than today: support `filament/pages/help.php`
   (EN 147 lines, locales 71), support `fr/filament/resources/currency.php` (two
   extra `bulk-actions.delete.notification.error.*` keys), employees

@@ -1277,10 +1277,17 @@ DOCUMENTATION AND UPSTREAM REVIEW (ALL AGENTS)
 • `docs/upstream-fix-adoption-plan.md` is the register of known upstream findings
   (UF-001..UF-024) and what was decided about each. Treat it as a bug list, not a
   schedule: the recurring seven-day review cadence was dropped on 2026-10-21 to
-  keep focus. Eight findings are still open, including UF-017, an unfixed P0 XSS
-  in Chatter change summaries, and UF-018/UF-021/UF-022 (financial correctness and
-  data integrity). Consult it when working in an affected plugin, and update a
-  finding's Local state when you touch one.
+  keep focus. **No P0 or P1 finding is open (verified 2026-10-23 by reading every
+  Local state).** UF-017, the P0 Chatter XSS, is *not applicable* - this fork was
+  never exposed, and `ChatterEscapingTest` now pins that. UF-018/020/021/022/023
+  are fixed, UF-019/024 were already handled, UF-011/012/013/014/015 were
+  rejected or deferred. What remains: UF-003 (open, and not fixed upstream
+  either), UF-009 (investigated, needs an install-flow decision), UF-010
+  (partial - Sales order price lists), UF-001 (awaiting a first remote CI run)
+  and UF-007 (awaiting browser execution). Do not re-hunt the closed ones; the
+  earlier "eight still open" wording predated the 2026-10-22 work. Consult the
+  register when working in an affected plugin, and update a finding's Local state
+  when you touch one.
 • `docs/restructure-backlog.md` is the resource-restructure analysis: which
   resources adopt upstream's split layout mechanically and which carry local
   changes that must be moved by hand.
@@ -1333,7 +1340,8 @@ REFERENCES
 • docs/agent-reminders.md — standing instructions and task log (read first).
 • docs/change-log.md — what changed and why, per session.
 • docs/upstream-fix-adoption-plan.md — register of upstream findings UF-001..024
-  and the decision on each. Eight still open, UF-017 a P0 XSS. No review cadence.
+  and the decision on each. No P0/P1 open as of 2026-10-23; UF-003, UF-009 and
+  UF-010 are the live ones. No review cadence.
 • docs/restructure-backlog.md — deferred upstream restructures.
 • Package F, resource structure alignment — the plan lives on the
   `chore/resource-structure` branch, not on main:
