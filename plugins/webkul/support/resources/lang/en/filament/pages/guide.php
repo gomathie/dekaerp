@@ -2,11 +2,15 @@
 
 return [
     'navigation' => [
-        'label' => 'User Guide',
+        'label' => 'Guides',
     ],
 
-    'title'   => 'User Guide',
-    'heading' => 'User Guide',
+    'title'   => 'Guides',
+    'heading' => 'Guides',
+
+    'audience' => [
+        'label' => 'Guide audience',
+    ],
 
     'subheading' => '{0}No guide pages are available yet.|{1}One page covering what the system can do.|[2,*]:count pages covering what the system can do.',
 

@@ -6,7 +6,7 @@
                     {{ __('support::filament/pages/help.guides.group') }}
                 </span>
 
-                <div class="grid gap-4 lg:grid-cols-2">
+                <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                     @foreach ($this->guides() as $guide)
                         <x-filament::section class="h-full">
                             <div class="flex h-full flex-col gap-5">
@@ -26,7 +26,7 @@
                                     </div>
                                 </div>
 
-                                <div class="space-y-4">
+                                <div class="flex-1 space-y-4">
                                     @foreach ($guide['sections'] as $section)
                                         <div>
                                             <h4 class="text-sm font-semibold text-gray-950 dark:text-white">
@@ -45,6 +45,25 @@
                                     @endforeach
                                 </div>
 
+                                {{--
+                                    Every card now opens its own guide. The admin
+                                    card used to show a checklist and link
+                                    nowhere, so there was no way through to the
+                                    content from here.
+                                --}}
+                                <div class="flex items-center justify-between gap-3">
+                                    <span class="text-xs text-gray-400">
+                                        {{ trans_choice('support::filament/pages/help.guides.user.category_count', $guide['count'], ['count' => $guide['count']]) }}
+                                    </span>
+
+                                    <x-filament::button
+                                        tag="a"
+                                        :href="$guide['url']"
+                                        size="sm"
+                                    >
+                                        {{ $guide['button'] }}
+                                    </x-filament::button>
+                                </div>
                             </div>
                         </x-filament::section>
                     @endforeach

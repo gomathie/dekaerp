@@ -8,6 +8,10 @@ return [
     'title'   => 'Guide utilisateur',
     'heading' => 'Guide utilisateur',
 
+    'audience' => [
+        'label' => 'Guide audience',
+    ],
+
     'subheading' => '{0}Aucune page de guide n’est disponible pour le moment.|{1}Une page sur ce que le système permet de faire.|[2,*]:count pages sur ce que le système permet de faire.',
 
     'search' => [

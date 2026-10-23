@@ -4,6 +4,7 @@ namespace Webkul\Support\Filament\Pages;
 
 use Filament\Pages\Page;
 use Livewire\Attributes\Url;
+use Webkul\Support\Enums\GuideAudience;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Services\GuideLibrary;
 
@@ -31,6 +32,9 @@ class Guide extends Page
     protected static ?string $slug = 'guide';
 
     protected static ?int $navigationSort = 2;
+
+    #[Url(as: 'audience', keep: true)]
+    public ?string $audience = null;
 
     #[Url(as: 'category', keep: true)]
     public ?string $categoryId = null;
@@ -69,20 +73,35 @@ class Guide extends Page
         return __('support::filament/pages/guide.title');
     }
 
+    /**
+     * Named after the open guide rather than the page.
+     *
+     * The page holds three guides now, so its own label had to become generic.
+     * Naming the heading after the current audience keeps "User Guide" on the
+     * screen an ordinary user sees, and tells an administrator which of the
+     * three they are reading.
+     */
     public function getHeading(): string
     {
-        return __('support::filament/pages/guide.heading');
+        return $this->currentAudience()?->getLabel()
+            ?? __('support::filament/pages/guide.heading');
     }
 
     public function getSubheading(): ?string
     {
-        return trans_choice('support::filament/pages/guide.subheading', $this->library()->articleCount(), [
-            'count' => $this->library()->articleCount(),
-        ]);
+        $count = $this->library()->articleCount($this->currentAudience());
+
+        return trans_choice('support::filament/pages/guide.subheading', $count, ['count' => $count]);
     }
 
     public function mount(): void
     {
+        // An audience the viewer may not read is discarded rather than honoured,
+        // so ?audience=superadmin in a shared link cannot open the installation
+        // guide for an ordinary user. library()->article() is gated the same way,
+        // which is why a forbidden article id below behaves like a stale one.
+        $this->audience = $this->resolveAudience($this->audience)?->value;
+
         // An article in the URL decides the category, so a deep link opens with
         // the right section expanded even when no category was passed.
         if (filled($this->articleId)) {
@@ -90,16 +109,64 @@ class Guide extends Page
 
             if ($found) {
                 $this->categoryId = (string) ($found['category']['id'] ?? $this->categoryId);
+                $this->audience = $this->library()->audienceOf($found['category'])->value;
 
                 return;
             }
 
-            // A stale or mistyped article id falls back to browsing rather than
-            // showing an empty pane with no way out.
+            // A stale, mistyped or forbidden article id falls back to browsing
+            // rather than showing an empty pane with no way out.
             $this->articleId = null;
         }
 
-        $this->categoryId ??= $this->library()->firstCategoryId();
+        $this->categoryId ??= $this->library()->firstCategoryId($this->currentAudience());
+    }
+
+    /**
+     * The audience to open on, or null when the viewer may read none.
+     *
+     * Falls back to the first audience the viewer actually has rather than to
+     * GuideAudience::User, so the page still opens for a hypothetical viewer
+     * whose only guide is an administrative one.
+     */
+    protected function resolveAudience(?string $requested): ?GuideAudience
+    {
+        $available = $this->library()->audiences();
+
+        if ($available === []) {
+            return null;
+        }
+
+        $wanted = GuideAudience::tryFromValue($requested);
+
+        return in_array($wanted, $available, true) ? $wanted : $available[0];
+    }
+
+    public function currentAudience(): ?GuideAudience
+    {
+        return GuideAudience::tryFromValue($this->audience);
+    }
+
+    /**
+     * @return array<int, GuideAudience>
+     */
+    public function audiences(): array
+    {
+        return $this->library()->audiences();
+    }
+
+    public function selectAudience(string $audience): void
+    {
+        $resolved = $this->resolveAudience($audience);
+
+        if (! $resolved) {
+            return;
+        }
+
+        $this->audience = $resolved->value;
+        $this->categoryId = $this->library()->firstCategoryId($resolved);
+        $this->articleId = null;
+        $this->search = '';
     }
 
     public function selectCategory(string $categoryId): void
@@ -119,6 +186,9 @@ class Guide extends Page
 
         $this->articleId = $articleId;
         $this->categoryId = (string) ($found['category']['id'] ?? $this->categoryId);
+        // Search spans audiences, so opening a result can move the page to the
+        // guide that result belongs to.
+        $this->audience = $this->library()->audienceOf($found['category'])->value;
         $this->search = '';
     }
 
@@ -137,7 +207,7 @@ class Guide extends Page
      */
     public function categories(): array
     {
-        return $this->library()->index();
+        return $this->library()->index($this->currentAudience());
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Webkul\Support\Services;
 
 use Illuminate\Support\Str;
+use Webkul\Support\Enums\GuideAudience;
 
 /**
  * Reads the in-app user guide.
@@ -22,6 +23,21 @@ use Illuminate\Support\Str;
 class GuideLibrary
 {
     /**
+     * Content files, merged in this order.
+     *
+     * guide.json is imported reference material for end users and is large and
+     * machine-shaped. The administrative guides are written by hand, so they
+     * live in their own files: a hand edit never has to find its place inside
+     * 2,600 lines of generated HTML, and a re-import of the reference content
+     * cannot silently drop them.
+     */
+    protected const SOURCE_FILES = [
+        'guide.json',
+        'guide-admin.json',
+        'guide-superadmin.json',
+    ];
+
+    /**
      * @var array<int, array<string, mixed>>|null
      */
     protected ?array $categories = null;
@@ -35,26 +51,82 @@ class GuideLibrary
             return $this->categories;
         }
 
-        $path = dirname(__DIR__, 2).'/resources/data/guide.json';
+        $categories = [];
 
-        if (! file_exists($path)) {
-            return $this->categories = [];
+        foreach (static::SOURCE_FILES as $file) {
+            $path = dirname(__DIR__, 2).'/resources/data/'.$file;
+
+            if (! file_exists($path)) {
+                continue;
+            }
+
+            $decoded = json_decode((string) file_get_contents($path), true);
+
+            if (is_array($decoded)) {
+                $categories = array_merge($categories, $decoded);
+            }
         }
 
-        $decoded = json_decode((string) file_get_contents($path), true);
+        return $this->categories = $categories;
+    }
 
-        return $this->categories = is_array($decoded) ? $decoded : [];
+    /**
+     * The categories the signed-in user is allowed to read.
+     *
+     * Every public accessor below goes through this rather than categories(),
+     * so the audience gate holds by default instead of holding only where a
+     * caller remembered to ask for it. The guide has no policy and no API of
+     * its own - this method is the whole boundary - so a new accessor that
+     * reached for categories() directly would quietly serve administrative
+     * pages to everyone.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function visible(?GuideAudience $only = null): array
+    {
+        $permitted = GuideAudience::visibleTo(auth()->user());
+
+        return array_values(array_filter($this->categories(), function (array $category) use ($permitted, $only): bool {
+            $audience = $this->audienceOf($category);
+
+            if (! in_array($audience, $permitted, true)) {
+                return false;
+            }
+
+            return $only === null || $audience === $only;
+        }));
+    }
+
+    public function audienceOf(array $category): GuideAudience
+    {
+        return GuideAudience::tryFromValue($category['audience'] ?? null) ?? GuideAudience::default();
+    }
+
+    /**
+     * The audiences this user may switch between, narrowest first.
+     *
+     * An audience with no categories is left out, so the page never offers a
+     * tab that opens onto nothing.
+     *
+     * @return array<int, GuideAudience>
+     */
+    public function audiences(): array
+    {
+        return array_values(array_filter(
+            GuideAudience::visibleTo(auth()->user()),
+            fn (GuideAudience $audience): bool => $this->visible($audience) !== [],
+        ));
     }
 
     public function isEmpty(): bool
     {
-        return $this->categories() === [];
+        return $this->visible() === [];
     }
 
-    public function articleCount(): int
+    public function articleCount(?GuideAudience $only = null): int
     {
         return array_reduce(
-            $this->categories(),
+            $this->visible($only),
             fn (int $total, array $category): int => $total + count($category['items'] ?? []),
             0,
         );
@@ -69,14 +141,14 @@ class GuideLibrary
      *
      * @return array<int, array{id: string, name: string, icon: ?string, count: int}>
      */
-    public function index(): array
+    public function index(?GuideAudience $only = null): array
     {
         return array_map(fn (array $category): array => [
             'id'    => (string) ($category['id'] ?? Str::slug($category['name'] ?? '')),
             'name'  => (string) ($category['name'] ?? ''),
             'icon'  => $category['icon'] ?? null,
             'count' => count($category['items'] ?? []),
-        ], $this->categories());
+        ], $this->visible($only));
     }
 
     /**
@@ -88,7 +160,7 @@ class GuideLibrary
             return null;
         }
 
-        foreach ($this->categories() as $category) {
+        foreach ($this->visible() as $category) {
             if ((string) ($category['id'] ?? '') === $categoryId) {
                 return $category;
             }
@@ -130,7 +202,7 @@ class GuideLibrary
             return null;
         }
 
-        foreach ($this->categories() as $category) {
+        foreach ($this->visible() as $category) {
             foreach ($category['items'] ?? [] as $item) {
                 if ((string) ($item['id'] ?? '') === $articleId) {
                     return ['article' => $item, 'category' => $category];
@@ -164,7 +236,10 @@ class GuideLibrary
         $titleHits = [];
         $otherHits = [];
 
-        foreach ($this->categories() as $category) {
+        // Searches every audience the viewer may read, not just the open tab:
+        // an administrator looking for "permissions" should find the admin page
+        // without first guessing which guide it lives in.
+        foreach ($this->visible() as $category) {
             $categoryName = (string) ($category['name'] ?? '');
 
             foreach ($category['items'] ?? [] as $item) {
@@ -198,9 +273,9 @@ class GuideLibrary
     /**
      * The first category's id, used when the page opens with nothing selected.
      */
-    public function firstCategoryId(): ?string
+    public function firstCategoryId(?GuideAudience $only = null): ?string
     {
-        $index = $this->index();
+        $index = $this->index($only);
 
         return $index === [] ? null : $index[0]['id'];
     }
