@@ -6,6 +6,7 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -27,6 +28,7 @@ use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema as DBSchema;
 use RuntimeException;
 use Throwable;
@@ -34,7 +36,9 @@ use Webkul\PluginManager\Console\Commands\UninstallCommand;
 use Webkul\PluginManager\Filament\Resources\PluginResource\Pages\ListPlugins;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Package;
+use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Models\Company;
 
 class PluginResource extends Resource
 {
@@ -131,6 +135,49 @@ class PluginResource extends Resource
             ->recordActions([
                 ActionGroup::make([
                     ViewAction::make()->icon('heroicon-o-eye'),
+
+                    // Installing a plugin is global; this is which companies may
+                    // use it. Without this the company_plugin grants could only
+                    // be changed with SQL, which makes the feature unusable.
+                    Action::make('companies')
+                        ->label(__('plugin-manager::filament/resources/plugin.actions.companies.title'))
+                        ->icon('heroicon-o-building-office-2')
+                        ->color('info')
+                        ->visible(fn ($record): bool => (bool) $record->is_installed)
+                        ->modalHeading(fn ($record): string => __('plugin-manager::filament/resources/plugin.actions.companies.heading', [
+                            'name' => ucfirst($record->name),
+                        ]))
+                        ->modalDescription(__('plugin-manager::filament/resources/plugin.actions.companies.description'))
+                        ->schema([
+                            CheckboxList::make('company_ids')
+                                ->label(__('plugin-manager::filament/resources/plugin.actions.companies.field'))
+                                ->options(fn (): array => Company::query()
+                                    ->withoutGlobalScopes()
+                                    ->orderBy('name')
+                                    ->pluck('name', 'id')
+                                    ->all())
+                                ->bulkToggleable()
+                                ->columns(2),
+                        ])
+                        ->fillForm(fn ($record): array => [
+                            'company_ids' => $record->companies()->pluck('companies.id')->all(),
+                        ])
+                        ->action(function ($record, array $data): void {
+                            $record->companies()->sync($data['company_ids'] ?? []);
+
+                            // The grants are cached per request, so a stale read
+                            // would otherwise survive until the next one.
+                            PluginAccess::flush();
+
+                            Notification::make()
+                                ->success()
+                                ->title(__('plugin-manager::filament/resources/plugin.actions.companies.notification.title'))
+                                ->body(__('plugin-manager::filament/resources/plugin.actions.companies.notification.body', [
+                                    'count' => count($data['company_ids'] ?? []),
+                                    'name'  => ucfirst($record->name),
+                                ]))
+                                ->send();
+                        }),
 
                     Action::make('install')
                         ->label(__('plugin-manager::filament/resources/plugin.actions.install.title'))
@@ -262,7 +309,21 @@ class PluginResource extends Resource
                             return view('plugin-manager::uninstall-modal', compact('record', 'dependents', 'installedDependents', 'tables'));
                         })
                         ->action(fn ($record) => self::uninstallPlugin($record))
-                        ->after(fn () => redirect(self::getUrl('index'))),
+                        // Guarded: this redirects to the page the user is
+                        // already on, and it runs immediately after the caches
+                        // were cleared. When the rebuild fails the route is
+                        // momentarily unresolvable and getUrl() throws
+                        // RouteNotFoundException, turning a completed uninstall
+                        // into an unhandled error (2026-10-21). Skipping the
+                        // redirect loses nothing: Livewire re-renders the table
+                        // either way.
+                        ->after(function () {
+                            if (! Route::has(self::getRouteBaseName().'.index')) {
+                                return null;
+                            }
+
+                            return redirect(self::getUrl('index'));
+                        }),
                 ]),
             ], position: RecordActionsPosition::BeforeColumns)
             ->recordActionsAlignment('end')
@@ -423,7 +484,18 @@ class PluginResource extends Resource
                 }
             });
 
-        Package::refreshPluginCaches();
+        // A false return means the caches were cleared but not rebuilt, so the
+        // application is now running uncached. Said out loud rather than only
+        // reported: on 2026-10-21 this failed on production in silence, and the
+        // only visible sign was an unrelated-looking RouteNotFoundException.
+        if (! Package::refreshPluginCaches()) {
+            Notification::make()
+                ->title(__('plugin-manager::filament/resources/plugin.notifications.cache-rebuild-failed.title'))
+                ->body(__('plugin-manager::filament/resources/plugin.notifications.cache-rebuild-failed.body'))
+                ->warning()
+                ->persistent()
+                ->send();
+        }
 
         if (empty($errors)) {
             Notification::make()

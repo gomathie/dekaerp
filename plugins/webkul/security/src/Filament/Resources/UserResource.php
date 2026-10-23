@@ -5,7 +5,6 @@ namespace Webkul\Security\Filament\Resources;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Facades\Filament;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -15,6 +14,7 @@ use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -45,8 +45,8 @@ use Webkul\Security\Filament\Resources\UserResource\Pages\CreateUser;
 use Webkul\Security\Filament\Resources\UserResource\Pages\EditUser;
 use Webkul\Security\Filament\Resources\UserResource\Pages\ListUsers;
 use Webkul\Security\Filament\Resources\UserResource\Pages\ViewUsers;
-use Webkul\Security\Models\User;
 use Webkul\Security\Models\Role;
+use Webkul\Security\Models\User;
 use Webkul\Security\Services\MultiCompanyAdminService;
 use Webkul\Security\Settings\UserSettings;
 use Webkul\Support\Enums\NavigationGroup;
@@ -131,6 +131,15 @@ class UserResource extends Resource
                                             ->hiddenOn('edit')
                                             ->rule('required', fn ($get) => (bool) $get('password'))
                                             ->same('password'),
+                                        // Shown on edit too, where the password
+                                        // fields are not: it is the only way to
+                                        // make an existing user rotate a
+                                        // password that was shared with them.
+                                        Toggle::make('must_change_password')
+                                            ->label(__('security::filament/resources/user.form.sections.general-information.fields.must-change-password'))
+                                            ->helperText(__('security::filament/resources/user.form.sections.general-information.fields.must-change-password-helper'))
+                                            ->default(false)
+                                            ->columnSpanFull(),
                                     ])
                                     ->columns(2),
 

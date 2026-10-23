@@ -54,7 +54,8 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
      * @var array<string, mixed>
      */
     protected $attributes = [
-        'is_active' => true,
+        'is_active'            => true,
+        'must_change_password' => false,
     ];
 
     public function __construct(array $attributes = [])
@@ -67,13 +68,15 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
             'default_company_id',
             'resource_permission',
             'is_default',
+            'must_change_password',
         ]);
 
         $this->mergeCasts([
-            'default_company_id'  => 'integer',
-            'resource_permission' => PermissionType::class,
-            'is_default'          => 'boolean',
-            'is_active'           => 'boolean',
+            'default_company_id'   => 'integer',
+            'resource_permission'  => PermissionType::class,
+            'is_default'           => 'boolean',
+            'is_active'            => 'boolean',
+            'must_change_password' => 'boolean',
         ]);
 
         parent::__construct($attributes);
@@ -114,6 +117,20 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
             ->contains(fn (string $name): bool => mb_strtolower(trim($name)) === mb_strtolower(Role::MULTI_COMPANY_ADMIN));
     }
 
+    /**
+     * A customer's own administrator for their company.
+     *
+     * Deliberately only the role itself, with no super-admin or multi-company
+     * fallback: callers that mean "this person administers something" compose
+     * the three predicates themselves, so neither of the wider roles can be
+     * mistaken for a tenant-scoped one. See Role::COMPANY_ADMIN.
+     */
+    public function isCompanyAdmin(): bool
+    {
+        return $this->getRoleNames()
+            ->contains(fn (string $name): bool => mb_strtolower(trim($name)) === mb_strtolower(Role::COMPANY_ADMIN));
+    }
+
     public function hasPermissionTo($permission, ?string $guardName = null): bool
     {
         if (! $this->is_active) {
@@ -121,10 +138,10 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
         }
 
         $permissionName = match (true) {
-            $permission instanceof \BackedEnum => (string) $permission->value,
+            $permission instanceof \BackedEnum                 => (string) $permission->value,
             is_object($permission) && isset($permission->name) => (string) $permission->name,
-            is_string($permission) => $permission,
-            default => null,
+            is_string($permission)                             => $permission,
+            default                                            => null,
         };
 
         if (
@@ -190,6 +207,17 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
 
         static::creating(function ($user) {
             $user->creator_id ??= Auth::id();
+        });
+
+        static::updating(function (self $user): void {
+            // Changing the password satisfies the requirement, so the flag
+            // clears itself and nobody has to remember to untick it. Skipped
+            // when the flag is also being set in the same save: an
+            // administrator who sets a password *and* ticks the box means the
+            // person must still replace it.
+            if ($user->isDirty('password') && ! $user->isDirty('must_change_password')) {
+                $user->must_change_password = false;
+            }
         });
 
         static::saved(function ($user) {

@@ -82,7 +82,11 @@ inventing a capability is a bug, not marketing.
 - Custom fields across most modules
 - Command palette (Ctrl/Cmd-K) for keyboard navigation
 - Dashboards with date-range filtering
-- Website and blog pages managed from the same admin
+- Customer portal — contacts granted portal access from their partner record can
+  sign in and see their own quotations and orders
+  *(corrected 2026-10-22: this line said "Website and blog pages managed from the
+  same admin". The CMS pages and the Blogs plugin were removed on 2026-10-21;
+  the website plugin is portal-only and has no admin resources.)*
 - REST API with token authentication
 - Import/export to Excel; PDF generation for invoices, orders, delivery notes
 - Modules installable or removable per deployment

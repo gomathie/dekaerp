@@ -1,29 +1,25 @@
 <?php
 
-use Webkul\Website\Filament\Admin\Clusters\Configurations;
-use Webkul\Website\Filament\Admin\Resources\PageResource;
-use Webkul\Website\Filament\Admin\Resources\PartnerResource;
-use Webkul\Website\Filament\Customer\Resources\PageResource as WebsitePageResource;
-
-$basic = ['view_any', 'view', 'create', 'update'];
-$delete = ['delete', 'delete_any'];
-$forceDelete = ['force_delete', 'force_delete_any'];
-$restore = ['restore', 'restore_any'];
-$reorder = ['reorder'];
-
+/**
+ * This plugin contributes no Filament resources or admin pages any more.
+ *
+ * It listed three before 2026-10-22 - the admin and customer PageResources and
+ * a duplicate PartnerResource - all of which went with the CMS. What remains is
+ * the customer portal: a cluster and auth pages on the `customer` panel, plus
+ * the portal-access actions that PortalContributions injects into the Partners
+ * plugin's own resource. Those actions are governed by the Partner resource's
+ * permissions, not by anything declared here.
+ *
+ * Kept as an empty declaration rather than deleted so the plugin's Shield
+ * contribution stays explicit, and so adding one later has an obvious home.
+ */
 return [
     'resources' => [
-        'manage' => [
-            PageResource::class        => [...$basic, ...$delete, ...$restore, ...$forceDelete],
-            PartnerResource::class     => [...$basic, ...$delete, ...$restore, ...$forceDelete],
-            WebsitePageResource::class => [...$basic, ...$delete, ...$restore, ...$forceDelete],
-        ],
+        'manage'  => [],
         'exclude' => [],
     ],
 
     'pages' => [
-        'exclude' => [
-            Configurations::class,
-        ],
+        'exclude' => [],
     ],
 ];

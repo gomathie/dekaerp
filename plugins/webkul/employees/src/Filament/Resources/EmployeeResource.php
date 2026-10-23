@@ -923,7 +923,7 @@ class EmployeeResource extends Resource
                             ->label(__('employees::filament/resources/employee.table.filters.job-title'))
                             ->icon('heroicon-o-user-circle'),
                         DateConstraint::make('birthday')
-                            ->label(__('employees::filament/resources/employee.table.filters.birthdate'))
+                            ->label(__('employees::filament/resources/employee.table.filters.birth-date'))
                             ->icon('heroicon-o-cake'),
                         TextConstraint::make('work_email')
                             ->label(__('employees::filament/resources/employee.table.filters.work-email'))

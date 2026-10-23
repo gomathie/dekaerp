@@ -236,7 +236,7 @@ class Journal extends Model implements Sortable
 
         return [
             'name'            => $variant ? "{$this->name} (".ucwords($variant, '-').')' : $this->name,
-            'prefix'          => $flag.$this->code.'/%(year)/',
+            'prefix'          => $flag.$this->code.'-%(year)-',
             'reset_frequency' => SequenceResetFrequency::YEARLY,
             'initial_from'    => Move::withoutGlobalScopes()->where('journal_id', $this->id),
         ];

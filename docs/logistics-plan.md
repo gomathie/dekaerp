@@ -2672,6 +2672,14 @@ overriding `getRelations()`:
 | `accounts` | bank accounts (`...parent::getRelations()` plus its own `RelationGroup`) |
 | `website` | addresses, contacts |
 
+> **Corrected 2026-10-22.** The `website` row is stale. After the Website/Blogs
+> removal on 2026-10-21 the plugin declares no admin resources and no
+> `PartnerResource` subclass; it contributes portal actions, a table column, a
+> filter and an infolist section through `PartnerSchemaRegistry`
+> (`plugins/webkul/website/src/PortalContributions.php`). The conclusion this
+> table supports is unaffected — `contacts` and `accounts` still subclass, and
+> `website` still does not provide a place to hang somebody else's tab.
+
 Subclassing is an extension mechanism for a plugin that owns its own customer page.
 It is not an extension point for contributing a tab to somebody else's.
 

@@ -57,8 +57,15 @@ class VehiclesTable
                 TextColumn::make('telematics_device_ref')
                     ->label(__(static::$lang.'.table.columns.telematics-device-ref'))
                     ->placeholder('—')
-                    ->visibleFrom('lg')
-                    ->searchable(),
+                    ->visibleFrom('xl')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('telematics_agent_id')
+                    ->label(__(static::$lang.'.table.columns.telematics-agent-id'))
+                    ->placeholder('—')
+                    ->visibleFrom('xl')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('company.name')
                     ->label(__(static::$lang.'.table.columns.company'))
                     ->visibleFrom('lg'),

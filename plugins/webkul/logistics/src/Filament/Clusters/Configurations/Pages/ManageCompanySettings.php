@@ -20,6 +20,7 @@ use Webkul\Account\Enums\JournalType;
 use Webkul\Account\Models\Account;
 use Webkul\Account\Models\Journal;
 use Webkul\Logistics\Enums\CapacityCheck;
+use Webkul\Logistics\Enums\TelematicsProvider;
 use Webkul\Logistics\Filament\Clusters\Configurations;
 use Webkul\Logistics\Models\CompanySetting;
 use Webkul\Logistics\Models\ServiceType;
@@ -89,6 +90,7 @@ class ManageCompanySettings extends Page
             ->disabled(! $companyId)
             ->components([
                 Section::make(__(static::$lang.'.sections.status'))
+                    ->compact()
                     ->schema([
                         TextEntry::make('status')
                             ->hiddenLabel()
@@ -106,6 +108,7 @@ class ManageCompanySettings extends Page
                     ]),
 
                 Section::make(__(static::$lang.'.sections.delivery'))
+                    ->compact()
                     ->columns(2)
                     ->schema([
                         Toggle::make('require_pod_for_delivery')
@@ -140,6 +143,7 @@ class ManageCompanySettings extends Page
                     ]),
 
                 Section::make(__(static::$lang.'.sections.operations'))
+                    ->compact()
                     ->columns(2)
                     ->schema([
                         Select::make('default_service_type_id')
@@ -166,6 +170,7 @@ class ManageCompanySettings extends Page
                     ]),
 
                 Section::make(__(static::$lang.'.sections.accounting'))
+                    ->compact()
                     ->columns(2)
                     ->schema([
                         Select::make('invoice_journal_id')
@@ -187,39 +192,45 @@ class ManageCompanySettings extends Page
                 Section::make(__(static::$lang.'.sections.integrations'))
                     ->description(__(static::$lang.'.sections.integrations-description'))
                     ->icon('heroicon-o-signal')
+                    ->compact()
                     ->columns(2)
                     ->schema([
-                        Toggle::make('pilot_enabled')
-                            ->label(__(static::$lang.'.fields.pilot-enabled'))
-                            ->helperText(__(static::$lang.'.fields.pilot-enabled-helper'))
+                        Select::make('telematics_provider')
+                            ->label(__(static::$lang.'.fields.telematics-provider'))
+                            ->helperText(__(static::$lang.'.fields.telematics-provider-helper'))
+                            ->options(TelematicsProvider::options())
+                            ->native(false)
                             ->live()
                             ->columnSpanFull(),
-                        TextInput::make('pilot_server')
-                            ->label(__(static::$lang.'.fields.pilot-server'))
-                            ->helperText(__(static::$lang.'.fields.pilot-server-helper'))
-                            ->placeholder('https://africa.pilot-gps.com')
+                        TextInput::make('telematics_server')
+                            ->label(__(static::$lang.'.fields.telematics-server'))
+                            ->helperText(__(static::$lang.'.fields.telematics-server-helper'))
+                            ->placeholder(fn ($get): ?string => $get('telematics_provider') === TelematicsProvider::PILOT->value
+                                ? 'https://africa.pilot-gps.com'
+                                : null)
                             ->url()
                             ->maxLength(500)
-                            ->visible(fn ($get): bool => (bool) $get('pilot_enabled')),
-                        TextInput::make('pilot_node')
-                            ->label(__(static::$lang.'.fields.pilot-node'))
+                            ->visible(fn ($get): bool => filled($get('telematics_provider'))),
+                        TextInput::make('telematics_options.node')
+                            ->label(__(static::$lang.'.fields.telematics-node'))
+                            ->helperText(__(static::$lang.'.fields.telematics-node-helper'))
                             ->numeric()
                             ->integer()
                             ->minValue(1)
                             ->default(1)
-                            ->visible(fn ($get): bool => (bool) $get('pilot_enabled')),
-                        TextInput::make('pilot_username')
-                            ->label(__(static::$lang.'.fields.pilot-username'))
+                            ->visible(fn ($get): bool => $get('telematics_provider') === TelematicsProvider::PILOT->value),
+                        TextInput::make('telematics_username')
+                            ->label(__(static::$lang.'.fields.telematics-username'))
                             ->autocomplete('off')
                             ->maxLength(255)
-                            ->visible(fn ($get): bool => (bool) $get('pilot_enabled')),
-                        TextInput::make('pilot_password')
-                            ->label(__(static::$lang.'.fields.pilot-password'))
+                            ->visible(fn ($get): bool => filled($get('telematics_provider'))),
+                        TextInput::make('telematics_password')
+                            ->label(__(static::$lang.'.fields.telematics-password'))
                             ->password()
                             ->revealable()
                             ->autocomplete('new-password')
                             ->maxLength(255)
-                            ->visible(fn ($get): bool => (bool) $get('pilot_enabled')),
+                            ->visible(fn ($get): bool => filled($get('telematics_provider'))),
                     ]),
             ]);
     }
@@ -255,12 +266,12 @@ class ManageCompanySettings extends Page
 
         // Credential fields are not pre-filled for security. Preserve the
         // stored value when the user submits without entering a new one.
-        if (blank($data['pilot_username'] ?? null) && $setting->exists) {
-            unset($data['pilot_username']);
+        if (blank($data['telematics_username'] ?? null) && $setting->exists) {
+            unset($data['telematics_username']);
         }
 
-        if (blank($data['pilot_password'] ?? null) && $setting->exists) {
-            unset($data['pilot_password']);
+        if (blank($data['telematics_password'] ?? null) && $setting->exists) {
+            unset($data['telematics_password']);
         }
 
         $setting->fill(collect($data)->only(static::editableFields())->all());
@@ -275,16 +286,17 @@ class ManageCompanySettings extends Page
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('pilot_sync')
-                ->label(__(static::$lang.'.actions.pilot-sync.label'))
+            Action::make('telematics_sync')
+                ->label(__(static::$lang.'.actions.telematics-sync.label'))
                 ->icon('heroicon-o-arrow-path')
                 ->color('info')
-                ->visible(fn (): bool => (bool) $this->setting()?->pilot_enabled
-                    && filled($this->setting()?->pilot_server)
-                    && filled($this->setting()?->pilot_username))
+                // Only PILOT has a driver today. A second provider needs its own
+                // client and a resolver here, not a widened condition.
+                ->visible(fn (): bool => $this->setting()?->hasTelematics()
+                    && $this->setting()?->telematics_provider === TelematicsProvider::PILOT)
                 ->requiresConfirmation()
-                ->modalHeading(__(static::$lang.'.actions.pilot-sync.heading'))
-                ->modalDescription(__(static::$lang.'.actions.pilot-sync.description'))
+                ->modalHeading(__(static::$lang.'.actions.telematics-sync.heading'))
+                ->modalDescription(__(static::$lang.'.actions.telematics-sync.description'))
                 ->action(function (): void {
                     $company = $this->company();
 
@@ -299,12 +311,12 @@ class ManageCompanySettings extends Page
 
                         Notification::make()
                             ->success()
-                            ->title(__(static::$lang.'.actions.pilot-sync.notification', $result))
+                            ->title(__(static::$lang.'.actions.telematics-sync.notification', $result))
                             ->send();
                     } catch (\Throwable $e) {
                         Notification::make()
                             ->danger()
-                            ->title(__(static::$lang.'.actions.pilot-sync.error'))
+                            ->title(__(static::$lang.'.actions.telematics-sync.error'))
                             ->body($e->getMessage())
                             ->send();
                     }
@@ -370,11 +382,11 @@ class ManageCompanySettings extends Page
             'bill_journal_id',
             'default_expense_account_id',
             'expense_approval_required',
-            'pilot_enabled',
-            'pilot_server',
-            'pilot_username',
-            'pilot_password',
-            'pilot_node',
+            'telematics_provider',
+            'telematics_server',
+            'telematics_username',
+            'telematics_password',
+            'telematics_options',
         ];
     }
 

@@ -1,5 +1,12 @@
 # v1.6.0 restructure backlog
 
+> **Note, 2026-10-21.** The Website and Blogs plugins were removed from the
+> product. Four entries below belong to them and are now moot: blogs
+> `CategoryResource` and `TagResource` in SAFE, and blogs `PostResource` and
+> website `PageResource` in REVIEW. That takes the real totals to 68 safe and
+> 49 review. The lists are left as they were recorded rather than edited, so
+> the counts above still match the analysis that produced them.
+
 Upstream v1.6.0 moved every Filament resource's `form()`, `table()` and
 `infolist()` body out into `Schemas/XxxForm.php`, `Schemas/XxxInfolist.php`
 and `Tables/XxxTable.php` classes. The body is copied verbatim - **no
@@ -47,8 +54,8 @@ SAFE (pure relocation, adopting cannot change behaviour): 70
   plugins/webkul/accounts/src/Filament/Resources/PaymentTermResource.php
   plugins/webkul/accounts/src/Filament/Resources/ProductCategoryResource.php
   plugins/webkul/accounts/src/Filament/Resources/TaxGroupResource.php
-  plugins/webkul/blogs/src/Filament/Admin/Clusters/Configurations/Resources/CategoryResource.php
-  plugins/webkul/blogs/src/Filament/Admin/Clusters/Configurations/Resources/TagResource.php
+  plugins/webkul/blogs/src/Filament/Admin/Clusters/Configurations/Resources/CategoryResource.php   # REMOVED 2026-10-21, moot
+  plugins/webkul/blogs/src/Filament/Admin/Clusters/Configurations/Resources/TagResource.php        # REMOVED 2026-10-21, moot
   plugins/webkul/employees/src/Filament/Clusters/Configurations/Resources/ActivityPlanResource.php
   plugins/webkul/employees/src/Filament/Clusters/Configurations/Resources/DepartureReasonResource.php
   plugins/webkul/employees/src/Filament/Clusters/Configurations/Resources/EmployeeCategoryResource.php
@@ -117,7 +124,7 @@ NEEDS REVIEW (content differs): 51
   plugins/webkul/accounts/src/Filament/Resources/BillResource.php                                 fork-only:12  upstream-only:23
   plugins/webkul/accounts/src/Filament/Resources/InvoiceResource.php                              fork-only:19  upstream-only:41
   plugins/webkul/accounts/src/Filament/Resources/PaymentResource.php                              fork-only:7   upstream-only:10
-  plugins/webkul/blogs/src/Filament/Admin/Resources/PostResource.php                              fork-only:6   upstream-only:9
+  plugins/webkul/blogs/src/Filament/Admin/Resources/PostResource.php                              fork-only:6   upstream-only:9   # REMOVED 2026-10-21, moot
   plugins/webkul/employees/src/Filament/Clusters/Configurations/Resources/SkillTypeResource.php   fork-only:1   upstream-only:4
   plugins/webkul/employees/src/Filament/Resources/DepartmentResource.php                          fork-only:3   upstream-only:6
   plugins/webkul/employees/src/Filament/Resources/EmployeeResource.php                            fork-only:6   upstream-only:110
@@ -161,6 +168,6 @@ NEEDS REVIEW (content differs): 51
   plugins/webkul/support/src/Filament/Resources/CurrencyResource.php                              fork-only:3   upstream-only:12
   plugins/webkul/time-off/src/Filament/Clusters/Management/Resources/TimeOffResource.php          fork-only:5   upstream-only:8
   plugins/webkul/timesheets/src/Filament/Resources/TimesheetResource.php                          fork-only:5   upstream-only:7
-  plugins/webkul/website/src/Filament/Admin/Resources/PageResource.php                            fork-only:6   upstream-only:9
+  plugins/webkul/website/src/Filament/Admin/Resources/PageResource.php                            fork-only:6   upstream-only:9   # REMOVED 2026-10-21, moot
 
 No extracted classes upstream (not a restructure): 0

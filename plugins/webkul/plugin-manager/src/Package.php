@@ -197,7 +197,14 @@ class Package extends BasePackage
         return static::$plugins[$name] ??= Plugin::where('name', $name)->first();
     }
 
-    public static function refreshPluginCaches(): void
+    /**
+     * Rebuild the framework caches after a plugin is installed or removed.
+     *
+     * @return bool True when the caches are whole afterwards. A false return
+     *              means `optimize:clear` ran but the rebuild did not, so the
+     *              app is running uncached and the caller should say so.
+     */
+    public static function refreshPluginCaches(): bool
     {
         try {
             Artisan::call('optimize:clear');
@@ -214,10 +221,29 @@ class Package extends BasePackage
                 // sent its own failures to /dev/null. Rebuilding here costs the
                 // install action a few seconds and leaves the caches whole
                 // before anyone is redirected.
-                Artisan::call('optimize');
+                //
+                // The exit code has to be read: Artisan::call() returns it and
+                // does not throw, so a failed rebuild used to fall straight
+                // through the catch below and be reported nowhere. On
+                // 2026-10-21 that left production with cleared caches, no
+                // rebuild and no error, and surfaced only as a
+                // RouteNotFoundException from the redirect that ran next.
+                $exitCode = Artisan::call('optimize');
+
+                if ($exitCode !== 0) {
+                    report(new Exception(
+                        'php artisan optimize exited '.$exitCode.' after a plugin change. The caches were cleared but not rebuilt, so the application is running uncached. Output: '.Artisan::output()
+                    ));
+
+                    return false;
+                }
             }
+
+            return true;
         } catch (Throwable $e) {
             report($e);
+
+            return false;
         }
     }
 

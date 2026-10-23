@@ -16,6 +16,8 @@ class OrderCalculator
 
     public function recompute(Order $record): Order
     {
+        $this->refreshCurrencyRate($record);
+
         $record->untaxed_amount = 0;
         $record->tax_amount = 0;
         $record->total_amount = 0;
@@ -42,6 +44,35 @@ class OrderCalculator
         $record->save();
 
         return $record;
+    }
+
+    /**
+     * UF-022. `purchases_orders.currency_rate` defaults to 0 and nothing ever
+     * assigned it, so the `(float) $record->currency_rate ? ... : ...` guard
+     * below always took its else branch and `total_cc_amount` accumulated the
+     * raw order-currency total. For an order in any currency other than the
+     * company's, the company-currency total was simply the foreign amount
+     * relabelled - wrong, and wrong in a way that looks plausible.
+     *
+     * Direction matters and matches the consumer: the rate is company -> order,
+     * so dividing an order-currency total by it gives company currency. Same
+     * convention as Account\Models\Move::computeInvoiceCurrencyRate(), which
+     * already did this correctly.
+     */
+    protected function refreshCurrencyRate(Order $record): void
+    {
+        if (! $record->currency_id || ! $record->company?->currency) {
+            $record->currency_rate = 1;
+
+            return;
+        }
+
+        $record->currency_rate = $record->currency->getConversionRate(
+            fromCurrency: $record->company->currency,
+            toCurrency: $record->currency,
+            company: $record->company,
+            date: $record->date_order ?? now()->toDateString(),
+        );
     }
 
     public function recomputeLine(OrderLine $line): OrderLine

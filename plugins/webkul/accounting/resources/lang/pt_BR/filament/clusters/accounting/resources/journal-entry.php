@@ -72,6 +72,7 @@ return [
                     'checked'         => 'Verificado',
                     'company'         => 'Empresa',
                     'fiscal-position' => 'Posição fiscal',
+                    'fiscal-position-tooltip' => 'Posições fiscais são usadas para adaptar impostos e contas com base na localização do cliente.',
                 ],
             ],
 

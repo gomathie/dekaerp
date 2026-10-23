@@ -16,7 +16,6 @@ return [
         'employee'      => 'Employés',
         'time-off'      => 'Congés',
         'recruitment'   => 'Recrutements',
-        'website'       => 'Site web',
         'plugin'        => 'Plugins',
         'setting'       => 'Paramètres',
         'help'          => 'Aide',

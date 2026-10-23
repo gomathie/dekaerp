@@ -23,6 +23,7 @@ use Webkul\Support\Database\Dialects\PostgresDialect;
 use Webkul\Support\Http\Controllers\CompanyContextController;
 use Webkul\Support\Livewire\QuickNavigation;
 use Webkul\Support\Services\CompanyContext;
+use Webkul\Support\Services\GuideLibrary;
 use Webkul\Support\Traits\HasFilamentDefaults;
 use Webkul\Support\Traits\HasRouterMacros;
 use Webkul\Support\Traits\HasRtlSupport;
@@ -163,6 +164,10 @@ class SupportServiceProvider extends PackageServiceProvider
         });
 
         $this->app->scoped(CompanyContext::class);
+
+        // Scoped: guide.json is around 620KB, so it is decoded once per request
+        // rather than once per page object asking for it.
+        $this->app->scoped(GuideLibrary::class);
 
         $this->registerLanguageSwitch();
 

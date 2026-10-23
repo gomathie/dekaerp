@@ -48,13 +48,14 @@ return [
         'bill-journal'                => 'Diário para faturas de fornecedores',
         'default-expense-account'     => 'Conta de despesa padrão',
         'expense-approval-required'   => 'As despesas precisam de aprovação antes do faturamento',
-        'pilot-enabled'               => 'PILOT Telemática',
-        'pilot-enabled-helper'        => 'Importar veículos e dados de frota da sua conta PILOT GPS.',
-        'pilot-server'                => 'URL do servidor',
-        'pilot-server-helper'         => 'URL base do seu servidor PILOT, ex. https://africa.pilot-gps.com',
-        'pilot-node'                  => 'Nó',
-        'pilot-username'              => 'Usuário',
-        'pilot-password'              => 'Senha',
+        'telematics-provider'         => 'Plataforma de telemetria',
+        'telematics-provider-helper'  => 'A plataforma de rastreamento GPS que esta empresa usa. Deixe vazio se não usar nenhuma.',
+        'telematics-server'           => 'URL do servidor',
+        'telematics-server-helper'    => 'URL base do seu servidor de telemetria.',
+        'telematics-node'             => 'Nó',
+        'telematics-node-helper'      => 'Apenas PILOT. Deixe em 1 a menos que sua conta use outro nó.',
+        'telematics-username'         => 'Usuário',
+        'telematics-password'         => 'Senha',
     ],
 
     'actions' => [
@@ -75,7 +76,7 @@ return [
             'notification' => 'Logística desativada',
         ],
 
-        'pilot-sync' => [
+        'telematics-sync' => [
             'label'        => 'Sincronizar frota PILOT',
             'heading'      => 'Sincronizar frota do PILOT?',
             'description'  => 'Veículos encontrados no PILOT serão criados ou atualizados na frota desta empresa.',

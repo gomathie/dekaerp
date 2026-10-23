@@ -40,7 +40,10 @@ class SecurityServiceProvider extends PackageServiceProvider
                 '2026_09_18_000001_add_administration_context_to_user_invitations_table',
                 '2026_09_18_000002_provision_multi_company_admin_role',
                 '2026_09_20_150533_repair_multi_company_admin_install_state',
+                // Was missing until 2026-10-21: the role existed in
+                // DatabaseSeeder only, so a plugin install never created it.
                 '2026_09_24_000001_provision_company_admin_role',
+                '2026_10_21_000002_add_must_change_password_to_users_table',
             ])
             ->hasSettings([
                 '2024_11_05_042358_create_user_settings',

@@ -19,10 +19,35 @@ docker compose run --rm --no-deps laravel.test php artisan test path/to/Test.php
 
 `phpunit.xml` pins the connection to the `pgsql` service and database
 `aureuserp_testing`, and blanks `DB_URL`/`DATABASE_URL` so `migrate:fresh`
-cannot reach a managed database. Do not override those.
+cannot reach a managed database. Never override the host, credentials or the
+blanked URLs.
 
-**Suites must run serially.** They share one database and each bootstraps with
-`migrate:fresh` plus a full install, so two at once corrupt each other.
+**Give each work package its own database (superseded 2026-10-22).** This
+section used to say one shared `aureuserp_testing` and serial runs only. That
+is still true *per database*, but the enforced practice now is one database per
+work package, created once and reused:
+
+```bash
+docker compose exec -T pgsql psql -U sail -d postgres \
+  -c "CREATE DATABASE aureuserp_testing_wp<N> OWNER sail;"
+docker compose run --rm --no-deps -e DB_DATABASE=aureuserp_testing_wp<N> \
+  laravel.test php artisan test --testsuite=SUITE
+```
+
+`phpunit.xml` sets `DB_DATABASE` without `force="true"`, so a real environment
+variable wins and no shared file has to change. Forgetting `-e DB_DATABASE=...`
+silently lands you on `aureuserp_testing`, so treat that as a collision trap
+rather than as the default. List the names in use with:
+
+```bash
+docker compose exec -T pgsql psql -U sail -d postgres -tAc \
+  "SELECT datname FROM pg_database WHERE datname LIKE 'aureuserp%'"
+```
+
+**Two `migrate:fresh` runs on one database interleave**, producing errors that
+look like broken code - "relation X does not exist" on a table the migration
+just created, or "relation Y already exists". Waiting for the other container
+to exit is not enough; a new run can start on top of yours mid-suite.
 
 ## Two things that will bite
 

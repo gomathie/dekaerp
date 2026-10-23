@@ -33,6 +33,18 @@ return [
             'description' => "Are you sure you want to install the ':name' plugin? This will run migrations and seeders.",
             'submit'      => 'Install Plugin',
         ],
+
+        'companies' => [
+            'title'       => 'Companies',
+            'heading'     => 'Which companies may use :name?',
+            'description' => 'Installing a plugin makes its code available to the whole installation. This decides which companies may actually use it — grant it to the companies whose subscription includes it. Removing a company hides the plugin from everyone in it.',
+            'field'       => 'Companies',
+
+            'notification' => [
+                'title' => 'Plugin availability updated',
+                'body'  => ':name is now available to :count company(ies).',
+            ],
+        ],
         'uninstall' => [
             'title'      => 'Uninstall',
             'heading'    => 'Uninstall Plugin',
@@ -51,6 +63,11 @@ return [
         'uninstalled' => [
             'title' => 'Plugin Uninstalled Successfully',
             'body'  => "The ':name' plugin has been uninstalled.",
+        ],
+
+        'cache-rebuild-failed' => [
+            'title' => 'Caches were cleared but not rebuilt',
+            'body'  => 'The plugin change itself finished. The application is now running without cached config and routes, which is slower but correct. Run "php artisan optimize" and read its output to find out why it failed; the error has also been reported.',
         ],
         'uninstalled-failed' => [
             'title' => 'Uninstallation Failed',

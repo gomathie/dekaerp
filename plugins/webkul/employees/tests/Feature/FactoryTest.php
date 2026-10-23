@@ -4,6 +4,7 @@ use Webkul\Employee\Models\Department;
 use Webkul\Employee\Models\DepartureReason;
 use Webkul\Employee\Models\Employee;
 use Webkul\Employee\Models\WorkLocation;
+use Webkul\Security\Models\User;
 
 require_once __DIR__.'/../../../support/tests/Helpers/TestBootstrapHelper.php';
 
@@ -69,4 +70,19 @@ it('creates an employee with a department, a job and a work location', function 
     $employee = Employee::factory()->create();
 
     expect($employee->fresh()->exists)->toBeTrue();
+});
+
+it('creates an employee with an employee manager', function () {
+    $manager = Employee::factory()->create([
+        'name'    => 'Manager',
+        'user_id' => User::factory(),
+    ]);
+    $employee = Employee::factory()->create([
+        'name'      => 'Direct report',
+        'user_id'   => User::factory(),
+        'parent_id' => $manager->id,
+    ]);
+
+    expect($employee->fresh()->parent_id)->toBe($manager->id)
+        ->and($employee->parent->id)->toBe($manager->id);
 });

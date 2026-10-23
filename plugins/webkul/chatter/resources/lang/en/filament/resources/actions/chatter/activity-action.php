@@ -15,6 +15,7 @@ return [
                 'summary'       => 'Summary',
                 'assigned-to'   => 'Assigned To',
                 'log-note'      => 'Log note',
+                'body'          => 'Type your message here',
             ],
         ],
 

@@ -40,6 +40,15 @@ it('loads profile form pre-filled with current user language', function () {
         ->assertFormSet(['language' => 'ar'], 'editProfileForm');
 });
 
+it('falls back to the active application locale when the user has no language preference', function () {
+    config()->set('app.locale', 'ar');
+
+    loginAsUser(['language' => null]);
+
+    Livewire::test(Profile::class)
+        ->assertFormSet(['language' => 'ar'], 'editProfileForm');
+});
+
 it('persists language change to users table', function () {
     $user = loginAsUser(['language' => 'en']);
 
@@ -51,7 +60,21 @@ it('persists language change to users table', function () {
         ], 'editProfileForm')
         ->call('updateProfile');
 
-    expect($user->fresh()->language)->toBe('ar');
+    expect($user->fresh()->language)->toBe('ar')
+        ->and(Session::get('locale'))->toBe('ar');
+});
+
+it('keeps the profile language unchanged when a session locale is active', function () {
+    // A ?lang= choice lands in the session and must not leak into the saved
+    // preference: the switcher is a per-session view, the profile is the record.
+    $user = loginAsUser(['language' => 'en']);
+
+    Session::put('locale', 'ar');
+
+    Livewire::test(Profile::class)
+        ->assertFormSet(['language' => 'en'], 'editProfileForm');
+
+    expect($user->fresh()->language)->toBe('en');
 });
 
 it('rejects unsupported language values when saving profile', function () {

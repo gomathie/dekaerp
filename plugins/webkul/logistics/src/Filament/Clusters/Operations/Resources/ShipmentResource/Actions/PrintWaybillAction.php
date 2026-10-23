@@ -3,13 +3,14 @@
 namespace Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions;
 
 use Filament\Actions\Action;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\Logistics\Models\Shipment;
 use Webkul\Logistics\Support\LogisticsAccess;
 use Webkul\Logistics\Support\LogisticsSequences;
+use Webkul\Support\SupportServiceProvider;
 use Webkul\Support\Traits\PDFHandler;
 
 class PrintWaybillAction extends Action
@@ -23,7 +24,7 @@ class PrintWaybillAction extends Action
         return 'printWaybill';
     }
 
-    public function download(Shipment $record): Response
+    public function download(Shipment $record): StreamedResponse
     {
         Gate::authorize('view', $record);
 
@@ -63,10 +64,29 @@ class PrintWaybillAction extends Action
             'trips' => fn ($query) => $query->with(['driver', 'vehicle'])->orderByDesc('logistics_trips.id'),
         ]);
 
-        return $this->downloadPDF(
-            view('logistics::pdf.waybill', ['record' => $shipment])->render(),
-            'waybill-'.$shipment->waybill_no,
+        $pdf = $this->generatePDF(view('logistics::pdf.waybill', [
+            'record' => $shipment,
+            'isRtl'  => SupportServiceProvider::isRtl(),
+        ])->render());
+
+        return response()->streamDownload(
+            function () use ($pdf): void {
+                echo $pdf->output();
+            },
+            static::fileName($shipment->waybill_no),
+            ['Content-Type' => 'application/pdf'],
         );
+    }
+
+    /**
+     * Waybill numbers carry their sequence prefix, which contains slashes
+     * (WB/2026/00001). Symfony refuses a Content-Disposition filename holding
+     * a path separator, so those become hyphens; without this every print
+     * threw InvalidArgumentException after the PDF had already been rendered.
+     */
+    public static function fileName(?string $waybillNumber): string
+    {
+        return 'waybill-'.str_replace(['/', '\\'], '-', (string) $waybillNumber).'.pdf';
     }
 
     protected function setUp(): void
@@ -78,6 +98,6 @@ class PrintWaybillAction extends Action
             ->icon('heroicon-o-printer')
             ->color('gray')
             ->visible(fn (Shipment $record): bool => Auth::user()?->can('view', $record) ?? false)
-            ->action(fn (Shipment $record): Response => $this->download($record));
+            ->action(fn (Shipment $record): StreamedResponse => $this->download($record));
     }
 }

@@ -299,7 +299,7 @@ return [
                         'disabled'                => 'Désactivé',
                         'disabled-dates'          => 'Dates désactivées',
                         'display-format'          => "Format d'affichage",
-                        'first-fay-of-week'       => 'Premier jour de la semaine',
+                        'first-day-of-week'       => 'Premier jour de la semaine',
                         'format'                  => 'Format',
                         'helper-text'             => "Texte d'aide",
                         'hint'                    => 'Indice',
