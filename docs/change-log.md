@@ -6,6 +6,166 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-10-23 (Contacts: import from a spreadsheet)
+
+Asked for an upload option on Contacts, with a downloadable example to fill in
+and re-upload. Both CSV and Excel are accepted; CSV is the default template.
+
+### Shape
+
+One service, `Partner\Services\ContactImporter`, whose `columns()` is the
+single source of truth: the template's heading row and the per-row validation
+are both generated from it, so a column cannot be added to one and forgotten in
+the other. A test asserts the two match, and the strongest test downloads the
+example file and imports it back unchanged - that is what catches a heading the
+parser cannot match or example data that fails the importer's own rules.
+
+The rules mirror `Partner\Http\Requests\PartnerRequest`, the only place in the
+application that declares validation for a partner, so an imported contact is
+held to the same standard as one created through the API. That is where the
+tight `max:20` on phone, mobile and zip comes from - the columns themselves are
+wider.
+
+| Decision | Why |
+|---|---|
+| Synchronous, capped at 2,000 rows | Production is `QUEUE_CONNECTION=database`, but whether a Laravel Cloud worker runs is a dashboard setting. A queued import with no worker never finishes and never says so. |
+| Bad rows reported by spreadsheet row number, good rows still imported | The person fixes the file and re-uploads. The row number counts the heading row, so it matches what they see. |
+| Duplicate email skipped, not updated | Silently overwriting customer data on an upload is worse than reporting it. |
+| Duplicate and parent lookups use `withoutGlobalScopes()` | Partner carries both CompanyScope and OwnershipScope. A scoped lookup reports "no match" for a contact that exists but is invisible, and then creates a second one. |
+| `company_id` left null | See the next section - contacts are shared by upstream design, and the form does the same. An import that stamped the active company would make imported contacts behave differently from typed ones. |
+| CSV template written with a BOM | Excel otherwise opens it as the local codepage and accented names arrive as mojibake. |
+| Excel template offered too | Excel mangles CSV in ways that matter to these columns: it strips the leading zero from a zip and can reinterpret `+233...`. |
+
+### On the formula-injection guard
+
+A value starting with `=`, `@`, tab or newline is **refused and reported**, not
+rewritten. `+` and `-` are deliberately not guarded: every international phone
+number in the template's own example rows starts with `+`, so guarding them
+would reject ordinary contact data. There is a test pinning that.
+
+The usual advice - prefix the value with an apostrophe - was rejected because
+it is wrong for this application. It is invisible in Excel, but this ERP renders
+contact names as HTML, where it would show as a literal apostrophe on every
+screen; silently editing a customer's name is worse than refusing the row.
+
+There is no server-side execution risk either way:
+`maatwebsite/excel`'s `ReaderFactory` calls `setReadDataOnly()` from
+`config('excel.imports.read_only', true)`, and no `config/excel.php` overrides
+it, so a formula arrives as its cached value and is never calculated. What the
+guard protects is the step after: a stored `=cmd|...` exported to CSV later and
+opened in Excel by a colleague.
+
+Also added server-side file validation. `acceptedFileTypes()` is only a browser
+hint and is trivially bypassed, so the upload now also carries
+`['file', 'mimes:xlsx,xls,csv,txt', 'max:10240']`. Laravel's `mimes` sniffs the
+file's contents rather than trusting its extension, which is what catches a
+renamed file, so no extra package is needed. `txt` is listed because a CSV
+written by Excel frequently sniffs as `text/plain`.
+
+### Verification
+
+`ContactImportTest` 11 passed / 35 assertions; `PartnerFeature` 85 passed / 192
+assertions with no regressions; `php -l` clean on 13 files; Pint passed.
+
+Two of those tests failed first, and both were defects in the test rather than
+the feature: the suite's database is seeded with the world's countries, so
+creating a second "Ghana" left the importer resolving the country to the seeded
+row while the state hung off the duplicate. Worth recording because the failure
+looked like a product bug and was not.
+
+## 2026-10-23 (Per-company contacts: why it is a fork, and the report that decides it)
+
+Asked for contacts to belong to a company, since each tenant invoices its own
+customers, with the rule: keep the company it was created in, otherwise the
+oldest company.
+
+**The request conflicts with a deliberate upstream decision, and that was not
+obvious.** Commit `57e234223` by the AureusERP maintainer, "Fixed shared
+partner issue" (2026-07-30), did three things at once:
+
+* added `Partner::autoAssignsCompany()` returning **false**;
+* shipped `2026_07_30_100000_null_company_on_non_user_partners`, which nulls
+  `company_id` on every partner not tied to a user;
+* removed the `?? current_company_id()` fallback from `AddressResource` and
+  `ManageContacts`.
+
+The bug it fixed is the one project memory describes independently: a child
+address inherited `$parent->company_id ?? current_company_id()`, so whenever
+the parent was shared the child was filed under **whoever created it**.
+Upstream's answer was to treat contacts as shared master data. `CompanyIsolationTest`
+pins it: "leaves a new partner shared instead of stamping the active company".
+
+So scoping contacts per company is a fork, with three consequences:
+
+1. Those three upstream files need re-patching on every future upstream merge.
+2. A contact referenced by two companies' documents cannot be filed under one
+   without the other losing sight of it - silently, because a scoped relation
+   read returns `null` rather than raising.
+3. The child-inheritance bug upstream fixed has to be re-solved, by applying
+   `Webkul\Support\Traits\InheritsParentCompany` to `Partner`. That is in fact
+   a better fix than upstream's, because it reads the parent scope-free.
+
+None of that makes the goal wrong, but it is a one-way data migration against a
+deliberate design, so what decides it is data rather than opinion.
+
+### `partners:company-report` (read-only)
+
+`Partner\Console\Commands\ContactCompanyReport` reports how many contacts are
+unassigned, how each would resolve under the agreed rule, and the decisive
+number: how many contacts are referenced by **more than one** company. It
+writes nothing, and it is meant to be run against production before any
+backfill. It discovers the tables to check from the schema rather than
+hardcoding them, because which of the sixteen partner-referencing plugins are
+installed varies per deployment.
+
+Two bugs surfaced only by actually running it, both of which would have made the
+report lie:
+
+* The discovery matched `companies`, because **`companies.company_id` is a
+  unique `character varying`** - the company's own registration identifier, a
+  text input on the company form - and nothing to do with owning a tenant.
+* The resulting UNION then died with "bigint and character varying cannot be
+  matched".
+
+Fixed by requiring both columns to be an integer type, which excludes that
+column on principle rather than by naming it, so any other table that reuses
+the name for a label is excluded too.
+
+**Status: nothing was backfilled and no behaviour changed.** The flip of
+`autoAssignsCompany()`, the backfill migration, `InheritsParentCompany` on
+`Partner` and the two test inversions are one deliberate change, pending the
+report's conflict count from production.
+
+### Also found, not fixed
+
+`Company::boot()` passes `'parent_id' => $company->parent_id` into
+`Partner::create()`/`updateOrCreate()` (Company.php:184 and :229).
+`companies.parent_id` references a **company**; `partners.parent_id` references
+a **partner**. A child company's own partner row therefore gets whatever
+partner happens to share that id. Pre-existing and unrelated to this work.
+
+## 2026-10-23 (Correction: the per-company plugins entry overstated its verification)
+
+The entry below for the per-company plugin grants recorded the work as verified.
+It was not fully verified: `ResourceStructureSnapshotTest`, which records the
+declared shape of every resource form, was never run against it, and the
+`company_modules` checkbox list contributed into the Company form was missing
+from the snapshot. A later full `SupportFeature` run failed on it - 2 failed,
+171 passed.
+
+Resolved by regenerating `security.json` and `support.json` through the
+procedure the test documents (delete and re-record, never hand-edit). Both now
+differ from their previous contents by exactly the intended section, with the
+same resource counts (30 and 21). `SupportFeature` is now 173 passed / 891
+assertions, zero failures.
+
+A trap worth recording: regenerating with `--filter` produced a fixture with
+**50** resource keys instead of 30, because a filtered run installs a different
+set of plugins and recorded Employee and TimeOff permission trees the full suite
+never sees. Committing that would have broken the next full run with a
+20-resource phantom diff. The test's own CAVEAT warns about this. Fixtures must
+be regenerated by the full suite that will later compare them.
+
 ## 2026-10-23 (Filament 5.10.3 upgrade: investigated, not applied)
 
 Asked whether Filament can be updated. Answer: yes, cleanly, but it was
