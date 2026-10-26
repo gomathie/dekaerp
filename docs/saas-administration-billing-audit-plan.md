@@ -138,7 +138,354 @@ Whether plugin charges are included-plan features or additive line items is a pr
 
 Use signed 64-bit integer minor units with currency metadata and checked conversion at boundaries. If currencies with more than the chosen minor-unit precision must be supported, decide that before the first migration; do not fall back to binary floating point.
 
-## Sequential implementation checklist
+## Multi-agent execution board
+
+This is the claimable implementation board. An agent takes one package, stays
+inside its write scope, verifies its acceptance checks, and leaves it at
+`review`. The user reviews and commits; only the user or an integration agent
+moves a package to `done`.
+
+### How to claim and complete a package
+
+1. Read `AGENTS.md`, `docs/agent-reminders.md`, `docs/running-tests.md`, the
+   evidence matrix above, and the package card below.
+2. Claim only a package whose dependencies are `done` and whose decision gates
+   are answered. Change only its `Status` and `Owner / database` cells.
+3. Read any file, but write only files listed under the package's `Owns` field.
+   Record any cross-package need in the handoff instead of editing that file.
+4. Pin the current behaviour or failure with a test before changing production
+   code. Assert positive preconditions so a zero/absent result cannot pass for
+   the wrong reason.
+5. Give the package its own PostgreSQL database and pass `-e DB_DATABASE=...`
+   on every run. Never use the shared `aureuserp_testing` collision trap.
+6. Run the package checks and `vendor/bin/pint --dirty --format agent`. Record
+   exact commands, database, pass/assertion counts, failures and checks not run.
+7. Fill in the package handoff, set status to `review`, and stop. Do not commit,
+   merge, rebase, reset, stash, or edit another package.
+
+### Shared-file rules
+
+- Worker agents do not edit `AGENTS.md`, `docs/agent-reminders.md`, root
+  `CHANGELOG.md`, or `docs/change-log.md`. `SAAS-14` owns integration docs.
+- A worker edits this plan only in its status row and its own handoff block.
+- New migrations must be registered in `hasMigrations([...])`; new plugin test
+  directories must have a `phpunit.xml` suite.
+- No package adds dependencies, uses a managed database, or stores platform
+  invoices in tenant `accounts_account_moves`.
+- Posted platform money is append-only. Reversals are compensating entries.
+- Cards sharing a production file are sequential even if their domain work
+  appears independent.
+
+### Decision gates
+
+Record the user's answer before unblocking dependent packages.
+
+| Decision | Question | Recommendation | Answer |
+|---|---|---|---|
+| D-SAAS-01 | Whole-plan, additive-plugin, or base-plus-add-on pricing; which currencies? | Whole-plan prices per currency/interval first | pending |
+| D-SAAS-02 | Can tenant roles differ by company, and how do multi-active mutations work? | Membership roles; privileged mutation requires one explicit company | pending |
+| D-SAAS-03 | Who consumes a seat? | Active tenant memberships plus valid invitations; exclude platform support identities | pending |
+| D-SAAS-04 | What happens over limit or overdue? | Block new seats, apply explicit grace period, never silently deactivate | pending |
+| D-SAAS-05 | Issuer, tax/VAT, numbering, due terms, currency and credit-note rules? | Must be supplied before financial migrations | pending |
+| D-SAAS-06 | Who may change entitlements, limits and money? | Super Admin only initially | pending |
+| D-SAAS-07 | How does an API client target one of several allowed companies? | Authorized company header/parameter; default only for compatibility | pending |
+
+### Status board
+
+`Status`: `todo` · `in progress` · `review` · `done` · `blocked`.
+
+| Package | Title | Depends on | Safe alongside | Status | Owner / database |
+|---|---|---|---|---|---|
+| SAAS-00 | Baseline inventories and characterization | — | no implementation package | in progress | Codex + weaker-agent 2026-10-26 / `aureuserp_testing_saas_00_codex`, `aureuserp_testing_saas_00_weak` |
+| SAAS-01 | Membership-role foundation | SAAS-00, D-SAAS-02, D-SAAS-06 | SAAS-03 | blocked | — |
+| SAAS-02 | Tenant-aware jobs and API company selection | SAAS-00, D-SAAS-02, D-SAAS-07 | SAAS-03 | blocked | — |
+| SAAS-03 | Plugin defaults, dependencies and audited mutations | SAAS-00, D-SAAS-06 | SAAS-01/02 | blocked | — |
+| SAAS-04 | Generic plugin enforcement contract | SAAS-03 | — | todo | — |
+| SAAS-05A | Plugin enforcement: finance | SAAS-04 | SAAS-05B/C/D | todo | — |
+| SAAS-05B | Plugin enforcement: commercial | SAAS-04 | SAAS-05A/C/D | todo | — |
+| SAAS-05C | Plugin enforcement: operations | SAAS-04 | SAAS-05A/B/D | todo | — |
+| SAAS-05D | Plugin enforcement: people/work tools | SAAS-04 | SAAS-05A/B/C | todo | — |
+| SAAS-06 | Seat limit and invitation lifecycle | SAAS-01, D-SAAS-03, D-SAAS-04 | SAAS-05A/B/C/D | blocked | — |
+| SAAS-07 | Onboarding and all seat-enforcement paths | SAAS-06 | — | todo | — |
+| SAAS-08 | Platform-billing plugin foundation | SAAS-00, D-SAAS-01, D-SAAS-05 | completed SAAS-05 slices, SAAS-06/07 | blocked | — |
+| SAAS-09 | Plans, prices and subscriptions | SAAS-08, D-SAAS-04 | — | todo | — |
+| SAAS-10 | Idempotent recurring invoices | SAAS-09 | — | todo | — |
+| SAAS-11 | Payments, allocations, credit and reversals | SAAS-08, D-SAAS-05, D-SAAS-06 | — | blocked | — |
+| SAAS-12 | Platform administration screens | SAAS-03, SAAS-07, SAAS-09/10/11 | — | todo | — |
+| SAAS-13 | Company-administration screens | SAAS-01, SAAS-07, SAAS-09/10/11 | — | todo | — |
+| SAAS-14 | Backfill, shadow mode and release hardening | all implementation packages | — | todo | — |
+
+`SAAS-00` is the only package ready before decisions are answered. After the
+relevant decisions, `SAAS-01` or `SAAS-02` may run alongside `SAAS-03`, but
+`SAAS-01` and `SAAS-02` must not run together because both affect company
+context and authorization. The four `SAAS-05*` rollout slices are parallel-safe
+after their shared contract.
+
+### Test database reservation
+
+Use `aureuserp_testing_saas_<package>` in lowercase and record it in the board:
+
+```bash
+docker compose up -d pgsql
+docker compose exec -T pgsql psql -U sail -d postgres \
+  -c "CREATE DATABASE aureuserp_testing_saas_00 OWNER sail;"
+docker compose run --rm --no-deps -e DB_DATABASE=aureuserp_testing_saas_00 \
+  laravel.test php artisan test --testsuite=SecurityFeature --compact
+```
+
+### Work-package cards
+
+#### SAAS-00 — baseline inventories and characterization
+
+**Owns:** new tests under
+`plugins/webkul/security/tests/Feature/SaaSAdministration/` and
+`plugins/webkul/plugin-manager/tests/Feature/Entitlements/`; its handoff only.
+Production code is read-only.
+
+**Deliver:** inventories of every user/membership creation path, every
+non-core plugin's navigation/page/API/policy/service/job entry points, and
+tenant jobs/exports; characterize global roles across two companies, a real
+plugin revocation bypass, and API default-company behaviour with `path:line`
+evidence.
+
+**Accept:** focused SecurityFeature and PluginManagerFeature tests pass; no
+production change; inventory identifies the future enforcement hook per path.
+
+#### SAAS-01 — membership-role foundation
+
+**Owns:** membership migrations/models/relations in Support/Security;
+membership permission resolver; affected Security policies, assignment
+services, UserResource pages and focused tests. List exact files when claiming.
+
+**Deliver:** unique membership pair with safe duplicate preflight;
+membership-role storage; global Super/Multi-Company roles preserved; tenant
+roles resolved against record/current company; unified create/edit/invitation
+assignment; regression fix for the CreateUser/EditUser Company Admin mismatch.
+
+**Accept:** one user is admin in A and ordinary in B across list, direct policy,
+Filament and API; existing Super Admin, MultiCompanyAdminTest,
+CompanyUserIsolationTest and invitation tests pass.
+
+#### SAAS-02 — tenant-aware jobs and API selection
+
+**Owns:** new Support company-context execution helper/middleware, API company
+selection middleware/config and focused Support/API tests. Existing jobs outside
+Support require a recorded ownership request.
+
+**Deliver:** `try/finally` context restoration; fail-closed tenant writes with
+no company; authorized API selector; documented compatibility fallback; one
+representative serialized job/export.
+
+**Accept:** assigned company works; forged company is 403; no-context tenant
+write fails; prior context returns after success/exception; relevant Support
+and API tests pass.
+
+#### SAAS-03 — plugin defaults and audited mutations
+
+**Owns:** Plugin Manager services/models/provider/form actions, Plugin Manager
+migrations and tests. Other plugin directories are read-only.
+
+**Deliver:** configured defaults; historical grants preserved; one
+transactional mutation service; dependency closure/revocation rules;
+authorization per D-SAAS-06; before/after audit; cache flush.
+
+**Accept:** existing companies unchanged; new company receives exact defaults;
+dependency, forged-write, audit and idempotency tests pass.
+
+#### SAAS-04 — generic plugin enforcement contract
+
+**Owns:** Plugin Manager middleware/contracts/concerns/exceptions, provider
+integration and contract tests. Other plugin directories are read-only.
+
+**Deliver:** stable plugin key; navigation, route, current-company,
+record-company and service/job guards; explicit core/non-entitleable manifest;
+fail-closed no-company semantics.
+
+**Accept:** a fixture proves hidden navigation, direct route denial, record
+denial and service/job denial; re-enabling restores access. Do not bulk-edit
+real plugins in this package.
+
+#### SAAS-05A/B/C/D — plugin rollout slices
+
+Each slice applies SAAS-04 without inventing another guard:
+
+- **05A:** `accounts`, `accounting`, `invoices`, `payments`.
+- **05B:** `contacts`, `partners`, `products`, `sales`, `purchases`.
+- **05C:** `inventories`, `manufacturing`, `maintenance`, `logistics`,
+  `barcode`; reconcile `LogisticsAccess` to one authoritative entitlement.
+- **05D:** `employees`, `recruitments`, `projects`, `timesheets`, `time-off`,
+  `table-views`, `fields`, `analytics`, `full-calendar`, and `website` only
+  when SAAS-04 marks them entitleable.
+
+**Owns:** only listed plugin directories and slice tests. No slice edits Plugin
+Manager, Support, Security, `phpunit.xml`, or another slice.
+
+**Accept per plugin:** assert installed and granted; revoke; navigation hides;
+direct page/API and one write service deny; data remains; restore access. Run
+and report each touched plugin suite separately.
+
+#### SAAS-06 — seat limit and invitation lifecycle
+
+**Owns:** Support/Security entitlement and invitation-lifecycle migrations;
+`SeatCapacityService`; invitation models/services and focused tests. Broad UI
+and entry-point wiring belong to SAAS-07.
+
+**Deliver:** default/backfill 5; approved unlimited semantics; explicit pending,
+expired, revoked and accepted invitation state; duplicate-pending protection;
+locked active-membership plus reservation count; audited limit change.
+
+**Accept:** boundary cases, release-on-expiry/revoke, acceptance without double
+counting, and two-connection last-seat race pass; migration does not deactivate
+an existing over-limit company.
+
+#### SAAS-07 — onboarding and all seat-enforcement paths
+
+**Owns:** onboarding coordinator; Security company/user Filament pages;
+invitation acceptance; import/API/services identified by SAAS-00; focused tests.
+
+**Deliver:** UI/API/programmatic company onboarding; capacity service called by
+create, invite, accept, activation, membership attach and imports; after-commit
+email; resend/revoke; one consistent capacity error.
+
+**Accept:** one test per inventory path; mail failure remains recoverable;
+company remains durable; no path exceeds capacity; existing administrator
+invitation and user-isolation suites pass.
+
+#### SAAS-08 — platform-billing foundation
+
+**Owns:** new `plugins/webkul/platform-billing/`, `bootstrap/providers.php`, its
+`phpunit.xml` suite, and only its foundation migrations/models/enums/value
+objects/tests. This package fixes the final plugin name and namespace.
+
+**Deliver:** registered provider/plugin/test suite; integer-minor-unit Money;
+table-name and FK/index conventions; policies denying tenant writes; migration
+registration/structure tests. Do not alter tenant Accounts tables.
+
+**Accept:** empty and production-shaped installs; Money rejects floats,
+currency mismatch and overflow; migration guard and PlatformBillingFeature pass.
+
+#### SAAS-09 — plans, prices and subscriptions
+
+**Owns:** Platform Billing plan/price/subscription migrations, models, services
+and tests; no screens or invoice scheduler.
+
+**Deliver:** 1/3/6/12-month prices; included plugins; subscription status,
+anchor/time zone/period/next invoice; transitions and audits; immutable terms;
+approved synchronization to effective plugin and seat entitlements.
+
+**Accept:** uniqueness/check constraints; month-end, leap-year and DST data
+sets; no period drift; invalid transitions fail; plan edits preserve snapshots.
+
+#### SAAS-10 — recurring invoices
+
+**Owns:** Platform Billing invoice migrations/models/services/jobs/commands,
+scheduler registration and tests; no payment/allocation files or screens.
+
+**Deliver:** immutable invoice/lines/legal snapshots; unique period key;
+locked generator; bounded due-job; retries/telemetry; dry-run; advance next date
+only with successful invoice.
+
+**Accept:** duplicate call/retry/two workers produce one invoice; failure
+advances nothing; paused/cancelled skip; dates match SAAS-09.
+
+#### SAAS-11 — payments, allocations, credit and reversals
+
+**Owns:** Platform Billing payment/allocation/adjustment/reversal migrations,
+models/services/commands/tests; SAAS-10 invoice generation files are read-only.
+
+**Deliver:** posted deposits/payments; signed allocations; derived balance and
+unapplied credit; idempotency; deterministic locks; cross-company/currency
+rejection; compensating reversals; actor/date/reference/reason audit fields.
+
+**Accept:** partial/multi-invoice allocation, over-allocation rejection,
+concurrent no-overspend, duplicate request safety, reversal net-zero, immutable
+posted rows and zero-drift reconciliation all pass.
+
+#### SAAS-12 — platform administration screens
+
+**Owns:** Platform Billing Filament cluster/resources/pages/translations and
+explicit company-resource contributions. Domain rules remain in prior services.
+
+**Deliver:** plan/prices, subscription/anchor, seat limit/usage, entitlement,
+invoice, payment/deposit, allocation, credit, reversal and audit screens.
+
+**Accept:** policies/direct URLs/forged payloads; confirmation and reason for
+money actions; posted records read-only; pagination, empty/error states,
+Filament tests and browser smoke path.
+
+#### SAAS-13 — company-administration screens
+
+**Owns:** Security tenant user/invitation/seat UI and Platform Billing
+tenant-facing read resources/translations. Platform mutation services are
+read-only.
+
+**Deliver:** users/roles/invitations, seat usage, subscription/entitlement
+summary, and read-only invoices/payments/allocations/credit.
+
+**Accept:** Company A cannot enumerate B via list, URL, relation, search,
+export or API; membership roles apply; displayed balances match services;
+platform mutations remain server-side denied.
+
+#### SAAS-14 — backfill, shadow mode and release hardening
+
+**Owns:** bounded backfill/dry-run commands, rollout flags, reconciliation and
+health checks, deployment docs, change logs and cross-package verification.
+
+**Deliver:** duplicate-membership repair; limit/default/subscription backfills;
+shadow seat/entitlement/invoice calculations; metrics/alerts; security review;
+production-copy migration rehearsal; non-destructive rollback.
+
+**Accept:** affected suites/migration guards pass; rehearsal records runtime and
+locks; reconciliation is clean; flags are independently reversible; no
+compatibility read is removed before one billing cycle and approval.
+
+### Handoff template
+
+Append this under the claimed card:
+
+```markdown
+#### SAAS-XX handoff — YYYY-MM-DD
+
+- Owner / database:
+- Status: review | blocked
+- Implemented:
+- Files changed:
+- Tests run with pass/assertion counts:
+- Reviewed but not executed:
+- Failures investigated:
+- Security/tenant/concurrency review:
+- Risks and rollback:
+- Cross-package requests:
+- Suggested next package:
+```
+
+### Copy-ready agent assignment prompt
+
+Replace `SAAS-XX` and paste this with the repository context:
+
+```text
+You are assigned work package SAAS-XX in
+docs/saas-administration-billing-audit-plan.md.
+
+Read AGENTS.md, docs/agent-reminders.md, docs/running-tests.md, the audit
+plan's evidence matrix, multi-agent rules, status board, and the complete
+SAAS-XX card before changing anything.
+
+Confirm all dependencies are marked done and all required D-SAAS decisions
+are answered. If they are not, do not implement: report the exact blocker.
+Claim only SAAS-XX in the status board and reserve the database
+aureuserp_testing_saas_xx. Read any file, but edit only the paths owned by
+SAAS-XX. Record cross-package needs instead of editing another package's files.
+
+Inspect and trace first, state the smallest implementation plan and exact
+expected files, then implement. Add a regression/characterization test with
+positive preconditions. Register every migration and test suite. Run every
+test with -e DB_DATABASE=aureuserp_testing_saas_xx, run Pint, review the final
+diff, complete the package handoff template with exact counts and failures,
+set SAAS-XX to review, and stop. Do not commit or alter git history.
+```
+
+## Phase checklist and exit gates
 
 ### Phase 0 — decisions and executable invariants
 
