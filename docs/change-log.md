@@ -6,6 +6,70 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-10-26 (Zambian kwacha, and a payroll plan that is not a build)
+
+Two things, one code change and one planning document.
+
+### Zambian kwacha was already there, inactive
+
+Answering "add the Zambian currency" turned out to need no new data. ZMW has
+been seeded since the first commit — `currencies` id 123, ISO 967, symbol `ZK`,
+full name *Zambian kwacha* — and `countries` row 248 (`ZM`) already points at it
+through `currency_id = 123`. The same positional check for ZA/ZW/MW/TZ/KE
+resolves correctly, so the hardcoded-id convention in the seed files is sound.
+
+The real gap was `active = false`, and `active` is what **every** currency picker
+in the application filters on: company creation (`CompanyResource.php:207`),
+invoices, bills, payments, journals, accounts, sales quotations, purchase orders,
+vendor prices, and the Settings → Manage Currency page. So ZMW existed and could
+never be selected.
+
+- `plugins/webkul/security/src/Data/currencies.json` now marks ZMW active, so
+  fresh installations and new tenants offer it.
+- `plugins/webkul/support/database/migrations/2026_10_26_000001_activate_zambian_kwacha_currency.php`
+  activates an existing inactive row, which is how installations seeded earlier
+  (including production) pick it up on deploy. Registered in the support
+  plugin's `hasMigrations([...])`. `down()` is deliberately empty: deactivating a
+  currency on rollback would strand companies and documents created against it.
+  Ordering makes both paths correct — migrations run before seeders, so on a
+  fresh install the update matches nothing and the seeder inserts it active.
+- `plugins/webkul/support/tests/Feature/Workflows/ActivateZambianKwachaTest.php`
+  forces the row inactive, runs the migration, asserts it is active and that a
+  second run leaves exactly one active row; a second test pins the seed file
+  itself (ZMW active, ISO 967, and Zambia's `currency_id` still matching ZMW's
+  position, since a reorder of that file would silently repoint the country).
+
+**Verification is outstanding.** The combined run of that test with
+`MigrationRegistrationTest` was started, then hung for 25 minutes with idle
+connections and was stopped; the database was dropped and recreated, and the
+host has been continuously occupied since by another agent's suite. The change
+was committed in `7c7a12203` before it was ever seen green. Static checks that
+did pass: `php -l` on the new migration, test and provider, JSON parses with
+`active: true`, and Pint clean. Treat behavioural verification as owed.
+
+### A currency cannot be selected until it is active
+
+Worth recording because it is not obvious and cost the investigation: 168 of the
+169 seeded currencies are inactive, only USD ships active, and there is no
+provider filling `currency_rates` — rates are typed into the currency form. A
+non-base currency therefore also needs a rate before conversion works.
+
+### `docs/payroll.md` — a plan, not a decision
+
+The user asked whether payroll exists (it does not, here or upstream) and then
+for a build plan to pick up later. The document records the evidence —
+no salary/grade/payslip/PAYE/NAPSA identifiers anywhere, no compensation columns
+on `employees_employees`, and `timesheets` being project task hours rather than
+attendance, so there is currently no record of hours worked at all — and then
+sets out jurisdictions (Zambia first), a thirteen-table domain model, a pure
+deterministic calculator, ledger posting, plugin scaffolding, nine work
+packages, the invariants to test, ten decision gates, the codebase traps that
+will specifically bite payroll, and a shadow-mode rollout.
+
+It is explicit that statutory rates must be transcribed from current official
+ZMA/NAPSA/NHIMA publications at build time and never taken from the document or
+from memory. Nothing in it is implemented and no decision gate is answered.
+
 ## 2026-10-26 (SaaS administration and billing architecture audit)
 
 Audited the existing multi-company administration, user/role assignment,
