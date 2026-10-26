@@ -22,6 +22,12 @@ platform invoices, deposits, allocations, credit and reversals do not yet
 exist. The plan preserves the existing tenant accounting ledger and proposes a
 separate integer-money platform receivables boundary.
 
+The implementation section was then converted into claimable `SAAS-00` through
+`SAAS-14` work packages so multiple agents can execute it safely. The board now
+records decision gates, dependencies, parallel-safe lanes, bounded file
+ownership, per-package test databases, acceptance checks and a required
+handoff template.
+
 ## 2026-10-23 (Company administrator: an address of its own, and visible on edit)
 
 Asked for two things: a new company should be created with its administrator at
