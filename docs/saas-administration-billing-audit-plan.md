@@ -124,6 +124,7 @@ Proposed additive tables/names are illustrative and should follow final plugin n
 - `billing_plan_prices`: `(plan, currency, interval_months)` with non-negative `amount_minor`; unique tuple.
 - `billing_plan_plugins`: included plugin set.
 - `company_subscriptions`: company, plan, status, interval, billing anchor/time zone, current period, next invoice time, and price/currency snapshots where required.
+- `billing_discounts` and immutable tenant redemption records: Super Admin-generated codes with explicit validity and usage constraints. Invoice generation snapshots every applied discount and amount so later edits or deactivation cannot rewrite posted billing history.
 - `company_entitlements` or a backward-compatible company extension: operational `user_limit`, default 5. This remains available even while a migrated company has no subscription row.
 
 Whether plugin charges are included-plan features or additive line items is a product decision. The schema should not silently implement both pricing models.
@@ -182,13 +183,14 @@ Record the user's answer before unblocking dependent packages.
 
 | Decision | Question | Recommendation | Answer |
 |---|---|---|---|
-| D-SAAS-01 | Whole-plan, additive-plugin, or base-plus-add-on pricing; which currencies? | Whole-plan prices per currency/interval first | pending |
-| D-SAAS-02 | Can tenant roles differ by company, and how do multi-active mutations work? | Membership roles; privileged mutation requires one explicit company | pending |
-| D-SAAS-03 | Who consumes a seat? | Active tenant memberships plus valid invitations; exclude platform support identities | pending |
-| D-SAAS-04 | What happens over limit or overdue? | Block new seats, apply explicit grace period, never silently deactivate | pending |
-| D-SAAS-05 | Issuer, tax/VAT, numbering, due terms, currency and credit-note rules? | Must be supplied before financial migrations | pending |
-| D-SAAS-06 | Who may change entitlements, limits and money? | Super Admin only initially | pending |
-| D-SAAS-07 | How does an API client target one of several allowed companies? | Authorized company header/parameter; default only for compatibility | pending |
+| D-SAAS-01 | Whole-plan, additive-plugin, or base-plus-add-on pricing; which currencies? | Whole-plan prices per currency/interval first | **Accepted 2026-10-26:** whole-plan pricing with a defined included-plugin set; no per-plugin charging initially. Launch plan prices and platform invoices use USD only, represented as explicit currency-specific prices so additional currencies can be added later without implicit FX conversion. |
+| D-SAAS-02 | Can tenant roles differ by company, and how do multi-active mutations work? | Membership roles; privileged mutation requires one explicit company | **Accepted 2026-10-26:** tenant roles are scoped to each company membership and each tenant has its own Company Admins. Super Admin and Multi-Company Admin remain global roles. Super Admin assigns the companies each Multi-Company Admin may manage; privileged mutations target one explicit assigned company. |
+| D-SAAS-03 | Who consumes a seat? | Active tenant memberships plus valid invitations; exclude platform support identities | **Accepted 2026-10-26:** each active membership consumes one seat in that company, including Company Admin and one seat per company for shared users. Valid pending invitations reserve seats. Inactive users and expired/revoked invitations do not count. Global Super Admin/Multi-Company Admin support access is excluded unless the user also receives an ordinary tenant membership. |
+| D-SAAS-04 | What happens over limit or overdue? | Block new seats, apply explicit grace period, never silently deactivate | **Accepted 2026-10-26:** lowering a limit never deactivates existing users; while over limit, block new invitations, activations and membership attachments until usage is reduced or the limit is raised. Overdue tenants retain existing access during a 10-day grace period but cannot add seats or entitlements; after grace they become read-only without data loss, while Super Admin retains recovery access. Company Admin may activate one audited, non-stackable 10-day self-service extension per overdue invoice. Super Admin may grant a separate manual extension. |
+| D-SAAS-05 | Issuer, tax/VAT, numbering, due terms, currency and credit-note rules? | Must be supplied before financial migrations | **Accepted 2026-10-26:** issuer defaults to `DEKA` and is configurable by Super Admin in the administration interface. VAT defaults to 15% and Super Admin may edit or disable it. Posted invoices snapshot issuer identity, applied tax rate and amounts so later configuration changes do not rewrite history. Invoice numbers use `DEKA-INV-{compact year}-{six-digit sequence}` and credit notes use `DEKA-CN-{compact year}-{six-digit sequence}`, where the zero is removed from the four-digit year (`2026 → 226`, `2027 → 227`). Each document type has a separate yearly sequence; posted numbers are unique and never reused. Subscription invoices are Net 7; they become overdue on day 8 and the D-SAAS-04 grace period starts then. Credit notes must reference the original posted invoice, may be full or partial, require a reason, and never rewrite/delete the invoice. Overpayments remain customer credit until allocated or refunded. Super Admin issues credit notes or explicitly delegates/revokes that right for a selected Multi-Company Admin, limited to assigned companies. Currency is USD under D-SAAS-01. |
+| D-SAAS-06 | Who may change entitlements, limits and money? | Super Admin only initially | **Accepted 2026-10-26:** plugin entitlements, seat limits, subscription terms, invoices, payments, credits and reversals are Super Admin-only and cannot be delegated to Company Admin. Tenant user/invitation operations and billing visibility may be granted separately. Narrow exception: Super Admin may grant/revoke credit-note issuance for selected Multi-Company Admins, limited to their assigned companies. |
+| D-SAAS-07 | How does an API client target one of several allowed companies? | Authorized company header/parameter; default only for compatibility | **Accepted 2026-10-26:** expose distinct platform-admin and tenant/company API namespaces. Company API requests identify the company explicitly and verify membership/token access. Super Admin may query all companies; Multi-Company Admin admin-API lists, searches and record operations return only companies assigned by Super Admin. Keep default-company fallback only on legacy unscoped routes during compatibility migration. |
+| D-SAAS-08 | Which discount types, duration, eligibility, redemption limits, tax order and administration rights are required? | Audited Super Admin-generated codes; immutable redemptions and invoice snapshots; no retroactive invoice changes | **Partially accepted 2026-10-26:** add discount-code generation so selected tenants can redeem a reduction against platform billing. Detailed rules are being confirmed one question at a time before the package is unblocked. |
 
 ### Status board
 
@@ -209,7 +211,8 @@ Record the user's answer before unblocking dependent packages.
 | SAAS-07 | Onboarding and all seat-enforcement paths | SAAS-06 | — | todo | — |
 | SAAS-08 | Platform-billing plugin foundation | SAAS-00, D-SAAS-01, D-SAAS-05 | completed SAAS-05 slices, SAAS-06/07 | blocked | — |
 | SAAS-09 | Plans, prices and subscriptions | SAAS-08, D-SAAS-04 | — | todo | — |
-| SAAS-10 | Idempotent recurring invoices | SAAS-09 | — | todo | — |
+| SAAS-09A | Discount codes and tenant redemptions | SAAS-09, D-SAAS-08 | — | blocked | — |
+| SAAS-10 | Idempotent recurring invoices | SAAS-09, SAAS-09A | — | todo | — |
 | SAAS-11 | Payments, allocations, credit and reversals | SAAS-08, D-SAAS-05, D-SAAS-06 | — | blocked | — |
 | SAAS-12 | Platform administration screens | SAAS-03, SAAS-07, SAAS-09/10/11 | — | todo | — |
 | SAAS-13 | Company-administration screens | SAAS-01, SAAS-07, SAAS-09/10/11 | — | todo | — |
@@ -501,6 +504,21 @@ approved synchronization to effective plugin and seat entitlements.
 
 **Accept:** uniqueness/check constraints; month-end, leap-year and DST data
 sets; no period drift; invalid transitions fail; plan edits preserve snapshots.
+
+#### SAAS-09A — discount codes and tenant redemptions
+
+**Owns:** Platform Billing discount/redemption migrations, models, services and
+tests; no invoice scheduler or screens outside the minimal domain interface.
+
+**Deliver:** Super Admin-generated redeemable codes; explicit eligibility,
+validity, usage and duration rules from D-SAAS-08; atomic redemption; auditable
+activation/deactivation; deterministic discount calculation exposed to SAAS-10.
+Posted invoice discount snapshots remain immutable when a code later changes.
+
+**Accept:** forged, expired, inactive, ineligible, exhausted and duplicate
+redemptions fail; concurrent final-use redemption cannot exceed its limit;
+cross-company use is denied; amount bounds and rounding are exact integer-money
+calculations; changing or disabling a code does not alter posted invoices.
 
 #### SAAS-10 — recurring invoices
 
