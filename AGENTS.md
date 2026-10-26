@@ -1458,6 +1458,10 @@ REFERENCES
 • docs/unified-product-resource-plan.md — cross-plugin product-resource plan.
 • docs/landing-page-brief.md — public landing-page scope and constraints.
 • docs/running-tests.md — how to run tests.
+• docs/harness2-integration.md — assessment of Google's Harness² framework: why
+  it cannot integrate with this repo or agent, plus the repo-owned evaluation
+  scenarios and the approval gate for instruction changes. Documentation only;
+  nothing is installed.
 • docs/api-access.md — client API tokens and abilities.
 • docs/supabase-database.md — database hardening and the Data API.
 • docs/handover-actions.md — actions the user must take in the dashboards.
