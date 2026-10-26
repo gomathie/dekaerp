@@ -824,7 +824,7 @@
         "decimal_places": "2",
         "full_name": "Kenyan shilling",
         "rounding": "0.01",
-        "active": false,
+        "active": true,
         "name": "KES"
     },
     {
@@ -1004,7 +1004,7 @@
         "decimal_places": "2",
         "full_name": "Ghanaian cedi",
         "rounding": "0.01",
-        "active": false,
+        "active": true,
         "name": "GHS"
     },
     {
@@ -1103,7 +1103,7 @@
         "decimal_places": "2",
         "full_name": "Zambian kwacha",
         "rounding": "0.01",
-        "active": false,
+        "active": true,
         "name": "ZMW"
     },
     {
