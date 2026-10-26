@@ -251,6 +251,132 @@ evidence.
 **Accept:** focused SecurityFeature and PluginManagerFeature tests pass; no
 production change; inventory identifies the future enforcement hook per path.
 
+#### SAAS-00 handoff — 2026-10-26
+
+- Owner / database: Codex plus weaker-agent / `aureuserp_testing_saas_00_codex`
+  and `aureuserp_testing_saas_00_weak`.
+- Status: in progress; runtime verification is still running.
+- Characterized findings:
+  - **Global tenant roles are real here.** Teams are disabled
+    (`config/permission.php:126`), the membership pivot has only user/company
+    IDs
+    (`plugins/webkul/support/database/migrations/2024_12_10_100944_create_user_allowed_companies_table.php:14`),
+    and invitation acceptance writes one global role assignment after syncing
+    memberships
+    (`plugins/webkul/security/src/Services/UserInvitationService.php:90`).
+    `GlobalTenantRoleCharacterizationTest.php` proves the same granted
+    permission follows one user from company A to company B while an ungranted
+    control permission remains denied.
+  - **Plugin revocation is not an enforcement boundary.** Routes are loaded
+    when a package is globally installed
+    (`plugins/webkul/plugin-manager/src/PackageServiceProvider.php:204`), the
+    Sales API checks only its policy
+    (`plugins/webkul/sales/src/Http/Controllers/API/V1/OrderController.php:72`),
+    and that policy checks only the permission
+    (`plugins/webkul/sales/src/Policies/OrderPolicy.php:19`).
+    `PluginEnforcementCharacterizationTest.php` first proves the Sales grant
+    changed from present to absent, then records that the authorized request
+    still returns 200. SAAS-04 must invert that final expectation.
+  - **API company selection is implicit.** With no session selection,
+    `CompanyContext` chooses an allowed default company
+    (`plugins/webkul/support/src/Services/CompanyContext.php:78`, `:91`).
+    `ApiDefaultCompanyCharacterizationTest.php` pins that fallback for a user
+    who belongs to two companies. No production API company selector or
+    selector middleware was found.
+- User, membership and seat-mutation inventory:
+
+  | Path | Current mutation | Future owner / hook |
+  |---|---|---|
+  | ERP installer | Creates or updates the default administrator, attaches the default and then all companies, and assigns the global administrator role (`plugins/webkul/plugin-manager/src/Console/Commands/InstallERP.php:255`, `:257`, `:264`, `:267`). | SAAS-06 must explicitly classify the platform installer identity as seat-counted or exempt; SAAS-07 calls the capacity service before any tenant membership attachment. |
+  | Filament user create/edit | `UserResource` persists global `roles` and `allowedCompanies` relationships (`plugins/webkul/security/src/Filament/Resources/UserResource.php:148`, `:241`); create/edit validate administration state around Filament relationship persistence (`plugins/webkul/security/src/Filament/Resources/UserResource/Pages/CreateUser.php:27`, `plugins/webkul/security/src/Filament/Resources/UserResource/Pages/EditUser.php:106`). | SAAS-01 replaces tenant role persistence; SAAS-07 guards create, activation and membership changes before save. |
+  | Invitation creation/acceptance | `UserInvitationService::create()` stores the pending role/company request; `accept()` creates the user then syncs companies and roles (`plugins/webkul/security/src/Services/UserInvitationService.php:21`, `:65`, `:70`, `:90`). | SAAS-06 reserves/rechecks/releases seats; SAAS-01 resolves tenant roles from memberships; SAAS-07 keeps acceptance idempotent and recoverable. |
+  | Company onboarding | Only the Security Filament create page invokes `CompanyAdministratorInviter` after company persistence (`plugins/webkul/security/src/Filament/Resources/CompanyResource/Pages/CreateCompany.php:24`, `:38`). Direct model/factory/programmatic company creation does not create or invite an administrator. | SAAS-07 introduces one onboarding coordinator for UI/API/programmatic paths without moving invitation work into a global model event. |
+  | New-company plugin grants | A global `Company::created` listener calls the provisioner (`plugins/webkul/plugin-manager/src/PluginManagerServiceProvider.php:58`), which grants every globally installed plugin (`plugins/webkul/plugin-manager/src/Services/CompanyPluginProvisioner.php:28`, `:40`). | SAAS-03 changes only the grant-selection/mutation service; existing companies retain grants. |
+
+  No production user REST-create endpoint or bulk user importer was found.
+  Future import/API paths must use the SAAS-07 coordinator rather than writing
+  `users` or `user_allowed_companies` directly.
+- Plugin entry-point inventory:
+  - Grantable/non-core Filament plugin IDs found: `accounting`, `accounts`,
+    `barcode`, `contacts`, `employees`, `inventories`, `invoices`, `logistics`,
+    `maintenance`, `manufacturing`, `partners`, `payments`, `products`,
+    `projects`, `purchases`, `recruitments`, `sales`, `time-off`, `timesheets`,
+    and portal-only `website`. Their `*Plugin.php` registrations are the
+    navigation/page discovery boundary; SAAS-04 must provide the shared page
+    access/navigation contract before the SAAS-05 slices apply it.
+  - Production route files exist for non-core `accounts`, `barcode`,
+    `inventories`, `logistics`, `partners`, `products`, `projects`, `purchases`,
+    and `sales`. `PackageServiceProvider` applies API throttle/ability
+    middleware (`plugins/webkul/plugin-manager/src/PackageServiceProvider.php:217`)
+    but no company-plugin middleware. SAAS-04 owns that middleware contract;
+    each SAAS-05 slice maps its route files to a stable plugin key.
+  - Policies exist throughout every data-bearing business plugin. The
+    representative Sales policy combines permissions and record company access
+    but not entitlement (`plugins/webkul/sales/src/Policies/OrderPolicy.php:19`,
+    `:47`). SAAS-04 should add one reusable policy guard, while record operations
+    check the record's company rather than only the current navigation context.
+  - Service/event entry points likewise use global installation state. The
+    Manufacturing warehouse observer, for example, checks
+    `Package::isPluginInstalled('manufacturing')`
+    (`plugins/webkul/manufacturing/src/Observers/WarehouseObserver.php:38`).
+    SAAS-05 slices must guard externally callable services and integrations at
+    the owning record/company boundary.
+- Tenant asynchronous/export inventory:
+  - The only application `ShouldQueue` class found is the recipient-specific
+    Chatter database notification
+    (`plugins/webkul/chatter/src/Notifications/ChatterDatabaseNotification.php:11`).
+    Two observers defer until commit but are not queued: Inventory company
+    provisioning
+    (`plugins/webkul/inventories/src/Observers/CompanyObserver.php:9`) and
+    Manufacturing warehouse synchronization
+    (`plugins/webkul/manufacturing/src/Observers/WarehouseObserver.php:10`).
+  - Nine Filament exporters can execute through Filament's export jobs: Accounts
+    bill/invoice/payment, Accounting journal entry/item, and Logistics delivery
+    performance/shipment profitability/shipment register/trip history. Their
+    action boundaries are at
+    `plugins/webkul/accounts/src/Filament/Resources/InvoiceResource.php:760`,
+    `plugins/webkul/accounting/src/Filament/Clusters/Accounting/Resources/JournalEntryResource.php:410`,
+    and `plugins/webkul/logistics/src/Filament/Clusters/Reporting/Pages/ShipmentRegister.php:90`
+    (with sibling actions for the remaining exporters). None declares a
+    serialized company-context contract in application code.
+  - There are no application domain classes under a `Jobs` namespace. Console
+    execution deliberately bypasses `CompanyScope` outside tests
+    (`plugins/webkul/support/src/Models/Scopes/CompanyScope.php:14`), so SAAS-02
+    must require an explicit company payload/context wrapper for every future
+    tenant job/command and pin exporter restoration with two-company tests.
+  - `FleetImporter` is synchronous and copies Employee/Maintenance records into
+    Logistics (`plugins/webkul/logistics/src/Services/FleetImporter.php:19`,
+    `:63`); it is a SAAS-05C service-boundary enforcement target, not a user-seat
+    import.
+- Implemented: added three characterization tests across the two owned test
+  directories; no production behavior or schema changed.
+- Files changed: `plugins/webkul/security/tests/Feature/SaaSAdministration/GlobalTenantRoleCharacterizationTest.php`,
+  `plugins/webkul/security/tests/Feature/SaaSAdministration/ApiDefaultCompanyCharacterizationTest.php`,
+  `plugins/webkul/plugin-manager/tests/Feature/Entitlements/PluginEnforcementCharacterizationTest.php`,
+  and this handoff.
+- Tests run with pass/assertion counts: pending active Sail runs; all three new
+  files are already covered by the existing `SecurityFeature` and
+  `PluginManagerFeature` directory suites in `phpunit.xml`.
+- Reviewed but not executed: full SecurityFeature/PluginManagerFeature suites,
+  browser navigation, queued Filament export execution, and concurrent context
+  restoration.
+- Failures investigated: none yet; the first isolated run is still in the known
+  slow ERP/Shield bootstrap.
+- Security/tenant/concurrency review: tests use two real company memberships and
+  positive/negative permission controls. The plugin test proves both grant
+  presence and revocation before exercising the bypass. No managed database or
+  production environment is involved.
+- Risks and rollback: tests intentionally describe insecure/incomplete current
+  behavior and must be inverted by SAAS-01/02/04, not preserved through
+  compatibility code. Rollback is deletion of the new tests/handoff only.
+- Cross-package requests: SAAS-01 owns membership roles; SAAS-02 owns explicit
+  API/job context; SAAS-03 owns default/dependency-aware grants and audited
+  mutations; SAAS-04 owns the shared enforcement contract; SAAS-05A-D own
+  plugin-by-plugin adoption; SAAS-06/07 own capacity and every mutation path
+  listed above.
+- Suggested next package: answer D-SAAS-02/D-SAAS-06/D-SAAS-07, then run SAAS-01
+  or SAAS-02 alongside SAAS-03 as allowed by the board.
+
 #### SAAS-01 — membership-role foundation
 
 **Owns:** membership migrations/models/relations in Support/Security;
