@@ -7,6 +7,7 @@ use Spatie\Permission\PermissionRegistrar;
 use Webkul\Security\Enums\PermissionType;
 use Webkul\Security\Filament\Resources\UserResource\Pages\CreateUser;
 use Webkul\Security\Filament\Resources\UserResource\Pages\EditUser;
+use Webkul\Security\Models\Role;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\CompanyAdminRoleProvisioner;
 use Webkul\Support\Models\Company;
@@ -53,7 +54,7 @@ it('applies different resource permissions when creating and promoting Company A
     app()->forgetInstance(CompanyContext::class);
 
     expect($superAdmin->isSuperAdmin())->toBeTrue()
-        ->and($companyAdminRole->isCompanyAdminRole())->toBeTrue();
+        ->and(mb_strtolower(trim($companyAdminRole->name)))->toBe(mb_strtolower(Role::COMPANY_ADMIN));
 
     $createdEmail = fake()->unique()->safeEmail();
 

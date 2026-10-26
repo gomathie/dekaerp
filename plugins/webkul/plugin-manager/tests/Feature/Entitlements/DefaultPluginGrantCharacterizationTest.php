@@ -7,6 +7,11 @@ use Webkul\Support\Models\Company;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
 
+beforeEach(function (): void {
+    TestBootstrapHelper::ensurePluginInstalled('sales');
+    PluginAccess::flush();
+});
+
 /**
  * SAAS-00 characterization: pins a known defect, it does not endorse it.
  *

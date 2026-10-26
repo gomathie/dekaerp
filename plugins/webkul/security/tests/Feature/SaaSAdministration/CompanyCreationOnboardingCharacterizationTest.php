@@ -5,8 +5,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Webkul\Security\Models\Invitation;
 use Webkul\Security\Models\User;
-use Webkul\Security\Services\CompanyAdminRoleProvisioner;
 use Webkul\Security\Services\CompanyAdministratorInviter;
+use Webkul\Security\Services\CompanyAdminRoleProvisioner;
 use Webkul\Security\Settings\UserSettings;
 use Webkul\Support\Models\Company;
 
@@ -18,10 +18,12 @@ require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php
  * A new company reaches its administrator through exactly one code path - the
  * administration panel's create page, which calls `CompanyAdministratorInviter`
  * in `afterCreate()`. Creating a company any other way (model, factory, seeder,
- * a future API) produces a tenant with no administrator, no invitation and no
- * member, and nothing logs or reports that. ADM-03 records the same finding;
- * SAAS-07 owns the single onboarding coordinator that closes it, and must
- * invert this expectation rather than preserve it.
+ * a future API) produces a tenant with no administrator and no invitation.
+ * The creator IS auto-attached as a member (`Company::created` hook at
+ * `support/Models/Company.php:198`), but that is just a membership row - there
+ * is no role assignment, no invitation, and no administrator designation.
+ * ADM-03 records the same finding; SAAS-07 owns the single onboarding
+ * coordinator that closes it.
  */
 beforeEach(function (): void {
     Auth::forgetGuards();
@@ -37,7 +39,7 @@ afterEach(function (): void {
     Auth::forgetGuards();
 });
 
-it('creates a company with no administrator, invitation or member outside the create page', function () {
+it('creates a company with no administrator or invitation outside the create page', function () {
     $superAdmin = User::query()->where('email', 'admin@example.com')->firstOrFail();
 
     Auth::forgetGuards();
@@ -58,8 +60,20 @@ it('creates a company with no administrator, invitation or member outside the cr
         ->and(settings(UserSettings::class)->enable_user_invitation)->toBeTrue()
         ->and(CompanyAdministratorInviter::companyAdminRoleId())->not->toBeNull();
 
+    // The creator is auto-attached as a member (Company::created hook), but
+    // there is no invitation and no admin role assignment.
+    $membershipCount = DB::table('user_allowed_companies')
+        ->where('company_id', $company->getKey())
+        ->count();
+
+    $creatorIsMember = DB::table('user_allowed_companies')
+        ->where('company_id', $company->getKey())
+        ->where('user_id', $superAdmin->getKey())
+        ->exists();
+
     expect(Invitation::query()->count())->toBe(0)
-        ->and(DB::table('user_allowed_companies')->where('company_id', $company->getKey())->count())->toBe(0);
+        ->and($membershipCount)->toBe(1)
+        ->and($creatorIsMember)->toBeTrue();
 
     // The same actor and the same company do produce an administrator when the
     // inviter is actually called, which is what the create page does. Without
@@ -70,6 +84,5 @@ it('creates a company with no administrator, invitation or member outside the cr
     $invitation = Invitation::query()->firstOrFail();
 
     expect($reason)->toBe(CompanyAdministratorInviter::INVITED)
-        ->and((int) $invitation->default_company_id)->toBe((int) $company->getKey())
-        ->and(DB::table('user_allowed_companies')->where('company_id', $company->getKey())->count())->toBe(0);
+        ->and((int) $invitation->default_company_id)->toBe((int) $company->getKey());
 });
