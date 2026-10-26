@@ -198,7 +198,7 @@ Record the user's answer before unblocking dependent packages.
 
 | Package | Title | Depends on | Safe alongside | Status | Owner / database |
 |---|---|---|---|---|---|
-| SAAS-00 | Baseline inventories and characterization | — | no implementation package | in progress | Codex + weaker-agent 2026-10-26 / `aureuserp_testing_saas_00_codex`, `aureuserp_testing_saas_00_weak` |
+| SAAS-00 | Baseline inventories and characterization | — | no implementation package | done | Verified 2026-10-27: 12 tests, 68 assertions, 0 failures / `aureuserp_testing_saas_00_verify` |
 | SAAS-01 | Membership-role foundation | SAAS-00, D-SAAS-02, D-SAAS-06 | SAAS-03 | blocked | — |
 | SAAS-02 | Tenant-aware jobs and API company selection | SAAS-00, D-SAAS-02, D-SAAS-07 | SAAS-03 | blocked | — |
 | SAAS-03 | Plugin defaults, dependencies and audited mutations | SAAS-00, D-SAAS-06 | SAAS-01/02 | blocked | — |
@@ -257,8 +257,9 @@ production change; inventory identifies the future enforcement hook per path.
 #### SAAS-00 handoff — 2026-10-26
 
 - Owner / database: Codex plus weaker-agent / `aureuserp_testing_saas_00_codex`
-  and `aureuserp_testing_saas_00_weak`.
-- Status: in progress; runtime verification is still running.
+  and `aureuserp_testing_saas_00_weak`; verification on
+  `aureuserp_testing_saas_00_verify`.
+- Status: **done** — 12 tests, 68 assertions, 0 failures (2026-10-27).
 - Characterized findings:
   - **Global tenant roles are real here.** Teams are disabled
     (`config/permission.php:126`), the membership pivot has only user/company
@@ -351,32 +352,53 @@ production change; inventory identifies the future enforcement hook per path.
     Logistics (`plugins/webkul/logistics/src/Services/FleetImporter.php:19`,
     `:63`); it is a SAAS-05C service-boundary enforcement target, not a user-seat
     import.
-- Implemented: added three characterization tests across the two owned test
-  directories; no production behavior or schema changed.
-- Files changed: `plugins/webkul/security/tests/Feature/SaaSAdministration/GlobalTenantRoleCharacterizationTest.php`,
-  `plugins/webkul/security/tests/Feature/SaaSAdministration/ApiDefaultCompanyCharacterizationTest.php`,
-  `plugins/webkul/plugin-manager/tests/Feature/Entitlements/PluginEnforcementCharacterizationTest.php`,
-  and this handoff.
-- Tests run with pass/assertion counts: pending active Sail runs; all three new
-  files are already covered by the existing `SecurityFeature` and
-  `PluginManagerFeature` directory suites in `phpunit.xml`.
+- Implemented: eight characterization tests across the two owned test
+  directories plus one company-creation onboarding test; no production behavior
+  or schema changed.
+- Files changed (8 test files):
+  - `plugins/webkul/security/tests/Feature/SaaSAdministration/GlobalTenantRoleCharacterizationTest.php`
+  - `plugins/webkul/security/tests/Feature/SaaSAdministration/ApiDefaultCompanyCharacterizationTest.php`
+  - `plugins/webkul/security/tests/Feature/SaaSAdministration/CompanyCreationOnboardingCharacterizationTest.php`
+  - `plugins/webkul/security/tests/Feature/SaaSAdministration/ResourcePermissionMismatchCharacterizationTest.php`
+  - `plugins/webkul/security/tests/Feature/SaaSAdministration/MembershipUniquenessCharacterizationTest.php`
+  - `plugins/webkul/security/tests/Feature/SaaSAdministration/InvitationUniquenessCharacterizationTest.php`
+  - `plugins/webkul/plugin-manager/tests/Feature/Entitlements/PluginEnforcementCharacterizationTest.php`
+  - `plugins/webkul/plugin-manager/tests/Feature/Entitlements/DefaultPluginGrantCharacterizationTest.php`
+  - This handoff.
+- Tests run with pass/assertion counts (2026-10-27, database
+  `aureuserp_testing_saas_00_verify`):
+  - SaaSAdministration filter: **8 passed, 54 assertions**, 151 s.
+  - Entitlements filter: **4 passed, 14 assertions**, 608 s.
+  - Total: **12 passed, 68 assertions, 0 failures.**
 - Reviewed but not executed: full SecurityFeature/PluginManagerFeature suites,
   browser navigation, queued Filament export execution, and concurrent context
   restoration.
-- Failures investigated: none yet; the first isolated run is still in the known
-  slow ERP/Shield bootstrap.
+- Failures investigated during verification:
+  - `CompanyCreationOnboardingCharacterizationTest` expected zero memberships
+    after factory creation, but `Company::created` (at
+    `support/Models/Company.php:198`) auto-attaches the creator. Fixed: test now
+    expects 1 membership (creator) and 0 invitations/administrators.
+  - `ResourcePermissionMismatchCharacterizationTest` called
+    `Role::isCompanyAdminRole()` which does not exist. Fixed: replaced with a
+    direct `Role::COMPANY_ADMIN` name comparison.
+  - `DefaultPluginGrantCharacterizationTest` had no `beforeEach` to install
+    plugins, so `$installedPluginIds` was empty on a fresh database. Fixed:
+    added `TestBootstrapHelper::ensurePluginInstalled('sales')`.
 - Security/tenant/concurrency review: tests use two real company memberships and
   positive/negative permission controls. The plugin test proves both grant
-  presence and revocation before exercising the bypass. No managed database or
-  production environment is involved.
+  presence and revocation before exercising the bypass. The Livewire test
+  exercises CreateUser and EditUser with real form submissions. No managed
+  database or production environment is involved.
 - Risks and rollback: tests intentionally describe insecure/incomplete current
-  behavior and must be inverted by SAAS-01/02/04, not preserved through
+  behavior and must be inverted by SAAS-01/02/04/06, not preserved through
   compatibility code. Rollback is deletion of the new tests/handoff only.
-- Cross-package requests: SAAS-01 owns membership roles; SAAS-02 owns explicit
+- Cross-package requests: SAAS-01 owns membership roles and the
+  CreateUser/EditUser resource_permission mismatch; SAAS-02 owns explicit
   API/job context; SAAS-03 owns default/dependency-aware grants and audited
   mutations; SAAS-04 owns the shared enforcement contract; SAAS-05A-D own
-  plugin-by-plugin adoption; SAAS-06/07 own capacity and every mutation path
-  listed above.
+  plugin-by-plugin adoption; SAAS-06 owns invitation lifecycle (duplicate
+  protection, expiry); SAAS-07 owns capacity, the membership unique constraint,
+  and every mutation path listed above.
 - Suggested next package: answer D-SAAS-02/D-SAAS-06/D-SAAS-07, then run SAAS-01
   or SAAS-02 alongside SAAS-03 as allowed by the board.
 
