@@ -28,6 +28,109 @@ records decision gates, dependencies, parallel-safe lanes, bounded file
 ownership, per-package test databases, acceptance checks and a required
 handoff template.
 
+## 2026-10-26 (SAAS-00-W: tenant roles are global to the user, characterized)
+
+The narrow characterization slice of `SAAS-00`, one new test and nothing else.
+Recorded here at the user's request; the plan's shared-file rules give
+`docs/change-log.md` to `SAAS-14`, so this entry is the only departure from
+them. The SAAS status board and package handoff were left to the primary agent.
+
+### The finding, with evidence
+
+A tenant role is a property of the **user**, not of a company membership. There
+is nowhere in the schema to say "supervisor in company A, ordinary in B":
+
+- Spatie teams are off — `config/permission.php:126` `'teams' => false` — so
+  `model_has_roles` carries no team/company column.
+- The membership row cannot carry it either:
+  `plugins/webkul/support/database/migrations/2024_12_10_100944_create_user_allowed_companies_table.php`
+  declares only `id`, `user_id`, `company_id`.
+- Assignment is global by construction:
+  `plugins/webkul/security/src/Models/User.php:194` (`allowedCompanies()` pivot)
+  plus `UserInvitationService.php:91` (`syncRoles()`).
+- Resolution never consults the active company:
+  `plugins/webkul/security/src/Models/User.php:134` (`hasPermissionTo()`) gates on
+  `is_active` and a Multi-Company-Admin denylist, then delegates to Spatie's
+  global role lookup.
+
+**Why one user sees the same permission in both companies is not a scope leak** -
+`AllowedCompanyScope` filters `Company` queries by *membership*
+(`plugins/webkul/support/src/Models/Scopes/AllowedCompanyScope.php`), not by the
+active company, so `CompanyContext::currentId()` genuinely flips from A to B
+while the permission set is untouched. That distinction matters for SAAS-01: the
+membership resolver must key off the active company, which this test proves is
+working correctly today.
+
+### What was added
+
+`plugins/webkul/security/tests/Feature/SaaSAdministration/GlobalTenantRoleCharacterizationTest.php`
+(one new file, 146 lines, new directory inside the existing `SecurityFeature`
+suite directory - so no `phpunit.xml` change was needed or made).
+
+Two companies, one ordinary active user explicitly assigned to both, one custom
+non-system role holding one real permission (`view_any_security_user`), assigned
+through the current `syncRoles()` mechanism. The test then:
+
+- asserts positive preconditions, so an absent/zero result cannot pass for the
+  wrong reason: memberships are exactly `[A, B]`, the user's role list is
+  exactly the one custom role, exactly one `role_has_permissions` row exists,
+  and the role itself resolves the permission;
+- activates A, then B, asserting `CompanyContext::currentId()` actually changed
+  each time (otherwise the second check would merely repeat the first);
+- asserts the permission resolves in **both** companies, including through
+  `Auth::user()->can()` in B, which is what policies and the UI read;
+- asserts the structural reason: exactly one `model_has_roles` row, no
+  `company_id` column on that table, and no `role_id` column on
+  `user_allowed_companies`.
+
+The name and docblock state plainly that this pins current behaviour for the
+SAAS-01 migration and does not endorse it; SAAS-01 is expected to make it fail,
+and the expectation should then be inverted rather than the code weakened.
+
+**A negative control was added after the first green run.** The first revision
+proved the permission *is* granted but never that the check *can* return false,
+so a leaked `Gate::before` or an unwanted default role would have satisfied both
+company assertions - the "zero/absent result passing for the wrong reason" trap
+inverted. A second real permission (`delete_security_user`) is now created,
+never attached, and asserted `false` in both companies: the same user, in the
+same company, is permitted one ability and denied another, which is what makes
+the grant attributable to the global role.
+
+### A flakiness trap caught before it ran
+
+`CompanyFactory` sets `'is_active' => fake()->boolean()`. Two randomly inactive
+companies would have made the characterization non-deterministic, so both are
+created with `is_active => true`. The first run was withdrawn for this reason
+and its database dropped and recreated, per the interrupted-run rule in
+`docs/running-tests.md`.
+
+No global helper functions were added; the company switch is a closure local to
+the test, so it cannot collide with sibling Pest files.
+
+### Verification actually run
+
+Database `aureuserp_testing_saas_00_weak`, created for this slice. Never
+`aureuserp_testing`; collision checked first each time (no
+`dekaerp-laravel.test-run` container, no session on the database).
+
+| Command | Result |
+|---|---|
+| new file alone, `--compact` | **1 passed, 14 assertions**, 151s |
+| new file + `Authorization/CompanyUserIsolationTest.php` | **56 passed, 172 assertions**, 1097s |
+
+`vendor/bin/pint --dirty --format agent` -> `{"tool":"pint","result":"passed"}`.
+The pair re-ran after the negative control was added, so 172 assertions is the
+final file (56/170 before it). "56 tests" rather than two is expected:
+`CompanyUserIsolationTest.php` already does `require_once MultiCompanyAdminTest.php`,
+so that file's tests load with it. `php -l` clean on the new file.
+
+### Not done here
+
+The rest of `SAAS-00` - the user/membership creation-path inventory, the
+non-core plugin entry-point inventory, the plugin-revocation bypass
+characterization, and the API default-company characterization - remains with
+the primary agent, as do the status board and the handoff block.
+
 ## 2026-10-23 (Company administrator: an address of its own, and visible on edit)
 
 Asked for two things: a new company should be created with its administrator at
