@@ -6,6 +6,22 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-10-26 (SaaS administration and billing architecture audit)
+
+Audited the existing multi-company administration, user/role assignment,
+company invitations, plugin entitlements, accounting/payment patterns, tenant
+storage, API boundaries and scheduler against the proposed SaaS subscription
+and billing requirements. No production behaviour or schema changed.
+
+The persistent evidence matrix and phased adoption checklist are in
+[`docs/saas-administration-billing-audit-plan.md`](saas-administration-billing-audit-plan.md).
+The main findings are that company/plugin grant management exists but plugin
+entry points do not enforce it, tenant roles are global to a user rather than
+scoped to each company membership, and SaaS plans, seat limits, recurring
+platform invoices, deposits, allocations, credit and reversals do not yet
+exist. The plan preserves the existing tenant accounting ledger and proposes a
+separate integer-money platform receivables boundary.
+
 ## 2026-10-23 (Company administrator: an address of its own, and visible on edit)
 
 Asked for two things: a new company should be created with its administrator at
@@ -652,6 +668,76 @@ security work that exists only on production, showing up as +216 and +54 lines
 in the two `stop-link` views. Anyone doing logistics work on `develop` is
 editing the older, token-leaking version of those views until production is
 back-merged.
+
+## 2026-10-26 (Harness² assessed — documentation and evaluation process only)
+
+Requested: adopt Google Research's [Harness²](https://github.com/google-research/harness2)
+to improve how agents develop this application. Outcome: **assessment plus a
+repository-owned evaluation process**; the framework was not installed, because
+it cannot be connected to this repository or to this agent.
+
+### Why not installed
+
+Read from `main` on 2026-10-26 rather than taken from the request's description:
+
+- **POSIX only.** `pyproject.toml` declares `Operating System :: POSIX` and
+  `requires-python = ">=3.12,<3.14"`. The host is Windows with no Python; Sail is
+  Linux but PHP-only.
+- **Its executors are a closed set of two.** `SUBSTRATES = ("oc", "cx")` in
+  `harness2/cli/_common.py` — OpenCode and Codex. The agent working on this repo
+  is VS Code Copilot, and there is no adapter to register another executor.
+- **Its benchmarks are a closed set of three.** `BENCHES = ("jb", "wb", "lab")`,
+  enforced by `--bench` `choices=BENCHES`. There is no `--repo`, no custom task
+  source, and no hook that runs `LogisticsFeature` or anything else of ours.
+- **Model access needs Vertex AI.** `docs/SETUP.md` requires the Google Cloud
+  CLI and `gcloud auth application-default login`. Credentials for a model
+  provider are not something an agent should create, hold, or move around.
+
+So the honest result is that installing it would buy a benchmark lab for
+JobBench/LAB/WorkBuddy-Bench — useful research tooling, but not an improvement
+to how this codebase is developed, and it would add a Python toolchain and a GCP
+project to a PHP application for no measured return. Its published gains (+11.5
+WorkBuddy-Bench, +4.5 JobBench, +11.8pp LAB) come from its own benchmarks and
+its own models, and are not transferable claims about Copilot on Laravel.
+
+### What was adopted
+
+- `docs/harness2-integration.md` — the assessment with the evidence above, the
+  safe sandbox route (a throwaway `python:3.12-slim` container with the clone
+  **outside** the repo, so no dependency, config, or application file changes),
+  the rollback, and the split of what is shareable across repositories versus
+  what must be re-derived per project.
+- **A repo-owned evaluation process**, which is the part of Harness²'s idea that
+  does transfer: eight scenario types mapped onto suites that already exist
+  (bug fixing, reuse, duplication, API contracts, migration registration,
+  tenant isolation, maintainability, root cause), with the baseline defined as
+  the pass/fail counts those commands return today. An instruction change now
+  has something concrete to be measured against.
+- **An approval gate** for lessons: problem, attempt, test result, candidate
+  lesson, comparison with baseline, proposed instruction change, then the user
+  decides. No agent edits global instructions, security policy, or deployment
+  settings by itself, and nothing unverified becomes a permanent lesson.
+- `AGENTS.md` gained one REFERENCES line pointing at the new document, so the
+  next agent finds the verdict instead of re-investigating it. Nothing else in
+  `AGENTS.md` changed — its existing inspect-first / root-cause / reuse /
+  tenant-isolation / verification rules already cover what the request asked to
+  add, and were left alone.
+
+### Verification
+
+Documentation only — no dependency, container, config, migration or test was
+added, so there was nothing to run. What was checked instead:
+
+- Every claim about Harness² traced to its own source: `pyproject.toml`,
+  `harness2/cli/_common.py` (`BENCHES`, `SUBSTRATES`, `WB_SUBSETS`),
+  `harness2/cli/` script entry points, `docs/SETUP.md`, `README.md`.
+- Repository side confirmed rather than assumed: `phpunit.xml` has 16 suites and
+  the suite-to-directory map quoted in the document; all seven test paths it
+  cites exist; the two scenarios whose intent was inferred
+  (`ResourceStructureSnapshotTest`, `accounts/.../Workflows/InvoiceTest`) were
+  read to confirm the row describes them correctly.
+- Local toolchain probed: Node v22.15.0 and Docker 29.8.1 present; no Python, no
+  `uv`, no `gcloud`, and WSL carries only the `docker-desktop` distro.
 
 ## 2026-10-23 (French waybill lang file did not parse)
 
