@@ -199,15 +199,15 @@ Record the user's answer before unblocking dependent packages.
 | Package | Title | Depends on | Safe alongside | Status | Owner / database |
 |---|---|---|---|---|---|
 | SAAS-00 | Baseline inventories and characterization | — | no implementation package | done | Verified 2026-10-27: 12 tests, 68 assertions, 0 failures / `aureuserp_testing_saas_00_verify` |
-| SAAS-01 | Membership-role foundation | SAAS-00, D-SAAS-02, D-SAAS-06 | SAAS-03 | review (code complete, no suite run yet) | Copilot 2026-10-28, db not yet run |
-| SAAS-02 | Tenant-aware jobs and API company selection | SAAS-00, D-SAAS-02, D-SAAS-07 | SAAS-03 | review (code complete, no suite run yet) | Copilot 2026-10-28, db not yet run |
-| SAAS-03 | Plugin defaults, dependencies and audited mutations | SAAS-00, D-SAAS-06 | SAAS-01/02 | review (code complete, no suite run yet) | Copilot 2026-10-28, db not yet run |
-| SAAS-04 | Generic plugin enforcement contract | SAAS-03 | — | review (code complete, no suite run yet) | Copilot 2026-10-28, db not yet run |
+| SAAS-01 | Membership-role foundation | SAAS-00, D-SAAS-02, D-SAAS-06 | SAAS-03 | review (focused tests green; full suites not run) | Copilot 2026-10-28; Claude review run 2026-10-29 / `aureuserp_testing_saas_review` |
+| SAAS-02 | Tenant-aware jobs and API company selection | SAAS-00, D-SAAS-02, D-SAAS-07 | SAAS-03 | review (focused tests green after R-1 fix; full suites not run) | Copilot 2026-10-28; Claude review run 2026-10-29 / `aureuserp_testing_saas_review` |
+| SAAS-03 | Plugin defaults, dependencies and audited mutations | SAAS-00, D-SAAS-06 | SAAS-01/02 | review (focused tests green after R-2 fix; full suites not run) | Copilot 2026-10-28; Claude review run 2026-10-29 / `aureuserp_testing_saas_review` |
+| SAAS-04 | Generic plugin enforcement contract | SAAS-03 | — | review (focused tests green; full suites not run) | Copilot 2026-10-28; Claude review run 2026-10-29 / `aureuserp_testing_saas_review` |
 | SAAS-05A | Plugin enforcement: finance | SAAS-04 | SAAS-05B/C/D | todo | — |
 | SAAS-05B | Plugin enforcement: commercial | SAAS-04 | SAAS-05A/C/D | todo | — |
 | SAAS-05C | Plugin enforcement: operations | SAAS-04 | SAAS-05A/B/D | todo | — |
 | SAAS-05D | Plugin enforcement: people/work tools | SAAS-04 | SAAS-05A/B/C | todo | — |
-| SAAS-06 | Seat limit and invitation lifecycle | SAAS-01, D-SAAS-03, D-SAAS-04 | SAAS-05A/B/C/D | review (code complete, no suite run yet) | Copilot 2026-10-28, db not yet run |
+| SAAS-06 | Seat limit and invitation lifecycle | SAAS-01, D-SAAS-03, D-SAAS-04 | SAAS-05A/B/C/D | review (focused tests green; full suites not run) | Copilot 2026-10-28; Claude review run 2026-10-29 / `aureuserp_testing_saas_review` |
 | SAAS-07 | Onboarding and all seat-enforcement paths | SAAS-06 | — | review (partial: capacity wired at existing entry points; UI/API/import paths remain) | Copilot 2026-10-28, db not yet run |
 | SAAS-08 | Platform-billing plugin foundation | SAAS-00, D-SAAS-01, D-SAAS-05 | — | review (foundation complete, no suite run yet) | Copilot 2026-10-28, db not yet run |
 | SAAS-09 | Plans, prices and subscriptions | SAAS-08, D-SAAS-04 | — | todo | — |
@@ -263,6 +263,61 @@ package. The user reviewed SAAS-01/02/03/04/06 before any suite was run.
 | RF-2 | **Per-company roles are stored but no policy consults them yet.** Admin in A / ordinary in B still leaks across a multi-active session. | **Accepted as deferred.** `TenantRoleResolver` and `User::hasPermissionInCompany()` exist and are tested; the adoption rewrite (policies + per-resource list restriction) belongs to **SAAS-05** and **SAAS-13**. The SAAS-01 handoff's cross-package request is the same work and now explicitly names both packages. |
 | RF-3 | **Extra queries per permission check** — a denied check now costs more, once per row on a Filament page. Measure before caching. | **Measured, no cache added.** `plugins/webkul/security/tests/Feature/SaaSAdministration/PermissionCheckQueryBudgetTest.php` pins a ceiling of 4 queries for a granted *and* a denied check, and asserts a repeated check does not grow. The numbers are in the test's failure output; re-measure there before introducing caching. |
 | RF-4 | **Multi-Company Admins lose the company form's modules section.** | **Confirmed correct** per D-SAAS-06 (entitlements are Super Admin only). No change; the narrowing stays. |
+
+**RF-3 correction (2026-10-29).** The budget test above had not passed when RF-3
+was written: its first run measured **6** queries and failed. The extra queries
+were per-request warm-up, not per-row cost (see the run block below), so the test
+now measures after one cold check. The ceiling of 4 is unchanged.
+
+### Review run — 2026-10-28/29 (Claude, `aureuserp_testing_saas_review`)
+
+The first time any of SAAS-01/02/03/04/06 code was executed. Focused filter
+`SaaSAdministration|Entitlements|CompanyExecutionContextTest|CompanyAdministratorInvitationTest|MultiCompanyAdminTest|CompanyUserIsolationTest`:
+**128 passed, 6 failed (425 assertions, 5,158 s)**. Each failure was run and read
+on its own before anything changed.
+
+| # | Failing test | Cause | Kind | Change |
+|---|---|---|---|---|
+| R-1 | `CompanyExecutionContextTest` "lets the installation administrator select any company" | `ResolveApiCompany` let any `isSuperAdmin()` user select any company. `Admin` is in `Role::getSuperAdminRoleNames()` but does not hold `bypass_company_scope` (only `super_admin` does, per company-admin-role-plan §1), so `CompanyContext` intersected the forced company with the Admin's memberships and resolved to **no company**: a 200 with `company: null` instead of a refusal. | **Code defect** (two definitions of "may see every company") | The selector now accepts exactly `CompanyContext::allowedIds()`, which already lists every company for a bypassing user. An Admin asking for a company outside their memberships gets a 403. Test renamed to "lets a user who sees every company select any company" (grants the bypass permission explicitly), plus a new test "refuses an Admin role holder a company outside their memberships". |
+| R-2 | `PluginEntitlementServiceTest` "refuses to revoke a plugin a still-granted plugin depends on" | `applyForCompany()` closed the requested set over dependencies *before* `guardRevocations()`, so a dependency the administrator unticked was re-added and never appeared as revoked. The guard could not fire; the untick was silently ignored. | **Code defect** | `guardRevocations()` now compares `$before` against the **requested** set. The class docblock's "refused, with the dependents named" rule now holds. |
+| R-3 | `MultiCompanyAdminTest` "creates a company user through the Filament relationship form" | Read `roles()` (global pivot). Since SAAS-01 a tenant role is stored on the membership; the sibling invitation test had been updated, this one had not. | Stale test | Reads `effectiveRoleIds()` and pins the global pivot as empty. |
+| R-4 | `MembershipUniquenessCharacterizationTest` | The refused duplicate insert aborted the PostgreSQL transaction the test runs in, so the following count failed with `25P02`. Introduced by the SAAS-01 inversion in the earlier review. | Test defect | Insert wrapped in `DB::transaction()` (savepoint). |
+| R-5 | `PermissionCheckQueryBudgetTest` "measures what one permission check costs" | 6 > 4 on the first check after `forgetCachedPermissions()`. The SQL (now printed in the failure message) showed four one-time queries: Spatie direct permissions (once per model), the membership-table probe (memoised), and `CompanyContext` allowed companies (two, memoised). A warm check is 2: `resolvableCompanyIds` + the `exists`. | Measurement error | One cold check first; the ceiling of 4 applies to warm checks. No caching added. |
+| R-6 | `PluginEntitlementServiceTest` "grants a newly installed plugin to every company" | Expected 2, got 3: the installation's default company exists too. | Test premise | Expects `Company::withoutGlobalScopes()->count()`. |
+
+Fixing R-2 exposed a seventh: "adds the dependencies of a granted plugin" passed
+only because a new company is provisioned with every installed plugin, so the
+dependency was already granted. It now starts from a company holding neither.
+
+**Verification actually run:** the 12 affected tests and neighbours (guest 401,
+default-company fallback, member selection): 10 passed / 2 failed (the two
+above), then those two plus the second budget test: **4 passed, 18 assertions**.
+Pint clean on every changed file. **Not run yet:** the full SecurityFeature,
+PluginManagerFeature, SupportFeature, SaleFeature and PlatformBillingFeature
+suites, so the packages stay in `review`.
+
+**Benefit.** An API client can no longer get a successful response with no
+tenant. A plugin's dependency can no longer be quietly kept after an
+administrator removed it. Two tests that could not fail now can.
+
+**Trade-off / risk.**
+
+- An `Admin` who previously reached another company through the header now
+  gets 403. Nothing in the repository relied on it (only the test above
+  sent the header as an Admin); external integrations using it would see the
+  change. Granting `bypass_company_scope` restores it deliberately.
+- Unticking a required plugin on the **company form** now throws. The
+  error is keyed `company_ids` (the Plugins page field), so the company
+  form may not show it, and the form's own fields save before the modules
+  section. Follow-up: map the message onto `company_modules` or validate
+  before save.
+
+**Rollback.** Restore the `isSuperAdmin()` branch in `ResolveApiCompany`
+and pass `$wanted` to `guardRevocations()`; the test changes are
+independent.
+
+**Protected decisions added** (AGENTS.md): the selector accepts exactly
+`allowedIds()`; a needed dependency's untick is refused.
 
 ---
 
