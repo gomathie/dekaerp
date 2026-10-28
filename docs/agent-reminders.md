@@ -95,6 +95,14 @@ references) is kept at the end of `AGENTS.md` under "DEKA ERP — PROJECT
 MEMORY". Update it when a session finds a new trap or finishes a significant
 piece of work.
 
+**Workflow and skills library contribution check.** After completing any task
+**and** after invoking any skill from the library during the session, check
+whether a new workflow, skill, or update belongs in the shared library at
+`C:\Users\gomat\OneDrive\Documents\Workflow and skills\`. See
+`AGENT-INSTRUCTIONS.md` in that folder. Write content only when the check
+surfaces something worth saving (a new trap, a corrected step, a stack pattern
+not yet covered). This standing instruction was added 2026-10-28.
+
 **Logistics plugin** work follows `docs/logistics-plan.md`: claim a package on
 its status board, touch only the files that package owns, and fill in the
 handoff log.
