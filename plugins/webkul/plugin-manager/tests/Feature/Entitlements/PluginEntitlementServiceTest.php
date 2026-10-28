@@ -135,12 +135,26 @@ it('adds the dependencies of a granted plugin', function () {
 
     $company = Company::factory()->create(['is_active' => true]);
 
+    // A new company is provisioned with every installed plugin, so it already
+    // held the dependency and this test proved nothing about closure. Start from
+    // a company holding neither: requesting the child must bring the parent.
+    DB::table('company_plugin')
+        ->where('company_id', $company->getKey())
+        ->whereIn('plugin_id', [$child->getKey(), $dependency->getKey()])
+        ->delete();
+    PluginAccess::flush();
+
+    expect(pluginEntitlementsGranted($company))->not->toContain((int) $dependency->getKey());
+
     $service = Mockery::mock(PluginEntitlementService::class)->makePartial();
     $service->shouldReceive('dependencyNamesFor')->andReturnUsing(
         fn (string $name): array => $name === 'saas-child-plugin' ? ['saas-parent-plugin'] : [],
     );
 
-    $service->syncForCompany($company, [(int) $child->getKey()]);
+    $service->syncForCompany($company, [
+        ...array_diff(pluginEntitlementsGranted($company), [(int) $child->getKey()]),
+        (int) $child->getKey(),
+    ]);
 
     $granted = pluginEntitlementsGranted($company);
 
