@@ -5,8 +5,8 @@ use Illuminate\Support\Facades\Schema;
 use Webkul\PlatformBilling\Models\DocumentNumber;
 use Webkul\PlatformBilling\PlatformBillingServiceProvider;
 
-require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
-require_once __DIR__.'/../../../../support/tests/Helpers/SecurityHelper.php';
+require_once __DIR__.'/../../../support/tests/Helpers/TestBootstrapHelper.php';
+require_once __DIR__.'/../../../support/tests/Helpers/SecurityHelper.php';
 
 /**
  * SAAS-08: the foundation is registered, and it is platform data.

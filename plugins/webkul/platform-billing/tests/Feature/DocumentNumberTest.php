@@ -3,7 +3,7 @@
 use Webkul\PlatformBilling\Enums\PlatformDocumentType;
 use Webkul\PlatformBilling\Services\DocumentNumberGenerator;
 
-require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
+require_once __DIR__.'/../../../support/tests/Helpers/TestBootstrapHelper.php';
 
 /**
  * SAAS-08: platform document numbering (D-SAAS-05).

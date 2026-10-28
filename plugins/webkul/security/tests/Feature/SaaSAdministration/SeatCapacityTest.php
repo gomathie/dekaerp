@@ -196,6 +196,12 @@ it('keeps a pending invitation\'s seat when an existing user is attached', funct
     // invitee unable to accept a seat they were promised.
     expect(fn () => $service->withLockedCompany($company, fn () => $service->assertCanAttachMembership($company)))
         ->toThrow(ValidationException::class, 'user seats');
+
+    // The per-person variant applies the same rule to someone not yet a member.
+    $outsider = User::factory()->create(['is_active' => true, 'is_default' => false]);
+
+    expect(fn () => $service->assertCanAttachUser($outsider, (int) $company->getKey()))
+        ->toThrow(ValidationException::class, 'user seats');
 });
 
 it('reserves the seat of a pending invitation', function () {
