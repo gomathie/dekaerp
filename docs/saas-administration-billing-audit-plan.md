@@ -1105,6 +1105,9 @@ Append this under the claimed card:
 - Owner / database:
 - Status: review | blocked
 - Implemented:
+- Why (root cause or decision id) / How (mechanism) / Benefit:
+- Protected decisions added or superseded (see `AGENTS.md`, "CHANGE RATIONALE
+  AND PROTECTED DECISIONS"):
 - Files changed:
 - Tests run with pass/assertion counts:
 - Reviewed but not executed:

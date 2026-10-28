@@ -1369,6 +1369,77 @@ DOCUMENTATION AND UPSTREAM REVIEW (ALL AGENTS)
   "no actionable changes" result when applicable. Never merge or cherry-pick
   upstream wholesale.
 
+CHANGE RATIONALE AND PROTECTED DECISIONS (ALL AGENTS)
+
+User rule, 2026-10-28. Several agents work on this repository, sometimes at
+the same time. A fix whose reason is not written down gets undone by the next
+agent who finds it "unnecessary": on 2026-10-28 a seat rule corrected in one
+method was reintroduced in a new sibling method within the hour. Every change
+therefore carries its reasoning, and nobody undoes reasoning they have not read.
+
+• **Record every change that adds or alters a guard, a business rule, a schema
+  constraint, a refusal or a default, in four places:**
+  1. At the code: a short comment saying **why** - the failure it prevents -
+     not what the code does. That is the line the next agent is about to
+     delete. (This overrides the Boost guidance against inline comments: why
+     comments are this project's convention.)
+  2. A test named after the behaviour. When the code can refuse for more than
+     one reason, pin the message, not only the exception class.
+  3. The owning plan's handoff, or `docs/change-log.md` for work outside a plan:
+     **Why** (root cause or decision id), **How** (mechanism, files),
+     **Benefit** (what is now prevented or possible), **Trade-off / risk**,
+     **Verification actually run** (database, pass/assertion counts) and
+     **Rollback**.
+  4. If it is a decision others will be tempted to undo, a line in "Protected
+     decisions" below.
+• **Before changing or removing code that carries a why comment, a pinned test
+  or a protected decision:** read all three first. If you still think it is
+  wrong, do not revert it quietly. State the conflict in your handoff and to the
+  user, and change it only with the user's agreement. Then update the comment,
+  the test and the entry in the same change, marking the old entry
+  *superseded (date, reason)* rather than deleting it.
+• **A red pinned or characterization test means behaviour changed.** Decide
+  whether that was intended; never make it pass by weakening the assertion.
+  When your package deliberately changes pinned behaviour, invert the test in
+  the same change and say so in its docblock.
+• **One rule, one place.** Before writing a check, search for the existing one
+  and call it. A second implementation of the same rule is how a corrected rule
+  comes back wrong.
+• **Concurrent agents:** re-read a file immediately before editing it (another
+  agent may have changed it since you last looked), stay inside the files your
+  package owns, and record any edit outside them in your handoff.
+
+Protected decisions (each has a why comment and a test; details in the plan or
+log named):
+
+• SaaS administration review, 2026-10-28
+  (`docs/saas-administration-billing-audit-plan.md`, review block):
+  - A tenant role row exists only inside its membership: composite foreign key
+    to `user_allowed_companies` with cascade. `TenantRoleAssigner` drops
+    companies the user is not a member of.
+  - Seats: platform identities (system roles) consume no seat unless they hold
+    a tenant role in that company (D-SAAS-03). Every new seat - invitation,
+    attach, user create - counts pending reservations. Call
+    `SeatCapacityService::assertCanReserve()` / `assertCanAttachMembership()`;
+    do not write another capacity rule.
+  - A plugin is granted to every company only on its **first** install. A
+    re-run, or an install triggered as someone else's dependency, must not
+    undo a revocation.
+  - The API company selector is the `X-Company-Id` header only. A `company_id`
+    body field is record data, never the selector.
+  - Guests pass through `api.company` and `plugin.entitlement`, so the route's
+    `auth:sanctum` answers 401 rather than 403.
+  - A forced company context intersects with membership whenever a user is
+    acting, including a user with no memberships at all.
+  - An accepted, revoked or expired invitation link answers 404. The
+    duplicate-pending check is case-insensitive.
+  - Test includes: a file directly in `tests/Feature/` reaches helpers with
+    `__DIR__.'/../../../support/tests/Helpers/...'`, and each extra directory
+    level adds one `../`. A wrong path fatals Pest discovery and breaks **every**
+    suite, CI included.
+  - A new plugin namespace needs the local autoloader regenerated (command in
+    WORKING RULES), a `phpunit.xml` suite and a `bootstrap/providers.php` entry.
+
 DONE RECENTLY (newest first; details in docs/change-log.md)
 
 • 2026-10-23 — Company administrator: an "Administrator" section on the company

@@ -216,11 +216,10 @@ class SeatCapacityService
             return;
         }
 
-        $active = $this->activeMembershipCount($companyId);
-
-        if ($active + 1 > $limit) {
-            throw $this->capacityError($limit, $active);
-        }
+        // The same rule as any other new seat, pending reservations included:
+        // an attach that ignored them could take the seat an invitee was
+        // already promised.
+        $this->assertCanAttachMembership($companyId);
     }
 
     /**
