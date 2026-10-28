@@ -23,8 +23,10 @@ return [
                     'title'         => 'No administrator was invited',
                     'missing-email' => 'The company was created, but it has no email address, so nobody could be invited to administer it. Add one and send an invitation from the Users page.',
                     'missing-role'  => 'The company was created, but the Company Admin role does not exist in this installation, so nobody could be invited.',
-                    'invite-failed' => 'The company was created, but the invitation could not be issued. The address may already belong to a user, or the company may not yet be one you are allowed to assign. Invite from the Users page instead.',
-                    'mail-failed'   => 'The company was created and the invitation was issued, but the email could not be sent. Give this sign-in link to :email over a channel you trust — it expires in 7 days, and they set their own password: :link',
+
+                    'seats-exhausted' => 'The company was created, but it has no free user seats left, so nobody could be invited to administer it. Raise the seat limit and send an invitation from the Users page.',
+                    'invite-failed'   => 'The company was created, but the invitation could not be issued. The address may already belong to a user, or the company may not yet be one you are allowed to assign. Invite from the Users page instead.',
+                    'mail-failed'     => 'The company was created and the invitation was issued, but the email could not be sent. Give this sign-in link to :email over a channel you trust — it expires in 7 days, and they set their own password: :link',
                 ],
             ],
         ],

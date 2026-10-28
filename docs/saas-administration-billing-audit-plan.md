@@ -208,8 +208,8 @@ Record the user's answer before unblocking dependent packages.
 | SAAS-05C | Plugin enforcement: operations | SAAS-04 | SAAS-05A/B/D | todo | — |
 | SAAS-05D | Plugin enforcement: people/work tools | SAAS-04 | SAAS-05A/B/C | todo | — |
 | SAAS-06 | Seat limit and invitation lifecycle | SAAS-01, D-SAAS-03, D-SAAS-04 | SAAS-05A/B/C/D | review (code complete, no suite run yet) | Copilot 2026-10-28, db not yet run |
-| SAAS-07 | Onboarding and all seat-enforcement paths | SAAS-06 | — | todo | — |
-| SAAS-08 | Platform-billing plugin foundation | SAAS-00, D-SAAS-01, D-SAAS-05 | completed SAAS-05 slices, SAAS-06/07 | blocked | — |
+| SAAS-07 | Onboarding and all seat-enforcement paths | SAAS-06 | — | review (partial: capacity wired at existing entry points; UI/API/import paths remain) | Copilot 2026-10-28, db not yet run |
+| SAAS-08 | Platform-billing plugin foundation | SAAS-00, D-SAAS-01, D-SAAS-05 | — | review (foundation complete, no suite run yet) | Copilot 2026-10-28, db not yet run |
 | SAAS-09 | Plans, prices and subscriptions | SAAS-08, D-SAAS-04 | — | todo | — |
 | SAAS-09A | Discount codes and tenant redemptions | SAAS-09, D-SAAS-08 | — | blocked | — |
 | SAAS-10 | Idempotent recurring invoices | SAAS-09, SAAS-09A | — | todo | — |
@@ -223,6 +223,20 @@ relevant decisions, `SAAS-01` or `SAAS-02` may run alongside `SAAS-03`, but
 `SAAS-01` and `SAAS-02` must not run together because both affect company
 context and authorization. The four `SAAS-05*` rollout slices are parallel-safe
 after their shared contract.
+
+### Review outcomes — 2026-10-28 (user review of the first five packages)
+
+Recorded because each one changes either code or the expectations of the next
+package. The user reviewed SAAS-01/02/03/04/06 before any suite was run.
+
+| # | Finding | Disposition |
+|---|---|---|
+| RF-1 | **Seat limit of 5 on existing companies** would stop any production tenant already at five or more people from inviting anyone on the day SAAS-06 deploys. | **Fixed in the migration.** `2026_10_28_000004_add_seat_limit_to_companies_table` now leaves *existing* companies unlimited (`seat_limit = null`) and keeps 5 only as the column default for companies created from now on. A limit is a commercial decision that has not been made per tenant; setting one stays deliberate and audited (`SeatCapacityService::setLimit()`). Per-company limits are the SAAS-12/13 screens. |
+| RF-2 | **Per-company roles are stored but no policy consults them yet.** Admin in A / ordinary in B still leaks across a multi-active session. | **Accepted as deferred.** `TenantRoleResolver` and `User::hasPermissionInCompany()` exist and are tested; the adoption rewrite (policies + per-resource list restriction) belongs to **SAAS-05** and **SAAS-13**. The SAAS-01 handoff's cross-package request is the same work and now explicitly names both packages. |
+| RF-3 | **Extra queries per permission check** — a denied check now costs more, once per row on a Filament page. Measure before caching. | **Measured, no cache added.** `plugins/webkul/security/tests/Feature/SaaSAdministration/PermissionCheckQueryBudgetTest.php` pins a ceiling of 4 queries for a granted *and* a denied check, and asserts a repeated check does not grow. The numbers are in the test's failure output; re-measure there before introducing caching. |
+| RF-4 | **Multi-Company Admins lose the company form's modules section.** | **Confirmed correct** per D-SAAS-06 (entitlements are Super Admin only). No change; the narrowing stays. |
+
+---
 
 ### Test database reservation
 
@@ -497,8 +511,18 @@ CompanyUserIsolationTest and invitation tests pass.
   multi-active session still lists every active company's rows, so a user who is
   admin in A and ordinary in B sees B's rows in a combined list and is denied only
   on the record. `TenantRoleResolver::companyIdsHolding()` is the intended input
-  for a per-resource `whereIn`; adopt it in SAAS-12/13 per resource, not by
+  for a per-resource `whereIn`; adopt it in **SAAS-12/13** per resource, not by
   changing `CompanyScope`.
+- Cross-package request (review RF-2, 2026-10-28): **policy adoption**. Nothing
+  consults `hasPermissionInCompany()` yet, so the storage is correct while the
+  enforcement still runs through `hasPermissionTo()` (which unions both stores).
+  Policies and services that know a record's company must call the company-scoped
+  method; that rewrite is **SAAS-05** (per plugin) and **SAAS-13** (screens), and
+  the same user is admin in A and ordinary in B only once it lands.
+- Cost of a check (review RF-3): measured, not assumed —
+  `PermissionCheckQueryBudgetTest` caps a granted and a denied check at 4 queries
+  and asserts a repeated check does not grow. No caching was added; re-measure
+  there before adding any.
 
 #### SAAS-02 — tenant-aware jobs and API selection
 
@@ -643,8 +667,9 @@ dependency, forged-write, audit and idempotency tests pass.
   - `PluginResource`'s Companies action now writes through the service, which
     validates; a revocation blocked by a dependency surfaces as a validation
     error in the action, not a silent no-op.
-  - Multi-Company Admin loses the modules section (see above). Confirm this is
-    the intended reading of D-SAAS-06 before release.
+  - Multi-Company Admin loses the modules section — **confirmed correct on
+    2026-10-28** (review RF-4, D-SAAS-06). No change; do not "restore" it in
+    SAAS-13 without a new decision.
 
 #### SAAS-04 — generic plugin enforcement contract
 
@@ -769,10 +794,13 @@ an existing over-limit company.
   Reuse `aureuserp_testing_saas_01` (same plugin, same run).
 - Status: **review**, no test executed. `php -l` clean; `pint --format agent`
   passed.
-- **Seats** — `companies.seat_limit`, `unsignedInteger` nullable, default 5;
-  `null` means unlimited (an approved sold state, D-SAAS-04). The default
-  backfills existing rows in the same statement and deactivates nobody: an
-  over-limit company keeps every membership and simply cannot add more.
+- **Seats** — `companies.seat_limit`, `unsignedInteger` nullable. **5 is the
+  column default for companies created from now on; existing companies are left
+  unlimited** (`null`), per review RF-1: a limit is a commercial decision not yet
+  made per tenant, and applying 5 retroactively would have stopped every tenant
+  already at five people from inviting anyone on deploy. `null` means unlimited
+  (an approved sold state, D-SAAS-04). Setting a limit is deliberate and audited
+  (`SeatCapacityService::setLimit()`), and lowering one deactivates nobody.
 - **Counting** (D-SAAS-03) — one seat per active membership per company
   (administrators included); a valid pending invitation reserves one; inactive
   users and accepted/revoked/expired invitations do not count.
@@ -821,7 +849,13 @@ an existing over-limit company.
 - Tests to run, one at a time: `--filter=SeatCapacityTest`, then
   `--filter=InvitationUniquenessCharacterizationTest`, then
   `--filter=MultiCompanyAdminTest`, `--filter=CompanyAdministratorInvitationTest`,
-  then the whole `SecurityFeature`.
+  `--filter=PermissionCheckQueryBudgetTest` (review RF-3), then the whole
+  `SecurityFeature`.
+- **Stale documentation to fix in SAAS-14:** `AGENTS.md` states that
+  `user_invitations` has no `accepted_at` and that "a surviving row is a pending
+  invitation". That is now false - the row survives acceptance and `pending()` is
+  the predicate. Docs are SAAS-14's to change, so it is recorded here rather than
+  edited from this package.
 - Watch for, when the suite runs: `CompanyAdministratorInviter` is untouched, but
   it creates invitations through this service, so a company whose seat limit is
   5 and which already has five members will now report `INVITE_FAILED` for its
@@ -843,6 +877,64 @@ email; resend/revoke; one consistent capacity error.
 company remains durable; no path exceeds capacity; existing administrator
 invitation and user-isolation suites pass.
 
+#### SAAS-07 handoff — 2026-10-28 (partial)
+
+- Owner / database: Copilot / **no database used**. Status: **partial** — the
+  capacity checks are wired at the entry points that already exist; the rest of
+  the card is listed below and is not started.
+- Why this part first: SAAS-06 shipped the seat counting, and without wiring it
+  into the existing paths the limit was decorative — while the *only* path that
+  did consume a seat (invitations) would have reported a full company as the
+  generic `INVITE_FAILED`. Both are now real.
+- Done here:
+  - `CompanyAdministratorInviter` returns a new **`SEATS_EXHAUSTED`** outcome,
+    checked before anything is created, with the message in all five locales
+    (`security::filament/resources/company.pages.create.administrator.skipped.seats-exhausted`).
+    The create page already renders `skipped.<reason>`, so the difference between
+    "raise the seat limit" and "that address already has an account" now reaches
+    the operator.
+  - `CreateUser` checks `assertCanAttachMembership()` for every company selected
+    on the form, so "add a user" cannot walk past the limit invitations respect.
+  - `EditUser` checks only **newly added** companies: re-saving a form for a
+    company the person already belongs to must not be blocked by a full company
+    (`SeatCapacityService::assertCanAttachUser()` states the same rule for
+    services and imports).
+  - `SeatCapacityService::canReserve()` — the non-throwing predicate the inviter
+    needs, since a saved company must not be lost to an exception.
+- Still open in this package (unchanged, do not assume done):
+  - one onboarding coordinator used by UI, API and programmatic company creation
+    (`CreateCompany` still calls the inviter directly). **Deliberately not built
+    yet:** the inviter already performs the sequence the card describes (capacity
+    → invitation → mail, failure as a reported reason), so a coordinator today
+    would be an empty layer. It earns its place when a second caller exists -
+    the API/programmatic company-creation path - and should be written then, not
+    guessed now;
+  - after-commit email dispatch. Also deliberately not changed: the inviter's
+    `MAIL_FAILED` outcome currently returns the accept link to the page, which is
+    what makes a failed send recoverable; moving the send after commit would make
+    that outcome unknowable at the time it is reported. Whoever builds it must
+    keep the link reachable by another route (resend, below);
+  - capacity for imports and for the remaining API/service entry points listed in
+    SAAS-00's inventory;
+  - the capacity message is English inside the service and now localised at the
+    create-page boundary only.
+- **Resend added** (`UserInvitationService::renew()` +
+  `CompanyAdministratorInviter::resend()`): a pending invitation can be sent
+  again with a renewed window, keeping the row and its audit trail, instead of
+  revoke-and-re-invite. A non-pending invitation is refused. Both outcomes are
+  reported, never thrown, because the caller holds a company that must survive.
+  **UI is not built** - the resend and revoke controls belong on the Users page
+  (SAAS-13, which owns screens), so the capability exists for the API and for
+  that work rather than sitting half-wired on a page nobody has tested.
+- Tests: `InvitationLifecycleTest` (4 tests) covers renewal, refusal of an
+  accepted/revoked row, a successful resend, and a refused resend.
+- Tests added to `SeatCapacityTest`: a full company reports `SEATS_EXHAUSTED` and
+  writes no invitation; an existing member costs no seat while an outsider in a
+  full company is refused.- Watch for: `assertCanAttachMembership()` counts *active* memberships, so
+  creating a user into a company that is exactly at its limit is refused — that
+  is the intended rule, and it is why existing companies were left unlimited
+  (review RF-1).
+
 #### SAAS-08 — platform-billing foundation
 
 **Owns:** new `plugins/webkul/platform-billing/`, `bootstrap/providers.php`, its
@@ -855,6 +947,63 @@ registration/structure tests. Do not alter tenant Accounts tables.
 
 **Accept:** empty and production-shaped installs; Money rejects floats,
 currency mismatch and overflow; migration guard and PlatformBillingFeature pass.
+
+#### SAAS-08 handoff — 2026-10-28
+
+- Owner / database: Copilot / **no database used**. Status: **review**, no test
+  executed. `php -l` clean on all 11 files; `pint --format agent` passed.
+- **The first thing to run is not a test**: adding the provider to
+  `bootstrap/providers.php` without regenerating the autoloader makes every
+  `/admin` request 500 with "class not found" — the exact outage mode the project
+  memory records. Run, as root and without scripts:
+  `docker run --rm -v "$(pwd -W):/var/www/html" -w /var/www/html --entrypoint composer sail-8.4/app dump-autoload --no-scripts`
+- Plugin decided: **`platform-billing`**, namespace `Webkul\PlatformBilling\`,
+  **`isCore()`**. Core because this is how the installation is paid for, not a
+  module a company subscribes to: core plugins are never offered on the Plugins
+  page and are exempt from the per-company entitlement gate, which is the correct
+  posture for a plugin that administers tenants rather than serving one.
+- `Money` — integer minor units with a currency carried on the value, immutable.
+  Rejects: a third decimal at scale 2, non-decimal text, `1,50`-style commas,
+  combining two currencies, and an amount or multiplication that does not fit in
+  an `int` (compared as strings first, because a PHP `int` cast *saturates* rather
+  than failing). Percentages round half-up once, in integer maths.
+- Numbering (D-SAAS-05) — `platform_billing_document_numbers`, one row per
+  document type per year, `unique(document_type, year)`, `lockForUpdate()` in the
+  generator. `DEKA-INV-226-000001`; the compact year drops the third digit, so
+  2026 → 226 and no two years collide (2030 → 230, 2003 → 203).
+  Deliberately a separate table from the tenant `sequences`: platform numbering
+  must be gap-free installation-wide, and a company resetting its own sequence
+  must never disturb an invoice number DEKA has already issued.
+- Policy — `DocumentNumberPolicy` denies every ability. Registered explicitly with
+  `Gate::policy()` in `packageBooted()` because Laravel's namespace guessing only
+  covers `App\Models`; the fork's convention is explicit registration (`support`,
+  `fields`). Super Admin still works through the existing `Gate::before`, and
+  Multi-Company Admin does not, because that hook only answers for bare ability
+  checks.
+- Deliberately **not** done, and not an oversight: plans, prices, subscriptions,
+  invoices, payments and screens (SAAS-09 to SAAS-12), and no implementation of
+  credit notes or tax beyond the config defaults. The foundation is the value
+  object, the numbering and the policy.
+- Files changed:
+  - `plugins/webkul/platform-billing/composer.json` (new)
+  - `plugins/webkul/platform-billing/config/platform-billing.php` (new)
+  - `plugins/webkul/platform-billing/src/PlatformBillingServiceProvider.php` (new)
+  - `plugins/webkul/platform-billing/src/Support/Money.php` (new)
+  - `plugins/webkul/platform-billing/src/Enums/PlatformDocumentType.php` (new)
+  - `plugins/webkul/platform-billing/src/Services/DocumentNumberGenerator.php` (new)
+  - `plugins/webkul/platform-billing/src/Models/DocumentNumber.php` (new)
+  - `plugins/webkul/platform-billing/src/Policies/DocumentNumberPolicy.php` (new)
+  - `plugins/webkul/platform-billing/database/migrations/2026_10_28_000006_create_platform_billing_document_numbers_table.php` (new)
+  - `plugins/webkul/platform-billing/tests/Feature/{MoneyTest,DocumentNumberTest,FoundationTest}.php` (new)
+  - `bootstrap/providers.php`, `phpunit.xml` (registration and suite)
+- Tests to run: `--testsuite=PlatformBillingFeature` (13 tests). They do not touch
+  tenant tables, so this suite is safe to run first: it is the cheapest proof that
+  the provider boots.
+- Watch for: `Money::percentage()` converts the rate string through a float to
+  reach integer basis points. That is deliberate (a 4-dp rate cannot drift
+  meaningfully), but if a rate were ever longer than 4 decimals the value would be
+  rejected by the regex first — do not add a rate with more precision without
+  extending the rounding rule.
 
 #### SAAS-09 — plans, prices and subscriptions
 

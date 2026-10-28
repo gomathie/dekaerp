@@ -8,6 +8,7 @@ use Webkul\Security\Enums\PermissionType;
 use Webkul\Security\Filament\Resources\UserResource;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\MultiCompanyAdminService;
+use Webkul\Security\Services\SeatCapacityService;
 use Webkul\Security\Services\SecurityAuditLogger;
 use Webkul\Security\Services\TenantRoleAssigner;
 
@@ -87,5 +88,22 @@ class CreateUser extends CreateRecord
             $companyIds,
             $defaultCompanyId ? (int) $defaultCompanyId : null,
         );
+
+        /*
+         * Seats (D-SAAS-03): creating a user attaches a membership, which
+         * consumes a seat. Checked here as well as on invitation, so "add a
+         * user" cannot walk past the limit the invitations respect.
+         *
+         * `assertCanAttachMembership` throws a ValidationException keyed to
+         * `seats`, which Filament renders on the form; the company that is full
+         * is named by the message, not by the field.
+         */
+        $capacity = app(SeatCapacityService::class);
+
+        foreach (array_unique(array_map('intval', $companyIds)) as $companyId) {
+            if ($companyId > 0) {
+                $capacity->assertCanAttachMembership($companyId);
+            }
+        }
     }
 }

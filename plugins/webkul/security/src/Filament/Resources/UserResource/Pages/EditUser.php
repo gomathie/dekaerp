@@ -16,6 +16,7 @@ use Webkul\Security\Enums\PermissionType;
 use Webkul\Security\Filament\Resources\UserResource;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\MultiCompanyAdminService;
+use Webkul\Security\Services\SeatCapacityService;
 use Webkul\Security\Services\SecurityAuditLogger;
 use Webkul\Security\Services\TenantRoleAssigner;
 use Webkul\Security\Settings\UserSettings;
@@ -158,6 +159,20 @@ class EditUser extends EditRecord
             $companyIds,
             $defaultCompanyId ? (int) $defaultCompanyId : null,
         );
+
+        /*
+         * Seats (D-SAAS-03): only a *newly added* company consumes a seat.
+         * Re-saving a form for a company the person already belongs to must not
+         * be blocked by a full company.
+         */
+        $capacity = app(SeatCapacityService::class);
+        $currentCompanyIds = app(MultiCompanyAdminService::class)->assignedCompanyIds($this->record);
+
+        foreach (array_diff(array_unique(array_map('intval', $companyIds)), $currentCompanyIds) as $companyId) {
+            if ($companyId > 0) {
+                $capacity->assertCanAttachMembership($companyId);
+            }
+        }
 
         $this->administrationBefore = app(MultiCompanyAdminService::class)->userSnapshot($this->record);
     }

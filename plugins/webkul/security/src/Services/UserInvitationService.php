@@ -188,6 +188,44 @@ class UserInvitationService
         );
     }
 
+    /**
+     * Send a pending invitation again, with a fresh accept window.
+     *
+     * The gap this closes: when the first mail failed, the only way to get the
+     * link to the customer was to revoke and re-invite - which threw away the
+     * original row (and, before SAAS-06, the only record that anyone had been
+     * invited at all). Resending keeps the row and its audit trail.
+     *
+     * The window is renewed deliberately: re-sending a link that expires in ten
+     * minutes would look like it worked and then fail for the recipient.
+     *
+     * Mail is sent by the caller's transport (the inviter), not here, so this
+     * service keeps one job: the row and its state.
+     *
+     * @throws ValidationException when the invitation is no longer pending
+     */
+    public function renew(Invitation $invitation, User $actor): Invitation
+    {
+        $this->assertStillPending($invitation);
+
+        $before = $invitation->expires_at?->toIso8601String();
+
+        $invitation->forceFill([
+            'expires_at' => now()->addDays(Invitation::ACCEPT_WINDOW_DAYS),
+        ])->save();
+
+        $this->audit->record(
+            'security.user.invitation_renewed',
+            $invitation,
+            $actor,
+            $invitation->default_company_id ? (int) $invitation->default_company_id : null,
+            before: ['expires_at' => $before],
+            after: ['expires_at' => $invitation->expires_at?->toIso8601String()],
+        );
+
+        return $invitation;
+    }
+
     protected function assertStillPending(Invitation $invitation): void
     {
         if ($invitation->isPending()) {
