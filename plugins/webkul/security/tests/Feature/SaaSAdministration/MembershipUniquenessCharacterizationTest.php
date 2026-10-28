@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Webkul\Security\Models\User;
@@ -8,16 +9,18 @@ use Webkul\Support\Models\Company;
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
 
 /**
- * SAAS-00 characterization: pins a known defect, it does not endorse it.
+ * SAAS-00 characterization, **inverted by SAAS-01**.
  *
- * The `user_allowed_companies` table has no unique constraint on
- * `(user_id, company_id)`. Eloquent `sync()` happens to avoid duplicates, but
- * the database does not protect raw writes, imports, or races.
+ * It used to pin that `user_allowed_companies` had no unique constraint on
+ * `(user_id, company_id)`, so a raw write, an import or a race could store the
+ * same membership twice. SAAS-01 added the constraint
+ * (`2026_10_28_000001_add_unique_membership_to_user_allowed_companies`), which
+ * the per-company role table now references, so the duplicate is refused by the
+ * database rather than avoided by Eloquent's `sync()`.
  *
- * SAAS-01 must add the unique constraint after cleaning up any duplicates.
  * See: docs/saas-administration-billing-audit-plan.md § Known related defects.
  */
-it('allows duplicate membership rows in user_allowed_companies', function () {
+it('refuses a duplicate membership row in user_allowed_companies', function () {
     expect(Schema::hasTable('user_allowed_companies'))->toBeTrue();
 
     $company = Company::factory()->create();
@@ -26,49 +29,27 @@ it('allows duplicate membership rows in user_allowed_companies', function () {
         'is_active'          => true,
     ]));
 
-    // Precondition: no membership exists yet.
-    $countBefore = DB::table('user_allowed_companies')
-        ->where('user_id', $user->getKey())
-        ->where('company_id', $company->getKey())
-        ->count();
-
-    expect($countBefore)->toBe(0);
-
-    // Insert one membership via Eloquent sync (the normal path).
+    // Precondition: exactly one membership exists through the normal path, so
+    // the refusal below is about the duplicate and not about a missing row.
     $user->allowedCompanies()->sync([$company->getKey()]);
 
-    $countAfterSync = DB::table('user_allowed_companies')
+    expect(DB::table('user_allowed_companies')
         ->where('user_id', $user->getKey())
         ->where('company_id', $company->getKey())
-        ->count();
+        ->count())->toBe(1);
 
-    expect($countAfterSync)->toBe(1);
-
-    // Insert a duplicate via raw DB — this succeeds because no unique constraint
-    // exists. If this test starts throwing a unique-violation exception, the
-    // defect has been fixed and this test should be updated accordingly.
-    DB::table('user_allowed_companies')->insert([
+    expect(fn () => DB::table('user_allowed_companies')->insert([
         'user_id'    => $user->getKey(),
         'company_id' => $company->getKey(),
-    ]);
+    ]))->toThrow(QueryException::class);
 
-    $countAfterDuplicate = DB::table('user_allowed_companies')
+    expect(DB::table('user_allowed_companies')
         ->where('user_id', $user->getKey())
         ->where('company_id', $company->getKey())
-        ->count();
-
-    // The defect: two rows exist for the same (user, company) pair.
-    expect($countAfterDuplicate)->toBe(2);
-
-    // Clean up the duplicate so subsequent tests are not affected.
-    DB::table('user_allowed_companies')
-        ->where('user_id', $user->getKey())
-        ->where('company_id', $company->getKey())
-        ->limit(1)
-        ->delete();
+        ->count())->toBe(1);
 });
 
-it('confirms the membership table has no unique index on user_id and company_id', function () {
+it('confirms the membership table has a unique index on user_id and company_id', function () {
     $indexes = DB::select(
         "SELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'user_allowed_companies'"
     );
@@ -79,6 +60,5 @@ it('confirms the membership table has no unique index on user_id and company_id'
             && str_contains($index->indexdef, 'company_id'))
         ->isNotEmpty();
 
-    // The defect: no unique index covers (user_id, company_id).
-    expect($hasUniqueOnPair)->toBeFalse();
+    expect($hasUniqueOnPair)->toBeTrue();
 });

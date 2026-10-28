@@ -7,20 +7,21 @@ use Spatie\Permission\PermissionRegistrar;
 use Webkul\Security\Enums\PermissionType;
 use Webkul\Security\Filament\Resources\UserResource\Pages\CreateUser;
 use Webkul\Security\Filament\Resources\UserResource\Pages\EditUser;
-use Webkul\Security\Models\Role;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\CompanyAdminRoleProvisioner;
+use Webkul\Security\Services\MultiCompanyAdminService;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Services\CompanyContext;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
 
 /**
- * SAAS-00 characterization: pins a known defect, it does not endorse it.
+ * SAAS-00 characterization, **inverted by SAAS-01**.
  *
- * Creating a Company Admin forces global resource visibility, but promoting an
- * existing restricted user through the edit page preserves the restriction.
- * SAAS-01 must make both real Filament paths agree, then invert this test.
+ * It used to pin that creating a Company Admin forced global resource
+ * visibility while promoting an existing restricted user through the edit page
+ * kept the restriction. SAAS-01 made `EditUser` apply the same rule as
+ * `CreateUser`, so both real Filament paths now end on `global`.
  */
 beforeEach(function (): void {
     Auth::forgetGuards();
@@ -38,7 +39,7 @@ afterEach(function (): void {
     app(PermissionRegistrar::class)->forgetCachedPermissions();
 });
 
-it('applies different resource permissions when creating and promoting Company Admins', function () {
+it('applies the same resource permission when creating and promoting Company Admins', function () {
     $company = Company::factory()->create([
         'name'      => 'SaaS Resource Permission Characterization',
         'is_active' => true,
@@ -53,8 +54,10 @@ it('applies different resource permissions when creating and promoting Company A
     session([CompanyContext::SESSION_KEY => [$company->getKey()]]);
     app()->forgetInstance(CompanyContext::class);
 
+    // The same predicate both pages call, so "it is a Company Admin role" is
+    // proven the way production decides it rather than by a name comparison.
     expect($superAdmin->isSuperAdmin())->toBeTrue()
-        ->and(mb_strtolower(trim($companyAdminRole->name)))->toBe(mb_strtolower(Role::COMPANY_ADMIN));
+        ->and(app(MultiCompanyAdminService::class)->includesCompanyAdminRole([$companyAdminRole->getKey()]))->toBeTrue();
 
     $createdEmail = fake()->unique()->safeEmail();
 
@@ -96,8 +99,9 @@ it('applies different resource permissions when creating and promoting Company A
     $createdAdministrator->refresh()->unsetRelation('roles');
     $promotedAdministrator->refresh()->unsetRelation('roles');
 
-    expect($createdAdministrator->isCompanyAdmin())->toBeTrue()
-        ->and($promotedAdministrator->isCompanyAdmin())->toBeTrue()
+    // Asked for this company: since SAAS-01 the role is held in a membership.
+    expect($createdAdministrator->isCompanyAdmin((int) $company->getKey()))->toBeTrue()
+        ->and($promotedAdministrator->isCompanyAdmin((int) $company->getKey()))->toBeTrue()
         ->and($createdAdministrator->resource_permission)->toBe(PermissionType::GLOBAL)
-        ->and($promotedAdministrator->resource_permission)->toBe(PermissionType::INDIVIDUAL);
+        ->and($promotedAdministrator->resource_permission)->toBe(PermissionType::GLOBAL);
 });

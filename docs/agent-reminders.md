@@ -101,7 +101,10 @@ whether a new workflow, skill, or update belongs in the shared library at
 `C:\Users\gomat\OneDrive\Documents\Workflow and skills\`. See
 `AGENT-INSTRUCTIONS.md` in that folder. Write content only when the check
 surfaces something worth saving (a new trap, a corrected step, a stack pattern
-not yet covered). This standing instruction was added 2026-10-28.
+not yet covered). The folder is on the owner's machine only: where it is not
+reachable (CI, cloud agents, another contributor), record that in the handoff
+and carry on. This standing instruction was added 2026-10-28 and is pointed to
+from `AGENTS.md` so every agent that loads that file sees it.
 
 **Logistics plugin** work follows `docs/logistics-plan.md`: claim a package on
 its status board, touch only the files that package owns, and fill in the

@@ -1341,6 +1341,12 @@ DOCUMENTATION AND UPSTREAM REVIEW (ALL AGENTS)
   changed behavior, verification actually run, failures, risks, and handoff in
   the owning documents. Keep historical records; mark stale statements as
   superseded instead of silently rewriting history.
+• Shared workflow and skills library (user rule, 2026-10-28): run its
+  contribution check at the end of every task **and immediately after using
+  any skill**. Details and the library path are in `docs/agent-reminders.md`.
+  Write content only when the check finds something worth keeping; where the
+  library folder is not reachable (CI, cloud agents, another machine), say so
+  in the handoff and skip it.
 • `docs/upstream-fix-adoption-plan.md` is the register of known upstream findings
   (UF-001..UF-024) and what was decided about each. Treat it as a bug list, not a
   schedule: the recurring seven-day review cadence was dropped on 2026-10-21 to

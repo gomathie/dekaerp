@@ -85,14 +85,24 @@ it('refuses a duplicate pending invitation for the same email and company', func
     // The inversion: a second invitation for the same address and company is now
     // refused while the first is still pending, so the customer cannot be
     // promised two seats for one person.
+    // The message is pinned: a seat-capacity refusal is also a
+    // ValidationException and must not satisfy this test.
     expect(fn () => $service->create(
         $superAdmin,
         $email,
         $company->getKey(),
         [$tenantRole->getKey()],
-    ))->toThrow(ValidationException::class);
+    ))->toThrow(ValidationException::class, 'pending invitation');
 
-    expect(Invitation::query()->where('email', $email)->count())->toBe(1);
+    // The same mailbox in different case is the same person.
+    expect(fn () => $service->create(
+        $superAdmin,
+        mb_strtoupper($email),
+        $company->getKey(),
+        [$tenantRole->getKey()],
+    ))->toThrow(ValidationException::class, 'pending invitation');
+
+    expect(Invitation::query()->whereRaw('LOWER(email) = ?', [mb_strtolower($email)])->count())->toBe(1);
 });
 
 it('confirms the invitations table has no unique constraint on email', function () {
