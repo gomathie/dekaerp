@@ -6,6 +6,7 @@ use Illuminate\Validation\ValidationException;
 use Webkul\Security\Models\Invitation;
 use Webkul\Security\Models\Role;
 use Webkul\Security\Models\User;
+use Webkul\Security\Services\CompanyAdministratorInviter;
 use Webkul\Security\Services\CompanyAdminRoleProvisioner;
 use Webkul\Security\Services\SeatCapacityService;
 use Webkul\Security\Services\UserInvitationService;
@@ -348,6 +349,37 @@ it('never deactivates anyone when a limit is lowered below current usage', funct
         ->and(DB::table('user_allowed_companies')->where('company_id', $company->getKey())->count())->toBe(5);
 });
 
+it('reports a company with no free seat as a capacity reason, not a generic failure', function () {
+    $company = seatCapCompany(['seat_limit' => 1]);
+
+    // One active member fills the single seat; the onboarding invitation would
+    // be the second person.
+    seatCapMember($company);
+
+    $superAdmin = FilamentHelper::actingAs();
+
+    $reason = app(CompanyAdministratorInviter::class)->invite($company, $superAdmin, 'owner@tenant-full.test');
+
+    expect($reason)->toBe(CompanyAdministratorInviter::SEATS_EXHAUSTED)
+        ->and(Invitation::query()->where('email', 'owner@tenant-full.test')->exists())->toBeFalse();
+});
+
+it('does not charge a seat for a person who is already a member', function () {
+    $company = seatCapCompany(['seat_limit' => 2]);
+
+    $member = seatCapMember($company);
+    seatCapMember($company);
+
+    $outsider = User::factory()->create(['is_active' => true, 'is_default' => false]);
+
+    $capacity = app(SeatCapacityService::class);
+
+    // Re-saving an existing member's form must not be blocked by a full company.
+    $capacity->assertCanAttachUser($member, (int) $company->getKey());
+
+    expect(fn () => $capacity->assertCanAttachUser($outsider, (int) $company->getKey()))
+        ->toThrow(ValidationException::class);
+});
 it('records a limit change with the actor and the before/after values', function () {
     $company = seatCapCompany();
     $superAdmin = seatCapAdministrator($company);

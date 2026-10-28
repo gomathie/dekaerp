@@ -180,6 +180,50 @@ class SeatCapacityService
     }
 
     /**
+     * The same question without throwing - for callers that report an outcome
+     * rather than an error (the company onboarding inviter returns a reason, it
+     * cannot fail the request).
+     */
+    public function canReserve(Company|int $company, int $reservations = 1): bool
+    {
+        $limit = $this->limitFor($company);
+
+        return $limit === null || $this->usedSeats($company) + $reservations <= $limit;
+    }
+
+    /**
+     * Attaching an existing person to a company (the Users form, an import).
+     *
+     * A user who is already an active member of that company consumes nothing
+     * new - re-saving their form must not be blocked by a full company.
+     *
+     * @throws ValidationException
+     */
+    public function assertCanAttachUser(User $user, int $companyId): void
+    {
+        $limit = $this->limitFor($companyId);
+
+        if ($limit === null) {
+            return;
+        }
+
+        $alreadyMember = DB::table('user_allowed_companies')
+            ->where('user_id', $user->getKey())
+            ->where('company_id', $companyId)
+            ->exists();
+
+        if ($alreadyMember && $user->is_active) {
+            return;
+        }
+
+        $active = $this->activeMembershipCount($companyId);
+
+        if ($active + 1 > $limit) {
+            throw $this->capacityError($limit, $active);
+        }
+    }
+
+    /**
      * Accepting an invitation turns a reservation into a membership, so the
      * reservation itself must not be counted twice - only the active memberships
      * plus this one are compared with the limit.

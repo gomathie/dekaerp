@@ -1,0 +1,27 @@
+{
+    "name": "webkul/platform-billing",
+    "description": "DEKA platform billing: plans, subscriptions and platform receivables",
+    "authors": [
+        {
+            "name": "DEKA ERP"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Webkul\\PlatformBilling\\PlatformBillingServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Webkul\\PlatformBilling\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Webkul\\PlatformBilling\\Tests\\": "tests/"
+        }
+    }
+}

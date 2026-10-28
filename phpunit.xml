@@ -53,6 +53,9 @@
         <testsuite name="ChatterFeature">
             <directory>plugins/webkul/chatter/tests/Feature</directory>
         </testsuite>
+        <testsuite name="PlatformBillingFeature">
+            <directory>plugins/webkul/platform-billing/tests/Feature</directory>
+        </testsuite>
     </testsuites>
     <source>
         <include>
