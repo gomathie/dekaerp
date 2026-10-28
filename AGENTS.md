@@ -1425,8 +1425,15 @@ log named):
   - A plugin is granted to every company only on its **first** install. A
     re-run, or an install triggered as someone else's dependency, must not
     undo a revocation.
+  - Unticking a plugin that a still-granted plugin depends on is **refused**
+    (`ValidationException`), not silently re-granted. `guardRevocations()`
+    compares against the *requested* set; against the dependency-closed set
+    it could never fire.
   - The API company selector is the `X-Company-Id` header only. A `company_id`
-    body field is record data, never the selector.
+    body field is record data, never the selector. It accepts exactly
+    `CompanyContext::allowedIds()` - no `isSuperAdmin()` shortcut, because
+    `Admin` is a super-admin name without `bypass_company_scope` and the
+    shortcut produced a 200 with no company.
   - Guests pass through `api.company` and `plugin.entitlement`, so the route's
     `auth:sanctum` answers 401 rather than 403.
   - A forced company context intersects with membership whenever a user is

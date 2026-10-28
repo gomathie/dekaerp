@@ -42,28 +42,31 @@ afterEach(function (): void {
 });
 
 /**
- * @return array{0: int, 1: bool} query cost of this call, and the result
+ * @return array{0: int, 1: bool, 2: string} query cost of this call, the result,
+ *                                           and the SQL it ran (for failure output)
  */
 function permissionCheckCost(User $user, string $ability): array
 {
-    // A single listener for the whole test, counting monotonically: registering
+    // A single listener for the whole test, recording monotonically: registering
     // one per call would double count, and DB::listen cannot be removed.
-    static $total = 0;
+    static $statements = [];
     static $registered = false;
 
     if (! $registered) {
-        DB::listen(function () use (&$total): void {
-            $total++;
+        DB::listen(function ($query) use (&$statements): void {
+            $statements[] = $query->sql;
         });
 
         $registered = true;
     }
 
-    $before = $total;
+    $before = count($statements);
 
     $result = $user->hasPermissionTo($ability);
 
-    return [$total - $before, $result];
+    $ran = array_slice($statements, $before);
+
+    return [count($ran), $result, implode("\n", $ran)];
 }
 
 it('measures what one permission check costs', function () {
@@ -96,8 +99,8 @@ it('measures what one permission check costs', function () {
     CompanyHelper::setActive([$company->getKey()]);
     app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-    [$grantedCost, $grantedResult] = permissionCheckCost($user, $granted->name);
-    [$deniedCost, $deniedResult] = permissionCheckCost($user, $withheld->name);
+    [$grantedCost, $grantedResult, $grantedSql] = permissionCheckCost($user, $granted->name);
+    [$deniedCost, $deniedResult, $deniedSql] = permissionCheckCost($user, $withheld->name);
 
     // Preconditions: the two checks really do answer differently, so neither
     // number can come from a short-circuited path.
@@ -106,8 +109,8 @@ it('measures what one permission check costs', function () {
 
     // Recorded here as well as asserted, so the number is in the failure output
     // when it changes.
-    expect($grantedCost)->toBeLessThanOrEqual(4, "a granted check cost {$grantedCost} queries")
-        ->and($deniedCost)->toBeLessThanOrEqual(4, "a denied check cost {$deniedCost} queries");
+    expect($grantedCost)->toBeLessThanOrEqual(4, "a granted check cost {$grantedCost} queries:\n{$grantedSql}")
+        ->and($deniedCost)->toBeLessThanOrEqual(4, "a denied check cost {$deniedCost} queries:\n{$deniedSql}");
 });
 
 it('does not grow the cost of a check when the same question is asked twice', function () {

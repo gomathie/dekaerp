@@ -314,7 +314,11 @@ class PluginEntitlementService
 
         $wanted = $this->withDependencies($installed, $requestedIds);
 
-        $this->guardRevocations($installed, $before, $wanted);
+        // The guard reads what was *requested*, not the dependency-closed set:
+        // closure re-adds any dependency of a wanted plugin, so measured against
+        // $wanted a revoked dependency vanished from the diff, the guard could
+        // never fire, and an untick was silently ignored.
+        $this->guardRevocations($installed, $before, $requestedIds, $wanted);
 
         if ($wanted === $before) {
             return;
@@ -399,13 +403,14 @@ class PluginEntitlementService
      *
      * @param  Collection<int, Plugin>  $installed  keyed by id
      * @param  array<int, int>  $before
-     * @param  array<int, int>  $wanted
+     * @param  array<int, int>  $requested  what the caller asked for, before dependency closure
+     * @param  array<int, int>  $wanted  $requested plus its dependencies
      *
      * @throws ValidationException
      */
-    protected function guardRevocations(Collection $installed, array $before, array $wanted): void
+    protected function guardRevocations(Collection $installed, array $before, array $requested, array $wanted): void
     {
-        $revoked = array_values(array_diff($before, $wanted));
+        $revoked = array_values(array_diff($before, $requested));
 
         if ($revoked === []) {
             return;

@@ -38,10 +38,13 @@ it('refuses a duplicate membership row in user_allowed_companies', function () {
         ->where('company_id', $company->getKey())
         ->count())->toBe(1);
 
-    expect(fn () => DB::table('user_allowed_companies')->insert([
+    // Inside DB::transaction() so the refused insert rolls back to a savepoint.
+    // On PostgreSQL a failed statement otherwise aborts the transaction the test
+    // runs in, and the count below dies with "current transaction is aborted".
+    expect(fn () => DB::transaction(fn () => DB::table('user_allowed_companies')->insert([
         'user_id'    => $user->getKey(),
         'company_id' => $company->getKey(),
-    ]))->toThrow(QueryException::class);
+    ])))->toThrow(QueryException::class);
 
     expect(DB::table('user_allowed_companies')
         ->where('user_id', $user->getKey())

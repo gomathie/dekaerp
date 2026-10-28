@@ -241,7 +241,9 @@ it('grants a newly installed plugin to every company', function () {
 
     $added = app(PluginEntitlementService::class)->grantToEveryCompany($plugin);
 
-    expect($added)->toBe(2)
+    // Every company, not just the two made here: the installation's own default
+    // company exists too, and it must receive the plugin like any other.
+    expect($added)->toBe(Company::query()->withoutGlobalScopes()->count())
         ->and(pluginEntitlementsGranted($companyA))->toContain((int) $plugin->getKey())
         ->and(pluginEntitlementsGranted($companyB))->toContain((int) $plugin->getKey());
 });
