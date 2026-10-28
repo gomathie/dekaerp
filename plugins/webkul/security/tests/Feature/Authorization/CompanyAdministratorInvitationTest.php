@@ -168,7 +168,11 @@ it('grants the administrator their own company only, and no way to escalate', fu
 
     expect($allowed)->toBe([(int) $company->getKey()])
         ->and($allowed)->not->toContain((int) $other->getKey())
-        ->and($user->hasRole(Role::COMPANY_ADMIN))->toBeTrue()
+        // A tenant role is held *in a company* since SAAS-01, so the assertion
+        // follows the permission rather than the storage: `hasRole()` reads
+        // model_has_roles, which is now the platform-role store only.
+        ->and($user->isCompanyAdmin((int) $company->getKey()))->toBeTrue()
+        ->and($user->hasPermissionInCompany('create_security_user', (int) $company->getKey()))->toBeTrue()
         ->and($granted)->toContain('create_security_user')
         // Asserted against the provisioned set, so widening the role fails here:
         // no bulk or permanent deletion of people, and no handing out roles.

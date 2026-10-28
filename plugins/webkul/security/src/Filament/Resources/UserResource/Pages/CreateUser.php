@@ -9,6 +9,7 @@ use Webkul\Security\Filament\Resources\UserResource;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\MultiCompanyAdminService;
 use Webkul\Security\Services\SecurityAuditLogger;
+use Webkul\Security\Services\TenantRoleAssigner;
 
 class CreateUser extends CreateRecord
 {
@@ -49,6 +50,20 @@ class CreateUser extends CreateRecord
     {
         /** @var User $record */
         $record = $this->record;
+
+        /*
+         * Roles are written here, not by the form: the roles field is not a
+         * relationship any more because a tenant role belongs to a company
+         * membership rather than to the user. TenantRoleAssigner splits the
+         * selection into the global pivot (platform roles) and
+         * company_membership_roles (tenant roles).
+         */
+        app(TenantRoleAssigner::class)->sync(
+            $record,
+            (array) ($this->form->getRawState()['roles'] ?? []),
+            app(MultiCompanyAdminService::class)->assignedCompanyIds($record),
+        );
+
         $record->unsetRelation('roles');
 
         app(SecurityAuditLogger::class)->record(

@@ -2,23 +2,24 @@
 
 namespace Webkul\PluginManager\Services;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Support\Models\Company;
 
 /**
- * Gives a new company the plugins every other company already has.
+ * Gives a new company the plugins it is meant to start with.
  *
  * Without this, per-company availability would create a cliff: the migration
  * backfills existing companies, but a company created afterwards would start
- * with nothing and look like a broken install. Granting the installed set on
- * creation keeps the default behaviour identical to before the feature
+ * with nothing and look like a broken install. Which plugins those are is
+ * `config('plugin-manager.default_company_plugins')`; `null` there means the
+ * installed set, which keeps the behaviour identical to before the setting
  * existed, and leaves taking access away as the deliberate act.
  *
  * Needs no acting user, so it is driven by a model event rather than from the
  * create page - that way seeders, factories, console commands and the UI all
  * behave the same.
+ *
+ * Delegates to PluginEntitlementService so there is one writer for
+ * `company_plugin`, not two that can drift.
  */
 class CompanyPluginProvisioner
 {
@@ -27,48 +28,10 @@ class CompanyPluginProvisioner
      */
     public function grantInstalledPlugins(Company $company): int
     {
-        if (! Schema::hasTable('company_plugin') || ! Schema::hasTable('plugins')) {
-            return 0;
-        }
-
-        $companyId = (int) $company->getKey();
-
-        if (! $companyId) {
-            return 0;
-        }
-
-        $pluginIds = DB::table('plugins')->where('is_installed', true)->pluck('id');
-
-        if ($pluginIds->isEmpty()) {
-            return 0;
-        }
-
-        $alreadyGranted = DB::table('company_plugin')
-            ->where('company_id', $companyId)
-            ->pluck('plugin_id')
-            ->all();
-
-        $now = now();
-
-        $rows = $pluginIds
-            ->reject(fn ($pluginId): bool => in_array($pluginId, $alreadyGranted))
-            ->map(fn ($pluginId): array => [
-                'company_id' => $companyId,
-                'plugin_id'  => $pluginId,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ])
-            ->values()
-            ->all();
-
-        if ($rows === []) {
-            return 0;
-        }
-
-        DB::table('company_plugin')->insert($rows);
-
-        PluginAccess::flush();
-
-        return count($rows);
+        // The set itself lives in `config('plugin-manager.default_company_plugins')`;
+        // null there means every installed plugin, which is what this class did
+        // before the setting existed. Additive either way - an existing grant is
+        // never revoked by provisioning.
+        return app(PluginEntitlementService::class)->grantDefaults($company);
     }
 }

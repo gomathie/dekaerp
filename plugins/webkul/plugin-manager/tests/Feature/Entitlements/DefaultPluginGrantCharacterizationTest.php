@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\DB;
 use Webkul\PluginManager\Services\CompanyPluginProvisioner;
+use Webkul\PluginManager\Services\PluginEntitlementService;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Support\Models\Company;
 
@@ -21,6 +22,11 @@ beforeEach(function (): void {
  * grants.
  *
  * See: docs/saas-administration-billing-audit-plan.md § ENT-02.
+ *
+ * SAAS-03 update: the first test still holds, because `null` in
+ * `config('plugin-manager.default_company_plugins')` deliberately means "every
+ * installed plugin" - that is the upgrade path. The third test was rewritten to
+ * assert the configuration seam that now exists.
  */
 it('grants every installed plugin to a new company', function () {
     $installedPluginIds = DB::table('plugins')
@@ -69,15 +75,22 @@ it('does not revoke grants when called again on an existing company', function (
         ->and($grantedAfter)->toBe($grantedBefore);
 });
 
-it('confirms there is no default_set or configurable plugin list', function () {
-    // The provisioner has no concept of a "default set" — it queries all
-    // installed plugins directly. There is no setting, config key or
-    // database row that controls which plugins a new company should receive.
-    $provisioner = new ReflectionClass(CompanyPluginProvisioner::class);
-    $source = file_get_contents($provisioner->getFileName());
+it('reads the default set from configuration instead of granting everything unconditionally', function () {
+    // SAAS-03 replaced "grant every installed plugin" with a configured set.
+    // `null` still means every installed plugin, so nothing changes for an
+    // installation that does not set it - but there is now a key that controls
+    // it, and the provisioner delegates to the one writer rather than querying
+    // `plugins` itself.
+    expect(config('plugin-manager.default_company_plugins'))->toBeNull();
 
-    // The provisioner queries all installed plugins unconditionally.
-    expect($source)->toContain("->where('is_installed', true)")
-        ->and($source)->not->toContain('default_set')
-        ->and($source)->not->toContain('default_plugins');
+    $provisioner = new ReflectionClass(CompanyPluginProvisioner::class);
+    $provisionerSource = file_get_contents($provisioner->getFileName());
+
+    expect($provisionerSource)->toContain('PluginEntitlementService')
+        ->and($provisionerSource)->not->toContain("->where('is_installed', true)");
+
+    $service = new ReflectionClass(PluginEntitlementService::class);
+    $serviceSource = file_get_contents($service->getFileName());
+
+    expect($serviceSource)->toContain('plugin-manager.default_company_plugins');
 });

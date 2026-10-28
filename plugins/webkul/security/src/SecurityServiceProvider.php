@@ -10,6 +10,7 @@ use Webkul\PluginManager\PackageServiceProvider;
 use Webkul\Security\Facades\Bouncer as BouncerFacade;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\MultiCompanyAdminService;
+use Webkul\Security\Services\TenantRoleResolver;
 
 class SecurityServiceProvider extends PackageServiceProvider
 {
@@ -44,6 +45,15 @@ class SecurityServiceProvider extends PackageServiceProvider
                 // DatabaseSeeder only, so a plugin install never created it.
                 '2026_09_24_000001_provision_company_admin_role',
                 '2026_10_21_000002_add_must_change_password_to_users_table',
+                // SAAS-01: tenant roles become a property of a company
+                // membership. Order matters - the pivot must exist before the
+                // backfill moves rows into it.
+                '2026_10_28_000001_add_unique_membership_to_user_allowed_companies',
+                '2026_10_28_000002_create_company_membership_roles_table',
+                '2026_10_28_000003_scope_tenant_roles_to_company_memberships',
+                // SAAS-06: invitations get a lifecycle (pending/accepted/
+                // revoked/expired) so a seat count has something to count.
+                '2026_10_28_000005_add_lifecycle_to_user_invitations_table',
             ])
             ->hasSettings([
                 '2024_11_05_042358_create_user_settings',
@@ -109,6 +119,10 @@ class SecurityServiceProvider extends PackageServiceProvider
         Panel::configureUsing(function (Panel $panel): void {
             $panel->plugin(SecurityPlugin::make());
         });
+
+        // Scoped: the resolver memoises whether the membership store exists, and
+        // that answer must live for one request, not for the process.
+        $this->app->scoped(TenantRoleResolver::class);
 
         $loader = AliasLoader::getInstance();
 

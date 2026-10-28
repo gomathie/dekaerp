@@ -1,0 +1,304 @@
+<?php
+
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
+use Webkul\Security\Models\Invitation;
+use Webkul\Security\Models\Role;
+use Webkul\Security\Models\User;
+use Webkul\Security\Services\CompanyAdminRoleProvisioner;
+use Webkul\Security\Services\SeatCapacityService;
+use Webkul\Security\Services\UserInvitationService;
+use Webkul\Security\Settings\UserSettings;
+use Webkul\Support\Models\Company;
+
+require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
+require_once __DIR__.'/../../../../support/tests/Helpers/FilamentHelper.php';
+
+/**
+ * SAAS-06: a company has seats, and an invitation reserves one.
+ *
+ * D-SAAS-03: an active membership consumes a seat (administrators included, one
+ * per person per company); a valid pending invitation reserves one; inactive
+ * users and expired or revoked invitations do not count.
+ *
+ * D-SAAS-04: lowering a limit never deactivates anybody - the company simply
+ * cannot add members until usage falls or the limit rises.
+ */
+beforeEach(function (): void {
+    TestBootstrapHelper::ensureERPInstalled();
+
+    Auth::forgetGuards();
+    app(CompanyAdminRoleProvisioner::class)->provision();
+
+    settings(UserSettings::class)->enable_user_invitation = true;
+    settings(UserSettings::class)->save();
+});
+
+function seatCapCompany(array $attributes = []): Company
+{
+    return Company::factory()->create(['is_active' => true, ...$attributes]);
+}
+
+function seatCapMember(Company $company): User
+{
+    $user = User::factory()->create(['is_active' => true, 'is_default' => false]);
+
+    $user->allowedCompanies()->sync([$company->getKey()]);
+
+    return $user;
+}
+
+function seatCapPendingInvitation(Company $company, array $attributes = []): Invitation
+{
+    return Invitation::query()->create([
+        'email'              => fake()->unique()->safeEmail(),
+        'default_company_id' => $company->getKey(),
+        'company_ids'        => [$company->getKey()],
+        'role_ids'           => [],
+        'expires_at'         => now()->addDays(Invitation::ACCEPT_WINDOW_DAYS),
+        ...$attributes,
+    ]);
+}
+
+it('defaults a company to five seats', function () {
+    $company = seatCapCompany();
+
+    expect(app(SeatCapacityService::class)->limitFor($company))->toBe(5)
+        ->and(app(SeatCapacityService::class)->usedSeats($company))->toBe(0);
+});
+
+it('treats a null limit as unlimited', function () {
+    $company = seatCapCompany(['seat_limit' => null]);
+
+    for ($i = 0; $i < 7; $i++) {
+        seatCapMember($company);
+    }
+
+    $service = app(SeatCapacityService::class);
+
+    expect($service->isUnlimited($company))->toBeTrue()
+        ->and($service->remainingSeats($company))->toBeNull()
+        ->and($service->isOverLimit($company))->toBeFalse();
+});
+
+it('counts active memberships and pending invitations as used seats', function () {
+    $company = seatCapCompany();
+
+    seatCapMember($company);
+    seatCapMember($company);
+    seatCapPendingInvitation($company);
+
+    $service = app(SeatCapacityService::class);
+
+    expect($service->activeMembershipCount($company))->toBe(2)
+        ->and($service->pendingInvitationCount($company))->toBe(1)
+        ->and($service->usedSeats($company))->toBe(3)
+        ->and($service->remainingSeats($company))->toBe(2);
+});
+
+it('does not count an inactive user', function () {
+    $company = seatCapCompany();
+
+    seatCapMember($company);
+
+    $inactive = seatCapMember($company);
+    $inactive->forceFill(['is_active' => false])->saveQuietly();
+
+    expect(app(SeatCapacityService::class)->activeMembershipCount($company))->toBe(1);
+});
+
+it('does not count expired or revoked invitations', function () {
+    $company = seatCapCompany();
+
+    seatCapPendingInvitation($company, ['expires_at' => now()->subDay()]);
+    seatCapPendingInvitation($company, ['revoked_at' => now(), 'expires_at' => now()->addDay()]);
+    seatCapPendingInvitation($company, ['accepted_at' => now(), 'expires_at' => now()->addDay()]);
+
+    expect(app(SeatCapacityService::class)->pendingInvitationCount($company))->toBe(0);
+});
+
+it('refuses an invitation when the last seat is already in use', function () {
+    $company = seatCapCompany();
+
+    for ($i = 0; $i < 5; $i++) {
+        seatCapMember($company);
+    }
+
+    $superAdmin = FilamentHelper::actingAs();
+    Auth::guard('web')->setUser($superAdmin);
+    Auth::guard('sanctum')->setUser($superAdmin);
+
+    $role = Role::query()
+        ->whereRaw('LOWER(name) = ?', [mb_strtolower(Role::COMPANY_ADMIN)])
+        ->firstOrFail();
+
+    expect(fn () => app(UserInvitationService::class)->create(
+        $superAdmin,
+        fake()->unique()->safeEmail(),
+        (int) $company->getKey(),
+        [(int) $role->getKey()],
+    ))->toThrow(ValidationException::class);
+
+    expect(Invitation::query()->where('default_company_id', $company->getKey())->count())->toBe(0);
+});
+
+it('reserves the seat of a pending invitation', function () {
+    $company = seatCapCompany();
+
+    for ($i = 0; $i < 4; $i++) {
+        seatCapMember($company);
+    }
+
+    seatCapPendingInvitation($company);
+
+    $service = app(SeatCapacityService::class);
+
+    expect($service->remainingSeats($company))->toBe(0)
+        ->and(fn () => $service->withLockedCompany($company, fn () => $service->assertCanReserve($company)))
+        ->toThrow(ValidationException::class);
+});
+
+it('releases the seat when a pending invitation is revoked or expires', function () {
+    $company = seatCapCompany();
+
+    for ($i = 0; $i < 4; $i++) {
+        seatCapMember($company);
+    }
+
+    $invitation = seatCapPendingInvitation($company);
+
+    $service = app(SeatCapacityService::class);
+
+    expect($service->usedSeats($company))->toBe(5)
+        ->and($service->remainingSeats($company))->toBe(0);
+
+    $invitation->forceFill(['revoked_at' => now()])->save();
+
+    // The seat goes back the moment the invitation stops being valid - that is
+    // what makes revoking a usable support action rather than a bookkeeping one.
+    expect($service->usedSeats($company))->toBe(4)
+        ->and($service->remainingSeats($company))->toBe(1);
+});
+
+it('accepting an invitation does not double count the reserved seat', function () {
+    $company = seatCapCompany();
+
+    for ($i = 0; $i < 4; $i++) {
+        seatCapMember($company);
+    }
+
+    $superAdmin = FilamentHelper::actingAs();
+    Auth::guard('web')->setUser($superAdmin);
+    Auth::guard('sanctum')->setUser($superAdmin);
+
+    $service = app(UserInvitationService::class);
+    $capacity = app(SeatCapacityService::class);
+
+    $role = Role::query()
+        ->whereRaw('LOWER(name) = ?', [mb_strtolower(Role::COMPANY_ADMIN)])
+        ->firstOrFail();
+
+    $invitation = $service->create(
+        $superAdmin,
+        fake()->unique()->safeEmail(),
+        (int) $company->getKey(),
+        [(int) $role->getKey()],
+    );
+
+    // 4 active + 1 reservation = the limit: accepting must still work, because
+    // the reservation *becomes* the fifth membership.
+    expect($capacity->usedSeats($company))->toBe(5);
+
+    $accepted = $service->accept($invitation, 'Fifth Seat', 'correct-horse-battery');
+
+    expect($capacity->activeMembershipCount($company))->toBe(5)
+        ->and($capacity->usedSeats($company))->toBe(5)
+        ->and($accepted->allowedCompanies()->pluck('companies.id')->all())->toBe([(int) $company->getKey()]);
+});
+
+it('refuses an acceptance that would exceed the limit', function () {
+    $company = seatCapCompany();
+
+    for ($i = 0; $i < 5; $i++) {
+        seatCapMember($company);
+    }
+
+    $superAdmin = FilamentHelper::actingAs();
+    Auth::guard('web')->setUser($superAdmin);
+    Auth::guard('sanctum')->setUser($superAdmin);
+
+    $role = Role::query()
+        ->whereRaw('LOWER(name) = ?', [mb_strtolower(Role::COMPANY_ADMIN)])
+        ->firstOrFail();
+
+    // The invitation is written directly: the service would refuse to create it
+    // once the company is full, and this test is about acceptance.
+    $invitation = seatCapPendingInvitation($company, ['role_ids' => [(int) $role->getKey()], 'inviter_id' => $superAdmin->getKey()]);
+
+    expect(fn () => app(UserInvitationService::class)->accept($invitation, 'Over Limit', 'correct-horse-battery'))
+        ->toThrow(ValidationException::class);
+
+    expect(User::query()->where('name', 'Over Limit')->exists())->toBeFalse();
+});
+
+it('refuses to accept an expired or revoked invitation', function () {
+    $company = seatCapCompany();
+
+    $superAdmin = FilamentHelper::actingAs();
+    Auth::guard('web')->setUser($superAdmin);
+    Auth::guard('sanctum')->setUser($superAdmin);
+
+    $role = Role::query()
+        ->whereRaw('LOWER(name) = ?', [mb_strtolower(Role::COMPANY_ADMIN)])
+        ->firstOrFail();
+
+    $expired = seatCapPendingInvitation($company, [
+        'expires_at' => now()->subDay(),
+        'inviter_id' => $superAdmin->getKey(),
+        'role_ids'   => [(int) $role->getKey()],
+    ]);
+
+    $revoked = seatCapPendingInvitation($company, [
+        'revoked_at' => now(),
+        'inviter_id' => $superAdmin->getKey(),
+        'role_ids'   => [(int) $role->getKey()],
+    ]);
+
+    $service = app(UserInvitationService::class);
+
+    expect(fn () => $service->accept($expired, 'Expired User', 'correct-horse-battery'))
+        ->toThrow(ValidationException::class);
+
+    expect(fn () => $service->accept($revoked, 'Revoked User', 'correct-horse-battery'))
+        ->toThrow(ValidationException::class);
+});
+
+it('never deactivates anyone when a limit is lowered below current usage', function () {
+    $company = seatCapCompany(['seat_limit' => 3]);
+
+    $members = collect(range(1, 5))->map(fn () => seatCapMember($company));
+
+    $capacity = app(SeatCapacityService::class);
+
+    expect($capacity->activeMembershipCount($company))->toBe(5)
+        ->and($capacity->isOverLimit($company))->toBeTrue()
+        ->and($members->every(fn (User $user): bool => (bool) $user->fresh()->is_active))->toBeTrue()
+        ->and(DB::table('user_allowed_companies')->where('company_id', $company->getKey())->count())->toBe(5);
+});
+
+it('records a limit change with the actor and the before/after values', function () {
+    $company = seatCapCompany();
+    $superAdmin = FilamentHelper::actingAs();
+
+    $capacity = app(SeatCapacityService::class);
+
+    $capacity->setLimit($company, 12, $superAdmin);
+
+    expect($capacity->limitFor($company))->toBe(12);
+
+    $capacity->setLimit($company, null, $superAdmin);
+
+    expect($capacity->limitFor($company))->toBeNull()
+        ->and($capacity->isUnlimited($company))->toBeTrue();
+});

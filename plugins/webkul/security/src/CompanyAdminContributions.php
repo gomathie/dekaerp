@@ -12,6 +12,7 @@ use Webkul\Security\Filament\Resources\UserResource;
 use Webkul\Security\Models\Invitation;
 use Webkul\Security\Models\Role;
 use Webkul\Security\Models\User;
+use Webkul\Security\Services\TenantRoleResolver;
 use Webkul\Support\Filament\Resources\CompanyResource\Support\CompanySchemaRegistry;
 use Webkul\Support\Models\Company;
 
@@ -87,11 +88,21 @@ class CompanyAdminContributions
             return new HtmlString(e(__('security::filament/contributions/company.administrator.none')));
         }
 
+        // Two stores since SAAS-01: a legacy global assignment (read against the
+        // user's default company, as before) and the per-company membership
+        // role, which is where every new Company Admin is written.
+        $membershipAdminIds = app(TenantRoleResolver::class)->supported()
+            ? app(TenantRoleResolver::class)->userIdsWithRoleInCompany(Role::COMPANY_ADMIN, (int) $record->getKey())
+            : [];
+
         $admins = User::query()
             ->withoutGlobalScopes()
-            ->where('default_company_id', $record->getKey())
-            ->whereHas('roles', fn ($query) => $query
-                ->whereRaw('LOWER(name) = ?', [mb_strtolower(Role::COMPANY_ADMIN)]))
+            ->where(fn ($query) => $query
+                ->whereIn('id', $membershipAdminIds)
+                ->orWhere(fn ($legacy) => $legacy
+                    ->where('default_company_id', $record->getKey())
+                    ->whereHas('roles', fn ($roles) => $roles
+                        ->whereRaw('LOWER(name) = ?', [mb_strtolower(Role::COMPANY_ADMIN)]))))
             ->orderBy('id')
             ->get();
 
@@ -110,15 +121,17 @@ class CompanyAdminContributions
             );
         }
 
-        // An invitation that nobody has accepted yet is the normal state for a
+        // An invitation nobody has accepted yet is the normal state for a
         // company created moments ago, and the support question it answers -
         // "why can nobody sign in?" - is the whole point of showing it.
         //
-        // A surviving row *is* a pending invitation: user_invitations has no
-        // accepted_at column, because UserInvitationService deletes the row on
-        // acceptance.
+        // Since SAAS-06 the row survives acceptance (so the history is
+        // answerable and a seat count has something to count), which means
+        // "a row exists" is no longer the same as "still pending": the scope is
+        // what says it.
         $pending = Invitation::query()
             ->where('default_company_id', $record->getKey())
+            ->pending()
             ->orderBy('id')
             ->pluck('email');
 
