@@ -22,10 +22,10 @@ use Webkul\Support\Services\CompanyContext;
  * The selector is the `X-Company-Id` header and nothing else. A `company_id`
  * body or query field is deliberately **not** read: plenty of API writes carry
  * one as record data, and treating it as the selector would silently switch the
- * tenant of a request that only meant to set a column. Membership is checked
- * against the user's own allow-list, so a forged id is a 403 and not a context
- * switch; a super admin may select any company, which is the same
- * installation-administrator position they hold in the UI.
+ * tenant of a request that only meant to set a column. The requested company is
+ * checked against `CompanyContext::allowedIds()`, so a forged id is a 403 and not
+ * a context switch. A user who sees every company (`bypass_company_scope`) has
+ * every company in that list, which is the same position they hold in the UI.
  *
  * No header keeps the documented compatibility fallback: the default company,
  * exactly as before, so existing integrations are unaffected until they opt in.
@@ -67,12 +67,12 @@ class ResolveApiCompany
 
         $companyId = (int) $requested;
 
-        if ($user->isSuperAdmin()) {
-            app(CompanyContext::class)->forceActive($companyId);
-
-            return $next($request);
-        }
-
+        // allowedIds() is the only test, with no role-name shortcut. It already
+        // holds every company for a user who sees them all, and CompanyContext
+        // intersects a forced company with this same list, so a separate
+        // isSuperAdmin() branch let an `Admin` (a super-admin *name* without
+        // `bypass_company_scope`) select a company the context then dropped: a
+        // 200 with no company instead of a refusal.
         if (! in_array($companyId, app(CompanyContext::class)->allowedIds(), true)) {
             throw new AuthorizationException(__('You are not a member of the requested company.'));
         }

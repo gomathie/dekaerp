@@ -219,8 +219,32 @@ it('keeps the default company when an API client sends no selector', function ()
         ->assertJson(['company' => (int) $companyA->getKey()]);
 });
 
-it('lets the installation administrator select any company', function () {
+it('lets a user who sees every company select any company', function () {
     $companyB = CompanyHelper::company(['name' => 'Api Admin B', 'is_active' => true]);
+
+    $user = SecurityHelper::authenticateWithPermissions([], bypassCompanyScope: true);
+
+    // Precondition: not a member of B, so only the bypass can make B selectable.
+    expect($user->allowedCompanies()->pluck('companies.id')->all())
+        ->not->toContain((int) $companyB->getKey());
+
+    Route::middleware('api.company')->get('/__api_company_admin_probe', fn () => response()->json([
+        'company' => app(CompanyContext::class)->currentId(),
+    ]));
+
+    $this->actingAs($user)
+        ->getJson('/__api_company_admin_probe', ['X-Company-Id' => $companyB->getKey()])
+        ->assertOk()
+        ->assertJson(['company' => (int) $companyB->getKey()]);
+});
+
+/**
+ * `Admin` is in Role::getSuperAdminRoleNames(), but only `bypass_company_scope`
+ * makes every company visible. The selector used to trust the role name, so this
+ * request was accepted and then resolved to no company at all (200, company null).
+ */
+it('refuses an Admin role holder a company outside their memberships', function () {
+    $companyB = CompanyHelper::company(['name' => 'Api Admin Outside B', 'is_active' => true]);
 
     $user = FilamentHelper::actingAs();
 
@@ -239,12 +263,15 @@ it('lets the installation administrator select any company', function () {
     $user->assignRole($role);
     $user->unsetRelation('roles');
 
-    Route::middleware('api.company')->get('/__api_company_admin_probe', fn () => response()->json([
+    expect($user->isSuperAdmin())->toBeTrue()
+        ->and($user->can('bypass_company_scope'))->toBeFalse('the role sees every company, so this would not test the refusal')
+        ->and($user->allowedCompanies()->pluck('companies.id')->all())->not->toContain((int) $companyB->getKey());
+
+    Route::middleware('api.company')->get('/__api_company_admin_outside_probe', fn () => response()->json([
         'company' => app(CompanyContext::class)->currentId(),
     ]));
 
     $this->actingAs($user)
-        ->getJson('/__api_company_admin_probe', ['X-Company-Id' => $companyB->getKey()])
-        ->assertOk()
-        ->assertJson(['company' => (int) $companyB->getKey()]);
+        ->getJson('/__api_company_admin_outside_probe', ['X-Company-Id' => $companyB->getKey()])
+        ->assertForbidden();
 });

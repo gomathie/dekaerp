@@ -427,7 +427,10 @@ it('creates a company user through the Filament relationship form', function () 
 
     $createdUser = User::query()->where('email', $email)->firstOrFail();
 
-    expect($createdUser->roles()->pluck('roles.id')->all())->toBe([$companyRole->getKey()])
+    // A tenant role picked on the form is stored on the membership since SAAS-01
+    // (TenantRoleAssigner), not in the global model_has_roles pivot.
+    expect(app(MultiCompanyAdminService::class)->effectiveRoleIds($createdUser))->toBe([$companyRole->getKey()])
+        ->and($createdUser->roles()->pluck('roles.id')->all())->toBe([])
         ->and($createdUser->allowedCompanies()->pluck('companies.id')->all())->toBe([$company->getKey()]);
 });
 
