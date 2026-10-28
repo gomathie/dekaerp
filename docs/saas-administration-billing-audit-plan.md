@@ -352,9 +352,15 @@ production change; inventory identifies the future enforcement hook per path.
     Logistics (`plugins/webkul/logistics/src/Services/FleetImporter.php:19`,
     `:63`); it is a SAAS-05C service-boundary enforcement target, not a user-seat
     import.
-- Implemented: eight characterization tests across the two owned test
-  directories plus one company-creation onboarding test; no production behavior
-  or schema changed.
+- Implemented: eight characterization test files (twelve tests) across the two
+  owned test directories; no production behavior or schema changed.
+  *(Correction 2026-10-28: an earlier wording here counted the onboarding test
+  separately from the eight files it belongs to.)* Since then SAAS-01 inverted
+  `MembershipUniquenessCharacterizationTest` and
+  `ResourcePermissionMismatchCharacterizationTest`, SAAS-04 inverted
+  `PluginEnforcementCharacterizationTest`, and SAAS-06 inverted
+  `InvitationUniquenessCharacterizationTest`; see the review block after the
+  SAAS-06 handoff.
 - Files changed (8 test files):
   - `plugins/webkul/security/tests/Feature/SaaSAdministration/GlobalTenantRoleCharacterizationTest.php`
   - `plugins/webkul/security/tests/Feature/SaaSAdministration/ApiDefaultCompanyCharacterizationTest.php`

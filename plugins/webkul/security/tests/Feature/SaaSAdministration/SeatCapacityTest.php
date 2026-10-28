@@ -49,6 +49,30 @@ function seatCapMember(Company $company): User
     return $user;
 }
 
+/**
+ * The installation administrator, signed in and attached to the company.
+ *
+ * A real super admin rather than FilamentHelper::actingAs(), which returns a
+ * user with no permissions: inviting as that user is refused by the role
+ * assignment rules before capacity is ever consulted, so a "refused for lack of
+ * seats" assertion would pass for the wrong reason. Attaching costs no seat -
+ * platform identities are excluded (D-SAAS-03).
+ */
+function seatCapAdministrator(Company $company): User
+{
+    $administrator = User::query()->where('email', 'admin@example.com')->firstOrFail();
+
+    $administrator->allowedCompanies()->syncWithoutDetaching([$company->getKey()]);
+
+    Auth::forgetGuards();
+    Auth::shouldUse('web');
+    Auth::guard('web')->login($administrator);
+
+    expect($administrator->isSuperAdmin())->toBeTrue();
+
+    return $administrator;
+}
+
 function seatCapPendingInvitation(Company $company, array $attributes = []): Invitation
 {
     return Invitation::query()->create([
@@ -125,22 +149,52 @@ it('refuses an invitation when the last seat is already in use', function () {
         seatCapMember($company);
     }
 
-    $superAdmin = FilamentHelper::actingAs();
-    Auth::guard('web')->setUser($superAdmin);
-    Auth::guard('sanctum')->setUser($superAdmin);
+    $superAdmin = seatCapAdministrator($company);
 
     $role = Role::query()
         ->whereRaw('LOWER(name) = ?', [mb_strtolower(Role::COMPANY_ADMIN)])
         ->firstOrFail();
 
+    // The message is pinned: a ValidationException alone would also pass if the
+    // invitation were refused for an unrelated assignment reason.
     expect(fn () => app(UserInvitationService::class)->create(
         $superAdmin,
         fake()->unique()->safeEmail(),
         (int) $company->getKey(),
         [(int) $role->getKey()],
-    ))->toThrow(ValidationException::class);
+    ))->toThrow(ValidationException::class, 'user seats');
 
     expect(Invitation::query()->where('default_company_id', $company->getKey())->count())->toBe(0);
+});
+
+it('does not count a platform support identity as a seat', function () {
+    $company = seatCapCompany();
+
+    // Support access: the installer and Company::created attach platform
+    // administrators to tenants, and D-SAAS-03 excludes them from the count.
+    $superAdmin = seatCapAdministrator($company);
+    seatCapMember($company);
+
+    expect($superAdmin->isSuperAdmin())->toBeTrue()
+        ->and(DB::table('user_allowed_companies')->where('company_id', $company->getKey())->count())->toBe(2)
+        ->and(app(SeatCapacityService::class)->activeMembershipCount($company))->toBe(1);
+});
+
+it('keeps a pending invitation\'s seat when an existing user is attached', function () {
+    $company = seatCapCompany();
+
+    for ($i = 0; $i < 4; $i++) {
+        seatCapMember($company);
+    }
+
+    seatCapPendingInvitation($company);
+
+    $service = app(SeatCapacityService::class);
+
+    // 4 members + 1 reservation = 5: attaching a fifth member would leave the
+    // invitee unable to accept a seat they were promised.
+    expect(fn () => $service->withLockedCompany($company, fn () => $service->assertCanAttachMembership($company)))
+        ->toThrow(ValidationException::class, 'user seats');
 });
 
 it('reserves the seat of a pending invitation', function () {
@@ -188,9 +242,7 @@ it('accepting an invitation does not double count the reserved seat', function (
         seatCapMember($company);
     }
 
-    $superAdmin = FilamentHelper::actingAs();
-    Auth::guard('web')->setUser($superAdmin);
-    Auth::guard('sanctum')->setUser($superAdmin);
+    $superAdmin = seatCapAdministrator($company);
 
     $service = app(UserInvitationService::class);
     $capacity = app(SeatCapacityService::class);
@@ -224,9 +276,7 @@ it('refuses an acceptance that would exceed the limit', function () {
         seatCapMember($company);
     }
 
-    $superAdmin = FilamentHelper::actingAs();
-    Auth::guard('web')->setUser($superAdmin);
-    Auth::guard('sanctum')->setUser($superAdmin);
+    $superAdmin = seatCapAdministrator($company);
 
     $role = Role::query()
         ->whereRaw('LOWER(name) = ?', [mb_strtolower(Role::COMPANY_ADMIN)])
@@ -237,7 +287,7 @@ it('refuses an acceptance that would exceed the limit', function () {
     $invitation = seatCapPendingInvitation($company, ['role_ids' => [(int) $role->getKey()], 'inviter_id' => $superAdmin->getKey()]);
 
     expect(fn () => app(UserInvitationService::class)->accept($invitation, 'Over Limit', 'correct-horse-battery'))
-        ->toThrow(ValidationException::class);
+        ->toThrow(ValidationException::class, 'user seats');
 
     expect(User::query()->where('name', 'Over Limit')->exists())->toBeFalse();
 });
@@ -245,9 +295,7 @@ it('refuses an acceptance that would exceed the limit', function () {
 it('refuses to accept an expired or revoked invitation', function () {
     $company = seatCapCompany();
 
-    $superAdmin = FilamentHelper::actingAs();
-    Auth::guard('web')->setUser($superAdmin);
-    Auth::guard('sanctum')->setUser($superAdmin);
+    $superAdmin = seatCapAdministrator($company);
 
     $role = Role::query()
         ->whereRaw('LOWER(name) = ?', [mb_strtolower(Role::COMPANY_ADMIN)])
@@ -274,6 +322,19 @@ it('refuses to accept an expired or revoked invitation', function () {
         ->toThrow(ValidationException::class);
 });
 
+it('answers a used invitation link with not found', function () {
+    $company = seatCapCompany();
+
+    $accepted = seatCapPendingInvitation($company, ['accepted_at' => now()]);
+    $pending = seatCapPendingInvitation($company);
+
+    // Acceptance used to delete the row, so a reused link was a 404. The row now
+    // survives; the page must still refuse it instead of showing a form that can
+    // only fail. The pending link is the control: the route itself works.
+    $this->get($pending->acceptUrl())->assertOk();
+    $this->get($accepted->acceptUrl())->assertNotFound();
+});
+
 it('never deactivates anyone when a limit is lowered below current usage', function () {
     $company = seatCapCompany(['seat_limit' => 3]);
 
@@ -289,7 +350,7 @@ it('never deactivates anyone when a limit is lowered below current usage', funct
 
 it('records a limit change with the actor and the before/after values', function () {
     $company = seatCapCompany();
-    $superAdmin = FilamentHelper::actingAs();
+    $superAdmin = seatCapAdministrator($company);
 
     $capacity = app(SeatCapacityService::class);
 

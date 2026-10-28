@@ -8,11 +8,6 @@ use Webkul\Support\Models\Company;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
 
-beforeEach(function (): void {
-    TestBootstrapHelper::ensurePluginInstalled('sales');
-    PluginAccess::flush();
-});
-
 /**
  * SAAS-00 characterization: pins a known defect, it does not endorse it.
  *
@@ -28,6 +23,13 @@ beforeEach(function (): void {
  * installed plugin" - that is the upgrade path. The third test was rewritten to
  * assert the configuration seam that now exists.
  */
+beforeEach(function (): void {
+    // At least one plugin must be installed, or "grants every installed plugin"
+    // would compare two empty lists and pass on a bare database.
+    TestBootstrapHelper::ensurePluginInstalled('sales');
+    PluginAccess::flush();
+});
+
 it('grants every installed plugin to a new company', function () {
     $installedPluginIds = DB::table('plugins')
         ->where('is_installed', true)
