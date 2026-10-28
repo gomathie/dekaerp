@@ -216,7 +216,35 @@ Record the user's answer before unblocking dependent packages.
 | SAAS-11 | Payments, allocations, credit and reversals | SAAS-08, D-SAAS-05, D-SAAS-06 | — | blocked | — |
 | SAAS-12 | Platform administration screens | SAAS-03, SAAS-07, SAAS-09/10/11 | — | todo | — |
 | SAAS-13 | Company-administration screens | SAAS-01, SAAS-07, SAAS-09/10/11 | — | todo | — |
-| SAAS-14 | Backfill, shadow mode and release hardening | all implementation packages | — | todo | — |
+| SAAS-15 | Backfill, shadow mode, release hardening and tenant impersonation | All implementation packages | — | todo | — |
+
+Additional requirement: Tenant impersonation
+
+Super Admins and authorized Multi-Company Admins should be able to impersonate a Tenant Admin or Tenant User for troubleshooting, support, and verification purposes.
+
+Requirements:
+
+Allow authorized administrators to select a company/tenant and a specific Tenant Admin or Tenant User to impersonate.
+Make impersonation access a configurable, assignable permission or right, granted only to authorized roles or individual administrators.
+Enforce tenant isolation so administrators can only impersonate users within the companies they are authorized to access.
+Clearly indicate when impersonation is active and identify the original administrator.
+Provide a secure mechanism to end impersonation and return to the original administrator session.
+Record audit logs for impersonation start and end events, including the original administrator, target user, tenant, timestamp, and relevant actions performed during impersonation.
+Prevent impersonation from bypassing tenant-level permissions, security controls, or authorization restrictions.
+Do not expose the target user's password, authentication credentials, or other secrets.
+Require appropriate authorization and, where applicable, re-authentication before starting impersonation.
+Ensure all impersonation activity is auditable and that sensitive or high-risk operations remain subject to appropriate safeguards.
+
+Acceptance criteria:
+
+Super Admins and authorized Multi-Company Admins can impersonate eligible tenant users when granted the required permission.
+Administrators without the assigned permission cannot start impersonation.
+Tenant boundaries and the target user's effective permissions remain enforced.
+The original administrator can securely terminate impersonation and resume their own session.
+Impersonation sessions and relevant actions are recorded in the audit trail.
+Impersonation is covered by automated authorization, tenant-isolation, and session-security tests.
+Implement this as a dedicated permission such as tenant.impersonate, rather than automatically granting it to every administrator. This makes access explicitly assignable and auditable.
+
 
 `SAAS-00` is the only package ready before decisions are answered. After the
 relevant decisions, `SAAS-01` or `SAAS-02` may run alongside `SAAS-03`, but
