@@ -184,7 +184,7 @@ Record the user's answer before unblocking dependent packages.
 | Decision | Question | Recommendation | Answer |
 |---|---|---|---|
 | D-SAAS-01 | Whole-plan, additive-plugin, or base-plus-add-on pricing; which currencies? | Whole-plan prices per currency/interval first | **Accepted 2026-10-26:** whole-plan pricing with a defined included-plugin set; no per-plugin charging initially. Launch plan prices and platform invoices use USD only, represented as explicit currency-specific prices so additional currencies can be added later without implicit FX conversion. |
-| D-SAAS-02 | Can tenant roles differ by company, and how do multi-active mutations work? | Membership roles; privileged mutation requires one explicit company | **Accepted 2026-10-26:** tenant roles are scoped to each company membership and each tenant has its own Company Admins. Super Admin and Multi-Company Admin remain global roles. Super Admin assigns the companies each Multi-Company Admin may manage; privileged mutations target one explicit assigned company. |
+| D-SAAS-02 | Can tenant roles differ by company, and how do multi-active mutations work? | Membership roles; privileged mutation requires one explicit company | **Accepted 2026-10-26:** tenant roles are scoped to each company membership and each tenant has its own Company Admins. Super Admin and Multi-Company Admin remain global roles. Super Admin assigns the companies each Multi-Company Admin may manage; privileged mutations target one explicit assigned company. **Addendum 2026-10-28 (resolution semantics):** tenant permissions are evaluated **record-scoped** — against each record's own `company_id` — never against the session's current company, because `CompanyContext::currentId()` is "first active company, else default" and is a display convention. `hasPermissionTo()` with no company answers only the navigation question, using the session's active companies; policies and services that know a record must call `hasPermissionInCompany()`. List queries still admit every active company (`CompanyScope`) and need the resolver applied per resource — recorded as a cross-package request from SAAS-01. |
 | D-SAAS-03 | Who consumes a seat? | Active tenant memberships plus valid invitations; exclude platform support identities | **Accepted 2026-10-26:** each active membership consumes one seat in that company, including Company Admin and one seat per company for shared users. Valid pending invitations reserve seats. Inactive users and expired/revoked invitations do not count. Global Super Admin/Multi-Company Admin support access is excluded unless the user also receives an ordinary tenant membership. |
 | D-SAAS-04 | What happens over limit or overdue? | Block new seats, apply explicit grace period, never silently deactivate | **Accepted 2026-10-26:** lowering a limit never deactivates existing users; while over limit, block new invitations, activations and membership attachments until usage is reduced or the limit is raised. Overdue tenants retain existing access during a 10-day grace period but cannot add seats or entitlements; after grace they become read-only without data loss, while Super Admin retains recovery access. Company Admin may activate one audited, non-stackable 10-day self-service extension per overdue invoice. Super Admin may grant a separate manual extension. |
 | D-SAAS-05 | Issuer, tax/VAT, numbering, due terms, currency and credit-note rules? | Must be supplied before financial migrations | **Accepted 2026-10-26:** issuer defaults to `DEKA` and is configurable by Super Admin in the administration interface. VAT defaults to 15% and Super Admin may edit or disable it. Posted invoices snapshot issuer identity, applied tax rate and amounts so later configuration changes do not rewrite history. Invoice numbers use `DEKA-INV-{compact year}-{six-digit sequence}` and credit notes use `DEKA-CN-{compact year}-{six-digit sequence}`, where the zero is removed from the four-digit year (`2026 → 226`, `2027 → 227`). Each document type has a separate yearly sequence; posted numbers are unique and never reused. Subscription invoices are Net 7; they become overdue on day 8 and the D-SAAS-04 grace period starts then. Credit notes must reference the original posted invoice, may be full or partial, require a reason, and never rewrite/delete the invoice. Overpayments remain customer credit until allocated or refunded. Super Admin issues credit notes or explicitly delegates/revokes that right for a selected Multi-Company Admin, limited to assigned companies. Currency is USD under D-SAAS-01. |
@@ -199,15 +199,15 @@ Record the user's answer before unblocking dependent packages.
 | Package | Title | Depends on | Safe alongside | Status | Owner / database |
 |---|---|---|---|---|---|
 | SAAS-00 | Baseline inventories and characterization | — | no implementation package | done | Verified 2026-10-27: 12 tests, 68 assertions, 0 failures / `aureuserp_testing_saas_00_verify` |
-| SAAS-01 | Membership-role foundation | SAAS-00, D-SAAS-02, D-SAAS-06 | SAAS-03 | blocked | — |
-| SAAS-02 | Tenant-aware jobs and API company selection | SAAS-00, D-SAAS-02, D-SAAS-07 | SAAS-03 | blocked | — |
-| SAAS-03 | Plugin defaults, dependencies and audited mutations | SAAS-00, D-SAAS-06 | SAAS-01/02 | blocked | — |
-| SAAS-04 | Generic plugin enforcement contract | SAAS-03 | — | todo | — |
+| SAAS-01 | Membership-role foundation | SAAS-00, D-SAAS-02, D-SAAS-06 | SAAS-03 | review (code complete, no suite run yet) | Copilot 2026-10-28, db not yet run |
+| SAAS-02 | Tenant-aware jobs and API company selection | SAAS-00, D-SAAS-02, D-SAAS-07 | SAAS-03 | review (code complete, no suite run yet) | Copilot 2026-10-28, db not yet run |
+| SAAS-03 | Plugin defaults, dependencies and audited mutations | SAAS-00, D-SAAS-06 | SAAS-01/02 | review (code complete, no suite run yet) | Copilot 2026-10-28, db not yet run |
+| SAAS-04 | Generic plugin enforcement contract | SAAS-03 | — | review (code complete, no suite run yet) | Copilot 2026-10-28, db not yet run |
 | SAAS-05A | Plugin enforcement: finance | SAAS-04 | SAAS-05B/C/D | todo | — |
 | SAAS-05B | Plugin enforcement: commercial | SAAS-04 | SAAS-05A/C/D | todo | — |
 | SAAS-05C | Plugin enforcement: operations | SAAS-04 | SAAS-05A/B/D | todo | — |
 | SAAS-05D | Plugin enforcement: people/work tools | SAAS-04 | SAAS-05A/B/C | todo | — |
-| SAAS-06 | Seat limit and invitation lifecycle | SAAS-01, D-SAAS-03, D-SAAS-04 | SAAS-05A/B/C/D | blocked | — |
+| SAAS-06 | Seat limit and invitation lifecycle | SAAS-01, D-SAAS-03, D-SAAS-04 | SAAS-05A/B/C/D | review (code complete, no suite run yet) | Copilot 2026-10-28, db not yet run |
 | SAAS-07 | Onboarding and all seat-enforcement paths | SAAS-06 | — | todo | — |
 | SAAS-08 | Platform-billing plugin foundation | SAAS-00, D-SAAS-01, D-SAAS-05 | completed SAAS-05 slices, SAAS-06/07 | blocked | — |
 | SAAS-09 | Plans, prices and subscriptions | SAAS-08, D-SAAS-04 | — | todo | — |
@@ -417,6 +417,83 @@ assignment; regression fix for the CreateUser/EditUser Company Admin mismatch.
 Filament and API; existing Super Admin, MultiCompanyAdminTest,
 CompanyUserIsolationTest and invitation tests pass.
 
+#### SAAS-01 handoff — 2026-10-28
+
+- Owner / database: Copilot / **no database used** — code written on request, the
+  suite is to be run next. Reserve `aureuserp_testing_saas_01`.
+- Status: **review**, with the explicit caveat that **no test has been executed**.
+  Only `php -l` was run over every changed file (all clean).
+- Decision taken with the user before coding: D-SAAS-02 addendum above —
+  record-scoped resolution, `hasPermissionInCompany()` for policies.
+- Storage chosen: a **companion pivot** (`company_membership_roles`:
+  user + company + role) rather than a `role_id` column on the membership row.
+  Reason: a user may hold more than one tenant role, and a single column would
+  silently drop the second one for anybody who has two today.
+- Platform roles stay in `model_has_roles`. Super Admin, Multi-Company Admin and
+  the install administrator role administer the installation, not one tenant;
+  `Role::getSystemRoleNames()` is the existing predicate, so no new list was
+  invented.
+- `User::hasPermissionTo()` became a **union**: Spatie (global store) first, then
+  the membership store. It can therefore only add to what the previous
+  implementation returned, which is what makes the migration safe to apply to a
+  live installation.
+- Migration 3 is the only data change and is deliberately conservative: each
+  moved role is granted in **every** company the user is a member of (exactly the
+  access they had a second earlier); a user with a tenant role but **no**
+  membership row keeps the global grant and is logged rather than silently
+  stripped. `down()` writes the union back to `model_has_roles`.
+- Known behaviour change, deliberate: after the migration a tenant role is no
+  longer in `model_has_roles`, so `hasRole('Company Admin')` is false for a
+  Company Admin. `isCompanyAdmin()` and `hasPermissionInCompany()` are the
+  supported questions. The one test asserting the old storage
+  (`CompanyAdministratorInvitationTest`) was updated to assert the permission
+  instead.
+- Fixed the audited regression: `EditUser` now sets `resource_permission = global`
+  for Company Admin as well as Multi-Company Admin, matching `CreateUser` and
+  invitation acceptance.
+- Also updated, because the migration would otherwise break them:
+  `MultiCompanyAdminService::scopeAssignableRoles()` (a Company Admin's
+  permissions now come from the membership store, so without the merge they could
+  assign nothing), `userSnapshot()` and the self-administration guard (both read
+  the union, or an MCA editing themselves looks like an escalation), and the
+  Users list/infolist columns (a tenant role would otherwise render as an empty
+  cell).
+- Files changed:
+  - `plugins/webkul/security/database/migrations/2026_10_28_000001_add_unique_membership_to_user_allowed_companies.php`
+  - `plugins/webkul/security/database/migrations/2026_10_28_000002_create_company_membership_roles_table.php`
+  - `plugins/webkul/security/database/migrations/2026_10_28_000003_scope_tenant_roles_to_company_memberships.php`
+  - `plugins/webkul/security/src/Services/TenantRoleResolver.php` (new)
+  - `plugins/webkul/security/src/Services/TenantRoleAssigner.php` (new)
+  - `plugins/webkul/security/src/Models/User.php`
+  - `plugins/webkul/security/src/Services/MultiCompanyAdminService.php`
+  - `plugins/webkul/security/src/Services/UserInvitationService.php`
+  - `plugins/webkul/security/src/SecurityServiceProvider.php` (migration registration + scoped binding)
+  - `plugins/webkul/security/src/Filament/Resources/UserResource.php`
+  - `plugins/webkul/security/src/Filament/Resources/UserResource/Pages/CreateUser.php`
+  - `plugins/webkul/security/src/Filament/Resources/UserResource/Pages/EditUser.php`
+  - `plugins/webkul/security/tests/Feature/SaaSAdministration/TenantRoleScopingTest.php` (new)
+  - `plugins/webkul/security/tests/Feature/Authorization/CompanyAdministratorInvitationTest.php`
+- Tests to run (in this order), one at a time, `-e DB_DATABASE=aureuserp_testing_saas_01`:
+  1. `TenantRoleScopingTest` alone — 3 tests.
+  2. `MultiCompanyAdminTest`, `CompanyUserIsolationTest`,
+     `CompanyAdministratorInvitationTest`, `ResourcePermissionMismatchCharacterizationTest`,
+     `GlobalTenantRoleCharacterizationTest`.
+  3. `--testsuite=SecurityFeature`, then `PluginManagerFeature` and
+     `SupportFeature` (the Users page and `isCompanyAdmin()` are used by guides).
+- Risks to check first when the suite runs:
+  - The `roles` form field is no longer a Filament relationship, so a create/edit
+    that fails to persist roles points at `afterCreate`/`afterSave`, not the form.
+  - `GlobalTenantRoleCharacterizationTest` is expected to stay **green**: the
+    legacy `syncRoles()` path is still honoured by design. Its docblock said
+    SAAS-01 would make it fail; that expectation is now wrong and should be
+    reworded rather than the test deleted.
+- Cross-package request (recorded, not done here): **list restriction**. A
+  multi-active session still lists every active company's rows, so a user who is
+  admin in A and ordinary in B sees B's rows in a combined list and is denied only
+  on the record. `TenantRoleResolver::companyIdsHolding()` is the intended input
+  for a per-resource `whereIn`; adopt it in SAAS-12/13 per resource, not by
+  changing `CompanyScope`.
+
 #### SAAS-02 — tenant-aware jobs and API selection
 
 **Owns:** new Support company-context execution helper/middleware, API company
@@ -431,6 +508,64 @@ representative serialized job/export.
 write fails; prior context returns after success/exception; relevant Support
 and API tests pass.
 
+#### SAAS-02 handoff — 2026-10-28
+
+- Owner / database: Copilot / **no database used** — suite to be run next.
+  Reserve `aureuserp_testing_saas_02`, or reuse the SAAS-01 database (both are
+  `SecurityFeature`/`SupportFeature` work).
+- Status: **review**, no test executed. `php -l` clean; `pint --format agent`
+  passed.
+- **Explicit context** — `CompanyContext::runFor(?int $companyId, Closure)` sets
+  the company, runs the callback and restores the previous context in a
+  `finally`. This is the contract for queued jobs and console commands: the
+  company must be declared, because `CompanyScope` is skipped outside tests in
+  console execution and there is no session to fall back on. `forceActive()` is
+  the same thing without a restore step, for a request lifetime.
+- A forced context deliberately **loses the default-company fallback**:
+  `currentId()` returns the forced company or null, never "their default",
+  otherwise a context that resolved to nothing would quietly act on the wrong
+  tenant.
+- **Fail-closed write** — `BelongsToCompany::creating` now throws
+  `MissingCompanyContextException` when an acting user is present and no company
+  resolves. A null `company_id` is read by `CompanyScope` as *shared*, so the row
+  would appear in every company; this is a cross-tenant leak, not a default.
+  Nobody acting (seeders, installers, console bootstrapping) keeps the old
+  behaviour, because those genuinely create rows outside a request.
+- **API selector** — `ResolveApiCompany`, aliased as `api.company` in
+  `SupportServiceProvider`, applied to every plugin's API group before
+  `plugin.entitlement` so entitlement is judged against the selected company.
+  Reads `X-Company-Id` (or a `company_id` field), checks membership, 403 on a
+  forged id, allows any company for a super admin. No header = the documented
+  compatibility fallback (default company), so existing integrations are
+  unaffected until they opt in.
+- Cross-package edit, recorded as required: `plugin-manager/src/PackageServiceProvider.php`
+  (the API middleware group now reads `throttle:api, api.abilities, api.company,
+  plugin.entitlement:<plugin>`). It is the only place every plugin's API routes
+  are loaded, so the selector could not be applied without it.
+- Files changed:
+  - `plugins/webkul/support/src/Services/CompanyContext.php`
+  - `plugins/webkul/support/src/Traits/BelongsToCompany.php`
+  - `plugins/webkul/support/src/Exceptions/MissingCompanyContextException.php` (new)
+  - `plugins/webkul/support/src/Http/Middleware/ResolveApiCompany.php` (new)
+  - `plugins/webkul/support/src/SupportServiceProvider.php` (alias)
+  - `plugins/webkul/plugin-manager/src/PackageServiceProvider.php` (group)
+  - `plugins/webkul/support/tests/Feature/Tenancy/CompanyExecutionContextTest.php` (new, 8 tests)
+- **Highest risk in this package:** the fail-closed write. Any existing test or
+  seeder that authenticates a user with **no** resolvable company and then
+  creates a tenant model with `autoAssignsCompany() === true` now throws.
+  `SecurityHelper::authenticateWithPermissions()` sets a default company and
+  membership, so the common pattern is safe; that is a reading, not a
+  measurement. If a suite fails with `MissingCompanyContextException`, the
+  fixture is missing a company - do not relax the guard.
+- Deliberately not done here: converting existing jobs/commands to `runFor()`.
+  The card requires a recorded ownership request for jobs outside Support; the
+  helper and its tests are the deliverable, adoption belongs with each owner.
+  (There is no application `Jobs` namespace yet - Chatter's notification is the
+  only `ShouldQueue` class - so adoption is a greenfield step, not a migration.)
+- Tests to run, one at a time: `--testsuite=SupportFeature --filter=CompanyExecutionContextTest`,
+  then the whole `SupportFeature`, then `SecurityFeature` and one plugin suite
+  (`SaleFeature`) as the fail-closed probe.
+
 #### SAAS-03 — plugin defaults and audited mutations
 
 **Owns:** Plugin Manager services/models/provider/form actions, Plugin Manager
@@ -442,6 +577,68 @@ authorization per D-SAAS-06; before/after audit; cache flush.
 
 **Accept:** existing companies unchanged; new company receives exact defaults;
 dependency, forged-write, audit and idempotency tests pass.
+
+#### SAAS-03 handoff — 2026-10-28
+
+- Owner / database: Copilot / **no database used** — code written on request, the
+  suite is to be run next. Reserve `aureuserp_testing_saas_03`.
+- Status: **review**, no test executed. `php -l` clean on all files;
+  `pint --format agent` passed.
+- What changed, and why it was two writers before: the Plugins page action called
+  `$record->companies()->sync(...)` with no authorization re-check and no
+  dependency awareness, while `CompanyContributions::syncGrants()` had its own
+  delete/insert with an authorization check the other lacked. Both now delegate
+  to `PluginEntitlementService`, which owns the transaction, dependency closure,
+  revocation guard, audit record and `PluginAccess::flush()`.
+- Configured defaults: new key `config('plugin-manager.default_company_plugins')`.
+  **`null` keeps today's behaviour** (every installed plugin), so an installation
+  that never sets it is unaffected; an explicit list of plugin names narrows the
+  set for *new* companies only. Provisioning stays purely additive - a narrowed
+  default never revokes an existing grant.
+- Dependency closure: granting a plugin also grants its declared dependencies
+  (`Plugin::getDependenciesFromConfig()`, the live source - the
+  `plugin_dependencies` table exists but nothing writes to it). Only installed
+  dependencies are added.
+- Revocation guard: revoking a plugin that a still-granted plugin depends on is
+  **refused** with the dependents named, rather than silently auto-revoking a set
+  nobody ticked. Revoke the dependent first.
+- Authorization per D-SAAS-06: **Super Admin only** for entitlements. This is a
+  deliberate narrowing - `CompanyContributions::administersInstallation()` used to
+  admit Multi-Company Admins, and the Companies action had no check at all. The
+  service re-checks because the super-admin `Gate::before` skips policies. To
+  restore MCA access, change that one predicate and the service guard together.
+- Grants for plugins **not installed here** are left untouched by a replace, as
+  before: they belong to a plugin this installation does not carry, and dropping
+  them would lose an entitlement that returns as soon as the plugin is installed.
+  They are therefore outside the compared/audited set.
+- Audit: `plugin.entitlement.updated` on the Company (subject), with actor,
+  company, and `before`/`after` `plugin_ids`, written only when the set actually
+  changes.
+- Files changed:
+  - `plugins/webkul/plugin-manager/config/plugin-manager.php` (new)
+  - `plugins/webkul/plugin-manager/src/Services/PluginEntitlementService.php` (new)
+  - `plugins/webkul/plugin-manager/src/Services/CompanyPluginProvisioner.php` (delegates)
+  - `plugins/webkul/plugin-manager/src/CompanyContributions.php` (delegates; super-admin only)
+  - `plugins/webkul/plugin-manager/src/PluginManagerServiceProvider.php` (`->hasConfigFile`)
+  - `plugins/webkul/plugin-manager/src/Filament/Resources/PluginResource.php` (Companies action delegates; hidden for non-super-admins)
+  - `plugins/webkul/plugin-manager/tests/Feature/Entitlements/PluginEntitlementServiceTest.php` (new)
+  - `plugins/webkul/plugin-manager/tests/Feature/Entitlements/DefaultPluginGrantCharacterizationTest.php` (third test rewritten for the config seam)
+- Tests to run, one at a time, `-e DB_DATABASE=aureuserp_testing_saas_03`:
+  1. `--filter=PluginEntitlementServiceTest` — 7 tests.
+  2. `--filter=DefaultPluginGrantCharacterizationTest`.
+  3. `--filter=PluginAccessTest` and `--filter=CompanyModulesTest` (both exercise
+     the paths that now delegate).
+  4. `--testsuite=PluginManagerFeature`, then `SupportFeature` (the company form
+     section is contributed from here).
+- Risks:
+  - The dependency tests mock `dependencyNamesFor()`; a real two-plugin install
+    pair is not exercised because installing plugins costs minutes per plugin in
+    this suite. If a real dependency regresses, it will show in SAAS-05 slices.
+  - `PluginResource`'s Companies action now writes through the service, which
+    validates; a revocation blocked by a dependency surfaces as a validation
+    error in the action, not a silent no-op.
+  - Multi-Company Admin loses the modules section (see above). Confirm this is
+    the intended reading of D-SAAS-06 before release.
 
 #### SAAS-04 — generic plugin enforcement contract
 
@@ -455,6 +652,77 @@ fail-closed no-company semantics.
 **Accept:** a fixture proves hidden navigation, direct route denial, record
 denial and service/job denial; re-enabling restores access. Do not bulk-edit
 real plugins in this package.
+
+#### SAAS-04 handoff — 2026-10-28
+
+- Owner / database: Copilot / **no database used** — the suite is to be run next.
+  Reserve `aureuserp_testing_saas_04` (or reuse the SAAS-03 database, since this
+  is the same plugin and the same process).
+- Status: **review**, no test executed. `php -l` clean; `pint --format agent`
+  passed.
+- What closed the hole: every plugin's `routes/api.php` is loaded by
+  `PackageServiceProvider` inside
+  `['throttle:api', 'api.abilities', 'plugin.entitlement:<plugin>']`, so a plugin
+  cannot forget the guard. `PluginEnforcementCharacterizationTest` was inverted
+  from `assertOk()` to `assertForbidden()` — same request, now denied.
+- Middleware ordering trap, handled explicitly: the group runs *before* the route
+  file's own `auth:sanctum`, so `$request->user()` is null there. The middleware
+  resolves `sanctum` then `web` itself and calls `Auth::setUser()`, because
+  `CompanyContext` reads `auth()->user()` and the default guard is not always
+  `web` on an API request. Without that, an entitled request would read as "no
+  company" and be denied.
+- Contract surface (`Webkul\PluginManager\Support\PluginEntitlement`):
+  `enabledForCurrent()` for navigation, `enabledForCompany()` for a record/policy,
+  `assertForCompany()` for services and jobs, `currentCompanyId()` for the
+  "route carries no record" case. Fail-closed: a null company throws.
+- Exempt manifest: `config('plugin-manager.entitlements.exempt')` lists the nine
+  `->isCore()` plugins (support, security, plugin-manager, partners, chatter,
+  fields, table-views, analytics, full-calendar). Listed explicitly rather than
+  derived so the boundary is readable; forgetting one fails closed.
+- Super admin bypass: `config('plugin-manager.entitlements.super_admin_bypass')`,
+  default true — the installation administrator may hold no membership at all,
+  and Super Admin is also the recovery path. Tenants are still enforced.
+- **Required companion fix (InstallCommand):** installing a plugin now grants it
+  to every existing company (`PluginEntitlementService::grantToEveryCompany()`),
+  called right after the plugin row is marked installed. Without it, a plugin
+  installed after the tenants existed would have been unreachable — previously a
+  missing menu entry, but with routes enforced a **403 for everyone**. This
+  matches what the 2026-10-22 migration preserved: grants are an opt-out from a
+  global default, not an opt-in.
+- No page/resource trait was added on purpose. A trait that defines `canAccess()`
+  collides with `HasPageShield` (a class method beats a trait method, and two
+  traits defining the same method are a fatal error without `insteadof`) — that
+  is the trap this repository already documents. SAAS-05 slices call
+  `PluginEntitlement::enabledForCurrent('<plugin>')` from their own
+  `canAccess()`/`canViewAny()` explicitly.
+- Web routes are **not** auto-guarded: a URL carries no company, and a blanket
+  middleware cannot express "this record belongs to another company". SAAS-05
+  slices add `plugin.entitlement:<plugin>` to their web group where the page has
+  no per-record decision, and a policy check via `assertForCompany()` where it
+  does.
+- Files changed:
+  - `plugins/webkul/plugin-manager/config/plugin-manager.php` (exempt list, bypass flag)
+  - `plugins/webkul/plugin-manager/src/Exceptions/PluginNotEntitledException.php` (new)
+  - `plugins/webkul/plugin-manager/src/Support/PluginEntitlement.php` (new)
+  - `plugins/webkul/plugin-manager/src/Http/Middleware/EnsurePluginIsEntitled.php` (new)
+  - `plugins/webkul/plugin-manager/src/PluginManagerServiceProvider.php` (alias)
+  - `plugins/webkul/plugin-manager/src/PackageServiceProvider.php` (api group)
+  - `plugins/webkul/plugin-manager/src/Console/Commands/InstallCommand.php` (grant on install)
+  - `plugins/webkul/plugin-manager/src/Services/PluginEntitlementService.php` (`grantToEveryCompany`)
+  - `plugins/webkul/plugin-manager/tests/Feature/Entitlements/PluginEntitlementGuardTest.php` (new)
+  - `plugins/webkul/plugin-manager/tests/Feature/Entitlements/PluginEnforcementCharacterizationTest.php` (inverted)
+  - `plugins/webkul/plugin-manager/tests/Feature/Entitlements/PluginEntitlementServiceTest.php` (grant-on-install case)
+- Tests to run, one at a time: `--filter=PluginEntitlementGuardTest`, then
+  `--filter=PluginEnforcementCharacterizationTest`, then `--filter=PluginEntitlementServiceTest`,
+  then the whole `PluginManagerFeature`.
+- **Widest risk in the whole session:** the guard now applies to every plugin's
+  API routes. Other suites that build a company *before* installing the plugin
+  under test would now get a 403 instead of a 200. `TestBootstrapHelper::ensurePluginInstalled()`
+  runs the real install command, which now grants, so the common
+  "install in `beforeEach`, create company in the test" order is safe - but that
+  claim is untested until the run. If a suite fails with 403 on a plugin API, the
+  fixture needs the plugin installed before its company is created, not a
+  relaxation of the guard.
 
 #### SAAS-05A/B/C/D — plugin rollout slices
 
@@ -488,6 +756,73 @@ locked active-membership plus reservation count; audited limit change.
 **Accept:** boundary cases, release-on-expiry/revoke, acceptance without double
 counting, and two-connection last-seat race pass; migration does not deactivate
 an existing over-limit company.
+
+#### SAAS-06 handoff — 2026-10-28
+
+- Owner / database: Copilot / **no database used** — suite to be run next.
+  Reuse `aureuserp_testing_saas_01` (same plugin, same run).
+- Status: **review**, no test executed. `php -l` clean; `pint --format agent`
+  passed.
+- **Seats** — `companies.seat_limit`, `unsignedInteger` nullable, default 5;
+  `null` means unlimited (an approved sold state, D-SAAS-04). The default
+  backfills existing rows in the same statement and deactivates nobody: an
+  over-limit company keeps every membership and simply cannot add more.
+- **Counting** (D-SAAS-03) — one seat per active membership per company
+  (administrators included); a valid pending invitation reserves one; inactive
+  users and accepted/revoked/expired invitations do not count.
+- **Locking** — `SeatCapacityService::withLockedCompany()` takes
+  `lockForUpdate()` on the company row and runs the decision inside it. Both
+  `create()` and `accept()` go through it, so two administrators inviting the
+  last seat serialize instead of both succeeding.
+- **Invitation lifecycle** — `expires_at`, `accepted_at`, `revoked_at`,
+  `revoked_by_id`, a `pending()` scope and `isPending()/isExpired()/isRevoked()/
+  isAccepted()`. **Acceptance now marks the row instead of deleting it**: the row
+  is the only record that someone was invited, and a seat count needs a state to
+  count. `expires_at` is backfilled from `created_at + 7 days`, the window the
+  signed URL already used.
+- **Duplicate protection** — a second pending invitation for the same address and
+  company is refused, checked under the same lock. Deliberately *not* a unique
+  database index: re-inviting after a revoke must stay possible.
+- Ripple effects that had to be updated, each because it assumed the old
+  behaviour: `CompanyAdminContributions` (a surviving row is no longer the same as
+  pending → uses the scope), `MultiCompanyAdminTest` (asserts the invitation is
+  now `accepted` rather than deleted, and reads the tenant role through
+  `effectiveRoleIds()` since SAAS-01 moved it), `InvitationUniquenessCharacterizationTest`
+  (inverted to assert the refusal).
+- New audit events: `security.company.seat_limit_updated` (before/after),
+  `security.user.invitation_revoked`.
+- Not done, by design: wiring capacity into the remaining entry points (company
+  onboarding, user create/activate, membership attach, imports) is **SAAS-07** -
+  `assertCanAccept()` and `assertCanAttachMembership()` are provided and tested
+  here. Capacity messages are English via `__('<sentence>')`; translating them is
+  a SAAS-07 item because the key set is not settled yet.
+- **Not provable in this suite: the two-connection last-seat race.** The lock is
+  implemented and reviewed, but a real race needs two connections; the plan asks
+  for it and it stays open against SAAS-14/shadow mode. Everything else in the
+  acceptance list is a test here.
+- Files changed:
+  - `plugins/webkul/support/database/migrations/2026_10_28_000004_add_seat_limit_to_companies_table.php` (new)
+  - `plugins/webkul/support/src/SupportServiceProvider.php` (registration)
+  - `plugins/webkul/security/database/migrations/2026_10_28_000005_add_lifecycle_to_user_invitations_table.php` (new)
+  - `plugins/webkul/security/src/Services/SeatCapacityService.php` (new)
+  - `plugins/webkul/security/src/Services/UserInvitationService.php`
+  - `plugins/webkul/security/src/Models/Invitation.php`
+  - `plugins/webkul/security/src/CompanyAdminContributions.php`
+  - `plugins/webkul/security/src/SecurityServiceProvider.php` (registration)
+  - `plugins/webkul/security/tests/Feature/SaaSAdministration/SeatCapacityTest.php` (new, 12 tests)
+  - `plugins/webkul/security/tests/Feature/SaaSAdministration/InvitationUniquenessCharacterizationTest.php`
+  - `plugins/webkul/security/tests/Feature/Authorization/MultiCompanyAdminTest.php`
+- Tests to run, one at a time: `--filter=SeatCapacityTest`, then
+  `--filter=InvitationUniquenessCharacterizationTest`, then
+  `--filter=MultiCompanyAdminTest`, `--filter=CompanyAdministratorInvitationTest`,
+  then the whole `SecurityFeature`.
+- Watch for, when the suite runs: `CompanyAdministratorInviter` is untouched, but
+  it creates invitations through this service, so a company whose seat limit is
+  5 and which already has five members will now report `INVITE_FAILED` for its
+  own onboarding invitation. That is the intended rule (a seat is a seat) and it
+  is why the default of 5 matters - but it is the behaviour most likely to
+  surprise, and SAAS-07 owns surfacing it as a capacity message rather than a
+  generic failure.
 
 #### SAAS-07 — onboarding and all seat-enforcement paths
 

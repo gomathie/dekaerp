@@ -230,8 +230,12 @@ class MultiCompanyAdminService
                 );
         }
 
-        $permissionNames = $actor->getAllPermissions()
-            ->pluck('name')
+        $permissionNames = collect($actor->getAllPermissions()->pluck('name'))
+            // A tenant role's permissions are not on the user's global roles any
+            // more, so without this a Company Admin could assign only roles that
+            // grant nothing at all.
+            ->merge(app(TenantRoleResolver::class)->permissionNamesFor($actor))
+            ->unique()
             ->filter(fn (string $permission): bool => ! $this->deniesAbility($permission))
             ->values()
             ->all();
@@ -332,7 +336,10 @@ class MultiCompanyAdminService
         }
 
         if ($target && $actor->isMultiCompanyAdmin() && $actor->is($target)) {
-            $currentRoleIds = $target->roles()->pluck('roles.id')->map(fn ($id): int => (int) $id)->sort()->values()->all();
+            // Compared against both stores. Reading only the global pivot would
+            // make a Multi-Company Admin's own tenant roles look like an attempt
+            // to escalate, every time they edited themselves.
+            $currentRoleIds = $this->effectiveRoleIds($target);
             $currentCompanyIds = $this->assignedCompanyIds($target);
 
             sort($roleIds);
@@ -345,6 +352,33 @@ class MultiCompanyAdminService
                 ]);
             }
         }
+    }
+
+    /**
+     * Every role the user holds, global and per company.
+     *
+     * The audit's before/after and the Users page both need the whole set: after
+     * the membership migration a tenant role is not in `model_has_roles`, so a
+     * global-only read would report "no roles" for a company administrator.
+     *
+     * @return array<int, int>
+     */
+    public function effectiveRoleIds(User $user): array
+    {
+        $globalRoleIds = $user->roles()
+            ->pluck('roles.id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+
+        $tenantRoleIds = app(TenantRoleResolver::class)->supported()
+            ? app(TenantRoleResolver::class)->roleIdsFor($user)
+            : [];
+
+        return collect(array_merge($globalRoleIds, $tenantRoleIds))
+            ->unique()
+            ->sort()
+            ->values()
+            ->all();
     }
 
     public function assignedCompanyIds(User $user): array
@@ -401,7 +435,7 @@ class MultiCompanyAdminService
     public function userSnapshot(User $user): array
     {
         return [
-            'role_ids'           => $user->roles()->pluck('roles.id')->map(fn ($id): int => (int) $id)->sort()->values()->all(),
+            'role_ids'           => $this->effectiveRoleIds($user),
             'company_ids'        => $this->assignedCompanyIds($user),
             'default_company_id' => $user->default_company_id,
             'is_active'          => (bool) $user->is_active,

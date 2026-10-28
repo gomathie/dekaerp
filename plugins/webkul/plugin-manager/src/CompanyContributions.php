@@ -6,7 +6,7 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Schemas\Components\Section;
 use Illuminate\Support\Facades\DB;
 use Webkul\PluginManager\Models\Plugin;
-use Webkul\PluginManager\Support\PluginAccess;
+use Webkul\PluginManager\Services\PluginEntitlementService;
 use Webkul\Security\Models\User;
 use Webkul\Support\Filament\Resources\CompanyResource\Support\CompanySchemaRegistry;
 use Webkul\Support\Models\Company;
@@ -82,10 +82,10 @@ class CompanyContributions
     /**
      * Who may decide a company's modules.
      *
-     * Entitlement is an installation-level decision, so a Company Admin must
-     * not be able to grant their own company a module. Filament does not save a
-     * hidden component, and the write re-checks anyway because the super-admin
-     * Gate::before skips policies entirely.
+     * Entitlement is an installation-level decision (D-SAAS-06): Super Admin
+     * only, so neither a Company Admin nor Multi-Company Admin staff can grant
+     * a module. Filament does not save a hidden component, and the write
+     * re-checks anyway because the super-admin Gate::before skips policies.
      */
     protected static function administersInstallation(): bool
     {
@@ -95,7 +95,7 @@ class CompanyContributions
             return false;
         }
 
-        return $user->isSuperAdmin() || $user->isMultiCompanyAdmin();
+        return $user->isSuperAdmin();
     }
 
     /**
@@ -115,47 +115,21 @@ class CompanyContributions
      *
      * Public because it is the operation, not an implementation detail of the
      * form: it carries its own authorization check, so any caller gets the same
-     * answer the form does.
+     * answer the form does. The write itself - dependency closure, revocation
+     * guard, transaction, audit - belongs to PluginEntitlementService.
+     *
+     * An unauthorized caller is refused silently rather than by exception: this
+     * runs inside a Filament save, and an exception there would surface as a
+     * broken form for someone who simply cannot see the section.
      *
      * @param  array<int, mixed>  $pluginIds
      */
     public static function syncGrants(Company $company, array $pluginIds): void
     {
-        // Entitlement is an installation-level decision. Filament will not save
-        // a hidden component, but this re-checks rather than trusting that,
-        // because the super-admin Gate::before skips policies entirely and a
-        // forged form payload must not land either.
         if (! static::administersInstallation()) {
             return;
         }
 
-        $state = $pluginIds;
-
-        $installed = Plugin::query()->where('is_installed', true)->pluck('id');
-
-        // Only installed plugins can be granted, and only installed plugins are
-        // revoked - a grant for something not installed here is left untouched
-        // rather than silently dropped.
-        $wanted = $installed
-            ->intersect(array_map('intval', $state))
-            ->values();
-
-        DB::table('company_plugin')
-            ->where('company_id', $company->getKey())
-            ->whereIn('plugin_id', $installed)
-            ->delete();
-
-        if ($wanted->isNotEmpty()) {
-            DB::table('company_plugin')->insert(
-                $wanted->map(fn (int $pluginId): array => [
-                    'company_id' => $company->getKey(),
-                    'plugin_id'  => $pluginId,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ])->all()
-            );
-        }
-
-        PluginAccess::flush();
+        app(PluginEntitlementService::class)->syncForCompany($company, $pluginIds);
     }
 }

@@ -21,6 +21,7 @@ use Webkul\Support\Database\Dialects\DatabaseDialect;
 use Webkul\Support\Database\Dialects\MySqlDialect;
 use Webkul\Support\Database\Dialects\PostgresDialect;
 use Webkul\Support\Http\Controllers\CompanyContextController;
+use Webkul\Support\Http\Middleware\ResolveApiCompany;
 use Webkul\Support\Livewire\QuickNavigation;
 use Webkul\Support\Services\CompanyContext;
 use Webkul\Support\Services\GuideLibrary;
@@ -82,6 +83,8 @@ class SupportServiceProvider extends PackageServiceProvider
                 '2026_07_30_110000_null_company_on_utm_campaigns',
                 '2026_08_03_120000_create_sequences_table',
                 '2026_10_26_000001_activate_zambian_kwacha_currency',
+                // SAAS-06: seats are a per-company limit. `null` = unlimited.
+                '2026_10_28_000004_add_seat_limit_to_companies_table',
             ])
             ->runsMigrations()
             ->hasSettings([
@@ -165,6 +168,12 @@ class SupportServiceProvider extends PackageServiceProvider
         });
 
         $this->app->scoped(CompanyContext::class);
+
+        // Applied to every plugin's API route file, before the plugin
+        // entitlement guard, so the selected company is what entitlement is
+        // judged against. Aliased here rather than in bootstrap/app.php so the
+        // middleware ships with the plugin that owns CompanyContext.
+        $this->app['router']->aliasMiddleware('api.company', ResolveApiCompany::class);
 
         // Scoped: guide.json is around 620KB, so it is decoded once per request
         // rather than once per page object asking for it.

@@ -32,6 +32,11 @@ class AcceptInvitation extends SimplePage
     {
         $this->invitationModel = Invitation::findOrFail($this->invitation);
 
+        // Acceptance used to delete the row, so a used link was a 404. The row
+        // now survives as a record, and without this an accepted, revoked or
+        // expired link would show the form only to fail on submit.
+        abort_unless($this->invitationModel->isPending(), 404);
+
         $this->form->fill([
             'email' => $this->invitationModel->email,
         ]);

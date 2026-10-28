@@ -24,9 +24,12 @@ require_once __DIR__.'/../../../../support/tests/Helpers/CompanyHelper.php';
  * "supervisor in A, ordinary in B". One permission therefore resolves in every
  * company the user belongs to.
  *
- * SAAS-01 (membership-role foundation) must make this test fail by design. When
- * it does, invert the expectation deliberately - do not weaken production code
- * to keep this green.
+ * SAAS-01 (membership-role foundation) added `company_membership_roles`, but
+ * this path still behaves exactly as described: `syncRoles()` writes the global
+ * store, and `User::hasPermissionTo()` unions that store with the membership one
+ * on purpose, so a pre-migration or unscoped assignment keeps working. The
+ * per-company distinction is covered by TenantRoleScopingTest instead. Do not
+ * delete this test: it pins the compatibility half of the design.
  */
 beforeEach(function (): void {
     Auth::forgetGuards();

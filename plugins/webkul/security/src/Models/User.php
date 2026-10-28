@@ -25,6 +25,7 @@ use Webkul\Partner\Models\Partner;
 use Webkul\Security\Enums\PermissionType;
 use Webkul\Security\Services\MultiCompanyAdminService;
 use Webkul\Security\Services\SecurityAuditLogger;
+use Webkul\Security\Services\TenantRoleResolver;
 use Webkul\Security\Support\OwnerSource;
 use Webkul\Security\Traits\HasOwnershipScope;
 use Webkul\Support\Models\Company;
@@ -124,25 +125,48 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
      * fallback: callers that mean "this person administers something" compose
      * the three predicates themselves, so neither of the wider roles can be
      * mistaken for a tenant-scoped one. See Role::COMPANY_ADMIN.
+     *
+     * Since tenant roles live on company memberships, pass the company whose
+     * administration is being judged. With no company this answers "somewhere",
+     * which is what navigation and the guide picker want - never authorization
+     * for a record. The global store is still consulted first because that is
+     * where a pre-migration assignment, and any user with no membership row,
+     * still lives.
      */
-    public function isCompanyAdmin(): bool
+    public function isCompanyAdmin(?int $companyId = null): bool
     {
-        return $this->getRoleNames()
-            ->contains(fn (string $name): bool => mb_strtolower(trim($name)) === mb_strtolower(Role::COMPANY_ADMIN));
+        $matchesCompanyAdmin = fn (string $name): bool => mb_strtolower(trim($name)) === mb_strtolower(Role::COMPANY_ADMIN);
+
+        if ($this->getRoleNames()->contains($matchesCompanyAdmin)) {
+            return true;
+        }
+
+        if (! app(TenantRoleResolver::class)->supported()) {
+            return false;
+        }
+
+        $resolver = app(TenantRoleResolver::class);
+
+        return $companyId === null
+            ? $resolver->hasRoleInAnyCompany($this, Role::COMPANY_ADMIN)
+            : $resolver->hasRoleInCompany($this, Role::COMPANY_ADMIN, $companyId);
     }
 
-    public function hasPermissionTo($permission, ?string $guardName = null): bool
+    /**
+     * A permission, answered for one company.
+     *
+     * This is the check a policy or a service must use when a record's company
+     * is known. Platform roles and directly assigned permissions are
+     * installation-wide and therefore count in every company; tenant roles count
+     * only where the membership grants them.
+     */
+    public function hasPermissionInCompany($permission, int $companyId): bool
     {
         if (! $this->is_active) {
             return false;
         }
 
-        $permissionName = match (true) {
-            $permission instanceof \BackedEnum                 => (string) $permission->value,
-            is_object($permission) && isset($permission->name) => (string) $permission->name,
-            is_string($permission)                             => $permission,
-            default                                            => null,
-        };
+        $permissionName = $this->normalizePermissionName($permission);
 
         if (
             $permissionName !== null
@@ -152,7 +176,91 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
             return false;
         }
 
-        return $this->hasPermissionToWithoutMultiCompanyRestrictions($permission, $guardName);
+        if ($this->hasPermissionToWithoutMultiCompanyRestrictions($permission)) {
+            return true;
+        }
+
+        if ($permissionName === null || ! app(TenantRoleResolver::class)->supported()) {
+            return false;
+        }
+
+        return app(TenantRoleResolver::class)->holdsAbility($this, $permissionName, $companyId);
+    }
+
+    public function hasPermissionTo($permission, ?string $guardName = null): bool
+    {
+        if (! $this->is_active) {
+            return false;
+        }
+
+        $permissionName = $this->normalizePermissionName($permission);
+
+        if (
+            $permissionName !== null
+            && $this->isMultiCompanyAdmin()
+            && app(MultiCompanyAdminService::class)->deniesAbility($permissionName)
+        ) {
+            return false;
+        }
+
+        /*
+         * Two sources, unioned on purpose. Spatie answers for the global store -
+         * platform roles, direct permissions, and any tenant role the migration
+         * deliberately left global because the user has no membership row.
+         * `company_membership_roles` answers for tenant roles granted per
+         * company. Taking the union means this can only ever add to what the
+         * previous implementation returned, so the migration cannot lock a user
+         * out of something they held a moment before.
+         *
+         * With no company in scope this is the navigation question, so it
+         * considers the companies active in the session, falling back to all
+         * memberships outside a web request.
+         */
+        if ($this->hasPermissionToWithoutMultiCompanyRestrictions($permission, $guardName)) {
+            return true;
+        }
+
+        if ($permissionName === null || ! app(TenantRoleResolver::class)->supported()) {
+            return false;
+        }
+
+        return app(TenantRoleResolver::class)->holdsAbility($this, $permissionName);
+    }
+
+    /**
+     * Every role name that applies to this user, from both stores.
+     *
+     * The Users list and infolist show roles, and after the migration a tenant
+     * role is no longer in `model_has_roles`, so `roles.name` alone would show
+     * an empty column for every tenant user.
+     *
+     * @return array<int, string>
+     */
+    public function effectiveRoleNames(): array
+    {
+        $global = $this->getRoleNames()->all();
+
+        if (! app(TenantRoleResolver::class)->supported()) {
+            return array_values($global);
+        }
+
+        $tenant = app(TenantRoleResolver::class)->roleNamesFor($this);
+
+        return collect(array_merge($global, $tenant))
+            ->unique()
+            ->sort()
+            ->values()
+            ->all();
+    }
+
+    protected function normalizePermissionName($permission): ?string
+    {
+        return match (true) {
+            $permission instanceof \BackedEnum                 => (string) $permission->value,
+            is_object($permission) && isset($permission->name) => (string) $permission->name,
+            is_string($permission)                             => $permission,
+            default                                            => null,
+        };
     }
 
     public function creator(): BelongsTo

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\ValidationException;
 use Webkul\Security\Models\Invitation;
 use Webkul\Security\Models\Role;
 use Webkul\Security\Models\User;
@@ -14,14 +15,15 @@ use Webkul\Support\Models\Company;
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
 
 /**
- * SAAS-00 characterization: pins a known defect, it does not endorse it.
+ * SAAS-00 characterization, **inverted by SAAS-06**.
  *
- * Invitation uniqueness covers only existing `users.email` — multiple pending
- * invitations for the same email/company are accepted without error. There is
- * also no expiry tracking beyond the signed-URL timeout.
- *
- * SAAS-06 owns invitation lifecycle (status, expiry, revocation, duplicate
- * protection) and must invert the duplicate expectation.
+ * It used to pin that invitation uniqueness covered only existing `users.email`,
+ * so a second pending invitation for the same address and company was accepted
+ * without error. SAAS-06 added the lifecycle (`pending`/`accepted`/`revoked`/
+ * `expired`) and duplicate-pending protection, so the first test now asserts the
+ * refusal and the second still pins that the database carries no *unique* index
+ * on `email` (the protection is a locked service check, not a constraint that
+ * would forbid re-inviting an address after a revoke).
  *
  * See: docs/saas-administration-billing-audit-plan.md § Known related defects.
  */
@@ -39,7 +41,7 @@ afterEach(function (): void {
     Auth::forgetGuards();
 });
 
-it('allows duplicate pending invitations for the same email', function () {
+it('refuses a duplicate pending invitation for the same email and company', function () {
     $superAdmin = User::query()->where('email', 'admin@example.com')->firstOrFail();
 
     Auth::forgetGuards();
@@ -77,24 +79,20 @@ it('allows duplicate pending invitations for the same email', function () {
     );
 
     expect($firstInvitation)->toBeInstanceOf(Invitation::class)
-        ->and($firstInvitation->email)->toBe($email);
+        ->and($firstInvitation->email)->toBe($email)
+        ->and($firstInvitation->expires_at)->not->toBeNull();
 
-    // The defect: a second invitation for the same email succeeds without error.
-    $secondInvitation = $service->create(
+    // The inversion: a second invitation for the same address and company is now
+    // refused while the first is still pending, so the customer cannot be
+    // promised two seats for one person.
+    expect(fn () => $service->create(
         $superAdmin,
         $email,
         $company->getKey(),
         [$tenantRole->getKey()],
-    );
+    ))->toThrow(ValidationException::class);
 
-    expect($secondInvitation)->toBeInstanceOf(Invitation::class)
-        ->and($secondInvitation->email)->toBe($email)
-        ->and($secondInvitation->getKey())->not->toBe($firstInvitation->getKey());
-
-    $pendingCount = Invitation::query()->where('email', $email)->count();
-
-    // Two pending invitations for the same email — the defect.
-    expect($pendingCount)->toBe(2);
+    expect(Invitation::query()->where('email', $email)->count())->toBe(1);
 });
 
 it('confirms the invitations table has no unique constraint on email', function () {

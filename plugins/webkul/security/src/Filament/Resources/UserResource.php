@@ -147,14 +147,22 @@ class UserResource extends Resource
                                     ->schema([
                                         Select::make('roles')
                                             ->label(__('security::filament/resources/user.form.sections.permissions.fields.roles'))
-                                            ->relationship(
-                                                'roles',
-                                                'name',
-                                                fn (Builder $query): Builder => self::scopeAssignableRoles($query),
-                                            )
+                                            /*
+                                             * Deliberately not `->relationship('roles')`.
+                                             * Tenant roles live on company memberships, so the
+                                             * global pivot is only half the answer, and letting
+                                             * Filament sync it would detach every tenant role the
+                                             * user already holds the moment the form is saved.
+                                             * TenantRoleAssigner writes both stores.
+                                             */
+                                            ->options(fn (): array => self::assignableRoleOptions())
                                             ->multiple()
                                             ->required()
                                             ->preload()
+                                            ->dehydrated(false)
+                                            ->afterStateHydrated(function (Select $component, ?User $record): void {
+                                                $component->state($record ? self::currentRoleIds($record) : []);
+                                            })
                                             ->rule(function (?User $record) {
                                                 return function (string $attribute, $value, Closure $fail) use ($record): void {
                                                     try {
@@ -336,8 +344,10 @@ class UserResource extends Resource
                     ->label(__('security::filament/resources/user.table.columns.teams'))
                     ->badge()
                     ->listWithLineBreaks(),
-                TextColumn::make('roles.name')
-                    ->label(__('security::filament/resources/user.table.columns.role')),
+                TextColumn::make('effective_role_names')
+                    ->label(__('security::filament/resources/user.table.columns.role'))
+                    ->listWithLineBreaks()
+                    ->state(fn (User $record): array => $record->effectiveRoleNames()),
                 TextColumn::make('resource_permission')
                     ->label(__('security::filament/resources/user.table.columns.resource-permission'))
                     ->formatStateUsing(fn (PermissionType $state) => $state->getLabel())
@@ -519,11 +529,12 @@ class UserResource extends Resource
 
                                 Section::make(__('security::filament/resources/user.infolist.sections.permissions.title'))
                                     ->schema([
-                                        TextEntry::make('roles.name')
+                                        TextEntry::make('effective_role_names')
                                             ->icon('heroicon-o-key')
                                             ->placeholder('—')
                                             ->label(__('security::filament/resources/user.infolist.sections.permissions.entries.roles'))
                                             ->listWithLineBreaks()
+                                            ->state(fn (User $record): array => $record->effectiveRoleNames())
                                             ->formatStateUsing(fn ($state) => ucfirst($state))
                                             ->bulleted(),
                                         TextEntry::make('teams.name')
@@ -674,6 +685,30 @@ class UserResource extends Resource
         }
 
         return app(MultiCompanyAdminService::class)->scopeAssignableCompanies($query, $actor);
+    }
+
+    /**
+     * Roles an actor may hand out, as Filament select options.
+     *
+     * @return array<int, string>
+     */
+    protected static function assignableRoleOptions(): array
+    {
+        return static::scopeAssignableRoles(Role::query())
+            ->orderBy('name')
+            ->pluck('name', 'id')
+            ->all();
+    }
+
+    /**
+     * Every role the user holds today, from both stores, so editing a user does
+     * not present a half-filled role list and then save it back.
+     *
+     * @return array<int, int>
+     */
+    public static function currentRoleIds(User $record): array
+    {
+        return app(MultiCompanyAdminService::class)->effectiveRoleIds($record);
     }
 
     protected static function scopeAssignableRoles(Builder $query): Builder

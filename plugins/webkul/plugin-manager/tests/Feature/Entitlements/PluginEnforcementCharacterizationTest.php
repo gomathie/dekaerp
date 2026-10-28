@@ -9,19 +9,23 @@ require_once __DIR__.'/../../../../support/tests/Helpers/SecurityHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
 
 /**
- * SAAS-00 characterization: this pins today's behavior, not the desired rule.
+ * SAAS-00 characterization, **inverted by SAAS-04**.
  *
- * Plugin grants can be revoked per company, but plugin routes and policies do
- * not yet enforce that decision. SAAS-04 must invert the response expectation
- * once a shared enforcement boundary protects HTTP, Filament, and service
- * entry points.
+ * Plugin grants can be revoked per company. Until SAAS-04 the routes did not
+ * enforce that decision - this test used to assert `assertOk()` on a revoked
+ * grant, which is the "looks gated and is not" failure. The API route group now
+ * carries `plugin.entitlement:<plugin>`, so the same request is denied.
+ *
+ * Kept rather than deleted: it is the record of the hole and the proof that it
+ * closed. The full contract (exempt plugins, super admin, no-company, record
+ * assertions) lives in PluginEntitlementGuardTest.
  */
 beforeEach(function (): void {
     TestBootstrapHelper::ensurePluginInstalled('sales');
     PluginAccess::flush();
 });
 
-it('allows a sales API request after the current company loses its sales grant', function () {
+it('denies a sales API request after the current company loses its sales grant', function () {
     $user = SecurityHelper::authenticateWithPermissions(['view_any_sale_order']);
     $companyId = (int) $user->default_company_id;
     $sales = Plugin::query()->where('name', 'sales')->firstOrFail();
@@ -49,5 +53,5 @@ it('allows a sales API request after the current company loses its sales grant',
     expect(PluginAccess::enabledFor('sales', $companyId))->toBeFalse();
 
     $this->getJson(route('admin.api.v1.sales.orders.index'))
-        ->assertOk();
+        ->assertForbidden();
 });

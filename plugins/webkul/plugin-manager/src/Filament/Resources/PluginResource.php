@@ -36,7 +36,8 @@ use Webkul\PluginManager\Console\Commands\UninstallCommand;
 use Webkul\PluginManager\Filament\Resources\PluginResource\Pages\ListPlugins;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Package;
-use Webkul\PluginManager\Support\PluginAccess;
+use Webkul\PluginManager\Services\PluginEntitlementService;
+use Webkul\Security\Models\User;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Models\Company;
 
@@ -143,7 +144,9 @@ class PluginResource extends Resource
                         ->label(__('plugin-manager::filament/resources/plugin.actions.companies.title'))
                         ->icon('heroicon-o-building-office-2')
                         ->color('info')
-                        ->visible(fn ($record): bool => (bool) $record->is_installed)
+                        ->visible(fn ($record): bool => (bool) $record->is_installed
+                            && auth()->user() instanceof User
+                            && auth()->user()->isSuperAdmin())
                         ->modalHeading(fn ($record): string => __('plugin-manager::filament/resources/plugin.actions.companies.heading', [
                             'name' => ucfirst($record->name),
                         ]))
@@ -163,11 +166,15 @@ class PluginResource extends Resource
                             'company_ids' => $record->companies()->pluck('companies.id')->all(),
                         ])
                         ->action(function ($record, array $data): void {
-                            $record->companies()->sync($data['company_ids'] ?? []);
-
-                            // The grants are cached per request, so a stale read
-                            // would otherwise survive until the next one.
-                            PluginAccess::flush();
+                            // One writer for company_plugin: this action and the
+                            // modules section on the company form both go through
+                            // PluginEntitlementService, so dependency closure,
+                            // authorization, the audit record and the cache flush
+                            // cannot differ between the two screens.
+                            app(PluginEntitlementService::class)->syncForPlugin(
+                                $record,
+                                $data['company_ids'] ?? [],
+                            );
 
                             Notification::make()
                                 ->success()
