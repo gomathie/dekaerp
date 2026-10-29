@@ -23,6 +23,15 @@ use Webkul\Support\Exceptions\CompanyMismatchException;
  */
 trait InheritsParentCompany
 {
+    /**
+     * The attribute holding the parent's key, for code outside the model that
+     * must not decide the company itself (HasCompanyDefault in factories).
+     */
+    public static function parentCompanyKey(): string
+    {
+        return static::$parentCompanyKey;
+    }
+
     public static function bootInheritsParentCompany(): void
     {
         static::saving(function (Model $model): void {
