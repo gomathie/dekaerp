@@ -375,13 +375,60 @@ heavier on save, for a Super Admin only.
 **Rollback.** Drop the `->rule(...)` and the `wasRecentlyCreated` branch in
 `CompanyContributions`. The service methods are additive.
 
+#### Company switcher restricted to installation staff — 2026-10-29 (commit `57687b905`)
+
+**Why.** This is a user decision, taken while preparing to onboard a client
+from a different sector. Any user who belonged to several companies could
+widen one view across them through the switcher, and `company-context/set`
+accepted the switch from any active user.
+
+**How.**
+
+- `CompanyContext::canSwitchCompanies()` holds the rule: an active Super
+  Admin, or a Multi-Company Admin. The second was confirmed by the user,
+  since DEKA staff work across the clients assigned to them.
+- `SetCompanyContextRequest::authorize()` refuses everyone else with a 403,
+  for both a switch and a reset.
+- The render hook passes `canSwitch` to the view. Everyone else sees their
+  company's name with no form.
+- The internal, self-restoring context changes in `StopLinkService` and
+  `Logistics\Support\CompanyStorage` are untouched.
+
+**Benefit.** A client user can no longer change which companies are active,
+from the UI or by posting the form by hand.
+
+**Trade-off / risk.**
+
+- A client user who holds several memberships is now limited to their
+  default company. To move them, change their default company.
+- A session that already holds several active companies keeps them until
+  that session ends. Only staff can write the key from now on.
+
+**Verification actually run.** `CompanySwitcherTest`, five tests: a client
+user is refused a switch and a reset, a Super Admin can switch, and the
+header has no form for a client user but has one for a Super Admin. **5
+passed, 15 assertions.** The existing Multi-Company Admin switch tests in
+`MultiCompanyAdminTest` are unchanged. The full SupportFeature rerun is in
+the table below.
+
+**Rollback.** Revert `57687b905`.
+
+**Also in this round.**
+
+- `MustChangePasswordTest` fix (`4b2e6e1bd`).
+- Production merged into develop (`52fccc235`, no conflicts), so the next
+  deploy merges cleanly.
+- The two stop-link views that merge brought back (`form`, `landing`) were
+  deleted. Develop replaced them with `show`, `done` and `expired`, and
+  nothing renders them.
+
 ### Full-suite runs — 2026-10-29 (`aureuserp_testing_saas_review`)
 
 | Suite | Result |
 |---|---|
 | PluginManagerFeature | 42 passed, 133 assertions, 0 failures |
 | SecurityFeature | 107 passed, 2 failed (355 assertions, 1,088 s). Both failures were in `MustChangePasswordTest`, a test defect present since 2026-10-21 and unrelated to SAAS: its fake `$next` returned a string, which `RequirePasswordChange::handle()`'s `Response` return type rejects before any assertion runs. The fake now returns `response('passed-through')` and the test asserts the body. File rerun: 47 passed, 131 assertions (includes `MultiCompanyAdminTest`, which the file `require`s), 0 failures. |
-| SupportFeature | pending |
+| SupportFeature | First run: 185 passed, 2 failed (931 assertions, 1,783 s). Both failures were stale structure snapshots, `security.json` and `support.json`, from two intended changes: the company form's Administrator section (`administrator_email`, 2026-10-23) and SAAS-01's `effective_role_names` replacing `roles.name` on the user infolist. Both fixtures were deleted and re-recorded from the full suite, per the snapshot test's own rule. Re-run: pending. |
 | SaleFeature | pending |
 | PlatformBillingFeature | pending |
 

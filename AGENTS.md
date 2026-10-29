@@ -1436,6 +1436,13 @@ log named):
     shortcut produced a 200 with no company.
   - Guests pass through `api.company` and `plugin.entitlement`, so the route's
     `auth:sanctum` answers 401 rather than 403.
+  - Only installation staff switch company (user decision, 2026-10-29): a
+    Super Admin, or a Multi-Company Admin within their assigned companies.
+    Clients are unrelated businesses, so their own users stay in their
+    default company. One rule, `CompanyContext::canSwitchCompanies()`, which
+    `SetCompanyContextRequest` **enforces** (the switch is a plain POST) and
+    the render hook only uses to hide the control. Tests:
+    `support/tests/Feature/Tenancy/CompanySwitcherTest.php`.
   - A forced company context intersects with membership whenever a user is
     acting, including a user with no memberships at all.
   - An accepted, revoked or expired invitation link answers 404. The
