@@ -5,12 +5,14 @@ namespace Webkul\Product\Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Webkul\Product\Models\Category;
 use Webkul\Security\Models\User;
+use Webkul\Support\Database\Factories\Concerns\HasCompanyDefault;
 
 /**
  * @extends Factory<Category>
  */
 class CategoryFactory extends Factory
 {
+    use HasCompanyDefault;
     /**
      * The name of the factory's corresponding model.
      *

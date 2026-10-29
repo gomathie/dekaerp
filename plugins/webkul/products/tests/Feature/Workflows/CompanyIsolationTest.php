@@ -89,6 +89,16 @@ it('gives a variant its template\'s company, not the session\'s', function () {
     // still be filed under the template's company A.
     CompanyHelper::actingAsCompanyUser($companyB);
 
+    $made = Product::factory()->make(['parent_id' => $template->id]);
+    fwrite(STDERR, 'TEMPDIAG '.json_encode([
+        'A'                 => $companyA->id,
+        'B'                 => $companyB->id,
+        'template_company'  => Product::withoutGlobalScopes()->whereKey($template->id)->value('company_id'),
+        'made_company'      => $made->company_id,
+        'made_parent'       => $made->parent_id,
+        'template_parent'   => $template->parent_id,
+    ]).PHP_EOL);
+
     $variant = Product::factory()->create(['parent_id' => $template->id]);
 
     expect($variant->company_id)->toBe($companyA->id);

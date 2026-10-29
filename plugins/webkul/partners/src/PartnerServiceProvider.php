@@ -26,6 +26,7 @@ class PartnerServiceProvider extends PackageServiceProvider
                 '2024_12_11_111929_create_partners_partner_tag_table',
                 '2025_03_28_115218_add_address_columns_in_partners_partners_table',
                 '2026_07_30_100000_null_company_on_non_user_partners',
+                '2026_10_29_120001_add_company_id_to_partners_tags_table',
             ])
             ->hasCommand(ContactCompanyReport::class)
             ->runsMigrations();

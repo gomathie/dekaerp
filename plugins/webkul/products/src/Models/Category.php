@@ -13,13 +13,28 @@ use Webkul\Chatter\Traits\HasLogActivity;
 use Webkul\Field\Traits\HasCustomFields;
 use Webkul\Product\Database\Factories\CategoryFactory;
 use Webkul\Security\Models\User;
+use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Concerns\HasContributedAttributes;
+use Webkul\Support\Traits\BelongsToCompany;
+use Webkul\Support\Traits\InheritsParentCompany;
 
 class Category extends Model
 {
+    use BelongsToCompany;
     use HasChatter, HasContributedAttributes, HasCustomFields, HasFactory, HasLogActivity;
+    use InheritsParentCompany;
 
     public const ACTIVITY_PLAN_PLUGIN = 'products';
+
+    /*
+     * Each client has its own catalogue, so a category belongs to the company
+     * that creates it and a sub-category takes its parent's company, never the
+     * session's (docs/company-admin-role-plan.md §4k). InheritsParentCompany
+     * refuses a child filed under a different company from its parent.
+     */
+    protected static string $parentCompanyModel = self::class;
+
+    protected static string $parentCompanyKey = 'parent_id';
 
     protected $table = 'products_categories';
 
@@ -33,6 +48,7 @@ class Category extends Model
         'full_name',
         'parent_path',
         'parent_id',
+        'company_id',
         'creator_id',
     ];
 
@@ -50,6 +66,11 @@ class Category extends Model
     public function parent(): BelongsTo
     {
         return $this->belongsTo(self::class);
+    }
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
     }
 
     public function children(): HasMany
@@ -81,9 +102,10 @@ class Category extends Model
                 throw new InvalidArgumentException('Circular reference detected in product category hierarchy');
             }
 
-            $authUser = Auth::user();
-
-            $category->creator_id ??= $authUser->id;
+            // Auth::id() rather than Auth::user()->id: provisioning runs from
+            // Company::created, where nobody may be acting yet, and reading a
+            // property off null is a warning Laravel turns into an exception.
+            $category->creator_id ??= Auth::id();
 
             static::handleProductCategoryData($category);
         });
@@ -119,7 +141,7 @@ class Category extends Model
             }
 
             $visitedIds[] = $currentParentId;
-            $parent = static::find($currentParentId);
+            $parent = static::withoutGlobalScopes()->find($currentParentId);
 
             if (! $parent) {
                 break;
@@ -134,7 +156,13 @@ class Category extends Model
     protected static function handleProductCategoryData($category)
     {
         if ($category->parent_id) {
-            $parent = static::find($category->parent_id);
+            // Scope-free, like the other parent reads in this class: the parent
+            // may belong to a company that is not active in this session (a
+            // company provisioner, a queue worker, a user acting across
+            // companies). CompanyScope would return null and the branch below
+            // then silently clears parent_id and resets parent_path - the
+            // category moves to the root instead of failing loudly.
+            $parent = static::withoutGlobalScopes()->find($category->parent_id);
 
             if ($parent) {
                 $category->parent_path = $parent->parent_path.$parent->id.'/';
@@ -157,7 +185,7 @@ class Category extends Model
         $currentCategory = $category;
 
         while ($currentCategory->parent_id) {
-            $currentCategory = static::find($currentCategory->parent_id);
+            $currentCategory = static::withoutGlobalScopes()->find($currentCategory->parent_id);
 
             if ($currentCategory) {
                 array_unshift($names, $currentCategory->name);

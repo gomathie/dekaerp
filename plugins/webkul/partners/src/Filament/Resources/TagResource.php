@@ -18,6 +18,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Validation\Rules\Unique;
 use Webkul\Partner\Models\Tag;
 
 class TagResource extends Resource
@@ -39,7 +40,13 @@ class TagResource extends Resource
                     ->label(__('partners::filament/resources/tag.form.name'))
                     ->required()
                     ->maxLength(255)
-                    ->unique(ignoreRecord: true),
+                    // Per company, like the row itself: each client names its own
+                    // tags, and two of them may pick the same words
+                    // (docs/company-admin-role-plan.md §4k).
+                    ->unique(
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule) => $rule->where('company_id', current_company_id()),
+                    ),
                 ColorPicker::make('color')
                     ->label(__('partners::filament/resources/tag.form.color'))
                     ->hexColor(),

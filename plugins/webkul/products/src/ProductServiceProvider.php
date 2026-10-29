@@ -8,9 +8,12 @@ use Webkul\PluginManager\Console\Commands\InstallCommand;
 use Webkul\PluginManager\Console\Commands\UninstallCommand;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
+use Webkul\Product\Console\Commands\ProductsCompanyBackfill;
 use Webkul\Product\Models\Category;
 use Webkul\Product\Models\Product;
+use Webkul\Product\Observers\CompanyObserver;
 use Webkul\Product\Observers\UOMObserver;
+use Webkul\Support\Models\Company;
 use Webkul\Support\Models\UOM;
 
 class ProductServiceProvider extends PackageServiceProvider
@@ -42,8 +45,10 @@ class ProductServiceProvider extends PackageServiceProvider
                 '2025_02_21_053249 _create_products_product_combinations_table',
                 '2025_07_28_080116_alter_products_products_table',
                 '2026_04_15_044431_add_columns_in_products_product_suppliers_table',
+                '2026_10_29_120000_add_company_id_to_products_categories_and_tags_tables',
             ])
             ->hasSeeder('Webkul\\Product\\Database\Seeders\\DatabaseSeeder')
+            ->hasCommand(ProductsCompanyBackfill::class)
             ->runsMigrations()
             ->hasSettings([
                 '2025_01_17_094022_create_products_product_settings',
@@ -66,6 +71,8 @@ class ProductServiceProvider extends PackageServiceProvider
         if (! Package::isPluginInstalled(static::$name)) {
             return;
         }
+
+        Company::observe(CompanyObserver::class);
 
         UOM::observe(UOMObserver::class);
     }
