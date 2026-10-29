@@ -202,7 +202,20 @@ it('records the actor and the before/after grants', function () {
 
     $this->app->instance(SecurityAuditLogger::class, $logger);
 
+    // The sync must be a real change, because an unchanged set is deliberately
+    // not audited. A new company is provisioned with every installed plugin, so
+    // when this test's plugin was the only one installed (a run that had
+    // installed nothing else) the company already held exactly [$plugin], the
+    // sync changed nothing, and the test failed depending on what ran before it.
+    DB::table('company_plugin')
+        ->where('company_id', $company->getKey())
+        ->where('plugin_id', $plugin->getKey())
+        ->delete();
+    PluginAccess::flush();
+
     $before = pluginEntitlementsGranted($company);
+
+    expect($before)->not->toContain((int) $plugin->getKey());
 
     app(PluginEntitlementService::class)->syncForCompany($company, [(int) $plugin->getKey()], $superAdmin);
 

@@ -2,9 +2,11 @@
 
 namespace Webkul\PluginManager;
 
+use Closure;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Schemas\Components\Section;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Services\PluginEntitlementService;
 use Webkul\Security\Models\User;
@@ -71,10 +73,36 @@ class CompanyContributions
                     ->loadStateFromRelationshipsUsing(function (CheckboxList $component, ?Company $record): void {
                         $component->state($record ? static::grantedPluginIds($record) : []);
                     })
-                    ->saveRelationshipsUsing(function (?Company $record, array $state): void {
-                        if ($record) {
-                            static::syncGrants($record, $state);
+                    // Refused here, before anything saves: the edit page saves the
+                    // company first and its relationships second, outside a
+                    // transaction, so a refusal raised by the write itself left the
+                    // company saved, the modules unchanged and the message on no
+                    // field. Edit only - on create nothing was shown to untick.
+                    ->rule(fn (?Company $record): Closure => function (string $attribute, mixed $value, Closure $fail) use ($record): void {
+                        if (! $record || ! static::administersInstallation()) {
+                            return;
                         }
+
+                        try {
+                            app(PluginEntitlementService::class)->assertCanSyncForCompany($record, (array) $value);
+                        } catch (ValidationException $exception) {
+                            $fail((string) collect($exception->errors())->flatten()->first());
+                        }
+                    })
+                    ->saveRelationshipsUsing(function (?Company $record, array $state): void {
+                        if (! $record) {
+                            return;
+                        }
+
+                        // A new company was just provisioned with the default set,
+                        // which the form never showed. Its unticked boxes mean "not
+                        // chosen", so the choice is closed over its dependencies
+                        // rather than read as revoking a dependency it needs.
+                        if ($record->wasRecentlyCreated) {
+                            $state = app(PluginEntitlementService::class)->withDependenciesOf($state);
+                        }
+
+                        static::syncGrants($record, $state);
                     }),
             ]);
     }
