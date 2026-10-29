@@ -13,6 +13,7 @@ use Webkul\Support\Database\Factories\Concerns\HasCompanyDefault;
 class TagFactory extends Factory
 {
     use HasCompanyDefault;
+
     /**
      * The name of the factory's corresponding model.
      *
