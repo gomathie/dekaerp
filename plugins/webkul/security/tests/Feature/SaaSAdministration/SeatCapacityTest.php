@@ -36,9 +36,16 @@ beforeEach(function (): void {
     settings(UserSettings::class)->save();
 });
 
+/**
+ * A company with a five-seat limit unless the test says otherwise.
+ *
+ * Explicit because new companies are unlimited by default (2026-10-29): a
+ * capacity test has to state the limit it is testing against, or it would test
+ * nothing.
+ */
 function seatCapCompany(array $attributes = []): Company
 {
-    return Company::factory()->create(['is_active' => true, ...$attributes]);
+    return Company::factory()->create(['is_active' => true, 'seat_limit' => 5, ...$attributes]);
 }
 
 function seatCapMember(Company $company): User
@@ -86,10 +93,16 @@ function seatCapPendingInvitation(Company $company, array $attributes = []): Inv
     ]);
 }
 
-it('defaults a company to five seats', function () {
-    $company = seatCapCompany();
+/**
+ * Inverted 2026-10-29 (user decision): this used to pin "defaults a company to
+ * five seats". With no screen to raise a limit before SAAS-12/13, that default
+ * would have stopped the next onboarded client at their sixth user.
+ */
+it('leaves a new company unlimited by default', function () {
+    $company = Company::factory()->create(['is_active' => true]);
 
-    expect(app(SeatCapacityService::class)->limitFor($company))->toBe(5)
+    expect(app(SeatCapacityService::class)->limitFor($company))->toBeNull()
+        ->and(app(SeatCapacityService::class)->isUnlimited($company))->toBeTrue()
         ->and(app(SeatCapacityService::class)->usedSeats($company))->toBe(0);
 });
 
