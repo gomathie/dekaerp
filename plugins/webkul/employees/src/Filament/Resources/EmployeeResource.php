@@ -344,6 +344,10 @@ class EmployeeResource extends Resource
                                                                     ->searchable()
                                                                     ->preload()
                                                                     ->default(current_company_id())
+                                                                    // Required: an employee saved with no company is visible to
+                                                                    // every company, and clearing the field on edit would do that
+                                                                    // (docs/company-admin-role-plan.md §4k).
+                                                                    ->required()
                                                                     ->live()
                                                                     ->afterStateUpdated(fn (Set $set, Get $get, $state) => clear_foreign_company_values($set, $get, [
                                                                         'job_id'           => EmployeeJobPosition::class,

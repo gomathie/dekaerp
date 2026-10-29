@@ -1,15 +1,16 @@
 <?php
 
-use Webkul\Partner\Models\Partner;
-
 require_once __DIR__.'/../../../../support/tests/Helpers/CompanyScopeHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
 
 $plugin = 'partners';
 
-$shared = [
-    Partner::class,
-];
+/*
+ * Empty since 2026-10-29: Partner used to be declared shared, upstream's design
+ * (57e234223). Contacts now belong to the company that creates them
+ * (docs/company-admin-role-plan.md §4k).
+ */
+$shared = [];
 
 it('finds the models of this plugin that opt into company scoping', function () use ($plugin) {
     expect(CompanyScopeHelper::companyModels($plugin))->not->toBeEmpty();

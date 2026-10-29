@@ -13,11 +13,21 @@ use Webkul\Product\Database\Factories\PackagingFactory;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Traits\BelongsToCompany;
+use Webkul\Support\Traits\InheritsParentCompany;
 
 class Packaging extends Model implements Sortable
 {
     use BelongsToCompany;
-    use HasCustomFields, HasFactory, SortableTrait;
+    use HasCustomFields, HasFactory, InheritsParentCompany, SortableTrait;
+
+    /*
+     * A packaging is part of its product, so it takes the product's company,
+     * never the session's. It used to be shared (autoAssignsCompany() returned
+     * false) like the product itself; see docs/company-admin-role-plan.md §4k.
+     */
+    protected static string $parentCompanyModel = Product::class;
+
+    protected static string $parentCompanyKey = 'product_id';
 
     protected $table = 'products_packagings';
 
@@ -58,11 +68,6 @@ class Packaging extends Model implements Sortable
         static::creating(function ($packaging) {
             $packaging->creator_id ??= Auth::id();
         });
-    }
-
-    public static function autoAssignsCompany(): bool
-    {
-        return false;
     }
 
     protected static function newFactory(): PackagingFactory

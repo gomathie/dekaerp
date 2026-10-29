@@ -168,8 +168,17 @@ class Partner extends Authenticatable implements FilamentUser
         });
     }
 
-    public static function autoAssignsCompany(): bool
-    {
-        return false;
-    }
+    /*
+     * Deliberately no autoAssignsCompany() override, a fork from upstream
+     * (57e234223 returned false, which made every new contact shared across
+     * companies). Clients are unrelated businesses (user decision,
+     * 2026-10-29), so BelongsToCompany stamps the creating company. See
+     * docs/company-admin-role-plan.md §4k.
+     *
+     * Not InheritsParentCompany either. A branch company's own contact
+     * legitimately belongs to the branch while its parent contact belongs to
+     * the parent company, which that trait refuses. Child contacts get their
+     * owner's company where they are created instead: AddressResource,
+     * ManageContacts and the address API.
+     */
 }
