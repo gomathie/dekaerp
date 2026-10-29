@@ -428,7 +428,7 @@ the table below.
 |---|---|
 | PluginManagerFeature | 42 passed, 133 assertions, 0 failures |
 | SecurityFeature | 107 passed, 2 failed (355 assertions, 1,088 s). Both failures were in `MustChangePasswordTest`, a test defect present since 2026-10-21 and unrelated to SAAS: its fake `$next` returned a string, which `RequirePasswordChange::handle()`'s `Response` return type rejects before any assertion runs. The fake now returns `response('passed-through')` and the test asserts the body. File rerun: 47 passed, 131 assertions (includes `MultiCompanyAdminTest`, which the file `require`s), 0 failures. |
-| SupportFeature | First run: 185 passed, 2 failed (931 assertions, 1,783 s). Both failures were stale structure snapshots, `security.json` and `support.json`, from two intended changes: the company form's Administrator section (`administrator_email`, 2026-10-23) and SAAS-01's `effective_role_names` replacing `roles.name` on the user infolist. Both fixtures were deleted and re-recorded from the full suite, per the snapshot test's own rule. Re-run: pending. |
+| SupportFeature | First run: 185 passed, 2 failed (931 assertions, 1,783 s). Both failures were stale structure snapshots, `security.json` and `support.json`, from two intended changes: the company form's Administrator section (`administrator_email`, 2026-10-23) and SAAS-01's `effective_role_names` replacing `roles.name` on the user infolist. Both fixtures were deleted and re-recorded from the full suite, per the snapshot test's own rule. Re-run: **192 passed, 946 assertions, 0 failures** (1,766 s), including `CompanySwitcherTest`. The re-recorded fixtures differ from the old ones (`57687b905`) by exactly those two changes. |
 | SaleFeature | pending |
 | PlatformBillingFeature | pending |
 
