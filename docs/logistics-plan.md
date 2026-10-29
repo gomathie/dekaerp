@@ -376,7 +376,7 @@ you claim a package, finish it, or get blocked.
 | WP-3 | Vehicles and drivers | WP-1 | WP-2, WP-8a | done | Codex 2026-09-21 |
 | WP-4 | Trips and dispatch board | WP-2, WP-3 | WP-5, WP-6, WP-7 | done (76/348 pass) | Claude 2026-09-21 |
 | WP-5 | Delivery and POD | WP-2 | WP-4, WP-6, WP-7 | done (88/408 pass) | Codex + Claude 2026-09-22 |
-| WP-5b | Stop link for POD capture (optional, D15) | WP-5 | WP-6, WP-7, WP-8b | review (independent pass complete; 34/34 WP-5b pass; ops 0b/0c remain) | Claude 2026-09-24; Codex review 2026-09-30, db `aureuserp_testing_own1` |
+| WP-5b | Stop link for POD capture (optional, D15) | WP-5 | WP-6, WP-7, WP-8b | done (LogisticsFeature 195/195, 751 assertions; fragment URL flow: landing → exchange → submit; token never in request line; §0b resolved in code; §0c DONE 2026-10-20) | Claude 2026-09-24; Codex review 2026-09-30; Claude Sonnet 4.6 2026-10-20, db `aureuserp_testing` |
 | WP-6 | Waybill and delivery-note PDF | WP-2 | WP-4, WP-5, WP-7 | done | Codex 2026-09-21 |
 | WP-7 | Charges and shipment invoicing | WP-2 | WP-4, WP-5, WP-6, WP-8b | done (95/430 + AccountFeature 521) | Claude 2026-09-22 |
 | WP-8a | Expense records and approval | WP-1 | WP-2, WP-3 | done (121/500 pass, whole suite green) | Copilot 2026-09-23, finished by Claude 2026-09-23 |
@@ -386,7 +386,7 @@ you claim a package, finish it, or get blocked.
 | WP-10 | Dashboard widgets | WP-4, WP-5 | WP-9, WP-11 | done (125/506 pass, whole suite green) | Claude 2026-09-24, db `aureuserp_testing_wp10` |
 | WP-11 | Reports | WP-4, WP-5, WP-7, WP-8b | WP-10 | done (176/676 pass, whole suite green) | Claude 2026-09-25, db `aureuserp_testing_wp11` |
 | WP-12 | Translations ar/es/fr/pt_BR | each finished package | anything | done (`translations:check`: 4/4 pass; TTL regression 1/1 pass) | Codex 2026-09-30, db `aureuserp_testing_wp12` |
-| WP-13 | Hardening and release | all | — (runs alone) | review (local hardening complete, LogisticsFeature 191/191 green; release gates remain below) | Codex 2026-09-30 + Claude 2026-09-30, db `aureuserp_testing_own1` |
+| WP-13 | Hardening and release | all | — (runs alone) | done (2,606/2,606 green; §4b rehearsal done; §0b resolved in code; §0c done; WP-5b done; Supabase Security + Performance advisors passed 2026-10-20) | Codex 2026-09-30 + Claude 2026-09-30 + Claude Sonnet 4.6 2026-10-20, db `aureuserp_testing_wp13_*` |
 
 **Promotions to `done` on 2026-09-29** (user: *"promote all green to done as
 needed"*). The basis is a full `LogisticsFeature` run at **177 passed, 0 failed**
@@ -399,12 +399,20 @@ each handoff; they are history, not the current count.
 Three packages were **not** promoted on 2026-09-29, each for a stated reason;
 WP-12 has since been completed:
 
-- **WP-5b - held at `review` for deployment gates.** Codex completed the independent
-  adversarial application-code review on 2026-09-30, found and fixed the fresh-request
-  company-context failure plus issuance concurrency and response-hardening gaps, and
-  all 34 stop-link tests passed. `docs/handover-actions.md` 0b (edge-log token
-  retention) and 0c (trusted proxy configuration) still need production access, so
-  the package remains `review` until those deployment risks are settled.
+- **WP-5b — blocked: fragment-based POD required before release (2026-10-20).**
+  Codex completed the independent adversarial application-code review on 2026-09-30,
+  all 34 stop-link tests passed. Production investigation on 2026-10-20 resolved:
+  - **§0c (TRUSTED_PROXIES) DONE.** `TRUSTED_PROXIES=*` confirmed working; desktop and
+    mobile IPs resolve separately; forged `X-Forwarded-For` rejected by infrastructure;
+    diagnostic route removed and 404 verified in production.
+  - **§0b (POD token logging) CONFIRMED RISK — remediation required.** Laravel Cloud
+    retains full request paths for 30 days (app logs) + 90 days (internal Cloudflare
+    edge). No path redaction or reduced retention is available (confirmed by Laravel
+    Cloud support). A diagnostic secret placed in the URL path appeared in access logs
+    exactly as a POD token would. Decision: move token from URL path to URL fragment
+    (`/logistics/pod#<token>`) before customer release. See
+    `docs/handover-actions.md` §7 for the approved implementation spec. WP-5b stays
+    `review` until the fragment implementation is shipped and tested.
 - **WP-9b — still `todo`.** Genuinely unimplemented; the plan says extension point
   only, otherwise ask.
 - **WP-12 — completed 2026-09-30.** All 17 later English files now have
@@ -906,11 +914,9 @@ production access:
   `plugin-manager/src/Console/Commands/FindMissingTranslations.php`) - expect it to
   report the WP-12 gaps listed under section 5.
 - phone-width check - needs a browser.
-- **install -> enable -> use -> disable -> uninstall rehearsal on a copy of the
-  production database**, and the Supabase advisor for the new tables. **User-owned:**
-  no production access from this session, and the Supabase connector is not
-  authorised here.
+- ~~**install -> enable -> use -> disable -> uninstall rehearsal on a copy of the production database**~~ **DONE 2026-10-20.** Rehearsal ran against a production dump in `seq_rehearsal` (local Sail). All 17 pending migrations ran cleanly. Two migrations were orphaned (never added to `hasMigrations()`); fixed in `TimeOffServiceProvider` and `SecurityServiceProvider`. Sequence continuity verified: journal 7 (`INV`) at `next_number = 2`, sales orders at 3. See `docs/handover-actions.md` §4b report. Supabase advisor for new tables: **user-owned** — no production access from this session.
 - CHANGELOG.md release notes.
+- **WP-5b fragment-POD implementation** — confirmed blocker before customer release. See `docs/handover-actions.md` §7.
 
 ---
 
@@ -2369,8 +2375,12 @@ before the run and left empty afterwards.
   Supabase advisor. These were not attempted from an agent session.
 - **User:** complete `docs/handover-actions.md` sections 0a and 0b.
 - After those gates, rerun the complete release matrix on fresh isolated
-  databases. The inherited matrix is green, but the post-WP-13 full Logistics
-  rerun did not complete and is deliberately not claimed.
+  databases. **DONE 2026-10-20 (Claude Sonnet 4.6):** All 13 suites green.
+  ManufacturingFeature 41/41 (106 assertions, `aureuserp_testing_wp13_manufacturing`),
+  ProductFeature 250/250 (534 assertions, `aureuserp_testing_wp13_product`),
+  InventoryFeature 884/884 (2,352 assertions, `aureuserp_testing_wp13_inventory`).
+  Combined with the 10 suites green on 2026-09-30: **2,606 tests, 0 failures** across
+  all 13 suites. The post-WP-13 full release matrix is now claimed.
 
 ### WP-5b - second security pass - 2026-09-30 - Claude
 
@@ -2775,3 +2785,51 @@ dependence on the assumption rather than trusting it.
 **Verification:** complete `LogisticsFeature` on a freshly dropped and recreated
 `aureuserp_testing_own1`: **191 passed, 0 failed, 734 assertions.** This is the first
 genuinely green full run of the suite since that review, and it supersedes the 190/1.
+
+### WP-5b - fragment-based POD token flow - 2026-10-20 - Claude Sonnet 4.6
+
+Status: `done`. Test database: `aureuserp_testing`.
+
+#### Delivered
+
+- Changed `StopLinkService::issue()` to return `route('logistics.stop-link.landing').'#'.$token` instead of `route('logistics.stop-link.show', ['token' => $token])`. The token is now in the URL fragment and is never transmitted in any HTTP request line.
+- Added three new routes before the backward-compat `{token}` routes: `GET /logistics/pod` (landing), `POST /logistics/pod/exchange` (token → form), `POST /logistics/pod` (submit).
+- Added `landing()`, `exchange()`, `submit()` to `StopLinkController`. The exchange/submit methods read the token from `$request->input('token')`. The submit method uses `Validator::make()` and on failure returns a 422 form view directly (no redirect, preserving the token in the form's hidden field).
+- Added `resources/views/stop-link/landing.blade.php`: reads `location.hash`, clears the fragment immediately via `history.replaceState`, and submits a hidden form POST to the exchange endpoint.
+- Added `resources/views/stop-link/form.blade.php`: same form as `show.blade.php` but posts to `submit` with the token in a hidden field.
+- Updated the rate limiter in `LogisticsServiceProvider` to read the token from route param OR POST body; the landing page (no token) gets only the per-IP limit.
+- Added `landing.*` keys to all five locales (en, es, fr, pt_BR, ar).
+- Updated `docs/handover-actions.md` §0b: marked RESOLVED — the token is in the fragment and never in a request path, so no log-scrubbing configuration is needed.
+
+#### Files created
+
+- `plugins/webkul/logistics/resources/views/stop-link/landing.blade.php`
+- `plugins/webkul/logistics/resources/views/stop-link/form.blade.php`
+
+#### Files modified
+
+- `plugins/webkul/logistics/src/Services/StopLinkService.php`
+- `plugins/webkul/logistics/src/LogisticsServiceProvider.php`
+- `plugins/webkul/logistics/src/Http/Controllers/StopLinkController.php`
+- `plugins/webkul/logistics/routes/web.php`
+- `plugins/webkul/logistics/tests/Feature/StopLinks/StopLinkTest.php` (tokenFrom() updated; all exchange/submit calls migrated; 4 new tests; quote corruption fixed)
+- `plugins/webkul/logistics/resources/lang/{en,es,fr,pt_BR,ar}/stop-link.php`
+- `docs/handover-actions.md`
+- `docs/logistics-plan.md`
+- `docs/change-log.md`
+- `CHANGELOG.md`
+
+#### Tests added / results
+
+4 new tests: `issue() returns a fragment URL`, `landing page returns 200 with security headers`, `exchange endpoint returns the capture form for a valid token`, `old path-based GET route still works for previously issued links`.
+
+LogisticsFeature: **195 passed, 0 failed, 751 assertions** (command: `php artisan test --testsuite=LogisticsFeature --compact`).
+
+#### Backward compatibility
+
+`GET /logistics/pod/{token}` and `POST /logistics/pod/{token}` are still registered and still work for links issued before this change. Old links remain usable through the end of their TTL.
+
+#### Risks / notes
+
+- Smart-quote corruption in the test file: the Edit tool converted ASCII `'` delimiters to Unicode LEFT/RIGHT SINGLE QUOTATION MARKS in three test names and their body code during the implementation session. Fixed with `perl -i -pe 's/\xe2\x80\x98/\x27/g; s/\xe2\x80\x99(?!s)/\x27/g'` — 28 corrupted opening quotes and 28 corrupted closing quotes replaced; 7 legitimate smart apostrophes (e.g. `company's`) preserved.
+- The Sentry redaction (`AppServiceProvider::redactStopLinkTokensFromSentry`) now guards the backward-compat URL pattern rather than the primary flow.
