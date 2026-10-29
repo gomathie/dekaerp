@@ -1,0 +1,801 @@
+{
+    "Webkul\\Security\\Filament\\Resources\\CompanyResource": {
+        "model": "Webkul\\Security\\Models\\Company",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "registration_number"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "company_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "tax_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "website"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                "name": "street1"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                "name": "street2"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                "name": "city"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                "name": "zip"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "country_id"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "state_id"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "currency_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\DatePicker",
+                                        "name": "founded_date"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "administrator_email"
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Text"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                        "name": "company_modules"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\FileUpload",
+                                                "name": "avatar"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\ColorPicker",
+                                        "name": "color"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "phone"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "mobile"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "email"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Grid",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "registration_number"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "company_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "tax_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "website"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "street1"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "street2"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "city"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "zip"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "country.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "state.name"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "currency.full_name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "founded_date"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "is_active"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\ImageEntry",
+                                        "name": "partner.avatar"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\ColorEntry",
+                                        "name": "color"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "phone"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "mobile"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "email"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Webkul\\Security\\Filament\\Resources\\RoleResource": {
+        "model": "Webkul\\Security\\Models\\Role",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Grid",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "name"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "guard_name"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "team_id"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Hidden",
+                                "name": "permissions_sync_mode"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Toggle",
+                                "name": "select_all"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Tabs",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Field\\Filament\\Resources\\FieldResource"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Partner\\Filament\\Resources\\AddressResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Partner\\Filament\\Resources\\BankAccountResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Partner\\Filament\\Resources\\BankResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Partner\\Filament\\Resources\\IndustryResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Partner\\Filament\\Resources\\PartnerResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Partner\\Filament\\Resources\\TagResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Partner\\Filament\\Resources\\TitleResource"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\PluginManager\\Filament\\Resources\\PluginResource"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Security\\Filament\\Resources\\CompanyResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Security\\Filament\\Resources\\RoleResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Security\\Filament\\Resources\\TeamResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Security\\Filament\\Resources\\UserResource"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Support\\Filament\\Resources\\ActivityTypeResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Support\\Filament\\Resources\\BankResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Support\\Filament\\Resources\\CalendarResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Support\\Filament\\Resources\\CompanyResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Support\\Filament\\Resources\\CountryResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Support\\Filament\\Resources\\CurrencyResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Support\\Filament\\Resources\\SequenceResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Support\\Filament\\Resources\\StateResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Support\\Filament\\Resources\\UOMCategoryResource"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                "name": "Security_pages_tab"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                "name": "Support_pages_tab"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab"
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\CheckboxList",
+                                "name": "custom_permissions_tab"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "infolist": []
+    },
+    "Webkul\\Security\\Filament\\Resources\\TeamResource": {
+        "model": "Webkul\\Security\\Models\\Team",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name"
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "name"
+            }
+        ]
+    },
+    "Webkul\\Security\\Filament\\Resources\\UserResource": {
+        "model": "Webkul\\Security\\Models\\User",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "email"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "password"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "password_confirmation"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "must_change_password"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "roles"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "resource_permission"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "teams"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\FileUpload",
+                                        "name": "avatar"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "language"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "is_active"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "allowed_companies"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "default_company_id"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Grid",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "email"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "language"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "effective_role_names"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "teams.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "resource_permission"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\ImageEntry",
+                                        "name": "partner.avatar"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "allowedCompanies.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "defaultCompany.name"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "is_active"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}
