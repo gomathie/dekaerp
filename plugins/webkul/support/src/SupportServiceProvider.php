@@ -124,6 +124,7 @@ class SupportServiceProvider extends PackageServiceProvider
                 return view('support::company-switcher', [
                     'companies' => app(CompanyContext::class)->allowedCompanies(),
                     'active'    => app(CompanyContext::class)->activeIds(),
+                    'canSwitch' => app(CompanyContext::class)->canSwitchCompanies(),
                 ])->render();
             },
         );

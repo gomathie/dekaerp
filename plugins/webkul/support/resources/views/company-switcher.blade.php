@@ -1,5 +1,12 @@
 <div>
-    @if ($companies->isNotEmpty())
+    {{-- Only installation staff may switch (CompanyContext::canSwitchCompanies); everyone else sees which company they are in, with no form to post. --}}
+    @if ($companies->isNotEmpty() && ! $canSwitch)
+        <span style="display:inline-flex;align-items:center;gap:0.375rem;font-size:0.875rem;color:rgb(107 114 128);">
+            <x-filament::icon icon="heroicon-o-building-office-2" style="width:1.25rem;height:1.25rem;flex-shrink:0;" />
+
+            <span>{{ $companies->firstWhere('id', $active[0] ?? null)?->name }}</span>
+        </span>
+    @elseif ($companies->isNotEmpty())
         <x-filament::dropdown placement="bottom-end" width="xs" teleport>
             <x-slot name="trigger">
                 <x-filament::link tag="button" size="sm" color="gray" style="text-decoration:none;">
