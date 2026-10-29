@@ -1,7 +1,7 @@
 <?php
 
-use IlluminateSupportFacadesValidator;
-use WebkulProductHttpRequests\TagRequest;
+use Illuminate\Support\Facades\Validator;
+use Webkul\Product\Http\Requests\TagRequest;
 use Webkul\Product\Models\Tag;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/CompanyHelper.php';
