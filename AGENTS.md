@@ -1417,6 +1417,10 @@ log named):
   - A tenant role row exists only inside its membership: composite foreign key
     to `user_allowed_companies` with cascade. `TenantRoleAssigner` drops
     companies the user is not a member of.
+  - Every company starts with **no seat limit** (`seat_limit` null), new ones
+    included (user decision, 2026-10-29). A limit is set deliberately through
+    `SeatCapacityService::setLimit()`. Do not restore a column default of 5:
+    there is no screen to raise a limit before SAAS-12/13.
   - Seats: platform identities (system roles) consume no seat unless they hold
     a tenant role in that company (D-SAAS-03). Every new seat - invitation,
     attach, user create - counts pending reservations. Call

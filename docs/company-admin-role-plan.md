@@ -1413,13 +1413,47 @@ assignment. Phase D can therefore be a reviewed data migration with explicit
 ids for this installation, not a general copy engine. The general case
 returns only if a future installation has shared records.
 
+#### Decisions on the report (user, 2026-10-29)
+
+**Employees 1 to 10 are example data and stay shared** (`company_id` null),
+together with their work contacts 5 to 14. They are deliberately excluded
+from the backfill. This is the one intended exception to "nothing stays
+shared".
+
+**New employees are per company. Already true, no code change needed:**
+
+- `Employee` uses `BelongsToCompany` with no opt-out, so a record created in
+  the UI is stamped with the current company.
+- The trait throws `MissingCompanyContextException` instead of saving a null
+  company while a staff user is acting.
+- The shared ten were created with nobody acting (a seeder or console
+  command), which the trait allows on purpose.
+
+**Remaining gap, for phase C.** Stamping happens only on *create*. Editing a
+record and clearing an optional "Company" field saves it as shared again.
+The company field on the employee, product and contact forms becomes
+required. That is still to verify: it must not break the form for a user
+who sees only one company.
+
+**User 2:** remove the extra membership. User 2 holds companies 2 (default)
+and 3, so company 3 goes. This is done through the user form, not SQL, so it
+is audited and caches refresh.
+
+**New companies get no seat limit by default.** Recorded in the SaaS plan
+(RF-1 superseded).
+
+**Revised backfill, phase D, explicit ids for this installation:**
+
+| Record | Action |
+|---|---|
+| Contacts 5 to 14 (employee work contacts) | Stay shared (decision above) |
+| Product 1 | `company_id = 2` |
+| Categories 1 and 2 (the branch company 2 uses) | Copy for company 2, re-point product 1 to the copy of 2 |
+| Categories 1 to 10 (the originals) | `company_id = 1`. Company 1 created them and uses the root |
+| Tags | Nothing to do |
+
 #### Still open
 
-- **Employees:** are employees 1 to 10 real staff? If so, which company does
-  each belong to? If not, they can be deleted. And should employees become
-  per company as well?
-- **User 2:** is user 2 one client with two companies (and should their
-  default company change), or DEKA staff who should be a Multi-Company Admin?
 - Whether attributes and units should also become per company.
 
 ## 5. Notes for whoever picks this up
