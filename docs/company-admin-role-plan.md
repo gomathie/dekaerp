@@ -1676,8 +1676,9 @@ specific classification.
 | DECIDE | Support `Company` parent/contact mapping | `Company::booted` still assigns the branch company's `parent_id` to a `Partner` parent field. This is an existing cross-domain relationship decision and was intentionally not edited. |
 | DECIDE | Accounts `MoveWorkflow::sendByEmail`, Sales `OrderMailer`, Purchases `OrderWorkflow` and the matching send-email recipient selectors | Explicit recipient ids can name a partner outside the current company. Decide whether cross-company outbound email is allowed; if it is, make the bypass explicit and audit it, and if not, reject ids outside the active company. No change was made in this package. |
 | DECIDE | Products `ProductResource` product-company/category edit behavior | The resource's category default and company change behavior need an owner decision about whether a company change should re-home or refuse an existing category. This DO-NOT-TOUCH file was not edited. |
+| DECIDE | Products `Product::saved` variant propagation | The model currently removes only `CompanyScope` while propagating a template's company to variants. Because this is a DO-NOT-TOUCH model and the variants also participate in ownership rules, replacing it with `withoutGlobalScopes()` needs the owning agent's review. |
 
-**Audit totals:** 5 SAFE groups, 7 FIXED groups, and 3 DECIDE groups. The
+**Audit totals:** 5 SAFE groups, 7 FIXED groups, and 4 DECIDE groups. The
 SAFE groups include the current-context reads across the full plugin source
 tree; the FIXED/DECIDE rows are the places where a normal scoped read would be
 wrong, ambiguous or security-sensitive across company boundaries.

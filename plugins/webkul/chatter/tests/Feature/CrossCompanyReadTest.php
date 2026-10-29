@@ -2,8 +2,8 @@
 
 use Illuminate\Support\Facades\Mail;
 use Webkul\Chatter\Models\Follower;
-use Webkul\Chatter\Models\Message;
 use Webkul\Chatter\Mail\MessageMail;
+use Webkul\Chatter\Models\Message;
 use Webkul\Partner\Models\Partner;
 use Webkul\Project\Models\Project;
 use Webkul\Chatter\Services\ChatterNotificationService;
