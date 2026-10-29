@@ -1428,6 +1428,19 @@ together with their work contacts 5 to 14. They are deliberately excluded
 from the backfill. This is the one intended exception to "nothing stays
 shared".
 
+**Existing contacts are not reassigned (user, 2026-10-29, general rule):**
+
+- A contact that has **no company today stays shared** across companies.
+- A contact that **already belongs to a company stays there.**
+- Only contacts created from now on are stamped with their creator's company
+  (phase C).
+
+So the backfill assigns **no** contact. In this installation the only
+contacts with no company are the employee work contacts 5 to 14, so the
+rule and the decision above agree. It also covers any other installation:
+the backfill never moves a contact between companies, and never takes a
+contact away from the companies that can see it today.
+
 **New employees are per company. Already true, no code change needed:**
 
 - `Employee` uses `BelongsToCompany` with no opt-out, so a record created in
