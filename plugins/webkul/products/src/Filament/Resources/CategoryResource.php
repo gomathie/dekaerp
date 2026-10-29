@@ -25,6 +25,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
+use Illuminate\Validation\Rules\Unique;
 use Webkul\Product\Models\Category;
 
 class CategoryResource extends Resource
@@ -54,7 +55,13 @@ class CategoryResource extends Resource
                                     ->autofocus()
                                     ->placeholder(__('products::filament/resources/category.form.sections.general.fields.name-placeholder'))
                                     ->extraInputAttributes(['style' => 'font-size: 1.5rem;height: 3rem;'])
-                                    ->unique(ignoreRecord: true),
+                                    // Per company, like the row itself: a global check
+                                    // would refuse a second client's "All" while the
+                                    // database allows it (docs/company-admin-role-plan.md §4k).
+                                    ->unique(
+                                        ignoreRecord: true,
+                                        modifyRuleUsing: fn (Unique $rule) => $rule->where('company_id', current_company_id()),
+                                    ),
                                 Select::make('parent_id')
                                     ->label(__('products::filament/resources/category.form.sections.general.fields.parent'))
                                     ->relationship('parent', 'full_name')

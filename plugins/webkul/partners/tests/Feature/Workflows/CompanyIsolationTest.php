@@ -56,17 +56,19 @@ it('keeps a new partner out of another company', function () {
 });
 
 /**
- * A contact with no company is still visible everywhere. That is how the
- * example data created by seeders stays shared (decided 2026-10-29), so it is
- * created here the same way: with nobody acting, when nothing is stamped.
+ * A contact with no company is still visible everywhere. Existing contacts with
+ * no company stay shared (user decision, 2026-10-29), and that state is written
+ * directly here: a create always stamps whoever is acting, and the test
+ * environment can have someone acting.
  */
 it('shows a partner with no company from every company', function () {
     $companyA = CompanyHelper::company();
     $companyB = CompanyHelper::company();
 
-    $partner = Partner::factory()->create(['company_id' => null]);
+    $partner = Partner::factory()->create();
+    Partner::withoutGlobalScopes()->whereKey($partner->id)->update(['company_id' => null]);
 
-    expect($partner->company_id)->toBeNull();
+    expect(Partner::withoutGlobalScopes()->whereKey($partner->id)->value('company_id'))->toBeNull();
 
     CompanyHelper::actingAsCompanyUser($companyA);
 

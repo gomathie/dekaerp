@@ -5,12 +5,14 @@ namespace Webkul\Partner\Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Webkul\Partner\Models\Tag;
 use Webkul\Security\Models\User;
+use Webkul\Support\Database\Factories\Concerns\HasCompanyDefault;
 
 /**
  * @extends Factory<Tag>
  */
 class TagFactory extends Factory
 {
+    use HasCompanyDefault;
     /**
      * The name of the factory's corresponding model.
      *

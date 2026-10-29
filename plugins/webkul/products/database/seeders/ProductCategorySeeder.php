@@ -17,6 +17,16 @@ class ProductCategorySeeder extends Seeder
 
         $user = User::first();
 
+        /*
+         * The installation's first company created this tree, so it is that
+         * client's taxonomy and not shared setup data: left with no company it
+         * would be visible to every company created afterwards. The install-time
+         * company row is inserted with raw SQL, so `Company::created` never
+         * fires for it and CompanyCategoryProvisioner never runs
+         * (docs/company-admin-role-plan.md §4k).
+         */
+        $companyId = DB::table('companies')->orderBy('id')->value('id');
+
         $categories = [
             [
                 'id'          => 1,
@@ -120,6 +130,9 @@ class ProductCategorySeeder extends Seeder
             ],
         ];
 
-        DB::table('products_categories')->insert($categories);
+        DB::table('products_categories')->insert(array_map(
+            fn (array $category): array => ['company_id' => $companyId, ...$category],
+            $categories
+        ));
     }
 }
