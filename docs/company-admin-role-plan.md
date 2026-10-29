@@ -1623,6 +1623,11 @@ idempotent, rollback-documented step instead of a migration.
 - Suites ProductFeature / PartnerFeature / InventoryFeature: **in progress at the
   time of writing**; counts added below when each finishes. Do not treat the
   absence of a count here as a pass.
+- 2026-10-30 focused Partners rerun on `aureuserp_testing_saas_4k_b`:
+  `TagCompanyScopingTest.php` **2 passed (4 assertions)**, 74.09 seconds.
+  Partners is core and has no `partners:install` command; this test now uses
+  the same `beforeEach` as its sibling Partners workflow tests, with core
+  installation supplied by `Tests\TestCase`.
 - The backfill was **not** run against production, and its dry-run output below
   is from a local database seeded to the expected state by the test, not from
   Supabase.

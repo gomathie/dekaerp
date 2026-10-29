@@ -257,24 +257,33 @@ it('refuses a file with no column it recognises', function () {
 });
 
 /**
- * Imported contacts must be filed exactly as typed ones are. Partner opts out
- * of automatic company assignment, so a contact created through the form has a
- * null company_id; an import that stamped the active company instead would
- * make imported contacts invisible to the other companies that can see the
- * typed ones. CompanyIsolationTest pins the form side of this.
+ * Imported contacts must be filed exactly as typed ones are, and
+ * CompanyIsolationTest pins the typed side.
+ *
+ * Inverted 2026-10-29. This used to pin "leaves company_id null so imported
+ * contacts match typed ones", from when Partner opted out of automatic company
+ * assignment. Contacts now belong to the company that creates them (user
+ * decision; docs/company-admin-role-plan.md §4k), so an import is stamped with
+ * the importing company. Another client must not receive a spreadsheet's worth
+ * of this client's customers.
  */
-it('leaves company_id null so imported contacts match typed ones', function () {
+it('stamps imported contacts with the importing company, as typed ones are', function () {
     $company = CompanyHelper::company();
+    $otherCompany = CompanyHelper::company();
 
     CompanyHelper::actingAsCompanyUser($company);
 
     $path = contactImportFile([
-        contactImportRow(['name' => 'Shared Contact']),
+        contactImportRow(['name' => 'Imported Contact']),
     ]);
 
     app(ContactImporter::class)->import($path, ContactImporter::readerTypeFor('csv'));
 
-    expect(Partner::query()->where('name', 'Shared Contact')->value('company_id'))->toBeNull();
+    expect(Partner::query()->where('name', 'Imported Contact')->value('company_id'))->toBe($company->id);
+
+    CompanyHelper::actingAsCompanyUser($otherCompany);
+
+    expect(Partner::query()->where('name', 'Imported Contact')->exists())->toBeFalse();
 
     unlink($path);
 });
