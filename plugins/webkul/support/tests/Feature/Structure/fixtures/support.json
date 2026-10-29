@@ -1,0 +1,938 @@
+{
+    "Webkul\\Support\\Filament\\Resources\\ActivityTypeResource": {
+        "model": "Webkul\\Support\\Models\\ActivityType",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "category"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "default_user_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Textarea",
+                                        "name": "summary"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\RichEditor",
+                                        "name": "default_note"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "delay_count"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "delay_unit"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "delay_from"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Guava\\IconPicker\\Forms\\Components\\IconPicker",
+                                        "name": "icon"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "decoration_type"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "chaining_type"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "activity_type_suggestions"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "triggered_next_type_id"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "is_active"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "keep_done"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Grid",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "category"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "defaultUser.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "plugin"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "summary"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "default_note"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "delay_count"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "delay_unit"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "delay_from"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "icon"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "decoration_type"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "chaining_type"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "suggestedActivityTypes.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "triggeredNextType.name"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "is_active"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "keep_done"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Webkul\\Support\\Filament\\Resources\\BankResource": {
+        "model": "Webkul\\Support\\Models\\Bank",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "name"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "code"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "email"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "phone"
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "country_id"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "state_id"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "street1"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "street2"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "city"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "zip"
+                    }
+                ]
+            }
+        ],
+        "infolist": []
+    },
+    "Webkul\\Support\\Filament\\Resources\\CalendarResource": {
+        "model": "Webkul\\Support\\Models\\Calendar",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "timezone"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "company_id"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "hours_per_day"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "full_time_required_hours"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "is_active"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "two_weeks_calendar"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "flexible_hours"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Grid",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "timezone"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "company.name"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "hours_per_day"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "full_time_required_hours"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "is_active"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "two_weeks_calendar"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "flexible_hours"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Webkul\\Support\\Filament\\Resources\\CompanyResource": {
+        "model": "Webkul\\Support\\Models\\Company",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "registration_number"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "company_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "tax_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "website"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                "name": "street1"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                "name": "street2"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                "name": "city"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                "name": "zip"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "country_id"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "state_id"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "currency_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\DatePicker",
+                                        "name": "founded_date"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "administrator_email"
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Text"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                        "name": "company_modules"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\FileUpload",
+                                                "name": "avatar"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\ColorPicker",
+                                        "name": "color"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "phone"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "mobile"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "email"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Grid",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "registration_number"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "company_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "tax_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "website"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "street1"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "street2"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "city"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "zip"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "country.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "state.name"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "currency.full_name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "founded_date"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "is_active"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\ImageEntry",
+                                        "name": "partner.avatar"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\ColorEntry",
+                                        "name": "color"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "phone"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "mobile"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "email"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Webkul\\Support\\Filament\\Resources\\CountryResource": {
+        "model": "Webkul\\Support\\Models\\Country",
+        "form": [],
+        "infolist": []
+    },
+    "Webkul\\Support\\Filament\\Resources\\CurrencyResource": {
+        "model": "Webkul\\Support\\Models\\Currency",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "symbol"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "full_name"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "iso_numeric"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "decimal_places"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "rounding"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "active"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Webkul\\Support\\Filament\\Forms\\Components\\Repeater",
+                        "name": "rates",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\DatePicker",
+                                "name": "name"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "rate"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "rate_temp"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Grid",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "symbol"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "full_name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "iso_numeric"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "decimal_places"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "rounding"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "active"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Webkul\\Support\\Filament\\Infolists\\Components\\RepeatableEntry",
+                        "name": "rates",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "name"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "rate"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "rate_temp"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Webkul\\Support\\Filament\\Resources\\SequenceResource": {
+        "model": "Webkul\\Support\\Models\\Sequence",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "applies_to"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "code"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "company_id"
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "prefix"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "suffix"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "padding"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "next_number"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "step"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "reset_frequency"
+                    }
+                ]
+            }
+        ],
+        "infolist": []
+    },
+    "Webkul\\Support\\Filament\\Resources\\StateResource": {
+        "model": "Webkul\\Support\\Models\\State",
+        "form": [],
+        "infolist": []
+    },
+    "Webkul\\Support\\Filament\\Resources\\UOMCategoryResource": {
+        "model": "Webkul\\Support\\Models\\UOMCategory",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "name"
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Webkul\\Support\\Filament\\Forms\\Components\\Repeater",
+                        "name": "uoms",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "name"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "type"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "ratio"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "rounding"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "infolist": []
+    }
+}

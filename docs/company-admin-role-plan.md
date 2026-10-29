@@ -1244,6 +1244,121 @@ The rule they all now follow lives in one place,
 `Webkul\Support\Traits\InheritsParentCompany`, so the next child model gets it for
 free rather than re-deriving it.
 
+### 4k. PLANNED: contacts, products, categories and tags per company - 2026-10-29 - Claude
+
+**Status: plan only. No code or data has changed.** It waits on the read-only
+production report below; Supabase access had not been granted at the time of
+writing.
+
+#### Why
+
+The user decided this on 2026-10-29, ahead of onboarding a client from a
+different sector. Today these records are visible to **every** company:
+
+- **Contacts:** `Partner::autoAssignsCompany()` returns false, so a new
+  contact is saved with no company. Upstream's
+  `2026_07_30_100000_null_company_on_non_user_partners` also removed the
+  company from every existing contact not tied to a user. That includes
+  each company's own contact record (`companies.partner_id`).
+- **Products:** `Product::autoAssignsCompany()` returns false, and the
+  form's company field is optional with no default.
+- **Contact tags, product categories, product tags:** these tables
+  (`partners_tags`, `products_categories`, `products_tags`) have **no
+  `company_id` column at all**.
+- **The scope:** `CompanyScope` always adds `OR company_id IS NULL`, so a
+  record with no company is shared by design.
+
+Unrelated clients would see each other's customers, vendors and catalogue.
+
+#### Decisions taken (user, 2026-10-29)
+
+| Question | Answer |
+|---|---|
+| Scope contacts and products per company | Yes |
+| Categories and tags too | Yes: contact tags, product categories and product tags |
+| A record **already used by two or more companies** | **Copy per company.** Each company gets its own copy and its documents are re-pointed to it. Runs only after the user has reviewed the production report |
+| Attributes, units, industries, titles, banks | Not decided; they stay shared setup data unless the user asks |
+
+This is a deliberate **fork from upstream** (see the partners note in AGENTS.md
+and commit `57e234223`). Every upstream merge that touches `Partner`,
+`AddressResource` or `ManageContacts` has to be re-patched.
+
+#### What changes in code
+
+1. **Stamping.**
+   - `Partner` and `Product` drop their `autoAssignsCompany(): false`
+     override, so `BelongsToCompany` stamps the creating company.
+   - Contact tags, product categories and product tags get a nullable
+     `company_id`, `BelongsToCompany`, and an index.
+   - Because the scope lives on the base models, it reaches every subclass
+     at once: about 10 contact models (accounts `Customer`/`Vendor`,
+     `contacts\Address`, the sales, purchases, invoices, accounting and
+     website `Partner`s), 8 product models and 6 category models.
+2. **Child records take their parent's company** through
+   `InheritsParentCompany`, not the session's company: contact addresses
+   (`parent_id`), product variants (`parent_id`) and sub-categories
+   (`parent_id`).
+3. **Records that must stay readable across companies.** These are read
+   scope-free, because a scoped relation read returns null silently (the
+   §4e family):
+   - each company's own contact record, which the company list shows
+     (`partner.avatar` and the address);
+   - the contact record behind each user (chatter, messages);
+   - `companies.partner_id` reads in the switcher and the guides.
+
+   Each read site is listed and tested before the scope is switched on.
+4. **Upstream re-patches.**
+   - `AddressResource` and `ManageContacts` get back the company handling
+     upstream removed.
+   - `CompanyIsolationTest`, which pins contacts as shared, is **inverted**
+     in the same change, with a docblock explaining why.
+5. **Guests and portal customers are unaffected:** `CompanyScope` does
+   nothing without a staff user. A staff member browsing the website
+   storefront sees their own company's products, which must be confirmed
+   in the browser.
+
+#### Data: backfill, then copy where needed
+
+A read-only report decides everything below. Run it before any migration:
+`php artisan partners:company-report` for contacts, plus a matching report to
+be written for products, categories and tags.
+
+1. **Used by exactly one company:** set `company_id` to that company.
+2. **Used by two or more companies:** create one copy per company, re-point
+   that company's documents to its copy, and keep the original for the
+   first company. This is the one step that rewrites historical document
+   references. It runs in a transaction, logs every re-pointed row, and
+   ships with a rollback that restores the original references.
+3. **Used by no company:** assign it to the installation's default company.
+   Rows left without a company would stay visible everywhere.
+4. Each company's own contact record gets its own company.
+
+#### Phases, each with its own test run
+
+| Phase | Content | Gate |
+|---|---|---|
+| A | Production report (read-only) | User reviews the numbers |
+| B | Schema: `company_id` on the three tag and category tables | Migration tested up and down |
+| C | Stamping, parent inheritance, scope-free read sites, upstream re-patches, inverted `CompanyIsolationTest` | Full suites green |
+| D | Backfill and copy migration, a dry-run command first | Dry-run output reviewed by the user; Supabase backup taken |
+| E | Production check with a throwaway company before the real client | Checklist in the SaaS plan's production section |
+
+#### Risks
+
+- A scoped relation read returning null is silent. Every
+  `->partner` / `->product` / `->category` read in listeners, jobs and
+  cross-plugin services must be reviewed (AGENTS.md: "An event listener
+  runs under whoever acted").
+- Copying a contact splits its history: chatter and activities stay on the
+  original.
+- Product variants, price lists and supplier rows must be copied together
+  with their product, or the copy is incomplete.
+
+#### Still open
+
+- The production numbers (phase A).
+- Whether attributes and units should also become per company.
+
 ## 5. Notes for whoever picks this up
 
 - `assignedCompanyIds()` is simply the actor's `user_allowed_companies` rows and
