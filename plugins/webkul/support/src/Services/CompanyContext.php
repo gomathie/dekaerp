@@ -75,6 +75,25 @@ class CompanyContext
         return $this->allowedCompanies()->pluck('id')->all();
     }
 
+    /**
+     * Who may change which companies are active (user decision, 2026-10-29).
+     *
+     * Installation staff only: a Super Admin, and a Multi-Company Admin within
+     * the companies assigned to them. A client's own users work in their
+     * default company - clients are unrelated businesses, and a switcher let a
+     * user who belonged to several companies widen one view across them. This
+     * is the one place the rule lives: the render hook hides the switcher with
+     * it and SetCompanyContextRequest refuses the switch with it.
+     */
+    public function canSwitchCompanies(): bool
+    {
+        $user = $this->internalUser();
+
+        return $user instanceof User
+            && $user->is_active
+            && ($user->isSuperAdmin() || $user->isMultiCompanyAdmin());
+    }
+
     public function defaultId(): ?int
     {
         return $this->internalUser()?->default_company_id;
