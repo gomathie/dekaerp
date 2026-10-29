@@ -10,13 +10,13 @@ return new class extends Migration
     /**
      * How many seats a company may consume (D-SAAS-03/D-SAAS-04).
      *
-     * Five is the default for a company created from now on. **Existing
-     * companies are explicitly left unlimited**, because a limit is a commercial
-     * decision that has not been made per tenant yet: applying 5 retroactively
-     * would stop every production company that already has five or more people
-     * from inviting anyone on the day this deploys - including inviting the
-     * administrator of a company that is mid-onboarding. That is a support
-     * incident, not a migration.
+     * **Every company starts unlimited (`null`), new ones included** (user
+     * decision, 2026-10-29; this supersedes the earlier "5 for new companies").
+     * A limit is a commercial decision, and there is no screen to set one until
+     * SAAS-12/13. A default of 5 meant the next client onboarded would be
+     * stopped at their sixth user with no way to raise it except code. Existing
+     * companies were already left unlimited for the same reason: a retroactive 5
+     * would have stopped every company that already had five people.
      *
      * `null` means unlimited, which is an approved state rather than a missing
      * value. Setting a limit is deliberate and audited
@@ -29,13 +29,8 @@ return new class extends Migration
         Schema::table('companies', function (Blueprint $table): void {
             $table->unsignedInteger('seat_limit')
                 ->nullable()
-                ->default(5)
                 ->after('is_active');
         });
-
-        // The column default fills existing rows with 5, so it is overwritten
-        // here rather than relied on. New rows keep the default.
-        DB::table('companies')->update(['seat_limit' => null]);
     }
 
     public function down(): void

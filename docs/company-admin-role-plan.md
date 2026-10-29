@@ -1354,9 +1354,72 @@ be written for products, categories and tags.
 - Product variants, price lists and supplier rows must be copied together
   with their product, or the copy is incomplete.
 
+#### Phase A: production report - 2026-10-29
+
+Read-only `SELECT`s run through the Supabase connector. Nothing was written.
+Only counts and record ids were read, no names or contact details.
+
+**The installation:** 5 companies and 4 users. The latest migration is
+`2026_10_22_000001`, so none of the SAAS migrations has run.
+
+**Contacts:** 19 live.
+
+- Each company's own contact record (5) and each user's contact record (4)
+  already carries the right company.
+- The **10 with no company** are all employee work contacts
+  (`sub_type = employee`), created on 2026-08-25 by user 1. They cover
+  employees 1 to 10.
+- **None is used by more than one company**, so no copies are needed.
+  Contact 5 is used by company 2 (a sales order and an invoice), contact 14
+  by company 1 (a logistics shipment), and the other eight by no document.
+
+**Employees: a gap the plan did not list.** All 10 employees in
+`employees_employees` have `company_id` **null**, and also no user,
+department or job position, so they are visible to every company. They look
+like seeded or test data, but that has to be confirmed. Per-company
+employees were not part of the request.
+
+**Products:** 7 live.
+
+- Six belong to company 1: the `LOG-*` service products the Logistics
+  provisioner created.
+- Product 1 has no company. It is used only by company 2 and was created by
+  company 2's administrator, so it simply becomes company 2's. No copies are
+  needed.
+
+**Product categories:** 10, one tree, apparently the seeded default.
+
+- The root (1) is used by company 1's six products.
+- Its child (2) is used by company 2's product.
+- The other eight are unused.
+- Because a child cannot sit under another company's parent, company 2 needs
+  its own copy of the 1 > 2 branch, with product 1 re-pointed to it.
+- New companies need a default category provisioned too: the product form
+  defaults to `Category::first()`, which scoping would otherwise empty.
+
+**Tags:** contact tags 0, product tags 0. Nothing to backfill.
+
+**Two other findings that affect deploying:**
+
+- `user_allowed_companies` has **no duplicate pairs**, so
+  `2026_10_28_000001` (the unique membership index) will run.
+- User 2 holds the client role `Admin2` in **two companies** (default:
+  company 2). Under the 2026-10-29 switcher rule, user 2 is fixed to company
+  2. Users 1 (`Admin`, 4 companies), 3 and 4 are unaffected.
+
+**What this means for the backfill:** the "copy per company" machinery is
+needed only for one category branch. Everything else is a one-line
+assignment. Phase D can therefore be a reviewed data migration with explicit
+ids for this installation, not a general copy engine. The general case
+returns only if a future installation has shared records.
+
 #### Still open
 
-- The production numbers (phase A).
+- **Employees:** are employees 1 to 10 real staff? If so, which company does
+  each belong to? If not, they can be deleted. And should employees become
+  per company as well?
+- **User 2:** is user 2 one client with two companies (and should their
+  default company change), or DEKA staff who should be a Multi-Company Admin?
 - Whether attributes and units should also become per company.
 
 ## 5. Notes for whoever picks this up
