@@ -310,7 +310,7 @@ administrator removed it. Two tests that could not fail now can.
   error is keyed `company_ids` (the Plugins page field), so the company
   form may not show it, and the form's own fields save before the modules
   section. Follow-up: map the message onto `company_modules` or validate
-  before save.
+  before save. *Resolved 2026-10-29, see "Company-form follow-up" below.*
 
 **Rollback.** Restore the `isSuperAdmin()` branch in `ResolveApiCompany`
 and pass `$wanted` to `guardRevocations()`; the test changes are
@@ -318,6 +318,72 @@ independent.
 
 **Protected decisions added** (AGENTS.md): the selector accepts exactly
 `allowedIds()`; a needed dependency's untick is refused.
+
+#### Company-form follow-up — 2026-10-29 (Claude, commit `87c9cc880`)
+
+**Why.** R-2 made the revocation guard live, which exposed two company-form
+paths it had been hiding:
+
+- **Edit:** the refusal came from the write, *after* the company's own
+  fields saved (`EditCompany` has no database transaction), keyed to a field
+  the company form does not have.
+- **Create:** a new company is provisioned with every installed plugin
+  before the form's choice is applied, so ticking a plugin without its
+  dependency read as revoking the dependency, and the create would have
+  failed after the company existed.
+
+**How.**
+
+- `PluginEntitlementService::resolveForCompany()` is now the single
+  resolution step, shared by the write and a new validate-only
+  `assertCanSyncForCompany()`, so the two cannot disagree.
+- The modules `CheckboxList` calls `assertCanSyncForCompany()` as a field
+  rule on edit.
+- On create (`wasRecentlyCreated`), the choice is closed over its
+  dependencies with `withDependenciesOf()` before syncing.
+
+**Benefit.** The refusal now shows on the modules field and nothing saves. A
+new company gets its chosen plugins' dependencies instead of a failed create.
+
+**Tests.** Two new `CompanyModulesTest` page tests, the first Livewire tests
+for the company pages:
+
+- an edit that unticks a needed plugin is refused on the field, and the
+  company's name is unchanged;
+- a create that ticks only the child grants the parent too.
+
+Also corrected, and not caused by this work:
+
+- **Two `CompanyModulesTest` section tests** assumed the modules section
+  was alone in `main.after`. Security's Administrator section (2026-10-23)
+  shares the slot. They now find the section by heading and still assert
+  exactly one.
+- **The audit test** ("records the actor and the before/after grants")
+  passed or failed depending on run order. A temporary diagnostic showed
+  that when its plugin was the only one installed, the new company already
+  held it. The sync changed nothing, so correctly no audit was written. It
+  now removes that grant first.
+
+**Verification actually run** (`aureuserp_testing_saas_review`): the two
+test files, 14 passed / 3 failed (the three corrected above). The audit test
+alone failed, which is how its cause was found. Then **PluginManagerFeature,
+full suite: 42 passed, 133 assertions, 0 failures** (1,071 s). Pint clean.
+
+**Trade-off / risk.** The company form's validation is now one database read
+heavier on save, for a Super Admin only.
+
+**Rollback.** Drop the `->rule(...)` and the `wasRecentlyCreated` branch in
+`CompanyContributions`. The service methods are additive.
+
+### Full-suite runs — 2026-10-29 (`aureuserp_testing_saas_review`)
+
+| Suite | Result |
+|---|---|
+| PluginManagerFeature | 42 passed, 133 assertions, 0 failures |
+| SecurityFeature | 107 passed, 2 failed (355 assertions, 1,088 s). Both failures were in `MustChangePasswordTest`, a test defect present since 2026-10-21 and unrelated to SAAS: its fake `$next` returned a string, which `RequirePasswordChange::handle()`'s `Response` return type rejects before any assertion runs. The fake now returns `response('passed-through')` and the test asserts the body. File rerun: 47 passed, 131 assertions (includes `MultiCompanyAdminTest`, which the file `require`s), 0 failures. |
+| SupportFeature | pending |
+| SaleFeature | pending |
+| PlatformBillingFeature | pending |
 
 ---
 
