@@ -1477,6 +1477,218 @@ is audited and caches refresh.
 
 - Whether attributes and units should also become per company.
 
+#### Phase B/D handoff - 2026-10-29 (GitHub Copilot / phase B+D package)
+
+**Scope of this package:** phase B (a `company_id` on product categories, product
+tags and contact tags) and phase D (the reviewed backfill command). Phase C
+(contacts, products, packagings, employees) is a separate package and is
+already committed (`12161e743`).
+
+**Status: code complete, verification in progress.** Pint and a syntax lint have
+run; the three suites have not all finished at the time of writing, so this
+block carries no pass/assertion counts yet. It is updated below as each run
+finishes - do not read a missing count as a pass.
+
+##### Why
+
+§4k decided that categories and tags belong to a company. The three tables had
+**no `company_id` column at all**, so every company saw every category and
+every tag, and `CompanyScope`'s "null means shared" made that unavoidable
+without new columns.
+
+Two failures were found while tracing, both of which would have shipped
+silently:
+
+1. `Category::creating` did `Auth::user()->id`. With nobody acting (a company
+   provisioner, a seeder, a console command) that reads a property off null,
+   which Laravel turns into an exception - and the products provisioner creates
+   a category from `Company::created`, exactly that situation.
+2. `products_tags.name` and `partners_tags.name` carried a **global** unique
+   index. Once tags are per company, the second client cannot create a tag named
+   like the first client's: the database refuses, and the partners tag API has
+   no validation rule for it, so it surfaced as a 500.
+
+##### How
+
+- **Schema.** `products` `2026_10_29_120000_...` adds a nullable indexed
+  `company_id` (FK `companies`, `nullOnDelete`) to `products_categories` and
+  `products_tags`, and replaces `unique(name)` with `unique(company_id, name)`.
+  `partners` `2026_10_29_120001_...` does the same for `partners_tags`. Both are
+  named in their provider's `hasMigrations()` list. Nullable is deliberate: the
+  existing rows are filed by the reviewed backfill, not by a migration that also
+  runs on test and fresh databases. `down()` restores `unique(name)`.
+- **Models.** `Product\Models\Category` gains `BelongsToCompany` +
+  `InheritsParentCompany` (`parent_id`), `company_id` in `$fillable`, a
+  `company()` relation, and an `Auth::id()` creator (not `Auth::user()->id`).
+  `Product\Models\Tag` and `Partner\Models\Tag` gain `BelongsToCompany`,
+  `company_id` and `company()`. All six `Category` subclasses (accounting,
+  accounts, inventories, invoices, purchases, sales) and `contacts\Models\Tag`
+  needed no change - checked, they only add relations and `mergeFillable`.
+- The three parent lookups in `Category` (`validateNoRecursion`,
+  `handleProductCategoryData`, `getCompleteName`) now read the parent with
+  `withoutGlobalScopes()`. With the scope in place a parent from another company
+  returns null, and the "no parent found" branch then **clears `parent_id` and
+  resets `parent_path`** - the category silently moves to the root and its
+  `full_name` loses its ancestors.
+- **Default category for a new company.** `Product\Services\CompanyCategoryProvisioner`
+  (one root category named by `DEFAULT_CATEGORY_NAME`, idempotent, plus
+  `defaultCategoryId()`), driven by `Product\Observers\CompanyObserver::created`
+  and registered in `ProductServiceProvider::packageBooted()` next to
+  `UOM::observe()` - the way inventories contributes its virtual locations. Not
+  in `Support\Models\Company`: `support` is the base plugin and must not depend
+  on products.
+- `ProductCategorySeeder` stamps its ten seeded categories with the
+  installation's first company. The install-time company row is inserted with
+  raw SQL, so `Company::created` never fires for it: without this, a fresh
+  installation keeps a **shared** taxonomy and every later company sees the
+  first client's sectors, which is the leak this package exists to close.
+- **Forms.** No company field was added to any category or tag resource - they
+  have none, and stamping covers create, so an edit cannot clear it. Only the
+  `name` uniqueness rules moved from global to per company
+  (`CategoryResource`, partners `TagResource`, via `modifyRuleUsing`).
+- **Backfill.** `products:company-backfill {--dry-run}`,
+  `Product\Console\Commands\ProductsCompanyBackfill`, registered with
+  `hasCommand()`. It refuses unless the database matches the state §4k was
+  written from (ids 1-10 with their parent links, `company_id` null on all of
+  them and on product 1, product 1 pointing at category 2, companies 1 and 2
+  present, both tag tables empty), printing every difference. Then one
+  transaction: categories 1-10 -> company 1; copies of 1 and 2 for company 2
+  (created through the model so `parent_path`/`full_name` are derived, not
+  restated); product 1 -> company 2 and re-pointed at the copy of 2. It prints
+  the applied changes and a rollback summary, and a second run reports "Nothing
+  to do".
+- **Factories.** `CategoryFactory`, `Product\...\TagFactory` and
+  `Partner\...\TagFactory` use `HasCompanyDefault` (as `ProductFactory` and
+  `PackagingFactory` do), so `->company()` is not dropped by `$fillable`
+  filtering and a factory row created with nobody acting is not shared.
+- **Tests.** `products/tests/Feature/Workflows/CategoryCompanyScopingTest.php`,
+  `.../Workflows/TagCompanyScopingTest.php`,
+  `.../Feature/Schema/CompanyIdOnCategoriesAndTagsMigrationTest.php`,
+  `.../Feature/Console/ProductsCompanyBackfillTest.php`, and
+  `partners/tests/Feature/Workflows/TagCompanyScopingTest.php`.
+
+##### Benefit
+
+A second client can no longer see, edit or pick the first client's product
+categories, product tags or contact tags; two clients may each have a tag called
+"Fragile" or a root category called "All"; a sub-category can no longer be filed
+under another company's parent (refused, not silently re-parented); every new
+company starts with its own root category, so the required category select on the
+product form is never empty; and the production data change is a reviewed,
+idempotent, rollback-documented step instead of a migration.
+
+##### Trade-off / risk
+
+- Categories and tags now carry a `company_id` that `CompanyScope` honours: any
+  cross-company `->category` read in a listener, job or cross-plugin service
+  returns **null** rather than raising. Consumers found and **left alone** (not
+  this package's files, reported to the user):
+  - `Logistics\Services\CompanyProvisioner::rootCategoryId()` reads
+    `Category::query()->whereNull('parent_id')` with no company filter. Once
+    categories are scoped this either finds nothing or returns *another
+    company's* root, and the `LOG-*` service products are filed under it. It
+    should call `CompanyCategoryProvisioner::defaultCategoryId($company->id)`.
+  - `Inventory\Models\Location` (`categoryAncestry()`) uses `Category::find()`.
+- Three **global** tag-name uniqueness rules survive outside this package and
+  will refuse a legitimate per-company duplicate from those screens:
+  `ProductResource/Schemas/ProductForm.php` (`unique('products_tags')`, a
+  DO-NOT-TOUCH file), `PartnerResource/Schemas/PartnerForm.php`
+  (`unique('partners_tags')`) and `products/Http/Requests/TagRequest.php`
+  (`unique:products_tags,name`). The database now allows the duplicate, so these
+  are validation refusals, not 500s.
+- `ProductResource/.../ProductForm.php` does not list `category_id` as a
+  company-dependent field, so changing a product's company keeps the previous
+  company's category (DO-NOT-TOUCH file).
+- `down()` restores `unique(name)`, which fails if two companies already hold the
+  same tag name. Correct for a rollback of a just-deployed change; not a
+  general-purpose downgrade path.
+- A row with a null `company_id` is still *shared* by design. After this
+  package the seeded tree and the ten production categories are stamped, but
+  companies 3-5 (this installation) still have no category of their own - the
+  backfill's table does not include them, so their product form select starts
+  empty until someone creates one.
+- `Company::observe()` is registered in `packageBooted()`, which can run more
+  than once per process (AGENTS.md); the provisioner is idempotent, so a double
+  registration costs one extra lookup, not a second category.
+- Structure snapshots: **no resource gained or lost a field**, so
+  `products.json` and `partners.json` are unchanged and were not regenerated.
+
+##### Verification
+
+- Pint (`vendor/bin/pint --format agent`, 21 changed files): fixed
+  line endings, brace position on the two anonymous migration classes, and
+  `! $x` spacing; re-run clean.
+- `php -l` on all 21 changed files: no syntax errors.
+- Test database: `aureuserp_testing_saas_4k_b` (this package's own).
+- Suites ProductFeature / PartnerFeature / InventoryFeature: **in progress at the
+  time of writing**; counts added below when each finishes. Do not treat the
+  absence of a count here as a pass.
+- The backfill was **not** run against production, and its dry-run output below
+  is from a local database seeded to the expected state by the test, not from
+  Supabase.
+
+##### Rollback
+
+- Code: revert the commit; the new columns are additive and nullable, so the
+  previous code runs unchanged.
+- Schema: `migrate:rollback` runs both `down()` methods (tested).
+- Data, if the backfill has been applied:
+  `delete from products_categories where id in (<copy1>, <copy2>);`
+  `update products_products set category_id = 2, company_id = null where id = 1;`
+  `update products_categories set company_id = null where id in (1,...,10);`
+  The command prints these with the real ids.
+
+##### Proposed protected decisions (for the owner of AGENTS.md to place)
+
+- Categories, product tags and contact tags belong to the company that creates
+  them. A sub-category takes its **parent's** company and a mismatch is refused
+  (`CompanyMismatchException`); it is never silently re-parented.
+- A tag name is unique **per company**, not globally. Do not restore
+  `unique(name)`.
+- Every company gets one root category (`CompanyCategoryProvisioner`), created
+  from the products plugin's `Company::created` observer. The product form's
+  `Category::first()` default has no other fallback.
+- The products seeders stamp their categories with the installation's first
+  company; a fresh installation must not leave a shared taxonomy.
+
+#### Read-audit handoff - 2026-10-29 (Codex)
+
+I audited reads of `Partner`, `Product`, `Packaging`, `Category` and both
+`Tag` models under `plugins/webkul/*/src`. Ordinary Filament, Livewire and API
+queries are **SAFE** when they use the active company-scoped model query; the
+`api.company` middleware and `CompanyScope` are the boundary. The rows below
+are the cross-context or potentially cross-context reads that needed a more
+specific classification.
+
+| Classification | Location / flow | Finding and disposition |
+|---|---|---|
+| SAFE | Products `CompanyCategoryProvisioner`, `ProductsCompanyBackfill`, product `CompanyObserver` | Explicit company/id reads with `withoutGlobalScopes()`; provisioning and the named installation backfill do not depend on the actor's company. |
+| SAFE | Logistics `StopLinkService` public token flow | Reads are deliberately scope-free and keyed by the signed/public stop-link token; there is no staff company session to apply. All parent queries now use `withoutGlobalScopes()`. |
+| SAFE | Website `PortalAccess`, Partners `ContactImporter` | Portal email uniqueness and importer duplicate/parent resolution are deliberately global identity checks; both explicitly bypass tenant scopes and document why. Imported partners remain shared by decision. |
+| SAFE | Barcode Livewire selectors; Products, Inventory, Accounts, Sales, Purchases and Projects API controllers; Filament resources and ordinary model relations | These are current-company UI/API reads. Their scoped query builders and relation loading preserve the active-company boundary; no cross-company bypass was added. |
+| FIXED | Logistics `CompanyProvisioner::rootCategoryId` | The previous unfiltered first root could place `LOG-*` products under another company's category. It now provisions/returns the requested company's root through `CompanyCategoryProvisioner`; covered by the Logistics adoption isolation test. |
+| FIXED | Inventory `Location::categoryAncestry` | Putaway can inspect a product loaded under another company context. Category ancestry now uses explicit scope-free id lookups; covered by `CrossCompanyCategoryReadTest`. |
+| FIXED | Products `ProductSupplier` creating hook | A supplier row inherits the product's company, not the actor's. The product lookup is now scope-free; covered by `CrossCompanyParentReadTest`. |
+| FIXED | Sales `Order::handleOrderCreation` | Shipping/invoice defaults follow the explicitly selected partner even when the actor is in another company; covered by `CrossCompanyParentReadTest`. |
+| FIXED | Sales `SendSMSNotificationListener` | Payment workers have no reliable active company context. Order, invoice and customer reads now follow the paid move/order key with all scopes removed; listener test coverage is pending the full Sales-feature run. |
+| FIXED | Chatter `HasChatter` and `ChatterNotificationService` | Responsible-user contacts and follower email recipients may belong to the record's company rather than the actor's. Explicit partner reads/eager loads now survive that context; covered by `CrossCompanyReadTest`. |
+| FIXED | Products `UOMObserver` | Deleting a shared UOM must find products in every company. The observer now checks products without tenant scopes; covered by the cross-company UOM deletion test. |
+| DECIDE | Support `Company` parent/contact mapping | `Company::booted` still assigns the branch company's `parent_id` to a `Partner` parent field. This is an existing cross-domain relationship decision and was intentionally not edited. |
+| DECIDE | Accounts `MoveWorkflow::sendByEmail`, Sales `OrderMailer`, Purchases `OrderWorkflow` and the matching send-email recipient selectors | Explicit recipient ids can name a partner outside the current company. Decide whether cross-company outbound email is allowed; if it is, make the bypass explicit and audit it, and if not, reject ids outside the active company. No change was made in this package. |
+| DECIDE | Products `ProductResource` product-company/category edit behavior | The resource's category default and company change behavior need an owner decision about whether a company change should re-home or refuse an existing category. This DO-NOT-TOUCH file was not edited. |
+
+**Audit totals:** 5 SAFE groups, 7 FIXED groups, and 3 DECIDE groups. The
+SAFE groups include the current-context reads across the full plugin source
+tree; the FIXED/DECIDE rows are the places where a normal scoped read would be
+wrong, ambiguous or security-sensitive across company boundaries.
+
+**Protected decisions to carry forward:** cross-context event/model-hook reads
+must use `withoutGlobalScopes()` plus an explicit foreign key; a public stop
+link is keyed by its token rather than a staff session; logistics service
+products always use the requested company's provisioned root; and the
+backfill provisions one idempotent root for every existing active company that
+has none. The selected-recipient email behavior remains a product decision.
+
 ## 5. Notes for whoever picks this up
 
 - `assignedCompanyIds()` is simply the actor's `user_allowed_companies` rows and

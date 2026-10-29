@@ -4,6 +4,7 @@ namespace Webkul\Product\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class TagRequest extends FormRequest
 {
@@ -28,7 +29,16 @@ class TagRequest extends FormRequest
         $requiredRule = $isUpdate ? ['sometimes', 'required'] : ['required'];
 
         $rules = [
-            'name'  => [...$requiredRule, 'string', 'max:255', 'unique:products_tags,name'.($tagId ? ','.$tagId : '')],
+            // The database and TagResource both scope uniqueness by company;
+            // a global API rule would reject a name another client may use.
+            'name'  => [
+                ...$requiredRule,
+                'string',
+                'max:255',
+                Rule::unique('products_tags', 'name')
+                    ->where(fn ($query) => $query->where('company_id', current_company_id()))
+                    ->ignore($tagId),
+            ],
             'color' => ['nullable', 'string', 'max:7'],
         ];
 

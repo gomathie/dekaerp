@@ -15,7 +15,9 @@ class UOMObserver
             return;
         }
 
-        $product = Product::withTrashed()
+        // UOMs are shared setup data; deleting one must detect a product from
+        // any company instead of treating a hidden product as unused.
+        $product = Product::withoutGlobalScopes()->withTrashed()
             ->where(fn ($query) => $query->where('uom_id', $uom->id)->orWhere('uom_po_id', $uom->id))
             ->first();
 

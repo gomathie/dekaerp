@@ -269,11 +269,14 @@ class Order extends Model
         $this->state ??= OrderState::DRAFT;
 
         if ($this->partner_id) {
-            $partner = Partner::find($this->partner_id);
+            // The order's partner is the parent data for these defaults; a
+            // scoped hook read would silently replace it with null for a
+            // cross-company import and leave the order half-addressed.
+            $partner = Partner::withoutGlobalScopes()->find($this->partner_id);
 
-            $this->partner_shipping_id ??= $partner->id;
-            $this->partner_invoice_id ??= $partner->id;
-            $this->partner_id ??= $partner->id;
+            $this->partner_shipping_id ??= $partner?->id;
+            $this->partner_invoice_id ??= $partner?->id;
+            $this->partner_id ??= $partner?->id;
         }
     }
 

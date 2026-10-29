@@ -348,12 +348,16 @@ class Location extends Model
 
         $ancestry = collect();
 
-        $category = Category::find($categoryIds->first());
+        // Putaway can run after an operation was loaded by another company
+        // context; a scoped lookup would silently drop the product's category.
+        $category = Category::withoutGlobalScopes()->find($categoryIds->first());
 
         while ($category) {
             $ancestry->push($category->id);
 
-            $category = $category->parent_id ? $category->parent : null;
+            $category = $category->parent_id
+                ? Category::withoutGlobalScopes()->find($category->parent_id)
+                : null;
         }
 
         return $ancestry;

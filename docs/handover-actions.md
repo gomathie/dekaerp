@@ -929,3 +929,104 @@ Sets `company_id = NULL` on the six default leave-type names (`Paid Time Off`, `
 ### Rehearsal database
 
 `seq_rehearsal` was dropped after the report was written.yes
+
+## SaaS administration + per-company data: production deploy, 2026-10
+
+The user performs these steps in the production environment. They are a
+runbook only; no production commands are run from this session.
+
+1. **Back up Supabase.** Take a point-in-time backup or a manual dump, and
+   record its provider identifier, timestamp and retention. If the backup fails,
+   stop here; there is no application rollback until a usable backup exists.
+
+2. **Merge develop into production.** The user performs the merge. If the
+   branch can be fast-forwarded, use `git fetch . develop:production`; otherwise
+   use the normal reviewed merge process. Rollback: stop deployment and restore
+   the previous production commit through the repository's reviewed revert
+   process; do not rewrite the shared branch history.
+
+3. **Deploy and confirm migrations.** After deployment, confirm the migration
+   log and that no expected migration is pending. The new migration files, in
+   timestamp order, are:
+
+   - `plugins/webkul/support/database/migrations/2026_10_26_000001_activate_zambian_kwacha_currency.php`
+   - `plugins/webkul/security/database/migrations/2026_10_28_000001_add_unique_membership_to_user_allowed_companies.php`
+   - `plugins/webkul/security/database/migrations/2026_10_28_000002_create_company_membership_roles_table.php`
+   - `plugins/webkul/security/database/migrations/2026_10_28_000003_scope_tenant_roles_to_company_memberships.php`
+   - `plugins/webkul/support/database/migrations/2026_10_28_000004_add_seat_limit_to_companies_table.php`
+   - `plugins/webkul/security/database/migrations/2026_10_28_000005_add_lifecycle_to_user_invitations_table.php`
+   - `plugins/webkul/platform-billing/database/migrations/2026_10_28_000006_create_platform_billing_document_numbers_table.php`
+   - `plugins/webkul/products/database/migrations/2026_10_29_120000_add_company_id_to_products_categories_and_tags_tables.php`
+   - `plugins/webkul/partners/database/migrations/2026_10_29_120001_add_company_id_to_partners_tags_table.php`
+
+   This list was produced from `git diff --name-only production develop --
+   '*/migrations/*'`. Rollback: if deployment fails, redeploy the last known
+   good application release. Do not down-migrate production blindly; the
+   membership and tenant-data migrations are additive and require a reviewed,
+   data-aware rollback decision.
+
+4. **Review and run the catalogue backfill.** First run
+   `php artisan products:company-backfill --dry-run`, review every planned row,
+   then run `php artisan products:company-backfill` for real. Save the command
+   output, including the generated category ids and rollback summary. Rollback:
+   use the exact `products_categories` ids printed by the command, delete the
+   newly copied/default roots, restore product 1's `category_id = 2` and
+   `company_id = NULL`, and set the original category rows' `company_id` back
+   to `NULL`; do not guess ids.
+
+5. **Run these read-only verification queries.** An empty result is expected for
+   each exception query unless stated otherwise:
+
+   ```sql
+   SELECT user_id, company_id, COUNT(*) AS memberships
+   FROM user_allowed_companies
+   GROUP BY user_id, company_id
+   HAVING COUNT(*) > 1;
+
+   SELECT id, name, seat_limit
+   FROM companies
+   WHERE seat_limit IS NOT NULL;
+
+   SELECT id, company_id, category_id
+   FROM products_products
+   WHERE id = 1 AND company_id = 2;
+
+   SELECT id, name, company_id
+   FROM products_categories
+   WHERE company_id IS NULL;
+
+   SELECT c.id, c.name
+   FROM companies AS c
+   LEFT JOIN products_categories AS pc ON pc.company_id = c.id
+   WHERE c.deleted_at IS NULL AND pc.id IS NULL;
+
+   SELECT id, company_id
+   FROM partners_partners
+   WHERE id BETWEEN 5 AND 14 AND company_id IS NOT NULL;
+
+   SELECT id, company_id
+   FROM employees_employees
+   WHERE id BETWEEN 1 AND 10 AND company_id IS NOT NULL;
+   ```
+
+   The product query should return product 1 with `company_id = 2`; the other
+   six queries should return no rows. Rollback: these are read-only checks, so
+   there is no database rollback. Stop the rollout and restore the previous
+   application release or backup if any result is unexpected.
+
+6. **Run the throwaway-company isolation check from the SaaS administration
+   plan.** Create a throwaway company through the normal application path,
+   create one contact, product, category and tag in it, and verify as a normal
+   user of an existing company that list queries, direct URLs, relations,
+   search/export and API reads do not expose those rows. Verify the throwaway
+   user's own company can read its rows, then remove the throwaway company and
+   confirm its tenant rows were removed by the normal cascade/cleanup path.
+   Do not use customer data. Rollback: if any isolation assertion fails, stop
+   onboarding, disable the affected entry point, delete the throwaway records
+   only, and restore the pre-deploy application/backup after investigation.
+
+7. **Rollback per the incident decision.** For an application defect, redeploy
+   the previous release and keep the backup identifier attached to the incident.
+   For a migration or backfill defect, stop writes first, preserve the failing
+   output and database snapshot, and use the reviewed data rollback from steps 3
+   and 4. Re-run steps 5 and 6 before accepting production again.

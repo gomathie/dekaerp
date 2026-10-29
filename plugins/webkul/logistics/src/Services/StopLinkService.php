@@ -20,7 +20,6 @@ use Webkul\Logistics\Models\Stop;
 use Webkul\Logistics\Models\StopLink;
 use Webkul\Logistics\Models\Trip;
 use Webkul\Logistics\Support\LogisticsAccess;
-use Webkul\Support\Models\Scopes\CompanyScope;
 use Webkul\Support\Services\CompanyContext;
 
 /**
@@ -88,7 +87,7 @@ class StopLinkService
             return $default;
         }
 
-        $companyId = StopLink::withoutGlobalScope(CompanyScope::class)
+        $companyId = StopLink::withoutGlobalScopes()
             ->where('token_hash', hash('sha256', $token))
             ->value('company_id');
 
@@ -213,7 +212,7 @@ class StopLinkService
      */
     public function resolve(string $token): StopLink
     {
-        $link = StopLink::withoutGlobalScope(CompanyScope::class)
+        $link = StopLink::withoutGlobalScopes()
             ->where('token_hash', $this->hash($token))
             ->first();
 
@@ -233,7 +232,7 @@ class StopLinkService
      */
     public function stopFor(StopLink $link): Stop
     {
-        $stop = Stop::withoutGlobalScope(CompanyScope::class)
+        $stop = Stop::withoutGlobalScopes()
             ->whereKey($link->stop_id)
             ->with(['shipment:id,name,company_id,state,customer_reference'])
             ->first();
@@ -286,7 +285,7 @@ class StopLinkService
                 ->lockForUpdate()
                 ->firstOrFail();
 
-            $locked = StopLink::withoutGlobalScope(CompanyScope::class)
+            $locked = StopLink::withoutGlobalScopes()
                 ->whereKey($link->getKey())
                 ->lockForUpdate()
                 ->first();
@@ -401,7 +400,7 @@ class StopLinkService
             return null;
         }
 
-        $driverId = Trip::withoutGlobalScope(CompanyScope::class)
+        $driverId = Trip::withoutGlobalScopes()
             ->whereKey($stop->trip_id)
             ->value('driver_id');
 
