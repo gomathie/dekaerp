@@ -276,6 +276,51 @@ class PluginEntitlementService
     }
 
     /**
+     * Refuse, without writing, a set that syncForCompany() would refuse.
+     *
+     * For form validation. The company edit page saves the company's own fields
+     * before its relationships and does not wrap the two in a transaction, so a
+     * refusal raised by the write would leave the company saved and its modules
+     * unchanged, with the message on no visible field.
+     *
+     * @param  array<int, mixed>  $pluginIds
+     *
+     * @throws ValidationException when a revocation would break a granted plugin
+     */
+    public function assertCanSyncForCompany(Company $company, array $pluginIds): void
+    {
+        if (! $this->schemaReady()) {
+            return;
+        }
+
+        [$installed, $before, $requested, $wanted] = $this->resolveForCompany($company, $pluginIds);
+
+        $this->guardRevocations($installed, $before, $requested, $wanted);
+    }
+
+    /**
+     * The given plugin ids plus every installed plugin they depend on.
+     *
+     * For a set chosen without seeing the current grants - a new company, which
+     * is provisioned with the default set before its form's choice is applied.
+     * Unticked there means "not chosen", not "revoke", so the choice is closed
+     * over its dependencies first instead of being refused.
+     *
+     * @param  array<int, mixed>  $pluginIds
+     * @return array<int, int>
+     */
+    public function withDependenciesOf(array $pluginIds): array
+    {
+        if (! $this->schemaReady()) {
+            return [];
+        }
+
+        $installed = $this->installedPlugins();
+
+        return $this->withDependencies($installed, $this->installedIdsAmong($installed, $pluginIds));
+    }
+
+    /**
      * Write one company's set, with dependency closure, revocation guard, audit
      * and cache flush. Callers own the transaction.
      *
@@ -287,32 +332,7 @@ class PluginEntitlementService
             return;
         }
 
-        $installed = $this->installedPlugins();
-
-        // Grants for plugins that are not installed *here* are deliberately left
-        // alone: they belong to a plugin this installation does not carry, and
-        // dropping them would lose the entitlement of a company that would get
-        // it back the moment the plugin is installed. They are therefore outside
-        // the set this method compares and audits.
-        $before = array_values(array_intersect(
-            $this->grantedPluginIds((int) $company->getKey()),
-            $installed->keys()->map(fn ($id): int => (int) $id)->all(),
-        ));
-
-        $requestedIds = collect($pluginIds)
-            ->filter(fn ($id): bool => is_numeric($id))
-            ->map(fn ($id): int => (int) $id)
-            ->all();
-
-        // Only installed plugins participate; the rest are ignored rather than
-        // written as rows nothing can honour.
-        $requestedIds = $installed->keys()
-            ->map(fn ($id): int => (int) $id)
-            ->intersect($requestedIds)
-            ->values()
-            ->all();
-
-        $wanted = $this->withDependencies($installed, $requestedIds);
+        [$installed, $before, $requestedIds, $wanted] = $this->resolveForCompany($company, $pluginIds);
 
         // The guard reads what was *requested*, not the dependency-closed set:
         // closure re-adds any dependency of a wanted plugin, so measured against
@@ -350,6 +370,55 @@ class PluginEntitlementService
             before: ['plugin_ids' => $this->sorted($before)],
             after: ['plugin_ids' => $this->sorted($wanted)],
         );
+    }
+
+    /**
+     * The inputs of one company's change, shared by the write and the
+     * validate-only check so the two cannot disagree.
+     *
+     * @param  array<int, mixed>  $pluginIds
+     * @return array{0: Collection<int, Plugin>, 1: array<int, int>, 2: array<int, int>, 3: array<int, int>}
+     *                                                                                                       installed (keyed by id), before, requested, wanted
+     */
+    protected function resolveForCompany(Company $company, array $pluginIds): array
+    {
+        $installed = $this->installedPlugins();
+
+        // Grants for plugins that are not installed *here* are deliberately left
+        // alone: they belong to a plugin this installation does not carry, and
+        // dropping them would lose the entitlement of a company that would get
+        // it back the moment the plugin is installed. They are therefore outside
+        // the set this method compares and audits.
+        $before = array_values(array_intersect(
+            $this->grantedPluginIds((int) $company->getKey()),
+            $installed->keys()->map(fn ($id): int => (int) $id)->all(),
+        ));
+
+        $requestedIds = $this->installedIdsAmong($installed, $pluginIds);
+
+        return [$installed, $before, $requestedIds, $this->withDependencies($installed, $requestedIds)];
+    }
+
+    /**
+     * Only installed plugins participate; the rest are ignored rather than
+     * written as rows nothing can honour.
+     *
+     * @param  Collection<int, Plugin>  $installed  keyed by id
+     * @param  array<int, mixed>  $pluginIds
+     * @return array<int, int>
+     */
+    protected function installedIdsAmong(Collection $installed, array $pluginIds): array
+    {
+        $requestedIds = collect($pluginIds)
+            ->filter(fn ($id): bool => is_numeric($id))
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+
+        return $installed->keys()
+            ->map(fn ($id): int => (int) $id)
+            ->intersect($requestedIds)
+            ->values()
+            ->all();
     }
 
     /**
