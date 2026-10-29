@@ -17,6 +17,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Validation\Rules\Unique;
 use Webkul\Partner\Enums\AccountType;
 use Webkul\Partner\Filament\Resources\PartnerResource;
 use Webkul\Partner\Filament\Resources\PartnerResource\Support\PartnerSchemaRegistry as Registry;
@@ -175,7 +176,11 @@ class PartnerForm
                                             ->label(__('partners::filament/resources/partner.form.sections.general.fields.name'))
                                             ->required()
                                             ->maxLength(255)
-                                            ->unique('partners_tags'),
+                                            // A global validator would reject a legitimate duplicate tag owned by another client.
+                                            ->unique(
+                                                ignoreRecord: true,
+                                                modifyRuleUsing: fn (Unique $rule) => $rule->where('company_id', current_company_id()),
+                                            ),
                                         ColorPicker::make('color')
                                             ->label(__('partners::filament/resources/partner.form.sections.general.fields.color'))
                                             ->hexColor(),

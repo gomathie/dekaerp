@@ -6,6 +6,8 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Webkul\Product\Models\Category;
+use Webkul\Product\Services\CompanyCategoryProvisioner;
+use Webkul\Support\Models\Company;
 
 /**
  * Files this installation's existing categories and product 1 under their
@@ -40,6 +42,9 @@ class ProductsCompanyBackfill extends Command
     private const PRODUCT_COMPANY = 2;
 
     private const PRODUCT_CATEGORY_ID = 2;
+
+    /** Existing companies 3-5 have no catalogue rows in the production copy. */
+    private const COMPANIES_WITHOUT_CATEGORIES = [3, 4, 5];
 
     /**
      * The "1 > 2" branch company 2 needs, parent first: a child cannot sit under
@@ -98,9 +103,9 @@ class ProductsCompanyBackfill extends Command
             return self::SUCCESS;
         }
 
-        [$firstCopyId, $secondCopyId] = DB::transaction(fn (): array => $this->apply());
+        [$firstCopyId, $secondCopyId, $provisionedCategories] = DB::transaction(fn (): array => $this->apply());
 
-        $this->printChanges([$firstCopyId, $secondCopyId]);
+        $this->printChanges([$firstCopyId, $secondCopyId, $provisionedCategories]);
 
         $this->newLine();
         $this->components->info('Applied.');
@@ -112,7 +117,7 @@ class ProductsCompanyBackfill extends Command
      * One transaction: a product pointing at a half-copied branch is worse than
      * no backfill at all.
      *
-     * @return array{0: int, 1: int} the two copy ids, parent first
+     * @return array{0: int, 1: int, 2: array<int, array{company_id: int, category_id: int}>} the two copy ids and newly provisioned roots
      */
     protected function apply(): array
     {
@@ -144,7 +149,25 @@ class ProductsCompanyBackfill extends Command
                 'company_id'  => self::PRODUCT_COMPANY,
             ]);
 
-        return [$copiedIds[self::COPIED_CATEGORY_IDS[0]], $copiedIds[self::PRODUCT_CATEGORY_ID]];
+        $provisionedCategories = [];
+        $categoryProvisioner = app(CompanyCategoryProvisioner::class);
+
+        foreach (Company::withoutGlobalScopes()->whereNull('deleted_at')->orderBy('id')->get() as $company) {
+            if (Category::withoutGlobalScopes()->where('company_id', $company->id)->exists()) {
+                continue;
+            }
+
+            $category = $categoryProvisioner->provision($company);
+
+            if ($category) {
+                $provisionedCategories[] = [
+                    'company_id'  => (int) $company->id,
+                    'category_id' => (int) $category->id,
+                ];
+            }
+        }
+
+        return [$copiedIds[self::COPIED_CATEGORY_IDS[0]], $copiedIds[self::PRODUCT_CATEGORY_ID], $provisionedCategories];
     }
 
     /**
@@ -175,7 +198,11 @@ class ProductsCompanyBackfill extends Command
             ->where('id', $product->category_id)
             ->value('company_id');
 
-        return (int) $categoryCompany === self::PRODUCT_COMPANY;
+        if ((int) $categoryCompany !== self::PRODUCT_COMPANY) {
+            return false;
+        }
+
+        return $this->companiesMissingCategories() === [];
     }
 
     /**
@@ -191,6 +218,18 @@ class ProductsCompanyBackfill extends Command
         foreach ([self::CATEGORY_COMPANY => 'created the categories', self::PRODUCT_COMPANY => 'owns product 1'] as $companyId => $role) {
             if (! DB::table('companies')->where('id', $companyId)->exists()) {
                 $differences[] = "Company #{$companyId}, which {$role}, does not exist.";
+            }
+        }
+
+        foreach (self::COMPANIES_WITHOUT_CATEGORIES as $companyId) {
+            if (! DB::table('companies')->where('id', $companyId)->exists()) {
+                $differences[] = "Company #{$companyId}, which needs a default category, does not exist.";
+
+                continue;
+            }
+
+            if (DB::table('products_categories')->where('company_id', $companyId)->exists()) {
+                $differences[] = "Company #{$companyId} already has a category; it was expected to have none before this backfill.";
             }
         }
 
@@ -247,7 +286,25 @@ class ProductsCompanyBackfill extends Command
     }
 
     /**
-     * @param  array{0: int, 1: int}|null  $copyIds  null in a dry run, where the ids are not assigned yet
+     * @return array<int, int>
+     */
+    protected function companiesMissingCategories(): array
+    {
+        return Company::withoutGlobalScopes()
+            ->whereNull('deleted_at')
+            ->whereNotExists(function ($query): void {
+                $query->selectRaw('1')
+                    ->from('products_categories')
+                    ->whereColumn('products_categories.company_id', 'companies.id');
+            })
+            ->orderBy('id')
+            ->pluck('id')
+            ->map(fn (mixed $id): int => (int) $id)
+            ->all();
+    }
+
+    /**
+     * @param  array{0: int, 1: int, 2: array<int, array{company_id: int, category_id: int}>}|null  $copyIds  null in a dry run, where the ids are not assigned yet
      */
     protected function printChanges(?array $copyIds): void
     {
@@ -270,6 +327,12 @@ class ProductsCompanyBackfill extends Command
                     .', company_id: none -> '.self::PRODUCT_COMPANY,
             ],
             [
+                'products_categories (missing company roots)',
+                $copyIds === null
+                    ? 'companies #'.implode(', #', self::COMPANIES_WITHOUT_CATEGORIES).': create one default root category each'
+                    : collect($copyIds[2])->map(fn (array $row): string => 'company #'.$row['company_id'].' -> category #'.$row['category_id'])->implode('; '),
+            ],
+            [
                 'products_tags, partners_tags',
                 'nothing to do (the plan expects no tags)',
             ],
@@ -282,7 +345,9 @@ class ProductsCompanyBackfill extends Command
         $this->newLine();
         $this->components->info('Rollback');
 
-        $this->line('  delete from products_categories where id in ('.$copyIds[0].', '.$copyIds[1].');');
+        $allCreatedCategoryIds = array_merge([$copyIds[0], $copyIds[1]], array_column($copyIds[2], 'category_id'));
+
+        $this->line('  delete from products_categories where id in ('.implode(', ', $allCreatedCategoryIds).');');
         $this->line('  update products_products set category_id = '.self::PRODUCT_CATEGORY_ID.', company_id = null where id = '.self::PRODUCT_ID.';');
         $this->line('  update products_categories set company_id = null where id in ('.implode(', ', array_keys(self::CATEGORY_PARENTS)).');');
     }

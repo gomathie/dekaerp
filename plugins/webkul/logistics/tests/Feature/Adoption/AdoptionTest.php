@@ -7,6 +7,7 @@ use Webkul\Logistics\Models\Shipment;
 use Webkul\Logistics\Services\CompanyProvisioner;
 use Webkul\Logistics\Support\LogisticsAccess;
 use Webkul\Logistics\Support\LogisticsSequences;
+use Webkul\Product\Models\Category;
 use Webkul\Product\Models\Product;
 use Webkul\Support\Models\Sequence;
 
@@ -70,6 +71,27 @@ it('provisions per-company numbering, default products and settings once', funct
         ->and(Sequence::withoutGlobalScopes()->where('company_id', $company->id)->whereIn('code', LogisticsSequences::CODES)->count())->toBe(3)
         ->and(Sequence::withoutGlobalScopes()->whereNull('company_id')->whereIn('code', LogisticsSequences::CODES)->count())->toBe(0)
         ->and(CompanySetting::withoutGlobalScopes()->where('company_id', $company->id)->count())->toBe(1);
+});
+
+it('files service products under the requested company category while acting in another company', function () {
+    $companyA = LogisticsHelper::company();
+    $companyB = LogisticsHelper::company();
+
+    $categoryA = Category::withoutGlobalScopes()->where('company_id', $companyA->id)->whereNull('parent_id')->firstOrFail();
+    $categoryB = Category::withoutGlobalScopes()->where('company_id', $companyB->id)->whereNull('parent_id')->firstOrFail();
+
+    CompanyHelper::actingAsCompanyUser($companyA);
+
+    app(CompanyProvisioner::class)->provision($companyB);
+
+    $products = Product::withoutGlobalScopes()
+        ->where('company_id', $companyB->id)
+        ->where('reference', 'like', 'LOG-%')
+        ->get();
+
+    expect($products)->toHaveCount(count(CompanyProvisioner::SERVICE_PRODUCTS))
+        ->and($products->pluck('category_id')->unique()->all())->toBe([$categoryB->id])
+        ->and($products->pluck('category_id')->contains($categoryA->id))->toBeFalse();
 });
 
 it('reports missing accounting setup instead of creating it', function () {

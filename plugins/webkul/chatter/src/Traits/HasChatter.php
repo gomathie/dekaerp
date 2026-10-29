@@ -49,7 +49,10 @@ trait HasChatter
             try {
                 $partnerId = User::whereKey($this->getAttribute($column))->value('partner_id');
 
-                if ($partnerId && $partner = Partner::find($partnerId)) {
+                // A model hook may run while the actor's company differs from
+                // the responsible user's contact; the scoped read would drop
+                // the follower silently.
+                if ($partnerId && $partner = Partner::withoutGlobalScopes()->find($partnerId)) {
                     $this->addFollower($partner);
                 }
             } catch (Throwable $e) {
@@ -295,7 +298,9 @@ trait HasChatter
                 ->unique();
 
             foreach ($partnerIds as $partnerId) {
-                if ($partner = Partner::find($partnerId)) {
+                // Default followers belong to the created record, not to the
+                // session company that happened to trigger its hook.
+                if ($partner = Partner::withoutGlobalScopes()->find($partnerId)) {
                     $this->addFollower($partner);
                 }
             }

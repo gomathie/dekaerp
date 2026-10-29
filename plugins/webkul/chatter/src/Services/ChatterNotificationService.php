@@ -32,7 +32,11 @@ class ChatterNotificationService
             return;
         }
 
-        $followers = $record->followers()->with('partner')->get();
+        // Notifications can be delivered outside the record's company
+        // context; a scoped eager load would silently omit its recipients.
+        $followers = $record->followers()
+            ->with(['partner' => fn ($query) => $query->withoutGlobalScopes()])
+            ->get();
 
         if ($followers->isEmpty()) {
             return;

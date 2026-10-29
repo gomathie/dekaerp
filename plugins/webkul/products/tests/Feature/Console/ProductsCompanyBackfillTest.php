@@ -73,19 +73,20 @@ function seedExpectedStartingState(): void
         'updated_at'  => now(),
     ]);
 
-    // Company 1 comes from the installation seeder; company 2 is inserted
-    // directly so it exists without the products observer provisioning it a
-    // root category, which would change the state under test.
-    if (! DB::table('companies')->where('id', 2)->exists()) {
-        DB::table('companies')->insert([
-            'id'          => 2,
-            'name'        => 'Second client',
-            'company_id'  => 'BACKFILL-COMPANY-2',
-            'is_active'   => true,
-            'currency_id' => DB::table('currencies')->value('id'),
-            'created_at'  => now(),
-            'updated_at'  => now(),
-        ]);
+    // Company 1 comes from the installation seeder; companies 2-5 are inserted
+    // directly so they exist without the products observer provisioning roots.
+    foreach ([2 => 'Second client', 3 => 'Third client', 4 => 'Fourth client', 5 => 'Fifth client'] as $id => $name) {
+        if (! DB::table('companies')->where('id', $id)->exists()) {
+            DB::table('companies')->insert([
+                'id'          => $id,
+                'name'        => $name,
+                'company_id'  => 'BACKFILL-COMPANY-'.$id,
+                'is_active'   => true,
+                'currency_id' => DB::table('currencies')->value('id'),
+                'created_at'  => now(),
+                'updated_at'  => now(),
+            ]);
+        }
     }
 }
 
@@ -93,6 +94,7 @@ it('writes nothing on a dry run', function () {
     expect(DB::table('companies')->where('id', 1)->exists())->toBeTrue();
 
     $this->artisan('products:company-backfill', ['--dry-run' => true])
+        ->expectsOutputToContain('companies #3, #4, #5: create one default root category each')
         ->expectsOutputToContain('Dry run: nothing was written')
         ->assertExitCode(0);
 
@@ -104,14 +106,22 @@ it('writes nothing on a dry run', function () {
 
 it('files the categories and product 1 under their company', function () {
     $this->artisan('products:company-backfill')
+        ->expectsOutputToContain('Rollback')
         ->expectsOutputToContain('Applied')
         ->assertExitCode(0);
 
     expect(DB::table('products_categories')->whereBetween('id', [1, 10])->where('company_id', 1)->count())->toBe(10);
 
+    $roots = DB::table('products_categories')
+        ->whereIn('company_id', [3, 4, 5])
+        ->whereNull('parent_id')
+        ->get();
+
     $copies = DB::table('products_categories')->where('company_id', 2)->orderBy('id')->get();
 
-    expect($copies)->toHaveCount(2)
+    expect($roots)->toHaveCount(3)
+        ->and($roots->pluck('name')->all())->toBe(['All', 'All', 'All'])
+        ->and($copies)->toHaveCount(2)
         ->and($copies[0]->name)->toBe('All')
         ->and($copies[0]->parent_id)->toBeNull()
         ->and($copies[0]->parent_path)->toBe('/')
@@ -138,7 +148,7 @@ it('reports nothing to do when run a second time', function () {
 
     expect(DB::table('products_categories')->orderBy('id')->get(['id', 'company_id', 'parent_id'])->toArray())
         ->toEqual($after)
-        ->and(DB::table('products_categories')->count())->toBe(12);
+        ->and(DB::table('products_categories')->count())->toBe(15);
 });
 
 it('refuses an unexpected starting state and says what differs', function () {
