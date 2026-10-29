@@ -31,9 +31,9 @@ it('sends a flagged user to the profile page instead of where they asked to go',
 
     $request = Request::create('/admin/users', 'GET');
 
-    $response = app(RequirePasswordChange::class)->handle($request, fn (): mixed => 'passed-through');
+    $response = app(RequirePasswordChange::class)->handle($request, fn () => response('passed-through'));
 
-    expect($response)->not->toBe('passed-through')
+    expect($response->getContent())->not->toBe('passed-through')
         ->and($response->getStatusCode())->toBe(302)
         ->and($response->headers->get('location'))->toBe(Profile::getUrl());
 });
@@ -46,9 +46,11 @@ it('lets the profile page itself through, or the user could never comply', funct
 
     $request = Request::create(strtok(Profile::getUrl(), '?'), 'GET');
 
-    $passed = app(RequirePasswordChange::class)->handle($request, fn (): string => 'passed-through');
+    // A Response, not a string: handle() is typed to return one, and a string
+    // from $next fails that type before any assertion runs.
+    $passed = app(RequirePasswordChange::class)->handle($request, fn () => response('passed-through'));
 
-    expect($passed)->toBe('passed-through');
+    expect($passed->getContent())->toBe('passed-through');
 });
 
 it('does not interfere with a user who is not flagged', function () {
@@ -58,10 +60,10 @@ it('does not interfere with a user who is not flagged', function () {
 
     $request = Request::create('/admin/users', 'GET');
 
-    $passed = app(RequirePasswordChange::class)->handle($request, fn (): string => 'passed-through');
+    $passed = app(RequirePasswordChange::class)->handle($request, fn () => response('passed-through'));
 
     expect($user->must_change_password)->toBeFalse()
-        ->and($passed)->toBe('passed-through');
+        ->and($passed->getContent())->toBe('passed-through');
 });
 
 it('clears the requirement once the password is changed', function () {
