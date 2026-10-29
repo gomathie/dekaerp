@@ -1305,7 +1305,13 @@ MULTI-COMPANY FACTS THAT BITE
   Filter on `data_type IN ('bigint','integer','smallint')`, which excludes it on
   principle rather than by naming it. `Partner\Console\Commands\ContactCompanyReport`
   shows the shape.
-• **Contacts (partners) are shared across companies by upstream design, not by
+• *Superseded 2026-10-29 (user decision, §4k of docs/company-admin-role-plan.md):
+  contacts are now per company in this fork. New contacts are stamped with the
+  creating company, while existing contacts with no company stay shared. The
+  note below is kept as the record of upstream's design and of what the fork
+  must re-apply on every merge; the protected decisions list the rules in
+  force.*
+  **Contacts (partners) are shared across companies by upstream design, not by
   accident.** Commit `57e234223` ("Fixed shared partner issue", 2026-07-30)
   added `Partner::autoAssignsCompany()` returning false, nulled `company_id` on
   every partner not tied to a user, and removed the `?? current_company_id()`
@@ -1457,6 +1463,39 @@ log named):
     suite, CI included.
   - A new plugin namespace needs the local autoloader regenerated (command in
     WORKING RULES), a `phpunit.xml` suite and a `bootstrap/providers.php` entry.
+
+• Per-company contacts, products, categories and tags, 2026-10-29
+  (`docs/company-admin-role-plan.md` §4k, user decision for unrelated clients):
+  - `Partner`, `Product` and `Packaging` have **no** `autoAssignsCompany()`
+    opt-out. They are stamped with the creating company. This is a deliberate
+    fork from upstream 57e234223: re-apply it on every upstream merge, and keep
+    the three models off the `$shared` lists in the plugins'
+    `CompanyScopingInvariantsTest`.
+  - A product variant takes its template's company and a packaging its
+    product's (`InheritsParentCompany`). `Partner` deliberately does **not**
+    use that trait, because a branch company's own contact belongs to the
+    branch while its parent contact belongs to the parent company. Child
+    contacts get the owner's company where they are created: `AddressResource`,
+    `ManageContacts` and the address API.
+  - Existing contacts are never reassigned. One with no company stays shared,
+    and one with a company stays there. Example employees 1 to 10 and their
+    contacts 5 to 14 stay shared.
+  - The company field is required on the product and employee forms. Stamping
+    happens only on create, so clearing the field on edit would share the
+    record again.
+  - Categories, product tags and contact tags belong to the company that
+    creates them. A sub-category takes its parent's company, and a mismatch is
+    refused (`CompanyMismatchException`), never silently re-parented.
+  - A tag name is unique **per company** (`unique(company_id, name)`), in the
+    database and in every form or request rule. Do not restore a global
+    `unique(name)`.
+  - Every company gets a root category (`CompanyCategoryProvisioner`, run from
+    the products plugin's `Company::created` observer), and the seeders stamp
+    their categories with the first company. A fresh installation must not
+    leave a shared taxonomy.
+  - The factory concern `HasCompanyDefault` leaves a child that has its parent
+    set to `InheritsParentCompany`. Filling the session's company first made
+    the trait refuse correct children.
 
 DONE RECENTLY (newest first; details in docs/change-log.md)
 

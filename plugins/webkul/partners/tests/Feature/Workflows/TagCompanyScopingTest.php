@@ -6,7 +6,6 @@ require_once __DIR__.'/../../../../support/tests/Helpers/CompanyHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
 
 beforeEach(function () {
-    TestBootstrapHelper::ensurePluginInstalled('partners');
     SecurityHelper::disableUserEvents();
 });
 
