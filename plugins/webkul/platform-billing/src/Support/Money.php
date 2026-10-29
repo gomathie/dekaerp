@@ -148,8 +148,15 @@ final class Money
             throw new InvalidArgumentException("Not a percentage rate: [{$rate}].");
         }
 
-        // Integer maths end to end: rate is in basis-point-like units (4 dp).
-        $scaledRate = (int) round((float) $rate * 10000);
+        // The rate is parsed from its digits, never through a float, so "15.0001"
+        // is exactly 150001 ten-thousandths of a percent.
+        $rate = trim($rate);
+        [$whole, $fraction] = array_pad(explode('.', ltrim($rate, '-'), 2), 2, '');
+        $scaledRate = ((int) $whole * 10000) + (int) str_pad($fraction, 4, '0');
+
+        if (str_starts_with($rate, '-')) {
+            $scaledRate = -$scaledRate;
+        }
 
         if ($scaledRate !== 0 && abs($this->minor) > intdiv(PHP_INT_MAX, abs($scaledRate))) {
             throw new OverflowException("Applying {$rate}% to {$this->minor} would overflow.");
@@ -157,7 +164,12 @@ final class Money
 
         $product = $this->minor * $scaledRate;
 
-        $rounded = intdiv($product + ($product >= 0 ? 5000 : -5000), 10000);
+        // One divisor for both scales: 10,000 undoes the four rate decimals and
+        // 100 turns a percent into a fraction. Dividing by 10,000 alone returned
+        // the amount times the rate - 15% of 100.00 came out as 1,500.00.
+        $divisor = 100 * 10000;
+
+        $rounded = intdiv($product + ($product >= 0 ? intdiv($divisor, 2) : -intdiv($divisor, 2)), $divisor);
 
         return new self($rounded, $this->currency);
     }

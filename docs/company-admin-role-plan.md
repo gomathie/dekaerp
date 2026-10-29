@@ -1296,8 +1296,16 @@ and commit `57e234223`). Every upstream merge that touches `Partner`,
      website `Partner`s), 8 product models and 6 category models.
 2. **Child records take their parent's company** through
    `InheritsParentCompany`, not the session's company: contact addresses
-   (`parent_id`), product variants (`parent_id`) and sub-categories
-   (`parent_id`).
+   (`parent_id`), product variants (`parent_id`), sub-categories
+   (`parent_id`) and product packagings (`product_id`). `Packaging` is also
+   declared shared today, in products' invariants test.
+
+   *The existing guard (found 2026-10-29):* each plugin has a
+   `CompanyScopingInvariantsTest` with a `$shared` list. Partners lists
+   `Partner`; products lists `Packaging` and `Product`. Removing a model from
+   that list automatically asserts it is stamped with the active company, and
+   any model that newly uses `BelongsToCompany` is picked up without listing
+   it. Phase C moves those three off their lists.
 3. **Records that must stay readable across companies.** These are read
    scope-free, because a scoped relation read returns null silently (the
    §4e family):

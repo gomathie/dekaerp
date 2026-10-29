@@ -1,17 +1,15 @@
 <?php
 
-use Webkul\Product\Models\Packaging;
-use Webkul\Product\Models\Product;
-
 require_once __DIR__.'/../../../../support/tests/Helpers/CompanyScopeHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
 
 $plugin = 'products';
 
-$shared = [
-    Packaging::class,
-    Product::class,
-];
+/*
+ * Empty since 2026-10-29: Product and Packaging used to be declared shared.
+ * Each client has its own catalogue (docs/company-admin-role-plan.md §4k).
+ */
+$shared = [];
 
 beforeEach(function () {
     TestBootstrapHelper::ensurePluginInstalled('products');

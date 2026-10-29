@@ -429,8 +429,12 @@ the table below.
 | PluginManagerFeature | 42 passed, 133 assertions, 0 failures |
 | SecurityFeature | 107 passed, 2 failed (355 assertions, 1,088 s). Both failures were in `MustChangePasswordTest`, a test defect present since 2026-10-21 and unrelated to SAAS: its fake `$next` returned a string, which `RequirePasswordChange::handle()`'s `Response` return type rejects before any assertion runs. The fake now returns `response('passed-through')` and the test asserts the body. File rerun: 47 passed, 131 assertions (includes `MultiCompanyAdminTest`, which the file `require`s), 0 failures. |
 | SupportFeature | First run: 185 passed, 2 failed (931 assertions, 1,783 s). Both failures were stale structure snapshots, `security.json` and `support.json`, from two intended changes: the company form's Administrator section (`administrator_email`, 2026-10-23) and SAAS-01's `effective_role_names` replacing `roles.name` on the user infolist. Both fixtures were deleted and re-recorded from the full suite, per the snapshot test's own rule. Re-run: **192 passed, 946 assertions, 0 failures** (1,766 s), including `CompanySwitcherTest`. The re-recorded fixtures differ from the old ones (`57687b905`) by exactly those two changes. |
-| SaleFeature | pending |
-| PlatformBillingFeature | pending |
+| SaleFeature | 143 passed, 434 assertions, 0 failures (2,914 s) |
+| PlatformBillingFeature | First run: 17 passed, 1 failed. **A real defect (SAAS-08):** `Money::percentage()` divided by the rate's 10,000 scale but not by 100, so 15% of 100.00 returned 1,500.00. It also read the rate through `(float)`, despite its "integer maths end to end" comment. Fixed: the rate is parsed from its digits, and one divisor of 100 × 10,000 is used. New test "applies fractional, four-decimal and negative-amount rates exactly". No caller existed outside the test, so no stored amount was affected. Re-run: **19 passed, 46 assertions, 0 failures.** |
+| Seat-capacity file (after the no-default change) | 18 passed, 55 assertions, 0 failures |
+
+**All five suites green on 2026-10-29**, plus the targeted reruns above. The
+packages stay in `review` only until the user commits and decides the deploy.
 
 ---
 

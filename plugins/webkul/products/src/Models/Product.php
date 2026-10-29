@@ -22,20 +22,27 @@ use Webkul\Support\Models\Concerns\HasContributedAttributes;
 use Webkul\Support\Models\Scopes\CompanyScope;
 use Webkul\Support\Models\UOM;
 use Webkul\Support\Traits\BelongsToCompany;
+use Webkul\Support\Traits\InheritsParentCompany;
 
 class Product extends Model implements Sortable
 {
     use BelongsToCompany;
     use HasChatter, HasContributedAttributes, HasCustomFields, HasFactory, HasLogActivity, SoftDeletes, SortableTrait;
+    use InheritsParentCompany;
 
     public const ACTIVITY_PLAN_PLUGIN = 'products';
 
     protected $table = 'products_products';
 
-    public static function autoAssignsCompany(): bool
-    {
-        return false;
-    }
+    /*
+     * No autoAssignsCompany() override: BelongsToCompany stamps the creating
+     * company, because each client has its own catalogue (user decision,
+     * 2026-10-29; docs/company-admin-role-plan.md §4k). A variant takes its
+     * template's company through InheritsParentCompany, never the session's.
+     */
+    protected static string $parentCompanyModel = self::class;
+
+    protected static string $parentCompanyKey = 'parent_id';
 
     protected $fillable = [
         'type',

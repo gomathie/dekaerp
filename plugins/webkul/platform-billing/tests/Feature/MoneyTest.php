@@ -61,6 +61,19 @@ it('applies a percentage rate once, rounded half up', function () {
         ->and(Money::fromDecimal('0.05', 'USD')->percentage('15')->minor)->toBe(1);
 });
 
+/**
+ * Added 2026-10-29 with the fix: percentage() divided by the rate's scale but
+ * not by 100, so every result was the amount times the rate (15% of 100.00 was
+ * 1,500.00), and it read the rate through a float.
+ */
+it('applies fractional, four-decimal and negative-amount rates exactly', function () {
+    expect(Money::fromDecimal('10.00', 'USD')->percentage('7.5')->toDecimal())->toBe('0.75')
+        // 0.0001% of 1,000,000.00 is exactly 1.00; a float rate can miss it.
+        ->and(Money::fromDecimal('1000000.00', 'USD')->percentage('0.0001')->toDecimal())->toBe('1.00')
+        ->and(Money::fromDecimal('-100.00', 'USD')->percentage('15')->toDecimal())->toBe('-15.00')
+        ->and(Money::fromDecimal('100.00', 'USD')->percentage('0')->toDecimal())->toBe('0.00');
+});
+
 it('keeps negative amounts, because credit notes exist', function () {
     $credit = Money::fromDecimal('-25.50', 'USD');
 

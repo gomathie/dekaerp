@@ -163,6 +163,12 @@ class ProductForm
                     })
                     ->disableOptionWhen(fn ($label) => str_contains($label, ' (Deleted)'))
                     ->placeholder(__('products::filament/resources/product.form.sections.settings.fields.company-placeholder'))
+                    // Required with the current company as default: a product
+                    // saved with no company is visible to every company, and the
+                    // model only stamps one on create, so clearing it on edit
+                    // would share the product again (docs/company-admin-role-plan.md §4k).
+                    ->default(fn (): ?int => current_company_id())
+                    ->required()
                     ->searchable()
                     ->preload()
                     ->live()

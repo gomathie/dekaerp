@@ -77,6 +77,10 @@ class AddressController extends Controller
         $data = $request->validated();
         $data['parent_id'] = $partner;
         $data['account_type'] = AccountType::ADDRESS;
+        // The owner's company, as AddressResource and ManageContacts do. Without
+        // it, stamping would file the address under the caller's company rather
+        // than the contact's. A shared owner (null) still gets the caller's.
+        $data['company_id'] = $partnerModel->company_id;
 
         $address = Partner::create($data);
 
