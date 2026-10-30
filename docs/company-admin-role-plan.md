@@ -1838,6 +1838,82 @@ command is read-only, but that description predates the decision to stamp new
 contacts while leaving existing unassigned example contacts shared. Its wording
 needs an owner review before anyone uses it as a deployment instruction.
 
+#### Read-audit decisions - 2026-10-30 (user decided; implemented by Claude)
+
+The user agreed to the recommendations on the five DECIDE rows above.
+
+| DECIDE row | Decision | Done |
+|---|---|---|
+| Selected email recipients (invoice, sales order, purchase order) | **Refuse** another company's contact | `Partner::recipientsForCompany()` |
+| Chatter mentions | **Do not deliver** outside the record's company | `ChatterNotificationService::mayBeToldAbout()` |
+| Branch company contact `parent_id` set to a company id | **Wait**: production has no branch companies | Left as documented |
+| Product category when its company changes | **Close**: the form clears the old company's category and tags | Phase C follow-up |
+| `Product` `saved` hook drops only `CompanyScope` | **Safe**: no product model carries another global scope | Closed, no change |
+
+**Why.** Clients are unrelated businesses. An email or a mention carries the
+record's details to its recipient. The email actions read recipients through
+the scoped query, which dropped an ordinary user's out-of-company id silently.
+It also widened for a super admin (who bypasses `CompanyScope`) or a
+Multi-Company Admin with several companies active.
+
+**How.**
+
+- **`Partner::recipientsForCompany(array $ids, ?int $companyId)`** is the
+  one rule for all three email paths.
+  - It reads with `withoutGlobalScopes()`, because `Partner` also carries the
+    ownership scope, then excludes soft-deleted contacts.
+  - It keeps only `owned_by_company($companyId)`: the record's company, or no
+    company.
+  - It refuses anything else, including ids that do not exist, with a
+    `ValidationException` naming the ids. The message is pinned.
+- **The three email paths** now read their recipients through it:
+  `Account\Services\MoveWorkflow::sendByEmail()`,
+  `Sale\Services\OrderMailer::sendQuotation()`/`sendCancellation()`, and
+  `Purchase\Services\OrderWorkflow::mailVendors()`. The last now receives the
+  order. The record's company decides, whoever is acting.
+- **Mentions.** `ChatterNotificationService::notifyMentions()` filters the
+  mentioned users through `mayBeToldAbout()`: a record with no company has no
+  boundary; otherwise the user must be a super admin or be assigned to the
+  record's company (`MultiCompanyAdminService::isCompanyAssigned()`, the rule
+  `CompanyPolicy` uses). An outsider is neither notified nor added as a
+  follower. The message itself still posts, because notifications run after
+  it is saved.
+- **`partners:company-report`.** Its description and messages no longer
+  present a contact backfill. Shared contacts stay shared by decision, and
+  the old framing is marked superseded in its docblock. The report's data is
+  unchanged.
+
+**Benefit.** One client's invoice, order or chatter mention can no longer
+reach another client's contact or user, whoever sends it.
+
+**Trade-off / risk.**
+
+- An email that names any out-of-company recipient is refused as a whole,
+  not sent to the valid ones. Partial sending would hide the refusal.
+- Within one company the ownership scope is not applied to recipients.
+  Company is the boundary these actions enforce (`resource_permission`
+  defaults to `global`).
+- No Filament or Livewire test drives the three email actions end to end.
+  The service paths are tested.
+
+**Verification actually run** (`aureuserp_testing_saas_review`, each file
+alone, Pint clean on all changed files):
+
+- partners `RecipientsForCompanyTest`: **4 passed, 6 assertions.** Own and
+  shared contacts accepted; another company's refused with the message
+  pinned; refused for a user with `bypass_company_scope`; a missing id
+  refused.
+- chatter `MentionCompanyBoundaryTest`: **1 passed, 4 assertions.** The
+  insider is notified; the outsider is not notified and not made a follower.
+- chatter `CrossCompanyReadTest` (read-audit agent's, rerun because its
+  service changed): **4 passed, 9 assertions.**
+- sales `OrderRecipientsTest`: **1 passed, 3 assertions.** Refused for a user
+  with both companies active, and nothing sent.
+
+**Rollback.** Revert the three services to their scoped `whereIn` reads,
+remove the filter in `notifyMentions()`, and remove the protected-decision
+lines in AGENTS.md. The helper method can stay unused.
+
 ## 5. Notes for whoever picks this up
 
 - `assignedCompanyIds()` is simply the actor's `user_allowed_companies` rows and
