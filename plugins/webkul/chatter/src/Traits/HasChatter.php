@@ -214,7 +214,11 @@ trait HasChatter
         }
 
         try {
-            $users = User::with('partner')->whereIn('id', $userIds)->get();
+            // Responsible user ids are explicit; their contacts may belong to
+            // a company other than the actor assigning them to this record.
+            $users = User::with(['partner' => fn ($query) => $query->withoutGlobalScopes()])
+                ->whereIn('id', $userIds)
+                ->get();
 
             if ($users->isEmpty()) {
                 return;

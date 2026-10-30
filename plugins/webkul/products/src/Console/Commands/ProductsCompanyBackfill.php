@@ -344,11 +344,14 @@ class ProductsCompanyBackfill extends Command
 
         $this->newLine();
         $this->components->info('Rollback');
+        $this->components->warn('Before deleting created categories, verify no other products reference them; category deletion cascades to products.');
 
         $allCreatedCategoryIds = array_merge([$copyIds[0], $copyIds[1]], array_column($copyIds[2], 'category_id'));
 
-        $this->line('  delete from products_categories where id in ('.implode(', ', $allCreatedCategoryIds).');');
+        // Product 1's category foreign key cascades on delete: re-point it
+        // before deleting the copied categories, or rollback deletes the product.
         $this->line('  update products_products set category_id = '.self::PRODUCT_CATEGORY_ID.', company_id = null where id = '.self::PRODUCT_ID.';');
+        $this->line('  delete from products_categories where id in ('.implode(', ', $allCreatedCategoryIds).');');
         $this->line('  update products_categories set company_id = null where id in ('.implode(', ', array_keys(self::CATEGORY_PARENTS)).');');
     }
 }
