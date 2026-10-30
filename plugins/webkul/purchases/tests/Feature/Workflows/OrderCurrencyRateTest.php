@@ -53,9 +53,13 @@ it('never leaves the rate at the column default of zero', function () {
         ->whereKeyNot($company->currency_id)
         ->firstOrFail();
 
+    // Set explicitly: OrderFactory fills currency_rate with 1.0, so without this
+    // the precondition below never held and the test could not reach the defect
+    // it exists for (the AGENTS.md factory-default trap).
     $order = Order::factory()->create([
-        'company_id'  => $company->getKey(),
-        'currency_id' => $other->getKey(),
+        'company_id'    => $company->getKey(),
+        'currency_id'   => $other->getKey(),
+        'currency_rate' => 0,
     ]);
 
     expect((float) $order->currency_rate)->toBe(0.0);

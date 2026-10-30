@@ -47,16 +47,18 @@ beforeEach(function () {
     $this->incomeA = AccountHelper::account('income');
     $this->incomeB = AccountHelper::account('income');
 
-    $this->partner = Partner::factory()->create();
+    // Shared records: a document resolves their per-company accounts from its
+    // own company. Creating them while acting now stamps a company, so they are
+    // made shared explicitly (AccountHelper::shared).
+    $this->partner = AccountHelper::shared(Partner::factory()->create());
 
-    $this->emptyCategory = Category::query()->create([
+    $this->emptyCategory = AccountHelper::shared(Category::query()->create([
         'name' => 'No accounts '.uniqid(),
-    ]);
+    ]));
 
-    $this->product = AccountHelper::product([
-        'company_id'  => null,
+    $this->product = AccountHelper::shared(AccountHelper::product([
         'category_id' => $this->emptyCategory->id,
-    ]);
+    ]));
 
     $this->setPerCompany = function ($record, string $field, array $valuePerCompany) {
         foreach ($valuePerCompany as $companyId => $value) {

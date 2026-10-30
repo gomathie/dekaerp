@@ -27,7 +27,8 @@ it('adds a responsible user contact as a chatter follower across company context
 
     CompanyHelper::actingAsCompanyUser($companyB);
 
-    $project = Project::factory()->forCompany($companyB)->create([
+    $project = Project::factory()->create([
+        'company_id' => $companyB->id,
         'creator_id' => $creator->id,
         'user_id'    => $creator->id,
     ]);
@@ -51,7 +52,7 @@ it('syncs an explicitly assigned user contact as a chatter follower across compa
 
     CompanyHelper::actingAsCompanyUser($companyB);
 
-    $project = Project::factory()->forCompany($companyB)->create();
+    $project = Project::factory()->create(['company_id' => $companyB->id]);
     $followers = Follower::query()
         ->where('followable_type', $project->getMorphClass())
         ->where('followable_id', $project->id)
@@ -79,7 +80,7 @@ it('emails a cross-company chatter follower when the notification record is load
 
     CompanyHelper::actingAsCompanyUser($companyB);
 
-    $project = Project::factory()->forCompany($companyB)->create();
+    $project = Project::factory()->create(['company_id' => $companyB->id]);
     $project->addFollower($partner);
 
     $message = new Message([
@@ -90,6 +91,9 @@ it('emails a cross-company chatter follower when the notification record is load
         'body'             => 'Cross-company notification',
     ]);
     $message->saveQuietly();
+
+    expect($message->messageable)->toBeNull()
+        ->and($project->followers()->where('partner_id', $partner->id)->exists())->toBeTrue();
 
     app(ChatterNotificationService::class)->notifyFollowers($message);
 
@@ -104,12 +108,15 @@ it('sends a database notification to an explicit follower in another company', f
     $companyB = CompanyHelper::company();
 
     $followerUser = SecurityHelper::authenticateWithPermissions([]);
-    $partner = Partner::factory()->create(['company_id' => $companyA->id]);
+    $partner = Partner::factory()->create([
+        'company_id' => $companyA->id,
+        'user_id'    => $followerUser->id,
+    ]);
     $followerUser->forceFill(['partner_id' => $partner->id])->saveQuietly();
 
     CompanyHelper::actingAsCompanyUser($companyB);
 
-    $project = Project::factory()->forCompany($companyB)->create();
+    $project = Project::factory()->create(['company_id' => $companyB->id]);
     $project->addFollower($partner);
 
     $message = new Message([
@@ -120,6 +127,9 @@ it('sends a database notification to an explicit follower in another company', f
         'body'             => 'Cross-company database notification',
     ]);
     $message->saveQuietly();
+
+    expect($message->messageable)->toBeNull()
+        ->and($project->followers()->where('partner_id', $partner->id)->exists())->toBeTrue();
 
     app(ChatterNotificationService::class)->notifyFollowers($message);
 

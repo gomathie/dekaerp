@@ -462,16 +462,29 @@ it('links the created bill to the order and its lines to the order lines', funct
         ->and((float) $line->accountMoveLines->first()->quantity)->toBe(10.0);
 });
 
-it('converts the company-currency total using the order currency rate', function () {
+/**
+ * Inverted 2026-10-30. This used to pin "converts the company-currency total
+ * using the order currency rate" by hand-setting `currency_rate` to 2.0. Since
+ * UF-022 (2026-10-22, OrderCalculator::refreshCurrencyRate) the rate is derived
+ * from the company and order currencies on every recompute, because the stored
+ * value was the column default 0 and silently left totals unconverted. A
+ * hand-set rate is therefore overwritten, and the company-currency total uses
+ * the derived one. Conversion between two different currencies is pinned by
+ * OrderCurrencyConversionTest.
+ */
+it('derives the order currency rate instead of trusting a hand-set one', function () {
     $order = PurchaseHelper::order(['currency_rate' => 2.0]);
     PurchaseHelper::line($order, $this->product, qty: 2, priceUnit: 100);
 
     PurchaseHelper::compute($order);
 
     $order->refresh();
+    $rate = (float) $order->currency_rate;
 
     expect((float) $order->total_amount)->toBe(200.0)
-        ->and((float) $order->total_cc_amount)->toBe(100.0);
+        ->and($rate)->not->toBe(2.0)
+        ->and($rate)->toBeGreaterThan(0.0)
+        ->and(round((float) $order->total_cc_amount, 2))->toBe(round(200.0 / $rate, 2));
 });
 
 it('backorders the unreceived remainder and marks the receipt partial', function () {

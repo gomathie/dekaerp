@@ -1,8 +1,10 @@
 <?php
 
 use Webkul\Account\Events\MovePaid;
+use Webkul\Account\Models\Journal;
 use Webkul\Account\Models\Move;
 use Webkul\Partner\Models\Partner;
+use Webkul\Sale\Listeners\SendSMSNotificationListener;
 use Webkul\Sale\Models\Order;
 use Webkul\Sale\Services\Msg91Service;
 
@@ -24,8 +26,10 @@ it('copies a cross-company order partner into the address defaults during its mo
     CompanyHelper::actingAsCompanyUser($companyB);
 
     $order = Order::factory()->create([
-        'company_id' => $companyB->id,
-        'partner_id'  => $partner->id,
+        'company_id'           => $companyB->id,
+        'partner_id'           => $partner->id,
+        'partner_shipping_id'  => null,
+        'partner_invoice_id'   => null,
     ]);
 
     expect($order->partner_shipping_id)->toBe($partner->id)
@@ -46,11 +50,17 @@ it('notifies a cross-company order customer when a payment event has no company 
     CompanyHelper::actingAsCompanyUser($companyB);
 
     $order = Order::factory()->create([
-        'company_id' => $companyB->id,
+        'company_id'  => $companyB->id,
         'partner_id'  => $partner->id,
     ]);
+    $journal = Journal::factory()->sale()->create([
+        'company_id'  => $companyB->id,
+        'currency_id' => $companyB->currency_id,
+    ]);
     $move = Move::factory()->invoice()->posted()->create([
-        'company_id' => $companyB->id,
+        'company_id'  => $companyB->id,
+        'currency_id' => $companyB->currency_id,
+        'journal_id'  => $journal->id,
     ]);
     $order->accountMoves()->attach($move->id);
 
@@ -61,5 +71,5 @@ it('notifies a cross-company order customer when a payment event has no company 
 
     app()->instance(Msg91Service::class, $sms);
 
-    (new \Webkul\Sale\Listeners\SendSMSNotificationListener($sms))->handle(new MovePaid($move));
+    (new SendSMSNotificationListener($sms))->handle(new MovePaid($move));
 });

@@ -17,7 +17,7 @@ it('inherits a supplier row company from its product across actor company contex
 
     CompanyHelper::actingAsCompanyUser($companyA);
 
-    $product = Product::factory()->forCompany($companyA)->create();
+    $product = Product::factory()->create(['company_id' => $companyA->id]);
 
     CompanyHelper::actingAsCompanyUser($companyB);
 
@@ -33,9 +33,10 @@ it('detects a product using a UOM when the deleting actor is in another company'
     CompanyHelper::actingAsCompanyUser($companyA);
 
     $uom = UOM::factory()->create();
-    $product = Product::factory()->forCompany($companyA)->create([
-        'uom_id'    => $uom->id,
-        'uom_po_id' => $uom->id,
+    $product = Product::factory()->create([
+        'company_id' => $companyA->id,
+        'uom_id'     => $uom->id,
+        'uom_po_id'  => $uom->id,
     ]);
 
     CompanyHelper::actingAsCompanyUser($companyB);

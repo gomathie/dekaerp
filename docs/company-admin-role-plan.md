@@ -1710,6 +1710,18 @@ idempotent, rollback-documented step instead of a migration.
   Partners is core and has no `partners:install` command; this test now uses
   the same `beforeEach` as its sibling Partners workflow tests, with core
   installation supplied by `Tests\TestCase`.
+- 2026-10-30 focused reruns on `aureuserp_testing_saas_4k_b`:
+  `ProductsCompanyBackfillTest.php` **6 passed (42 assertions)**, 167.35
+  seconds; Chatter `CrossCompanyReadTest.php` **4 passed (9 assertions)**,
+  165.56 seconds. The Chatter test first exposed a factory setup error and then
+  a scoped `Message::messageable` read that prevented both delivery paths;
+  both were corrected before the passing rerun.
+  `CompanyIdOnCategoriesAndTagsMigrationTest.php` **5 passed (19 assertions)**,
+  158.53 seconds; products `CrossCompanyParentReadTest.php` **2 passed (3
+  assertions)**, 163.91 seconds; sales `CrossCompanyParentReadTest.php` **2
+  passed (3 assertions)**, 544.23 seconds. The Sales failures in the earlier
+  `saas_review` run came from factory-supplied address defaults and a missing
+  sale journal in the new company; the focused rerun supplied those fixtures.
 - The backfill was **not** run against production, and its dry-run output below
   is from a local database seeded to the expected state by the test, not from
   Supabase.
@@ -1761,7 +1773,7 @@ specific classification.
 | `products/Models/ProductSupplier.php:97` — product by `product_id` in creating hook | Actor can create a supplier row for another company's product | FIXED | Reads the explicit product id without scopes and inherits its company; `CrossCompanyParentReadTest`. |
 | `sales/Models/Order.php:261,275` — selected partner by `partner_id` | Order creator may be acting in another company | FIXED | Reads the explicit partner id without scopes for shipping/invoice defaults; `CrossCompanyParentReadTest`. |
 | `sales/Listeners/SendSMSNotificationListener.php:24,33,42` — order, invoice, partner from paid move | Queue/event worker has no reliable staff company | FIXED | Reads by paid move/order keys without scopes; full Sales-feature coverage is pending. |
-| `chatter/Traits/HasChatter.php:55,220,307`, `chatter/Services/ChatterNotificationService.php:38,260` — responsible/follower partner | Activity actor and recipient may belong to different companies | FIXED | Explicit partner reads and eager loads bypass scopes for follower sync, email and database notifications; `CrossCompanyReadTest`. |
+| `chatter/Traits/HasChatter.php:55,220,307`, `chatter/Services/ChatterNotificationService.php:30,38,90,260` — message target and responsible/follower partner | Activity actor and recipient may belong to different companies; the message target can be hidden by ownership/company scopes | FIXED | Resolves the stored `messageable` morph key without scopes, then reads explicit partner/follower keys without scopes for follower sync, email and database notifications; `CrossCompanyReadTest` (4 passed, 9 assertions). |
 | `products/Observers/UOMObserver.php:20` — products using shared UOM | UOM deletion may run while acting in any company | FIXED | Searches products without scopes; cross-company UOM deletion test. |
 | `support/Models/Company.php:184,229` — branch company to partner `parent_id` | Company model hook, potentially cross-company | DECIDE | Existing cross-domain parent mapping needs product-owner review; this protected file was not edited. |
 | `accounts/Services/MoveWorkflow.php:186`, `sales/Services/OrderMailer.php:21,75`, `purchases/Services/OrderWorkflow.php:58,65` — selected recipient partners | Staff can supply explicit recipient ids | DECIDE | Decide whether cross-company outbound email is allowed. If allowed, add an explicit audited bypass; otherwise reject out-of-company ids. |
@@ -1779,8 +1791,9 @@ must use `withoutGlobalScopes()` plus an explicit foreign key; a public stop
 link is keyed by its token rather than a staff session; logistics service
 products always use the requested company's provisioned root; and the
 backfill provisions one idempotent root for every existing active company that
-has none. Explicit responsible-user ids and existing chatter followers may be
-read across company contexts; cross-company mentions and selected-recipient
+has none. Chatter delivery resolves its stored message target without scopes;
+explicit responsible-user ids and existing followers may be read across
+company contexts. Cross-company mentions and selected-recipient
 email behavior remain product decisions.
 
 **Related documentation gap:** `partners/Console/Commands/ContactCompanyReport.php`
