@@ -257,8 +257,10 @@ class ChatterNotificationService
     {
         $excludedIds = array_filter($excludedIds);
 
+        // Followers are explicit recipients and may belong to a different
+        // company than the actor whose change triggered this notification.
         return $record->followers()
-            ->with('partner.user')
+            ->with(['partner' => fn ($query) => $query->withoutGlobalScopes()->with('user')])
             ->get()
             ->map(fn ($follower) => $follower->partner?->user)
             ->filter()

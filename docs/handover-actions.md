@@ -969,10 +969,13 @@ runbook only; no production commands are run from this session.
    `php artisan products:company-backfill --dry-run`, review every planned row,
    then run `php artisan products:company-backfill` for real. Save the command
    output, including the generated category ids and rollback summary. Rollback:
-   use the exact `products_categories` ids printed by the command, delete the
-   newly copied/default roots, restore product 1's `category_id = 2` and
-   `company_id = NULL`, and set the original category rows' `company_id` back
-   to `NULL`; do not guess ids.
+   restore product 1's `category_id = 2` and `company_id = NULL` first, then
+   use the exact `products_categories` ids printed by the command to delete the
+   newly copied/default roots, and set the original category rows' `company_id`
+   back to `NULL`. Product 1's category foreign key cascades on delete, so
+   reversing that order would delete the product. Before deleting those roots,
+   verify that no other products reference them; if any do, stop for a
+   data-aware rollback. Do not guess ids.
 
 5. **Run these read-only verification queries.** An empty result is expected for
    each exception query unless stated otherwise:

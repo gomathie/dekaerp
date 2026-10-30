@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
@@ -75,6 +76,9 @@ function seedExpectedStartingState(): void
 
     // Company 1 comes from the installation seeder; companies 2-5 are inserted
     // directly so they exist without the products observer provisioning roots.
+    // Their partner_id must reference an existing contact to satisfy the schema.
+    $existingPartnerId = DB::table('companies')->where('id', 1)->value('partner_id');
+
     foreach ([2 => 'Second client', 3 => 'Third client', 4 => 'Fourth client', 5 => 'Fifth client'] as $id => $name) {
         if (! DB::table('companies')->where('id', $id)->exists()) {
             DB::table('companies')->insert([
@@ -82,6 +86,7 @@ function seedExpectedStartingState(): void
                 'name'        => $name,
                 'company_id'  => 'BACKFILL-COMPANY-'.$id,
                 'is_active'   => true,
+                'partner_id'  => $existingPartnerId,
                 'currency_id' => DB::table('currencies')->value('id'),
                 'created_at'  => now(),
                 'updated_at'  => now(),
@@ -135,6 +140,18 @@ it('files the categories and product 1 under their company', function () {
 
     expect((int) $product->company_id)->toBe(2)
         ->and((int) $product->category_id)->toBe((int) $copies[1]->id);
+});
+
+it('prints rollback that re-points product 1 before deleting copied categories', function () {
+    expect(Artisan::call('products:company-backfill'))->toBe(0);
+
+    $output = Artisan::output();
+    $repointPosition = strpos($output, 'update products_products set category_id = 2');
+    $deletePosition = strpos($output, 'delete from products_categories where id in (');
+
+    expect($repointPosition)->not->toBeFalse()
+        ->and($deletePosition)->not->toBeFalse()
+        ->and($repointPosition)->toBeLessThan($deletePosition);
 });
 
 it('reports nothing to do when run a second time', function () {

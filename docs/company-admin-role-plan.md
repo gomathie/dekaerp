@@ -1477,6 +1477,90 @@ is audited and caches refresh.
 
 - Whether attributes and units should also become per company.
 
+#### Phase C handoff - 2026-10-29/30 (Claude)
+
+Commits `12161e743` and `471497633`, plus uncommitted follow-ups: the product
+form, the import test and AGENTS.md.
+
+**Why.** New contacts, products and packagings were saved with no company, so
+every client saw every other client's records (§4k "Why").
+
+**How.**
+
+- **Stamping.** `Partner`, `Product` and `Packaging` drop their
+  `autoAssignsCompany(): false` opt-out, so `BelongsToCompany` stamps the
+  creating company.
+- **Children.** `Product` (variants, `parent_id`) and `Packaging`
+  (`product_id`) use `InheritsParentCompany`. `Partner` deliberately does not:
+  a branch company's own contact legitimately belongs to the branch while its
+  parent contact belongs to the parent company, which the trait refuses.
+  Child contacts get the owner's company where they are created instead.
+  Upstream's `AddressResource` and `ManageContacts` already do this, and the
+  address API (`AddressController::store`) now does too.
+- **Forms.** The company field is required on the product form (defaulting to
+  the current company) and on the employee form. Stamping happens only on
+  create, so clearing the field on edit would share the record again.
+- **Product form follow-ups (uncommitted):**
+  - an inline-created tag is unique per company, not globally;
+  - changing a product's company also clears a category or tags that belong
+    to the previous company.
+- **Test infrastructure.** `HasCompanyDefault` filled the session's company
+  after `make()`. For a variant made while acting in another company, the
+  trait then saw a mismatch and refused a correct child. It now leaves a model
+  whose parent is set to the trait, through a new public
+  `InheritsParentCompany::parentCompanyKey()`. This changes nothing in
+  production code paths.
+- **Tests.**
+  - Inverted, each with a docblock saying why: partners
+    `CompanyIsolationTest` ("stamps the active company on a new partner"),
+    products `CompanyIsolationTest` (packaging) and `ContactImportTest`
+    (imports are stamped like typed contacts).
+  - New: a variant takes its template's company even while the actor is in
+    another company; a mismatched variant is refused; a new product is
+    stamped and hidden from another company; a contact with no company stays
+    visible everywhere.
+  - Partner, Product and Packaging are off their plugins'
+    `CompanyScopingInvariantsTest` `$shared` lists.
+
+**Benefit.** A client's new contacts, products and packagings are invisible to
+other clients. Example data with no company stays shared, as decided.
+
+**Trade-off / risk.**
+
+- This forks from upstream 57e234223, which made contacts shared on purpose.
+  It must be re-applied on every upstream merge (protected decision added).
+- Every cross-company *read* of these models now returns null silently.
+  That audit is the read-audit handoff below, by another agent.
+- A contact created with nobody acting (a seeder or console command) still
+  gets no company, by design.
+
+**Verification actually run** (`aureuserp_testing_saas_review`):
+
+- Focused files: products `CompanyIsolationTest` 6 passed; partners
+  `CompanyIsolationTest` 4 passed; the invariants tests passed.
+- `ContactImportTest` 11 passed, 36 assertions.
+- **PartnerFeature:** 85 passed, 3 failed. The failures were the import test,
+  since inverted and passing, and two tests in the phase B/D agent's
+  `partners/.../TagCompanyScopingTest`, which calls the non-existent
+  `partners:install`.
+- **ProductFeature**, full output read: 264 passed, 9 failed, 572 assertions.
+  **All nine are in phase B/D or read-audit files still in progress**, none in
+  phase C:
+  - `ProductsCompanyBackfillTest` ×5: its setup inserts companies with no
+    `partner_id`, which the full suite's schema refuses;
+  - `CompanyIdOnCategoriesAndTagsMigrationTest` ×1: index assertion;
+  - `CrossCompanyParentReadTest` ×2: a `Company` passed to a factory
+    `state()`;
+  - products `TagCompanyScopingTest` ×1: the `TagRequest` rule is not per
+    company yet.
+- **EmployeeFeature:** 7 passed, 11 assertions.
+- Sale, Purchase, Inventory, Account, Logistics and Project: **not run yet.**
+  They create contacts and products and must run before deploy.
+
+**Rollback.** Revert `12161e743` and `471497633` (and the uncommitted
+follow-ups). No schema changed in phase C. Records created while it was live
+keep their company. They are only hidden from other companies, never lost.
+
 #### Phase B/D handoff - 2026-10-29 (GitHub Copilot / phase B+D package)
 
 **Scope of this package:** phase B (a `company_id` on product categories, product
@@ -1551,10 +1635,11 @@ silently:
   `hasCommand()`. It refuses unless the database matches the state §4k was
   written from (ids 1-10 with their parent links, `company_id` null on all of
   them and on product 1, product 1 pointing at category 2, companies 1 and 2
-  present, both tag tables empty), printing every difference. Then one
-  transaction: categories 1-10 -> company 1; copies of 1 and 2 for company 2
-  (created through the model so `parent_path`/`full_name` are derived, not
-  restated); product 1 -> company 2 and re-pointed at the copy of 2. It prints
+  present, companies 3-5 present without categories, both tag tables empty),
+  printing every difference. Then one transaction: categories 1-10 -> company
+  1; copies of 1 and 2 for company 2 (created through the model so
+  `parent_path`/`full_name` are derived, not restated); product 1 -> company 2
+  and re-pointed at the copy of 2; one default root each for companies 3-5. It prints
   the applied changes and a rollback summary, and a second run reports "Nothing
   to do".
 - **Factories.** `CategoryFactory`, `Product\...\TagFactory` and
@@ -1581,32 +1666,29 @@ idempotent, rollback-documented step instead of a migration.
 
 - Categories and tags now carry a `company_id` that `CompanyScope` honours: any
   cross-company `->category` read in a listener, job or cross-plugin service
-  returns **null** rather than raising. Consumers found and **left alone** (not
-  this package's files, reported to the user):
-  - `Logistics\Services\CompanyProvisioner::rootCategoryId()` reads
-    `Category::query()->whereNull('parent_id')` with no company filter. Once
-    categories are scoped this either finds nothing or returns *another
-    company's* root, and the `LOG-*` service products are filed under it. It
-    should call `CompanyCategoryProvisioner::defaultCategoryId($company->id)`.
-  - `Inventory\Models\Location` (`categoryAncestry()`) uses `Category::find()`.
-- Three **global** tag-name uniqueness rules survive outside this package and
-  will refuse a legitimate per-company duplicate from those screens:
+  returns **null** rather than raising. The following consumers were found and
+  fixed in the read-audit follow-up below:
+  - `Logistics\Services\CompanyProvisioner::rootCategoryId()` formerly read
+    the first root with no company filter, which could select another company's
+    category for a `LOG-*` service product. It
+    now calls `CompanyCategoryProvisioner::defaultCategoryId($company->id)`.
+  - `Inventory\Models\Location::categoryAncestry()` formerly used scoped
+    `Category::find()`; it now reads the explicit category ids without scopes.
+- Three **global** tag-name uniqueness rules were found and fixed in the
+  follow-up work, so the screens now accept per-company duplicates:
   `ProductResource/Schemas/ProductForm.php` (`unique('products_tags')`, a
   DO-NOT-TOUCH file), `PartnerResource/Schemas/PartnerForm.php`
   (`unique('partners_tags')`) and `products/Http/Requests/TagRequest.php`
-  (`unique:products_tags,name`). The database now allows the duplicate, so these
-  are validation refusals, not 500s.
-- `ProductResource/.../ProductForm.php` does not list `category_id` as a
-  company-dependent field, so changing a product's company keeps the previous
-  company's category (DO-NOT-TOUCH file).
+  (`unique:products_tags,name`).
+- `ProductResource/.../ProductForm.php` formerly retained another company's
+  category when changing a product's company. The owning agent's follow-up now
+  clears the incompatible category and tags (DO-NOT-TOUCH file for this package).
 - `down()` restores `unique(name)`, which fails if two companies already hold the
   same tag name. Correct for a rollback of a just-deployed change; not a
   general-purpose downgrade path.
-- A row with a null `company_id` is still *shared* by design. After this
-  package the seeded tree and the ten production categories are stamped, but
-  companies 3-5 (this installation) still have no category of their own - the
-  backfill's table does not include them, so their product form select starts
-  empty until someone creates one.
+- A row with a null `company_id` is still *shared* by design. The extended
+  backfill stamps the ten production categories and provisions roots for
+  existing companies 3-5, so their product category select has a default.
 - `Company::observe()` is registered in `packageBooted()`, which can run more
   than once per process (AGENTS.md); the provisioner is idempotent, so a double
   registration costs one extra lookup, not a second category.
@@ -1638,10 +1720,12 @@ idempotent, rollback-documented step instead of a migration.
   previous code runs unchanged.
 - Schema: `migrate:rollback` runs both `down()` methods (tested).
 - Data, if the backfill has been applied:
-  `delete from products_categories where id in (<copy1>, <copy2>);`
   `update products_products set category_id = 2, company_id = null where id = 1;`
+  `delete from products_categories where id in (<copy1>, <copy2>, <root3>, <root4>, <root5>);`
   `update products_categories set company_id = null where id in (1,...,10);`
-  The command prints these with the real ids.
+  The command prints these with the real ids. Re-point product 1 before deleting
+  copied categories: its category foreign key cascades on delete. Confirm no
+  other products reference those new categories before deleting them.
 
 ##### Proposed protected decisions (for the owner of AGENTS.md to place)
 
@@ -1665,25 +1749,27 @@ queries are **SAFE** when they use the active company-scoped model query; the
 are the cross-context or potentially cross-context reads that needed a more
 specific classification.
 
-| Classification | Location / flow | Finding and disposition |
-|---|---|---|
-| SAFE | Products `CompanyCategoryProvisioner`, `ProductsCompanyBackfill`, product `CompanyObserver` | Explicit company/id reads with `withoutGlobalScopes()`; provisioning and the named installation backfill do not depend on the actor's company. |
-| SAFE | Logistics `StopLinkService` public token flow | Reads are deliberately scope-free and keyed by the signed/public stop-link token; there is no staff company session to apply. All parent queries now use `withoutGlobalScopes()`. |
-| SAFE | Website `PortalAccess`, Partners `ContactImporter` | Portal email uniqueness and importer duplicate/parent resolution are deliberately global identity checks; both explicitly bypass tenant scopes and document why. Imported partners remain shared by decision. |
-| SAFE | Barcode Livewire selectors; Products, Inventory, Accounts, Sales, Purchases and Projects API controllers; Filament resources and ordinary model relations | These are current-company UI/API reads. Their scoped query builders and relation loading preserve the active-company boundary; no cross-company bypass was added. |
-| FIXED | Logistics `CompanyProvisioner::rootCategoryId` | The previous unfiltered first root could place `LOG-*` products under another company's category. It now provisions/returns the requested company's root through `CompanyCategoryProvisioner`; covered by the Logistics adoption isolation test. |
-| FIXED | Inventory `Location::categoryAncestry` | Putaway can inspect a product loaded under another company context. Category ancestry now uses explicit scope-free id lookups; covered by `CrossCompanyCategoryReadTest`. |
-| FIXED | Products `ProductSupplier` creating hook | A supplier row inherits the product's company, not the actor's. The product lookup is now scope-free; covered by `CrossCompanyParentReadTest`. |
-| FIXED | Sales `Order::handleOrderCreation` | Shipping/invoice defaults follow the explicitly selected partner even when the actor is in another company; covered by `CrossCompanyParentReadTest`. |
-| FIXED | Sales `SendSMSNotificationListener` | Payment workers have no reliable active company context. Order, invoice and customer reads now follow the paid move/order key with all scopes removed; listener test coverage is pending the full Sales-feature run. |
-| FIXED | Chatter `HasChatter` and `ChatterNotificationService` | Responsible-user contacts and follower email recipients may belong to the record's company rather than the actor's. Explicit partner reads/eager loads now survive that context; covered by `CrossCompanyReadTest`. |
-| FIXED | Products `UOMObserver` | Deleting a shared UOM must find products in every company. The observer now checks products without tenant scopes; covered by the cross-company UOM deletion test. |
-| DECIDE | Support `Company` parent/contact mapping | `Company::booted` still assigns the branch company's `parent_id` to a `Partner` parent field. This is an existing cross-domain relationship decision and was intentionally not edited. |
-| DECIDE | Accounts `MoveWorkflow::sendByEmail`, Sales `OrderMailer`, Purchases `OrderWorkflow` and the matching send-email recipient selectors | Explicit recipient ids can name a partner outside the current company. Decide whether cross-company outbound email is allowed; if it is, make the bypass explicit and audit it, and if not, reject ids outside the active company. No change was made in this package. |
-| DECIDE | Products `ProductResource` product-company/category edit behavior | The resource's category default and company change behavior need an owner decision about whether a company change should re-home or refuse an existing category. This DO-NOT-TOUCH file was not edited. |
-| DECIDE | Products `Product::saved` variant propagation | The model currently removes only `CompanyScope` while propagating a template's company to variants. Because this is a DO-NOT-TOUCH model and the variants also participate in ownership rules, replacing it with `withoutGlobalScopes()` needs the owning agent's review. |
+| File:line and read path | Actor/context | Class | Action and evidence |
+|---|---|---|---|
+| `products/Services/CompanyCategoryProvisioner.php:38,52`, `products/Console/Commands/ProductsCompanyBackfill.php:69`, `products/Observers/CompanyObserver.php:16` — category by company/id | Company creation or named installation backfill; no staff company required | SAFE | Explicit company/id reads use `withoutGlobalScopes()`; the provisioner and backfill target the named company. |
+| `logistics/Services/StopLinkService.php:90,215,235` — stop link and stop by token/key | Public stop-link visitor, no staff session | SAFE | Scope-free reads are keyed by the signed/public stop-link token and its explicit parent ids. |
+| `website/Support/PortalAccess.php:35`, `partners/Services/ContactImporter.php:240,428` — partner by email/external identity | Portal registration or importing staff | SAFE | These are deliberate global identity checks. Newly imported contacts are stamped with the creating company; the global lookup does not make them shared. |
+| `logistics/Services/ExpensePoster.php:133` — explicit expense partner id | Logistics expense posting under a company service | SAFE | The explicit partner id is checked without scopes before it is used; the service does not infer a contact from the actor's company. |
+| `*/src/Filament/**`, `*/src/Http/Controllers/Api/**`, Barcode selectors — ordinary category/tag/product/partner relations | Signed-in staff or an API request with active company context | SAFE | Scoped query builders and relation loading preserve the current-company boundary; no bypass was added to these ordinary reads. |
+| `logistics/Services/CompanyProvisioner.php:182` — root category for `LOG-*` product | Provisioner may run for company B while acting in A | FIXED | Calls `CompanyCategoryProvisioner::defaultCategoryId(B)` and provisions B's root if absent; Logistics adoption isolation test. |
+| `inventories/Models/Location.php:341,353,359` — product category ancestry | Putaway may inspect another company's product | FIXED | Reads explicit category ids without scopes; `CrossCompanyCategoryReadTest`. |
+| `products/Models/ProductSupplier.php:97` — product by `product_id` in creating hook | Actor can create a supplier row for another company's product | FIXED | Reads the explicit product id without scopes and inherits its company; `CrossCompanyParentReadTest`. |
+| `sales/Models/Order.php:261,275` — selected partner by `partner_id` | Order creator may be acting in another company | FIXED | Reads the explicit partner id without scopes for shipping/invoice defaults; `CrossCompanyParentReadTest`. |
+| `sales/Listeners/SendSMSNotificationListener.php:24,33,42` — order, invoice, partner from paid move | Queue/event worker has no reliable staff company | FIXED | Reads by paid move/order keys without scopes; full Sales-feature coverage is pending. |
+| `chatter/Traits/HasChatter.php:55,220,307`, `chatter/Services/ChatterNotificationService.php:38,260` — responsible/follower partner | Activity actor and recipient may belong to different companies | FIXED | Explicit partner reads and eager loads bypass scopes for follower sync, email and database notifications; `CrossCompanyReadTest`. |
+| `products/Observers/UOMObserver.php:20` — products using shared UOM | UOM deletion may run while acting in any company | FIXED | Searches products without scopes; cross-company UOM deletion test. |
+| `support/Models/Company.php:184,229` — branch company to partner `parent_id` | Company model hook, potentially cross-company | DECIDE | Existing cross-domain parent mapping needs product-owner review; this protected file was not edited. |
+| `accounts/Services/MoveWorkflow.php:186`, `sales/Services/OrderMailer.php:21,75`, `purchases/Services/OrderWorkflow.php:58,65` — selected recipient partners | Staff can supply explicit recipient ids | DECIDE | Decide whether cross-company outbound email is allowed. If allowed, add an explicit audited bypass; otherwise reject out-of-company ids. |
+| `products/Filament/Resources/ProductResource/Schemas/ProductForm.php:160,183` — category default and company edit | Product editor switching companies | DECIDE | The owning agent now clears incompatible category/tags on company change; product owner should still decide whether to re-home or refuse a populated product's category. This protected file was not edited by this package. |
+| `products/Models/Product.php:437` — template `variants()` in saved hook | Model hook may run under another company's actor | DECIDE | Only `CompanyScope` is removed; replacing it with `withoutGlobalScopes()` needs the owning agent's review because variants also have ownership rules. |
+| `chatter/Services/ChatterNotificationService.php:210,227` — `notifyMentions()` user/contact | Message author can mention a user in another company | DECIDE | The existing code sends a database notification containing record details even if the scoped partner lookup is null. Decide whether cross-company mentions are allowed; if not, reject recipients without record access before notifying. The behavior was not changed in this package. |
 
-**Audit totals:** 5 SAFE groups, 7 FIXED groups, and 4 DECIDE groups. The
+**Audit totals:** 5 SAFE groups, 7 FIXED groups, and 5 DECIDE groups. The
 SAFE groups include the current-context reads across the full plugin source
 tree; the FIXED/DECIDE rows are the places where a normal scoped read would be
 wrong, ambiguous or security-sensitive across company boundaries.
@@ -1693,7 +1779,9 @@ must use `withoutGlobalScopes()` plus an explicit foreign key; a public stop
 link is keyed by its token rather than a staff session; logistics service
 products always use the requested company's provisioned root; and the
 backfill provisions one idempotent root for every existing active company that
-has none. The selected-recipient email behavior remains a product decision.
+has none. Explicit responsible-user ids and existing chatter followers may be
+read across company contexts; cross-company mentions and selected-recipient
+email behavior remain product decisions.
 
 ## 5. Notes for whoever picks this up
 

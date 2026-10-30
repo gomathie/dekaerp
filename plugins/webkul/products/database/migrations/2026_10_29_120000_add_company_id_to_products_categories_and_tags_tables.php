@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Schema;
  * place it would stop a second company creating a tag named like the first
  * company's, which is a database error behind a validation message nobody can
  * satisfy.
+ * Categories also need an explicit company index: PostgreSQL does not index
+ * the referencing side of a foreign key for CompanyScope lookups.
  */
 return new class extends Migration
 {
@@ -24,6 +26,7 @@ return new class extends Migration
     {
         Schema::table('products_categories', function (Blueprint $table) {
             $table->foreignId('company_id')->nullable()->after('id')->constrained('companies')->nullOnDelete();
+            $table->index('company_id');
         });
 
         Schema::table('products_tags', function (Blueprint $table) {
@@ -46,6 +49,7 @@ return new class extends Migration
         });
 
         Schema::table('products_categories', function (Blueprint $table) {
+            $table->dropIndex(['company_id']);
             $table->dropForeign(['company_id']);
             $table->dropColumn('company_id');
         });

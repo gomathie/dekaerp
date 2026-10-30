@@ -277,11 +277,8 @@ class ContactImporter
             ]);
         }
 
-        // company_id is deliberately left unset. Partner opts out of automatic
-        // company assignment (autoAssignsCompany() returns false) and the
-        // contact form has no owning-company field, so contacts are created
-        // shared across companies. Stamping the active company here would make
-        // imported contacts behave differently from typed ones.
+        // Leave company_id unset so Partner stamps the importing company's
+        // context, matching contacts created through the form.
         DB::transaction(function () use ($attributes, $countryId, $stateId, $parentId): void {
             Partner::query()->create([
                 'name'         => $attributes['name'],
