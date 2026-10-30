@@ -26,7 +26,9 @@ class ChatterNotificationService
 
     protected function viaEmail(Message $message): void
     {
-        $record = $message->messageable;
+        // Delivery can run after the actor or company context changes; the
+        // stored morph key identifies the record even when its scopes hide it.
+        $record = $message->messageable()->withoutGlobalScopes()->first();
 
         if (! $record || ! method_exists($record, 'followers')) {
             return;
@@ -86,7 +88,7 @@ class ChatterNotificationService
 
     protected function viaDatabase(Message $message): void
     {
-        $record = $message->messageable;
+        $record = $message->messageable()->withoutGlobalScopes()->first();
 
         if (! $record || ! method_exists($record, 'followers')) {
             return;
