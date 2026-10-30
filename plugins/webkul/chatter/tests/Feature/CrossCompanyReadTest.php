@@ -2,13 +2,13 @@
 
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
-use Webkul\Chatter\Models\Follower;
 use Webkul\Chatter\Mail\MessageMail;
+use Webkul\Chatter\Models\Follower;
 use Webkul\Chatter\Models\Message;
 use Webkul\Chatter\Notifications\ChatterDatabaseNotification;
+use Webkul\Chatter\Services\ChatterNotificationService;
 use Webkul\Partner\Models\Partner;
 use Webkul\Project\Models\Project;
-use Webkul\Chatter\Services\ChatterNotificationService;
 
 require_once __DIR__.'/../../../support/tests/Helpers/CompanyHelper.php';
 require_once __DIR__.'/../../../support/tests/Helpers/TestBootstrapHelper.php';
