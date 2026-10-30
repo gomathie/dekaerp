@@ -1554,8 +1554,44 @@ other clients. Example data with no company stays shared, as decided.
   - products `TagCompanyScopingTest` ×1: the `TagRequest` rule is not per
     company yet.
 - **EmployeeFeature:** 7 passed, 11 assertions.
-- Sale, Purchase, Inventory, Account, Logistics and Project: **not run yet.**
-  They create contacts and products and must run before deploy.
+- Six more suites, each run alone with its full output read (2026-10-30):
+
+  | Suite | Result |
+  |---|---|
+  | InventoryFeature | 885 passed, 2,353 assertions |
+  | LogisticsFeature | 196 passed, 810 assertions |
+  | ProjectFeature | 86 passed, 203 assertions |
+  | SaleFeature | 143 passed, 2 failed |
+  | AccountFeature | 529 passed, 11 failed |
+  | PurchaseFeature | 187 passed, 2 failed |
+
+  - **Sale ×2:** the read-audit agent's in-progress
+    `sales/.../CrossCompanyParentReadTest`.
+  - **Account ×11, phase C test setup:** `CompanyDependentAccountsTest` and
+    `DocumentCompanyResolutionTest` test per-company account properties on a
+    *shared* record, but created it with `company_id => null` while acting.
+    That now stamps company A, so company B could not find it. The feature is
+    still valid, because shared records still exist. New
+    `AccountHelper::shared()` makes a created record shared explicitly.
+  - **Purchase ×2, pre-existing since UF-022 (2026-10-22) and unrelated to
+    §4k:**
+    - `OrderCurrencyRateTest` expected the column default 0, but
+      `OrderFactory` sets 1.0, the AGENTS.md factory-default trap. It now
+      passes `currency_rate => 0`.
+    - A July test in `PurchaseOrderTest` hand-set a rate of 2.0 and expected
+      it to be used. Since UF-022 the calculator derives the rate on every
+      recompute. Inverted to "derives the order currency rate instead of
+      trusting a hand-set one", with a docblock.
+  - Re-runs, each file alone: `CompanyDependentAccountsTest` 13 passed,
+    `DocumentCompanyResolutionTest` 8 passed, `OrderCurrencyRateTest` 3
+    passed, `PurchaseOrderTest` 35 passed.
+
+  **No failure in any of the ten suites run is a defect in phase C code.**
+  The remaining reds all belong to the phase B/D and read-audit packages, in
+  progress.
+- Not run: AccountingFeature, ManufacturingFeature, SecurityFeature,
+  SupportFeature, ChatterFeature and the rest after phase C. Run them in the
+  final pre-deploy pass, together with the other two packages.
 
 **Rollback.** Revert `12161e743` and `471497633` (and the uncommitted
 follow-ups). No schema changed in phase C. Records created while it was live

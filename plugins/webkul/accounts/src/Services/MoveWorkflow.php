@@ -183,7 +183,8 @@ class MoveWorkflow
 
     public function sendByEmail(AccountMove $move, array $data): AccountMove
     {
-        $partners = Partner::whereIn('id', $data['partners'])->get();
+        // The invoice's company decides who may receive it, whoever is acting.
+        $partners = Partner::recipientsForCompany((array) $data['partners'], $move->company_id);
 
         $view = 'accounts::mail/invoice/actions/invoice';
 

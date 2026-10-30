@@ -18,7 +18,8 @@ class OrderMailer
 
         $failed = [];
 
-        foreach (Partner::whereIn('id', $data['partners'])->get() as $partner) {
+        // The order's company decides who may receive it, whoever is acting.
+        foreach (Partner::recipientsForCompany((array) $data['partners'], $record->company_id) as $partner) {
             if (empty($partner->email)) {
                 $failed[$partner->name] = 'No email address';
 
@@ -72,7 +73,7 @@ class OrderMailer
     {
         $view = 'sales::mails.sale-order-cancel-quotation';
 
-        foreach (Partner::whereIn('id', $data['partners'])->get() as $partner) {
+        foreach (Partner::recipientsForCompany((array) $data['partners'], $record->company_id) as $partner) {
             $payload = $this->payload($record, $partner, $data, 'Quotation');
 
             app(EmailService::class)->send(

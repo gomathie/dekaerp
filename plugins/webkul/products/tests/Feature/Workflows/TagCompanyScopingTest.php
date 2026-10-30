@@ -58,6 +58,9 @@ it('rejects a duplicate product tag name only inside the active company', functi
         (new TagRequest)->rules(),
     );
 
+    // The unique rule's company filter is evaluated when validation runs.
+    expect($sameCompany->fails())->toBeTrue();
+
     CompanyHelper::actingAsCompanyUser($companyB);
 
     $otherCompany = Validator::make(
@@ -65,6 +68,5 @@ it('rejects a duplicate product tag name only inside the active company', functi
         (new TagRequest)->rules(),
     );
 
-    expect($sameCompany->fails())->toBeTrue()
-        ->and($otherCompany->fails())->toBeFalse();
+    expect($otherCompany->fails())->toBeFalse();
 });

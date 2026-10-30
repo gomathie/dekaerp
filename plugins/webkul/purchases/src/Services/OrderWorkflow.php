@@ -29,7 +29,7 @@ class OrderWorkflow
     {
         $pdfPath = $this->documents->requestForQuotationPdf($record);
 
-        if (! $this->mailVendors($data, $pdfPath)) {
+        if (! $this->mailVendors($record, $data, $pdfPath)) {
             return $record;
         }
 
@@ -46,7 +46,7 @@ class OrderWorkflow
     {
         $pdfPath = $this->documents->purchaseOrderPdf($record);
 
-        if ($this->mailVendors($data, $pdfPath)) {
+        if ($this->mailVendors($record, $data, $pdfPath)) {
             $this->attachToChatter($record, $data, $pdfPath);
         }
 
@@ -60,12 +60,11 @@ class OrderWorkflow
             ->count();
     }
 
-    protected function mailVendors(array $data, string $pdfPath): int
+    protected function mailVendors(Order $record, array $data, string $pdfPath): int
     {
-        $vendors = Partner::whereIn('id', $data['vendors'])
-            ->whereNotNull('email')
-            ->where('email', '!=', '')
-            ->get();
+        // The order's company decides who may receive it, whoever is acting.
+        $vendors = Partner::recipientsForCompany((array) $data['vendors'], $record->company_id)
+            ->filter(fn (Partner $vendor): bool => filled($vendor->email));
 
         foreach ($vendors as $vendor) {
             Mail::to($vendor->email)->send(new VendorPurchaseOrderMail($data['subject'], $data['message'], $pdfPath));

@@ -1496,6 +1496,16 @@ log named):
   - The factory concern `HasCompanyDefault` leaves a child that has its parent
     set to `InheritsParentCompany`. Filling the session's company first made
     the trait refuse correct children.
+  - A document is emailed only to its own company's contacts or shared ones
+    (user decision, 2026-10-30). Invoice, sales order and purchase order email
+    paths read their recipients through `Partner::recipientsForCompany()`,
+    which refuses any other id with a `ValidationException` instead of
+    dropping it. The record's company decides, whoever is acting, including a
+    super admin. Do not go back to a scoped `whereIn`.
+  - A chatter mention reaches only installation staff or members of the
+    record's company (user decision, 2026-10-30). Anyone else is neither
+    notified nor added as a follower
+    (`ChatterNotificationService::mayBeToldAbout()`).
 
 DONE RECENTLY (newest first; details in docs/change-log.md)
 

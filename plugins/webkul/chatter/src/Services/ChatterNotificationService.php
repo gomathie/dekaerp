@@ -12,6 +12,7 @@ use Webkul\Chatter\Notifications\ChatterDatabaseNotification;
 use Webkul\Chatter\Support\ChatterMentions;
 use Webkul\Partner\Models\Partner;
 use Webkul\Security\Models\User;
+use Webkul\Security\Services\MultiCompanyAdminService;
 
 class ChatterNotificationService
 {
@@ -212,7 +213,13 @@ class ChatterNotificationService
         $users = User::with('partner')
             ->whereIn('id', $mentionedIds)
             ->when($causerUserId, fn ($query) => $query->where('id', '!=', $causerUserId))
-            ->get();
+            ->get()
+            // A mention sends the record's name and the message body, and adds a
+            // follower, so someone outside the record's company would learn
+            // another client's business from it (user decision, 2026-10-30,
+            // §4k read audit). Mentions of them are dropped, not delivered.
+            ->filter(fn (User $user): bool => $this->mayBeToldAbout($user, $record))
+            ->values();
 
         if ($users->isEmpty()) {
             return [];
@@ -230,6 +237,23 @@ class ChatterNotificationService
         }
 
         return $users->pluck('id')->all();
+    }
+
+    /**
+     * Whether a mentioned user may be told about this record: it has no
+     * company, or the user is installation staff or a member of its company.
+     * The same rule CompanyPolicy applies to a company itself.
+     */
+    protected function mayBeToldAbout(User $user, Model $record): bool
+    {
+        $companyId = $record->getAttribute('company_id');
+
+        if ($companyId === null) {
+            return true;
+        }
+
+        return $user->isSuperAdmin()
+            || app(MultiCompanyAdminService::class)->isCompanyAssigned($user, (int) $companyId);
     }
 
     protected function notifyActivityAssignee(Message $message, ?int $causerUserId, array $mentionedUserIds, string $causerName, string $recordName, string $recordUrl): void
