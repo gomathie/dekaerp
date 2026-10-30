@@ -1783,6 +1783,12 @@ has none. Explicit responsible-user ids and existing chatter followers may be
 read across company contexts; cross-company mentions and selected-recipient
 email behavior remain product decisions.
 
+**Related documentation gap:** `partners/Console/Commands/ContactCompanyReport.php`
+still describes all contacts as shared and suggests a contact backfill. The
+command is read-only, but that description predates the decision to stamp new
+contacts while leaving existing unassigned example contacts shared. Its wording
+needs an owner review before anyone uses it as a deployment instruction.
+
 ## 5. Notes for whoever picks this up
 
 - `assignedCompanyIds()` is simply the actor's `user_allowed_companies` rows and
