@@ -4,6 +4,7 @@ namespace Webkul\Partner\Models;
 
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -13,6 +14,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Webkul\Chatter\Traits\HasChatter;
 use Webkul\Chatter\Traits\HasLogActivity;
 use Webkul\Field\Traits\HasCustomFields;
@@ -181,4 +183,48 @@ class Partner extends Authenticatable implements FilamentUser
      * owner's company where they are created instead: AddressResource,
      * ManageContacts and the address API.
      */
+
+    /**
+     * The contacts a document of `$companyId` may be emailed to: that company's
+     * own contacts and shared ones (no company). Any other id is refused, not
+     * dropped.
+     *
+     * Why (user decision, 2026-10-30, §4k read audit): clients are unrelated
+     * businesses. The email actions used to read recipients through the scoped
+     * query. That silently dropped an ordinary user's out-of-company id, and
+     * widened for a super admin (who bypasses CompanyScope) or a Multi-Company
+     * Admin with several companies active, letting one client's invoice or
+     * order reach another client's contact. The record's company decides,
+     * whoever is acting.
+     *
+     * Read with withoutGlobalScopes(): Partner also carries the ownership scope,
+     * so dropping only CompanyScope could still hide a valid recipient.
+     *
+     * @param  array<int, mixed>  $ids
+     * @return EloquentCollection<int, static>
+     *
+     * @throws ValidationException naming the refused ids
+     */
+    public static function recipientsForCompany(array $ids, ?int $companyId): EloquentCollection
+    {
+        $ids = array_values(array_unique(array_map('intval', array_filter($ids, 'is_numeric'))));
+
+        $recipients = static::withoutGlobalScopes()
+            ->whereKey($ids)
+            ->whereNull((new static)->getTable().'.deleted_at')
+            ->where(owned_by_company($companyId))
+            ->get();
+
+        $refused = array_values(array_diff($ids, array_map('intval', $recipients->modelKeys())));
+
+        if ($refused !== []) {
+            throw ValidationException::withMessages([
+                'partners' => __('These recipients do not belong to this company and cannot be emailed: :ids.', [
+                    'ids' => implode(', ', $refused),
+                ]),
+            ]);
+        }
+
+        return $recipients;
+    }
 }

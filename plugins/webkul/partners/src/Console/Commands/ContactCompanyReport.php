@@ -7,9 +7,16 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Read-only report: what would happen if contacts were scoped per company.
+ * Read-only report: which contacts have no company, and which companies use them.
  *
- * Contacts are currently shared. Upstream made them so deliberately in
+ * Superseded framing, 2026-10-29 (docs/company-admin-role-plan.md §4k): contacts
+ * are now per company for **new** records, and the user decided that existing
+ * contacts are **never reassigned**. One with no company stays shared, one with
+ * a company stays there. So this report is no longer the input to a contact
+ * backfill; there is none. Use it to see what is still shared and who uses it.
+ * The history below explains upstream's original design.
+ *
+ * Contacts were shared until 2026-10-29. Upstream made them so deliberately in
  * commit 57e23422 ("Fixed shared partner issue"), which added
  * Partner::autoAssignsCompany() returning false and a migration that nulled
  * company_id on every partner not tied to a user. Scoping them per company is
@@ -19,7 +26,7 @@ use Illuminate\Support\Facades\Schema;
  * of it - silently, because a scoped relation read returns null rather than
  * raising.
  *
- * This command writes nothing. Run it before the backfill:
+ * This command writes nothing. Run it to see what is still shared:
  *
  *     php artisan partners:company-report
  *
@@ -31,7 +38,7 @@ class ContactCompanyReport extends Command
 {
     protected $signature = 'partners:company-report {--conflicts=20 : How many conflicting contacts to list}';
 
-    protected $description = 'Report what a per-company backfill of contacts would do (read-only)';
+    protected $description = 'Report contacts with no company and which companies use them (read-only)';
 
     public function handle(): int
     {
@@ -54,7 +61,7 @@ class ContactCompanyReport extends Command
         ]);
 
         if ($shared === 0) {
-            $this->components->info('Nothing to backfill.');
+            $this->components->info('No contact is shared: every contact belongs to a company.');
 
             return self::SUCCESS;
         }
@@ -71,7 +78,9 @@ class ContactCompanyReport extends Command
         $this->reportConflicts();
 
         $this->newLine();
-        $this->components->warn('This command changed nothing. The backfill is a separate, deliberate step.');
+        // Existing contacts are never reassigned (user decision, 2026-10-29): this
+        // report informs, it does not prepare a step.
+        $this->components->warn('This command changed nothing. Shared contacts stay shared by decision (docs/company-admin-role-plan.md §4k).');
 
         return self::SUCCESS;
     }
@@ -145,7 +154,7 @@ class ContactCompanyReport extends Command
         $rows = DB::select($sql);
 
         if ($rows === []) {
-            $this->components->info('None. Every referenced contact is used by a single company, so the backfill is safe.');
+            $this->components->info('None. Every referenced shared contact is used by a single company.');
 
             return;
         }
