@@ -1738,9 +1738,17 @@ idempotent, rollback-documented step instead of a migration.
   `! $x` spacing; re-run clean.
 - `php -l` on all 21 changed files: no syntax errors.
 - Test database: `aureuserp_testing_saas_4k_b` (this package's own).
-- Suites ProductFeature / PartnerFeature / InventoryFeature: **in progress at the
-  time of writing**; counts added below when each finishes. Do not treat the
-  absence of a count here as a pass.
+- **ProductFeature:** 274 passed, 0 failed, 620 assertions on
+  `aureuserp_testing_saas_4k_b` (2450.93 seconds). An earlier full run had
+  273 passed, 1 failed, 619 assertions: the tag validation test evaluated its
+  company A validator only after switching the active context to company B.
+  The file alone reproduced the failure; after evaluating while A was active,
+  the file passed 3 tests / 6 assertions and the full suite passed.
+- **PartnerFeature:** 92 passed, 0 failed, 205 assertions on
+  `aureuserp_testing_saas_4k_b` (1355.17 seconds), including the corrected
+  core-partners tag bootstrap.
+- **InventoryFeature:** pending a full run on `aureuserp_testing_saas_4k_b`;
+  no pass count is claimed yet.
 - 2026-10-30 focused Partners rerun on `aureuserp_testing_saas_4k_b`:
   `TagCompanyScopingTest.php` **2 passed (4 assertions)**, 74.09 seconds.
   Partners is core and has no `partners:install` command; this test now uses
@@ -1758,9 +1766,29 @@ idempotent, rollback-documented step instead of a migration.
   passed (3 assertions)**, 544.23 seconds. The Sales failures in the earlier
   `saas_review` run came from factory-supplied address defaults and a missing
   sale journal in the new company; the focused rerun supplied those fixtures.
-- The backfill was **not** run against production, and its dry-run output below
-  is from a local database seeded to the expected state by the test, not from
-  Supabase.
+- The backfill was **not** run against production. The following is the actual
+  `php artisan products:company-backfill --dry-run` output on the local
+  `aureuserp_testing_saas_4k_b` database, seeded to the same starting state as
+  `ProductsCompanyBackfillTest.php` (10 shared categories, shared product 1 in
+  category 2, companies 1-5, no tags). It exited 0. A read-only check afterward
+  confirmed all 10 categories still had `company_id = NULL` and product 1 still
+  had `company_id = NULL`, `category_id = 2`.
+
+  ```text
+  INFO  Planned changes.
+
+  +-------------------------------------------------------------+-------------------------------------------------------------+
+  | Record                                                      | Change                                                      |
+  +-------------------------------------------------------------+-------------------------------------------------------------+
+  | products_categories #1, #2, #3, #4, #5, #6, #7, #8, #9, #10 | company_id: none -> 1                                       |
+  | products_categories (new)                                   | a copy of #1 for company 2, then a copy of #2 under it      |
+  | products_products #1                                        | category_id: 2 -> the copy of #2, company_id: none -> 2     |
+  | products_categories (missing company roots)                 | companies #3, #4, #5: create one default root category each |
+  | products_tags, partners_tags                                | nothing to do (the plan expects no tags)                    |
+  +-------------------------------------------------------------+-------------------------------------------------------------+
+
+  INFO  Dry run: nothing was written. Run again without --dry-run to apply.
+  ```
 
 ##### Rollback
 
@@ -1829,14 +1857,13 @@ products always use the requested company's provisioned root; and the
 backfill provisions one idempotent root for every existing active company that
 has none. Chatter delivery resolves its stored message target without scopes;
 explicit responsible-user ids and existing followers may be read across
-company contexts. Cross-company mentions and selected-recipient
-email behavior remain product decisions.
+company contexts. The mention and recipient decisions in this audit were
+resolved in "Read-audit decisions" below.
 
-**Related documentation gap:** `partners/Console/Commands/ContactCompanyReport.php`
-still describes all contacts as shared and suggests a contact backfill. The
-command is read-only, but that description predates the decision to stamp new
-contacts while leaving existing unassigned example contacts shared. Its wording
-needs an owner review before anyone uses it as a deployment instruction.
+**Related documentation gap, resolved below:**
+`partners/Console/Commands/ContactCompanyReport.php` described all contacts as
+shared and suggested a contact backfill. Its wording was corrected in the
+"Read-audit decisions" work; the report remains read-only.
 
 #### Read-audit decisions - 2026-10-30 (user decided; implemented by Claude)
 
