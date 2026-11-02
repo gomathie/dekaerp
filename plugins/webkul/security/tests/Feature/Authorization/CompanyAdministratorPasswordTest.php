@@ -38,6 +38,21 @@ beforeEach(function (): void {
     Mail::fake();
 });
 
+/**
+ * A company the edit page can save as it stands.
+ *
+ * Explicit phone numbers, not the factory's: faker's phoneNumber() sometimes
+ * produces a format (an extension, "x890") that the form's tel() rule rejects,
+ * which failed a page test on a random run for a reason unrelated to it.
+ */
+function companyAdministratorPasswordPageCompany(): Company
+{
+    $company = multiCompanyAdminTestCompany();
+    $company->forceFill(['phone' => '+260971234567', 'mobile' => '+260961234567'])->save();
+
+    return $company;
+}
+
 function companyAdministratorPasswordSet(Company $company, User $actor, string $email, string $password, bool $mustChange = true): string
 {
     return app(CompanyAdministratorAccount::class)->setPassword($company, $actor, $email, $password, $mustChange);
@@ -193,7 +208,7 @@ it('gives an existing company an administrator from the edit page and clears the
     FilamentHelper::bootAdminPanel();
 
     $superAdmin = multiCompanyAdminTestSuperAdmin();
-    $company = multiCompanyAdminTestCompany();
+    $company = companyAdministratorPasswordPageCompany();
     multiCompanyAdminTestAuthenticate($superAdmin, [(int) $company->getKey()]);
 
     Livewire::test(EditCompany::class, ['record' => $company->getRouteKey()])
@@ -220,7 +235,7 @@ it('invites from the edit page when only an email is given', function () {
     FilamentHelper::bootAdminPanel();
 
     $superAdmin = multiCompanyAdminTestSuperAdmin();
-    $company = multiCompanyAdminTestCompany();
+    $company = companyAdministratorPasswordPageCompany();
     multiCompanyAdminTestAuthenticate($superAdmin, [(int) $company->getKey()]);
 
     Livewire::test(EditCompany::class, ['record' => $company->getRouteKey()])
@@ -240,7 +255,7 @@ it('does nothing about an administrator when the edit page is saved with the sec
     FilamentHelper::bootAdminPanel();
 
     $superAdmin = multiCompanyAdminTestSuperAdmin();
-    $company = multiCompanyAdminTestCompany();
+    $company = companyAdministratorPasswordPageCompany();
     $company->forceFill(['email' => 'mailbox@tenant-pw.test'])->save();
     multiCompanyAdminTestAuthenticate($superAdmin, [(int) $company->getKey()]);
 
