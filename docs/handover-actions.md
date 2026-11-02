@@ -1000,7 +1000,36 @@ guard their own preconditions, and those preconditions were checked above.
    membership and tenant-data migrations are additive and require a reviewed,
    data-aware rollback decision.
 
-4. **Review and run the catalogue backfill.** First run
+4. **Review and run the catalogue backfill.** Run it only after step 3 shows
+   the migrations applied, from a console on the **new** deployment.
+   *2026-11-03:* the first attempt ran before the deploy's migrations reached
+   `products_categories`. Both the dry run and the real run then failed at
+   their first query with `column "company_id" does not exist`
+   (`alreadyApplied()`), and nothing was written. A later read-only check
+   showed the column present, batch 28 holding all 9 migrations, and the
+   categories and product 1 unchanged. Re-running is safe.
+   *Applied 2026-11-03* after a dry run that matched the plan row for row:
+   - categories 1–10 → company 1;
+   - copies #11 (of #1) and #12 (of #2, under #11) → company 2;
+   - product 1 → company 2, category #12;
+   - root categories #13, #14 and #15 → companies 3, 4 and 5.
+
+   **Rollback for this production run** (as printed by the command):
+
+   ```sql
+   update products_products set category_id = 2, company_id = null where id = 1;
+   delete from products_categories where id in (11, 12, 13, 14, 15);
+   update products_categories set company_id = null where id in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+   ```
+
+   Step 5 (Claude, read-only, 2026-11-03): **all checks passed.** No
+   duplicate memberships, no seat limits, product 1 is company 2 / category
+   12, no shared categories, every company has a category, contacts 5–14 and
+   employees 1–10 still shared. Two extra checks also passed: no product
+   other than #1 uses categories 11–15, and no product sits in another
+   company's category.
+
+   First run
    `php artisan products:company-backfill --dry-run`, review every planned row,
    then run `php artisan products:company-backfill` for real. Save the command
    output, including the generated category ids and rollback summary. Rollback:
