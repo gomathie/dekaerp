@@ -1747,8 +1747,11 @@ idempotent, rollback-documented step instead of a migration.
 - **PartnerFeature:** 92 passed, 0 failed, 205 assertions on
   `aureuserp_testing_saas_4k_b` (1355.17 seconds), including the corrected
   core-partners tag bootstrap.
-- **InventoryFeature:** pending a full run on `aureuserp_testing_saas_4k_b`;
-  no pass count is claimed yet.
+- **InventoryFeature:** 885 passed, 0 failed, 2,353 assertions on
+  `aureuserp_testing_saas_4k_b` (9,356.67 seconds). The first attempt was
+  interrupted externally after 608 passing progress markers and produced no
+  Pest footer or exit code; the detached full rerun exited 0 with the counts
+  above.
 - 2026-10-30 focused Partners rerun on `aureuserp_testing_saas_4k_b`:
   `TagCompanyScopingTest.php` **2 passed (4 assertions)**, 74.09 seconds.
   Partners is core and has no `partners:install` command; this test now uses
