@@ -30,5 +30,39 @@ return [
                 ],
             ],
         ],
+
+        'edit' => [
+            'administrator' => [
+                'skipped' => [
+                    'title'           => 'Nenhum administrador foi convidado',
+                    'disabled'        => 'Os convites estão desativados nas configurações de usuários, então :email não foi convidado. Defina uma senha em vez disso, ou ative os convites.',
+                    'missing-role'    => 'O papel “Company Admin” não existe nesta instalação, então ninguém pôde ser convidado.',
+                    'seats-exhausted' => 'Esta empresa não tem assentos de usuário livres, então :email não foi convidado. Aumente primeiro o limite de assentos.',
+                    'invite-failed'   => 'O convite não pôde ser emitido. O endereço pode já pertencer a um usuário, ou a empresa pode não ser uma que você possa atribuir. Para redefinir a senha de um administrador existente, informe também uma senha.',
+                    'mail-failed'     => 'O convite foi emitido, mas o e-mail não pôde ser enviado. Entregue este link de acesso a :email por um canal confiável — ele expira em 7 dias e a pessoa escolhe a própria senha: :link',
+                ],
+            ],
+        ],
+
+        'administrator-account' => [
+            'created' => [
+                'title' => 'Conta de administrador criada',
+                'body'  => ':email já pode entrar com a senha que você definiu. Ela não foi enviada por e-mail: entregue-a você mesmo.',
+            ],
+
+            'password-reset' => [
+                'title' => 'Senha do administrador alterada',
+                'body'  => 'A senha de :email foi alterada. Ela não foi enviada por e-mail: entregue-a você mesmo.',
+            ],
+
+            'refused' => [
+                'title'             => 'O administrador não foi alterado',
+                'missing-email'     => 'Informe o e-mail do administrador junto com a senha.',
+                'missing-role'      => 'O papel “Company Admin” não existe nesta instalação, então nenhuma conta foi criada.',
+                'not-administrator' => ':email pertence a um usuário que não é o administrador desta empresa, então a senha dele não foi alterada aqui. Gerencie esse usuário pela página de Usuários.',
+                'not-allowed'       => 'Você não tem permissão para gerenciar o administrador desta empresa.',
+                'seats-exhausted'   => 'Esta empresa não tem assentos de usuário livres, então nenhuma conta foi criada para :email. Aumente primeiro o limite de assentos.',
+            ],
+        ],
     ],
 ];

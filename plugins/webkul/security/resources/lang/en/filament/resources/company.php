@@ -30,5 +30,39 @@ return [
                 ],
             ],
         ],
+
+        'edit' => [
+            'administrator' => [
+                'skipped' => [
+                    'title'           => 'No administrator was invited',
+                    'disabled'        => 'Invitations are switched off in the user settings, so :email was not invited. Set a password instead, or switch invitations on.',
+                    'missing-role'    => 'The Company Admin role does not exist in this installation, so nobody could be invited.',
+                    'seats-exhausted' => 'This company has no free user seats left, so :email was not invited. Raise the seat limit first.',
+                    'invite-failed'   => 'The invitation could not be issued. The address may already belong to a user, or the company may not be one you are allowed to assign. To reset an existing administrator’s password, enter a password as well.',
+                    'mail-failed'     => 'The invitation was issued, but the email could not be sent. Give this sign-in link to :email over a channel you trust — it expires in 7 days, and they set their own password: :link',
+                ],
+            ],
+        ],
+
+        'administrator-account' => [
+            'created' => [
+                'title' => 'Administrator account created',
+                'body'  => ':email can sign in now with the password you set. It was not emailed: give it to them yourself.',
+            ],
+
+            'password-reset' => [
+                'title' => 'Administrator password changed',
+                'body'  => 'The password for :email was changed. It was not emailed: give it to them yourself.',
+            ],
+
+            'refused' => [
+                'title'             => 'The administrator was not changed',
+                'missing-email'     => 'Enter the administrator’s email address together with the password.',
+                'missing-role'      => 'The Company Admin role does not exist in this installation, so no account was created.',
+                'not-administrator' => ':email belongs to a user who is not this company’s administrator, so their password was not changed here. Manage that user from the Users page.',
+                'not-allowed'       => 'You are not allowed to manage this company’s administrator.',
+                'seats-exhausted'   => 'This company has no free user seats left, so no account was created for :email. Raise the seat limit first.',
+            ],
+        ],
     ],
 ];

@@ -6,6 +6,50 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-03 (Administrator password from the company form)
+
+**Why.** This was a user decision. Clients phone DEKA to have their
+administrator's password set or reset. An existing company also had no way to
+get an administrator from the company form, because the email field only
+existed on create. This supersedes the 2026-10-23 decision that the company
+form never handles a password.
+
+**How.**
+
+- **Service.** New `Security\Services\CompanyAdministratorAccount::setPassword()`.
+  - If no user has the address, it creates the Company Admin. It uses the same
+    assignment check (`assertUserAssignment`), the create policy and the seat
+    lock as the Users page, revokes any pending invitation to that address
+    first, and sets `GLOBAL` and the membership role.
+  - If the address belongs to this company's administrator, it resets the
+    password.
+  - Anyone else is refused.
+  - The must-change flag is saved separately, because `User`'s updating hook
+    would otherwise clear a flag that is already true.
+  - The audit records the flag, never the password.
+- **One rule, one place.** `administrators($company)` is now the single
+  definition of who administers a company, and the section's summary uses it.
+- **Form.** `CompanyAdminContributions` shows the email on edit too, and adds a
+  password field (`Password::default()`, the same rule as the Users page's
+  change-password action) and a must-change toggle, on by default. The shared
+  page logic is in the trait `Pages\Concerns\SetsAdministratorPassword`.
+- **Edit page.** `EditCompany::afterSave()` sets the password, or invites when
+  only an email is given, then clears the fields.
+- **Translations:** en, ar, es, fr and pt_BR.
+
+**Benefit.** Support can set an administrator up on any company, old or new,
+during a call, without the password ever going through email.
+
+**Trade-off / risk.** DEKA staff now handle a password they then pass on, so
+the must-change flag defaults on. Resetting is limited to this company's own
+administrators; other users still go through the Users page and its policy.
+
+**Verification.** See the handoff in this entry once the runs finish: the
+focused tests on `aureuserp_testing_admin_pw`, then the structure-snapshot
+fixtures regenerated from the full SupportFeature suite.
+
+**Rollback.** Revert the commit. No schema change.
+
 ## 2026-11-02 (Payroll plan rewritten for multi-company, multi-country scope)
 
 Documentation only; no code changed.
