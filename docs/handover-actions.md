@@ -935,6 +935,41 @@ Sets `company_id = NULL` on the six default leave-type names (`Paid Time Off`, `
 The user performs these steps in the production environment. They are a
 runbook only; no production commands are run from this session.
 
+### Pre-flight check, 2026-11-03 (Claude; read-only)
+
+**Tests.** All 17 suites passed on `develop` at the last code commit
+`7bbf65741`: 2,904 tests, 0 failed, each suite on its own database. Commits
+after it change only documentation. Per-suite counts are in
+docs/company-admin-role-plan.md §4k Verification.
+
+**Repository.**
+
+- `production` is an ancestor of `develop` (48 commits behind), so step 2 is a
+  clean `git fetch . develop:production`.
+- `main` is 182 commits behind `develop`. It is not needed for this deploy.
+- All 9 new migrations are registered in their plugin's `hasMigrations` list.
+  This was checked because the 2026-10-20 rehearsal found two that were not.
+- No new environment variables are needed.
+- `platform-billing` is a new core plugin with migrations only, no routes or
+  pages. Its missing `plugins` row is normal for core plugins.
+
+**Production state** (Supabase, `SELECT`s only):
+
+| Check | Found | Meaning |
+|---|---|---|
+| The 9 migrations already applied | 0 | Last applied is `2026_10_22_000001_create_company_plugin_table`; all 9 are pending as expected |
+| Duplicate `(user_id, company_id)` memberships | 0 | `000001` will not refuse |
+| Users with no company membership | 0 of 4 | `000003` moves every tenant role (5 assignments in total) into memberships; none stays global |
+| Companies / categories / products | 5 / 10 / 7 | Matches the dry-run plan in step 4 |
+| Product 1 | shared, category 2 | The only product the backfill moves (to company 2). Products 2–7 are already company 1, category 1. |
+| Product tags / contact tags | 0 / 0 | No tag backfill needed |
+
+**Verdict:** ready to deploy. Steps 1–7 below stand as written.
+
+**Not done:** a full restore-and-migrate rehearsal on a copy of production,
+like the 2026-10-20 one, was not repeated. The two constraint migrations
+guard their own preconditions, and those preconditions were checked above.
+
 1. **Back up Supabase.** Take a point-in-time backup or a manual dump, and
    record its provider identifier, timestamp and retention. If the backup fails,
    stop here; there is no application rollback until a usable backup exists.
