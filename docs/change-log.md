@@ -6,6 +6,87 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-02 (Payroll plan rewritten for multi-company, multi-country scope)
+
+Documentation only; no code changed.
+
+**Why.** The user issued a mandatory scope update: a shared payroll engine
+with separate, versioned country localization packages for Ghana, Zambia and
+Congo, statutory rules kept apart from tenant-owned company policy, one legal
+employer and jurisdiction per run, onboarding with test and live payroll, and
+readiness tracked per country and per company. The 2026-10-26 plan copied
+statutory rates into company-owned pay components, which let a company lower
+a legal minimum and left statutory updates to be retyped company by company.
+
+**How.** `docs/payroll.md` is now the single payroll document. The scope note
+(`REVIEW all THIS WITH SKILLs + i have.md`) is merged into it, verbatim, as
+Appendix A. The document was reviewed with the `engineering:system-design`,
+`engineering:testing-strategy` and `devil-advocate` skills, after inspecting
+the codebase. It contains:
+
+- review findings F-01 to F-12 against the old plan;
+- requirements R-01 to R-15 and N-01 to N-05;
+- three-tier architecture (platform, country package, company);
+- run binding, readiness, statutory rollout and salary confidentiality;
+- decision gates DP-01 to DP-15 (old decisions kept with a status);
+- revised data model, interface, 14-phase plan and test strategy;
+- acceptance tests A-01 to A-09, and a per-country readiness register.
+
+**Two findings to note.**
+
+- **F-02:** the old Ghana seed table listed NHIL as a salary deduction and a
+  separate employee Tier 2 rate. Both are believed wrong (unverified), so the
+  table is withdrawn. Rates come only from official sources and a practitioner
+  review.
+- **Congo currencies:** CDF and XAF are seeded but inactive, so the Congo
+  package also waits on DP-09 (CD or CG).
+
+**Adversarial review (§16 of the plan).** A cold devil's-advocate agent put
+P(mistake) at 65 %. Three of its attacks were checked against the document and
+conceded:
+
+- **Sequencing:** the general machinery came before any real country was
+  validated. §9 is now resequenced as Stage A (verify, then one slice per
+  country, then shadow reconciliation) and Stage B (generalize).
+- **Joiners, leavers and final pay** are now in v1.
+- **Code versioning:** country calculation classes are pinned and versioned
+  side by side, so history stays reproducible.
+
+The fourth attack, an unnamed practitioner and no shadow-run date, is open
+until the user supplies them.
+
+**Decisions recorded the same day (user, 2026-11-02; `docs/payroll.md` §6).**
+
+- **DP-09:** both Congos, as two separate packages (`CD` and `CG`). Each
+  package's currency (CDF or XAF) is activated when that package starts.
+- **DP-10:** free for pilots through the plugin grant. Paid later, through
+  entitlements and subscriptions.
+- **DP-11:** each branch chooses whether it is its own employer or is covered by
+  its parent's employer, foreign branches included. This adds a
+  `payroll_employer_companies` coverage table, with one employer per company
+  per jurisdiction.
+- **DP-12:** main super admins see all pay data. A separate right,
+  `view_payroll_pay_data`, goes to DEKA support admins (all companies) and to
+  Multi-Company Admins (their assigned companies only). Every such view is
+  logged.
+- **DP-03b:** promote `PlatformBilling\Support\Money` to `support`. No new
+  dependency.
+- **Pilot:** Zambia first, with a shadow run targeted within a month. The scope
+  of that month is limited to A1, A2, Zambia's A3 and A4. The practitioner is
+  each client's own accountant, cross-checked against the authority's published
+  tables. Pilot facts are collected at onboarding.
+
+Attack 3 of the review is now partly resolved. The user said client and
+accountant names are not needed: a company is added, its region selected, and
+it picks its payroll country. The plan now states that a country is verified
+once by DEKA and then works for every company that selects it (§8.2). Only the
+exact start date is still open.
+
+**Verification.** Not applicable (documentation). Facts about the codebase in
+§2 were read from source on 2026-11-02.
+
+**Rollback.** `git revert` the commit; the previous plan is commit `2c948c283`.
+
 ## 2026-10-26 (Zambian kwacha, and a payroll plan that is not a build)
 
 Two things, one code change and one planning document.
