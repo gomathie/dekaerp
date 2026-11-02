@@ -199,17 +199,17 @@ Record the user's answer before unblocking dependent packages.
 | Package | Title | Depends on | Safe alongside | Status | Owner / database |
 |---|---|---|---|---|---|
 | SAAS-00 | Baseline inventories and characterization | — | no implementation package | done | Verified 2026-10-27: 12 tests, 68 assertions, 0 failures / `aureuserp_testing_saas_00_verify` |
-| SAAS-01 | Membership-role foundation | SAAS-00, D-SAAS-02, D-SAAS-06 | SAAS-03 | review (focused tests green; full suites not run) | Copilot 2026-10-28; Claude review run 2026-10-29 / `aureuserp_testing_saas_review` |
-| SAAS-02 | Tenant-aware jobs and API company selection | SAAS-00, D-SAAS-02, D-SAAS-07 | SAAS-03 | review (focused tests green after R-1 fix; full suites not run) | Copilot 2026-10-28; Claude review run 2026-10-29 / `aureuserp_testing_saas_review` |
-| SAAS-03 | Plugin defaults, dependencies and audited mutations | SAAS-00, D-SAAS-06 | SAAS-01/02 | review (focused tests green after R-2 fix; full suites not run) | Copilot 2026-10-28; Claude review run 2026-10-29 / `aureuserp_testing_saas_review` |
-| SAAS-04 | Generic plugin enforcement contract | SAAS-03 | — | review (focused tests green; full suites not run) | Copilot 2026-10-28; Claude review run 2026-10-29 / `aureuserp_testing_saas_review` |
+| SAAS-01 | Membership-role foundation | SAAS-00, D-SAAS-02, D-SAAS-06 | SAAS-03 | review | Copilot 2026-10-28; Claude review 2026-10-29 / `aureuserp_testing_saas_review`; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
+| SAAS-02 | Tenant-aware jobs and API company selection | SAAS-00, D-SAAS-02, D-SAAS-07 | SAAS-03 | review | Copilot 2026-10-28; Claude review 2026-10-29 / `aureuserp_testing_saas_review`; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
+| SAAS-03 | Plugin defaults, dependencies and audited mutations | SAAS-00, D-SAAS-06 | SAAS-01/02 | review | Copilot 2026-10-28; Claude review 2026-10-29 / `aureuserp_testing_saas_review`; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
+| SAAS-04 | Generic plugin enforcement contract | SAAS-03 | — | review | Copilot 2026-10-28; Claude review 2026-10-29 / `aureuserp_testing_saas_review`; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
 | SAAS-05A | Plugin enforcement: finance | SAAS-04 | SAAS-05B/C/D | todo | — |
-| SAAS-05B | Plugin enforcement: commercial | SAAS-04 | SAAS-05A/C/D | todo | — |
+| SAAS-05B | Plugin enforcement: commercial | SAAS-04 | SAAS-05A/C/D | in progress | Codex 2026-11-03 / `aureuserp_testing_saas_05b` |
 | SAAS-05C | Plugin enforcement: operations | SAAS-04 | SAAS-05A/B/D | todo | — |
 | SAAS-05D | Plugin enforcement: people/work tools | SAAS-04 | SAAS-05A/B/C | todo | — |
-| SAAS-06 | Seat limit and invitation lifecycle | SAAS-01, D-SAAS-03, D-SAAS-04 | SAAS-05A/B/C/D | review (focused tests green; full suites not run) | Copilot 2026-10-28; Claude review run 2026-10-29 / `aureuserp_testing_saas_review` |
-| SAAS-07 | Onboarding and all seat-enforcement paths | SAAS-06 | — | review (partial: capacity wired at existing entry points; UI/API/import paths remain) | Copilot 2026-10-28, db not yet run |
-| SAAS-08 | Platform-billing plugin foundation | SAAS-00, D-SAAS-01, D-SAAS-05 | — | review (foundation complete, no suite run yet) | Copilot 2026-10-28, db not yet run |
+| SAAS-06 | Seat limit and invitation lifecycle | SAAS-01, D-SAAS-03, D-SAAS-04 | SAAS-05A/B/C/D | review | Copilot 2026-10-28; Claude review 2026-10-29 / `aureuserp_testing_saas_review`; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
+| SAAS-07 | Onboarding and all seat-enforcement paths | SAAS-06 | — | review (partial: capacity wired at existing entry points; UI/API/import paths remain) | Copilot 2026-10-28; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03; coordinator, company API/programmatic creation, after-commit/resend/revoke UI, imports and remaining API/service capacity paths stay open |
+| SAAS-08 | Platform-billing plugin foundation | SAAS-00, D-SAAS-01, D-SAAS-05 | — | review (foundation complete) | Copilot 2026-10-28; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
 | SAAS-09 | Plans, prices and subscriptions | SAAS-08, D-SAAS-04 | — | todo | — |
 | SAAS-09A | Discount codes and tenant redemptions | SAAS-09, D-SAAS-08 | — | blocked | — |
 | SAAS-10 | Idempotent recurring invoices | SAAS-09, SAAS-09A | — | todo | — |
@@ -263,6 +263,12 @@ package. The user reviewed SAAS-01/02/03/04/06 before any suite was run.
 | RF-2 | **Per-company roles are stored but no policy consults them yet.** Admin in A / ordinary in B still leaks across a multi-active session. | **Accepted as deferred.** `TenantRoleResolver` and `User::hasPermissionInCompany()` exist and are tested; the adoption rewrite (policies + per-resource list restriction) belongs to **SAAS-05** and **SAAS-13**. The SAAS-01 handoff's cross-package request is the same work and now explicitly names both packages. |
 | RF-3 | **Extra queries per permission check** — a denied check now costs more, once per row on a Filament page. Measure before caching. | **Measured, no cache added.** `plugins/webkul/security/tests/Feature/SaaSAdministration/PermissionCheckQueryBudgetTest.php` pins a ceiling of 4 queries for a granted *and* a denied check, and asserts a repeated check does not grow. The numbers are in the test's failure output; re-measure there before introducing caching. |
 | RF-4 | **Multi-Company Admins lose the company form's modules section.** | **Confirmed correct** per D-SAAS-06 (entitlements are Super Admin only). No change; the narrowing stays. |
+
+**RF-1 disposition correction (2026-11-03).** The original disposition's
+statement that the column keeps a default of five for new companies is
+superseded. The user decided on 2026-10-29 that new and existing companies are
+unlimited by default (`seat_limit = null`); a limit is applied deliberately
+through `SeatCapacityService::setLimit()`.
 
 **RF-3 correction (2026-10-29).** The budget test above had not passed when RF-3
 was written: its first run measured **6** queries and failed. The extra queries
@@ -967,6 +973,16 @@ Each slice applies SAAS-04 without inventing another guard:
   `table-views`, `fields`, `analytics`, `full-calendar`, and `website` only
   when SAAS-04 marks them entitleable.
 
+**Scope reconciliation and production evidence (2026-11-03).** Production's
+five companies each held all 18 installed plugin grants, so enforcement removes
+nothing until an administrator deliberately unticks a module. The card above
+lists `contacts` and `partners` in 05B, while the current assignment omits
+`contacts` and marks `partners` exempt. The authoritative SAAS-04 manifest also
+exempts `partners`, so 05B must not gate it. `contacts` is not exempt but its
+omission from the assignment conflicts with this card; this package records the
+disagreement and limits implementation to `products`, `sales` and `purchases`
+pending an owner decision on `contacts`.
+
 **Owns:** only listed plugin directories and slice tests. No slice edits Plugin
 Manager, Support, Security, `phpunit.xml`, or another slice.
 
@@ -1481,6 +1497,14 @@ Exit: production reconciliation is clean, alerts are actionable, and rollback ha
 - Invitation uniqueness covers existing users only, not multiple pending invitations for the same company/email, and invitation expiry is encoded only in each generated signed URL.
 - Plugin grant changes are not recorded through `SecurityAuditLogger`.
 - Multi-company API semantics are implicit: API routes authenticate Sanctum tokens but do not select a company, while `CompanyContext` normally reads the web session and otherwise falls back to the user's default company. This is fail-narrow rather than a demonstrated cross-tenant leak, but integrations cannot deliberately and audibly target another allowed company.
+
+**Superseded/fixed outcomes (2026-11-03).** The five findings above are retained
+as audit history. SAAS-01 fixed the CreateUser/EditUser Company Admin mismatch
+and added the unique membership pair. SAAS-06 added invitation lifecycle and
+duplicate-pending protection. SAAS-03 centralized and audited plugin grant
+changes. SAAS-02 added the authorized API company selector and explicit tenant
+execution context. Their focused checks and all 17 full suites are green on the
+deployed code; package status remains for the user to promote.
 
 These are in scope for the relevant phases; no fixes were made during this audit.
 
