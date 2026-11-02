@@ -3,16 +3,17 @@
 namespace Webkul\Security;
 
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
+use Illuminate\Validation\Rules\Password;
 use Webkul\Security\Filament\Resources\UserResource;
 use Webkul\Security\Models\Invitation;
-use Webkul\Security\Models\Role;
 use Webkul\Security\Models\User;
-use Webkul\Security\Services\TenantRoleResolver;
+use Webkul\Security\Services\CompanyAdministratorAccount;
 use Webkul\Support\Filament\Resources\CompanyResource\Support\CompanySchemaRegistry;
 use Webkul\Support\Models\Company;
 
@@ -22,7 +23,9 @@ use Webkul\Support\Models\Company;
  * Two jobs, both asked for by the user (2026-10-23): let a new company's
  * administrator be invited at an address of their own rather than the
  * company's shared mailbox, and let support see who administers an existing
- * company instead of searching the Users list for it.
+ * company instead of searching the Users list for it. A third since
+ * 2026-11-03 (user): set or reset the administrator's password, on create and
+ * on edit, for clients who phone DEKA to have it done.
  *
  * Contributed through CompanySchemaRegistry rather than by overriding the
  * company form: `support` is the base plugin and must not reference `security`.
@@ -58,19 +61,51 @@ class CompanyAdminContributions
             ->icon('heroicon-o-shield-check')
             ->visible(fn (): bool => static::administersInstallation())
             ->schema([
-                TextInput::make('administrator_email')
-                    ->label(__('security::filament/contributions/company.administrator.fields.email'))
-                    ->helperText(__('security::filament/contributions/company.administrator.fields.email-helper'))
-                    ->email()
-                    ->maxLength(255)
-                    ->visibleOn('create')
-                    // Not a company column. The create page reads it from the
-                    // form state and hands it to CompanyAdministratorInviter.
-                    ->dehydrated(false)
-                    ->placeholder(fn (Get $get): string => (string) $get('email')),
-
                 Text::make(fn (?Company $record): HtmlString => static::administratorSummary($record))
                     ->visibleOn(['edit', 'view']),
+
+                // On edit too since 2026-11-03 (user): an existing company had no
+                // way to get an administrator, because this field only existed
+                // on create. None of these is a company column: the create and
+                // edit pages read them from the form state.
+                TextInput::make('administrator_email')
+                    ->label(__('security::filament/contributions/company.administrator.fields.email'))
+                    ->helperText(fn (string $operation): string => __($operation === 'create'
+                        ? 'security::filament/contributions/company.administrator.fields.email-helper'
+                        : 'security::filament/contributions/company.administrator.fields.email-helper-edit'))
+                    ->email()
+                    ->maxLength(255)
+                    ->visibleOn(['create', 'edit'])
+                    ->dehydrated(false)
+                    // Only create falls back to the company's address. On edit a
+                    // blank field means "no change", or every save would invite.
+                    ->placeholder(fn (Get $get, string $operation): ?string => $operation === 'create' ? (string) $get('email') : null)
+                    ->requiredWith('administrator_password'),
+
+                // Clients phone DEKA to have their administrator's password set
+                // or reset (user, 2026-11-03). Supersedes "passwords only on the
+                // Users page"; the password is set by CompanyAdministratorAccount
+                // and never emailed. Same rule as the Users page's change action.
+                TextInput::make('administrator_password')
+                    ->label(__('security::filament/contributions/company.administrator.fields.password'))
+                    ->helperText(__('security::filament/contributions/company.administrator.fields.password-helper'))
+                    ->password()
+                    ->revealable()
+                    ->rule(Password::default())
+                    ->maxLength(255)
+                    ->visibleOn(['create', 'edit'])
+                    ->dehydrated(false)
+                    ->live(onBlur: true),
+
+                // On by default: a password someone else chose should be
+                // replaced by its owner, and the RequirePasswordChange middleware
+                // enforces it at their next sign-in.
+                Toggle::make('administrator_must_change_password')
+                    ->label(__('security::filament/contributions/company.administrator.fields.must-change-password'))
+                    ->default(true)
+                    ->visible(fn (Get $get, string $operation): bool => in_array($operation, ['create', 'edit'], true)
+                        && filled($get('administrator_password')))
+                    ->dehydrated(false),
             ])
             ->columns(1);
     }
@@ -88,23 +123,9 @@ class CompanyAdminContributions
             return new HtmlString(e(__('security::filament/contributions/company.administrator.none')));
         }
 
-        // Two stores since SAAS-01: a legacy global assignment (read against the
-        // user's default company, as before) and the per-company membership
-        // role, which is where every new Company Admin is written.
-        $membershipAdminIds = app(TenantRoleResolver::class)->supported()
-            ? app(TenantRoleResolver::class)->userIdsWithRoleInCompany(Role::COMPANY_ADMIN, (int) $record->getKey())
-            : [];
-
-        $admins = User::query()
-            ->withoutGlobalScopes()
-            ->where(fn ($query) => $query
-                ->whereIn('id', $membershipAdminIds)
-                ->orWhere(fn ($legacy) => $legacy
-                    ->where('default_company_id', $record->getKey())
-                    ->whereHas('roles', fn ($roles) => $roles
-                        ->whereRaw('LOWER(name) = ?', [mb_strtolower(Role::COMPANY_ADMIN)]))))
-            ->orderBy('id')
-            ->get();
+        // One definition of "administers this company", shared with the
+        // password reset, which must refuse anyone this list does not show.
+        $admins = app(CompanyAdministratorAccount::class)->administrators($record);
 
         $lines = [];
 
@@ -151,12 +172,13 @@ class CompanyAdminContributions
     }
 
     /**
-     * A direct link to the user, which is where passwords are changed.
+     * A direct link to the user, for everything about them except the password.
      *
-     * Deliberately a link rather than password fields repeated here: the Users
-     * form already does confirmation, the minimum length and the
-     * must-change-password flag, and credential handling should have one
-     * implementation rather than two.
+     * *Superseded in part 2026-11-03 (user):* this used to be the only way to
+     * change an administrator's password, on the grounds that credential
+     * handling should have one implementation. The company form now sets it
+     * too, through CompanyAdministratorAccount, which uses the same password
+     * rule and must-change flag as the Users page.
      */
     protected static function userEditUrl(User $user): string
     {

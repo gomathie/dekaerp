@@ -10,8 +10,12 @@ return [
         'manage'      => 'Gestionar este usuario',
 
         'fields' => [
-            'email'        => 'Correo del administrador',
-            'email-helper' => 'Se envía una invitación a esta dirección, donde la persona establece su nombre y contraseña. Déjelo en blanco para usar el correo de la empresa.',
+            'email'                => 'Correo del administrador',
+            'email-helper'         => 'Sin contraseña, se envía una invitación a esta dirección y la persona elige su propia contraseña. Déjelo en blanco para invitar al correo de la empresa.',
+            'email-helper-edit'    => 'Introduzca una dirección para invitar a un nuevo administrador. Añada una contraseña para crear su cuenta al momento, o para restablecer la contraseña del administrador de esta empresa. Déjelo en blanco para no cambiar nada.',
+            'password'             => 'Contraseña del administrador',
+            'password-helper'      => 'Opcional. Establece la contraseña ahora en lugar de enviar una invitación, o la restablece para el administrador de esta empresa. Nunca se envía por correo: entréguesela usted mismo.',
+            'must-change-password' => 'Debe cambiar esta contraseña en el próximo inicio de sesión',
         ],
     ],
 ];

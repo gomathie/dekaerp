@@ -1507,17 +1507,39 @@ log named):
     notified nor added as a follower
     (`ChatterNotificationService::mayBeToldAbout()`).
 
+• Company administrator password from the company form, 2026-11-03
+  (user decision; docs/change-log.md):
+  - The company form's Administrator section may set or reset a password, on
+    create **and** edit (`CompanyAdministratorAccount::setPassword()`). With
+    no password it still sends the invitation, which stays the default.
+  - It resets **only** someone `administrators($company)` lists. Any other
+    existing address is refused (`NOT_ADMINISTRATOR`), never re-pointed:
+    otherwise whoever administers one company could take over another
+    tenant's user by typing their email.
+  - The password is **never emailed**. The person who sets it hands it over.
+  - On edit, a blank email does nothing. Only create falls back to the
+    company's address, or every save would invite the company mailbox.
+  - Tests: `security/tests/Feature/Authorization/CompanyAdministratorPasswordTest.php`.
+
 DONE RECENTLY (newest first; details in docs/change-log.md)
+
+• 2026-11-03 — Administrator password from the company form, for existing
+  companies too: see the protected decision above.
 
 • 2026-10-23 — Company administrator: an "Administrator" section on the company
   form, contributed from `security` through `CompanySchemaRegistry`. On create it
   collects the administrator's own address (the inviter now takes an optional
   email and still falls back to the company's); on edit it lists each Company
-  Admin plus any pending invitation, for support. Password changes link to the
+  Admin plus any pending invitation, for support. *Superseded in part
+  2026-11-03 (user):* "Password changes link to the user rather than repeating
+  password fields" no longer holds; the section now sets the administrator's
+  password itself. Also stale since SAAS-06: invitations now have
+  `accepted_at`, and the row survives acceptance, so use the `pending()` scope
+  rather than "a row exists". Original text: "Password changes link to the
   user rather than repeating password fields - `UserResource` already owns that,
   and the invitation flow deliberately never mints a password. Note
   `user_invitations` has **no** `accepted_at`: acceptance deletes the row, so a
-  surviving row is a pending invitation.
+  surviving row is a pending invitation."
 
 • 2026-10-23 — Contacts import from a spreadsheet (CSV and Excel, with a
   downloadable example): `Partner\Services\ContactImporter`, whose `columns()`

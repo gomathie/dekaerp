@@ -5,6 +5,7 @@ namespace Webkul\Security\Filament\Resources\CompanyResource\Pages;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
 use Webkul\Security\Filament\Resources\CompanyResource;
+use Webkul\Security\Filament\Resources\CompanyResource\Pages\Concerns\SetsAdministratorPassword;
 use Webkul\Security\Models\Invitation;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\CompanyAdministratorInviter;
@@ -12,6 +13,8 @@ use Webkul\Support\Filament\Resources\CompanyResource\Pages\CreateCompany as Bas
 
 class CreateCompany extends BaseCreateCompany
 {
+    use SetsAdministratorPassword;
+
     protected static string $resource = CompanyResource::class;
 
     protected static string $lang = 'security::filament/resources/company.pages.create.administrator';
@@ -26,6 +29,12 @@ class CreateCompany extends BaseCreateCompany
         $actor = Auth::user();
 
         if (! $actor instanceof User) {
+            return;
+        }
+
+        // A typed password creates the account outright instead of inviting
+        // (user, 2026-11-03), so it does not depend on invitations being on.
+        if ($this->setAdministratorPassword($actor)) {
             return;
         }
 
