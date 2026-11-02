@@ -1752,6 +1752,34 @@ idempotent, rollback-documented step instead of a migration.
   interrupted externally after 608 passing progress markers and produced no
   Pest footer or exit code; the detached full rerun exited 0 with the counts
   above.
+- **AccountFeature:** 540 passed, 0 failed, 1,417 assertions on
+  `aureuserp_testing_deploy_account` (5,703.10 seconds).
+- **AccountingFeature:** 54 passed, 0 failed, 88 assertions on
+  `aureuserp_testing_deploy_accounting` (1,184.64 seconds).
+- **SaleFeature:** 146 passed, 0 failed, 440 assertions on
+  `aureuserp_testing_deploy_sale` (3,208.46 seconds).
+- **PurchaseFeature:** 189 passed, 0 failed, 504 assertions on
+  `aureuserp_testing_deploy_purchase` (3,490.55 seconds).
+- **ManufacturingFeature:** 41 passed, 0 failed, 106 assertions on
+  `aureuserp_testing_deploy_manufacturing` (1,043.81 seconds).
+- **ProjectFeature:** 86 passed, 0 failed, 203 assertions on
+  `aureuserp_testing_deploy_project` (901.46 seconds).
+- **SupportFeature:** 192 passed, 0 failed, 946 assertions on
+  `aureuserp_testing_deploy_support` (1,758.53 seconds).
+- **TableViewsFeature:** 1 passed, 0 failed, 2 assertions on
+  `aureuserp_testing_deploy_tableviews` (73.89 seconds).
+- **SecurityFeature:** 109 passed, 0 failed, 359 assertions on
+  `aureuserp_testing_deploy_security` (1,030.97 seconds).
+- **LogisticsFeature:** 196 passed, 0 failed, 810 assertions on
+  `aureuserp_testing_deploy_logistics` (4,021.12 seconds).
+- **EmployeeFeature:** 7 passed, 0 failed, 11 assertions on
+  `aureuserp_testing_deploy_employee` (201.77 seconds).
+- **PluginManagerFeature:** 42 passed, 0 failed, 133 assertions on
+  `aureuserp_testing_deploy_pluginmanager` (1,010.66 seconds).
+- **ChatterFeature:** 8 passed, 0 failed, 21 assertions on
+  `aureuserp_testing_deploy_chatter` (209.25 seconds).
+- **PlatformBillingFeature:** 19 passed, 0 failed, 46 assertions on
+  `aureuserp_testing_deploy_platformbilling` (188.70 seconds).
 - 2026-10-30 focused Partners rerun on `aureuserp_testing_saas_4k_b`:
   `TagCompanyScopingTest.php` **2 passed (4 assertions)**, 74.09 seconds.
   Partners is core and has no `partners:install` command; this test now uses
