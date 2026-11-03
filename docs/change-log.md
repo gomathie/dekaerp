@@ -44,9 +44,30 @@ during a call, without the password ever going through email.
 the must-change flag defaults on. Resetting is limited to this company's own
 administrators; other users still go through the Users page and its policy.
 
-**Verification.** See the handoff in this entry once the runs finish: the
-focused tests on `aureuserp_testing_admin_pw`, then the structure-snapshot
-fixtures regenerated from the full SupportFeature suite.
+**Verification** (Sail, 2026-11-03):
+
+- **Focused run** on `aureuserp_testing_admin_pw`:
+  `CompanyAdministratorPasswordTest` plus `CompanyAdministratorInvitationTest`,
+  which also loads `MultiCompanyAdminTest` through its `require_once`.
+  **62 passed, 1 failed, 195 assertions.**
+- **The one failure was the test data, not the feature.** The factory's
+  `fake()->phoneNumber()` sometimes produces an extension format ("x890")
+  that the company form's `tel()` rule rejects, so saving the page failed.
+  The page tests now use a company with fixed valid numbers. Re-run:
+  `--filter='edit page'`, **3 passed, 19 assertions**.
+- **Snapshots.** `security.json` and `support.json` were deleted and
+  re-recorded from the full **SupportFeature: 192 passed, 946 assertions**,
+  on `aureuserp_testing_admin_pw_support`. Diffed against `8f2aab8fb^`, the
+  only change is this one, in both files: the summary moved above the fields,
+  plus `administrator_password` and `administrator_must_change_password`.
+- Pint and `php -l` are clean on every changed file.
+- **Not run:** the full SecurityFeature suite. Only the new code path and the
+  invitation tests were run.
+
+**Commit note.** `8f2aab8fb` recorded both snapshots as *deleted*, because
+it was taken while this regeneration had them removed. Commit the
+regenerated files. Without them the snapshot test silently re-records a
+baseline instead of comparing against one.
 
 **Rollback.** Revert the commit. No schema change.
 

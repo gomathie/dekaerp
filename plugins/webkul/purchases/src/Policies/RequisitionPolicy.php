@@ -4,11 +4,13 @@ namespace Webkul\Purchase\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Webkul\Purchase\Models\Requisition;
+use Webkul\Purchase\Policies\Concerns\ChecksPurchasesEntitlement;
 use Webkul\Security\Models\User;
 use Webkul\Security\Traits\HasScopedPermissions;
 
 class RequisitionPolicy
 {
+    use ChecksPurchasesEntitlement;
     use HandlesAuthorization, HasScopedPermissions;
 
     /**

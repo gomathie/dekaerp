@@ -10,10 +10,16 @@ use Filament\Schemas\Schema;
 use UnitEnum;
 use Webkul\Account\Enums\InvoicePolicy;
 use Webkul\Sale\Settings\InvoiceSettings;
+use Webkul\Sale\Support\SalesAccess;
 use Webkul\Support\Filament\Clusters\Settings;
 
 class ManageInvoice extends SettingsPage
 {
+    public static function canAccess(): bool
+    {
+        return SalesAccess::enabledForCurrent();
+    }
+
     use HasPageShield;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-document-text';

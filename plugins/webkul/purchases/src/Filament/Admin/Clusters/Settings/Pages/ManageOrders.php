@@ -10,10 +10,16 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Webkul\Purchase\Settings\OrderSettings;
+use Webkul\Purchase\Support\PurchasesAccess;
 use Webkul\Support\Filament\Clusters\Settings;
 
 class ManageOrders extends SettingsPage
 {
+    public static function canAccess(): bool
+    {
+        return PurchasesAccess::enabledForCurrent();
+    }
+
     use HasPageShield;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shopping-cart';

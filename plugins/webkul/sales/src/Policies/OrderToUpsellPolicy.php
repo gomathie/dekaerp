@@ -4,11 +4,13 @@ namespace Webkul\Sale\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Webkul\Sale\Models\OrderToUpsell as Order;
+use Webkul\Sale\Policies\Concerns\ChecksSalesEntitlement;
 use Webkul\Security\Models\User;
 use Webkul\Security\Traits\HasScopedPermissions;
 
 class OrderToUpsellPolicy
 {
+    use ChecksSalesEntitlement;
     use HandlesAuthorization, HasScopedPermissions;
 
     /**

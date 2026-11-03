@@ -45,6 +45,8 @@ function setPurchasesEntitlement(Company $company, bool $enabled): void
 it('enforces the purchases entitlement across UI API policies and services', function (): void {
     $companyA = Company::factory()->create();
     $companyB = Company::factory()->create();
+    setPurchasesEntitlement($companyA, true);
+    setPurchasesEntitlement($companyB, true);
     $user = FilamentHelper::actingAsCompanyUser($companyA, ['view_any_purchase_purchase::order']);
     $order = PurchaseHelper::order(['company_id' => $companyA->getKey(), 'user_id' => $user->getKey()]);
     $plugin = Plugin::query()->where('name', 'purchases')->firstOrFail();

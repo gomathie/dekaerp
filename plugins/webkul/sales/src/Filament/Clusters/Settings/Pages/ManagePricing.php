@@ -9,10 +9,16 @@ use Filament\Pages\SettingsPage;
 use Filament\Schemas\Schema;
 use UnitEnum;
 use Webkul\Sale\Settings\PriceSettings;
+use Webkul\Sale\Support\SalesAccess;
 use Webkul\Support\Filament\Clusters\Settings;
 
 class ManagePricing extends SettingsPage
 {
+    public static function canAccess(): bool
+    {
+        return SalesAccess::enabledForCurrent();
+    }
+
     use HasPageShield;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-currency-dollar';
