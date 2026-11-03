@@ -2,6 +2,7 @@
 
 namespace Webkul\Purchase\Support;
 
+use Webkul\Partner\Models\Partner;
 use Webkul\PluginManager\Support\PluginEntitlement;
 
 class PurchasesAccess
@@ -28,6 +29,13 @@ class PurchasesAccess
         }
 
         PluginEntitlement::assertForCompany('purchases', $companyId);
+    }
+
+    public static function enabledForCustomer(?Partner $customer): bool
+    {
+        // Customer guards do not use CompanyContext, so their own company selects the grant.
+        return $customer?->company_id !== null
+            && PluginEntitlement::enabledForCompany('purchases', (int) $customer->company_id);
     }
 
     protected static function superAdminBypassesEntitlement(): bool

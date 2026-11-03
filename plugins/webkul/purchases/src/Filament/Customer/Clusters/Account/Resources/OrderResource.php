@@ -22,10 +22,16 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Webkul\Purchase\Enums\OrderState;
 use Webkul\Purchase\Models\Order;
+use Webkul\Purchase\Support\PurchasesAccess;
 use Webkul\Website\Filament\Customer\Clusters\Account;
 
 class OrderResource extends Resource
 {
+    public static function canAccess(): bool
+    {
+        return PurchasesAccess::enabledForCustomer(Auth::guard('customer')->user());
+    }
+
     protected static ?string $model = Order::class;
 
     protected static bool $shouldRegisterNavigation = false;

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use Livewire\Livewire;
 use Webkul\PluginManager\Exceptions\PluginNotEntitledException;
 use Webkul\PluginManager\Models\Plugin;
@@ -19,6 +20,7 @@ require_once __DIR__.'/../../Helpers/PurchaseHelper.php';
 beforeEach(function (): void {
     TestBootstrapHelper::ensurePluginInstalled('purchases');
     PluginAccess::flush();
+    URL::resolveMissingNamedRoutesUsing(fn () => '#');
 });
 
 function setPurchasesEntitlement(Company $company, bool $enabled): void

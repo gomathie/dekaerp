@@ -2,12 +2,19 @@
 
 namespace Webkul\Purchase\Filament\Customer\Clusters\Account\Resources;
 
+use Illuminate\Support\Facades\Auth;
 use Webkul\Purchase\Filament\Customer\Clusters\Account\Resources\QuotationResource\Pages\ListQuotations;
 use Webkul\Purchase\Filament\Customer\Clusters\Account\Resources\QuotationResource\Pages\ViewQuotation;
 use Webkul\Purchase\Models\CustomerPurchaseOrder as PurchaseOrder;
+use Webkul\Purchase\Support\PurchasesAccess;
 
 class QuotationResource extends OrderResource
 {
+    public static function canAccess(): bool
+    {
+        return PurchasesAccess::enabledForCustomer(Auth::guard('customer')->user());
+    }
+
     protected static ?string $model = PurchaseOrder::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-list';
