@@ -49,10 +49,11 @@ it('enforces the sales entitlement across UI API policies and services', functio
     $companyB = Company::factory()->create();
     setSalesEntitlement($companyA, true);
     setSalesEntitlement($companyB, true);
-    $user = FilamentHelper::actingAsCompanyUser($companyA, [
+    $user = FilamentHelper::actingAsCompanyUser([$companyA, $companyB], [
         'view_any_sale_quotation',
         'view_any_sale_order',
     ]);
+    CompanyHelper::setActive([$companyA->getKey()]);
     $order = SaleHelper::order(['company_id' => $companyA->getKey(), 'user_id' => $user->getKey()]);
     $plugin = Plugin::query()->where('name', 'sales')->firstOrFail();
 
@@ -71,6 +72,13 @@ it('enforces the sales entitlement across UI API policies and services', functio
 
     Livewire::test(ListQuotations::class)->assertForbidden();
     $this->getJson(route('admin.api.v1.sales.orders.index'))->assertForbidden();
+
+    CompanyHelper::setActive([$companyB->getKey()]);
+
+    expect(Orders::canAccess())->toBeTrue();
+    $this->getJson(route('admin.api.v1.sales.orders.index'))->assertOk();
+
+    CompanyHelper::setActive([$companyA->getKey()]);
 
     expect(fn () => app(OrderWorkflow::class)->toggleLock($order->refresh()))
         ->toThrow(PluginNotEntitledException::class);

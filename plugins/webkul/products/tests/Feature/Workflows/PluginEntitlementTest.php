@@ -45,10 +45,11 @@ it('enforces the products entitlement across UI API policies and services', func
     $companyB = Company::factory()->create();
     setProductsEntitlement($companyA, true);
     setProductsEntitlement($companyB, true);
-    FilamentHelper::actingAsCompanyUser($companyA, [
+    FilamentHelper::actingAsCompanyUser([$companyA, $companyB], [
         'view_any_product_category',
         'view_any_product_price::list',
     ]);
+    CompanyHelper::setActive([$companyA->getKey()]);
     $priceList = PriceList::factory()->create(['company_id' => $companyA->getKey()]);
     $plugin = Plugin::query()->where('name', 'products')->firstOrFail();
 
@@ -67,6 +68,13 @@ it('enforces the products entitlement across UI API policies and services', func
 
     Livewire::test(ListPriceLists::class)->assertForbidden();
     $this->getJson(route('admin.api.v1.products.categories.index'))->assertForbidden();
+
+    CompanyHelper::setActive([$companyB->getKey()]);
+
+    expect(PriceListResource::canAccess())->toBeTrue();
+    $this->getJson(route('admin.api.v1.products.categories.index'))->assertOk();
+
+    CompanyHelper::setActive([$companyA->getKey()]);
 
     expect(app(CompanyCategoryProvisioner::class)->provision($companyA))->toBeNull();
 

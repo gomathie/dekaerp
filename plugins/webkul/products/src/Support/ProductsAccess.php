@@ -3,6 +3,7 @@
 namespace Webkul\Product\Support;
 
 use Webkul\PluginManager\Support\PluginEntitlement;
+use Webkul\Security\Models\User;
 
 class ProductsAccess
 {
@@ -21,18 +22,12 @@ class ProductsAccess
             || PluginEntitlement::enabledForCompany('products', $companyId);
     }
 
-    public static function assertForCompany(?int $companyId): void
-    {
-        if (static::superAdminBypassesEntitlement()) {
-            return;
-        }
-
-        PluginEntitlement::assertForCompany('products', $companyId);
-    }
-
     protected static function superAdminBypassesEntitlement(): bool
     {
+        $user = auth()->user();
+
         return config('plugin-manager.entitlements.super_admin_bypass', true)
-            && auth()->user()?->isSuperAdmin() === true;
+            && $user instanceof User
+            && $user->isSuperAdmin();
     }
 }
