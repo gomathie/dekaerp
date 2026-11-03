@@ -4,10 +4,12 @@ namespace Webkul\Product\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Webkul\Product\Models\Product;
+use Webkul\Product\Policies\Concerns\ChecksProductsEntitlement;
 use Webkul\Security\Models\User;
 
 class ProductPolicy
 {
+    use ChecksProductsEntitlement;
     use HandlesAuthorization;
 
     /**

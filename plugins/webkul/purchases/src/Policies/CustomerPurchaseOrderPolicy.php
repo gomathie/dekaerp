@@ -4,10 +4,12 @@ namespace Webkul\Purchase\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Webkul\Purchase\Models\CustomerPurchaseOrder;
+use Webkul\Purchase\Policies\Concerns\ChecksPurchasesEntitlement;
 use Webkul\Website\Models\Partner;
 
 class CustomerPurchaseOrderPolicy
 {
+    use ChecksPurchasesEntitlement;
     use HandlesAuthorization;
 
     /**

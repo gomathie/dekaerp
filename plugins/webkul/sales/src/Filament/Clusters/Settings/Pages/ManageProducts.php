@@ -10,10 +10,16 @@ use Filament\Pages\SettingsPage;
 use Filament\Schemas\Schema;
 use UnitEnum;
 use Webkul\Product\Settings\ProductSettings;
+use Webkul\Sale\Support\SalesAccess;
 use Webkul\Support\Filament\Clusters\Settings;
 
 class ManageProducts extends SettingsPage
 {
+    public static function canAccess(): bool
+    {
+        return SalesAccess::enabledForCurrent();
+    }
+
     use HasPageShield;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-cube';

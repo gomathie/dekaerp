@@ -4,10 +4,12 @@ namespace Webkul\Sale\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Webkul\Sale\Models\OrderTemplate;
+use Webkul\Sale\Policies\Concerns\ChecksSalesEntitlement;
 use Webkul\Security\Models\User;
 
 class OrderTemplatePolicy
 {
+    use ChecksSalesEntitlement;
     use HandlesAuthorization;
 
     /**

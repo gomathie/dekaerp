@@ -1225,6 +1225,12 @@ MULTI-COMPANY FACTS THAT BITE
   "delivered with no promised date" silently exercised the promised-date branch
   and passed green. Whenever a test turns on a column being **absent**, set it
   to null explicitly rather than trusting the factory to leave it alone.
+• `CompanyFactory` fills `phone` with `fake()->phoneNumber()`, which sometimes
+  produces an extension format ("x890") that the company form's `tel()` rule
+  rejects. A test that **saves the company edit page** therefore fails at
+  random with "The phone Number field format is invalid". Give such a test a
+  company with fixed valid numbers, as
+  `security/.../CompanyAdministratorPasswordTest.php` does (2026-11-03).
 • **Never read a parent through a relation inside a model hook.** The parent is
   almost always globally scoped, so for an actor not entitled to see it the
   relation returns **null**, and then: `??=`/`?->` leaves `company_id` null, which

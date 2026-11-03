@@ -4,10 +4,12 @@ namespace Webkul\Sale\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Webkul\Sale\Models\Tag;
+use Webkul\Sale\Policies\Concerns\ChecksSalesEntitlement;
 use Webkul\Security\Models\User;
 
 class TagPolicy
 {
+    use ChecksSalesEntitlement;
     use HandlesAuthorization;
 
     /**

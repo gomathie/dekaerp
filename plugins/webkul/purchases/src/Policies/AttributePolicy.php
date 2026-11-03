@@ -4,10 +4,12 @@ namespace Webkul\Purchase\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Webkul\Purchase\Models\Attribute;
+use Webkul\Purchase\Policies\Concerns\ChecksPurchasesEntitlement;
 use Webkul\Security\Models\User;
 
 class AttributePolicy
 {
+    use ChecksPurchasesEntitlement;
     use HandlesAuthorization;
 
     /**

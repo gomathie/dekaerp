@@ -11,6 +11,7 @@ use Webkul\Sale\Events\OrderLocked;
 use Webkul\Sale\Events\OrderUnlocked;
 use Webkul\Sale\Models\Order;
 use Webkul\Sale\Settings\QuotationAndOrderSettings;
+use Webkul\Sale\Support\SalesAccess;
 
 class OrderWorkflow
 {
@@ -18,6 +19,8 @@ class OrderWorkflow
 
     public function sendByEmail(Order $record, array $data = []): array
     {
+        SalesAccess::assertForCompany((int) $record->company_id);
+
         $result = app(OrderMailer::class)->sendQuotation($record, $data);
 
         if (! empty($result['sent'])) {
@@ -29,6 +32,8 @@ class OrderWorkflow
 
     public function toggleLock(Order $record): Order
     {
+        SalesAccess::assertForCompany((int) $record->company_id);
+
         $record->update(['locked' => ! $record->locked]);
 
         $record = app(OrderCalculator::class)->recompute($record);
@@ -42,6 +47,8 @@ class OrderWorkflow
 
     public function confirm(Order $record): Order
     {
+        SalesAccess::assertForCompany((int) $record->company_id);
+
         $record->update([
             'state'          => OrderState::SALE,
             'invoice_status' => InvoiceStatus::TO_INVOICE,
@@ -60,6 +67,8 @@ class OrderWorkflow
 
     public function backToQuotation(Order $record): Order
     {
+        SalesAccess::assertForCompany((int) $record->company_id);
+
         $record->update([
             'state'          => OrderState::DRAFT,
             'invoice_status' => InvoiceStatus::NO,
@@ -74,6 +83,8 @@ class OrderWorkflow
 
     public function cancel(Order $record, array $data = []): Order
     {
+        SalesAccess::assertForCompany((int) $record->company_id);
+
         $record->update([
             'state'          => OrderState::CANCEL,
             'invoice_status' => InvoiceStatus::NO,

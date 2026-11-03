@@ -45,7 +45,12 @@ function setSalesEntitlement(Company $company, bool $enabled): void
 it('enforces the sales entitlement across UI API policies and services', function (): void {
     $companyA = Company::factory()->create();
     $companyB = Company::factory()->create();
-    $user = FilamentHelper::actingAsCompanyUser($companyA, ['view_any_sale_quotation']);
+    setSalesEntitlement($companyA, true);
+    setSalesEntitlement($companyB, true);
+    $user = FilamentHelper::actingAsCompanyUser($companyA, [
+        'view_any_sale_quotation',
+        'view_any_sale_order',
+    ]);
     $order = SaleHelper::order(['company_id' => $companyA->getKey(), 'user_id' => $user->getKey()]);
     $plugin = Plugin::query()->where('name', 'sales')->firstOrFail();
 

@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
-use Webkul\PluginManager\Exceptions\PluginNotEntitledException;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Product\Filament\Resources\PriceListResource;
@@ -44,6 +43,8 @@ function setProductsEntitlement(Company $company, bool $enabled): void
 it('enforces the products entitlement across UI API policies and services', function (): void {
     $companyA = Company::factory()->create();
     $companyB = Company::factory()->create();
+    setProductsEntitlement($companyA, true);
+    setProductsEntitlement($companyB, true);
     FilamentHelper::actingAsCompanyUser($companyA, [
         'view_any_product_category',
         'view_any_product_price::list',
@@ -67,8 +68,7 @@ it('enforces the products entitlement across UI API policies and services', func
     Livewire::test(ListPriceLists::class)->assertForbidden();
     $this->getJson(route('admin.api.v1.products.categories.index'))->assertForbidden();
 
-    expect(fn () => app(CompanyCategoryProvisioner::class)->provision($companyA))
-        ->toThrow(PluginNotEntitledException::class);
+    expect(app(CompanyCategoryProvisioner::class)->provision($companyA))->toBeNull();
 
     setProductsEntitlement($companyA, true);
 

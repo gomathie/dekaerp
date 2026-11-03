@@ -4,11 +4,13 @@ namespace Webkul\Purchase\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Webkul\Purchase\Models\Quotation;
+use Webkul\Purchase\Policies\Concerns\ChecksPurchasesEntitlement;
 use Webkul\Security\Models\User;
 use Webkul\Security\Traits\HasScopedPermissions;
 
 class QuotationPolicy
 {
+    use ChecksPurchasesEntitlement;
     use HandlesAuthorization, HasScopedPermissions;
 
     /**
