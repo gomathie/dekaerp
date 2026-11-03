@@ -4,6 +4,7 @@ namespace Webkul\Purchase\Support;
 
 use Webkul\Partner\Models\Partner;
 use Webkul\PluginManager\Support\PluginEntitlement;
+use Webkul\Security\Models\User;
 
 class PurchasesAccess
 {
@@ -22,6 +23,9 @@ class PurchasesAccess
             || PluginEntitlement::enabledForCompany('purchases', $companyId);
     }
 
+    /**
+     * Stop non-HTTP purchasing writes at the same entitlement boundary as the UI and API.
+     */
     public static function assertForCompany(?int $companyId): void
     {
         if (static::superAdminBypassesEntitlement()) {
@@ -40,7 +44,10 @@ class PurchasesAccess
 
     protected static function superAdminBypassesEntitlement(): bool
     {
+        $user = auth()->user();
+
         return config('plugin-manager.entitlements.super_admin_bypass', true)
-            && auth()->user()?->isSuperAdmin() === true;
+            && $user instanceof User
+            && $user->isSuperAdmin();
     }
 }
