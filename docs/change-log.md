@@ -6,6 +6,162 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-04 (Mail sender, catalogue-backfill preflight, tampered Livewire updates)
+
+**Why.** Triage of five more Sentry issues. Two are the test-suite noise the
+next entry fixed - 148912476 `shipment numbering unavailable` and 157505669
+`filament.admin.resources.project.projects.view`, both `environment=testing`,
+both from `report()` inside code the tests exercise deliberately. Three are
+production and needed code:
+
+- **158147606**, `UnexpectedResponseException` 550 "From header sender domain
+  not verified". `Support\Services\EmailService` and
+  `Chatter\Services\ChatterNotificationService::resolveFrom()` both put **the
+  acting user's own address** in the envelope From. A relay only sends as a
+  domain it has verified, and the recipient's DMARC check rejects anything else,
+  so every tenant address failed - and DEKA's own too until that domain is
+  verified at the provider.
+- **158146393**, `Undefined column: company_id` from
+  `ProductsCompanyBackfill::alreadyApplied()`. The command had been run on
+  production before the per-company migration reached `products_categories`
+  (the 2026-11-03 deploy attempt, recorded in `docs/handover-actions.md` step 4).
+  It died as a raw QueryException that named no cause and no next step.
+- **151536596**, `CannotUpdateLockedPropertyException` on
+  `POST /livewire-*/update` from the Filament login page, unauthenticated, with
+  a hand-built `updates: {discoveredSchemaNames: []}` payload. It answered 500
+  and reported itself. Anyone can send that payload, so it could be repeated
+  without limit and only cost us Sentry quota and attention.
+
+**How.**
+
+- `EmailService::send()` and `ChatterNotificationService::resolveFrom()` build
+  the envelope From from `config('mail.from.address')`, keep the author as the
+  From **name**, and pass the author's own address as `from.reply_to`.
+- `Chatter\Mail\MessageMail` and `Chatter\Mail\FollowerMail` set `replyTo` from
+  that key, so a reply still reaches the person. The two templates that print the
+  sender's address (`chatter::mail.follower-mail`,
+  `recruitments::mails.applicant-not-interested`) print `reply_to` with the
+  address as fallback, so their bodies keep showing a person, not `no-reply@`.
+- `ProductsCompanyBackfill` gained a `Schema::hasColumn` preflight for the two
+  `company_id` columns it writes, refusing with the missing column, the command
+  to run and "nothing was written" - the same shape as its existing
+  missing-table check.
+- `bootstrap/app.php` excludes `CannotUpdateLockedPropertyException` from
+  reporting and renders it as a 400 JSON response.
+
+**Benefit.** Notification and document mail can actually be delivered: the
+envelope sender is now a domain the relay can be verified for, and the author
+remains reachable through Reply-To and the message body. The backfill explains
+itself instead of failing obscurely on a half-migrated database. An
+unauthenticated probe of the login page no longer produces a Sentry issue.
+
+**Trade-off / risk.**
+
+- From is now the application address for **all** mail sent through
+  `EmailService` (invoice, quotation, applicant and follower mail), not only
+  chatter. That is the only address a relay can accept, but it does mean a
+  tenant's mail leaves under DEKA's domain; per-company verified senders would be
+  a separate feature.
+- Replies to chatter notification and follower mail go to the author
+  (Reply-To). Replies to the other mailables still go to
+  `mail.from.address`, because adding Reply-To there was out of scope for this
+  fix - worth doing when someone asks.
+- **The 550 will keep happening until the sending domain is verified at the
+  provider and `MAIL_FROM_ADDRESS` is set to it** - `docs/handover-actions.md`
+  §0d.
+- No production code behaviour changed for the Livewire guard beyond the status
+  code and the missing report.
+
+**Verification.** Sail `laravel.test`, database `aureuserp_testing_sentry`.
+
+- `plugins/webkul/chatter/tests/Feature/MailSenderTest.php`: **2 passed, 2
+  assertions** (new).
+- `plugins/webkul/products/tests/Feature/Console/ProductsCompanyBackfillTest.php`:
+  **7 passed, 46 assertions** (1 new).
+- `plugins/webkul/support/tests/Feature/Http/LivewireLockedPropertyTest.php`:
+  **2 passed** (new); `plugins/webkul/chatter/tests/Feature/CrossCompanyReadTest.php`
+  still **1 passed** with the new From.
+- `vendor/bin/pint --format agent` on every changed PHP file: **passed**.
+
+**Rollback.** Restore `Auth::user()->email` / `$causer?->email` in the two From
+builders, drop the `Schema::hasColumn` loop, and delete the two
+`CannotUpdateLockedPropertyException` registrations in `bootstrap/app.php`.
+Nothing else reads the new `reply_to` key except the two templates, which fall
+back to the address.
+
+## 2026-11-04 (Sentry stays off while the test suite runs)
+
+**Why.** Two Sentry issues were filed against this project with
+`environment: testing` and `sapi: cli`, both from local Sail test runs - 155782383
+`RuntimeException: smtp down` (2026-11-02, culprit `CompanyAdministratorInvitationTest`)
+and 149361620 `RouteNotFoundException: Route
+[filament.admin.purchase.orders.resources.purchase-agreements.view] not defined`
+(2026-11-03, culprit `PurchaseAgreementLineTest`). Neither is an application
+defect:
+
+- `CompanyAdministratorInviter` catches a failed invitation email and calls
+  `report()` on purpose, so support sees a mail outage; the test throws that
+  failure deliberately with `Mail::shouldReceive('to')->andThrow(...)`.
+- `HasChatter::getChatterResourceUrl()` catches and reports its own URL lookup.
+  The route it failed to find does exist in a normally booted app (the router
+  lists `filament.admin.purchase.orders.resources.purchase-agreements.view`); it
+  is missing only inside the test bootstrap, which installs plugins - and so
+  registers their Filament resources - after the panel routes were registered.
+
+Both reached the production project because `bootstrap/app.php` registers
+`Integration::handles()`, the DSN comes from `.env`, and `phpunit.xml` pinned no
+`SENTRY_LARAVEL_DSN`. The comment in `bootstrap/app.php` ("Inert until
+SENTRY_LARAVEL_DSN is set, so local and test runs send nothing") only holds for
+CI, which copies `.env.example` and leaves the DSN empty - not for a developer
+whose `.env` carries the real DSN.
+
+**How.**
+
+- `phpunit.xml` sets `SENTRY_LARAVEL_DSN` to an empty string with
+  `force="true"`. `force` is required: PHPUnit otherwise leaves a DSN already
+  exported into the shell in place. An empty DSN makes `sentry-laravel`'s
+  `BaseServiceProvider::hasDsnSet()` false, so no client, transport, event
+  binding or tracing integration is built - a `before_send` filter would still
+  boot the SDK and still trace transactions.
+- Why comment rewritten in `bootstrap/app.php` so the next reader is not told
+  that tests already send nothing.
+- Guard: `plugins/webkul/support/tests/Feature/Observability/SentryTestEnvironmentTest.php`,
+  which asserts the suite really is in `testing` and that `config('sentry.dsn')`
+  is empty.
+
+**Benefit.** Local test runs no longer create Sentry issues or performance
+transactions. The whole class goes, not just these two tests, because every
+`report()` reached from a test was affected, and the same line also stops the
+traced `livewire-*` transactions that appeared on these events.
+
+**Trade-off / risk.** None in production: no application code, config or service
+behaviour changed, and CI was already sending nothing. A developer loses the
+ability to see their own test-triggered `report()` output in Sentry - that is the
+point. A test that deliberately exercises Sentry behaviour would have to set the
+DSN itself.
+
+**Verification.** Sail `laravel.test`, dedicated database
+`aureuserp_testing_sentry` (created for this change; no shared test database and
+no managed database used).
+
+- `php artisan test --filter="leaves Sentry unconfigured"`: **1 passed, 2
+  assertions** (131 s including the full install bootstrap).
+- `php artisan test --filter="Sentry|CompanyAdministratorInvitation"`:
+  **52 passed, 158 assertions**, 753 s - the SecurityFeature invitation tests
+  that produced issue 155782383 are green with Sentry disabled.
+- `php artisan tinker` on the same checkout (APP_ENV=local, so `.env` is read):
+  `config('sentry.dsn')` is **set** (95 chars). That is what proves the pin is
+  the `phpunit.xml` line and not the absence of a DSN - without the line the
+  guard test would fail on this machine.
+- `vendor/bin/pint --format agent` on both changed PHP files: **passed**.
+- Confirmed by router inspection that
+  `filament.admin.purchase.orders.resources.purchase-agreements.view` is
+  registered in a normally booted app, so issue 149361620 needs no change in
+  chatter or purchases.
+
+**Rollback.** Delete the `SENTRY_LARAVEL_DSN` line from `phpunit.xml` (and the
+guard test with it). Nothing else depends on it.
+
 ## 2026-11-04 (SAAS-05 plugin entitlement rollout)
 
 Implemented SAAS-04 enforcement across the SAAS-05 plugin slices. Detailed

@@ -12,9 +12,19 @@ class EmailService
     public function send(string $view, string $mailClass, array $payload, array $attachments = [])
     {
         try {
+            $author = Auth::user();
+
+            // The envelope From has to be an address the relay is allowed to
+            // send as. Sending as the acting user was rejected with
+            // "550-From header sender domain not verified" for every address the
+            // provider had not verified - which is every tenant's - and would
+            // fail the recipient's DMARC check even where the relay accepted it
+            // (Sentry 158147606). The author is still named in the message and
+            // stays reachable as the reply-to.
             $payload['from'] = [
-                'address' => Auth::user()->email,
-                'name'    => Auth::user()->name,
+                'address'  => config('mail.from.address'),
+                'name'     => $author?->name ?? config('mail.from.name'),
+                'reply_to' => $author?->email,
             ];
 
             if (current_company()) {

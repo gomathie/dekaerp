@@ -379,9 +379,15 @@ class ChatterNotificationService
 
     protected function resolveFrom(Message $message, mixed $causer, mixed $record): array
     {
+        // Same rule as Support\Services\EmailService: the relay only sends as a
+        // domain it has verified, so the author's own address cannot be the
+        // sender (Sentry 158147606 - "550-From header sender domain not
+        // verified"). The author is still named in the message and stays
+        // reachable as the reply-to.
         $from = [
-            'address' => $causer?->email ?? config('mail.from.address'),
-            'name'    => $causer?->name ?? config('mail.from.name'),
+            'address'  => config('mail.from.address'),
+            'name'     => $causer?->name ?? config('mail.from.name'),
+            'reply_to' => $causer?->email,
         ];
 
         $company = $message->company ?? ($record->company ?? null);
