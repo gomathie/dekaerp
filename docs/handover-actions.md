@@ -312,6 +312,32 @@ logistics tables produced no new findings.
 
 ---
 
+## 0d. Verify the sending domain, or every notification email bounces (2026-11-04)
+
+**You must do this in the mail provider and in Laravel Cloud.** Sentry 158147606
+is a hard failure, not a warning: `550-From header sender domain not verified`,
+answered by the relay for a chatter notification on 2026-11-02 21:38 UTC.
+
+The code now sends every chatter and document email from
+`config('mail.from.address')` instead of the acting user's own address (see
+`docs/change-log.md`, 2026-11-04). That fixes the "tenant domain can never be
+verified" half. The remaining half is configuration:
+
+1. In the SMTP provider (the 550 text is Brevo's), add and verify **the domain
+   used in `MAIL_FROM_ADDRESS`** - SPF and DKIM records on that domain, not just
+   a verified single address.
+2. In Laravel Cloud's `production` environment, set
+   `MAIL_FROM_ADDRESS` to an address on that verified domain (for example
+   `no-reply@<verified domain>`), and confirm `MAIL_FROM_NAME`.
+3. Deploy, then post one chatter message on a record with a follower and
+   confirm the follower receives it. Until step 1 is done the 550 repeats and
+   Sentry keeps reporting it - correctly.
+
+**Reply-To.** Chatter notification and follower mail carry `Reply-To: <author>`,
+so replying reaches the person who wrote the message even though the envelope
+sender is the application. Invoice, quotation and applicant mail do not yet -
+replies to those go to `MAIL_FROM_ADDRESS`.
+
 ## 0. Point production Sentry at the DEKA ERP project DONE (2026-09-20)
 
 **You must do this in the Laravel Cloud dashboard.** Editing
@@ -1002,6 +1028,8 @@ guard their own preconditions, and those preconditions were checked above.
 
 4. **Review and run the catalogue backfill.** Run it only after step 3 shows
    the migrations applied, from a console on the **new** deployment.
+   *2026-11-04:* the command now refuses up front, naming the missing column and
+   this step, instead of failing inside `alreadyApplied()` (Sentry 158146393).
    *2026-11-03:* the first attempt ran before the deploy's migrations reached
    `products_categories`. Both the dry run and the real run then failed at
    their first query with `column "company_id" does not exist`

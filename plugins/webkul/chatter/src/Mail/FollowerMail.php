@@ -30,6 +30,9 @@ class FollowerMail extends Mailable
         return new Envelope(
             subject: $this->payload['subject'],
             from: new Address($this->payload['from']['address'], '"'.addslashes($this->payload['from']['name']).'"'),
+            // The acting user, so a reply still reaches them even though the
+            // envelope From is the application's verified address.
+            replyTo: empty($this->payload['from']['reply_to']) ? [] : [new Address($this->payload['from']['reply_to'])],
         );
     }
 

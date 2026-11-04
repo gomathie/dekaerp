@@ -10,6 +10,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Validation\ValidationException;
+use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
 use Sentry\Laravel\Integration;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -49,6 +50,18 @@ return Application::configure(basePath: dirname(__DIR__))
         // and 149361620). Reporting is separate from the render() callbacks
         // below - those still shape the client response.
         Integration::handles($exceptions);
+
+        // Livewire refuses a request that tries to write a #[Locked] property,
+        // and anyone can send one - including on the login page, before
+        // authenticating. Left alone it answers 500 and reports, so a single
+        // probe becomes a Sentry issue (151536596) and can be repeated without
+        // limit. It is a bad request, not a server fault: answer 400 and do not
+        // report it.
+        $exceptions->dontReport([CannotUpdateLockedPropertyException::class]);
+
+        $exceptions->render(function (CannotUpdateLockedPropertyException $e) {
+            return response()->json(['message' => 'This update is not allowed.'], 400);
+        });
 
         $exceptions->render(function (MissingJournalException $e, $request) {
             if ($request->is('api/*', 'admin/api/*') || $request->expectsJson()) {

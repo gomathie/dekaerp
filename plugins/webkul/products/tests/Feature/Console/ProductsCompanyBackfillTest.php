@@ -1,7 +1,9 @@
 <?php
 
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
 
@@ -193,4 +195,24 @@ it('refuses to touch tags the plan did not account for', function () {
         ->assertExitCode(1);
 
     expect(DB::table('products_categories')->whereNotNull('company_id')->count())->toBe(0);
+});
+
+it('refuses to run before the per-company columns have been deployed', function () {
+    // On 2026-11-02 this command was run on production before `migrate` had
+    // added products_categories.company_id. The first query died as a raw
+    // "Undefined column" QueryException with nothing actionable in it
+    // (Sentry 158146393), so the preflight now names the missing column and
+    // the command to run. The drop is rolled back with the test transaction -
+    // PostgreSQL supports transactional DDL.
+    Schema::table('products_categories', fn (Blueprint $table) => $table->dropColumn('company_id'));
+
+    // Artisan::output() rather than expectsOutputToContain(): the latter matches
+    // a single write() call, and the components renderer emits the advice as
+    // its own chunk.
+    expect(Artisan::call('products:company-backfill'))->toBe(1)
+        ->and(Artisan::output())
+        ->toContain('has no company_id column')
+        ->toContain('migrate');
+
+    expect(DB::table('products_products')->where('id', 1)->value('category_id'))->toBe(2);
 });

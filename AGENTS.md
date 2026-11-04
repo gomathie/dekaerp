@@ -1547,6 +1547,35 @@ log named):
     company's address, or every save would invite the company mailbox.
   - Tests: `security/tests/Feature/Authorization/CompanyAdministratorPasswordTest.php`.
 
+• Test runs never report to Sentry, 2026-11-04 (`docs/change-log.md`):
+  - `phpunit.xml` sets `SENTRY_LARAVEL_DSN` to an empty string with
+    `force="true"`. A developer's `.env` carries the real DSN, so removing that
+    line sends the exceptions the application deliberately `report()`s - and its
+    traced transactions - to the production project, tagged
+    `environment=testing` (Sentry issues 155782383 and 149361620, both local test
+    runs). `force` is required: PHPUnit otherwise leaves a DSN exported into the
+    shell in place.
+  - The DSN is blanked rather than filtered in `before_send`, because an empty
+    DSN makes `sentry-laravel`'s `hasDsnSet()` false and no client is built at
+    all, while a `before_send` filter still boots the SDK and still traces.
+  - Test: `support/tests/Feature/Observability/SentryTestEnvironmentTest.php`.
+
+• Mail leaves as the application, not as the person, 2026-11-04
+  (`docs/change-log.md`):
+  - `Support\Services\EmailService` and
+    `Chatter\Services\ChatterNotificationService::resolveFrom()` put
+    `config('mail.from.address')` in the envelope From. Never the acting user's
+    own address: a relay only sends as a domain it has verified, and the
+    recipient's DMARC check rejects anything else, so sending as the clerk
+    failed with "550-From header sender domain not verified" for every tenant
+    address (Sentry 158147606). The author is still the From **name**.
+  - Tests: `chatter/tests/Feature/MailSenderTest.php`.
+  - A tampered Livewire update is a client error, not a server fault:
+    `CannotUpdateLockedPropertyException` is excluded from reporting and answers
+    400 (`bootstrap/app.php`). Sentry 151536596 came from an unauthenticated
+    probe of the login page and could be repeated without limit. Test:
+    `support/tests/Feature/Http/LivewireLockedPropertyTest.php`.
+
 DONE RECENTLY (newest first; details in docs/change-log.md)
 
 • 2026-11-03 — Administrator password from the company form, for existing

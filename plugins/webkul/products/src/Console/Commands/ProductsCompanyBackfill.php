@@ -76,6 +76,18 @@ class ProductsCompanyBackfill extends Command
             }
         }
 
+        // Every step below writes company_id. Without the column the command
+        // died in alreadyApplied() as a raw "Undefined column" QueryException
+        // that said nothing about what to do (Sentry 158146393: it was run on
+        // production before the per-company migrations had been deployed).
+        foreach (['products_categories', 'products_products'] as $table) {
+            if (! Schema::hasColumn($table, 'company_id')) {
+                $this->components->error("The {$table} table has no company_id column. Run `php artisan migrate` first; nothing was written.");
+
+                return self::FAILURE;
+            }
+        }
+
         if ($this->alreadyApplied()) {
             $this->components->info('Nothing to do: the categories and product 1 already match the target state.');
 

@@ -20,7 +20,7 @@
                     'name' => $payload['from']['name']
                 ]) !!}</strong></p>
                 <p>{!! __('recruitments::mails/applicant-not-interested.admin-details.email', [
-                    'email' => $payload['from']['address']
+                    'email' => $payload['from']['reply_to'] ?? $payload['from']['address']
                 ]) !!}</p>
             </div>
         </div>
