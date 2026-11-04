@@ -8,7 +8,7 @@ use Webkul\Security\Models\User;
 
 class TagPolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, Concerns\ChecksInventoryEntitlement;
 
     public function viewAny(User $user): bool
     {

@@ -8,7 +8,7 @@ use Webkul\TimeOff\Models\LeaveAllocation;
 
 class LeaveAllocationPolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, Concerns\ChecksTimeOffEntitlement;
 
     /**
      * Determine whether the user can view any models.

@@ -8,7 +8,7 @@ use Webkul\Security\Models\User;
 
 class AttributePolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, Concerns\ChecksAccountingEntitlement;
 
     /**
      * Determine whether the user can view any models.

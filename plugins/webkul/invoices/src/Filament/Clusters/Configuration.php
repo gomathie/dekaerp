@@ -2,6 +2,8 @@
 
 namespace Webkul\Invoice\Filament\Clusters;
 
+
+use Webkul\PluginManager\Support\PluginEntitlement;
 use Filament\Clusters\Cluster;
 use Webkul\Support\Enums\NavigationGroup;
 
@@ -19,5 +21,9 @@ class Configuration extends Cluster
     public static function getNavigationGroup(): string|\UnitEnum
     {
         return NavigationGroup::Invoice;
+    }
+    public static function canAccess(): bool
+    {
+        return PluginEntitlement::enabledForCurrent('invoices');
     }
 }

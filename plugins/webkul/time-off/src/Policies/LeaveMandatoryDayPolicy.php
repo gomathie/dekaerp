@@ -8,7 +8,7 @@ use Webkul\TimeOff\Models\LeaveMandatoryDay;
 
 class LeaveMandatoryDayPolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, Concerns\ChecksTimeOffEntitlement;
 
     /**
      * Determine whether the user can view any models.

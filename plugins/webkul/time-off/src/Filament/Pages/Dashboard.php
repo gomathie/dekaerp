@@ -2,6 +2,8 @@
 
 namespace Webkul\TimeOff\Filament\Pages;
 
+
+use Webkul\PluginManager\Support\PluginEntitlement;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Pages\Dashboard as BaseDashboard;
@@ -55,5 +57,9 @@ class Dashboard extends BaseDashboard
         return [
             MyTimeOffWidget::make(),
         ];
+    }
+    public static function canAccess(): bool
+    {
+        return PluginEntitlement::enabledForCurrent('time-off');
     }
 }

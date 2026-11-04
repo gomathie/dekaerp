@@ -18,11 +18,14 @@ use Webkul\Manufacturing\Events\OrderStarted;
 use Webkul\Manufacturing\Models\Move;
 use Webkul\Manufacturing\Models\Order;
 use Webkul\Manufacturing\Models\WorkOrder;
+use Webkul\PluginManager\Support\PluginEntitlement;
 
 class OrderWorkflow
 {
     public function confirm(Order $order): Order
     {
+        $this->assertEntitled($order);
+
         $this->applyConfirmationDefaults($order);
 
         $order->rawMaterialMoves->sortBy('id')->each(function (Move $move) {
@@ -87,6 +90,8 @@ class OrderWorkflow
 
     public function start(Order $order): Order
     {
+        $this->assertEntitled($order);
+
         if ($order->state !== ManufacturingOrderState::CONFIRMED) {
             return $order;
         }
@@ -100,6 +105,8 @@ class OrderWorkflow
 
     public function plan(Order $order): Order
     {
+        $this->assertEntitled($order);
+
         if ($order->state === ManufacturingOrderState::DRAFT) {
             $order = $this->confirm($order);
         }
@@ -113,6 +120,8 @@ class OrderWorkflow
 
     public function unplan(Order $order): Order
     {
+        $this->assertEntitled($order);
+
         $this->assertUnplannable($order);
 
         $order->workOrders->each(function (WorkOrder $workOrder) {
@@ -139,6 +148,8 @@ class OrderWorkflow
 
     public function complete(Order $order): void
     {
+        $this->assertEntitled($order);
+
         $order->workOrders->each->finish();
 
         app(ProductionRecorder::class)->record($order, cancelBackorder: true);
@@ -160,6 +171,8 @@ class OrderWorkflow
 
     public function cancel(Order $order): Order
     {
+        $this->assertEntitled($order);
+
         $order->workOrders
             ->filter(fn (WorkOrder $workOrder) => ! in_array($workOrder->state, [WorkOrderState::DONE, WorkOrderState::CANCEL]))
             ->each(function (WorkOrder $workOrder) {
@@ -204,6 +217,10 @@ class OrderWorkflow
 
     public function confirmMoves(Collection $moves, bool $merge = false, ?Collection $mergeInto = null): void
     {
+        $moves->pluck('company_id')->unique()->each(
+            fn ($companyId) => PluginEntitlement::assertForCompany('manufacturing', (int) $companyId)
+        );
+
         $kits = app(KitExpander::class);
 
         InventoryFacade::confirmMoves(
@@ -215,6 +232,8 @@ class OrderWorkflow
 
     public function scheduleWorkOrders(Order $order, bool $replan = false): Order
     {
+        $this->assertEntitled($order);
+
         if ($order->workOrders->isEmpty()) {
             $order->update(['is_planned' => true]);
 
@@ -241,5 +260,10 @@ class OrderWorkflow
         ]);
 
         return $order;
+    }
+
+    private function assertEntitled(Order $order): void
+    {
+        PluginEntitlement::assertForCompany('manufacturing', (int) $order->company_id);
     }
 }

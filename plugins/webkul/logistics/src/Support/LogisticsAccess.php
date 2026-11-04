@@ -5,6 +5,7 @@ namespace Webkul\Logistics\Support;
 use Illuminate\Support\Facades\Schema;
 use Webkul\Logistics\Exceptions\LogisticsNotEnabledException;
 use Webkul\Logistics\Models\CompanySetting;
+use Webkul\PluginManager\Support\PluginEntitlement;
 use Webkul\Support\Models\Scopes\CompanyScope;
 use Webkul\Support\Services\CompanyContext;
 
@@ -27,7 +28,7 @@ class LogisticsAccess
 
     public static function enabledFor(?int $companyId): bool
     {
-        if (! $companyId) {
+        if (! $companyId || ! PluginEntitlement::enabledForCompany('logistics', $companyId)) {
             return false;
         }
 

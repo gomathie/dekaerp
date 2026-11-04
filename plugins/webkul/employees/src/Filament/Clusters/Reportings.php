@@ -2,6 +2,8 @@
 
 namespace Webkul\Employee\Filament\Clusters;
 
+
+use Webkul\PluginManager\Support\PluginEntitlement;
 use Filament\Clusters\Cluster;
 use Filament\Panel;
 use Webkul\Support\Enums\NavigationGroup;
@@ -23,5 +25,9 @@ class Reportings extends Cluster
     public static function getNavigationGroup(): string|\UnitEnum
     {
         return NavigationGroup::Employee;
+    }
+    public static function canAccess(): bool
+    {
+        return PluginEntitlement::enabledForCurrent('employees');
     }
 }

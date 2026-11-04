@@ -9,7 +9,7 @@ use Webkul\Security\Traits\HasScopedPermissions;
 
 class TimesheetPolicy
 {
-    use HandlesAuthorization, HasScopedPermissions;
+    use HandlesAuthorization, HasScopedPermissions, Concerns\ChecksProjectEntitlement;
 
     /**
      * Determine whether the user can view any models.

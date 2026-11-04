@@ -9,7 +9,7 @@ use Webkul\Security\Traits\HasScopedPermissions;
 
 class ApplicantPolicy
 {
-    use HandlesAuthorization, HasScopedPermissions;
+    use HandlesAuthorization, HasScopedPermissions, Concerns\ChecksRecruitmentEntitlement;
 
     /**
      * Determine whether the user can view any models.

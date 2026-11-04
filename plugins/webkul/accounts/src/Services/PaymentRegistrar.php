@@ -13,11 +13,18 @@ use Webkul\Account\Events\MovePaid;
 use Webkul\Account\Models\Move as AccountMove;
 use Webkul\Account\Models\Payment;
 use Webkul\Account\Models\PaymentRegister;
+use Webkul\PluginManager\Support\PluginEntitlement;
 
 class PaymentRegistrar
 {
     public function register(PaymentRegister $register): void
     {
+        PluginEntitlement::assertForCompany('accounts', (int) $register->company_id);
+
+        if ($register->payment_token_id) {
+            PluginEntitlement::assertForCompany('payments', (int) $register->company_id);
+        }
+
         $batches = $this->payableBatches($register);
 
         $singleBatch = $batches[0];

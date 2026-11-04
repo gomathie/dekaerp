@@ -8,7 +8,7 @@ use Webkul\Security\Models\User;
 
 class RefuseReasonPolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, Concerns\ChecksRecruitmentEntitlement;
 
     /**
      * Determine whether the user can view any models.

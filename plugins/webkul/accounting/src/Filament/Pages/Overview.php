@@ -2,6 +2,8 @@
 
 namespace Webkul\Accounting\Filament\Pages;
 
+
+use Webkul\PluginManager\Support\PluginEntitlement;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Pages\Page;
 use Webkul\Accounting\Filament\Widgets\JournalChartsWidget;
@@ -35,5 +37,9 @@ class Overview extends Page
         return [
             JournalChartsWidget::class,
         ];
+    }
+    public static function canAccess(): bool
+    {
+        return PluginEntitlement::enabledForCurrent('accounting');
     }
 }

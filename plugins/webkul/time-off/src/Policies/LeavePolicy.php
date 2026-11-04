@@ -9,7 +9,7 @@ use Webkul\TimeOff\Models\Leave;
 
 class LeavePolicy
 {
-    use HandlesAuthorization, HasScopedPermissions;
+    use HandlesAuthorization, HasScopedPermissions, Concerns\ChecksTimeOffEntitlement;
 
     /**
      * Determine whether the user can view any models.

@@ -24,7 +24,7 @@ Route::middleware(['web', PersistNativeShell::class, RenderHostedNativeUi::class
 Route::middleware(['web', PersistNativeShell::class, RenderHostedNativeUi::class, SetUpPanel::class.':admin'])->prefix('admin/barcode')->name('barcode.')->group(function (): void {
     Route::get('/login', Login::class)->name('login');
 
-    Route::middleware([Authenticate::class])->group(function (): void {
+    Route::middleware([Authenticate::class, 'plugin.entitlement:barcode'])->group(function (): void {
         Route::get('/', Dashboard::class)->name('dashboard');
         Route::get('/inventory-adjustments', Adjustments::class)->name('adjustments');
         Route::get('/operations/{operationType}', Transfers::class)->name('transfers');

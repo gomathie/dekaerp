@@ -9,7 +9,7 @@ use Webkul\Security\Traits\HasScopedPermissions;
 
 class EmployeePolicy
 {
-    use HandlesAuthorization, HasScopedPermissions;
+    use HandlesAuthorization, HasScopedPermissions, Concerns\ChecksEmployeeEntitlement;
 
     /**
      * Determine whether the user can view any models.
