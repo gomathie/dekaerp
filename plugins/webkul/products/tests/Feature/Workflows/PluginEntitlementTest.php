@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
+use Webkul\Product\Models\Category;
 use Webkul\Product\Filament\Resources\PriceListResource;
 use Webkul\Product\Filament\Resources\PriceListResource\Pages\ListPriceLists;
 use Webkul\Product\Models\PriceList;
@@ -76,7 +77,8 @@ it('enforces the products entitlement across UI API policies and services', func
 
     CompanyHelper::setActive([$companyA->getKey()]);
 
-    expect(app(CompanyCategoryProvisioner::class)->provision($companyA))->toBeNull();
+    expect(app(CompanyCategoryProvisioner::class)->provision($companyA))
+        ->toBeInstanceOf(Category::class);
 
     setProductsEntitlement($companyA, true);
 

@@ -203,10 +203,10 @@ Record the user's answer before unblocking dependent packages.
 | SAAS-02 | Tenant-aware jobs and API company selection | SAAS-00, D-SAAS-02, D-SAAS-07 | SAAS-03 | review | Copilot 2026-10-28; Claude review 2026-10-29 / `aureuserp_testing_saas_review`; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
 | SAAS-03 | Plugin defaults, dependencies and audited mutations | SAAS-00, D-SAAS-06 | SAAS-01/02 | review | Copilot 2026-10-28; Claude review 2026-10-29 / `aureuserp_testing_saas_review`; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
 | SAAS-04 | Generic plugin enforcement contract | SAAS-03 | — | review | Copilot 2026-10-28; Claude review 2026-10-29 / `aureuserp_testing_saas_review`; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
-| SAAS-05A | Plugin enforcement: finance | SAAS-04 | SAAS-05B/C/D | todo | — |
+| SAAS-05A | Plugin enforcement: finance | SAAS-04 | SAAS-05B/C/D | in progress | Codex 2026-11-04 / `aureuserp_testing_saas_05a` |
 | SAAS-05B | Plugin enforcement: commercial | SAAS-04 | SAAS-05A/C/D | review | Codex 2026-11-03 / `aureuserp_testing_saas_05b` |
-| SAAS-05C | Plugin enforcement: operations | SAAS-04 | SAAS-05A/B/D | todo | — |
-| SAAS-05D | Plugin enforcement: people/work tools | SAAS-04 | SAAS-05A/B/C | todo | — |
+| SAAS-05C | Plugin enforcement: operations | SAAS-04 | SAAS-05A/B/D | in progress | Codex 2026-11-04 / `aureuserp_testing_saas_05c` |
+| SAAS-05D | Plugin enforcement: people/work tools | SAAS-04 | SAAS-05A/B/C | in progress | Codex 2026-11-04 / `aureuserp_testing_saas_05d` |
 | SAAS-06 | Seat limit and invitation lifecycle | SAAS-01, D-SAAS-03, D-SAAS-04 | SAAS-05A/B/C/D | review | Copilot 2026-10-28; Claude review 2026-10-29 / `aureuserp_testing_saas_review`; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
 | SAAS-07 | Onboarding and all seat-enforcement paths | SAAS-06 | — | review (partial: capacity wired at existing entry points; UI/API/import paths remain) | Copilot 2026-10-28; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03; coordinator, company API/programmatic creation, after-commit/resend/revoke UI, imports and remaining API/service capacity paths stay open |
 | SAAS-08 | Platform-billing plugin foundation | SAAS-00, D-SAAS-01, D-SAAS-05 | — | review (foundation complete) | Copilot 2026-10-28; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
