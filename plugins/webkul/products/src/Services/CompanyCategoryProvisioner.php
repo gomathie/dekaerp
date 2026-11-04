@@ -5,7 +5,6 @@ namespace Webkul\Product\Services;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Webkul\Product\Models\Category;
-use Webkul\Product\Support\ProductsAccess;
 use Webkul\Support\Models\Company;
 
 /**
@@ -32,11 +31,6 @@ class CompanyCategoryProvisioner
      */
     public function provision(Company $company): ?Category
     {
-        // Company creation can reach this observer before default grants are synchronized.
-        if (! ProductsAccess::enabledForCompany((int) $company->getKey())) {
-            return null;
-        }
-
         if (! Schema::hasTable('products_categories')) {
             return null;
         }
