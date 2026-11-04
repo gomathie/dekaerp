@@ -40,8 +40,8 @@ it('enforces the accounts entitlement through a registered resource policy', fun
 });
 
 it('requires the payments entitlement when registering a tokenized payment', function (): void {
-    $company = Company::factory()->create();
     TestBootstrapHelper::ensurePluginInstalled('payments');
+    $company = Company::factory()->create();
     $paymentPlugin = Plugin::query()->where('name', 'payments')->firstOrFail();
     DB::table('company_plugin')
         ->where('company_id', $company->getKey())
