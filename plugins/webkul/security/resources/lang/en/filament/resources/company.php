@@ -59,7 +59,7 @@ return [
                 'title'             => 'The administrator was not changed',
                 'missing-email'     => 'Enter the administrator’s email address together with the password.',
                 'missing-role'      => 'The Company Admin role does not exist in this installation, so no account was created.',
-                'not-administrator' => ':email belongs to a user who is not this company’s administrator, so their password was not changed here. Manage that user from the Users page.',
+                'not-member'        => ':email belongs to a user who is not a member of this company, so their password was not changed here. Manage that user from the Users page.',
                 'not-allowed'       => 'You are not allowed to manage this company’s administrator.',
                 'seats-exhausted'   => 'This company has no free user seats left, so no account was created for :email. Raise the seat limit first.',
             ],

@@ -1,12 +1,15 @@
 <?php
 
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 use Livewire\Livewire;
 use Webkul\Security\Enums\PermissionType;
 use Webkul\Security\Filament\Resources\CompanyResource\Pages\EditCompany;
+use Webkul\Security\Filament\Resources\CompanyResource\RelationManagers\UsersRelationManager;
 use Webkul\Security\Mail\UserInvitationMail;
+use Webkul\Security\Models\Company as SecurityCompany;
 use Webkul\Security\Models\Invitation;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\CompanyAdministratorAccount;
@@ -26,8 +29,10 @@ require_once __DIR__.'/../../../../support/tests/Helpers/FilamentHelper.php';
  *
  * This supersedes "the company form never handles a password" (2026-10-23).
  * What must still hold is pinned here: the password is never emailed, the
- * form cannot reach a user who is not this company's administrator, and the
- * seat and assignment rules apply exactly as on the Users page.
+ * form cannot reach a user who is not a member of this company, and the seat
+ * and assignment rules apply exactly as on the Users page. Widened on
+ * 2026-11-05 (user) from the administrator to every member, through the
+ * company page's Users list.
  */
 beforeEach(function (): void {
     app(CompanyAdminRoleProvisioner::class)->provision();
@@ -117,7 +122,7 @@ it('lets the reset leave the administrator free to keep the password when asked'
     expect(User::query()->where('email', 'keep@tenant-pw.test')->firstOrFail()->must_change_password)->toBeFalse();
 });
 
-it('refuses to change the password of a user who is not this company’s administrator', function () {
+it('refuses to change the password of a user who is not a member of this company', function () {
     // The account-takeover guard. Without it, whoever administers this company
     // could type another tenant's user's address and sign in as them.
     $superAdmin = multiCompanyAdminTestSuperAdmin();
@@ -130,9 +135,90 @@ it('refuses to change the password of a user who is not this company’s adminis
 
     $reason = companyAdministratorPasswordSet($company, $superAdmin, $outsider->email, 'Takeover-attempt-9');
 
-    expect($reason)->toBe(CompanyAdministratorAccount::NOT_ADMINISTRATOR)
+    expect($reason)->toBe(CompanyAdministratorAccount::NOT_MEMBER)
         ->and($outsider->fresh()->password)->toBe($hashBefore)
         ->and($outsider->fresh()->isCompanyAdmin((int) $company->getKey()))->toBeFalse();
+
+    // The same refusal from the Users list, whose row action names the user
+    // directly instead of by address.
+    expect(app(CompanyAdministratorAccount::class)->setPasswordFor($company, $superAdmin, $outsider, 'Takeover-attempt-9'))
+        ->toBe(CompanyAdministratorAccount::NOT_MEMBER)
+        ->and($outsider->fresh()->password)->toBe($hashBefore);
+});
+
+/**
+ * Every user of the company, not only its administrator (user, 2026-11-05):
+ * when invitation emails do not arrive, support sets each person's password.
+ */
+it('sets the password of an ordinary member of the company', function () {
+    $superAdmin = multiCompanyAdminTestSuperAdmin();
+    multiCompanyAdminTestAuthenticate($superAdmin, []);
+
+    $company = multiCompanyAdminTestCompany();
+    $member = multiCompanyAdminTestUser($company);
+
+    expect($member->isCompanyAdmin((int) $company->getKey()))->toBeFalse('the member must not be an administrator, or this proves nothing new');
+
+    $reason = app(CompanyAdministratorAccount::class)->setPasswordFor($company, $superAdmin, $member, 'Member-password-7');
+
+    expect($reason)->toBe(CompanyAdministratorAccount::PASSWORD_RESET)
+        ->and(Hash::check('Member-password-7', $member->fresh()->password))->toBeTrue()
+        ->and($member->fresh()->must_change_password)->toBeTrue();
+
+    Mail::assertNothingSent();
+});
+
+it('refuses a Multi-Company Admin resetting a member who also belongs to a company outside their assignment', function () {
+    // Being a member of an assigned company is not enough: the same password
+    // opens the other company too, which this staff member may not administer.
+    $assigned = multiCompanyAdminTestCompany();
+    $notAssigned = multiCompanyAdminTestCompany();
+    $sharedMember = multiCompanyAdminTestUser([$assigned, $notAssigned]);
+    $hashBefore = $sharedMember->password;
+
+    $staff = multiCompanyAdminTestAdministrator($assigned);
+    multiCompanyAdminTestAuthenticate($staff, [(int) $assigned->getKey()]);
+
+    expect(app(CompanyAdministratorAccount::class)->setPasswordFor($assigned, $staff, $sharedMember, 'Member-password-7'))
+        ->toBe(CompanyAdministratorAccount::NOT_ALLOWED)
+        ->and($sharedMember->fresh()->password)->toBe($hashBefore);
+});
+
+it('lists the company’s users with their logins and sets a password from the list', function () {
+    FilamentHelper::bootAdminPanel();
+
+    $superAdmin = multiCompanyAdminTestSuperAdmin();
+    $company = SecurityCompany::query()->findOrFail(companyAdministratorPasswordPageCompany()->getKey());
+    $member = multiCompanyAdminTestUser($company);
+    $outsider = multiCompanyAdminTestUser(multiCompanyAdminTestCompany());
+    multiCompanyAdminTestAuthenticate($superAdmin, [(int) $company->getKey()]);
+
+    Livewire::test(UsersRelationManager::class, ['ownerRecord' => $company, 'pageClass' => EditCompany::class])
+        ->assertCanSeeTableRecords([$member])
+        ->assertCanNotSeeTableRecords([$outsider])
+        ->callAction(TestAction::make('setPassword')->table($member), data: [
+            'password'             => 'From-the-list-3',
+            'must_change_password' => true,
+        ])
+        ->assertHasNoFormErrors();
+
+    expect(Hash::check('From-the-list-3', $member->fresh()->password))->toBeTrue();
+
+    Mail::assertNothingSent();
+});
+
+it('shows the Users list only to installation staff', function () {
+    // A company's own administrator manages people from the Users page, under
+    // its policy; this list is DEKA support's.
+    $company = SecurityCompany::query()->findOrFail(multiCompanyAdminTestCompany()->getKey());
+    $tenantUser = multiCompanyAdminTestUser($company);
+    multiCompanyAdminTestAuthenticate($tenantUser, [(int) $company->getKey()]);
+
+    expect(UsersRelationManager::canViewForRecord($company, EditCompany::class))->toBeFalse();
+
+    multiCompanyAdminTestAuthenticate(multiCompanyAdminTestSuperAdmin(), [(int) $company->getKey()]);
+
+    expect(UsersRelationManager::canViewForRecord($company, EditCompany::class))->toBeTrue();
 });
 
 it('refuses a Multi-Company Admin acting on a company outside their assignment', function () {

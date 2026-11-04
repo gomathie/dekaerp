@@ -1538,10 +1538,19 @@ log named):
   - The company form's Administrator section may set or reset a password, on
     create **and** edit (`CompanyAdministratorAccount::setPassword()`). With
     no password it still sends the invitation, which stays the default.
-  - It resets **only** someone `administrators($company)` lists. Any other
-    existing address is refused (`NOT_ADMINISTRATOR`), never re-pointed:
-    otherwise whoever administers one company could take over another
-    tenant's user by typing their email.
+  - It resets **only a member of that company**
+    (`CompanyAdministratorAccount::isMember()`). Any other existing address is
+    refused (`NOT_MEMBER`), never re-pointed: otherwise whoever administers one
+    company could take over another tenant's user by typing their email. The
+    Users-page policy and `assertUserAssignment()` still apply, so a
+    Multi-Company Admin cannot reset a member who also belongs to a company
+    outside their assignment.
+    *Widened 2026-11-05 (user):* this used to be "only someone
+    `administrators($company)` lists" (`NOT_ADMINISTRATOR`). The company's edit
+    page now has a **Users and logins** list (`UsersRelationManager`, visible
+    to installation staff only) with **Set password** on each member, for
+    when invitation emails do not arrive. Current passwords are never shown:
+    they are one-way hashes.
   - The password is **never emailed**. The person who sets it hands it over.
   - On edit, a blank email does nothing. Only create falls back to the
     company's address, or every save would invite the company mailbox.

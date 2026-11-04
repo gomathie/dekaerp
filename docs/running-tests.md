@@ -22,6 +22,12 @@ docker compose run --rm --no-deps laravel.test php artisan test path/to/Test.php
 cannot reach a managed database. Never override the host, credentials or the
 blanked URLs.
 
+`phpunit.xml` also pins `SENTRY_LARAVEL_DSN` to an empty string with
+`force="true"` so test-triggered exceptions and transactions never reach
+Sentry, even when the developer's shell or `.env` has a real DSN. Do not add a
+DSN here: that reopens test-run noise in the production Sentry project. The
+guard is `plugins/webkul/support/tests/Feature/Observability/SentryTestEnvironmentTest.php`.
+
 **Give each work package its own database (superseded 2026-10-22).** This
 section used to say one shared `aureuserp_testing` and serial runs only. That
 is still true *per database*, but the enforced practice now is one database per
