@@ -41,9 +41,13 @@ return Application::configure(basePath: dirname(__DIR__))
         }
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        // Reports unhandled exceptions to Sentry. Inert until SENTRY_LARAVEL_DSN
-        // is set, so local and test runs send nothing. Reporting is separate from
-        // the render() callbacks below - those still shape the client response.
+        // Reports exceptions to Sentry, including the ones the application
+        // reports() on purpose. Inert until SENTRY_LARAVEL_DSN is set, which is
+        // why the test suite blanks it in phpunit.xml: a developer's .env holds
+        // the real DSN, so without that line every `php artisan test` run sent
+        // test-only failures to the production project (Sentry issues 155782383
+        // and 149361620). Reporting is separate from the render() callbacks
+        // below - those still shape the client response.
         Integration::handles($exceptions);
 
         $exceptions->render(function (MissingJournalException $e, $request) {
