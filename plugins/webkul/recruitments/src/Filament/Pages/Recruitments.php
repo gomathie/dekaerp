@@ -2,6 +2,8 @@
 
 namespace Webkul\Recruitment\Filament\Pages;
 
+
+use Webkul\PluginManager\Support\PluginEntitlement;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms\Components\Select;
@@ -120,5 +122,9 @@ class Recruitments extends BaseDashboard
             JobPositionStatsWidget::class,
             ApplicantChartWidget::class,
         ];
+    }
+    public static function canAccess(): bool
+    {
+        return PluginEntitlement::enabledForCurrent('recruitments');
     }
 }

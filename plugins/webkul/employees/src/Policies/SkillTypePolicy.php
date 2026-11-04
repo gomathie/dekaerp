@@ -8,7 +8,7 @@ use Webkul\Security\Models\User;
 
 class SkillTypePolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, Concerns\ChecksEmployeeEntitlement;
 
     /**
      * Determine whether the user can view any models.

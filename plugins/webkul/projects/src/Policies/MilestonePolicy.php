@@ -8,7 +8,7 @@ use Webkul\Security\Models\User;
 
 class MilestonePolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, Concerns\ChecksProjectEntitlement;
 
     /**
      * Determine whether the user can view any models.

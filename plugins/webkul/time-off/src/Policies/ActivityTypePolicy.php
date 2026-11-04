@@ -8,7 +8,7 @@ use Webkul\TimeOff\Models\ActivityType;
 
 class ActivityTypePolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, Concerns\ChecksTimeOffEntitlement;
 
     /**
      * Determine whether the user can view any models.

@@ -8,6 +8,7 @@ use Webkul\Inventory\Enums\ProcureMethod;
 use Webkul\Inventory\Enums\ReservationMethod;
 use Webkul\Inventory\Models\Move;
 use Webkul\Inventory\Support\ProcurementRequest;
+use Webkul\PluginManager\Support\PluginEntitlement;
 
 class MoveConfirmer
 {
@@ -16,6 +17,10 @@ class MoveConfirmer
         if ($moves->isEmpty()) {
             return collect();
         }
+
+        $moves->pluck('company_id')->unique()->each(
+            fn ($companyId) => PluginEntitlement::assertForCompany('inventories', (int) $companyId)
+        );
 
         $pendingOperationGroups = $moves
             ->filter(fn (Move $move) => $move->state == MoveState::DRAFT && $move->needsOperation())

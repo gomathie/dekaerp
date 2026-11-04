@@ -8,7 +8,7 @@ use Webkul\Security\Models\User;
 
 class OperationPolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, Concerns\ChecksManufacturingEntitlement;
 
     public function viewAny(User $user): bool
     {

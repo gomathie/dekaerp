@@ -8,7 +8,7 @@ use Webkul\Security\Models\User;
 
 class RoutePolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, Concerns\ChecksInventoryEntitlement;
 
     /**
      * Determine whether the user can view any models.
