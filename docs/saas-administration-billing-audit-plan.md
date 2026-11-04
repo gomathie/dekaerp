@@ -203,10 +203,10 @@ Record the user's answer before unblocking dependent packages.
 | SAAS-02 | Tenant-aware jobs and API company selection | SAAS-00, D-SAAS-02, D-SAAS-07 | SAAS-03 | review | Copilot 2026-10-28; Claude review 2026-10-29 / `aureuserp_testing_saas_review`; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
 | SAAS-03 | Plugin defaults, dependencies and audited mutations | SAAS-00, D-SAAS-06 | SAAS-01/02 | review | Copilot 2026-10-28; Claude review 2026-10-29 / `aureuserp_testing_saas_review`; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
 | SAAS-04 | Generic plugin enforcement contract | SAAS-03 | — | review | Copilot 2026-10-28; Claude review 2026-10-29 / `aureuserp_testing_saas_review`; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
-| SAAS-05A | Plugin enforcement: finance | SAAS-04 | SAAS-05B/C/D | in progress | Codex 2026-11-04 / `aureuserp_testing_saas_05a` |
-| SAAS-05B | Plugin enforcement: commercial | SAAS-04 | SAAS-05A/C/D | review | Codex 2026-11-03 / `aureuserp_testing_saas_05b` |
-| SAAS-05C | Plugin enforcement: operations | SAAS-04 | SAAS-05A/B/D | in progress | Codex 2026-11-04 / `aureuserp_testing_saas_05c` |
-| SAAS-05D | Plugin enforcement: people/work tools | SAAS-04 | SAAS-05A/B/C | in progress | Codex 2026-11-04 / `aureuserp_testing_saas_05d` |
+| SAAS-05A | Plugin enforcement: finance | SAAS-04 | SAAS-05B/C/D | review (implementation committed; tests pending) | Codex 2026-11-04 / `aureuserp_testing_saas_05a` |
+| SAAS-05B | Plugin enforcement: commercial | SAAS-04 | SAAS-05A/C/D | review (ProductFeature green) | Codex 2026-11-04 / `aureuserp_testing_saas_05b` |
+| SAAS-05C | Plugin enforcement: operations | SAAS-04 | SAAS-05A/B/D | review (implementation committed; tests pending) | Codex 2026-11-04 / `aureuserp_testing_saas_05c` |
+| SAAS-05D | Plugin enforcement: people/work tools | SAAS-04 | SAAS-05A/B/C | review (implementation committed; tests pending) | Codex 2026-11-04 / `aureuserp_testing_saas_05d` |
 | SAAS-06 | Seat limit and invitation lifecycle | SAAS-01, D-SAAS-03, D-SAAS-04 | SAAS-05A/B/C/D | review | Copilot 2026-10-28; Claude review 2026-10-29 / `aureuserp_testing_saas_review`; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
 | SAAS-07 | Onboarding and all seat-enforcement paths | SAAS-06 | — | review (partial: capacity wired at existing entry points; UI/API/import paths remain) | Copilot 2026-10-28; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03; coordinator, company API/programmatic creation, after-commit/resend/revoke UI, imports and remaining API/service capacity paths stay open |
 | SAAS-08 | Platform-billing plugin foundation | SAAS-00, D-SAAS-01, D-SAAS-05 | — | review (foundation complete) | Copilot 2026-10-28; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
@@ -966,22 +966,20 @@ real plugins in this package.
 Each slice applies SAAS-04 without inventing another guard:
 
 - **05A:** `accounts`, `accounting`, `invoices`, `payments`.
-- **05B:** `contacts`, `partners`, `products`, `sales`, `purchases`.
+- **05B:** `products`, `sales`, `purchases`; `contacts` and `partners` are core
+  plugins exempt from entitlement enforcement.
 - **05C:** `inventories`, `manufacturing`, `maintenance`, `logistics`,
   `barcode`; reconcile `LogisticsAccess` to one authoritative entitlement.
 - **05D:** `employees`, `recruitments`, `projects`, `timesheets`, `time-off`,
   `table-views`, `fields`, `analytics`, `full-calendar`, and `website` only
   when SAAS-04 marks them entitleable.
 
-**Scope reconciliation and production evidence (2026-11-03).** Production's
+**Scope reconciliation and production evidence (2026-11-04).** Production's
 five companies each held all 18 installed plugin grants, so enforcement removes
 nothing until an administrator deliberately unticks a module. The card above
-lists `contacts` and `partners` in 05B, while the current assignment omits
-`contacts` and marks `partners` exempt. The authoritative SAAS-04 manifest also
-exempts `partners`, so 05B must not gate it. `contacts` is not exempt but its
-omission from the assignment conflicts with this card; this package records the
-disagreement and limits implementation to `products`, `sales` and `purchases`
-pending an owner decision on `contacts`.
+lists `contacts` and `partners` in 05B, while the authoritative SAAS-04 manifest
+exempts both. Therefore 05B must not gate either core plugin; this rollout
+covers `products`, `sales` and `purchases` only.
 
 **Owns:** only listed plugin directories and slice tests. No slice edits Plugin
 Manager, Support, Security, `phpunit.xml`, or another slice.
@@ -993,63 +991,94 @@ and report each touched plugin suite separately.
 #### SAAS-05B handoff — 2026-11-04
 
 - Owner / database: Codex / `aureuserp_testing_saas_05b` (local Sail Postgres).
-- Status: **review**. No production or managed database used; no git history
-  changes made by this run.
+- Status: **review**. No production or managed database used.
 - Implemented: Products, Sales and Purchases now enforce the SAAS-04 entitlement
   at navigation/resource policy, API and write-service boundaries. Super Admin
   bypass remains intact. Tests revoke Company A's grant, verify denial, verify
   Company B remains enabled, then restore A's grant. Purchases also checks the
   customer portal against the customer's own company. Partners remains exempt
-  under the SAAS-04 manifest and was not gated. Contacts remains unresolved:
-  listed in this plan card but omitted from the assignment; no contacts code was
-  changed pending an owner decision.
+  under the SAAS-04 manifest and was not gated. Contacts is also exempt under
+  SAAS-04; no contacts code was changed.
 - Why / how / benefit: use the shared `PluginEntitlement` contract so revocation
   blocks direct access and writes, not only menu visibility. Policies use the
   record's `company_id` when a record is available. The Products category
   provisioner skips creation when the company lacks a Products grant, since the
   company-created observer can run before default grants are synchronized.
-- Protected decisions proposed for `AGENTS.md` (not edited here): retain the
-  record-company entitlement check; resolve customer-portal entitlement from
-  the authenticated Partner's company because `CompanyContext` is for internal
-  users; keep `partners` exempt per the SAAS-04 manifest.
+- Protected decisions recorded in `AGENTS.md`: retain the record-company
+  entitlement check; resolve customer-portal entitlement from the authenticated
+  Partner's company because `CompanyContext` is for internal users; keep
+  `contacts` and `partners` exempt per the SAAS-04 manifest.
 - Files changed: implementation and regression test files are in
   `plugins/webkul/products/`, `plugins/webkul/sales/` and
-  `plugins/webkul/purchases/`; the exact shared-branch change set is recorded in
-  git history. This handoff and the SAAS-05B status row were updated here.
+  `plugins/webkul/purchases/`; the implementation is recorded in shared git
+  history. This handoff and the SAAS-05B status row were updated here.
 - Tests run (serially, same isolated database):
   - Focused `PluginEntitlementTest` — Products: **1 passed, 16 assertions**;
     Sales: **1 passed, 16 assertions**; Purchases: **1 passed, 25 assertions**.
-  - `ProductFeature`: **272 passed, 3 failed (619 assertions)**, 2,584.58 s.
-    Failures: `ProductsCompanyBackfillTest` expected three root categories but
-    got zero; its idempotent second-run case received exit code 1; and
-    `CategoryCompanyScopingTest` expected one root category but got zero.
+  - Previous `ProductFeature`: **272 passed, 3 failed (619 assertions)**,
+    2,584.58 s. After fixing root category provisioning, rerun:
+    **275 passed (636 assertions), 0 failed**, 2,934.68 s.
   - `SaleFeature`: **147 passed (456 assertions)**, 3,105.92 s.
   - `PurchaseFeature`: **190 passed (529 assertions)**, 3,545.19 s.
 - Reviewed but not executed: complete Contacts/Partners suites, broader
   plugin-manager and cross-slice suites, browser interaction, and production
   rollout checks.
-- Failures investigated: the three Products failures arise because test-created
-  companies do not receive a Products entitlement, so the entitlement-aware
-  `CompanyCategoryProvisioner` returns `null`. This breaks the root-category
-  workflow and leaves the backfill's company roots absent. The entitlement
-  regression itself passes. Do not weaken the entitlement guard or mark 05B
-  deployment-ready until the company grant/provisioning lifecycle is reconciled
-  and these three tests pass.
+- Failures investigated and resolved: category infrastructure provisioning
+  must run when a company is created even before its default Products grant is
+  synchronized. Removing the entitlement gate from
+  `CompanyCategoryProvisioner` restored company root categories and backfill
+  behavior; the full ProductFeature rerun passed.
 - Security / tenant / concurrency review: entitlement checks are company
   specific; tests prove A revocation does not affect B, direct/API/service
   denial, data retention, and regrant. Existing Sales and Purchases business
   workflow tests passed. Suites were run serially to avoid concurrent use of the
   same test database.
-- Risks and rollback: deployment readiness is blocked by the Products root
-  category provisioning gap. Preserve data and grant state; resolve whether
-  provisioning should run after default grants sync or company fixtures should
-  explicitly receive the grant, then rerun ProductFeature. Rollback is limited
-  to the SAAS-05B implementation if needed; no schema change was made here.
-- Cross-package requests: resolve Contacts inclusion with the plan owner;
-  reconcile Products default-grant synchronization with the company observer
-  and backfill lifecycle. Partners exemption remains as recorded in SAAS-04.
-- Suggested next package: fix and rerun the Products provisioning integration
-  gap before beginning another SAAS-05 slice.
+- Risks and rollback: retain root category provisioning independently of module
+  grants. No schema change was made. Remaining 05B package suite coverage is
+  noted above; the existing focused entitlement and Sale/Purchase suites passed.
+- Cross-package requests: none. Contacts and Partners stay exempt under SAAS-04.
+
+#### SAAS-05A handoff — 2026-11-04
+
+- Owner / database: Codex / `aureuserp_testing_saas_05a` (local Sail Postgres).
+- Status: **review; tests pending**. The entitlement implementation is in
+  shared commit `98f40d9e6`; no production database was used.
+- Test attempt: Accounts `PluginEntitlementTest` was started twice. Both runs
+  spent several minutes in `accounts:install` and repeated full
+  `shield:generate --all` scans; the last isolated container was stopped after
+  confirming the repeated work. No test count is claimed.
+- Reviewed but not executed: Accounting and Invoices focused tests, full
+  AccountFeature and AccountingFeature suites, browser access checks.
+- Cross-package issue: none identified. Rerun focused tests and package suites
+  after the plugin-install test bootstrap cost is addressed or accepted.
+
+#### SAAS-05C handoff — 2026-11-04
+
+- Owner / database: Codex / `aureuserp_testing_saas_05c` (local Sail Postgres).
+- Status: **review; tests pending**. The entitlement implementation is in
+  shared commit `98f40d9e6`; no production database was used.
+- Reviewed implementation: inventory move confirmation and manufacturing order
+  workflows assert company entitlement before mutation; Barcode authenticated
+  routes use the shared route middleware; LogisticsAccess requires both its
+  existing company activation setting and SAAS-04 entitlement.
+- Tests: no 05C test suite ran this turn because the Accounts install bootstrap
+  repeatedly triggered full Shield permission generation. No counts claimed.
+- Cross-package request: none. Run the focused tests and InventoryFeature,
+  ManufacturingFeature, and LogisticsFeature once setup completes within the
+  available test window.
+
+#### SAAS-05D handoff — 2026-11-04
+
+- Owner / database: Codex / `aureuserp_testing_saas_05d` (local Sail Postgres).
+- Status: **review; tests pending**. The entitlement implementation is in
+  shared commit `98f40d9e6`; no production database was used.
+- Scope: `analytics`, `fields`, `full-calendar`, and `table-views` are core and
+  exempt per SAAS-04; `website` remains an entitlement plugin. The committed
+  portal middleware checks the authenticated Partner's own company.
+- Tests: no 05D suite ran this turn because the shared install test bootstrap
+  repeatedly triggered full Shield permission generation. No counts claimed.
+- Reviewed but not executed: focused tests and EmployeeFeature, ProjectFeature,
+  recruitment, timesheet, and time-off package coverage.
 
 #### SAAS-06 — seat limit and invitation lifecycle
 

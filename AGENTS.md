@@ -1035,6 +1035,26 @@ under REFERENCES.
 
 WORKING RULES LEARNED THE HARD WAY
 
+SAAS-05 plugin entitlement rollout, 2026-11-04:
+
+- Read `plugin-manager/config/plugin-manager.php` before adding plugin gates.
+  Contacts, Partners, Analytics, Fields, Full Calendar and Table Views are
+  exempt core plugins; do not gate them locally.
+- Use `PluginEntitlement` for current-company navigation, record-company policy
+  checks and `assertForCompany()` service checks. Resolve Website customer
+  portal entitlement from the authenticated Partner's own `company_id`, not
+  internal `CompanyContext`. Plugin API routes already receive the shared
+  `plugin.entitlement:<plugin>` middleware.
+- Product root-category provisioning is infrastructure. The products plugin's
+  `Company::created` observer must create it before or after the Products grant
+  is synchronized; never gate the provisioner on that grant. ProductFeature
+  covers backfill idempotence and per-company root creation.
+- TestBootstrapHelper installs plugins through their real install commands,
+  which invoke full `shield:generate --all`. This was costly and repeated in
+  the 2026-11-04 focused run. Do not bypass install, migration or seeder setup
+  just to speed up entitlement tests; diagnose the bootstrap and report tests
+  that remain pending.
+
 • The user commits manually. Never run git commit, push, stash, reset or checkout
   unless asked. When a branch must move, fast-forward it with
   `git fetch . main:production`; never check it out.

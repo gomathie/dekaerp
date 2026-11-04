@@ -6,6 +6,42 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-04 (SAAS-05 plugin entitlement rollout)
+
+Implemented SAAS-04 enforcement across the SAAS-05 plugin slices. Detailed
+ownership, scope and per-slice handoffs are in
+[`docs/saas-administration-billing-audit-plan.md`](saas-administration-billing-audit-plan.md).
+
+- **05B commercial:** Products, Sales and Purchases enforce entitlement at
+  navigation/policy, API and write-service boundaries. Customer portal checks
+  use the authenticated Partner's company. Contacts and Partners remain
+  exempt core plugins under SAAS-04.
+- **Products provisioning correction:** `CompanyCategoryProvisioner` creates
+  the company's root category regardless of entitlement timing. The company
+  observer can run before default grants are synchronized; category setup is
+  required infrastructure, not a paid module operation.
+- **05A finance:** Accounts, Accounting and Invoices policy/navigation checks;
+  tokenized payment registration also asserts the Payments entitlement.
+- **05C operations:** Inventory move confirmation and Manufacturing order
+  workflows assert entitlement before mutation; Barcode authenticated routes
+  use the shared guard; LogisticsAccess combines entitlement with its existing
+  company activation setting.
+- **05D people/work tools:** Employees, Recruitments, Projects, Timesheets and
+  Time Off receive entitlement checks. Analytics, Fields, Full Calendar and
+  Table Views remain exempt core plugins. Website portal access checks the
+  authenticated Partner's company.
+
+**Verification.** ProductFeature rerun on the isolated Sail database:
+**275 passed, 636 assertions, 0 failed**. Existing focused entitlement tests
+for Products, Sales and Purchases passed; SaleFeature was 147 passed and
+PurchaseFeature 190 passed. Focused 05A tests did not complete because package
+installation repeatedly invoked full `shield:generate --all`; 05C and 05D
+suite tests remain pending. No production or managed database was used.
+
+**Risk / follow-up.** Run the pending 05A/C/D focused tests and package suites
+after diagnosing the test-bootstrap cost. The 05A/C/D implementation is
+committed in shared history but remains review status until those tests pass.
+
 ## 2026-11-03 (Administrator password from the company form)
 
 **Why.** This was a user decision. Clients phone DEKA to have their
