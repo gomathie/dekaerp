@@ -59,7 +59,7 @@ return [
                 'title'             => 'L’administrateur n’a pas été modifié',
                 'missing-email'     => 'Saisissez l’e-mail de l’administrateur avec le mot de passe.',
                 'missing-role'      => 'Le rôle « Company Admin » n’existe pas dans cette installation : aucun compte n’a été créé.',
-                'not-administrator' => ':email appartient à un utilisateur qui n’est pas l’administrateur de cette société : son mot de passe n’a donc pas été modifié ici. Gérez cet utilisateur depuis la page Utilisateurs.',
+                'not-member'        => ':email appartient à un utilisateur qui n’est pas membre de cette société : son mot de passe n’a donc pas été modifié ici. Gérez cet utilisateur depuis la page Utilisateurs.',
                 'not-allowed'       => 'Vous n’êtes pas autorisé à gérer l’administrateur de cette société.',
                 'seats-exhausted'   => 'Cette société n’a plus de siège utilisateur disponible : aucun compte n’a été créé pour :email. Augmentez d’abord la limite de sièges.',
             ],

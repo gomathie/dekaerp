@@ -191,7 +191,7 @@ class CompanyAdminContributions
      * A company's own administrator has no business reading or reaching the
      * other administrators of their company through this section.
      */
-    protected static function administersInstallation(): bool
+    public static function administersInstallation(): bool
     {
         $user = Auth::user();
 

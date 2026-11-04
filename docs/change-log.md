@@ -198,6 +198,46 @@ suite tests remain pending. No production or managed database was used.
 after diagnosing the test-bootstrap cost. The 05A/C/D implementation is
 committed in shared history but remains review status until those tests pass.
 
+## 2026-11-05 (Users and logins on the company page)
+
+**Why.** This was a user decision. When invitation emails do not arrive,
+support must be able to see each existing company's users and set their
+passwords. Current passwords cannot be shown, because they are stored as
+one-way hashes. So the page shows each user's **login**, and a way to set a
+new password.
+
+**How.**
+
+- **Users list.** New `Security\...\CompanyResource\RelationManagers\UsersRelationManager`
+  on the company page, through the new `Security\Models\Company::users()`
+  (`user_allowed_companies`). It shows name, login (copyable), Company Admin,
+  active, and must-change-password, with a **Set password** row action that
+  has its own must-change toggle. It is visible to installation staff only,
+  using the same rule as the Administrator section, which is now public:
+  `CompanyAdminContributions::administersInstallation()`.
+- **Global scopes.** The list removes the global scopes, because User's
+  ownership scope would show support only the users they created. It then
+  excludes deleted users by hand.
+- **Service.** `CompanyAdministratorAccount::setPasswordFor()`. The reset
+  boundary widens from the company's administrators to its **members**
+  (`isMember()`). The refusal is renamed `NOT_ADMINISTRATOR` →
+  `NOT_MEMBER`, with its message in all 5 locales. The policy and
+  `assertUserAssignment()` checks are unchanged.
+- **Translations:** a new file in en, ar, es, fr and pt_BR.
+
+**Benefit.** Every user of an existing company can be given a working
+password from one screen, with no email involved.
+
+**Trade-off / risk.**
+- Support now handles passwords for any member, not only the administrator.
+  The must-change flag stays on by default, and every set is audited.
+- A Multi-Company Admin is still refused for a member shared with a company
+  outside their assignment, because the same password opens both companies.
+
+**Verification.** See below once run.
+
+**Rollback.** Revert the commit. No schema change.
+
 ## 2026-11-03 (Administrator password from the company form)
 
 **Why.** This was a user decision. Clients phone DEKA to have their

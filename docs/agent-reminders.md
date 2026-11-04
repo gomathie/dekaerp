@@ -14,6 +14,36 @@ Set by the user 2026-09-03. These apply to every session, not one task.
 **This fork is in production, with multi-tenancy in use.** Real customers, real
 data, a public repo. Nothing here is a sandbox.
 
+## 2026-11-04
+
+**Requested:** Continue triage of Sentry issues and finish verification of four
+related fixes. The reviewed issues were 155782383, 148912476 and 157505669
+(test-run noise); 158147606 (unverified sender domain); 158146393 (backfill
+against a partially migrated schema); and 151536596 (unauthenticated locked
+Livewire-property probe).
+
+**Implemented before this continuation:** Test runs pin `SENTRY_LARAVEL_DSN` to
+empty; outgoing mail uses the configured application sender with the author as
+Reply-To where supported; the products backfill checks required columns before
+writing; and tampered locked-property updates return 400 without Sentry
+reporting. See the two 2026-11-04 entries in `docs/change-log.md` for rationale
+and pinned tests.
+
+**Verification in the prior continuation and retry (2026-11-04):** Not run.
+`docker compose up -d pgsql` and a later `docker compose ps` both failed to
+connect to `npipe:////./pipe/docker_engine` (`permission denied`). `docker
+context ls` also could not read `C:\Users\gomat\.docker\contexts\meta`, so no
+alternate configured context could be checked. The interrupted SAAS
+AccountFeature run is incomplete and does not count as Sentry-fix verification.
+No Mailpit, admin-panel, fresh DSN, or broader package-suite check was performed.
+The requested broader suites remain ChatterFeature, SupportFeature,
+ProductFeature, SaleFeature and AccountFeature, serially on a dedicated local
+PostgreSQL test database; RecruitmentsFeature is not registered in `phpunit.xml`.
+
+**Still external:** Verify the sender domain with the mail provider and set
+`MAIL_FROM_ADDRESS` in Laravel Cloud; perform production Sentry housekeeping and
+deploy only after the test handoff is complete.
+
 1. **Go through all of it.** When working from a list - a release's notes, a
    linter's findings, a review - check every item against the code. Report
    which were verified and which were not. Do not summarise a category as

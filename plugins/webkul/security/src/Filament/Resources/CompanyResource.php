@@ -10,6 +10,7 @@ use Webkul\Security\Filament\Resources\CompanyResource\Pages\EditCompany;
 use Webkul\Security\Filament\Resources\CompanyResource\Pages\ListCompanies;
 use Webkul\Security\Filament\Resources\CompanyResource\Pages\ViewCompany;
 use Webkul\Security\Filament\Resources\CompanyResource\RelationManagers\BranchesRelationManager;
+use Webkul\Security\Filament\Resources\CompanyResource\RelationManagers\UsersRelationManager;
 use Webkul\Security\Models\Company;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\MultiCompanyAdminService;
@@ -76,6 +77,7 @@ class CompanyResource extends BaseCompanyResource
     {
         return [
             BranchesRelationManager::class,
+            UsersRelationManager::class,
         ];
     }
 

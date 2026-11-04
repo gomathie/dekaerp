@@ -4,9 +4,9 @@ namespace Webkul\Security\Services;
 
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\PermissionRegistrar;
-use Webkul\Security\PermissionRegistrar as ForkPermissionRegistrar;
 use Webkul\Security\Models\Permission;
 use Webkul\Security\Models\Role;
+use Webkul\Security\PermissionRegistrar as ForkPermissionRegistrar;
 
 class MultiCompanyAdminRoleProvisioner
 {

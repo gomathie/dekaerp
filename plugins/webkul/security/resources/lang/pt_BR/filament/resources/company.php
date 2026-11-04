@@ -59,7 +59,7 @@ return [
                 'title'             => 'O administrador não foi alterado',
                 'missing-email'     => 'Informe o e-mail do administrador junto com a senha.',
                 'missing-role'      => 'O papel “Company Admin” não existe nesta instalação, então nenhuma conta foi criada.',
-                'not-administrator' => ':email pertence a um usuário que não é o administrador desta empresa, então a senha dele não foi alterada aqui. Gerencie esse usuário pela página de Usuários.',
+                'not-member'        => ':email pertence a um usuário que não é membro desta empresa, então a senha dele não foi alterada aqui. Gerencie esse usuário pela página de Usuários.',
                 'not-allowed'       => 'Você não tem permissão para gerenciar o administrador desta empresa.',
                 'seats-exhausted'   => 'Esta empresa não tem assentos de usuário livres, então nenhuma conta foi criada para :email. Aumente primeiro o limite de assentos.',
             ],

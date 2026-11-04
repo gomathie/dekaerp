@@ -41,14 +41,15 @@ class CompanyAdministratorAccount
     public const MISSING_ROLE = 'missing-role';
 
     /**
-     * The address belongs to someone who is not this company's administrator.
+     * The address belongs to someone who is not a member of this company.
      *
      * Refused rather than handled: resetting that password from this form would
      * let whoever administers this company sign in as a user of another one -
      * an account takeover across tenants. Their password belongs to the Users
-     * page, where the policy for *that* user applies.
+     * page, where the policy for *that* user applies. (Until 2026-11-05 this
+     * refused anyone but the company's administrators; see isMember().)
      */
-    public const NOT_ADMINISTRATOR = 'not-administrator';
+    public const NOT_MEMBER = 'not-member';
 
     public const NOT_ALLOWED = 'not-allowed';
 
@@ -61,9 +62,9 @@ class CompanyAdministratorAccount
 
     /**
      * Create this company's administrator with the given password, or reset
-     * the password of the one it already has at that address.
+     * the password of the company's user at that address.
      *
-     * @return self::CREATED|self::PASSWORD_RESET|self::MISSING_EMAIL|self::MISSING_ROLE|self::NOT_ADMINISTRATOR|self::NOT_ALLOWED|self::SEATS_EXHAUSTED
+     * @return self::CREATED|self::PASSWORD_RESET|self::MISSING_EMAIL|self::MISSING_ROLE|self::NOT_MEMBER|self::NOT_ALLOWED|self::SEATS_EXHAUSTED
      *
      * @throws ValidationException when the password breaks the password rules
      */
@@ -139,6 +140,55 @@ class CompanyAdministratorAccount
             ->get();
     }
 
+    /**
+     * Set the password of one of the company's users, chosen from its Users
+     * list (user, 2026-11-05: when invitation emails do not arrive, support
+     * sets each user's password by hand).
+     *
+     * @return self::PASSWORD_RESET|self::NOT_MEMBER|self::NOT_ALLOWED
+     *
+     * @throws ValidationException when the password breaks the password rules
+     */
+    public function setPasswordFor(
+        Company $company,
+        User $actor,
+        User $target,
+        string $password,
+        bool $mustChangePassword = true,
+    ): string {
+        Validator::make(
+            ['password' => $password],
+            ['password' => ['required', Password::default()]],
+        )->validate();
+
+        return $this->resetPassword($company, $actor, $target, $password, $mustChangePassword);
+    }
+
+    /**
+     * Whether the user belongs to the company: a member, or one of its
+     * administrators (whose legacy assignment may predate memberships).
+     *
+     * This is the boundary for every password set from the company page.
+     * Widened from administrators only on 2026-11-05 (user), so that support
+     * can set any of the company's users' passwords; it still refuses anyone
+     * outside the company, which is what stops one tenant's page from taking
+     * over another tenant's user.
+     */
+    public function isMember(Company $company, User $user): bool
+    {
+        if ($user->trashed()) {
+            return false;
+        }
+
+        $isMember = $user->allowedCompanies()
+            ->withoutGlobalScopes()
+            ->where('companies.id', $company->getKey())
+            ->exists();
+
+        return $isMember
+            || $this->administrators($company)->contains(fn (User $admin): bool => $admin->is($user));
+    }
+
     protected function resetPassword(
         Company $company,
         User $actor,
@@ -146,11 +196,8 @@ class CompanyAdministratorAccount
         string $password,
         bool $mustChangePassword,
     ): string {
-        $isThisCompanysAdministrator = ! $target->trashed()
-            && $this->administrators($company)->contains(fn (User $admin): bool => $admin->is($target));
-
-        if (! $isThisCompanysAdministrator) {
-            return self::NOT_ADMINISTRATOR;
+        if (! $this->isMember($company, $target)) {
+            return self::NOT_MEMBER;
         }
 
         // The same checks as editing the user on the Users page. Without the

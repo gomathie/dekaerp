@@ -59,7 +59,7 @@ return [
                 'title'             => 'No se cambió el administrador',
                 'missing-email'     => 'Introduzca el correo del administrador junto con la contraseña.',
                 'missing-role'      => 'El rol «Company Admin» no existe en esta instalación, así que no se creó ninguna cuenta.',
-                'not-administrator' => ':email pertenece a un usuario que no es el administrador de esta empresa, así que su contraseña no se cambió aquí. Gestione ese usuario desde la página de Usuarios.',
+                'not-member'        => ':email pertenece a un usuario que no es miembro de esta empresa, así que su contraseña no se cambió aquí. Gestione ese usuario desde la página de Usuarios.',
                 'not-allowed'       => 'No tiene permiso para gestionar el administrador de esta empresa.',
                 'seats-exhausted'   => 'A esta empresa no le quedan plazas de usuario libres, así que no se creó ninguna cuenta para :email. Aumente primero el límite de plazas.',
             ],
