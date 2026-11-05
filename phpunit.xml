@@ -11,6 +11,9 @@
         <testsuite name="AccountingFeature">
             <directory>plugins/webkul/accounting/tests/Feature</directory>
         </testsuite>
+        <testsuite name="InvoiceFeature">
+            <directory>plugins/webkul/invoices/tests/Feature</directory>
+        </testsuite>
         <testsuite name="InventoryFeature">
             <directory>plugins/webkul/inventories/tests/Feature</directory>
         </testsuite>
@@ -26,6 +29,9 @@
         <testsuite name="ProjectFeature">
             <directory>plugins/webkul/projects/tests/Feature</directory>
         </testsuite>
+        <testsuite name="RecruitmentFeature">
+            <directory>plugins/webkul/recruitments/tests/Feature</directory>
+        </testsuite>
         <testsuite name="PartnerFeature">
             <directory>plugins/webkul/partners/tests/Feature</directory>
         </testsuite>
@@ -37,6 +43,15 @@
         </testsuite>
         <testsuite name="TableViewsFeature">
             <directory>plugins/webkul/table-views/tests/Feature</directory>
+        </testsuite>
+        <testsuite name="TimeOffFeature">
+            <directory>plugins/webkul/time-off/tests/Feature</directory>
+        </testsuite>
+        <testsuite name="TimesheetFeature">
+            <directory>plugins/webkul/timesheets/tests/Feature</directory>
+        </testsuite>
+        <testsuite name="MaintenanceFeature">
+            <directory>plugins/webkul/maintenance/tests/Feature</directory>
         </testsuite>
         <testsuite name="SecurityFeature">
             <directory>plugins/webkul/security/tests/Feature</directory>

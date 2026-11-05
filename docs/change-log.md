@@ -234,7 +234,22 @@ password from one screen, with no email involved.
 - A Multi-Company Admin is still refused for a member shared with a company
   outside their assignment, because the same password opens both companies.
 
-**Verification.** See below once run.
+**Verification** (Sail, 2026-11-05, `aureuserp_testing_admin_pw`):
+
+- **Tests:**
+  `--filter='password|Users list|edit page'` on `CompanyAdministratorPasswordTest.php`
+  gave **57 passed, 186 assertions, 0 failed**. The filter also matches tests
+  in the `MultiCompanyAdminTest` helpers it loads. The run covers the new
+  member reset, the cross-company and staff-assignment refusals, the Users
+  list's rows and Set password action, the list's staff-only visibility, and
+  every 2026-11-03 password and edit-page test.
+- **Pint** ran over `plugins/webkul/security/src`, the test file and the
+  security lang files. It realigned the lang arrays and fixed import order
+  in `MultiCompanyAdminRoleProvisioner.php`, a file this change does not
+  otherwise touch.
+- **`php -l`** is clean on every changed file.
+- **Not run:** the full SecurityFeature suite. That is part of the 22-suite
+  verification assigned for everything since `7bbf65741`.
 
 **Rollback.** Revert the commit. No schema change.
 
