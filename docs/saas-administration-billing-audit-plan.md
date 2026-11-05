@@ -1158,6 +1158,43 @@ fixed):**
     because the login page must stay reachable.
 - **Finding 3 (Invoicer/Biller service boundaries)** and **finding 4
   (`contacts` not in the exempt list)** are unchanged and open, as described.
+  *Superseded the same day, see below.*
+
+**User decisions and fixes, 2026-11-05 (later the same day):**
+
+- **Finding 1, decided: a shared customer may always sign in.**
+  - `EnsureCustomerPortalIsEntitled` now lets a customer with no company
+    through. A company's own customer still follows that company's Website
+    grant.
+  - The middleware is **still not registered**. The customer panel has no
+    `Authenticate` middleware at all, so registering it means adding sign-in
+    enforcement to the panel. That is a change in its own right, and it can be
+    verified only with Website installed.
+  - Do both together when Website is installed.
+- **Finding 3: fixed.**
+  - `Sale\Services\Invoicer::invoiceOrder()` and `createInvoice()` now call
+    `SalesAccess::assertForCompany()`.
+  - `Purchase\Services\Biller::createBill()` now calls
+    `PurchasesAccess::assertForCompany()`.
+  - The record's company decides, and the existing super-admin bypass is kept.
+- **Finding 4: fixed.**
+  - `contacts` is in `plugin-manager.entitlements.exempt`.
+  - The company Modules list still shows it as a tickbox, as it already does
+    for the other exempt plugins that are installed.
+- **Tests:**
+  - `PluginEntitlementGuardTest`: "treats contacts as always available…" and
+    "lets a shared customer through the portal guard…".
+  - Sales `PluginEntitlementTest`: "refuses to invoice an order once Sales is
+    revoked…".
+  - Purchases `PluginEntitlementTest`: "refuses to bill an order once
+    Purchases is revoked…".
+- **Verification run:** the three files, each on its own new database
+  (`aureuserp_testing_d4_*`), all passed with none failed:
+  - plugin-manager guard test: 9 passed, 20 assertions;
+  - Purchases: 3 passed, 31 assertions;
+  - Sales: 2 passed, 19 assertions.
+
+  Pint passed. The full suites were not re-run.
 
 No new entitlement check was found inside a plugin's `Plugin::register()`.
 Newly added page checks use explicit entitlement checks; the inspected

@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Webkul\PluginManager\Exceptions\PluginNotEntitledException;
@@ -8,7 +9,10 @@ use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\PluginManager\Support\PluginEntitlement;
 use Webkul\Security\Models\Role;
 use Webkul\Support\Models\Company;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Webkul\Support\Services\CompanyContext;
+use Webkul\Website\Http\Middleware\EnsureCustomerPortalIsEntitled;
+use Webkul\Website\Models\Partner as Customer;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/SecurityHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
@@ -103,6 +107,18 @@ it('exempts a core plugin from the guard', function () {
     $this->get('/__plugin_guard_core')->assertOk();
 });
 
+/**
+ * Contacts installs like a module, but every business plugin reads it, so a
+ * company with it revoked would be broken rather than restricted. User
+ * decision, 2026-11-05 (SAAS-05 review finding 4).
+ */
+it('treats contacts as always available, whatever a company was granted', function () {
+    $company = Company::factory()->create();
+
+    expect(PluginEntitlement::isExempt('contacts'))->toBeTrue()
+        ->and(PluginEntitlement::enabledForCompany('contacts', $company->getKey()))->toBeTrue();
+});
+
 it('fails closed when an authenticated user has no active company', function () {
     $user = SecurityHelper::authenticateWithPermissions([]);
 
@@ -169,4 +185,33 @@ it('asserts a record company entitlement for services and jobs', function () {
 
     expect(fn () => PluginEntitlement::assertForCompany('sales', null))
         ->toThrow(PluginNotEntitledException::class);
+});
+
+/**
+ * SAAS-05 review finding 1. A shared customer (no company, §4k) belongs to no
+ * tenant, so no company's Website switch may lock them out of the portal; a
+ * company's own customer still follows that company's grant. User decision,
+ * 2026-11-05. The middleware is not yet registered on the customer panel,
+ * which has no Authenticate middleware to run after (see the SaaS plan).
+ */
+it('lets a shared customer through the portal guard and holds a company customer to its grant', function () {
+    // Website is deliberately not installed in this suite, so the company
+    // below holds no Website grant and its customer must be refused.
+    $company = Company::factory()->create();
+
+    $guard = new EnsureCustomerPortalIsEntitled;
+    $next = fn () => response('ok');
+
+    $shared = new Customer;
+    $shared->company_id = null;
+    Auth::guard('customer')->setUser($shared);
+
+    expect($guard->handle(request(), $next)->getContent())->toBe('ok');
+
+    $owned = new Customer;
+    $owned->company_id = $company->getKey();
+    Auth::guard('customer')->setUser($owned);
+
+    expect(fn () => $guard->handle(request(), $next))
+        ->toThrow(HttpException::class);
 });

@@ -13,6 +13,7 @@ use Webkul\Purchase\Filament\Customer\Clusters\Account\Resources\OrderResource a
 use Webkul\Purchase\Filament\Customer\Clusters\Account\Resources\PurchaseOrderResource as CustomerPurchaseOrderResource;
 use Webkul\Purchase\Filament\Customer\Clusters\Account\Resources\QuotationResource as CustomerQuotationResource;
 use Webkul\Purchase\Models\Order;
+use Webkul\Purchase\Services\Biller;
 use Webkul\Purchase\Services\OrderWorkflow;
 use Webkul\Support\Models\Company;
 use Webkul\Website\Models\Partner as Customer;
@@ -143,4 +144,23 @@ it('refuses a signed vendor response once Purchases is revoked for the order’s
     $this->get($url)->assertOk();
 
     expect((bool) Order::withoutGlobalScopes()->findOrFail($order->getKey())->mail_reception_confirmed)->toBeTrue();
+});
+
+/**
+ * SAAS-05 review finding 3: billing was guarded only by the screens. A job,
+ * another plugin or a super-admin-bypassed policy could still bill an order
+ * of a company with Purchases revoked. User decision, 2026-11-05: refuse.
+ */
+it('refuses to bill an order once Purchases is revoked for its company', function (): void {
+    $company = Company::factory()->create();
+    setPurchasesEntitlement($company, true);
+    FilamentHelper::actingAsCompanyUser([$company], []);
+    CompanyHelper::setActive([$company->getKey()]);
+    $order = PurchaseHelper::order(['company_id' => $company->getKey()]);
+
+    setPurchasesEntitlement($company, false);
+
+    expect(fn () => app(Biller::class)->createBill($order->refresh()))
+        ->toThrow(PluginNotEntitledException::class)
+        ->and($order->refresh()->accountMoves()->count())->toBe(0);
 });

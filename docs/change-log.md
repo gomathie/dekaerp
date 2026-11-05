@@ -198,6 +198,37 @@ suite tests remain pending. No production or managed database was used.
 after diagnosing the test-bootstrap cost. The 05A/C/D implementation is
 committed in shared history but remains review status until those tests pass.
 
+## 2026-11-05 (Module switch reaches invoicing and billing; Contacts always on; shared portal customers)
+
+**Why.** These close SAAS-05 review findings 1, 3 and 4. The user chose the
+recommended option for each.
+
+**How.**
+- **Invoicing and billing:** `Sale\Services\Invoicer` (`invoiceOrder`,
+  `createInvoice`) and `Purchase\Services\Biller::createBill` assert the
+  module for the order's company before writing anything.
+- **Contacts:** `contacts` is added to `plugin-manager.entitlements.exempt`.
+- **Portal:** `Website\Http\Middleware\EnsureCustomerPortalIsEntitled` lets a
+  customer with no company through. Before, it cast null to 0 and refused
+  every such customer.
+
+**Benefit.**
+- Turning Sales or Purchases off now stops invoices and bills from every
+  caller, not only the screens.
+- Contacts can never be turned off underneath the modules that depend on it.
+
+**Trade-off / risk.**
+- A caller that invoices or bills a revoked company's order now gets
+  `PluginNotEntitledException`. No production company has anything revoked,
+  so nothing changes today.
+- The portal middleware is still unregistered: the customer panel has no
+  `Authenticate` middleware. Wire both when Website is installed.
+
+**Verification.** See the SaaS plan's "User decisions and fixes, 2026-11-05"
+block.
+
+**Rollback.** Revert the commit.
+
 ## 2026-11-05 (Purchases vendor-response link respects the module grant)
 
 **Why.** The SAAS-05 verification review found the signed vendor-response

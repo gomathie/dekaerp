@@ -6,11 +6,17 @@ use Webkul\Account\Enums as AccountEnums;
 use Webkul\Account\Facades\Account as AccountFacade;
 use Webkul\Purchase\Models\AccountMove;
 use Webkul\Purchase\Models\Order;
+use Webkul\Purchase\Support\PurchasesAccess;
 
 class Biller
 {
     public function createBill(Order $record): void
     {
+        // Revoking Purchases for a company (SAAS-05) must stop its billing too,
+        // not only hide the screens: a job or another plugin can call this
+        // directly, and the super-admin Gate::before skips the UI's policies.
+        PurchasesAccess::assertForCompany((int) $record->company_id);
+
         $accountMove = AccountMove::create([
             'move_type'               => $record->qty_to_invoice >= 0
                 ? AccountEnums\MoveType::IN_INVOICE
