@@ -1002,8 +1002,9 @@ and report each touched plugin suite separately.
 - Why / how / benefit: use the shared `PluginEntitlement` contract so revocation
   blocks direct access and writes, not only menu visibility. Policies use the
   record's `company_id` when a record is available. The Products category
-  provisioner skips creation when the company lacks a Products grant, since the
-  company-created observer can run before default grants are synchronized.
+  provisioner is deliberately independent of entitlement: company root
+  categories are required infrastructure, and the company-created observer can
+  run before default grants are synchronized.
 - Protected decisions recorded in `AGENTS.md`: retain the record-company
   entitlement check; resolve customer-portal entitlement from the authenticated
   Partner's company because `CompanyContext` is for internal users; keep
@@ -1079,6 +1080,62 @@ and report each touched plugin suite separately.
   repeatedly triggered full Shield permission generation. No counts claimed.
 - Reviewed but not executed: focused tests and EmployeeFeature, ProjectFeature,
   recruitment, timesheet, and time-off package coverage.
+
+#### SAAS-05 pre-deploy entitlement audit — 2026-11-05
+
+Read-only review against the protected SAAS-04 decisions. No production code was
+changed during this review.
+
+| Plugin | Navigation / page | Resource policies | Write services / jobs | Routes |
+|---|---|---|---|---|
+| Accounts | Resource navigation follows policy | All 18 policies use the account entitlement concern; record checks use `company_id` | `PaymentRegistrar` checks Accounts and Payments | API guarded centrally |
+| Accounting | Overview and clusters gated | All 22 policies use the accounting concern | No separate write-service assertion found | No package routes |
+| Invoices | Clusters gated | All 16 policies use the invoice concern | No separate write-service assertion found | No package routes |
+| Payments | No separate UI | No policies | `PaymentRegistrar` checks both Accounts and Payments | No package routes |
+| Products | Resource navigation follows policy | All 6 policies use `ProductsAccess` and the product company | Root-category provisioning intentionally remains ungated infrastructure | API guarded centrally |
+| Sales | Clusters and settings pages gated | All 17 policies use the sales concern | `OrderWorkflow` asserts Sales; `Invoicer` methods do not assert at their service boundary | API guarded centrally |
+| Purchases | Clusters and settings pages gated | All 12 policies use the purchases concern | `OrderWorkflow` asserts Purchases; `Biller::createBill()` has no service assertion | API guarded centrally; signed vendor-response web route is unguarded (finding below) |
+| Inventories | Overview and clusters gated | All 24 policies use the inventory concern | `MoveConfirmer` asserts Inventories | API guarded centrally |
+| Manufacturing | Clusters gated | All 11 policies use the manufacturing concern | `OrderWorkflow` asserts Manufacturing | No package routes |
+| Maintenance | Clusters gated | All 5 policies use the maintenance concern | No separate write service found | No package routes |
+| Logistics | Dashboard, clusters, pages and widgets use `LogisticsAccess` | Shared Logistics policies check entitlement and the company switch | State-changing logistics services call `ensureEnabled()` | Public POD web flow checks through its service |
+| Barcode | No Filament navigation | No policies | No separate service boundary found | Authenticated web routes use `plugin.entitlement:barcode`; login remains public |
+| Employees | Clusters gated | All 10 policies use the employee concern | No separate write service found | No package routes |
+| Recruitments | Page and clusters gated | All 15 policies use the recruitment concern | No separate write service found | No package routes |
+| Projects | Dashboard and clusters gated | All 8 policies use the project concern | No separate write service found | API guarded centrally |
+| Timesheets | Resource navigation follows policy | Its policy uses the timesheet concern | No separate write service found | No package routes |
+| Time Off | Pages and clusters gated | All 7 policies use the time-off concern | No separate write service found | No package routes |
+| Website | Customer portal middleware exists but is not registered or referenced | No website entitlement policy found | No separate write service found | Customer-panel routes have no website entitlement middleware (blocker) |
+| Analytics, Fields, Full Calendar, Table Views, Partners, Plugin Manager, Security, Support, Chatter | Exempt core plugins; no entitlement gate added | No entitlement policies added | No entitlement service gates added | Shared API middleware short-circuits configured exemptions |
+
+Findings requiring correction before deployment:
+
+1. **Website entitlement is not enforced on the customer portal.**
+   `EnsureCustomerPortalIsEntitled` has no reference outside its class, and
+   `CustomerPanelProvider` does not include it in panel middleware. A customer
+   whose Website grant is revoked can still reach the authenticated portal.
+2. **A signed Purchases route mutates after revocation.**
+   `plugins/webkul/purchases/routes/web.php` sends the signed vendor-response URL
+   to `RespondQuotation`; its `mount()` updates the order directly without
+   `PurchasesAccess` or middleware. Signature validation does not check the
+   current module grant.
+3. **Two write-service boundaries lack explicit entitlement assertions.**
+   Sales `Invoicer::invoiceOrder()` / `createInvoice()` and Purchases
+   `Biller::createBill()` mutate records without asserting their owning module.
+   Their current Filament callers have gated resources, but non-UI callers do
+   not get that policy check. Review and pin these entry points before treating
+   the service boundary as complete.
+4. **Core exemption configuration omits Contacts.** `contacts` is a core plugin
+   with no current API route or entitlement reference, so it is not gated today;
+   it is nevertheless absent from `plugin-manager.entitlements.exempt`, unlike
+   the documented core set. A future API route would inherit a non-exempt guard.
+
+No new entitlement check was found inside a plugin's `Plugin::register()`.
+Newly added page checks use explicit entitlement checks; the inspected
+`parent::canAccess()` overrides in Inventory, Sales, Purchases and Projects
+pre-date this rollout. Barcode and Website have no feature tests; no tests were
+invented, as requested. Full-suite results are recorded separately below once
+the run completes.
 
 #### SAAS-06 — seat limit and invitation lifecycle
 
