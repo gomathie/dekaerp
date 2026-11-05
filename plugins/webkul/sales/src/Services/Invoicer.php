@@ -12,6 +12,7 @@ use Webkul\Sale\Models\AdvancedPaymentInvoice;
 use Webkul\Sale\Models\Order;
 use Webkul\Sale\Models\OrderLine;
 use Webkul\Sale\Settings\InvoiceSettings;
+use Webkul\Sale\Support\SalesAccess;
 
 class Invoicer
 {
@@ -19,6 +20,11 @@ class Invoicer
 
     public function invoiceOrder(Order $record, array $data = []): AdvancedPaymentInvoice
     {
+        // Revoking Sales for a company (SAAS-05) must stop its invoicing too, not
+        // only hide the screens: a job or another plugin can call this directly,
+        // and the super-admin Gate::before skips the policies that guard the UI.
+        SalesAccess::assertForCompany((int) $record->company_id);
+
         if ($data['advance_payment_method'] == AdvancedPayment::DELIVERED->value) {
             $this->createInvoice($record);
         }
@@ -39,6 +45,9 @@ class Invoicer
 
     public function createInvoice(Order $record): AccountMove
     {
+        // Public and called on its own, so it repeats invoiceOrder()'s check.
+        SalesAccess::assertForCompany((int) $record->company_id);
+
         $accountMove = AccountMove::create([
             'move_type'               => AccountEnums\MoveType::OUT_INVOICE,
             'invoice_origin'          => $record->name,

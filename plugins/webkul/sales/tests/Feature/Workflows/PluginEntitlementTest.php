@@ -6,9 +6,11 @@ use Livewire\Livewire;
 use Webkul\PluginManager\Exceptions\PluginNotEntitledException;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
+use Webkul\Sale\Enums\AdvancedPayment;
 use Webkul\Sale\Filament\Clusters\Orders;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource\Pages\ListQuotations;
 use Webkul\Sale\Models\Order;
+use Webkul\Sale\Services\Invoicer;
 use Webkul\Sale\Services\OrderWorkflow;
 use Webkul\Support\Models\Company;
 
@@ -88,4 +90,25 @@ it('enforces the sales entitlement across UI API policies and services', functio
     expect(Orders::canAccess())->toBeTrue();
     Livewire::test(ListQuotations::class)->assertOk();
     $this->getJson(route('admin.api.v1.sales.orders.index'))->assertOk();
+});
+
+/**
+ * SAAS-05 review finding 3: invoicing was guarded only by the screens. A job,
+ * another plugin or a super-admin-bypassed policy could still invoice an order
+ * of a company with Sales revoked. User decision, 2026-11-05: refuse.
+ */
+it('refuses to invoice an order once Sales is revoked for its company', function (): void {
+    $company = Company::factory()->create();
+    setSalesEntitlement($company, true);
+    FilamentHelper::actingAsCompanyUser([$company], []);
+    CompanyHelper::setActive([$company->getKey()]);
+    $order = SaleHelper::order(['company_id' => $company->getKey()]);
+
+    setSalesEntitlement($company, false);
+
+    expect(fn () => app(Invoicer::class)->createInvoice($order->refresh()))
+        ->toThrow(PluginNotEntitledException::class)
+        ->and(fn () => app(Invoicer::class)->invoiceOrder($order->refresh(), ['advance_payment_method' => AdvancedPayment::DELIVERED->value]))
+        ->toThrow(PluginNotEntitledException::class)
+        ->and($order->refresh()->accountMoves()->count())->toBe(0);
 });

@@ -40,6 +40,10 @@ return [
         'exempt' => [
             'analytics',
             'chatter',
+            // Not `->isCore()` (it installs like a module), but Sales, Purchases,
+            // Invoicing and the rest all read contacts, so turning it off for one
+            // company would break them. User decision, 2026-11-05.
+            'contacts',
             'fields',
             'full-calendar',
             'partners',

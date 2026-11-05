@@ -1556,6 +1556,19 @@ log named):
     company's address, or every save would invite the company mailbox.
   - Tests: `security/tests/Feature/Authorization/CompanyAdministratorPasswordTest.php`.
 
+• Module switch boundaries, 2026-11-05 (user decisions; SaaS plan, SAAS-05
+  review):
+  - `Invoicer` (Sales) and `Biller` (Purchases) refuse an order whose company
+    has the module revoked. Do not move the check back to the screens only.
+  - `contacts` is exempt, like `partners`: always available. Every business
+    plugin reads contacts.
+  - A shared customer (no company) always passes the portal guard
+    (`EnsureCustomerPortalIsEntitled`). Never cast their null company to 0.
+    The guard is not yet registered: register it with `Authenticate` when
+    Website is installed.
+  - Tests: plugin-manager `PluginEntitlementGuardTest`, Sales and Purchases
+    `PluginEntitlementTest`.
+
 • Test runs never report to Sentry, 2026-11-04 (`docs/change-log.md`):
   - `phpunit.xml` sets `SENTRY_LARAVEL_DSN` to an empty string with
     `force="true"`. A developer's `.env` carries the real DSN, so removing that

@@ -17,8 +17,17 @@ class EnsureCustomerPortalIsEntitled
     {
         $customer = Auth::guard('customer')->user();
 
+        abort_unless($customer, Response::HTTP_FORBIDDEN);
+
+        // A shared customer (no company, kept by §4k) belongs to no tenant, so
+        // no company's Website switch governs them: they may always sign in.
+        // Casting null to 0 refused every one of them. User decision, 2026-11-05.
+        if ($customer->company_id === null) {
+            return $next($request);
+        }
+
         abort_unless(
-            $customer && PluginEntitlement::enabledForCompany('website', (int) $customer->company_id),
+            PluginEntitlement::enabledForCompany('website', (int) $customer->company_id),
             Response::HTTP_FORBIDDEN,
         );
 
