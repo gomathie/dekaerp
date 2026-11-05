@@ -198,6 +198,37 @@ suite tests remain pending. No production or managed database was used.
 after diagnosing the test-bootstrap cost. The 05A/C/D implementation is
 committed in shared history but remains review status until those tests pass.
 
+## 2026-11-05 (Purchases vendor-response link respects the module grant)
+
+**Why.** The SAAS-05 verification review found the signed vendor-response
+link (`purchases/{order}/{action}`) updating an order after its company's
+Purchases grant was revoked. It is the one Purchases write that needs no
+sign-in, so no panel, policy or API guard saw it.
+
+**How.** `Purchase\Livewire\RespondQuotation::mount()` answers 404 before
+writing, unless `PurchasesAccess::enabledForCompany()` allows the order's
+company.
+
+**Benefit.** Turning Purchases off for a company now also stops vendor links
+that were emailed earlier.
+
+**Trade-off / risk.**
+- A vendor clicking an old link after revocation sees "not found". That is
+  intended, and is how a revoked invitation link already behaves.
+- No production company has Purchases revoked, so nothing changes today.
+
+**Verification.** New test in `purchases/tests/Feature/Workflows/PluginEntitlementTest.php`
+(refused while revoked, the order unchanged; accepted again once re-granted).
+It runs inside PurchaseFeature, part of the 22-suite run started 2026-11-05
+03:46; results are in the SaaS plan.
+
+**Not changed, by decision.** The Website customer portal guard is still not
+wired. Website is not installed in production, and wiring it as written
+would lock out every shared (no-company) customer. That needs a user
+decision first, recorded in the SaaS plan's SAAS-05 resolutions.
+
+**Rollback.** Revert the commit.
+
 ## 2026-11-05 (Users and logins on the company page)
 
 **Why.** This was a user decision. When invitation emails do not arrive,

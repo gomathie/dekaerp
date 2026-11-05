@@ -109,3 +109,38 @@ it('enforces the purchases entitlement across UI API policies and services', fun
     Livewire::test(ListPurchaseOrders::class)->assertOk();
     $this->getJson(route('admin.api.v1.purchases.purchase-orders.index'))->assertOk();
 });
+
+/**
+ * The signed vendor-response link is the one Purchases write that needs no
+ * sign-in, so no panel, policy or API guard sees it. Found in the SAAS-05
+ * verification review (2026-11-05): it kept updating orders after the
+ * company's Purchases grant was revoked.
+ */
+it('refuses a signed vendor response once Purchases is revoked for the order’s company', function (): void {
+    $company = Company::factory()->create();
+    setPurchasesEntitlement($company, true);
+    $order = PurchaseHelper::order(['company_id' => $company->getKey()]);
+
+    // Explicit, not left to the factory: the assertions below turn on these
+    // starting false, and a factory default of true would prove nothing.
+    $order->forceFill(['mail_reception_confirmed' => false, 'mail_reception_declined' => false])->saveQuietly();
+
+    $url = URL::signedRoute('purchases.quotations.respond', ['order' => $order->getKey(), 'action' => 'accept']);
+
+    // The vendor is never signed in.
+    Auth::guard('web')->logout();
+
+    setPurchasesEntitlement($company, false);
+
+    $this->get($url)->assertNotFound();
+
+    expect((bool) Order::withoutGlobalScopes()->findOrFail($order->getKey())->mail_reception_confirmed)->toBeFalse();
+
+    // Restoring the grant restores the link, so the refusal above is the
+    // entitlement and not a broken route.
+    setPurchasesEntitlement($company, true);
+
+    $this->get($url)->assertOk();
+
+    expect((bool) Order::withoutGlobalScopes()->findOrFail($order->getKey())->mail_reception_confirmed)->toBeTrue();
+});

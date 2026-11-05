@@ -203,10 +203,10 @@ Record the user's answer before unblocking dependent packages.
 | SAAS-02 | Tenant-aware jobs and API company selection | SAAS-00, D-SAAS-02, D-SAAS-07 | SAAS-03 | review | Copilot 2026-10-28; Claude review 2026-10-29 / `aureuserp_testing_saas_review`; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
 | SAAS-03 | Plugin defaults, dependencies and audited mutations | SAAS-00, D-SAAS-06 | SAAS-01/02 | review | Copilot 2026-10-28; Claude review 2026-10-29 / `aureuserp_testing_saas_review`; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
 | SAAS-04 | Generic plugin enforcement contract | SAAS-03 | — | review | Copilot 2026-10-28; Claude review 2026-10-29 / `aureuserp_testing_saas_review`; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
-| SAAS-05A | Plugin enforcement: finance | SAAS-04 | SAAS-05B/C/D | review (implementation committed; tests pending) | Codex 2026-11-04 / `aureuserp_testing_saas_05a` |
-| SAAS-05B | Plugin enforcement: commercial | SAAS-04 | SAAS-05A/C/D | review (ProductFeature green) | Codex 2026-11-04 / `aureuserp_testing_saas_05b` |
-| SAAS-05C | Plugin enforcement: operations | SAAS-04 | SAAS-05A/B/D | review (implementation committed; tests pending) | Codex 2026-11-04 / `aureuserp_testing_saas_05c` |
-| SAAS-05D | Plugin enforcement: people/work tools | SAAS-04 | SAAS-05A/B/C | review (implementation committed; tests pending) | Codex 2026-11-04 / `aureuserp_testing_saas_05d` |
+| SAAS-05A | Plugin enforcement: finance | SAAS-04 | SAAS-05B/C/D | review (implementation committed; verification blocked before Pest startup) | Codex 2026-11-05 / isolated Sail databases `aureuserp_testing_verify_*` |
+| SAAS-05B | Plugin enforcement: commercial | SAAS-04 | SAAS-05A/C/D | review (ProductFeature green on prior focused pass; full verification blocked before Pest startup) | Codex 2026-11-05 / isolated Sail database `aureuserp_testing_verify_product` |
+| SAAS-05C | Plugin enforcement: operations | SAAS-04 | SAAS-05A/B/D | review (implementation committed; full verification blocked before Pest startup) | Codex 2026-11-05 / isolated Sail databases `aureuserp_testing_verify_*` |
+| SAAS-05D | Plugin enforcement: people/work tools | SAAS-04 | SAAS-05A/B/C | review (implementation committed; full verification blocked before Pest startup) | Codex 2026-11-05 / isolated Sail databases `aureuserp_testing_verify_*` |
 | SAAS-06 | Seat limit and invitation lifecycle | SAAS-01, D-SAAS-03, D-SAAS-04 | SAAS-05A/B/C/D | review | Copilot 2026-10-28; Claude review 2026-10-29 / `aureuserp_testing_saas_review`; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
 | SAAS-07 | Onboarding and all seat-enforcement paths | SAAS-06 | — | review (partial: capacity wired at existing entry points; UI/API/import paths remain) | Copilot 2026-10-28; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03; coordinator, company API/programmatic creation, after-commit/resend/revoke UI, imports and remaining API/service capacity paths stay open |
 | SAAS-08 | Platform-billing plugin foundation | SAAS-00, D-SAAS-01, D-SAAS-05 | — | review (foundation complete) | Copilot 2026-10-28; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
@@ -1108,7 +1108,7 @@ changed during this review.
 | Website | Customer portal middleware exists but is not registered or referenced | No website entitlement policy found | No separate write service found | Customer-panel routes have no website entitlement middleware (blocker) |
 | Analytics, Fields, Full Calendar, Table Views, Partners, Plugin Manager, Security, Support, Chatter | Exempt core plugins; no entitlement gate added | No entitlement policies added | No entitlement service gates added | Shared API middleware short-circuits configured exemptions |
 
-Findings requiring correction before deployment:
+Findings and open pre-deploy risks:
 
 1. **Website entitlement is not enforced on the customer portal.**
    `EnsureCustomerPortalIsEntitled` has no reference outside its class, and
@@ -1122,20 +1122,127 @@ Findings requiring correction before deployment:
 3. **Two write-service boundaries lack explicit entitlement assertions.**
    Sales `Invoicer::invoiceOrder()` / `createInvoice()` and Purchases
    `Biller::createBill()` mutate records without asserting their owning module.
-   Their current Filament callers have gated resources, but non-UI callers do
-   not get that policy check. Review and pin these entry points before treating
-   the service boundary as complete.
+   Their current Filament callers have gated resources. No separate route or
+   queued-job caller was found in the read-only audit, so this is an incomplete
+   SAAS-04 service-boundary guarantee rather than a confirmed externally
+   reachable bypass; review and pin the intended boundary before claiming full
+   coverage.
 4. **Core exemption configuration omits Contacts.** `contacts` is a core plugin
    with no current API route or entitlement reference, so it is not gated today;
    it is nevertheless absent from `plugin-manager.entitlements.exempt`, unlike
-   the documented core set. A future API route would inherit a non-exempt guard.
+   the documented core set. This is not a current access break, but a future API
+   route would inherit a non-exempt guard; reconcile the manifest before adding
+   Contacts entitlement checks or routes.
+
+**Resolutions, 2026-11-05 (Claude, after the user asked for the gaps to be
+fixed):**
+
+- **Finding 2 (Purchases signed link): fixed.**
+  - `RespondQuotation::mount()` now answers **404** before writing, unless
+    `PurchasesAccess::enabledForCompany()` allows the order's own company.
+    404 matches how a revoked invitation link answers.
+  - Test: `PluginEntitlementTest` "refuses a signed vendor response once
+    Purchases is revoked for the order’s company". It also checks that
+    re-granting Purchases restores the link.
+- **Finding 1 (Website portal): not wired. This needs a decision, so it is
+  not a deploy blocker.**
+  - A read-only production check found the `website` plugin **not installed**,
+    and `partners_partners` has no password column, so production has no
+    customer portal and no customer sign-in today.
+  - Wiring `EnsureCustomerPortalIsEntitled` as written would refuse every
+    customer whose contact has no company. Those are the shared contacts that
+    §4k deliberately keeps, so it would lock them out of the portal.
+  - Decide before installing Website: which company's grant governs a shared
+    customer, or whether a shared customer may sign in at all. Then register
+    the middleware in the customer panel's auth middleware, never globally,
+    because the login page must stay reachable.
+- **Finding 3 (Invoicer/Biller service boundaries)** and **finding 4
+  (`contacts` not in the exempt list)** are unchanged and open, as described.
 
 No new entitlement check was found inside a plugin's `Plugin::register()`.
 Newly added page checks use explicit entitlement checks; the inspected
 `parent::canAccess()` overrides in Inventory, Sales, Purchases and Projects
 pre-date this rollout. Barcode and Website have no feature tests; no tests were
-invented, as requested. Full-suite results are recorded separately below once
-the run completes.
+invented, as requested.
+
+#### Full-suite verification — 2026-11-05 (`7bbf65741..aca1f6602`)
+
+*Correction, 2026-11-05 (Claude): the claim below that the first batch and the
+retries "did not reach Pest" is contradicted by the logs.*
+
+- Decoded from UTF-16, `verify-AccountFeature.log`,
+  `verify-InventoryFeature.log`, `verify-LogisticsFeature.log` and
+  `verify-PurchaseFeature.log` show **47, 32, 7 and 9 tests passed, with
+  none failed**, when the runs were stopped at about 03:23.
+- They were slow, not stalled. Each suite's first test installs the ERP for
+  several minutes.
+- The `retry-*` logs exit 137 (killed) right after container creation. They
+  also show PowerShell wrapping Docker's progress output as
+  `NativeCommandError`, the PowerShell 5.1 `2>&1` trap AGENTS.md warns about.
+- These partial counts are still not a suite result. The suites were re-run
+  from Bash; see the block that follows this one.
+
+All five package suites are registered in `phpunit.xml`, bringing its suite
+count to 22. The four-suite first batch was interrupted before Pest
+started: Sail Laravel bootstrap processes became stuck in uninterruptible host
+filesystem I/O, with idle sessions on their isolated PostgreSQL databases. A
+retry after clearing `storage/installed` showed the same pre-Pest stall. No
+suite footer was produced, so these are **not test failures and have no valid
+test/assertion counts**. The four incomplete containers were stopped; the
+protected `aureuserp_testing_admin_pw` container was left running and untouched.
+
+| Suite | Result | Tests / assertions | Database |
+|---|---|---:|---|
+| AccountFeature | Blocked before Pest startup; bootstrap stalled | N/A | `aureuserp_testing_verify_account` |
+| AccountingFeature | Not started; first batch blocked | N/A | `aureuserp_testing_verify_accounting` |
+| InvoiceFeature | Not started; first batch blocked | N/A | `aureuserp_testing_verify_invoice` |
+| InventoryFeature | Blocked before Pest startup; bootstrap stalled | N/A | `aureuserp_testing_verify_inventory` |
+| SaleFeature | Not started; first batch blocked | N/A | `aureuserp_testing_verify_sale` |
+| PurchaseFeature | Blocked before Pest startup; bootstrap stalled | N/A | `aureuserp_testing_verify_purchase` |
+| ManufacturingFeature | Not started; first batch blocked | N/A | `aureuserp_testing_verify_manufacturing` |
+| ProjectFeature | Not started; first batch blocked | N/A | `aureuserp_testing_verify_project` |
+| RecruitmentFeature | Not started; first batch blocked | N/A | `aureuserp_testing_verify_recruitment` |
+| PartnerFeature | Not started; first batch blocked | N/A | `aureuserp_testing_verify_partner` |
+| ProductFeature | Not started; first batch blocked | N/A | `aureuserp_testing_verify_product` |
+| SupportFeature | Not started; first batch blocked | N/A | `aureuserp_testing_verify_support` |
+| TableViewsFeature | Not started; first batch blocked | N/A | `aureuserp_testing_verify_tableviews` |
+| TimeOffFeature | Not started; first batch blocked | N/A | `aureuserp_testing_verify_timeoff` |
+| TimesheetFeature | Not started; first batch blocked | N/A | `aureuserp_testing_verify_timesheet` |
+| MaintenanceFeature | Not started; first batch blocked | N/A | `aureuserp_testing_verify_maintenance` |
+| SecurityFeature | Not started; first batch blocked | N/A | `aureuserp_testing_verify_security` |
+| LogisticsFeature | Blocked before Pest startup; bootstrap stalled | N/A | `aureuserp_testing_verify_logistics` |
+| EmployeeFeature | Not started; first batch blocked | N/A | `aureuserp_testing_verify_employee` |
+| PluginManagerFeature | Not started; first batch blocked | N/A | `aureuserp_testing_verify_pluginmanager` |
+| ChatterFeature | Not started; first batch blocked | N/A | `aureuserp_testing_verify_chatter` |
+| PlatformBillingFeature | Not started; first batch blocked | N/A | `aureuserp_testing_verify_platformbilling` |
+
+The initial four commands used unregistered shorthand suite names and returned
+“No tests found”; those attempts ran zero tests and are excluded. Correctly
+named first attempts and the retries did not reach Pest. Logs are under
+`storage/logs/deploy-check/` (ignored). All 22 dedicated databases were created
+locally; no managed database was used. No contribution to the shared test
+workflow library was needed: its existing guidance already covers isolated
+databases, bounded batches, footer-based counts and bootstrap-marker handling.
+
+The repeated `shield:generate --all` calls are caused by the plugin install
+command itself: `InstallCommand::handle()` unconditionally calls
+`regenerateAdminPanelPermissions()` after each plugin install, and that method
+shells out to Shield. `TestBootstrapHelper::ensurePluginInstalled()` invokes
+the plugin install command the first time each test process needs that plugin;
+plugin dependencies can install more than one package in the same bootstrap.
+The top-level ERP installer also generates permissions once. This cost is
+therefore repeated at install boundaries by design, not by each assertion.
+The existing timeout bounds each call but does not deduplicate it. No
+implementation change was made during this verification-only task.
+
+**Pre-deploy verdict: blocked.** Full-suite verification did not execute, and
+the Website portal and Purchases signed-response entitlement gaps above must
+be resolved or explicitly accepted before rollout. Tenant-visible effect of
+the audited gating code alone is unchanged access for companies retaining their
+grants; revoking Website currently fails to revoke authenticated portal access,
+and a previously issued signed vendor response can still update a Purchases
+order. The separate company “Users and logins” screen is restricted to
+Super Admin/Multi-Company Admin and does not appear for ordinary tenant users.
 
 #### SAAS-06 — seat limit and invitation lifecycle
 
