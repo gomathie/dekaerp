@@ -219,8 +219,10 @@ that were emailed earlier.
 
 **Verification.** New test in `purchases/tests/Feature/Workflows/PluginEntitlementTest.php`
 (refused while revoked, the order unchanged; accepted again once re-granted).
-It runs inside PurchaseFeature, part of the 22-suite run started 2026-11-05
-03:46; results are in the SaaS plan.
+PurchaseFeature: 191 passed (533 assertions), on database
+`aureuserp_testing_d2_purchase`. SecurityFeature 125, SupportFeature 195 and
+PluginManagerFeature 42 also passed, with none failed. The full table is in the
+SaaS plan.
 
 **Not changed, by decision.** The Website customer portal guard is still not
 wired. Website is not installed in production, and wiring it as written
