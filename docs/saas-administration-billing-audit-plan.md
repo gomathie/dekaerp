@@ -1182,6 +1182,28 @@ retries "did not reach Pest" is contradicted by the logs.*
 - These partial counts are still not a suite result. The suites were re-run
   from Bash; see the block that follows this one.
 
+#### Suite runs — 2026-11-05, Bash re-run (Claude)
+
+Each suite ran on its own new database (`aureuserp_testing_d2_<suite>` and
+`aureuserp_testing_d3_<suite>`). Logs are in `storage/logs/deploy-check/d2/`
+and `d3/`.
+
+| Suite | Result | Seconds |
+|---|---|---|
+| PurchaseFeature | 191 passed (533 assertions), includes the vendor-link test | 28,832 |
+| SecurityFeature | 125 passed (423 assertions) | 1,283 |
+| SupportFeature | 195 passed (950 assertions) | 1,892 |
+| PluginManagerFeature | 42 passed (133 assertions) | 1,101 |
+
+- **Full run abandoned.** The first attempt ran 22 suites four at a time. The
+  host slept overnight, which paused Docker, so Purchase took 8 hours.
+- **Stopped partway, not counted as results:** Account had 369 tests passing,
+  Inventory 293 and Logistics 163, none failed, when they were stopped.
+- **Not re-run this time:** the other suites. They were last green on
+  7bbf65741, the 17-suite run, and are untouched by this change set except for
+  Purchases.
+- **Decision:** the user chose the targeted run (option 2).
+
 All five package suites are registered in `phpunit.xml`, bringing its suite
 count to 22. The four-suite first batch was interrupted before Pest
 started: Sail Laravel bootstrap processes became stuck in uninterruptible host
