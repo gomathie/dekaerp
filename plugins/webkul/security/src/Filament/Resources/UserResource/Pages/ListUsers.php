@@ -14,9 +14,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Webkul\Security\Filament\Resources\UserResource;
 use Webkul\Security\Mail\UserInvitationMail;
+use Webkul\Security\Models\Invitation;
 use Webkul\Security\Models\Role;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\MultiCompanyAdminService;
+use Webkul\Security\Services\CompanyAdministratorInviter;
 use Webkul\Security\Services\UserInvitationService;
 use Webkul\Security\Settings\UserSettings;
 use Webkul\Support\Models\Company;
@@ -126,6 +128,87 @@ class ListUsers extends ListRecords
                             ->send();
                     }
                 }),
+            Action::make('resendInvitation')
+                ->label(__('security::filament/resources/user/pages/list-user.header-actions.resend.title'))
+                ->icon('heroicon-o-arrow-path')
+                ->visible(fn (): bool => Auth::user()?->can('create_security_user') ?? false)
+                ->schema([
+                    Select::make('invitation_id')
+                        ->label(__('security::filament/resources/user/pages/list-user.header-actions.invitation'))
+                        ->options(fn (): array => $this->pendingInvitationOptions())
+                        ->searchable()
+                        ->required(),
+                ])
+                ->action(function (array $data): void {
+                    $actor = Auth::user();
+                    abort_unless($actor instanceof User, 403);
+
+                    // The options are only a convenience; the service checks
+                    // the actor again, including a forged invitation id.
+                    $invitation = Invitation::query()->findOrFail((int) $data['invitation_id']);
+                    $reason = app(CompanyAdministratorInviter::class)->resend($invitation, $actor);
+
+                    $notification = Notification::make('invitationResent')
+                        ->title(__('security::filament/resources/user/pages/list-user.header-actions.resend.'.$reason))
+                        ->body($reason === CompanyAdministratorInviter::MAIL_FAILED
+                            ? __('security::filament/resources/user/pages/list-user.header-actions.resend.recovery', ['link' => $invitation->acceptUrl()])
+                            : null);
+
+                    if ($reason === CompanyAdministratorInviter::INVITED) {
+                        $notification->success();
+                    } else {
+                        $notification->warning()->persistent();
+                    }
+
+                    $notification->send();
+                }),
+            Action::make('revokeInvitation')
+                ->label(__('security::filament/resources/user/pages/list-user.header-actions.revoke.title'))
+                ->icon('heroicon-o-x-mark')
+                ->color('danger')
+                ->requiresConfirmation()
+                ->visible(fn (): bool => Auth::user()?->can('create_security_user') ?? false)
+                ->schema([
+                    Select::make('invitation_id')
+                        ->label(__('security::filament/resources/user/pages/list-user.header-actions.invitation'))
+                        ->options(fn (): array => $this->pendingInvitationOptions())
+                        ->searchable()
+                        ->required(),
+                ])
+                ->action(function (array $data): void {
+                    $actor = Auth::user();
+                    abort_unless($actor instanceof User, 403);
+
+                    $invitation = Invitation::query()->findOrFail((int) $data['invitation_id']);
+                    app(UserInvitationService::class)->revoke($invitation, $actor);
+
+                    Notification::make('invitationRevoked')
+                        ->title(__('security::filament/resources/user/pages/list-user.header-actions.revoke.done'))
+                        ->success()
+                        ->send();
+                }),
         ];
+    }
+
+    /** @return array<int, string> */
+    protected function pendingInvitationOptions(): array
+    {
+        $actor = Auth::user();
+
+        if (! $actor instanceof User || ! $actor->can('create_security_user')) {
+            return [];
+        }
+
+        $query = Invitation::query()->pending()->with('defaultCompany');
+
+        if (! $actor->isSuperAdmin()) {
+            $query->whereIn('default_company_id', app(MultiCompanyAdminService::class)->assignedCompanyIds($actor));
+        }
+
+        return $query->orderBy('email')->get()
+            ->mapWithKeys(fn (Invitation $invitation): array => [
+                (int) $invitation->getKey() => $invitation->email.' — '.$invitation->defaultCompany?->name,
+            ])
+            ->all();
     }
 }

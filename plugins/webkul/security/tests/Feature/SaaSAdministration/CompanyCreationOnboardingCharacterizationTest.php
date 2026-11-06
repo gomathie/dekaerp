@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\ValidationException;
 use Webkul\Security\Models\Invitation;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\CompanyAdministratorInviter;
@@ -85,4 +86,19 @@ it('creates a company with no administrator or invitation outside the create pag
 
     expect($reason)->toBe(CompanyAdministratorInviter::INVITED)
         ->and((int) $invitation->default_company_id)->toBe((int) $company->getKey());
+});
+
+it('refuses a tenant creator membership when a programmatic company has no free seats', function () {
+    $creator = User::factory()->create(['is_active' => true, 'is_default' => false]);
+    $name = 'Capped programmatic company';
+
+    expect(fn () => Company::factory()->create([
+        'name' => $name,
+        'creator_id' => $creator->getKey(),
+        'seat_limit' => 0,
+    ]))->toThrow(ValidationException::class, 'user seats');
+
+    $companyId = Company::query()->withoutGlobalScopes()->where('name', $name)->value('id');
+
+    expect(DB::table('user_allowed_companies')->where('company_id', $companyId)->exists())->toBeFalse();
 });

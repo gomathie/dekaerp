@@ -16,6 +16,7 @@ use Webkul\Chatter\Traits\HasChatter;
 use Webkul\Field\Traits\HasCustomFields;
 use Webkul\Partner\Models\Partner;
 use Webkul\Security\Models\User;
+use Webkul\Security\Services\SeatCapacityService;
 use Webkul\Security\Traits\HasOwnershipScope;
 use Webkul\Support\Database\Factories\CompanyFactory;
 use Webkul\Support\Models\Scopes\CompanyScope;
@@ -200,9 +201,33 @@ class Company extends Model implements Sortable
                 return;
             }
 
-            User::find($company->creator_id)
-                ?->allowedCompanies()
-                ->syncWithoutDetaching([$company->id]);
+            $creator = User::find($company->creator_id);
+
+            if (! $creator instanceof User) {
+                return;
+            }
+
+            // During the installer, the seat and invitation migrations may not
+            // exist yet. Once they do, every programmatic company create uses
+            // the same lock and reservation rule as the Users page.
+            if (! Schema::hasColumn('companies', 'seat_limit') || ! Schema::hasTable('user_invitations')) {
+                $creator->allowedCompanies()->syncWithoutDetaching([$company->id]);
+
+                return;
+            }
+
+            $capacity = app(SeatCapacityService::class);
+
+            $capacity->withLockedCompany($company, function () use ($creator, $company, $capacity): void {
+                // Installation staff and inactive users do not consume seats
+                // (D-SAAS-03). A tenant creator does, including while an invite
+                // is pending, so check before attaching their membership.
+                if ($creator->is_active && ! $creator->isSuperAdmin() && ! $creator->isMultiCompanyAdmin()) {
+                    $capacity->assertCanAttachUser($creator, (int) $company->id);
+                }
+
+                $creator->allowedCompanies()->syncWithoutDetaching([$company->id]);
+            });
         });
 
         static::saved(function ($company) {

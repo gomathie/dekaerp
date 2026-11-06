@@ -7,6 +7,18 @@ return [
     ],
 
     'header-actions' => [
+        'invitation' => 'Pending invitation',
+        'resend' => [
+            'title' => 'Resend invitation',
+            'invited' => 'Invitation resent',
+            'invite-failed' => 'Invitation could not be resent',
+            'mail-failed' => 'Email failed',
+            'recovery' => 'The invitation is still active. Share this link over a trusted channel: :link',
+        ],
+        'revoke' => [
+            'title' => 'Revoke invitation',
+            'done' => 'Invitation revoked',
+        ],
         'invite' => [
             'title' => 'Invite User',
             'modal' => [

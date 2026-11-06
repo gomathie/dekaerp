@@ -7,6 +7,18 @@ return [
     ],
 
     'header-actions' => [
+        'invitation' => 'Invitación pendiente',
+        'resend' => [
+            'title' => 'Reenviar invitación',
+            'invited' => 'Invitación reenviada',
+            'invite-failed' => 'No se pudo reenviar la invitación',
+            'mail-failed' => 'No se pudo enviar el correo',
+            'recovery' => 'La invitación sigue activa. Comparta este enlace por un canal seguro: :link',
+        ],
+        'revoke' => [
+            'title' => 'Revocar invitación',
+            'done' => 'Invitación revocada',
+        ],
         'invite' => [
             'title' => 'Invitar usuario',
             'modal' => [
