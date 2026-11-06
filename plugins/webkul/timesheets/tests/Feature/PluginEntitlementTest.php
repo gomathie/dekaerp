@@ -2,11 +2,14 @@
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Webkul\Project\Models\Timesheet;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\PluginManager\Support\PluginEntitlement;
 use Webkul\Support\Models\Company;
+// The Timesheets plugin's own model, which its resource uses. The Projects
+// base class resolves to Projects' policy (project permission and Projects
+// entitlement), so asserting against it tested the wrong plugin and failed.
+use Webkul\Timesheet\Models\Timesheet;
 
 require_once __DIR__.'/../../../support/tests/Helpers/CompanyHelper.php';
 require_once __DIR__.'/../../../support/tests/Helpers/TestBootstrapHelper.php';
