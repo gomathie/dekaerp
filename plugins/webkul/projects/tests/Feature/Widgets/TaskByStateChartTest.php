@@ -54,11 +54,13 @@ it('counts tasks per state in one query, within the active company', function ()
     $data = taskByStateChartData();
 
     $taskCounts = collect(DB::getQueryLog())
-        ->filter(fn (array $entry): bool => str_contains($entry['query'], 'projects_tasks'))
+        // Only the counting queries: a one-off column lookup on projects_tasks
+        // also appears in the log, and it is not part of the N+1.
+        ->filter(fn (array $entry): bool => str_contains($entry['query'], 'count(*)')
+            && str_contains($entry['query'], 'projects_tasks'))
         ->count();
 
     DB::disableQueryLog();
-    fwrite(STDERR, json_encode(array_column(DB::getQueryLog(), 'query'), JSON_PRETTY_PRINT));
 
     $byLabel = array_combine($data['labels'], $data['datasets'][0]['data']);
 

@@ -5,6 +5,7 @@ namespace Webkul\PlatformBilling\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Webkul\Support\Models\Company;
+use Webkul\Support\Traits\BelongsToCompany;
 
 /**
  * Sold terms are copied from the plan and price at creation. Catalog edits do
@@ -12,9 +13,22 @@ use Webkul\Support\Models\Company;
  */
 class Subscription extends Model
 {
+    use BelongsToCompany;
+
     protected $table = 'platform_billing_subscriptions';
 
     protected $guarded = [];
+
+    protected $attributes = ['status' => 'draft'];
+
+    /**
+     * Subscription writes must name their tenant explicitly. A session default
+     * could otherwise attach a sold contract to the wrong company.
+     */
+    public static function autoAssignsCompany(): bool
+    {
+        return false;
+    }
 
     protected function casts(): array
     {

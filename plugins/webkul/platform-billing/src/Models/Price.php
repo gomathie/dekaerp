@@ -12,6 +12,9 @@ class Price extends Model
 
     protected $guarded = [];
 
+    /** The database default must also be visible before a newly created model reloads. */
+    protected $attributes = ['is_active' => true];
+
     protected function casts(): array
     {
         return ['interval_months' => 'integer', 'amount_minor' => 'integer', 'is_active' => 'boolean'];
