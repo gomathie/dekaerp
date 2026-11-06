@@ -4,6 +4,7 @@ namespace Webkul\Support;
 
 use Filament\Panel;
 use Filament\Support\Assets\Css;
+use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
@@ -140,6 +141,9 @@ class SupportServiceProvider extends PackageServiceProvider
 
         FilamentAsset::register([
             Css::make('support', __DIR__.'/../resources/dist/support.css'),
+            // Chart entrance animations and gradients for the module dashboards
+            // (docs/dashboards-plan.md DB-1). Published to public/js/support/.
+            Js::make('dashboard-charts', __DIR__.'/../resources/js/dashboard-charts.js'),
         ], 'support');
 
         $this->registerFilamentDefaults();

@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Livewire\Livewire;
+use Webkul\Security\Filament\Resources\UserResource\Pages\ListUsers;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Validation\ValidationException;
 use Webkul\Security\Mail\UserInvitationMail;
@@ -10,6 +12,7 @@ use Webkul\Security\Models\User;
 use Webkul\Security\Services\CompanyAdministratorInviter;
 use Webkul\Security\Services\CompanyAdminRoleProvisioner;
 use Webkul\Security\Services\UserInvitationService;
+use Webkul\Security\Services\SeatCapacityService;
 use Webkul\Security\Settings\UserSettings;
 use Webkul\Support\Models\Company;
 
@@ -124,4 +127,33 @@ it('refuses a tenant attempt to renew or revoke another company invitation', fun
         ->and(fn () => $service->revoke($invitation, $tenant))
         ->toThrow(AuthorizationException::class, 'You may not manage invitations for this company.')
         ->and($invitation->fresh()->isPending())->toBeTrue();
+});
+
+it('resends and revokes a pending invitation from the users page without stacking a seat', function () {
+    $company = Company::factory()->create(['is_active' => true, 'seat_limit' => 1]);
+    $invitation = lifecycleInvitation($company);
+    $actor = lifecycleAdministrator();
+
+    Auth::shouldUse('web');
+    Auth::guard('web')->login($actor);
+    FilamentHelper::bootAdminPanel();
+
+    $capacity = app(SeatCapacityService::class);
+    expect($capacity->usedSeats($company))->toBe(1);
+
+    Livewire::test(ListUsers::class)
+        ->callAction('resendInvitation', data: ['invitation_id' => $invitation->id])
+        ->assertHasNoActionErrors();
+
+    expect($capacity->usedSeats($company))->toBe(1)
+        ->and(Invitation::query()->whereKey($invitation->id)->pending()->exists())->toBeTrue();
+    Mail::assertSent(UserInvitationMail::class);
+
+    Livewire::test(ListUsers::class)
+        ->callAction('revokeInvitation', data: ['invitation_id' => $invitation->id])
+        ->assertHasNoActionErrors();
+
+    expect($capacity->usedSeats($company))->toBe(0)
+        ->and($capacity->remainingSeats($company))->toBe(1)
+        ->and($invitation->fresh()->isRevoked())->toBeTrue();
 });
