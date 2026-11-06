@@ -38,33 +38,41 @@ class TaskByStateChart extends ChartWidget
             'labels'   => [],
         ];
 
+        $query = Task::query();
+
+        if (! empty($this->pageFilters['selectedProjects'])) {
+            $query->whereIn('project_id', $this->pageFilters['selectedProjects']);
+        }
+
+        if (! empty($this->pageFilters['selectedAssignees'])) {
+            $query->whereHas('users', function ($q) {
+                $q->whereIn('users.id', $this->pageFilters['selectedAssignees']);
+            });
+        }
+
+        if (! empty($this->pageFilters['selectedTags'])) {
+            $query->whereHas('tags', function ($q) {
+                $q->whereIn('projects_task_tag.tag_id', $this->pageFilters['selectedTags']);
+            });
+        }
+
+        if (! empty($this->pageFilters['selectedPartners'])) {
+            $query->whereIn('parent_id', $this->pageFilters['selectedPartners']);
+        }
+
+        $this->applyDateFilters($query);
+
+        // One grouped count instead of one count per state: the per-state loop
+        // was reported as an N+1 by Sentry (issue 156271115). toBase() keeps the
+        // global company and ownership scopes and returns raw state strings.
+        $counts = $query->toBase()
+            ->selectRaw('state, count(*) as aggregate')
+            ->groupBy('state')
+            ->pluck('aggregate', 'state');
+
         foreach (TaskState::cases() as $state) {
-            $query = Task::query();
-
-            if (! empty($this->pageFilters['selectedProjects'])) {
-                $query->whereIn('project_id', $this->pageFilters['selectedProjects']);
-            }
-
-            if (! empty($this->pageFilters['selectedAssignees'])) {
-                $query->whereHas('users', function ($q) {
-                    $q->whereIn('users.id', $this->pageFilters['selectedAssignees']);
-                });
-            }
-
-            if (! empty($this->pageFilters['selectedTags'])) {
-                $query->whereHas('tags', function ($q) {
-                    $q->whereIn('projects_task_tag.tag_id', $this->pageFilters['selectedTags']);
-                });
-            }
-
-            if (! empty($this->pageFilters['selectedPartners'])) {
-                $query->whereIn('parent_id', $this->pageFilters['selectedPartners']);
-            }
-
-            $this->applyDateFilters($query);
-
             $datasets['labels'][] = TaskState::options()[$state->value];
-            $datasets['datasets'][] = $query->where('state', $state->value)->count();
+            $datasets['datasets'][] = (int) ($counts[$state->value] ?? 0);
         }
 
         $colors = TaskState::colors();
