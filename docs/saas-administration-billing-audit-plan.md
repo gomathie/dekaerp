@@ -1194,7 +1194,14 @@ fixed):**
   - Purchases: 3 passed, 31 assertions;
   - Sales: 2 passed, 19 assertions.
 
-  Pint passed. The full suites were not re-run.
+  Pint passed.
+
+  The full suites were then run, with logs in `storage/logs/deploy-check/d5/`.
+  SaleFeature: 148 passed, 459 assertions. PurchaseFeature: 192 passed, 535
+  assertions. Neither had a failure.
+
+  PluginManagerFeature: 44 passed, 137 assertions, none failed. That is the
+  earlier 42 plus the two new tests. Logs are in `d6/`.
 
 No new entitlement check was found inside a plugin's `Plugin::register()`.
 Newly added page checks use explicit entitlement checks; the inspected
