@@ -35,7 +35,7 @@ it('counts tasks per state in one query, within the active company', function ()
     $company = CompanyHelper::company();
     $otherCompany = CompanyHelper::company();
 
-    CompanyHelper::actingAsCompanyUser($company);
+    $user = CompanyHelper::actingAsCompanyUser($company);
 
     $project = Project::factory()->create(['company_id' => $company->id]);
     $otherProject = Project::factory()->create(['company_id' => $otherCompany->id]);
@@ -44,8 +44,8 @@ it('counts tasks per state in one query, within the active company', function ()
     $first = $states[0];
     $second = $states[1];
 
-    Task::factory()->count(2)->create(['project_id' => $project->id, 'company_id' => $company->id, 'state' => $first->value]);
-    Task::factory()->create(['project_id' => $project->id, 'company_id' => $company->id, 'state' => $second->value]);
+    Task::factory()->count(2)->create(['project_id' => $project->id, 'company_id' => $company->id, 'creator_id' => $user->id, 'state' => $first->value]);
+    Task::factory()->create(['project_id' => $project->id, 'company_id' => $company->id, 'creator_id' => $user->id, 'state' => $second->value]);
     Task::factory()->count(3)->create(['project_id' => $otherProject->id, 'company_id' => $otherCompany->id, 'state' => $first->value]);
 
     DB::flushQueryLog();

@@ -1595,6 +1595,64 @@ approved synchronization to effective plugin and seat entitlements.
 **Accept:** uniqueness/check constraints; month-end, leap-year and DST data
 sets; no period drift; invalid transitions fail; plan edits preserve snapshots.
 
+#### SAAS-09 handoff — 2026-11-07
+
+- **Status / owner / database:** in progress; Codex; local Sail
+  `aureuserp_testing_saas09` (created once and reused). No production or managed
+  database was used.
+- **Built:** additive plan, price and company subscription tables; explicit USD
+  prices for 1/3/6/12 months; catalog included-plugin list; company foreign key
+  and `BelongsToCompany` scope on subscriptions; draft records snapshot plan name,
+  plugin list, currency, amount, interval, timezone and anchor. The period
+  calculator derives each boundary from the original local anchor, including
+  month ends, leap years and daylight saving changes. A Super Admin-only service
+  creates and audits drafts without activating access or scheduling invoices.
+- **Why / benefit:** D-SAAS-01 and D-SAAS-06 require explicit USD terms and
+  platform-only changes. Snapshots keep catalog edits from silently changing a
+  sold deal; the company scope prevents a tenant query from reading another
+  company's subscription. Model `is_active` defaults mirror the database so a
+  newly created price is usable before reload. Unique plan codes and
+  `(plan_id, currency, interval_months)` prices, foreign keys and interval check
+  constraints guard direct database writes.
+- **Files:**
+  `plugins/webkul/platform-billing/database/migrations/2026_11_07_000001_create_platform_billing_plans_prices_subscriptions_tables.php`;
+  `src/Models/{Plan,Price,Subscription}.php`;
+  `src/Services/{SubscriptionDrafts,SubscriptionPeriod}.php`;
+  `src/PlatformBillingServiceProvider.php`;
+  `tests/Feature/{SubscriptionTest,SubscriptionPeriodTest}.php` (paths under
+  `plugins/webkul/platform-billing/`). This status row, handoff, D-SAAS-08
+  decision row, D-SAAS-06 exception note and SAAS-05D correction are the plan
+  edits. D-SAAS-08 is accepted and SAAS-09A is `todo`; no discount code was built.
+- **Verification actually run:** `vendor/bin/pint --dirty --format agent`
+  passed in Sail. Initial full `PlatformBillingFeature`: 28 passed, 1 failed,
+  65 assertions; the new draft test exposed the unset model default. After the
+  fix, `SubscriptionTest.php`: 5 passed, 14 assertions; final full
+  `PlatformBillingFeature`: **30 passed, 74 assertions, 0 failed** (679.42 s).
+  All Pest runs used `aureuserp_testing_saas09`; logs are in
+  `storage/logs/deploy-check/saas09/`. SupportFeature was not run because no
+  resource or structure snapshot input was changed.
+- **Open questions before activation:** when does a plan or price change take
+  effect for an existing tenant: immediately, at the next period, or only on an
+  explicit new agreement? Should plan plugin grants replace manual grants or
+  preserve exceptions and dependency grants? What seat limit, if any, is sold
+  with each plan, and how does a plan change synchronize it? Which subscription
+  states and transitions are permitted, including pause, cancellation and
+  reactivation? These rules were not specified, so no transition or effective
+  entitlement service was added. One active subscription per company is not yet
+  constrained; multiple drafts are allowed.
+- **Dependency / risk:** D-SAAS-04's 10-day overdue grace and extensions need an
+  overdue invoice and belong with SAAS-10 enforcement; this package does not
+  make a tenant read-only. Catalog mutation has no approved service or screen
+  yet; the draft service is the only write entry point added here. Draft terms
+  are snapshots against catalog edits, but direct subscription updates are not
+  yet frozen by a transition service. SAAS-09A can later attach redemptions to a
+  company/subscription and snapshot discounts on invoices without changing this
+  draft schema.
+- **Rollback:** stop calling the draft service and leave existing draft rows
+  intact. The migration's `down()` drops only the three new tables in child-to-
+  parent order; use it only if they contain no data worth preserving. No tenant
+  Accounts table or existing billing table was changed.
+
 #### SAAS-09A — discount codes and tenant redemptions
 
 **Owns:** Platform Billing discount/redemption migrations, models, services and
