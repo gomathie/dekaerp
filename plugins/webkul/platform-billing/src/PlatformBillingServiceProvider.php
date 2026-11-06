@@ -4,6 +4,9 @@ namespace Webkul\PlatformBilling;
 
 use Illuminate\Support\Facades\Gate;
 use Webkul\PlatformBilling\Models\DocumentNumber;
+use Webkul\PlatformBilling\Models\Plan;
+use Webkul\PlatformBilling\Models\Price;
+use Webkul\PlatformBilling\Models\Subscription;
 use Webkul\PlatformBilling\Policies\DocumentNumberPolicy;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
@@ -32,6 +35,7 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
             ->hasConfigFile('platform-billing')
             ->hasMigrations([
                 '2026_10_28_000006_create_platform_billing_document_numbers_table',
+                '2026_11_07_000001_create_platform_billing_plans_prices_subscriptions_tables',
             ])
             ->runsMigrations();
     }
@@ -41,5 +45,9 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
         // Policies are registered explicitly in this codebase (see `support` and
         // `fields`); Laravel's namespace guessing only covers App\Models.
         Gate::policy(DocumentNumber::class, DocumentNumberPolicy::class);
+        // D-SAAS-06: catalog and subscription writes remain platform-only.
+        Gate::policy(Plan::class, DocumentNumberPolicy::class);
+        Gate::policy(Price::class, DocumentNumberPolicy::class);
+        Gate::policy(Subscription::class, DocumentNumberPolicy::class);
     }
 }
