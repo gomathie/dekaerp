@@ -1209,6 +1209,37 @@ Newly added page checks use explicit entitlement checks; the inspected
 pre-date this rollout. Barcode and Website have no feature tests; no tests were
 invented, as requested.
 
+#### Remaining suites — 2026-11-06 (other agent)
+
+Ran the requested remaining suites serially in pairs, each against its own fresh
+local Sail database. Logs are in `storage/logs/deploy-check/a7/`. Account,
+Inventory, Logistics and Accounting suites/databases belonging to the other
+agent were left untouched.
+
+| Suite | Passed | Failed | Assertions | Seconds | Database |
+|---|---:|---:|---:|---:|---|
+| ProductFeature | 276 | 0 | 640 | 5424.42 | `aureuserp_testing_a7_product` |
+| PartnerFeature | 92 | 0 | 205 | 1428.65 | `aureuserp_testing_a7_partner` |
+| ProjectFeature | 87 | 0 | 208 | 1579.31 | `aureuserp_testing_a7_project` |
+| ManufacturingFeature | 43 | 0 | 113 | 1515.53 | `aureuserp_testing_a7_manufacturing` |
+| EmployeeFeature | 8 | 0 | 16 | 344.52 | `aureuserp_testing_a7_employee` |
+| TimeOffFeature | 1 | 0 | 5 | 322.70 | `aureuserp_testing_a7_timeoff` |
+| RecruitmentFeature | 1 | 0 | 5 | 443.65 | `aureuserp_testing_a7_recruitment` |
+| InvoiceFeature | 1 | 0 | 5 | 645.95 | `aureuserp_testing_a7_invoice` |
+| TimesheetFeature | 0 | 1 | 3 | 450.15 | `aureuserp_testing_a7_timesheet` |
+| MaintenanceFeature | 1 | 0 | 5 | 351.68 | `aureuserp_testing_a7_maintenance` |
+| ChatterFeature | 10 | 0 | 23 | 845.12 | `aureuserp_testing_a7_chatter` |
+| PlatformBillingFeature | 19 | 0 | 46 | 811.86 | `aureuserp_testing_a7_platformbilling` |
+| TableViewsFeature | 1 | 0 | 2 | 111.70 | `aureuserp_testing_a7_tableviews` |
+
+**Timesheet failure, reproduced on an isolated retry:**
+`Plugins\\webkul\\timesheets\\tests\\Feature\\PluginEntitlementTest` —
+`Failed asserting that false is true.` at `PluginEntitlementTest.php:27`, where
+the test expects `Gate::forUser($user)->allows('viewAny', Timesheet::class)` to
+be true. The focused file rerun on fresh database
+`aureuserp_testing_a7_timesheet_retry` failed with the same exception (1 failed,
+3 assertions, 511.24 seconds).
+
 #### Full-suite verification — 2026-11-05 (`7bbf65741..aca1f6602`)
 
 *Correction, 2026-11-05 (Claude): the claim below that the first batch and the
