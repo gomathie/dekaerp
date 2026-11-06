@@ -2,6 +2,7 @@
 @import "./colors.css";
 @import "./repeater.css";
 @import "./grid-layout.css";
+@import "./dashboard.css";
 
 @variant dark (&:where(.dark, .dark *));
 
