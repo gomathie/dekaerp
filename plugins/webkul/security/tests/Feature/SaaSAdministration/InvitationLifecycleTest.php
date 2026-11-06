@@ -2,9 +2,11 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Validation\ValidationException;
 use Webkul\Security\Mail\UserInvitationMail;
 use Webkul\Security\Models\Invitation;
+use Webkul\Security\Models\User;
 use Webkul\Security\Services\CompanyAdministratorInviter;
 use Webkul\Security\Services\CompanyAdminRoleProvisioner;
 use Webkul\Security\Services\UserInvitationService;
@@ -50,9 +52,14 @@ function lifecycleInvitation(Company $company, array $attributes = []): Invitati
     ]);
 }
 
+function lifecycleAdministrator(): User
+{
+    return User::query()->where('email', 'admin@example.com')->firstOrFail();
+}
+
 it('renews a pending invitation and extends its window', function () {
     $company = Company::factory()->create(['is_active' => true, 'seat_limit' => null]);
-    $actor = FilamentHelper::actingAs();
+    $actor = lifecycleAdministrator();
 
     $invitation = lifecycleInvitation($company);
 
@@ -67,7 +74,7 @@ it('renews a pending invitation and extends its window', function () {
 
 it('refuses to renew an accepted or revoked invitation', function () {
     $company = Company::factory()->create(['is_active' => true, 'seat_limit' => null]);
-    $actor = FilamentHelper::actingAs();
+    $actor = lifecycleAdministrator();
 
     $accepted = lifecycleInvitation($company, ['accepted_at' => now()]);
     $revoked = lifecycleInvitation($company, ['revoked_at' => now()]);
@@ -80,7 +87,7 @@ it('refuses to renew an accepted or revoked invitation', function () {
 
 it('resends a pending invitation and reports the outcome instead of throwing', function () {
     $company = Company::factory()->create(['is_active' => true, 'seat_limit' => null]);
-    $actor = FilamentHelper::actingAs();
+    $actor = lifecycleAdministrator();
 
     $invitation = lifecycleInvitation($company);
 
@@ -95,7 +102,7 @@ it('resends a pending invitation and reports the outcome instead of throwing', f
 
 it('reports a resend of an invitation that is no longer pending as a failure', function () {
     $company = Company::factory()->create(['is_active' => true, 'seat_limit' => null]);
-    $actor = FilamentHelper::actingAs();
+    $actor = lifecycleAdministrator();
 
     $revoked = lifecycleInvitation($company, ['revoked_at' => now()]);
 
@@ -104,4 +111,17 @@ it('reports a resend of an invitation that is no longer pending as a failure', f
     expect($reason)->toBe(CompanyAdministratorInviter::INVITE_FAILED);
 
     Mail::assertNothingSent();
+});
+
+it('refuses a tenant attempt to renew or revoke another company invitation', function () {
+    $company = Company::factory()->create(['is_active' => true, 'seat_limit' => 1]);
+    $invitation = lifecycleInvitation($company);
+    $tenant = FilamentHelper::actingAs();
+    $service = app(UserInvitationService::class);
+
+    expect(fn () => $service->renew($invitation, $tenant))
+        ->toThrow(AuthorizationException::class, 'You may not manage invitations for this company.')
+        ->and(fn () => $service->revoke($invitation, $tenant))
+        ->toThrow(AuthorizationException::class, 'You may not manage invitations for this company.')
+        ->and($invitation->fresh()->isPending())->toBeTrue();
 });

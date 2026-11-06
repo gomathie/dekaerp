@@ -2,6 +2,7 @@
 
 namespace Webkul\Security\Services;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -173,19 +174,32 @@ class UserInvitationService
      */
     public function revoke(Invitation $invitation, User $actor): void
     {
-        if (! $invitation->isPending()) {
-            return;
-        }
+        $this->assertMayManageInvitation($invitation, $actor);
 
-        $invitation->revoke($actor);
+        // Release the reservation under the same company lock used by an
+        // invitation create. A concurrent resend must see the revoked state.
+        app(SeatCapacityService::class)->withLockedCompany((int) $invitation->default_company_id, function () use ($invitation, $actor): void {
+            $locked = Invitation::query()->lockForUpdate()->findOrFail($invitation->getKey());
+            $this->assertMayManageInvitation($locked, $actor);
 
-        $this->audit->record(
-            'security.user.invitation_revoked',
-            $invitation,
-            $actor,
-            $invitation->default_company_id ? (int) $invitation->default_company_id : null,
-            after: ['email' => $invitation->email],
-        );
+            if ((int) $locked->default_company_id !== (int) $invitation->default_company_id) {
+                throw new AuthorizationException('You may not manage invitations for this company.');
+            }
+
+            if (! $locked->isPending()) {
+                return;
+            }
+
+            $locked->revoke($actor);
+
+            $this->audit->record(
+                'security.user.invitation_revoked',
+                $locked,
+                $actor,
+                (int) $locked->default_company_id,
+                after: ['email' => $locked->email],
+            );
+        });
     }
 
     /**
@@ -206,24 +220,51 @@ class UserInvitationService
      */
     public function renew(Invitation $invitation, User $actor): Invitation
     {
-        $this->assertStillPending($invitation);
+        $this->assertMayManageInvitation($invitation, $actor);
 
-        $before = $invitation->expires_at?->toIso8601String();
+        // Renewal keeps the *same* reservation. Re-read after taking the lock
+        // so an accepted or revoked invitation cannot be revived by a stale UI.
+        return app(SeatCapacityService::class)->withLockedCompany((int) $invitation->default_company_id, function () use ($invitation, $actor): Invitation {
+            $locked = Invitation::query()->lockForUpdate()->findOrFail($invitation->getKey());
+            $this->assertMayManageInvitation($locked, $actor);
 
-        $invitation->forceFill([
-            'expires_at' => now()->addDays(Invitation::ACCEPT_WINDOW_DAYS),
-        ])->save();
+            if ((int) $locked->default_company_id !== (int) $invitation->default_company_id) {
+                throw new AuthorizationException('You may not manage invitations for this company.');
+            }
+            $this->assertStillPending($locked);
 
-        $this->audit->record(
-            'security.user.invitation_renewed',
-            $invitation,
-            $actor,
-            $invitation->default_company_id ? (int) $invitation->default_company_id : null,
-            before: ['expires_at' => $before],
-            after: ['expires_at' => $invitation->expires_at?->toIso8601String()],
-        );
+            $before = $locked->expires_at?->toIso8601String();
 
-        return $invitation;
+            $locked->forceFill([
+                'expires_at' => now()->addDays(Invitation::ACCEPT_WINDOW_DAYS),
+            ])->save();
+
+            $this->audit->record(
+                'security.user.invitation_renewed',
+                $locked,
+                $actor,
+                (int) $locked->default_company_id,
+                before: ['expires_at' => $before],
+                after: ['expires_at' => $locked->expires_at?->toIso8601String()],
+            );
+
+            return $locked;
+        });
+    }
+
+    /**
+     * A forged Livewire action or direct service call must not let an actor
+     * extend or release another company's reserved seat (D-SAAS-02/03).
+     */
+    protected function assertMayManageInvitation(Invitation $invitation, User $actor): void
+    {
+        $companyId = (int) $invitation->default_company_id;
+
+        if (! $actor->is_active || ! ($actor->isSuperAdmin()
+            || (Gate::forUser($actor)->allows('create_security_user')
+                && $this->administration->isCompanyAssigned($actor, $companyId)))) {
+            throw new AuthorizationException('You may not manage invitations for this company.');
+        }
     }
 
     protected function assertStillPending(Invitation $invitation): void
