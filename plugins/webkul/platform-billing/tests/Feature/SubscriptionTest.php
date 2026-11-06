@@ -49,6 +49,19 @@ it('refuses a tenant subscription mutation even with an unrelated permission', f
         ->toThrow(AuthorizationException::class);
 });
 
+it('hides another company subscription from a tenant query', function () {
+    $company = Company::factory()->create();
+    $actor = \Webkul\Security\Models\User::query()->where('email', 'admin@example.com')->firstOrFail();
+    $plan = Plan::query()->create(['name' => 'Basic', 'code' => 'basic', 'included_plugins' => []]);
+    $price = Price::query()->create(['plan_id' => $plan->id, 'currency' => 'USD', 'interval_months' => 1, 'amount_minor' => 1000]);
+    $subscription = app(SubscriptionDrafts::class)->create($actor, $company, $price, new DateTimeImmutable('2026-01-01'));
+
+    $tenant = SecurityHelper::authenticateWithPermissions([]);
+
+    expect($tenant->default_company_id)->not->toBe($company->id)
+        ->and(Subscription::query()->whereKey($subscription->id)->exists())->toBeFalse();
+});
+
 it('enforces unique prices in the database', function () {
     $plan = Plan::query()->create(['name' => 'Basic', 'code' => 'basic', 'included_plugins' => []]);
     Price::query()->create(['plan_id' => $plan->id, 'currency' => 'USD', 'interval_months' => 1, 'amount_minor' => 1000]);
