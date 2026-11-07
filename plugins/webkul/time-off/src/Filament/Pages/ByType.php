@@ -3,6 +3,8 @@
 namespace Webkul\TimeOff\Filament\Pages;
 
 
+
+use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 use Webkul\PluginManager\Support\PluginEntitlement;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
@@ -12,6 +14,7 @@ use Webkul\TimeOff\Filament\Widgets\LeaveTypeWidget;
 
 class ByType extends BaseDashboard
 {
+    use ChecksPagePermission;
     use HasPageShield;
 
     protected static string $routePath = 'reporting/by-type';
@@ -52,6 +55,7 @@ class ByType extends BaseDashboard
     }
     public static function canAccess(): bool
     {
-        return PluginEntitlement::enabledForCurrent('time-off');
+        return PluginEntitlement::enabledForCurrent('time-off')
+            && static::hasPagePermission();
     }
 }

@@ -3,6 +3,8 @@
 namespace Webkul\Recruitment\Filament\Pages;
 
 
+
+use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 use Webkul\PluginManager\Support\PluginEntitlement;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
@@ -25,6 +27,7 @@ use Webkul\Support\Models\Company;
 class Recruitments extends BaseDashboard
 {
     use BaseDashboard\Concerns\HasFiltersForm;
+    use ChecksPagePermission;
     use HasPageShield;
 
     protected static string $routePath = 'recruitment';
@@ -125,6 +128,7 @@ class Recruitments extends BaseDashboard
     }
     public static function canAccess(): bool
     {
-        return PluginEntitlement::enabledForCurrent('recruitments');
+        return PluginEntitlement::enabledForCurrent('recruitments')
+            && static::hasPagePermission();
     }
 }
