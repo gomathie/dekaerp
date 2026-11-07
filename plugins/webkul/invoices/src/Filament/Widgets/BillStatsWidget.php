@@ -2,7 +2,7 @@
 
 namespace Webkul\Invoice\Filament\Widgets;
 
-use WebkulInvoiceilamentwidgetsconcernsguardsinvoicedashboardwidget;
+use Webkul\Invoice\Filament\Widgets\Concerns\GuardsInvoiceDashboardWidget;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;

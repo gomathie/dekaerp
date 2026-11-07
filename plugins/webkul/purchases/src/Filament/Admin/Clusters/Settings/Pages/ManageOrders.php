@@ -2,6 +2,8 @@
 
 namespace Webkul\Purchase\Filament\Admin\Clusters\Settings\Pages;
 
+
+use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -17,8 +19,11 @@ class ManageOrders extends SettingsPage
 {
     public static function canAccess(): bool
     {
-        return PurchasesAccess::enabledForCurrent();
+        return PurchasesAccess::enabledForCurrent()
+            && static::hasPagePermission();
     }
+
+    use ChecksPagePermission;
 
     use HasPageShield;
 

@@ -13,22 +13,43 @@ use Illuminate\Contracts\Support\Htmlable;
 use Webkul\Account\Enums\PaymentState;
 use Webkul\Invoice\Filament\Widgets;
 use Webkul\Partner\Models\Partner;
+use Webkul\PluginManager\Support\PluginEntitlement;
 use Webkul\Product\Models\Category;
 use Webkul\Product\Models\Product;
-use Webkul\Security\Models\User;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Filament\Concerns\ChecksPagePermission;
+use Webkul\Support\Filament\Concerns\ListsCompanyMembers;
 use Webkul\Support\Filament\Forms\Components\DashboardDateRange;
 
 class Invoices extends BaseDashboard
 {
     use BaseDashboard\Concerns\HasFiltersForm;
+    use ChecksPagePermission;
     use HasPageShield;
+    use ListsCompanyMembers;
 
     protected static string $routePath = 'invoice';
 
+    /**
+     * The name PermissionManager generates for this page (plugin key "invoice"
+     * from the namespace). Pinned by InvoiceDashboardTest against
+     * FilamentShield::getPages(): if the two ever disagree the page is
+     * unopenable for everyone while tests that grant the name by hand pass.
+     */
     protected static function getPagePermission(): ?string
     {
         return 'page_invoice_invoices';
+    }
+
+    /**
+     * Module switch (SAAS-05) plus the page permission. This replaces
+     * HasPageShield::canAccess(), so the permission half must be checked here
+     * (ChecksPagePermission explains why).
+     */
+    public static function canAccess(): bool
+    {
+        return PluginEntitlement::enabledForCurrent('invoices')
+            && static::hasPagePermission();
     }
 
     public static function getNavigationLabel(): string
@@ -91,7 +112,7 @@ class Invoices extends BaseDashboard
 
                     Select::make('salesperson_id')
                         ->label(__('invoices::filament/pages/dashboard.filters.salesperson'))
-                        ->options(fn () => User::pluck('name', 'id')->toArray())
+                        ->options(fn () => static::companyMemberOptions())
                         ->multiple()
                         ->searchable()
                         ->placeholder(__('invoices::filament/pages/dashboard.filters.all-salespersons'))

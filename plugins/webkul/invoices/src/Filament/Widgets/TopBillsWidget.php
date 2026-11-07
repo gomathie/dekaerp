@@ -3,7 +3,7 @@
 namespace Webkul\Invoice\Filament\Widgets;
 
 use BackedEnum;
-use WebkulInvoiceilamentwidgetsconcernsguardsinvoicedashboardwidget;
+use Webkul\Invoice\Filament\Widgets\Concerns\GuardsInvoiceDashboardWidget;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;

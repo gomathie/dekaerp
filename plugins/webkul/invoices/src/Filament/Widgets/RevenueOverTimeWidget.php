@@ -2,12 +2,9 @@
 
 namespace Webkul\Invoice\Filament\Widgets;
 
-use WebkulInvoiceilamentwidgetsconcernsguardsinvoicedashboardwidget;
-use DateInterval;
-use DatePeriod;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Carbon;
+use Webkul\Invoice\Filament\Widgets\Concerns\GuardsInvoiceDashboardWidget;
 use Webkul\Invoice\Filament\Widgets\Concerns\HasInvoiceDashboardFilters;
 use Webkul\Support\Filament\Concerns\HasChartTheme;
 
@@ -39,18 +36,15 @@ class RevenueOverTimeWidget extends ChartWidget
 
         $query = $this->customerInvoices();
 
-        $totals = $query
-            ->where($query->qualifyColumn('payment_state'), 'paid')
-            ->get(['invoice_date', 'amount_total_signed'])
-            ->groupBy(fn ($invoice) => Carbon::parse($invoice->invoice_date)->format('Y-m-d'))
-            ->map(fn ($group) => round((float) $group->sum('amount_total_signed'), 2));
+        // Upstream loaded every paid invoice of the period to add them up per
+        // day in PHP. dailyBuckets() asks the database for one total per day
+        // (docs/dashboards-plan.md §2.4), with the company scope intact.
+        $data = $this->dailyBuckets($query->where($query->qualifyColumn('payment_state'), 'paid'), true);
 
         $labels = [];
-        $data = [];
 
-        foreach (new DatePeriod($start, new DateInterval('P1D'), (clone $end)->addDay()) as $date) {
+        for ($date = (clone $start)->startOfDay(); $date->lte($end); $date->addDay()) {
             $labels[] = $date->format('M d');
-            $data[] = $totals[$date->format('Y-m-d')] ?? 0;
         }
 
         return [
