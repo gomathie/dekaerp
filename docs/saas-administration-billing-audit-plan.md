@@ -211,13 +211,13 @@ Record the user's answer before unblocking dependent packages.
 | SAAS-06 | Seat limit and invitation lifecycle | SAAS-01, D-SAAS-03, D-SAAS-04 | SAAS-05A/B/C/D | review | Copilot 2026-10-28; Claude review 2026-10-29 / `aureuserp_testing_saas_review`; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
 | SAAS-07 | Onboarding and all seat-enforcement paths | SAAS-06 | — | review (existing paths covered; onboarding atomicity and after-commit mail remain open) | Copilot 2026-10-28; Codex follow-up 2026-11-07 on `aureuserp_testing_saas07`; see completion handoff below |
 | SAAS-08 | Platform-billing plugin foundation | SAAS-00, D-SAAS-01, D-SAAS-05 | — | review (foundation complete) | Copilot 2026-10-28; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
-| SAAS-09 | Plans, prices and subscriptions | SAAS-08, D-SAAS-04 | — | in progress (catalog, draft subscriptions and period calculator; activation and entitlement sync pending decisions) | Codex 2026-11-07 / `aureuserp_testing_saas09` |
+| SAAS-09 | Plans, prices and subscriptions | SAAS-08, D-SAAS-04 | — | review (activation built; read-only write enforcement rollout remains) | Codex 2026-11-07 / `aureuserp_testing_saas09`; see activation handoff |
 | SAAS-09A | Discount codes and tenant redemptions | SAAS-09, D-SAAS-08 | — | todo (unblocked 2026-11-07: D-SAAS-08 is accepted; waits for SAAS-09) | — |
 | SAAS-10 | Idempotent recurring invoices | SAAS-09, SAAS-09A | — | todo | — |
 | SAAS-11 | Payments, allocations, credit and reversals | SAAS-08, D-SAAS-05, D-SAAS-06 | — | blocked | — |
 | SAAS-12 | Platform administration screens | SAAS-03, SAAS-07, SAAS-09/10/11 | — | todo | — |
 | SAAS-13 | Company-administration screens | SAAS-01, SAAS-07, SAAS-09/10/11 | — | todo | — |
-| SAAS-15 | Backfill, shadow mode, release hardening and tenant impersonation | All implementation packages | — | todo | — |
+| SAAS-15 | Backfill, shadow mode, release hardening and tenant impersonation When a new conpany is created. the superadmin or company admin should have a drop dwon option whether the account is test or commercial. If its a test he should be able to indicated how many days or add more if days if required. after test, the account can be switecd to commercial in that order | All implementation packages | — | todo | — |
 
 Additional requirement: Tenant impersonation
 
@@ -1655,6 +1655,16 @@ sets; no period drift; invalid transitions fail; plan edits preserve snapshots.
   reactivation? These rules were not specified, so no transition or effective
   entitlement service was added. One active subscription per company is not yet
   constrained; multiple drafts are allowed.
+
+#### SAAS-09 handoff — 2026-11-07 (activation)
+
+- **Status:** implementation in review. D-SAAS-09 now controls the transitions; SAAS-09A was not started.
+- **Files:** `plugins/webkul/platform-billing/database/migrations/2026_11_07_000002_add_subscription_activation_fields.php`; `src/PlatformBillingServiceProvider.php`; `src/Models/{Plan,Subscription}.php`; `src/Services/{SubscriptionDrafts,SubscriptionLifecycle}.php`; `tests/Feature/SubscriptionActivationTest.php`; this plan.
+- **Implemented:** a PostgreSQL partial unique index allows one `active` subscription per company while retaining drafts; the migration checks for existing duplicates and has a rollback. Plan seat limits and scheduled prices are stored, and drafts snapshot the seat limit. `SubscriptionLifecycle` alone authorizes and audits activation, next-period price changes, cancellation at period end, expiry, overdue recording, and Super Admin reactivation. It unions plan modules with existing manual grants through `PluginEntitlementService`, which supplies dependency closure, and applies the sold seat limit through `SeatCapacityService::setLimit()`. No automatic module revocation or proration is performed. The service repeats its Super Admin check because the platform role skips policies.
+- **Read-only boundary:** `SubscriptionLifecycle::isReadOnly($company)` returns true after the 10-day overdue grace period or after cancellation expires; it does not block writes yet. A single guard across Filament, APIs, services, and queued writes needs a separate rollout. Applying it to only some plugins would create inconsistent tenant behavior. Installation staff must be exempt at that future enforcement point.
+- **Risks:** subscription renewal is currently explicit through `advance()`; SAAS-10's invoice scheduler must call it at the period boundary and record overdue/payment state. Existing company-specific seat overrides are replaced when a newly sold plan takes effect, as D-SAAS-09 states. A scheduled price points to a mutable catalog row until renewal; catalog edits before renewal may change the future terms, so the scheduler must snapshot or lock scheduled terms before production use. The read-only predicate alone does not enforce the prohibition on writes.
+- **Rollback:** run the new migration's `down()` to drop the active-only index and new columns, then revert the lifecycle, model, provider, draft snapshot, and tests together. No production or managed database was touched.
+- **Verification:** pending completion of `PlatformBillingFeature` on local Sail database `aureuserp_testing_saas09`; Pint and final diff review pending.
 - **Dependency / risk:** D-SAAS-04's 10-day overdue grace and extensions need an
   overdue invoice and belong with SAAS-10 enforcement; this package does not
   make a tenant read-only. Catalog mutation has no approved service or screen

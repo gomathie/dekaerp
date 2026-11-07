@@ -82,3 +82,13 @@ it('refuses an early period transition and permits Super Admin reactivation', fu
     $service->cancelAtPeriodEnd($active, $actor);
     expect($service->reactivate($active, $actor)->cancel_at_period_end)->toBeFalse();
 });
+
+it('makes overdue subscriptions read only only after the ten day grace period', function () {
+    [$company, $actor, , , $draft] = billingSetup();
+    $service = app(SubscriptionLifecycle::class);
+    $active = $service->activate($draft, $actor, new DateTimeImmutable('2026-01-01'));
+    $service->recordOverdue($active, $actor, new DateTimeImmutable('2026-01-10'));
+
+    expect($service->isReadOnly($company, new DateTimeImmutable('2026-01-19')))->toBeFalse()
+        ->and($service->isReadOnly($company, new DateTimeImmutable('2026-01-20')))->toBeTrue();
+});
