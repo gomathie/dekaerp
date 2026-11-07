@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Facades\Filament;
+use Illuminate\Support\Once;
 use Webkul\Security\Enums\PermissionType;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
@@ -15,6 +16,14 @@ class FilamentHelper
         Filament::setCurrentPanel(Filament::getPanel('admin'));
 
         Filament::bootCurrentPanel();
+
+        // FilamentShield memoizes getPages()/getWidgets() with once() for the
+        // whole process. A plugin install earlier in the same test (the first
+        // test of a file installs the ERP) fills that cache before the
+        // plugin's pages are registered, so the page list came back empty and
+        // permission-name tests failed by test order alone. A real request
+        // starts fresh, so only tests need this.
+        Once::flush();
     }
 
     /**

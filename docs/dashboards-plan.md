@@ -52,10 +52,10 @@ These are why it is a port rather than a copy.
 | Package | Content | Status |
 |---|---|---|
 | DB-1 | Shared support pieces (concerns, base widgets, JS asset, theme CSS, `compact_money()`), with the grouped `dailyBuckets` and a unit test for `statTrend()` and the period ranges. | done (verified 2026-11-07: SupportFeature 200 passed) |
-| DB-2 | Invoice tab: the page, eight widgets, filters and translations, meeting every rule in §2. Tests: page permission generated; a revoked Invoices module hides the page; widgets count only the current company; query count bounded. | todo |
-| DB-3 | Sales tab (`sales/src/Filament/Pages/SalesDashboard.php` and its widgets). | todo |
-| DB-4 | Purchase tab (`purchases/src/Filament/Admin/Pages/Purchases.php` and its widgets). | todo |
-| DB-5 | Recruitment tab (`recruitments/src/Filament/Pages/Recruitments.php`). | todo |
+| DB-2 | Invoice tab: the page, eight widgets, filters and translations, meeting every rule in §2. Tests: page permission generated; a revoked Invoices module hides the page; widgets count only the current company; query count bounded. | review |
+| DB-3 | Sales tab (`sales/src/Filament/Pages/SalesDashboard.php` and its widgets). | review |
+| DB-4 | Purchase tab (`purchases/src/Filament/Admin/Pages/Purchases.php` and its widgets). | review |
+| DB-5 | Recruitment tab (`recruitments/src/Filament/Pages/Recruitments.php`). | review |
 | DB-6 | Restyle the existing Project tab with the shared widgets (optional); run all affected suites; write the `CHANGELOG.md` entry. | todo |
 
 Each package runs its plugin's full suite, plus SupportFeature (the structure
@@ -111,3 +111,77 @@ commit or this plan. Claude built DB-1 along that design, then verified it.
 
 **Not covered.** The `SUM` path of `dailyBuckets()` runs first in DB-2,
 against invoices.
+
+### DB-2 to DB-5 handoff — 2026-11-07 (Claude)
+
+**Shared rules added to support, one place each:**
+- **`Filament/Concerns/GuardsDashboardWidget`.** A widget is visible only
+  when its module is on for the current company *and* the user holds the
+  widget's Shield permission. A widget Shield cannot name is refused;
+  Shield's own trait allows it. Each module adds a three-line trait that
+  names its plugin.
+- **`Filament/Concerns/ListsCompanyMembers`.** People filters list only
+  members of the viewer's companies. Upstream's `User::pluck()` listed every
+  tenant's staff.
+- **`Filament/Concerns/ChecksPagePermission`.** This is the page half,
+  written for the 13-page fix (see `docs/change-log.md` 2026-11-07,
+  CRITICAL). Every new dashboard page returns
+  `<module>::enabledForCurrent() && static::hasPagePermission()`.
+
+**Per tab:**
+- **Invoice (DB-2).**
+  - Files: `invoices/src/Filament/Pages/Invoices.php`; the eight widgets
+    and `Concerns/HasInvoiceDashboardFilters`; `GuardsInvoiceDashboardWidget`.
+  - Translations: `filament/pages/dashboard.php` and
+    `filament/widgets/invoice-dashboard.php`, in en, ar, es, fr and pt_BR.
+  - The revenue chart uses the grouped `dailyBuckets()` (SUM), where
+    upstream loaded every paid invoice.
+  - Permission: `page_invoice_invoices`.
+- **Sales (DB-3).**
+  - Files: `sales/src/Filament/Pages/SalesDashboard.php`; eight widgets plus
+    `Concerns/HasSaleDashboardFilters`; `GuardsSaleDashboardWidget`; and
+    translations in all five languages.
+  - The widgets already aggregate in SQL, through Trend and grouped joins.
+  - Permission: `page_sale_sales_dashboard`.
+- **Purchases (DB-4).**
+  - Files: `purchases/src/Filament/Admin/Pages/Purchases.php`; seven widgets
+    plus `Concerns/HasPurchaseDashboardFilters`;
+    `GuardsPurchaseDashboardWidget`; and translations in all five languages.
+  - Upstream's `TopRfqsWidget` and `TopVendorsWidget` had **no check at
+    all**; they are now guarded.
+  - `PurchaseTrendWidget` uses one grouped query (day × state), where
+    upstream loaded every order of the period.
+  - Permission: `page_purchase_purchases`.
+- **Recruitment (DB-5).**
+  - The page already existed; the new `ApplicantsByStageChart` and the
+    dashboard loading state were added.
+  - All three widgets were taken from upstream and guarded.
+    `ApplicantChartWidget` had no check before.
+  - The local `getRouteName()` and entitlement code were kept.
+
+**Test-helper fix.**
+- `support/tests/Helpers/FilamentHelper::bootAdminPanel()` now calls
+  `Once::flush()`.
+- Shield memoizes `getPages()` and `getWidgets()` for the whole process. The
+  install inside a file's first test filled that cache before the plugin's
+  pages were registered, so every "permission name is generated" test failed
+  in first position and passed elsewhere.
+- Production is unaffected, because each request starts fresh.
+
+**Verification (tests run):**
+- Pint passed.
+- Dashboard test files, each on its own database:
+
+  | Tab | Database | Passed | Assertions |
+  |---|---|---|---|
+  | Invoice | `aureuserp_testing_dash2` | 6 | 14 |
+  | Sales | `aureuserp_testing_dash3` | 5 | 11 |
+  | Purchases | `aureuserp_testing_dash4` | 4 | 11 |
+  | Recruitment | `aureuserp_testing_dash5` | 3 | 12 |
+
+- The 13-page permission test: 13 passed, 39 assertions.
+- Full suites: see below.
+
+**Not done:** DB-6. That covers restyling the Project tab with the shared
+widgets, a `CHANGELOG.md` entry, and a browser check of every tab, which
+has not been done.
