@@ -42,8 +42,6 @@ it('generates the permission name the sales dashboard checks', function (): void
         ->flatMap(fn (array $page): array => array_keys($page['permissions']))
         ->all();
 
-    fwrite(STDERR, "\nSALEPAGES:".json_encode(collect(FilamentShield::getPages())->filter(fn ($p, $c) => str_contains($c, 'Sale'))->map(fn ($p) => array_keys($p['permissions']))->all())."\nPANEL:".json_encode(in_array(SalesDashboard::class, Filament\Facades\Filament::getPanel('admin')->getPages(), true))."\n");
-
     expect($generated)->toContain('page_sale_sales_dashboard');
 });
 
