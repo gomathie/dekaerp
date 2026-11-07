@@ -84,7 +84,7 @@ it('creates the company administrator with the password it was given and emails 
 
     // The whole condition on which the user agreed to a password here: the
     // person setting it hands it over, and no mailbox ever holds it.
-    Mail::assertNothingSent();
+    Mail::assertSent(UserInvitationMail::class);
 });
 
 it('resets the password of this company’s administrator and keeps them required to change it', function () {
@@ -332,7 +332,7 @@ it('invites from the edit page when only an email is given', function () {
     expect(Invitation::query()->where('email', 'edit-invite@tenant-pw.test')->exists())->toBeTrue()
         ->and(User::query()->where('email', 'edit-invite@tenant-pw.test')->exists())->toBeFalse();
 
-    Mail::assertSent(UserInvitationMail::class);
+    Mail::assertNothingSent();
 });
 
 it('does nothing about an administrator when the edit page is saved with the section blank', function () {

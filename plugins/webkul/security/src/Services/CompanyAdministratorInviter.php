@@ -2,6 +2,8 @@
 
 namespace Webkul\Security\Services;
 
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Throwable;
 use Webkul\Security\Mail\UserInvitationMail;
@@ -22,10 +24,9 @@ use Webkul\Support\Models\Company;
  * company's people and nothing else - CompanyAdminRoleProvisioner documents
  * what it deliberately withholds.
  *
- * This is a service rather than logic inside the create page so the outcome can
- * be asserted without mounting Filament. Every outcome is a returned reason and
- * never an exception, because the company has already been saved by the time
- * this runs and must not be lost over a failed invitation.
+ * This is a service rather than logic inside the create page. The invitation
+ * remains durable when its after-commit mail fails; staff recover its link
+ * from the company's Users and logins list.
  */
 class CompanyAdministratorInviter
 {
@@ -55,7 +56,7 @@ class CompanyAdministratorInviter
      * @param  string|null  $email  The administrator's own address. Falls back
      *                              to the company's address when not given, so
      *                              existing callers behave exactly as before.
-     * @return self::INVITED|self::DISABLED|self::MISSING_EMAIL|self::MISSING_ROLE|self::SEATS_EXHAUSTED|self::INVITE_FAILED|self::MAIL_FAILED
+     * @return self::INVITED|self::DISABLED|self::MISSING_EMAIL|self::MISSING_ROLE|self::SEATS_EXHAUSTED|self::INVITE_FAILED
      */
     public function invite(Company $company, User $actor, ?string $email = null): string
     {
@@ -105,15 +106,7 @@ class CompanyAdministratorInviter
             return self::INVITE_FAILED;
         }
 
-        try {
-            Mail::to($invitation->email)->send(new UserInvitationMail($invitation));
-        } catch (Throwable $exception) {
-            report($exception);
-
-            // The invitation row outlives a mail failure on purpose, so it can
-            // be resent from the Users page instead of recreated.
-            return self::MAIL_FAILED;
-        }
+        $this->sendAfterCommit($invitation, $actor);
 
         return self::INVITED;
     }
@@ -134,15 +127,54 @@ class CompanyAdministratorInviter
             return self::INVITE_FAILED;
         }
 
-        try {
-            Mail::to($invitation->email)->send(new UserInvitationMail($invitation));
-        } catch (Throwable $exception) {
-            report($exception);
-
-            return self::MAIL_FAILED;
-        }
+        $this->sendAfterCommit($invitation, $actor);
 
         return self::INVITED;
+    }
+
+    /** A pending link is a login credential; installation staff may copy only their assigned company's link. */
+    public function pendingLink(Company $company, User $actor, int $invitationId): string
+    {
+        if (! $actor->is_active || ! ($actor->isSuperAdmin()
+            || ($actor->isMultiCompanyAdmin() && app(MultiCompanyAdminService::class)->isCompanyAssigned($actor, (int) $company->getKey())))) {
+            throw new AuthorizationException('You may not copy invitation links for this company.');
+        }
+
+        return Invitation::query()
+            ->whereKey($invitationId)
+            ->where('default_company_id', $company->getKey())
+            ->pending()
+            ->firstOrFail()
+            ->acceptUrl();
+    }
+
+    protected function sendAfterCommit(Invitation $invitation, User $actor): void
+    {
+        // Never deliver a link for a row that may still roll back. The callback
+        // re-reads pending state because staff may revoke it before dispatch.
+        DB::afterCommit(function () use ($invitation, $actor): void {
+            $pending = Invitation::query()->whereKey($invitation->getKey())->pending()->first();
+
+            if (! $pending) {
+                return;
+            }
+
+            try {
+                Mail::to($pending->email)->send(new UserInvitationMail($pending));
+            } catch (Throwable $exception) {
+                report($exception);
+
+                // The durable row and staff-only copy action are the recovery
+                // path; never put the signed link in an audit payload.
+                app(SecurityAuditLogger::class)->record(
+                    'security.user.invitation_mail_failed',
+                    $pending,
+                    $actor,
+                    (int) $pending->default_company_id,
+                    after: ['email' => $pending->email, 'error' => $exception::class],
+                );
+            }
+        });
     }
 
     public static function companyAdminRoleId(): ?int

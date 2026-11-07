@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'capacity-error' => 'Esta empresa ha alcanzado su límite de :limit usuarios (:used en uso, incluidas las invitaciones pendientes). Aumente el límite para añadir más usuarios.',
     'title' => 'Empresas',
 
     'navigation' => [

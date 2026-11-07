@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'capacity-error' => 'This company has reached its :limit user seats (:used in use, including pending invitations). Raise the seat limit to add more users.',
     'title' => 'Companies',
 
     'navigation' => [

@@ -100,5 +100,6 @@ it('refuses a tenant creator membership when a programmatic company has no free 
 
     $companyId = Company::query()->withoutGlobalScopes()->where('name', $name)->value('id');
 
-    expect(DB::table('user_allowed_companies')->where('company_id', $companyId)->exists())->toBeFalse();
+    expect($companyId)->toBeNull()
+        ->and(DB::table('user_allowed_companies')->where('company_id', $companyId)->exists())->toBeFalse();
 });
