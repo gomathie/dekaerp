@@ -18,6 +18,11 @@ return [
         ],
 
         'actions' => [
+            'copy-invitation-link' => [
+                'label' => 'Copiar link do convite',
+                'invitation' => 'Convite pendente',
+                'link' => 'Link do convite',
+            ],
             'set-password' => [
                 'label'             => 'Definir senha',
                 'modal-heading'     => 'Definir a senha de :email',

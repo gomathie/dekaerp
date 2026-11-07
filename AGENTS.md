@@ -1458,6 +1458,15 @@ log named):
     attach, user create - counts pending reservations. Call
     `SeatCapacityService::assertCanReserve()` / `assertCanAttachMembership()`;
     do not write another capacity rule.
+  - Company onboarding is atomic, 2026-11-07 (SAAS-07): a first `Company::save()`
+    wraps its created observers in a transaction, so refusal of a creator seat
+    also rolls back the inserted company and partner. The Security create page
+    uses `CompanyOnboarding` for its administrator account or invitation. Never
+    move the creator attachment back outside that transaction.
+  - Invitation mail leaves after the outermost database commit, 2026-11-07
+    (SAAS-07). Pending links remain available to installation staff from the
+    company's Users and logins list. Mail failure is audited; no password or
+    signed link is included in audit data. Do not send from inside a transaction.
   - A plugin is granted to every company only on its **first** install. A
     re-run, or an install triggered as someone else's dependency, must not
     undo a revocation.

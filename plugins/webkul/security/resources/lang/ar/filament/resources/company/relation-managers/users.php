@@ -18,6 +18,11 @@ return [
         ],
 
         'actions' => [
+            'copy-invitation-link' => [
+                'label' => 'نسخ رابط الدعوة',
+                'invitation' => 'دعوة معلقة',
+                'link' => 'رابط الدعوة',
+            ],
             'set-password' => [
                 'label'             => 'تعيين كلمة المرور',
                 'modal-heading'     => 'تعيين كلمة المرور لـ :email',

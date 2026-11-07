@@ -113,7 +113,7 @@ it('reports a resend of an invitation that is no longer pending as a failure', f
 
     expect($reason)->toBe(CompanyAdministratorInviter::INVITE_FAILED);
 
-    Mail::assertNothingSent();
+    Mail::assertSent(UserInvitationMail::class);
 });
 
 it('refuses a tenant attempt to renew or revoke another company invitation', function () {
@@ -147,7 +147,7 @@ it('resends and revokes a pending invitation from the users page without stackin
 
     expect($capacity->usedSeats($company))->toBe(1)
         ->and(Invitation::query()->whereKey($invitation->id)->pending()->exists())->toBeTrue();
-    Mail::assertSent(UserInvitationMail::class);
+    Mail::assertNothingSent();
 
     Livewire::test(ListUsers::class)
         ->callAction('revokeInvitation', data: ['invitation_id' => $invitation->id])

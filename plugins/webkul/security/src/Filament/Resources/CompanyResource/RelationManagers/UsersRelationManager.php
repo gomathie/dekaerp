@@ -3,6 +3,7 @@
 namespace Webkul\Security\Filament\Resources\CompanyResource\RelationManagers;
 
 use Filament\Actions\Action;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
@@ -10,6 +11,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +19,9 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Password;
 use Webkul\Security\CompanyAdminContributions;
 use Webkul\Security\Models\User;
+use Webkul\Security\Models\Invitation;
 use Webkul\Security\Services\CompanyAdministratorAccount;
+use Webkul\Security\Services\CompanyAdministratorInviter;
 
 /**
  * The company's users and their logins, with a password button per user
@@ -97,6 +101,32 @@ class UsersRelationManager extends RelationManager
             ->defaultSort('name')
             ->emptyStateHeading(__(static::$lang.'.table.empty-state.heading'))
             ->emptyStateDescription(__(static::$lang.'.table.empty-state.description'))
+            ->headerActions([
+                Action::make('copyInvitationLink')
+                    ->label(__(static::$lang.'.table.actions.copy-invitation-link.label'))
+                    ->icon('heroicon-o-link')
+                    ->visible(fn (): bool => CompanyAdminContributions::administersInstallation())
+                    ->schema([
+                        Select::make('invitation_id')
+                            ->label(__(static::$lang.'.table.actions.copy-invitation-link.invitation'))
+                            ->options(fn (): array => Invitation::query()
+                                ->where('default_company_id', $this->getOwnerRecord()->getKey())
+                                ->pending()
+                                ->pluck('email', 'id')->all())
+                            ->live()
+                            ->afterStateUpdated(function (Set $set, ?string $state): void {
+                                $actor = Auth::user();
+                                $set('link', $actor instanceof User && $state
+                                    ? app(CompanyAdministratorInviter::class)->pendingLink($this->getOwnerRecord(), $actor, (int) $state)
+                                    : '');
+                            }),
+                        TextInput::make('link')
+                            ->label(__(static::$lang.'.table.actions.copy-invitation-link.link'))
+                            ->readOnly()
+                            ->copyable(),
+                    ])
+                    ->modalSubmitAction(false),
+            ])
             ->recordActions([
                 Action::make('setPassword')
                     ->label(__(static::$lang.'.table.actions.set-password.label'))

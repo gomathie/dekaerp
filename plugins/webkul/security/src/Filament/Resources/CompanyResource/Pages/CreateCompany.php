@@ -3,89 +3,75 @@
 namespace Webkul\Security\Filament\Resources\CompanyResource\Pages;
 
 use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Webkul\Security\Filament\Resources\CompanyResource;
-use Webkul\Security\Filament\Resources\CompanyResource\Pages\Concerns\SetsAdministratorPassword;
-use Webkul\Security\Models\Invitation;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\CompanyAdministratorInviter;
+use Webkul\Security\Services\CompanyOnboarding;
+use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 use Webkul\Support\Filament\Resources\CompanyResource\Pages\CreateCompany as BaseCreateCompany;
 
 class CreateCompany extends BaseCreateCompany
 {
-    use SetsAdministratorPassword;
+    use ChecksPagePermission;
 
     protected static string $resource = CompanyResource::class;
 
     protected static string $lang = 'security::filament/resources/company.pages.create.administrator';
 
-    /**
-     * Invite the new company's administrator. The decision and all of its
-     * failure modes live in CompanyAdministratorInviter so they can be tested
-     * without mounting this page; here we only turn the outcome into a message.
-     */
-    protected function afterCreate(): void
+    // Keep Filament's relationship saves in the same outer transaction. Mail
+    // registered after commit cannot leave before the whole page is durable.
+    protected ?bool $hasDatabaseTransactions = true;
+
+    protected ?array $onboardingResult = null;
+
+    protected function handleRecordCreation(array $data): Model
     {
         $actor = Auth::user();
 
         if (! $actor instanceof User) {
-            return;
+            abort(403);
         }
 
-        // A typed password creates the account outright instead of inviting
-        // (user, 2026-11-03), so it does not depend on invitations being on.
-        if ($this->setAdministratorPassword($actor)) {
-            return;
-        }
-
-        // The administrator's own address, from the contributed "Administrator"
-        // section. It is dehydrated(false) - not a company column - so it is
-        // read from the raw form state. Blank falls back to the company's
-        // address inside the inviter, which is what it always used.
-        $administratorEmail = trim((string) ($this->data['administrator_email'] ?? ''));
-
-        $reason = app(CompanyAdministratorInviter::class)->invite(
-            $this->getRecord(),
+        $email = trim((string) ($this->data['administrator_email'] ?? ''));
+        $this->onboardingResult = app(CompanyOnboarding::class)->create(
             $actor,
-            $administratorEmail === '' ? null : $administratorEmail,
+            $data,
+            $email === '' ? null : $email,
+            (string) ($this->data['administrator_password'] ?? ''),
+            (bool) ($this->data['administrator_must_change_password'] ?? true),
         );
 
-        if ($reason === CompanyAdministratorInviter::DISABLED) {
+        return $this->onboardingResult['company'];
+    }
+
+    protected function afterCreate(): void
+    {
+        if (! $this->onboardingResult) {
             return;
         }
 
-        $invitedEmail = $administratorEmail === ''
-            ? (string) $this->getRecord()->email
-            : $administratorEmail;
+        $email = trim((string) ($this->data['administrator_email'] ?? ''));
+        $email = $email === '' ? (string) $this->getRecord()->email : $email;
 
-        if ($reason === CompanyAdministratorInviter::INVITED) {
-            Notification::make('companyAdministratorInvited')
-                ->title(__(static::$lang.'.invited.title'))
-                ->body(__(static::$lang.'.invited.body', ['email' => $invitedEmail]))
-                ->success()
-                ->send();
+        if ($this->onboardingResult['password']) {
+            $lang = 'security::filament/resources/company.pages.administrator-account.created';
+            Notification::make('companyAdministratorPasswordSet')
+                ->title(__($lang.'.title'))
+                ->body(__($lang.'.body', ['email' => $email]))
+                ->success()->send();
 
             return;
         }
 
-        // Persistent: the company exists but nobody can administer it yet, and
-        // that needs to survive the page transition to be acted on.
-        Notification::make('companyAdministratorNotInvited')
-            ->title(__(static::$lang.'.skipped.title'))
-            ->body(__(static::$lang.'.skipped.'.$reason, [
-                // Only MAIL_FAILED's message uses this. The invitation exists
-                // but its link was only ever inside the email that failed, so
-                // without showing it here the tenant cannot be onboarded at all.
-                'link' => $reason === CompanyAdministratorInviter::MAIL_FAILED
-                    ? (Invitation::query()
-                        ->where('email', $invitedEmail)
-                        ->latest('id')
-                        ->first()
-                        ?->acceptUrl() ?? '')
-                    : '',
-            ]))
-            ->warning()
-            ->persistent()
-            ->send();
+        if ($this->onboardingResult['outcome'] === CompanyAdministratorInviter::DISABLED) {
+            return;
+        }
+
+        Notification::make('companyAdministratorInvited')
+            ->title(__(static::$lang.'.invited.title'))
+            ->body(__(static::$lang.'.invited.body', ['email' => $email]))
+            ->success()->send();
     }
 }

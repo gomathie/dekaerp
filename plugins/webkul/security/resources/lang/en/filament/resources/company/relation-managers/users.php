@@ -18,6 +18,11 @@ return [
         ],
 
         'actions' => [
+            'copy-invitation-link' => [
+                'label' => 'Copy invitation link',
+                'invitation' => 'Pending invitation',
+                'link' => 'Invitation link',
+            ],
             'set-password' => [
                 'label'             => 'Set password',
                 'modal-heading'     => 'Set the password for :email',

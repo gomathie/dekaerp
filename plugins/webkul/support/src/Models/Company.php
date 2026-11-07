@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
@@ -56,6 +57,21 @@ class Company extends Model implements Sortable
         'partner_id',
         'website',
     ];
+
+    /**
+     * A created observer can refuse a creator membership after INSERT. Wrap
+     * every direct create so that refusal also removes its company and partner;
+     * the security onboarding coordinator adds administrator work in its own
+     * outer transaction (D-SAAS-03).
+     */
+    public function save(array $options = []): bool
+    {
+        if ($this->exists) {
+            return parent::save($options);
+        }
+
+        return DB::transaction(fn (): bool => parent::save($options));
+    }
 
     public $sortable = [
         'order_column_name'  => 'sort',

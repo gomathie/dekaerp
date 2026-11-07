@@ -299,7 +299,7 @@ class SeatCapacityService
     public function capacityError(int $limit, int $used): ValidationException
     {
         return ValidationException::withMessages([
-            'seats' => __('This company has reached its :limit user seats (:used in use, including pending invitations). Raise the seat limit to add more users.', [
+            'seats' => __('security::filament/resources/company.capacity-error', [
                 'limit' => $limit,
                 'used'  => $used,
             ]),
