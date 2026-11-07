@@ -2,6 +2,8 @@
 
 namespace Webkul\Sale\Filament\Clusters\Settings\Pages;
 
+
+use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms\Components\Toggle;
@@ -16,8 +18,11 @@ class ManagePricing extends SettingsPage
 {
     public static function canAccess(): bool
     {
-        return SalesAccess::enabledForCurrent();
+        return SalesAccess::enabledForCurrent()
+            && static::hasPagePermission();
     }
+
+    use ChecksPagePermission;
 
     use HasPageShield;
 
