@@ -24,9 +24,6 @@ function dashboardMetricsHost(array $filters = []): object
     {
         use HasDashboardMetrics;
 
-        /** @var array<string, mixed> */
-        public ?array $pageFilters = [];
-
         public function call(string $method, mixed ...$arguments): mixed
         {
             return $this->{$method}(...$arguments);

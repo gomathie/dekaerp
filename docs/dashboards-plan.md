@@ -51,7 +51,7 @@ These are why it is a port rather than a copy.
 
 | Package | Content | Status |
 |---|---|---|
-| DB-1 | Shared support pieces (concerns, base widgets, JS asset, theme CSS, `compact_money()`), with the grouped `dailyBuckets` and a unit test for `statTrend()` and the period ranges. | todo |
+| DB-1 | Shared support pieces (concerns, base widgets, JS asset, theme CSS, `compact_money()`), with the grouped `dailyBuckets` and a unit test for `statTrend()` and the period ranges. | review (verifying: SupportFeature run pending) |
 | DB-2 | Invoice tab: the page, eight widgets, filters and translations, meeting every rule in §2. Tests: page permission generated; a revoked Invoices module hides the page; widgets count only the current company; query count bounded. | todo |
 | DB-3 | Sales tab (`sales/src/Filament/Pages/SalesDashboard.php` and its widgets). | todo |
 | DB-4 | Purchase tab (`purchases/src/Filament/Admin/Pages/Purchases.php` and its widgets). | todo |
@@ -64,4 +64,49 @@ snapshots record the new pages and widgets), on its own database
 
 ## 4. Handoffs
 
-(none yet)
+### DB-1 handoff — 2026-11-07 (Claude)
+
+**How it was produced.** A code-only agent designed DB-1, but it could not
+write files. Its handoff described files that never reached the disk, any
+commit or this plan. Claude built DB-1 along that design, then verified it.
+
+**Files**
+- **Verbatim from upstream:** `support/src/Filament/Concerns/BuildsDashboardStats.php`,
+  `HasChartTheme.php`, `Widgets/DashboardStatsWidget.php`,
+  `Widgets/DashboardChartWidget.php` and `resources/js/dashboard-charts.js`.
+- **`support/src/Filament/Concerns/HasDashboardMetrics.php`:** ported, with
+  two changes.
+  - `dailyBuckets()` is one grouped query
+    (`DATE(col)` with `COUNT(*)` or `SUM(col)`, limited to the period),
+    built on `toBase()` so the global scopes stay in force. Upstream loaded
+    every row of the period.
+  - `previousPeriodRange()` floors the day count; upstream's fractional
+    count is ambiguous.
+- **`support/src/helpers.php`:** `compact_money()`, adapted. This fork has
+  no `default_currency_code()` or `isRtl()`, so it defaults to
+  `config('app.currency')`, sends Arabic to Latin digits, and falls back to
+  `money()` without ext-intl.
+- **`support/src/SupportServiceProvider.php`:** registers
+  `Js::make('dashboard-charts', …)` in the `support` asset package.
+  Upstream's `VersionedCss` wrapper is absent here and was not ported.
+- **CSS:** a new `support/resources/css/dashboard.css` holds upstream's
+  dashboard rules, with logical padding and radii for RTL. It is imported
+  from `index.css`.
+- **Built assets:** `support/resources/dist/support.css` was rebuilt from
+  the project root, about +1.7 KB with no classes dropped. It is copied to
+  `public/css/support/support.css`, and `public/js/support/dashboard-charts.js`
+  is published alongside it.
+- **Tests:** `support/tests/Feature/Dashboard/DashboardMetricsTest.php`, with 5
+  tests:
+  - the stat trend, in three cases;
+  - the previous-period length;
+  - the daily series in one query, within the active company.
+
+**Verification**
+- Pint passed.
+- `DashboardMetricsTest`: 5 passed, 8 assertions, on
+  `aureuserp_testing_dash1`.
+- SupportFeature full run: see below.
+
+**Not covered.** The `SUM` path of `dailyBuckets()` runs first in DB-2,
+against invoices.
