@@ -36,6 +36,7 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
             ->hasMigrations([
                 '2026_10_28_000006_create_platform_billing_document_numbers_table',
                 '2026_11_07_000001_create_platform_billing_plans_prices_subscriptions_tables',
+                '2026_11_07_000002_add_subscription_activation_fields',
             ])
             ->runsMigrations();
     }
