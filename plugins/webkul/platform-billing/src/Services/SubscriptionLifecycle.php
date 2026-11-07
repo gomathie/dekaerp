@@ -34,9 +34,11 @@ class SubscriptionLifecycle
             $start = $at ?? new DateTimeImmutable('now', new DateTimeZone('UTC'));
             $period = app(SubscriptionPeriod::class)->period($start, $locked->interval_months, 0);
             $locked->forceFill([
-                'status' => 'active', 'period_start_at' => $period['start'],
-                'period_end_at' => $period['end'], 'next_invoice_at' => $period['end'],
+                'status'               => 'active', 'period_start_at' => $period['start'],
+                'period_end_at'        => $period['end'], 'next_invoice_at' => $period['end'],
                 'cancel_at_period_end' => false,
+                'anchor_at'            => $start->setTimezone(new DateTimeZone('UTC')),
+                'timezone'             => $start->getTimezone()->getName(),
             ])->save();
             $this->applyPlan($locked, $company, $actor);
             $this->audit('activated', $locked, $actor);
@@ -57,7 +59,19 @@ class SubscriptionLifecycle
                 throw ValidationException::withMessages(['price' => 'An active USD plan price is required.']);
             }
             // The sold snapshot and current-period access stay fixed until renewal.
-            $locked->forceFill(['scheduled_price_id' => $price->id])->save();
+            $locked->forceFill([
+                'scheduled_price_id' => $price->id,
+                'scheduled_terms'    => [
+                    'plan_id'          => $price->plan_id,
+                    'price_id'         => $price->id,
+                    'plan_name'        => $price->plan->name,
+                    'included_plugins' => $price->plan->included_plugins,
+                    'currency'         => $price->currency,
+                    'interval_months'  => $price->interval_months,
+                    'amount_minor'     => $price->amount_minor,
+                    'seat_limit'       => $price->plan->seat_limit,
+                ],
+            ])->save();
             $this->audit('price_scheduled', $locked, $actor);
 
             return $locked;
@@ -71,7 +85,7 @@ class SubscriptionLifecycle
         return DB::transaction(function () use ($subscription, $actor): Subscription {
             $locked = $this->locked($subscription);
             $this->assertState($locked, 'active');
-            $locked->forceFill(['cancel_at_period_end' => true, 'scheduled_price_id' => null])->save();
+            $locked->forceFill(['cancel_at_period_end' => true, 'scheduled_price_id' => null, 'scheduled_terms' => null])->save();
             $this->audit('cancellation_scheduled', $locked, $actor);
 
             return $locked;
@@ -95,27 +109,26 @@ class SubscriptionLifecycle
                 return $locked;
             }
             $company = Company::query()->lockForUpdate()->findOrFail($locked->company_id);
-            if ($locked->scheduled_price_id) {
-                $price = Price::query()->with('plan')->findOrFail($locked->scheduled_price_id);
+            if ($locked->scheduled_terms) {
                 $locked->forceFill([
-                    'plan_id' => $price->plan_id, 'price_id' => $price->id,
-                    'plan_name' => $price->plan->name, 'included_plugins' => $price->plan->included_plugins,
-                    'currency' => $price->currency, 'interval_months' => $price->interval_months,
-                    'amount_minor' => $price->amount_minor, 'seat_limit' => $price->plan->seat_limit,
-                    'scheduled_price_id' => null, 'anchor_at' => $locked->period_end_at,
-                    'timezone' => 'UTC',
+                    ...$locked->scheduled_terms,
+                    'scheduled_price_id' => null,
+                    'scheduled_terms'    => null,
+                    'anchor_at'          => $locked->period_end_at,
+                    'timezone'           => 'UTC',
                 ]);
                 $this->applyPlan($locked, $company, $actor);
             }
-            // Walk from the original anchor when terms are unchanged; avoid month-end drift.
+            // Advance one period only: a late scheduler must not silently skip
+            // invoice periods. Derive the boundary from the original anchor.
             $periodIndex = 1;
             $anchor = $locked->anchor_at->setTimezone(new DateTimeZone($locked->timezone));
             $end = app(SubscriptionPeriod::class)->boundary($anchor, $locked->interval_months, $periodIndex);
-            while ($end <= $at) {
+            while ($end <= $locked->period_end_at) {
                 $periodIndex++;
                 $end = app(SubscriptionPeriod::class)->boundary($anchor, $locked->interval_months, $periodIndex);
             }
-            $start = app(SubscriptionPeriod::class)->boundary($anchor, $locked->interval_months, $periodIndex - 1);
+            $start = $locked->period_end_at;
             $locked->forceFill(['period_start_at' => $start, 'period_end_at' => $end, 'next_invoice_at' => $end])->save();
             $this->audit('renewed', $locked, $actor);
 
@@ -126,6 +139,7 @@ class SubscriptionLifecycle
     public function reactivate(Subscription $subscription, User $actor, ?DateTimeImmutable $at = null): Subscription
     {
         $this->assertSuperAdmin($actor);
+
         return DB::transaction(function () use ($subscription, $actor, $at): Subscription {
             $fresh = $this->locked($subscription);
             if ($fresh->status === 'active' && $fresh->cancel_at_period_end) {
@@ -150,6 +164,20 @@ class SubscriptionLifecycle
             $this->assertState($locked, 'active');
             $locked->forceFill(['overdue_at' => $overdueAt])->save();
             $this->audit('overdue_recorded', $locked, $actor);
+
+            return $locked;
+        });
+    }
+
+    public function clearOverdue(Subscription $subscription, User $actor): Subscription
+    {
+        $this->assertSuperAdmin($actor);
+
+        return DB::transaction(function () use ($subscription, $actor): Subscription {
+            $locked = $this->locked($subscription);
+            $this->assertState($locked, 'active');
+            $locked->forceFill(['overdue_at' => null])->save();
+            $this->audit('overdue_cleared', $locked, $actor);
 
             return $locked;
         });
