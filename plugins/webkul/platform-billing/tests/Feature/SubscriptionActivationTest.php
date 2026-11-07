@@ -8,6 +8,8 @@ use Webkul\PlatformBilling\Models\Plan;
 use Webkul\PlatformBilling\Models\Price;
 use Webkul\PlatformBilling\Services\SubscriptionDrafts;
 use Webkul\PlatformBilling\Services\SubscriptionLifecycle;
+use Webkul\PluginManager\Models\Plugin;
+use Webkul\PluginManager\Services\PluginEntitlementService;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 
@@ -56,9 +58,12 @@ it('keeps current price until the next period and retains access after cancellat
     $active = $service->activate($draft, $actor, new DateTimeImmutable('2026-01-01'));
     $next = Price::query()->create(['plan_id' => $plan->id, 'currency' => 'USD', 'interval_months' => 3, 'amount_minor' => 2400]);
     $service->schedulePrice($active, $next, $actor);
+    $next->update(['amount_minor' => 9900]);
+    $plan->update(['seat_limit' => 8]);
     expect($active->fresh()->amount_minor)->toBe(1000);
     $service->advance($active, $actor, new DateTimeImmutable('2026-02-01'));
-    expect($active->fresh()->amount_minor)->toBe(2400);
+    expect($active->fresh()->amount_minor)->toBe(2400)
+        ->and($company->fresh()->seat_limit)->toBe(3);
     $service->cancelAtPeriodEnd($active, $actor);
     expect($service->isReadOnly($company, new DateTimeImmutable('2026-03-01')))->toBeFalse();
     $service->advance($active, $actor, new DateTimeImmutable('2026-05-01'));
@@ -91,4 +96,30 @@ it('makes overdue subscriptions read only only after the ten day grace period', 
 
     expect($service->isReadOnly($company, new DateTimeImmutable('2026-01-19')))->toBeFalse()
         ->and($service->isReadOnly($company, new DateTimeImmutable('2026-01-20')))->toBeTrue();
+    $service->clearOverdue($active, $actor);
+    expect($service->isReadOnly($company, new DateTimeImmutable('2026-01-20')))->toBeFalse();
+});
+
+it('adds plan modules while preserving manual company grants', function () {
+    [$company, $actor, $plan, , $draft] = billingSetup();
+    $manual = Plugin::query()->updateOrCreate(['name' => 'saas-manual-module'], ['is_installed' => true, 'is_active' => true]);
+    $planned = Plugin::query()->updateOrCreate(['name' => 'saas-planned-module'], ['is_installed' => true, 'is_active' => true]);
+    DB::table('company_plugin')->insertOrIgnore(['company_id' => $company->id, 'plugin_id' => $manual->id]);
+    $draft->forceFill(['included_plugins' => [$planned->name]])->save();
+
+    app(SubscriptionLifecycle::class)->activate($draft, $actor);
+
+    expect(app(PluginEntitlementService::class)->grantedPluginIds((int) $company->id))
+        ->toContain((int) $manual->id, (int) $planned->id);
+});
+
+it('advances only one period when the scheduler runs late', function () {
+    [, $actor, , , $draft] = billingSetup();
+    $service = app(SubscriptionLifecycle::class);
+    $active = $service->activate($draft, $actor, new DateTimeImmutable('2026-01-01'));
+
+    $service->advance($active, $actor, new DateTimeImmutable('2026-05-01'));
+
+    expect($active->fresh()->period_start_at->format('Y-m-d'))->toBe('2026-02-01')
+        ->and($active->fresh()->period_end_at->format('Y-m-d'))->toBe('2026-03-01');
 });

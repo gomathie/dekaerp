@@ -21,6 +21,7 @@ return new class extends Migration
 
         Schema::table('platform_billing_subscriptions', function (Blueprint $table): void {
             $table->foreignId('scheduled_price_id')->nullable()->constrained('platform_billing_prices')->restrictOnDelete();
+            $table->jsonb('scheduled_terms')->nullable();
             $table->boolean('cancel_at_period_end')->default(false);
             $table->timestampTz('overdue_at')->nullable();
             $table->unsignedInteger('seat_limit')->nullable();
@@ -34,7 +35,7 @@ return new class extends Migration
         DB::statement('DROP INDEX IF EXISTS platform_billing_one_active_per_company');
         Schema::table('platform_billing_subscriptions', function (Blueprint $table): void {
             $table->dropConstrainedForeignId('scheduled_price_id');
-            $table->dropColumn(['cancel_at_period_end', 'overdue_at', 'seat_limit']);
+            $table->dropColumn(['scheduled_terms', 'cancel_at_period_end', 'overdue_at', 'seat_limit']);
         });
         Schema::table('platform_billing_plans', fn (Blueprint $table) => $table->dropColumn('seat_limit'));
     }

@@ -43,6 +43,7 @@ class Subscription extends Model
             'cancel_at_period_end' => 'boolean',
             'overdue_at' => 'immutable_datetime',
             'seat_limit' => 'integer',
+            'scheduled_terms' => 'array',
         ];
     }
 
