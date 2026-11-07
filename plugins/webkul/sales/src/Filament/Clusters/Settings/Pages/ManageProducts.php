@@ -2,6 +2,8 @@
 
 namespace Webkul\Sale\Filament\Clusters\Settings\Pages;
 
+
+use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms;
@@ -17,8 +19,11 @@ class ManageProducts extends SettingsPage
 {
     public static function canAccess(): bool
     {
-        return SalesAccess::enabledForCurrent();
+        return SalesAccess::enabledForCurrent()
+            && static::hasPagePermission();
     }
+
+    use ChecksPagePermission;
 
     use HasPageShield;
 

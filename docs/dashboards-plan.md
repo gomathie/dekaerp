@@ -51,7 +51,7 @@ These are why it is a port rather than a copy.
 
 | Package | Content | Status |
 |---|---|---|
-| DB-1 | Shared support pieces (concerns, base widgets, JS asset, theme CSS, `compact_money()`), with the grouped `dailyBuckets` and a unit test for `statTrend()` and the period ranges. | review (verifying: SupportFeature run pending) |
+| DB-1 | Shared support pieces (concerns, base widgets, JS asset, theme CSS, `compact_money()`), with the grouped `dailyBuckets` and a unit test for `statTrend()` and the period ranges. | done (verified 2026-11-07: SupportFeature 200 passed) |
 | DB-2 | Invoice tab: the page, eight widgets, filters and translations, meeting every rule in §2. Tests: page permission generated; a revoked Invoices module hides the page; widgets count only the current company; query count bounded. | todo |
 | DB-3 | Sales tab (`sales/src/Filament/Pages/SalesDashboard.php` and its widgets). | todo |
 | DB-4 | Purchase tab (`purchases/src/Filament/Admin/Pages/Purchases.php` and its widgets). | todo |
@@ -106,7 +106,8 @@ commit or this plan. Claude built DB-1 along that design, then verified it.
 - Pint passed.
 - `DashboardMetricsTest`: 5 passed, 8 assertions, on
   `aureuserp_testing_dash1`.
-- SupportFeature full run: see below.
+- SupportFeature, full run: 200 passed, 958 assertions, on
+  `aureuserp_testing_dash1`. DB-1 is confirmed.
 
 **Not covered.** The `SUM` path of `dailyBuckets()` runs first in DB-2,
 against invoices.

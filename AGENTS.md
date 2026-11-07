@@ -1569,6 +1569,20 @@ log named):
   - Tests: plugin-manager `PluginEntitlementGuardTest`, Sales and Purchases
     `PluginEntitlementTest`.
 
+• A page's own canAccess() keeps its Shield permission, 2026-11-07
+  (`docs/change-log.md`, CRITICAL):
+  - A Shield page that adds the module switch returns
+    `<module>::enabledForCurrent() && static::hasPagePermission()`
+    (`Support\Filament\Concerns\ChecksPagePermission`). The module check
+    alone opened 13 pages, company settings included, to every user of an
+    entitled company. Never write a canAccess() that returns the module
+    check by itself.
+  - Dashboard widgets use `GuardsDashboardWidget`, which requires both the
+    module and the widget's permission, and refuses a widget Shield cannot
+    name. Shield's own trait allows that case.
+  - Tests: plugin-manager `EntitledPagePermissionTest` and each dashboard's
+    tests.
+
 • Test runs never report to Sentry, 2026-11-04 (`docs/change-log.md`):
   - `phpunit.xml` sets `SENTRY_LARAVEL_DSN` to an empty string with
     `force="true"`. A developer's `.env` carries the real DSN, so removing that

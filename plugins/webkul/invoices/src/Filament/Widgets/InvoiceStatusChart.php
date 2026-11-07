@@ -2,7 +2,7 @@
 
 namespace Webkul\Invoice\Filament\Widgets;
 
-use WebkulInvoiceilamentwidgetsconcernsguardsinvoicedashboardwidget;
+use Webkul\Invoice\Filament\Widgets\Concerns\GuardsInvoiceDashboardWidget;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Contracts\Support\Htmlable;
 use Webkul\Account\Enums\PaymentState;

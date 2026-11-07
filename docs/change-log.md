@@ -198,6 +198,47 @@ suite tests remain pending. No production or managed database was used.
 after diagnosing the test-bootstrap cost. The 05A/C/D implementation is
 committed in shared history but remains review status until those tests pass.
 
+## 2026-11-07 (CRITICAL: 13 pages had lost their permission check)
+
+**Why.** The SAAS-05 module-switch rollout (fa9d134f8 and 98f40d9e6,
+2026-11-03/04) wrote `canAccess()` on 13 Shield-guarded pages, returning only
+the module check. That method replaces `HasPageShield::canAccess()`, which is
+the trap AGENTS.md describes, so the page permission was no longer checked.
+Every user of a company that holds the module could open these pages,
+whatever their role:
+- Sales settings: invoicing, pricing, products, and quotations and orders;
+- Purchases settings: orders and products;
+- the Accounting and Inventory overviews;
+- the Project and Recruitment dashboards;
+- the Time Off dashboard, overview and by-type pages.
+
+Company separation was not affected: nobody could see another company's
+data. The bug is in production, which contains 98f40d9e6. It was found on
+2026-11-07 while porting the module dashboards.
+
+**How.**
+- `Webkul\Support\Filament\Concerns\ChecksPagePermission::hasPagePermission()`
+  mirrors `HasPageShield`, including its rule that a page with no permission
+  name stays open.
+- Each of the 13 pages now returns `<module>::enabledForCurrent() &&
+  static::hasPagePermission()`.
+- The new Invoice, Sales and Purchase dashboards use the same check.
+
+**Benefit.** The role decides again who sees settings and dashboards. The
+module switch still applies on top.
+
+**Trade-off / risk.** Users who opened these pages without the permission
+over the last few days lose access. That is intended. A role that should
+have them needs the page permission ticked.
+
+**Verification.**
+`plugin-manager/tests/Feature/Entitlements/EntitledPagePermissionTest.php`
+checks every one of the 13 pages: a company user without the permission is
+refused, and one with it is allowed. Results are in
+`docs/dashboards-plan.md`.
+
+**Rollback.** Revert the commit. That reopens the pages, so do not.
+
 ## 2026-11-05 (Module switch reaches invoicing and billing; Contacts always on; shared portal customers)
 
 **Why.** These close SAAS-05 review findings 1, 3 and 4. The user chose the

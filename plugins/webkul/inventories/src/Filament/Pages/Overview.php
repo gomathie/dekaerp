@@ -3,6 +3,8 @@
 namespace Webkul\Inventory\Filament\Pages;
 
 
+
+use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 use Webkul\PluginManager\Support\PluginEntitlement;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Pages\Page;
@@ -11,6 +13,7 @@ use Webkul\Support\Enums\NavigationGroup;
 
 class Overview extends Page
 {
+    use ChecksPagePermission;
     use HasPageShield;
 
     protected static ?string $slug = 'inventory/overview';
@@ -37,6 +40,7 @@ class Overview extends Page
     }
     public static function canAccess(): bool
     {
-        return PluginEntitlement::enabledForCurrent('inventories');
+        return PluginEntitlement::enabledForCurrent('inventories')
+            && static::hasPagePermission();
     }
 }

@@ -3,6 +3,8 @@
 namespace Webkul\Recruitment\Filament\Pages;
 
 
+
+use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 use Webkul\PluginManager\Support\PluginEntitlement;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
@@ -15,7 +17,9 @@ use Filament\View\LegacyComponents\Widget;
 use Illuminate\Contracts\Support\Htmlable;
 use Webkul\Employee\Models\Department;
 use Webkul\Employee\Models\EmployeeJobPosition;
+use Filament\Schemas\Components\Component;
 use Webkul\Recruitment\Filament\Widgets\ApplicantChartWidget;
+use Webkul\Recruitment\Filament\Widgets\ApplicantsByStageChart;
 use Webkul\Recruitment\Filament\Widgets\JobPositionStatsWidget;
 use Webkul\Recruitment\Models\Stage;
 use Webkul\Support\Enums\NavigationGroup;
@@ -25,6 +29,7 @@ use Webkul\Support\Models\Company;
 class Recruitments extends BaseDashboard
 {
     use BaseDashboard\Concerns\HasFiltersForm;
+    use ChecksPagePermission;
     use HasPageShield;
 
     protected static string $routePath = 'recruitment';
@@ -108,8 +113,18 @@ class Recruitments extends BaseDashboard
                         'default' => 1,
                         'sm'      => 2,
                         'md'      => 3,
-                        'xl'      => 7,
+                        'xl'      => 6,
                     ]),
+            ]);
+    }
+
+    public function getWidgetsContentComponent(): Component
+    {
+        return parent::getWidgetsContentComponent()
+            ->extraAttributes([
+                'data-dashboard-widgets' => 'true',
+                'wire:loading.class'     => 'dashboard-widgets--loading',
+                'wire:target'            => 'filters',
             ]);
     }
 
@@ -121,10 +136,12 @@ class Recruitments extends BaseDashboard
         return [
             JobPositionStatsWidget::class,
             ApplicantChartWidget::class,
+            ApplicantsByStageChart::class,
         ];
     }
     public static function canAccess(): bool
     {
-        return PluginEntitlement::enabledForCurrent('recruitments');
+        return PluginEntitlement::enabledForCurrent('recruitments')
+            && static::hasPagePermission();
     }
 }

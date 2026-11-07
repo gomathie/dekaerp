@@ -3,6 +3,8 @@
 namespace Webkul\Project\Filament\Pages;
 
 
+
+use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 use Webkul\PluginManager\Support\PluginEntitlement;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
@@ -27,6 +29,7 @@ use Webkul\Support\Filament\Forms\Components\DashboardDateRange;
 class Dashboard extends BaseDashboard
 {
     use BaseDashboard\Concerns\HasFiltersForm;
+    use ChecksPagePermission;
     use HasPageShield;
 
     protected static string $routePath = 'project';
@@ -120,6 +123,7 @@ class Dashboard extends BaseDashboard
     }
     public static function canAccess(): bool
     {
-        return PluginEntitlement::enabledForCurrent('projects');
+        return PluginEntitlement::enabledForCurrent('projects')
+            && static::hasPagePermission();
     }
 }
