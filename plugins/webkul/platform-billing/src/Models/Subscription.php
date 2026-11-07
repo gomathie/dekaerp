@@ -40,6 +40,9 @@ class Subscription extends Model
             'period_start_at' => 'immutable_datetime',
             'period_end_at' => 'immutable_datetime',
             'next_invoice_at' => 'immutable_datetime',
+            'cancel_at_period_end' => 'boolean',
+            'overdue_at' => 'immutable_datetime',
+            'seat_limit' => 'integer',
         ];
     }
 
@@ -56,5 +59,10 @@ class Subscription extends Model
     public function price(): BelongsTo
     {
         return $this->belongsTo(Price::class);
+    }
+
+    public function scheduledPrice(): BelongsTo
+    {
+        return $this->belongsTo(Price::class, 'scheduled_price_id');
     }
 }

@@ -44,6 +44,7 @@ class SubscriptionDrafts
                 'currency' => $price->currency,
                 'interval_months' => $price->interval_months,
                 'amount_minor' => $price->amount_minor,
+                'seat_limit' => $price->plan->seat_limit,
                 'timezone' => $anchor->getTimezone()->getName(),
                 'anchor_at' => $anchor->setTimezone(new DateTimeZone('UTC')),
             ]);

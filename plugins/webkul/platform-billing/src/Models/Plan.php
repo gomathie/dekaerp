@@ -16,7 +16,7 @@ class Plan extends Model
 
     protected function casts(): array
     {
-        return ['included_plugins' => 'array', 'is_active' => 'boolean'];
+        return ['included_plugins' => 'array', 'is_active' => 'boolean', 'seat_limit' => 'integer'];
     }
 
     public function prices(): HasMany
