@@ -6,7 +6,7 @@ use DateTimeImmutable;
 use DateTimeZone;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\QueryException;
-use Illuminate\Support\CarbonImmutable;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Webkul\PlatformBilling\Models\DiscountCode;
@@ -106,11 +106,15 @@ class DiscountCodeService
                     ->exists()) {
                 throw new AuthorizationException('This discount code is not available to this company.');
             }
-            if ($discount->max_redemptions !== null && $discount->redemption_count >= $discount->max_redemptions) {
-                throw ValidationException::withMessages(['code' => 'This discount code has reached its redemption limit.']);
-            }
+            // The company-specific refusal comes before the global cap. Once the
+            // cap is exhausted, checking the cap first tells a company that
+            // already holds the code that the code is globally used up, and the
+            // duplicate they actually hit is never named.
             if (DiscountRedemption::withoutGlobalScopes()->where('discount_code_id', $discount->id)->where('company_id', $lockedCompany->id)->exists()) {
                 throw ValidationException::withMessages(['code' => 'This company has already redeemed this discount code.']);
+            }
+            if ($discount->max_redemptions !== null && $discount->redemption_count >= $discount->max_redemptions) {
+                throw ValidationException::withMessages(['code' => 'This discount code has reached its redemption limit.']);
             }
 
             // The company row lock serializes different codes too, so two
@@ -127,6 +131,9 @@ class DiscountCodeService
                 DB::table('platform_billing_company_discount_slots')->where('company_id', $lockedCompany->id)->delete();
             }
 
+            // Carbon\CarbonImmutable, not Illuminate\Support\CarbonImmutable: that
+            // class does not exist, so every N-month redemption crashed before the
+            // duration could be stored (the stacking test is the pin).
             $endsAt = $discount->duration_type === 'months'
                 ? CarbonImmutable::instance($at)->addMonthsNoOverflow($discount->duration_months)
                 : null;
