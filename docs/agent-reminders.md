@@ -17,8 +17,10 @@ explicit platform-wide mode. Forced API and queued company contexts stay
 scoped to their forced company. The protected decision is in `AGENTS.md`.
 
 **Implementation and verification:** See `docs/change-log.md`, entry
-"2026-11-09 (Super Admin company data scope)". Tests and formatter status will
-be recorded there before handoff.
+"2026-11-09 (Super Admin company data scope)". The corrected tenancy directory
+passed **20 tests / 69 assertions**, CompanyIsolation passed **9 / 26**, the
+isolated scoping test passed **1 / 21**, and Pint passed. The initial test
+failure and two fixture-only retry failures are documented there.
 
 ## Standing instructions
 
