@@ -76,6 +76,7 @@ class Invoices extends BaseDashboard
                         __('invoices::filament/pages/dashboard.filters.date-range'),
                         'start_date',
                         'end_date',
+                        columnSpan: ['xl' => 2],
                     ),
 
                     Select::make('product_id')
@@ -132,7 +133,7 @@ class Invoices extends BaseDashboard
                     'default' => 1,
                     'sm'      => 2,
                     'md'      => 3,
-                    'xl'      => 7,
+                    'xl'      => 4,
                 ]),
         ]);
     }
