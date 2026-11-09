@@ -6,6 +6,7 @@
 * Added per-company Logistics settings, numbering sequences, service products, capacity warnings, delivery requirements, and accounting defaults
 * Added one-time, expiring driver links for mobile proof-of-delivery capture without requiring a driver login
 * Added shipment register, delivery performance, profitability, vehicle trip history, and driver trip history reports with filtered exports
+* Added Invoice, Sales and Purchase dashboards, and expanded the Recruitment dashboard, with filters, trend cards, charts and top-record lists. Each shows only the current company's figures
 
 ### Improvements
 
@@ -15,6 +16,9 @@
 
 ### Fixes
 
+* [Security] Settings pages, overviews and dashboards in Sales, Purchases, Accounting, Inventory, Projects, Recruitment and Time Off require their page permission again; a recent change had let any user of the company open them
+* [Security] Dashboard widgets check both the module and their own permission
+* The Project "Tasks by state" chart loads faster: it counts every state in one query instead of one per state
 * [Security] Enforced company isolation and server-side authorization across Logistics actions, reports, exports, widgets, documents, and delivery files
 * [Security] Added hashed, single-use, revocable, expiring, and rate-limited public delivery links whose token travels in the URL fragment so it never appears in HTTP access logs, edge CDN logs, or any other layer that records request paths
 
