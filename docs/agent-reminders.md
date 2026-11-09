@@ -13,12 +13,15 @@ Boost guidelines the agent follows) and [`CHANGELOG.md`](../CHANGELOG.md)
 the SAAS-15 account type. Leave SAAS-10B and impersonation unbuilt.
 
 **Decision:** Manual Super Admin payments, with derived credit and one-person
-reversals. Test or commercial is chosen by installation staff at creation.
-An expired test is read-only. Switching to commercial was implemented for
-Super Admin only, and that split is an open question in the SAAS-15 handoff.
+reversals. A reversal that reopens an invoice already past day 8 starts a
+fresh 10-day overdue grace from the reversal. Test or commercial is chosen
+by installation staff at creation. An expired test is read-only. An assigned
+Multi-Company Admin may switch that company to commercial. `create()`,
+`activate()` and `syncForCompany()` stay Super Admin.
 
-**Implementation and verification:** See the SAAS-11 and SAAS-15 handoffs in
-`docs/saas-administration-billing-audit-plan.md`, and the matching entry in
+**Implementation and verification:** See the SAAS-11 and SAAS-15 handoffs,
+including the two same-day addenda, in
+`docs/saas-administration-billing-audit-plan.md`, and the matching entries in
 `docs/change-log.md`. Database `aureuserp_testing_saas11`.
 
 ## 2026-11-09

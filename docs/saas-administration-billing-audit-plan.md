@@ -2130,6 +2130,52 @@ moved them to SAAS-10B.
 - Suggested next package: SAAS-10B (todo). It changes when `isReadOnly()`
   becomes true. Do not build it inside a payment change.
 
+#### SAAS-11 handoff addendum — reversal grace — 2026-11-09
+
+- Owner / database: `aureuserp_testing_saas11`
+- Status: review
+- Implemented: a full reversal that leaves an invoice unpaid, and that
+  invoice is already past day 8, calls
+  `SubscriptionLifecycle::recordOverdue()` with the reversal's time. The
+  company then has a new 10 days before it is read-only. Paying again
+  clears the mark through `clearOverdue`, as before. A reversal before
+  day 8 does not set the mark. A refund of unused credit does not reopen
+  an invoice and does not touch the mark. If `overdue_at` is already set,
+  the reversal leaves that timestamp where it is.
+- Why (root cause or decision id) / How (mechanism) / Benefit: user,
+  2026-11-09, after the first handoff left this open. Restoring the
+  original day-8 date would lock the company at the moment of the
+  reversal whenever that grace had already run out. Leaving the mark
+  empty would let an unpaid company keep editing until the next period
+  is billed. The lifecycle owns the mark. `reversePayment()` does not
+  write `overdue_at` itself.
+- Protected decisions added or superseded: see `AGENTS.md`, platform
+  payments, the reversal-grace bullet. The sentence in the first SAAS-11
+  handoff that said a reversal does not put the subscription back overdue
+  is superseded above.
+- Files changed, uncommitted: `src/Services/PlatformPayments.php`
+  (`restoreOverdueIfReopened`), `tests/Feature/PlatformPaymentTest.php`,
+  `AGENTS.md`, this plan, `docs/change-log.md`, `docs/agent-reminders.md`.
+- Tests run with pass/assertion counts: `PlatformPaymentTest` 12 passed,
+  41 assertions, 203.64s, exit 0, on `aureuserp_testing_saas11`.
+  `vendor/bin/pint --dirty --format agent` passed.
+- Reviewed but not executed: PlatformBillingFeature was not re-run.
+  No browser pass. No production database.
+- Failures investigated: none in this run.
+- Security/tenant/concurrency review: the caller is already a Super
+  Admin, and `recordOverdue()` checks that again. The mark is set only
+  for the payment's company, after the invoice rows are reopened, inside
+  the same transaction. A retry that finds the existing reversal returns
+  before this step, so it does not move the mark a second time.
+- Risks and rollback: remove `restoreOverdueIfReopened()` and its call.
+  No migration. A reversal posted after this ships will start a grace
+  that a rollback of the code cannot erase; clear it with
+  `clearOverdue` if the invoice is paid again.
+- Cross-package requests: unchanged. Claude still reviews the
+  test-expiry branch of `isReadOnly()`. Payment, Allocation and Reversal
+  stay outside `EXEMPT_MODELS`.
+- Suggested next package: SAAS-10B.
+
 #### SAAS-12 — platform administration screens
 
 **Owns:** Platform Billing Filament cluster/resources/pages/translations and
@@ -2326,6 +2372,64 @@ Questions:
      the same method.
 - Suggested next package: SAAS-10B. Impersonation stays on this row and
   was not built.
+
+#### SAAS-15 handoff addendum — assigned Multi-Company Admin may switch — 2026-11-09
+
+- Owner / database: `aureuserp_testing_saas11`
+- Status: review for the account type. Impersonation, backfill, shadow
+  mode and release hardening stay out.
+- Implemented: an assigned Multi-Company Admin may switch that test
+  company to commercial. The switch still picks a plan and price, starts
+  the subscription at the next period, and posts no invoice for the
+  trial. The assignment check is `MultiCompanyAdminService::mayAdministerCompany()`,
+  shared with adding days. A company administrator, and a Multi-Company
+  Admin for a company they are not assigned to, are refused with "Only a
+  Super Admin, or a Multi-Company Admin for this company, may switch it
+  to commercial." `SubscriptionDrafts::create()`,
+  `SubscriptionLifecycle::activate()` and
+  `PluginEntitlementService::syncForCompany()` still refuse anyone who
+  is not a Super Admin. The switch calls `createForCommercialSwitch()`,
+  `activateForCommercialSwitch()` and `syncForCommercialSwitch()`, which
+  apply that plan's modules and seat limit and nothing else.
+- Why (root cause or decision id) / How (mechanism) / Benefit: user,
+  2026-11-09. The first build kept the switch with Super Admin because
+  it starts a subscription (D-SAAS-06). The user included the assigned
+  Multi-Company Admin the same day. D-SAAS-06 now records this as its
+  third narrow exception. Widening `create()`, `activate()` or
+  `syncForCompany()` would have let that admin change any subscription
+  or any module list.
+- Protected decisions added or superseded: see `AGENTS.md`, account type.
+  The "Super Admin only" switch line is marked superseded there.
+- Files changed, uncommitted:
+  `platform-billing/src/Services/CompanyAccountType.php`,
+  `platform-billing/src/Services/SubscriptionDrafts.php`,
+  `platform-billing/src/Services/SubscriptionLifecycle.php`,
+  `plugin-manager/src/Services/PluginEntitlementService.php`,
+  `security/src/Services/MultiCompanyAdminService.php`,
+  `platform-billing/tests/Feature/AccountTypeTest.php`, `AGENTS.md`,
+  this plan, `docs/change-log.md`, `docs/agent-reminders.md`.
+- Tests run with pass/assertion counts: `AccountTypeTest` and
+  `SubscriptionActivationTest` together, 13 passed, 54 assertions,
+  252.91s, exit 0, on `aureuserp_testing_saas11`. Pint passed.
+- Reviewed but not executed: PlatformBillingFeature, SecurityFeature and
+  SupportFeature were not re-run. The create form was not opened in a
+  browser. No production database.
+- Failures investigated: none in this run.
+- Security/tenant/concurrency review: the staff check runs in the switch
+  and again in the draft, activation and entitlement entries, so a later
+  caller cannot skip it. The general subscription and entitlement methods
+  stay Super Admin; `AccountTypeTest` pins "Only a Super Admin may change
+  subscriptions." and "Only a platform administrator may change plugin
+  entitlements." The company must be assigned. Creating the stranger
+  company while the Super Admin is signed in matters, because
+  `Company::created` assigns the authenticated creator.
+- Risks and rollback: remove the three `ForCommercialSwitch` methods and
+  point the switch back at `create()` and `activate()`. No migration.
+  `syncForCompany()` must stay Super Admin; the modules screen and a
+  forged company-form payload rely on that refusal.
+- Cross-package requests: Claude still reviews the `isReadOnly`
+  test-expiry branch before SAAS-10B changes that method.
+- Suggested next package: SAAS-10B. Impersonation stays unbuilt.
 
 ### Handoff template
 

@@ -18,6 +18,9 @@ period.
 invoice is unpaid again. A mark that is already set is not moved. A reversal
 before day 8, and a refund of unused credit, leave the mark alone.
 
+**Verification:** `aureuserp_testing_saas11`. `PlatformPaymentTest` 12 passed,
+41 assertions. Pint passed. PlatformBillingFeature was not re-run.
+
 ## 2026-11-09 (commercial switch for an assigned Multi-Company Admin)
 
 **Requested:** A Multi-Company Admin may switch a test company to commercial.
