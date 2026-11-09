@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
+use Webkul\PlatformBilling\Models\Allocation;
 use Webkul\PlatformBilling\Models\Invoice;
 use Webkul\PlatformBilling\Models\Payment;
 use Webkul\PlatformBilling\Models\Plan;
@@ -18,7 +19,6 @@ use Webkul\Security\Models\User;
 use Webkul\Security\Services\MultiCompanyAdminRoleProvisioner;
 use Webkul\Support\Models\Company;
 
-require_once __DIR__.'/../../../support/tests/Helpers/SecurityHelper.php';
 require_once __DIR__.'/../../../support/tests/Helpers/TestBootstrapHelper.php';
 
 beforeEach(function (): void {
@@ -51,6 +51,11 @@ function paymentFixture(): array
     app(RecurringInvoiceGenerator::class)->generateDue((int) $active->getKey(), new DateTimeImmutable('2026-02-01T00:00:00Z'));
     $invoice = Invoice::withoutGlobalScopes()->where('subscription_id', $active->getKey())->firstOrFail();
 
+    // The read-only guard looks at the authenticated user, not the service
+    // argument. Posting is a signed-in Super Admin (D-SAAS-10).
+    Auth::shouldUse('web');
+    Auth::guard('web')->login($actor);
+
     return [$company, $actor, $active, $invoice];
 }
 
@@ -70,7 +75,12 @@ it('returns the same payment when the reference is posted twice and refuses a di
 
 it('refuses a multi-company admin even though credit notes can be delegated', function () {
     [$company] = paymentFixture();
-    $actor = SecurityHelper::authenticateWithPermissions(['view_any_platform_billing_payment']);
+    $actor = User::withoutEvents(fn (): User => User::factory()->create([
+        'default_company_id' => $company->getKey(),
+        'is_active' => true,
+        'is_default' => false,
+    ]));
+    $actor->allowedCompanies()->sync([$company->getKey()]);
     $actor->syncRoles([app(MultiCompanyAdminRoleProvisioner::class)->provision()->getKey()]);
     $actor->unsetRelation('roles');
 
@@ -102,7 +112,7 @@ it('allocates one payment across invoices and rejects an amount past the invoice
     $rest = $service->unappliedMinor($payment->fresh());
 
     expect(fn () => $service->allocate($actor, $payment, [
-        ['invoice_id' => (int) $first->getKey(), 'amount_minor' => $rest + 1],
+        ['invoice_id' => (int) $second->getKey(), 'amount_minor' => $rest + 1],
     ], new DateTimeImmutable('2026-03-02T00:00:00Z')))
         ->toThrow(ValidationException::class, PlatformPayments::PAYMENT_LEFT);
 });
@@ -145,26 +155,52 @@ it('keeps posted payments immutable in the database', function () {
 });
 
 it('holds the payment row lock so a second allocation waits its turn', function () {
-    [$company, $actor, , $invoice] = paymentFixture();
-    $service = app(PlatformPayments::class);
-    $payment = $service->post($actor, $company, 5000, 'RCPT-LOCK', new DateTimeImmutable('2026-02-02T00:00:00Z'));
-    $name = config('database.default');
-    config(["database.connections.payment_lock" => config("database.connections.{$name}")]);
-    DB::purge('payment_lock');
+    // The suite wraps each test in a transaction, so a second session cannot
+    // see this test's rows and will not wait on them. Commit that wrapper.
+    // The tearDown still expects a transaction it can roll back.
+    while (DB::transactionLevel() > 0) {
+        DB::commit();
+    }
 
-    DB::beginTransaction();
-    $service->allocate($actor, $payment, [
-        ['invoice_id' => (int) $invoice->getKey(), 'amount_minor' => 100],
-    ], new DateTimeImmutable('2026-02-02T00:00:00Z'));
+    try {
+        [$company, $actor, , $invoice] = paymentFixture();
+        $service = app(PlatformPayments::class);
+        $payment = $service->post($actor, $company, 5000, 'RCPT-LOCK', new DateTimeImmutable('2026-02-02T00:00:00Z'));
+        $name = config('database.default');
+        $probe = config("database.connections.{$name}");
+        unset($probe['name']);
+        config(['database.connections.payment_lock' => $probe]);
+        DB::purge('payment_lock');
 
-    $second = DB::connection('payment_lock');
-    $second->statement("SET lock_timeout = '400ms'");
+        $blocked = false;
+        Allocation::creating(function () use (&$blocked, $payment): void {
+            if ($blocked) {
+                return;
+            }
 
-    expect(fn () => $second->select('select id from platform_billing_payments where id = ? for update', [$payment->getKey()]))
-        ->toThrow(QueryException::class);
+            $second = DB::connection('payment_lock');
+            $pdo = $second->getPdo();
+            $pdo->exec("SET lock_timeout = '400ms'");
 
-    DB::rollBack();
-    $second->disconnect();
+            try {
+                $pdo->query('select id from platform_billing_payments where id = '.(int) $payment->getKey().' for update');
+            } catch (PDOException $exception) {
+                $blocked = str_contains($exception->getMessage(), 'lock timeout');
+            } finally {
+                $second->disconnect();
+            }
+        });
+
+        $service->allocate($actor, $payment, [
+            ['invoice_id' => (int) $invoice->getKey(), 'amount_minor' => 100],
+        ], new DateTimeImmutable('2026-02-02T00:00:00Z'));
+
+        expect($blocked)->toBeTrue();
+    } finally {
+        if (DB::transactionLevel() === 0) {
+            DB::beginTransaction();
+        }
+    }
 });
 
 it('refunds only unapplied credit and a full reversal nets the payment to zero', function () {

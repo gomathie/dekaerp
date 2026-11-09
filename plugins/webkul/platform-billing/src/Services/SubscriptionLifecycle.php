@@ -28,8 +28,12 @@ class SubscriptionLifecycle
         return DB::transaction(function () use ($subscription, $actor, $at): Subscription {
             $locked = $this->locked($subscription);
             $this->assertState($locked, 'draft');
-            $company = Company::query()->lockForUpdate()->findOrFail($locked->company_id);
-            if (Subscription::query()->where('company_id', $company->id)->where('status', 'active')->exists()) {
+            // CompanyScope follows the selected company. A Super Admin can
+            // activate a subscription for a company they are not currently
+            // viewing; a scoped lookup would miss it, and would also miss an
+            // active subscription that company already has.
+            $company = Company::withoutGlobalScopes()->lockForUpdate()->findOrFail($locked->company_id);
+            if (Subscription::withoutGlobalScopes()->where('company_id', $company->id)->where('status', 'active')->exists()) {
                 throw ValidationException::withMessages(['subscription' => 'This company already has an active subscription.']);
             }
 
