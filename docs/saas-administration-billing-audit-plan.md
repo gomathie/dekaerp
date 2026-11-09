@@ -2473,9 +2473,9 @@ Questions:
 - Why / How / Benefit: user, 2026-11-10. The first build refused the company admin once the lock had started, and a number of days added to an old deadline could leave the company locked. The opening is the new row only, for that company's Company Admin.
 - Protected decisions added or superseded: `AGENTS.md`, overdue extensions. The "guard refuses the Company Admin" line and the "number of days" line are marked superseded.
 - Files changed: `CompanyReadOnlyWriteGuard.php`, `OverdueExtensions.php`, `SubscriptionLifecycle.php`, `OverdueExtension.php`, the overdue-extension migration (`length` and `unit` instead of `days`), `OverdueExtensionTest.php`.
-- Tests run with pass/assertion counts: recorded after the run.
+- Tests run with pass/assertion counts: OverdueExtensionTest 6 passed, 54 assertions, 312.23s, exit 0. PlatformBillingFeature 94 passed, 358 assertions, 1190.68s, exit 0. Both on `aureuserp_testing_saas11`. Pint passed. PluginManagerFeature was not re-run.
 - Reviewed but not executed: no browser. No production migration. The migration is still uncommitted, so the column change is in the original create.
-- Failures investigated: none yet.
+- Failures investigated: none.
 - Security/tenant/concurrency review: another company's Company Admin is still refused. A calendar write on the locked company is still refused. A second grant of the same kind is still refused. Installation staff already passed the guard.
 - Risks and rollback: put the guard check back and the company admin cannot extend after the lock. The table has not shipped, so the length and unit columns are in the create migration.
 - Cross-package requests: item 2 of the SAAS-10B handoff is answered. The model is not exempt. Claude still reviews `isReadOnly()`.
