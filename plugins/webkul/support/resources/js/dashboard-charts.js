@@ -160,6 +160,15 @@ const dashboardChartEntrance = {
         const stagger = (typeof config === 'object' && config.stagger) ? config.stagger : 60
 
         if (type === 'progressive-line') {
+            // Spread the per-point delay over at most one second. A fixed
+            // stagger per point made a year of daily points (365 x 22 ms) take
+            // about 8 s to draw on every refresh. (DEKA ERP, 2026-11-09)
+            const spreadFor = (ctx) => {
+                const points = ctx.chart.data?.labels?.length || 1
+
+                return Math.min(stagger, 1000 / points)
+            }
+
             chart.options.animation = { duration, easing }
 
             chart.options.animations = Object.assign({}, chart.options.animations, {
@@ -175,7 +184,7 @@ const dashboardChartEntrance = {
 
                         ctx.xStarted = true
 
-                        return ctx.index * stagger
+                        return ctx.index * spreadFor(ctx)
                     },
                 },
                 y: {
@@ -190,7 +199,7 @@ const dashboardChartEntrance = {
 
                         ctx.yStarted = true
 
-                        return ctx.index * stagger
+                        return ctx.index * spreadFor(ctx)
                     },
                 },
             })

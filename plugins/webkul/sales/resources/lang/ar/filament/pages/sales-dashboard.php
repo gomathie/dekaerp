@@ -2,7 +2,7 @@
 
 return [
     'navigation' => [
-        'title' => 'لوحة ',
+        'title' => 'المبيعات',
         'group' => 'لوحة التحكم',
     ],
 

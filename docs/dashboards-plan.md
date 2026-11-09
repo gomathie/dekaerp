@@ -52,11 +52,11 @@ These are why it is a port rather than a copy.
 | Package | Content | Status |
 |---|---|---|
 | DB-1 | Shared support pieces (concerns, base widgets, JS asset, theme CSS, `compact_money()`), with the grouped `dailyBuckets` and a unit test for `statTrend()` and the period ranges. | done (verified 2026-11-07: SupportFeature 200 passed) |
-| DB-2 | Invoice tab: the page, eight widgets, filters and translations, meeting every rule in §2. Tests: page permission generated; a revoked Invoices module hides the page; widgets count only the current company; query count bounded. | review |
-| DB-3 | Sales tab (`sales/src/Filament/Pages/SalesDashboard.php` and its widgets). | review |
-| DB-4 | Purchase tab (`purchases/src/Filament/Admin/Pages/Purchases.php` and its widgets). | review |
-| DB-5 | Recruitment tab (`recruitments/src/Filament/Pages/Recruitments.php`). | review |
-| DB-6 | Restyle the existing Project tab with the shared widgets (optional); run all affected suites; write the `CHANGELOG.md` entry. | review (browser check pending) |
+| DB-2 | Invoice tab: the page, eight widgets, filters and translations, meeting every rule in §2. Tests: page permission generated; a revoked Invoices module hides the page; widgets count only the current company; query count bounded. | done (tests and browser check 2026-11-09) |
+| DB-3 | Sales tab (`sales/src/Filament/Pages/SalesDashboard.php` and its widgets). | done (tests and browser check 2026-11-09) |
+| DB-4 | Purchase tab (`purchases/src/Filament/Admin/Pages/Purchases.php` and its widgets). | done (tests and browser check 2026-11-09) |
+| DB-5 | Recruitment tab (`recruitments/src/Filament/Pages/Recruitments.php`). | done (tests and browser check 2026-11-09) |
+| DB-6 | Restyle the existing Project tab with the shared widgets (optional); run all affected suites; write the `CHANGELOG.md` entry. | done (tests and browser check 2026-11-09) |
 
 Each package runs its plugin's full suite, plus SupportFeature (the structure
 snapshots record the new pages and widgets), on its own database
@@ -217,5 +217,63 @@ security fix, the widget guard and the faster Project chart.
 - ProjectFeature, full run after the restyle: 89 passed, 216 assertions, on
   `aureuserp_testing_d12_project`.
 
-**Still open.** No tab has been opened in a browser. Charts, the RTL card
-layout and phone widths are unchecked.
+**Full suites on `develop`, 2026-11-09.** Each ran on its own database
+(`aureuserp_testing_d11_*`, plus `d12` for Project). The branch stayed put
+throughout; the earlier `d10` batch mixed branches and is not counted.
+
+| Suite | Passed | Assertions | Failed |
+|---|---|---|---|
+| Project (after restyle) | 89 | 216 | 0 |
+| Plugin Manager | 57 | 176 | 0 |
+| Support | 203 | 984 | 0 |
+| Sale | 153 | 470 | 0 |
+| Purchase | 196 | 546 | 0 |
+| Invoice | 7 | 19 | 0 |
+| Recruitment | 4 | 17 | 0 |
+
+**Browser check — 2026-11-09 (Claude).**
+- **Setup:** a fresh local install on `aureuserp_browser` with only the seed
+  data, served from the Sail image with opcache on. Signed in as a local
+  throwaway admin. Screenshots are in `storage/logs/browser-check/`.
+- **Desktop (1440 px):** Invoice, Sales, Purchase, Recruitment and Project
+  each render their filters, themed stat cards, charts, doughnut centre
+  totals and top-record tables. The page widths are fine.
+- **Phone (390 px):** Invoice was checked. The filters and cards stack, and
+  nothing runs past the screen edge (measured: page `scrollWidth` equals
+  `clientWidth`, no card or chart wider than the viewport).
+- **Arabic:** the layout is mirrored, and the card icon and text sit
+  correctly with the logical padding from DB-1.
+- **Fixed:** the Sales tab's Arabic menu label read "لوحة" ("board"). It is
+  now "المبيعات", matching the other tabs.
+- **Not fixed (upstream, cosmetic):**
+  - The date-range box on the Invoice and Purchase filter rows is too
+    narrow at desktop width, so the dates are cut off. *Fixed 2026-11-09:*
+    `DashboardDateRange::make()` takes an optional `columnSpan`. Invoice and
+    Purchase lay their filters out in two rows of four columns at xl: the
+    date range takes two columns, then six filters. A first attempt kept
+    every filter on one row (eight columns); the date fitted, but
+    "All Salespersons" broke mid-word, so it was replaced. The final layout
+    was seen in the browser on both tabs, with nothing truncated or broken.
+    Invoice 6 passed and Purchase 4 passed after the change.
+  - The line charts' per-point entrance delay is capped so a whole line
+    draws in about 1 s. It was a fixed 22 ms per point, so a year of daily
+    points took about 8 s on every refresh. The change is in
+    `support/resources/js/dashboard-charts.js` (`spreadFor`) and its
+    published copy in `public/js/support/`. The browser was confirmed to
+    load the new script; the seed data's lines are flat, so the timing was
+    checked by arithmetic, not by eye.
+  - **Cache note:** Filament serves the script as `?v=5.7.6.0`, Filament's
+    own version, so a browser that cached the old script keeps it until its
+    cache expires. The old script still works, it only animates slowly.
+    Upstream's `VersionedCss` exists for this reason and was not ported. The
+    asset version needs bumping before a script change that matters.
+  - The line charts' entrance animation briefly draws past the card edge
+    while redrawing after a refresh; it settles inside the card. *Mitigated
+    2026-11-09: the animation now lasts about 1 s instead of up to 8 s (see
+    below). The brief overflow itself was not reproduced on purpose.* Both are
+    in upstream's CSS and `dashboard-charts.js`.
+- **Environment only:** Livewire refresh requests were cancelled because
+  the local server is slow (status null), which caused the console errors.
+  These are not code faults.
+
+DB-2 to DB-6 are complete; the two cosmetic upstream items are optional.
