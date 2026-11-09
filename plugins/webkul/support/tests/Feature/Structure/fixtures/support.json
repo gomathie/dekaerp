@@ -497,6 +497,19 @@
                                 "type": "Filament\\Schemas\\Components\\Section",
                                 "children": [
                                     {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "account_type"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "test_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
                                         "type": "Filament\\Forms\\Components\\CheckboxList",
                                         "name": "company_modules"
                                     }
