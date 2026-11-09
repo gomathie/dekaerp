@@ -1659,6 +1659,54 @@ log named):
     subscription never expires. Do not widen it to tenant models. Test:
     `SubscriptionReadOnlyEnforcementTest`.
 
+• Platform payments, 2026-11-09 (`docs/saas-administration-billing-audit-plan.md`,
+  SAAS-11 handoff, D-SAAS-10):
+  - A Super Admin enters the payment by hand. There is no provider. The
+    service checks the actor: `Gate::before` lets a Super Admin skip a
+    policy, and a Multi-Company Admin's credit-note grant does not cover
+    a payment or a reversal.
+  - The reference is the idempotency key, unique on
+    `(company_id, idempotency_key)`. A retry with the same amount returns
+    the existing row. A different amount is refused.
+  - There is one posted money-in row. Unapplied credit is that row minus
+    its allocations and reversals. Do not store a running balance. A
+    refund of credit is its own immutable row referencing the payment. It
+    moves no money to a bank.
+  - Posted payments, allocations and reversals are immutable. The database
+    trigger is the backstop. `migrate:fresh` leaves the function behind:
+    drop it before creating it again.
+  - Allocations lock the payment, then the invoices in ascending id order,
+    and hold those locks until the transaction commits.
+  - The payment's company and currency must equal the invoice's. The
+    refusal messages are pinned in `PlatformPayments`.
+  - An allocation that clears an overdue invoice calls
+    `SubscriptionLifecycle::clearOverdue`. Do not write a second
+    read-only rule.
+  - `Payment`, `Allocation` and `Reversal` are not in
+    `CompanyReadOnlyWriteGuard::EXEMPT_MODELS`. The signed-in Super Admin
+    already passes. Do not add them so a job with no user can post money.
+
+• Account type, 2026-11-09 (`docs/saas-administration-billing-audit-plan.md`,
+  SAAS-15 handoff, D-SAAS-11):
+  - `test` or `commercial` is chosen only inside
+    `CompanyOnboarding::create()`, by a Super Admin or a Multi-Company
+    Admin. Omitting it leaves the company commercial. A tenant Company
+    Admin is refused if the payload includes the choice. A refusal rolls
+    the company back.
+  - Existing companies are backfilled `commercial`. A test row must have
+    `test_ends_at`. There is no switch from commercial back to test.
+  - An expired test is read-only through `SubscriptionLifecycle::isReadOnly`,
+    including a company with no subscription. The read-only guard calls
+    that method. Do not add a second clock.
+  - Adding days is a Super Admin, or a Multi-Company Admin for an assigned
+    company. The new end is the later of `test_ends_at` and the instant,
+    plus the days. Switching to commercial is Super Admin only, because it
+    starts a subscription (D-SAAS-06). Billing starts at the next period.
+    The trial is not invoiced.
+  - Saving the company also saves its partner. Once the trial has ended,
+    the guard allows that partner write only while the staff member is
+    the authenticated user. Do not `Auth::login()` inside the service.
+
 DONE RECENTLY (newest first; details in docs/change-log.md)
 
 • 2026-11-03 — Administrator password from the company form, for existing

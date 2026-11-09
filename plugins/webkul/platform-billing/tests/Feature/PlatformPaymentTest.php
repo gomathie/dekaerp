@@ -157,13 +157,22 @@ it('keeps posted payments immutable in the database', function () {
 it('holds the payment row lock so a second allocation waits its turn', function () {
     // The suite wraps each test in a transaction, so a second session cannot
     // see this test's rows and will not wait on them. Commit that wrapper.
-    // The tearDown still expects a transaction it can roll back.
+    // The posted invoice number must not survive, or the next test starts at
+    // 000002. Posted rows cannot be deleted until their immutability triggers
+    // are off. The tearDown still expects a transaction it can roll back.
     while (DB::transactionLevel() > 0) {
         DB::commit();
     }
 
+    $companyId = null;
+    $counterBefore = DB::table('platform_billing_document_numbers')
+        ->where('document_type', 'invoice')
+        ->where('year', 2026)
+        ->value('last_number');
+
     try {
         [$company, $actor, , $invoice] = paymentFixture();
+        $companyId = (int) $company->getKey();
         $service = app(PlatformPayments::class);
         $payment = $service->post($actor, $company, 5000, 'RCPT-LOCK', new DateTimeImmutable('2026-02-02T00:00:00Z'));
         $name = config('database.default');
@@ -197,6 +206,47 @@ it('holds the payment row lock so a second allocation waits its turn', function 
 
         expect($blocked)->toBeTrue();
     } finally {
+        if ($companyId !== null) {
+            foreach ([
+                'platform_billing_allocations',
+                'platform_billing_reversals',
+                'platform_billing_payments',
+                'platform_billing_invoice_lines',
+                'platform_billing_invoices',
+            ] as $table) {
+                DB::statement('ALTER TABLE '.$table.' DISABLE TRIGGER '.$table.'_immutable');
+            }
+
+            DB::table('platform_billing_allocations')->where('company_id', $companyId)->delete();
+            DB::table('platform_billing_reversals')->where('company_id', $companyId)->delete();
+            DB::table('platform_billing_payments')->where('company_id', $companyId)->delete();
+            DB::table('platform_billing_invoice_lines')->where('company_id', $companyId)->delete();
+            DB::table('platform_billing_invoices')->where('company_id', $companyId)->delete();
+            DB::table('platform_billing_subscriptions')->where('company_id', $companyId)->delete();
+
+            foreach ([
+                'platform_billing_allocations',
+                'platform_billing_reversals',
+                'platform_billing_payments',
+                'platform_billing_invoice_lines',
+                'platform_billing_invoices',
+            ] as $table) {
+                DB::statement('ALTER TABLE '.$table.' ENABLE TRIGGER '.$table.'_immutable');
+            }
+        }
+
+        if ($counterBefore === null) {
+            DB::table('platform_billing_document_numbers')
+                ->where('document_type', 'invoice')
+                ->where('year', 2026)
+                ->delete();
+        } else {
+            DB::table('platform_billing_document_numbers')
+                ->where('document_type', 'invoice')
+                ->where('year', 2026)
+                ->update(['last_number' => $counterBefore]);
+        }
+
         if (DB::transactionLevel() === 0) {
             DB::beginTransaction();
         }
