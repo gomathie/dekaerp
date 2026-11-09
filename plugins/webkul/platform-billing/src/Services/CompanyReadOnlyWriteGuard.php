@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use Webkul\PlatformBilling\Models\Invoice;
 use Webkul\PlatformBilling\Models\InvoiceLine;
+use Webkul\PlatformBilling\Models\OverdueExtension;
 use Webkul\PlatformBilling\Models\Subscription;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
@@ -51,6 +52,15 @@ class CompanyReadOnlyWriteGuard
             return;
         }
 
+        // A Company Admin of this company may record the one overdue
+        // extension after the lock (user, 2026-11-10). The model stays out
+        // of EXEMPT_MODELS: a no-user job, another tenant, and every other
+        // model stay refused. An existing row is not covered, so the grant
+        // cannot be edited through this opening.
+        if ($actor instanceof User && $this->companyAdminMayGrantExtension($actor, $model)) {
+            return;
+        }
+
         $companyIds = [];
         if ($model->exists && $model->getOriginal('company_id') !== null) {
             $companyIds[] = (int) $model->getOriginal('company_id');
@@ -79,5 +89,20 @@ class CompanyReadOnlyWriteGuard
                 throw ValidationException::withMessages(['company_id' => self::MESSAGE]);
             }
         }
+    }
+
+    /**
+     * Only a new extension, and only for a company this person administers.
+     * A Company Admin of another company stays refused once that company is read-only.
+     */
+    protected function companyAdminMayGrantExtension(User $actor, Model $model): bool
+    {
+        if (! $model instanceof OverdueExtension || $model->exists || ! $actor->is_active) {
+            return false;
+        }
+
+        $companyId = $model->getAttribute('company_id');
+
+        return $companyId !== null && $actor->isCompanyAdmin((int) $companyId);
     }
 }

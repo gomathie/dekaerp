@@ -21,6 +21,12 @@ class OverdueExtension extends Model
 
     public const KIND_SUPER_ADMIN = 'super_admin';
 
+    public const UNIT_DAY = 'day';
+
+    public const UNIT_WEEK = 'week';
+
+    public const UNIT_MONTH = 'month';
+
     protected $table = 'platform_billing_overdue_extensions';
 
     protected $guarded = [];
@@ -37,7 +43,7 @@ class OverdueExtension extends Model
     protected function casts(): array
     {
         return [
-            'days' => 'integer',
+            'length' => 'integer',
             'granted_at' => 'immutable_datetime',
         ];
     }

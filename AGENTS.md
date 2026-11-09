@@ -1733,15 +1733,21 @@ log named):
     overdue invoice. A second grant is refused with "This invoice already
     has its company-admin extension." The days are added only inside
     `SubscriptionLifecycle::isReadOnly()`. Do not write a second clock.
-  - A Super Admin may grant one separate extension on the same invoice
-    and names a positive number of days. The plan says manual and does
-    not name a length. One grant per invoice and kind. A blank reason
-    is refused.
+  - A Super Admin may grant one separate extension on the same invoice.
+    The length is a positive count of days, weeks, or months (user,
+    2026-11-10). One grant per invoice and kind. A blank reason is refused.
+    *Superseded 2026-11-10:* the first build stored only a number of days.
+  - Each grant starts at the later of the current read-only instant and
+    the time it was given. A grant during grace still pushes the original
+    day-10 instant. A grant after the lock buys its length from the grant,
+    so the company is writable again.
   - An invoice before day 8, or one that is already paid, is not overdue.
-  - `OverdueExtension` is not in `CompanyReadOnlyWriteGuard::EXEMPT_MODELS`.
-    Once the company is already read-only, the guard refuses the Company
-    Admin's grant. A signed-in Super Admin can still grant the manual
-    one. Do not add the model to the exemption without a decision.
+  - `OverdueExtension` stays out of `CompanyReadOnlyWriteGuard::EXEMPT_MODELS`.
+    *Superseded 2026-11-10 (user):* the guard used to refuse the Company
+    Admin once the company was read-only. It now allows a new extension
+    when the authenticated user is a Company Admin of that company. Do not
+    add the model to the exemption: a no-user job and every other tenant
+    write stay refused. An existing extension row is not covered.
   - The row is immutable. `migrate:fresh` leaves the function behind:
     drop `platform_billing_overdue_extensions_are_immutable()` before
     creating it again.

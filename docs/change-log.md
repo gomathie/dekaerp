@@ -6,6 +6,20 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-10 (company admin may extend after the lock)
+
+**Requested:** A Company Admin can extend an overdue invoice after the
+company is read-only. The Super Admin extension is a length they enter
+in days, weeks, or months.
+
+**Implemented:** The read-only guard allows a new overdue extension when
+the signed-in user is a Company Admin of that company. Other tenant
+writes stay refused, and the model is not added to the exemption list.
+Each grant moves the deadline from the later of the current instant and
+the grant time. Weeks and months are calendar lengths.
+
+**Verification:** recorded after the suite on `aureuserp_testing_saas11`.
+
 ## 2026-11-09 (commercial switch helpers stay inside the switch)
 
 **Requested:** Close the gap in `45636cfcf` before SAAS-10B. An assigned
