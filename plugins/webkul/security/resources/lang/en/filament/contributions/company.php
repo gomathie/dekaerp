@@ -18,4 +18,17 @@ return [
             'must-change-password' => 'Must change this password at next sign-in',
         ],
     ],
+
+    'account' => [
+        'title'       => 'Account type',
+        'description' => 'Whether this company is on a trial or a commercial account. Only installation staff can choose this, and only when the company is created.',
+
+        'fields' => [
+            'type'         => 'Account type',
+            'commercial'   => 'Commercial',
+            'test'         => 'Test',
+            'days'         => 'Trial days',
+            'days-helper'  => 'How many days the trial lasts. You can add more days later. A trial is not invoiced.',
+        ],
+    ],
 ];

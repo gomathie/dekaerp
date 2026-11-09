@@ -1653,6 +1653,11 @@ log named):
   - `migrate:fresh` drops tables and leaves a PostgreSQL function behind.
     Drop the immutability function before creating it again.
   - Tests: `plugins/webkul/platform-billing/tests/Feature/RecurringInvoiceTest.php`.
+  - The read-only guard exempts only Subscription, Invoice and InvoiceLine
+    (`CompanyReadOnlyWriteGuard::EXEMPT_MODELS`, user, 2026-11-09). Without
+    it a read-only company is never invoiced again and a cancelled
+    subscription never expires. Do not widen it to tenant models. Test:
+    `SubscriptionReadOnlyEnforcementTest`.
 
 DONE RECENTLY (newest first; details in docs/change-log.md)
 

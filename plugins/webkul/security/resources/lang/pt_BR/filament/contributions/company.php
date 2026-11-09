@@ -18,4 +18,17 @@ return [
             'must-change-password' => 'Deve alterar esta senha no próximo acesso',
         ],
     ],
+
+    'account' => [
+        'title'       => 'Tipo de conta',
+        'description' => 'Se esta empresa está em teste ou é comercial. Somente a equipe de instalação pode escolher, e apenas na criação.',
+
+        'fields' => [
+            'type'         => 'Tipo de conta',
+            'commercial'   => 'Comercial',
+            'test'         => 'Teste',
+            'days'         => 'Dias de teste',
+            'days-helper'  => 'Quantos dias o teste dura. Dá para acrescentar mais depois. Um teste não é faturado.',
+        ],
+    ],
 ];
