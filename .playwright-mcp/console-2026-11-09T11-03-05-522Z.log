@@ -1,0 +1,4 @@
+[  192278ms] [ERROR] Failed to load resource: net::ERR_EMPTY_RESPONSE @ http://localhost:8099/livewire-d159acdd/livewire.js?id=283899a5:0
+[  192322ms] [ERROR] Failed to load resource: net::ERR_EMPTY_RESPONSE @ http://localhost:8099/images/favicon.ico:0
+[  192323ms] [ERROR] Failed to load resource: net::ERR_EMPTY_RESPONSE @ http://localhost:8099/images/icons/icon-192.png:0
+[  192324ms] [WARNING] Error while trying to use the following icon from the Manifest: http://localhost:8099/images/icons/icon-192.png (Download error or resource isn't a valid image) @ http://localhost:8099/admin/login:0

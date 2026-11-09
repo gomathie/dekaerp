@@ -1,0 +1,158 @@
+- generic [active] [ref=f5e1]:
+  - link "Skip to content" [ref=f5e2] [cursor=pointer]:
+    - /url: "#fi-main-content"
+  - generic [ref=f5e3]:
+    - navigation [ref=f5e4]:
+      - button "Expand sidebar" [ref=f5e5] [cursor=pointer]
+      - link [ref=f5e14] [cursor=pointer]:
+        - /url: http://localhost:8099/admin
+        - img "DekaERP logo" [ref=f5e15]
+      - list [ref=f5e16]:
+        - listitem [ref=f5e17]:
+          - link "Dashboard" [ref=f5e19] [cursor=pointer]:
+            - /url: http://localhost:8099/admin/invoice
+        - listitem [ref=f5e20]:
+          - link "Invoice" [ref=f5e21] [cursor=pointer]:
+            - /url: http://localhost:8099/admin/invoice
+        - listitem [ref=f5e23]:
+          - link "Project" [ref=f5e24] [cursor=pointer]:
+            - /url: http://localhost:8099/admin/project
+        - listitem [ref=f5e26]:
+          - link "Purchase" [ref=f5e27] [cursor=pointer]:
+            - /url: http://localhost:8099/admin/purchase
+        - listitem [ref=f5e29]:
+          - link "Recruitment" [ref=f5e30] [cursor=pointer]:
+            - /url: http://localhost:8099/admin/recruitment
+        - listitem [ref=f5e32]:
+          - link "Sales" [ref=f5e33] [cursor=pointer]:
+            - /url: http://localhost:8099/admin/sales
+      - generic [ref=f5e35]:
+        - button "My Company" [ref=f5e39] [cursor=pointer]
+        - generic [ref=f5e47]:
+          - generic [ref=f5e48]: Global search
+          - searchbox "Global search" [ref=f5e54]
+        - generic [ref=f5e435]:
+          - button "Notifications" [disabled]
+        - button "User menu" [ref=f5e61] [cursor=pointer]:
+          - img "Avatar of Browser Admin" [ref=f5e62]
+    - complementary [ref=f5e63]:
+      - navigation [ref=f5e64]:
+        - link "Dashboard" [ref=f5e66] [cursor=pointer]:
+          - /url: http://localhost:8099/admin/invoice
+        - link "Sales" [ref=f5e78] [cursor=pointer]:
+          - /url: http://localhost:8099/admin/sale/orders
+        - link "Purchase" [ref=f5e89] [cursor=pointer]:
+          - /url: http://localhost:8099/admin/purchase/orders
+        - link "Invoices" [ref=f5e104] [cursor=pointer]:
+          - /url: http://localhost:8099/admin/invoices/customers
+        - link "Project" [ref=f5e118] [cursor=pointer]:
+          - /url: http://localhost:8099/admin/project/projects
+        - link "Employees" [ref=f5e134] [cursor=pointer]:
+          - /url: http://localhost:8099/admin/employees/employees
+        - link "Recruitments" [ref=f5e146] [cursor=pointer]:
+          - /url: http://localhost:8099/admin/recruitments/applications
+        - link "Plugins" [ref=f5e156] [cursor=pointer]:
+          - /url: http://localhost:8099/admin/plugins
+        - link "Settings" [ref=f5e165] [cursor=pointer]:
+          - /url: http://localhost:8099/admin/shield/roles
+        - link "Help" [ref=f5e173] [cursor=pointer]:
+          - /url: http://localhost:8099/admin/whats-new
+  - generic [ref=f5e181]:
+    - complementary [ref=f5e182]:
+      - navigation [ref=f5e183]:
+        - list [ref=f5e184]:
+          - list [ref=f5e185]:
+            - listitem [ref=f5e186]:
+              - link "Invoice" [ref=f5e187] [cursor=pointer]:
+                - /url: http://localhost:8099/admin/invoice
+            - listitem [ref=f5e189]:
+              - link "Project" [ref=f5e190] [cursor=pointer]:
+                - /url: http://localhost:8099/admin/project
+            - listitem [ref=f5e192]:
+              - link "Purchase" [ref=f5e193] [cursor=pointer]:
+                - /url: http://localhost:8099/admin/purchase
+            - listitem [ref=f5e195]:
+              - link "Recruitment" [ref=f5e196] [cursor=pointer]:
+                - /url: http://localhost:8099/admin/recruitment
+            - listitem [ref=f5e198]:
+              - link "Sales" [ref=f5e199] [cursor=pointer]:
+                - /url: http://localhost:8099/admin/sales
+    - main [ref=f5e202]:
+      - generic [ref=f5e204]:
+        - heading "Dashboard" [level=1] [ref=f5e207]
+        - generic [ref=f5e210]:
+          - generic [ref=f5e219]:
+            - generic [ref=f5e222]:
+              - generic [ref=f5e223]: Date Range
+              - textbox "Date Range" [ref=f5e232]: 01/01/2026 - 31/12/2026
+            - generic [ref=f5e238]:
+              - generic [ref=f5e239]: Country
+              - generic [ref=f5e248]:
+                - combobox "Country" [ref=f5e249] [cursor=pointer]:
+                  - generic [ref=f5e250]: Select an option
+                - status [ref=f5e252]
+            - generic [ref=f5e255]:
+              - generic [ref=f5e256]: Products
+              - generic [ref=f5e265]:
+                - combobox "Products" [ref=f5e266] [cursor=pointer]:
+                  - generic [ref=f5e267]: Select an option
+                - status [ref=f5e269]
+            - generic [ref=f5e272]:
+              - generic [ref=f5e273]: Category
+              - generic [ref=f5e282]:
+                - combobox "Category" [ref=f5e283] [cursor=pointer]:
+                  - generic [ref=f5e284]: Select an option
+                - status [ref=f5e286]
+            - generic [ref=f5e289]:
+              - generic [ref=f5e290]: Sales Team
+              - generic [ref=f5e299]:
+                - combobox "Sales Team" [ref=f5e300] [cursor=pointer]:
+                  - generic [ref=f5e301]: Select an option
+                - status [ref=f5e303]
+            - generic [ref=f5e306]:
+              - generic [ref=f5e307]: Sales Person
+              - generic [ref=f5e316]:
+                - combobox "Sales Person" [ref=f5e317] [cursor=pointer]:
+                  - generic [ref=f5e318]: Select an option
+                - status [ref=f5e320]
+          - generic [ref=f5e324]:
+            - region [ref=f5e330]:
+              - heading "Key Metrics" [level=2] [ref=f5e333]
+              - generic [ref=f5e335]:
+                - generic [ref=f5e339]:
+                  - generic [ref=f5e340]: Total Quotations
+                  - generic [ref=f5e344]: "0"
+                  - generic [ref=f5e345]: 0%
+                - generic [ref=f5e354]:
+                  - generic [ref=f5e355]: Total Sales Orders
+                  - generic [ref=f5e359]: "0"
+                  - generic [ref=f5e360]: 0%
+                - generic "$0.00" [ref=f5e368]:
+                  - generic [ref=f5e369]:
+                    - generic [ref=f5e370]: Total Revenue
+                    - generic [ref=f5e374]: $0
+                    - generic [ref=f5e375]: 0%
+                - generic "$0.00" [ref=f5e383]:
+                  - generic [ref=f5e384]:
+                    - generic [ref=f5e385]: Average Revenue
+                    - generic [ref=f5e389]: $0
+                    - generic [ref=f5e390]: 0%
+            - generic [ref=f5e397]:
+              - heading "Monthly Sales" [level=2] [ref=f5e400]
+              - img "Monthly Sales" [ref=f5e405]
+            - generic [ref=f5e407]:
+              - heading "Revenue by Category" [level=2] [ref=f5e410]
+              - img "Revenue by Category" [ref=f5e415]
+            - generic [ref=f5e417]:
+              - heading "Sales Person Performance" [level=2] [ref=f5e420]
+              - img "Sales Person Performance" [ref=f5e425]
+            - status [ref=f5e426]:
+              - generic [ref=f5e427]: Loading...
+            - status [ref=f5e428]:
+              - generic [ref=f5e429]: Loading...
+            - status [ref=f5e430]:
+              - generic [ref=f5e431]: Loading...
+            - status [ref=f5e432]:
+              - generic [ref=f5e433]: Loading...
+  - generic:
+    - status

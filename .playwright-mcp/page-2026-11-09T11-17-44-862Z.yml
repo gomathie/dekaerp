@@ -1,0 +1,179 @@
+- generic [active] [ref=f6e1]:
+  - link "Skip to content" [ref=f6e2] [cursor=pointer]:
+    - /url: "#fi-main-content"
+  - generic [ref=f6e3]:
+    - navigation [ref=f6e4]:
+      - button "Expand sidebar" [ref=f6e5] [cursor=pointer]
+      - link [ref=f6e14] [cursor=pointer]:
+        - /url: http://localhost:8099/admin
+        - img "DekaERP logo" [ref=f6e15]
+      - list [ref=f6e16]:
+        - listitem [ref=f6e17]:
+          - link "Dashboard" [ref=f6e19] [cursor=pointer]:
+            - /url: http://localhost:8099/admin/invoice
+        - listitem [ref=f6e20]:
+          - link "Invoice" [ref=f6e21] [cursor=pointer]:
+            - /url: http://localhost:8099/admin/invoice
+        - listitem [ref=f6e23]:
+          - link "Project" [ref=f6e24] [cursor=pointer]:
+            - /url: http://localhost:8099/admin/project
+        - listitem [ref=f6e26]:
+          - link "Purchase" [ref=f6e27] [cursor=pointer]:
+            - /url: http://localhost:8099/admin/purchase
+        - listitem [ref=f6e29]:
+          - link "Recruitment" [ref=f6e30] [cursor=pointer]:
+            - /url: http://localhost:8099/admin/recruitment
+        - listitem [ref=f6e32]:
+          - link "Sales" [ref=f6e33] [cursor=pointer]:
+            - /url: http://localhost:8099/admin/sales
+      - generic [ref=f6e35]:
+        - button "My Company" [ref=f6e39] [cursor=pointer]
+        - generic [ref=f6e47]:
+          - generic [ref=f6e48]: Global search
+          - searchbox "Global search" [ref=f6e54]
+        - button "Notifications" [ref=f6e413] [cursor=pointer]
+        - button "User menu" [ref=f6e61] [cursor=pointer]:
+          - img "Avatar of Browser Admin" [ref=f6e62]
+    - complementary [ref=f6e63]:
+      - navigation [ref=f6e64]:
+        - link "Dashboard" [ref=f6e66] [cursor=pointer]:
+          - /url: http://localhost:8099/admin/invoice
+        - link "Sales" [ref=f6e78] [cursor=pointer]:
+          - /url: http://localhost:8099/admin/sale/orders
+        - link "Purchase" [ref=f6e89] [cursor=pointer]:
+          - /url: http://localhost:8099/admin/purchase/orders
+        - link "Invoices" [ref=f6e104] [cursor=pointer]:
+          - /url: http://localhost:8099/admin/invoices/customers
+        - link "Project" [ref=f6e118] [cursor=pointer]:
+          - /url: http://localhost:8099/admin/project/projects
+        - link "Employees" [ref=f6e134] [cursor=pointer]:
+          - /url: http://localhost:8099/admin/employees/employees
+        - link "Recruitments" [ref=f6e146] [cursor=pointer]:
+          - /url: http://localhost:8099/admin/recruitments/applications
+        - link "Plugins" [ref=f6e156] [cursor=pointer]:
+          - /url: http://localhost:8099/admin/plugins
+        - link "Settings" [ref=f6e165] [cursor=pointer]:
+          - /url: http://localhost:8099/admin/shield/roles
+        - link "Help" [ref=f6e173] [cursor=pointer]:
+          - /url: http://localhost:8099/admin/whats-new
+  - generic [ref=f6e181]:
+    - complementary [ref=f6e182]:
+      - navigation [ref=f6e183]:
+        - list [ref=f6e184]:
+          - list [ref=f6e185]:
+            - listitem [ref=f6e186]:
+              - link "Invoice" [ref=f6e187] [cursor=pointer]:
+                - /url: http://localhost:8099/admin/invoice
+            - listitem [ref=f6e189]:
+              - link "Project" [ref=f6e190] [cursor=pointer]:
+                - /url: http://localhost:8099/admin/project
+            - listitem [ref=f6e192]:
+              - link "Purchase" [ref=f6e193] [cursor=pointer]:
+                - /url: http://localhost:8099/admin/purchase
+            - listitem [ref=f6e195]:
+              - link "Recruitment" [ref=f6e196] [cursor=pointer]:
+                - /url: http://localhost:8099/admin/recruitment
+            - listitem [ref=f6e198]:
+              - link "Sales" [ref=f6e199] [cursor=pointer]:
+                - /url: http://localhost:8099/admin/sales
+    - main [ref=f6e202]:
+      - generic [ref=f6e204]:
+        - heading "Dashboard" [level=1] [ref=f6e207]
+        - generic [ref=f6e210]:
+          - generic [ref=f6e219]:
+            - generic [ref=f6e222]:
+              - generic [ref=f6e223]: Date Range
+              - textbox "Date Range" [ref=f6e232]: 01/01/2026 - 31/12/2026
+            - generic [ref=f6e238]:
+              - generic [ref=f6e239]: Country
+              - generic [ref=f6e416]:
+                - combobox "Country" [ref=f6e417] [cursor=pointer]:
+                  - generic [ref=f6e418]: All Countries
+                - status [ref=f6e420]
+            - generic [ref=f6e250]:
+              - generic [ref=f6e251]: Product
+              - generic [ref=f6e421]:
+                - combobox "Product" [ref=f6e422] [cursor=pointer]:
+                  - generic [ref=f6e423]: All Products
+                - status [ref=f6e425]
+            - generic [ref=f6e262]:
+              - generic [ref=f6e263]: Vendor
+              - generic [ref=f6e426]:
+                - combobox "Vendor" [ref=f6e427] [cursor=pointer]:
+                  - generic [ref=f6e428]: All Vendors
+                - status [ref=f6e430]
+            - generic [ref=f6e274]:
+              - generic [ref=f6e275]: Category
+              - generic [ref=f6e431]:
+                - combobox "Category" [ref=f6e432] [cursor=pointer]:
+                  - generic [ref=f6e433]: All Categories
+                - status [ref=f6e435]
+            - generic [ref=f6e286]:
+              - generic [ref=f6e287]: Buyer
+              - generic [ref=f6e436]:
+                - combobox "Buyer" [ref=f6e437] [cursor=pointer]:
+                  - generic [ref=f6e438]: All Buyers
+                - status [ref=f6e440]
+            - generic [ref=f6e298]:
+              - generic [ref=f6e299]: Order State
+              - generic [ref=f6e441]:
+                - combobox "Order State" [ref=f6e442] [cursor=pointer]:
+                  - generic [ref=f6e443]: All States
+                - status [ref=f6e445]
+          - generic [ref=f6e311]:
+            - region [ref=f6e317]:
+              - heading "Key Metrics" [level=2] [ref=f6e320]
+              - generic [ref=f6e322]:
+                - generic [ref=f6e326]:
+                  - generic [ref=f6e327]: Draft RFQs
+                  - generic [ref=f6e331]: "0"
+                  - generic [ref=f6e332]: 0%
+                - generic [ref=f6e341]:
+                  - generic [ref=f6e342]: Sent RFQs
+                  - generic [ref=f6e346]: "0"
+                  - generic [ref=f6e347]: 0%
+                - generic [ref=f6e356]:
+                  - generic [ref=f6e357]: Confirmed Orders
+                  - generic [ref=f6e361]: "0"
+                  - generic [ref=f6e362]: 0%
+                - generic [ref=f6e371]:
+                  - generic [ref=f6e372]: Total Purchase Value
+                  - generic [ref=f6e376]: $0
+                  - generic [ref=f6e377]: 0%
+            - generic [ref=f6e384]:
+              - heading "Purchase Orders Trend by State" [level=2] [ref=f6e387]
+              - img "Purchase Orders Trend by State" [ref=f6e392]
+            - generic [ref=f6e394]:
+              - heading "Vendor Spend Share" [level=2] [ref=f6e397]
+              - img "Vendor Spend Share" [ref=f6e402]
+            - generic [ref=f6e449]:
+              - heading "Top Orders" [level=2] [ref=f6e453]
+              - generic [ref=f6e454]:
+                - status [ref=f6e455]: No results
+                - table "Top Orders" [ref=f6e456]:
+                  - rowgroup [ref=f6e457]:
+                    - row [ref=f6e458]:
+                      - columnheader "Order Number" [ref=f6e459]
+                      - columnheader "Receipt Status" [ref=f6e460]
+                      - columnheader "Billing Status" [ref=f6e461]
+                      - columnheader "Total Amount" [ref=f6e462]
+              - status [ref=f6e463]:
+                - heading "No purchase orders" [level=3] [ref=f6e468]
+            - generic [ref=f6e472]:
+              - heading "Top RFQs" [level=2] [ref=f6e476]
+              - generic [ref=f6e477]:
+                - status [ref=f6e478]: No results
+                - table "Top RFQs" [ref=f6e479]:
+                  - rowgroup [ref=f6e480]:
+                    - row [ref=f6e481]:
+                      - columnheader "RFQ Number" [ref=f6e482]
+                      - columnheader "Status" [ref=f6e483]
+                      - columnheader "Total Amount" [ref=f6e484]
+              - status [ref=f6e485]:
+                - heading "No purchase orders" [level=3] [ref=f6e490]
+            - status [ref=f6e407]:
+              - generic [ref=f6e408]: Loading...
+            - status [ref=f6e409]:
+              - generic [ref=f6e410]: Loading...
+  - generic:
+    - status
