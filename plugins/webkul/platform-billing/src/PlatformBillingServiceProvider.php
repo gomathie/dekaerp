@@ -2,12 +2,15 @@
 
 namespace Webkul\PlatformBilling;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Webkul\PlatformBilling\Models\DocumentNumber;
 use Webkul\PlatformBilling\Models\Plan;
 use Webkul\PlatformBilling\Models\Price;
 use Webkul\PlatformBilling\Models\Subscription;
 use Webkul\PlatformBilling\Policies\DocumentNumberPolicy;
+use Webkul\PlatformBilling\Services\CompanyReadOnlyWriteGuard;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
 
@@ -27,6 +30,8 @@ use Webkul\PluginManager\PackageServiceProvider;
 class PlatformBillingServiceProvider extends PackageServiceProvider
 {
     public static string $name = 'platform-billing';
+
+    protected static ?object $readOnlyWriteGuardDispatcher = null;
 
     public function configureCustomPackage(Package $package): void
     {
@@ -51,5 +56,38 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
         Gate::policy(Plan::class, DocumentNumberPolicy::class);
         Gate::policy(Price::class, DocumentNumberPolicy::class);
         Gate::policy(Subscription::class, DocumentNumberPolicy::class);
+
+        $dispatcher = Event::getFacadeRoot();
+
+        if (static::$readOnlyWriteGuardDispatcher === $dispatcher) {
+            return;
+        }
+
+        // Test bootstrap can replace Laravel's dispatcher between app instances.
+        // Register once per dispatcher to avoid both stale guards and duplicates.
+        static::$readOnlyWriteGuardDispatcher = $dispatcher;
+
+        // Run after model-specific creating hooks have resolved the row's company.
+        Event::listen('eloquent.creating: *', function (string $event, array $payload): void {
+            $model = $payload[0] ?? null;
+
+            if ($model instanceof Model) {
+                app(CompanyReadOnlyWriteGuard::class)->assertMayWrite($model);
+            }
+        });
+        Event::listen('eloquent.saving: *', function (string $event, array $payload): void {
+            $model = $payload[0] ?? null;
+
+            if ($model instanceof Model && $model->exists) {
+                app(CompanyReadOnlyWriteGuard::class)->assertMayWrite($model);
+            }
+        });
+        Event::listen('eloquent.deleting: *', function (string $event, array $payload): void {
+            $model = $payload[0] ?? null;
+
+            if ($model instanceof Model) {
+                app(CompanyReadOnlyWriteGuard::class)->assertMayWrite($model);
+            }
+        });
     }
 }

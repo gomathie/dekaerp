@@ -18,7 +18,8 @@
 
 * [Security] Settings pages, overviews and dashboards in Sales, Purchases, Accounting, Inventory, Projects, Recruitment and Time Off require their page permission again; a recent change had let any user of the company open them
 * [Security] Dashboard widgets check both the module and their own permission
-* The Project "Tasks by state" chart loads faster: it counts every state in one query instead of one per state
+* The Project "Tasks by state" and "Tasks by stage" charts load faster: each counts in one query instead of one per state or stage
+* The Project "Tasks by stage" chart no longer shows zero for every stage when no start date is chosen
 * [Security] Enforced company isolation and server-side authorization across Logistics actions, reports, exports, widgets, documents, and delivery files
 * [Security] Added hashed, single-use, revocable, expiring, and rate-limited public delivery links whose token travels in the URL fragment so it never appears in HTTP access logs, edge CDN logs, or any other layer that records request paths
 
