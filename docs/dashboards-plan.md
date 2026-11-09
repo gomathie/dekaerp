@@ -56,7 +56,7 @@ These are why it is a port rather than a copy.
 | DB-3 | Sales tab (`sales/src/Filament/Pages/SalesDashboard.php` and its widgets). | review |
 | DB-4 | Purchase tab (`purchases/src/Filament/Admin/Pages/Purchases.php` and its widgets). | review |
 | DB-5 | Recruitment tab (`recruitments/src/Filament/Pages/Recruitments.php`). | review |
-| DB-6 | Restyle the existing Project tab with the shared widgets (optional); run all affected suites; write the `CHANGELOG.md` entry. | todo |
+| DB-6 | Restyle the existing Project tab with the shared widgets (optional); run all affected suites; write the `CHANGELOG.md` entry. | review (browser check pending) |
 
 Each package runs its plugin's full suite, plus SupportFeature (the structure
 snapshots record the new pages and widgets), on its own database
@@ -184,4 +184,38 @@ against invoices.
 
 **Not done:** DB-6. That covers restyling the Project tab with the shared
 widgets, a `CHANGELOG.md` entry, and a browser check of every tab, which
-has not been done.
+has not been done. *Superseded by the DB-6 handoff below.*
+
+### DB-6 handoff — 2026-11-09 (Claude)
+
+**Project tab.**
+- The five widgets come from upstream: the stat cards on
+  `DashboardStatsWidget`, the charts on `DashboardChartWidget`, and the hours
+  shown as `H:MM`.
+- Both charts keep grouped queries, because upstream's restyle still has the
+  N+1:
+  - **Tasks by state:** one count per state, which is Sentry 156271115.
+  - **Tasks by stage:** one count per stage of `TaskStage::all()`, so the cost
+    grew with every stage. It is now one grouped count plus one stage list.
+- **Stage chart date bug.** Upstream passed a null start into
+  `whereBetween()`. "Between NULL and …" matches no row, so every stage
+  showed 0 whenever no start date was chosen. An empty start is now no lower
+  bound.
+- **Guard.** All five widgets use `GuardsProjectDashboardWidget` (module and
+  permission). Shield's trait alone ignored the module switch.
+- **Page.** `Pages/Dashboard.php` gained the loading state. Its
+  `ChecksPagePermission` fix and route are unchanged.
+
+**Release notes.** `CHANGELOG.md` v1.7.0 lists the dashboards, the 13-page
+security fix, the widget guard and the faster Project chart.
+
+**Verification.**
+- Pint passed.
+- `projects/tests/Feature/Widgets`: 2 passed, 8 assertions, on
+  `aureuserp_testing_dash6`. That covers the new `TaskByStageChartTest`
+  (one grouped query, empty stage reported as 0) and `TaskByStateChartTest`.
+- ProjectFeature, full run after the restyle: 89 passed, 216 assertions, on
+  `aureuserp_testing_d12_project`.
+
+**Still open.** No tab has been opened in a browser. Charts, the RTL card
+layout and phone widths are unchecked.
