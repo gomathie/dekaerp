@@ -2,6 +2,7 @@
 
 namespace Webkul\Security;
 
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
@@ -52,6 +53,7 @@ class CompanyAdminContributions
         static::$registered = true;
 
         CompanySchemaRegistry::form('main.after', fn (): array => [static::administratorSection()]);
+        CompanySchemaRegistry::form('main.after', fn (): array => [static::accountTypeSection()]);
     }
 
     protected static function administratorSection(): Section
@@ -106,6 +108,39 @@ class CompanyAdminContributions
                     ->visible(fn (Get $get, string $operation): bool => in_array($operation, ['create', 'edit'], true)
                         && filled($get('administrator_password')))
                     ->dehydrated(false),
+            ])
+            ->columns(1);
+    }
+
+    /**
+     * Chosen once, at creation, by installation staff (D-SAAS-11). A tenant
+     * Company Admin never sees it. The day count is only for a test account.
+     */
+    protected static function accountTypeSection(): Section
+    {
+        return Section::make(__('security::filament/contributions/company.account.title'))
+            ->description(__('security::filament/contributions/company.account.description'))
+            ->icon('heroicon-o-beaker')
+            ->visible(fn (string $operation): bool => $operation === 'create' && static::administersInstallation())
+            ->schema([
+                Select::make('account_type')
+                    ->label(__('security::filament/contributions/company.account.fields.type'))
+                    ->options([
+                        'commercial' => __('security::filament/contributions/company.account.fields.commercial'),
+                        'test' => __('security::filament/contributions/company.account.fields.test'),
+                    ])
+                    ->default('commercial')
+                    ->required()
+                    ->native(false)
+                    ->live(),
+
+                TextInput::make('test_days')
+                    ->label(__('security::filament/contributions/company.account.fields.days'))
+                    ->helperText(__('security::filament/contributions/company.account.fields.days-helper'))
+                    ->integer()
+                    ->minValue(1)
+                    ->required(fn (Get $get): bool => $get('account_type') === 'test')
+                    ->visible(fn (Get $get): bool => $get('account_type') === 'test'),
             ])
             ->columns(1);
     }

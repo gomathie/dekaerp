@@ -192,6 +192,10 @@ Record the user's answer before unblocking dependent packages.
 | D-SAAS-07 | How does an API client target one of several allowed companies? | Authorized company header/parameter; default only for compatibility | **Accepted 2026-10-26:** expose distinct platform-admin and tenant/company API namespaces. Company API requests identify the company explicitly and verify membership/token access. Super Admin may query all companies; Multi-Company Admin admin-API lists, searches and record operations return only companies assigned by Super Admin. Keep default-company fallback only on legacy unscoped routes during compatibility migration. |
 | D-SAAS-08 | Which discount types, duration, eligibility, redemption limits, tax order and administration rights are required? | Audited eligible codes; immutable redemptions and invoice snapshots; no retroactive invoice changes | **Accepted 2026-11-07 (user):** percentage off, fixed USD amount off, or free months; per-code duration of one invoice, N months, or forever; eligibility for any company or a named company list; discount before VAT; optional total redemption limit, always at most once per company; optional redemption end date that does not stop an existing redemption; one active discount per company, with no stacking. Super Admin may create codes; Multi-Company Admin may create them only for assigned companies, and those codes can never reach another company. A company's own admin, Super Admin, or an MCA acting for that company may redeem. Redemptions are immutable and snapshotted on invoices, never retroactive. |
 | D-SAAS-09 | Subscription activation: plan changes, modules, seats and non-payment | Answers the SAAS-09 handoff's open questions | **Accepted 2026-11-07 (user).** **Plan and price changes** take effect at the next billing period. The current period finishes at the old price, with no mid-period proration. **Modules:** starting or changing a plan adds the plan's modules and their dependencies. Modules granted by hand stay, and nothing is revoked automatically. **Seats:** each plan carries a seat limit. Starting or changing the plan sets the company's limit through `SeatCapacityService::setLimit()`, and Super Admin can still override it per company. **Non-payment:** after the D-SAAS-04 grace period the company becomes read-only. Its users can sign in and see data but cannot change anything until it is paid; installation staff are unaffected. **One active subscription per company**, enforced in the database; drafts may sit alongside it, and a plan change replaces the active one at the next period. **Cancellation** stops renewal: the company keeps access until the paid period ends, then becomes read-only. Super Admin may reactivate. There is no pause state for now. |
+| D-SAAS-10 | How are platform payments, reversals and credit recorded? | Manual Super Admin entry; one money-in row; derived credit | **Accepted 2026-11-09 (user).** A Super Admin enters a payment by hand. There is no payment provider. One Super Admin posts a reversal, with actor, date, reference and reason, and no second approver. A Multi-Company Admin's credit-note grant does not cover payment reversals. The Super Admin supplies a reference, stored as the idempotency key, unique on `(company_id, idempotency_key)`; a retry returns the existing posting. There is one posted money-in row. Its unallocated part is the company's credit. A refund of that credit is its own immutable row referencing the payment, and it moves no money to a bank. SAAS-08 counts as satisfied. SAAS-10 is a dependency of SAAS-11. |
+| D-SAAS-11 | What is a test account, and who chooses it? | Installation staff choose at creation; trial then commercial only | **Accepted 2026-11-09 (user).** The type is `test` or `commercial`, chosen only by installation staff who may create the company, inside `CompanyOnboarding::create()`. A tenant Company Admin is not offered the choice. When the test days end, the company is read-only and its data stays; staff can add days or switch the type. A test company is not charged and gets no platform invoice. Switching to commercial picks a plan and price. Billing starts at the next period, with no back-billing of the trial. There is no switch from commercial back to test. Existing companies are backfilled as `commercial`. The columns are `account_type` and `test_ends_at` on the company. Adding days is an audited update by a Super Admin, or by a Multi-Company Admin for an assigned company. Impersonation is a separate slice. |
+| D-SAAS-12 | May the read-only guard block platform billing's own writes? | Exempt only the billing records the invoice job must save | **Accepted 2026-11-09 (user).** Only platform billing's own subscription and invoice writes pass `CompanyReadOnlyWriteGuard`. Claude is implementing that exemption for `Subscription`, `Invoice` and `InvoiceLine`. |
+| D-SAAS-13 | When do the D-SAAS-04 grace extensions exist? | A package of their own, after payments and account type | **Accepted 2026-11-09 (user).** Company Admin and Super Admin extensions are a separate small package, SAAS-10B, done next after this one. They change when `isReadOnly()` becomes true. They are not part of SAAS-11 or the account-type work. |
 
 ### Status board
 
@@ -214,10 +218,11 @@ Record the user's answer before unblocking dependent packages.
 | SAAS-09 | Plans, prices and subscriptions | SAAS-08, D-SAAS-04 | — | review (activation built; cross-plugin read-only enforcement remains open) | Codex 2026-11-07 / `aureuserp_testing_saas09`; read-only rollout assessment 2026-11-09 below |
 | SAAS-09A | Discount codes and tenant redemptions | SAAS-09, D-SAAS-08 | — | review (2026-11-09 / `aureuserp_testing_saas10`; gaps listed in the handoff, not fixed here) | commit `4f6284396` |
 | SAAS-10 | Idempotent recurring invoices | SAAS-09, SAAS-09A | — | review (2026-11-09 / `aureuserp_testing_saas10`; invoice tests passed; four read-only-guard failures left untouched) | commit `4d7b611b9`; schedule-hook fix still uncommitted |
-| SAAS-11 | Payments, allocations, credit and reversals | SAAS-08, D-SAAS-05, D-SAAS-06 | — | blocked (D-SAAS-05 and D-SAAS-06 are accepted; the remaining questions are in the 2026-11-09 note) | — |
+| SAAS-10B | Grace extensions that move the read-only instant | SAAS-10, D-SAAS-04, D-SAAS-13 | — | todo | — |
+| SAAS-11 | Payments, allocations, credit and reversals | SAAS-08, SAAS-10, D-SAAS-05, D-SAAS-06, D-SAAS-10 | — | in progress (2026-11-09 / `aureuserp_testing_saas11`) | — |
 | SAAS-12 | Platform administration screens | SAAS-03, SAAS-07, SAAS-09/10/11 | — | todo | — |
 | SAAS-13 | Company-administration screens | SAAS-01, SAAS-07, SAAS-09/10/11 | — | todo | — |
-| SAAS-15 | Backfill, shadow mode, release hardening, tenant impersonation, and test-or-commercial account type | All implementation packages | — | todo (scoped 2026-11-09; proposal below; no code) | — |
+| SAAS-15 | Backfill, shadow mode, release hardening, tenant impersonation, and test-or-commercial account type | All implementation packages | — | in progress (account type only, 2026-11-09 / `aureuserp_testing_saas11`; impersonation stays out) | — |
 
 Additional requirement: Tenant impersonation
 
@@ -1938,6 +1943,30 @@ advances nothing; paused/cancelled skip; dates match SAAS-09.
 - Suggested next package: do not start SAAS-11 until the questions below
   are answered.
 
+#### Read-only guard review (`54d606a4b`) — 2026-11-09 (Claude)
+
+- Why: the guard refused platform billing's own writes. The invoice job
+  runs with no user, so a read-only company never received its next
+  invoice and a cancelled subscription could not expire. In Filament the
+  refusal was keyed `company_id` while the field is
+  `mountedActions.0.data.company_id`, so the user saw nothing happen.
+- How: `CompanyReadOnlyWriteGuard::EXEMPT_MODELS` (Subscription, Invoice,
+  InvoiceLine; user decision D-SAAS-12, 2026-11-09). Every other tenant
+  write stays refused. The refusal also sends a danger notification.
+- Tests: `SubscriptionReadOnlyEnforcementTest` (new: "lets platform billing
+  write its own subscription and invoice records for a read-only company";
+  the Filament test now asserts the notification and that nothing was
+  saved) plus `SubscriptionActivationTest`: 17 passed, 45 assertions, on
+  `aureuserp_testing_claude`. The exemption fixes the three activation
+  failures from the SAAS-10 handoff. The full PlatformBillingFeature suite
+  was not re-run.
+- Not changed, noted: writes through `saveQuietly()` or query-builder
+  `update()`/`delete()` fire no model events and pass the guard. Each
+  guarded save makes one company and one subscription query, so watch
+  bulk imports. `DiscountRedemption` is still refused for a read-only
+  company.
+- Rollback: remove the constant and the notification line.
+
 #### SAAS-11 — payments, allocations, credit and reversals
 
 **Owns:** Platform Billing payment/allocation/adjustment/reversal migrations,
@@ -1951,7 +1980,10 @@ rejection; compensating reversals; actor/date/reference/reason audit fields.
 concurrent no-overspend, duplicate request safety, reversal net-zero, immutable
 posted rows and zero-drift reconciliation all pass.
 
-#### SAAS-11 note — 2026-11-09 (still blocked; nothing built)
+#### SAAS-11 note — 2026-11-09 (answered 2026-11-09; see D-SAAS-10)
+
+The five questions below are answered by D-SAAS-10. They stay here so the
+recommendation that was accepted is still visible.
 
 The row has said `blocked` since `f95e5212c` (2026-10-26), the commit that
 added the board. `git log -S SAAS-11` on this plan has no later commit.
@@ -2027,7 +2059,10 @@ production-copy migration rehearsal; non-destructive rollback.
 locks; reconciliation is clean; flags are independently reversible; no
 compatibility read is removed before one billing cycle and approval.
 
-#### SAAS-15 scoping proposal — 2026-11-09 (no code)
+#### SAAS-15 scoping proposal — 2026-11-09 (questions answered 2026-11-09; see D-SAAS-11)
+
+The questions at the bottom of this proposal are answered by D-SAAS-11.
+They stay here. Impersonation is still out of scope.
 
 The board note, kept as written: "When a new conpany is created. the
 superadmin or company admin should have a drop dwon option whether the

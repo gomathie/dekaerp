@@ -86,6 +86,8 @@ class SupportServiceProvider extends PackageServiceProvider
                 '2026_10_26_000001_activate_zambian_kwacha_currency',
                 // SAAS-06: seats are a per-company limit. `null` = unlimited.
                 '2026_10_28_000004_add_seat_limit_to_companies_table',
+                // D-SAAS-11: test or commercial. Existing companies stay commercial.
+                '2026_11_09_000004_add_account_type_to_companies_table',
             ])
             ->runsMigrations()
             ->hasSettings([

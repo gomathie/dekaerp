@@ -3,6 +3,7 @@
 namespace Webkul\PlatformBilling\Services;
 
 use DateTimeImmutable;
+use DateTimeInterface;
 use DateTimeZone;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
@@ -220,6 +221,14 @@ class SubscriptionLifecycle
     public function isReadOnly(Company $company, ?DateTimeImmutable $at = null): bool
     {
         $at ??= new DateTimeImmutable('now', new DateTimeZone('UTC'));
+
+        // A trial that has reached its own end is read-only with or without a
+        // subscription (D-SAAS-11). The date is test_ends_at, not a second clock.
+        // The read-only guard calls this method, so Claude should review the change.
+        if ($company->account_type === 'test' && $company->test_ends_at instanceof DateTimeInterface && $at >= $company->test_ends_at) {
+            return true;
+        }
+
         $subscription = Subscription::withoutGlobalScopes()->where('company_id', $company->id)
             ->whereIn('status', ['active', 'expired'])->orderByRaw("CASE WHEN status = 'active' THEN 0 ELSE 1 END")
             ->latest('id')->first();

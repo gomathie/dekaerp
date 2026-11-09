@@ -56,7 +56,16 @@ class Company extends Model implements Sortable
         'currency_id',
         'partner_id',
         'website',
+        'account_type',
+        'test_ends_at',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'test_ends_at' => 'immutable_datetime',
+        ];
+    }
 
     /**
      * A created observer can refuse a creator membership after INSERT. Wrap

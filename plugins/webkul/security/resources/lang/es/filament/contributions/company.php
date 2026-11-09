@@ -18,4 +18,17 @@ return [
             'must-change-password' => 'Debe cambiar esta contraseña en el próximo inicio de sesión',
         ],
     ],
+
+    'account' => [
+        'title'       => 'Tipo de cuenta',
+        'description' => 'Si esta empresa está en prueba o es comercial. Solo el personal de instalación puede elegirlo, y solo al crear la empresa.',
+
+        'fields' => [
+            'type'         => 'Tipo de cuenta',
+            'commercial'   => 'Comercial',
+            'test'         => 'Prueba',
+            'days'         => 'Días de prueba',
+            'days-helper'  => 'Cuántos días dura la prueba. Puede añadir más después. Una prueba no se factura.',
+        ],
+    ],
 ];

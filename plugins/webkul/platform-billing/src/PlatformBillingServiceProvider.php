@@ -7,11 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Webkul\PlatformBilling\Console\Commands\InvoiceSubscriptions;
+use Webkul\PlatformBilling\Models\Allocation;
 use Webkul\PlatformBilling\Models\DocumentNumber;
 use Webkul\PlatformBilling\Models\Invoice;
 use Webkul\PlatformBilling\Models\InvoiceLine;
+use Webkul\PlatformBilling\Models\Payment;
 use Webkul\PlatformBilling\Models\Plan;
 use Webkul\PlatformBilling\Models\Price;
+use Webkul\PlatformBilling\Models\Reversal;
 use Webkul\PlatformBilling\Models\Subscription;
 use Webkul\PlatformBilling\Policies\DocumentNumberPolicy;
 use Webkul\PlatformBilling\Services\CompanyReadOnlyWriteGuard;
@@ -27,8 +30,8 @@ use Webkul\PluginManager\PackageServiceProvider;
  * are exempt from the per-company entitlement gate, which is exactly right for a
  * plugin that administers tenants instead of serving one.
  *
- * Plans, subscriptions, discounts and recurring invoices live here. Payments
- * and screens are SAAS-11 to SAAS-13.
+ * Plans, subscriptions, discounts, recurring invoices and payments live here.
+ * Screens are SAAS-12 and SAAS-13.
  */
 class PlatformBillingServiceProvider extends PackageServiceProvider
 {
@@ -49,6 +52,7 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
                 '2026_11_07_000002_add_subscription_activation_fields',
                 '2026_11_09_000001_create_platform_billing_discounts_tables',
                 '2026_11_09_000002_create_platform_billing_invoices_tables',
+                '2026_11_09_000003_create_platform_billing_payments_tables',
             ])
             ->hasCommands([
                 InvoiceSubscriptions::class,
@@ -67,6 +71,9 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
         Gate::policy(Subscription::class, DocumentNumberPolicy::class);
         Gate::policy(Invoice::class, DocumentNumberPolicy::class);
         Gate::policy(InvoiceLine::class, DocumentNumberPolicy::class);
+        Gate::policy(Payment::class, DocumentNumberPolicy::class);
+        Gate::policy(Allocation::class, DocumentNumberPolicy::class);
+        Gate::policy(Reversal::class, DocumentNumberPolicy::class);
 
         // A process-wide boolean would skip every application after the first.
         // Pest builds a new application per test, so the hook has to follow the

@@ -2,6 +2,8 @@
 
 namespace Webkul\Security\Services;
 
+use DateTimeImmutable;
+use DateTimeZone;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -38,6 +40,7 @@ class CompanyOnboarding
         }
 
         return DB::transaction(function () use ($actor, $attributes, $administratorEmail, $administratorPassword, $mustChangePassword): array {
+            $attributes = $this->accountTypeAttributes($actor, $attributes);
             $attributes['creator_id'] = $actor->getKey();
             $company = Company::query()->create($attributes);
 
@@ -74,5 +77,51 @@ class CompanyOnboarding
 
             return ['company' => $company, 'outcome' => $outcome, 'password' => $password];
         });
+    }
+
+    /**
+     * The type is chosen in this same transaction (D-SAAS-11). A refusal here
+     * rolls the company back with the administrator. A tenant Company Admin is
+     * not offered the choice; omitting it leaves the company commercial.
+     *
+     * @param  array<string, mixed>  $attributes
+     * @return array<string, mixed>
+     */
+    protected function accountTypeAttributes(User $actor, array $attributes): array
+    {
+        $choosing = array_key_exists('account_type', $attributes) || array_key_exists('test_days', $attributes);
+        $accountType = (string) ($attributes['account_type'] ?? 'commercial');
+        $testDays = $attributes['test_days'] ?? null;
+        unset($attributes['account_type'], $attributes['test_days'], $attributes['test_ends_at']);
+
+        if ($choosing && ! $actor->isSuperAdmin() && ! $actor->isMultiCompanyAdmin()) {
+            throw new AuthorizationException('Only installation staff may choose the account type.');
+        }
+
+        if (! in_array($accountType, ['test', 'commercial'], true)) {
+            throw ValidationException::withMessages([
+                'account_type' => 'The account type must be test or commercial.',
+            ]);
+        }
+
+        if ($accountType === 'commercial') {
+            $attributes['account_type'] = 'commercial';
+            $attributes['test_ends_at'] = null;
+
+            return $attributes;
+        }
+
+        $days = filter_var($testDays, FILTER_VALIDATE_INT);
+
+        if ($days === false || (int) $days < 1) {
+            throw ValidationException::withMessages([
+                'test_days' => 'A test company needs a number of days.',
+            ]);
+        }
+
+        $attributes['account_type'] = 'test';
+        $attributes['test_ends_at'] = (new DateTimeImmutable('now', new DateTimeZone('UTC')))->modify('+'.(int) $days.' days');
+
+        return $attributes;
     }
 }
