@@ -6,6 +6,18 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-09 (reversal starts a fresh overdue grace)
+
+**Requested:** When a reversal reopens an invoice that is already past day 8,
+mark the subscription overdue from the reversal, so the company gets a new
+10 days instead of being locked immediately or left editable until the next
+period.
+
+**Implemented:** `PlatformPayments::reversePayment()` calls
+`SubscriptionLifecycle::recordOverdue()` with the reversal time after the
+invoice is unpaid again. A mark that is already set is not moved. A reversal
+before day 8, and a refund of unused credit, leave the mark alone.
+
 ## 2026-11-09 (commercial switch for an assigned Multi-Company Admin)
 
 **Requested:** A Multi-Company Admin may switch a test company to commercial.
@@ -21,6 +33,10 @@ days. It starts the subscription through `createForCommercialSwitch()` and
 still refuse anyone who is not a Super Admin. A Multi-Company Admin who is
 not assigned to the company is refused with "Only a Super Admin, or a
 Multi-Company Admin for this company, may switch it to commercial."
+
+**Verification:** `aureuserp_testing_saas11`. `AccountTypeTest` and
+`SubscriptionActivationTest` together: 13 passed, 54 assertions. Pint
+passed. PlatformBillingFeature was not re-run.
 
 ## 2026-11-09 (SAAS-11 payments and SAAS-15 account type)
 

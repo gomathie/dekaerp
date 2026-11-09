@@ -3,6 +3,7 @@
 namespace Webkul\PlatformBilling\Services;
 
 use DateTimeImmutable;
+use DateTimeInterface;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
@@ -318,7 +319,10 @@ class PlatformPayments
                 throw ValidationException::withMessages(['amount' => self::REFUND_LIMIT]);
             }
 
-            return $this->insertReversal($locked, $actor, $remaining, $reference, $reason, $at);
+            $reversal = $this->insertReversal($locked, $actor, $remaining, $reference, $reason, $at);
+            $this->restoreOverdueIfReopened($locked, $actor, $at, $invoiceIds->all());
+
+            return $reversal;
         });
     }
 
@@ -412,6 +416,50 @@ class PlatformPayments
         }
 
         app(SubscriptionLifecycle::class)->clearOverdue($subscription, $actor);
+    }
+
+    /**
+     * A reversal that reopens an invoice already past day 8 starts a new
+     * overdue grace from the reversal (user, 2026-11-09). The original day-8
+     * date would lock the company at once. A mark that is already set is left
+     * alone, so a reversal cannot restart a grace that is already running.
+     * A refund of unused credit does not reach here. The lifecycle owns the
+     * mark; this does not write a second read-only rule.
+     *
+     * @param  array<int, int>  $invoiceIds
+     */
+    protected function restoreOverdueIfReopened(Payment $payment, User $actor, DateTimeImmutable $at, array $invoiceIds): void
+    {
+        $reopened = false;
+
+        foreach ($invoiceIds as $invoiceId) {
+            $invoice = Invoice::withoutGlobalScopes()->find($invoiceId);
+
+            if (! $invoice instanceof Invoice || ! $invoice->grace_starts_at instanceof DateTimeInterface || $invoice->grace_starts_at > $at) {
+                continue;
+            }
+
+            if ($this->invoiceBalanceMinor($invoice) > 0) {
+                $reopened = true;
+                break;
+            }
+        }
+
+        if (! $reopened) {
+            return;
+        }
+
+        $subscription = Subscription::withoutGlobalScopes()
+            ->where('company_id', $payment->company_id)
+            ->where('status', 'active')
+            ->whereNull('overdue_at')
+            ->first();
+
+        if (! $subscription instanceof Subscription) {
+            return;
+        }
+
+        app(SubscriptionLifecycle::class)->recordOverdue($subscription, $actor, $at);
     }
 
     protected function insertReversal(
