@@ -7,6 +7,19 @@ Note: this is a working log, separate from [`AGENTS.md`](../AGENTS.md) (Laravel
 Boost guidelines the agent follows) and [`CHANGELOG.md`](../CHANGELOG.md)
 (release notes). Code-change details go in [`docs/change-log.md`](change-log.md).
 
+## 2026-11-09
+
+**Requested:** Make a Super Admin's selected company scope tenant data, while
+keeping an explicit All companies mode.
+
+**Decision:** Super Admin reads default to one company; All companies is an
+explicit platform-wide mode. Forced API and queued company contexts stay
+scoped to their forced company. The protected decision is in `AGENTS.md`.
+
+**Implementation and verification:** See `docs/change-log.md`, entry
+"2026-11-09 (Super Admin company data scope)". Tests and formatter status will
+be recorded there before handoff.
+
 ## Standing instructions
 
 Set by the user 2026-09-03. These apply to every session, not one task.
