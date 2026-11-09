@@ -152,7 +152,26 @@ it('refuses a read-only company Filament create action', function () {
             'company_id' => $company->getKey(),
             'hours_per_day' => 8,
         ])
-        ->assertHasActionErrors(['company_id']);
+        ->assertNotified(CompanyReadOnlyWriteGuard::MESSAGE);
+
+    expect(Calendar::withoutGlobalScopes()->where('name', 'Action calendar')->exists())->toBeFalse();
+});
+
+it('lets platform billing write its own subscription and invoice records for a read-only company', function () {
+    [$company, $staff, $subscription] = makeCompanyWithActiveSubscription();
+    markCompanyReadOnly($subscription, $staff);
+    authenticateForReadOnlyCompany($company);
+
+    expect(app(SubscriptionLifecycle::class)->isReadOnly($company))->toBeTrue();
+
+    $subscription->refresh()->forceFill(['cancel_at_period_end' => true])->save();
+    expect($subscription->refresh()->cancel_at_period_end)->toBeTrue();
+
+    expectReadOnlyRefusal(fn () => Calendar::query()->create([
+        'name' => 'Still refused',
+        'timezone' => 'UTC',
+        'company_id' => $company->getKey(),
+    ]));
 });
 
 it('refuses a queued company write after the job restores its forced company context', function () {
