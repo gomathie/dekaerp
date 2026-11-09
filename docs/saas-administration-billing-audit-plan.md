@@ -212,12 +212,12 @@ Record the user's answer before unblocking dependent packages.
 | SAAS-07 | Onboarding and all seat-enforcement paths | SAAS-06 | — | review (complete) | Codex 2026-11-09 on `aureuserp_testing_saas07b`; see onboarding and mail handoff below |
 | SAAS-08 | Platform-billing plugin foundation | SAAS-00, D-SAAS-01, D-SAAS-05 | — | review (foundation complete) | Copilot 2026-10-28; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
 | SAAS-09 | Plans, prices and subscriptions | SAAS-08, D-SAAS-04 | — | review (activation built; cross-plugin read-only enforcement remains open) | Codex 2026-11-07 / `aureuserp_testing_saas09`; read-only rollout assessment 2026-11-09 below |
-| SAAS-09A | Discount codes and tenant redemptions | SAAS-09, D-SAAS-08 | — | todo (unblocked 2026-11-07: D-SAAS-08 is accepted; waits for SAAS-09) | — |
-| SAAS-10 | Idempotent recurring invoices | SAAS-09, SAAS-09A | — | todo | — |
-| SAAS-11 | Payments, allocations, credit and reversals | SAAS-08, D-SAAS-05, D-SAAS-06 | — | blocked | — |
+| SAAS-09A | Discount codes and tenant redemptions | SAAS-09, D-SAAS-08 | — | review (2026-11-09 / `aureuserp_testing_saas10`; gaps listed in the handoff, not fixed here) | commit `4f6284396` |
+| SAAS-10 | Idempotent recurring invoices | SAAS-09, SAAS-09A | — | review (2026-11-09 / `aureuserp_testing_saas10`; invoice tests passed; four read-only-guard failures left untouched) | commit `4d7b611b9`; schedule-hook fix still uncommitted |
+| SAAS-11 | Payments, allocations, credit and reversals | SAAS-08, D-SAAS-05, D-SAAS-06 | — | blocked (D-SAAS-05 and D-SAAS-06 are accepted; the remaining questions are in the 2026-11-09 note) | — |
 | SAAS-12 | Platform administration screens | SAAS-03, SAAS-07, SAAS-09/10/11 | — | todo | — |
 | SAAS-13 | Company-administration screens | SAAS-01, SAAS-07, SAAS-09/10/11 | — | todo | — |
-| SAAS-15 | Backfill, shadow mode, release hardening and tenant impersonation When a new conpany is created. the superadmin or company admin should have a drop dwon option whether the account is test or commercial. If its a test he should be able to indicated how many days or add more if days if required. after test, the account can be switecd to commercial in that order | All implementation packages | — | todo | — |
+| SAAS-15 | Backfill, shadow mode, release hardening, tenant impersonation, and test-or-commercial account type | All implementation packages | — | todo (scoped 2026-11-09; proposal below; no code) | — |
 
 Additional requirement: Tenant impersonation
 
@@ -1737,6 +1737,74 @@ redemptions fail; concurrent final-use redemption cannot exceed its limit;
 cross-company use is denied; amount bounds and rounding are exact integer-money
 calculations; changing or disabling a code does not alter posted invoices.
 
+#### SAAS-09A handoff — 2026-11-09
+
+- Owner / database: commit `4f6284396` / `aureuserp_testing_saas10`
+- Status: review
+- Implemented: discount codes and redemptions for D-SAAS-08. Percentage
+  (basis points, so 1500 is 15.00%), fixed USD minor units, and free months.
+  Duration is one invoice, N months, or forever. Eligibility is any company
+  or a named list. A company redeems a code at most once. An optional total
+  redemption limit and an optional redemption end date are enforced at
+  redeem time; the end date does not stop a redemption that already exists.
+  One active discount per company is a slot row, so codes do not stack.
+  Super Admin creates codes for any company. A Multi-Company Admin creates
+  them only for assigned companies. The company's own admin, a Super Admin,
+  or a Multi-Company Admin acting for that company may redeem. Redemption
+  rows are frozen by a database trigger. `calculateBeforeVat()` is the
+  pre-tax amount SAAS-10 snapshots.
+- Why / How / Benefit: the package had been committed and the board still
+  said `todo`, with no handoff. The service, the unique keys, the slot, and
+  `DiscountCodeTest` are the enforcement. Two defects found by the first
+  suite run on this database were corrected in `4d7b611b9`, not as new
+  product rules: `Illuminate\Support\CarbonImmutable` does not exist, so
+  every N-month redemption crashed; and the global cap was reported before
+  the company-specific "already redeemed" message.
+- Protected decisions added or superseded: none. The gaps below are not
+  enforced and were not silently closed.
+- Files changed: `plugins/webkul/platform-billing/database/migrations/2026_11_09_000001_create_platform_billing_discounts_tables.php`,
+  `src/Models/DiscountCode.php`, `src/Models/DiscountRedemption.php`,
+  `src/Services/DiscountCodeService.php`,
+  `tests/Feature/DiscountCodeTest.php`, and the provider registration.
+  Commit `4f6284396` also changed project dashboard widgets and
+  `CHANGELOG.md`; those are outside this package.
+- Tests run with pass/assertion counts: `DiscountCodeTest` passed inside
+  PlatformBillingFeature on `aureuserp_testing_saas10` (2026-11-09): 64
+  passed, 4 failed, 212 assertions. The four failures are the read-only
+  guard under review (`54d606a4b`), listed in the SAAS-10 handoff. The
+  earlier run, before the Carbon and message-order fixes, was 49 passed,
+  6 failed, 144 assertions.
+- Reviewed but not executed: a two-connection race for the last redemption.
+  The company row lock and the unique key exist; no second connection was
+  opened.
+- Failures investigated: the expired/exhausted/already-redeemed test wanted
+  "already redeemed" and received "reached its redemption limit" because
+  the cap was checked first. The stacking test died on the missing Carbon
+  class. Both are fixed in `4d7b611b9`.
+- Security/tenant/concurrency review: creation and redemption are
+  authorized and audited. A company-list code is refused for a company
+  that is not on the list. There is no database constraint that a
+  company-list code has at least one company row; the service checks it.
+- Risks and rollback: `down()` drops the discount tables and the
+  immutability function. Do not run it once a redemption has been issued.
+  `migrate:fresh` does not run `down()`, so the migration drops the
+  function before creating it again.
+- D-SAAS-08 points the code does not enforce, left for a decision:
+  1. Free-month calendar. The decision names "free months" and leaves the
+     calendar to the invoice run. SAAS-10 waives the next
+     `discount_value` invoices after redemption. Confirm or replace that.
+  2. Percentage scale. The code stores basis points (1500 = 15.00%,
+     10000 = 100%). The decision does not say that.
+  3. Discount-code terms can still be updated through the model. Only the
+     redemption snapshot is immutable. `setActive` is Super Admin only.
+  4. A company-list code is not required by the database to name at least
+     one company.
+  5. No two-connection test proves the last redemption cannot exceed the cap.
+- Cross-package requests: SAAS-10 consumes `calculateBeforeVat()` and
+  releases a one-invoice slot after the snapshot. Do not add a second
+  calculator.
+- Suggested next package: SAAS-10, now in review.
+
 #### SAAS-10 — recurring invoices
 
 **Owns:** Platform Billing invoice migrations/models/services/jobs/commands,
@@ -1748,6 +1816,125 @@ only with successful invoice.
 
 **Accept:** duplicate call/retry/two workers produce one invoice; failure
 advances nothing; paused/cancelled skip; dates match SAAS-09.
+
+#### SAAS-10 handoff — 2026-11-09
+
+- Owner / database: `aureuserp_testing_saas10`
+- Status: review
+- Implemented: one posted platform invoice per subscription period.
+  `platform_billing_invoices` has a unique `(subscription_id, period_start_at)`.
+  The generator inserts inside a savepoint and treats a unique conflict as
+  "already posted". It does not look first and then insert. The subscription
+  row is locked for the post and the advance, in one transaction, so a
+  failed advance rolls the invoice back and a retry finishes a partial run.
+  A late run posts elapsed periods one at a time, capped at 24, and does
+  not skip. Numbers come from `DocumentNumberGenerator`:
+  `DEKA-INV-{compact year}-{six digits}`, one sequence per year, and a
+  failed post does not consume the number because the counter moves inside
+  the same transaction. The posted row snapshots issuer name, whether VAT
+  is on, the VAT rate, subtotal, discount, tax, and total. A SAAS-09A
+  discount is applied before VAT. Net 7 is dated from
+  `subscription.next_invoice_at` (when the period fell due), due seven days
+  later, and `grace_starts_at` is day 8. The sweep sets
+  `subscription.overdue_at` to that timestamp through
+  `SubscriptionLifecycle::recordOverdueFromScheduler()` and does not
+  rewrite it later. `isReadOnly()` is unchanged: grace is ten days after
+  `overdue_at`. A scheduled plan change is snapshotted at schedule time
+  and applied on advance, with no proration. The command
+  `platform-billing:invoice-subscriptions` queues one job per due
+  subscription; the job has no user and reads with `withoutGlobalScopes()`
+  plus the subscription's company. The schedule is daily at 02:15,
+  `withoutOverlapping`.
+- Why / How / Benefit: D-SAAS-04, D-SAAS-05, and D-SAAS-09. A check-then-insert
+  would double-bill under overlapping schedulers. Dating Net 7 from the
+  job clock would give a late backlog a fresh week on every missed month.
+  `SequenceService` was not used: SAAS-08 kept platform numbers in
+  `platform_billing_document_numbers` so a company resetting its own
+  sequences cannot move a DEKA invoice number. The job does not log in as
+  a Super Admin: `CompanyReadOnlyWriteGuard` treats the authenticated
+  installation staff as exempt, and a login would make the billing run
+  look like staff. A scheduled plan change still names an active Super
+  Admin as the audit actor, because `PluginEntitlementService` refuses a
+  null actor. That person is not logged in.
+- Protected decisions added or superseded: see `AGENTS.md`, platform
+  invoices, 2026-11-09. The plan's worker note says SAAS-14 owns
+  `AGENTS.md`. This task's four-place rule required the entry. It does not
+  replace the SAAS-14 ownership of the rest of that file.
+- Files changed: commit `4d7b611b9` —
+  `database/migrations/2026_11_09_000002_create_platform_billing_invoices_tables.php`,
+  `src/Models/Invoice.php`, `src/Models/InvoiceLine.php`,
+  `src/Services/RecurringInvoiceGenerator.php`,
+  `src/Jobs/GenerateSubscriptionInvoice.php`,
+  `src/Console/Commands/InvoiceSubscriptions.php`,
+  `src/Services/SubscriptionLifecycle.php` (`advanceFromScheduler`,
+  `recordOverdueFromScheduler`), `config/platform-billing.php`
+  (`issuer.tax_enabled`), `src/Services/DiscountCodeService.php` (the two
+  defect fixes), `src/PlatformBillingServiceProvider.php`,
+  `tests/Feature/RecurringInvoiceTest.php`.
+  Still uncommitted after that commit: the schedule hook follows the
+  application instance. A process-wide flag registered the daily command
+  on the first Pest application only, so a later test saw an empty
+  scheduler. `schedule:list` shows `platform-billing:invoice-subscriptions`
+  at 02:15.
+- Tests run with pass/assertion counts: `RecurringInvoiceTest` 13 passed,
+  63 assertions, on `aureuserp_testing_saas10`. PlatformBillingFeature on
+  the same database: 64 passed, 4 failed, 212 assertions, 1082.05s.
+  `vendor/bin/pint --dirty --format agent` passed. SecurityFeature was
+  started on the same database after this suite exited.
+- Reviewed but not executed: two database connections racing the same
+  period. The unique key and the row lock are what the single-connection
+  retry test exercises. SupportFeature was not run; no support file changed.
+- Failures investigated: the four PlatformBillingFeature failures come from
+  `CompanyReadOnlyWriteGuard` (`54d606a4b`), which this package was told
+  not to change. The guard calls `isReadOnly(now())`. Today is 2026-11-09,
+  so historical January–May 2026 periods are already read-only when the
+  test saves again:
+  - `keeps current price until the next period and retains access after cancellation until period end`
+  - `refuses an early period transition and permits Super Admin reactivation`
+  - `makes overdue subscriptions read only only after the ten day grace period`
+  - `refuses a read-only company Filament create action` — the assertion
+    looks for `mountedActions.0.data.company_id`, and the guard reports
+    `company_id`.
+  The same guard refuses the invoice job once a cancelled subscription has
+  reached period end, and once a company is past grace. The cancelled case
+  is tested as `read-only-blocked`: no final invoice is posted and the
+  subscription stays active. That is fail-closed. It is not a fix.
+- Security/tenant/concurrency review: invoices and lines take the
+  subscription's company, including when another company is selected.
+  Tenant `viewAny` on `Invoice` is denied. Posted rows reject update and
+  delete with "Posted platform invoices are immutable." The job does not
+  authenticate.
+- Risks and rollback: `down()` drops the invoice tables, their triggers,
+  and `platform_billing_posted_invoices_are_immutable()`. It does not touch
+  subscriptions, discounts, or tenant accounting. Do not run it once an
+  invoice has been issued. After the first unpaid invoice, about eighteen
+  days from `issued_at` (Net 7, day-8 grace start, then the existing ten
+  days), the company is read-only and the job cannot post the next period
+  or expire a cancellation, because the guard refuses those writes. There
+  is no payment screen. A Super Admin can still call `clearOverdue`;
+  there is no screen for it. D-SAAS-04 self-service and manual extensions
+  are not modeled, so `isReadOnly()` cannot see them.
+- Cross-package requests, needing a decision before the next package:
+  1. Should platform billing's own subscription and invoice writes be
+     exempt from `CompanyReadOnlyWriteGuard`, so a read-only company still
+     receives the next invoice and a cancelled subscription can expire and
+     be billed for the consumed period? Recommendation: yes, only those
+     writes, and only after the guard review of `54d606a4b` finishes.
+     This package did not change the guard.
+  2. Free months: the next `discount_value` invoices after redemption are
+     waived in full, and the code's duration still limits them.
+     Recommendation: keep that until a calendar is specified.
+  3. The scheduled plan change records the first active Super Admin as the
+     audit actor and does not log them in. Recommendation: keep that until
+     a named system actor exists. Do not `Auth::login()` inside the job.
+  4. D-SAAS-04 extensions (one Company Admin extension per overdue invoice,
+     plus a separate Super Admin extension) were assigned to this package
+     by the 2026-11-09 read-only assessment and were not built. They change
+     when `isReadOnly()` becomes true, which the guard calls.
+     Recommendation: a follow-up after the guard review, not a silent
+     change here.
+- Suggested next package: do not start SAAS-11 until the questions below
+  are answered.
 
 #### SAAS-11 — payments, allocations, credit and reversals
 
@@ -1761,6 +1948,44 @@ rejection; compensating reversals; actor/date/reference/reason audit fields.
 **Accept:** partial/multi-invoice allocation, over-allocation rejection,
 concurrent no-overspend, duplicate request safety, reversal net-zero, immutable
 posted rows and zero-drift reconciliation all pass.
+
+#### SAAS-11 note — 2026-11-09 (still blocked; nothing built)
+
+The row has said `blocked` since `f95e5212c` (2026-10-26), the commit that
+added the board. `git log -S SAAS-11` on this plan has no later commit.
+D-SAAS-05 and D-SAAS-06 were accepted the same day, after that wording, and
+nobody moved the row. The decisions are not the remaining blocker.
+
+What is still undecided:
+
+1. Must a reversal be approved by a second person? Blocking question 6
+   still asks this. D-SAAS-06 says payments, credits, and reversals are
+   Super Admin only, with a narrow credit-note exception for a selected
+   Multi-Company Admin. It does not require four eyes. Recommendation: no
+   four-eyes for the first version. One Super Admin posts a compensating
+   reversal with actor, date, reference, and reason. The credit-note grant
+   does not include payment reversals.
+2. How does the money arrive? Phase 6 says manual payments. Neither
+   D-SAAS-05 nor D-SAAS-06 names a card or bank provider. Recommendation:
+   Super Admin enters the payment. No provider in SAAS-11.
+3. What is the idempotency key? The accept line says a duplicate request
+   must be safe and does not say where the key comes from. Recommendation:
+   the Super Admin supplies it, and the database unique key is
+   `(company_id, idempotency_key)`. A retry returns the existing posting.
+4. A deposit and a payment are both named on the card. D-SAAS-05 says an
+   overpayment stays customer credit until it is allocated or refunded.
+   Recommendation: one posted money-in row. An unallocated payment is the
+   deposit. A refund of unused credit is its own immutable row that
+   references that credit. It does not delete the payment, and it does not
+   send money to a bank.
+5. SAAS-08 is `review`, and the board's depends-on does not include
+   SAAS-10. Allocation needs the invoices SAAS-10 now posts, and SAAS-08
+   is already in production batch 28. Recommendation: treat SAAS-08 as
+   satisfied, add SAAS-10 as a dependency, and start SAAS-11 only after
+   these five answers.
+
+D-SAAS-04 extensions are not part of this package. They are listed on the
+SAAS-10 handoff because they change the read-only predicate.
 
 #### SAAS-12 — platform administration screens
 
@@ -1799,6 +2024,58 @@ production-copy migration rehearsal; non-destructive rollback.
 **Accept:** affected suites/migration guards pass; rehearsal records runtime and
 locks; reconciliation is clean; flags are independently reversible; no
 compatibility read is removed before one billing cycle and approval.
+
+#### SAAS-15 scoping proposal — 2026-11-09 (no code)
+
+The board note, kept as written: "When a new conpany is created. the
+superadmin or company admin should have a drop dwon option whether the
+account is test or commercial. If its a test he should be able to indicated
+how many days or add more if days if required. after test, the account can
+be switecd to commercial in that order."
+
+Tenant impersonation stays on this row and is a separate slice. This
+proposal is only the account type. It has to fit
+`CompanyOnboarding::create()`, which inserts the company and its first
+administrator in one transaction. A refusal rolls both back.
+
+Proposed shape:
+
+- Types are `test` and `commercial`.
+- The person who may create the company chooses the type inside that
+  transaction: a Super Admin, or a Multi-Company Admin within their
+  assignment. A tenant Company Admin is not offered the choice.
+  D-SAAS-06 keeps subscription terms with Super Admin, and at creation the
+  tenant administrator does not exist yet.
+- `commercial` is today's company. It does not by itself start a
+  subscription or an invoice.
+- `test` stores a day count. Adding days extends that one trial. It does
+  not open a second one. A test company is not invoiced.
+- Switching runs only from test to commercial. The switch chooses a plan
+  and price, and billing follows D-SAAS-09 from the next period. Test days
+  are not back-billed.
+- Companies that already exist are backfilled as `commercial`.
+
+Questions:
+
+1. Who may choose the type? Recommendation: only installation staff who
+   may create the company, inside `CompanyOnboarding`. Not the tenant
+   Company Admin.
+2. What happens when the test days end and nobody has switched it?
+   Recommendation: the company becomes read-only, data stays, and
+   installation staff can add days or switch it to commercial.
+3. Does a test company get a subscription? Recommendation: no charge and
+   no platform invoice until the commercial switch. The switch starts
+   billing at the next period and does not bill the trial.
+4. Can commercial be switched back to test? Recommendation: no.
+5. What about companies that already exist? Recommendation: backfill
+   `commercial`. Do not put them on a trial.
+6. Where is the choice stored? Recommendation: `account_type` and
+   `test_ends_at` on the company, written in the onboarding transaction.
+   Adding days later is an audited update by Super Admin, or by a
+   Multi-Company Admin for an assigned company.
+7. Impersonation is already specified on this row. Recommendation: build
+   the account type on its own, after the questions above are answered.
+   Do not combine it with impersonation.
 
 ### Handoff template
 

@@ -36,7 +36,7 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
 
     protected static ?object $readOnlyWriteGuardDispatcher = null;
 
-    protected static bool $invoiceScheduleHooked = false;
+    protected static ?object $invoiceScheduleApp = null;
 
     public function configureCustomPackage(Package $package): void
     {
@@ -68,9 +68,12 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
         Gate::policy(Invoice::class, DocumentNumberPolicy::class);
         Gate::policy(InvoiceLine::class, DocumentNumberPolicy::class);
 
-        if (! static::$invoiceScheduleHooked) {
-            static::$invoiceScheduleHooked = true;
-            // packageBooted can run again in the same process. One hook, and the
+        // A process-wide boolean would skip every application after the first.
+        // Pest builds a new application per test, so the hook has to follow the
+        // instance, the same way the read-only guard follows the dispatcher.
+        if (static::$invoiceScheduleApp !== $this->app) {
+            static::$invoiceScheduleApp = $this->app;
+            // packageBooted can run again on one application. One hook, and the
             // callback itself refuses a second event on the same scheduler.
             // The console kernel can resolve the scheduler before this provider
             // finishes booting; afterResolving does not replay that instance.

@@ -338,6 +338,9 @@ it('queues due subscriptions and leaves a dry run unposted', function () {
             && $job->asOf === '2026-02-01T00:00:00+00:00';
     });
 
+    // This assertion sits after the other tests, and each test builds its own
+    // application. A provider flag that remembers only the first application
+    // leaves this scheduler empty.
     $events = collect(app(Schedule::class)->events())
         ->filter(fn ($event): bool => str_contains((string) $event->command, 'platform-billing:invoice-subscriptions'));
 

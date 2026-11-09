@@ -1631,6 +1631,29 @@ log named):
     probe of the login page and could be repeated without limit. Test:
     `support/tests/Feature/Http/LivewireLockedPropertyTest.php`.
 
+• Platform invoices, 2026-11-09 (`docs/saas-administration-billing-audit-plan.md`,
+  SAAS-10 handoff):
+  - Number them with `DocumentNumberGenerator`, not `SequenceService`.
+    A company resetting its own sequences must not move a DEKA invoice
+    number. The format is `DEKA-INV-{compact year}-{six digits}`, one
+    sequence per year, and a failed post must not consume the number.
+  - One invoice per subscription and period. The unique key is
+    `(subscription_id, period_start_at)`. Insert and treat a unique
+    conflict as already posted. Do not check, then insert.
+  - A posted invoice snapshots the issuer, the VAT switch, the rate, and
+    every amount, including a discount taken before VAT. Later
+    configuration must not rewrite it. The database trigger is the backstop.
+  - Net 7 is dated from `next_invoice_at`, the moment the period fell due,
+    not from the clock of a late job. Day 8 is `grace_starts_at`. Feed
+    `SubscriptionLifecycle`; do not write a second read-only rule.
+  - The invoice job has no user. Do not log a Super Admin in for it:
+    `CompanyReadOnlyWriteGuard` would then treat the billing run as
+    installation staff. A scheduled plan change may name an active Super
+    Admin as the audit actor without logging them in.
+  - `migrate:fresh` drops tables and leaves a PostgreSQL function behind.
+    Drop the immutability function before creating it again.
+  - Tests: `plugins/webkul/platform-billing/tests/Feature/RecurringInvoiceTest.php`.
+
 DONE RECENTLY (newest first; details in docs/change-log.md)
 
 • 2026-11-03 — Administrator password from the company form, for existing
