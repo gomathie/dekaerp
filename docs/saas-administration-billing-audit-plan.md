@@ -219,10 +219,10 @@ Record the user's answer before unblocking dependent packages.
 | SAAS-09A | Discount codes and tenant redemptions | SAAS-09, D-SAAS-08 | — | review (2026-11-09 / `aureuserp_testing_saas10`; gaps listed in the handoff, not fixed here) | commit `4f6284396` |
 | SAAS-10 | Idempotent recurring invoices | SAAS-09, SAAS-09A | — | review (2026-11-09 / `aureuserp_testing_saas10`; invoice tests passed; four read-only-guard failures left untouched) | commit `4d7b611b9`; schedule-hook fix still uncommitted |
 | SAAS-10B | Grace extensions that move the read-only instant | SAAS-10, D-SAAS-04, D-SAAS-13 | — | todo | — |
-| SAAS-11 | Payments, allocations, credit and reversals | SAAS-08, SAAS-10, D-SAAS-05, D-SAAS-06, D-SAAS-10 | — | in progress (2026-11-09 / `aureuserp_testing_saas11`) | — |
+| SAAS-11 | Payments, allocations, credit and reversals | SAAS-08, SAAS-10, D-SAAS-05, D-SAAS-06, D-SAAS-10 | — | review (2026-11-09 / `aureuserp_testing_saas11`) | commits `47c750cd7`, `028fe0148`, `a6b78e405`; company-form fixtures still uncommitted |
 | SAAS-12 | Platform administration screens | SAAS-03, SAAS-07, SAAS-09/10/11 | — | todo | — |
 | SAAS-13 | Company-administration screens | SAAS-01, SAAS-07, SAAS-09/10/11 | — | todo | — |
-| SAAS-15 | Backfill, shadow mode, release hardening, tenant impersonation, and test-or-commercial account type | All implementation packages | — | in progress (account type only, 2026-11-09 / `aureuserp_testing_saas11`; impersonation stays out) | — |
+| SAAS-15 | Backfill, shadow mode, release hardening, tenant impersonation, and test-or-commercial account type | All implementation packages | — | review (account type only, 2026-11-09 / `aureuserp_testing_saas11`; impersonation, backfill, shadow mode and release hardening stay out) | commits `47c750cd7`, `028fe0148`; company-form fixtures still uncommitted |
 
 Additional requirement: Tenant impersonation
 
@@ -2019,7 +2019,109 @@ What is still undecided:
    these five answers.
 
 D-SAAS-04 extensions are not part of this package. They are listed on the
-SAAS-10 handoff because they change the read-only predicate.
+SAAS-10 handoff because they change the read-only predicate. D-SAAS-13
+moved them to SAAS-10B.
+
+#### SAAS-11 handoff — 2026-11-09
+
+- Owner / database: `aureuserp_testing_saas11`
+- Status: review
+- Implemented: a Super Admin posts one money-in row by hand. There is no
+  provider and no screen. `PlatformPayments` allocates that row across
+  invoices, including a partial allocation and one payment applied to
+  several invoices. The unapplied remainder is the company's credit. It is
+  derived from the payment, its allocations and its reversals. Nothing
+  stores a running balance. A refund of unused credit is its own immutable
+  reversal and moves no money to a bank. A full reversal posts a negative
+  allocation for each invoice's net applied amount, then a reversal for
+  what is still unapplied, so the allocations net to zero and the reversals
+  equal the payment. Amounts are integer minor units, USD only. The
+  payment's company and currency must equal the invoice's. The reference
+  the Super Admin supplies is the idempotency key, unique on
+  `(company_id, idempotency_key)`. The same amount returns the existing
+  row. A different amount is refused. Allocations lock the payment, then
+  the invoices in ascending id order, with `SELECT … FOR UPDATE` held
+  until the transaction commits. An allocation that leaves no overdue
+  invoice with a remaining balance calls
+  `SubscriptionLifecycle::clearOverdue`. A reversal does not put the
+  subscription back overdue. The next sweep can.
+- Why (root cause or decision id) / How (mechanism) / Benefit: D-SAAS-10,
+  D-SAAS-05 and D-SAAS-06. The service checks the actor itself.
+  `Gate::before` lets a Super Admin skip a policy, and a Multi-Company
+  Admin's credit-note grant does not cover a payment or a reversal. Posted
+  rows are immutable in the model and again in
+  `platform_billing_posted_payments_are_immutable()`, the same backstop the
+  invoices use. `migrate:fresh` leaves that function behind, so the
+  migration drops it before creating it. Clearing overdue goes through the
+  lifecycle so there is not a second read-only rule.
+- Protected decisions added or superseded: see `AGENTS.md`, platform
+  payments, 2026-11-09. The plan's worker note says SAAS-14 owns
+  `AGENTS.md`. This task's four-place rule required the entry.
+- Files changed: commits `47c750cd7`, `028fe0148` and `a6b78e405` —
+  `database/migrations/2026_11_09_000003_create_platform_billing_payments_tables.php`,
+  `src/Models/Payment.php`, `src/Models/Allocation.php`,
+  `src/Models/Reversal.php`, `src/Services/PlatformPayments.php`,
+  `src/PlatformBillingServiceProvider.php`,
+  `tests/Feature/PlatformPaymentTest.php`,
+  `tests/Feature/RecurringInvoiceTest.php` (the cancelled-renewal assertion
+  was inverted; see Failures), and `src/Services/SubscriptionLifecycle.php`
+  (the company and active-subscription lookups in `activate` use
+  `withoutGlobalScopes()`, because a Super Admin posting for another
+  company was hidden by `CompanyScope`). `CompanyReadOnlyWriteGuard` and
+  `SubscriptionReadOnlyEnforcementTest` were not edited. Claude changed
+  those in `3b9a08186`.
+- Tests run with pass/assertion counts: PlatformBillingFeature 80 passed,
+  269 assertions, 864.33s, exit 0, on `aureuserp_testing_saas11`.
+  SecurityFeature 138 passed, 486 assertions, 1796.58s, exit 0, on the
+  same database, after the billing suite exited. SupportFeature 203
+  passed, 984 assertions, 2747.49s, exit 0, on that database after it was
+  dropped and recreated. `vendor/bin/pint --dirty --format agent` passed.
+- Reviewed but not executed: two PHP processes allocating at once. The
+  lock test is one process and two connections, with `lock_timeout` 400ms,
+  during `Allocation::creating`. No browser pass: this package has no
+  screen. No production database and no Supabase.
+- Failures investigated: the lock test first returned immediately because
+  Pest's `DatabaseTransactions` hid the uncommitted payment, and PostgreSQL
+  does not wait for a row its snapshot cannot see. The test now commits
+  the wrapper, probes with a second connection, then disables the
+  immutability triggers, deletes the committed billing rows, restores
+  `platform_billing_document_numbers` for invoice year 2026, and opens a
+  new transaction for tear-down. Without that restore the next invoice was
+  `DEKA-INV-226-000002`. The cancelled-renewal test expected
+  `read-only-blocked`. D-SAAS-12 exempts `Invoice` and `Subscription`, so
+  the job posts the final invoice and `advanceFromScheduler` expires the
+  subscription. The test was inverted and its docblock says what it used
+  to assert. The four guard failures named in the SAAS-10 handoff were
+  not in the green PlatformBillingFeature run.
+- Security/tenant/concurrency review: company and currency mismatches are
+  refused with the pinned messages in `PlatformPayments`. Over-allocation
+  is refused against the payment remainder and against the invoice
+  balance. Reconciliation reports `drift_minor` 0, including the identity
+  `sum(payments) - sum(allocations) - sum(reversals) = unapplied`.
+  `Payment`, `Allocation` and `Reversal` use `BelongsToCompany`.
+  `Allocation` and `Reversal` take the payment's company through
+  `InheritsParentCompany`. They are not in
+  `CompanyReadOnlyWriteGuard::EXEMPT_MODELS`. A signed-in Super Admin
+  already passes the guard. A job with no user cannot post a payment,
+  which matches D-SAAS-10: a person enters it.
+- Risks and rollback: `down()` drops the three payment tables, their
+  triggers, and `platform_billing_posted_payments_are_immutable()`. It
+  does not touch invoices or subscriptions. Do not run it once a payment
+  has been posted. The raw `FOR UPDATE` inlines the integer id. Do not
+  switch it back to a bound parameter without re-proving the lock. If a
+  run is interrupted inside the lock test's cleanup, the immutability
+  triggers can be left disabled on `aureuserp_testing_saas11`. Recreate
+  that database rather than trusting it.
+- Cross-package requests:
+  1. Claude should review the test-expiry branch in
+     `SubscriptionLifecycle::isReadOnly`. The guard calls that method.
+     This package did not edit the guard.
+  2. `Payment`, `Allocation` and `Reversal` do not need to be added to
+     `EXEMPT_MODELS` while a Super Admin is the authenticated user. Ask
+     before adding them.
+  3. A full reversal does not set `overdue_at` again. Say if it should.
+- Suggested next package: SAAS-10B (todo). It changes when `isReadOnly()`
+  becomes true. Do not build it inside a payment change.
 
 #### SAAS-12 — platform administration screens
 
@@ -2113,6 +2215,107 @@ Questions:
 7. Impersonation is already specified on this row. Recommendation: build
    the account type on its own, after the questions above are answered.
    Do not combine it with impersonation.
+
+#### SAAS-15 handoff — account type only — 2026-11-09
+
+- Owner / database: `aureuserp_testing_saas11`
+- Status: review for the account type. Impersonation, backfill, shadow
+  mode and release hardening are not in this handoff.
+- Implemented: `companies.account_type` is `test` or `commercial`, and
+  `companies.test_ends_at` is set only for a test company. Existing rows
+  become `commercial` from the column default. There is no separate
+  update, so a database that already has companies is safe. The choice is
+  written inside `CompanyOnboarding::create()`, before the company insert,
+  so a refusal rolls the company back. Omitting the choice leaves the
+  company commercial, which keeps the existing callers green. A tenant
+  Company Admin who sends the choice is refused. The company create form
+  shows the choice only to installation staff, through
+  `CompanySchemaRegistry`, and asks for a day count when the type is
+  `test`. An expired test is read-only from
+  `SubscriptionLifecycle::isReadOnly`, including a company with no
+  subscription. `CompanyAccountType::addDays` extends the later of
+  `test_ends_at` and the supplied instant, and audits
+  `platform_billing.trial_extended`. A Super Admin or a Multi-Company
+  Admin assigned to that company may add days. `switchToCommercial` is
+  Super Admin only. It sets the company commercial, clears `test_ends_at`,
+  creates a draft and activates it at the switch instant, so
+  `next_invoice_at` is the end of the next period. No invoice is posted
+  for the trial, and there is no path back to test.
+- Why (root cause or decision id) / How (mechanism) / Benefit: D-SAAS-11.
+  The check constraints refuse a commercial row that still has an end
+  date, and a test row with no end date, so a missing date cannot become
+  an open-ended free account. `activate` now locks the company and looks
+  for an active subscription with `withoutGlobalScopes()`. A logged-in
+  Super Admin switching a company other than the selected one otherwise
+  got `ModelNotFoundException`. Saving a company also saves its partner.
+  Once the trial has ended, the read-only guard allows that partner write
+  only while the staff member is the authenticated web user. The service
+  does not call `Auth::login()`.
+- Protected decisions added or superseded: see `AGENTS.md`, account type,
+  2026-11-09. Switching to commercial is Super Admin only in this
+  implementation because it starts a subscription (D-SAAS-06). D-SAAS-11
+  says staff can switch the type and names the Multi-Company Admin only
+  for adding days. That split is recorded here so it is not widened
+  quietly. See the question below.
+- Files changed: commits `47c750cd7` and `028fe0148` —
+  `support/database/migrations/2026_11_09_000004_add_account_type_to_companies_table.php`,
+  `support/src/SupportServiceProvider.php`, `support/src/Models/Company.php`,
+  `security/src/Services/CompanyOnboarding.php`,
+  `security/src/CompanyAdminContributions.php`, the five
+  `security/resources/lang/*/filament/contributions/company.php` files,
+  `security/tests/Feature/SaaSAdministration/AccountTypeOnboardingTest.php`,
+  `platform-billing/src/Services/CompanyAccountType.php`,
+  `platform-billing/src/Services/SubscriptionLifecycle.php`,
+  `platform-billing/tests/Feature/AccountTypeTest.php`. Still uncommitted:
+  `support/tests/Feature/Structure/fixtures/security.json` and
+  `support.json`. Each gained the account-type section (a select and a
+  day count) and nothing else. The first SupportFeature run failed those
+  two snapshots. They were deleted and rewritten by the next full run.
+  `git diff` is 13 added lines in each file.
+- Tests run with pass/assertion counts: the same three suites as the
+  SAAS-11 handoff, on `aureuserp_testing_saas11`. PlatformBillingFeature
+  80 passed, 269 assertions. SecurityFeature 138 passed, 486 assertions.
+  SupportFeature 203 passed, 984 assertions, 2747.49s, exit 0, after the
+  database was recreated. Pint passed.
+- Reviewed but not executed: the create form was not opened in a browser.
+  The structure snapshot records the declared fields, and
+  `AccountTypeOnboardingTest` drives the create page for installation
+  staff and for a company administrator. No production migration was run.
+- Failures investigated: one SupportFeature run, after the fixtures had
+  been deleted, failed three UOM tests and the partner snapshot because
+  `products_products` and `accounts_accounts` were missing and the partner
+  form's transaction aborted. The rewritten company fixtures did not
+  contain `__error`. The database was dropped and created again. The
+  following run passed all 203 tests. Creating an already-expired test
+  company through Eloquent also saves its partner, and the guard refuses
+  that write when nobody is logged in. The tests create a future trial
+  and then set `test_ends_at` in the past with the query builder.
+- Security/tenant/concurrency review: the form section is visible on
+  create only, and only when `administersInstallation()` is true. A
+  company administrator's payload is refused with "Only installation
+  staff may choose the account type." and the company is not kept. A
+  test company with no positive day count is refused with "A test company
+  needs a number of days." Adding days on a company the actor is not
+  assigned to is refused with "Only a Super Admin, or a Multi-Company
+  Admin for this company, may change the trial." A commercial company
+  cannot be given days or switched. The switch refusal is "Only a test
+  company can be switched to commercial." and the actor refusal is "Only
+  a Super Admin may switch a company to commercial."
+- Risks and rollback: `down()` drops the two check constraints and the
+  two columns. Do not run it once a company is on a trial or has been
+  switched, because the type and the end date would disappear. A test
+  company is not invoiced. Switching starts the subscription and leaves
+  the first invoice to the existing daily job. Claude has not yet
+  reviewed the `isReadOnly` change. The guard calls it.
+- Cross-package requests, needing a decision:
+  1. Should an assigned Multi-Company Admin be able to switch a test
+     company to commercial? This package allows only a Super Admin,
+     because the switch starts a subscription. Adding days already allows
+     the assigned Multi-Company Admin.
+  2. Claude reviews the new `isReadOnly` branch before SAAS-10B changes
+     the same method.
+- Suggested next package: SAAS-10B. Impersonation stays on this row and
+  was not built.
 
 ### Handoff template
 

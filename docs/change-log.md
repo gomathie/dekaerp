@@ -6,6 +6,30 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-09 (SAAS-11 payments and SAAS-15 account type)
+
+**Requested:** Record D-SAAS-10 through D-SAAS-13, then build platform
+payments and the test-or-commercial account type. SAAS-10B stays unbuilt.
+
+**Cause:** Platform invoices had no way to be settled, and a new company had
+no trial. The decisions are in
+`docs/saas-administration-billing-audit-plan.md`.
+
+**Implemented:** `PlatformPayments` posts, allocates, refunds and reverses
+by hand, Super Admin only, with derived credit and a database immutability
+trigger. `CompanyOnboarding` records `account_type` and `test_ends_at`.
+An expired test is read-only through `SubscriptionLifecycle::isReadOnly`.
+Adding days is installation staff. Switching to commercial is Super Admin
+only and starts billing at the next period. The full rationale, files,
+counts and the open Multi-Company Admin question are in the SAAS-11 and
+SAAS-15 handoffs in that plan.
+
+**Verification:** `aureuserp_testing_saas11`. PlatformBillingFeature 80
+passed, 269 assertions. SecurityFeature 138 passed, 486 assertions.
+SupportFeature 203 passed, 984 assertions, after the database was
+recreated. Pint passed. The company-form structure fixtures are the
+uncommitted remainder.
+
 ## 2026-11-09 (Super Admin company data scope)
 
 **Requested:** Ensure switching to a company as Super Admin shows only that
