@@ -18,10 +18,10 @@ list, including revocations.
 holds that company. The module helper unions the plan's plugins with the
 grants already on the company.
 
-**Verification:** `aureuserp_testing_saas11`. `AccountTypeTest` and
-`OverdueExtensionTest` together, 11 passed, 80 assertions. Pint passed.
-PlatformBillingFeature and PluginManagerFeature follow in the SAAS-10B
-entry once those runs finish.
+**Verification:** `aureuserp_testing_saas11`. Focused `AccountTypeTest` and
+`OverdueExtensionTest` together, 11 passed, 80 assertions, 173.32s.
+PlatformBillingFeature 92 passed, 341 assertions, 1076.55s, exit 0.
+PluginManagerFeature 57 passed, 176 assertions, 3281.85s, exit 0. Pint passed.
 
 ## 2026-11-09 (SAAS-10B overdue extensions)
 
@@ -35,8 +35,10 @@ The super-admin length is the number of days that admin names, because
 the plan does not fix one. `OverdueExtension` is not exempt from the
 read-only guard, so a Company Admin cannot grant it after the lock.
 
-**Verification:** same focused run as the entry above. Full suite counts
-are added when PlatformBillingFeature and PluginManagerFeature finish.
+**Verification:** `aureuserp_testing_saas11`. PlatformBillingFeature 92
+passed, 341 assertions, 1076.55s, exit 0. PluginManagerFeature 57 passed,
+176 assertions, 3281.85s, exit 0. The focused run shared with the gap fix
+was 11 passed, 80 assertions. Pint passed.
 
 ## 2026-11-09 (reversal starts a fresh overdue grace)
 
