@@ -126,6 +126,9 @@ class SupportServiceProvider extends PackageServiceProvider
                     'companies' => app(CompanyContext::class)->allowedCompanies(),
                     'active'    => app(CompanyContext::class)->activeIds(),
                     'canSwitch' => app(CompanyContext::class)->canSwitchCompanies(),
+                    'allCompaniesActive' => app(CompanyContext::class)->allCompaniesActive(),
+                    'canSelectAllCompanies' => app(CompanyContext::class)->canSwitchCompanies()
+                        && app(CompanyContext::class)->seesAllCompanies(),
                 ])->render();
             },
         );

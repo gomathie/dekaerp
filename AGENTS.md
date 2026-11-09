@@ -61,7 +61,7 @@ This project has domain-specific skills available. You MUST activate the relevan
 
 ## Replies
 
-- Be concise in your explanations - focus on what's important rather than explaining obvious details. Start every reply with my name. If you are unsure about what was being one previously, pause, and start first with goal rules and verified progress.
+- Be concise in your explanations - focus on what's important rather than explaining obvious details. Start every reply with my name 'Mathie'. If you are unsure about what was being one previously, pause, and start first with goal rules and verified progress.
 
 === boost rules ===
 

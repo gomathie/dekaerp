@@ -20,6 +20,30 @@ class CompanyContextController extends Controller
         /** @var User $user */
         $user = $request->user();
         $before = $context->activeIds();
+        $beforeAllCompanies = $context->allCompaniesActive();
+
+        if ($request->input('action') === 'all') {
+            try {
+                $context->setAllCompanies();
+            } catch (AuthorizationException $exception) {
+                $audit->denied('security.company_context.switch_denied', $user, [
+                    'requested_scope' => 'all_companies',
+                ]);
+
+                throw $exception;
+            }
+
+            $audit->record(
+                'security.company_context.switched',
+                $user,
+                $user,
+                $context->currentId(),
+                ['company_ids' => $before, 'all_companies' => $beforeAllCompanies],
+                ['company_ids' => $context->activeIds(), 'all_companies' => true],
+            );
+
+            return back();
+        }
 
         if ($request->input('action') === 'reset') {
             $context->reset();
@@ -30,8 +54,8 @@ class CompanyContextController extends Controller
                 $user,
                 $user,
                 $after[0] ?? null,
-                ['company_ids' => $before],
-                ['company_ids' => $after],
+                ['company_ids' => $before, 'all_companies' => $beforeAllCompanies],
+                ['company_ids' => $after, 'all_companies' => $context->allCompaniesActive()],
             );
 
             return back();
@@ -55,8 +79,8 @@ class CompanyContextController extends Controller
             $user,
             $user,
             $after[0] ?? null,
-            ['company_ids' => $before],
-            ['company_ids' => $after],
+            ['company_ids' => $before, 'all_companies' => $beforeAllCompanies],
+            ['company_ids' => $after, 'all_companies' => $context->allCompaniesActive()],
         );
 
         return back();
