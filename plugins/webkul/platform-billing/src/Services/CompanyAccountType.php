@@ -17,14 +17,17 @@ use Webkul\Support\Models\Company;
 /**
  * Trial length and the one-way switch to commercial (D-SAAS-11).
  *
- * Adding days is installation staff. Switching starts a subscription, which
- * D-SAAS-06 keeps with Super Admin. There is no path back to test.
+ * Adding days and switching are the same people: a Super Admin, or a
+ * Multi-Company Admin assigned to that company (user, 2026-11-09). The
+ * switch is the one subscription write that assignment covers. Every other
+ * subscription change stays Super Admin (D-SAAS-06). There is no path back
+ * to test.
  */
 class CompanyAccountType
 {
     public const ONLY_STAFF = 'Only a Super Admin, or a Multi-Company Admin for this company, may change the trial.';
 
-    public const ONLY_SUPER_ADMIN = 'Only a Super Admin may switch a company to commercial.';
+    public const ONLY_SWITCH_STAFF = 'Only a Super Admin, or a Multi-Company Admin for this company, may switch it to commercial.';
 
     public const ONLY_TEST = 'Only a test company can be given more days.';
 
@@ -69,9 +72,7 @@ class CompanyAccountType
 
     public function switchToCommercial(User $actor, Company $company, Price $price, DateTimeImmutable $at): Company
     {
-        if (! $actor->is_active || ! $actor->isSuperAdmin()) {
-            throw new AuthorizationException(self::ONLY_SUPER_ADMIN);
-        }
+        $this->assertMaySwitch($actor, $company);
 
         return DB::transaction(function () use ($actor, $company, $price, $at): Company {
             $locked = Company::withoutGlobalScopes()->lockForUpdate()->findOrFail($company->getKey());
@@ -85,8 +86,11 @@ class CompanyAccountType
                 'test_ends_at' => null,
             ])->save();
 
-            $draft = app(SubscriptionDrafts::class)->create($actor, $locked, $price, $at);
-            $active = app(SubscriptionLifecycle::class)->activate($draft, $actor, $at);
+            // create() and activate() stay Super Admin. These two entries are
+            // the commercial switch only, so an assigned Multi-Company Admin
+            // cannot open the rest of subscription administration.
+            $draft = app(SubscriptionDrafts::class)->createForCommercialSwitch($actor, $locked, $price, $at);
+            $active = app(SubscriptionLifecycle::class)->activateForCommercialSwitch($draft, $actor, $at);
 
             app(SecurityAuditLogger::class)->record(
                 'platform_billing.account_became_commercial',
@@ -100,20 +104,17 @@ class CompanyAccountType
         });
     }
 
+    public function assertMaySwitch(User $actor, Company $company): void
+    {
+        if (! app(MultiCompanyAdminService::class)->mayAdministerCompany($actor, (int) $company->getKey())) {
+            throw new AuthorizationException(self::ONLY_SWITCH_STAFF);
+        }
+    }
+
     protected function assertMayExtend(User $actor, Company $company): void
     {
-        if (! $actor->is_active) {
+        if (! app(MultiCompanyAdminService::class)->mayAdministerCompany($actor, (int) $company->getKey())) {
             throw new AuthorizationException(self::ONLY_STAFF);
         }
-
-        if ($actor->isSuperAdmin()) {
-            return;
-        }
-
-        if ($actor->isMultiCompanyAdmin() && app(MultiCompanyAdminService::class)->isCompanyAssigned($actor, (int) $company->getKey())) {
-            return;
-        }
-
-        throw new AuthorizationException(self::ONLY_STAFF);
     }
 }

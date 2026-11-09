@@ -399,6 +399,26 @@ class MultiCompanyAdminService
     }
 
     /**
+     * Super Admin, or a Multi-Company Admin assigned to this company.
+     *
+     * Trial length and the commercial switch share this predicate. It does
+     * not grant plugin entitlements, payments, or other subscription edits:
+     * those stay on their own Super Admin checks (D-SAAS-06).
+     */
+    public function mayAdministerCompany(User $actor, int $companyId): bool
+    {
+        if (! $actor->is_active) {
+            return false;
+        }
+
+        if ($actor->isSuperAdmin()) {
+            return true;
+        }
+
+        return $actor->isMultiCompanyAdmin() && $this->isCompanyAssigned($actor, $companyId);
+    }
+
+    /**
      * Whether these roles include Company Admin.
      *
      * Used to give such a user `global` resource permission on creation.

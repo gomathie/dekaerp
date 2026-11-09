@@ -25,6 +25,23 @@ class SubscriptionDrafts
             throw new AuthorizationException('Only a Super Admin may change subscriptions.');
         }
 
+        return $this->store($actor, $company, $price, $anchor);
+    }
+
+    /**
+     * The commercial switch is the one subscription a Multi-Company Admin may
+     * start, and only for an assigned company (user, 2026-11-09). create()
+     * stays Super Admin so this does not become general subscription access.
+     */
+    public function createForCommercialSwitch(User $actor, Company $company, Price $price, DateTimeImmutable $anchor): Subscription
+    {
+        app(CompanyAccountType::class)->assertMaySwitch($actor, $company);
+
+        return $this->store($actor, $company, $price, $anchor);
+    }
+
+    protected function store(User $actor, Company $company, Price $price, DateTimeImmutable $anchor): Subscription
+    {
         $price->loadMissing('plan');
 
         if (! $price->exists || ! $price->plan || ! $price->is_active || ! $price->plan->is_active

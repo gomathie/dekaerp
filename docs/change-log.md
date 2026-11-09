@@ -6,6 +6,22 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-09 (commercial switch for an assigned Multi-Company Admin)
+
+**Requested:** A Multi-Company Admin may switch a test company to commercial.
+
+**Cause:** The first account-type build kept the switch with Super Admin
+because it starts a subscription (D-SAAS-06). The user included the assigned
+Multi-Company Admin the same day.
+
+**Implemented:** The switch checks the same assignment predicate as adding
+days. It starts the subscription through `createForCommercialSwitch()` and
+`activateForCommercialSwitch()`, and applies the plan's modules through
+`syncForCommercialSwitch()`. `create()`, `activate()` and `syncForCompany()`
+still refuse anyone who is not a Super Admin. A Multi-Company Admin who is
+not assigned to the company is refused with "Only a Super Admin, or a
+Multi-Company Admin for this company, may switch it to commercial."
+
 ## 2026-11-09 (SAAS-11 payments and SAAS-15 account type)
 
 **Requested:** Record D-SAAS-10 through D-SAAS-13, then build platform
