@@ -1879,8 +1879,10 @@ advances nothing; paused/cancelled skip; dates match SAAS-09.
 - Tests run with pass/assertion counts: `RecurringInvoiceTest` 13 passed,
   63 assertions, on `aureuserp_testing_saas10`. PlatformBillingFeature on
   the same database: 64 passed, 4 failed, 212 assertions, 1082.05s.
-  `vendor/bin/pint --dirty --format agent` passed. SecurityFeature was
-  started on the same database after this suite exited.
+  SecurityFeature on the same database, after that suite exited: 134
+  passed, 470 assertions, 2214.60s, zero failures. SupportFeature was not
+  run; no support file changed. `vendor/bin/pint --dirty --format agent`
+  passed.
 - Reviewed but not executed: two database connections racing the same
   period. The unique key and the row lock are what the single-connection
   retry test exercises. SupportFeature was not run; no support file changed.
