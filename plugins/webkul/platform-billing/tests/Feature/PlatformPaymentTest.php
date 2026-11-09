@@ -297,3 +297,71 @@ it('clears the subscription overdue state through the lifecycle when the overdue
         ->and($lifecycle->isReadOnly($company, new DateTimeImmutable('2026-02-20T00:00:00Z')))->toBeFalse()
         ->and($service->reconcile((int) $company->getKey())['drift_minor'])->toBe(0);
 });
+
+it('starts a fresh overdue grace from a reversal that reopens an invoice past day 8', function () {
+    [$company, $actor, $active, $invoice] = paymentFixture();
+    $lifecycle = app(SubscriptionLifecycle::class);
+    $service = app(PlatformPayments::class);
+    $paidAt = new DateTimeImmutable('2026-02-20T00:00:00Z');
+    $lifecycle->recordOverdue($active, $actor, new DateTimeImmutable('2026-02-09T00:00:00Z'));
+    $payment = $service->post($actor, $company, (int) $invoice->total_minor, 'RCPT-REOPEN', $paidAt);
+    $service->allocate($actor, $payment, [
+        ['invoice_id' => (int) $invoice->getKey(), 'amount_minor' => (int) $invoice->total_minor],
+    ], $paidAt);
+
+    expect($active->fresh()->overdue_at)->toBeNull();
+
+    $service->reversePayment($actor, $payment, 'REV-REOPEN', 'payment returned', $paidAt);
+    $mark = $active->fresh()->overdue_at;
+
+    expect($mark?->format('Y-m-d H:i:s'))->toBe('2026-02-20 00:00:00')
+        ->and($lifecycle->isReadOnly($company->fresh(), $paidAt))->toBeFalse()
+        ->and($lifecycle->isReadOnly($company->fresh(), $paidAt->modify('+10 days')))->toBeTrue();
+});
+
+it('does not mark overdue when a reversal reopens an invoice before day 8', function () {
+    [$company, $actor, $active, $invoice] = paymentFixture();
+    $service = app(PlatformPayments::class);
+    $at = new DateTimeImmutable('2026-02-02T00:00:00Z');
+    $payment = $service->post($actor, $company, (int) $invoice->total_minor, 'RCPT-EARLY', $at);
+    $service->allocate($actor, $payment, [
+        ['invoice_id' => (int) $invoice->getKey(), 'amount_minor' => (int) $invoice->total_minor],
+    ], $at);
+    $service->reversePayment($actor, $payment, 'REV-EARLY', 'posted too early', $at);
+
+    expect($active->fresh()->overdue_at)->toBeNull();
+});
+
+it('does not restart an overdue grace that is already running', function () {
+    [$company, $actor, $active, $invoice] = paymentFixture();
+    $lifecycle = app(SubscriptionLifecycle::class);
+    $service = app(PlatformPayments::class);
+    $original = new DateTimeImmutable('2026-02-09T00:00:00Z');
+    $lifecycle->recordOverdue($active, $actor, $original);
+    $payment = $service->post($actor, $company, 1000, 'RCPT-PARTIAL', new DateTimeImmutable('2026-02-20T00:00:00Z'));
+    $service->allocate($actor, $payment, [
+        ['invoice_id' => (int) $invoice->getKey(), 'amount_minor' => 1000],
+    ], new DateTimeImmutable('2026-02-20T00:00:00Z'));
+    $service->reversePayment($actor, $payment, 'REV-PARTIAL', 'partial payment returned', new DateTimeImmutable('2026-02-21T00:00:00Z'));
+
+    expect($active->fresh()->overdue_at?->format('Y-m-d'))->toBe('2026-02-09');
+});
+
+it('leaves the overdue mark alone when a refund does not reopen an invoice', function () {
+    [$company, $actor, $active, $invoice] = paymentFixture();
+    $lifecycle = app(SubscriptionLifecycle::class);
+    $service = app(PlatformPayments::class);
+    $paidAt = new DateTimeImmutable('2026-02-20T00:00:00Z');
+    $lifecycle->recordOverdue($active, $actor, new DateTimeImmutable('2026-02-09T00:00:00Z'));
+    $payment = $service->post($actor, $company, (int) $invoice->total_minor + 500, 'RCPT-CREDIT', $paidAt);
+    $service->allocate($actor, $payment, [
+        ['invoice_id' => (int) $invoice->getKey(), 'amount_minor' => (int) $invoice->total_minor],
+    ], $paidAt);
+
+    expect($active->fresh()->overdue_at)->toBeNull();
+
+    $service->refundCredit($actor, $payment, 500, 'RF-CREDIT', 'refund unused credit', $paidAt);
+
+    expect($active->fresh()->overdue_at)->toBeNull()
+        ->and($service->invoiceBalanceMinor($invoice->fresh()))->toBe(0);
+});

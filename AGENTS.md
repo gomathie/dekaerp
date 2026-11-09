@@ -1682,6 +1682,12 @@ log named):
   - An allocation that clears an overdue invoice calls
     `SubscriptionLifecycle::clearOverdue`. Do not write a second
     read-only rule.
+  - A reversal that reopens an invoice already past day 8 calls
+    `SubscriptionLifecycle::recordOverdue` with the reversal's own time,
+    so the company gets a new 10-day grace (user, 2026-11-09). Do not
+    restore the original day-8 date, and do not move a mark that is
+    already set. A refund of unused credit does not reopen an invoice
+    and does not touch the mark.
   - `Payment`, `Allocation` and `Reversal` are not in
     `CompanyReadOnlyWriteGuard::EXEMPT_MODELS`. The signed-in Super Admin
     already passes. Do not add them so a job with no user can post money.

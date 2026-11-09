@@ -2043,8 +2043,11 @@ moved them to SAAS-10B.
   the invoices in ascending id order, with `SELECT … FOR UPDATE` held
   until the transaction commits. An allocation that leaves no overdue
   invoice with a remaining balance calls
-  `SubscriptionLifecycle::clearOverdue`. A reversal does not put the
-  subscription back overdue. The next sweep can.
+  `SubscriptionLifecycle::clearOverdue`. *Superseded 2026-11-09 (user):*
+  a reversal that reopens an invoice already past day 8 puts the
+  subscription overdue again from the reversal's own time, through
+  `recordOverdue`. A fresh 10-day grace follows. A mark already set is
+  not moved, and a refund of unused credit does not touch it.
 - Why (root cause or decision id) / How (mechanism) / Benefit: D-SAAS-10,
   D-SAAS-05 and D-SAAS-06. The service checks the actor itself.
   `Gate::before` lets a Super Admin skip a policy, and a Multi-Company
@@ -2119,7 +2122,11 @@ moved them to SAAS-10B.
   2. `Payment`, `Allocation` and `Reversal` do not need to be added to
      `EXEMPT_MODELS` while a Super Admin is the authenticated user. Ask
      before adding them.
-  3. A full reversal does not set `overdue_at` again. Say if it should.
+  3. Answered 2026-11-09 (user): a reversal that reopens an invoice
+     already past day 8 calls `recordOverdue` with the reversal's time,
+     so the 10-day grace starts then. The original day-8 date is not
+     restored, and a mark that is already set is not moved. A refund of
+     unused credit does not touch the mark.
 - Suggested next package: SAAS-10B (todo). It changes when `isReadOnly()`
   becomes true. Do not build it inside a payment change.
 
