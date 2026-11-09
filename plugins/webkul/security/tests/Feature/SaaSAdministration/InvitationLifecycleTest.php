@@ -1,18 +1,18 @@
 <?php
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\ValidationException;
 use Livewire\Livewire;
 use Webkul\Security\Filament\Resources\UserResource\Pages\ListUsers;
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Validation\ValidationException;
 use Webkul\Security\Mail\UserInvitationMail;
 use Webkul\Security\Models\Invitation;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\CompanyAdministratorInviter;
 use Webkul\Security\Services\CompanyAdminRoleProvisioner;
-use Webkul\Security\Services\UserInvitationService;
 use Webkul\Security\Services\SeatCapacityService;
+use Webkul\Security\Services\UserInvitationService;
 use Webkul\Security\Settings\UserSettings;
 use Webkul\Support\Models\Company;
 
@@ -113,7 +113,7 @@ it('reports a resend of an invitation that is no longer pending as a failure', f
 
     expect($reason)->toBe(CompanyAdministratorInviter::INVITE_FAILED);
 
-    Mail::assertSent(UserInvitationMail::class);
+    Mail::assertNothingSent();
 });
 
 it('refuses a tenant attempt to renew or revoke another company invitation', function () {
@@ -147,7 +147,7 @@ it('resends and revokes a pending invitation from the users page without stackin
 
     expect($capacity->usedSeats($company))->toBe(1)
         ->and(Invitation::query()->whereKey($invitation->id)->pending()->exists())->toBeTrue();
-    Mail::assertNothingSent();
+    Mail::assertSent(UserInvitationMail::class);
 
     Livewire::test(ListUsers::class)
         ->callAction('revokeInvitation', data: ['invitation_id' => $invitation->id])
