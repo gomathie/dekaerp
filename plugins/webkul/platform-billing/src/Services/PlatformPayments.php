@@ -114,7 +114,8 @@ class PlatformPayments
         }
 
         return DB::transaction(function () use ($actor, $payment, $lines, $at): array {
-            $lockedPayment = Payment::withoutGlobalScopes()->lockForUpdate()->findOrFail($payment->getKey());
+            $this->lockPaymentRow((int) $payment->getKey());
+            $lockedPayment = Payment::withoutGlobalScopes()->findOrFail($payment->getKey());
             $invoiceIds = collect($lines)
                 ->map(fn (array $line): int => (int) $line['invoice_id'])
                 ->unique()
@@ -126,7 +127,8 @@ class PlatformPayments
             $invoices = [];
 
             foreach ($invoiceIds as $invoiceId) {
-                $invoice = Invoice::withoutGlobalScopes()->lockForUpdate()->find($invoiceId);
+                $this->lockInvoiceRow((int) $invoiceId);
+                $invoice = Invoice::withoutGlobalScopes()->find($invoiceId);
 
                 if (! $invoice instanceof Invoice) {
                     throw ValidationException::withMessages(['invoice' => self::SAME_COMPANY]);
@@ -224,7 +226,8 @@ class PlatformPayments
         }
 
         return DB::transaction(function () use ($actor, $payment, $amountMinor, $reference, $reason, $at): Reversal {
-            $locked = Payment::withoutGlobalScopes()->lockForUpdate()->findOrFail($payment->getKey());
+            $this->lockPaymentRow((int) $payment->getKey());
+            $locked = Payment::withoutGlobalScopes()->findOrFail($payment->getKey());
             $existing = $this->findReversal((int) $locked->company_id, $reference);
 
             if ($existing instanceof Reversal) {
@@ -267,7 +270,8 @@ class PlatformPayments
         }
 
         return DB::transaction(function () use ($actor, $payment, $reference, $reason, $at): Reversal {
-            $locked = Payment::withoutGlobalScopes()->lockForUpdate()->findOrFail($payment->getKey());
+            $this->lockPaymentRow((int) $payment->getKey());
+            $locked = Payment::withoutGlobalScopes()->findOrFail($payment->getKey());
             $existing = $this->findReversal((int) $locked->company_id, $reference);
 
             if ($existing instanceof Reversal) {
@@ -287,7 +291,8 @@ class PlatformPayments
                 ->values();
 
             foreach ($invoiceIds as $invoiceId) {
-                $invoice = Invoice::withoutGlobalScopes()->lockForUpdate()->findOrFail($invoiceId);
+                $this->lockInvoiceRow((int) $invoiceId);
+                $invoice = Invoice::withoutGlobalScopes()->findOrFail($invoiceId);
                 $applied = (int) Allocation::withoutGlobalScopes()
                     ->where('payment_id', $locked->getKey())
                     ->where('invoice_id', $invoice->getKey())
@@ -382,8 +387,14 @@ class PlatformPayments
             ->where('company_id', $companyId)
             ->where('status', 'active')
             ->whereNotNull('overdue_at')
-            ->lockForUpdate()
             ->first();
+
+        if ($subscription instanceof Subscription) {
+            DB::connection()->getPdo()->query(
+                'select id from platform_billing_subscriptions where id = '.(int) $subscription->getKey().' for update'
+            );
+            $subscription->refresh();
+        }
 
         if (! $subscription instanceof Subscription) {
             return;
@@ -471,6 +482,25 @@ class PlatformPayments
             ->first();
 
         return $reversal instanceof Reversal ? $reversal : null;
+    }
+
+    /**
+     * Hold this payment until the transaction commits. Another allocation of
+     * the same payment waits on this row, so both cannot spend one remainder.
+     * The id is an integer and is inlined.
+     */
+    protected function lockPaymentRow(int $paymentId): void
+    {
+        DB::connection()->getPdo()->query(
+            'select id from platform_billing_payments where id = '.$paymentId.' for update'
+        );
+    }
+
+    protected function lockInvoiceRow(int $invoiceId): void
+    {
+        DB::connection()->getPdo()->query(
+            'select id from platform_billing_invoices where id = '.$invoiceId.' for update'
+        );
     }
 
     protected function assertSuperAdmin(User $actor): void

@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Webkul\PlatformBilling\Models\Invoice;
 use Webkul\PlatformBilling\Models\Plan;
@@ -23,10 +25,18 @@ beforeEach(function (): void {
 
 function trialCompany(string $endsAt): Company
 {
-    return Company::factory()->create([
+    $company = Company::factory()->create([
         'account_type' => 'test',
         'test_ends_at' => new DateTimeImmutable($endsAt),
     ]);
+
+    return $company->fresh() ?? $company;
+}
+
+function actAsInstallationStaff(User $user): void
+{
+    Auth::shouldUse('web');
+    Auth::guard('web')->login($user);
 }
 
 function trialPrice(): Price
@@ -47,7 +57,13 @@ function trialPrice(): Price
 }
 
 it('makes an expired test company read-only and leaves an open trial writable', function () {
-    $company = trialCompany('2026-11-01T00:00:00Z');
+    // Create while the trial is still open. Saving the company also saves its
+    // partner, and that write is refused once the trial has ended.
+    $company = trialCompany('2026-12-01T00:00:00Z');
+    DB::table('companies')->where('id', $company->getKey())->update([
+        'test_ends_at' => '2026-11-01 00:00:00+00',
+    ]);
+    $company->refresh();
     $lifecycle = app(SubscriptionLifecycle::class);
 
     expect($lifecycle->isReadOnly($company, new DateTimeImmutable('2026-10-31T00:00:00Z')))->toBeFalse()
@@ -55,24 +71,37 @@ it('makes an expired test company read-only and leaves an open trial writable', 
 
     $tenant = SecurityHelper::authenticateWithPermissions([]);
 
-    expect(fn () => Calendar::query()->create([
-        'name' => 'expired trial write',
-        'timezone' => 'UTC',
-        'company_id' => $company->getKey(),
-    ]))->toThrow(ValidationException::class, CompanyReadOnlyWriteGuard::MESSAGE)
-        ->and(Company::withoutGlobalScopes()->find($company->getKey()))->not->toBeNull()
-        ->and($tenant->isSuperAdmin())->toBeFalse();
+    expect($tenant->isSuperAdmin())->toBeFalse()
+        ->and(fn () => Calendar::query()->create([
+            'name' => 'expired trial write',
+            'timezone' => 'UTC',
+            'company_id' => $company->getKey(),
+        ]))->toThrow(ValidationException::class, CompanyReadOnlyWriteGuard::MESSAGE);
+
+    expect(Company::withoutGlobalScopes()->whereKey($company->getKey())->exists())->toBeTrue();
 });
 
 it('lets installation staff add days and refuses a company administrator', function () {
-    $company = trialCompany('2026-11-01T00:00:00Z');
+    $company = trialCompany('2026-12-01T00:00:00Z');
+    DB::table('companies')->where('id', $company->getKey())->update([
+        'test_ends_at' => '2026-11-01 00:00:00+00',
+    ]);
+    $company->refresh();
     $admin = User::query()->where('email', 'admin@example.com')->firstOrFail();
     $service = app(CompanyAccountType::class);
     $at = new DateTimeImmutable('2026-11-09T00:00:00Z');
 
+    // The company save also updates its partner. The guard allows that only
+    // while the installation staff member is the authenticated user.
+    actAsInstallationStaff($admin);
     $extended = $service->addDays($admin, $company, 10, $at);
 
     expect($extended->test_ends_at->format('Y-m-d'))->toBe('2026-11-19');
+
+    // Created while the Super Admin is signed in, so this company is assigned
+    // to them. Creating it after the Multi-Company Admin signs in would assign
+    // it to that admin and the refusal would never run.
+    $stranger = Company::factory()->create(['account_type' => 'test', 'test_ends_at' => $at->modify('+2 days')]);
 
     $mca = User::withoutEvents(fn (): User => User::factory()->create([
         'default_company_id' => $company->getKey(),
@@ -82,10 +111,9 @@ it('lets installation staff add days and refuses a company administrator', funct
     $mca->allowedCompanies()->sync([$company->getKey()]);
     $mca->syncRoles([app(MultiCompanyAdminRoleProvisioner::class)->provision()->getKey()]);
     $mca->unsetRelation('roles');
+    actAsInstallationStaff($mca);
 
     expect($service->addDays($mca, $company, 5, $at)->fresh()->test_ends_at->format('Y-m-d'))->toBe('2026-11-24');
-
-    $stranger = Company::factory()->create(['account_type' => 'test', 'test_ends_at' => $at->modify('+2 days')]);
 
     expect(fn () => $service->addDays($mca, $stranger, 1, $at))
         ->toThrow(AuthorizationException::class, CompanyAccountType::ONLY_STAFF);
@@ -98,8 +126,13 @@ it('lets installation staff add days and refuses a company administrator', funct
 
 it('switches a test company to commercial at the next period and refuses the reverse', function () {
     $company = trialCompany('2026-12-01T00:00:00Z');
+    DB::table('companies')->where('id', $company->getKey())->update([
+        'test_ends_at' => '2026-11-01 00:00:00+00',
+    ]);
+    $company->refresh();
     $actor = User::query()->where('email', 'admin@example.com')->firstOrFail();
     $at = new DateTimeImmutable('2026-11-09T00:00:00Z');
+    actAsInstallationStaff($actor);
     $switched = app(CompanyAccountType::class)->switchToCommercial($actor, $company, trialPrice(), $at);
     $subscription = Subscription::withoutGlobalScopes()->where('company_id', $company->getKey())->first();
 
