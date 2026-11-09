@@ -7,6 +7,19 @@ Note: this is a working log, separate from [`AGENTS.md`](../AGENTS.md) (Laravel
 Boost guidelines the agent follows) and [`CHANGELOG.md`](../CHANGELOG.md)
 (release notes). Code-change details go in [`docs/change-log.md`](change-log.md).
 
+## 2026-11-10
+
+**Requested:** A Company Admin may extend after the lock. A Super Admin
+extension is a number of days, weeks, or months that they enter.
+
+**Decision:** The guard allows that one new extension for the company's
+own Company Admin. The model is not generally exempt. The length keeps
+its unit.
+
+**Implementation and verification:** See the SAAS-10B addendum in
+`docs/saas-administration-billing-audit-plan.md` and `docs/change-log.md`.
+Database `aureuserp_testing_saas11`.
+
 ## 2026-11-09
 
 **Requested:** Close the commercial-switch gap in `45636cfcf`, then build

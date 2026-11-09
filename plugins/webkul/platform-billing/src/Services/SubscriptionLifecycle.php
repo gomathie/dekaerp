@@ -273,28 +273,54 @@ class SubscriptionLifecycle
             return true;
         }
 
-        // Extensions add days to this instant and nowhere else. The read-only
-        // guard calls this method, so Claude should review the change.
+        // Each grant starts at the later of the current deadline and the
+        // moment it was given, then adds its own length. A grant after the
+        // lock therefore buys that length from the grant, and a grant during
+        // grace still extends the original day-10 instant. The guard calls
+        // this method, so Claude should review the change.
         return $subscription->overdue_at instanceof DateTimeInterface
             && $at >= $this->overdueReadOnlyAt($subscription);
     }
 
     /**
-     * Day 10 after overdue_at, plus every granted extension on this
-     * subscription's invoices. One place, because the guard calls isReadOnly().
+     * The one read-only instant. Extensions are applied in grant order.
      */
     protected function overdueReadOnlyAt(Subscription $subscription): DateTimeImmutable
     {
-        $extra = (int) OverdueExtension::withoutGlobalScopes()
+        $deadline = DateTimeImmutable::createFromInterface($subscription->overdue_at)->modify('+10 days');
+        $extensions = OverdueExtension::withoutGlobalScopes()
             ->whereIn('invoice_id', function ($query) use ($subscription): void {
                 $query->select('id')
                     ->from('platform_billing_invoices')
                     ->where('subscription_id', $subscription->getKey());
             })
-            ->sum('days');
+            // Only extensions granted in the current overdue episode. Without
+            // this, an extension on an invoice paid months ago lengthened every
+            // later grace, so extensions stacked against D-SAAS-04
+            // (review of 1fecd51c2, 2026-11-10).
+            ->where('granted_at', '>=', $subscription->overdue_at)
+            ->orderBy('granted_at')
+            ->orderBy('id')
+            ->get();
 
-        return DateTimeImmutable::createFromInterface($subscription->overdue_at)
-            ->modify('+'.(10 + $extra).' days');
+        foreach ($extensions as $extension) {
+            $granted = DateTimeImmutable::createFromInterface($extension->granted_at);
+            $start = $granted > $deadline ? $granted : $deadline;
+            $deadline = $this->addExtensionLength($start, (int) $extension->length, (string) $extension->unit);
+        }
+
+        return $deadline;
+    }
+
+    protected function addExtensionLength(DateTimeImmutable $start, int $length, string $unit): DateTimeImmutable
+    {
+        $length = max(0, $length);
+
+        return match ($unit) {
+            OverdueExtension::UNIT_WEEK  => $start->modify('+'.$length.' weeks'),
+            OverdueExtension::UNIT_MONTH => $start->modify('+'.$length.' months'),
+            default                      => $start->modify('+'.$length.' days'),
+        };
     }
 
     protected function activeSuperAdmin(): User

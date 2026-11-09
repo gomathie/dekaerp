@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * One extension per invoice and kind (D-SAAS-04). Days are added to the
-     * read-only instant. The row is the audit, so it cannot be edited to
-     * grant the same slot twice.
+     * One extension per invoice and kind (D-SAAS-04). The length and unit
+     * move the read-only instant. The row is the audit, so it cannot be
+     * edited to grant the same slot twice.
      */
     public function up(): void
     {
@@ -19,7 +19,8 @@ return new class extends Migration
             $table->foreignId('company_id')->constrained('companies')->restrictOnDelete();
             $table->foreignId('invoice_id')->constrained('platform_billing_invoices')->restrictOnDelete();
             $table->string('kind', 32);
-            $table->unsignedInteger('days');
+            $table->unsignedInteger('length');
+            $table->string('unit', 8);
             $table->text('reason')->nullable();
             $table->foreignId('granted_by')->constrained('users')->restrictOnDelete();
             $table->timestampTz('granted_at');
@@ -28,7 +29,8 @@ return new class extends Migration
         });
 
         DB::statement("ALTER TABLE platform_billing_overdue_extensions ADD CONSTRAINT platform_billing_overdue_extensions_kind_check CHECK (kind IN ('company_admin', 'super_admin'))");
-        DB::statement('ALTER TABLE platform_billing_overdue_extensions ADD CONSTRAINT platform_billing_overdue_extensions_days_check CHECK (days > 0)');
+        DB::statement('ALTER TABLE platform_billing_overdue_extensions ADD CONSTRAINT platform_billing_overdue_extensions_length_check CHECK (length > 0)');
+        DB::statement("ALTER TABLE platform_billing_overdue_extensions ADD CONSTRAINT platform_billing_overdue_extensions_unit_check CHECK (unit IN ('day', 'week', 'month'))");
 
         // migrate:fresh drops the table and leaves the function behind.
         DB::unprepared('DROP FUNCTION IF EXISTS platform_billing_overdue_extensions_are_immutable()');

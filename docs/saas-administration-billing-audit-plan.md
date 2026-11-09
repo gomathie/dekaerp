@@ -2458,12 +2458,38 @@ Questions:
 - Tests run with pass/assertion counts: the focused run above, then PlatformBillingFeature 92 passed, 341 assertions, 1076.55s, exit 0, and PluginManagerFeature 57 passed, 176 assertions, 3281.85s, exit 0, both on `aureuserp_testing_saas11`. Pint passed.
 - Reviewed but not executed: no browser. The company-admin action is a service call; SAAS-12 owns the screen. No production migration. SecurityFeature and SupportFeature were not re-run.
 - Failures investigated: none in the focused run.
-- Security/tenant/concurrency review: the company admin must hold that role on the invoice's company. A Multi-Company Admin is refused both methods. A Company Admin cannot grant the extension once the company is already read-only, because `OverdueExtension` is not exempt from the guard. A signed-in Super Admin can still grant the manual extension. The service does not call `Auth::login()`.
+- Security/tenant/concurrency review: the company admin must hold that role on the invoice's company. A Multi-Company Admin is refused both methods. *Superseded 2026-11-10:* a Company Admin can grant the extension after the lock. See the addendum. A signed-in Super Admin can still grant the manual extension. The service does not call `Auth::login()`.
 - Risks and rollback: `down()` drops the trigger, `platform_billing_overdue_extensions_are_immutable()`, and the table. Do not run it once an extension has been granted. Removing the days from `isReadOnly()` restores the original day-10 lock and leaves the rows unused.
 - Cross-package requests:
   1. Claude reviews the `isReadOnly()` extension branch. The guard calls it with `now()`.
-  2. Should `OverdueExtension` be added to `EXEMPT_MODELS` so a Company Admin can grant the 10 days after the company is already read-only? This package did not. The self-service works during the grace, while the company is still writable.
+  2. *Answered 2026-11-10:* `OverdueExtension` stays out of `EXEMPT_MODELS`. The guard allows a new row when the authenticated user is a Company Admin of that company. See the addendum.
 - Suggested next package: SAAS-12 screens. Impersonation stays unbuilt.
+
+#### SAAS-10B addendum — company admin after the lock — 2026-11-10
+
+- Owner / database: `aureuserp_testing_saas11`
+- Status: review
+- Implemented: a Company Admin of that company can grant the 10-day extension after the company is already read-only. The guard allows a new `OverdueExtension` for that person and still refuses every other tenant write. The model stays out of `EXEMPT_MODELS`. A Super Admin extension is a positive count of days, weeks, or months. `isReadOnly()` starts each grant at the later of the current deadline and the grant time, so a late grant buys its length from that moment.
+- Why / How / Benefit: user, 2026-11-10. The first build refused the company admin once the lock had started, and a number of days added to an old deadline could leave the company locked. The opening is the new row only, for that company's Company Admin.
+- Protected decisions added or superseded: `AGENTS.md`, overdue extensions. The "guard refuses the Company Admin" line and the "number of days" line are marked superseded.
+- Files changed: `CompanyReadOnlyWriteGuard.php`, `OverdueExtensions.php`, `SubscriptionLifecycle.php`, `OverdueExtension.php`, the overdue-extension migration (`length` and `unit` instead of `days`), `OverdueExtensionTest.php`.
+- Tests run with pass/assertion counts: recorded after the run.
+- Reviewed but not executed: no browser. No production migration. The migration is still uncommitted, so the column change is in the original create.
+- Failures investigated: none yet.
+- Security/tenant/concurrency review: another company's Company Admin is still refused. A calendar write on the locked company is still refused. A second grant of the same kind is still refused. Installation staff already passed the guard.
+- Risks and rollback: put the guard check back and the company admin cannot extend after the lock. The table has not shipped, so the length and unit columns are in the create migration.
+- Cross-package requests: item 2 of the SAAS-10B handoff is answered. The model is not exempt. Claude still reviews `isReadOnly()`.
+- Suggested next package: SAAS-12 screens.
+
+#### SAAS-10B review — extensions from an earlier episode — 2026-11-10 (Claude)
+
+- Owner / database: Claude review, `aureuserp_testing_claude`
+- Why: `overdueReadOnlyAt()` applied every extension ever granted on any of the subscription's invoices. An extension on an invoice paid months ago lengthened every later grace, so extensions stacked. That contradicts D-SAAS-04: one non-stackable extension per overdue invoice.
+- How: `SubscriptionLifecycle::overdueReadOnlyAt()` counts only extensions with `granted_at >= overdue_at`, which means the current overdue episode. A grant made after the lock still counts, because it is later than `overdue_at`. A reversal that restarts the grace (SAAS-11) also starts a new episode, so earlier grants stop counting.
+- Benefit: each overdue episode gets its own 10 days plus only the extensions granted during it.
+- Test: `OverdueExtensionTest` "does not carry an extension from an earlier overdue episode into a later grace".
+- Tests run: see the change log entry for the same date.
+- Rollback: remove the `granted_at` condition. Extensions then stack again.
 
 ### Handoff template
 
