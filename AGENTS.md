@@ -1488,6 +1488,16 @@ log named):
     `SetCompanyContextRequest` **enforces** (the switch is a plain POST) and
     the render hook only uses to hide the control. Tests:
     `support/tests/Feature/Tenancy/CompanySwitcherTest.php`.
+  - Company data visibility after switching, 2026-11-09 (user): a Super Admin
+    sees one selected company's tenant records by default. The switcher has an
+    explicit **All companies** mode for platform-wide work. Old sessions with
+    multiple selected companies are narrowed to the current one unless that
+    mode is explicitly selected. Forced API and queued company contexts always
+    scope to their forced company, regardless of browser mode. The all-company
+    capability still authorizes the company selector; it does not itself mean
+    tenant records are currently unscoped. Tests:
+    `support/tests/Feature/Tenancy/CompanySwitcherTest.php` and
+    `support/tests/Feature/Tenancy/CompanyExecutionContextTest.php`.
   - A forced company context intersects with membership whenever a user is
     acting, including a user with no memberships at all.
   - An accepted, revoked or expired invitation link answers 404. The

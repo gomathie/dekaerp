@@ -6,6 +6,36 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-09 (Super Admin company data scope)
+
+**Requested:** Ensure switching to a company as Super Admin shows only that
+company's data, with an explicit way to return to platform-wide visibility.
+
+**Cause:** `CompanyContext::bypassed()` treated the Super Admin's ability to
+access all companies as a permanent instruction to skip `CompanyScope` and
+`CompaniesScope`. The selected company therefore affected the current-company
+helper but not tenant record reads.
+
+**Implemented:** Super Admin tenant queries now default to one active company.
+The switcher offers an explicit **All companies** mode, records its changes in
+the security audit, and returns to one selected company when a company is
+chosen. Existing sessions that held multiple company IDs are narrowed to their
+current company unless All companies is explicitly active. Multi-Company Admins
+retain their assigned-company multi-select. A forced API or queued company
+context takes precedence over the browser's all-company mode. The global
+all-company capability remains available for the company selector and API
+authorization.
+
+**Files:** `CompanyContext`, the two company global scopes through the shared
+context, switcher request/controller/view/provider, five locale files, tenancy
+feature tests, `AGENTS.md`, and this log.
+
+**Verification:** Pending focused SupportFeature tests and Pint.
+
+**Risk:** All companies remains a powerful explicit platform-staff view. New
+and existing Super Admin sessions now start scoped to one company, so users
+doing cross-company support must select All companies in the switcher.
+
 ## 2026-11-04 (Mail sender, catalogue-backfill preflight, tampered Livewire updates)
 
 **Why.** Triage of five more Sentry issues. Two are the test-suite noise the
