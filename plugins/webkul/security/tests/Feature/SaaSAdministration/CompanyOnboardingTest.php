@@ -1,10 +1,14 @@
 <?php
 
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
+use Livewire\Livewire;
+use Webkul\Security\Filament\Resources\CompanyResource\Pages\CreateCompany;
+use Webkul\Security\Mail\UserInvitationMail;
 use Webkul\Security\Models\Invitation;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\CompanyAdministratorInviter;
@@ -12,9 +16,11 @@ use Webkul\Security\Services\CompanyAdminRoleProvisioner;
 use Webkul\Security\Services\CompanyOnboarding;
 use Webkul\Security\Settings\UserSettings;
 use Webkul\Support\Models\Company;
+use Webkul\Support\Models\Currency;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/SecurityHelper.php';
+require_once __DIR__.'/../../../../support/tests/Helpers/FilamentHelper.php';
 
 beforeEach(function (): void {
     TestBootstrapHelper::ensureERPInstalled();
@@ -40,7 +46,7 @@ it('creates a company and its administrator invitation in one transaction withou
     expect($result['outcome'])->toBe(CompanyAdministratorInviter::INVITED)
         ->and(DB::table('user_allowed_companies')->where('company_id', $company->id)->where('user_id', $actor->id)->exists())->toBeTrue()
         ->and($invitation->email)->toBe('owner@atomic.test');
-    Mail::assertSent(\Webkul\Security\Mail\UserInvitationMail::class);
+    Mail::assertSent(UserInvitationMail::class);
 });
 
 it('rolls back a company and partner when its administrator invitation is refused', function () {
@@ -97,5 +103,28 @@ it('does not send an invitation until the outer application transaction commits'
         Mail::assertNothingSent();
     });
 
-    Mail::assertSent(\Webkul\Security\Mail\UserInvitationMail::class);
+    Mail::assertSent(UserInvitationMail::class);
+});
+
+it('creates the company and administrator invitation through the Filament page', function () {
+    FilamentHelper::bootAdminPanel();
+    $actor = User::query()->where('email', 'admin@example.com')->firstOrFail();
+    Auth::shouldUse('web');
+    Auth::guard('web')->login($actor);
+    $currency = Currency::query()->where('active', true)->firstOrFail();
+
+    Livewire::test(CreateCompany::class)
+        ->fillForm([
+            'name'                => 'Page Onboarding Company',
+            'email'               => 'page-company@tenant.test',
+            'currency_id'         => $currency->id,
+            'phone'               => '+260971234567',
+            'mobile'              => '+260961234567',
+            'administrator_email' => 'page-owner@tenant.test',
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    $company = Company::withoutGlobalScopes()->where('name', 'Page Onboarding Company')->firstOrFail();
+    expect(Invitation::query()->where('default_company_id', $company->id)->where('email', 'page-owner@tenant.test')->exists())->toBeTrue();
 });
