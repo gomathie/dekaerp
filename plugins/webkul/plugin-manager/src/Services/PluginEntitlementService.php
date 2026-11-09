@@ -199,21 +199,32 @@ class PluginEntitlementService
     }
 
     /**
-     * Apply the plan chosen while switching a test company to commercial.
+     * Add the plan's plugins while a test company is being switched to
+     * commercial. Refuses every caller outside that switch. The ids are
+     * added to the company's current grants: a shorter list cannot remove
+     * a module, and this method is not a way to pass an arbitrary set.
+     * syncForCompany() stays Super Admin (D-SAAS-06, review of 45636cfcf).
      *
-     * syncForCompany() stays Super Admin (D-SAAS-06). This entry exists so
-     * an assigned Multi-Company Admin can apply that one plan, and no other
-     * module change. The message matches CompanyAccountType::ONLY_SWITCH_STAFF.
-     *
-     * @param  array<int, mixed>  $pluginIds
+     * @param  array<int, mixed>  $planPluginIds
      */
-    public function syncForCommercialSwitch(Company $company, array $pluginIds, ?User $actor): void
+    public function syncForCommercialSwitch(Company $company, array $planPluginIds, ?User $actor): void
     {
+        // Resolved by name. Importing the class would make plugin-manager
+        // depend on platform-billing. The flag still lives on that class,
+        // because a commercial row cannot prove it was just flipped.
+        app('Webkul\PlatformBilling\Services\CompanyAccountType')->assertInsideCommercialSwitch($company);
+
         if (! $actor instanceof User || ! app(MultiCompanyAdminService::class)->mayAdministerCompany($actor, (int) $company->getKey())) {
             throw new AuthorizationException('Only a Super Admin, or a Multi-Company Admin for this company, may switch it to commercial.');
         }
 
-        DB::transaction(fn () => $this->applyForCompany($company, $pluginIds, $actor));
+        $adding = array_map(intval(...), $planPluginIds);
+        $grants = array_values(array_unique([
+            ...$this->grantedPluginIds((int) $company->getKey()),
+            ...$adding,
+        ]));
+
+        DB::transaction(fn () => $this->applyForCompany($company, $grants, $actor));
     }
 
     /**

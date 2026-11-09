@@ -6,6 +6,38 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-09 (commercial switch helpers stay inside the switch)
+
+**Requested:** Close the gap in `45636cfcf` before SAAS-10B. An assigned
+Multi-Company Admin could call `createForCommercialSwitch()`,
+`activateForCommercialSwitch()` and `syncForCommercialSwitch()` on a
+company that was already commercial, and the module helper accepted any
+list, including revocations.
+
+**Implemented:** The three methods run only while `switchToCommercial()`
+holds that company. The module helper unions the plan's plugins with the
+grants already on the company.
+
+**Verification:** `aureuserp_testing_saas11`. `AccountTypeTest` and
+`OverdueExtensionTest` together, 11 passed, 80 assertions. Pint passed.
+PlatformBillingFeature and PluginManagerFeature follow in the SAAS-10B
+entry once those runs finish.
+
+## 2026-11-09 (SAAS-10B overdue extensions)
+
+**Requested:** Company Admin may add one 10-day extension per overdue
+invoice. Super Admin may grant a separate manual extension. Both move
+the read-only instant. No screens.
+
+**Implemented:** `OverdueExtensions` records the days.
+`SubscriptionLifecycle::isReadOnly()` adds them to the original 10.
+The super-admin length is the number of days that admin names, because
+the plan does not fix one. `OverdueExtension` is not exempt from the
+read-only guard, so a Company Admin cannot grant it after the lock.
+
+**Verification:** same focused run as the entry above. Full suite counts
+are added when PlatformBillingFeature and PluginManagerFeature finish.
+
 ## 2026-11-09 (reversal starts a fresh overdue grace)
 
 **Requested:** When a reversal reopens an invoice that is already past day 8,

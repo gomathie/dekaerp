@@ -12,7 +12,9 @@ use Webkul\PlatformBilling\Services\CompanyAccountType;
 use Webkul\PlatformBilling\Services\CompanyReadOnlyWriteGuard;
 use Webkul\PlatformBilling\Services\SubscriptionDrafts;
 use Webkul\PlatformBilling\Services\SubscriptionLifecycle;
+use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Services\PluginEntitlementService;
+use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\MultiCompanyAdminRoleProvisioner;
 use Webkul\Support\Models\Calendar;
@@ -195,10 +197,77 @@ it('refuses a multi-company admin switching a company they are not assigned to',
         ->toThrow(AuthorizationException::class, CompanyAccountType::ONLY_SWITCH_STAFF);
 
     expect(fn () => app(PluginEntitlementService::class)->syncForCommercialSwitch($stranger, [], $mca))
-        ->toThrow(AuthorizationException::class, CompanyAccountType::ONLY_SWITCH_STAFF);
+        ->toThrow(AuthorizationException::class, CompanyAccountType::ONLY_DURING_SWITCH);
 
     $clerk = SecurityHelper::authenticateWithPermissions(['create_security_company']);
 
     expect(fn () => app(CompanyAccountType::class)->switchToCommercial($clerk, $assigned, trialPrice(), $at))
         ->toThrow(AuthorizationException::class, CompanyAccountType::ONLY_SWITCH_STAFF);
+});
+
+it('refuses a multi-company admin using the commercial switch entries on a commercial company', function () {
+    $company = Company::factory()->create([
+        'account_type' => 'commercial',
+        'test_ends_at' => null,
+    ]);
+    $at = new DateTimeImmutable('2026-11-09T00:00:00Z');
+    $admin = User::query()->where('email', 'admin@example.com')->firstOrFail();
+    $price = trialPrice();
+    $draft = app(SubscriptionDrafts::class)->create($admin, $company, $price, $at);
+    $mca = User::withoutEvents(fn (): User => User::factory()->create([
+        'default_company_id' => $company->getKey(),
+        'is_active' => true,
+        'is_default' => false,
+    ]));
+    $mca->allowedCompanies()->sync([$company->getKey()]);
+    $mca->syncRoles([app(MultiCompanyAdminRoleProvisioner::class)->provision()->getKey()]);
+    $mca->unsetRelation('roles');
+    actAsInstallationStaff($mca);
+
+    expect(fn () => app(SubscriptionDrafts::class)->createForCommercialSwitch($mca, $company, $price, $at))
+        ->toThrow(AuthorizationException::class, CompanyAccountType::ONLY_DURING_SWITCH)
+        ->and(fn () => app(SubscriptionLifecycle::class)->activateForCommercialSwitch($draft, $mca, $at))
+        ->toThrow(AuthorizationException::class, CompanyAccountType::ONLY_DURING_SWITCH)
+        ->and(fn () => app(PluginEntitlementService::class)->syncForCommercialSwitch($company, [], $mca))
+        ->toThrow(AuthorizationException::class, CompanyAccountType::ONLY_DURING_SWITCH);
+
+    expect(Subscription::withoutGlobalScopes()->where('company_id', $company->getKey())->where('status', 'active')->exists())->toBeFalse();
+});
+
+it('keeps a manually granted module when a test company switches to commercial', function () {
+    $company = trialCompany('2026-12-01T00:00:00Z');
+    $plugin = Plugin::query()->updateOrCreate(
+        ['name' => 'saas-switch-kept'],
+        ['is_installed' => true, 'is_active' => true],
+    );
+    DB::table('company_plugin')->insert([
+        'company_id' => $company->getKey(),
+        'plugin_id' => $plugin->getKey(),
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+    PluginAccess::flush();
+    $before = app(PluginEntitlementService::class)->grantedPluginIds((int) $company->getKey());
+    $mca = User::withoutEvents(fn (): User => User::factory()->create([
+        'default_company_id' => $company->getKey(),
+        'is_active' => true,
+        'is_default' => false,
+    ]));
+    $mca->allowedCompanies()->sync([$company->getKey()]);
+    $mca->syncRoles([app(MultiCompanyAdminRoleProvisioner::class)->provision()->getKey()]);
+    $mca->unsetRelation('roles');
+    actAsInstallationStaff($mca);
+
+    $switched = app(CompanyAccountType::class)->switchToCommercial(
+        $mca,
+        $company,
+        trialPrice(),
+        new DateTimeImmutable('2026-11-09T00:00:00Z'),
+    );
+    $after = app(PluginEntitlementService::class)->grantedPluginIds((int) $company->getKey());
+
+    expect($switched->account_type)->toBe('commercial')
+        ->and($before)->toContain((int) $plugin->getKey())
+        ->and($after)->toContain((int) $plugin->getKey())
+        ->and(array_diff($before, $after))->toBe([]);
 });

@@ -11,6 +11,7 @@ use Webkul\PlatformBilling\Models\Allocation;
 use Webkul\PlatformBilling\Models\DocumentNumber;
 use Webkul\PlatformBilling\Models\Invoice;
 use Webkul\PlatformBilling\Models\InvoiceLine;
+use Webkul\PlatformBilling\Models\OverdueExtension;
 use Webkul\PlatformBilling\Models\Payment;
 use Webkul\PlatformBilling\Models\Plan;
 use Webkul\PlatformBilling\Models\Price;
@@ -53,6 +54,7 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
                 '2026_11_09_000001_create_platform_billing_discounts_tables',
                 '2026_11_09_000002_create_platform_billing_invoices_tables',
                 '2026_11_09_000003_create_platform_billing_payments_tables',
+                '2026_11_09_000005_create_platform_billing_overdue_extensions_table',
             ])
             ->hasCommands([
                 InvoiceSubscriptions::class,
@@ -74,6 +76,7 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
         Gate::policy(Payment::class, DocumentNumberPolicy::class);
         Gate::policy(Allocation::class, DocumentNumberPolicy::class);
         Gate::policy(Reversal::class, DocumentNumberPolicy::class);
+        Gate::policy(OverdueExtension::class, DocumentNumberPolicy::class);
 
         // A process-wide boolean would skip every application after the first.
         // Pest builds a new application per test, so the hook has to follow the

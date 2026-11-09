@@ -8,6 +8,7 @@ use DateTimeZone;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Webkul\PlatformBilling\Models\OverdueExtension;
 use Webkul\PlatformBilling\Models\Price;
 use Webkul\PlatformBilling\Models\Subscription;
 use Webkul\PluginManager\Models\Plugin;
@@ -29,14 +30,22 @@ class SubscriptionLifecycle
     }
 
     /**
-     * Starts the subscription chosen while switching a test company to
-     * commercial. An assigned Multi-Company Admin may do this and may not
-     * call activate() for any other transition (user, 2026-11-09).
+     * Starts the subscription the commercial switch just drafted. Refuses
+     * every caller outside that switch, including an assigned Multi-Company
+     * Admin activating a draft on a company that was already commercial.
+     * activate() stays Super Admin (D-SAAS-06, review of 45636cfcf).
      */
     public function activateForCommercialSwitch(Subscription $subscription, User $actor, ?DateTimeImmutable $at = null): Subscription
     {
         $company = Company::withoutGlobalScopes()->findOrFail($subscription->company_id);
-        app(CompanyAccountType::class)->assertMaySwitch($actor, $company);
+        $accountType = app(CompanyAccountType::class);
+        $accountType->assertInsideCommercialSwitch($company);
+        $accountType->assertMaySwitch($actor, $company);
+
+        if ($company->account_type !== 'commercial' || $company->test_ends_at !== null
+            || Subscription::withoutGlobalScopes()->where('company_id', $company->getKey())->whereKeyNot($subscription->getKey())->exists()) {
+            throw new AuthorizationException(CompanyAccountType::ONLY_DURING_SWITCH);
+        }
 
         return $this->activateDraft($subscription, $actor, $at, true);
     }
@@ -264,7 +273,28 @@ class SubscriptionLifecycle
             return true;
         }
 
-        return $subscription->overdue_at && $at >= $subscription->overdue_at->modify('+10 days');
+        // Extensions add days to this instant and nowhere else. The read-only
+        // guard calls this method, so Claude should review the change.
+        return $subscription->overdue_at instanceof DateTimeInterface
+            && $at >= $this->overdueReadOnlyAt($subscription);
+    }
+
+    /**
+     * Day 10 after overdue_at, plus every granted extension on this
+     * subscription's invoices. One place, because the guard calls isReadOnly().
+     */
+    protected function overdueReadOnlyAt(Subscription $subscription): DateTimeImmutable
+    {
+        $extra = (int) OverdueExtension::withoutGlobalScopes()
+            ->whereIn('invoice_id', function ($query) use ($subscription): void {
+                $query->select('id')
+                    ->from('platform_billing_invoices')
+                    ->where('subscription_id', $subscription->getKey());
+            })
+            ->sum('days');
+
+        return DateTimeImmutable::createFromInterface($subscription->overdue_at)
+            ->modify('+'.(10 + $extra).' days');
     }
 
     protected function activeSuperAdmin(): User
@@ -297,13 +327,14 @@ class SubscriptionLifecycle
         if (count($ids) !== count(array_unique($names))) {
             throw ValidationException::withMessages(['included_plugins' => 'Every plan module must be installed.']);
         }
-        // Union before sync preserves manual grants; the service adds dependencies.
-        // The commercial switch is the only path that may apply a plan as an
-        // assigned Multi-Company Admin. syncForCompany() itself stays Super Admin.
-        $grants = array_unique([...$entitlements->grantedPluginIds((int) $company->id), ...$ids]);
+        // The commercial switch passes only the plan's plugins.
+        // syncForCommercialSwitch unions those with the grants already on the
+        // company, so the switch cannot remove one and a caller cannot hand
+        // it a replacement list. syncForCompany() itself stays Super Admin.
         if ($commercialSwitch) {
-            $entitlements->syncForCommercialSwitch($company, $grants, $actor);
+            $entitlements->syncForCommercialSwitch($company, $ids, $actor);
         } else {
+            $grants = array_unique([...$entitlements->grantedPluginIds((int) $company->id), ...$ids]);
             $entitlements->syncForCompany($company, $grants, $actor);
         }
         app(SeatCapacityService::class)->setLimit($company, $subscription->seat_limit, $actor);
