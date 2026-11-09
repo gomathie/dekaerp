@@ -29,13 +29,24 @@ class SubscriptionDrafts
     }
 
     /**
-     * The commercial switch is the one subscription a Multi-Company Admin may
-     * start, and only for an assigned company (user, 2026-11-09). create()
-     * stays Super Admin so this does not become general subscription access.
+     * Starts the one draft the commercial switch needs. Refuses every caller
+     * outside that switch, including a Super Admin and an assigned
+     * Multi-Company Admin on a company that is already commercial. create()
+     * stays the Super Admin path (D-SAAS-06, review of 45636cfcf).
      */
     public function createForCommercialSwitch(User $actor, Company $company, Price $price, DateTimeImmutable $anchor): Subscription
     {
-        app(CompanyAccountType::class)->assertMaySwitch($actor, $company);
+        $accountType = app(CompanyAccountType::class);
+        $accountType->assertInsideCommercialSwitch($company);
+        $accountType->assertMaySwitch($actor, $company);
+        $locked = Company::withoutGlobalScopes()->lockForUpdate()->findOrFail($company->getKey());
+
+        // The switch flips the locked row first. A company that was already
+        // commercial, or that already has a subscription, is not that flip.
+        if ($locked->account_type !== 'commercial' || $locked->test_ends_at !== null
+            || Subscription::withoutGlobalScopes()->where('company_id', $locked->getKey())->exists()) {
+            throw new AuthorizationException(CompanyAccountType::ONLY_DURING_SWITCH);
+        }
 
         return $this->store($actor, $company, $price, $anchor);
     }

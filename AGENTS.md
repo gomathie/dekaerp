@@ -1713,9 +1713,39 @@ log named):
     limit. `SubscriptionDrafts::create()`, `SubscriptionLifecycle::activate()`
     and `PluginEntitlementService::syncForCompany()` stay Super Admin.
     Billing starts at the next period. The trial is not invoiced.
+  - *Tightened the same day (review of 45636cfcf):*
+    `createForCommercialSwitch()`, `activateForCommercialSwitch()` and
+    `syncForCommercialSwitch()` run only while `switchToCommercial()`
+    holds that company. Assignment is not enough. A call on a company
+    that is already commercial is refused with "A commercial switch is
+    the only way to make that subscription change."
+    `syncForCommercialSwitch()` unions the plan's modules with the
+    grants already on the company. It cannot remove a module, and it
+    does not take a replacement list. Do not put the three methods back
+    to a `mayAdministerCompany()` check.
   - Saving the company also saves its partner. Once the trial has ended,
     the guard allows that partner write only while the staff member is
     the authenticated user. Do not `Auth::login()` inside the service.
+
+• Overdue extensions, 2026-11-09 (`docs/saas-administration-billing-audit-plan.md`,
+  SAAS-10B, D-SAAS-04, D-SAAS-13):
+  - A Company Admin of that company may add exactly 10 days, once per
+    overdue invoice. A second grant is refused with "This invoice already
+    has its company-admin extension." The days are added only inside
+    `SubscriptionLifecycle::isReadOnly()`. Do not write a second clock.
+  - A Super Admin may grant one separate extension on the same invoice
+    and names a positive number of days. The plan says manual and does
+    not name a length. One grant per invoice and kind. A blank reason
+    is refused.
+  - An invoice before day 8, or one that is already paid, is not overdue.
+  - `OverdueExtension` is not in `CompanyReadOnlyWriteGuard::EXEMPT_MODELS`.
+    Once the company is already read-only, the guard refuses the Company
+    Admin's grant. A signed-in Super Admin can still grant the manual
+    one. Do not add the model to the exemption without a decision.
+  - The row is immutable. `migrate:fresh` leaves the function behind:
+    drop `platform_billing_overdue_extensions_are_immutable()` before
+    creating it again.
+  - Tests: `plugins/webkul/platform-billing/tests/Feature/OverdueExtensionTest.php`.
 
 DONE RECENTLY (newest first; details in docs/change-log.md)
 

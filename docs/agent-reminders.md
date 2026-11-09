@@ -9,6 +9,20 @@ Boost guidelines the agent follows) and [`CHANGELOG.md`](../CHANGELOG.md)
 
 ## 2026-11-09
 
+**Requested:** Close the commercial-switch gap in `45636cfcf`, then build
+SAAS-10B overdue extensions.
+
+**Decision:** The three switch helpers run only inside
+`switchToCommercial()`. The module helper cannot remove a grant. A
+Company Admin may add 10 days once per overdue invoice. A Super Admin
+names the days of one separate extension. Neither is a screen.
+
+**Implementation and verification:** See the two 2026-11-09 handoffs in
+`docs/saas-administration-billing-audit-plan.md` and the matching entries
+in `docs/change-log.md`. Database `aureuserp_testing_saas11`.
+
+## 2026-11-09
+
 **Requested:** Record D-SAAS-10 to D-SAAS-13, build SAAS-11 payments, then
 the SAAS-15 account type. Leave SAAS-10B and impersonation unbuilt.
 
