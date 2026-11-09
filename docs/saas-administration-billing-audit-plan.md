@@ -209,9 +209,9 @@ Record the user's answer before unblocking dependent packages.
 | SAAS-05C | Plugin enforcement: operations | SAAS-04 | SAAS-05A/B/D | review (verified 2026-11-05/06: every suite run; review findings 1–4 resolved. See "Suite runs" and "Remaining suites") | Codex 2026-11-05 / isolated Sail databases `aureuserp_testing_verify_*` |
 | SAAS-05D | Plugin enforcement: people/work tools | SAAS-04 | SAAS-05A/B/C | review (suites executed 2026-11-05/06; TimesheetFeature failed and reproduced alone; see "Remaining suites") | Codex 2026-11-05 / isolated Sail databases `aureuserp_testing_verify_*` and `aureuserp_testing_a7_*` |
 | SAAS-06 | Seat limit and invitation lifecycle | SAAS-01, D-SAAS-03, D-SAAS-04 | SAAS-05A/B/C/D | review | Copilot 2026-10-28; Claude review 2026-10-29 / `aureuserp_testing_saas_review`; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
-| SAAS-07 | Onboarding and all seat-enforcement paths | SAAS-06 | — | in progress (SupportFeature verification pending) | Codex follow-up 2026-11-09 on `aureuserp_testing_saas07b`; see onboarding and mail handoff below |
+| SAAS-07 | Onboarding and all seat-enforcement paths | SAAS-06 | — | review (complete) | Codex 2026-11-09 on `aureuserp_testing_saas07b`; see onboarding and mail handoff below |
 | SAAS-08 | Platform-billing plugin foundation | SAAS-00, D-SAAS-01, D-SAAS-05 | — | review (foundation complete) | Copilot 2026-10-28; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
-| SAAS-09 | Plans, prices and subscriptions | SAAS-08, D-SAAS-04 | — | review (activation built; read-only write enforcement rollout remains) | Codex 2026-11-07 / `aureuserp_testing_saas09`; see activation handoff |
+| SAAS-09 | Plans, prices and subscriptions | SAAS-08, D-SAAS-04 | — | review (activation built; cross-plugin read-only enforcement remains open) | Codex 2026-11-07 / `aureuserp_testing_saas09`; read-only rollout assessment 2026-11-09 below |
 | SAAS-09A | Discount codes and tenant redemptions | SAAS-09, D-SAAS-08 | — | todo (unblocked 2026-11-07: D-SAAS-08 is accepted; waits for SAAS-09) | — |
 | SAAS-10 | Idempotent recurring invoices | SAAS-09, SAAS-09A | — | todo | — |
 | SAAS-11 | Payments, allocations, credit and reversals | SAAS-08, D-SAAS-05, D-SAAS-06 | — | blocked | — |
@@ -1525,12 +1525,12 @@ invitation and user-isolation suites pass.
 
 #### SAAS-07 handoff — 2026-11-09 (onboarding and mail)
 
-- **Status / database:** implementation is complete; final SupportFeature verification is pending because the local Docker Desktop Linux engine is unavailable. The `desktop-linux` context is selected, but `com.docker.service` is stopped and Windows denied attempts to start it, including an elevated attempt. Start Docker Desktop Service with Windows administrator rights, confirm `docker info` succeeds, then run the pending SupportFeature command. All test commands used only local Sail database `aureuserp_testing_saas07b`. No production or managed database touched.
+- **Status / database:** implementation and verification are complete on local Sail database `aureuserp_testing_saas07b`. No production or managed database touched.
 - **Why / mechanism:** an Eloquent `created` observer can refuse a creator seat after the company INSERT. First `Company::save()` now wraps its observers and partner creation in a transaction; the existing `SeatCapacityService` still owns the actual limit and pending-reservation rule. `CompanyOnboarding` coordinates company creation and its password-backed administrator account or invitation in one outer transaction, and the Security company create page routes through it. A failed administrator setup rolls the company back rather than leaving an apparently successful onboarding with no login. Existing company edit/password behavior remains in `CompanyAdministratorAccount`.
 - **Callers:** the Filament Security company create page moved to the coordinator. A search of plugin `src` found one direct `Company::factory()->create()` in Support's `HasCompanyDefault` factory concern; it is a factory fallback, not an administrator-onboarding path, and first-save transaction protection applies. Installer/model factory/test callers retain direct creation; they do not request administrator onboarding. No production company-creation API was found.
 - **Mail and recovery:** `CompanyAdministratorInviter::invite()` and `resend()` register mail after the outermost commit. A send failure reports the exception and audits `security.user.invitation_mail_failed` without a password or signed link. The company's staff-only Users and logins list exposes a pending-invitation selector and copyable signed link. `pendingLink()` rechecks active Super Admin or assigned Multi-Company Admin status and the invitation's company and pending state, so a forged ID cannot cross companies. The shared capacity exception now uses translations in all five locales wherever it reaches a service caller.
 - **Files:** `support/src/Models/Company.php`; `security/src/Services/{CompanyOnboarding,CompanyAdministratorInviter,SeatCapacityService}.php`; Security company `Pages/CreateCompany.php` and `RelationManagers/UsersRelationManager.php`; five `security/resources/lang/*/filament/resources/company.php` files and five `.../company/relation-managers/users.php` files; Security onboarding, invitation-lifecycle and administrator-password feature tests; `AGENTS.md`; this plan.
-- **Tests:** focused `InvitationLifecycleTest` **6 passed (31 assertions, 185.22s)**; focused `CompanyAdministratorInvitationTest` **51 passed (157 assertions, 573.89s)**; focused `CompanyOnboardingTest` **6 passed (20 assertions, 187.04s)**. `CompanyAdministratorPasswordTest` was isolated after the full suite identified two stale mail assertions: **55 passed, 2 failed (186 assertions, 967.92s)**; both assertions were corrected. Final full `SecurityFeature` on `aureuserp_testing_saas07b`: **134 passed (470 assertions, 1923.22s)**. `SupportFeature` was attempted after SecurityFeature, but Docker returned `failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine`. The follow-up found `com.docker.service` stopped; Windows denied starting it, even with an elevated attempt. Its output is in `storage/logs/deploy-check/saas07b-SupportFeature-final.log`; rerun `docker compose run --rm --no-deps -T -e DB_DATABASE=aureuserp_testing_saas07b laravel.test php artisan test --compact --testsuite=SupportFeature` through Git Bash after an administrator starts the service. `vendor/bin/pint --dirty --format agent` passed. PartnerFeature is unnecessary because no partners files changed.
+- **Tests:** focused `InvitationLifecycleTest` **6 passed (31 assertions, 185.22s)**; focused `CompanyAdministratorInvitationTest` **51 passed (157 assertions, 573.89s)**; focused `CompanyOnboardingTest` **6 passed (20 assertions, 187.04s)**. `CompanyAdministratorPasswordTest` was isolated after the full suite identified two stale mail assertions: **55 passed, 2 failed (186 assertions, 967.92s)**; both assertions were corrected. Final full `SecurityFeature` on `aureuserp_testing_saas07b`: **134 passed (470 assertions, 1923.22s)**. Final full `SupportFeature` on `aureuserp_testing_saas07b`: **200 passed (958 assertions, 1587.73s)**. `vendor/bin/pint --dirty --format agent` and `git diff --check` passed. PartnerFeature was unnecessary because no partners files changed.
 - **Test corrections:** `InvitationLifecycleTest` now expects no mail for a revoked invitation and expects mail after the successful Users-page resend commits. `CompanyAdministratorPasswordTest` now expects no invitation mail when setting the administrator password, and expects after-commit mail when an email-only invitation is created from the edit page.
 - **Risk / rollback:** after-commit mail cannot return a synchronous `MAIL_FAILED` outcome; staff must use the copy-link action and audit entry. Existing invitations stay durable, and no password is emailed. Revert the coordinator, page, model transaction, inviter callback, recovery action, translations and tests together to restore the old synchronous flow. No schema migration was added.
 
@@ -1688,6 +1688,39 @@ sets; no period drift; invalid transitions fail; plan edits preserve snapshots.
   intact. The migration's `down()` drops only the three new tables in child-to-
   parent order; use it only if they contain no data worth preserving. No tenant
   Accounts table or existing billing table was changed.
+
+#### SAAS-09 handoff — 2026-11-09 (read-only rollout assessment)
+
+- **Decision:** no write guard was added. The activation task explicitly permits
+  enforcement only at a reliable shared boundary and forbids a partial rollout.
+  The current application has no single boundary that covers tenant web/API
+  requests, service calls, bulk writes, and queued jobs while retaining read
+  interactions and exempting installation staff.
+- **Evidence:** `Gate::before` is only consulted by authorization checks, so
+  direct service and query-builder writes can bypass it. A model event in
+  `BelongsToCompany` would cover ordinary Eloquent saves/deletes for its 108
+  model users, but not bulk query-builder operations or raw database writes. A
+  blanket non-GET middleware would also block normal Filament/Livewire
+  interactions. Company-scoped work is additionally dispatched to jobs, where
+  `CompanyScope` is skipped outside tests unless the job establishes company
+  context. A repository search found 462 PHP files matching database/query
+  write APIs; this is a broad inventory signal, not a count of unique tenant
+  write paths.
+- **Billing prerequisite:** `SubscriptionLifecycle::isReadOnly($company)` uses
+  the subscription's overdue date plus ten days, or an expired/cancelled
+  subscription. It has no invoice-linked self-service or Super Admin extension
+  deadline. D-SAAS-04 allows both extensions, so enforcing the predicate before
+  SAAS-10 models those decisions could lock a company out despite an approved
+  extension.
+- **Rollout remains open:** after SAAS-10 defines overdue invoices and extension
+  records, inventory and enforce every tenant write boundary (web and Livewire
+  actions, API controllers, direct service and bulk writes, and queued jobs).
+  Keep reads available, recheck at execution time for queued work, exempt
+  installation staff, and route payment/renewal/extension recovery actions
+  through their approved billing rules. Add refusal-message tests for each
+  boundary and cross-company tests before changing the status row to complete.
+- **Files / verification:** this plan only. No application code or tests changed;
+  no tests run for this assessment.
 
 #### SAAS-09A — discount codes and tenant redemptions
 
