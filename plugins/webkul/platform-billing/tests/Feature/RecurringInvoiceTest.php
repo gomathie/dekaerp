@@ -305,15 +305,18 @@ it('marks the subscription overdue on day eight so the existing grace rule can t
     expect($active->fresh()->overdue_at->format('Y-m-d'))->toBe('2026-02-09');
 });
 
-it('does not post the final invoice when the read-only guard refuses the cancelled renewal', function () {
+it('posts the final invoice and expires a cancelled subscription because billing rows are exempt', function () {
+    // D-SAAS-12 exempts Invoice and Subscription from the read-only guard, so
+    // the job can close the period. This used to stay read-only-blocked, with
+    // no invoice and the subscription still active.
     [, $actor, , , $active] = invoiceBillingFixture();
     app(SubscriptionLifecycle::class)->cancelAtPeriodEnd($active, $actor);
 
     $outcomes = app(RecurringInvoiceGenerator::class)->generateDue((int) $active->getKey(), invoiceAt());
 
-    expect($outcomes)->toContain('read-only-blocked')
-        ->and(Invoice::withoutGlobalScopes()->where('subscription_id', $active->getKey())->count())->toBe(0)
-        ->and($active->fresh()->status)->toBe('active')
+    expect($outcomes)->toContain('created')
+        ->and(Invoice::withoutGlobalScopes()->where('subscription_id', $active->getKey())->count())->toBe(1)
+        ->and($active->fresh()->status)->toBe('expired')
         ->and($active->fresh()->cancel_at_period_end)->toBeTrue();
 });
 
