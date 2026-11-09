@@ -6,6 +6,16 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-10 (overdue extensions do not stack across episodes)
+
+- **Why:** found in review of `1fecd51c2`. `SubscriptionLifecycle::overdueReadOnlyAt()` applied every extension on every invoice of the subscription. An extension on an invoice paid long ago lengthened each later grace, which contradicts D-SAAS-04's one non-stackable extension per overdue invoice.
+- **How:** the extension query adds `granted_at >= overdue_at`, so only the current overdue episode counts.
+- **Benefit:** each episode gets 10 days plus only its own extensions.
+- **Trade-off / risk:** a grant timestamped before `overdue_at` is ignored. The service already refuses a grant before the grace starts, so a legitimate grant cannot fall in that window.
+- **Verification:** PlatformBillingFeature, 94 passed (358 assertions), on `aureuserp_testing_claude`. Pint ran. This run includes the agent's uncommitted 2026-11-10 changes.
+- **Test:** `OverdueExtensionTest` "does not carry an extension from an earlier overdue episode into a later grace".
+- **Rollback:** remove the `granted_at` condition.
+
 ## 2026-11-10 (company admin may extend after the lock)
 
 **Requested:** A Company Admin can extend an overdue invoice after the
@@ -18,7 +28,10 @@ writes stay refused, and the model is not added to the exemption list.
 Each grant moves the deadline from the later of the current instant and
 the grant time. Weeks and months are calendar lengths.
 
-**Verification:** recorded after the suite on `aureuserp_testing_saas11`.
+**Verification:** `aureuserp_testing_saas11`. OverdueExtensionTest 6 passed,
+54 assertions, 312.23s, exit 0. PlatformBillingFeature 94 passed, 358
+assertions, 1190.68s, exit 0. Pint passed. PluginManagerFeature was not
+re-run.
 
 ## 2026-11-09 (commercial switch helpers stay inside the switch)
 

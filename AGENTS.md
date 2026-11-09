@@ -1742,6 +1742,11 @@ log named):
     day-10 instant. A grant after the lock buys its length from the grant,
     so the company is writable again.
   - An invoice before day 8, or one that is already paid, is not overdue.
+  - Only extensions granted in the current overdue episode count
+    (`granted_at >= overdue_at`, review 2026-11-10). Without that, an
+    extension on an invoice paid months ago lengthened every later grace.
+    Do not drop the condition. Test: `OverdueExtensionTest` "does not carry
+    an extension from an earlier overdue episode".
   - `OverdueExtension` stays out of `CompanyReadOnlyWriteGuard::EXEMPT_MODELS`.
     *Superseded 2026-11-10 (user):* the guard used to refuse the Company
     Admin once the company was read-only. It now allows a new extension
