@@ -64,6 +64,9 @@ return new class extends Migration
         DB::statement("ALTER TABLE platform_billing_discount_codes ADD CONSTRAINT platform_billing_discount_codes_percentage_check CHECK (discount_type <> 'percentage' OR discount_value <= 10000)");
         DB::statement('ALTER TABLE platform_billing_discount_codes ADD CONSTRAINT platform_billing_discount_codes_count_check CHECK (max_redemptions IS NULL OR redemption_count <= max_redemptions)');
 
+        // migrate:fresh drops tables without running down(), so a function left
+        // by an earlier suite makes the next CREATE FUNCTION fail for every test.
+        DB::unprepared('DROP FUNCTION IF EXISTS platform_billing_discount_redemptions_are_immutable()');
         DB::unprepared(<<<'SQL'
             CREATE FUNCTION platform_billing_discount_redemptions_are_immutable() RETURNS trigger AS $$
             BEGIN

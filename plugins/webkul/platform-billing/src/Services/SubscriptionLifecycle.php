@@ -11,6 +11,7 @@ use Webkul\PlatformBilling\Models\Price;
 use Webkul\PlatformBilling\Models\Subscription;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Services\PluginEntitlementService;
+use Webkul\Security\Models\Role;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\SeatCapacityService;
 use Webkul\Security\Services\SecurityAuditLogger;
@@ -97,43 +98,67 @@ class SubscriptionLifecycle
         $this->assertSuperAdmin($actor);
 
         return DB::transaction(function () use ($subscription, $actor, $at): Subscription {
-            $locked = $this->locked($subscription);
-            $this->assertState($locked, 'active');
-            if ($at < $locked->period_end_at) {
-                throw ValidationException::withMessages(['period' => 'The current billing period has not ended.']);
-            }
-            if ($locked->cancel_at_period_end) {
-                $locked->forceFill(['status' => 'expired', 'next_invoice_at' => null])->save();
-                $this->audit('expired', $locked, $actor);
+            return $this->applyAdvance($this->locked($subscription), $at, $actor);
+        });
+    }
 
-                return $locked;
-            }
-            $company = Company::query()->lockForUpdate()->findOrFail($locked->company_id);
-            if ($locked->scheduled_terms) {
-                $locked->forceFill([
-                    ...$locked->scheduled_terms,
-                    'scheduled_price_id' => null,
-                    'scheduled_terms'    => null,
-                    'anchor_at'          => $locked->period_end_at,
-                    'timezone'           => 'UTC',
-                ]);
-                $this->applyPlan($locked, $company, $actor);
-            }
-            // Advance one period only: a late scheduler must not silently skip
-            // invoice periods. Derive the boundary from the original anchor.
-            $periodIndex = 1;
-            $anchor = $locked->anchor_at->setTimezone(new DateTimeZone($locked->timezone));
-            $end = app(SubscriptionPeriod::class)->boundary($anchor, $locked->interval_months, $periodIndex);
-            while ($end <= $locked->period_end_at) {
-                $periodIndex++;
-                $end = app(SubscriptionPeriod::class)->boundary($anchor, $locked->interval_months, $periodIndex);
-            }
-            $start = $locked->period_end_at;
-            $locked->forceFill(['period_start_at' => $start, 'period_end_at' => $end, 'next_invoice_at' => $end])->save();
-            $this->audit('renewed', $locked, $actor);
+    /**
+     * The invoice job has no signed-in user. Renewal rules stay in this service
+     * so the job cannot grow a second one. A scheduled plan change still has to
+     * pass PluginEntitlementService, which refuses a missing actor, so that path
+     * records an active Super Admin without logging them in. Logging them in
+     * would make the read-only guard treat the billing run as installation staff.
+     */
+    public function advanceFromScheduler(Subscription $subscription, DateTimeImmutable $at): Subscription
+    {
+        return DB::transaction(function () use ($subscription, $at): Subscription {
+            $locked = $this->locked($subscription);
+            $actor = $locked->scheduled_terms ? $this->activeSuperAdmin() : null;
+
+            return $this->applyAdvance($locked, $at, $actor);
+        });
+    }
+
+    protected function applyAdvance(Subscription $locked, DateTimeImmutable $at, ?User $actor): Subscription
+    {
+        $this->assertState($locked, 'active');
+        if ($at < $locked->period_end_at) {
+            throw ValidationException::withMessages(['period' => 'The current billing period has not ended.']);
+        }
+        if ($locked->cancel_at_period_end) {
+            $locked->forceFill(['status' => 'expired', 'next_invoice_at' => null])->save();
+            $this->audit('expired', $locked, $actor);
 
             return $locked;
-        });
+        }
+        // The subscription already names its company. A queue has no session, and
+        // a Super Admin's selected company is not every company, so a scoped read
+        // would hide the tenant whose plan is being renewed.
+        $company = Company::withoutGlobalScopes()->lockForUpdate()->findOrFail($locked->company_id);
+        if ($locked->scheduled_terms) {
+            $locked->forceFill([
+                ...$locked->scheduled_terms,
+                'scheduled_price_id' => null,
+                'scheduled_terms'    => null,
+                'anchor_at'          => $locked->period_end_at,
+                'timezone'           => 'UTC',
+            ]);
+            $this->applyPlan($locked, $company, $actor);
+        }
+        // Advance one period only: a late scheduler must not silently skip
+        // invoice periods. Derive the boundary from the original anchor.
+        $periodIndex = 1;
+        $anchor = $locked->anchor_at->setTimezone(new DateTimeZone($locked->timezone));
+        $end = app(SubscriptionPeriod::class)->boundary($anchor, $locked->interval_months, $periodIndex);
+        while ($end <= $locked->period_end_at) {
+            $periodIndex++;
+            $end = app(SubscriptionPeriod::class)->boundary($anchor, $locked->interval_months, $periodIndex);
+        }
+        $start = $locked->period_end_at;
+        $locked->forceFill(['period_start_at' => $start, 'period_end_at' => $end, 'next_invoice_at' => $end])->save();
+        $this->audit('renewed', $locked, $actor);
+
+        return $locked;
     }
 
     public function reactivate(Subscription $subscription, User $actor, ?DateTimeImmutable $at = null): Subscription
@@ -159,6 +184,15 @@ class SubscriptionLifecycle
     {
         $this->assertSuperAdmin($actor);
 
+        return $this->recordOverdueFromScheduler($subscription, $overdueAt, $actor);
+    }
+
+    /**
+     * The billing sweep calls this with no user. The grace instant is the
+     * invoice's day-8 timestamp; this method does not invent a second clock.
+     */
+    public function recordOverdueFromScheduler(Subscription $subscription, DateTimeImmutable $overdueAt, ?User $actor = null): Subscription
+    {
         return DB::transaction(function () use ($subscription, $actor, $overdueAt): Subscription {
             $locked = $this->locked($subscription);
             $this->assertState($locked, 'active');
@@ -202,7 +236,29 @@ class SubscriptionLifecycle
         return $subscription->overdue_at && $at >= $subscription->overdue_at->modify('+10 days');
     }
 
-    protected function applyPlan(Subscription $subscription, Company $company, User $actor): void
+    protected function activeSuperAdmin(): User
+    {
+        $names = Role::getSuperAdminRoleNames();
+        $actor = User::query()
+            ->where('is_active', true)
+            ->whereHas('roles', function ($query) use ($names): void {
+                $query->where(function ($roles) use ($names): void {
+                    foreach ($names as $name) {
+                        $roles->orWhereRaw('LOWER(name) = ?', [$name]);
+                    }
+                });
+            })
+            ->orderBy('id')
+            ->first();
+
+        if (! $actor instanceof User || ! $actor->isSuperAdmin()) {
+            throw new AuthorizationException('A scheduled plan change needs an active Super Admin to apply module and seat terms.');
+        }
+
+        return $actor;
+    }
+
+    protected function applyPlan(Subscription $subscription, Company $company, ?User $actor): void
     {
         $entitlements = app(PluginEntitlementService::class);
         $names = $subscription->included_plugins ?? [];
@@ -234,7 +290,7 @@ class SubscriptionLifecycle
         }
     }
 
-    protected function audit(string $event, Subscription $subscription, User $actor): void
+    protected function audit(string $event, Subscription $subscription, ?User $actor): void
     {
         app(SecurityAuditLogger::class)->record('platform_billing.subscription_'.$event, $subscription, $actor, (int) $subscription->company_id);
     }

@@ -44,7 +44,10 @@ return [
     */
 
     'issuer' => [
-        'name'     => 'DEKA',
-        'tax_rate' => '15.0000',
+        'name'        => 'DEKA',
+        'tax_rate'    => '15.0000',
+        // Super Admin may disable VAT (D-SAAS-05). The administration screen is
+        // SAAS-12; until then this flag is the switch. Posted invoices copy it.
+        'tax_enabled' => true,
     ],
 ];

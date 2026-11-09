@@ -2,10 +2,14 @@
 
 namespace Webkul\PlatformBilling;
 
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+use Webkul\PlatformBilling\Console\Commands\InvoiceSubscriptions;
 use Webkul\PlatformBilling\Models\DocumentNumber;
+use Webkul\PlatformBilling\Models\Invoice;
+use Webkul\PlatformBilling\Models\InvoiceLine;
 use Webkul\PlatformBilling\Models\Plan;
 use Webkul\PlatformBilling\Models\Price;
 use Webkul\PlatformBilling\Models\Subscription;
@@ -23,15 +27,16 @@ use Webkul\PluginManager\PackageServiceProvider;
  * are exempt from the per-company entitlement gate, which is exactly right for a
  * plugin that administers tenants instead of serving one.
  *
- * Foundation only, by design: value objects, numbering and policies. Plans,
- * subscriptions, invoices, payments and screens are SAAS-09 to SAAS-12, each of
- * which adds its own migrations here.
+ * Plans, subscriptions, discounts and recurring invoices live here. Payments
+ * and screens are SAAS-11 to SAAS-13.
  */
 class PlatformBillingServiceProvider extends PackageServiceProvider
 {
     public static string $name = 'platform-billing';
 
     protected static ?object $readOnlyWriteGuardDispatcher = null;
+
+    protected static bool $invoiceScheduleHooked = false;
 
     public function configureCustomPackage(Package $package): void
     {
@@ -43,6 +48,10 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
                 '2026_11_07_000001_create_platform_billing_plans_prices_subscriptions_tables',
                 '2026_11_07_000002_add_subscription_activation_fields',
                 '2026_11_09_000001_create_platform_billing_discounts_tables',
+                '2026_11_09_000002_create_platform_billing_invoices_tables',
+            ])
+            ->hasCommands([
+                InvoiceSubscriptions::class,
             ])
             ->runsMigrations();
     }
@@ -56,6 +65,36 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
         Gate::policy(Plan::class, DocumentNumberPolicy::class);
         Gate::policy(Price::class, DocumentNumberPolicy::class);
         Gate::policy(Subscription::class, DocumentNumberPolicy::class);
+        Gate::policy(Invoice::class, DocumentNumberPolicy::class);
+        Gate::policy(InvoiceLine::class, DocumentNumberPolicy::class);
+
+        if (! static::$invoiceScheduleHooked) {
+            static::$invoiceScheduleHooked = true;
+            // packageBooted can run again in the same process. One hook, and the
+            // callback itself refuses a second event on the same scheduler.
+            // The console kernel can resolve the scheduler before this provider
+            // finishes booting; afterResolving does not replay that instance.
+            $register = function (Schedule $schedule): void {
+                $already = collect($schedule->events())->contains(
+                    fn ($event): bool => str_contains((string) $event->command, 'platform-billing:invoice-subscriptions'),
+                );
+
+                if ($already) {
+                    return;
+                }
+
+                $schedule->command('platform-billing:invoice-subscriptions')
+                    ->dailyAt('02:15')
+                    ->withoutOverlapping()
+                    ->name('platform-billing-invoice-subscriptions');
+            };
+
+            $this->app->afterResolving(Schedule::class, $register);
+
+            if ($this->app->resolved(Schedule::class)) {
+                $register($this->app->make(Schedule::class));
+            }
+        }
 
         $dispatcher = Event::getFacadeRoot();
 
