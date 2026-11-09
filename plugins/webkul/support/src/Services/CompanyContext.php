@@ -13,6 +13,10 @@ class CompanyContext
 {
     public const SESSION_KEY = 'active_company_ids';
 
+    public const SCOPE_MODE_SESSION_KEY = 'company_scope_mode';
+
+    public const SCOPE_MODE_ALL = 'all';
+
     protected ?Collection $allowed = null;
 
     protected ?Company $currentCompany = null;
@@ -32,11 +36,9 @@ class CompanyContext
 
     public function bypassed(): bool
     {
-        if ($this->internalUser()?->isMultiCompanyAdmin()) {
-            return false;
-        }
-
-        return Gate::allows('bypass_company_scope');
+        return $this->forcedActiveIds === null
+            && $this->seesAllCompanies()
+            && session(self::SCOPE_MODE_SESSION_KEY) === self::SCOPE_MODE_ALL;
     }
 
     public function internalUser(): ?User
@@ -66,6 +68,12 @@ class CompanyContext
     }
 
     public function seesAllCompanies(): bool
+    {
+        return ! $this->internalUser()?->isMultiCompanyAdmin()
+            && Gate::allows('bypass_company_scope');
+    }
+
+    public function allCompaniesActive(): bool
     {
         return $this->bypassed();
     }
@@ -133,7 +141,16 @@ class CompanyContext
 
         $active = array_values(array_intersect($stored, $allowed));
 
-        return empty($active) ? [$allowed[0]] : $active;
+        $active = empty($active) ? [$allowed[0]] : $active;
+
+        // Older sessions may contain several selected companies. Keep a
+        // Super Admin's normal mode to one tenant until they explicitly choose
+        // All companies; otherwise an old multi-select silently remains broad.
+        if ($this->seesAllCompanies() && session(self::SCOPE_MODE_SESSION_KEY) !== self::SCOPE_MODE_ALL) {
+            return [$active[0]];
+        }
+
+        return $active;
     }
 
     public function currentId(): ?int
@@ -233,6 +250,12 @@ class CompanyContext
 
         $current ??= $this->activeIds()[0] ?? null;
 
+        if ($this->seesAllCompanies()) {
+            $current = $current && in_array($current, $valid, true) ? $current : ($valid[0] ?? null);
+            $valid = $current === null ? [] : [$current];
+            session([self::SCOPE_MODE_SESSION_KEY => 'company']);
+        }
+
         if ($current && in_array($current, $valid)) {
             $valid = array_values(array_unique([$current, ...$valid]));
         }
@@ -242,9 +265,21 @@ class CompanyContext
         $this->forgetCurrentCompany();
     }
 
+    public function setAllCompanies(): void
+    {
+        if (! $this->canSwitchCompanies() || ! $this->seesAllCompanies()) {
+            throw new AuthorizationException;
+        }
+
+        session([self::SCOPE_MODE_SESSION_KEY => self::SCOPE_MODE_ALL]);
+
+        $this->forgetCurrentCompany();
+    }
+
     public function reset(): void
     {
         session()->forget(self::SESSION_KEY);
+        session()->forget(self::SCOPE_MODE_SESSION_KEY);
 
         $this->forgetCurrentCompany();
     }

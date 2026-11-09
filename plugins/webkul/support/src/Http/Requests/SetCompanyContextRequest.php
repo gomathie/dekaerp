@@ -23,8 +23,8 @@ class SetCompanyContextRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'action'      => ['nullable', Rule::in(['reset'])],
-            'companies'   => [Rule::requiredIf(fn (): bool => $this->input('action') !== 'reset'), 'array', 'min:1'],
+            'action'      => ['nullable', Rule::in(['all', 'reset'])],
+            'companies'   => [Rule::requiredIf(fn (): bool => ! in_array($this->input('action'), ['all', 'reset'], true)), 'array', 'min:1'],
             'companies.*' => ['integer', 'distinct'],
             'current'     => ['nullable', 'integer'],
         ];

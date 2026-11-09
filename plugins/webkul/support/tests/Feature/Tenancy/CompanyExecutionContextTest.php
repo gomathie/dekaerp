@@ -4,6 +4,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Webkul\Security\Models\Role;
+use Webkul\Support\Models\UtmCampaign;
 use Webkul\Support\Exceptions\MissingCompanyContextException;
 use Webkul\Support\Services\CompanyContext;
 use Webkul\Support\Traits\BelongsToCompany;
@@ -28,12 +29,14 @@ beforeEach(function (): void {
 
     Auth::forgetGuards();
     session()->forget(CompanyContext::SESSION_KEY);
+    session()->forget(CompanyContext::SCOPE_MODE_SESSION_KEY);
     app()->forgetInstance(CompanyContext::class);
 });
 
 afterEach(function (): void {
     Auth::forgetGuards();
     session()->forget(CompanyContext::SESSION_KEY);
+    session()->forget(CompanyContext::SCOPE_MODE_SESSION_KEY);
     app()->forgetInstance(CompanyContext::class);
 });
 
@@ -236,6 +239,29 @@ it('lets a user who sees every company select any company', function () {
         ->getJson('/__api_company_admin_probe', ['X-Company-Id' => $companyB->getKey()])
         ->assertOk()
         ->assertJson(['company' => (int) $companyB->getKey()]);
+});
+
+it('keeps an API selected company scoped when the Super Admin browser uses all-company mode', function () {
+    $companyA = CompanyHelper::company(['name' => 'API Scoped A', 'is_active' => true]);
+    $companyB = CompanyHelper::company(['name' => 'API Scoped B', 'is_active' => true]);
+
+    $campaignA = UtmCampaign::factory()->company($companyA)->create();
+    $campaignB = UtmCampaign::factory()->company($companyB)->create();
+    $user = SecurityHelper::authenticateWithPermissions([], bypassCompanyScope: true);
+
+    session([CompanyContext::SCOPE_MODE_SESSION_KEY => CompanyContext::SCOPE_MODE_ALL]);
+
+    Route::middleware('api.company')->get('/__api_company_scope_probe', fn () => response()->json([
+        'campaign_ids' => UtmCampaign::query()->pluck('id')->all(),
+    ]));
+
+    $response = $this->actingAs($user)
+        ->getJson('/__api_company_scope_probe', ['X-Company-Id' => $companyA->getKey()])
+        ->assertOk();
+
+    expect($response->json('campaign_ids'))
+        ->toContain($campaignA->id)
+        ->not->toContain($campaignB->id);
 });
 
 /**

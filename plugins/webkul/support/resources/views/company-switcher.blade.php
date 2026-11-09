@@ -13,7 +13,7 @@
                     <span style="display:inline-flex;align-items:center;gap:0.375rem;">
                         <x-filament::icon icon="heroicon-o-building-office-2" style="width:1.25rem;height:1.25rem;flex-shrink:0;" />
 
-                        <span>{{ $companies->firstWhere('id', $active[0] ?? null)?->name }}</span>
+                        <span>{{ $allCompaniesActive ? __('support::company-switcher.all_companies') : $companies->firstWhere('id', $active[0] ?? null)?->name }}</span>
 
                         @if ($companies->count() > 1)
                             <x-filament::icon icon="heroicon-m-chevron-down" style="width:1rem;height:1rem;flex-shrink:0;" />
@@ -58,10 +58,16 @@
                     @endforeach
                 </div>
 
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;padding:0.5rem;border-top:1px solid rgba(128,128,128,0.2);">
+                <div style="display:grid;grid-template-columns:repeat({{ $canSelectAllCompanies ? 3 : 2 }},1fr);gap:0.5rem;padding:0.5rem;border-top:1px solid rgba(128,128,128,0.2);">
                     <x-filament::button type="submit" size="sm" style="width:100%;justify-content:center;">
                         {{ __('support::company-switcher.confirm') }}
                     </x-filament::button>
+
+                    @if ($canSelectAllCompanies)
+                        <x-filament::button type="submit" name="action" value="all" color="gray" size="sm" style="width:100%;justify-content:center;">
+                            {{ __('support::company-switcher.all_companies') }}
+                        </x-filament::button>
+                    @endif
 
                     <x-filament::button type="submit" name="action" value="reset" color="gray" size="sm" style="width:100%;justify-content:center;">
                         {{ __('support::company-switcher.reset') }}

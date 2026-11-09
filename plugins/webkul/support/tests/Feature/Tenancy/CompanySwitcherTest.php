@@ -4,8 +4,10 @@ use Filament\Facades\Filament;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Support\Facades\Auth;
+use Webkul\Account\Models\Account;
 use Webkul\Security\Models\Role;
 use Webkul\Security\Models\User;
+use Webkul\Support\Models\UtmCampaign;
 use Webkul\Support\Services\CompanyContext;
 
 require_once __DIR__.'/../../Helpers/CompanyHelper.php';
@@ -31,12 +33,14 @@ beforeEach(function (): void {
 
     Auth::forgetGuards();
     session()->forget(CompanyContext::SESSION_KEY);
+    session()->forget(CompanyContext::SCOPE_MODE_SESSION_KEY);
     app()->forgetInstance(CompanyContext::class);
 });
 
 afterEach(function (): void {
     Auth::forgetGuards();
     session()->forget(CompanyContext::SESSION_KEY);
+    session()->forget(CompanyContext::SCOPE_MODE_SESSION_KEY);
     app()->forgetInstance(CompanyContext::class);
 });
 
@@ -100,6 +104,17 @@ it('refuses the reset action from a client user too', function () {
         ->assertForbidden();
 });
 
+it('refuses all-company mode for a client user', function () {
+    $company = CompanyHelper::company(['name' => 'Switcher Client All', 'is_active' => true]);
+    $user = CompanyHelper::actingAsCompanyUser($company, [], [$company->getKey()]);
+
+    $this->actingAs($user, 'web')
+        ->post(route('company-context.set'), ['action' => 'all'])
+        ->assertForbidden();
+
+    expect(session(CompanyContext::SCOPE_MODE_SESSION_KEY))->toBeNull();
+});
+
 it('lets a Super Admin switch between the companies they hold', function () {
     $companyA = CompanyHelper::company(['name' => 'Switcher Admin A', 'is_active' => true]);
     $companyB = CompanyHelper::company(['name' => 'Switcher Admin B', 'is_active' => true]);
@@ -116,6 +131,64 @@ it('lets a Super Admin switch between the companies they hold', function () {
         ->assertRedirect();
 
     expect(session(CompanyContext::SESSION_KEY))->toBe([$companyB->getKey()]);
+});
+
+it('limits a Super Admin to one company unless they explicitly select all companies', function () {
+    TestBootstrapHelper::ensurePluginInstalled('accounts');
+
+    $companyA = CompanyHelper::company(['name' => 'Scoped Admin A', 'is_active' => true]);
+    $companyB = CompanyHelper::company(['name' => 'Scoped Admin B', 'is_active' => true]);
+    $companyC = CompanyHelper::company(['name' => 'Scoped Admin C', 'is_active' => true]);
+
+    $campaignA = UtmCampaign::factory()->company($companyA)->create();
+    $campaignB = UtmCampaign::factory()->company($companyB)->create();
+    $campaignC = UtmCampaign::factory()->company($companyC)->create();
+
+    $accountA = Account::factory()->create();
+    $accountA->companies()->attach($companyA);
+    $accountB = Account::factory()->create();
+    $accountB->companies()->attach($companyB);
+
+    $user = companySwitcherMakeSuperAdmin(
+        CompanyHelper::actingAsCompanyUser([$companyA, $companyB, $companyC], [], [$companyA->getKey(), $companyB->getKey()]),
+    );
+
+    $this->actingAs($user, 'web');
+
+    // Old sessions may contain multiple checked companies; normal mode narrows
+    // them to the current company so switching never leaves a wider data view.
+    expect(UtmCampaign::query()->pluck('id'))
+        ->toContain($campaignA->id)
+        ->not->toContain($campaignB->id)
+        ->not->toContain($campaignC->id);
+
+    $this->post(route('company-context.set'), ['action' => 'all'])
+        ->assertRedirect();
+
+    expect(UtmCampaign::query()->pluck('id'))
+        ->toContain($campaignA->id)
+        ->toContain($campaignB->id)
+        ->toContain($campaignC->id)
+        ->and(Account::query()->pluck('id'))
+        ->toContain($accountA->id)
+        ->toContain($accountB->id)
+        ->and(companySwitcherHeader())
+        ->toContain(__('support::company-switcher.all_companies'));
+
+    $this->post(route('company-context.set'), [
+        'companies' => [$companyA->getKey(), $companyB->getKey()],
+        'current'   => $companyB->getKey(),
+    ])->assertRedirect();
+
+    expect(session(CompanyContext::SESSION_KEY))->toBe([$companyB->getKey()])
+        ->and(app(CompanyContext::class)->allCompaniesActive())->toBeFalse()
+        ->and(UtmCampaign::query()->pluck('id'))
+        ->toContain($campaignB->id)
+        ->not->toContain($campaignA->id)
+        ->not->toContain($campaignC->id)
+        ->and(Account::query()->pluck('id'))
+        ->toContain($accountB->id)
+        ->not->toContain($accountA->id);
 });
 
 it('shows a client user their company name but no switch form', function () {
