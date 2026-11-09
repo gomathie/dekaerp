@@ -25,7 +25,25 @@ class SubscriptionLifecycle
     {
         $this->assertSuperAdmin($actor);
 
-        return DB::transaction(function () use ($subscription, $actor, $at): Subscription {
+        return $this->activateDraft($subscription, $actor, $at, false);
+    }
+
+    /**
+     * Starts the subscription chosen while switching a test company to
+     * commercial. An assigned Multi-Company Admin may do this and may not
+     * call activate() for any other transition (user, 2026-11-09).
+     */
+    public function activateForCommercialSwitch(Subscription $subscription, User $actor, ?DateTimeImmutable $at = null): Subscription
+    {
+        $company = Company::withoutGlobalScopes()->findOrFail($subscription->company_id);
+        app(CompanyAccountType::class)->assertMaySwitch($actor, $company);
+
+        return $this->activateDraft($subscription, $actor, $at, true);
+    }
+
+    protected function activateDraft(Subscription $subscription, User $actor, ?DateTimeImmutable $at, bool $commercialSwitch): Subscription
+    {
+        return DB::transaction(function () use ($subscription, $actor, $at, $commercialSwitch): Subscription {
             $locked = $this->locked($subscription);
             $this->assertState($locked, 'draft');
             // CompanyScope follows the selected company. A Super Admin can
@@ -46,7 +64,7 @@ class SubscriptionLifecycle
                 'anchor_at'            => $start->setTimezone(new DateTimeZone('UTC')),
                 'timezone'             => $start->getTimezone()->getName(),
             ])->save();
-            $this->applyPlan($locked, $company, $actor);
+            $this->applyPlan($locked, $company, $actor, $commercialSwitch);
             $this->audit('activated', $locked, $actor);
 
             return $locked;
@@ -271,7 +289,7 @@ class SubscriptionLifecycle
         return $actor;
     }
 
-    protected function applyPlan(Subscription $subscription, Company $company, ?User $actor): void
+    protected function applyPlan(Subscription $subscription, Company $company, ?User $actor, bool $commercialSwitch = false): void
     {
         $entitlements = app(PluginEntitlementService::class);
         $names = $subscription->included_plugins ?? [];
@@ -280,7 +298,14 @@ class SubscriptionLifecycle
             throw ValidationException::withMessages(['included_plugins' => 'Every plan module must be installed.']);
         }
         // Union before sync preserves manual grants; the service adds dependencies.
-        $entitlements->syncForCompany($company, array_unique([...$entitlements->grantedPluginIds((int) $company->id), ...$ids]), $actor);
+        // The commercial switch is the only path that may apply a plan as an
+        // assigned Multi-Company Admin. syncForCompany() itself stays Super Admin.
+        $grants = array_unique([...$entitlements->grantedPluginIds((int) $company->id), ...$ids]);
+        if ($commercialSwitch) {
+            $entitlements->syncForCommercialSwitch($company, $grants, $actor);
+        } else {
+            $entitlements->syncForCompany($company, $grants, $actor);
+        }
         app(SeatCapacityService::class)->setLimit($company, $subscription->seat_limit, $actor);
     }
 

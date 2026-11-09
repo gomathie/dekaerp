@@ -10,6 +10,7 @@ use Illuminate\Validation\ValidationException;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Security\Models\User;
+use Webkul\Security\Services\MultiCompanyAdminService;
 use Webkul\Security\Services\SecurityAuditLogger;
 use Webkul\Support\Models\Company;
 
@@ -193,6 +194,24 @@ class PluginEntitlementService
     public function syncForCompany(Company $company, array $pluginIds, ?User $actor = null): void
     {
         $this->assertCanMutate($actor);
+
+        DB::transaction(fn () => $this->applyForCompany($company, $pluginIds, $actor));
+    }
+
+    /**
+     * Apply the plan chosen while switching a test company to commercial.
+     *
+     * syncForCompany() stays Super Admin (D-SAAS-06). This entry exists so
+     * an assigned Multi-Company Admin can apply that one plan, and no other
+     * module change. The message matches CompanyAccountType::ONLY_SWITCH_STAFF.
+     *
+     * @param  array<int, mixed>  $pluginIds
+     */
+    public function syncForCommercialSwitch(Company $company, array $pluginIds, ?User $actor): void
+    {
+        if (! $actor instanceof User || ! app(MultiCompanyAdminService::class)->mayAdministerCompany($actor, (int) $company->getKey())) {
+            throw new AuthorizationException('Only a Super Admin, or a Multi-Company Admin for this company, may switch it to commercial.');
+        }
 
         DB::transaction(fn () => $this->applyForCompany($company, $pluginIds, $actor));
     }

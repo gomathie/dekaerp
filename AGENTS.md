@@ -1700,9 +1700,13 @@ log named):
     that method. Do not add a second clock.
   - Adding days is a Super Admin, or a Multi-Company Admin for an assigned
     company. The new end is the later of `test_ends_at` and the instant,
-    plus the days. Switching to commercial is Super Admin only, because it
-    starts a subscription (D-SAAS-06). Billing starts at the next period.
-    The trial is not invoiced.
+    plus the days. Switching to commercial is the same people (user,
+    2026-11-09). *Superseded the same day:* it was Super Admin only because
+    the switch starts a subscription. The user then included an assigned
+    Multi-Company Admin. The switch applies that plan's modules and seat
+    limit. `SubscriptionDrafts::create()`, `SubscriptionLifecycle::activate()`
+    and `PluginEntitlementService::syncForCompany()` stay Super Admin.
+    Billing starts at the next period. The trial is not invoiced.
   - Saving the company also saves its partner. Once the trial has ended,
     the guard allows that partner write only while the staff member is
     the authenticated user. Do not `Auth::login()` inside the service.

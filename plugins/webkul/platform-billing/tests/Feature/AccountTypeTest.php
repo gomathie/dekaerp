@@ -10,7 +10,9 @@ use Webkul\PlatformBilling\Models\Price;
 use Webkul\PlatformBilling\Models\Subscription;
 use Webkul\PlatformBilling\Services\CompanyAccountType;
 use Webkul\PlatformBilling\Services\CompanyReadOnlyWriteGuard;
+use Webkul\PlatformBilling\Services\SubscriptionDrafts;
 use Webkul\PlatformBilling\Services\SubscriptionLifecycle;
+use Webkul\PluginManager\Services\PluginEntitlementService;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\MultiCompanyAdminRoleProvisioner;
 use Webkul\Support\Models\Calendar;
@@ -143,4 +145,60 @@ it('switches a test company to commercial at the next period and refuses the rev
 
     expect(fn () => app(CompanyAccountType::class)->switchToCommercial($actor, $switched, trialPrice(), $at))
         ->toThrow(ValidationException::class, CompanyAccountType::ONLY_TEST_SWITCH);
+});
+
+it('lets an assigned multi-company admin switch a test company to commercial', function () {
+    $company = trialCompany('2026-12-01T00:00:00Z');
+    $at = new DateTimeImmutable('2026-11-09T00:00:00Z');
+    $mca = User::withoutEvents(fn (): User => User::factory()->create([
+        'default_company_id' => $company->getKey(),
+        'is_active' => true,
+        'is_default' => false,
+    ]));
+    $mca->allowedCompanies()->sync([$company->getKey()]);
+    $mca->syncRoles([app(MultiCompanyAdminRoleProvisioner::class)->provision()->getKey()]);
+    $mca->unsetRelation('roles');
+    actAsInstallationStaff($mca);
+    $price = trialPrice();
+
+    $switched = app(CompanyAccountType::class)->switchToCommercial($mca, $company, $price, $at);
+
+    expect($switched->account_type)->toBe('commercial')
+        ->and($switched->test_ends_at)->toBeNull()
+        ->and(Invoice::withoutGlobalScopes()->where('company_id', $company->getKey())->count())->toBe(0)
+        ->and(Subscription::withoutGlobalScopes()->where('company_id', $company->getKey())->where('status', 'active')->exists())->toBeTrue();
+
+    expect(fn () => app(SubscriptionDrafts::class)->create($mca, $company, $price, $at))
+        ->toThrow(AuthorizationException::class, 'Only a Super Admin may change subscriptions.');
+
+    expect(fn () => app(PluginEntitlementService::class)->syncForCompany($company, [], $mca))
+        ->toThrow(AuthorizationException::class, 'Only a platform administrator may change plugin entitlements.');
+});
+
+it('refuses a multi-company admin switching a company they are not assigned to', function () {
+    $admin = User::query()->where('email', 'admin@example.com')->firstOrFail();
+    actAsInstallationStaff($admin);
+    $stranger = trialCompany('2026-12-01T00:00:00Z');
+    $assigned = trialCompany('2026-12-01T00:00:00Z');
+    $at = new DateTimeImmutable('2026-11-09T00:00:00Z');
+    $mca = User::withoutEvents(fn (): User => User::factory()->create([
+        'default_company_id' => $assigned->getKey(),
+        'is_active' => true,
+        'is_default' => false,
+    ]));
+    $mca->allowedCompanies()->sync([$assigned->getKey()]);
+    $mca->syncRoles([app(MultiCompanyAdminRoleProvisioner::class)->provision()->getKey()]);
+    $mca->unsetRelation('roles');
+    actAsInstallationStaff($mca);
+
+    expect(fn () => app(CompanyAccountType::class)->switchToCommercial($mca, $stranger, trialPrice(), $at))
+        ->toThrow(AuthorizationException::class, CompanyAccountType::ONLY_SWITCH_STAFF);
+
+    expect(fn () => app(PluginEntitlementService::class)->syncForCommercialSwitch($stranger, [], $mca))
+        ->toThrow(AuthorizationException::class, CompanyAccountType::ONLY_SWITCH_STAFF);
+
+    $clerk = SecurityHelper::authenticateWithPermissions(['create_security_company']);
+
+    expect(fn () => app(CompanyAccountType::class)->switchToCommercial($clerk, $assigned, trialPrice(), $at))
+        ->toThrow(AuthorizationException::class, CompanyAccountType::ONLY_SWITCH_STAFF);
 });
