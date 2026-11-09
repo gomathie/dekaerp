@@ -58,6 +58,7 @@ function companySwitcherMakeSuperAdmin(User $user): User
 
     expect($role)->not->toBeNull('no super-admin role exists, so this test would prove nothing');
 
+    // The installed Admin role name does not itself grant the company-scope bypass.
     $user->assignRole($role);
     $user->unsetRelation('roles');
     app()->forgetInstance(CompanyContext::class);
@@ -149,11 +150,17 @@ it('limits a Super Admin to one company unless they explicitly select all compan
     $accountB = Account::factory()->create();
     $accountB->companies()->attach($companyB);
 
-    $user = companySwitcherMakeSuperAdmin(
-        CompanyHelper::actingAsCompanyUser([$companyA, $companyB, $companyC], [], [$companyA->getKey(), $companyB->getKey()]),
-    );
+    $user = SecurityHelper::authenticateWithPermissions([], bypassCompanyScope: true);
+    $user->forceFill(['default_company_id' => $companyA->getKey()])->saveQuietly();
+    $user->allowedCompanies()->sync([$companyA->getKey(), $companyB->getKey(), $companyC->getKey()]);
+    session([CompanyContext::SESSION_KEY => [$companyA->getKey(), $companyB->getKey()]]);
+    app()->forgetInstance(CompanyContext::class);
+    $user = companySwitcherMakeSuperAdmin($user);
 
     $this->actingAs($user, 'web');
+
+    expect($user->can('bypass_company_scope'))->toBeTrue()
+        ->and($user->isMultiCompanyAdmin())->toBeFalse();
 
     // Old sessions may contain multiple checked companies; normal mode narrows
     // them to the current company so switching never leaves a wider data view.

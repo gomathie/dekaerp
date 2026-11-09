@@ -15,6 +15,8 @@ class CompanyContext
 
     public const SCOPE_MODE_SESSION_KEY = 'company_scope_mode';
 
+    public const SCOPE_MODE_COMPANY = 'company';
+
     public const SCOPE_MODE_ALL = 'all';
 
     protected ?Collection $allowed = null;
@@ -36,6 +38,8 @@ class CompanyContext
 
     public function bypassed(): bool
     {
+        // Access to every company is a capability; skipping tenant scopes is a
+        // separate, explicit view mode. Forced API and job contexts always win.
         return $this->forcedActiveIds === null
             && $this->seesAllCompanies()
             && session(self::SCOPE_MODE_SESSION_KEY) === self::SCOPE_MODE_ALL;
@@ -253,7 +257,7 @@ class CompanyContext
         if ($this->seesAllCompanies()) {
             $current = $current && in_array($current, $valid, true) ? $current : ($valid[0] ?? null);
             $valid = $current === null ? [] : [$current];
-            session([self::SCOPE_MODE_SESSION_KEY => 'company']);
+            session([self::SCOPE_MODE_SESSION_KEY => self::SCOPE_MODE_COMPANY]);
         }
 
         if ($current && in_array($current, $valid)) {

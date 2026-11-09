@@ -30,11 +30,37 @@ authorization.
 context, switcher request/controller/view/provider, five locale files, tenancy
 feature tests, `AGENTS.md`, and this log.
 
-**Verification:** Pending focused SupportFeature tests and Pint.
+**Verification:** Sail PostgreSQL, using only the dedicated local databases
+below. The first `CompanySwitcherTest.php` run had **6 passed, 1 failed / 20
+assertions**: the new test fixture selected the `Admin` role, which the
+protected role decision explicitly keeps separate from
+`bypass_company_scope`. Two isolated fixture retries exposed setup mistakes
+(configured `super_admin` role absent in the installed test database; then a
+single-guard permission did not satisfy the dual-guard helper). The final test
+uses `SecurityHelper::authenticateWithPermissions(..., bypassCompanyScope:
+true)` and passed alone.
+
+- `CompanySwitcherTest.php --filter=limits` on
+  `aureuserp_testing_company_scope_retry3`: **1 passed, 21 assertions**
+  (199.78 seconds).
+- Tenancy test directory on `aureuserp_testing_company_scope`: **20 passed, 69
+  assertions** (386.94 seconds).
+- `CompanyIsolationTest.php` on `aureuserp_testing_company_scope`: **9 passed,
+  26 assertions** (164.70 seconds).
+- `vendor/bin/pint --dirty --format agent`: **passed**.
+
+The two earlier isolated fixture retries failed before testing record
+visibility: `aureuserp_testing_company_scope_retry` had **1 failed, 1
+assertion** because the configured role was absent, and
+`aureuserp_testing_company_scope_retry2` had **1 failed, 2 assertions** because
+the fixture's direct permission did not meet the dual-guard setup. No product
+failure reproduced after correcting the fixture.
 
 **Risk:** All companies remains a powerful explicit platform-staff view. New
 and existing Super Admin sessions now start scoped to one company, so users
-doing cross-company support must select All companies in the switcher.
+doing cross-company support must select All companies in the switcher. All
+companies changes record visibility; new records still use the current/default
+company through the existing `currentId()` behavior.
 
 ## 2026-11-04 (Mail sender, catalogue-backfill preflight, tampered Livewire updates)
 
