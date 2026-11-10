@@ -1795,6 +1795,20 @@ calculations; changing or disabling a code does not alter posted invoices.
   immutability function. Do not run it once a redemption has been issued.
   `migrate:fresh` does not run `down()`, so the migration drops the
   function before creating it again.
+- *Decided 2026-11-11 (user), superseding the open list below:*
+  - Point 1: free months mean **the next N invoices are free**, as built.
+  - Point 3: a code's terms **lock once any company has redeemed it**
+    (`DiscountCode` updating hook, `LOCKED_TERMS_MESSAGE`). Deactivating it
+    stays allowed.
+  - Point 4: the database refuses a company-list code with no company. The
+    deferred constraint triggers come from platform-billing migration
+    `2026_11_11_000001`.
+  - Point 5: the cap was already database-enforced by
+    `platform_billing_discount_codes_count_check`, and redemption locks the
+    code row. A test now pins the check instead of a timing-dependent
+    two-connection test.
+  - Point 2 (basis points) is unchanged.
+  - Tests are in `DiscountCodeTest`.
 - D-SAAS-08 points the code does not enforce, left for a decision:
   1. Free-month calendar. The decision names "free months" and leaves the
      calendar to the invoice run. SAAS-10 waives the next
