@@ -2,6 +2,7 @@
 
 namespace Webkul\PlatformBilling;
 
+use Filament\Panel;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
@@ -46,6 +47,7 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
     {
         $package->name(static::$name)
             ->isCore()
+            ->hasTranslations()
             ->hasConfigFile('platform-billing')
             ->hasMigrations([
                 '2026_10_28_000006_create_platform_billing_document_numbers_table',
@@ -62,8 +64,19 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
             ->runsMigrations();
     }
 
+    public function packageRegistered(): void
+    {
+        Panel::configureUsing(function (Panel $panel): void {
+            $panel->plugin(PlatformBillingPlugin::make());
+        });
+    }
+
     public function packageBooted(): void
     {
+        // Once per process. packageBooted runs again from the installer and
+        // the test bootstrapper, and the schema registry does not reset.
+        BillingCompanyContributions::register();
+
         // Policies are registered explicitly in this codebase (see `support` and
         // `fields`); Laravel's namespace guessing only covers App\Models.
         Gate::policy(DocumentNumber::class, DocumentNumberPolicy::class);

@@ -7,17 +7,16 @@ use Webkul\Security\Models\User;
 /**
  * Platform data is not a tenant's to touch (D-SAAS-06).
  *
- * Every ability is denied explicitly. That is not decoration: the tenant panels
- * auto-discover policies, and a missing or permissive one would let a Company
- * Admin whose role happens to carry a similarly named permission reach the
- * installation's numbering or, later, its invoices.
- *
- * Super Admin is not handled here on purpose - `SecurityServiceProvider`'s
- * `Gate::before` grants them bare ability checks and skips policies, so platform
- * staff keep working while every tenant actor is refused. The `before()` hook
- * below keeps Multi-Company Admin staff out too: that Gate only answers when it
- * receives no model argument, and returning `null` here makes this policy the
- * decider for a record.
+ * Shield's super-admin gate is off (`define_via_gate` false), and
+ * `SecurityServiceProvider`'s `Gate::before` returns true only for a bare
+ * permission check. A model or class argument falls through to this policy.
+ * Returning false for every ability therefore locked the Super Admin out of
+ * the billing screens as well as every tenant. View, create and update are
+ * allowed for an active Super Admin only. Delete stays refused: plans and
+ * prices are deactivated, and posted invoices, payments, allocations,
+ * reversals and extensions are immutable. The services still check the actor.
+ * Do not turn the Shield gate back on to "fix" this; that would skip the
+ * per-record checks this policy is here to keep.
  */
 class DocumentNumberPolicy
 {
@@ -28,22 +27,22 @@ class DocumentNumberPolicy
 
     public function viewAny(User $user): bool
     {
-        return false;
+        return $this->superAdmin($user);
     }
 
     public function view(User $user): bool
     {
-        return false;
+        return $this->superAdmin($user);
     }
 
     public function create(User $user): bool
     {
-        return false;
+        return $this->superAdmin($user);
     }
 
     public function update(User $user): bool
     {
-        return false;
+        return $this->superAdmin($user);
     }
 
     public function delete(User $user): bool
@@ -64,5 +63,14 @@ class DocumentNumberPolicy
     public function forceDelete(User $user): bool
     {
         return false;
+    }
+
+    /**
+     * An inactive Super Admin is not a platform actor. `users.is_active` is
+     * what `canAccessPanel()` already requires.
+     */
+    protected function superAdmin(User $user): bool
+    {
+        return $user->is_active && $user->isSuperAdmin();
     }
 }
