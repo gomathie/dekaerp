@@ -24,6 +24,10 @@ return [
             'label'       => 'Rôle par défaut',
             'helper-text' => 'Le rôle par défaut attribué aux nouveaux utilisateurs.',
         ],
+        'company-admin-business-role' => [
+            'label'       => 'Rôle métier de l’administrateur d’entreprise',
+            'helper-text' => 'Attribué à chaque nouvel administrateur d’entreprise en plus de Company Admin, pour qu’il puisse gérer son entreprise. Les rôles de la plateforme ne sont pas proposés.',
+        ],
 
         'default-company' => [
             'label'       => 'Société par défaut',

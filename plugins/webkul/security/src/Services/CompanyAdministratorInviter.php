@@ -74,9 +74,9 @@ class CompanyAdministratorInviter
             return self::MISSING_EMAIL;
         }
 
-        $roleId = static::companyAdminRoleId();
+        $roleIds = static::administratorRoleIds();
 
-        if (! $roleId) {
+        if ($roleIds === []) {
             return self::MISSING_ROLE;
         }
 
@@ -93,7 +93,7 @@ class CompanyAdministratorInviter
                 $actor,
                 $email,
                 (int) $company->getKey(),
-                [$roleId],
+                $roleIds,
             );
         } catch (Throwable $exception) {
             // Two expected cases, both the caller's to act on: the address
@@ -175,6 +175,64 @@ class CompanyAdministratorInviter
                 );
             }
         });
+    }
+
+    /**
+     * Every role a new company administrator gets: "Company Admin", plus the
+     * configured business role (user, 2026-11-11). "Company Admin" alone only
+     * manages users, so an administrator signed in to an almost empty panel.
+     *
+     * Empty when "Company Admin" is missing. The business role is skipped
+     * whenever it is not a plain tenant role: a system or super-admin role, or
+     * one holding a platform-only ability, would give a client's
+     * administrator the whole installation.
+     *
+     * @return list<int>
+     */
+    public static function administratorRoleIds(): array
+    {
+        $companyAdminRoleId = static::companyAdminRoleId();
+
+        if (! $companyAdminRoleId) {
+            return [];
+        }
+
+        $businessRoleId = static::businessRoleId();
+
+        return $businessRoleId && $businessRoleId !== $companyAdminRoleId
+            ? [$companyAdminRoleId, $businessRoleId]
+            : [$companyAdminRoleId];
+    }
+
+    public static function businessRoleId(): ?int
+    {
+        $roleId = settings(UserSettings::class)->company_admin_business_role_id ?? null;
+
+        if (! $roleId) {
+            return null;
+        }
+
+        $role = Role::query()->where('guard_name', 'web')->find($roleId);
+
+        if (! $role instanceof Role || ! static::isEligibleBusinessRole($role)) {
+            return null;
+        }
+
+        return (int) $role->getKey();
+    }
+
+    /** Whether a role may be handed to a client's administrator as their business role. */
+    public static function isEligibleBusinessRole(Role $role): bool
+    {
+        if ($role->isSystemRole() || $role->isSuperAdminRole() || $role->isMultiCompanyAdminRole()) {
+            return false;
+        }
+
+        if (mb_strtolower((string) $role->getRawOriginal('name')) === mb_strtolower(Role::COMPANY_ADMIN)) {
+            return false;
+        }
+
+        return ! $role->permissions()->whereIn('name', User::PLATFORM_ONLY_ABILITIES)->exists();
     }
 
     public static function companyAdminRoleId(): ?int
