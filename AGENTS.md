@@ -1610,6 +1610,18 @@ log named):
   - On edit, a blank email does nothing. Only create falls back to the
     company's address, or every save would invite the company mailbox.
   - Tests: `security/tests/Feature/Authorization/CompanyAdministratorPasswordTest.php`.
+  - Security's `CompanyResource` alone owns `/admin/companies` (2026-11-11).
+    Support's base sets `$isDiscovered = false`. With both discovered, Support's
+    pages won the routes, and the Administrator section was silently dropped:
+    production never created an administrator. Test: security
+    `CompanyRouteTest`.
+  - A new company administrator gets "Company Admin" **plus** the business role
+    in `UserSettings::company_admin_business_role_id` (user, 2026-11-11).
+    Production preselects "Admin2". One list, used by both the invitation and
+    the password path: `CompanyAdministratorInviter::administratorRoleIds()`. It
+    never hands out a system or super-admin role, or one holding a
+    platform-only ability. Do not reuse `default_role_id` for this: it is
+    "Admin", the platform role. Test: `CompanyAdministratorBusinessRoleTest`.
 
 • Module switch boundaries, 2026-11-05 (user decisions; SaaS plan, SAAS-05
   review):

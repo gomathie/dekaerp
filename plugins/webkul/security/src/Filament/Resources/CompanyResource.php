@@ -26,6 +26,12 @@ class CompanyResource extends BaseCompanyResource
 
     protected static bool $shouldRegisterNavigation = true;
 
+    /**
+     * The base opts out of discovery so this class alone owns the company
+     * routes; see the base's $isDiscovered (2026-11-11).
+     */
+    protected static bool $isDiscovered = true;
+
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function getEloquentQuery(): Builder

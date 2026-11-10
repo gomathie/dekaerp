@@ -6,6 +6,48 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-11 (company administrator never created: wrong pages on the company routes)
+
+- **Why:** the user entered an administrator in the Administrator section on
+  the edit pages for HITRACE (5) and Naviafri (6), and nobody could sign in.
+  Production has no user and no invitation for either company, and no
+  invitation at all. Root cause: Support's `CompanyResource` and Security's
+  subclass were both discovered on the `companies` slug, and Support's pages
+  won `/admin/companies/create` and `/{record}/edit` (`route:list` showed the
+  `Webkul\Support\...\Pages\EditCompany` action). The section is drawn by the
+  shared form (through `CompanySchemaRegistry`), but only Security's pages act
+  on it, in `afterSave`/`afterCreate`. Its fields are `dehydrated(false)`, so
+  the email and password were discarded without a message. Company onboarding
+  on create was dead for the same reason. The page tests mounted Security's
+  classes directly, so they passed.
+- **How:** Support `CompanyResource::$isDiscovered = false` and Security's
+  subclass `$isDiscovered = true`, each with a why comment.
+- **Benefit:** a company created with an administrator email gets that
+  administrator, or the company's own address when none is given. Saving the
+  section on edit creates or invites the administrator.
+- **Trade-off / risk:** Support's resource is no longer registered on its
+  own. Security is a core plugin, so this matters only if Security is ever
+  removed. URLs and route names are unchanged.
+- **Business role (user decision, same day: "new administrators should get
+  the business role"):**
+  - New setting `general.company_admin_business_role_id`, chosen on Settings >
+    Users. Its settings migration preselects "Admin2" where it exists.
+  - `CompanyAdministratorInviter::administratorRoleIds()` returns "Company
+    Admin" plus that role. Both the invitation and
+    `CompanyAdministratorAccount` use it.
+  - A system, super-admin or Multi-Company Admin role, or one holding
+    `bypass_company_scope` or `bypass_ownership_scope`, is never handed out.
+    The settings field lists only eligible roles.
+  - `default_role_id` is deliberately not reused: in production it is "Admin",
+    the platform role.
+  - Existing administrators are unchanged.
+  - Test: `CompanyAdministratorBusinessRoleTest`.
+- **Verification:** route fix: 64 passed, 208 assertions, on
+  `aureuserp_testing_claude_vault` (`CompanyRouteTest`, the password test and
+  the onboarding test). Business role run: see the handoff.
+- **Rollback:** remove the two `$isDiscovered` lines.
+- **Test:** security `Authorization/CompanyRouteTest.php`.
+
 ## 2026-11-10 (records of finished Logistics work)
 
 - **Why:** the customer-page tab was missing from the release notes, and the 2026-10-20 fragment proof-of-delivery notes say the token left the request path. The current `StopLinkService::issue()` still returns `route('logistics.stop-link.show', ['token' => $token])`.

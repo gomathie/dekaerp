@@ -76,6 +76,7 @@ class SecurityServiceProvider extends PackageServiceProvider
             ->hasSettings([
                 '2024_11_05_042358_create_user_settings',
                 '2025_07_29_064223_create_currency_settings',
+                '2026_11_11_000001_add_company_admin_business_role_to_user_settings',
             ])
             ->runsSettings();
     }

@@ -88,9 +88,11 @@ class CompanyAdministratorAccount
             ['email' => ['email', 'max:255'], 'password' => ['required', Password::default()]],
         )->validate();
 
-        $roleId = CompanyAdministratorInviter::companyAdminRoleId();
+        // "Company Admin" plus the configured business role (user, 2026-11-11);
+        // the same list the invitation path uses.
+        $roleIds = CompanyAdministratorInviter::administratorRoleIds();
 
-        if (! $roleId) {
+        if ($roleIds === []) {
             return self::MISSING_ROLE;
         }
 
@@ -107,7 +109,7 @@ class CompanyAdministratorAccount
             return $this->resetPassword($company, $actor, $existing, $password, $mustChangePassword);
         }
 
-        return $this->createAdministrator($company, $actor, $roleId, $email, $password, $mustChangePassword);
+        return $this->createAdministrator($company, $actor, $roleIds, $email, $password, $mustChangePassword);
     }
 
     /**
@@ -244,7 +246,7 @@ class CompanyAdministratorAccount
     protected function createAdministrator(
         Company $company,
         User $actor,
-        int $roleId,
+        array $roleIds,
         string $email,
         string $password,
         bool $mustChangePassword,
@@ -256,7 +258,7 @@ class CompanyAdministratorAccount
         }
 
         try {
-            $this->administration->assertUserAssignment($actor, null, [$roleId], [$companyId], $companyId);
+            $this->administration->assertUserAssignment($actor, null, $roleIds, [$companyId], $companyId);
         } catch (ValidationException|AuthorizationException) {
             return self::NOT_ALLOWED;
         }
@@ -264,7 +266,7 @@ class CompanyAdministratorAccount
         $capacity = app(SeatCapacityService::class);
 
         try {
-            $user = $capacity->withLockedCompany($companyId, function () use ($actor, $companyId, $roleId, $email, $password, $mustChangePassword, $capacity): User {
+            $user = $capacity->withLockedCompany($companyId, function () use ($actor, $companyId, $roleIds, $email, $password, $mustChangePassword, $capacity): User {
                 // A pending invitation to the same address would keep holding a
                 // seat for a person who now has an account, and its link would
                 // fail on the unique email. Revoked first so the seat check
@@ -293,7 +295,7 @@ class CompanyAdministratorAccount
 
                 $user->allowedCompanies()->sync([$companyId]);
 
-                app(TenantRoleAssigner::class)->sync($user, [$roleId], [$companyId]);
+                app(TenantRoleAssigner::class)->sync($user, $roleIds, [$companyId]);
 
                 $user->unsetRelation('roles');
 
