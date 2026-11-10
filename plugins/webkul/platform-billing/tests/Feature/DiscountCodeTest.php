@@ -4,8 +4,6 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use Webkul\PlatformBilling\Models\DiscountCode;
-use Webkul\PlatformBilling\Models\DiscountRedemption;
 use Webkul\PlatformBilling\Services\DiscountCodeService;
 use Webkul\PlatformBilling\Support\Money;
 use Webkul\Security\Models\Role;
@@ -22,14 +20,14 @@ beforeEach(function (): void {
 function discountCodeTerms(array $overrides = []): array
 {
     return array_replace([
-        'code' => 'SAAS09A-'.strtoupper(fake()->bothify('??????')),
-        'discount_type' => 'percentage',
-        'discount_value' => 1500,
-        'duration_type' => 'forever',
-        'duration_months' => null,
-        'eligibility_type' => 'any_company',
-        'company_ids' => [],
-        'max_redemptions' => null,
+        'code'               => 'SAAS09A-'.strtoupper(fake()->bothify('??????')),
+        'discount_type'      => 'percentage',
+        'discount_value'     => 1500,
+        'duration_type'      => 'forever',
+        'duration_months'    => null,
+        'eligibility_type'   => 'any_company',
+        'company_ids'        => [],
+        'max_redemptions'    => null,
         'redemption_ends_at' => null,
     ], $overrides);
 }
@@ -45,8 +43,8 @@ function discountCodeMca(array $companies): User
     $role = app(MultiCompanyAdminRoleProvisioner::class)->provision();
     $actor = User::withoutEvents(fn (): User => User::factory()->create([
         'default_company_id' => $company->getKey(),
-        'is_active' => true,
-        'is_default' => false,
+        'is_active'          => true,
+        'is_default'         => false,
     ]));
     $actor->allowedCompanies()->sync(collect($companies)->map->getKey()->all());
     $actor->syncRoles([$role->getKey()]);
@@ -59,15 +57,15 @@ function discountCodeCompanyAdmin(Company $company): User
 {
     $actor = User::withoutEvents(fn (): User => User::factory()->create([
         'default_company_id' => $company->getKey(),
-        'is_active' => true,
-        'is_default' => false,
+        'is_active'          => true,
+        'is_default'         => false,
     ]));
     $actor->allowedCompanies()->sync([$company->getKey()]);
     $role = Role::query()->firstOrCreate(['name' => 'Company Admin', 'guard_name' => 'web'], ['is_default' => false]);
     DB::table('company_membership_roles')->insert([
-        'user_id' => $actor->getKey(),
+        'user_id'    => $actor->getKey(),
         'company_id' => $company->getKey(),
-        'role_id' => $role->getKey(),
+        'role_id'    => $role->getKey(),
         'created_at' => now(),
         'updated_at' => now(),
     ]);
@@ -90,13 +88,13 @@ it('limits Multi-Company Admin discount codes to their assigned company list', f
 
     $code = $service->create($mca, discountCodeTerms([
         'eligibility_type' => 'company_list',
-        'company_ids' => [$assigned->getKey()],
+        'company_ids'      => [$assigned->getKey()],
     ]));
 
     expect($code->eligibleCompanies()->pluck('companies.id')->all())->toBe([$assigned->getKey()])
         ->and(fn () => $service->create($mca, discountCodeTerms([
             'eligibility_type' => 'company_list',
-            'company_ids' => [$other->getKey()],
+            'company_ids'      => [$other->getKey()],
         ])))->toThrow(AuthorizationException::class, 'A Multi-Company Admin may create discount codes only for assigned companies.')
         ->and(fn () => $service->create($mca, discountCodeTerms()))
         ->toThrow(AuthorizationException::class, 'A Multi-Company Admin must limit discount codes to assigned companies.');
@@ -108,7 +106,7 @@ it('lets only the company administrator redeem for that company', function () {
     $admin = discountCodeCompanyAdmin($company);
     $code = app(DiscountCodeService::class)->create(discountCodeSuperAdmin(), discountCodeTerms([
         'eligibility_type' => 'company_list',
-        'company_ids' => [$company->getKey()],
+        'company_ids'      => [$company->getKey()],
     ]));
     $service = app(DiscountCodeService::class);
 
@@ -124,7 +122,7 @@ it('allows a Multi-Company Admin to redeem only for an assigned eligible company
     $mca = discountCodeMca([$assigned, $alsoAssigned]);
     $code = app(DiscountCodeService::class)->create($mca, discountCodeTerms([
         'eligibility_type' => 'company_list',
-        'company_ids' => [$assigned->getKey()],
+        'company_ids'      => [$assigned->getKey()],
     ]));
     $service = app(DiscountCodeService::class);
 
@@ -141,11 +139,11 @@ it('refuses expired, exhausted and already redeemed discount codes with specific
     $secondCompany = Company::factory()->create();
     $service = app(DiscountCodeService::class);
     $expired = $service->create($actor, discountCodeTerms([
-        'code' => 'EXPIRED-'.strtoupper(fake()->bothify('????')),
+        'code'               => 'EXPIRED-'.strtoupper(fake()->bothify('????')),
         'redemption_ends_at' => new DateTimeImmutable('2026-01-01T00:00:00Z'),
     ]));
     $limited = $service->create($actor, discountCodeTerms([
-        'code' => 'LIMIT-'.strtoupper(fake()->bothify('????')),
+        'code'            => 'LIMIT-'.strtoupper(fake()->bothify('????')),
         'max_redemptions' => 1,
     ]));
     $service->redeem($limited->code, $firstCompany, $actor, new DateTimeImmutable('2025-12-01T00:00:00Z'));
@@ -163,8 +161,8 @@ it('refuses stacking and allows a new code after a months-long redemption expire
     $actor = discountCodeSuperAdmin();
     $service = app(DiscountCodeService::class);
     $first = $service->create($actor, discountCodeTerms([
-        'code' => 'MONTHS-A-'.strtoupper(fake()->bothify('???')),
-        'duration_type' => 'months',
+        'code'            => 'MONTHS-A-'.strtoupper(fake()->bothify('???')),
+        'duration_type'   => 'months',
         'duration_months' => 1,
     ]));
     $second = $service->create($actor, discountCodeTerms(['code' => 'MONTHS-B-'.strtoupper(fake()->bothify('???'))]));
@@ -181,7 +179,7 @@ it('calculates percentage and fixed discounts in USD before VAT and preserves re
     $actor = discountCodeSuperAdmin();
     $service = app(DiscountCodeService::class);
     $percentage = $service->create($actor, discountCodeTerms([
-        'code' => 'PCT-'.strtoupper(fake()->bothify('????')),
+        'code'               => 'PCT-'.strtoupper(fake()->bothify('????')),
         'redemption_ends_at' => new DateTimeImmutable('2026-01-02T00:00:00Z'),
     ]));
     $redemption = $service->redeem($percentage->code, $company, $actor, new DateTimeImmutable('2026-01-01T00:00:00Z'));
@@ -193,8 +191,8 @@ it('calculates percentage and fixed discounts in USD before VAT and preserves re
         ->toBe(1500);
 
     $fixed = $service->create($actor, discountCodeTerms([
-        'code' => 'FIXED-'.strtoupper(fake()->bothify('????')),
-        'discount_type' => 'fixed_usd',
+        'code'           => 'FIXED-'.strtoupper(fake()->bothify('????')),
+        'discount_type'  => 'fixed_usd',
         'discount_value' => 2500,
     ]));
     $companyB = Company::factory()->create();
@@ -208,8 +206,8 @@ it('applies free months as a full pre-tax invoice discount only when the invoice
     $actor = discountCodeSuperAdmin();
     $service = app(DiscountCodeService::class);
     $code = $service->create($actor, discountCodeTerms([
-        'code' => 'FREE-'.strtoupper(fake()->bothify('????')),
-        'discount_type' => 'free_months',
+        'code'           => 'FREE-'.strtoupper(fake()->bothify('????')),
+        'discount_type'  => 'free_months',
         'discount_value' => 2,
     ]));
     $redemption = $service->redeem($code->code, $company, $actor);

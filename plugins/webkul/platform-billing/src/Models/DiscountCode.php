@@ -18,12 +18,12 @@ class DiscountCode extends Model
     protected function casts(): array
     {
         return [
-            'discount_value' => 'integer',
-            'duration_months' => 'integer',
-            'max_redemptions' => 'integer',
-            'redemption_count' => 'integer',
+            'discount_value'     => 'integer',
+            'duration_months'    => 'integer',
+            'max_redemptions'    => 'integer',
+            'redemption_count'   => 'integer',
             'redemption_ends_at' => 'immutable_datetime',
-            'is_active' => 'boolean',
+            'is_active'          => 'boolean',
         ];
     }
 

@@ -48,6 +48,7 @@ use Webkul\Security\Filament\Resources\UserResource\Pages\ViewUsers;
 use Webkul\Security\Models\Role;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\MultiCompanyAdminService;
+use Webkul\Security\Services\TenantImpersonation;
 use Webkul\Security\Settings\UserSettings;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Models\Company;
@@ -442,6 +443,36 @@ class UserResource extends Resource
                                 ->title(__('security::filament/resources/user.table.actions.restore.notification.title'))
                                 ->body(__('security::filament/resources/user.table.actions.restore.notification.body')),
                         ),
+                    // Tenant impersonation grant (SAAS-15). Only a Super Admin
+                    // may give or take it, and only a Multi-Company Admin can
+                    // hold it; TenantImpersonation re-checks both.
+                    Action::make('grantImpersonation')
+                        ->label(__('security::impersonation.actions.grant.label'))
+                        ->icon('heroicon-o-eye')
+                        ->requiresConfirmation()
+                        ->modalDescription(__('security::impersonation.actions.grant.modal-description'))
+                        ->visible(fn (User $record): bool => self::managesImpersonationGrants()
+                            && ! $record->trashed()
+                            && $record->isMultiCompanyAdmin()
+                            && ! app(TenantImpersonation::class)->holdsGrant($record))
+                        ->action(function (User $record): void {
+                            app(TenantImpersonation::class)->grant(Auth::user(), $record);
+
+                            Notification::make()->success()->title(__('security::impersonation.notifications.granted'))->send();
+                        }),
+                    Action::make('revokeImpersonation')
+                        ->label(__('security::impersonation.actions.revoke.label'))
+                        ->icon('heroicon-o-eye-slash')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->modalDescription(__('security::impersonation.actions.revoke.modal-description'))
+                        ->visible(fn (User $record): bool => self::managesImpersonationGrants()
+                            && app(TenantImpersonation::class)->holdsGrant($record))
+                        ->action(function (User $record): void {
+                            app(TenantImpersonation::class)->revoke(Auth::user(), $record);
+
+                            Notification::make()->success()->title(__('security::impersonation.notifications.revoked'))->send();
+                        }),
                 ]),
             ])
             ->toolbarActions([
@@ -582,6 +613,20 @@ class UserResource extends Resource
                     ]),
             ])
             ->columns(1);
+    }
+
+    /**
+     * Shows the impersonation grant actions. Only to an active Super Admin
+     * who is not impersonating; TenantImpersonation::grant() re-checks.
+     */
+    protected static function managesImpersonationGrants(): bool
+    {
+        $actor = Auth::user();
+
+        return $actor instanceof User
+            && $actor->is_active
+            && $actor->isSuperAdmin()
+            && ! app(TenantImpersonation::class)->isActive();
     }
 
     public static function canDeleteUser(User $record): bool

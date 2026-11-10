@@ -196,6 +196,7 @@ Record the user's answer before unblocking dependent packages.
 | D-SAAS-11 | What is a test account, and who chooses it? | Installation staff choose at creation; trial then commercial only | **Accepted 2026-11-09 (user).** The type is `test` or `commercial`, chosen only by installation staff who may create the company, inside `CompanyOnboarding::create()`. A tenant Company Admin is not offered the choice. When the test days end, the company is read-only and its data stays; staff can add days or switch the type. A test company is not charged and gets no platform invoice. Switching to commercial picks a plan and price. Billing starts at the next period, with no back-billing of the trial. There is no switch from commercial back to test. Existing companies are backfilled as `commercial`. The columns are `account_type` and `test_ends_at` on the company. Adding days is an audited update by a Super Admin, or by a Multi-Company Admin for an assigned company. *Switch actor, 2026-11-09 (user):* those same people may switch an assigned test company to commercial. Impersonation is a separate slice. |
 | D-SAAS-12 | May the read-only guard block platform billing's own writes? | Exempt only the billing records the invoice job must save | **Accepted 2026-11-09 (user).** Only platform billing's own subscription and invoice writes pass `CompanyReadOnlyWriteGuard`. Claude is implementing that exemption for `Subscription`, `Invoice` and `InvoiceLine`. |
 | D-SAAS-13 | When do the D-SAAS-04 grace extensions exist? | A package of their own, after payments and account type | **Accepted 2026-11-09 (user).** Company Admin and Super Admin extensions are a separate small package, SAAS-10B, done next after this one. They change when `isReadOnly()` becomes true. They are not part of SAAS-11 or the account-type work. |
+| D-SAAS-14 | Tenant impersonation: who, whom, how long, what is blocked? | Staff only; tenant users only; re-authenticate; time-limited | **Accepted 2026-11-10 (user).** A Super Admin may impersonate by default. A Multi-Company Admin needs the explicit `tenant.impersonate` grant, which only a Super Admin gives or removes, and acts only in assigned companies. No other user may impersonate, whatever permission they hold. The target is an active tenant member of that company. It is never a Super Admin, a Multi-Company Admin, or the administrator themselves. Every start needs the administrator's own password and a reason. A session ends after 60 minutes. Nothing extra is blocked while impersonating: the administrator can do exactly what the target can, and every write is logged with the administrator's id. |
 
 ### Status board
 
@@ -222,7 +223,7 @@ Record the user's answer before unblocking dependent packages.
 | SAAS-11 | Payments, allocations, credit and reversals | SAAS-08, SAAS-10, D-SAAS-05, D-SAAS-06, D-SAAS-10 | — | review (2026-11-09 / `aureuserp_testing_saas11`) | commits `47c750cd7`, `028fe0148`, `a6b78e405`; company-form fixtures still uncommitted |
 | SAAS-12 | Platform administration screens | SAAS-03, SAAS-07, SAAS-09/10/11 | — | todo | — |
 | SAAS-13 | Company-administration screens | SAAS-01, SAAS-07, SAAS-09/10/11 | — | todo | — |
-| SAAS-15 | Backfill, shadow mode, release hardening, tenant impersonation, and test-or-commercial account type | All implementation packages | — | review (account type only, 2026-11-09 / `aureuserp_testing_saas11`; impersonation, backfill, shadow mode and release hardening stay out) | commits `47c750cd7`, `028fe0148`; company-form fixtures still uncommitted |
+| SAAS-15 | Backfill, shadow mode, release hardening, tenant impersonation, and test-or-commercial account type | All implementation packages | — | review (account type 2026-11-09 / `aureuserp_testing_saas11`; tenant impersonation 2026-11-10 / `aureuserp_testing_claude`, D-SAAS-14; backfill, shadow mode and release hardening stay out) | commits `47c750cd7`, `028fe0148`; company-form fixtures still uncommitted |
 
 Additional requirement: Tenant impersonation
 
@@ -2490,6 +2491,44 @@ Questions:
 - Test: `OverdueExtensionTest` "does not carry an extension from an earlier overdue episode into a later grace".
 - Tests run: see the change log entry for the same date.
 - Rollback: remove the `granted_at` condition. Extensions then stack again.
+
+#### SAAS-15 handoff — tenant impersonation — 2026-11-10 (Claude)
+
+- Owner / database: Claude, `aureuserp_testing_claude`
+- Status: review
+- Implemented: D-SAAS-14.
+  - `Security\Services\TenantImpersonation` holds every rule: who may impersonate, who may be impersonated, start, end, the per-request validity check, and grant/revoke.
+  - Start: **Impersonate** on the company's Users and logins list. It asks for a reason and the administrator's own password.
+  - While active: a banner on every admin page names the target, the company and the administrator, shows the end time, and has an **End impersonation** button (POST `security.impersonation.end`).
+  - `EnforceImpersonationSession` (admin `authMiddleware`, after `Authenticate`) ends the session on the first request after 60 minutes. It also ends it as soon as the grant is revoked, either account is deactivated, or the membership is removed. It adds the administrator's id to the log context and to a Sentry tag.
+  - Audit through `SecurityAuditLogger`: `security.impersonation_started`, `…_ended` (with `end_reason`: ended, expired, invalid or logout), `…_granted`, `…_revoked`. A `Log::notice` "Write during impersonation." records every Eloquent create, update and delete with the administrator's id.
+  - Grant: **Allow impersonation** and **Remove impersonation access** actions on the Users list. They are visible to a Super Admin on a Multi-Company Admin's row.
+  - Migration `2026_11_10_000001_create_tenant_impersonate_permission` creates the permission row.
+- Why / How / Benefit: support can reproduce a client's problem as that client's user without knowing or resetting their password.
+  - The session runs as the target: their roles, their company, and the read-only guard.
+  - Starting and switching back each migrate the session id. The `AuthenticateSession` password hash is cleared, so the next request stores the new user's hash instead of logging the session out.
+  - The administrator's company selection is saved at the start and restored at the end.
+  - `RequirePasswordChange` skips an impersonating session. Otherwise the administrator would be held on the target's change-password page and pushed to choose the client's password.
+- Design notes:
+  - The Multi-Company Admin `Gate::before` and `User::hasPermissionTo()` both deny any ability containing `impersonate`. That stays: it is what stops every Multi-Company Admin receiving the permission automatically. `holdsGrant()` therefore reads the permission store directly with `getAllPermissions()`.
+  - The target's membership is read without global scopes. A scoped read follows the administrator's own company selection and reported real members as strangers; that was found by the first test run.
+  - `InstallERP` syncs every permission onto the Admin role, which is a Super Admin role. That grants nothing new, and the test states it.
+- Protected decisions added: `AGENTS.md`, "Tenant impersonation".
+- Files changed:
+  - New: `TenantImpersonation.php`, `EnforceImpersonationSession.php`, `ImpersonationController.php`, `impersonation-banner.blade.php`, `lang/{en,fr,es,pt_BR,ar}/impersonation.php`, the migration, `TenantImpersonationTest.php`.
+  - Edited: `SecurityServiceProvider.php` (migration, banner hook, logout listener, write log; guarded per application), `routes/web.php`, `RequirePasswordChange.php`, `UsersRelationManager.php`, `UserResource.php`, `app/Providers/Filament/AdminPanelProvider.php`.
+- Tests run: see the change log entry for 2026-11-10 (tenant impersonation).
+- Reviewed but not executed: no browser session. The banner layout on a phone and the End button were checked as markup only.
+- Security review:
+  - The target's password and session are never read.
+  - The end route is POST with CSRF.
+  - A tenant user holding the permission is still refused.
+  - Nested impersonation is refused.
+  - The audit names both people.
+- Risks and rollback:
+  - With nothing extra blocked, an impersonating administrator can change the target's password or email. Those writes are logged with the administrator's id.
+  - Rollback: remove the two actions and the middleware registration. Roll back the migration to drop the permission and every grant of it, since the pivots cascade.
+- Suggested next: a browser smoke run of start, banner and end. Then SAAS-12 and SAAS-13 can list impersonation sessions from the audit messages.
 
 ### Handoff template
 

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 use Webkul\Security\Models\User;
+use Webkul\Security\Services\TenantImpersonation;
 use Webkul\Support\Filament\Pages\Profile;
 
 /**
@@ -34,6 +35,13 @@ class RequirePasswordChange
         $user = Auth::user();
 
         if (! $user instanceof User || ! $user->must_change_password) {
+            return $next($request);
+        }
+
+        // An impersonating administrator would otherwise be held on the
+        // target's profile page and pushed to choose the client's new
+        // password, which only the client should do (SAAS-15, 2026-11-10).
+        if (app(TenantImpersonation::class)->isActive()) {
             return $next($request);
         }
 

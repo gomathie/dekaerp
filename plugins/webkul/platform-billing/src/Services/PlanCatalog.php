@@ -73,11 +73,11 @@ class PlanCatalog
 
             try {
                 $plan = Plan::query()->create([
-                    'name' => $name,
-                    'code' => $code,
+                    'name'             => $name,
+                    'code'             => $code,
                     'included_plugins' => $this->modules($attributes['included_plugins'] ?? []),
-                    'seat_limit' => $this->seatLimit($attributes['seat_limit'] ?? null),
-                    'is_active' => true,
+                    'seat_limit'       => $this->seatLimit($attributes['seat_limit'] ?? null),
+                    'is_active'        => true,
                 ]);
             } catch (QueryException $exception) {
                 // The exists() check above loses a race. The unique index is
@@ -178,11 +178,11 @@ class PlanCatalog
 
         try {
             return Price::query()->create([
-                'plan_id' => $plan->getKey(),
-                'currency' => $currency,
+                'plan_id'         => $plan->getKey(),
+                'currency'        => $currency,
                 'interval_months' => $interval,
-                'amount_minor' => $minor,
-                'is_active' => true,
+                'amount_minor'    => $minor,
+                'is_active'       => true,
             ]);
         } catch (QueryException $exception) {
             if ($this->isUniqueViolation($exception)) {
@@ -230,11 +230,17 @@ class PlanCatalog
             return null;
         }
 
-        if (is_int($value) && $value >= 0) {
-            return $value;
+        if (is_string($value)) {
+            $value = trim($value);
         }
 
-        if (is_string($value) && preg_match('/^\d+$/', $value) === 1) {
+        // Filament's integer input can arrive as an int, a digit string, or a
+        // whole-number float. Anything else is not a seat limit.
+        $whole = is_int($value)
+            || (is_string($value) && preg_match('/^\d+$/', $value) === 1)
+            || (is_float($value) && $value >= 0 && floor($value) === $value);
+
+        if ($whole && (int) $value >= 0) {
             return (int) $value;
         }
 

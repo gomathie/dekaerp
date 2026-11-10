@@ -60,7 +60,7 @@ return new class extends Migration
         DB::statement("ALTER TABLE platform_billing_discount_codes ADD CONSTRAINT platform_billing_discount_codes_eligibility_check CHECK (eligibility_type IN ('any_company', 'company_list'))");
         DB::statement("ALTER TABLE platform_billing_discount_codes ADD CONSTRAINT platform_billing_discount_codes_duration_months_check CHECK ((duration_type = 'months' AND duration_months > 0) OR (duration_type <> 'months' AND duration_months IS NULL))");
         DB::statement("ALTER TABLE platform_billing_discount_codes ADD CONSTRAINT platform_billing_discount_codes_eligibility_list_check CHECK (eligibility_type = 'company_list' OR eligibility_type = 'any_company')");
-        DB::statement("ALTER TABLE platform_billing_discount_codes ADD CONSTRAINT platform_billing_discount_codes_value_check CHECK (discount_value > 0)");
+        DB::statement('ALTER TABLE platform_billing_discount_codes ADD CONSTRAINT platform_billing_discount_codes_value_check CHECK (discount_value > 0)');
         DB::statement("ALTER TABLE platform_billing_discount_codes ADD CONSTRAINT platform_billing_discount_codes_percentage_check CHECK (discount_type <> 'percentage' OR discount_value <= 10000)");
         DB::statement('ALTER TABLE platform_billing_discount_codes ADD CONSTRAINT platform_billing_discount_codes_count_check CHECK (max_redemptions IS NULL OR redemption_count <= max_redemptions)');
 

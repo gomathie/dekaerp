@@ -6,6 +6,16 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-10 (tenant impersonation)
+
+- **Why:** SAAS-15 open item, D-SAAS-14. Support staff needed to see a tenant user's screens without asking for that user's password. User decisions: tenant targets only, Super Admins by default, the administrator's password plus a reason to start, 60 minutes, nothing extra blocked.
+- **How:** all rules are in `Security\Services\TenantImpersonation`. A Multi-Company Admin needs the `tenant.impersonate` grant (migration `2026_11_10_000001`), which only a Super Admin gives or removes from the user page. The grant is read with `holdsGrant()`, because the Multi-Company Admin `Gate::before` denies every "impersonate" ability. The **Impersonate** action is on the company's Users and logins list. `EnforceImpersonationSession` sits after `Authenticate` in the admin panel. It ends a session that has expired or lost its grant, account or membership. While a session is active, every Eloquent write is logged with the administrator's id, a banner offers **End** (`POST security.impersonation.end`), and logout ends the session. Each switch migrates the session id and clears `password_hash_web`. `RequirePasswordChange` skips while impersonating.
+- **Benefit:** support works as the user, with an audit trail of start, end and every write.
+- **Trade-off / risk:** nothing is blocked during a session (user decision). An impersonating administrator can change the target's email or password. Those writes are logged but not prevented.
+- **Verification:** `TenantImpersonationTest`, 17 passed (74 assertions), on `aureuserp_testing_claude`. Pint passed. SupportFeature: 201 passed and 2 failed. Both failures are `ResourceStructureSnapshotTest` drift from the billing company-form actions committed after fixture `33dee850c`, not from this change. The SecurityFeature result is in the handoff.
+- **Test:** `security/tests/Feature/SaaSAdministration/TenantImpersonationTest.php`.
+- **Rollback:** remove the middleware from `AdminPanelProvider`, the hooks in `SecurityServiceProvider`, the two record actions and the route, then roll back the migration.
+
 ## 2026-11-10 (overdue extensions do not stack across episodes)
 
 - **Why:** found in review of `1fecd51c2`. `SubscriptionLifecycle::overdueReadOnlyAt()` applied every extension on every invoice of the subscription. An extension on an invoice paid long ago lengthened each later grace, which contradicts D-SAAS-04's one non-stackable extension per overdue invoice.

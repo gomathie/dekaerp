@@ -34,7 +34,7 @@ class Payment extends Model
     {
         return [
             'amount_minor' => 'integer',
-            'received_at' => 'immutable_datetime',
+            'received_at'  => 'immutable_datetime',
         ];
     }
 

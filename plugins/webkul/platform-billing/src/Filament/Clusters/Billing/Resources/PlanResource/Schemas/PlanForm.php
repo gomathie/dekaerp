@@ -55,9 +55,9 @@ class PlanForm
     public static function intervals(): array
     {
         return [
-            1 => __(static::$lang.'.intervals.1'),
-            3 => __(static::$lang.'.intervals.3'),
-            6 => __(static::$lang.'.intervals.6'),
+            1  => __(static::$lang.'.intervals.1'),
+            3  => __(static::$lang.'.intervals.3'),
+            6  => __(static::$lang.'.intervals.6'),
             12 => __(static::$lang.'.intervals.12'),
         ];
     }

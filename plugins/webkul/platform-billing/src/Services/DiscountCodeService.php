@@ -2,11 +2,11 @@
 
 namespace Webkul\PlatformBilling\Services;
 
+use Carbon\CarbonImmutable;
 use DateTimeImmutable;
 use DateTimeZone;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\QueryException;
-use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Webkul\PlatformBilling\Models\DiscountCode;
@@ -53,16 +53,16 @@ class DiscountCodeService
 
         return DB::transaction(function () use ($actor, $attributes, $companyIds, $eligibility, $code): DiscountCode {
             $discount = DiscountCode::query()->create([
-                'code' => $code,
-                'discount_type' => $attributes['discount_type'],
-                'discount_value' => $attributes['discount_value'],
-                'duration_type' => $attributes['duration_type'],
-                'duration_months' => $attributes['duration_type'] === 'months' ? $attributes['duration_months'] : null,
-                'eligibility_type' => $eligibility,
-                'max_redemptions' => $attributes['max_redemptions'] ?? null,
+                'code'               => $code,
+                'discount_type'      => $attributes['discount_type'],
+                'discount_value'     => $attributes['discount_value'],
+                'duration_type'      => $attributes['duration_type'],
+                'duration_months'    => $attributes['duration_type'] === 'months' ? $attributes['duration_months'] : null,
+                'eligibility_type'   => $eligibility,
+                'max_redemptions'    => $attributes['max_redemptions'] ?? null,
                 'redemption_ends_at' => $attributes['redemption_ends_at'] ?? null,
-                'created_by' => $actor->getKey(),
-                'is_active' => true,
+                'created_by'         => $actor->getKey(),
+                'is_active'          => true,
             ]);
 
             if ($eligibility === 'company_list') {
@@ -141,14 +141,14 @@ class DiscountCodeService
             try {
                 $redemption = DiscountRedemption::query()->create([
                     'discount_code_id' => $discount->id,
-                    'company_id' => $lockedCompany->id,
-                    'redeemed_by' => $actor->getKey(),
-                    'code_snapshot' => $discount->code,
-                    'discount_type' => $discount->discount_type,
-                    'discount_value' => $discount->discount_value,
-                    'duration_type' => $discount->duration_type,
-                    'duration_months' => $discount->duration_months,
-                    'redeemed_at' => $at,
+                    'company_id'       => $lockedCompany->id,
+                    'redeemed_by'      => $actor->getKey(),
+                    'code_snapshot'    => $discount->code,
+                    'discount_type'    => $discount->discount_type,
+                    'discount_value'   => $discount->discount_value,
+                    'duration_type'    => $discount->duration_type,
+                    'duration_months'  => $discount->duration_months,
+                    'redeemed_at'      => $at,
                     'duration_ends_at' => $endsAt,
                 ]);
             } catch (QueryException $exception) {
@@ -161,9 +161,9 @@ class DiscountCodeService
             }
 
             DB::table('platform_billing_company_discount_slots')->insert([
-                'company_id' => $lockedCompany->id,
+                'company_id'    => $lockedCompany->id,
                 'redemption_id' => $redemption->id,
-                'reserved_at' => $at,
+                'reserved_at'   => $at,
             ]);
             $discount->increment('redemption_count');
 
@@ -199,10 +199,10 @@ class DiscountCodeService
         }
 
         return match ($redemption->discount_type) {
-            'percentage' => $subtotal->percentage($this->percentageString($redemption->discount_value)),
-            'fixed_usd' => Money::of(min($subtotal->minor, $redemption->discount_value), 'USD'),
+            'percentage'  => $subtotal->percentage($this->percentageString($redemption->discount_value)),
+            'fixed_usd'   => Money::of(min($subtotal->minor, $redemption->discount_value), 'USD'),
             'free_months' => $freeMonthApplies ? $subtotal : Money::zero('USD'),
-            default => throw ValidationException::withMessages(['discount' => 'This discount type is not supported.']),
+            default       => throw ValidationException::withMessages(['discount' => 'This discount type is not supported.']),
         };
     }
 
@@ -306,7 +306,7 @@ class DiscountCodeService
     }
 
     /** @param array<int, mixed> $companyIds
-     *  @return array<int, int>
+     * @return array<int, int>
      */
     protected function normalizeCompanyIds(array $companyIds): array
     {

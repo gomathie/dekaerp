@@ -29,7 +29,7 @@ class InvoiceLine extends Model
     protected function casts(): array
     {
         return [
-            'position' => 'integer',
+            'position'     => 'integer',
             'amount_minor' => 'integer',
         ];
     }

@@ -4,7 +4,6 @@ namespace Webkul\PlatformBilling;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
-use Webkul\PluginManager\Package;
 
 class PlatformBillingPlugin implements Plugin
 {
@@ -20,12 +19,11 @@ class PlatformBillingPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        // Installed is global. Do not read the current company here: route
-        // caching would freeze one tenant's answer for every company.
-        if (! Package::isPluginInstalled($this->getId())) {
-            return;
-        }
-
+        // Core plugins are not rows in `plugins` (Plugin::getAllPluginPackages
+        // skips them), so isPluginInstalled() is always false here and would
+        // leave the billing routes unregistered. Do not read the current
+        // company either: a cached route list would then belong to whichever
+        // tenant happened to be active.
         $panel->when($panel->getId() === 'admin', function (Panel $panel): void {
             $panel->discoverClusters(
                 in: __DIR__.'/Filament/Clusters',

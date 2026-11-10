@@ -80,9 +80,9 @@ class PlanResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListPlans::route('/'),
+            'index'  => ListPlans::route('/'),
             'create' => CreatePlan::route('/create'),
-            'view' => ViewPlan::route('/{record}'),
+            'view'   => ViewPlan::route('/{record}'),
         ];
     }
 }

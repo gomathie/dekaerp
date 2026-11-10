@@ -61,7 +61,6 @@ class ViewSubscription extends ViewRecord
                 ->label(__(static::$lang.'.actions.cancel'))
                 ->color('danger')
                 ->requiresConfirmation()
-                ->visible(fn (Subscription $record): bool => $record->status === 'active' && ! $record->cancel_at_period_end)
                 ->action(function (Subscription $record): void {
                     $this->run(fn (User $actor) => app(SubscriptionLifecycle::class)->cancelAtPeriodEnd($record, $actor));
                 }),

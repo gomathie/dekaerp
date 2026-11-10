@@ -64,10 +64,10 @@ class RecurringInvoiceGenerator
 
         return [
             'subscription_id' => (int) $subscription->getKey(),
-            'company_id' => (int) $subscription->company_id,
+            'company_id'      => (int) $subscription->company_id,
             'period_start_at' => $subscription->period_start_at?->format(DateTimeInterface::ATOM),
-            'amount_minor' => (int) $subscription->amount_minor,
-            'currency' => (string) $subscription->currency,
+            'amount_minor'    => (int) $subscription->amount_minor,
+            'currency'        => (string) $subscription->currency,
         ];
     }
 
@@ -94,7 +94,7 @@ class RecurringInvoiceGenerator
 
         Log::info('Platform billing invoice run.', [
             'subscription_id' => $subscriptionId,
-            'outcomes' => $outcomes,
+            'outcomes'        => $outcomes,
         ]);
 
         return $outcomes;
@@ -228,37 +228,37 @@ class RecurringInvoiceGenerator
         $sequence = (int) substr($number, -6);
 
         $invoice = Invoice::query()->create([
-            'company_id' => $subscription->company_id,
-            'subscription_id' => $subscription->getKey(),
-            'period_start_at' => $subscription->period_start_at,
-            'period_end_at' => $subscription->period_end_at,
-            'number' => $number,
-            'document_year' => $year,
-            'sequence' => $sequence,
-            'issued_at' => $issuedAt,
-            'due_at' => $issuedAt->modify('+7 days'),
-            'grace_starts_at' => $issuedAt->modify('+8 days'),
-            'currency' => 'USD',
-            'issuer_name' => (string) config('platform-billing.issuer.name', 'DEKA'),
-            'tax_rate' => $taxRate,
-            'tax_enabled' => $taxEnabled,
-            'subtotal_minor' => $subtotal->minor,
-            'discount_minor' => $discount->minor,
-            'tax_minor' => $tax->minor,
-            'total_minor' => $total->minor,
+            'company_id'             => $subscription->company_id,
+            'subscription_id'        => $subscription->getKey(),
+            'period_start_at'        => $subscription->period_start_at,
+            'period_end_at'          => $subscription->period_end_at,
+            'number'                 => $number,
+            'document_year'          => $year,
+            'sequence'               => $sequence,
+            'issued_at'              => $issuedAt,
+            'due_at'                 => $issuedAt->modify('+7 days'),
+            'grace_starts_at'        => $issuedAt->modify('+8 days'),
+            'currency'               => 'USD',
+            'issuer_name'            => (string) config('platform-billing.issuer.name', 'DEKA'),
+            'tax_rate'               => $taxRate,
+            'tax_enabled'            => $taxEnabled,
+            'subtotal_minor'         => $subtotal->minor,
+            'discount_minor'         => $discount->minor,
+            'tax_minor'              => $tax->minor,
+            'total_minor'            => $total->minor,
             'discount_redemption_id' => $applied ? $redemption?->getKey() : null,
-            'discount_code' => $applied ? $redemption?->code_snapshot : null,
-            'discount_type' => $applied ? $redemption?->discount_type : null,
-            'discount_value' => $applied ? $redemption?->discount_value : null,
-            'free_month_applied' => $applied && $freeMonthApplies,
-            'status' => 'posted',
+            'discount_code'          => $applied ? $redemption?->code_snapshot : null,
+            'discount_type'          => $applied ? $redemption?->discount_type : null,
+            'discount_value'         => $applied ? $redemption?->discount_value : null,
+            'free_month_applied'     => $applied && $freeMonthApplies,
+            'status'                 => 'posted',
         ]);
 
         InvoiceLine::query()->create([
-            'invoice_id' => $invoice->getKey(),
-            'company_id' => $subscription->company_id,
-            'position' => 1,
-            'description' => $subscription->plan_name.' ('.$subscription->interval_months.' months)',
+            'invoice_id'   => $invoice->getKey(),
+            'company_id'   => $subscription->company_id,
+            'position'     => 1,
+            'description'  => $subscription->plan_name.' ('.$subscription->interval_months.' months)',
             'amount_minor' => $subtotal->minor,
         ]);
 
