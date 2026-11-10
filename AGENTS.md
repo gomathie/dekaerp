@@ -1673,6 +1673,16 @@ log named):
     failed with "550-From header sender domain not verified" for every tenant
     address (Sentry 158147606). The author is still the From **name**.
   - Tests: `chatter/tests/Feature/MailSenderTest.php`.
+  - *Planned change (user decision D16, 2026-11-11; `docs/logistics-plan.md`
+    §6a; not built):* a Super Admin may give a company its own SMTP, and SMS
+    provider. Once set, all of that company's mail and SMS use it, chosen by
+    the **record's** company. The From is then that company's configured
+    address. Without one, nothing changes: the application SMTP and
+    `mail.from.address` are used. Build it as one resolver that every sender
+    calls. Do not change the From rule above until that resolver exists.
+    If a company's own server or SMS provider fails, **never** fall back to
+    the application's (user, 2026-11-11). Record the failure for the Super
+    Admin, without secrets, and leave the message failed so it can be retried.
   - A tampered Livewire update is a client error, not a server fault:
     `CannotUpdateLockedPropertyException` is excluded from reporting and answers
     400 (`bootstrap/app.php`). Sentry 151536596 came from an unauthenticated

@@ -1,6 +1,10 @@
 # Logistics Plugin — Implementation Plan
 
-Status: **Complete (2026-11-10).** Every package on the status board is done.
+Status: **Phase 1 complete (2026-11-10).** Phase 2 (WP-14 to WP-23, §6a,
+added 2026-11-11 from an ERPNext/Frappe comparison) is planned and not started.
+The line below describes phase 1.
+
+Every phase 1 package on the status board is done.
 WP-9b is a read-only tab on the customer page. PILOT telematics stays research
 and was not built.
 Prepared 2026-09-17 against `main @ 3e8cf0bf2`. Work happened on the branch
@@ -394,6 +398,17 @@ you claim a package, finish it, or get blocked.
 | WP-10 | Dashboard widgets | WP-4, WP-5 | WP-9, WP-11 | done (125/506 pass, whole suite green) | Claude 2026-09-24, db `aureuserp_testing_wp10` |
 | WP-11 | Reports | WP-4, WP-5, WP-7, WP-8b | WP-10 | done (176/676 pass, whole suite green) | Claude 2026-09-25, db `aureuserp_testing_wp11` |
 | WP-12 | Translations ar/es/fr/pt_BR | each finished package | anything | done (`translations:check`: 4/4 pass; TTL regression 1/1 pass) | Codex 2026-09-30, db `aureuserp_testing_wp12` |
+| WP-14 | Vehicle and driver documents (§6a) | — | WP-15..WP-21 | todo | |
+| WP-15 | Fuel and vehicle log (§6a) | — | WP-14, WP-16 | todo | |
+| WP-16 | Customer notifications and tracking page (§6a) | — | WP-14, WP-15 | todo | |
+| WP-17 | Inventory delivery link (§6a) | — | WP-14..WP-16 | todo | |
+| WP-18 | Stop order, distance and ETA (§6a) | WP-17 for multi-order trips | WP-19 | todo | |
+| WP-19 | Rate cards (§6a) | — | WP-18 | todo | |
+| WP-20 | Parcel templates and packing list (§6a) | — | anything | todo | |
+| WP-21 | Import from ERPNext and spreadsheets (§6a) | WP-14 | anything | todo | |
+| WP-22 | Trailers and trip manifest (§6a) | — | anything | todo | |
+| WP-23 | Carrier integration contract (§6a) | — | — | deferred | |
+| WP-24 | Return shipments and incoterms (§6b O11, O12) | — | anything | todo | |
 | WP-13 | Hardening and release | all | — (runs alone) | done (2,606/2,606 green; §4b rehearsal done; §0b resolved in code; §0c done; WP-5b done; Supabase Security + Performance advisors passed 2026-10-20) | Codex 2026-09-30 + Claude 2026-09-30 + Claude Sonnet 4.6 2026-10-20, db `aureuserp_testing_wp13_*` |
 
 **Promotions to `done` on 2026-09-29** (user: *"promote all green to done as
@@ -931,6 +946,273 @@ production access:
 - CHANGELOG.md release notes.
 - **WP-5b fragment-POD implementation** — confirmed blocker before customer release. See `docs/handover-actions.md` §7.
   *Checked 2026-11-10:* still open in code. `StopLinkService::issue()` returns the path route. The later handoff that marks this shipped does not match the tree.
+
+---
+
+## 6a. Phase 2: ERPNext/Frappe comparison (2026-11-11)
+
+**Why:** most customers come from another ERP (user, 2026-11-11). They arrive
+with ERPNext habits and data. This section records what ERPNext/Frappe has,
+what DEKA already does better, the gaps, and the packages that close them in
+DEKA's own architecture. Rules from §0 and §2a apply unchanged: per-company
+switch, `BelongsToCompany`, services own the logic, and no new packages
+without approval.
+
+### What was studied
+
+- **ERPNext core (Stock):**
+  - **Delivery Trip:** a driver and vehicle, departure time, and stops (one
+    customer per stop, address filled in, submitted Delivery Notes attached).
+    "Get customers from Delivery Note", or create the trip from a Delivery
+    Note. ETA and route optimisation come from Google Maps, using the
+    customer's and the driver's addresses.
+    ([doc](https://docs.frappe.io/erpnext/delivery-trip),
+    [Google Maps](https://docs.frappe.io/erpnext/v13/user/manual/en/erpnext_integration/google_maps))
+  - **Driver** (licence, categories, expiry) and **Vehicle** (plate, odometer,
+    fuel, insurance).
+  - **Vehicle Log:** odometer, fuel and service entries, which can become an
+    employee expense claim.
+  - **Shipping Rule:** freight priced by amount or weight, with country
+    conditions.
+  - **Packing Slip** and **Shipment:** parcels with dimensions, parcel
+    templates, value of goods, pickup and delivery parties, and tracking
+    status.
+  - Field-level details of Driver, Vehicle, Vehicle Log, Shipping Rule and
+    Shipment come from knowledge of ERPNext v15 and were **not re-read from
+    source this session**. Verify them before WP-21 maps any field.
+- **ERPNext Shipping app:**
+  - Packlink, LetMeShip and SendCloud: rate comparison, carrier booking,
+    labels and tracking from the Shipment.
+  - Carrier credentials on one doctype per carrier.
+  - European parcel aggregators.
+  - ([doc](https://docs.frappe.io/erpnext/erpnext_shipping.md),
+    [repo](https://www.github.com/frappe/erpnext-shipping))
+- **Community fleet apps:**
+  - [vsd fleet_ms](https://github.com/iphenelist/fleet_ms): trucks, trailers,
+    drivers, routes, transport orders, cargo types, fuel requests, fixed
+    expenses, inspections, manifests and round trips.
+  - [fleet_management](https://github.com/dalwadani/fleet_management): odometer
+    and fuel; alpha, "do not use in production".
+  - ERPNext core ships no fleet or transport vertical. Vendor pages that sell
+    one (ecosire.com) are marketing and were not used as evidence.
+
+### Where DEKA is already ahead (keep; do not regress)
+
+| DEKA | ERPNext |
+| --- | --- |
+| Shipment workflow with exceptions: hold, failed delivery, return, cancel. A typed event timeline (§2) | A Delivery Trip is draft, then submitted. Shipment tracking status comes only from an integration |
+| Proof of delivery per stop: name, time, photo, signature, location; office or one-time stop link (D8, D15) | No proof of delivery in core |
+| Charges, invoicing, margin, and expenses becoming vendor bills (D2, D3, WP-7, WP-8) | Freight through a Shipping Rule on the sales document. No per-shipment cost or margin |
+| Opening shipments at cutover (D13) | Not covered |
+| Per-company switch and isolation (§2a) | One site per company is the usual pattern |
+| Capacity warning on trips (D5) | None |
+
+### Gaps and the package that closes each
+
+| # | ERPNext / Frappe has | DEKA today | Improvement in DEKA's design | Package |
+| --- | --- | --- | --- | --- |
+| G1 | Driver licence categories and expiry. Vehicle insurance details | `license_expires_at` only. No vehicle documents | **Documents with expiry** for vehicles (insurance, roadworthiness, permit, other) and drivers (licence, medical). An expiry alert widget. Dispatch **warns or blocks** an assignment with an expired document (D17). ERPNext only stores the dates | WP-14 |
+| G2 | Vehicle Log (fuel, odometer, service) and expense claim | Trip odometer start and end only | **Fuel entries** (litres, price, odometer, station, receipt). Each creates an `Expense` (Fuel category), so costs keep the one approval and billing path (WP-8). Consumption per vehicle (L/100 km) in Reports | WP-15 |
+| G3 | "Notify customers" on a Delivery Trip, by email | Nothing customer-facing | **Notifications** at dispatch, out for delivery, delivered and failed, with ETA. Email first, SMS or WhatsApp through a vendor-agnostic provider (D16). **A public tracking page** by token in the URL fragment, the same lesson as WP-5b §0b | WP-16 |
+| G4 | Trip built from Delivery Notes | Shipments come from Sales orders (D1) only | **From inventory deliveries:** a shipment from an Inventory delivery operation, and a trip from several. Delivered state written back as an event. Read scope-free, by key, as `ShipmentFromOrder` does | WP-17 |
+| G5 | Route optimisation and ETA (Google Maps) | Manual stop order. No distance | **Stop ordering** with a per-stop lock, as in ERPNext. Distance and ETA through a `RoutingProvider` contract with a manual fallback (kilometres entered). `total_distance_km` on the trip. Provider choice is D18 | WP-18 |
+| G6 | Shipping Rule | Prices typed on each charge | **Rate cards** per company: service type, zone or route, and weight, volume or flat bands, with validity dates. They fill charges and still allow editing. Sales quotation pricing stays as D1 | WP-19 |
+| G7 | Parcel templates, Packing Slip | Package types without default sizes | Package types gain default dimensions and weight, so lines fill from the template. **Packing list PDF** beside the waybill (WP-6) | WP-20 |
+| G8 | (Migration) ERPNext data in doctypes | Drivers from employees, vehicles from Maintenance | **Import** of drivers, vehicles, documents and open shipments from ERPNext CSV exports or a DEKA template, with column mapping. Open jobs become D13 opening shipments. Follows the `ContactImporter` pattern: one column definition drives the template and the validation, plus the formula-injection guard | WP-21 |
+| G9 | Trailers, manifests, round trips (fleet_ms) | One vehicle per trip | A **trailer** as a vehicle type flag, plus an optional `trailer_id` on the trip, which adds to capacity. A **trip manifest PDF** listing shipments, packages, weight and stops | WP-22 |
+| G10 | Carrier aggregators (Packlink, SendCloud, LetMeShip) | Carrier as partner plus reference | **Deferred.** These are European parcel networks and our pilots are in Ghana, Zambia and Congo. When needed: a `CarrierProvider` contract plus a provider enum and an options bag, never vendor-named columns | WP-23 |
+
+### Decisions needed (user)
+
+| ID | Question | Recommendation |
+| --- | --- | --- |
+| D16 | Customer notification channels | **Answered (user, 2026-11-11), applies app-wide, not only Logistics.** See "D16: per-company email and SMS" below |
+| D17 | An expired vehicle or driver document at dispatch: warn or block? | **Answered (user, 2026-11-11): warn and allow.** Per-company setting `document_check`, default `warn`, switchable to `block`, as `capacity_check` does |
+| D18 | Routing provider for distance and ETA | **Answered (user, 2026-11-11): distance typed by hand, plus a free map service (OSRM), plus the GPS tracking platform.** `RoutingProvider` has three sources. (1) Manual entry is always available. (2) OSRM gives planned distance, ETA and stop order. The public OSRM demo server forbids production use, so it needs a self-hosted or hosted instance, with its URL as a setting. (3) Telematics (PILOT) gives the **actual** distance driven, from odometer or GPS track, for completed trips. Planned and actual distance are stored separately, so fuel and cost per km use actual figures when present. Vendor-agnostic: a provider enum plus an options bag |
+| D19 | Rate card scope | **Answered (user, 2026-11-11): standard prices.** Service type × zone × band (weight, volume or flat), per company, with validity dates. No customer-specific cards in the first version |
+| D20 | Import sources | **Answered (user, 2026-11-11): all three.** ERPNext export files, a DEKA template, and Odoo export files. One import service per record type. Each source is a column mapping onto the same definition |
+
+### D21: vehicles and drivers, entered or synchronised from GPS (user decision, 2026-11-11)
+
+**Rule (user):** vehicle and driver details often already exist in a GPS
+tracking system. A company either **enters them in DEKA**, or, once its GPS
+platform is integrated, has them **synchronised** from it.
+
+**How it fits.** The two points marked \* were confirmed by the user on
+2026-11-11: GPS wins its own fields, and a record removed from GPS is marked
+inactive.
+- **Choice and setup:**
+  - Per company, in Logistics settings: source `manual` (default) or a
+    telematics provider.
+  - The company's own credentials, encrypted, set like the D16 per-company
+    SMTP.
+  - Vendor-agnostic: the existing `TelematicsProvider` enum plus an options
+    bag. PILOT is the first adapter, through the existing `PilotClient`.
+- **Matching:**
+  - Vehicles match on `telematics_device_ref` or `telematics_agent_id`, then
+    on registration number within the company.
+  - Drivers match on the platform's driver id, then on licence number.
+  - A record that cannot be matched is created as new. It is never attached
+    to another company's record: sync runs with an explicit `company_id`
+    and reads scope-free, by key.
+- **Ownership of fields\*:**
+  - The GPS platform owns what it knows: plate, make, model, device,
+    odometer, last location, driver name and phone.
+  - DEKA owns the rest: documents (WP-14), costs, capacity, ownership and
+    carrier.
+  - Sync overwrites only GPS-owned fields. An edit in DEKA to a GPS-owned
+    field is overwritten at the next sync, and the form says so.
+- **Removal\*:** a vehicle or driver that disappears from the platform is
+  **deactivated, never deleted**, because trips, expenses and history point
+  at it.
+- **Schedule and safety:**
+  - A queued job on a schedule, plus a "Sync now" action.
+  - Each run is recorded with counts (created, updated, deactivated,
+    unmatched) and any error, without secrets.
+  - The run is idempotent and safe to run twice.
+- **Both directions are optional:** a company with GPS can still add a
+  vehicle by hand, for example a hired truck with no tracker.
+- **Distance (D18):** the same integration supplies actual distance driven.
+
+Package: becomes part of **WP-21** (import), because sync is an import
+whose source is the GPS platform rather than a file. WP-14 adds no
+GPS-owned fields.
+
+### D16: per-company email and SMS (user decision, 2026-11-11)
+
+**Rule:**
+- The application's main SMTP sends **every** notification by default.
+- A **Super Admin** may give a company its own SMTP. When a company has one,
+  **all** of that company's mail uses it: to its customers, its staff and
+  anyone else.
+- When it has none, mail falls back to the application's SMTP.
+- SMS works the same way: an application-wide SMS provider by default, and a
+  company's own provider, set by a Super Admin, wins for that company.
+
+**Constraints for whoever builds it** (a platform package in
+`support` or `security`, not in Logistics, because every plugin sends mail):
+- **Who can configure it:** only an active Super Admin can set, change or
+  remove a company's SMTP or SMS configuration. A Company Admin or
+  Multi-Company Admin may not, unless the user widens this later.
+- **Which company decides:** the transport is chosen from the **record's
+  company**, never the acting user's. This matches the recipients rule
+  (`Partner::recipientsForCompany()`). It also covers queued mail and jobs
+  with no user.
+- **From address:**
+  - Supersedes in part the protected decision "Mail leaves as the
+    application" (2026-11-04).
+  - With a company SMTP, the envelope From is that company's configured
+    From address, the only one its relay may send as.
+  - Without one, the From stays `config('mail.from.address')`, exactly as
+    today.
+  - The author stays the From **name** in both cases.
+- **Secrets:**
+  - Passwords and API keys are encrypted at rest (APP_KEY cast) and never
+    shown back after saving: masked, with "replace" only.
+  - They are never logged, audited by value or sent to Sentry.
+  - A "Send test" action checks the configuration before it is saved as
+    active.
+- **When the company's own server fails:**
+  - Do not silently fall back to the application's SMTP. The company chose
+    its own sender, so an unexpected sender confuses its customers and may
+    fail their DMARC checks.
+  - Report the failure (audit and Sentry, without secrets), show it to the
+    Super Admin on the company, and leave the message failed so it can be
+    retried.
+  - *Confirmed by the user, 2026-11-11: "if a company's mail server fails,
+    don't fall back on the app's SMTP."* The same applies to a company's SMS
+    provider. Do not add a fallback without asking.
+- **SMS providers:** vendor-agnostic. A provider enum plus an options bag,
+  never columns named after one vendor (user rule).
+- **Where it goes:** one resolver (for example `CompanyMailer::for($companyId)`
+  and `CompanySms::for($companyId)`) that every sender calls:
+  `EmailService`, `ChatterNotificationService`, invoice, sales and purchase
+  email, invitations and Logistics WP-16. One rule, one place.
+- **Mail leaves after commit,** as today.
+
+WP-16 depends on this for company-branded notifications. It may ship first
+on the application's SMTP, because the resolver's fallback makes that
+behaviour identical.
+
+### Package outlines (each writes its own detail when claimed)
+
+- **WP-14 Documents:**
+  - Table `logistics_documents`, polymorphic over vehicle and driver, with
+    type, number, issued_at, expires_at and file.
+  - Company settings `document_check` (warn or block) and
+    `document_alert_days`.
+  - `DispatchService` calls the check.
+  - Expiry widget.
+  - Tests pin the warn and block messages.
+- **WP-15 Fuel:**
+  - Table `logistics_fuel_entries`, linked to the vehicle, trip and expense.
+  - `FuelLogService` creates the `Expense` in the same transaction.
+  - Consumption report.
+- **WP-16 Notifications:**
+  - A `ShipmentWorkflow` event listener.
+  - Notification per customer contact (`Partner::recipientsForCompany()`,
+    under the protected email rule).
+  - Mail goes out after commit, from the application address.
+  - Table `logistics_tracking_links`, storing a hash only, using the fragment
+    flow.
+- **WP-17 Inventory:**
+  - "Create shipment" from a done or ready delivery operation, and "Add to
+    trip" in bulk.
+  - Inventory files are untouched where an extension point exists. Otherwise
+    the Logistics side gets a picker, the same as the sales order picker in
+    §2a.
+- **WP-18 Routing:**
+  - `Stop.is_locked` and `distance_km`, `Trip.total_distance_km`.
+  - `RoutingProvider` contract with a `ManualRoutingProvider`.
+  - Reorder on the dispatch board.
+- **WP-19 Rates:**
+  - Tables `logistics_rate_cards` and `logistics_rate_lines`.
+  - `RateCalculator`, called by a "Price from rate card" action on charges.
+- **WP-20 Parcels:** default dimensions on `logistics_package_types`, and a
+  packing list view.
+- **WP-21 Import:**
+  - `FleetImporter` gains a CSV path.
+  - One import service per record type, using the column-definition pattern.
+- **WP-22 Trailers:** `vehicle_types.is_trailer`, `trips.trailer_id`, and a
+  manifest PDF.
+
+Order of value: **WP-14, WP-16, WP-17, WP-21** first. These are what
+customers moving from ERPNext notice first: compliance, customer updates,
+deliveries from stock, and their own data. Then WP-15, WP-19, WP-18, WP-20,
+WP-22.
+
+## 6b. Odoo comparison: additions beyond §6a (2026-11-11)
+
+Phase 1 already took from Odoo: quotations through Sales (D1), cost lines and
+a bill per vendor (D2), `paid_by` expenses (D3), vehicle capacity on dispatch
+(D5) and the driver as a contact (D6). The rows below come from Odoo 17–19
+**Fleet**, **Inventory** (delivery methods, batch and dispatch, packages,
+tracking) and **SMS on delivery**, from knowledge of those apps rather than
+pages re-read this session. Verify them against Odoo's documentation before
+building.
+
+| # | Odoo has | Gives DEKA | Fits into |
+| --- | --- | --- | --- |
+| O1 | **Fleet contracts:** leasing, insurance or rental, with a recurring cost (monthly or yearly), start and end dates, and a renewal alert | Recurring vehicle cost, posted per period as an expense, which feeds margin and cost per kilometre | WP-14: a document gains `recurring_amount` and `period`. The posting reuses the WP-8 expense path |
+| O2 | **Services log:** repairs and maintenance per vehicle, with vendor and cost | Repairs as expenses against the vehicle. Work orders stay in Maintenance, through `equipment_id` | WP-15: a service entry is a sibling of the fuel entry |
+| O3 | **Odometer history**, its own list per vehicle | One odometer timeline, fed by trips, fuel and services. It catches typing mistakes (a reading lower than the last one) | WP-15 |
+| O4 | **Driver history and "future driver"** | Who drove which vehicle when, for fines and incidents | WP-14: an assignment log on the vehicle |
+| O5 | **Vehicle cost analysis**: cost per vehicle by type and month | A total cost of ownership report: fuel, services, contracts and subcontracting against revenue, per vehicle | WP-11 follow-up report, after WP-15 |
+| O6 | **Delivery methods with pricing rules:** fixed, or rules on weight, volume, quantity or price, with destination country, state or postal-code conditions, and a free-over threshold | Confirms the WP-19 shape. Adds the **free-over threshold** and **destination conditions** as zone definitions | WP-19 |
+| O7 | **Batch and wave transfers with dispatch:** a batch with vehicle, dock and capacity check, built from several delivery orders | The same idea as WP-17's "add to trip" in bulk. Adds a **loading dock** field and the loading order | WP-17 |
+| O8 | **Packages:** package types with maximum weight and dimensions. "Put in pack" | Package types gain maximum weight, and lines warn when exceeded | WP-20 |
+| O9 | **SMS confirmation and tracking link** sent when a delivery is validated | Confirms D16. The tracking link is the WP-16 page | WP-16 |
+| O10 | **Signature on the delivery order** at validation | Already better in DEKA (D8 per-stop proof of delivery). No change | — |
+| O11 | **Return labels and returns** | A **return shipment** created from a delivered or failed one, in reverse, linked to the original | New, small. Suggest WP-24 |
+| O12 | **Incoterms** on orders and deliveries | `incoterm_id` on the shipment, for cross-border jobs (Ghana, Zambia, Congo) and customs costs. Sales already carries incoterms, so check `ShipmentFromOrder` copies it | WP-17 or WP-24 |
+| O13 | **Field Service and Planning** Gantt for people | A **driver availability and duty** view: leave from Time Off, plus hours per day. Dispatch warns on an unavailable driver | Later. Needs Time Off read access |
+| O14 | **Carbon (CO2) per vehicle** | CO2 per trip, from fuel litres times a factor per fuel type. Cheap once WP-15 exists, and asked for in tenders | WP-15 option |
+
+**Recommended picks from Odoo:**
+- O1, O3, O4 and O6 strengthen packages already planned at little cost.
+- O11 (returns) and O12 (incoterms) are small additions that customers moving
+  from Odoo expect.
+- O5 is the report owners ask for once fuel and services are recorded.
 
 ---
 
