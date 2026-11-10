@@ -3,6 +3,7 @@
 namespace Webkul\Security\Services;
 
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -98,9 +99,17 @@ class CompanyAdminPasswordVault
             throw ValidationException::withMessages(['password' => self::NOT_STORED]);
         }
 
+        // A copy encrypted under an earlier APP_KEY cannot be read after the
+        // key is rotated; say so instead of failing the page with a 500.
+        try {
+            $plain = Crypt::decryptString($encrypted);
+        } catch (DecryptException) {
+            throw ValidationException::withMessages(['password' => self::NOT_STORED]);
+        }
+
         // Who read whose password, never the password itself.
         $this->audit->record('security.user.password_revealed', $target, $actor, $companyId);
 
-        return Crypt::decryptString($encrypted);
+        return $plain;
     }
 }

@@ -1594,8 +1594,18 @@ log named):
     `administrators($company)` lists" (`NOT_ADMINISTRATOR`). The company's edit
     page now has a **Users and logins** list (`UsersRelationManager`, visible
     to installation staff only) with **Set password** on each member, for
-    when invitation emails do not arrive. Current passwords are never shown:
-    they are one-way hashes.
+    when invitation emails do not arrive. *Superseded 2026-11-10 (user, after
+    the risk was explained and show-once was offered):* "Current passwords are
+    never shown: they are one-way hashes." Now a **Company Admin's** password
+    is also kept encrypted with APP_KEY in `security_user_password_vault`
+    (never on `users`), captured by `User::setAttribute` on every change and
+    by `CompanyAdministratorAccount` on create. Only an active Super Admin
+    reads it, by re-entering their own password ("Show password" on Users and
+    logins); each read is audited without the value. Every rule is in
+    `CompanyAdminPasswordVault`. Do not widen it to other roles or let
+    Multi-Company Admins read it without asking the user. Anyone with APP_KEY
+    and the database can read these passwords: rotate APP_KEY with care.
+    Test: security `CompanyAdminPasswordVaultTest`.
   - The password is **never emailed**. The person who sets it hands it over.
   - On edit, a blank email does nothing. Only create falls back to the
     company's address, or every save would invite the company mailbox.

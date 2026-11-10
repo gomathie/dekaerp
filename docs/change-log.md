@@ -35,6 +35,15 @@ for the task/question log this change log is paired with.
 - **Test:** `AdministrationScreensTest.php`, `BillingScreensTest.php`.
 - **Rollback:** remove the cluster, the two pages, the company-form section and `PlanCatalog`. No migration.
 
+## 2026-11-10 (readable company administrator passwords; administrator login investigation)
+
+- **Why:** user requirement: a Super Admin must be able to see a company administrator's password. The user chose encrypted, viewable storage over show-once and reset-only after the risk was explained (anyone with APP_KEY and the database can read every stored password).
+- **How:** `security_user_password_vault` (security migration `2026_11_10_000003`), one row per Company Admin, value encrypted with `Crypt` (APP_KEY), on its own table so it never travels with a user record. `User::setAttribute` notes the typed password and the `saved` hook hands it to `CompanyAdminPasswordVault::capture()`, which stores it for a Company Admin and removes any copy for anyone else; `CompanyAdministratorAccount` stores it after assigning the role on create. "Show password" on the company's Users and logins: active Super Admin only, re-enter own password, audited as `security.user.password_revealed` without the value. A copy unreadable after an APP_KEY rotation answers "No password is stored", not a 500.
+- **Login investigation (production, read-only):** no user has ever been created for HITRACE (5) or Naviafri (6); there are no invitations at all. The "Company Admin" role holds 7 permissions (users and company view only), by design of `CompanyAdminRoleProvisioner` ("assign business roles alongside"): an administrator created from the company form signs in to an almost empty panel. The three working tenant administrators hold "Admin2" (1,038 permissions). See the session report for the decision needed.
+- **Trade-off / risk:** readable passwords are a deliberate weakening; it is limited to Company Admins and Super Admin readers. Rotating APP_KEY makes stored copies unreadable until the password is set again.
+- **Verification:** `CompanyAdminPasswordVaultTest` (see the run recorded in the handoff).
+- **Rollback:** roll back the migration (drops every stored copy), remove the `setAttribute` override and `saved` hook, the action and the service.
+
 ## 2026-11-10 (company isolation, missing permissions, user pickers)
 
 - **Why (found in production, read-only checks):**
