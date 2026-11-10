@@ -23,6 +23,7 @@ use Illuminate\Validation\ValidationException;
 use Webkul\Security\CompanyAdminContributions;
 use Webkul\Security\Models\Invitation;
 use Webkul\Security\Models\User;
+use Webkul\Security\Services\CompanyAdminPasswordVault;
 use Webkul\Security\Services\CompanyAdministratorAccount;
 use Webkul\Security\Services\CompanyAdministratorInviter;
 use Webkul\Security\Services\TenantImpersonation;
@@ -195,6 +196,63 @@ class UsersRelationManager extends RelationManager
                             ->send();
 
                         return redirect()->to(filament()->getPanel('admin')->getUrl());
+                    }),
+                // A company administrator's stored password, readable by a
+                // Super Admin only (user, 2026-11-10). Every rule is in
+                // CompanyAdminPasswordVault; hidden here is not a guard.
+                Action::make('showPassword')
+                    ->label(__(static::$lang.'.table.actions.show-password.label'))
+                    ->icon('heroicon-o-lock-open')
+                    ->color('gray')
+                    ->modalHeading(fn (User $record): string => __(static::$lang.'.table.actions.show-password.modal-heading', ['email' => $record->email]))
+                    ->modalDescription(__(static::$lang.'.table.actions.show-password.modal-description'))
+                    ->modalSubmitActionLabel(__(static::$lang.'.table.actions.show-password.submit'))
+                    ->visible(function (User $record): bool {
+                        $actor = Auth::user();
+
+                        return $actor instanceof User
+                            && app(CompanyAdminPasswordVault::class)->mayReveal($actor)
+                            && $record->isCompanyAdmin((int) $this->getOwnerRecord()->getKey());
+                    })
+                    ->schema([
+                        TextInput::make('password')
+                            ->label(__(static::$lang.'.table.actions.show-password.form.password'))
+                            ->password()
+                            ->required()
+                            ->autocomplete('current-password'),
+                    ])
+                    ->action(function (User $record, array $data, Action $action): void {
+                        $actor = Auth::user();
+
+                        if (! $actor instanceof User) {
+                            return;
+                        }
+
+                        try {
+                            $password = app(CompanyAdminPasswordVault::class)->reveal(
+                                $actor,
+                                $record,
+                                (string) $data['password'],
+                                (int) $this->getOwnerRecord()->getKey(),
+                            );
+                        } catch (ValidationException $exception) {
+                            throw ValidationException::withMessages(collect($exception->errors())
+                                ->mapWithKeys(fn (array $messages, string $key): array => ['mountedActions.0.data.'.$key => $messages])
+                                ->all());
+                        } catch (AuthorizationException $exception) {
+                            Notification::make()->danger()->title($exception->getMessage())->send();
+
+                            $action->halt();
+
+                            return;
+                        }
+
+                        Notification::make()
+                            ->title(__(static::$lang.'.table.actions.show-password.shown', ['email' => $record->email]))
+                            ->body($password)
+                            ->info()
+                            ->persistent()
+                            ->send();
                     }),
                 Action::make('setPassword')
                     ->label(__(static::$lang.'.table.actions.set-password.label'))

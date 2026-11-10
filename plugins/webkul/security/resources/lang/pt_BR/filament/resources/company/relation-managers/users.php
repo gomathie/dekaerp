@@ -23,6 +23,17 @@ return [
                 'invitation' => 'Convite pendente',
                 'link'       => 'Link do convite',
             ],
+            'show-password' => [
+                'label'             => 'Mostrar senha',
+                'modal-heading'     => 'Mostrar a senha de :email',
+                'modal-description' => 'Digite sua própria senha para continuar. Esta consulta fica registrada no log de auditoria.',
+                'submit'            => 'Mostrar senha',
+                'shown'             => 'Senha de :email',
+
+                'form' => [
+                    'password' => 'Sua senha',
+                ],
+            ],
             'set-password' => [
                 'label'             => 'Definir senha',
                 'modal-heading'     => 'Definir a senha de :email',
