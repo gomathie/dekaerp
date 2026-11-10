@@ -426,6 +426,19 @@
                                 ]
                             }
                         ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "logistics_recent_shipments"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "logistics_open_charges"
+                            }
+                        ]
                     }
                 ]
             }

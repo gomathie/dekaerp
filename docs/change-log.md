@@ -6,6 +6,25 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-11 (existing companies' administrators become Company Admin)
+
+- **Why:** the user asked for it. TRACE365, APEX and Nestem each have one
+  administrator, given "Admin2" by hand, and none holds "Company Admin". So
+  the company page listed nobody, and Show password could not apply to them.
+- **How:** security migration
+  `2026_11_11_000001_make_existing_business_admins_company_admins`. A company
+  qualifies only when it has no Company Admin yet. Its one active member who
+  holds Admin2 there and no platform role then gets Company Admin, added
+  beside their existing roles. A company with two or more candidates is
+  skipped and logged. It is idempotent, and rollback leaves the rows (they
+  cannot be told apart from rows the form creates later).
+- **Unchanged:** passwords. Show password works for these administrators only
+  after a password is set once through Set password.
+- **Expected in production:** TRACE365, APEX and Nestem each get their one
+  member as Company Admin. My Company, HITRACE and Naviafri have no
+  candidate.
+- **Test:** security `SaaSAdministration/BusinessAdminBackfillMigrationTest`.
+
 ## 2026-11-11 (company administrator never created: wrong pages on the company routes)
 
 - **Why:** the user entered an administrator in the Administrator section on

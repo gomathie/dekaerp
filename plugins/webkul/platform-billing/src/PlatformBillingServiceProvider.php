@@ -61,6 +61,7 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
                 '2026_11_09_000002_create_platform_billing_invoices_tables',
                 '2026_11_09_000003_create_platform_billing_payments_tables',
                 '2026_11_09_000005_create_platform_billing_overdue_extensions_table',
+                '2026_11_11_000001_require_company_for_company_list_discount_codes',
             ])
             ->hasCommands([
                 InvoiceSubscriptions::class,

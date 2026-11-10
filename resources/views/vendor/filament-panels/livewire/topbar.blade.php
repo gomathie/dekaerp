@@ -529,6 +529,19 @@
                     padding: 0.5rem;
                 }
 
+                /* Sidebars still scroll (wheel, touch, keyboard) but show no
+                   scrollbar (user, 2026-11-11). */
+                .module-sidebar-nav,
+                .fi-sidebar-nav {
+                    scrollbar-width: none;
+                    -ms-overflow-style: none;
+                }
+
+                .module-sidebar-nav::-webkit-scrollbar,
+                .fi-sidebar-nav::-webkit-scrollbar {
+                    display: none;
+                }
+
                 .module-sidebar-link {
                     display: flex;
                     align-items: center;

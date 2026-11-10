@@ -229,3 +229,79 @@ it('keeps discount redemptions immutable in the database', function () {
         ->and(fn () => DB::transaction(fn () => DB::table('platform_billing_discount_redemptions')->where('id', $redemption->id)->delete()))
         ->toThrow(QueryException::class, 'Discount redemptions are immutable.');
 });
+
+/**
+ * Run a write and force the plugin's deferred checks to run now. Tests sit in
+ * one rolled-back transaction, so a deferred trigger would otherwise never
+ * fire. The savepoint keeps a refused write from poisoning the test.
+ */
+function discountCodeWriteWithChecks(callable $write): void
+{
+    try {
+        DB::transaction(function () use ($write): void {
+            $write();
+            DB::statement('SET CONSTRAINTS ALL IMMEDIATE');
+        });
+    } finally {
+        DB::statement('SET CONSTRAINTS ALL DEFERRED');
+    }
+}
+
+/**
+ * A company-list code that names no company can never be redeemed (user,
+ * 2026-11-11). The service refused it; the database now refuses it from any
+ * writer, including removing a code's last company.
+ */
+it('refuses a company-list discount code with no company in the database', function () {
+    $company = Company::factory()->create();
+    $code = app(DiscountCodeService::class)->create(discountCodeSuperAdmin(), discountCodeTerms([
+        'eligibility_type' => 'company_list',
+        'company_ids'      => [$company->getKey()],
+    ]));
+
+    // A valid code passes the deferred check.
+    discountCodeWriteWithChecks(fn () => DB::table('platform_billing_discount_codes')->where('id', $code->id)->update(['eligibility_type' => 'company_list']));
+
+    expect(fn () => discountCodeWriteWithChecks(fn () => DB::table('platform_billing_discount_codes')->insert([
+        'code'          => 'EMPTY-LIST', 'discount_type' => 'percentage', 'discount_value' => 1000,
+        'duration_type' => 'forever', 'eligibility_type' => 'company_list',
+        'created_by'    => discountCodeSuperAdmin()->getKey(), 'is_active' => true,
+        'created_at'    => now(), 'updated_at' => now(),
+    ])))->toThrow(QueryException::class, 'A company-list discount code must name at least one company.')
+        ->and(fn () => discountCodeWriteWithChecks(fn () => DB::table('platform_billing_discount_code_companies')->where('discount_code_id', $code->id)->delete()))
+        ->toThrow(QueryException::class, 'A company-list discount code must name at least one company.');
+});
+
+/**
+ * Terms lock once any company has redeemed the code (user, 2026-11-11), so
+ * later redeemers cannot get different terms under the same code. Switching
+ * it off stays possible.
+ */
+it('locks a discount code terms after the first redemption but still allows deactivating it', function () {
+    $actor = discountCodeSuperAdmin();
+    $service = app(DiscountCodeService::class);
+    $unused = $service->create($actor, discountCodeTerms());
+    $used = $service->create($actor, discountCodeTerms());
+
+    $unused->forceFill(['discount_value' => 2000])->save();
+    $service->redeem($used->code, Company::factory()->create(), $actor);
+    $used->refresh();
+
+    expect($unused->fresh()->discount_value)->toBe(2000)
+        ->and(fn () => $used->forceFill(['discount_value' => 9000])->save())
+        ->toThrow(ValidationException::class, 'This discount code has been used, so its terms can no longer change.')
+        ->and($service->setActive($used, $actor, false)->is_active)->toBeFalse();
+});
+
+/**
+ * The last redemption cannot be taken twice: the code's own row lock
+ * serialises redemptions, and the database refuses a count above the limit
+ * whatever path writes it (user, 2026-11-11, instead of a two-connection
+ * test that would be timing-dependent).
+ */
+it('refuses a redemption count above the limit in the database', function () {
+    $code = app(DiscountCodeService::class)->create(discountCodeSuperAdmin(), discountCodeTerms(['max_redemptions' => 1]));
+
+    expect(fn () => DB::transaction(fn () => DB::table('platform_billing_discount_codes')->where('id', $code->id)->update(['redemption_count' => 2])))
+        ->toThrow(QueryException::class, 'platform_billing_discount_codes_count_check');
+});
