@@ -1702,6 +1702,32 @@ log named):
     `CompanyReadOnlyWriteGuard::EXEMPT_MODELS`. The signed-in Super Admin
     already passes. Do not add them so a job with no user can post money.
 
+• Platform administration screens, 2026-11-10 (`docs/saas-administration-billing-audit-plan.md`,
+  SAAS-12/13 handoff):
+  - `DocumentNumberPolicy` allows an active Super Admin to view, create and
+    update platform billing records, and refuses every delete. Do not enable
+    Shield's super-admin intercept gate. It would skip the per-record checks.
+  - `PlanCatalog` is the only writer for plans and prices, and it checks the
+    actor. Screens do not call `Plan::query()->create()`.
+  - The seat-limit actor check stays on the company form
+    (`BillingCompanyContributions::ONLY_SUPER_ADMIN_SEATS`).
+    `SeatCapacityService::setLimit()` does not check the caller. Do not add a
+    second capacity rule in security for this screen.
+  - `CompanyAccount` resolves the company from the signed-in user on every
+    request: session company, Company Admin of that id, and a membership row.
+    A global Company Admin role is true for every company id, so membership
+    is the tenant boundary. Reads use `withoutGlobalScopes()` plus that
+    `company_id`. Do not store the company id as a Livewire property.
+  - Do not gate `PlatformBillingPlugin::register()` on
+    `Package::isPluginInstalled()`. A core plugin is skipped by
+    `Plugin::getAllPluginPackages()`, so the check is always false and the
+    billing routes never register.
+  - Reason fields for a reversal, a refund and the Super Admin overdue
+    extension are not Filament `required()`. Laravel treats a blank reason
+    as empty, and the service's own message never appears.
+  - Tests: `platform-billing/tests/Feature/AdministrationScreensTest.php`
+    and `BillingScreensTest.php`.
+
 • Tenant impersonation, 2026-11-10 (`docs/saas-administration-billing-audit-plan.md`,
   SAAS-15 handoff, D-SAAS-14):
   - Every rule is in `Security\Services\TenantImpersonation`. A screen
