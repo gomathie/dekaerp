@@ -9,6 +9,17 @@ Boost guidelines the agent follows) and [`CHANGELOG.md`](../CHANGELOG.md)
 
 ## 2026-11-10
 
+**Requested:** Look at production on a phone and write a plan to improve the
+mobile layout, for review before any code.
+
+**Decision:** Every recommendation is in `docs/mobile-view-plan.md`
+(R1–R9). The first patch is the top bar and the scrolling tabs. Stat cards
+two-per-row, a list that has rows, cell wrapping, logical truncation, and
+a 320px check are the second pass. The module drawer stays. No layout code
+was changed.
+
+## 2026-11-10
+
 **Requested:** Update the records for Logistics work that is actually done.
 
 **Decision:** The customer-page tab goes in the v1.7.0 release notes. The
