@@ -43,7 +43,7 @@ class OverdueExtension extends Model
     protected function casts(): array
     {
         return [
-            'length' => 'integer',
+            'length'     => 'integer',
             'granted_at' => 'immutable_datetime',
         ];
     }

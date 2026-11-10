@@ -127,7 +127,7 @@ class CompanyAdminContributions
                     ->label(__('security::filament/contributions/company.account.fields.type'))
                     ->options([
                         'commercial' => __('security::filament/contributions/company.account.fields.commercial'),
-                        'test' => __('security::filament/contributions/company.account.fields.test'),
+                        'test'       => __('security::filament/contributions/company.account.fields.test'),
                     ])
                     ->default('commercial')
                     ->required()

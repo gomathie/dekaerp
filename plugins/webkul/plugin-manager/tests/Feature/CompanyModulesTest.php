@@ -283,7 +283,7 @@ it('hides the modules section from a multi-company admin and leaves the grants u
     $plugin = companyModulesPlugin('mca-cannot-grant');
     DB::table('company_plugin')->insert([
         'company_id' => $company->getKey(),
-        'plugin_id' => $plugin->getKey(),
+        'plugin_id'  => $plugin->getKey(),
         'created_at' => now(),
         'updated_at' => now(),
     ]);

@@ -1692,6 +1692,29 @@ log named):
     `CompanyReadOnlyWriteGuard::EXEMPT_MODELS`. The signed-in Super Admin
     already passes. Do not add them so a job with no user can post money.
 
+• Tenant impersonation, 2026-11-10 (`docs/saas-administration-billing-audit-plan.md`,
+  SAAS-15 handoff, D-SAAS-14):
+  - Every rule is in `Security\Services\TenantImpersonation`. A screen
+    calls it and repeats nothing.
+  - A Super Admin may impersonate without a grant. A Multi-Company Admin
+    needs `tenant.impersonate`, given or removed only by a Super Admin, and
+    acts only in assigned companies. Any other user is refused, even
+    holding the permission. Keep `impersonate` in
+    `MultiCompanyAdminService::deniesAbility()`: without it the
+    Multi-Company Admin `Gate::before` grants it to all of them. Read the
+    grant with `holdsGrant()`, never `can()`.
+  - A target is an active tenant member of that company, read scope-free.
+    Never a Super Admin, a Multi-Company Admin or the administrator.
+  - Start needs the administrator's own password and a reason. The session
+    lasts 60 minutes. `EnforceImpersonationSession` re-checks every panel
+    request and ends it when time is up or the grant, an account or the
+    membership is gone.
+  - Nothing extra is blocked (user). Do not add a block without asking;
+    every write is logged with the administrator's id instead.
+  - Each switch migrates the session id and clears `password_hash_web`.
+    Leaving the old hash logs the session out on the next request.
+  - Tests: `security/tests/Feature/SaaSAdministration/TenantImpersonationTest.php`.
+
 • Account type, 2026-11-09 (`docs/saas-administration-billing-audit-plan.md`,
   SAAS-15 handoff, D-SAAS-11):
   - `test` or `commercial` is chosen only inside

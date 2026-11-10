@@ -63,18 +63,18 @@ class SubscriptionDrafts
 
         return DB::transaction(function () use ($actor, $company, $price, $anchor): Subscription {
             $subscription = Subscription::query()->create([
-                'company_id' => $company->getKey(),
-                'plan_id' => $price->plan_id,
-                'price_id' => $price->getKey(),
-                'status' => 'draft',
-                'plan_name' => $price->plan->name,
+                'company_id'       => $company->getKey(),
+                'plan_id'          => $price->plan_id,
+                'price_id'         => $price->getKey(),
+                'status'           => 'draft',
+                'plan_name'        => $price->plan->name,
                 'included_plugins' => $price->plan->included_plugins,
-                'currency' => $price->currency,
-                'interval_months' => $price->interval_months,
-                'amount_minor' => $price->amount_minor,
-                'seat_limit' => $price->plan->seat_limit,
-                'timezone' => $anchor->getTimezone()->getName(),
-                'anchor_at' => $anchor->setTimezone(new DateTimeZone('UTC')),
+                'currency'         => $price->currency,
+                'interval_months'  => $price->interval_months,
+                'amount_minor'     => $price->amount_minor,
+                'seat_limit'       => $price->plan->seat_limit,
+                'timezone'         => $anchor->getTimezone()->getName(),
+                'anchor_at'        => $anchor->setTimezone(new DateTimeZone('UTC')),
             ]);
 
             app(SecurityAuditLogger::class)->record(

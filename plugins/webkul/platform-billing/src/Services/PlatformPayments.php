@@ -71,13 +71,13 @@ class PlatformPayments
             try {
                 $payment = DB::transaction(function () use ($actor, $company, $amountMinor, $reference, $receivedAt): Payment {
                     return Payment::query()->create([
-                        'company_id' => $company->getKey(),
+                        'company_id'      => $company->getKey(),
                         'idempotency_key' => $reference,
-                        'amount_minor' => $amountMinor,
-                        'currency' => 'USD',
-                        'received_at' => $receivedAt,
-                        'posted_by' => $actor->getKey(),
-                        'status' => 'posted',
+                        'amount_minor'    => $amountMinor,
+                        'currency'        => 'USD',
+                        'received_at'     => $receivedAt,
+                        'posted_by'       => $actor->getKey(),
+                        'status'          => 'posted',
                     ]);
                 });
             } catch (UniqueConstraintViolationException) {
@@ -173,12 +173,12 @@ class PlatformPayments
             foreach ($lines as $line) {
                 $invoice = $invoices[(int) $line['invoice_id']];
                 $created[] = Allocation::query()->create([
-                    'payment_id' => $lockedPayment->getKey(),
-                    'invoice_id' => $invoice->getKey(),
-                    'company_id' => $lockedPayment->company_id,
+                    'payment_id'   => $lockedPayment->getKey(),
+                    'invoice_id'   => $invoice->getKey(),
+                    'company_id'   => $lockedPayment->company_id,
                     'amount_minor' => (int) $line['amount_minor'],
-                    'posted_by' => $actor->getKey(),
-                    'posted_at' => $at,
+                    'posted_by'    => $actor->getKey(),
+                    'posted_at'    => $at,
                 ]);
 
                 if ($this->invoiceBalanceMinor($invoice) === 0) {
@@ -304,12 +304,12 @@ class PlatformPayments
                 }
 
                 Allocation::query()->create([
-                    'payment_id' => $locked->getKey(),
-                    'invoice_id' => $invoice->getKey(),
-                    'company_id' => $locked->company_id,
+                    'payment_id'   => $locked->getKey(),
+                    'invoice_id'   => $invoice->getKey(),
+                    'company_id'   => $locked->company_id,
                     'amount_minor' => -$applied,
-                    'posted_by' => $actor->getKey(),
-                    'posted_at' => $at,
+                    'posted_by'    => $actor->getKey(),
+                    'posted_at'    => $at,
                 ]);
             }
 
@@ -365,8 +365,8 @@ class PlatformPayments
 
         return [
             'unapplied_minor' => $unapplied,
-            'open_minor' => $open,
-            'drift_minor' => $drift,
+            'open_minor'      => $open,
+            'drift_minor'     => $drift,
         ];
     }
 
@@ -477,14 +477,14 @@ class PlatformPayments
         try {
             $reversal = DB::transaction(function () use ($payment, $actor, $amountMinor, $reference, $reason, $at): Reversal {
                 return Reversal::query()->create([
-                    'company_id' => $payment->company_id,
-                    'payment_id' => $payment->getKey(),
+                    'company_id'      => $payment->company_id,
+                    'payment_id'      => $payment->getKey(),
                     'idempotency_key' => $reference,
-                    'amount_minor' => $amountMinor,
-                    'currency' => 'USD',
-                    'reason' => $reason,
-                    'effective_at' => $at,
-                    'posted_by' => $actor->getKey(),
+                    'amount_minor'    => $amountMinor,
+                    'currency'        => 'USD',
+                    'reason'          => $reason,
+                    'effective_at'    => $at,
+                    'posted_by'       => $actor->getKey(),
                 ]);
             });
         } catch (UniqueConstraintViolationException) {

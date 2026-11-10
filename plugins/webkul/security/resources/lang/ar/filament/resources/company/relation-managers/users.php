@@ -19,9 +19,9 @@ return [
 
         'actions' => [
             'copy-invitation-link' => [
-                'label' => 'نسخ رابط الدعوة',
+                'label'      => 'نسخ رابط الدعوة',
                 'invitation' => 'دعوة معلقة',
-                'link' => 'رابط الدعوة',
+                'link'       => 'رابط الدعوة',
             ],
             'set-password' => [
                 'label'             => 'تعيين كلمة المرور',

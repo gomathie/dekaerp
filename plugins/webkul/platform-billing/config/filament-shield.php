@@ -16,7 +16,7 @@ $basic = ['view_any', 'view', 'create', 'update'];
 return [
     'resources' => [
         'manage' => [
-            PlanResource::class => $basic,
+            PlanResource::class         => $basic,
             SubscriptionResource::class => $basic,
         ],
         'exclude' => [],

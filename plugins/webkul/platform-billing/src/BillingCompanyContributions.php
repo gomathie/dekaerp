@@ -63,7 +63,9 @@ class BillingCompanyContributions
                 Actions::make([
                     Action::make('addTrialDays')
                         ->label(__(static::$lang.'.add-days'))
-                        ->visible(fn (?Company $record): bool => $record?->account_type === 'test')
+                        // Visible on a commercial company too. Hiding it would
+                        // make CompanyAccountType's "only a test company"
+                        // refusal unreachable from a forged action.
                         ->schema([
                             TextInput::make('test_days')
                                 ->label(__(static::$lang.'.days'))
@@ -84,7 +86,8 @@ class BillingCompanyContributions
                     Action::make('switchToCommercial')
                         ->label(__(static::$lang.'.switch'))
                         ->requiresConfirmation()
-                        ->visible(fn (?Company $record): bool => $record?->account_type === 'test')
+                        // Same reason as add trial days: the service refuses a
+                        // company that is already commercial.
                         ->schema([
                             Select::make('price_id')
                                 ->label(__(static::$lang.'.price'))
@@ -111,7 +114,6 @@ class BillingCompanyContributions
                     Action::make('setSeatLimit')
                         ->label(__(static::$lang.'.set-seats'))
                         ->requiresConfirmation()
-                        ->visible(fn (): bool => auth()->user() instanceof User && auth()->user()->isSuperAdmin())
                         ->schema([
                             TextInput::make('seat_limit')
                                 ->label(__(static::$lang.'.seat-limit'))
@@ -154,9 +156,9 @@ class BillingCompanyContributions
         $limitText = $limit === null ? __(static::$lang.'.unlimited') : (string) $limit;
 
         return __(static::$lang.'.summary', [
-            'type' => $type,
-            'ends' => $ends,
-            'used' => $used,
+            'type'  => $type,
+            'ends'  => $ends,
+            'used'  => $used,
             'limit' => $limitText,
         ]);
     }

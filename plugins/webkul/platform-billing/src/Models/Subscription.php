@@ -33,17 +33,17 @@ class Subscription extends Model
     protected function casts(): array
     {
         return [
-            'included_plugins' => 'array',
-            'interval_months' => 'integer',
-            'amount_minor' => 'integer',
-            'anchor_at' => 'immutable_datetime',
-            'period_start_at' => 'immutable_datetime',
-            'period_end_at' => 'immutable_datetime',
-            'next_invoice_at' => 'immutable_datetime',
+            'included_plugins'     => 'array',
+            'interval_months'      => 'integer',
+            'amount_minor'         => 'integer',
+            'anchor_at'            => 'immutable_datetime',
+            'period_start_at'      => 'immutable_datetime',
+            'period_end_at'        => 'immutable_datetime',
+            'next_invoice_at'      => 'immutable_datetime',
             'cancel_at_period_end' => 'boolean',
-            'overdue_at' => 'immutable_datetime',
-            'seat_limit' => 'integer',
-            'scheduled_terms' => 'array',
+            'overdue_at'           => 'immutable_datetime',
+            'seat_limit'           => 'integer',
+            'scheduled_terms'      => 'array',
         ];
     }
 

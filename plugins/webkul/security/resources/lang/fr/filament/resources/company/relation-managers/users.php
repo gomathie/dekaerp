@@ -19,9 +19,9 @@ return [
 
         'actions' => [
             'copy-invitation-link' => [
-                'label' => 'Copier le lien d’invitation',
+                'label'      => 'Copier le lien d’invitation',
                 'invitation' => 'Invitation en attente',
-                'link' => 'Lien d’invitation',
+                'link'       => 'Lien d’invitation',
             ],
             'set-password' => [
                 'label'             => 'Définir le mot de passe',

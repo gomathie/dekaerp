@@ -126,10 +126,10 @@ class OverdueExtensions
             $extension = OverdueExtension::query()->create([
                 'company_id' => $invoice->company_id,
                 'invoice_id' => $invoice->getKey(),
-                'kind' => $kind,
-                'length' => $length,
-                'unit' => $unit,
-                'reason' => $reason,
+                'kind'       => $kind,
+                'length'     => $length,
+                'unit'       => $unit,
+                'reason'     => $reason,
                 'granted_by' => $actor->getKey(),
                 'granted_at' => $at->setTimezone(new DateTimeZone('UTC')),
             ]);
@@ -151,10 +151,10 @@ class OverdueExtensions
     protected function normalizeUnit(string $unit): string
     {
         $unit = match (strtolower(trim($unit))) {
-            'day', 'days' => OverdueExtension::UNIT_DAY,
-            'week', 'weeks' => OverdueExtension::UNIT_WEEK,
+            'day', 'days'     => OverdueExtension::UNIT_DAY,
+            'week', 'weeks'   => OverdueExtension::UNIT_WEEK,
             'month', 'months' => OverdueExtension::UNIT_MONTH,
-            default => '',
+            default           => '',
         };
 
         if ($unit === '') {
