@@ -9,6 +9,20 @@ Boost guidelines the agent follows) and [`CHANGELOG.md`](../CHANGELOG.md)
 
 ## 2026-11-10
 
+**Requested:** SAAS-12 platform administration screens, then SAAS-13
+company-administration screens.
+
+**Decision:** Screens call the existing services and add no second rule.
+The company page is limited to the signed-in company. Seat-limit authority
+stays on the screen because `setLimit()` does not check the caller.
+
+**Implementation and verification:** See the SAAS-12/13 handoff in
+`docs/saas-administration-billing-audit-plan.md` and `docs/change-log.md`.
+Database `aureuserp_testing_saas11`. PlatformBillingFeature 116 passed
+(620 assertions). No browser smoke.
+
+## 2026-11-10
+
 **Requested:** A Company Admin may extend after the lock. A Super Admin
 extension is a number of days, weeks, or months that they enter.
 

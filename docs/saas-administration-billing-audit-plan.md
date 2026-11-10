@@ -221,8 +221,8 @@ Record the user's answer before unblocking dependent packages.
 | SAAS-10 | Idempotent recurring invoices | SAAS-09, SAAS-09A | — | review (2026-11-09 / `aureuserp_testing_saas10`; invoice tests passed; four read-only-guard failures left untouched) | commit `4d7b611b9`; schedule-hook fix still uncommitted |
 | SAAS-10B | Grace extensions that move the read-only instant | SAAS-10, D-SAAS-04, D-SAAS-13 | — | review (2026-11-09 / `aureuserp_testing_saas11`) | service and tests; screens stay SAAS-12 |
 | SAAS-11 | Payments, allocations, credit and reversals | SAAS-08, SAAS-10, D-SAAS-05, D-SAAS-06, D-SAAS-10 | — | review (2026-11-09 / `aureuserp_testing_saas11`) | commits `47c750cd7`, `028fe0148`, `a6b78e405`; company-form fixtures still uncommitted |
-| SAAS-12 | Platform administration screens | SAAS-03, SAAS-07, SAAS-09/10/11 | — | todo | — |
-| SAAS-13 | Company-administration screens | SAAS-01, SAAS-07, SAAS-09/10/11 | — | todo | — |
+| SAAS-12 | Platform administration screens | SAAS-03, SAAS-07, SAAS-09/10/11 | — | review (2026-11-10 / `aureuserp_testing_saas11`) | Grok; screens over the existing services; browser smoke not run |
+| SAAS-13 | Company-administration screens | SAAS-01, SAAS-07, SAAS-09/10/11 | — | review (2026-11-10 / `aureuserp_testing_saas11`) | Grok; company account page for the signed-in company; browser smoke not run |
 | SAAS-15 | Backfill, shadow mode, release hardening, tenant impersonation, and test-or-commercial account type | All implementation packages | — | review (account type 2026-11-09 / `aureuserp_testing_saas11`; tenant impersonation 2026-11-10 / `aureuserp_testing_claude`, D-SAAS-14; backfill and shadow mode replaced by a readiness report 2026-11-10, see "SAAS-09/14 handoff") | commits `47c750cd7`, `028fe0148`; company-form fixtures still uncommitted |
 
 Additional requirement: Tenant impersonation
@@ -2570,6 +2570,58 @@ Questions:
   - With nothing extra blocked, an impersonating administrator can change the target's password or email. Those writes are logged with the administrator's id.
   - Rollback: remove the two actions and the middleware registration. Roll back the migration to drop the permission and every grant of it, since the pivots cascade.
 - Suggested next: a browser smoke run of start, banner and end. Then SAAS-12 and SAAS-13 can list impersonation sessions from the audit messages.
+
+#### SAAS-12/13 handoff — 2026-11-10 (Grok)
+
+- Owner / database: Grok, `aureuserp_testing_saas11`
+- Status: review
+- Implemented: Super Admin billing screens over the services that already exist, and one Company Admin page for the signed-in company.
+  - Plans and prices (`PlanCatalog`): create, add a price, deactivate. No delete and no price edit.
+  - Subscriptions (`SubscriptionDrafts`, `SubscriptionLifecycle`): draft, activate, schedule a price, cancel at period end, reactivate. Two drafts are allowed. The screen does not call `activateForCommercialSwitch()` or `advance()`.
+  - Invoices: list and view. Posted invoices have no edit. A Super Admin extension takes a length, a unit (day, week, month) and a reason (`OverdueExtensions::extendAsSuperAdmin`).
+  - Payments (`PlatformPayments`): enter by hand, allocate, reverse, refund unused credit. The reference is the existing idempotency key. There is no second credit-note resource; a refund is a reversal, and the payment view shows `reconcile()`.
+  - Discount codes (`DiscountCodeService`): create and deactivate.
+  - Billing audit: chatter messages whose event starts with `platform_billing.`, still under `CompanyScope`.
+  - Company form, for an existing company: add trial days, switch to commercial (`CompanyAccountType::switchToCommercial` only), set a seat limit. Modules stay on the plugin-manager contribution.
+  - Company Admin page `CompanyAccount` (not in the billing cluster): seats used and limit, unapplied credit, the latest subscription, pending invitations (resend and revoke through `UserInvitationService`), own invoices, and the one 10-day extension (`extendAsCompanyAdmin`).
+- Why / How / Benefit: D-SAAS-06 keeps catalog, subscription, invoice and payment writes with a Super Admin, and the screens were the missing way to use the services. Each screen calls the service and maps `ValidationException` onto the form and `AuthorizationException` to a danger notification (`ReportsServiceFailure`). The company page resolves its company from the signed-in user on every request and reads with `withoutGlobalScopes()` plus that `company_id`, because a global Company Admin role is true for every company id and `CompanyScope` would hide another tenant's rows rather than prove they were excluded.
+- Protected decisions added (`AGENTS.md`, "Platform administration screens"):
+  - `DocumentNumberPolicy` allows an active Super Admin to view, create and update, and refuses every delete. Do not turn Shield's super-admin gate on.
+  - `PlanCatalog` is the only catalog writer, and it checks the actor.
+  - The seat-limit actor check stays on the screen. `SeatCapacityService::setLimit()` does not check the caller, and this slice does not add a second capacity rule in security.
+  - `CompanyAccount` does not take a company id from the browser.
+  - Do not gate `PlatformBillingPlugin::register()` on `isPluginInstalled()`. A core plugin has no `plugins` row.
+  - Reason fields for reverse, refund and the Super Admin extension are not Filament `required()`. Laravel treats a blank reason as empty and the service's own message never appears.
+- Files changed:
+  - New, under `plugins/webkul/platform-billing`: `PlanCatalog.php`, the Billing cluster, Plan, Subscription, Invoice, Payment and DiscountCode resources (split layout), `BillingAudit`, `CompanyAccount`, `ReportsServiceFailure`, `BillingCompanyContributions`, the table page view, `AdministrationScreensTest.php`, `BillingScreensTest.php`, and the five `filament/billing.php` locales.
+  - Edited in the plugin: `DocumentNumberPolicy.php`, `PlatformBillingPlugin.php`, `PlatformBillingServiceProvider.php`, `config/filament-shield.php`.
+  - Outside the plugin: `plugins/webkul/plugin-manager/tests/Feature/CompanyModulesTest.php` (one test: a Multi-Company Admin does not see the modules section and the grants stay put). `AGENTS.md`, this plan, `docs/change-log.md`, `docs/agent-reminders.md`.
+- Tests run with pass/assertion counts:
+  - `BillingScreensTest` 7 passed (93 assertions), 238.38s, exit 0, `aureuserp_testing_saas11`.
+  - `AdministrationScreensTest` is included in the suite run below (it had already passed alone: 12 passed, 159 assertions, 253.49s, same database).
+  - PlatformBillingFeature 116 passed (620 assertions), 1832.94s, exit 0, `aureuserp_testing_saas11`.
+  - `CompanyModulesTest` 9 passed (45 assertions), 277.94s, exit 0, same database. This is the one file outside the plugin.
+  - `php artisan translations:check --plugin=platform-billing --details`: ar, es, fr, pt_BR all PASS.
+  - `vendor/bin/pint --dirty --format agent` passed, then Pint on the screen paths fixed three files (`PaymentInfolist`, `PlatformBillingServiceProvider` imports, `BillingScreensTest` imports) before the suite run.
+- Reviewed but not executed: no browser smoke. SecurityFeature was not run. SupportFeature was not run. `ResourceStructureSnapshotTest` will drift because the company form gained a billing section; do not regenerate `support.json` from a filtered run.
+- Failures investigated:
+  - `isPluginInstalled('platform-billing')` is always false for a core plugin, so the cluster never registered. The check was removed.
+  - Filament integer inputs dehydrate to a float after validation. `PlanCatalog::seatLimit()` accepts a whole float.
+  - A hidden action cannot be called in a test, so refusals that must be seen stay visible and the service throws.
+  - A Filament `required()` reason blocked a whitespace reason before the service. The `required()` calls were removed.
+  - Shield resource permissions are real (`view_any_platform_billing_invoice`, `view_any_platform_billing_discount::code`). A test that `flatMap`s them without `values()` keeps the affix as the key, and a later resource overwrites an earlier one. The assertion now calls `values()`.
+  - A forged invoice or invitation id is rejected by the select's option list before the action's 404. The test pins that the other company's invitation stays pending and no extension is written.
+- Security/tenant/concurrency review: policies and services re-check the actor. The company page's company id is not a public Livewire property. Lists for a Super Admin keep `CompanyScope`. The company page drops scopes and filters `company_id`. Money actions confirm. Reverse, refund and extensions ask for a reason. The same payment reference does not post twice. Draft subscriptions have no idempotency key, and a test pins that two creates make two drafts.
+- Risks and rollback:
+  - Production has commercial companies and no subscriptions. These screens can post real money. They do not seed plans.
+  - `schedulePrice()` still requires the literal currency `USD`. Drafts use `config('platform-billing.currency')`. Not changed.
+  - A deactivated price interval cannot be replaced. The unique key includes inactive rows. There is no price edit.
+  - `SeatCapacityService::setLimit()` still succeeds for a Multi-Company Admin who calls it directly. The screen refuses first.
+  - `DiscountCodeService` allows an assigned Multi-Company Admin to create a code. The policy and the cluster do not, so the screen is Super Admin only.
+  - `UserInvitationService` was not changed. Resend and revoke succeed for a Company Admin who has `create_security_user` and a membership row, because `assignedCompanyIds()` is membership. A forged id for another company is not in the select.
+  - Rollback: remove the cluster, the two pages, the company-form section and `PlanCatalog`. No migration.
+- Cross-package requests: none. `CompanyReadOnlyWriteGuard`, `SubscriptionLifecycle::isReadOnly`, security `user.php` / `accept-invitation.php`, and structure-snapshot fixtures were not edited.
+- Suggested next package: SAAS-14 release hardening. A browser smoke of the billing cluster and the company account page is still outstanding.
 
 ### Handoff template
 

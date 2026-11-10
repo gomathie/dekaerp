@@ -6,6 +6,16 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-10 (SAAS-12 and SAAS-13 screens)
+
+- **Why:** the billing services had no screens. A Super Admin could not post a plan, a subscription, an invoice view, a payment or a discount without a service call, and a Company Admin could not see their own bill or grant the one 10-day extension.
+- **How:** Filament resources in the Billing cluster call `PlanCatalog`, `SubscriptionDrafts`, `SubscriptionLifecycle`, `PlatformPayments`, `DiscountCodeService` and `OverdueExtensions`. `CompanyAccount` is outside the cluster and reads one company. The company form gains trial days, the commercial switch and the seat limit. Details are in the SAAS-12/13 handoff.
+- **Benefit:** platform money and the company bill are operable from the admin panel, and each refusal is still the service's own message.
+- **Trade-off / risk:** the screens can post real money on production, which has commercial companies and no subscriptions. `setLimit()` still does not check its caller. A deactivated price interval cannot be replaced. `schedulePrice()` still says USD. Support's structure snapshot will drift and must not be regenerated from a filtered run.
+- **Verification:** PlatformBillingFeature 116 passed (620 assertions), 1832.94s, exit 0, on `aureuserp_testing_saas11`. `CompanyModulesTest` 9 passed (45 assertions), 277.94s, same database. `translations:check --plugin=platform-billing` 4 passed. Pint passed on the screen paths. No browser smoke.
+- **Test:** `AdministrationScreensTest.php`, `BillingScreensTest.php`.
+- **Rollback:** remove the cluster, the two pages, the company-form section and `PlanCatalog`. No migration.
+
 ## 2026-11-10 (read-only gaps, readiness report, security translations)
 
 - **Why:** a Multi-Company Admin passed the read-only guard in every company. Company settings bypassed the guard because they are written by query. The security translations lacked eight keys in four locales, which failed `translations:check` and showed raw keys to fr/es/pt_BR/ar users.
