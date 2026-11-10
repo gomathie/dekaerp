@@ -44,7 +44,9 @@ for the task/question log this change log is paired with.
   - Test: `CompanyAdministratorBusinessRoleTest`.
 - **Verification:** route fix: 64 passed, 208 assertions, on
   `aureuserp_testing_claude_vault` (`CompanyRouteTest`, the password test and
-  the onboarding test). Business role run: see the handoff.
+  the onboarding test). Business role: 76 passed, 240 assertions, same
+  database (`CompanyAdministratorBusinessRoleTest`, the invitation, password,
+  route and vault tests).
 - **Rollback:** remove the two `$isDiscovered` lines.
 - **Test:** security `Authorization/CompanyRouteTest.php`.
 
