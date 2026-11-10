@@ -10,6 +10,7 @@ use Webkul\PlatformBilling\Models\InvoiceLine;
 use Webkul\PlatformBilling\Models\OverdueExtension;
 use Webkul\PlatformBilling\Models\Subscription;
 use Webkul\Security\Models\User;
+use Webkul\Security\Services\MultiCompanyAdminService;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Services\CompanyContext;
 use Webkul\Support\Traits\BelongsToCompany;
@@ -48,9 +49,15 @@ class CompanyReadOnlyWriteGuard
         }
 
         $actor = app(CompanyContext::class)->internalUser();
-        if ($actor instanceof User && $actor->is_active && ($actor->isSuperAdmin() || $actor->isMultiCompanyAdmin())) {
+        if ($actor instanceof User && $actor->is_active && $actor->isSuperAdmin()) {
             return;
         }
+
+        // A Multi-Company Admin passes only in companies assigned to them
+        // (user, 2026-11-10). Exempting them everywhere let staff write into
+        // a locked company they do not administer, while every other rule
+        // limits them to their assignment.
+        $assignedStaff = $actor instanceof User && $actor->is_active && $actor->isMultiCompanyAdmin();
 
         // A Company Admin of this company may record the one overdue
         // extension after the lock (user, 2026-11-10). The model stays out
@@ -75,6 +82,10 @@ class CompanyReadOnlyWriteGuard
         }
 
         foreach (array_unique($companyIds) as $companyId) {
+            if ($assignedStaff && app(MultiCompanyAdminService::class)->isCompanyAssigned($actor, $companyId)) {
+                continue;
+            }
+
             $company = Company::withoutGlobalScopes()->find($companyId);
             if ($company && app(SubscriptionLifecycle::class)->isReadOnly($company)) {
                 // A user-facing field error survives both Livewire and JSON API

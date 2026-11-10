@@ -29,6 +29,10 @@ class PlatformBillingPlugin implements Plugin
                 in: __DIR__.'/Filament/Clusters',
                 for: 'Webkul\\PlatformBilling\\Filament\\Clusters',
             );
+            $panel->discoverPages(
+                in: __DIR__.'/Filament/Pages',
+                for: 'Webkul\\PlatformBilling\\Filament\\Pages',
+            );
         });
     }
 

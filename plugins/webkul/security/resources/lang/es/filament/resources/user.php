@@ -13,8 +13,15 @@ return [
 
     'form' => [
         'validation' => [
-            'cannot-remove-last-admin'   => 'No se puede quitar el rol de administrador del último usuario administrador.',
-            'first-user-must-be-admin'   => 'Al primer usuario del sistema se le debe asignar un rol de administrador.',
+            'cannot-remove-last-admin'        => 'No se puede quitar el rol de administrador del último usuario administrador.',
+            'company-invalid'                 => 'Una o más empresas seleccionadas no son válidas.',
+            'company-not-assigned'            => 'Solo puede asignar usuarios a las empresas asignadas a su cuenta.',
+            'company-required'                => 'Seleccione al menos una empresa.',
+            'first-user-must-be-admin'        => 'Al primer usuario del sistema se le debe asignar un rol de administrador.',
+            'role-invalid'                    => 'Seleccione al menos un rol válido.',
+            'role-not-assignable'             => 'Solo puede asignar roles no protegidos cuyos permisos posea.',
+            'self-administration-forbidden'   => 'No puede cambiar sus propios roles ni asignaciones de empresa.',
+            'target-administration-forbidden' => 'Solo un Super Admin puede modificar a un administrador protegido.',
         ],
 
         'sections' => [

@@ -13,8 +13,15 @@ return [
 
     'form' => [
         'validation' => [
-            'cannot-remove-last-admin'   => 'لا يمكن إزالة دور المسؤول من آخر مستخدم مسؤول.',
-            'first-user-must-be-admin'   => 'يجب تعيين دور المسؤول لأول مستخدم في النظام.',
+            'cannot-remove-last-admin'        => 'لا يمكن إزالة دور المسؤول من آخر مستخدم مسؤول.',
+            'company-invalid'                 => 'شركة واحدة أو أكثر من الشركات المحددة غير صالحة.',
+            'company-not-assigned'            => 'يمكنك تعيين المستخدمين فقط للشركات المعيّنة لحسابك.',
+            'company-required'                => 'اختر شركة واحدة على الأقل.',
+            'first-user-must-be-admin'        => 'يجب تعيين دور المسؤول لأول مستخدم في النظام.',
+            'role-invalid'                    => 'اختر دورًا صالحًا واحدًا على الأقل.',
+            'role-not-assignable'             => 'يمكنك تعيين الأدوار غير المحمية التي تملك صلاحياتها فقط.',
+            'self-administration-forbidden'   => 'لا يمكنك تغيير أدوارك أو تعيينات شركتك.',
+            'target-administration-forbidden' => 'لا يمكن تعديل مسؤول محمي إلا بواسطة Super Admin.',
         ],
 
         'sections' => [
