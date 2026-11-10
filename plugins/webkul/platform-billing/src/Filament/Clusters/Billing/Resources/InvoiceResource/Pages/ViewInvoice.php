@@ -43,8 +43,10 @@ class ViewInvoice extends ViewRecord
                         ->required()
                         ->native(false),
                     Textarea::make('reason')
-                        ->label(__(static::$lang.'.reason'))
-                        ->required(),
+                        // Not required() here. Laravel treats a blank reason as
+                        // empty before the action runs, so the service's own
+                        // "needs a reason" message would never be shown.
+                        ->label(__(static::$lang.'.reason')),
                 ])
                 ->action(function (Invoice $record, array $data, Action $action): void {
                     try {

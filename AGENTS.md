@@ -1658,6 +1658,16 @@ log named):
     it a read-only company is never invoiced again and a cancelled
     subscription never expires. Do not widen it to tenant models. Test:
     `SubscriptionReadOnlyEnforcementTest`.
+  - A Multi-Company Admin passes the read-only guard only in companies
+    assigned to them (user, 2026-11-10). A Super Admin passes everywhere.
+    Do not restore the blanket staff exemption.
+  - Company settings rows are not company models, so no model event reaches
+    the guard. `CompanyAwareSettingsRepository` fires
+    `support.company-settings.writing`, and platform-billing calls
+    `assertCompanyMayWrite()` from it (2026-11-10). Keep the event: without
+    it a locked company still saves its accounting and tax settings. Bulk
+    query writes elsewhere run inside a guarded parent save; a new bulk
+    write outside one needs the same call.
 
 • Platform payments, 2026-11-09 (`docs/saas-administration-billing-audit-plan.md`,
   SAAS-11 handoff, D-SAAS-10):

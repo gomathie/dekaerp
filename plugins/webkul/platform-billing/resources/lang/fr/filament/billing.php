@@ -249,6 +249,7 @@ return [
         'no-invitations'  => 'Aucune invitation en attente.',
         'invitation'      => 'Invitation en attente : :email.',
         'no-invoices'     => 'Aucune facture pour le moment.',
+        'saved'           => 'Enregistré.',
         'actions'         => [
             'extend'     => 'Prolonger une facture en retard',
             'invoice'    => 'Facture',

@@ -249,6 +249,7 @@ return [
         'no-invitations'  => 'No hay invitaciones pendientes.',
         'invitation'      => 'Invitación pendiente: :email.',
         'no-invoices'     => 'Todavía no hay facturas.',
+        'saved'           => 'Guardado.',
         'actions'         => [
             'extend'     => 'Prorrogar una factura vencida',
             'invoice'    => 'Factura',

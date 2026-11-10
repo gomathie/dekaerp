@@ -5,6 +5,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Livewire\Livewire;
+use Webkul\Account\Settings\TaxesSettings;
 use Webkul\PlatformBilling\Models\Plan;
 use Webkul\PlatformBilling\Models\Price;
 use Webkul\PlatformBilling\Models\Subscription;
@@ -13,6 +14,7 @@ use Webkul\PlatformBilling\Services\SubscriptionDrafts;
 use Webkul\PlatformBilling\Services\SubscriptionLifecycle;
 use Webkul\Project\Models\Task;
 use Webkul\Project\Models\TaskStage;
+use Webkul\Security\Models\Role;
 use Webkul\Security\Models\User;
 use Webkul\Support\Filament\Resources\CalendarResource\Pages\ListCalendars;
 use Webkul\Support\Models\Calendar;
@@ -225,6 +227,51 @@ it('allows active companies and installation staff to write tenant models', func
         'company_id' => $company->getKey(),
     ]);
     expect($staffCalendar->exists)->toBeTrue();
+});
+
+/**
+ * A Multi-Company Admin used to pass in every company. They pass now only in
+ * companies assigned to them (user, 2026-11-10), as every other rule limits
+ * them to their assignment.
+ */
+it('lets a multi-company admin write only into the read-only companies assigned to them', function () {
+    [$assigned, $staff, $assignedSubscription] = makeCompanyWithActiveSubscription();
+    [$unassigned, , $unassignedSubscription] = makeCompanyWithActiveSubscription();
+    markCompanyReadOnly($assignedSubscription, $staff);
+    markCompanyReadOnly($unassignedSubscription, $staff);
+
+    $admin = authenticateForReadOnlyCompany($assigned);
+    $admin->assignRole(Role::query()->whereRaw('LOWER(name) = ?', [mb_strtolower(Role::MULTI_COMPANY_ADMIN)])->firstOrFail());
+    $admin->unsetRelation('roles');
+    app()->forgetInstance(CompanyContext::class);
+
+    expect($admin->isMultiCompanyAdmin())->toBeTrue();
+
+    $calendar = Calendar::factory()->create([
+        'name'       => 'Assigned recovery calendar',
+        'company_id' => $assigned->getKey(),
+    ]);
+    expect($calendar->exists)->toBeTrue();
+
+    expectReadOnlyRefusal(fn () => Calendar::query()->create([
+        'name'       => 'Unassigned calendar',
+        'timezone'   => 'UTC',
+        'company_id' => $unassigned->getKey(),
+    ]));
+});
+
+/**
+ * Company settings are rows written by query, so no model event reached the
+ * guard and a locked company could still save them (2026-11-10).
+ */
+it('refuses a read-only company saving its own company settings', function () {
+    TestBootstrapHelper::ensurePluginInstalled('accounts');
+
+    [$company, $staff, $subscription] = makeCompanyWithActiveSubscription();
+    markCompanyReadOnly($subscription, $staff);
+    authenticateForReadOnlyCompany($company);
+
+    expectReadOnlyRefusal(fn () => app(TaxesSettings::class)->save());
 });
 
 it('refuses expired and cancelled subscriptions while leaving active subscriptions writable', function () {

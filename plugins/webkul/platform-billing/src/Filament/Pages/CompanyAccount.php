@@ -7,6 +7,7 @@ use DateTimeImmutable;
 use DateTimeZone;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -192,6 +193,7 @@ class CompanyAccount extends Page implements HasTable
                             $invoice,
                             new DateTimeImmutable('now', new DateTimeZone('UTC')),
                         );
+                        Notification::make()->success()->title(__('platform-billing::filament/billing.account.saved'))->send();
                     } catch (Throwable $exception) {
                         ReportsServiceFailure::onAction($action, $exception);
                     }
@@ -214,6 +216,7 @@ class CompanyAccount extends Page implements HasTable
 
                     try {
                         app(UserInvitationService::class)->renew($invitation, ReportsServiceFailure::actor());
+                        Notification::make()->success()->title(__('platform-billing::filament/billing.account.saved'))->send();
                     } catch (Throwable $exception) {
                         ReportsServiceFailure::onAction($action, $exception);
                     }
@@ -238,6 +241,7 @@ class CompanyAccount extends Page implements HasTable
 
                     try {
                         app(UserInvitationService::class)->revoke($invitation, ReportsServiceFailure::actor());
+                        Notification::make()->success()->title(__('platform-billing::filament/billing.account.saved'))->send();
                     } catch (Throwable $exception) {
                         ReportsServiceFailure::onAction($action, $exception);
                     }

@@ -7,6 +7,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+use Webkul\PlatformBilling\Console\Commands\BillingReadinessReport;
 use Webkul\PlatformBilling\Console\Commands\InvoiceSubscriptions;
 use Webkul\PlatformBilling\Models\Allocation;
 use Webkul\PlatformBilling\Models\DiscountCode;
@@ -23,6 +24,7 @@ use Webkul\PlatformBilling\Policies\DocumentNumberPolicy;
 use Webkul\PlatformBilling\Services\CompanyReadOnlyWriteGuard;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
+use Webkul\Support\Settings\CompanyAwareSettingsRepository;
 
 /**
  * DEKA's own billing: plans, subscriptions and the invoices it issues to
@@ -62,6 +64,7 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
             ])
             ->hasCommands([
                 InvoiceSubscriptions::class,
+                BillingReadinessReport::class,
             ])
             ->runsMigrations();
     }
@@ -149,6 +152,10 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
             if ($model instanceof Model && $model->exists) {
                 app(CompanyReadOnlyWriteGuard::class)->assertMayWrite($model);
             }
+        });
+        // Company settings are rows written by query, not company models.
+        Event::listen(CompanyAwareSettingsRepository::COMPANY_SETTINGS_WRITING, function (int $companyId): void {
+            app(CompanyReadOnlyWriteGuard::class)->assertCompanyMayWrite($companyId);
         });
         Event::listen('eloquent.deleting: *', function (string $event, array $payload): void {
             $model = $payload[0] ?? null;
