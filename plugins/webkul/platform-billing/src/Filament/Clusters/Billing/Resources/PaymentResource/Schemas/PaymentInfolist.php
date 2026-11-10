@@ -35,9 +35,9 @@ class PaymentInfolist
                     $currency = (string) $record->currency;
 
                     return __(static::$lang.'.infolist.reconciliation-values', [
-                        'credit' => Money::of($row['unapplied_minor'], $currency)->toDecimal(),
-                        'open'   => Money::of($row['open_minor'], $currency)->toDecimal(),
-                        'drift'  => Money::of($row['drift_minor'], $currency)->toDecimal(),
+                        'credit'   => Money::of($row['unapplied_minor'], $currency)->toDecimal(),
+                        'open'     => Money::of($row['open_minor'], $currency)->toDecimal(),
+                        'drift'    => Money::of($row['drift_minor'], $currency)->toDecimal(),
                         'currency' => $currency,
                     ]);
                 }),

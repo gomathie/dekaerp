@@ -68,8 +68,7 @@ class ViewPayment extends ViewRecord
                         ->label(__(static::$lang.'.reference'))
                         ->required(),
                     Textarea::make('reason')
-                        ->label(__(static::$lang.'.reason'))
-                        ->required(),
+                        ->label(__(static::$lang.'.reason')),
                 ])
                 ->action(function (Payment $record, array $data, Action $action): void {
                     try {
@@ -96,8 +95,7 @@ class ViewPayment extends ViewRecord
                         ->label(__(static::$lang.'.reference'))
                         ->required(),
                     Textarea::make('reason')
-                        ->label(__(static::$lang.'.reason'))
-                        ->required(),
+                        ->label(__(static::$lang.'.reason')),
                 ])
                 ->action(function (Payment $record, array $data, Action $action): void {
                     try {

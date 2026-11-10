@@ -6,6 +6,15 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-10 (read-only gaps, readiness report, security translations)
+
+- **Why:** a Multi-Company Admin passed the read-only guard in every company. Company settings bypassed the guard because they are written by query. The security translations lacked eight keys in four locales, which failed `translations:check` and showed raw keys to fr/es/pt_BR/ar users.
+- **How:** see "SAAS-09/14 handoff" in the SaaS plan. The guard rule is now `assertCompanyMayWrite()`; support fires `support.company-settings.writing`; `platform-billing:readiness-report` replaces shadow mode. The translations were added to `user.php` and `accept-invitation.php`.
+- **Benefit:** a locked company cannot change its settings, staff stay within their assignment, and the release has a check to run before billing goes live.
+- **Trade-off / risk:** an inventory operation API update that only removes moves is still unguarded. It is listed in the handoff.
+- **Verification:** `SubscriptionReadOnlyEnforcementTest` 11 passed (27 assertions), `BillingReadinessReportTest` 1 passed (6 assertions), `translations:check --plugin=security` all PASS, on `aureuserp_testing_claude`. Pint passed.
+- **Rollback:** see the handoff.
+
 ## 2026-11-10 (tenant impersonation)
 
 - **Why:** SAAS-15 open item, D-SAAS-14. Support staff needed to see a tenant user's screens without asking for that user's password. User decisions: tenant targets only, Super Admins by default, the administrator's password plus a reason to start, 60 minutes, nothing extra blocked.

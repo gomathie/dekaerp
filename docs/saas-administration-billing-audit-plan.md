@@ -216,14 +216,14 @@ Record the user's answer before unblocking dependent packages.
 | SAAS-06 | Seat limit and invitation lifecycle | SAAS-01, D-SAAS-03, D-SAAS-04 | SAAS-05A/B/C/D | review | Copilot 2026-10-28; Claude review 2026-10-29 / `aureuserp_testing_saas_review`; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
 | SAAS-07 | Onboarding and all seat-enforcement paths | SAAS-06 | — | review (complete) | Codex 2026-11-09 on `aureuserp_testing_saas07b`; see onboarding and mail handoff below |
 | SAAS-08 | Platform-billing plugin foundation | SAAS-00, D-SAAS-01, D-SAAS-05 | — | review (foundation complete) | Copilot 2026-10-28; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
-| SAAS-09 | Plans, prices and subscriptions | SAAS-08, D-SAAS-04 | — | review (activation built; cross-plugin read-only enforcement remains open) | Codex 2026-11-07 / `aureuserp_testing_saas09`; read-only rollout assessment 2026-11-09 below |
+| SAAS-09 | Plans, prices and subscriptions | SAAS-08, D-SAAS-04 | — | review (activation built; read-only enforcement closed 2026-11-10 / `aureuserp_testing_claude`, see "SAAS-09/14 handoff") | Codex 2026-11-07 / `aureuserp_testing_saas09`; read-only rollout assessment 2026-11-09 below |
 | SAAS-09A | Discount codes and tenant redemptions | SAAS-09, D-SAAS-08 | — | review (2026-11-09 / `aureuserp_testing_saas10`; gaps listed in the handoff, not fixed here) | commit `4f6284396` |
 | SAAS-10 | Idempotent recurring invoices | SAAS-09, SAAS-09A | — | review (2026-11-09 / `aureuserp_testing_saas10`; invoice tests passed; four read-only-guard failures left untouched) | commit `4d7b611b9`; schedule-hook fix still uncommitted |
 | SAAS-10B | Grace extensions that move the read-only instant | SAAS-10, D-SAAS-04, D-SAAS-13 | — | review (2026-11-09 / `aureuserp_testing_saas11`) | service and tests; screens stay SAAS-12 |
 | SAAS-11 | Payments, allocations, credit and reversals | SAAS-08, SAAS-10, D-SAAS-05, D-SAAS-06, D-SAAS-10 | — | review (2026-11-09 / `aureuserp_testing_saas11`) | commits `47c750cd7`, `028fe0148`, `a6b78e405`; company-form fixtures still uncommitted |
 | SAAS-12 | Platform administration screens | SAAS-03, SAAS-07, SAAS-09/10/11 | — | todo | — |
 | SAAS-13 | Company-administration screens | SAAS-01, SAAS-07, SAAS-09/10/11 | — | todo | — |
-| SAAS-15 | Backfill, shadow mode, release hardening, tenant impersonation, and test-or-commercial account type | All implementation packages | — | review (account type 2026-11-09 / `aureuserp_testing_saas11`; tenant impersonation 2026-11-10 / `aureuserp_testing_claude`, D-SAAS-14; backfill, shadow mode and release hardening stay out) | commits `47c750cd7`, `028fe0148`; company-form fixtures still uncommitted |
+| SAAS-15 | Backfill, shadow mode, release hardening, tenant impersonation, and test-or-commercial account type | All implementation packages | — | review (account type 2026-11-09 / `aureuserp_testing_saas11`; tenant impersonation 2026-11-10 / `aureuserp_testing_claude`, D-SAAS-14; backfill and shadow mode replaced by a readiness report 2026-11-10, see "SAAS-09/14 handoff") | commits `47c750cd7`, `028fe0148`; company-form fixtures still uncommitted |
 
 Additional requirement: Tenant impersonation
 
@@ -2491,6 +2491,47 @@ Questions:
 - Test: `OverdueExtensionTest` "does not carry an extension from an earlier overdue episode into a later grace".
 - Tests run: see the change log entry for the same date.
 - Rollback: remove the `granted_at` condition. Extensions then stack again.
+
+#### SAAS-09/14 handoff — read-only gaps and readiness report — 2026-11-10 (Claude)
+
+- **Why:** two gaps found while closing SAAS-09. A Multi-Company Admin passed
+  the read-only guard in every company. Company settings rows are written by
+  query, so a locked company still saved its accounting and tax settings.
+  Shadow mode (SAAS-14) had nothing to compare against: production has six
+  commercial companies, no subscriptions and no seat limits.
+- **Decisions (user, 2026-11-10):** a Multi-Company Admin passes only in
+  assigned companies. Shadow mode and backfill are replaced by a read-only
+  report and the deployment checklist below.
+- **How:**
+  - `CompanyReadOnlyWriteGuard::assertCompanyMayWrite(int)` holds the
+    per-company rule. `assertMayWrite()` calls it for each company id.
+  - `CompanyAwareSettingsRepository::updatePropertiesPayload()` fires
+    `support.company-settings.writing` for a company-scoped group. The
+    platform-billing provider listens and calls the guard.
+  - The bulk-write inventory found 43 single-line bulk writes. Most run
+    inside a parent model save that the guard already refuses. Platform-level
+    ones (install, cleanup, roles, seat limits) are not tenant writes.
+    One remaining edge: an inventory operation API update whose payload only
+    removes moves skips the parent save. It is listed, not fixed.
+  - `platform-billing:readiness-report` prints, per company: type, trial end,
+    seats used and limit, over limit, modules granted, subscription status
+    and whether it is read-only now. It writes nothing.
+- **Verification:** on `aureuserp_testing_claude`.
+  `SubscriptionReadOnlyEnforcementTest` 11 passed (27 assertions), including
+  "lets a multi-company admin write only into the read-only companies
+  assigned to them" and "refuses a read-only company saving its own company
+  settings". `BillingReadinessReportTest` 1 passed (6 assertions). Pint
+  passed. Full suites run in the joint verification.
+- **Deployment checklist:**
+  1. Deploy and run migrations (includes `tenant.impersonate`).
+  2. Run `php artisan platform-billing:readiness-report`. Expect every company
+     "Read-only now: no". Any "YES" is a lockout; stop and review it.
+  3. Set seat limits only through `SeatCapacityService::setLimit()`.
+  4. Create subscriptions per company only once commercial terms are known.
+     Never infer a plan from installed modules.
+  5. Run the report again after each billing change.
+- **Rollback:** remove the event call and listener; restore the staff
+  exemption in `assertMayWrite()`; delete the command and its test.
 
 #### SAAS-15 handoff — tenant impersonation — 2026-11-10 (Claude)
 

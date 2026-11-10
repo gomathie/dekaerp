@@ -249,6 +249,7 @@ return [
         'no-invitations'  => 'No pending invitations.',
         'invitation'      => 'Pending invitation: :email.',
         'no-invoices'     => 'No invoices yet.',
+        'saved'           => 'Saved.',
         'actions'         => [
             'extend'     => 'Extend an overdue invoice',
             'invoice'    => 'Invoice',

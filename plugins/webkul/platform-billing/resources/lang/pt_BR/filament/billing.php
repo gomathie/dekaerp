@@ -249,6 +249,7 @@ return [
         'no-invitations'  => 'Nenhum convite pendente.',
         'invitation'      => 'Convite pendente: :email.',
         'no-invoices'     => 'Nenhuma fatura ainda.',
+        'saved'           => 'Salvo.',
         'actions'         => [
             'extend'     => 'Estender uma fatura vencida',
             'invoice'    => 'Fatura',

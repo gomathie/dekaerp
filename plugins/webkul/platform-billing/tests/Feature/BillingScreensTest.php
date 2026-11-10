@@ -4,7 +4,7 @@ use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Livewire;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Spatie\Permission\PermissionRegistrar;
 use Webkul\PlatformBilling\Filament\Clusters\Billing\Resources\DiscountCodeResource\Pages\CreateDiscountCode;
 use Webkul\PlatformBilling\Filament\Clusters\Billing\Resources\DiscountCodeResource\Pages\ListDiscountCodes;
 use Webkul\PlatformBilling\Filament\Clusters\Billing\Resources\DiscountCodeResource\Pages\ViewDiscountCode;
@@ -16,9 +16,12 @@ use Webkul\PlatformBilling\Filament\Pages\BillingAudit;
 use Webkul\PlatformBilling\Filament\Pages\CompanyAccount;
 use Webkul\PlatformBilling\Models\DiscountCode;
 use Webkul\PlatformBilling\Models\Invoice;
+use Webkul\PlatformBilling\Models\OverdueExtension;
 use Webkul\PlatformBilling\Models\Payment;
+use Webkul\PlatformBilling\Models\Reversal;
 use Webkul\PlatformBilling\Services\OverdueExtensions;
 use Webkul\PlatformBilling\Services\PlanCatalog;
+use Webkul\PlatformBilling\Services\PlatformPayments;
 use Webkul\PlatformBilling\Services\RecurringInvoiceGenerator;
 use Webkul\PlatformBilling\Services\SubscriptionDrafts;
 use Webkul\PlatformBilling\Services\SubscriptionLifecycle;
@@ -111,8 +114,8 @@ function screenCompanyAdmin(Company $company): User
     $user->syncRoles([$role->getKey()]);
     $user->unsetRelation('roles');
     Permission::findOrCreate('page_platform_billing_company_account', 'web');
-    app(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
-    app(\Webkul\Security\PermissionRegistrar::class)->forgetCachedPermissions();
+    app(PermissionRegistrar::class)->forgetCachedPermissions();
+    app(Webkul\Security\PermissionRegistrar::class)->forgetCachedPermissions();
     $user->givePermissionTo('page_platform_billing_company_account');
     Auth::guard('web')->login($user->fresh());
     FilamentHelper::bootAdminPanel();
@@ -175,12 +178,12 @@ it('posts a payment once for the same reference, then allocates, reverses and re
         ->assertSee('40.00')
         ->callAction('allocate', data: ['invoice_id' => $invoice->getKey(), 'amount' => '10.00']);
 
-    expect(app(\Webkul\PlatformBilling\Services\PlatformPayments::class)->invoiceBalanceMinor($invoice->fresh()))
+    expect(app(PlatformPayments::class)->invoiceBalanceMinor($invoice->fresh()))
         ->toBe((int) $invoice->total_minor - 1000);
 
     Livewire::test(ViewPayment::class, ['record' => $payment->getRouteKey()])
         ->callAction('reversePayment', data: ['reference' => 'SCREEN-REV', 'reason' => '   '])
-        ->assertNotified(\Webkul\PlatformBilling\Services\PlatformPayments::REASON_REQUIRED);
+        ->assertNotified(PlatformPayments::REASON_REQUIRED);
 
     Livewire::test(ViewPayment::class, ['record' => $payment->getRouteKey()])
         ->callAction('refundCredit', data: [
@@ -196,7 +199,7 @@ it('posts a payment once for the same reference, then allocates, reverses and re
             'reason'    => 'Customer overpaid',
         ]);
 
-    expect(\Webkul\PlatformBilling\Models\Reversal::withoutGlobalScopes()->where('payment_id', $payment->getKey())->count())->toBe(1);
+    expect(Reversal::withoutGlobalScopes()->where('payment_id', $payment->getKey())->count())->toBe(1);
 });
 
 it('refuses a multi-company admin and a company admin the platform money screens', function () {
@@ -286,7 +289,7 @@ it('shows one company its own bill and refuses the other company and the invitat
         ->assertDontSee('other-pending@example.com')
         ->callAction('extend', data: ['invoice_id' => $ownInvoice->getKey()]);
 
-    expect(\Webkul\PlatformBilling\Models\OverdueExtension::withoutGlobalScopes()->where('invoice_id', $ownInvoice->getKey())->where('kind', 'company_admin')->exists())->toBeTrue();
+    expect(OverdueExtension::withoutGlobalScopes()->where('invoice_id', $ownInvoice->getKey())->where('kind', 'company_admin')->exists())->toBeTrue();
 
     Livewire::test(CompanyAccount::class)
         ->callAction('extend', data: ['invoice_id' => $ownInvoice->getKey()])
@@ -296,13 +299,25 @@ it('shows one company its own bill and refuses the other company and the invitat
 
     Livewire::test(CompanyAccount::class)
         ->callAction('revokeInvitation', data: ['invitation_id' => $invitation->getKey()])
-        ->assertNotified('You may not manage invitations for this company.');
+        ->assertNotified(__('platform-billing::filament/billing.account.saved'));
 
-    expect($invitation->fresh()->isPending())->toBeTrue();
+    expect($invitation->fresh()->isPending())->toBeFalse();
 
-    expect(fn () => Livewire::test(CompanyAccount::class)
-        ->callAction('extend', data: ['invoice_id' => $otherInvoice->getKey()]))
-        ->toThrow(NotFoundHttpException::class);
+    $otherInvitation = Invitation::query()->where('email', 'other-pending@example.com')->firstOrFail();
+
+    // The select only offers this company's rows, so a forged id is rejected
+    // before the action. The action still 404s if that check is ever skipped.
+    Livewire::test(CompanyAccount::class)
+        ->callAction('revokeInvitation', data: ['invitation_id' => $otherInvitation->getKey()])
+        ->assertNotNotified(__('platform-billing::filament/billing.account.saved'));
+
+    expect($otherInvitation->fresh()->isPending())->toBeTrue();
+
+    Livewire::test(CompanyAccount::class)
+        ->callAction('extend', data: ['invoice_id' => $otherInvoice->getKey()])
+        ->assertNotNotified(__('platform-billing::filament/billing.account.saved'));
+
+    expect(OverdueExtension::withoutGlobalScopes()->where('invoice_id', $otherInvoice->getKey())->exists())->toBeFalse();
 });
 
 it('refuses a blank super admin extension reason and records the billing audit', function () {
@@ -332,6 +347,7 @@ it('refuses a blank super admin extension reason and records the billing audit',
             return collect($resource['permissions'] ?? [])
                 ->map(fn (mixed $permission): ?string => is_array($permission) ? ($permission['key'] ?? null) : null)
                 ->filter()
+                ->values()
                 ->all();
         })
         ->all();

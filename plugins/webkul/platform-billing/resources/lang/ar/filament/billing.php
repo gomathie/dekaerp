@@ -249,6 +249,7 @@ return [
         'no-invitations'  => 'لا توجد دعوات معلّقة.',
         'invitation'      => 'دعوة معلّقة: :email.',
         'no-invoices'     => 'لا توجد فواتير بعد.',
+        'saved'           => 'تم الحفظ.',
         'actions'         => [
             'extend'     => 'تمديد فاتورة متأخرة',
             'invoice'    => 'فاتورة',
