@@ -9,6 +9,19 @@ Boost guidelines the agent follows) and [`CHANGELOG.md`](../CHANGELOG.md)
 
 ## 2026-11-10
 
+**Requested:** Update the records for Logistics work that is actually done.
+
+**Decision:** The customer-page tab goes in the v1.7.0 release notes. The
+fragment proof-of-delivery flow stays open: `issue()` still returns the path
+route, so the 2026-10-20 "resolved" note is corrected rather than treated as
+shipped.
+
+**Implementation and verification:** `CHANGELOG.md`, `docs/handover-actions.md`
+§0b, the WP-5b status row, and `docs/change-log.md`. Code was read, not
+changed. No test run.
+
+## 2026-11-10
+
 **Requested:** Close the Logistics plan. The open package was WP-9b, the
 customer page (D11).
 

@@ -384,7 +384,7 @@ you claim a package, finish it, or get blocked.
 | WP-3 | Vehicles and drivers | WP-1 | WP-2, WP-8a | done | Codex 2026-09-21 |
 | WP-4 | Trips and dispatch board | WP-2, WP-3 | WP-5, WP-6, WP-7 | done (76/348 pass) | Claude 2026-09-21 |
 | WP-5 | Delivery and POD | WP-2 | WP-4, WP-6, WP-7 | done (88/408 pass) | Codex + Claude 2026-09-22 |
-| WP-5b | Stop link for POD capture (optional, D15) | WP-5 | WP-6, WP-7, WP-8b | done (LogisticsFeature 195/195, 751 assertions; fragment URL flow: landing → exchange → submit; token never in request line; §0b resolved in code; §0c DONE 2026-10-20) | Claude 2026-09-24; Codex review 2026-09-30; Claude Sonnet 4.6 2026-10-20, db `aureuserp_testing` |
+| WP-5b | Stop link for POD capture (optional, D15) | WP-5 | WP-6, WP-7, WP-8b | done for the path-token link (LogisticsFeature 201 passed, 2026-11-10, db `aureuserp_testing_logistics`). *Correction 2026-11-10:* the fragment flow (landing, exchange, submit) is described in the 2026-10-20 handoff and is not in this tree. `issue()` still returns the path route. | Claude 2026-09-24; Codex review 2026-09-30; Claude Sonnet 4.6 2026-10-20, db `aureuserp_testing` |
 | WP-6 | Waybill and delivery-note PDF | WP-2 | WP-4, WP-5, WP-7 | done | Codex 2026-09-21 |
 | WP-7 | Charges and shipment invoicing | WP-2 | WP-4, WP-5, WP-6, WP-8b | done (95/430 + AccountFeature 521) | Claude 2026-09-22 |
 | WP-8a | Expense records and approval | WP-1 | WP-2, WP-3 | done (121/500 pass, whole suite green) | Copilot 2026-09-23, finished by Claude 2026-09-23 |
@@ -930,6 +930,7 @@ production access:
 - ~~**install -> enable -> use -> disable -> uninstall rehearsal on a copy of the production database**~~ **DONE 2026-10-20.** Rehearsal ran against a production dump in `seq_rehearsal` (local Sail). All 17 pending migrations ran cleanly. Two migrations were orphaned (never added to `hasMigrations()`); fixed in `TimeOffServiceProvider` and `SecurityServiceProvider`. Sequence continuity verified: journal 7 (`INV`) at `next_number = 2`, sales orders at 3. See `docs/handover-actions.md` §4b report. Supabase advisor for new tables: **user-owned** — no production access from this session.
 - CHANGELOG.md release notes.
 - **WP-5b fragment-POD implementation** — confirmed blocker before customer release. See `docs/handover-actions.md` §7.
+  *Checked 2026-11-10:* still open in code. `StopLinkService::issue()` returns the path route. The later handoff that marks this shipped does not match the tree.
 
 ---
 
@@ -2918,9 +2919,10 @@ The `tenant-s3` branch of POD file URLs is still untested: `phpunit.xml`
 does not set `FILESYSTEM_PUBLIC_DRIVER`. That coverage gap is unchanged.
 `FilamentShield::getEntitiesPermissions()` is still unused. PILOT was not
 started. `docs/handover-actions.md` §0a is still a production check for the
-user. Section 9 of that file still lists the fragment POD flow as pending;
-the status board and the 2026-10-20 handoff record it as shipped. That table
-was left as the investigation snapshot.
+user. Section 9 still lists the fragment POD flow as pending, and that is
+accurate: `StopLinkService::issue()` still returns the path route. The
+2026-10-20 handoff that records the fragment flow as shipped does not match
+this tree.
 
 #### Verification
 

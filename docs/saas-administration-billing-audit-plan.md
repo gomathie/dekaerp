@@ -2511,7 +2511,9 @@ Questions:
   - The bulk-write inventory found 43 single-line bulk writes. Most run
     inside a parent model save that the guard already refuses. Platform-level
     ones (install, cleanup, roles, seat limits) are not tenant writes.
-    One remaining edge: an inventory operation API update whose payload only
+    *Closed later on 2026-11-10 (user): moves are now removed one model at a
+    time, so the guard sees them; see `docs/change-log.md`.* One remaining
+    edge: an inventory operation API update whose payload only
     removes moves skips the parent save. It is listed, not fixed.
   - `platform-billing:readiness-report` prints, per company: type, trial end,
     seats used and limit, over limit, modules granted, subscription status

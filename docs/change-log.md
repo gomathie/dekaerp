@@ -6,6 +6,15 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-10 (records of finished Logistics work)
+
+- **Why:** the customer-page tab was missing from the release notes, and the 2026-10-20 fragment proof-of-delivery notes say the token left the request path. The current `StopLinkService::issue()` still returns `route('logistics.stop-link.show', ['token' => $token])`.
+- **How:** `CHANGELOG.md` v1.7.0 now names the customer shipments tab and describes the delivery link as a path URL. `docs/handover-actions.md` §0b and the WP-5b status row carry a dated correction. The fragment routes were not added.
+- **Benefit:** the release notes match the customer page that shipped, and the next reader is not told the token is already out of access logs.
+- **Trade-off / risk:** the fragment design remains the open security item in handover section 9. Production rollout of that design has not started.
+- **Verification:** read `StopLinkService::issue()`, `routes/web.php`, and `StopLinkController` (show and store only). No new test run.
+- **Rollback:** restore the previous changelog sentence and remove the dated corrections.
+
 ## 2026-11-10 (Logistics WP-9b, customer page)
 
 - **Why:** D11 asks for a customer's shipments and charges on the customer page. The 2026-09-30 deferral found no Partners extension point. `PartnerSchemaRegistry` now has infolist slots and no relation-manager slot.
@@ -39,6 +48,7 @@ for the task/question log this change log is paired with.
   3. Partners migration `2026_11_10_000001`: each shared contact goes to the single company whose documents use it, otherwise the default company; a contact used by two companies stays shared and is logged. In production: Paul Williams → TRACE365 (its sales order and invoice), the other nine → My Company. Employees migration `2026_11_10_000003`: shared employees take their contact's company.
   4. `Support\Filament\CompanyMembers` (`scope()`, `options()`) lists members of the active companies; 35 pickers in 20 plugins use it, and `ListsCompanyMembers` delegates to it (now active, not allowed, companies).
   5. Found while testing 2: once `bypass_company_scope` existed, `User::hasPermissionTo()` asked the tenant-role resolver for it, the resolver read the active companies, and those asked the same ability first, so every ordinary user's request recursed until PHP crashed (segfault in `CompanyMembersTest`). `User::PLATFORM_ONLY_ABILITIES` now answers the two bypass abilities from the global store only, which also stops a tenant role granting cross-company visibility. Test: security `PlatformOnlyAbilityTest`. **The security migration must not ship without this change.**
+  6. User decisions the same day: `EmployeeSeeder` stamps demo employees (and, through the model hook, their contacts) with the first company, so a fresh installation does not bring shared demo people back. The inventory operation API removes dropped moves one model at a time (`OperationController::syncMoves`), so a payload that only removes moves now passes the read-only guard and Move's own line-removing hook runs. Test: inventories `ReceiptTest` "removes a dropped move through the model so its delete events run". The Super Admin default stays one selected company; a combined Finance dashboard follows after deploy.
 - **Benefit:** the Super Admin sees every dashboard and every company and can choose "All companies"; selecting a company shows only its records and people.
 - **Trade-off / risk:** both data migrations are not reversible (which rows were shared is not recorded). Pickers no longer offer users outside the active companies, including a former member who created old records. The Admin role now holds `bypass_company_scope` in tests too, so suites using `admin@example.com` run with it.
 - **Superseded:** AGENTS.md "Existing contacts are never reassigned… example employees stay shared" (2026-10-29).
