@@ -6,6 +6,16 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-10 (Logistics WP-9b, customer page)
+
+- **Why:** D11 asks for a customer's shipments and charges on the customer page. The 2026-09-30 deferral found no Partners extension point. `PartnerSchemaRegistry` now has infolist slots and no relation-manager slot.
+- **How:** `PartnerContributions` adds one read-only tab on `tabs.append`, registered once. `CustomerPage` requires `view_any_logistics_shipment` and `LogisticsAccess::enabledFor()` for the company being read. Charge amounts also require `view_financials_logistics_shipment`. The query drops only `CompanyScope` and filters `customer_id` plus that company. A shared contact uses `current_company_id()` only. Details are in the WP-9b handoff.
+- **Benefit:** the customer page shows that customer's recent shipments and open charges, and a shared contact cannot show another tenant's jobs. A company without Logistics, or a user without the view permission, sees no tab.
+- **Trade-off / risk:** eight rows and links, not a relation manager. The tab is contributed to every partner infolist that uses the base schema; the gate hides it. The `tenant-s3` POD coverage gap, the unused Shield `getEntitiesPermissions()` method, and PILOT are unchanged. No new navigation item.
+- **Verification:** LogisticsFeature 201 passed (833 assertions), 5689.51s, exit 0, on `aureuserp_testing_logistics`. Focused `CustomerPageTest` 4 passed (20 assertions), 810.61s, exit 0, same database. `translations:check --plugin=logistics` 4 passed. Pint passed. No browser smoke. Partners was not edited.
+- **Test:** `plugins/webkul/logistics/tests/Feature/Customers/CustomerPageTest.php`.
+- **Rollback:** remove the `PartnerContributions` registration and delete `CustomerPage`, the contribution class, the test and `filament/partner.php`. No migration.
+
 ## 2026-11-10 (SAAS-12 and SAAS-13 screens)
 
 - **Why:** the billing services had no screens. A Super Admin could not post a plan, a subscription, an invoice view, a payment or a discount without a service call, and a Company Admin could not see their own bill or grant the one 10-day extension.
@@ -15,6 +25,24 @@ for the task/question log this change log is paired with.
 - **Verification:** PlatformBillingFeature 116 passed (620 assertions), 1832.94s, exit 0, on `aureuserp_testing_saas11`. `CompanyModulesTest` 9 passed (45 assertions), 277.94s, same database. `translations:check --plugin=platform-billing` 4 passed. Pint passed on the screen paths. No browser smoke.
 - **Test:** `AdministrationScreensTest.php`, `BillingScreensTest.php`.
 - **Rollback:** remove the cluster, the two pages, the company-form section and `PlanCatalog`. No migration.
+
+## 2026-11-10 (company isolation, missing permissions, user pickers)
+
+- **Why (found in production, read-only checks):**
+  1. The Sales, Purchases and Invoices dashboards (added 2026-11-07) answered 403 for the Super Admin. Their page and widget permission rows were never created in production: Shield permissions were generated only at plugin install, and the Admin role is a plain role (`filament-shield.super_admin.enabled = false`).
+  2. `bypass_company_scope` was never created outside the test helper, so the Super Admin was treated as an ordinary member: company 3 was missing from the switcher and "All companies" never appeared.
+  3. Ten demo contacts and ten demo employees had no company and appeared in every company.
+  4. People pickers read every user on the installation, e.g. the Project dashboard's Assignees filter listed other tenants' users.
+- **How:**
+  1. `erp:sync-permissions` (plugin-manager) runs `shield:generate --all --option=permissions --panel=admin` and adds any missing permission to the Admin role. It only adds. **Add it to the Laravel Cloud deploy commands after `migrate`.**
+  2. Security migration `2026_11_10_000002` creates `bypass_company_scope` and grants it to the Super Admin role names.
+  3. Partners migration `2026_11_10_000001`: each shared contact goes to the single company whose documents use it, otherwise the default company; a contact used by two companies stays shared and is logged. In production: Paul Williams → TRACE365 (its sales order and invoice), the other nine → My Company. Employees migration `2026_11_10_000003`: shared employees take their contact's company.
+  4. `Support\Filament\CompanyMembers` (`scope()`, `options()`) lists members of the active companies; 35 pickers in 20 plugins use it, and `ListsCompanyMembers` delegates to it (now active, not allowed, companies).
+- **Benefit:** the Super Admin sees every dashboard and every company and can choose "All companies"; selecting a company shows only its records and people.
+- **Trade-off / risk:** both data migrations are not reversible (which rows were shared is not recorded). Pickers no longer offer users outside the active companies, including a former member who created old records. The Admin role now holds `bypass_company_scope` in tests too, so suites using `admin@example.com` run with it.
+- **Superseded:** AGENTS.md "Existing contacts are never reassigned… example employees stay shared" (2026-10-29).
+- **Verification:** see the handoff entry below once the suites have run.
+- **Rollback:** remove the deploy command; revert the security migration (`down` removes the role grants only); the contact and employee assignments must be undone by hand.
 
 ## 2026-11-10 (module sidebar section headings)
 

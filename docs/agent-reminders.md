@@ -9,6 +9,20 @@ Boost guidelines the agent follows) and [`CHANGELOG.md`](../CHANGELOG.md)
 
 ## 2026-11-10
 
+**Requested:** Close the Logistics plan. The open package was WP-9b, the
+customer page (D11).
+
+**Decision:** Use the partner infolist slot `tabs.append`. Do not add a
+relation-manager slot or edit `PartnerResource`. A shared contact shows only
+the company the viewer is working in.
+
+**Implementation and verification:** See the WP-9b handoff in
+`docs/logistics-plan.md` and `docs/change-log.md`. Database
+`aureuserp_testing_logistics`. LogisticsFeature 201 passed (833 assertions).
+No browser smoke. No navigation change. PILOT was not started.
+
+## 2026-11-10
+
 **Requested:** SAAS-12 platform administration screens, then SAAS-13
 company-administration screens.
 

@@ -32,6 +32,7 @@ built; this document is the build guide and the single payroll document.
 14. [Open questions](#14-open-questions)
 15. [What to revisit as payroll grows](#15-what-to-revisit-as-payroll-grows)
 16. [Adversarial review, 2026-11-02](#16-adversarial-review-2026-11-02)
+17. [Odoo payroll check](#17-odoo-payroll-check)
 
 - [Appendix A: The scope note, verbatim](#appendix-a-the-scope-note-verbatim)
 - [Appendix B: Sources to research per country](#appendix-b-sources-to-research-per-country)
@@ -421,6 +422,7 @@ marked *needs user* blocks only the step it names.
 | DP-12 | Can DEKA staff see a tenant's salaries? | **Decided 2026-11-02 (user):** the **main super admins see everything.** Seeing salary and bank data is otherwise a **right** (`view_payroll_pay_data`) that is granted to **DEKA support admins** and **Multi-Company Admins**; a Multi-Company Admin holds it only within their assigned companies. Ordinary platform configuration access (editing localizations) does not include it. Every view of pay data is logged (who, which company, when), so the right stays accountable. *Supersedes the recommendation of a client-granted support grant.* |
 | DP-13 | Exchange-rate date when pay currency ≠ accounting currency? | **Recommended:** the run's pay date; stored on the run. Confirm with each pilot's accountant. |
 | DP-14 | Which rule version applies to a run? | **Recommended:** the version effective on the period **end** date (or pay date where a country taxes on payment); the localization declares which. Never "today". |
+| DP-16 | Do we check the design against Odoo payroll? | **Decided 2026-11-10 (user): yes.** A structured comparison with Odoo's payroll (§17), done in A0 and repeated before A3 and B1. Odoo is a reference for concepts, never a source of code. |
 | DP-15 | Net pay below zero? | **Recommended:** refuse the line with a plain warning and let the administrator adjust (a deferred deduction is a policy option later). Never a silent floor at zero. |
 
 ---
@@ -664,7 +666,7 @@ generalize, shaped by the real Ghana and Zambia packages.
 
 | Phase | Content | Depends on | Gate to finish |
 |---|---|---|---|
-| **A0** | ~~Decisions DP-03b, DP-09 to DP-12~~ **decided 2026-11-02**. Privacy impact assessment. **Pilot facts per client** (collected during each client's onboarding, user decision): employers, branches and how each is employed, pay groups, frequencies, currencies, headcount, joiners and leavers, mid-month changes, casual or daily staff, the current payroll tool. **Practitioner = each pilot client's own payroll accountant** (user decision), named per client. **Zambia first**: shadow run within a month of 2026-11-02 (user). ZM research pack first, then GH (Appendix B). | — | Zambia pilot's facts collected and its accountant named; ZM research pack done |
+| **A0** | ~~Decisions DP-03b, DP-09 to DP-12~~ **decided 2026-11-02**. Privacy impact assessment. **Pilot facts per client** (collected during each client's onboarding, user decision): employers, branches and how each is employed, pay groups, frequencies, currencies, headcount, joiners and leavers, mid-month changes, casual or daily staff, the current payroll tool. **Practitioner = each pilot client's own payroll accountant** (user decision), named per client. **Zambia first**: shadow run within a month of 2026-11-02 (user). ZM research pack first, then GH (Appendix B). **Odoo payroll check, first pass (§17, DP-16).** | — | Zambia pilot's facts collected and its accountant named; ZM research pack done; §17 comparison table filled and reviewed |
 | **A1** | Plugin skeleton; availability through the plugin grant (and entitlement if DP-10 says sold); **tenant isolation and the salary-access rule (§5.8) from day one**, since they are cheap early and costly to retrofit; `phpunit.xml` suite; autoloader | A0 (DP-10, DP-12) | Install, isolation and confidentiality tests |
 | **A2** | Minimal company setup: employer (one per company per country), one pay group, employment terms with statutory identifiers, period inputs. **Joiners, leavers and final pay in v1** (calendar-day proration, DP-04 amended). | A1 | Effective-date, overlap and proration tests |
 | **A3** | Engine plus the **Zambia calculator first** (the first shadow run is in Zambia), then Ghana, for monthly salaried staff. Rules live in **versioned data files in the repository**, deployed like code, each file citing its sources. Localization classes are versioned side by side (§5.6). Golden cases come from the practitioner's independent calculation. A fixture country is used only as a unit-test aid, never as a stand-in for a real one. | A2, DP-03b, A0 research | GH and ZM golden cases pass; practitioner review recorded |
@@ -939,6 +941,55 @@ as first written was probably wrong.
 **Verdict: STOP the plan as first sequenced.** It is replaced by the Stage A /
 Stage B sequence above. Attack 3 stays open until the user supplies the names
 and dates.
+
+---
+
+## 17. Odoo payroll check
+
+Added 2026-11-10 (user, DP-16). AureusERP follows Odoo's concepts in most
+plugins, and many pilot clients' accountants know Odoo. Comparing the design
+with Odoo's payroll finds concepts we have missed and makes deliberate
+differences explicit, before code exists.
+
+**Licensing guardrail.** Odoo's payroll (`hr_payroll` and its localizations)
+is Odoo Enterprise, under the proprietary Odoo Enterprise licence. Study its
+documentation and observed behaviour only: never copy its code, data files or
+rule definitions. The OCA community `payroll` module is LGPL-3; read it for
+ideas, do not paste it into this MIT-licensed repository. Country rules still
+come only from official sources and the practitioner (Appendix B), never from
+Odoo's localization data.
+
+**When.** First pass in A0, before the skeleton. Repeat before A3 (engine and
+calculators) and before B1 (platform publishing). Each pass records its date,
+who did it, and the Odoo version it was checked against.
+
+**What to compare.** The Odoo names below are from memory: verify each against
+the current Odoo payroll documentation and record the version.
+
+| Area | Odoo concept (to verify) | This plan | Question to answer |
+|---|---|---|---|
+| Pay structure | Structure types and salary structures | Pay groups and structures (§7.2) | Do we model the same separation of "kind of employee" and "how pay is computed"? |
+| Rules | Salary rules with categories (basic, allowances, gross, deductions, net, employer contributions), computed by conditions and code | Statutory items in versioned data plus one reviewed PHP class per country; company items constrained (§5.2) | Do our component categories cover everything a payslip shows? Odoo lets users write rule code; we deliberately do not (tenant-editable code is a security and audit risk). Record this difference. |
+| Dated parameters | Rule parameters with values effective from a date | Versioned, immutable statutory rule versions (§5.6, §5.7) | Is our effective dating at least as expressive, including mid-year changes? |
+| Contract | Employee contract with wage and wage type (monthly or hourly) | Employment terms with `pay_basis` (§7.3, DP-02) | Any contract field a pilot will expect that we lack? |
+| Time | Work entries and work entry types feeding worked days | Period inputs; daily and hourly pay later (R-06) | Which work-entry ideas do we need for leave and unpaid days in v1? |
+| Inputs | Payslip "other inputs" | Period inputs (§7.3) | Same coverage for one-off bonuses and deductions? |
+| Batches | Payslip batches | Runs bound to employer, pay group, period, currency and mode (§5.3) | Anything Odoo's batch does (e.g. regenerate, partial) that a run should? |
+| Corrections | Refund or credit payslip | Reversal by a compensating move (§9) | Is our correction flow as usable for an accountant? |
+| Accounting | Journal entry per payslip or per batch, accounts mapped on rules | One balanced move per finalized run, accounts by `account_role` (B5) | Do pilots need per-employee entries? |
+| Cumulatives | Year-to-date totals on payslips | Snapshots and results (§7.4) | Can every payslip show YTD without recomputing history? |
+| Payment | Payment reports and bank file exports | Payment records, bank export per configuration (DP-06) | Formats the pilots' banks actually accept. |
+| Multi-company | Payslips per company | Employer per company per country, salary-access rule (§5.3, §5.8) | Do we exceed Odoo here? Record it as a selling point if so. |
+| Localizations | Per-country payroll modules for some countries | Separate packages per country (ZM, GH, CD, CG) | Does Odoo ship a payroll localization for ZM, GH, CD or CG? If it does, use its documentation as a cross-check, not its data. |
+| Reports | Payroll analysis and statutory declarations | Reports with currency grouping (B8) | Which statutory returns do pilots file, and in what format? |
+
+**Output of each pass.** A table in this section with one row per area and a
+verdict: *already covered*, *adopt* (add to the plan, with the phase),
+*deliberately different* (with the reason), or *not relevant to the pilots*.
+"Adopt" rows become plan changes in the same edit. The pass is reviewed by the
+pilot's payroll accountant where it touches calculations.
+
+**Status.** Not yet done. The first pass belongs to A0.
 
 ---
 

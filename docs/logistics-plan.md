@@ -1,8 +1,11 @@
 # Logistics Plugin — Implementation Plan
 
-Status: **Decisions D1–D15 accepted (2026-09-17, all recommendations, stop link included). Next: WP-1 Foundation.**
-Prepared 2026-09-17 against `main @ 3e8cf0bf2`. Work happens on the branch
-**`feature/logistics`**. No Logistics code exists yet.
+Status: **Complete (2026-11-10).** Every package on the status board is done.
+WP-9b is a read-only tab on the customer page. PILOT telematics stays research
+and was not built.
+Prepared 2026-09-17 against `main @ 3e8cf0bf2`. Work happened on the branch
+**`feature/logistics`**. *Superseded the same-day lines "Next: WP-1 Foundation"
+and "No Logistics code exists yet."*
 
 This file is the working plan. It is written so **several agents can work at
 once**: the work is split into packages (section 6), each with its own files,
@@ -360,6 +363,11 @@ Research behind D1–D3, D5, D6, D8, D13 and D15 (2026-09-17):
 The first `TelematicsProvider` adapter would be PILOT (geofence entry and exit →
 stop arrival and departure events).
 
+*Not a package (confirmed 2026-11-10).* No adapter was built. The WP-1 file
+list names `src/Contracts/TelematicsProvider.php`; that file is not in the tree.
+`src/Enums/TelematicsProvider.php` and the telematics columns are. Do not start
+PILOT to close this plan.
+
 ---
 
 ## 5. Status board
@@ -382,7 +390,7 @@ you claim a package, finish it, or get blocked.
 | WP-8a | Expense records and approval | WP-1 | WP-2, WP-3 | done (121/500 pass, whole suite green) | Copilot 2026-09-23, finished by Claude 2026-09-23 |
 | WP-8b | Expense and carrier bills | WP-8a, WP-2 | WP-7 | done (implemented in 1047b1a71 and ef810923a; PostingTest green) | |
 | WP-9 | Sales quotation link (per D1) | WP-7 | WP-10 | done | Claude 2026-09-23, db `aureuserp_testing_wp9` |
-| WP-9b | Customer page integration (per D11) | WP-7 | WP-10 | deferred (no safe extension point; see handoff 2026-09-30) | |
+| WP-9b | Customer page integration (per D11) | WP-7 | WP-10 | done (read-only infolist tab; LogisticsFeature 201 passed, 833 assertions, db `aureuserp_testing_logistics`) | Grok 2026-11-10 |
 | WP-10 | Dashboard widgets | WP-4, WP-5 | WP-9, WP-11 | done (125/506 pass, whole suite green) | Claude 2026-09-24, db `aureuserp_testing_wp10` |
 | WP-11 | Reports | WP-4, WP-5, WP-7, WP-8b | WP-10 | done (176/676 pass, whole suite green) | Claude 2026-09-25, db `aureuserp_testing_wp11` |
 | WP-12 | Translations ar/es/fr/pt_BR | each finished package | anything | done (`translations:check`: 4/4 pass; TTL regression 1/1 pass) | Codex 2026-09-30, db `aureuserp_testing_wp12` |
@@ -415,6 +423,8 @@ WP-12 has since been completed:
     `review` until the fragment implementation is shipped and tested.
 - **WP-9b — still `todo`.** Genuinely unimplemented; the plan says extension point
   only, otherwise ask.
+  *Superseded 2026-11-10:* the infolist slot now exists and the tab shipped.
+  See "WP-9b - 2026-11-10 - Grok".
 - **WP-12 — completed 2026-09-30.** All 17 later English files now have
   ar/es/fr/pt_BR translations, and the stale exception and company-settings
   arrays are synchronized. The focused checker passes all four locale sets.
@@ -780,6 +790,9 @@ copies customer, currency, lines and charges, and runs only once.
 
 **Depends on:** WP-7. Look for a Partners extension point first. If none
 exists, report instead of editing.
+
+*Done 2026-11-10.* `PartnerSchemaRegistry` infolist slot `tabs.append` was
+the extension point. No relation-manager slot was added. See the handoff.
 
 ---
 
@@ -1587,6 +1600,8 @@ Requests for other packages:
 
 - WP-12: translate `resources/lang/en/delivery.php`.
 - WP-5b (optional, D15): the stop link for POD capture is still `todo`.
+  *Superseded 2026-09-24 through 2026-10-20:* WP-5b is done, including the
+  fragment URL. The status row is the current state.
 
 ### WP-7 - Charges and shipment invoicing - 2026-09-22 - Claude
 
@@ -2293,6 +2308,13 @@ Left for later (not changed here):
   `->map->permission` while `transformPages()` writes `permissions`. Nothing in
   this application calls it, so it is dead upstream code, but do not build on it.
 
+*Verified 2026-11-10, not reopened.* `total_costs` and `total_charges` do not
+appear in logistics PHP or migrations; WP-13 dropped them. The nine page
+permission names are pinned in `tests/Feature/Reports/ReportsTest.php`.
+`FilamentShield::getEntitiesPermissions()` still has no caller in this
+application. Leave it. The WP-1a label follow-up is already in the English
+enum file: "Arrived at Destination" and "Departed from Origin".
+
 Requests for other packages:
 - **WP-12:** translate `resources/lang/en/reports.php` and
   `resources/lang/en/filament/clusters/reporting.php`. Note that `reports.php`
@@ -2368,6 +2390,7 @@ before the run and left empty afterwards.
   `review` until that is complete.
 - **WP-9b/user:** decide and implement the customer-page integration; it remains
   genuinely `todo`.
+  *Superseded 2026-11-10:* done. See the handoff of that date.
 - **WP-12:** resolve the complete checker output, including the 17 missing files
   per locale plus `exceptions.php` and company-settings key/structure drift.
 - **User:** rehearse install -> enable one company -> use -> disable -> verify
@@ -2764,6 +2787,10 @@ partners base resource, a guarded contribution from Logistics, a relation manage
 filters by `customer_id` with the switch and permission applied, and a test that a
 customer shared between two companies sees only the active company's shipments.
 
+*Superseded 2026-11-10.* The registry arrived as `PartnerSchemaRegistry`, with
+infolist slots and no relation-manager slot. The tab shipped without editing
+partners. See "WP-9b - 2026-11-10 - Grok".
+
 ### WP-13 - flaky workflow assertion closed - 2026-09-30 - Claude
 
 Codex's independent WP-5b review reported the complete `LogisticsFeature` run as
@@ -2833,3 +2860,97 @@ LogisticsFeature: **195 passed, 0 failed, 751 assertions** (command: `php artisa
 
 - Smart-quote corruption in the test file: the Edit tool converted ASCII `'` delimiters to Unicode LEFT/RIGHT SINGLE QUOTATION MARKS in three test names and their body code during the implementation session. Fixed with `perl -i -pe 's/\xe2\x80\x98/\x27/g; s/\xe2\x80\x99(?!s)/\x27/g'` — 28 corrupted opening quotes and 28 corrupted closing quotes replaced; 7 legitimate smart apostrophes (e.g. `company's`) preserved.
 - The Sentry redaction (`AppServiceProvider::redactStopLinkTokensFromSentry`) now guards the backward-compat URL pattern rather than the primary flow.
+
+### WP-9b - 2026-11-10 - Grok
+
+Status: `done`. Test database: `aureuserp_testing_logistics`.
+
+#### Why
+
+D11 asks for a customer's shipments and charges on the customer page. The
+2026-09-30 deferral found no Partners extension point. Partners has since
+gained `PartnerSchemaRegistry`, the same `AbstractSchemaRegistry` pattern as
+the company form. It has form, infolist, table and action slots, and no
+relation-manager slot. A relation-manager tab would mean editing partners and
+support, and a `Partner::shipments()` method that points at an optional
+plugin. That was not done.
+
+#### How
+
+`PartnerContributions` registers one infolist tab on `tabs.append`, once.
+`packageBooted()` can run again, and the registry is static, so a second
+registration would draw the tab twice. The tab is visible only when
+`CustomerPage::visible()` is true: the user holds
+`view_any_logistics_shipment` and `LogisticsAccess::enabledFor()` is true for
+the company the rows will be read from. Hiding the tab is not the only check.
+The entries call the same gate. Charge amounts also need
+`view_financials_logistics_shipment`, the same permission as the margin widget
+and the profitability report.
+
+The query drops only `CompanyScope` and then filters `customer_id` plus an
+explicit `company_id`. Soft deletes stay. A partner that belongs to a company
+shows that company's jobs. A shared contact (no company) shows only
+`current_company_id()`. No current company shows nothing. Names in the HTML
+are escaped. Links go to the shipment view. Eight recent shipments and eight
+open (uninvoiced, billable) charges.
+
+No new cluster, page or resource. Existing Logistics clusters still return
+`NavigationGroup::Logistics`. The menu regroup is untouched.
+
+#### Benefit
+
+A clerk opening a customer sees that customer's recent shipments, and the
+open charges when they may see money. Another tenant's shipments do not
+appear on a shared contact. A company without Logistics, and a user without
+the view permission, see no tab. The other company's shipment URL does not
+resolve.
+
+#### Trade-off / risk
+
+This is not a relation-manager tab. It lists eight rows and links out. It
+appears on every partner infolist that uses the base schema, including
+contacts, because those resources do not override `infolist()`. The gate
+still hides it unless the partner passes `visible()`. A direct shipment URL
+for another company is a missing model (`ModelNotFoundException` from
+Filament's record resolution), which the test pins. There is no migration.
+
+The `tenant-s3` branch of POD file URLs is still untested: `phpunit.xml`
+does not set `FILESYSTEM_PUBLIC_DRIVER`. That coverage gap is unchanged.
+`FilamentShield::getEntitiesPermissions()` is still unused. PILOT was not
+started. `docs/handover-actions.md` §0a is still a production check for the
+user. Section 9 of that file still lists the fragment POD flow as pending;
+the status board and the 2026-10-20 handoff record it as shipped. That table
+was left as the investigation snapshot.
+
+#### Verification
+
+- Focused `CustomerPageTest`: **4 passed, 20 assertions**, 810.61s, exit 0,
+  after the direct-URL assertion was changed to expect
+  `ModelNotFoundException`. The first run of that file was 3 passed, 1
+  failed, 19 assertions, exit 2.
+- `LogisticsFeature`: **201 passed, 833 assertions**, 5689.51s, exit 0, on
+  `aureuserp_testing_logistics`.
+- `php artisan translations:check --plugin=logistics --details`: 4 passed
+  (ar, es, fr, pt_BR). The first run failed Arabic on a missing trailing
+  newline; the file was given the same closing line as English.
+- `vendor/bin/pint --dirty --format agent`: passed.
+- Browser: not run.
+- PartnerFeature was not run. Partners was not edited.
+
+Tests: `shows a customer their own shipments and open charges`,
+`hides another company's shipments on a shared contact`,
+`hides the shipments tab when logistics is off or the user cannot view shipments`,
+`hides open charges without view_financials`.
+
+#### Rollback
+
+Remove `PartnerContributions::register()` from `LogisticsServiceProvider` and
+delete `CustomerPage`, `PartnerContributions`, the customer-page test and
+`resources/lang/*/filament/partner.php`. No migration.
+
+#### Files outside `plugins/webkul/logistics`
+
+`AGENTS.md`, `docs/logistics-plan.md`, `docs/logistics.md`,
+`docs/change-log.md`, `docs/agent-reminders.md`, and the shared skill
+`dekaerp-plugin-architecture`. No partners, support, security or
+platform-billing source.

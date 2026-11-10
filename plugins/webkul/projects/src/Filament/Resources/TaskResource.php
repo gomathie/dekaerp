@@ -242,7 +242,7 @@ class TaskResource extends Resource
                                     ->editOptionForm(fn (Schema $schema): Schema => PartnerResource::form($schema)),
                                 Select::make('users')
                                     ->label(__('projects::filament/resources/task.form.sections.settings.fields.assignees'))
-                                    ->relationship('users', 'name')
+                                    ->relationship('users', 'name', fn ($query) => \Webkul\Support\Filament\CompanyMembers::scope($query))
                                     ->searchable()
                                     ->multiple()
                                     ->preload()

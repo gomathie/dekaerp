@@ -250,7 +250,7 @@ class QuotationResource extends Resource
                                 Fieldset::make(__('sales::filament/clusters/orders/resources/quotation.form.tabs.other-information.fieldset.sales.title'))
                                     ->schema([
                                         Select::make('user_id')
-                                            ->relationship('user', 'name')
+                                            ->relationship('user', 'name', fn ($query) => \Webkul\Support\Filament\CompanyMembers::scope($query))
                                             ->searchable()
                                             ->preload()
                                             ->label(__('sales::filament/clusters/orders/resources/quotation.form.tabs.other-information.fieldset.sales.fields.sales-person')),

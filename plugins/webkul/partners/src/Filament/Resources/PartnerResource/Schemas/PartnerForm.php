@@ -271,7 +271,7 @@ class PartnerForm
                     ->schema(array_merge([
                         Select::make('user_id')
                             ->label(__('partners::filament/resources/partner.form.tabs.sales-purchase.fields.responsible'))
-                            ->relationship('user', 'name')
+                            ->relationship('user', 'name', fn ($query) => \Webkul\Support\Filament\CompanyMembers::scope($query))
                             ->searchable()
                             ->preload()
                             ->hintIcon('heroicon-m-question-mark-circle', tooltip: __('partners::filament/resources/partner.form.tabs.sales-purchase.fields.responsible-hint-text')),

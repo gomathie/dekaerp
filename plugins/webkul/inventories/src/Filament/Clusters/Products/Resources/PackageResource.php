@@ -162,7 +162,7 @@ class PackageResource extends Resource
                     ->preload(),
                 SelectFilter::make('creator_id')
                     ->label(__('inventories::filament/clusters/products/resources/package.table.filters.creator'))
-                    ->relationship('creator', 'name')
+                    ->relationship('creator', 'name', fn ($query) => \Webkul\Support\Filament\CompanyMembers::scope($query))
                     ->searchable()
                     ->preload(),
                 SelectFilter::make('company_id')
