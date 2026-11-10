@@ -2,6 +2,8 @@
 
 use Webkul\Support\Enums\NavigationGroup;
 
+require_once __DIR__.'/../../Helpers/TestBootstrapHelper.php';
+
 /**
  * The module sidebar prints a section heading whenever the section changes
  * from one module to the next (user, 2026-11-10). Case order is the sidebar

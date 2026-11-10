@@ -16,6 +16,15 @@ for the task/question log this change log is paired with.
 - **Test:** `AdministrationScreensTest.php`, `BillingScreensTest.php`.
 - **Rollback:** remove the cluster, the two pages, the company-form section and `PlanCatalog`. No migration.
 
+## 2026-11-10 (module sidebar section headings)
+
+- **Why:** user request. Group the 18 modules in the left module sidebar (Sales & Purchases, Finance, Operations, Projects, HR, Administration) without moving any module away from where customers find it today.
+- **How:** `Support\Enums\NavigationGroup::section()` names each module's section. Case order is the sidebar order, so Invoice moved next to Purchase and Barcode into Operations. The module sidebar in `resources/views/vendor/filament-panels/livewire/topbar.blade.php` prints a heading when the section changes. In collapsed (icon-only) mode the heading shrinks to a divider. Labels are in `lang/{en,fr,es,pt_BR,ar}/admin.php` under `navigation-sections`. No plugin file and no top-bar entry changed.
+- **Benefit:** a shorter visual scan; every module keeps its name, icon, link and pages.
+- **Trade-off / risk:** that template is a local override of Filament's top bar, so re-diff it on every Filament upgrade (already true). A new module case must be given a section and placed beside its siblings, which the test enforces.
+- **Verification:** `support/tests/Feature/Filament/ModuleSidebarSectionsTest.php`, 20 passed (101 assertions), on `aureuserp_testing_claude`. Pint passed. A visual preview was made by applying the same markup and CSS in the browser to the production page (nothing on the server changed). The rendered template itself was not viewed: the local server takes about 135 s per page.
+- **Rollback:** revert the enum order and `section()`, the heading block and CSS in the template, and the `navigation-sections` keys.
+
 ## 2026-11-10 (read-only gaps, readiness report, security translations)
 
 - **Why:** a Multi-Company Admin passed the read-only guard in every company. Company settings bypassed the guard because they are written by query. The security translations lacked eight keys in four locales, which failed `translations:check` and showed raw keys to fr/es/pt_BR/ar users.
