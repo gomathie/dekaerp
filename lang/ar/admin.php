@@ -30,4 +30,9 @@ return [
         'human-resources' => 'الموارد البشرية',
         'administration'  => 'الإدارة',
     ],
+
+    'mobile-menu' => [
+        'menu'    => 'القائمة',
+        'modules' => 'الوحدات',
+    ],
 ];

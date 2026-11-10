@@ -49,6 +49,20 @@
                     :label="__('filament-panels::layout.actions.sidebar.expand.label')"
                     class="fi-topbar-module-sidebar-toggle"
                 />
+
+                {{-- Phones (2026-11-10, mobile plan P2): one labelled 44px Menu
+                     button replaces the two unlabelled 24px icons. It opens the
+                     module drawer, which also lists this module's pages. --}}
+                <button
+                    type="button"
+                    x-data="{}"
+                    x-on:click="$store.moduleSidebar.primaryToggle()"
+                    class="module-mobile-menu-btn"
+                    aria-label="{{ __('admin.mobile-menu.menu') }}"
+                >
+                    <x-filament::icon :icon="\Filament\Support\Icons\Heroicon::OutlinedBars3" class="module-mobile-menu-icon" />
+                    <span>{{ __('admin.mobile-menu.menu') }}</span>
+                </button>
             @endif
         @endif
 
@@ -339,7 +353,34 @@
             <nav class="module-sidebar-nav">
                 @php
                     $previousSection = null;
+                    $activeModuleGroup = collect($navigation)->first(fn ($group) => $group->isActive());
                 @endphp
+
+                {{-- Phones only (mobile plan P2): the current module's pages, which
+                     the top bar hides under 768px. Desktop shows them in the top bar. --}}
+                @if ($activeModuleGroup && $activeModuleGroup->getItems()->isNotEmpty())
+                    <div class="module-sidebar-current">
+                        <div class="module-sidebar-section" role="presentation">
+                            <span class="module-sidebar-section-label">{{ $activeModuleGroup->getLabel() }}</span>
+                        </div>
+
+                        @foreach ($activeModuleGroup->getItems() as $pageItem)
+                            @foreach ([$pageItem, ...$pageItem->getChildItems()] as $entry)
+                                @if ($entry->getUrl())
+                                    <div @class(['module-sidebar-item', 'fi-active' => $entry->isActive()])>
+                                        <a href="{{ $entry->getUrl() }}" class="module-sidebar-link module-sidebar-page-link">
+                                            <span class="module-sidebar-label">{{ $entry->getLabel() }}</span>
+                                        </a>
+                                    </div>
+                                @endif
+                            @endforeach
+                        @endforeach
+
+                        <div class="module-sidebar-section" role="presentation">
+                            <span class="module-sidebar-section-label">{{ __('admin.mobile-menu.modules') }}</span>
+                        </div>
+                    </div>
+                @endif
 
                 @foreach ($navigation as $group)
                     @php
@@ -625,6 +666,171 @@
 
                     .module-sidebar-header {
                         display: flex;
+                    }
+                }
+
+                /* ---- Mobile plan P1-P6 (2026-11-10). Phones only; desktop from
+                   768px up is untouched. See docs/mobile-view-plan.md. ---- */
+
+                /* P2: the labelled Menu button and "This module" exist on phones only. */
+                .module-mobile-menu-btn,
+                .module-sidebar-current {
+                    display: none;
+                }
+
+                @media (max-width: 767px) {
+                    /* P2: one Menu button replaces the two unlabelled 24px icons.
+                       Filament's own page-sidebar toggles go: the drawer now lists
+                       this module's pages too. */
+                    .fi-topbar-open-sidebar-btn,
+                    .fi-topbar-close-sidebar-btn,
+                    .fi-topbar-module-sidebar-toggle {
+                        display: none !important;
+                    }
+
+                    .module-mobile-menu-btn {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 0.375rem;
+                        min-block-size: 44px;
+                        min-inline-size: 44px;
+                        padding-inline: 0.5rem;
+                        border-radius: 0.5rem;
+                        color: var(--gray-700, #374151);
+                        font-size: 0.875rem;
+                        font-weight: 600;
+                        flex-shrink: 0;
+                    }
+
+                    .dark .module-mobile-menu-btn {
+                        color: var(--gray-200, #e5e7eb);
+                    }
+
+                    .module-mobile-menu-icon {
+                        inline-size: 1.5rem;
+                        block-size: 1.5rem;
+                    }
+
+                    .module-sidebar-current {
+                        display: block;
+                    }
+
+                    .module-sidebar-current .module-sidebar-section:first-child {
+                        margin-block-start: 0;
+                        border-block-start: 0;
+                    }
+
+                    .module-sidebar-page-link {
+                        padding-inline-start: 0.875rem;
+                        min-block-size: 44px;
+                    }
+
+                    .module-sidebar-link {
+                        min-block-size: 44px;
+                    }
+
+                    .module-sidebar {
+                        inline-size: min(85vw, 300px);
+                    }
+
+                    /* P3: the top bar fits; bell and avatar stay whole. */
+                    .fi-topbar {
+                        gap: 0.25rem;
+                        padding-inline: 0.5rem;
+                    }
+
+                    .fi-topbar-start {
+                        min-inline-size: 0;
+                    }
+
+                    .fi-topbar-end {
+                        min-inline-size: 0;
+                        gap: 0.25rem;
+                    }
+
+                    .company-switcher-name {
+                        display: inline-block;
+                        max-inline-size: 5.5rem;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        vertical-align: middle;
+                    }
+
+                    /* Search is an icon until tapped, then takes the room it needs. */
+                    .fi-global-search-field {
+                        max-inline-size: 2.75rem;
+                        transition: max-inline-size 0.2s ease;
+                    }
+
+                    .fi-global-search-field input::placeholder {
+                        color: transparent;
+                    }
+
+                    .fi-global-search-field:focus-within {
+                        max-inline-size: 11rem;
+                    }
+
+                    .fi-topbar-end .fi-icon-btn,
+                    .fi-topbar-end .fi-user-menu-trigger {
+                        flex-shrink: 0;
+                    }
+
+                    /* P1: 16px fields, so iPhone Safari does not zoom in on focus. */
+                    .fi-body input:not([type='checkbox']):not([type='radio']):not([type='range']),
+                    .fi-body select,
+                    .fi-body textarea {
+                        font-size: 16px !important;
+                    }
+
+                    /* P4: tab strips scroll on one line, with a fade showing more. */
+                    .fi-tabs {
+                        flex-wrap: nowrap;
+                        overflow-x: auto;
+                        scrollbar-width: none;
+                        -webkit-overflow-scrolling: touch;
+                        mask-image: linear-gradient(to right, #000 85%, transparent);
+                    }
+
+                    [dir='rtl'] .fi-tabs {
+                        mask-image: linear-gradient(to left, #000 85%, transparent);
+                    }
+
+                    .fi-tabs::-webkit-scrollbar {
+                        display: none;
+                    }
+
+                    .fi-tabs-item {
+                        flex-shrink: 0;
+                        white-space: nowrap;
+                    }
+
+                    /* P5: fingertip-sized hit areas (padding, not bigger icons). */
+                    .fi-icon-btn {
+                        min-inline-size: 40px;
+                        min-block-size: 40px;
+                    }
+
+                    .fi-ta-actions .fi-link,
+                    .fi-pagination-item-btn {
+                        min-block-size: 40px;
+                        padding-block: 0.5rem;
+                    }
+
+                    /* P6: the record status bar scrolls on one line, not wraps. */
+                    .state-container {
+                        flex-wrap: nowrap !important;
+                        justify-content: flex-start !important;
+                        overflow-x: auto;
+                        scrollbar-width: none;
+                    }
+
+                    .state-container::-webkit-scrollbar {
+                        display: none;
+                    }
+
+                    .state-container .state {
+                        flex-shrink: 0;
                     }
                 }
                 @endverbatim

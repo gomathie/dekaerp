@@ -311,6 +311,40 @@ page does not zoom; one tap opens the menu and both sections are reachable;
 `scrollWidth = clientWidth` on every page checked; desktop at 1280px
 unchanged.
 
+## Implementation — 2026-11-10 (Claude), user: "implement the mobile view"
+
+Built: **P1 to P6.** P7 (card image block) and P8 are not built yet.
+
+- **P1** fields at 16px under 768px.
+- **P2** one labelled "Menu" button (44px) replaces the two icons; the
+  module drawer lists **this module's pages** (from the active navigation
+  group, child items included) above **Modules**. Filament's own sidebar
+  toggles are hidden on phones only.
+- **P3** company name truncates (`.company-switcher-name`, logical
+  `max-inline-size`), search is an icon until tapped, bell and avatar keep
+  their size.
+- **P4** every `.fi-tabs` strip scrolls on one line with a trailing fade
+  (mirrored for RTL).
+- **P5** 40px minimum for icon buttons, table action links and pagination.
+- **P6** `.state-container` status bar scrolls on one line.
+
+Files: `resources/views/vendor/filament-panels/livewire/topbar.blade.php`
+(button, drawer section, CSS), `plugins/webkul/support/resources/views/company-switcher.blade.php`
+(name class), `lang/{en,fr,es,pt_BR,ar}/admin.php` (`mobile-menu`).
+
+Verification:
+
+- `support/tests/Feature/Filament/MobileNavigationTest.php`: 1 passed,
+  7 assertions (the Menu button, the drawer's module pages, the Modules
+  heading and the truncating name render on a real admin page).
+- Preview at 390 × 844: the same CSS and markup injected into the production
+  page in the browser (nothing on the server changed). Page width stays 375;
+  the avatar's right edge is at 367 of 375 (was 379); fields compute 16px;
+  the status bar is one line; the drawer shows Sales' six pages, then the
+  modules.
+- Not yet done: a real iPhone (Safari) and Android phone after deploy. F1
+  zoom happens only on a real iPhone.
+
 ## Approval
 
 *Superseded by the deep audit above:* the recommended first patch is now
