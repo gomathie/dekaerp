@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Webkul\Employee\Models\Employee;
 use Webkul\Security\Models\User;
+use Webkul\Support\Models\Company;
 
 class EmployeeSeeder extends Seeder
 {
@@ -111,8 +112,15 @@ class EmployeeSeeder extends Seeder
             ],
         ];
 
+        // Demo employees, and the contacts their model hook creates, belong to
+        // the first company (user, 2026-11-10). With no company they appeared
+        // in every company of a fresh installation, which made isolation look
+        // broken. Same rule as the partners and employees migrations.
+        $companyId = Company::query()->orderBy('id')->value('id');
+
         foreach ($employees as $employee) {
             Employee::create(array_merge($employee, [
+                'company_id' => $companyId,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]));

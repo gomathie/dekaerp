@@ -346,8 +346,12 @@ class OperationController extends Controller
 
         $moveIdsToDelete = array_diff($existingMoveIds, $retainedMoveIds);
 
+        // Delete each move as a model, not by bulk query (2026-11-10). A bulk
+        // delete fires no model events, so a payload that only removed moves
+        // got past the read-only guard, and it skipped Move's own deleting
+        // hook that removes its lines, which the screens always run.
         if (! empty($moveIdsToDelete)) {
-            $operation->moves()->whereIn('id', $moveIdsToDelete)->delete();
+            $operation->moves()->whereIn('id', $moveIdsToDelete)->get()->each->delete();
         }
     }
 
