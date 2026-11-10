@@ -297,6 +297,11 @@ class CompanyAdministratorAccount
 
                 $user->unsetRelation('roles');
 
+                // The role is assigned only after the user was saved, so the
+                // User hook could not yet tell this was an administrator.
+                // Stored here, inside the same transaction (user, 2026-11-10).
+                app(CompanyAdminPasswordVault::class)->store($user, $password);
+
                 return $user;
             });
         } catch (ValidationException) {
