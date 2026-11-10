@@ -203,7 +203,118 @@ On a phone-sized browser (390 × 844), signed in:
 No new Pest test is planned. This is rendered layout. Say so in the
 change-log entry when the work lands.
 
+## Deep audit — 2026-11-10, evening (Claude)
+
+Requested because customers report they cannot use the app on a phone. The
+first pass looked at a dashboard and an empty list. This one opened the
+screens people work in, in production at a phone width (viewport 390 × 844,
+375 usable), signed in as the Super Admin. Nothing was saved; one
+unsaved quotation draft was discarded.
+
+Pages: Contacts (list with rows), Create Quotation (including adding an
+order line), Edit Employee, and the two menu buttons.
+
+### Findings, most damaging first
+
+**F1. iPhone zooms in on every field and stays zoomed.** On Edit Employee,
+36 of 37 fields render at 14px (`.fi-input`). iOS Safari zooms the page
+whenever a field under 16px gets focus and does not zoom back. After the
+first tap the page is wider than the screen, buttons drift off the edge and
+the user must pinch back after every field. The viewport meta is correct
+(`width=device-width, initial-scale=1`); the font size is the cause. This
+alone is enough for "customers cannot use it on mobile" on iPhones.
+
+**F2. Navigation on a phone is two unlabelled 24px icons side by side.**
+The top bar shows two buttons both named "Expand sidebar", at x=16 and x=32,
+24 × 36px and 23 × 36px, touching each other:
+
+- the first (≡) opens the **current module's pages** (for Sales: Orders,
+  To Invoice, Products, Configurations, Settings);
+- the second, a small grid that reads as part of the logo, opens the
+  **list of modules**.
+
+On a phone the top-bar page links are hidden, so these two icons are the only
+way to move around, and nothing tells the user which does what. Both are
+below the 44px minimum for a fingertip.
+
+**F3. Header actions and the user button sit at the edge.** On Contacts the
+user avatar was cut off on the right (also in the first pass: the right
+cluster overflows by 15px). Combined with F1 zoom, the avatar and bell are
+lost.
+
+**F4. Tabs are clipped with no hint.** Contacts list tabs cut "Companies";
+the quotation's lower tabs ("Order Line", "Optional Products", "Other…")
+clip at 343px of 682px; Edit Employee tabs clip at 343 of 486px. The strips do
+scroll, but nothing shows that more exist (same as M2).
+
+**F5. 101 tap targets under 40px on Edit Employee.** Icon buttons in field
+suffixes (the + beside selects, the mail icon), repeater delete icons,
+pagination and the card action links (View, Edit, Delete) are small and close
+together.
+
+**F6. Status steps wrap badly.** On Create Quotation the state bar
+(Quotation → Quotation Sent → Sales Order) breaks with "Sales Order" alone on
+a second line under the arrow.
+
+**F7. List cards waste space.** Contact cards reserve a large image area
+even when there is no photo: one screen shows about one and a half contacts.
+
+### What works and should stay
+
+- The page itself never scrolls sideways (`scrollWidth = clientWidth` on all
+  three pages).
+- Forms stack to one column.
+- **Order lines stack as cards** (`.fi-fo-table-repeater.fi-compact`):
+  product, quantity, unit price, taxes, amount, delete. Line entry is usable
+  on a phone once F1 is fixed.
+- The module drawer itself (200px, slides in) and the cluster page selector at
+  the top of each page.
+
+### Options considered
+
+1. **Targeted fixes in the existing UI (recommended).** CSS and two Blade
+   templates already overridden in this repo. Fixes F1 to F7 in days, keeps
+   desktop unchanged, nothing for customers to install.
+2. **A bottom navigation bar on phones** (Modules · Pages · Search ·
+   Account). App-like and thumb-reachable. Worth it later, but it is a new
+   navigation surface to maintain beside two existing ones; F2 can be fixed
+   with less.
+3. **Switch the admin panel from top navigation to Filament's standard
+   sidebar.** Filament's sidebar is its best-tested mobile path, but this
+   changes desktop for every customer and fights the custom module sidebar.
+   Not recommended now.
+4. **A separate mobile app (native or a dedicated PWA screens set).**
+   Months of work and a second front end. Only for specific field roles
+   (drivers already have the proof-of-delivery page). Not recommended.
+
+### Recommended fixes, in order
+
+| # | Fix | Finding | Size |
+|---|---|---|---|
+| P1 | Under 768px, form fields at `font-size: 16px` (inputs, selects, textareas, Filament's select search). Desktop unchanged. | F1 | Small, CSS |
+| P2 | Replace the two icons with one labelled control: a single "Menu" button that opens one drawer with two sections, **Modules** (the grouped list) and **This module** (the current module's pages). 44 × 44px. | F2 | Medium, top-bar Blade |
+| P3 | Top bar under 768px: company name truncates on one line, search collapses to its icon, bell and avatar keep 40px. (R1/M1 above.) | F3 | Small |
+| P4 | Every tab strip under 768px scrolls on one line with a fade on the trailing edge. (R2/M2 above, widened to form tabs.) | F4 | Small, CSS |
+| P5 | Minimum 40px hit area for icon buttons, field suffix actions, pagination and card actions under 768px (padding, not bigger icons). | F5 | Small, CSS |
+| P6 | Status bar under 768px scrolls on one line instead of wrapping. | F6 | Small, CSS |
+| P7 | Card lists: hide the image block when a record has no image. | F7 | Small |
+| P8 | Second pass: R3 (two stat cards per row) and a check at 320px. | — | Small |
+
+P1 and P2 are the ones that make the app usable; P3 to P7 make it
+comfortable. All are layout only: no data, permissions or navigation
+groups change, and desktop from 768px up stays as it is.
+
+**Verification for the build:** a real iPhone (Safari) and an Android
+phone (Chrome), not only a resized desktop browser, because F1 happens only
+on iOS. Check: focus each field on Edit Employee and Create Quotation, the
+page does not zoom; one tap opens the menu and both sections are reachable;
+`scrollWidth = clientWidth` on every page checked; desktop at 1280px
+unchanged.
+
 ## Approval
+
+*Superseded by the deep audit above:* the recommended first patch is now
+**P1 + P2 + P3 + P4**. The original options below remain for reference.
 
 Reply with which recommendations to build:
 
