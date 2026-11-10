@@ -180,7 +180,7 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
             return true;
         }
 
-        if ($permissionName === null || ! app(TenantRoleResolver::class)->supported()) {
+        if ($permissionName === null || $this->isPlatformOnlyAbility($permissionName) || ! app(TenantRoleResolver::class)->supported()) {
             return false;
         }
 
@@ -220,7 +220,7 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
             return true;
         }
 
-        if ($permissionName === null || ! app(TenantRoleResolver::class)->supported()) {
+        if ($permissionName === null || $this->isPlatformOnlyAbility($permissionName) || ! app(TenantRoleResolver::class)->supported()) {
             return false;
         }
 
@@ -251,6 +251,27 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
             ->sort()
             ->values()
             ->all();
+    }
+
+    /**
+     * Abilities only a platform (global) role may hold, never a tenant role.
+     *
+     * A tenant role granting one would let a client's administrator see
+     * across companies. It also broke every request once the
+     * `bypass_company_scope` row existed (2026-11-10): the tenant lookup
+     * reads the active companies, which ask this same ability first, so
+     * the two called each other until the process crashed. Answer these
+     * from the global store alone. Test: SecurityFeature
+     * PlatformOnlyAbilityTest.
+     */
+    public const PLATFORM_ONLY_ABILITIES = [
+        'bypass_company_scope',
+        'bypass_ownership_scope',
+    ];
+
+    protected function isPlatformOnlyAbility(string $permissionName): bool
+    {
+        return in_array($permissionName, self::PLATFORM_ONLY_ABILITIES, true);
     }
 
     protected function normalizePermissionName($permission): ?string

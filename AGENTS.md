@@ -1543,6 +1543,14 @@ log named):
     `bypass_company_scope` is created and granted to the Super Admin roles by
     security migration `2026_11_10_000002`. Tests: plugin-manager
     `SyncAdminPermissionsTest`.
+  - `bypass_company_scope` and `bypass_ownership_scope` are platform-only
+    (`User::PLATFORM_ONLY_ABILITIES`): `hasPermissionTo()` answers them from
+    the global store and never asks the tenant-role resolver. Do not remove
+    this. The resolver reads the active companies, which ask
+    `bypass_company_scope` first, so once the permission row existed every
+    ordinary user's request recursed until PHP crashed (caught in tests
+    2026-11-10, before release). It also stops a tenant role granting
+    cross-company visibility. Test: security `PlatformOnlyAbilityTest`.
   - The company field is required on the product and employee forms. Stamping
     happens only on create, so clearing the field on edit would share the
     record again.

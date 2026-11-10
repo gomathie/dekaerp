@@ -24,7 +24,11 @@ function adminRoleId(): int
  * Admin (Sales, Purchases and Invoices dashboards, found 2026-11-10).
  */
 it('recreates a missing page permission and gives it to the Admin role', function () {
-    $name = 'page_project_dashboard';
+    // Any page permission this test install generated, so Shield will
+    // generate it again; which plugins are installed varies by suite.
+    $name = DB::table('permissions')->where('name', 'like', 'page\_%')->orderBy('name')->value('name');
+    expect($name)->not->toBeNull();
+
     DB::table('permissions')->where('name', $name)->delete();
     app(PermissionRegistrar::class)->forgetCachedPermissions();
 
