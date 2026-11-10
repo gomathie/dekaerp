@@ -11,6 +11,8 @@ return [
 
     'heading' => 'Cadastrar-se',
 
+    'invitation-no-longer-authorized' => 'Este convite não está mais autorizado. Peça a um administrador que envie um novo convite.',
+
     'actions' => [
 
         'login' => [

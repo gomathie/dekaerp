@@ -11,6 +11,8 @@ return [
 
     'heading' => 'إنشاء حساب',
 
+    'invitation-no-longer-authorized' => 'لم تعد هذه الدعوة مصرّحًا بها. اطلب من مسؤول إرسال دعوة جديدة.',
+
     'actions' => [
 
         'login' => [

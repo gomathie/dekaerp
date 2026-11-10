@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Webkul\PlatformBilling\Console\Commands\InvoiceSubscriptions;
 use Webkul\PlatformBilling\Models\Allocation;
+use Webkul\PlatformBilling\Models\DiscountCode;
 use Webkul\PlatformBilling\Models\DocumentNumber;
 use Webkul\PlatformBilling\Models\Invoice;
 use Webkul\PlatformBilling\Models\InvoiceLine;
@@ -48,6 +49,7 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
         $package->name(static::$name)
             ->isCore()
             ->hasTranslations()
+            ->hasViews()
             ->hasConfigFile('platform-billing')
             ->hasMigrations([
                 '2026_10_28_000006_create_platform_billing_document_numbers_table',
@@ -90,6 +92,7 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
         Gate::policy(Allocation::class, DocumentNumberPolicy::class);
         Gate::policy(Reversal::class, DocumentNumberPolicy::class);
         Gate::policy(OverdueExtension::class, DocumentNumberPolicy::class);
+        Gate::policy(DiscountCode::class, DocumentNumberPolicy::class);
 
         // A process-wide boolean would skip every application after the first.
         // Pest builds a new application per test, so the hook has to follow the

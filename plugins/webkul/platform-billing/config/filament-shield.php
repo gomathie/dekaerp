@@ -1,6 +1,9 @@
 <?php
 
 use Webkul\PlatformBilling\Filament\Clusters\Billing;
+use Webkul\PlatformBilling\Filament\Clusters\Billing\Resources\DiscountCodeResource;
+use Webkul\PlatformBilling\Filament\Clusters\Billing\Resources\InvoiceResource;
+use Webkul\PlatformBilling\Filament\Clusters\Billing\Resources\PaymentResource;
 use Webkul\PlatformBilling\Filament\Clusters\Billing\Resources\PlanResource;
 use Webkul\PlatformBilling\Filament\Clusters\Billing\Resources\SubscriptionResource;
 
@@ -18,6 +21,9 @@ return [
         'manage' => [
             PlanResource::class         => $basic,
             SubscriptionResource::class => $basic,
+            InvoiceResource::class      => ['view_any', 'view'],
+            PaymentResource::class      => $basic,
+            DiscountCodeResource::class => $basic,
         ],
         'exclude' => [],
     ],
