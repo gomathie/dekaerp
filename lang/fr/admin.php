@@ -21,4 +21,13 @@ return [
         'help'          => 'Aide',
         'barcode'       => 'Code-barres',
     ],
+
+    'navigation-sections' => [
+        'sales-purchases' => 'Ventes et achats',
+        'finance'         => 'Finance',
+        'operations'      => 'Opérations',
+        'projects'        => 'Projets',
+        'human-resources' => 'RH',
+        'administration'  => 'Administration',
+    ],
 ];

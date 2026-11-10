@@ -21,4 +21,13 @@ return [
         'help'          => 'المساعدة',
         'barcode'       => 'الباركود',
     ],
+
+    'navigation-sections' => [
+        'sales-purchases' => 'المبيعات والمشتريات',
+        'finance'         => 'المالية',
+        'operations'      => 'العمليات',
+        'projects'        => 'المشاريع',
+        'human-resources' => 'الموارد البشرية',
+        'administration'  => 'الإدارة',
+    ],
 ];

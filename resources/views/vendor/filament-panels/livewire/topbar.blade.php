@@ -337,16 +337,33 @@
             </div>
 
             <nav class="module-sidebar-nav">
+                @php
+                    $previousSection = null;
+                @endphp
+
                 @foreach ($navigation as $group)
                     @php
                         $groupLabel = $group->getLabel();
                         $groupIcon = $group->getIcon();
                         $itemUrl = $group->getItems()->first()?->getUrl();
+                        $groupCase = $group->getItems()->first()?->getGroup();
+                        $section = $groupCase instanceof \Webkul\Support\Enums\NavigationGroup ? $groupCase->section() : null;
                     @endphp
 
                     @if (! $groupLabel || ! $itemUrl || ! $groupIcon)
                         @continue
                     @endif
+
+                    {{-- Section heading (user, 2026-11-10): modules keep their place; a heading groups them. --}}
+                    @if ($section !== null && $section !== $previousSection)
+                        <div class="module-sidebar-section" role="presentation">
+                            <span class="module-sidebar-section-label">{{ $groupCase->getSectionLabel() }}</span>
+                        </div>
+                    @endif
+
+                    @php
+                        $previousSection = $section;
+                    @endphp
 
                     <div
                         @class([
@@ -518,9 +535,41 @@
                     color: var(--primary-300, #93c5fd);
                 }
 
-                /* Collapsed: icons only */
-                .module-sidebar.is-collapsed .module-sidebar-label {
+                /* Section headings */
+                .module-sidebar-section {
+                    margin-block-start: 0.75rem;
+                    padding: 0.25rem 0.625rem;
+                    border-block-start: 1px solid var(--gray-200, #e5e7eb);
+                }
+
+                .dark .module-sidebar-section {
+                    border-block-start-color: var(--gray-800, #1f2937);
+                }
+
+                .module-sidebar-section-label {
+                    display: block;
+                    padding-block-start: 0.5rem;
+                    color: var(--gray-500, #6b7280);
+                    font-size: 0.6875rem;
+                    font-weight: 600;
+                    letter-spacing: 0.06em;
+                    text-transform: uppercase;
+                    white-space: nowrap;
+                }
+
+                .dark .module-sidebar-section-label {
+                    color: var(--gray-400, #9ca3af);
+                }
+
+                /* Collapsed: icons only; a heading shrinks to its divider */
+                .module-sidebar.is-collapsed .module-sidebar-label,
+                .module-sidebar.is-collapsed .module-sidebar-section-label {
                     display: none;
+                }
+
+                .module-sidebar.is-collapsed .module-sidebar-section {
+                    margin-block-start: 0.375rem;
+                    padding-block: 0.375rem 0;
                 }
 
                 .module-sidebar.is-collapsed .module-sidebar-link {
@@ -564,7 +613,8 @@
                         width: var(--module-sidebar-width);
                     }
 
-                    .module-sidebar.is-collapsed .module-sidebar-label {
+                    .module-sidebar.is-collapsed .module-sidebar-label,
+                    .module-sidebar.is-collapsed .module-sidebar-section-label {
                         display: inline;
                     }
 
