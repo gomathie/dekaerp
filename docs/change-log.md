@@ -35,6 +35,15 @@ for the task/question log this change log is paired with.
 - **Test:** `AdministrationScreensTest.php`, `BillingScreensTest.php`.
 - **Rollback:** remove the cluster, the two pages, the company-form section and `PlanCatalog`. No migration.
 
+## 2026-11-10 (mobile view P1-P6)
+
+- **Why:** customers report the app is unusable on phones. Deep audit in production (docs/mobile-view-plan.md, F1-F7): iPhone zooms on every 14px field; navigation was two unlabelled 24px icons; the top bar clipped the avatar; tabs and the status bar clipped.
+- **How:** phone-only CSS and markup in the admin top-bar override; a labelled Menu button and a "this module" section in the module drawer; the company name truncates. Desktop from 768px up is unchanged.
+- **Benefit:** fields no longer zoom, one obvious menu reaches every page and module, the top bar fits.
+- **Trade-off / risk:** the top-bar template is a local Filament override; re-diff it on every Filament upgrade. Rendered layout is checked by eye on phones, not by tests.
+- **Verification:** `MobileNavigationTest` 1 passed (7 assertions) on `aureuserp_testing_claude_vault`; in-browser preview on production at 390 × 844 (no server change). A real iPhone and Android check remains after deploy.
+- **Rollback:** revert the two Blade files and the `mobile-menu` keys.
+
 ## 2026-11-10 (readable company administrator passwords; administrator login investigation)
 
 - **Why:** user requirement: a Super Admin must be able to see a company administrator's password. The user chose encrypted, viewable storage over show-once and reset-only after the risk was explained (anyone with APP_KEY and the database can read every stored password).

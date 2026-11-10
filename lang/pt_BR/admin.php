@@ -30,4 +30,9 @@ return [
         'human-resources' => 'RH',
         'administration'  => 'Administração',
     ],
+
+    'mobile-menu' => [
+        'menu'    => 'Menu',
+        'modules' => 'Módulos',
+    ],
 ];
