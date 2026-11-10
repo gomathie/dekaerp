@@ -1,0 +1,134 @@
+- generic [active] [ref=f6e1]:
+  - link "Skip to content" [ref=f6e2] [cursor=pointer]:
+    - /url: "#fi-main-content"
+  - generic [ref=f6e3]:
+    - navigation [ref=f6e4]:
+      - button "Expand sidebar" [ref=f6e5] [cursor=pointer]
+      - link [ref=f6e14] [cursor=pointer]:
+        - /url: https://cloud.dekaerp.com/admin
+        - img "DEKA ERP logo" [ref=f6e15]
+      - list [ref=f6e16]:
+        - listitem [ref=f6e17]:
+          - link "Dashboard" [ref=f6e19] [cursor=pointer]:
+            - /url: https://cloud.dekaerp.com/admin/project
+        - listitem [ref=f6e20]:
+          - link "Project" [ref=f6e21] [cursor=pointer]:
+            - /url: https://cloud.dekaerp.com/admin/project
+        - listitem [ref=f6e23]:
+          - link "Recruitment" [ref=f6e24] [cursor=pointer]:
+            - /url: https://cloud.dekaerp.com/admin/recruitment
+        - listitem [ref=f6e26]:
+          - link "Logistics" [ref=f6e27] [cursor=pointer]:
+            - /url: https://cloud.dekaerp.com/admin/logistics
+      - generic [ref=f6e31]:
+        - button "My Company" [ref=f6e35] [cursor=pointer]
+        - generic [ref=f6e45]:
+          - generic [ref=f6e46]: Global search
+          - searchbox "Search" [ref=f6e52]
+        - button "Notifications" [ref=f6e54] [cursor=pointer]
+        - button "User menu" [ref=f6e59] [cursor=pointer]:
+          - img "Avatar of Smooth" [ref=f6e60]
+    - complementary [ref=f6e61]:
+      - navigation [ref=f6e62]:
+        - link "Dashboard" [ref=f6e64] [cursor=pointer]:
+          - /url: https://cloud.dekaerp.com/admin/project
+        - link "Contact" [ref=f6e76] [cursor=pointer]:
+          - /url: https://cloud.dekaerp.com/admin/contact/contacts
+        - link "Sales" [ref=f6e91] [cursor=pointer]:
+          - /url: https://cloud.dekaerp.com/admin/sale/orders
+        - link "Purchase" [ref=f6e102] [cursor=pointer]:
+          - /url: https://cloud.dekaerp.com/admin/purchase/orders
+        - link "Maintenance" [ref=f6e117] [cursor=pointer]:
+          - /url: https://cloud.dekaerp.com/admin/maintenance/maintenance
+        - link "Manufacturing" [ref=f6e128] [cursor=pointer]:
+          - /url: https://cloud.dekaerp.com/admin/manufacturing/operations
+        - link "Inventory" [ref=f6e144] [cursor=pointer]:
+          - /url: https://cloud.dekaerp.com/admin/inventory/overview
+        - link "Logistics" [ref=f6e159] [cursor=pointer]:
+          - /url: https://cloud.dekaerp.com/admin/logistics/operations
+        - link "Invoices" [ref=f6e176] [cursor=pointer]:
+          - /url: https://cloud.dekaerp.com/admin/invoices/customers
+        - link "Accounting" [ref=f6e190] [cursor=pointer]:
+          - /url: https://cloud.dekaerp.com/admin/accounting/overview
+        - link "Project" [ref=f6e207] [cursor=pointer]:
+          - /url: https://cloud.dekaerp.com/admin/project/projects
+        - link "Employees" [ref=f6e223] [cursor=pointer]:
+          - /url: https://cloud.dekaerp.com/admin/employees/employees
+        - link "Time Off" [ref=f6e235] [cursor=pointer]:
+          - /url: https://cloud.dekaerp.com/admin/time-off/dashboard
+        - link "Recruitments" [ref=f6e244] [cursor=pointer]:
+          - /url: https://cloud.dekaerp.com/admin/recruitments/applications
+        - link "Barcode" [ref=f6e254] [cursor=pointer]:
+          - /url: https://cloud.dekaerp.com/admin/barcode-app
+        - link "Plugins" [ref=f6e272] [cursor=pointer]:
+          - /url: https://cloud.dekaerp.com/admin/plugins
+        - link "Settings" [ref=f6e281] [cursor=pointer]:
+          - /url: https://cloud.dekaerp.com/admin/shield/roles
+        - link "Help" [ref=f6e289] [cursor=pointer]:
+          - /url: https://cloud.dekaerp.com/admin/whats-new
+  - main [ref=f6e299]:
+    - generic [ref=f6e301]:
+      - heading "Dashboard" [level=1] [ref=f6e304]
+      - generic [ref=f6e307]:
+        - generic [ref=f6e316]:
+          - generic [ref=f6e317]: Project
+          - generic [ref=f6e329]: Assignees
+          - generic [ref=f6e341]: Tags
+          - generic [ref=f6e353]: Customer
+          - generic [ref=f6e367]:
+            - generic [ref=f6e368]: Date Range
+            - textbox "Date Range" [ref=f6e377]
+        - generic [ref=f6e384]:
+          - region [ref=f6e390]:
+            - heading "Stats Overview" [level=2] [ref=f6e393]
+            - generic [ref=f6e395]:
+              - generic [ref=f6e399]:
+                - generic [ref=f6e400]: Total Tasks
+                - generic [ref=f6e404]: "0"
+                - generic [ref=f6e405]: 0%
+              - generic [ref=f6e414]:
+                - generic [ref=f6e415]: Total Hours Spent
+                - generic [ref=f6e419]: 0:00
+                - generic [ref=f6e420]: 0%
+              - generic [ref=f6e429]:
+                - generic [ref=f6e430]: Total Time Remaining
+                - generic [ref=f6e434]: 0:00
+                - generic [ref=f6e435]: 0%
+          - generic [ref=f6e442]:
+            - heading "Tasks by Stage" [level=2] [ref=f6e445]
+            - img "Tasks by Stage" [ref=f6e450]
+          - generic [ref=f6e452]:
+            - heading "Tasks By State" [level=2] [ref=f6e455]
+            - img "Tasks By State" [ref=f6e460]
+          - generic [ref=f6e464]:
+            - heading "Top Assignees" [level=2] [ref=f6e468]
+            - generic [ref=f6e469]:
+              - status [ref=f6e470]: No results
+              - table "Top Assignees" [ref=f6e471]:
+                - rowgroup [ref=f6e472]:
+                  - row [ref=f6e473]:
+                    - columnheader [ref=f6e474]:
+                      - button "User" [ref=f6e475] [cursor=pointer]
+                    - columnheader [ref=f6e478]:
+                      - button "Hours Spent" [ref=f6e479] [cursor=pointer]
+                    - columnheader [ref=f6e482]:
+                      - button "Tasks" [ref=f6e483] [cursor=pointer]
+            - status [ref=f6e486]:
+              - heading "No timesheets" [level=3] [ref=f6e491]
+          - generic [ref=f6e495]:
+            - heading "Top Projects" [level=2] [ref=f6e499]
+            - generic [ref=f6e500]:
+              - status [ref=f6e501]: No results
+              - table "Top Projects" [ref=f6e502]:
+                - rowgroup [ref=f6e503]:
+                  - row [ref=f6e504]:
+                    - columnheader [ref=f6e505]:
+                      - button "Project" [ref=f6e506] [cursor=pointer]
+                    - columnheader [ref=f6e509]:
+                      - button "Hours Spent" [ref=f6e510] [cursor=pointer]
+                    - columnheader [ref=f6e513]:
+                      - button "Tasks" [ref=f6e514] [cursor=pointer]
+            - status [ref=f6e517]:
+              - heading "No timesheets" [level=3] [ref=f6e522]
+  - generic:
+    - status

@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\URL;
 use Livewire\Livewire;
 use Webkul\Account\Filament\Resources\CustomerResource\Pages\ViewCustomer;
@@ -90,8 +91,8 @@ it('hides another company\'s shipments on a shared contact', function () {
         ->assertSee('SHIP-SHARED-OWN')
         ->assertDontSee('SHIP-SHARED-OTHER');
 
-    Livewire::test(ViewShipment::class, ['record' => $theirs->getRouteKey()])
-        ->assertNotFound();
+    expect(fn () => Livewire::test(ViewShipment::class, ['record' => $theirs->getRouteKey()]))
+        ->toThrow(ModelNotFoundException::class);
 });
 
 it('hides the shipments tab when logistics is off or the user cannot view shipments', function () {
