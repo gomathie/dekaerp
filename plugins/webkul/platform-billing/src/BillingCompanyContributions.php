@@ -121,6 +121,9 @@ class BillingCompanyContributions
                         ])
                         ->action(function (array $data, Company $record): void {
                             static::run(function (User $actor) use ($data, $record): void {
+                                // setLimit() does not check who is calling.
+                                // Hiding the button is not the check: a forged
+                                // action still reaches this line.
                                 if (! $actor->isSuperAdmin()) {
                                     throw new AuthorizationException(self::ONLY_SUPER_ADMIN_SEATS);
                                 }

@@ -9,6 +9,8 @@ use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Services\PluginEntitlementService;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Security\Models\Role;
+use Webkul\Security\Models\User;
+use Webkul\Security\Services\MultiCompanyAdminRoleProvisioner;
 use Webkul\Support\Filament\Resources\CompanyResource\Pages\CreateCompany;
 use Webkul\Support\Filament\Resources\CompanyResource\Pages\EditCompany;
 use Webkul\Support\Filament\Resources\CompanyResource\Support\CompanySchemaRegistry;
@@ -274,4 +276,37 @@ it('adds the dependencies of a plugin chosen on a new company instead of refusin
 
     expect(companyModulesGrants($company))->toContain($child->id)
         ->and(companyModulesGrants($company))->toContain($parent->id);
+});
+
+it('hides the modules section from a multi-company admin and leaves the grants unchanged', function () {
+    $company = Company::factory()->create(['name' => 'Modules MCA']);
+    $plugin = companyModulesPlugin('mca-cannot-grant');
+    DB::table('company_plugin')->insert([
+        'company_id' => $company->getKey(),
+        'plugin_id' => $plugin->getKey(),
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+    PluginAccess::flush();
+    $before = companyModulesGrants($company);
+
+    $user = FilamentHelper::actingAs();
+    Auth::shouldUse('web');
+    $user->syncRoles([app(MultiCompanyAdminRoleProvisioner::class)->provision()->getKey()]);
+    $user->unsetRelation('roles');
+    $user->allowedCompanies()->sync([$company->getKey()]);
+    Auth::guard('web')->setUser($user->fresh());
+    Auth::guard('sanctum')->setUser($user);
+
+    expect(auth()->user()?->isMultiCompanyAdmin())->toBeTrue()
+        ->and(auth()->user()?->isSuperAdmin())->toBeFalse();
+
+    $sections = companyModulesSections();
+
+    expect($sections)->toHaveCount(1)
+        ->and($sections[0]->isVisible())->toBeFalse();
+
+    CompanyContributions::syncGrants($company, []);
+
+    expect(companyModulesGrants($company))->toBe($before);
 });
