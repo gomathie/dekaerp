@@ -23,6 +23,17 @@ return [
                 'invitation' => 'Pending invitation',
                 'link'       => 'Invitation link',
             ],
+            'show-password' => [
+                'label'             => 'Show password',
+                'modal-heading'     => 'Show the password for :email',
+                'modal-description' => 'Enter your own password to continue. This view is recorded in the audit log.',
+                'submit'            => 'Show password',
+                'shown'             => 'Password for :email',
+
+                'form' => [
+                    'password' => 'Your password',
+                ],
+            ],
             'set-password' => [
                 'label'             => 'Set password',
                 'modal-heading'     => 'Set the password for :email',

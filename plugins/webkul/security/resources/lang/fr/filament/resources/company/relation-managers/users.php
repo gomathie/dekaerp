@@ -23,6 +23,17 @@ return [
                 'invitation' => 'Invitation en attente',
                 'link'       => 'Lien d’invitation',
             ],
+            'show-password' => [
+                'label'             => 'Afficher le mot de passe',
+                'modal-heading'     => 'Afficher le mot de passe de :email',
+                'modal-description' => 'Saisissez votre propre mot de passe pour continuer. Cette consultation est enregistrée dans le journal d’audit.',
+                'submit'            => 'Afficher le mot de passe',
+                'shown'             => 'Mot de passe de :email',
+
+                'form' => [
+                    'password' => 'Votre mot de passe',
+                ],
+            ],
             'set-password' => [
                 'label'             => 'Définir le mot de passe',
                 'modal-heading'     => 'Définir le mot de passe de :email',
