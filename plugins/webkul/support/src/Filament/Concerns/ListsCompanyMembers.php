@@ -2,14 +2,14 @@
 
 namespace Webkul\Support\Filament\Concerns;
 
-use Webkul\Security\Models\User;
+use Webkul\Support\Filament\CompanyMembers;
 
 /**
  * Filter options listing people, for the module dashboards.
  *
  * User is not company-scoped, so upstream's User::pluck('name', 'id') listed
- * every user on the installation, other tenants' staff included. This lists
- * only members of the companies the viewer is working in.
+ * every user on the installation, other tenants' staff included. The rule
+ * lives in CompanyMembers; this keeps the dashboards' existing call.
  */
 trait ListsCompanyMembers
 {
@@ -18,10 +18,6 @@ trait ListsCompanyMembers
      */
     protected static function companyMemberOptions(): array
     {
-        return User::query()
-            ->whereHas('allowedCompanies', fn ($query) => $query->whereIn('companies.id', allowed_company_ids()))
-            ->orderBy('name')
-            ->pluck('name', 'id')
-            ->all();
+        return CompanyMembers::options();
     }
 }

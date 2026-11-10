@@ -68,6 +68,8 @@ class SecurityServiceProvider extends PackageServiceProvider
                 '2026_10_28_000005_add_lifecycle_to_user_invitations_table',
                 // SAAS-15: the explicit grant for tenant impersonation.
                 '2026_11_10_000001_create_tenant_impersonate_permission',
+                // The Super Admin's company-scope bypass, never created outside tests.
+                '2026_11_10_000002_grant_bypass_company_scope_to_super_admins',
             ])
             ->hasSettings([
                 '2024_11_05_042358_create_user_settings',

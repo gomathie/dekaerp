@@ -151,7 +151,7 @@ class BankAccountResource extends Resource
                     ->preload(),
                 SelectFilter::make('creator_id')
                     ->label(__('partners::filament/resources/bank-account.table.filters.creator'))
-                    ->relationship('creator', 'name')
+                    ->relationship('creator', 'name', fn ($query) => \Webkul\Support\Filament\CompanyMembers::scope($query))
                     ->searchable()
                     ->preload(),
             ])

@@ -289,7 +289,7 @@ class OrderResource extends Resource
                                     ->schema([
                                         Select::make('user_id')
                                             ->label(__('purchases::filament/admin/clusters/orders/resources/order.form.tabs.additional.fields.buyer'))
-                                            ->relationship('user', 'name')
+                                            ->relationship('user', 'name', fn ($query) => \Webkul\Support\Filament\CompanyMembers::scope($query))
                                             ->searchable()
                                             ->preload()
                                             ->default(Auth::id())

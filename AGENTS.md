@@ -1522,9 +1522,27 @@ log named):
     branch while its parent contact belongs to the parent company. Child
     contacts get the owner's company where they are created: `AddressResource`,
     `ManageContacts` and the address API.
-  - Existing contacts are never reassigned. One with no company stays shared,
-    and one with a company stays there. Example employees 1 to 10 and their
-    contacts 5 to 14 stay shared.
+  - *Superseded 2026-11-10 (user: shared contacts made isolation look
+    broken):* "Existing contacts are never reassigned. One with no company
+    stays shared, and one with a company stays there. Example employees 1 to
+    10 and their contacts 5 to 14 stay shared." Now: partners migration
+    `2026_11_10_000001` gives each shared contact the one company whose sales
+    orders, purchase orders or account moves use it, else the default
+    company, and leaves a contact two companies use shared (logged). Employees
+    migration `2026_11_10_000003` gives a shared employee its contact's
+    company. A contact with a company still stays where it is.
+  - Pickers and filters that list people read `Support\Filament\CompanyMembers`
+    (2026-11-10): members of the companies the viewer is working in, all of
+    them in "All companies" mode. Never `User::pluck()` or a bare
+    `->relationship('user', 'name')`: User is not company-scoped, so those
+    listed other tenants' staff. Test: support `CompanyMembersTest`.
+  - The Admin role is a plain role (Shield's gate super admin is disabled),
+    so it sees a page only through a permission row. Laravel Cloud must run
+    `php artisan erp:sync-permissions` after `migrate` on every deploy, or a
+    page or widget added after install answers 403 even for the Super Admin.
+    `bypass_company_scope` is created and granted to the Super Admin roles by
+    security migration `2026_11_10_000002`. Tests: plugin-manager
+    `SyncAdminPermissionsTest`.
   - The company field is required on the product and employee forms. Stamping
     happens only on create, so clearing the field on edit would share the
     record again.
@@ -1817,7 +1835,29 @@ log named):
     creating it again.
   - Tests: `plugins/webkul/platform-billing/tests/Feature/OverdueExtensionTest.php`.
 
+• Customer page shipments, 2026-11-10 (`docs/logistics-plan.md`, WP-9b, D11):
+  - The customer infolist tab is `PartnerSchemaRegistry` slot `tabs.append`.
+    Do not add a relation-manager slot, and do not edit `PartnerResource` or
+    add `Partner::shipments()`. Logistics is optional; a core model must not
+    reference it.
+  - `CustomerPage` drops only `CompanyScope`, then filters `customer_id` and
+    an explicit `company_id`. Soft deletes stay. A shared contact
+    (`company_id` null) uses `current_company_id()` only. No current company
+    shows nothing. Do not use `withoutGlobalScopes()` here: it would also
+    drop soft deletes, and an unfiltered scope would list every tenant on a
+    shared contact.
+  - The tab needs `view_any_logistics_shipment` and
+    `LogisticsAccess::enabledFor()` for that company. Charge amounts also
+    need `view_financials_logistics_shipment`. Hiding the tab is not the
+    only check; the entries call the same gate.
+  - Register the contribution once. `packageBooted()` runs again, and the
+    registry is static.
+  - Tests: `logistics/tests/Feature/Customers/CustomerPageTest.php`.
+
 DONE RECENTLY (newest first; details in docs/change-log.md)
+
+• 2026-11-10 — Logistics customer page (WP-9b): a read-only shipments tab on
+  the customer infolist. See the protected decision above.
 
 • 2026-11-03 — Administrator password from the company form, for existing
   companies too: see the protected decision above.

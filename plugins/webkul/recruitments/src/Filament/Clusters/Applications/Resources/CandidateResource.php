@@ -130,7 +130,7 @@ class CandidateResource extends Resource
                                     ->preload()
                                     ->label(__('recruitments::filament/clusters/applications/resources/candidate.form.sections.additional-details.fields.tags')),
                                 Select::make('manager_id')
-                                    ->relationship('manager', 'name')
+                                    ->relationship('manager', 'name', fn ($query) => \Webkul\Support\Filament\CompanyMembers::scope($query))
                                     ->searchable()
                                     ->preload()
                                     ->label(__('recruitments::filament/clusters/applications/resources/candidate.form.sections.additional-details.fields.manager')),
