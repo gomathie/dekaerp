@@ -6,6 +6,16 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-11 (reply greeting uses the developer's own name)
+
+- **Why:** user: several developers work on this project, and `AGENTS.md`
+  told every agent to open each reply with one fixed name.
+- **How:** the Replies rule in `AGENTS.md` now says to use the name of the
+  developer in that session (git user name or account), and to ask once if
+  none is available.
+- **Verification:** documentation only; searched the repository for other
+  copies of the old rule, and there were none.
+
 ## 2026-11-11 (attendance plugin: banner, manager screens, reports)
 
 - **Why:** the user asked for the whole of `docs/attendance-plan.md` (AT-1 to

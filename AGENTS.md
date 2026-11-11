@@ -61,7 +61,7 @@ This project has domain-specific skills available. You MUST activate the relevan
 
 ## Replies
 
-- Be concise in your explanations - focus on what's important rather than explaining obvious details. Start every reply with my name 'Mathie'. If you are unsure about what was being one previously, pause, and start first with goal rules and verified progress.
+- Be concise in your explanations - focus on what's important rather than explaining obvious details. Start every reply with the name of the developer you are working with, taken from that session's git user name or account, not a fixed name (user, 2026-11-11: several developers work on this project, so a hardcoded name addressed all of them as one person). If no name is available, ask once. If you are unsure about what was being one previously, pause, and start first with goal rules and verified progress.
 
 === boost rules ===
 
