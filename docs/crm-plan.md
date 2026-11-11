@@ -1,131 +1,106 @@
-# CRM plugin — adoption plan
+# CRM — Plan
 
-Status: **draft, awaiting decisions** (2026-11-07). Nothing has been ported yet.
-Owner of decisions: the user. Work happens on its own branch,
-`feature/crm`, never mixed with SaaS or Logistics work.
+Status: **plan only (2026-11-11). No code.** Asked for by the user together
+with a "Contacts & CRM" sidebar heading. That heading shipped the same day:
+`NavigationGroup::Contact` → section `contacts-crm`, and a CRM module joins
+it there.
 
-## 1. What upstream has
+Read `AGENTS.md` first: multi-company rules, protected decisions, and the
+upstream review rules.
 
-AureusERP added a `crm` plugin (`plugins/webkul/crm`, namespace `Webkul\Crm`)
-between 2026-10-19 and 2026-11-05, after this fork's last sync point
-(`8409fde62`, 2026-08-04). Upstream `aureus/master` at `c31a0db21`
-(2026-11-06) was inspected read-only.
+---
 
-| Area | Size |
-|---|---|
-| Files in total | 858 |
-| Translations | 395 files: en, ar, es, fr and pt_BR. Ours also carry fr. |
-| Filament resources and pages | 240 files in clusters: Leads, Sales (pipeline, opportunities, quotations, customers, activities), Reporting (forecast, reports), Configuration |
-| Models | 27, including Lead, Stage, CRMTeam, TeamMember, LostReason, Tag, MailServer, MailAlias, InboundEmail, LeadMerge, LeadConversion (plus mass conversion), RevealRule, RevealView, RecurringPlan and PartnerLevel |
-| Migrations | 37, plus 7 settings migrations |
-| Services | 16, covering lead assignment, scoring, merging, conversion and the activity log |
-| Console commands | 3: `crm:assign-leads` and `crm:fetch-mail` (both scheduled), and visits-to-leads |
-| Tests | 54 feature tests |
-| Declared dependencies | `contacts`, `sales` |
+## 1. Goal
 
-It is still being changed daily upstream: there are commits on 3, 4 and 5 November, and a migration was renamed on 28 October.
+Sales teams track prospects before they become orders: leads come in,
+become opportunities, move through a pipeline, and are won (a quotation in
+Sales) or lost (with a reason). Managers see the pipeline value and
+forecast. Everything stays per company.
 
-## 2. What conflicts with this fork
+## 2. What exists
 
-Each item below is a reason a straight copy would be wrong here.
+| Exists | Where | Use for CRM |
+| --- | --- | --- |
+| Contacts, per company | `partners` (`Partner`, stamped with the creating company; protected decision 2026-10-29) | The customer or prospect on a lead |
+| Sales teams, quotations, orders | `sales` (`Team`, `Order`, quotation → order) | Won opportunity becomes a quotation; team owns the pipeline |
+| Activities, chatter, followers | `chatter` | Calls, meetings, notes on a lead |
+| UTM source / medium / campaign | `support` models | Where a lead came from |
+| Per-company module switch | `company_plugin` + `PluginEntitlement` | CRM on or off per company |
+| Mail | app SMTP, later per-company SMTP (D16 in `docs/logistics-plan.md`) | Lead email and inbound email |
 
-1. **Company scoping is partial.**
-   - Only 8 of 37 migrations carry `company_id`: leads, activity logs, lead
-     merges, mail servers, lead conversions, mass conversions, quotation
-     partners and reveal rules.
-   - Stages, teams, tags, lost reasons, industries and recurring plans are
-     global.
-   - That breaks this fork's rules: tags are unique **per company** (§4k), and
-     unrelated client businesses must never see each other's pipeline.
-   - Every tenant-data table needs `company_id`, `BelongsToCompany`, and
-     `InheritsParentCompany` on child rows.
-2. **Module switch (SAAS-05).** Upstream has no per-company entitlement. CRM
-   needs the full five layers: cluster/page `canAccess`, resource
-   `canViewAny`, policies, service `assertForCompany`, and the API route
-   middleware. It also needs to be added to `company_plugin` on install. It
-   must never be gated in `Plugin::register()`.
-3. **Website visitor tracking does not exist here.**
-   - `CRMServiceProvider` listens to `Webkul\Website\Events\VisitorTracked`.
-     That event and the CMS were removed from our Website plugin on 2026-10-22.
-   - Visits-to-leads, lead "reveal" (rules and views) and the visitor relation
-     tables therefore have nothing to run on. They should be left out, not
-     ported dormant.
-4. **Inbound email.**
-   - `crm:fetch-mail` and the mail servers need the PHP `imap` extension.
-     Laravel Cloud may not have it.
-   - Mail-server passwords are stored in the database, so they must be
-     encrypted casts. The repo is public: never seed real credentials.
-5. **Outgoing mail and SMS settings.**
-   - Upstream adds its own outgoing-mail settings.
-   - This fork's protected decision is that mail leaves as
-     `config('mail.from.address')`, never as a person or a per-tenant
-     address (Sentry 158147606, DMARC). CRM must use `EmailService` and must
-     not add a second sender path.
-   - SMS has no provider here.
-6. **It changes Sales.**
-   - `add_opportunity_id_to_sales_orders_table` alters a core table. It must
-     be nullable, indexed, and safe to roll back.
-   - `CRMServiceProvider` also overrides Sales list pages (`ListQuotations`,
-     and the customer and partner relations). Those touch screens real
-     customers use today.
-7. **Missing shared pieces.** `Webkul\Support\Support\VersionedCss` and
-   CRM's `VersionedJs` do not exist here. Upstream's newer dashboard widgets
-   are also absent (see the dashboards note in the change log).
-8. **Settings per company.** CRM settings via `CompanyAwareSettingsRepository`
-   fall back to the default company. That is fine for preferences, but wrong
-   for any on/off switch (AGENTS.md).
-9. **Layout.** New resources must use the split `Schemas/` + `Tables/` layout.
-   Check upstream's layout before copying, rather than converting it later.
-10. **Speed.** Upstream widgets count per state in a loop, the N+1 that
-    Sentry 156271115 flagged on Projects. Check every CRM widget and report
-    for the same thing.
+## 3. Upstream AureusERP CRM (checked 2026-11-11, `aureuserp/aureuserp`, `plugins/webkul/crm`)
 
-## 3. Decisions needed before work starts
+A port of Odoo CRM, under active change (latest commits 2026-11-03 to
+2026-11-05). Uses `BelongsToCompany`, `HasOwnershipScope`, chatter, and
+depends on Sales (`Team`, `Quotation`).
+
+| Area | Upstream has | Notes for DEKA |
+| --- | --- | --- |
+| Core | Leads and opportunities (one model with a type), stages (per team), tags, lost reasons, priority, expected revenue, probability | Wanted in v1 |
+| Teams | CRM teams and members (on top of Sales teams) | Wanted; check it reuses `sales` teams, not a parallel copy |
+| Conversion | Lead → opportunity, mass conversion, duplicate detection and merge | Wanted; merge must not cross companies |
+| Quotation link | **Adds `opportunity_id` to `sales_orders`** | Changes a Sales table: the plugin owns that migration and must drop the column on uninstall |
+| Scoring | Lead scoring tables and service | Later |
+| Inbound email | Mail servers, aliases, inbound emails → leads | Later; must use the D16 per-company mail design, never one shared inbox across tenants |
+| Lead "reveal" | IP-based website visitor identification (rules, views, countries) | Not wanted for now: needs a paid data provider and has privacy implications |
+| Partner levels / assignation | Resellers and lead assignment to partners | Not wanted for now |
+| Recurring plans | Recurring revenue on opportunities | Later (SaaS-style clients only) |
+
+## 4. Reference: Odoo CRM (from knowledge, not re-read this session)
+
+Pipeline kanban by stage; lead vs opportunity; activities with due dates;
+won and lost with reasons; expected revenue and probability; forecast by
+expected closing month; team targets; quotation from opportunity; lead
+generation from email; lead scoring (predictive); duplicate merge.
+
+## 5. Options
+
+| Option | Effort | Fit | Risk |
+| --- | --- | --- | --- |
+| **A. Adopt upstream CRM wholesale** | Low at first | Same codebase lineage | Large, still changing, includes features we do not want (reveal, partner levels), adds a column to `sales_orders`; every fork rule (per-company contacts, entitlement, mail) must be re-checked across ~30 migrations |
+| **B. Build a lean CRM ourselves** | Medium | Exactly our rules | We diverge from upstream and cannot take their fixes |
+| **C. Phased adoption of upstream's core (recommended)** | Medium | Upstream models and names for the core; we take only the pieces we want, through the fork's checks | Needs a careful first port, then small upstream ports per fix |
+
+**Recommendation: C.** Take upstream's core (leads, opportunities, stages,
+tags, lost reasons, teams, conversion, quotation link) once its CRM stops
+changing week to week, as a reviewed port (never a merge — AGENTS.md
+upstream rule). Leave scoring, inbound email, recurring plans for later
+phases, and reveal and partner levels out.
+
+## 6. Rules the port must keep (DEKA forks)
+
+- A lead, opportunity, stage, tag and lost reason belongs to the creating
+  company; tag names unique per company (as for contact tags).
+- A lead's contact must be the same company's or a shared contact
+  (`Partner::recipientsForCompany()` style refusal), including on merge and
+  conversion.
+- Module switch: `PluginEntitlement` for navigation, policies, API and
+  services; pages use `ChecksPagePermission`; widgets `GuardsDashboardWidget`.
+- People pickers (salesperson, team members) use `Support\Filament\CompanyMembers`.
+- Mail from the application address now, through the D16 resolver later;
+  never the acting user's address.
+- Reading the parent in model hooks: `withoutGlobalScopes()` (AGENTS.md).
+- The `opportunity_id` column on `sales_orders`: nullable, added and dropped
+  by the CRM plugin only, and Sales must work with CRM uninstalled.
+- A CRM section on the combined Overview dashboard through
+  `OverviewRegistry` (pipeline value, won/lost this period).
+
+## 7. Decisions needed (user)
 
 | ID | Question | Recommendation |
-|---|---|---|
-| D-CRM-1 | Which scope for the first release? | Leads, pipeline (opportunities, stages, lost reasons), activities, teams, and quotation from an opportunity. Leave out reveal and visits, inbound email, SMS, lead scoring and recurring revenue until later. |
-| D-CRM-2 | Are stages, teams, tags and lost reasons per company? | Yes, matching tags and categories (§4k). |
-| D-CRM-3 | Who is a lead's company: the creating user's, or a chosen one? | The creating company, required on the form, as for products. |
-| D-CRM-4 | Inbound email at all? If so, which host? | Not in the first release. Later: decide host support for `imap`, or use a webhook-based provider instead. |
-| D-CRM-5 | Is CRM entitled per company like other modules, and is it in the default set for new companies? | Entitled, and **not** in the default set; granted deliberately. |
-| D-CRM-6 | Track upstream after the port? | Freeze at one upstream commit for the port. Review upstream CRM changes as findings in `upstream-fix-adoption-plan.md`, never merge wholesale. |
+| --- | --- | --- |
+| CRM-D1 | Adopt upstream's core (C), build lean (B), or adopt all (A)? | C |
+| CRM-D2 | When? | After upstream's CRM is stable for about two weeks and after Attendance; review upstream again then |
+| CRM-D3 | Lead and opportunity as one record with a type (Odoo/upstream) or separate? | One record with a type, as upstream |
+| CRM-D4 | Inbound email → leads in phase 1? | No; phase 3, after per-company mail (D16) |
+| CRM-D5 | Pipeline per sales team or one per company? | Per team, as upstream, with a company default team |
 
-## 4. Work packages
+## 8. Phases
 
-Each package ends with its suite green on its own database
-(`aureuserp_testing_crm<N>`), plus a handoff in §6. The four-place rule
-applies to every guard.
-
-| Package | Content | Depends on |
-|---|---|---|
-| CRM-0 | Freeze the upstream commit. Produce a file-by-file inventory: copy as is, adapt, or leave out, following D-CRM-1. List every class referenced outside the plugin and whether it exists here. | Decisions |
-| CRM-1 | Plugin skeleton: provider, `CRMPlugin`, `bootstrap/providers.php`, a `phpunit.xml` `CrmFeature` suite, autoloader, Shield config, an install/uninstall guard, and an `isPluginInstalled` check only in `register()`. | CRM-0 |
-| CRM-2 | Schema for the chosen scope, rewritten to carry `company_id` per D-CRM-2. Models use `BelongsToCompany` / `InheritsParentCompany`; factories use `HasCompanyDefault`. Includes the `opportunity_id` column on sales orders (nullable, with rollback). Adds `CompanyScopingInvariantsTest`. | CRM-1 |
-| CRM-3 | Configuration screens: stages, teams and members, tags, lost reasons, and settings. All per company, with `unique(company_id, name)` where names are unique. | CRM-2 |
-| CRM-4 | Leads and pipeline: lead and opportunity resources, kanban, won and lost, merge, convert to opportunity, and activities via chatter. Services repeat the business guards, because super admin skips policies. | CRM-3 |
-| CRM-5 | Sales link: quotation from an opportunity, and opportunity shown on the order. Done without replacing Sales' own list pages, through a schema registry or contributions. Sales suite stays green. | CRM-4 |
-| CRM-6 | Module switch: the five layers, `company_plugin` grant on first install, and a test per layer, following the SAAS-05 tests. | CRM-4 |
-| CRM-7 | Reporting and dashboard: forecast, pipeline analysis and a CRM tab, each with page permissions asserted against `FilamentShield::getPages()`. No per-row query loops. | CRM-4 |
-| CRM-8 | Release: run all suites; fr translations; guide entries; `CHANGELOG.md`; read-only pre-flight on production; and handover actions (install, then grant to chosen companies). | All |
-
-Later, each only after its own decision: inbound email, lead assignment
-scheduling, lead scoring, recurring revenue, SMS, and the reveal and visits
-features.
-
-## 5. Risks
-
-- **Moving target.** Upstream may change models after the freeze. Accept
-  that, and review later changes as findings.
-- **Size.** About 860 files, so expect several sessions per package. Copying
-  translations is cheap; tenancy and entitlement are the real cost.
-- **Sales regressions.** CRM-5 touches a module in production use. Run the
-  full SaleFeature suite at the end of that package.
-- **Hosting.** `imap` and scheduled commands need Laravel Cloud's scheduler
-  and extensions. Confirm both before any scheduled package.
-
-## 6. Status board and handoffs
-
-| Package | Status | Owner / database |
-|---|---|---|
-| CRM-0 … CRM-8 | todo (blocked on §3 decisions) | — |
+| Phase | Scope |
+| --- | --- |
+| CRM-1 | Port core: leads/opportunities, stages, tags, lost reasons, teams, kanban pipeline, activities, won/lost, conversion and duplicate merge within a company, quotation link; per-company switch; tests for every fork rule in §6 |
+| CRM-2 | Dashboard: pipeline value, forecast by month, won/lost, a CRM section on the Overview; reports with export |
+| CRM-3 | Inbound email to leads (needs D16), lead scoring |
+| CRM-4 | Recurring plans, if clients ask |
+| CRM-5 | Translations ar/es/fr/pt_BR, hardening, release |
