@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\DB;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Purchase\Filament\Admin\Pages\Purchases;
+use Webkul\Purchase\Filament\Admin\Widgets\PurchaseHeadlineWidget;
 use Webkul\Purchase\Filament\Admin\Widgets\PurchaseTrendWidget;
 use Webkul\Purchase\Filament\Admin\Widgets\TopRfqsWidget;
 use Webkul\Purchase\Models\Order;
@@ -121,4 +122,27 @@ it('counts orders per day and state in one grouped query within the company', fu
     expect($byLabel[0])->toBe([1, 0])
         ->and($byLabel[2])->toBe([0, 1])
         ->and($orderQueries)->toBe(1);
+});
+
+/**
+ * Sentry DEKAERP-12 (2026-11-11): the Overview's purchases card summed
+ * amount_total, a Sales column, and 500'd the page. Spend is the confirmed
+ * orders' total_cc_amount, within the company.
+ */
+it('computes the overview purchase spend from confirmed orders in company currency', function (): void {
+    $company = Company::factory()->create();
+    $user = CompanyHelper::actingAsCompanyUser($company, ['page_purchase_purchases']);
+
+    $confirmed = PurchaseHelper::order(['company_id' => $company->getKey(), 'user_id' => $user->getKey()]);
+    $draft = PurchaseHelper::order(['company_id' => $company->getKey(), 'user_id' => $user->getKey()]);
+
+    Order::withoutGlobalScopes()->whereKey($confirmed->getKey())->update(['ordered_at' => now(), 'state' => 'purchase', 'total_cc_amount' => 250]);
+    Order::withoutGlobalScopes()->whereKey($draft->getKey())->update(['ordered_at' => now(), 'state' => 'draft', 'total_cc_amount' => 999]);
+
+    $stats = (new PurchaseHeadlineWidget)->headlineStats([]);
+
+    expect($stats)->toHaveCount(2)
+        ->and((string) $stats[0]->getValue())->toContain('250')
+        ->and((string) $stats[0]->getValue())->not->toContain('999')
+        ->and((string) $stats[1]->getValue())->toBe('1');
 });
