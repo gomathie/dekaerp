@@ -12,7 +12,8 @@ Remaining (estimate about 2–3 days):
    combination of installed modules.
 2. Restore the custom-fields section (`left.append`, see Deferred).
 3. Contacts phase 3 (bank accounts, bills and purchases tabs on every
-   contact screen).
+   contact screen). **Decided 2026-11-11 (user): yes, all three tabs on
+   every contact screen**, each only when the company has that module.
 4. Combination tests and a full suite run.
 
 The "Implementation status (2026-06-05)" section below is the detail.
