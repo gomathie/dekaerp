@@ -52,6 +52,17 @@ defects were found by reading while it ran, and are fixed with it:
   deliberately reads scope-free - one caller away from a cross-tenant report.
   The pages always passed an explicit list; now the signature requires one.
 
+**2026-11-11 — report tests: the computation passes, one page test was wrong.**
+Combined run of both report files: **10 passed, 1 failed (22 assertions,
+683.99s)** on `aureuserp_testing_attendance`.
+`AttendanceReportsTest` passed all six, including the new open-row case.
+`ReportsTest` passed four: the generated page permission names, the page
+permission gate, the company switch and the own-rows-only query. The last one
+failed on
+`duplicate key value violates unique constraint "employees_employees_user_id_unique"`:
+`EmployeeFactory` fills `user_id` with the first user, so two employees created
+in one test collide. That test now passes `user_id => null` for both.
+
 **2026-11-11 — banner tests: a stale switch reads as off.**
 `DashboardBannerTest` enabled attendance with `CompanyProvisioner::enable()`
 directly after `appliesToViewer()` had already cached the company's flag, so
