@@ -6,6 +6,26 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-11 (profile-menu language shown once; dashboard scrollbar hidden)
+
+- **Why:** user: many complaints about five language rows in the profile
+  menu; asked that the language show once and the others open on click. Also
+  asked to hide the scrollbar on dashboards. Found in production while
+  checking: the language links' click handler used `@js()` inside a component
+  attribute, which Blade does not compile, so it threw and the plain
+  `?lang=` link dropped other query values.
+- **How:** `user-menu-language.blade.php` is one row (icon, current language,
+  chevron) that expands the other languages in place (Alpine), not a nested
+  dropdown. Codes are echoed directly (config values, letters and
+  underscores). `topbar.blade.php` hides the page scrollbar on pages with
+  widgets that are not resource pages (`fi-resource-*`), so record lists keep
+  theirs.
+- **Verification:** `UserMenuLanguageTest` 1 passed (12 assertions) on
+  `aureuserp_testing_claude_vault`; scrollbar CSS injected into the
+  production Overview (computed `scrollbar-width: none`). The new menu has not
+  been seen in a browser yet.
+- **Rollback:** restore the previous view; remove the two CSS rules.
+
 ## 2026-11-11 (top bar at ~1039px, modern dashboard charts)
 
 - **Why:** user: between about 1024px and 1200px the module page strip
