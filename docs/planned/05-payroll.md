@@ -420,10 +420,12 @@ marked *needs user* blocks only the step it names.
 | DP-10 | Is payroll a sold feature? | **Decided 2026-11-02 (user): free for pilots, paid later.** During the pilot, DEKA staff switch payroll on per company through the plugin grant. When pricing exists it moves behind the SAAS-03/04 entitlement contract and SAAS-09 subscriptions, with no change to how payroll checks availability (it always asks the grant). |
 | DP-11 | Is a branch its own legal employer? | **Decided 2026-11-02 (user): the company chooses, per branch, and both must work, including branches in other countries.** A branch is either **its own employer** (its own registrations, its own runs) or **covered by its parent's employer** for the branch's jurisdiction. The model supports both from the start (§5.3, §7.2). Whether a parent may legally pay foreign-branch staff under its own registration there is a country fact the practitioner confirms; the localization can refuse it. |
 | DP-12 | Can DEKA staff see a tenant's salaries? | **Decided 2026-11-02 (user):** the **main super admins see everything.** Seeing salary and bank data is otherwise a **right** (`view_payroll_pay_data`) that is granted to **DEKA support admins** and **Multi-Company Admins**; a Multi-Company Admin holds it only within their assigned companies. Ordinary platform configuration access (editing localizations) does not include it. Every view of pay data is logged (who, which company, when), so the right stays accountable. *Supersedes the recommendation of a client-granted support grant.* |
-| DP-13 | Exchange-rate date when pay currency ≠ accounting currency? | **Recommended:** the run's pay date; stored on the run. Confirm with each pilot's accountant. |
-| DP-14 | Which rule version applies to a run? | **Recommended:** the version effective on the period **end** date (or pay date where a country taxes on payment); the localization declares which. Never "today". |
+| DP-13 | Exchange-rate date when pay currency ≠ accounting currency? | **Decided 2026-11-11 (user), as recommended:** the run's pay date; stored on the run. Confirm with each pilot's accountant. |
+| DP-14 | Which rule version applies to a run? | **Decided 2026-11-11 (user), as recommended:** the version effective on the period **end** date (or pay date where a country taxes on payment); the localization declares which. Never "today". |
 | DP-16 | Do we check the design against Odoo payroll? | **Decided 2026-11-10 (user): yes.** A structured comparison with Odoo's payroll (§17), done in A0 and repeated before A3 and B1. Odoo is a reference for concepts, never a source of code. |
-| DP-15 | Net pay below zero? | **Recommended:** refuse the line with a plain warning and let the administrator adjust (a deferred deduction is a policy option later). Never a silent floor at zero. |
+| DP-15 | Net pay below zero? | **Decided 2026-11-11 (user), as recommended:** refuse the line with a plain warning and let the administrator adjust (a deferred deduction is a policy option later). Never a silent floor at zero. |
+| DP-17 | Contractors and casual labour: payroll or purchasing? | **Decided 2026-11-11 (user):** contractors stay suppliers paid by bill in Purchases; casual and daily staff come into Payroll later with daily or hourly pay (DP-02). |
+| DP-18 | Statutory returns: filing files or exports? | **Decided 2026-11-11 (user):** export the figures in each authority portal's layout (CSV or Excel) for manual upload first; direct e-filing later, per country. |
 
 ---
 
@@ -898,7 +900,7 @@ Kept from the first plan and extended. Every one has caused a real defect here.
   employed, joiners and leavers, casual or daily staff, current payroll tool.
 - Branches abroad paid under the parent: does each country allow it? The
   practitioner confirms per country.
-- Statutory returns: does DEKA produce the filing file each authority accepts,
+- ~~Statutory returns~~ and ~~contractors~~: **decided 2026-11-11, DP-18 and DP-17** (§6). Statutory returns: does DEKA produce the filing file each authority accepts,
   or export figures for manual entry in a portal? (per country, after research)
 - Contractors and casual labour: payroll or purchasing? (affects scope §2)
 - Bank export formats per pilot bank and mobile-money provider.
