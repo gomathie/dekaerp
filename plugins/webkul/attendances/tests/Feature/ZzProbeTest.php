@@ -22,7 +22,17 @@ it('probes the correction path step by step', function (): void {
     $mark('4 record employee');
     $employee = AttendanceHelper::employee($recordCompany);
     $mark('5 attendance');
-    $attendance = Attendance::factory()->create(['company_id' => $recordCompany->id, 'employee_id' => $employee->id]);
+    try {
+        $attendance = Attendance::factory()->create(['company_id' => $recordCompany->id, 'employee_id' => $employee->id]);
+    } catch (Throwable $e) {
+        $frames = collect($e->getTrace())
+            ->map(fn (array $f): string => ($f['class'] ?? '').($f['type'] ?? '').($f['function'] ?? '').' @'.basename($f['file'] ?? '?').':'.($f['line'] ?? '?'));
+        $mark('5x '.$e::class.': '.substr($e->getMessage(), 0, 200));
+        $mark("TOP FRAMES\n".$frames->take(40)->implode("\n"));
+        $mark("MOST REPEATED\n".$frames->countBy()->sortDesc()->take(15)->map(fn ($n, $k) => $n.'  '.$k)->implode("\n"));
+
+        throw $e;
+    }
     $mark('6 enable');
     app(CompanyProvisioner::class)->enable($activeCompany);
     app(CompanyProvisioner::class)->enable($recordCompany);
