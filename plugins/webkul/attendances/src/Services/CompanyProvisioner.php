@@ -34,10 +34,10 @@ class CompanyProvisioner
 
         if (! $setting->is_enabled) {
             $setting->forceFill([
-                'is_enabled' => true,
-                'enabled_at' => now(),
+                'is_enabled'    => true,
+                'enabled_at'    => now(),
                 'enabled_by_id' => Auth::id(),
-                'disabled_at' => null,
+                'disabled_at'   => null,
             ])->save();
         }
 
@@ -52,7 +52,7 @@ class CompanyProvisioner
 
         if ($setting->is_enabled) {
             $setting->forceFill([
-                'is_enabled' => false,
+                'is_enabled'  => false,
                 'disabled_at' => now(),
             ])->save();
         }

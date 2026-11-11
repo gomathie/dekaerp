@@ -3,6 +3,7 @@
 namespace Webkul\Attendance\Services;
 
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Webkul\Attendance\Models\Attendance;
 use Webkul\Attendance\Models\CompanySetting;
 use Webkul\Employee\Models\Employee;
@@ -191,7 +192,7 @@ class AttendanceReports
      * `worked_minutes`, so an open row simply reports none.
      *
      * @param  array<int, int>  $employeeIds
-     * @return \Illuminate\Support\Collection<int, Attendance>
+     * @return Collection<int, Attendance>
      */
     protected function attendances(Carbon $from, Carbon $to, array $employeeIds)
     {

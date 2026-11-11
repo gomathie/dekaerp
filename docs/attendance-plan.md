@@ -13,6 +13,26 @@ company, never the session's.
 
 ## Progress log
 
+**2026-11-11 — first full `AttendanceFeature` run: 29 of 31; two real findings.**
+On `aureuserp_testing_attendance` (639.64s, 74 assertions):
+
+- **Clock-out in the same second as clock-in failed (product bug).**
+  `afterCheckIn()` compared in memory with microseconds; the column stores
+  whole seconds, so the saved row had check-out equal to check-in and the
+  database check `attendances_check_out_after_check_in` refused it. The banner
+  showed "failed" (the Livewire button reports and swallows the exception).
+  Found by a direct-service probe (since deleted). Fixed: compare at whole
+  seconds; pinned by "closes an attendance clocked out within the same second
+  as the clock-in".
+- **An install test asserted the opposite of a protected rule.** "derives
+  attendance ownership from its employee" expected a contradicting
+  `company_id` to be silently replaced. `InheritsParentCompany` refuses a
+  mismatch by design (AGENTS.md). The test now pins both halves: no company
+  given takes the employee's; a contradicting one throws
+  `CompanyMismatchException`.
+
+Pint was run over the plugin. Re-run result follows below.
+
 **2026-11-11 — the "maximum call stack" fatal is fixed; it was in Employees.**
 Taken over from the previous agent. `pest --debug` showed the fatal in "refuses
 a correction when the target company is outside the active context"; a

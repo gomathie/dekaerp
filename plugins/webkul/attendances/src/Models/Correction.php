@@ -40,8 +40,8 @@ class Correction extends Model
     protected function casts(): array
     {
         return [
-            'before' => 'array',
-            'after' => 'array',
+            'before'     => 'array',
+            'after'      => 'array',
             'created_at' => 'datetime',
         ];
     }

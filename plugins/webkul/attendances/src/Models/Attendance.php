@@ -38,8 +38,8 @@ class Attendance extends Model
     protected $attributes = [
         'is_corrected' => false,
         'needs_review' => false,
-        'on_leave' => false,
-        'source_in' => 'banner',
+        'on_leave'     => false,
+        'source_in'    => 'banner',
     ];
 
     protected $fillable = [
@@ -69,20 +69,20 @@ class Attendance extends Model
     protected function casts(): array
     {
         return [
-            'check_in_at' => 'datetime',
-            'check_out_at' => 'datetime',
+            'check_in_at'    => 'datetime',
+            'check_out_at'   => 'datetime',
             'worked_minutes' => 'integer',
-            'source_in' => Source::class,
-            'source_out' => Source::class,
-            'latitude_in' => 'float',
-            'longitude_in' => 'float',
-            'accuracy_in' => 'float',
-            'latitude_out' => 'float',
-            'longitude_out' => 'float',
-            'accuracy_out' => 'float',
-            'is_corrected' => 'boolean',
-            'needs_review' => 'boolean',
-            'on_leave' => 'boolean',
+            'source_in'      => Source::class,
+            'source_out'     => Source::class,
+            'latitude_in'    => 'float',
+            'longitude_in'   => 'float',
+            'accuracy_in'    => 'float',
+            'latitude_out'   => 'float',
+            'longitude_out'  => 'float',
+            'accuracy_out'   => 'float',
+            'is_corrected'   => 'boolean',
+            'needs_review'   => 'boolean',
+            'on_leave'       => 'boolean',
         ];
     }
 

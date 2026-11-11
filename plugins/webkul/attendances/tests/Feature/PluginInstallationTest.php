@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Webkul\Attendance\Models\Attendance;
@@ -7,6 +8,7 @@ use Webkul\Attendance\Models\CompanySetting;
 use Webkul\Attendance\Services\CompanyProvisioner;
 use Webkul\Attendance\Support\AttendanceAccess;
 use Webkul\Employee\Models\Employee;
+use Webkul\Support\Exceptions\CompanyMismatchException;
 
 require_once __DIR__.'/../Helpers/AttendanceHelper.php';
 
@@ -49,13 +51,22 @@ it('derives attendance ownership from its employee rather than the active compan
     CompanyHelper::actingAsCompanyUser($activeCompany);
 
     $employee = AttendanceHelper::employee($employeeCompany);
-    $attendance = Attendance::factory()->create([
-        'employee_id' => $employee->id,
-        'company_id' => $activeCompany->id,
-    ]);
+
+    // With no company given, the row takes its employee's, not the actor's.
+    $attendance = Attendance::factory()->create(['employee_id' => $employee->id]);
 
     expect((int) $attendance->company_id)->toBe((int) $employeeCompany->id)
         ->and((int) $attendance->company_id)->not->toBe((int) $activeCompany->id);
+
+    // A contradicting company is refused, never silently re-parented
+    // (InheritsParentCompany; AGENTS.md protected decision). Corrected
+    // 2026-11-11: this test used to expect the row to be moved quietly.
+    $attendance->update(['check_out_at' => now()]);
+
+    expect(fn () => Attendance::factory()->create([
+        'employee_id' => $employee->id,
+        'company_id'  => $activeCompany->id,
+    ]))->toThrow(CompanyMismatchException::class);
 });
 
 it('enforces the single-open database index even when model scopes are bypassed', function (): void {
@@ -64,15 +75,15 @@ it('enforces the single-open database index even when model scopes are bypassed'
 
     Attendance::factory()->create([
         'employee_id' => $employee->id,
-        'company_id' => $company->id,
+        'company_id'  => $company->id,
     ]);
 
     expect(fn () => DB::table('attendances_attendances')->insert([
-        'company_id' => $company->id,
+        'company_id'  => $company->id,
         'employee_id' => $employee->id,
         'check_in_at' => now()->toDateTimeString(),
-        'source_in' => 'banner',
-        'created_at' => now()->toDateTimeString(),
-        'updated_at' => now()->toDateTimeString(),
-    ]))->toThrow(\Illuminate\Database\QueryException::class);
+        'source_in'   => 'banner',
+        'created_at'  => now()->toDateTimeString(),
+        'updated_at'  => now()->toDateTimeString(),
+    ]))->toThrow(QueryException::class);
 });

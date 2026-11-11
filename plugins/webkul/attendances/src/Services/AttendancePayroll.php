@@ -29,7 +29,7 @@ class AttendancePayroll
             ->get();
 
         return [
-            'worked_minutes' => (int) $rows->sum('worked_minutes'),
+            'worked_minutes'   => (int) $rows->sum('worked_minutes'),
             'overtime_minutes' => (int) $rows->sum(fn (Attendance $row): int => $this->schedule->overtimeMinutes($row)),
         ];
     }

@@ -56,15 +56,15 @@ class AttendanceService
 
             try {
                 return Attendance::query()->create([
-                    'employee_id' => $employee->id,
-                    'check_in_at' => $now,
-                    'source_in' => Source::Banner,
-                    'latitude_in' => $captured['latitude'],
+                    'employee_id'  => $employee->id,
+                    'check_in_at'  => $now,
+                    'source_in'    => Source::Banner,
+                    'latitude_in'  => $captured['latitude'],
                     'longitude_in' => $captured['longitude'],
-                    'accuracy_in' => $captured['accuracy'],
-                    'ip_in' => $captured['ip'],
-                    'on_leave' => $this->schedule->onApprovedLeave($employee, $now->copy()->timezone($this->schedule->timezone($employee))),
-                    'creator_id' => $user->id,
+                    'accuracy_in'  => $captured['accuracy'],
+                    'ip_in'        => $captured['ip'],
+                    'on_leave'     => $this->schedule->onApprovedLeave($employee, $now->copy()->timezone($this->schedule->timezone($employee))),
+                    'creator_id'   => $user->id,
                 ]);
             } catch (UniqueConstraintViolationException $exception) {
                 $existing = $this->openFor($employee);
@@ -102,13 +102,13 @@ class AttendanceService
             $out = $this->afterCheckIn($open->check_in_at);
 
             $open->forceFill([
-                'check_out_at' => $out,
+                'check_out_at'   => $out,
                 'worked_minutes' => $this->workedMinutes($open->check_in_at, $out),
-                'source_out' => Source::Banner,
-                'latitude_out' => $captured['latitude'],
-                'longitude_out' => $captured['longitude'],
-                'accuracy_out' => $captured['accuracy'],
-                'ip_out' => $captured['ip'],
+                'source_out'     => Source::Banner,
+                'latitude_out'   => $captured['latitude'],
+                'longitude_out'  => $captured['longitude'],
+                'accuracy_out'   => $captured['accuracy'],
+                'ip_out'         => $captured['ip'],
             ])->save();
 
             return $open->refresh();
@@ -155,22 +155,22 @@ class AttendanceService
             }
 
             $locked->forceFill([
-                'check_in_at' => $checkIn,
-                'check_out_at' => $checkOut,
-                'worked_minutes' => $checkOut === null ? null : $this->workedMinutes($checkIn, $checkOut),
-                'note' => array_key_exists('note', $changes) ? $changes['note'] : $locked->note,
-                'is_corrected' => true,
+                'check_in_at'     => $checkIn,
+                'check_out_at'    => $checkOut,
+                'worked_minutes'  => $checkOut === null ? null : $this->workedMinutes($checkIn, $checkOut),
+                'note'            => array_key_exists('note', $changes) ? $changes['note'] : $locked->note,
+                'is_corrected'    => true,
                 'corrected_by_id' => $actor->id,
-                'source_out' => $checkOut === null ? $locked->source_out : Source::Manager,
+                'source_out'      => $checkOut === null ? $locked->source_out : Source::Manager,
             ])->save();
 
             Correction::query()->create([
                 'attendance_id' => $locked->id,
-                'before' => $before,
-                'after' => $this->snapshot($locked),
-                'reason' => $reason,
-                'actor_id' => $actor->id,
-                'created_at' => now(),
+                'before'        => $before,
+                'after'         => $this->snapshot($locked),
+                'reason'        => $reason,
+                'actor_id'      => $actor->id,
+                'created_at'    => now(),
             ]);
 
             return $locked->refresh();
@@ -205,10 +205,10 @@ class AttendanceService
                 $out = $attendance->check_in_at->copy()->addHours($hours);
 
                 $attendance->forceFill([
-                    'check_out_at' => $out,
+                    'check_out_at'   => $out,
                     'worked_minutes' => $this->workedMinutes($attendance->check_in_at, $out),
-                    'source_out' => Source::System,
-                    'needs_review' => true,
+                    'source_out'     => Source::System,
+                    'needs_review'   => true,
                 ])->save();
 
                 $closed++;
@@ -361,19 +361,25 @@ class AttendanceService
         }
 
         return [
-            'latitude' => $latitude,
+            'latitude'  => $latitude,
             'longitude' => $longitude,
-            'accuracy' => $evidence['accuracy'] ?? null,
-            'ip' => $evidence['ip'] ?? null,
+            'accuracy'  => $evidence['accuracy'] ?? null,
+            'ip'        => $evidence['ip'] ?? null,
         ];
     }
 
     protected function afterCheckIn(Carbon $checkIn): Carbon
     {
-        $out = now();
+        // Compare at the precision the column stores (whole seconds). A
+        // clock-out in the same second as the clock-in is later in memory
+        // (microseconds) but equal once saved, and the database check
+        // attendances_check_out_after_check_in then refused the row - the
+        // banner showed "failed" (found by DashboardBannerTest, 2026-11-11).
+        $in = $checkIn->copy()->startOfSecond();
+        $out = now()->startOfSecond();
 
-        if ($out->lessThanOrEqualTo($checkIn)) {
-            return $checkIn->copy()->addSecond();
+        if ($out->lessThanOrEqualTo($in)) {
+            return $in->addSecond();
         }
 
         return $out;
@@ -390,9 +396,9 @@ class AttendanceService
     protected function snapshot(Attendance $attendance): array
     {
         return [
-            'check_in_at' => $attendance->check_in_at?->toIso8601String(),
-            'check_out_at' => $attendance->check_out_at?->toIso8601String(),
-            'note' => $attendance->note,
+            'check_in_at'    => $attendance->check_in_at?->toIso8601String(),
+            'check_out_at'   => $attendance->check_out_at?->toIso8601String(),
+            'note'           => $attendance->note,
             'worked_minutes' => $attendance->worked_minutes,
         ];
     }
