@@ -13,6 +13,21 @@ company, never the session's.
 
 ## Progress log
 
+**2026-11-11 — the "maximum call stack" fatal is fixed; it was in Employees.**
+Taken over from the previous agent. `pest --debug` showed the fatal in "refuses
+a correction when the target company is outside the active context"; a
+STDERR-marker probe put it at creating an employee for a company other than
+the acting one; `pg_stat_activity` showed an endless `chatter_followers`
+insert. Cause: `Employee`'s saved hook updated its contact through the
+company-scoped `Partner::updateOrCreate(['id' => ...])`, missed it, created a
+duplicate, re-saved and recursed. Fixed in `Employee::handlePartnerUpdation()`
+(scope-free read; employees `EmployeeContactCompanyTest`), pushed to
+production as `4cff41b6f`. `AttendanceServiceTest` then passed in full: with
+the new employees test, **11 passed, 34 assertions, 544.87s** on
+`aureuserp_testing_attendance`. The previous agent's probe test was deleted.
+Remaining before release: the installation file in full (AT-1), the manager
+screens (AT-4), Pint, the `SupportFeature` and `EmployeeFeature` suites.
+
 **2026-11-11 — AT-3 to AT-7 built; verification running.** Everything below is
 code-complete. Nothing is claimed as verified until a run is named here.
 
@@ -575,11 +590,11 @@ writes payroll tables.
 | --- | --- | --- | --- |
 | AT-0 | Decisions AT-D1..D6 | — | done |
 | AT-1 | Plugin skeleton, tables, models, per-company switch, provisioner, policies, Shield config, translations (en first) | AT-0 | built; install/provisioning checks pass |
-| AT-2 | `AttendanceService` (clock in/out, idempotence, one-open rule, auto check-out job) + tests | AT-1 | built; focused checks pass, full file blocked by a PHP stack fatal |
-| AT-3 | Welcome banner widget in `support` + attendance contribution (status pill, clock button) on every module dashboard | AT-2 (banner greeting part can ship first without attendance) | built; tests written, not yet passing in a run |
+| AT-2 | `AttendanceService` (clock in/out, idempotence, one-open rule, auto check-out job) + tests | AT-1 | built; **full file green** (10 tests, 2026-11-11) after the Employee contact-recursion fix |
+| AT-3 | Welcome banner widget in `support` + attendance contribution (status pill, clock button) on every module dashboard | AT-2 (banner greeting part can ship first without attendance) | built; DashboardBannerTest 5/5 passed |
 | AT-4 | Manager views: who is in now, daily list, corrections with reason and audit, export | AT-2 | built; tests written, not yet passing in a run |
 | AT-5 | Kiosk mode (PIN / badge) | AT-2, AT-D2 | design note only (no code, per AT-D2) |
-| AT-6 | Reports: lateness, absence, overtime against schedule; payroll hand-off contract | AT-2, payroll A0 gate | built; tests written, not yet passing in a run |
+| AT-6 | Reports: lateness, absence, overtime against schedule; payroll hand-off contract | AT-2, payroll A0 gate | built; reports 11/11 passed (AttendanceReportsTest + ReportsTest) |
 | AT-7 | Translations ar/es/fr/pt_BR, hardening, release | all | built (en/ar/es/fr/pt_BR), translations check 4/4; release notes added |
 
 **Order:** the greeting banner (AT-3 without the attendance part) can ship

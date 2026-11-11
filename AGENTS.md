@@ -1262,7 +1262,10 @@ MULTI-COMPANY FACTS THAT BITE
   with `withoutGlobalScopes()`. For any other field, read the parent scope-free the
   same way. Fixed in `TaskStage`, `Task`, `Account\MoveLine`, `Inventory\MoveLine`,
   `Inventory\ProductQuantity` and `Manufacturing\Move`; details in
-  docs/company-admin-role-plan.md §4e/§4i/§4j.
+  docs/company-admin-role-plan.md §4e/§4i/§4j. Also `Employee`'s saved hook
+  (2026-11-11): `Partner::updateOrCreate(['id' => ...])` is a scoped read too,
+  and a miss there created a contact, re-saved, and recursed until the stack ran
+  out. Test: employees `EmployeeContactCompanyTest`.
 • `withoutGlobalScope(CompanyScope::class)` **reads as careful and is not.** Several
   parents carry a global `OwnershipScope` too - `Account\Move`,
   `Inventory\Operation`, `Manufacturing\Order`, `Sale\Order`, `Project`, `Task` -
