@@ -1,6 +1,14 @@
 <?php
 
+use Webkul\Attendance\Filament\Clusters\Reporting;
 use Webkul\Attendance\Filament\Resources\AttendanceResource;
+
+/*
+ * A cluster is a Page subclass, and Shield rejects a page that is some page's
+ * cluster, so the reporting cluster is excluded and its pages carry their own
+ * permissions (page_attendance_lateness, page_attendance_absence,
+ * page_attendance_overtime).
+ */
 
 return [
     'resources' => [
@@ -17,6 +25,8 @@ return [
         'exclude' => [],
     ],
     'pages' => [
-        'exclude' => [],
+        'exclude' => [
+            Reporting::class,
+        ],
     ],
 ];

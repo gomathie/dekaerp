@@ -38,7 +38,7 @@ class AttendanceBannerContribution
      * The control is drawn only where it can actually be used: attendance
      * switched on for the company being worked in and an employee record there.
      */
-    protected static function appliesToViewer(): bool
+    public static function appliesToViewer(): bool
     {
         $user = filament()->auth()->user();
         $companyId = app(CompanyContext::class)->currentId();
