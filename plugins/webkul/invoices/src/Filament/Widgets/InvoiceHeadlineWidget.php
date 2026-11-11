@@ -69,11 +69,13 @@ class InvoiceHeadlineWidget extends StatsOverviewWidget
 
         return [
             Stat::make(__('invoices::filament/pages/overview.headline.to-collect'), compact_money($this->owed($receivable), $currency))
+                ->icon('heroicon-o-arrow-down-tray')
                 ->description(trans_choice('invoices::filament/pages/overview.headline.overdue', $overdue = $this->overdue($receivable), ['count' => $overdue]))
                 ->color($overdue > 0 ? 'warning' : 'success')
                 ->extraAttributes(['class' => 'overview-headline-stat']),
 
             Stat::make(__('invoices::filament/pages/overview.headline.to-pay'), compact_money($this->owed($payable), $currency))
+                ->icon('heroicon-o-arrow-up-tray')
                 ->description(trans_choice('invoices::filament/pages/overview.headline.overdue', $overdueBills = $this->overdue($payable), ['count' => $overdueBills]))
                 ->color($overdueBills > 0 ? 'danger' : 'success')
                 ->extraAttributes(['class' => 'overview-headline-stat']),

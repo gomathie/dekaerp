@@ -44,7 +44,9 @@ class OverviewHeadlineWidget extends StatsOverviewWidget
 
     protected function getColumns(): int|array
     {
-        return ['default' => 2, 'lg' => 3];
+        // Four across on desktop (user, 2026-11-11: three left the cards too
+        // wide); the six figures then take two short rows.
+        return ['default' => 2, 'lg' => 4];
     }
 
     protected function getStats(): array

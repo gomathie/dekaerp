@@ -20,7 +20,7 @@ class SalespersonPerformanceChart extends ChartWidget
 
     protected static bool $isLazy = true;
 
-    protected ?string $maxHeight = '300px';
+    protected ?string $maxHeight = '240px';
 
     public function getHeading(): string|Htmlable|null
     {

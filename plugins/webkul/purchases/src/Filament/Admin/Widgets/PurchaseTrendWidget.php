@@ -22,7 +22,7 @@ class PurchaseTrendWidget extends DashboardChartWidget
 
     protected static ?int $sort = 2;
 
-    protected ?string $maxHeight = '320px';
+    protected ?string $maxHeight = '240px';
 
     public function getHeading(): string|Htmlable|null
     {

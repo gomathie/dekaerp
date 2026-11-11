@@ -22,7 +22,7 @@ class RevenueOverTimeWidget extends ChartWidget
 
     protected int|string|array $columnSpan = 1;
 
-    protected ?string $maxHeight = '300px';
+    protected ?string $maxHeight = '240px';
 
     public function getHeading(): string|Htmlable|null
     {
