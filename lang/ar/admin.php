@@ -23,6 +23,7 @@ return [
     ],
 
     'navigation-sections' => [
+        'contacts-crm'    => 'جهات الاتصال وإدارة العملاء',
         'sales-purchases' => 'المبيعات والمشتريات',
         'finance'         => 'المالية',
         'operations'      => 'العمليات',
