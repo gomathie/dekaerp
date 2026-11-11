@@ -10,9 +10,12 @@ use Webkul\Accounting\Filament\Clusters\Customers\Resources\CustomerResource\Pag
 use Webkul\Accounting\Filament\Clusters\Customers\Resources\CustomerResource\Pages\ListCustomers;
 use Webkul\Accounting\Filament\Clusters\Customers\Resources\CustomerResource\Pages\ManageAddresses;
 use Webkul\Accounting\Filament\Clusters\Customers\Resources\CustomerResource\Pages\ManageBankAccounts;
+use Webkul\Accounting\Filament\Clusters\Customers\Resources\CustomerResource\Pages\ManageBills;
 use Webkul\Accounting\Filament\Clusters\Customers\Resources\CustomerResource\Pages\ManageContacts;
+use Webkul\Accounting\Filament\Clusters\Customers\Resources\CustomerResource\Pages\ManagePurchases;
 use Webkul\Accounting\Filament\Clusters\Customers\Resources\CustomerResource\Pages\ViewCustomer;
 use Webkul\Accounting\Models\Customer;
+use Webkul\PluginManager\Package;
 
 class CustomerResource extends BaseCustomerResource
 {
@@ -28,18 +31,28 @@ class CustomerResource extends BaseCustomerResource
 
     public static function getRecordSubNavigation(Page $page): array
     {
-        return $page->generateNavigationItems([
+        $items = [
             ViewCustomer::class,
             EditCustomer::class,
             ManageContacts::class,
             ManageAddresses::class,
             ManageBankAccounts::class,
-        ]);
+        ];
+
+        // Purchases and bills on every contact screen (unified contacts, user
+        // 2026-11-11). The pages check the company switch and the user's
+        // Purchases permissions themselves.
+        if (Package::isPluginInstalled('purchases')) {
+            $items[] = ManagePurchases::class;
+            $items[] = ManageBills::class;
+        }
+
+        return $page->generateNavigationItems($items);
     }
 
     public static function getPages(): array
     {
-        return [
+        $pages = [
             'index'         => ListCustomers::route('/'),
             'create'        => CreateCustomer::route('/create'),
             'view'          => ViewCustomer::route('/{record}'),
@@ -48,5 +61,12 @@ class CustomerResource extends BaseCustomerResource
             'addresses'     => ManageAddresses::route('/{record}/addresses'),
             'bank-accounts' => ManageBankAccounts::route('/{record}/bank-accounts'),
         ];
+
+        if (Package::isPluginInstalled('purchases')) {
+            $pages['purchases'] = ManagePurchases::route('/{record}/purchases');
+            $pages['bills'] = ManageBills::route('/{record}/bills');
+        }
+
+        return $pages;
     }
 }

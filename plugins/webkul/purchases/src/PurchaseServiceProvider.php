@@ -10,10 +10,12 @@ use Webkul\Account\Events\MoveCancelled;
 use Webkul\Account\Events\MoveConfirmed;
 use Webkul\Account\Events\MoveDrafted;
 use Webkul\Account\Events\MoveReversed;
+use Webkul\Account\Models\Move;
 use Webkul\Chatter\Services\ChatterCleanupService;
 use Webkul\Inventory\Events\OperationBackOrdered;
 use Webkul\Inventory\Events\OperationDone;
 use Webkul\Invoice\Filament\Overview\OverviewRegistry;
+use Webkul\Partner\Models\Partner;
 use Webkul\PluginManager\Console\Commands\InstallCommand;
 use Webkul\PluginManager\Console\Commands\UninstallCommand;
 use Webkul\PluginManager\Package;
@@ -91,6 +93,20 @@ class PurchaseServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         Livewire::component('order-summary', OrderSummary::class);
+
+        // The Bills and Purchases tabs on every contact screen (unified
+        // contacts, phase 3; user 2026-11-11) need these relations on every
+        // contact model, so they go on the base one. Laravel resolves them up
+        // the class chain. Named apart from "orders" and "accountMoves", which
+        // other contact models use for other records.
+        Partner::resolveRelationUsing(
+            'purchaseOrders',
+            fn ($partner) => $partner->hasMany(Order::class, 'partner_id'),
+        );
+        Partner::resolveRelationUsing(
+            'vendorBills',
+            fn ($partner) => $partner->hasMany(Move::class, 'partner_id'),
+        );
 
         // The Purchases section of the combined Overview dashboard (Invoices
         // owns the page; Purchases depends on Invoices, so it contributes).
