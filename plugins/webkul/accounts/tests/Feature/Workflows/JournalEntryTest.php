@@ -56,3 +56,17 @@ it('refuses to post a manual journal entry with no lines', function () {
     expect(fn () => AccountHelper::post($entry))
         ->toThrow(Exception::class, __('accounts::account-manager.post-action-validate.lines-required'));
 });
+
+/**
+ * An unbalanced manual journal entry puts the books out of balance, so it is
+ * never posted (upstream 99fd7c7e8, ported 2026-11-11).
+ */
+it('refuses to post a manual journal entry whose debits and credits differ', function () {
+    $entry = AccountHelper::journalEntry();
+    AccountHelper::entryLine($entry, $this->debitAccount, debit: 100, credit: 0);
+    AccountHelper::entryLine($entry, $this->creditAccount, debit: 0, credit: 90);
+
+    expect(fn () => AccountHelper::post($entry))
+        ->toThrow(Exception::class, __('accounts::account-manager.post-action-validate.unbalanced'))
+        ->and($entry->refresh()->state)->not->toBe(MoveState::POSTED);
+});

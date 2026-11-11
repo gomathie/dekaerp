@@ -91,6 +91,15 @@ class CompanyAdminPasswordVault
             throw ValidationException::withMessages(['password' => self::WRONG_PASSWORD]);
         }
 
+        // Only while they are still a Company Admin (review, 2026-11-11):
+        // losing the role does not change the password, so the copy stored
+        // while they held it would otherwise stay readable for good.
+        if (! $target->isCompanyAdmin()) {
+            $this->forget($target);
+
+            throw ValidationException::withMessages(['password' => self::NOT_STORED]);
+        }
+
         $encrypted = DB::table('security_user_password_vault')
             ->where('user_id', $target->getKey())
             ->value('encrypted_password');

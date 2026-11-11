@@ -780,8 +780,15 @@
                         color: transparent;
                     }
 
+                    /* Capped by the screen width, and the company name steps
+                       aside while searching, so the bell and avatar stay on
+                       screen at 390px (review, 2026-11-11). */
                     .fi-global-search-field:focus-within {
-                        max-inline-size: 11rem;
+                        max-inline-size: min(11rem, 40vw);
+                    }
+
+                    .fi-topbar:has(.fi-global-search-field:focus-within) .company-switcher-name {
+                        display: none;
                     }
 
                     .fi-topbar-end .fi-icon-btn,
