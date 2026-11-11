@@ -58,6 +58,22 @@ class AttendanceAccess
         }
     }
 
+    /**
+     * A permission to correct attendance does not grant access outside the active tenant context.
+     */
+    public static function inActiveCompanyContext(?int $companyId): bool
+    {
+        if (! $companyId) {
+            return false;
+        }
+
+        return in_array(
+            $companyId,
+            array_map('intval', app(CompanyContext::class)->activeIds()),
+            true,
+        );
+    }
+
     public static function flush(): void
     {
         app(static::class)->enabled = null;

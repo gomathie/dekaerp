@@ -28,10 +28,13 @@ continuation resumed. They have not yet been verified here.
   and service tests.
 - **In progress:** AT-1; the migration and company provisioning checks pass,
   including the application-rebuild sequence, and the database's single-open
-  index test passes. Employee-company ownership and Shield permission
-  generation, plus the complete installation test file, remain unverified.
+  index test passes. The employee-company ownership test remains blocked by
+  the PHP stack-size fatal noted below. Shield permission generation and the
+  complete installation test file remain unverified.
   AT-2's forced-context fallback is fixed and its focused regression test
-  passes; other service behaviors remain to be verified.
+  passes. Correction now checks the target company against the active context
+  in both the policy and service; its behavior test is pending. Other service
+  behaviors remain to be verified.
 - **Not started:** AT-3 through AT-7. The tagged topbar override is owned by a
   concurrent agent and is out of scope.
 - **Verification:** local PostgreSQL is running and the isolated database
@@ -78,7 +81,10 @@ continuation resumed. They have not yet been verified here.
   evidence against the attendance install path. Full Shield generation is
   intentionally not bypassed. After the later service-suite fatal, the
   single-open partial-index test passed in isolation (1 test, 1 assertion,
-  368.60s) on `aureuserp_testing_attendance`. Translation checks have not run.
+  368.60s) on `aureuserp_testing_attendance`. The isolated employee-company
+  ownership test then exited with the same PHP stack-size fatal at
+  `ConcurrencyErrorDetector.php:20`, before returning test counts. Translation
+  checks have not run.
 
 **AT-1 rationale — company listener registration (2026-11-11).** **Why:** a
 process-static flag survives Laravel test application rebuilds, but rebuilding
@@ -118,10 +124,26 @@ unverified; it exited with a PHP stack-size fatal at Laravel's
 existing `CompanyContext` forced-context decision and reintroduce the
 cross-tenant fallback.
 
+**AT-2 rationale — correction company boundary (2026-11-11).** **Why:** the
+correction permission is global, but it must not authorize modifying an
+attendance record outside the actor's active company context. The prior
+service and policy checked the permission/module without that record-company
+boundary. **How:** `AttendanceAccess::inActiveCompanyContext()` is the shared
+check; `AttendancePolicy::correct()` and `AttendanceService::correct()` both
+use it, and the existing behavior test now asserts both refusal surfaces and
+the service refusal message. **Benefit:** direct service calls and Filament
+authorization agree, including for super-admin calls that skip policies.
+**Trade-off / risk:** staff working in several companies can correct only
+records in companies currently selected; All companies mode remains supported
+through `CompanyContext::activeIds()`. **Verification:** pending the focused
+correction test. **Rollback:** removing either call would reopen a path for a
+global correction permission to cross the selected tenant boundary.
+
 - **Current file scope:** `docs/attendance-plan.md`,
   `plugins/webkul/attendances/src/AttendanceServiceProvider.php`,
   `plugins/webkul/attendances/src/Services/AttendanceService.php`, and the two
-  attendance feature test files. Further files will be recorded as they change.
+  attendance feature test files, plus `AttendanceAccess` and
+  `AttendancePolicy`. Further files will be recorded as they change.
 
 ---
 
