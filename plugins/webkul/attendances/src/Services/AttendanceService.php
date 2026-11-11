@@ -128,6 +128,10 @@ class AttendanceService
 
         $attendance = Attendance::withoutGlobalScopes()->findOrFail($attendance->id);
 
+        if (! AttendanceAccess::inActiveCompanyContext($attendance->company_id)) {
+            throw CorrectionRefusedException::notAllowed();
+        }
+
         AttendanceAccess::ensureEnabled($attendance->company_id);
         $this->assertMayCorrect($actor, $attendance);
 

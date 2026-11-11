@@ -84,6 +84,9 @@ it('refuses a correction when the target company is outside the active context',
     app(CompanyProvisioner::class)->enable($activeCompany);
     app(CompanyProvisioner::class)->enable($recordCompany);
 
+    expect(app(\Webkul\Attendance\Policies\AttendancePolicy::class)->correct($actor, $attendance))
+        ->toBeFalse();
+
     expect(fn () => app(AttendanceService::class)->correct($actor, $attendance, [
         'note' => 'Corrected by an out-of-company actor.',
     ], 'Wrong company'))

@@ -38,7 +38,10 @@ class AttendancePolicy
 
     public function correct(User $user, Attendance $attendance): bool
     {
-        if (! AttendanceAccess::enabledFor($attendance->company_id)) {
+        if (
+            ! AttendanceAccess::inActiveCompanyContext($attendance->company_id)
+            || ! AttendanceAccess::enabledFor($attendance->company_id)
+        ) {
             return false;
         }
 
