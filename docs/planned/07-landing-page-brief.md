@@ -196,6 +196,17 @@ Deviate if you have a better idea. This is a starting point, not a specification
 
 ## 8. Open questions — ask before starting
 
+**Answered 2026-11-11 (user):**
+
+1. Brand: use the existing DEKA logo and app colours (orange and dark).
+2. Screenshots: deferred with hosting (question 6).
+3. Pricing: "Talk to us", no prices yet.
+4 and 5. "Book a demo" and the contact form create a contact (and later a
+   CRM lead) in DEKA's own company and email the team.
+6. Repository and host: **to be discussed after all other tasks** (user).
+
+Original questions:
+
 1. Is there a logo and brand asset set, or should the page use type only?
 2. Are product screenshots available? If not, can a demo account be provided?
 3. Is pricing confirmed, or is it "Talk to us" for now?
