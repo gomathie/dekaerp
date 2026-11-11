@@ -15,6 +15,9 @@ return [
     'exceptions' => [
         'not-enabled' => 'Attendance is not enabled for company :company.',
     ],
+    'notifications' => [
+        'failed' => 'That did not work. The change was not saved.',
+    ],
     'statuses' => [
         'clocked-in' => 'Clocked in since :time',
         'not-clocked-in' => 'Not clocked in',
