@@ -62,9 +62,10 @@ class PurchaseHeadlineWidget extends StatsOverviewWidget
         $confirmed = $this->purchaseOrders()
             ->whereIn('state', [OrderState::PURCHASE->value, OrderState::DONE->value]);
 
-        $spend = (float) ((clone $confirmed)
-            ->selectRaw('SUM(CASE WHEN currency_rate > 0 THEN amount_total / currency_rate ELSE amount_total END) as cc_total')
-            ->value('cc_total') ?? 0.0);
+        // total_cc_amount is already in company currency, and is what
+        // PurchaseStatsWidget sums. purchases_orders has no amount_total
+        // (that is Sales): using it 500'd the Overview (Sentry DEKAERP-12).
+        $spend = (float) (clone $confirmed)->sum('total_cc_amount');
 
         $orders = (clone $confirmed)->count();
 
