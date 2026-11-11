@@ -18,6 +18,20 @@ abstract class DashboardChartWidget extends ChartWidget
      *
      * @return array<string, mixed>
      */
+    /**
+     * "No data for this period" in place of an empty axis or doughnut
+     * (dashboard-charts.js, dashboardChartEmptyState).
+     *
+     * @return array{text: string, color: string}
+     */
+    protected function chartEmptyState(): array
+    {
+        return [
+            'text'  => __('support::filament/dashboard.no-chart-data'),
+            'color' => $this->brandColor('gray', 500),
+        ];
+    }
+
     protected function barChartOptions(int $maxTicks = 12, int $stagger = 70): array
     {
         return [
@@ -26,8 +40,9 @@ abstract class DashboardChartWidget extends ChartWidget
             'plugins'             => [
                 'entrance' => ['type' => 'rising-bars', 'duration' => 700, 'stagger' => $stagger],
 
-                'legend'  => ['display' => false],
-                'tooltip' => $this->chartTooltip(),
+                'legend'     => ['display' => false],
+                'tooltip'    => $this->chartTooltip(),
+                'emptyState' => $this->chartEmptyState(),
             ],
             'scales'              => $this->cartesianScales($maxTicks),
         ];
@@ -46,8 +61,9 @@ abstract class DashboardChartWidget extends ChartWidget
             'plugins'             => [
                 'entrance' => ['type' => 'progressive-line', 'duration' => 700, 'stagger' => $stagger],
 
-                'legend'  => ['display' => false],
-                'tooltip' => $this->chartTooltip(),
+                'legend'     => ['display' => false],
+                'tooltip'    => $this->chartTooltip(),
+                'emptyState' => $this->chartEmptyState(),
             ],
             'scales'              => $this->cartesianScales($maxTicks),
         ];
@@ -83,6 +99,8 @@ abstract class DashboardChartWidget extends ChartWidget
                 ],
 
                 'tooltip'   => array_merge($this->chartTooltip(), ['percentage' => true]),
+
+                'emptyState' => $this->chartEmptyState(),
             ],
         ];
 
