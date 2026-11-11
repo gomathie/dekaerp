@@ -1,6 +1,9 @@
 # Attendance — Plan
 
-Status: **plan only (2026-11-11). No code.** Requested by the user together
+Status: **approved for build (2026-11-11, user: "build all of it from A to
+Z, step by step").** Decisions AT-D1 to AT-D6 were answered by the user on
+2026-11-11, each as recommended (§5). *Superseded the same day: "plan only,
+no code".* Requested by the user together
 with a welcome banner on every module dashboard (the banner shows the
 clock-in control once attendance exists).
 
@@ -97,14 +100,14 @@ writes payroll tables.
 
 ## 5. Decisions needed (user)
 
-| ID | Question | Recommendation |
+| ID | Question | Answer (user, 2026-11-11) |
 | --- | --- | --- |
-| AT-D1 | Separate plugin or part of Employees? | Separate `attendances` plugin, per-company switch; many companies will not use it |
-| AT-D2 | Kiosk (shared tablet with PIN or badge) in the first version? | Later (AT-5). Banner on own device first |
-| AT-D3 | Location capture default | Optional, off by default; companies may require it |
-| AT-D4 | Who corrects? | Department manager for their team, HR / admin for all; every correction needs a reason |
-| AT-D5 | Overtime | Computed for reports in v1; paid overtime only through payroll |
-| AT-D6 | Auto check-out limit | 12 hours, per company setting |
+| AT-D1 | Separate plugin or part of Employees? | **Accepted:** Separate `attendances` plugin, per-company switch; many companies will not use it |
+| AT-D2 | Kiosk (shared tablet with PIN or badge) in the first version? | **Accepted:** Later (AT-5). Banner on own device first |
+| AT-D3 | Location capture default | **Accepted:** Optional, off by default; companies may require it |
+| AT-D4 | Who corrects? | **Accepted:** Department manager for their team, HR / admin for all; every correction needs a reason |
+| AT-D5 | Overtime | **Accepted:** Computed for reports in v1; paid overtime only through payroll |
+| AT-D6 | Auto check-out limit | **Accepted:** 12 hours, per company setting |
 
 ## 6. Work packages
 
