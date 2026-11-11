@@ -2,6 +2,10 @@
 
 use Webkul\Invoice\Filament\Overview\OverviewRegistry;
 use Webkul\Inventory\Filament\Widgets\InventoryHeadlineWidget;
+use Webkul\Inventory\Models\Location;
+use Webkul\Inventory\Models\OrderPoint;
+use Webkul\Inventory\Models\ProductQuantity;
+use Webkul\Product\Models\Product;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Support\Models\Company;
 
@@ -29,16 +33,54 @@ it('shows the inventory section only to users who may open the inventory overvie
         ->and(OverviewRegistry::visible()['inventory']['headline'])->toBe(InventoryHeadlineWidget::class);
 });
 
-it('gives two cards, receipts and deliveries, each with an icon and a late count', function (): void {
+it('gives four cards with icons: receipts, deliveries, low stock and stock value', function (): void {
     CompanyHelper::actingAsCompanyUser(Company::factory()->create(), ['page_inventory_overview']);
 
     $stats = (new InventoryHeadlineWidget)->headlineStats([]);
 
-    expect($stats)->toHaveCount(2);
+    expect($stats)->toHaveCount(4)
+        ->and((string) $stats[0]->getDescription())->toBe('None late')
+        ->and((string) $stats[1]->getDescription())->toBe('None late')
+        ->and((string) $stats[2]->getValue())->toBe('0');
 
     foreach ($stats as $stat) {
-        expect($stat->getIcon())->not->toBeNull()
-            ->and((string) $stat->getValue())->toBe('0')
-            ->and((string) $stat->getDescription())->toBe('None late');
+        expect($stat->getIcon())->not->toBeNull();
     }
+});
+
+/**
+ * Low stock and stock value (user, 2026-11-11, recommendations accepted):
+ * low stock counts products at or below their reorder minimum across internal
+ * locations; stock value is on-hand quantity in internal locations times cost.
+ * Stock outside internal locations, and another company's stock, count for
+ * neither.
+ */
+it('counts low stock against the reorder minimum and values internal stock at cost', function (): void {
+    $company = Company::factory()->create();
+    $other = Company::factory()->create();
+    CompanyHelper::actingAsCompanyUser($company, ['page_inventory_overview']);
+
+    $internal = Location::factory()->internal()->create(['company_id' => $company->id]);
+    $customer = Location::factory()->customer()->create(['company_id' => $company->id]);
+
+    $low = Product::factory()->create(['company_id' => $company->id, 'cost' => 10]);
+    $fine = Product::factory()->create(['company_id' => $company->id, 'cost' => 2]);
+
+    ProductQuantity::factory()->create(['company_id' => $company->id, 'product_id' => $low->id, 'location_id' => $internal->id, 'quantity' => 3]);
+    ProductQuantity::factory()->create(['company_id' => $company->id, 'product_id' => $fine->id, 'location_id' => $internal->id, 'quantity' => 50]);
+    // Already delivered to a customer: not on hand.
+    ProductQuantity::factory()->create(['company_id' => $company->id, 'product_id' => $fine->id, 'location_id' => $customer->id, 'quantity' => 999]);
+
+    OrderPoint::factory()->create(['company_id' => $company->id, 'product_id' => $low->id, 'product_min_qty' => 5]);
+    OrderPoint::factory()->create(['company_id' => $company->id, 'product_id' => $fine->id, 'product_min_qty' => 5]);
+
+    // Another company's low rule must not count here.
+    $otherProduct = Product::factory()->create(['company_id' => $other->id]);
+    OrderPoint::withoutEvents(fn () => OrderPoint::factory()->create(['company_id' => $other->id, 'product_id' => $otherProduct->id, 'product_min_qty' => 5]));
+
+    $widget = new InventoryHeadlineWidget;
+
+    expect((fn () => $this->lowStockCount())->call($widget))->toBe(1)
+        // 3 x 10 + 50 x 2; the customer location is excluded.
+        ->and((fn () => $this->stockValue())->call($widget))->toBe(130.0);
 });

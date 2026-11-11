@@ -278,22 +278,36 @@ class Employee extends Model
 
     private function handlePartnerUpdation(self $employee): void
     {
-        $partner = Partner::updateOrCreate(
-            ['id' => $employee->partner_id],
-            [
-                'account_type' => 'individual',
-                'sub_type'     => 'employee',
-                'creator_id'   => $employee->creator_id ?? Auth::id(),
-                'name'         => $employee?->name,
-                'email'        => $employee?->work_email ?? $employee?->private_email,
-                'job_title'    => $employee?->job_title,
-                'phone'        => $employee?->work_phone,
-                'mobile'       => $employee?->mobile_phone,
-                'color'        => $employee?->color,
-                'company_id'   => $employee?->company_id,
-                'user_id'      => $employee?->user_id,
-            ]
-        );
+        $attributes = [
+            'account_type' => 'individual',
+            'sub_type'     => 'employee',
+            'creator_id'   => $employee->creator_id ?? Auth::id(),
+            'name'         => $employee?->name,
+            'email'        => $employee?->work_email ?? $employee?->private_email,
+            'job_title'    => $employee?->job_title,
+            'phone'        => $employee?->work_phone,
+            'mobile'       => $employee?->mobile_phone,
+            'color'        => $employee?->color,
+            'company_id'   => $employee?->company_id,
+            'user_id'      => $employee?->user_id,
+        ];
+
+        // Read the employee's own contact scope-free (2026-11-11). This ran
+        // Partner::updateOrCreate(['id' => ...]), whose lookup is company-scoped:
+        // when whoever saves is working in another company than the employee's
+        // (a queued job, a Multi-Company Admin, a test acting elsewhere), the
+        // lookup missed the existing contact and created a new one, the id
+        // changed, save() fired this hook again, and it recursed - a new
+        // contact and followers each turn - until PHP's stack ran out. Found
+        // as the Attendance suite's "maximum call stack" fatal. Never read the
+        // parent through a scoped query in a model hook (AGENTS.md).
+        $partner = Partner::withoutGlobalScopes()->find($employee->partner_id);
+
+        if ($partner) {
+            $partner->fill($attributes)->save();
+        } else {
+            $partner = Partner::create($attributes);
+        }
 
         if ($employee->partner_id !== $partner->id) {
             $employee->partner_id = $partner->id;

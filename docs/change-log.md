@@ -20,6 +20,12 @@ for the task/question log this change log is paired with.
   outline icons; Revenue and Purchase spend get a daily sparkline from one
   grouped query over the same filtered rows as the total (null under two
   points). Profile menu shows only the codes (no "Preferred Language" text).
+  Inventory joins the Overview (user): `InventoryHeadlineWidget` gives "To
+  receive" and "To deliver" (open operations, with the late count, same rule as
+  `OperationTypeCardWidget`), registered from `InventoryServiceProvider` only
+  when the Invoices `OverviewRegistry` class exists, because Inventory does not
+  depend on Invoices. Visible with the Inventory overview's access. The "Show"
+  placeholder now reads "All sections" (five languages).
 - **Benefit:** idle dashboards no longer load the database; the first screen
   shows all headline figures; cards show direction.
 - **Trade-off / risk:** figures no longer refresh by themselves; reload or
