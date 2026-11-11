@@ -15,7 +15,7 @@ abstract class DashboardChartWidget extends ChartWidget
 
     protected static bool $isLazy = false;
 
-    protected ?string $maxHeight = '300px';
+    protected ?string $maxHeight = '240px';
 
     /**
      * Themed options for a vertical bar chart: staggered rise-in, axis baselines, no grid, themed tooltip.

@@ -70,13 +70,40 @@ class SaleHeadlineWidget extends StatsOverviewWidget
 
         return [
             Stat::make(__('invoices::filament/pages/overview.headline.revenue'), compact_money($revenue, $currency))
+                ->icon('heroicon-o-banknotes')
                 ->description(trans_choice('invoices::filament/pages/overview.headline.orders', $orders, ['count' => $orders]))
+                ->chart($this->dailyRevenue())
                 ->color('success')
                 ->extraAttributes(['class' => 'overview-headline-stat']),
 
             Stat::make(__('invoices::filament/pages/overview.headline.open-quotations'), number_format($this->quotations()->count()))
+                ->icon('heroicon-o-document-text')
                 ->color('info')
                 ->extraAttributes(['class' => 'overview-headline-stat']),
         ];
+    }
+
+    /**
+     * Revenue per day over the filtered period, for the card's sparkline
+     * (user, 2026-11-11: modern cards show direction, not only a total). One
+     * grouped query over the same rows as the total, so the two agree. Fewer
+     * than two days of sales draws no line.
+     *
+     * @return array<int, float>|null
+     */
+    protected function dailyRevenue(): ?array
+    {
+        $query = $this->saleOrders();
+        $day = 'DATE('.$query->qualifyColumn('date_order').')';
+
+        $series = $query->toBase()
+            ->selectRaw($day.' as day, SUM(CASE WHEN currency_rate > 0 THEN amount_total / currency_rate ELSE amount_total END) as total')
+            ->groupByRaw($day)
+            ->orderByRaw($day)
+            ->pluck('total')
+            ->map(fn ($total): float => round((float) $total, 2))
+            ->all();
+
+        return count($series) > 1 ? $series : null;
     }
 }

@@ -22,7 +22,7 @@ class CustomerRevenueChart extends ChartWidget
 
     protected static bool $isLazy = true;
 
-    protected ?string $maxHeight = '300px';
+    protected ?string $maxHeight = '240px';
 
     /**
      * @var array{labels: list<string>, data: list<float>}|null

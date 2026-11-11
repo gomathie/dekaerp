@@ -234,6 +234,18 @@ class Overview extends BaseDashboard
         ];
     }
 
+    /**
+     * Three charts across on wide screens (user, 2026-11-11: "Monthly Sales
+     * is too big"). Full-width widgets (At a glance, stat blocks, lists) still
+     * span the row.
+     *
+     * @return int|array<string, int>
+     */
+    public function getColumns(): int|array
+    {
+        return ['md' => 2, 'xl' => 3];
+    }
+
     public function getWidgetsContentComponent(): Component
     {
         return parent::getWidgetsContentComponent()

@@ -148,6 +148,25 @@ it('does not poll any widget on the overview', function (): void {
     }
 });
 
+/**
+ * Layout (user, 2026-11-11): filters closed by default, four headline cards
+ * across, three charts across on wide screens, and every headline card has an
+ * icon so the row reads at a glance.
+ */
+it('starts with filters closed, four cards across and an icon on every card', function (): void {
+    CompanyHelper::actingAsCompanyUser(Company::factory()->create(), ['page_invoice_invoices']);
+
+    expect(Webkul\Support\Filament\Forms\Components\DashboardFilters::make([], [])->isCollapsed())->toBeTrue()
+        ->and((new Overview)->getColumns())->toBe(['md' => 2, 'xl' => 3])
+        ->and((fn () => $this->getColumns())->call(new OverviewHeadlineWidget))->toBe(['default' => 2, 'lg' => 4]);
+
+    $stats = app(Webkul\Invoice\Filament\Widgets\InvoiceHeadlineWidget::class)->headlineStats([]);
+
+    foreach ($stats as $stat) {
+        expect($stat->getIcon())->not->toBeNull();
+    }
+});
+
 it('refuses the overview to a user who may see no section', function (): void {
     CompanyHelper::actingAsCompanyUser(Company::factory()->create(), []);
 
