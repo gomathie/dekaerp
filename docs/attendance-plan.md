@@ -27,8 +27,9 @@ continuation resumed. They have not yet been verified here.
   `AttendanceFeature` suite registration, test helper, and initial installation
   and service tests.
 - **In progress:** AT-1; the migration and company provisioning checks pass,
-  including the application-rebuild sequence. Shield permission generation
-  and the complete installation test file remain unverified.
+  including the application-rebuild sequence, and the database's single-open
+  index test passes. Employee-company ownership and Shield permission
+  generation, plus the complete installation test file, remain unverified.
   AT-2's forced-context fallback is fixed and its focused regression test
   passes; other service behaviors remain to be verified.
 - **Not started:** AT-3 through AT-7. The tagged topbar override is owned by a
@@ -75,7 +76,9 @@ continuation resumed. They have not yet been verified here.
   where the Employee migration references `calendars` before Support creates
   it; this bypassed the test helper's migration-path filtering and is not
   evidence against the attendance install path. Full Shield generation is
-  intentionally not bypassed. Translation checks have not run.
+  intentionally not bypassed. After the later service-suite fatal, the
+  single-open partial-index test passed in isolation (1 test, 1 assertion,
+  368.60s) on `aureuserp_testing_attendance`. Translation checks have not run.
 
 **AT-1 rationale — company listener registration (2026-11-11).** **Why:** a
 process-static flag survives Laravel test application rebuilds, but rebuilding
@@ -88,13 +91,14 @@ lifecycle without duplicate callbacks when a provider boots twice in one
 application. **Trade-off / risk:** container state is intentionally not shared
 between application instances, so each new instance registers one callback.
 **Verification:** the application-rebuild sequence passed (2 tests, 7
-assertions) and the three install/provisioning tests passed (3 tests, 9
-assertions), on `aureuserp_testing_attendance`. The complete installation file
-still needs a successful run; a later attempt ended in PHP's stack-size fatal
-at Laravel's `ConcurrencyErrorDetector`. **Rollback:** revert the guard to the
-previous static flag only if the application lifecycle is changed so the
-Eloquent dispatcher outlives the provider; otherwise that reintroduces the
-missing-listener regression.
+assertions), the three install/provisioning tests passed (3 tests, 9
+assertions), and the partial-index test passed in isolation (1 test, 1
+assertion), all on `aureuserp_testing_attendance`. The complete installation
+file still needs a successful run; a prior attempt ended in PHP's stack-size
+fatal at Laravel's `ConcurrencyErrorDetector`. **Rollback:** revert the guard
+to the previous static flag only if the application lifecycle is changed so
+the Eloquent dispatcher outlives the provider; otherwise that reintroduces
+the missing-listener regression.
 
 **AT-2 rationale — empty forced company context (2026-11-11).** **Why:** a
 forced context that resolves to no active company must not fall through to the
@@ -137,7 +141,7 @@ records, instead of a second source.
 | Work locations | `Employee\Models\WorkLocation`, `employees_employees.work_location_id` | "You are working at …" in the banner; optional geofence later |
 | Leave | Time Off `Leave`, `CalendarLeave` | Show "On leave" instead of "Not clocked in"; do not count as absent |
 | Timesheets | `timesheets` plugin | Separate: time spent **on projects**. Attendance is presence. Not merged |
-| Payroll design | `docs/payroll.md` (`payroll_period_inputs`, `payroll_policies` kind `attendance` / `overtime`) | Consumer of worked and overtime units |
+| Payroll design | `docs/planned/payroll.md` (`payroll_period_inputs`, `payroll_policies` kind `attendance` / `overtime`) | Consumer of worked and overtime units |
 | Company context | `CompanyContext`, `BelongsToCompany`, `InheritsParentCompany` | Scoping |
 
 ## 3. Reference (from knowledge of Odoo Attendances, not re-read this session)
