@@ -8,15 +8,25 @@ use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables\Table;
 use Webkul\Invoice\Filament\Clusters\Vendors\Resources\BillResource;
 use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\VendorResource;
+use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\VendorResource\Pages\Concerns\ShownOnContactScreens;
 use Webkul\Support\Traits\HasRecordNavigationTabs;
 
 class ManageBills extends ManageRelatedRecords
 {
     use HasRecordNavigationTabs;
+    use ShownOnContactScreens;
 
     protected static string $resource = VendorResource::class;
 
-    protected static string $relationship = 'accountMoves';
+    // Registered on the base contact model by PurchaseServiceProvider, so the
+    // tab works on every contact screen. Not "accountMoves": other contact
+    // models may define that name differently.
+    protected static string $relationship = 'vendorBills';
+
+    protected static function listResourceAllowsViewing(): bool
+    {
+        return BillResource::canViewAny();
+    }
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-check';
 
