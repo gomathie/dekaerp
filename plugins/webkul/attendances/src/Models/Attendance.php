@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Webkul\Attendance\Database\Factories\AttendanceFactory;
 use Webkul\Attendance\Enums\Source;
+use Webkul\Attendance\Services\ScheduleReader;
 use Webkul\Employee\Models\Employee;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
@@ -117,10 +118,12 @@ class Attendance extends Model
 
     public function displayTimezone(): string
     {
-        $timezone = $this->employee?->calendar?->timezone;
+        $employee = $this->employee;
 
-        if (is_string($timezone) && in_array($timezone, timezone_identifiers_list(), true)) {
-            return $timezone;
+        if ($employee instanceof Employee) {
+            // One rule, one place: the employee's own zone, their calendar's,
+            // then the application's.
+            return app(ScheduleReader::class)->timezone($employee);
         }
 
         return (string) config('app.timezone');
