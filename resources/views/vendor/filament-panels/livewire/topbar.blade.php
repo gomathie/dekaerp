@@ -470,6 +470,19 @@
                     white-space: nowrap;
                 }
 
+                /* Dashboards scroll without a visible scrollbar (user,
+                   2026-11-11). A dashboard is a page with widgets that is not
+                   a resource page; resource lists keep theirs, because their
+                   header widgets would otherwise match too. Scrolling by
+                   wheel, touch and keyboard is unchanged. */
+                html:has(.fi-wi-widget):not(:has(.fi-page[class*="fi-resource-"])) {
+                    scrollbar-width: none;
+                }
+
+                html:has(.fi-wi-widget):not(:has(.fi-page[class*="fi-resource-"]))::-webkit-scrollbar {
+                    display: none;
+                }
+
                 /* The profile avatar was a dark circle on a dark bar in dark
                    mode, so people could not find the profile menu (user,
                    2026-11-11). A ring in the accent colour marks it in both
