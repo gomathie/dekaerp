@@ -1,10 +1,13 @@
 <?php
 
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use Filament\Widgets\StatsOverviewWidget;
+use Filament\Widgets\TableWidget;
 use Illuminate\Support\Facades\DB;
 use Webkul\Invoice\Filament\Overview\OverviewRegistry;
 use Webkul\Invoice\Filament\Pages\Invoices;
 use Webkul\Invoice\Filament\Pages\Overview;
+use Webkul\Invoice\Filament\Widgets\OverviewHeadlineWidget;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Support\Models\Company;
@@ -57,11 +60,57 @@ it('limits the widgets to the chosen section and shows every visible section by 
     expect($page->getWidgets())->toContain('TestOnlyWidget')
         ->and($page->getWidgets())->toContain(...Invoices::sectionWidgets());
 
+    // Changed 2026-11-11 (user): "At a glance" comes first, then widgets are
+    // grouped by kind across sections (charts, stats, lists).
     $page->filters = ['sections' => ['invoices']];
-    expect($page->getWidgets())->toBe(Invoices::sectionWidgets());
+    expect($page->getWidgets()[0])->toBe(OverviewHeadlineWidget::class)
+        ->and($page->getWidgets())->toContain(...Invoices::sectionWidgets())
+        ->and($page->getWidgets())->not->toContain('TestOnlyWidget');
 
     $page->filters = ['sections' => ['test-section']];
-    expect($page->getWidgets())->toBe(['TestOnlyWidget']);
+    expect($page->getWidgets())->toBe([OverviewHeadlineWidget::class, 'TestOnlyWidget']);
+});
+
+/**
+ * Relevant first (user, 2026-11-11): charts before detailed stat cards,
+ * stat cards before lists, across all sections.
+ */
+it('orders the widgets: at a glance, charts, stats, then lists', function (): void {
+    CompanyHelper::actingAsCompanyUser(Company::factory()->create(), ['page_invoice_invoices']);
+
+    $page = new Overview;
+    $page->filters = ['sections' => ['invoices']];
+
+    $kinds = array_map(fn (string $widget): string => match (true) {
+        $widget === OverviewHeadlineWidget::class                                 => 'glance',
+        is_subclass_of($widget, TableWidget::class)                               => 'list',
+        is_subclass_of($widget, StatsOverviewWidget::class)                       => 'stats',
+        default                                                                   => 'chart',
+    }, $page->getWidgets());
+
+    $order = ['glance' => 0, 'chart' => 1, 'stats' => 2, 'list' => 3];
+    $ranks = array_map(fn (string $kind): int => $order[$kind], $kinds);
+
+    expect($ranks)->toBe(collect($ranks)->sort()->values()->all());
+});
+
+/**
+ * All filters show by default (user, 2026-11-11). One Vendor filter must
+ * filter both Bills (vendor_id) and Purchases (partner_id), and clearing it
+ * must clear both, not be restored from the stale copy.
+ */
+it('copies a shared filter to every section name and clears all of them together', function (): void {
+    $page = new Overview;
+    $page->filters = ['vendor_id' => [5], 'partner_id' => null];
+
+    $page->updatedFilters([5], 'vendor_id');
+    expect($page->filters['partner_id'])->toBe([5]);
+
+    $page->filters['vendor_id'] = [];
+    $page->updatedFilters([], 'vendor_id');
+    expect($page->filters['partner_id'])->toBe([]);
+
+    expect(Overview::mirrorAliases(['countries' => [2]])['country_id'])->toBe([2]);
 });
 
 it('needs no permission of its own, so existing roles keep their dashboards', function (): void {
