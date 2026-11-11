@@ -6,6 +6,55 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-11 (agent review follow-ups: vault, phone search, journal balance, work orders, translations)
+
+From `docs/agent-review-2026-11-11.md`, approved by the user.
+
+- **Readable passwords outlived the role.**
+  - Fix: `CompanyAdminPasswordVault::reveal()` refuses anyone who is no
+    longer a Company Admin, and deletes their copy. `TenantRoleAssigner::sync()`
+    deletes the copy when it removes the role.
+  - Test: `CompanyAdminPasswordVaultTest`, "stops showing and deletes the
+    password once the person is no longer a company administrator". 46
+    passed, 134 assertions, on `aureuserp_testing_claude_backfill`.
+- **Phone search crowding the top bar.**
+  - Fix: the focused search is capped at `min(11rem, 40vw)`, and the company
+    name hides while searching (topbar CSS).
+  - Not browser-tested.
+- **Unbalanced manual journal entries could be posted.**
+  - Fix: upstream `99fd7c7e8` ported alone. `MoveWorkflow::assertPostable()`
+    refuses an `ENTRY` whose debits minus credits is not zero at the
+    currency's rounding. Invoices and bills are not affected.
+  - The message is translated in five languages, from upstream's text.
+  - Test: `JournalEntryTest`, "refuses to post a manual journal entry whose
+    debits and credits differ". 11 passed with `MoveLifecycleTest`, on
+    `aureuserp_testing_claude_accounts`.
+  - Rollback: remove the block.
+- **Zero-duration work order crash.**
+  - Fix: upstream `38268a2b8` ported. Decimals arrive as strings and `"0.00"`
+    is truthy, so they are cast before three checks in `WorkOrder`.
+  - Tests: upstream's three cases, in `WorkOrderTest`.
+- **Translations.**
+  - Support's Help page guide block was added in fr, es, pt_BR and ar, and
+    `empty` was moved to the English position. French also now uses `:app`
+    instead of a hard-coded "AureusERP".
+  - Removed French-only keys that no code reads: products
+    `exceptions/product-in-use.php` and `variant-in-use.php`; the attribute
+    `more` and `partial` keys; the currency bulk-delete `error` keys; the
+    employee resume tab; the resume attachment keys. The resume `type`/`name`
+    order was matched to English.
+- **Not changed:**
+  - `ResourceStructureSnapshotTest` fixtures, already re-recorded from the
+    full SupportFeature suite and confirmed on a clean database.
+  - Upstream's reversal swap (`10776eb0e`), which needs a line-by-line read
+    first.
+  - `CompanyMembers` listing deactivated users (low).
+- **Deploy note:** the 2026-11-11 settings migration must run before this
+  code serves traffic. `UserSettings` is read on every panel request, so an
+  unmigrated database answers 500 (`MissingSettings`). Laravel Cloud runs
+  `migrate` before the release goes live. A local database needs
+  `php artisan migrate`.
+
 ## 2026-11-11 (existing companies' administrators become Company Admin)
 
 - **Why:** the user asked for it. TRACE365, APEX and Nestem each have one
