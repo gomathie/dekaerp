@@ -1393,7 +1393,7 @@ DOCUMENTATION AND UPSTREAM REVIEW (ALL AGENTS)
   earlier "eight still open" wording predated the 2026-10-22 work. Consult the
   register when working in an affected plugin, and update a finding's Local state
   when you touch one.
-• `docs/restructure-backlog.md` is the resource-restructure analysis: which
+• `docs/planned/restructure-backlog.md` is the resource-restructure analysis: which
   resources adopt upstream's split layout mechanically and which carry local
   changes that must be moved by hand.
 • When you do review upstream, tell the user what is new, whether DEKA ERP needs
@@ -1983,7 +1983,10 @@ REFERENCES
 • docs/upstream-fix-adoption-plan.md — register of upstream findings UF-001..024
   and the decision on each. No P0/P1 open as of 2026-10-23; UF-003, UF-009 and
   UF-010 are the live ones. No review cadence.
-• docs/restructure-backlog.md — deferred upstream restructures.
+• docs/planned/ — plans decided or drafted but not started (index in its
+  README.md, 2026-11-11): CRM, Inventory improvements, payroll, POS,
+  landing page, restructure backlog, unified product resource.
+• docs/planned/restructure-backlog.md — deferred upstream restructures.
 • Package F, resource structure alignment — the plan lives on the
   `chore/resource-structure` branch, not on main:
   `git show chore/resource-structure:docs/upstream-structure-alignment-plan.md`.
@@ -1997,8 +2000,8 @@ REFERENCES
   after Logistics.
 • docs/logistics-plan.md — Logistics plan, decisions D1–D15, status board, work
   packages, handoff log.
-• docs/unified-product-resource-plan.md — cross-plugin product-resource plan.
-• docs/landing-page-brief.md — public landing-page scope and constraints.
+• docs/planned/unified-product-resource-plan.md — cross-plugin product-resource plan.
+• docs/planned/landing-page-brief.md — public landing-page scope and constraints.
 • docs/running-tests.md — how to run tests.
 • docs/harness2-integration.md — assessment of Google's Harness² framework: why
   it cannot integrate with this repo or agent, plus the repo-owned evaluation

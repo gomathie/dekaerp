@@ -406,7 +406,7 @@ the model they extend.
 
 ## References
 
-- [`AGENTS.md`](../AGENTS.md) — binding conventions, multi-company traps.
-- [`docs/logistics-plan.md`](logistics-plan.md) — reference for per-company plugin gating (five-layer shape).
-- [`docs/running-tests.md`](running-tests.md) — how to run suites.
+- [`AGENTS.md`](../../AGENTS.md) — binding conventions, multi-company traps.
+- [`docs/logistics-plan.md`](../logistics-plan.md) — reference for per-company plugin gating (five-layer shape).
+- [`docs/running-tests.md`](../running-tests.md) — how to run suites.
 - Upstream source: `aureus/master` remote, `plugins/webkul/point-of-sale/`.
