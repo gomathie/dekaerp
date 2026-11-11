@@ -7,11 +7,15 @@ use Webkul\Support\Filament\Concerns\HasChartTheme;
 
 abstract class DashboardChartWidget extends ChartWidget
 {
+    // No 5-second refresh (Filament default): every open dashboard re-ran all
+    // its queries 12 times a minute (Sentry DEKAERP-11). Filters reload it.
+    protected ?string $pollingInterval = null;
+
     use HasChartTheme;
 
     protected static bool $isLazy = false;
 
-    protected ?string $maxHeight = '300px';
+    protected ?string $maxHeight = '240px';
 
     /**
      * Themed options for a vertical bar chart: staggered rise-in, axis baselines, no grid, themed tooltip.

@@ -27,6 +27,8 @@ it('shows the current language once and offers every other language below it', f
     // The row shows the current code once; the strip lists every code as a
     // chip named by its full native language, the current one marked.
     expect($html)->toContain('class="uml-current" lang="fr">FR<')
+        // Only codes are visible (user, 2026-11-11); the label is for screen readers.
+        ->and($html)->not->toContain('fi-dropdown-list-item-label">'.e(__('support::filament/pages/profile.fields.language')))
         ->and($html)->toContain('aria-expanded')
         ->and(substr_count($html, 'aria-current="true"'))->toBe(1);
 

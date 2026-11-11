@@ -30,10 +30,10 @@
                 x-on:click.stop="languagesOpen = ! languagesOpen"
                 x-bind:aria-expanded="languagesOpen.toString()"
                 aria-controls="user-menu-languages"
+                aria-label="{{ __('support::filament/pages/profile.fields.language') }}: {{ $locales[$currentLocale]['native'] ?? $currentLocale }}"
             >
+                {{-- No visible label (user, 2026-11-11): only the codes show. --}}
                 <x-filament::icon icon="heroicon-o-language" class="fi-dropdown-list-item-icon" />
-
-                <span class="fi-dropdown-list-item-label">{{ __('support::filament/pages/profile.fields.language') }}</span>
 
                 <span class="uml-current" lang="{{ $currentLocale }}">{{ $shortCode($currentLocale) }}</span>
 

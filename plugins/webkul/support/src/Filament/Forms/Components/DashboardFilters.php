@@ -7,10 +7,10 @@ use Filament\Schemas\Components\Section;
 /**
  * The filter box at the top of a dashboard.
  *
- * On phones it starts folded under a "Filters" header (user, 2026-11-11:
- * dashboards were 4–5 screens long on a phone, and the seven stacked
- * filters alone took about 640px). On wider screens it opens as before.
- * The width is decided in the browser, because the server cannot know it.
+ * Starts folded under a "Filters" header on every screen size (user,
+ * 2026-11-11: first only on phones, where seven stacked filters took about
+ * 640px; then everywhere, so the figures are the first thing seen). One
+ * click opens it.
  */
 class DashboardFilters
 {
@@ -32,8 +32,6 @@ class DashboardFilters
         return $section
             ->heading(__('support::filament/dashboard.filters'))
             ->collapsible()
-            ->extraAlpineAttributes([
-                'x-init' => "if (window.matchMedia('(max-width: 767px)').matches) { isCollapsed = true }",
-            ]);
+            ->collapsed();
     }
 }

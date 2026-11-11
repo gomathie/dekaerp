@@ -15,7 +15,7 @@ return [
 
     'filters' => [
         'sections'       => 'Show',
-        'all-sections'   => 'Sales, purchases and invoices',
+        'all-sections'   => 'All sections',
         'date-range'     => 'Date range',
         'product'        => 'Product',
         'all-products'   => 'All products',

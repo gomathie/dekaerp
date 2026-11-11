@@ -15,7 +15,7 @@ return [
 
     'filters' => [
         'sections'       => 'Mostrar',
-        'all-sections'   => 'Vendas, compras e faturas',
+        'all-sections'   => 'Todas as seções',
         'date-range'     => 'Período',
         'product'        => 'Produto',
         'all-products'   => 'Todos os produtos',
