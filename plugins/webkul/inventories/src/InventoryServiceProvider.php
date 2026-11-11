@@ -166,6 +166,31 @@ class InventoryServiceProvider extends PackageServiceProvider
         $this->contributeProductSchema();
 
         $this->registerLivewireComponents();
+
+        $this->contributeOverviewSection();
+    }
+
+    /**
+     * Inventory's cards on the combined Overview (user, 2026-11-11). The
+     * Overview belongs to Invoices, which Inventory does not depend on, so this
+     * contributes only when that registry is present; Inventory alone still
+     * works. Keyed, so a second boot replaces rather than duplicates.
+     */
+    protected function contributeOverviewSection(): void
+    {
+        if (! class_exists(\Webkul\Invoice\Filament\Overview\OverviewRegistry::class)) {
+            return;
+        }
+
+        \Webkul\Invoice\Filament\Overview\OverviewRegistry::register(
+            'inventory',
+            fn (): string => __('inventories::filament/widgets/inventory-headline.section'),
+            [],
+            fn (): array => [],
+            fn (): bool => \Webkul\Inventory\Filament\Pages\Overview::canAccess(),
+            sort: 40,
+            headline: \Webkul\Inventory\Filament\Widgets\InventoryHeadlineWidget::class,
+        );
     }
 
     public function registerLivewireComponents(): void
