@@ -38,12 +38,13 @@ class AttendanceReports
                     return null;
                 }
 
-                $employee = Employee::withoutGlobalScopes()->find($attendance->employee_id);
+                $employee = $this->employee($attendance);
+                $local = $this->localCheckIn($attendance, $employee);
 
                 return [
                     'employee'     => (string) $employee?->name,
-                    'date'         => $attendance->checkInLocal()?->toDateString() ?? '',
-                    'check_in'     => $attendance->checkInLocal()?->format('H:i'),
+                    'date'         => $local?->toDateString() ?? '',
+                    'check_in'     => $local?->format('H:i'),
                     'late_minutes' => $minutes,
                 ];
             })
@@ -66,13 +67,13 @@ class AttendanceReports
                     return null;
                 }
 
-                $employee = Employee::withoutGlobalScopes()->find($attendance->employee_id);
+                $employee = $this->employee($attendance);
 
                 if ($employee === null) {
                     return null;
                 }
 
-                $local = $attendance->checkInLocal();
+                $local = $this->localCheckIn($attendance, $employee);
 
                 return [
                     'employee'         => (string) $employee->name,
@@ -109,7 +110,7 @@ class AttendanceReports
             $timezone = $this->schedule->timezone($employee);
 
             $attended = $this->attendances($from, $to, [$employee->id])
-                ->map(fn (Attendance $attendance): string => (string) $attendance->checkInLocal()?->toDateString())
+                ->map(fn (Attendance $attendance): string => (string) $this->localCheckIn($attendance, $employee)?->toDateString())
                 ->all();
 
             for ($day = $from->copy(); $day->lte($to); $day->addDay()) {
@@ -148,6 +149,36 @@ class AttendanceReports
             'late'     => (int) $settings->late_tolerance_minutes,
             'overtime' => (int) $settings->overtime_tolerance_minutes,
         ];
+    }
+
+    /**
+     * The employee loaded scope-free: a report must read the same person the
+     * schedule reader does, whoever is acting.
+     */
+    protected function employee(Attendance $attendance): ?Employee
+    {
+        return Employee::withoutGlobalScopes()->find($attendance->employee_id);
+    }
+
+    /**
+     * Check-in in the employee's own calendar timezone.
+     *
+     * `Attendance::checkInLocal()` reads the employee through a company-scoped
+     * relation, which a report run by someone outside that company does not
+     * see, and it would then fall back to the server zone and could report the
+     * wrong day. The schedule reader already resolved the right zone.
+     */
+    protected function localCheckIn(Attendance $attendance, ?Employee $employee): ?Carbon
+    {
+        if ($attendance->check_in_at === null) {
+            return null;
+        }
+
+        if ($employee === null) {
+            return $attendance->checkInLocal();
+        }
+
+        return $attendance->check_in_at->copy()->timezone($this->schedule->timezone($employee));
     }
 
     /**
