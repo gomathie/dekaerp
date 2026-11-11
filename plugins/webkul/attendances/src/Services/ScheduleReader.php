@@ -21,8 +21,23 @@ use Webkul\Support\Models\CalendarAttendance;
  */
 class ScheduleReader
 {
+    /**
+     * The employee's own time zone, then their working calendar's, then the
+     * application's.
+     *
+     * The employee's own setting wins because it is what the employee records
+     * themselves say; a calendar is shared by a whole team and only supplies a
+     * sensible default. This is the one place the choice is made - clock times
+     * are shown and reported through it, never through the server zone.
+     */
     public function timezone(Employee $employee): string
     {
+        $own = $employee->time_zone;
+
+        if (is_string($own) && in_array($own, timezone_identifiers_list(), true)) {
+            return $own;
+        }
+
         $calendar = $this->calendar($employee);
         $timezone = $calendar?->timezone;
 

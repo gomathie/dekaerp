@@ -52,7 +52,7 @@ defects were found by reading while it ran, and are fixed with it:
   deliberately reads scope-free - one caller away from a cross-tenant report.
   The pages always passed an explicit list; now the signature requires one.
 
-**2026-11-11 — report tests: the computation passes, one page test was wrong.**
+**2026-11-11 — report tests, combined run: the computation passes, one page test was wrong.**
 Combined run of both report files: **10 passed, 1 failed (22 assertions,
 683.99s)** on `aureuserp_testing_attendance`.
 `AttendanceReportsTest` passed all six, including the new open-row case.
@@ -62,6 +62,45 @@ failed on
 `duplicate key value violates unique constraint "employees_employees_user_id_unique"`:
 `EmployeeFactory` fills `user_id` with the first user, so two employees created
 in one test collide. That test now passes `user_id => null` for both.
+
+**2026-11-11 — report tests: all green.** `ReportsTest` 5 of 5 passed
+(434.62s bootstrap, 589.72s total for the combined run with the banner file) on
+`aureuserp_testing_attendance`. Together with the six `AttendanceReportsTest`
+cases, every attendance report behaviour is now verified: the generated page
+permission names, the page permission gate, the company switch, the own-rows
+narrowing, manager visibility, and the lateness/overtime/absence arithmetic.
+
+**2026-11-11 — banner tests: 4 of 5, the fifth a missing import.**
+`DashboardBannerTest` passed the greeting, the keyed registry, the visibility
+gate and the no-employee case. The clock-in/out case failed with
+`Target class [Webkul\Attendance\Models\ScheduleReader] does not exist`:
+`Attendance::displayTimezone()` had been changed mid-run to use
+`ScheduleReader` before its `use` statement was added, so the unimported name
+resolved inside the model's own namespace. The import is in; the file is
+re-running with `AttendanceServiceTest`.
+
+**2026-11-11 — clock times follow the employee's own time zone.**
+`ScheduleReader::timezone()` now reads the employee's own `time_zone` column
+before the calendar's, and `Attendance::displayTimezone()` delegates to it
+instead of reading `employee->calendar->timezone` itself. Without that, a
+person with their own zone and a shared calendar clocked in at the calendar's
+zone, and the local week/day in the reports could be the wrong one. The two
+implementations also disagreed, which is how one of them gets forgotten on the
+next edit. Pinned by the existing "stores open and closed times in UTC and
+records the worked minutes on check-out" case, which sets the employee's zone
+to Africa/Lusaka and expects 10:00 local for an 08:00 UTC check-in.
+
+**2026-11-11 — banner tests green; the service file still crashes PHP.**
+`DashboardBannerTest` passed 5 of 5 (315.70s bootstrap) after the missing import
+was added: greeting, keyed section, visibility gate, clock in and out, and the
+no-employee case. `AttendanceServiceTest`, in the same run, died with the same
+`Maximum call stack size ... reached during compilation` fatal at
+`Illuminate/Database/ConcurrencyErrorDetector.php:20` that blocked it before.
+Re-running the file with the guard disabled
+(`php -d zend.max_allowed_stack_size=-1 vendor/pestphp/pest/bin/pest ...`) ended
+in SIGSEGV (exit 139), so this is a genuine unbounded stack use somewhere in
+that file's path, not a limit that is merely set too low. Nothing in it is
+claimed as verified; the next attempt raises the limit instead of removing it.
 
 **2026-11-11 — banner tests: a stale switch reads as off.**
 `DashboardBannerTest` enabled attendance with `CompanyProvisioner::enable()`
@@ -372,11 +411,14 @@ hold a panel login.
 - **Why:** lateness, absence and overtime have to be answerable without payroll
   being built; and payroll must not read a second source.
 - **How:** `AttendanceReports` computes late/overtime rows and absence days at
-  read time through `ScheduleReader` (the employee's calendar, in the
-  calendar's timezone, after the company tolerance). `Filament/Clusters/Reporting`
+  read time through `ScheduleReader` (the employee's own time zone, then their
+  calendar's; after the company tolerance), and only for the employee ids the
+  caller passes — the pages pass `AttendanceService::visibleEmployeeIds()`, so a
+  report can never widen to another company. `Filament/Clusters/Reporting`
   holds three pages (`Lateness`, `Overtime`, `Absence`), each behind its own
   Shield page permission and the company switch, with a from/until range clamped
-  to 92 days. Approved leave is not an absence.
+  to 92 days. Approved leave is not an absence, someone still clocked in counts
+  as late but not absent, and overtime needs a closed row.
 - **Payroll hand-off contract (no payroll tables are written here):** at period
   close, payroll asks `AttendancePayroll::unitsFor(Employee, from, to)` for
   `worked_minutes` and `overtime_minutes` per employee and applies the company's
