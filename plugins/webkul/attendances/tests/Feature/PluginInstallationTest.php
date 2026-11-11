@@ -8,7 +8,7 @@ use Webkul\Attendance\Services\CompanyProvisioner;
 use Webkul\Attendance\Support\AttendanceAccess;
 use Webkul\Employee\Models\Employee;
 
-require_once __DIR__.'/../../Helpers/AttendanceHelper.php';
+require_once __DIR__.'/../Helpers/AttendanceHelper.php';
 
 beforeEach(function (): void {
     AttendanceHelper::install();
