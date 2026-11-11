@@ -1,6 +1,6 @@
 # CRM — Plan
 
-Status: **plan only (2026-11-11). No code.** Asked for by the user together
+Status: **decisions accepted (user, 2026-11-11); not started.** CRM-1 begins after Attendance and once upstream CRM is stable (CRM-D2). Asked for by the user together
 with a "Contacts & CRM" sidebar heading. That heading shipped the same day:
 `NavigationGroup::Contact` → section `contacts-crm`, and a CRM module joins
 it there.
@@ -87,13 +87,13 @@ phases, and reveal and partner levels out.
 
 ## 7. Decisions needed (user)
 
-| ID | Question | Recommendation |
+| ID | Question | Answer (user, 2026-11-11: recommendations accepted) |
 | --- | --- | --- |
-| CRM-D1 | Adopt upstream's core (C), build lean (B), or adopt all (A)? | C |
-| CRM-D2 | When? | After upstream's CRM is stable for about two weeks and after Attendance; review upstream again then |
-| CRM-D3 | Lead and opportunity as one record with a type (Odoo/upstream) or separate? | One record with a type, as upstream |
-| CRM-D4 | Inbound email → leads in phase 1? | No; phase 3, after per-company mail (D16) |
-| CRM-D5 | Pipeline per sales team or one per company? | Per team, as upstream, with a company default team |
+| CRM-D1 | Adopt upstream's core (C), build lean (B), or adopt all (A)? | **Accepted:** C |
+| CRM-D2 | When? | **Accepted:** After upstream's CRM is stable for about two weeks and after Attendance; review upstream again then |
+| CRM-D3 | Lead and opportunity as one record with a type (Odoo/upstream) or separate? | **Accepted:** One record with a type, as upstream |
+| CRM-D4 | Inbound email → leads in phase 1? | **Accepted:** No; phase 3, after per-company mail (D16) |
+| CRM-D5 | Pipeline per sales team or one per company? | **Accepted:** Per team, as upstream, with a company default team |
 
 ## 8. Phases
 
