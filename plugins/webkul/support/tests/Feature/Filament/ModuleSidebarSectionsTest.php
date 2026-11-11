@@ -26,6 +26,7 @@ it('keeps the modules of each sidebar section next to each other', function () {
     }
 
     expect($seen)->toBe([
+        'contacts-crm',
         'sales-purchases',
         'finance',
         'operations',
@@ -39,7 +40,9 @@ it('places each module under the section the user approved', function (Navigatio
     expect($case->section())->toBe($section);
 })->with([
     [NavigationGroup::Dashboard, null],
-    [NavigationGroup::Contact, null],
+    // Changed 2026-11-11 (user): Contacts gets its own "Contacts & CRM"
+    // heading, where a CRM module will join it.
+    [NavigationGroup::Contact, 'contacts-crm'],
     [NavigationGroup::Sale, 'sales-purchases'],
     [NavigationGroup::Purchase, 'sales-purchases'],
     [NavigationGroup::Invoice, 'sales-purchases'],

@@ -23,6 +23,7 @@ return [
     ],
 
     'navigation-sections' => [
+        'contacts-crm'    => 'Contatos e CRM',
         'sales-purchases' => 'Vendas e compras',
         'finance'         => 'Finanças',
         'operations'      => 'Operações',
