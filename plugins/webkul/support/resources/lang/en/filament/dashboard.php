@@ -1,7 +1,8 @@
 <?php
 
 return [
-    'filters'      => 'Filters',
-    'show-lists'   => 'Show / hide lists',
-    'show-details' => 'Show / hide details',
+    'filters'       => 'Filters',
+    'show-lists'    => 'Show / hide lists',
+    'show-details'  => 'Show / hide details',
+    'no-chart-data' => 'No data for this period',
 ];

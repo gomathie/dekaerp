@@ -303,7 +303,51 @@ const dashboardChartLineGradient = {
     },
 }
 
+// An empty period read as a broken chart (a flat line on a 0..1 axis, or a
+// blank doughnut). When every value is zero or missing, hide the axes and say
+// so in the middle instead (user, 2026-11-11). The text comes from PHP so it
+// is translated: options.plugins.emptyState.text.
+const dashboardChartEmptyState = {
+    id: 'dashboardChartEmptyState',
+    isEmpty(chart) {
+        return (chart.data?.datasets || []).every((dataset) =>
+            (dataset.data || []).every((value) => ! Number(typeof value === 'object' && value !== null ? value.y : value)),
+        )
+    },
+    beforeUpdate(chart) {
+        const config = chart.config?.options?.plugins?.emptyState
+
+        if (! config) {
+            return
+        }
+
+        const empty = this.isEmpty(chart)
+
+        Object.values(chart.options.scales || {}).forEach((scale) => {
+            scale.display = ! empty
+        })
+    },
+    afterDraw(chart) {
+        const config = chart.config?.options?.plugins?.emptyState
+
+        if (! config || ! this.isEmpty(chart)) {
+            return
+        }
+
+        const { ctx, width, height } = chart
+
+        ctx.save()
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        ctx.font = `500 14px ${resolveFontFamily(chart)}`
+        ctx.fillStyle = config.color || themeColor('--gray-500', '#6b7280')
+        ctx.fillText(config.text || 'No data', width / 2, height / 2)
+        ctx.restore()
+    },
+}
+
 window.filamentChartJsGlobalPlugins.push(
+    dashboardChartEmptyState,
     dashboardChartCenterText,
     dashboardChartTooltipPercentage,
     dashboardChartHoverGrow,
