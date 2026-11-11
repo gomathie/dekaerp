@@ -44,6 +44,7 @@
                 {{-- Module menu trigger: toggles sidebar collapse on desktop/tablet, opens the drawer on mobile --}}
                 <x-filament::icon-button
                     icon="icon-menu"
+                    color="gray"
                     x-data="{}"
                     x-on:click="$store.moduleSidebar.primaryToggle()"
                     :label="__('filament-panels::layout.actions.sidebar.expand.label')"
@@ -440,13 +441,21 @@
             <style>
                 @verbatim
                 :root {
-                    --module-sidebar-width: 200px;
+                    /* 240px, up from 200px: customers found module names
+                       too cramped (user, 2026-11-11). */
+                    --module-sidebar-width: 240px;
                     --module-sidebar-width-collapsed: 72px;
                     --module-topbar-height: 4rem;
                 }
 
                 /* Topbar stays full-width and sits above the sidebar; only the content column is pushed over (tablet & up) */
                 @media (min-width: 768px) {
+                    /* Lists always show on wider screens, so their phone-only
+                       toggle is not offered there (2026-11-11). */
+                    .dashboard-lists-toggle {
+                        display: none !important;
+                    }
+
                     html.module-sidebar-ready .fi-layout {
                         padding-inline-start: var(--module-sidebar-width);
                         transition: padding-inline-start 0.25s ease;
@@ -571,9 +580,14 @@
                     color: #fff;
                 }
 
+                /* Outline module icons (resources/svg, user 2026-11-11):
+                   they fill their whole box, unlike the old tiled ones
+                   whose artwork showed at ~15px, so 22px reads clearly.
+                   Main strokes use currentColor (dark, light in dark mode,
+                   brand when active); the accent stays #F59E0B. */
                 .module-sidebar-icon {
-                    width: 1.5rem;
-                    height: 1.5rem;
+                    width: 1.375rem;
+                    height: 1.375rem;
                     flex-shrink: 0;
                 }
 
@@ -789,6 +803,81 @@
 
                     .fi-topbar:has(.fi-global-search-field:focus-within) .company-switcher-name {
                         display: none;
+                    }
+
+                    /* The company switcher's 320px panel opened from the
+                       button's left edge and ran past the right of a 390px
+                       screen, cutting off its Reset button (user, 2026-11-11).
+                       On phones it is placed from the right with the page
+                       gutter, and never starts left of the screen. Only
+                       `left` is overridden: Filament sets its width inside a
+                       cascade layer, which this sheet cannot outrank. */
+                    /* Card lists (contentGrid: contacts, customers, vendors,
+                       employees, departments, candidates, jobs, projects,
+                       plugins) on phones (user, 2026-11-11; mobile plan P7).
+                       Cards were 212px with an empty picture row, and over
+                       300px with a logo drawn 200px tall, so a screen held
+                       about three. Now: the checkbox sits in the corner,
+                       a picture is a 48px thumbnail beside the name, and a
+                       missing picture takes no space. Only the card's outer
+                       stack turns sideways; its text column stays stacked. */
+                    .fi-ta-content-grid .fi-ta-record {
+                        position: relative;
+                    }
+
+                    .fi-ta-content-grid .fi-ta-record > .fi-ta-record-checkbox {
+                        position: absolute;
+                        top: 0.75rem;
+                        inset-inline-end: 0.75rem;
+                        margin: 0;
+                    }
+
+                    .fi-ta-content-grid .fi-ta-record-content > .fi-grid-col > .fi-ta-stack {
+                        flex-direction: row;
+                        align-items: flex-start;
+                        gap: 0.75rem;
+                        padding-inline-end: 1.5rem;
+                    }
+
+                    .fi-ta-content-grid .fi-ta-record-content > .fi-grid-col > .fi-ta-stack > .fi-ta-col:has(.fi-ta-image) {
+                        flex: 0 0 auto;
+                        width: auto;
+                    }
+
+                    .fi-ta-content-grid .fi-ta-record-content > .fi-grid-col > .fi-ta-stack > .fi-ta-col:has(.fi-ta-image):not(:has(img)) {
+                        display: none;
+                    }
+
+                    .fi-ta-content-grid .fi-ta-record-content > .fi-grid-col > .fi-ta-stack > .fi-grid-col:not(:has(.fi-ta-image)) {
+                        min-width: 0;
+                        flex: 1 1 auto;
+                    }
+
+                    .fi-ta-content-grid .fi-ta-image img {
+                        width: 3rem !important;
+                        height: 3rem !important;
+                        max-width: 3rem !important;
+                        object-fit: contain;
+                        border-radius: 0.5rem;
+                    }
+
+                    /* Dashboards on phones (user, 2026-11-11: "don't make the
+                       dashboard too long"). The Invoice dashboard was about
+                       4.5 screens: stat cards now sit two per row, and the
+                       "Top" lists stay hidden until the page's Show lists
+                       button adds .dashboard-show-lists. Filters fold by
+                       themselves (DashboardFilters). Charts stay. */
+                    [data-dashboard-widgets] .fi-wi-stats-overview .fi-section-content.fi-grid {
+                        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                        gap: 0.5rem;
+                    }
+
+                    [data-dashboard-widgets]:not(.dashboard-show-lists) .fi-wi-table {
+                        display: none;
+                    }
+
+                    .fi-dropdown-panel:has(.company-switcher-form) {
+                        left: max(0px, calc(100% - 20rem - 1rem)) !important;
                     }
 
                     .fi-topbar-end .fi-icon-btn,

@@ -52,6 +52,21 @@ class Invoices extends BaseDashboard
             && static::hasPagePermission();
     }
 
+    /**
+     * Replaced in the menu by the combined Overview (user, 2026-11-11). The
+     * page stays so old links work: it opens the Overview with this
+     * section chosen. Its permission still decides the Invoices section.
+     */
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
+    public function mount(): void
+    {
+        $this->redirect(Overview::getUrl(['section' => 'invoices']));
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('invoices::filament/pages/dashboard.navigation.title');
@@ -95,38 +110,7 @@ class Invoices extends BaseDashboard
                         ->placeholder(__('invoices::filament/pages/dashboard.filters.all-categories'))
                         ->live(),
 
-                    Select::make('customer_id')
-                        ->label(__('invoices::filament/pages/dashboard.filters.customer'))
-                        ->options(fn () => Partner::where('customer_rank', '>', 0)->pluck('name', 'id')->toArray())
-                        ->multiple()
-                        ->searchable()
-                        ->placeholder(__('invoices::filament/pages/dashboard.filters.all-customers'))
-                        ->live(),
-
-                    Select::make('vendor_id')
-                        ->label(__('invoices::filament/pages/dashboard.filters.vendor'))
-                        ->options(fn () => Partner::where('supplier_rank', '>', 0)->pluck('name', 'id')->toArray())
-                        ->multiple()
-                        ->searchable()
-                        ->placeholder(__('invoices::filament/pages/dashboard.filters.all-vendors'))
-                        ->live(),
-
-                    Select::make('salesperson_id')
-                        ->label(__('invoices::filament/pages/dashboard.filters.salesperson'))
-                        ->options(fn () => static::companyMemberOptions())
-                        ->multiple()
-                        ->searchable()
-                        ->placeholder(__('invoices::filament/pages/dashboard.filters.all-salespersons'))
-                        ->live(),
-
-                    Select::make('payment_state')
-                        ->label(__('invoices::filament/pages/dashboard.filters.payment-state'))
-                        ->options(PaymentState::options())
-                        ->multiple()
-                        ->searchable()
-                        ->placeholder(__('invoices::filament/pages/dashboard.filters.all-payment-states'))
-                        ->live(),
-
+                    ...static::sectionFilterFields(),
                 ])
                 ->columnSpanFull()
                 ->columns([
@@ -136,6 +120,69 @@ class Invoices extends BaseDashboard
                     'xl'      => 4,
                 ]),
         ]);
+    }
+
+    /**
+     * The filters only this dashboard has. Also shown on the Overview page
+     * when the Invoices section alone is chosen, so both pages build them
+     * here.
+     *
+     * @return array<int, Select>
+     */
+    public static function sectionFilterFields(): array
+    {
+        return [
+            Select::make('customer_id')
+                ->label(__('invoices::filament/pages/dashboard.filters.customer'))
+                ->options(fn () => Partner::where('customer_rank', '>', 0)->pluck('name', 'id')->toArray())
+                ->multiple()
+                ->searchable()
+                ->placeholder(__('invoices::filament/pages/dashboard.filters.all-customers'))
+                ->live(),
+
+            Select::make('vendor_id')
+                ->label(__('invoices::filament/pages/dashboard.filters.vendor'))
+                ->options(fn () => Partner::where('supplier_rank', '>', 0)->pluck('name', 'id')->toArray())
+                ->multiple()
+                ->searchable()
+                ->placeholder(__('invoices::filament/pages/dashboard.filters.all-vendors'))
+                ->live(),
+
+            Select::make('salesperson_id')
+                ->label(__('invoices::filament/pages/dashboard.filters.salesperson'))
+                ->options(fn () => static::companyMemberOptions())
+                ->multiple()
+                ->searchable()
+                ->placeholder(__('invoices::filament/pages/dashboard.filters.all-salespersons'))
+                ->live(),
+
+            Select::make('payment_state')
+                ->label(__('invoices::filament/pages/dashboard.filters.payment-state'))
+                ->options(PaymentState::options())
+                ->multiple()
+                ->searchable()
+                ->placeholder(__('invoices::filament/pages/dashboard.filters.all-payment-states'))
+                ->live(),
+        ];
+    }
+
+    /**
+     * The widgets this dashboard shows, also used by its Overview section.
+     *
+     * @return list<class-string>
+     */
+    public static function sectionWidgets(): array
+    {
+        return [
+            Widgets\InvoiceStatsWidget::class,
+            Widgets\BillStatsWidget::class,
+            Widgets\RevenueOverTimeWidget::class,
+            Widgets\InvoiceStatusChart::class,
+            Widgets\CustomerRevenueChart::class,
+            Widgets\SalespersonPerformanceChart::class,
+            Widgets\TopInvoicesWidget::class,
+            Widgets\TopBillsWidget::class,
+        ];
     }
 
     public function getWidgetsContentComponent(): Component
@@ -150,15 +197,6 @@ class Invoices extends BaseDashboard
 
     public function getWidgets(): array
     {
-        return [
-            Widgets\InvoiceStatsWidget::class,
-            Widgets\BillStatsWidget::class,
-            Widgets\RevenueOverTimeWidget::class,
-            Widgets\InvoiceStatusChart::class,
-            Widgets\CustomerRevenueChart::class,
-            Widgets\SalespersonPerformanceChart::class,
-            Widgets\TopInvoicesWidget::class,
-            Widgets\TopBillsWidget::class,
-        ];
+        return static::sectionWidgets();
     }
 }

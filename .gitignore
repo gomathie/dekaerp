@@ -38,3 +38,6 @@ opencode.json
 # remote with full history and tags, so an extracted copy is never needed in
 # git - and it is large enough to bloat the repository if committed.
 /aureuserp-*/
+
+# Browser automation logs and snapshots (Playwright MCP). Local only, never committed.
+/.playwright-mcp/

@@ -13,11 +13,13 @@ use Webkul\Account\Events\MovePaid;
 use Webkul\Account\Events\MoveReversed;
 use Webkul\Chatter\Services\ChatterCleanupService;
 use Webkul\Inventory\Events\OperationDone;
+use Webkul\Invoice\Filament\Overview\OverviewRegistry;
 use Webkul\PluginManager\Console\Commands\InstallCommand;
 use Webkul\PluginManager\Console\Commands\UninstallCommand;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
 use Webkul\Sale\Facades\SaleOrder as SaleOrderFacade;
+use Webkul\Sale\Filament\Pages\SalesDashboard;
 use Webkul\Sale\Listeners\ComputeSaleOrderFromMoveListener;
 use Webkul\Sale\Listeners\ComputeSaleOrderListener;
 use Webkul\Sale\Listeners\SendSMSNotificationListener;
@@ -98,6 +100,17 @@ class SaleServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         Livewire::component('quotation-summary', QuotationSummary::class);
+
+        // The Sales section of the combined Overview dashboard (Invoices owns
+        // the page; Sales depends on Invoices, so it contributes here).
+        OverviewRegistry::register(
+            'sales',
+            fn (): string => __('invoices::filament/pages/overview.sections.sales'),
+            SalesDashboard::sectionWidgets(),
+            fn (): array => SalesDashboard::sectionFilterFields(),
+            fn (): bool  => SalesDashboard::canAccess(),
+            sort: 10,
+        );
 
         Event::listen(OperationDone::class, ComputeSaleOrderListener::class);
 

@@ -6,6 +6,55 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-11 (company switcher on phones, wider sidebar, browser logs out of git)
+
+- **Company switcher cut off on phones (user report, checked on
+  production at 390px).**
+  - Cause: the 320px panel was placed from x=115 and ended at x=435, which
+    hid the Reset button.
+  - Fix: under 768px, the panel's `left` is
+    `max(0px, calc(100% - 20rem - 1rem))`. It now sits 16px from the right
+    edge and never starts left of the screen. Only `left` can be overridden:
+    Filament sets the width inside a cascade layer, and an `!important` in a
+    layer outranks this sheet.
+  - The form carries `company-switcher-form` for the selector.
+    `MobileNavigationTest` asserts it: 1 passed, 8 assertions, on
+    `aureuserp_testing_claude_backfill`.
+  - Previewed in the browser on production with injected CSS only: the
+    panel ran from x=39 to 359 of 375. Nothing on the server changed.
+- **Module sidebar 200px → 240px (user: customers found it too short).**
+  - `--module-sidebar-width` changed. The content padding follows the same
+    variable, and the phone drawer uses it too. Collapsed stays 72px.
+  - Not browser-tested.
+- **Outline module icons in our colours (user, after a 32px trial of the old
+  tiled icons).**
+  - The 18 navigation icons in `resources/svg` (dashboard to help) were
+    redrawn as 24px outline icons.
+  - Main strokes are `currentColor`: dark, light in dark mode, and the
+    brand colour when active. Each keeps an accent stroke in `#F59E0B`.
+  - `.module-sidebar-icon` is 22px, and link padding is back to
+    `0.5rem 0.625rem`.
+  - The same files feed the top-bar module tabs. `menu`, `pin`, `un-pin`,
+    `website` and the Plugins page images (`public/svg`) are unchanged.
+  - Rollback: `git checkout` the old SVGs.
+  - Previewed on production by swapping the SVGs in the browser only.
+- **Card lists compact on phones (user: contacts too big, worse with a
+  picture; mobile plan P7).**
+  - This covers every `contentGrid` list: contacts, customers, vendors,
+    employees, departments, candidates, jobs, projects and plugins.
+  - Under 768px:
+    - the checkbox moves to the top corner;
+    - the card's outer stack goes sideways;
+    - a picture is a 48px thumbnail beside the text;
+    - an empty picture column is hidden.
+  - Contacts cards went from 212px (or 300px or more with a logo) to 164px.
+  - Previewed on production (Contacts, Employees, Plugins) with injected
+    CSS only. Not run on a real phone.
+- **Browser logs no longer tracked (user).**
+  - `/.playwright-mcp/` is now in `.gitignore`, and its 13 committed files
+    were removed from the index with `git rm --cached`. They stay on disk.
+  - This ends the merge conflicts those logs caused today.
+
 ## 2026-11-11 (agent review follow-ups: vault, phone search, journal balance, work orders, translations)
 
 From `docs/agent-review-2026-11-11.md`, approved by the user.
