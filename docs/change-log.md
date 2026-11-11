@@ -25,8 +25,9 @@ for the task/question log this change log is paired with.
   Attendance agent's commit `51dfc31b6` while uncommitted; a production
   cherry-pick needs that commit's non-attendance hunks or a fresh commit.
 - **Verification:** top-bar CSS injected into production at 1039px: the strip
-  is one line (36px high). Chart theme: `DashboardChartThemeTest`; see the run
-  below. Charts not yet seen in a browser with data.
+  is one line (36px high). Chart theme: `support/tests/Feature/Dashboard`
+  6 passed (15 assertions), including the new `DashboardChartThemeTest`, on
+  `aureuserp_testing_claude_vault`. Charts not yet seen in a browser with data.
 - **Rollback:** revert the CSS block, the scales hunk and the plugin.
 
 ## 2026-11-11 (reply greeting uses the developer's own name)

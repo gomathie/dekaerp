@@ -503,11 +503,11 @@ writes payroll tables.
 | AT-0 | Decisions AT-D1..D6 | — | done |
 | AT-1 | Plugin skeleton, tables, models, per-company switch, provisioner, policies, Shield config, translations (en first) | AT-0 | built; install/provisioning checks pass |
 | AT-2 | `AttendanceService` (clock in/out, idempotence, one-open rule, auto check-out job) + tests | AT-1 | built; focused checks pass, full file blocked by a PHP stack fatal |
-| AT-3 | Welcome banner widget in `support` + attendance contribution (status pill, clock button) on every module dashboard | AT-2 (banner greeting part can ship first without attendance) | built; tests written |
-| AT-4 | Manager views: who is in now, daily list, corrections with reason and audit, export | AT-2 | built; tests written |
+| AT-3 | Welcome banner widget in `support` + attendance contribution (status pill, clock button) on every module dashboard | AT-2 (banner greeting part can ship first without attendance) | built; tests written, not yet passing in a run |
+| AT-4 | Manager views: who is in now, daily list, corrections with reason and audit, export | AT-2 | built; tests written, not yet passing in a run |
 | AT-5 | Kiosk mode (PIN / badge) | AT-2, AT-D2 | design note only (no code, per AT-D2) |
-| AT-6 | Reports: lateness, absence, overtime against schedule; payroll hand-off contract | AT-2, payroll A0 gate | built; tests written |
-| AT-7 | Translations ar/es/fr/pt_BR, hardening, release | all | built (en/ar/es/fr/pt_BR); release notes pending |
+| AT-6 | Reports: lateness, absence, overtime against schedule; payroll hand-off contract | AT-2, payroll A0 gate | built; tests written, not yet passing in a run |
+| AT-7 | Translations ar/es/fr/pt_BR, hardening, release | all | built (en/ar/es/fr/pt_BR), translations check 4/4; release notes added |
 
 **Order:** the greeting banner (AT-3 without the attendance part) can ship
 on its own straight away; attendance follows AT-1 → AT-2 → AT-3 → AT-4.
