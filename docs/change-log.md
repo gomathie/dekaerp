@@ -51,9 +51,12 @@ From `docs/agent-review-2026-11-11.md`, approved by the user.
   - `CompanyMembers` listing deactivated users (low).
 - **Deploy note:** the 2026-11-11 settings migration must run before this
   code serves traffic. `UserSettings` is read on every panel request, so an
-  unmigrated database answers 500 (`MissingSettings`). Laravel Cloud runs
-  `migrate` before the release goes live. A local database needs
-  `php artisan migrate`.
+  unmigrated database answers 500 (`MissingSettings`).
+  *Corrected the same day:* the Laravel Cloud Deploy commands were empty, and
+  `migrate` was commented out, so nothing migrated on deploy. The user is
+  setting them to `php artisan migrate --force` followed by
+  `php artisan erp:sync-permissions`. Deploy commands run before a release
+  goes live. A local database needs `php artisan migrate`.
 
 ## 2026-11-11 (existing companies' administrators become Company Admin)
 
