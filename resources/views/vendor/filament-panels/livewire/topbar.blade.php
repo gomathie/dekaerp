@@ -448,6 +448,28 @@
                     --module-topbar-height: 4rem;
                 }
 
+                /* The profile avatar was a dark circle on a dark bar in dark
+                   mode, so people could not find the profile menu (user,
+                   2026-11-11). A ring in the accent colour marks it in both
+                   themes; a brighter one on hover and keyboard focus. */
+                .fi-topbar .fi-user-menu-trigger .fi-avatar {
+                    box-shadow: 0 0 0 2px var(--color-white, #fff), 0 0 0 4px #F59E0B;
+                }
+
+                .dark .fi-topbar .fi-user-menu-trigger .fi-avatar {
+                    box-shadow: 0 0 0 2px var(--color-gray-900, #111827), 0 0 0 4px #FBBF24;
+                }
+
+                .fi-topbar .fi-user-menu-trigger:hover .fi-avatar,
+                .fi-topbar .fi-user-menu-trigger:focus-visible .fi-avatar {
+                    box-shadow: 0 0 0 2px var(--color-white, #fff), 0 0 0 4px #D97706;
+                }
+
+                .dark .fi-topbar .fi-user-menu-trigger:hover .fi-avatar,
+                .dark .fi-topbar .fi-user-menu-trigger:focus-visible .fi-avatar {
+                    box-shadow: 0 0 0 2px var(--color-gray-900, #111827), 0 0 0 4px #FDE68A;
+                }
+
                 /* Topbar stays full-width and sits above the sidebar; only the content column is pushed over (tablet & up) */
                 @media (min-width: 768px) {
                     /* Lists always show on wider screens, so their phone-only
@@ -872,7 +894,14 @@
                         gap: 0.5rem;
                     }
 
-                    [data-dashboard-widgets]:not(.dashboard-show-lists) .fi-wi-table {
+                    /* Overview only (it has the Show details button): on a
+                       phone just "At a glance" shows; charts, detailed stats
+                       and lists wait for the button (user, 2026-11-11).
+                       Scoped to [data-overview]: other dashboards have no
+                       button, so hiding there would make lists unreachable. */
+                    [data-overview]:not(.dashboard-show-lists) .fi-wi-table,
+                    [data-overview]:not(.dashboard-show-lists) .fi-wi-chart,
+                    [data-overview]:not(.dashboard-show-lists) .fi-wi-stats-overview:not(:has(.overview-headline-stat)) {
                         display: none;
                     }
 

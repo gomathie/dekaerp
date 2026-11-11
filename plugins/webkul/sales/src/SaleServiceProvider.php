@@ -20,6 +20,7 @@ use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
 use Webkul\Sale\Facades\SaleOrder as SaleOrderFacade;
 use Webkul\Sale\Filament\Pages\SalesDashboard;
+use Webkul\Sale\Filament\Widgets\SaleHeadlineWidget;
 use Webkul\Sale\Listeners\ComputeSaleOrderFromMoveListener;
 use Webkul\Sale\Listeners\ComputeSaleOrderListener;
 use Webkul\Sale\Listeners\SendSMSNotificationListener;
@@ -110,6 +111,7 @@ class SaleServiceProvider extends PackageServiceProvider
             fn (): array => SalesDashboard::sectionFilterFields(),
             fn (): bool  => SalesDashboard::canAccess(),
             sort: 10,
+            headline: SaleHeadlineWidget::class,
         );
 
         Event::listen(OperationDone::class, ComputeSaleOrderListener::class);
