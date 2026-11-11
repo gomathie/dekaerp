@@ -573,9 +573,14 @@
                     color: #fff;
                 }
 
+                /* Outline module icons (resources/svg, user 2026-11-11):
+                   they fill their whole box, unlike the old tiled ones
+                   whose artwork showed at ~15px, so 22px reads clearly.
+                   Main strokes use currentColor (dark, light in dark mode,
+                   brand when active); the accent stays #F59E0B. */
                 .module-sidebar-icon {
-                    width: 1.5rem;
-                    height: 1.5rem;
+                    width: 1.375rem;
+                    height: 1.375rem;
                     flex-shrink: 0;
                 }
 

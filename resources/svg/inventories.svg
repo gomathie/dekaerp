@@ -1,13 +1,5 @@
-<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="0.5" y="0.5" width="63" height="63" rx="12.5" fill="white"/>
-<rect x="0.5" y="0.5" width="63" height="63" rx="12.5" stroke="#DCE0E5"/>
-<path d="M32 15L48 24L32 33L16 24L32 15Z" fill="#78716C"/>
-<path d="M16 24L32 33V49L16 40V24Z" fill="#212A31"/>
-<path d="M32 33L48 24V40L32 49V33Z" fill="#161E24"/>
-<path d="M28 17.25L36 21.75L36 30.75L28 26.25L28 17.25Z" fill="#F59E0B"/>
-<path d="M28 26.25L32 28.5V47L28 44.75V26.25Z" fill="#F59E0B"/>
-<path d="M36 28L44 23.5V33.5L36 38V28Z" fill="white"/>
-<path d="M38 30L42 27.75" stroke="#212A31" stroke-width="1.2" stroke-linecap="round"/>
-<path d="M38 33L42 30.75" stroke="#78716C" stroke-width="1.2" stroke-linecap="round"/>
-<path d="M38 36L41 34.3" stroke="#F59E0B" stroke-width="1.2" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/>
+<path d="M4 7.5l8 4.5 8-4.5M12 12v9"/>
+<path d="M8 5.3l8 4.5" stroke="#F59E0B"/>
 </svg>
