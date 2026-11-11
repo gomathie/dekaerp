@@ -3,10 +3,10 @@
 namespace Webkul\Invoice\Filament\Pages;
 
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
@@ -15,6 +15,7 @@ use Webkul\Product\Models\Category;
 use Webkul\Product\Models\Product;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Filament\Forms\Components\DashboardDateRange;
+use Webkul\Support\Filament\Forms\Components\DashboardFilters;
 
 /**
  * Sales, Purchases and Invoices on one page (user, 2026-11-11), replacing
@@ -86,47 +87,63 @@ class Overview extends BaseDashboard
         }
 
         return $form->schema([
-            Section::make()
-                ->schema([
-                    Select::make('sections')
-                        ->label(__('invoices::filament/pages/overview.filters.sections'))
-                        ->options(array_map(fn (array $section): string => ($section['label'])(), $sections))
-                        ->multiple()
-                        ->placeholder(__('invoices::filament/pages/overview.filters.all-sections'))
-                        ->live(),
+            DashboardFilters::make([
+                Select::make('sections')
+                    ->label(__('invoices::filament/pages/overview.filters.sections'))
+                    ->options(array_map(fn (array $section): string => ($section['label'])(), $sections))
+                    ->multiple()
+                    ->placeholder(__('invoices::filament/pages/overview.filters.all-sections'))
+                    ->live(),
 
-                    ...DashboardDateRange::make(
-                        __('invoices::filament/pages/overview.filters.date-range'),
-                        'start_date',
-                        'end_date',
-                    ),
+                ...DashboardDateRange::make(
+                    __('invoices::filament/pages/overview.filters.date-range'),
+                    'start_date',
+                    'end_date',
+                ),
 
-                    Select::make('product_id')
-                        ->label(__('invoices::filament/pages/overview.filters.product'))
-                        ->options(fn () => Product::pluck('name', 'id')->toArray())
-                        ->multiple()
-                        ->searchable()
-                        ->placeholder(__('invoices::filament/pages/overview.filters.all-products'))
-                        ->live(),
+                Select::make('product_id')
+                    ->label(__('invoices::filament/pages/overview.filters.product'))
+                    ->options(fn () => Product::pluck('name', 'id')->toArray())
+                    ->multiple()
+                    ->searchable()
+                    ->placeholder(__('invoices::filament/pages/overview.filters.all-products'))
+                    ->live(),
 
-                    Select::make('category_id')
-                        ->label(__('invoices::filament/pages/overview.filters.category'))
-                        ->options(fn () => Category::pluck('name', 'id')->toArray())
-                        ->multiple()
-                        ->searchable()
-                        ->placeholder(__('invoices::filament/pages/overview.filters.all-categories'))
-                        ->live(),
+                Select::make('category_id')
+                    ->label(__('invoices::filament/pages/overview.filters.category'))
+                    ->options(fn () => Category::pluck('name', 'id')->toArray())
+                    ->multiple()
+                    ->searchable()
+                    ->placeholder(__('invoices::filament/pages/overview.filters.all-categories'))
+                    ->live(),
 
-                    ...$extraFields,
-                ])
-                ->columnSpanFull()
-                ->columns([
-                    'default' => 1,
-                    'sm'      => 2,
-                    'md'      => 3,
-                    'xl'      => 4,
-                ]),
+                ...$extraFields,
+            ], [
+                'default' => 1,
+                'sm'      => 2,
+                'md'      => 3,
+                'xl'      => 4,
+            ]),
         ]);
+    }
+
+    /**
+     * On phones the "Top" lists are hidden to keep the page short (user,
+     * 2026-11-11); this button shows them. Hidden on wider screens, where
+     * the lists always show (topbar CSS, `.dashboard-lists-toggle`).
+     *
+     * @return array<int, Action>
+     */
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('toggleLists')
+                ->label(__('support::filament/dashboard.show-lists'))
+                ->icon('heroicon-o-list-bullet')
+                ->color('gray')
+                ->extraAttributes(['class' => 'dashboard-lists-toggle'])
+                ->alpineClickHandler("document.querySelectorAll('[data-dashboard-widgets]').forEach(el => el.classList.toggle('dashboard-show-lists'))"),
+        ];
     }
 
     public function getWidgetsContentComponent(): Component

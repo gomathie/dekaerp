@@ -449,6 +449,12 @@
 
                 /* Topbar stays full-width and sits above the sidebar; only the content column is pushed over (tablet & up) */
                 @media (min-width: 768px) {
+                    /* Lists always show on wider screens, so their phone-only
+                       toggle is not offered there (2026-11-11). */
+                    .dashboard-lists-toggle {
+                        display: none !important;
+                    }
+
                     html.module-sidebar-ready .fi-layout {
                         padding-inline-start: var(--module-sidebar-width);
                         transition: padding-inline-start 0.25s ease;
@@ -852,6 +858,21 @@
                         max-width: 3rem !important;
                         object-fit: contain;
                         border-radius: 0.5rem;
+                    }
+
+                    /* Dashboards on phones (user, 2026-11-11: "don't make the
+                       dashboard too long"). The Invoice dashboard was about
+                       4.5 screens: stat cards now sit two per row, and the
+                       "Top" lists stay hidden until the page's Show lists
+                       button adds .dashboard-show-lists. Filters fold by
+                       themselves (DashboardFilters). Charts stay. */
+                    [data-dashboard-widgets] .fi-wi-stats-overview .fi-section-content.fi-grid {
+                        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                        gap: 0.5rem;
+                    }
+
+                    [data-dashboard-widgets]:not(.dashboard-show-lists) .fi-wi-table {
+                        display: none;
                     }
 
                     .fi-dropdown-panel:has(.company-switcher-form) {
