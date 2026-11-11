@@ -16,6 +16,19 @@ Remaining (estimate about 2–3 days):
    every contact screen**, each only when the company has that module.
 4. Combination tests and a full suite run.
 
+**Progress, 2026-11-11** (details in `docs/change-log.md`):
+
+1. Verified on production: the Sales, Purchases, Invoicing and Inventory
+   product screens show the same 16 fields. **Done.**
+2. Custom fields: the base form already had the custom-fields section. The
+   real gap was that a field showed and saved only for its own model class.
+   It now follows the table (`Field::customizableTypes()`). **Done.**
+3. Contacts phase 3: Purchases and Bills tabs on all six contact screens,
+   and Bank accounts on the Purchases vendor. **Done.**
+4. Tests: `SharedProductCustomFieldsTest` and
+   `ContactScreenPurchaseTabsTest` pass (5 tests). **The full suite run is
+   pending.**
+
 The "Implementation status (2026-06-05)" section below is the detail.
 
 ## Problem
