@@ -7,6 +7,7 @@ return [
                 'title'        => 'Titre',
                 'type'         => 'Type',
                 'name'         => 'Nom',
+                'type'         => 'Type',
                 'create-type'  => 'Créer un type',
                 'duration'     => 'Durée',
                 'start-date'   => 'Date de début',
