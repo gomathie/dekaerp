@@ -1,7 +1,7 @@
 # Attendance — Plan
 
-Status: **approved for build (2026-11-11, user: "build all of it from A to
-Z, step by step").** Decisions AT-D1 to AT-D6 were answered by the user on
+Status: **in progress (2026-11-11, user: "build all of it from A to Z, step
+by step").** Decisions AT-D1 to AT-D6 were answered by the user on
 2026-11-11, each as recommended (§5). *Superseded the same day: "plan only,
 no code".* Requested by the user together
 with a welcome banner on every module dashboard (the banner shows the
@@ -10,6 +10,35 @@ clock-in control once attendance exists).
 Read `AGENTS.md` (project memory and protected decisions) first. Multi-company
 rules apply throughout: an attendance row belongs to the **employee's**
 company, never the session's.
+
+## Progress log
+
+**2026-11-11 — continuation status.** The Attendance plugin's data layer and
+the initial registration/test files were already present and tracked when this
+continuation resumed. They have not yet been verified here.
+
+- **Done in this continuation:** recorded this status and the package board in
+  this plan. No feature code has been changed in this continuation yet.
+- **Present, pending verification:** the three migrations, models, access and
+  company provisioning classes, policy, clock-in/out and correction service,
+  schedule reader, payroll adapter, auto-checkout command, provider and
+  Filament plugin registration, Shield configuration, English strings,
+  `AttendanceFeature` suite registration, test helper, and initial installation
+  and service tests.
+- **In progress:** AT-1; the Shield resource target and install path still need
+  verification, including a real install test. AT-2's existing service has
+  unverified edge cases; its existing tests must run before service changes.
+- **Not started:** AT-3 through AT-7. The tagged topbar override is owned by a
+  concurrent agent and is out of scope.
+- **Verification:** local PostgreSQL is running and the isolated database
+  `aureuserp_testing_attendance` was created. In Sail,
+  `docker compose run --rm --no-deps --user root --entrypoint composer
+  laravel.test dump-autoload --no-scripts` completed successfully (exit 0).
+  Composer emitted PSR-4 warnings for global test helper classes, including
+  `AttendanceHelper`, and unrelated plugin helpers. No tests or translation
+  checks have run yet.
+- **Current file scope:** only `docs/attendance-plan.md` has been changed in
+  this continuation. Further files will be recorded as they change.
 
 ---
 
@@ -111,16 +140,16 @@ writes payroll tables.
 
 ## 6. Work packages
 
-| Package | Scope | Depends on |
-| --- | --- | --- |
-| AT-0 | Decisions AT-D1..D6 | — |
-| AT-1 | Plugin skeleton, tables, models, per-company switch, provisioner, policies, Shield config, translations (en first) | AT-0 |
-| AT-2 | `AttendanceService` (clock in/out, idempotence, one-open rule, auto check-out job) + tests | AT-1 |
-| AT-3 | Welcome banner widget in `support` + attendance contribution (status pill, clock button) on every module dashboard | AT-2 (banner greeting part can ship first without attendance) |
-| AT-4 | Manager views: who is in now, daily list, corrections with reason and audit, export | AT-2 |
-| AT-5 | Kiosk mode (PIN / badge) | AT-2, AT-D2 |
-| AT-6 | Reports: lateness, absence, overtime against schedule; payroll hand-off contract | AT-2, payroll A0 gate |
-| AT-7 | Translations ar/es/fr/pt_BR, hardening, release | all |
+| Package | Scope | Depends on | Status |
+| --- | --- | --- | --- |
+| AT-0 | Decisions AT-D1..D6 | — | done |
+| AT-1 | Plugin skeleton, tables, models, per-company switch, provisioner, policies, Shield config, translations (en first) | AT-0 | in progress |
+| AT-2 | `AttendanceService` (clock in/out, idempotence, one-open rule, auto check-out job) + tests | AT-1 | pending verification |
+| AT-3 | Welcome banner widget in `support` + attendance contribution (status pill, clock button) on every module dashboard | AT-2 (banner greeting part can ship first without attendance) | pending |
+| AT-4 | Manager views: who is in now, daily list, corrections with reason and audit, export | AT-2 | pending |
+| AT-5 | Kiosk mode (PIN / badge) | AT-2, AT-D2 | design note only |
+| AT-6 | Reports: lateness, absence, overtime against schedule; payroll hand-off contract | AT-2, payroll A0 gate | pending |
+| AT-7 | Translations ar/es/fr/pt_BR, hardening, release | all | pending |
 
 **Order:** the greeting banner (AT-3 without the attendance part) can ship
 on its own straight away; attendance follows AT-1 → AT-2 → AT-3 → AT-4.
