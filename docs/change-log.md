@@ -6,6 +6,55 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-11 (unified product and contact screens: shared custom fields, purchase tabs everywhere)
+
+Planned item #1, `docs/planned/01-unified-product-resource-plan.md` (user:
+high priority).
+
+- **Checked first:** on production, all four product edit screens (Sales,
+  Purchases, Invoicing, Inventory) already render the same 16 fields for the
+  same product. The June shared-registry work is live.
+- **Custom fields follow the table, not the model class.**
+  - Why: every module has its own product (and contact) model class.
+    `Field::customizableTypes()` matched a field only to its model and that
+    model's parents. A field created on, say, the Inventory product was
+    missing on the Sales product screen and was **not saved** from it
+    (`forCustomizable()` drives fillable and casts).
+  - How: `customizableTypes()` also includes every stored customizable type
+    whose model uses the same table. The type list and table names are
+    cached and flushed with the existing cache.
+  - The table is read with `ReflectionClass::newInstanceWithoutConstructor()`.
+    Constructing a customizable model loads its custom fields, so the first
+    version looped until PHP crashed (`ProcessSignaledException`).
+  - Test: sales `Filament/SharedProductCustomFieldsTest`. It shares fields
+    across product models and not across tables.
+- **Purchases and Bills tabs on every contact screen** (user decision,
+  2026-11-11).
+  - Screens: Contacts, the Sales customer screen, and the Invoicing and
+    Accounting customer and vendor screens. Thin page subclasses are added
+    only when Purchases is installed. The Purchases vendor screen also
+    gains Bank accounts.
+  - Relations: `PurchaseServiceProvider` registers `purchaseOrders` and
+    `vendorBills` on the base `Partner`; Laravel resolves them up the class
+    chain. They are **not** named `orders` or `accountMoves`: the Sales
+    contact model already has `orders` for sales orders, which would have
+    listed sales orders under a Purchases tab.
+  - Access: the Purchases pages use the new `ShownOnContactScreens` trait.
+    The company must have Purchases switched on (`PurchasesAccess`), and the
+    user must pass the list screen's own `canViewAny()`. Otherwise a user who
+    may open contacts but not Purchases would read purchase orders and bills
+    through the tab.
+  - Test: purchases `Filament/ContactScreenPurchaseTabsTest`: tabs present,
+    the relations read purchase records, and the tabs are hidden from a
+    user without Purchases permissions.
+- **Verification:** 5 passed, 15 assertions, on
+  `aureuserp_testing_claude_backfill`. The full 22-suite run follows.
+- **Rollback:**
+  - Restore `Field::customizableTypes()` to model-and-parents only.
+  - Remove the twelve page subclasses and the `isPluginInstalled('purchases')`
+    blocks in the six contact resources.
+  - Restore the Purchases pages' relationship names.
+
 ## 2026-11-11 (combined Overview dashboard, shorter dashboards on phones, outline collapse icon)
 
 - **Sales, Purchases and Invoices on one Overview page (user decision:
