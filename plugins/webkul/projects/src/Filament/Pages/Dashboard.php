@@ -2,10 +2,6 @@
 
 namespace Webkul\Project\Filament\Pages;
 
-
-
-use Webkul\Support\Filament\Concerns\ChecksPagePermission;
-use Webkul\PluginManager\Support\PluginEntitlement;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms\Components\Select;
@@ -16,6 +12,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
 use Webkul\Partner\Models\Partner;
+use Webkul\PluginManager\Support\PluginEntitlement;
 use Webkul\Project\Filament\Widgets\StatsOverviewWidget;
 use Webkul\Project\Filament\Widgets\TaskByStageChart;
 use Webkul\Project\Filament\Widgets\TaskByStateChart;
@@ -23,9 +20,11 @@ use Webkul\Project\Filament\Widgets\TopAssigneesWidget;
 use Webkul\Project\Filament\Widgets\TopProjectsWidget;
 use Webkul\Project\Models\Project;
 use Webkul\Project\Models\Tag;
-use Webkul\Security\Models\User;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Filament\CompanyMembers;
+use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 use Webkul\Support\Filament\Forms\Components\DashboardDateRange;
+use Webkul\Support\Filament\Forms\Components\DashboardFilters;
 
 class Dashboard extends BaseDashboard
 {
@@ -67,7 +66,7 @@ class Dashboard extends BaseDashboard
         return $schema
             ->components([
 
-                Section::make()
+                DashboardFilters::apply(Section::make())
                     ->columns([
                         'default' => 1,
                         'sm'      => 2,
@@ -88,7 +87,7 @@ class Dashboard extends BaseDashboard
                             ->multiple()
                             ->searchable()
                             ->preload()
-                            ->options(fn () => \Webkul\Support\Filament\CompanyMembers::options())
+                            ->options(fn () => CompanyMembers::options())
                             ->reactive(),
                         Select::make('selectedTags')
                             ->label(__('projects::filament/pages/dashboard.filters-form.tags'))

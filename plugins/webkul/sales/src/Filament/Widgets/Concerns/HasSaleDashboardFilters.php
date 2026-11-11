@@ -13,9 +13,30 @@ trait HasSaleDashboardFilters
 {
     use InteractsWithPageFilters;
 
-    protected function applyFilters(Builder $query, ?Carbon $start = null, ?Carbon $end = null): Builder
+    /**
+     * The page's filters, also read under the combined Overview's names.
+     * The Overview shares one product, category and date filter across
+     * sections, using the Invoices and Purchases names (product_id,
+     * category_id, start_date, end_date); without this the Sales widgets
+     * would ignore them there (2026-11-11).
+     *
+     * @return array<string, mixed>
+     */
+    protected function saleDashboardFilters(): array
     {
         $filters = $this->pageFilters ?? [];
+
+        $filters['products'] = $filters['products'] ?? $filters['product_id'] ?? null;
+        $filters['categories'] = $filters['categories'] ?? $filters['category_id'] ?? null;
+        $filters['startDate'] = $filters['startDate'] ?? $filters['start_date'] ?? null;
+        $filters['endDate'] = $filters['endDate'] ?? $filters['end_date'] ?? null;
+
+        return $filters;
+    }
+
+    protected function applyFilters(Builder $query, ?Carbon $start = null, ?Carbon $end = null): Builder
+    {
+        $filters = $this->saleDashboardFilters();
 
         [$defaultStart, $defaultEnd] = $this->periodRange();
 
@@ -75,7 +96,7 @@ trait HasSaleDashboardFilters
      */
     protected function periodRange(): array
     {
-        $filters = $this->pageFilters ?? [];
+        $filters = $this->saleDashboardFilters();
 
         $start = ! empty($filters['startDate'])
             ? Carbon::parse($filters['startDate'])->startOfDay()

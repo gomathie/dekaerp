@@ -1,12 +1,6 @@
-<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="0.5" y="0.5" width="63" height="63" rx="12.5" fill="white"/>
-<rect x="0.5" y="0.5" width="63" height="63" rx="12.5" stroke="#DCE0E5"/>
-<path d="M22 13H39C41.2091 13 43 14.7909 43 17V41C43 43.2091 41.2091 45 39 45H22C19.7909 45 18 43.2091 18 41V17C18 14.7909 19.7909 13 22 13Z" fill="#78716C" fill-opacity="0.35"/>
-<path d="M15 17H31L39 25V47C39 49.2091 37.2091 51 35 51H15C12.7909 51 11 49.2091 11 47V21C11 18.7909 12.7909 17 15 17Z" fill="#212A31"/>
-<path d="M31 17V21C31 23.2091 32.7909 25 35 25H39L31 17Z" fill="white" fill-opacity="0.25"/>
-<rect x="16" y="28" width="16" height="2.5" rx="1.25" fill="white" fill-opacity="0.5"/>
-<rect x="16" y="34" width="13" height="2.5" rx="1.25" fill="white"/>
-<rect x="16" y="40" width="8" height="2.5" rx="1.25" fill="#F59E0B"/>
-<circle cx="42" cy="41" r="9" fill="#F59E0B" stroke="white" stroke-width="2.5"/>
-<path d="M38.5 41L41 43.5L45.5 38.5" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+<path d="M6 3h9l4 4v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/>
+<path d="M15 3v4h4"/>
+<path d="M8.5 10h4M8.5 13.5h7"/>
+<path d="M8.5 17h3" stroke="#F59E0B"/>
 </svg>

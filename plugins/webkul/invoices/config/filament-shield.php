@@ -21,6 +21,7 @@ use Webkul\Invoice\Filament\Clusters\Vendors\Resources\PaymentResource as Invoic
 use Webkul\Invoice\Filament\Clusters\Vendors\Resources\ProductResource as InvoiceProductResource;
 use Webkul\Invoice\Filament\Clusters\Vendors\Resources\RefundResource;
 use Webkul\Invoice\Filament\Clusters\Vendors\Resources\VendorResource;
+use Webkul\Invoice\Filament\Pages\Overview;
 
 $basic = ['view_any', 'view', 'create', 'update'];
 $delete = ['delete', 'delete_any'];
@@ -59,6 +60,9 @@ return [
             Vendors::class,
             Customers::class,
             Configuration::class,
+            // No permission of its own: each section's dashboard permission
+            // decides what it shows (Overview::canAccess()).
+            Overview::class,
         ],
     ],
 ];
