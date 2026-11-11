@@ -14,13 +14,13 @@ for the task/question log this change log is paired with.
   checking: the language links' click handler used `@js()` inside a component
   attribute, which Blade does not compile, so it threw and the plain
   `?lang=` link dropped other query values.
-- **How:** `user-menu-language.blade.php` is one row (icon, current language,
+- **How:** `user-menu-language.blade.php` is one row ("Language" with the current code in an amber pill) that reveals a strip of code chips (EN AR ES FR PT-BR; full native name as tooltip and accessible name; current one filled amber; light and dark styles; reduced-motion respected). Superseded wording: one row (icon, current language,
   chevron) that expands the other languages in place (Alpine), not a nested
   dropdown. Codes are echoed directly (config values, letters and
   underscores). `topbar.blade.php` hides the page scrollbar on pages with
   widgets that are not resource pages (`fi-resource-*`), so record lists keep
   theirs.
-- **Verification:** `UserMenuLanguageTest` 1 passed (12 assertions) on
+- **Verification:** `UserMenuLanguageTest` 1 passed (19 assertions) on
   `aureuserp_testing_claude_vault`; scrollbar CSS injected into the
   production Overview (computed `scrollbar-width: none`). The new menu has not
   been seen in a browser yet.
