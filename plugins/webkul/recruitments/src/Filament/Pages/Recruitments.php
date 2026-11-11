@@ -2,28 +2,27 @@
 
 namespace Webkul\Recruitment\Filament\Pages;
 
-
-
-use Webkul\Support\Filament\Concerns\ChecksPagePermission;
-use Webkul\PluginManager\Support\PluginEntitlement;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms\Components\Select;
-use Filament\Panel;
 use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Panel;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\View\LegacyComponents\Widget;
 use Illuminate\Contracts\Support\Htmlable;
 use Webkul\Employee\Models\Department;
 use Webkul\Employee\Models\EmployeeJobPosition;
-use Filament\Schemas\Components\Component;
+use Webkul\PluginManager\Support\PluginEntitlement;
 use Webkul\Recruitment\Filament\Widgets\ApplicantChartWidget;
 use Webkul\Recruitment\Filament\Widgets\ApplicantsByStageChart;
 use Webkul\Recruitment\Filament\Widgets\JobPositionStatsWidget;
 use Webkul\Recruitment\Models\Stage;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 use Webkul\Support\Filament\Forms\Components\DashboardDateRange;
+use Webkul\Support\Filament\Forms\Components\DashboardFilters;
 use Webkul\Support\Models\Company;
 
 class Recruitments extends BaseDashboard
@@ -63,7 +62,7 @@ class Recruitments extends BaseDashboard
     {
         return $schema
             ->components([
-                Section::make()
+                DashboardFilters::apply(Section::make())
                     ->schema([
                         Select::make('selectedJobs')
                             ->label(__('recruitments::filament/pages/recruitment.filters-form.job-position'))
@@ -139,6 +138,7 @@ class Recruitments extends BaseDashboard
             ApplicantsByStageChart::class,
         ];
     }
+
     public static function canAccess(): bool
     {
         return PluginEntitlement::enabledForCurrent('recruitments')
