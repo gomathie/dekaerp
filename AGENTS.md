@@ -1318,6 +1318,15 @@ MULTI-COMPANY FACTS THAT BITE
   plugin providers, and `SchemaRegistry` is static with no reset. Guard any
   `register()` with a static flag or the contributed section is rendered twice.
   `PluginManager\CompanyContributions` shows the shape.
+• **Eloquent event-listener registration guards are per application, not per
+  PHP process** (2026-11-11). Rebuilding the Laravel test application replaces
+  Eloquent's dispatcher but preserves static provider properties. A static
+  "registered" flag then prevents the new application from attaching its
+  listener. Use an application-container marker to keep repeated boots
+  idempotent within one application while allowing registration after rebuild.
+  Do not apply this to `SchemaRegistry`, which is itself static. Attendance's
+  `provisions each new company with attendance disabled by default` test pins
+  the behavior.
 • A plugin contributing UI into another plugin's resource goes through a
   `*SchemaRegistry` (`AbstractSchemaRegistry` in `support`), **not** a direct
   reference - `support` is the base plugin, so `support` referencing
