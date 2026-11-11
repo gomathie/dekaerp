@@ -248,11 +248,16 @@ class AttendanceService
 
     public function employeeForCurrentCompany(User $user): Employee
     {
-        $companyId = app(CompanyContext::class)->currentId() ?: $user->default_company_id;
+        $companyId = app(CompanyContext::class)->currentId();
+
+        // Falling back would clock into another tenant when a forced context resolves empty.
+        if ($companyId === null) {
+            throw CorrectionRefusedException::noEmployee();
+        }
 
         $employee = Employee::withoutGlobalScopes()
             ->where('user_id', $user->id)
-            ->when($companyId, fn ($query) => $query->where('company_id', $companyId))
+            ->where('company_id', $companyId)
             ->first();
 
         if ($employee === null) {

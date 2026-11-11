@@ -26,8 +26,9 @@ continuation resumed. They have not yet been verified here.
   Filament plugin registration, Shield configuration, English strings,
   `AttendanceFeature` suite registration, test helper, and initial installation
   and service tests.
-- **In progress:** AT-1; migration installation passes, but provisioning a
-  newly created company's default-off settings row currently fails.
+- **In progress:** AT-1; the migration and company provisioning checks pass,
+  including the application-rebuild sequence. Shield permission generation
+  and the complete installation test file remain unverified.
   AT-2's service test exposed a forced-context fallback defect; service changes
   remain queued until AT-1 is handed off.
 - **Not started:** AT-3 through AT-7. The tagged topbar override is owned by a
@@ -44,8 +45,20 @@ continuation resumed. They have not yet been verified here.
   passed (1 test, 4 assertions, 449.40s) on
   `aureuserp_testing_attendance`. `PluginInstallationTest.php` then stopped
   with 1 passed, 1 failed, 3 pending, 5 assertions in 412.04s; creating a
-  company did not create its default-off `CompanySetting` row. Root cause is
-  under investigation. The full service suite's debug run stopped at
+  company did not create its default-off `CompanySetting` row. The provider's
+  process-static listener guard was the cause: application rebuilds replace
+  Eloquent's dispatcher but preserve the static flag. The guard is now stored
+  in the application container, so repeat boots in one application remain
+  idempotent while a rebuilt application registers its own listener. The
+  focused provisioning test passed after that change (1 test, 3 assertions,
+  546.96s) using the clean `aureuserp_testing_attendance` database. Then the
+  install-table and company-provisioning tests passed together (2 tests, 7
+  assertions, 435.66s), and all three install/provisioning tests passed (3
+  tests, 9 assertions, 437.60s), also on
+  `aureuserp_testing_attendance`. A full `PluginInstallationTest.php` attempt
+  exited with a PHP stack-size fatal at
+  `Illuminate/Database/ConcurrencyErrorDetector.php:20`; it did not provide a
+  complete suite result. The full service suite's debug run stopped at
   `does not fall back to the default company inside an empty forced context`:
   3 passed, 1 failed, 11 pending, 7 assertions, 545.85s. The exception was not
   thrown because `employeeForCurrentCompany()` falls back from `currentId()` to
@@ -59,6 +72,25 @@ continuation resumed. They have not yet been verified here.
   it; this bypassed the test helper's migration-path filtering and is not
   evidence against the attendance install path. Full Shield generation is
   intentionally not bypassed. Translation checks have not run.
+
+**AT-1 rationale — company listener registration (2026-11-11).** **Why:** a
+process-static flag survives Laravel test application rebuilds, but rebuilding
+the application replaces Eloquent's event dispatcher; later companies then
+miss their settings row. **How:** `AttendanceServiceProvider` records listener
+registration in the current application container; the existing
+`provisions each new company with attendance disabled by default` test pins
+the behavior. **Benefit:** settings are provisioned in each application
+lifecycle without duplicate callbacks when a provider boots twice in one
+application. **Trade-off / risk:** container state is intentionally not shared
+between application instances, so each new instance registers one callback.
+**Verification:** the application-rebuild sequence passed (2 tests, 7
+assertions) and the three install/provisioning tests passed (3 tests, 9
+assertions), on `aureuserp_testing_attendance`. The complete installation file
+still needs a successful run; a later attempt ended in PHP's stack-size fatal
+at Laravel's `ConcurrencyErrorDetector`. **Rollback:** revert the guard to the
+previous static flag only if the application lifecycle is changed so the
+Eloquent dispatcher outlives the provider; otherwise that reintroduces the
+missing-listener regression.
 - **Current file scope:** `docs/attendance-plan.md`,
   `plugins/webkul/attendances/tests/Feature/AttendanceServiceTest.php`, and
   `plugins/webkul/attendances/tests/Feature/PluginInstallationTest.php`.
