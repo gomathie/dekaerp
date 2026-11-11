@@ -11,10 +11,13 @@ use Webkul\Accounting\Filament\Clusters\Vendors\Resources\VendorResource\Pages\E
 use Webkul\Accounting\Filament\Clusters\Vendors\Resources\VendorResource\Pages\ListVendors;
 use Webkul\Accounting\Filament\Clusters\Vendors\Resources\VendorResource\Pages\ManageAddresses;
 use Webkul\Accounting\Filament\Clusters\Vendors\Resources\VendorResource\Pages\ManageBankAccounts;
+use Webkul\Accounting\Filament\Clusters\Vendors\Resources\VendorResource\Pages\ManageBills;
 use Webkul\Accounting\Filament\Clusters\Vendors\Resources\VendorResource\Pages\ManageContacts;
+use Webkul\Accounting\Filament\Clusters\Vendors\Resources\VendorResource\Pages\ManagePurchases;
 use Webkul\Accounting\Filament\Clusters\Vendors\Resources\VendorResource\Pages\ViewVendor;
 use Webkul\Accounting\Filament\Clusters\Vendors\Resources\VendorResource\RelationManagers\BankAccountsRelationManager;
 use Webkul\Accounting\Models\Vendor;
+use Webkul\PluginManager\Package;
 
 class VendorResource extends BaseVendorResource
 {
@@ -45,18 +48,28 @@ class VendorResource extends BaseVendorResource
 
     public static function getRecordSubNavigation(Page $page): array
     {
-        return $page->generateNavigationItems([
+        $items = [
             ViewVendor::class,
             EditVendor::class,
             ManageContacts::class,
             ManageAddresses::class,
             ManageBankAccounts::class,
-        ]);
+        ];
+
+        // Purchases and bills on every contact screen (unified contacts, user
+        // 2026-11-11). The pages check the company switch and the user's
+        // Purchases permissions themselves.
+        if (Package::isPluginInstalled('purchases')) {
+            $items[] = ManagePurchases::class;
+            $items[] = ManageBills::class;
+        }
+
+        return $page->generateNavigationItems($items);
     }
 
     public static function getPages(): array
     {
-        return [
+        $pages = [
             'index'        => ListVendors::route('/'),
             'create'       => CreateVendor::route('/create'),
             'edit'         => EditVendor::route('/{record}/edit'),
@@ -65,5 +78,12 @@ class VendorResource extends BaseVendorResource
             'addresses'    => ManageAddresses::route('/{record}/addresses'),
             'bank-account' => ManageBankAccounts::route('/{record}/bank-accounts'),
         ];
+
+        if (Package::isPluginInstalled('purchases')) {
+            $pages['purchases'] = ManagePurchases::route('/{record}/purchases');
+            $pages['bills'] = ManageBills::route('/{record}/bills');
+        }
+
+        return $pages;
     }
 }
