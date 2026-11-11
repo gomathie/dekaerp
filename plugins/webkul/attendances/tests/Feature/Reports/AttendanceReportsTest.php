@@ -48,11 +48,33 @@ it('measures lateness in the schedule timezone, not the server one', function ()
     $rows = app(AttendanceReports::class)->lateRows(
         Carbon::parse('2026-11-09'),
         Carbon::parse('2026-11-09'),
+        [$employee->id],
     );
 
     // Africa/Lusaka is UTC+2: 08:30 UTC is 10:30 local against an 08:00 start.
     expect($rows)->toHaveCount(1)
         ->and($rows[0]['late_minutes'])->toBe(150);
+});
+
+it('counts someone still clocked in as late, and not as absent', function (): void {
+    $company = AttendanceHelper::enable(AttendanceHelper::company());
+    $calendar = attendanceCalendar();
+    $employee = AttendanceHelper::employee($company, ['calendar_id' => $calendar->id]);
+
+    Attendance::factory()->create([
+        'company_id'   => $company->id,
+        'employee_id'  => $employee->id,
+        'check_in_at'  => Carbon::parse('2026-11-09 08:30:00', 'UTC'),
+        'check_out_at' => null,
+    ]);
+
+    $reports = app(AttendanceReports::class);
+    $from = Carbon::parse('2026-11-09');
+    $to = Carbon::parse('2026-11-09');
+
+    expect($reports->lateRows($from, $to, [$employee->id]))->toHaveCount(1)
+        ->and($reports->absenceRows($from, $to, [$employee->id]))->toBe([])
+        ->and($reports->overtimeRows($from, $to, [$employee->id]))->toBe([]);
 });
 
 it('reports no lateness when the arrival is inside the company tolerance', function (): void {
@@ -76,6 +98,7 @@ it('reports no lateness when the arrival is inside the company tolerance', funct
     expect(app(AttendanceReports::class)->lateRows(
         Carbon::parse('2026-11-09'),
         Carbon::parse('2026-11-09'),
+        [$employee->id],
     ))->toBe([]);
 });
 
@@ -126,5 +149,6 @@ it('does not report overtime while the person works their scheduled length', fun
     expect(app(AttendanceReports::class)->overtimeRows(
         Carbon::parse('2026-11-09'),
         Carbon::parse('2026-11-09'),
+        [$employee->id],
     ))->toBe([]);
 });

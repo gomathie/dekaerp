@@ -123,17 +123,21 @@ trait HasChartTheme
 
         $grid = $this->brandColor('gray', 500, 0.2);
 
+        // Modernised 2026-11-11 (user): flat month labels instead of slanted
+        // ones, a few faint dashed value lines instead of a solid y axis, and
+        // at most five value ticks, so an empty chart no longer shows a
+        // ladder of 0.1 steps.
         return [
             'x' => [
                 'border' => ['display' => true, 'color' => $axis],
                 'grid'   => ['display' => false],
-                'ticks'  => ['color' => $ink, 'maxTicksLimit' => $maxTicks],
+                'ticks'  => ['color' => $ink, 'maxTicksLimit' => $maxTicks, 'maxRotation' => 0, 'autoSkip' => true, 'padding' => 6],
             ],
             'y' => [
                 'beginAtZero' => true,
-                'border'      => ['display' => true, 'color' => $axis],
-                'grid'        => $yGrid ? ['color' => $grid, 'drawBorder' => false] : ['display' => false],
-                'ticks'       => ['color' => $ink],
+                'border'      => ['display' => false, 'dash' => [4, 4]],
+                'grid'        => ['color' => $yGrid ? $grid : $this->brandColor('gray', 500, 0.12), 'drawTicks' => false],
+                'ticks'       => ['color' => $ink, 'maxTicksLimit' => 5, 'padding' => 8],
             ],
         ];
     }

@@ -34,12 +34,12 @@ class AttendanceHelper
         ]);
     }
 
-    public static function enable(Company $company): CompanySetting
+    public static function enable(Company $company): Company
     {
-        $setting = app(\Webkul\Attendance\Services\CompanyProvisioner::class)->enable($company);
+        app(\Webkul\Attendance\Services\CompanyProvisioner::class)->enable($company);
 
         AttendanceAccess::flush();
 
-        return $setting;
+        return $company;
     }
 }

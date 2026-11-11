@@ -25,9 +25,10 @@ class AttendanceReports
     public function __construct(private ScheduleReader $schedule) {}
 
     /**
+     * @param  array<int, int>  $employeeIds
      * @return array<int, array{employee: string, date: string, check_in: ?string, late_minutes: int}>
      */
-    public function lateRows(Carbon $from, Carbon $to, ?array $employeeIds = null): array
+    public function lateRows(Carbon $from, Carbon $to, array $employeeIds): array
     {
         return $this->attendances($from, $to, $employeeIds)
             ->map(function (Attendance $attendance): ?array {
@@ -52,9 +53,10 @@ class AttendanceReports
     }
 
     /**
+     * @param  array<int, int>  $employeeIds
      * @return array<int, array{employee: string, date: string, worked_minutes: int, expected_minutes: int, overtime_minutes: int}>
      */
-    public function overtimeRows(Carbon $from, Carbon $to, ?array $employeeIds = null): array
+    public function overtimeRows(Carbon $from, Carbon $to, array $employeeIds): array
     {
         return $this->attendances($from, $to, $employeeIds)
             ->map(function (Attendance $attendance): ?array {
@@ -91,13 +93,14 @@ class AttendanceReports
      * An approved leave day is not an absence: it is shown in the banner and
      * must not be reported as an unpaid no-show.
      *
+     * @param  array<int, int>  $employeeIds
      * @return array<int, array{employee: string, date: string, expected_minutes: int}>
      */
-    public function absenceRows(Carbon $from, Carbon $to, ?array $employeeIds = null): array
+    public function absenceRows(Carbon $from, Carbon $to, array $employeeIds): array
     {
         $employees = Employee::withoutGlobalScopes()
             ->whereNotNull('calendar_id')
-            ->when($employeeIds !== null, fn ($query) => $query->whereIn('id', $employeeIds))
+            ->whereIn('id', $employeeIds)
             ->get();
 
         $rows = [];
@@ -148,16 +151,23 @@ class AttendanceReports
     }
 
     /**
-     * @param  array<int, int>|null  $employeeIds
+     * Attendance rows in the range for the given employees.
+     *
+     * The caller passes the ids it may see (already company-scoped), so this
+     * read drops the company scope instead of guessing one. Open rows are
+     * included: someone who checked in late and has not left yet is late, and
+     * someone still clocked in has not been absent. Overtime needs
+     * `worked_minutes`, so an open row simply reports none.
+     *
+     * @param  array<int, int>  $employeeIds
      * @return \Illuminate\Support\Collection<int, Attendance>
      */
-    protected function attendances(Carbon $from, Carbon $to, ?array $employeeIds = null)
+    protected function attendances(Carbon $from, Carbon $to, array $employeeIds)
     {
         return Attendance::withoutGlobalScopes()
-            ->whereNotNull('check_out_at')
+            ->whereIn('employee_id', $employeeIds)
             ->whereDate('check_in_at', '>=', $from->toDateString())
             ->whereDate('check_in_at', '<=', $to->toDateString())
-            ->when($employeeIds !== null, fn ($query) => $query->whereIn('employee_id', $employeeIds))
             ->orderBy('check_in_at')
             ->get();
     }

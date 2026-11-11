@@ -448,6 +448,28 @@
                     --module-topbar-height: 4rem;
                 }
 
+                /* The module's page strip wrapped onto a second line between
+                   about 1024px and 1200px, putting "Logistics" under the
+                   module title (user, 2026-11-11). Keep it on one line and
+                   let it scroll sideways; its entries are plain links, so
+                   there is no dropdown to clip. */
+                .fi-topbar-nav-groups {
+                    flex-wrap: nowrap;
+                    min-width: 0;
+                    overflow-x: auto;
+                    overflow-y: hidden;
+                    scrollbar-width: none;
+                }
+
+                .fi-topbar-nav-groups::-webkit-scrollbar {
+                    display: none;
+                }
+
+                .fi-topbar-nav-groups > li {
+                    flex-shrink: 0;
+                    white-space: nowrap;
+                }
+
                 /* The profile avatar was a dark circle on a dark bar in dark
                    mode, so people could not find the profile menu (user,
                    2026-11-11). A ring in the accent colour marks it in both
