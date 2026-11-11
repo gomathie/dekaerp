@@ -320,25 +320,6 @@ return [
         ],
 
         'tabs' => [
-            'resume' => [
-                'title' => 'CV',
-
-                'entries' => [
-                    'resume' => [
-                        'title'   => 'CV',
-                        'empty'   => 'Aucune ligne de CV pour le moment.',
-                        'untyped' => 'Autre',
-                        'present' => 'Actuel',
-                    ],
-
-                    'skills' => [
-                        'title'   => 'Compétences',
-                        'empty'   => 'Aucune compétence pour le moment.',
-                        'untyped' => 'Autre',
-                    ],
-                ],
-            ],
-
             'work-information' => [
                 'title' => 'Informations professionnelles',
 
