@@ -33,9 +33,12 @@ continuation resumed. They have not yet been verified here.
   complete installation test file remain unverified.
   AT-2's forced-context fallback is fixed and its focused regression test
   passes. Correction now checks the target company against the active context
-  in both the policy and service; its behavior test is pending. Other service
-  behaviors remain to be verified.
-- **Not started:** AT-3 through AT-7. The tagged topbar override is owned by a
+  in both the policy and service; its focused behavior test was attempted but
+  stopped at PHP's stack-size fatal in
+  `Illuminate/Database/ConcurrencyErrorDetector.php:20`, before returning test
+  counts. Other service behaviors remain to be verified. AT-3 banner research
+  has started; implementation has not.
+- **Not started:** AT-4 through AT-7. The tagged topbar override is owned by a
   concurrent agent and is out of scope.
 - **Verification:** local PostgreSQL is running and the isolated database
   `aureuserp_testing_attendance` was created. In Sail,
@@ -135,9 +138,16 @@ the service refusal message. **Benefit:** direct service calls and Filament
 authorization agree, including for super-admin calls that skip policies.
 **Trade-off / risk:** staff working in several companies can correct only
 records in companies currently selected; All companies mode remains supported
-through `CompanyContext::activeIds()`. **Verification:** pending the focused
-correction test. **Rollback:** removing either call would reopen a path for a
-global correction permission to cross the selected tenant boundary.
+through `CompanyContext::activeIds()`. **Verification:** the focused test was
+attempted on `aureuserp_testing_attendance` but PHP stopped with a stack-size
+fatal at `Illuminate/Database/ConcurrencyErrorDetector.php:20`, before test
+counts were returned; the behavior remains unverified. **Rollback:** removing
+either call would reopen a path for a global correction permission to cross
+the selected tenant boundary.
+
+The reusable listener-lifecycle rationale was also added to `AGENTS.md`, and
+the shared workflow library was updated with the same app-scoped registration
+lesson. The latter is outside this repository.
 
 - **Current file scope:** `docs/attendance-plan.md`,
   `plugins/webkul/attendances/src/AttendanceServiceProvider.php`,
@@ -250,7 +260,7 @@ writes payroll tables.
 | AT-0 | Decisions AT-D1..D6 | — | done |
 | AT-1 | Plugin skeleton, tables, models, per-company switch, provisioner, policies, Shield config, translations (en first) | AT-0 | in progress |
 | AT-2 | `AttendanceService` (clock in/out, idempotence, one-open rule, auto check-out job) + tests | AT-1 | in progress |
-| AT-3 | Welcome banner widget in `support` + attendance contribution (status pill, clock button) on every module dashboard | AT-2 (banner greeting part can ship first without attendance) | pending |
+| AT-3 | Welcome banner widget in `support` + attendance contribution (status pill, clock button) on every module dashboard | AT-2 (banner greeting part can ship first without attendance) | research in progress; implementation not started |
 | AT-4 | Manager views: who is in now, daily list, corrections with reason and audit, export | AT-2 | pending |
 | AT-5 | Kiosk mode (PIN / badge) | AT-2, AT-D2 | design note only |
 | AT-6 | Reports: lateness, absence, overtime against schedule; payroll hand-off contract | AT-2, payroll A0 gate | pending |
