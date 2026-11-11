@@ -24,6 +24,7 @@ use Webkul\Product\Models\Product;
 use Webkul\Product\Models\ProductSupplier;
 use Webkul\Purchase\Facades\PurchaseOrder as PurchaseOrderFacade;
 use Webkul\Purchase\Filament\Admin\Pages\Purchases;
+use Webkul\Purchase\Filament\Admin\Widgets\PurchaseHeadlineWidget;
 use Webkul\Purchase\Listeners\ComputePurchaseOrderFromMoveListener;
 use Webkul\Purchase\Listeners\ComputePurchaseOrderListener;
 use Webkul\Purchase\Livewire\Customer\ListProducts;
@@ -117,6 +118,7 @@ class PurchaseServiceProvider extends PackageServiceProvider
             fn (): array => Purchases::sectionFilterFields(),
             fn (): bool  => Purchases::canAccess(),
             sort: 20,
+            headline: PurchaseHeadlineWidget::class,
         );
 
         Livewire::component('list-products', ListProducts::class);

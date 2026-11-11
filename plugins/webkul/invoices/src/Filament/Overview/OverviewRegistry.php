@@ -27,14 +27,16 @@ class OverviewRegistry
      * @param  Closure(): array<int, mixed>  $filters  extra filter fields, shown when only this section is selected
      * @param  Closure(): bool  $visible
      */
-    public static function register(string $key, Closure $label, array $widgets, Closure $filters, Closure $visible, int $sort = 0): void
+    public static function register(string $key, Closure $label, array $widgets, Closure $filters, Closure $visible, int $sort = 0, ?string $headline = null): void
     {
         static::$sections[$key] = [
-            'label'   => $label,
-            'widgets' => $widgets,
-            'filters' => $filters,
-            'visible' => $visible,
-            'sort'    => $sort,
+            'label'    => $label,
+            'widgets'  => $widgets,
+            'filters'  => $filters,
+            'visible'  => $visible,
+            'sort'     => $sort,
+            // The section's card in the "At a glance" row, shown first.
+            'headline' => $headline,
         ];
     }
 
