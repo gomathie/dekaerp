@@ -15,7 +15,7 @@ return [
 
     'filters' => [
         'sections'       => 'عرض',
-        'all-sections'   => 'المبيعات والمشتريات والفواتير',
+        'all-sections'   => 'كل الأقسام',
         'date-range'     => 'النطاق الزمني',
         'product'        => 'المنتج',
         'all-products'   => 'كل المنتجات',

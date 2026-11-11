@@ -6,6 +6,32 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-11 (dashboard polling stopped; filters closed; 4 cards across; compact charts; card icons and sparklines)
+
+- **Why:** Sentry DEKAERP-11 (364 events) and -13: Filament stats and chart
+  widgets poll every 5 s by default (`CanPoll`), so every open dashboard re-ran
+  all its queries 12 times a minute. User: filters closed by default, four
+  cards across, Monthly Sales too big, modern widgets for a competitive market.
+- **How:** `$pollingInterval = null` on `Support` `DashboardChartWidget` and
+  `DashboardStatsWidget` and on the ten Overview widgets that extend Filament
+  directly (why comment on each). `DashboardFilters` is `collapsed()` on every
+  screen. `OverviewHeadlineWidget` four across from `lg`; `Overview::getColumns()`
+  `md` 2, `xl` 3. Chart `maxHeight` 300/320px to 240px. Headline cards get
+  outline icons; Revenue and Purchase spend get a daily sparkline from one
+  grouped query over the same filtered rows as the total (null under two
+  points). Profile menu shows only the codes (no "Preferred Language" text).
+- **Benefit:** idle dashboards no longer load the database; the first screen
+  shows all headline figures; cards show direction.
+- **Trade-off / risk:** figures no longer refresh by themselves; reload or
+  change a filter. Two extra grouped queries per Overview load.
+- **Verification:** see the dashboard run recorded below when it finishes.
+  Tests added: no Overview widget polls; filters closed, column counts and
+  card icons.
+- **Not reproduced:** the top-bar gap at the far right on large screens (fills
+  1920 and 2560px in Playwright); waiting for a screenshot.
+- **Library:** lessons added to the shared Workflow and skills library
+  (`laravel-filament-app.md` steps 7–9, `frontend-ui-engineering.md` step 3a).
+
 ## 2026-11-11 (profile-menu language shown once; dashboard scrollbar hidden)
 
 - **Why:** user: many complaints about five language rows in the profile
