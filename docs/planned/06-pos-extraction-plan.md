@@ -3,6 +3,23 @@
 **Status: planning only — nothing extracted yet.**
 The user gives the go-ahead before any step is executed.
 
+**Decisions (user, 2026-11-11):**
+
+- **Timing:** sixth in the planned queue (`README.md`), after the unified
+  product resource, the restructure, Inventory, CRM and Payroll.
+- **First version must have all four:**
+  - **Cash and mobile money:** cash plus mobile money (MTN and Airtel
+    MoMo) payments, with cash reconciliation at shift close.
+  - **Works offline:** keeps selling when the connection drops, and syncs
+    when it returns.
+  - **Receipt printer and cash drawer:** prints receipts and opens the
+    drawer from the browser.
+  - **Barcode scanning:** reuses the barcode app.
+- **Before extracting:** check which of the four upstream's plugin already
+  covers. Offline and mobile money are the likely gaps. Mobile money goes
+  through a provider enum plus an options bag, never vendor-named columns
+  (user rule).
+
 Branch: **`feature/point-of-sale`** (create from `develop` when ready).
 Source: `aureus/master` remote, directory `plugins/webkul/point-of-sale/`.
 
