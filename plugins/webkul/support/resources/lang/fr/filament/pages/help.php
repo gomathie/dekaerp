@@ -26,25 +26,25 @@ return [
                 [
                     'title' => "Configurer l'entreprise",
                     'items' => [
-                        'Créez ou vérifiez les entreprises, entrepôts, devises, taxes et paramètres fiscaux.',
-                        "Affectez les utilisateurs aux entreprises auxquelles ils ont accès et vérifiez le sélecteur d'entreprise active.",
-                        "Configurez les séquences, conditions de paiement, produits, unités de mesure et modèles de documents avant le début des transactions.",
+                        '0' => 'Créez ou vérifiez les entreprises, entrepôts, devises, taxes et paramètres fiscaux.',
+                        '1' => "Affectez les utilisateurs aux entreprises auxquelles ils ont accès et vérifiez le sélecteur d'entreprise active.",
+                        '2' => 'Configurez les séquences, conditions de paiement, produits, unités de mesure et modèles de documents avant le début des transactions.',
                     ],
                 ],
                 [
                     'title' => "Contrôler l'accès",
                     'items' => [
-                        'Créez des rôles pour les équipes finance, ventes, stock, RH, projets et direction.',
-                        "N'accordez les autorisations de module qu'aux utilisateurs qui en ont besoin.",
-                        "Vérifiez les champs personnalisés, imports, exports et jetons d'API avant d'accorder un accès large.",
+                        '0' => 'Créez des rôles pour les équipes finance, ventes, stock, RH, projets et direction.',
+                        '1' => "N'accordez les autorisations de module qu'aux utilisateurs qui en ont besoin.",
+                        '2' => "Vérifiez les champs personnalisés, imports, exports et jetons d'API avant d'accorder un accès large.",
                     ],
                 ],
                 [
                     'title' => 'Exploiter et maintenir',
                     'items' => [
-                        "Installez uniquement les modules utilisés par l'entreprise, puis masquez ou supprimez les autres.",
-                        'Suivez les discussions, pièces jointes, approbations et propriétaires des enregistrements pendant le déploiement.',
-                        "Alignez les paramètres d'e-mail, de PDF, de sauvegarde et de mise à jour sur la politique de déploiement.",
+                        '0' => "Installez uniquement les modules utilisés par l'entreprise, puis masquez ou supprimez les autres.",
+                        '1' => 'Suivez les discussions, pièces jointes, approbations et propriétaires des enregistrements pendant le déploiement.',
+                        '2' => "Alignez les paramètres d'e-mail, de PDF, de sauvegarde et de mise à jour sur la politique de déploiement.",
                     ],
                 ],
             ],
@@ -52,7 +52,7 @@ return [
 
         'user' => [
             'title'          => "Guide de l'utilisateur",
-            'description'    => "Utilisez le guide intégré pour les présentations DEKA et les pages de référence des modules pour le travail quotidien dans :app.",
+            'description'    => 'Utilisez le guide intégré pour les présentations DEKA et les pages de référence des modules pour le travail quotidien dans :app.',
             'button'         => "Ouvrir le guide de l'utilisateur",
             'full_heading'   => "Guide complet de l'utilisateur",
             'count'          => '{0} Aucune page de guide|{1} 1 page de guide|[2,*] :count pages de guide',
@@ -66,25 +66,25 @@ return [
                 [
                     'title' => 'Premiers pas',
                     'items' => [
-                        'Présentation de la plateforme et navigation',
-                        "Configuration multi-entreprise et sélecteur d'entreprise",
+                        '0' => 'Présentation de la plateforme et navigation',
+                        '1' => "Configuration multi-entreprise et sélecteur d'entreprise",
                     ],
                 ],
                 [
                     'title' => 'Processus principaux',
                     'items' => [
-                        'Vendre : ventes et facturation',
-                        'Acheter : achats et comptabilité',
-                        'Produire et déplacer : stock et production',
-                        'Piloter : projets, RH et maintenance',
-                        'Plateforme, API et auto-hébergement',
+                        '0' => 'Vendre : ventes et facturation',
+                        '1' => 'Acheter : achats et comptabilité',
+                        '2' => 'Produire et déplacer : stock et production',
+                        '3' => 'Piloter : projets, RH et maintenance',
+                        '4' => 'Plateforme, API et auto-hébergement',
                     ],
                 ],
                 [
                     'title' => 'Référence des modules : 12 modules / 69 pages',
                     'items' => [
-                        'Factures, Ventes, Achats, Stock, Fabrication, Maintenance',
-                        'Contacts, Projets, Employés, Recrutement, Congés',
+                        '0' => 'Factures, Ventes, Achats, Stock, Fabrication, Maintenance',
+                        '1' => 'Contacts, Projets, Employés, Recrutement, Congés',
                     ],
                 ],
             ],

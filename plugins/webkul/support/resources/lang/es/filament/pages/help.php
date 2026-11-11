@@ -26,25 +26,25 @@ return [
                 [
                     'title' => 'Configurar la empresa',
                     'items' => [
-                        'Crear o revisar empresas, almacenes, monedas, impuestos y ajustes fiscales.',
-                        'Asignar los usuarios a las empresas a las que pueden acceder y comprobar el selector de empresa activa.',
-                        'Configurar secuencias, condiciones de pago, productos, unidades de medida y plantillas de documentos antes de empezar a operar.',
+                        '0' => 'Crear o revisar empresas, almacenes, monedas, impuestos y ajustes fiscales.',
+                        '1' => 'Asignar los usuarios a las empresas a las que pueden acceder y comprobar el selector de empresa activa.',
+                        '2' => 'Configurar secuencias, condiciones de pago, productos, unidades de medida y plantillas de documentos antes de empezar a operar.',
                     ],
                 ],
                 [
                     'title' => 'Controlar el acceso',
                     'items' => [
-                        'Crear roles para los equipos de finanzas, ventas, inventario, RR. HH., proyectos y dirección.',
-                        'Conceder permisos de módulo solo a los usuarios que los necesitan.',
-                        'Revisar campos personalizados, importaciones, exportaciones y tokens de API antes de dar acceso amplio.',
+                        '0' => 'Crear roles para los equipos de finanzas, ventas, inventario, RR. HH., proyectos y dirección.',
+                        '1' => 'Conceder permisos de módulo solo a los usuarios que los necesitan.',
+                        '2' => 'Revisar campos personalizados, importaciones, exportaciones y tokens de API antes de dar acceso amplio.',
                     ],
                 ],
                 [
                     'title' => 'Operar y mantener',
                     'items' => [
-                        'Instalar solo los módulos que usa la empresa y ocultar o quitar los demás.',
-                        'Supervisar conversaciones, adjuntos, aprobaciones y propietarios de registros durante la implantación.',
-                        'Mantener los ajustes de correo, PDF, copias de seguridad y actualizaciones acordes con la política de despliegue.',
+                        '0' => 'Instalar solo los módulos que usa la empresa y ocultar o quitar los demás.',
+                        '1' => 'Supervisar conversaciones, adjuntos, aprobaciones y propietarios de registros durante la implantación.',
+                        '2' => 'Mantener los ajustes de correo, PDF, copias de seguridad y actualizaciones acordes con la política de despliegue.',
                     ],
                 ],
             ],
@@ -66,25 +66,25 @@ return [
                 [
                     'title' => 'Primeros pasos',
                     'items' => [
-                        'Visión general de la plataforma y navegación',
-                        'Configuración multiempresa y selector de empresa',
+                        '0' => 'Visión general de la plataforma y navegación',
+                        '1' => 'Configuración multiempresa y selector de empresa',
                     ],
                 ],
                 [
                     'title' => 'Procesos principales',
                     'items' => [
-                        'Vender: ventas y facturación',
-                        'Comprar: compras y contabilidad',
-                        'Fabricar y mover: inventario y producción',
-                        'Gestionar: proyectos, RR. HH. y mantenimiento',
-                        'Plataforma, API y alojamiento propio',
+                        '0' => 'Vender: ventas y facturación',
+                        '1' => 'Comprar: compras y contabilidad',
+                        '2' => 'Fabricar y mover: inventario y producción',
+                        '3' => 'Gestionar: proyectos, RR. HH. y mantenimiento',
+                        '4' => 'Plataforma, API y alojamiento propio',
                     ],
                 ],
                 [
                     'title' => 'Referencia de módulos: 12 módulos / 69 páginas',
                     'items' => [
-                        'Facturas, Ventas, Compras, Inventario, Fabricación, Mantenimiento',
-                        'Contactos, Proyectos, Empleados, Contratación, Ausencias',
+                        '0' => 'Facturas, Ventas, Compras, Inventario, Fabricación, Mantenimiento',
+                        '1' => 'Contactos, Proyectos, Empleados, Contratación, Ausencias',
                     ],
                 ],
             ],

@@ -26,25 +26,25 @@ return [
                 [
                     'title' => 'Set up the company',
                     'items' => [
-                        'Create or review companies, warehouses, currencies, taxes and fiscal settings.',
-                        'Assign users to the companies they can access and confirm the active company switcher.',
-                        'Configure sequences, payment terms, products, units of measure and document templates before transactions begin.',
+                        '0' => 'Create or review companies, warehouses, currencies, taxes and fiscal settings.',
+                        '1' => 'Assign users to the companies they can access and confirm the active company switcher.',
+                        '2' => 'Configure sequences, payment terms, products, units of measure and document templates before transactions begin.',
                     ],
                 ],
                 [
                     'title' => 'Control access',
                     'items' => [
-                        'Create roles for finance, sales, inventory, HR, project and management teams.',
-                        'Grant module permissions only to the users who need them.',
-                        'Review custom fields, imports, exports and API tokens before giving broad access.',
+                        '0' => 'Create roles for finance, sales, inventory, HR, project and management teams.',
+                        '1' => 'Grant module permissions only to the users who need them.',
+                        '2' => 'Review custom fields, imports, exports and API tokens before giving broad access.',
                     ],
                 ],
                 [
                     'title' => 'Operate and maintain',
                     'items' => [
-                        'Install only the modules the business uses, then hide or remove unused modules.',
-                        'Monitor discussions, attachments, approvals and record ownership during rollout.',
-                        'Keep email, PDF, backup and update settings aligned with the deployment policy.',
+                        '0' => 'Install only the modules the business uses, then hide or remove unused modules.',
+                        '1' => 'Monitor discussions, attachments, approvals and record ownership during rollout.',
+                        '2' => 'Keep email, PDF, backup and update settings aligned with the deployment policy.',
                     ],
                 ],
             ],
@@ -66,25 +66,25 @@ return [
                 [
                     'title' => 'Getting started',
                     'items' => [
-                        'Platform Overview & Navigation',
-                        'Multi-Company Setup & Switcher',
+                        '0' => 'Platform Overview & Navigation',
+                        '1' => 'Multi-Company Setup & Switcher',
                     ],
                 ],
                 [
                     'title' => 'Core workflows',
                     'items' => [
-                        'Sell: Sales & Invoicing',
-                        'Buy: Purchasing & Accounting',
-                        'Make & Move: Inventory & Production',
-                        'Run: Projects, HR & Maintenance',
-                        'Platform, API & Self-Hosting',
+                        '0' => 'Sell: Sales & Invoicing',
+                        '1' => 'Buy: Purchasing & Accounting',
+                        '2' => 'Make & Move: Inventory & Production',
+                        '3' => 'Run: Projects, HR & Maintenance',
+                        '4' => 'Platform, API & Self-Hosting',
                     ],
                 ],
                 [
                     'title' => 'Module reference: 12 modules / 69 pages',
                     'items' => [
-                        'Invoices, Sales, Purchase, Inventory, Manufacturing, Maintenance',
-                        'Contacts, Project, Employees, Recruitments, Time Off',
+                        '0' => 'Invoices, Sales, Purchase, Inventory, Manufacturing, Maintenance',
+                        '1' => 'Contacts, Project, Employees, Recruitments, Time Off',
                     ],
                 ],
             ],
