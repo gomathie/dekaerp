@@ -1,5 +1,22 @@
 # Unified ProductResource — Migration Plan
 
+Status: **high priority (user, 2026-11-11); mostly built.** Checked in code
+on 2026-11-11:
+- the shared registry exists;
+- Inventory, Accounts and Manufacturing contribute to it;
+- no module's product resource overrides `form()` any more (only small
+  `table()` filter overrides remain, on purpose).
+
+Remaining (estimate about 2–3 days):
+1. Verify every product screen renders and saves all fields for each
+   combination of installed modules.
+2. Restore the custom-fields section (`left.append`, see Deferred).
+3. Contacts phase 3 (bank accounts, bills and purchases tabs on every
+   contact screen).
+4. Combination tests and a full suite run.
+
+The "Implementation status (2026-06-05)" section below is the detail.
+
 ## Problem
 `ProductResource` is defined in the products plugin and extended separately by account, invoice,
 inventories, sales, purchases, manufacturing, accounting. Inheritance **branches**:
