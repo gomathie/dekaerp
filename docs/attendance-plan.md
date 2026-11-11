@@ -31,7 +31,7 @@ On `aureuserp_testing_attendance` (639.64s, 74 assertions):
   given takes the employee's; a contradicting one throws
   `CompanyMismatchException`.
 
-Pint was run over the plugin. Re-run result follows below.
+Pint was run over the plugin. **Re-run: `AttendanceFeature` 32 passed, 79 assertions, 690.83s.** New AT-4 test `ManagerViewsTest` (manager sees own and team rows only; an employee without a team sees only their own; no team and no permission cannot open the list): 2 passed, 9 assertions. Both on `aureuserp_testing_attendance`.
 
 **2026-11-11 — the "maximum call stack" fatal is fixed; it was in Employees.**
 Taken over from the previous agent. `pest --debug` showed the fatal in "refuses
@@ -612,7 +612,7 @@ writes payroll tables.
 | AT-1 | Plugin skeleton, tables, models, per-company switch, provisioner, policies, Shield config, translations (en first) | AT-0 | built; install/provisioning checks pass |
 | AT-2 | `AttendanceService` (clock in/out, idempotence, one-open rule, auto check-out job) + tests | AT-1 | built; **full file green** (10 tests, 2026-11-11) after the Employee contact-recursion fix |
 | AT-3 | Welcome banner widget in `support` + attendance contribution (status pill, clock button) on every module dashboard | AT-2 (banner greeting part can ship first without attendance) | built; DashboardBannerTest 5/5 passed |
-| AT-4 | Manager views: who is in now, daily list, corrections with reason and audit, export | AT-2 | built; tests written, not yet passing in a run |
+| AT-4 | Manager views: who is in now, daily list, corrections with reason and audit, export | AT-2 | built; ManagerViewsTest 2/2 passed (2026-11-12) |
 | AT-5 | Kiosk mode (PIN / badge) | AT-2, AT-D2 | design note only (no code, per AT-D2) |
 | AT-6 | Reports: lateness, absence, overtime against schedule; payroll hand-off contract | AT-2, payroll A0 gate | built; reports 11/11 passed (AttendanceReportsTest + ReportsTest) |
 | AT-7 | Translations ar/es/fr/pt_BR, hardening, release | all | built (en/ar/es/fr/pt_BR), translations check 4/4; release notes added |
