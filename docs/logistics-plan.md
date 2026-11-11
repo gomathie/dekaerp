@@ -1,8 +1,15 @@
 # Logistics Plugin — Implementation Plan
 
-Status: **Decisions D1–D15 accepted (2026-09-17, all recommendations, stop link included). Next: WP-1 Foundation.**
-Prepared 2026-09-17 against `main @ 3e8cf0bf2`. Work happens on the branch
-**`feature/logistics`**. No Logistics code exists yet.
+Status: **Phase 1 complete (2026-11-10).** Phase 2 (WP-14 to WP-23, §6a,
+added 2026-11-11 from an ERPNext/Frappe comparison) is planned and not started.
+The line below describes phase 1.
+
+Every phase 1 package on the status board is done.
+WP-9b is a read-only tab on the customer page. PILOT telematics stays research
+and was not built.
+Prepared 2026-09-17 against `main @ 3e8cf0bf2`. Work happened on the branch
+**`feature/logistics`**. *Superseded the same-day lines "Next: WP-1 Foundation"
+and "No Logistics code exists yet."*
 
 This file is the working plan. It is written so **several agents can work at
 once**: the work is split into packages (section 6), each with its own files,
@@ -360,6 +367,11 @@ Research behind D1–D3, D5, D6, D8, D13 and D15 (2026-09-17):
 The first `TelematicsProvider` adapter would be PILOT (geofence entry and exit →
 stop arrival and departure events).
 
+*Not a package (confirmed 2026-11-10).* No adapter was built. The WP-1 file
+list names `src/Contracts/TelematicsProvider.php`; that file is not in the tree.
+`src/Enums/TelematicsProvider.php` and the telematics columns are. Do not start
+PILOT to close this plan.
+
 ---
 
 ## 5. Status board
@@ -376,16 +388,27 @@ you claim a package, finish it, or get blocked.
 | WP-3 | Vehicles and drivers | WP-1 | WP-2, WP-8a | done | Codex 2026-09-21 |
 | WP-4 | Trips and dispatch board | WP-2, WP-3 | WP-5, WP-6, WP-7 | done (76/348 pass) | Claude 2026-09-21 |
 | WP-5 | Delivery and POD | WP-2 | WP-4, WP-6, WP-7 | done (88/408 pass) | Codex + Claude 2026-09-22 |
-| WP-5b | Stop link for POD capture (optional, D15) | WP-5 | WP-6, WP-7, WP-8b | done (LogisticsFeature 195/195, 751 assertions; fragment URL flow: landing → exchange → submit; token never in request line; §0b resolved in code; §0c DONE 2026-10-20) | Claude 2026-09-24; Codex review 2026-09-30; Claude Sonnet 4.6 2026-10-20, db `aureuserp_testing` |
+| WP-5b | Stop link for POD capture (optional, D15) | WP-5 | WP-6, WP-7, WP-8b | done for the path-token link (LogisticsFeature 201 passed, 2026-11-10, db `aureuserp_testing_logistics`). *Correction 2026-11-10:* the fragment flow (landing, exchange, submit) is described in the 2026-10-20 handoff and is not in this tree. `issue()` still returns the path route. | Claude 2026-09-24; Codex review 2026-09-30; Claude Sonnet 4.6 2026-10-20, db `aureuserp_testing` |
 | WP-6 | Waybill and delivery-note PDF | WP-2 | WP-4, WP-5, WP-7 | done | Codex 2026-09-21 |
 | WP-7 | Charges and shipment invoicing | WP-2 | WP-4, WP-5, WP-6, WP-8b | done (95/430 + AccountFeature 521) | Claude 2026-09-22 |
 | WP-8a | Expense records and approval | WP-1 | WP-2, WP-3 | done (121/500 pass, whole suite green) | Copilot 2026-09-23, finished by Claude 2026-09-23 |
 | WP-8b | Expense and carrier bills | WP-8a, WP-2 | WP-7 | done (implemented in 1047b1a71 and ef810923a; PostingTest green) | |
 | WP-9 | Sales quotation link (per D1) | WP-7 | WP-10 | done | Claude 2026-09-23, db `aureuserp_testing_wp9` |
-| WP-9b | Customer page integration (per D11) | WP-7 | WP-10 | deferred (no safe extension point; see handoff 2026-09-30) | |
+| WP-9b | Customer page integration (per D11) | WP-7 | WP-10 | done (read-only infolist tab; LogisticsFeature 201 passed, 833 assertions, db `aureuserp_testing_logistics`) | Grok 2026-11-10 |
 | WP-10 | Dashboard widgets | WP-4, WP-5 | WP-9, WP-11 | done (125/506 pass, whole suite green) | Claude 2026-09-24, db `aureuserp_testing_wp10` |
 | WP-11 | Reports | WP-4, WP-5, WP-7, WP-8b | WP-10 | done (176/676 pass, whole suite green) | Claude 2026-09-25, db `aureuserp_testing_wp11` |
 | WP-12 | Translations ar/es/fr/pt_BR | each finished package | anything | done (`translations:check`: 4/4 pass; TTL regression 1/1 pass) | Codex 2026-09-30, db `aureuserp_testing_wp12` |
+| WP-14 | Vehicle and driver documents (§6a) | — | WP-15..WP-21 | spec written (2026-11-11, detail under §6a; no code) | |
+| WP-15 | Fuel and vehicle log (§6a) | — | WP-14, WP-16 | todo | |
+| WP-16 | Customer notifications and tracking page (§6a) | — | WP-14, WP-15 | todo | |
+| WP-17 | Inventory delivery link (§6a) | — | WP-14..WP-16 | todo | |
+| WP-18 | Stop order, distance and ETA (§6a) | WP-17 for multi-order trips | WP-19 | todo | |
+| WP-19 | Rate cards (§6a) | — | WP-18 | todo | |
+| WP-20 | Parcel templates and packing list (§6a) | — | anything | todo | |
+| WP-21 | Import from ERPNext and spreadsheets (§6a) | WP-14 | anything | todo | |
+| WP-22 | Trailers and trip manifest (§6a) | — | anything | todo | |
+| WP-23 | Carrier integration contract (§6a) | — | — | deferred | |
+| WP-24 | Return shipments and incoterms (§6b O11, O12) | — | anything | todo | |
 | WP-13 | Hardening and release | all | — (runs alone) | done (2,606/2,606 green; §4b rehearsal done; §0b resolved in code; §0c done; WP-5b done; Supabase Security + Performance advisors passed 2026-10-20) | Codex 2026-09-30 + Claude 2026-09-30 + Claude Sonnet 4.6 2026-10-20, db `aureuserp_testing_wp13_*` |
 
 **Promotions to `done` on 2026-09-29** (user: *"promote all green to done as
@@ -415,6 +438,8 @@ WP-12 has since been completed:
     `review` until the fragment implementation is shipped and tested.
 - **WP-9b — still `todo`.** Genuinely unimplemented; the plan says extension point
   only, otherwise ask.
+  *Superseded 2026-11-10:* the infolist slot now exists and the tab shipped.
+  See "WP-9b - 2026-11-10 - Grok".
 - **WP-12 — completed 2026-09-30.** All 17 later English files now have
   ar/es/fr/pt_BR translations, and the stale exception and company-settings
   arrays are synchronized. The focused checker passes all four locale sets.
@@ -781,6 +806,9 @@ copies customer, currency, lines and charges, and runs only once.
 **Depends on:** WP-7. Look for a Partners extension point first. If none
 exists, report instead of editing.
 
+*Done 2026-11-10.* `PartnerSchemaRegistry` infolist slot `tabs.append` was
+the extension point. No relation-manager slot was added. See the handoff.
+
 ---
 
 ### WP-10 — Dashboard widgets
@@ -917,6 +945,490 @@ production access:
 - ~~**install -> enable -> use -> disable -> uninstall rehearsal on a copy of the production database**~~ **DONE 2026-10-20.** Rehearsal ran against a production dump in `seq_rehearsal` (local Sail). All 17 pending migrations ran cleanly. Two migrations were orphaned (never added to `hasMigrations()`); fixed in `TimeOffServiceProvider` and `SecurityServiceProvider`. Sequence continuity verified: journal 7 (`INV`) at `next_number = 2`, sales orders at 3. See `docs/handover-actions.md` §4b report. Supabase advisor for new tables: **user-owned** — no production access from this session.
 - CHANGELOG.md release notes.
 - **WP-5b fragment-POD implementation** — confirmed blocker before customer release. See `docs/handover-actions.md` §7.
+  *Checked 2026-11-10:* still open in code. `StopLinkService::issue()` returns the path route. The later handoff that marks this shipped does not match the tree.
+
+---
+
+## 6a. Phase 2: ERPNext/Frappe comparison (2026-11-11)
+
+**Why:** most customers come from another ERP (user, 2026-11-11). They arrive
+with ERPNext habits and data. This section records what ERPNext/Frappe has,
+what DEKA already does better, the gaps, and the packages that close them in
+DEKA's own architecture. Rules from §0 and §2a apply unchanged: per-company
+switch, `BelongsToCompany`, services own the logic, and no new packages
+without approval.
+
+### What was studied
+
+- **ERPNext core (Stock):**
+  - **Delivery Trip:** a driver and vehicle, departure time, and stops (one
+    customer per stop, address filled in, submitted Delivery Notes attached).
+    "Get customers from Delivery Note", or create the trip from a Delivery
+    Note. ETA and route optimisation come from Google Maps, using the
+    customer's and the driver's addresses.
+    ([doc](https://docs.frappe.io/erpnext/delivery-trip),
+    [Google Maps](https://docs.frappe.io/erpnext/v13/user/manual/en/erpnext_integration/google_maps))
+  - **Driver** (licence, categories, expiry) and **Vehicle** (plate, odometer,
+    fuel, insurance).
+  - **Vehicle Log:** odometer, fuel and service entries, which can become an
+    employee expense claim.
+  - **Shipping Rule:** freight priced by amount or weight, with country
+    conditions.
+  - **Packing Slip** and **Shipment:** parcels with dimensions, parcel
+    templates, value of goods, pickup and delivery parties, and tracking
+    status.
+  - Field-level details of Driver, Vehicle, Vehicle Log, Shipping Rule and
+    Shipment come from knowledge of ERPNext v15 and were **not re-read from
+    source this session**. Verify them before WP-21 maps any field.
+- **ERPNext Shipping app:**
+  - Packlink, LetMeShip and SendCloud: rate comparison, carrier booking,
+    labels and tracking from the Shipment.
+  - Carrier credentials on one doctype per carrier.
+  - European parcel aggregators.
+  - ([doc](https://docs.frappe.io/erpnext/erpnext_shipping.md),
+    [repo](https://www.github.com/frappe/erpnext-shipping))
+- **Community fleet apps:**
+  - [vsd fleet_ms](https://github.com/iphenelist/fleet_ms): trucks, trailers,
+    drivers, routes, transport orders, cargo types, fuel requests, fixed
+    expenses, inspections, manifests and round trips.
+  - [fleet_management](https://github.com/dalwadani/fleet_management): odometer
+    and fuel; alpha, "do not use in production".
+  - ERPNext core ships no fleet or transport vertical. Vendor pages that sell
+    one (ecosire.com) are marketing and were not used as evidence.
+
+### Where DEKA is already ahead (keep; do not regress)
+
+| DEKA | ERPNext |
+| --- | --- |
+| Shipment workflow with exceptions: hold, failed delivery, return, cancel. A typed event timeline (§2) | A Delivery Trip is draft, then submitted. Shipment tracking status comes only from an integration |
+| Proof of delivery per stop: name, time, photo, signature, location; office or one-time stop link (D8, D15) | No proof of delivery in core |
+| Charges, invoicing, margin, and expenses becoming vendor bills (D2, D3, WP-7, WP-8) | Freight through a Shipping Rule on the sales document. No per-shipment cost or margin |
+| Opening shipments at cutover (D13) | Not covered |
+| Per-company switch and isolation (§2a) | One site per company is the usual pattern |
+| Capacity warning on trips (D5) | None |
+
+### Gaps and the package that closes each
+
+| # | ERPNext / Frappe has | DEKA today | Improvement in DEKA's design | Package |
+| --- | --- | --- | --- | --- |
+| G1 | Driver licence categories and expiry. Vehicle insurance details | `license_expires_at` only. No vehicle documents | **Documents with expiry** for vehicles (insurance, roadworthiness, permit, other) and drivers (licence, medical). An expiry alert widget. Dispatch **warns or blocks** an assignment with an expired document (D17). ERPNext only stores the dates | WP-14 |
+| G2 | Vehicle Log (fuel, odometer, service) and expense claim | Trip odometer start and end only | **Fuel entries** (litres, price, odometer, station, receipt). Each creates an `Expense` (Fuel category), so costs keep the one approval and billing path (WP-8). Consumption per vehicle (L/100 km) in Reports | WP-15 |
+| G3 | "Notify customers" on a Delivery Trip, by email | Nothing customer-facing | **Notifications** at dispatch, out for delivery, delivered and failed, with ETA. Email first, SMS or WhatsApp through a vendor-agnostic provider (D16). **A public tracking page** by token in the URL fragment, the same lesson as WP-5b §0b | WP-16 |
+| G4 | Trip built from Delivery Notes | Shipments come from Sales orders (D1) only | **From inventory deliveries:** a shipment from an Inventory delivery operation, and a trip from several. Delivered state written back as an event. Read scope-free, by key, as `ShipmentFromOrder` does | WP-17 |
+| G5 | Route optimisation and ETA (Google Maps) | Manual stop order. No distance | **Stop ordering** with a per-stop lock, as in ERPNext. Distance and ETA through a `RoutingProvider` contract with a manual fallback (kilometres entered). `total_distance_km` on the trip. Provider choice is D18 | WP-18 |
+| G6 | Shipping Rule | Prices typed on each charge | **Rate cards** per company: service type, zone or route, and weight, volume or flat bands, with validity dates. They fill charges and still allow editing. Sales quotation pricing stays as D1 | WP-19 |
+| G7 | Parcel templates, Packing Slip | Package types without default sizes | Package types gain default dimensions and weight, so lines fill from the template. **Packing list PDF** beside the waybill (WP-6) | WP-20 |
+| G8 | (Migration) ERPNext data in doctypes | Drivers from employees, vehicles from Maintenance | **Import** of drivers, vehicles, documents and open shipments from ERPNext CSV exports or a DEKA template, with column mapping. Open jobs become D13 opening shipments. Follows the `ContactImporter` pattern: one column definition drives the template and the validation, plus the formula-injection guard | WP-21 |
+| G9 | Trailers, manifests, round trips (fleet_ms) | One vehicle per trip | A **trailer** as a vehicle type flag, plus an optional `trailer_id` on the trip, which adds to capacity. A **trip manifest PDF** listing shipments, packages, weight and stops | WP-22 |
+| G10 | Carrier aggregators (Packlink, SendCloud, LetMeShip) | Carrier as partner plus reference | **Deferred.** These are European parcel networks and our pilots are in Ghana, Zambia and Congo. When needed: a `CarrierProvider` contract plus a provider enum and an options bag, never vendor-named columns | WP-23 |
+
+### Decisions needed (user)
+
+| ID | Question | Recommendation |
+| --- | --- | --- |
+| D16 | Customer notification channels | **Answered (user, 2026-11-11), applies app-wide, not only Logistics.** See "D16: per-company email and SMS" below |
+| D17 | An expired vehicle or driver document at dispatch: warn or block? | **Answered (user, 2026-11-11): warn and allow.** Per-company setting `document_check`, default `warn`, switchable to `block`, as `capacity_check` does |
+| D18 | Routing provider for distance and ETA | **Answered (user, 2026-11-11): distance typed by hand, plus a free map service (OSRM), plus the GPS tracking platform.** `RoutingProvider` has three sources. (1) Manual entry is always available. (2) OSRM gives planned distance, ETA and stop order. The public OSRM demo server forbids production use, so it needs a self-hosted or hosted instance, with its URL as a setting. (3) Telematics (PILOT) gives the **actual** distance driven, from odometer or GPS track, for completed trips. Planned and actual distance are stored separately, so fuel and cost per km use actual figures when present. Vendor-agnostic: a provider enum plus an options bag |
+| D19 | Rate card scope | **Answered (user, 2026-11-11): standard prices.** Service type × zone × band (weight, volume or flat), per company, with validity dates. No customer-specific cards in the first version |
+| D20 | Import sources | **Answered (user, 2026-11-11): all three.** ERPNext export files, a DEKA template, and Odoo export files. One import service per record type. Each source is a column mapping onto the same definition |
+
+### D21: vehicles and drivers, entered or synchronised from GPS (user decision, 2026-11-11)
+
+**Rule (user):** vehicle and driver details often already exist in a GPS
+tracking system. A company either **enters them in DEKA**, or, once its GPS
+platform is integrated, has them **synchronised** from it.
+
+**How it fits.** The two points marked \* were confirmed by the user on
+2026-11-11: GPS wins its own fields, and a record removed from GPS is marked
+inactive.
+- **Choice and setup:**
+  - Per company, in Logistics settings: source `manual` (default) or a
+    telematics provider.
+  - The company's own credentials, encrypted, set like the D16 per-company
+    SMTP.
+  - Vendor-agnostic: the existing `TelematicsProvider` enum plus an options
+    bag. PILOT is the first adapter, through the existing `PilotClient`.
+- **Matching:**
+  - Vehicles match on `telematics_device_ref` or `telematics_agent_id`, then
+    on registration number within the company.
+  - Drivers match on the platform's driver id, then on licence number.
+  - A record that cannot be matched is created as new. It is never attached
+    to another company's record: sync runs with an explicit `company_id`
+    and reads scope-free, by key.
+- **Ownership of fields\*:**
+  - The GPS platform owns what it knows: plate, make, model, device,
+    odometer, last location, driver name and phone.
+  - DEKA owns the rest: documents (WP-14), costs, capacity, ownership and
+    carrier.
+  - Sync overwrites only GPS-owned fields. An edit in DEKA to a GPS-owned
+    field is overwritten at the next sync, and the form says so.
+- **Removal\*:** a vehicle or driver that disappears from the platform is
+  **deactivated, never deleted**, because trips, expenses and history point
+  at it.
+- **Schedule and safety:**
+  - A queued job on a schedule, plus a "Sync now" action.
+  - Each run is recorded with counts (created, updated, deactivated,
+    unmatched) and any error, without secrets.
+  - The run is idempotent and safe to run twice.
+- **Both directions are optional:** a company with GPS can still add a
+  vehicle by hand, for example a hired truck with no tracker.
+- **Distance (D18):** the same integration supplies actual distance driven.
+
+Package: becomes part of **WP-21** (import), because sync is an import
+whose source is the GPS platform rather than a file. WP-14 adds no
+GPS-owned fields.
+
+### D16: per-company email and SMS (user decision, 2026-11-11)
+
+**Rule:**
+- The application's main SMTP sends **every** notification by default.
+- A **Super Admin** may give a company its own SMTP. When a company has one,
+  **all** of that company's mail uses it: to its customers, its staff and
+  anyone else.
+- When it has none, mail falls back to the application's SMTP.
+- SMS works the same way: an application-wide SMS provider by default, and a
+  company's own provider, set by a Super Admin, wins for that company.
+
+**Constraints for whoever builds it** (a platform package in
+`support` or `security`, not in Logistics, because every plugin sends mail):
+- **Who can configure it:** only an active Super Admin can set, change or
+  remove a company's SMTP or SMS configuration. A Company Admin or
+  Multi-Company Admin may not, unless the user widens this later.
+- **Which company decides:** the transport is chosen from the **record's
+  company**, never the acting user's. This matches the recipients rule
+  (`Partner::recipientsForCompany()`). It also covers queued mail and jobs
+  with no user.
+- **From address:**
+  - Supersedes in part the protected decision "Mail leaves as the
+    application" (2026-11-04).
+  - With a company SMTP, the envelope From is that company's configured
+    From address, the only one its relay may send as.
+  - Without one, the From stays `config('mail.from.address')`, exactly as
+    today.
+  - The author stays the From **name** in both cases.
+- **Secrets:**
+  - Passwords and API keys are encrypted at rest (APP_KEY cast) and never
+    shown back after saving: masked, with "replace" only.
+  - They are never logged, audited by value or sent to Sentry.
+  - A "Send test" action checks the configuration before it is saved as
+    active.
+- **When the company's own server fails:**
+  - Do not silently fall back to the application's SMTP. The company chose
+    its own sender, so an unexpected sender confuses its customers and may
+    fail their DMARC checks.
+  - Report the failure (audit and Sentry, without secrets), show it to the
+    Super Admin on the company, and leave the message failed so it can be
+    retried.
+  - *Confirmed by the user, 2026-11-11: "if a company's mail server fails,
+    don't fall back on the app's SMTP."* The same applies to a company's SMS
+    provider. Do not add a fallback without asking.
+- **SMS providers:** vendor-agnostic. A provider enum plus an options bag,
+  never columns named after one vendor (user rule).
+- **Where it goes:** one resolver (for example `CompanyMailer::for($companyId)`
+  and `CompanySms::for($companyId)`) that every sender calls:
+  `EmailService`, `ChatterNotificationService`, invoice, sales and purchase
+  email, invitations and Logistics WP-16. One rule, one place.
+- **Mail leaves after commit,** as today.
+
+WP-16 depends on this for company-branded notifications. It may ship first
+on the application's SMTP, because the resolver's fallback makes that
+behaviour identical.
+
+### Package outlines (each writes its own detail when claimed)
+
+- **WP-14 Documents:**
+  - Table `logistics_documents`, polymorphic over vehicle and driver, with
+    type, number, issued_at, expires_at and file.
+  - Company settings `document_check` (warn or block) and
+    `document_alert_days`.
+  - `DispatchService` calls the check.
+  - Expiry widget.
+  - Tests pin the warn and block messages.
+  - Detail: "WP-14 detail" below. That subsection is the specification.
+    This list stays the summary.
+
+### WP-14 detail
+
+Specification only (2026-11-11). No code in this change. D17 is warn by
+default, switchable to block. O1 and O4 from §6b are in this package. D21
+is not: GPS sync does not add documents, and this package does not call a
+telematics provider.
+
+#### Tables and columns
+
+`logistics_documents`, one row per paper. `BelongsToCompany`. Soft deletes.
+The company comes from the vehicle or the driver through
+`InheritsParentCompany`, which reads the parent with
+`withoutGlobalScopes()`. A document is never filed under the session's
+company.
+
+| Column | Type | Notes |
+| --- | --- | --- |
+| `company_id` | foreign key, not null | Parent's company |
+| `documentable_type`, `documentable_id` | morph | Only `Vehicle` or `Driver`. A mismatch with `company_id` is refused |
+| `type` | string | Vehicle: `insurance`, `roadworthiness`, `permit`, `other`. Driver: `licence`, `medical`. A vehicle type on a driver is refused, and the reverse |
+| `number` | string, nullable | The paper's own number |
+| `issued_at` | date, nullable | |
+| `expires_at` | date, nullable | Null means it does not expire, so it never warns or blocks |
+| `file_path` | string, nullable | Stored through `CompanyStorage`, the same way proof-of-delivery files are. No `storage_path()` |
+| `recurring_amount` | decimal, nullable | O1. Null means the document is not a contract |
+| `period` | string, nullable | `monthly` or `yearly`, required when `recurring_amount` is set |
+| `currency_id` | foreign key, nullable | The company's currency when a recurring amount is set |
+| `next_post_at` | date, nullable | The next contract period that has not been posted |
+| `creator_id` | foreign key, nullable | |
+
+Index `(documentable_type, documentable_id)` and `(company_id, expires_at)`.
+
+Saving a driver document of type `licence` also writes `expires_at` onto
+`logistics_drivers.license_expires_at`. `Driver::isLicenseExpired()` already
+refuses dispatch, and that column stays the licence date. Other document
+types do not touch it.
+
+`logistics_vehicle_assignments`, the O4 log. Who drove which vehicle, and
+who is planned to.
+
+| Column | Type | Notes |
+| --- | --- | --- |
+| `company_id` | foreign key, not null | The vehicle's company |
+| `vehicle_id` | foreign key | |
+| `driver_id` | foreign key | Same company as the vehicle, or the row is refused |
+| `started_at` | timestamp | |
+| `ended_at` | timestamp, nullable | Null means this is the open assignment |
+| `is_planned` | boolean, default false | A future driver. Not the person on the road yet |
+| `trip_id` | foreign key, nullable | Set when the row was opened by a trip |
+| `creator_id` | foreign key, nullable | |
+
+One open unplanned row per vehicle (`ended_at` null and `is_planned` false).
+A second open row is refused. A planned row may sit beside the open one.
+
+`logistics_company_settings` gains:
+
+| Column | Default | Notes |
+| --- | --- | --- |
+| `document_check` | `warn` | `warn` or `block`, same shape as `capacity_check`. D17. No `off` |
+| `document_alert_days` | `30` | Widget and warn window |
+
+Both go on `CompanySetting::$attributes`, or a company with no saved row
+reads them as null and the check silently does nothing.
+
+#### Services
+
+`DocumentChecker` is the only place that decides expired or expiring.
+
+- `issues(Trip $trip): array` reads the trip's vehicle and driver with
+  `withoutGlobalScopes()`, filtered by the trip's `company_id`. A document
+  with `expires_at` before today is expired. One whose `expires_at` is
+  within `document_alert_days` is expiring. A null `expires_at` is fine.
+- `assertForDispatch(Trip $trip): void` reads
+  `CompanySetting::forCompany($trip->company_id)->document_check`.
+  `warn` returns without throwing. `block` throws
+  `TripNotDispatchable` when any required document is expired. The message
+  names the vehicle or the driver and the document type.
+- A missing document is not an expiry. Block mode refuses only an expired
+  date, not a vehicle that has no insurance row yet. The widget still lists
+  vehicles with nothing on file, as a separate count, so staff can see the
+  gap without being unable to dispatch on the first day.
+
+`ContractPoster` posts O1. For each document with a `recurring_amount` whose
+`next_post_at` is due, it creates one `Expense` in the document's company:
+`vehicle_id` set, `shipment_id` null (the expenses table already allows
+that), `paid_by` the company, amount and currency copied from the document.
+The expense then follows the existing approval path. `ExpensePoster` is not
+given a second writer. One expense per document per period: insert, and a
+unique `(document_id, period_start)` conflict means it was already posted.
+`next_post_at` moves forward only after that insert commits. A failed post
+does not consume the period. The job has no user, so it calls
+`LogisticsAccess::ensureEnabled($document->company_id)` and does not log a
+person in.
+
+`AssignmentLog` opens and closes O4 rows. It does not infer history from
+GPS.
+
+#### The DispatchService hook
+
+`assertDispatchable()` already refuses a missing crew, an inactive vehicle
+or driver, and `Driver::isLicenseExpired()`. After those, it calls
+`DocumentChecker::assertForDispatch($trip)`.
+
+`dispatch()` and `start()` both reach that method through `move(..., requireCrew: true)`.
+`complete()` does not. An expired document stops a trip leaving and stops
+it starting, and does not block completing one that is already out.
+
+Warn mode does not throw, so the dispatch action must show `issues()`
+before it calls `dispatch()`, the same way capacity warnings are shown and
+the trip still proceeds. The service does not hide the messages inside
+`dispatch()`'s return value, which is the trip.
+
+The check uses the trip's company, not the session's.
+
+#### Policies and permissions
+
+`DocumentPolicy` follows `LogisticsPolicy`: `viewAny` is
+`view_any_logistics_document` and `LogisticsAccess::enabledForCurrent()`.
+Create, update and delete repeat `enabledFor` on the record's company.
+The service repeats the check, because a super-admin `Gate::before` skips
+policies.
+
+Assignment rows use the same permission as the vehicle
+(`view_any_logistics_vehicle` / `update_logistics_vehicle`). They are not a
+second permission.
+
+Shield names, to be pinned the way the report pages are:
+`view_any_logistics_document`, `view_logistics_document`,
+`create_logistics_document`, `update_logistics_document`,
+`delete_logistics_document`. The widget permission is
+`widget_logistics_expiring_documents_widget`.
+
+The recurring amount is money. Showing it on the document form requires
+`view_financials_logistics_shipment`, the same permission as the margin
+widget. Hiding the field is not the only check. `ContractPoster` does not
+ask a user for that permission. It is a job.
+
+#### Widgets
+
+`ExpiringDocumentsWidget` on the Logistics dashboard, next to
+`FleetStatsWidget`. `canView()` is `LogisticsAccess::enabledForCurrent()`
+and `can('widget_logistics_expiring_documents_widget')`. It counts, for the
+companies in scope:
+
+- documents expired and not replaced
+- documents expiring inside `document_alert_days`
+- vehicles and drivers with no document on file
+
+`CompanyScope` does the company cut. The widget does not call
+`withoutGlobalScopes()`.
+
+#### Resource layout
+
+`DocumentResource` under the Fleet cluster, split as §2a requires:
+`DocumentResource.php`, `Schemas/DocumentForm.php`,
+`Schemas/DocumentInfolist.php`, `Tables/DocumentsTable.php`, and the
+usual pages. `getNavigationGroup()` matches the other Fleet resources.
+The assignment log is a relation manager on the vehicle, not its own
+navigation item.
+
+#### Tests
+
+Names are the behaviour. Each pins the message where the code refuses.
+
+- `warns and still dispatches a trip whose vehicle insurance is expired`
+- `blocks dispatch when the company's document check is block and the insurance is expired`
+- `does not block dispatch for a document with no expiry date`
+- `does not treat a missing document as an expired one`
+- `keeps the driver's licence date in step with the licence document`
+- `refuses a driver document typed as vehicle insurance`
+- `files the document under the vehicle's company, not the session's`
+- `hides another company's documents`
+- `hides the expiring-documents widget when logistics is off`
+- `hides the recurring amount without view_financials`
+- `posts one expense per contract period and does not post the same period twice`
+- `does not move next_post_at when the expense insert fails`
+- `refuses a second open driver on the same vehicle`
+- `records the trip's driver as the vehicle's open assignment when the trip starts`
+- `closes that assignment when the trip completes`
+- `a planned driver does not become the open assignment`
+
+#### Files to create
+
+- `database/migrations/*_create_logistics_documents_table.php`
+- `database/migrations/*_create_logistics_vehicle_assignments_table.php`
+- `database/migrations/*_add_document_check_to_logistics_company_settings.php`
+- `src/Models/Document.php`
+- `src/Models/VehicleAssignment.php`
+- `src/Enums/DocumentType.php`
+- `src/Enums/DocumentCheck.php`
+- `src/Enums/ContractPeriod.php`
+- `src/Services/DocumentChecker.php`
+- `src/Services/ContractPoster.php`
+- `src/Services/AssignmentLog.php`
+- `src/Policies/DocumentPolicy.php`
+- `src/Filament/Clusters/Fleet/Resources/DocumentResource.php` and its
+  schema, table and page classes
+- `src/Filament/Widgets/ExpiringDocumentsWidget.php`
+- `src/Console/Commands/PostDueContracts.php`
+- `database/factories/DocumentFactory.php`
+- `tests/Feature/Documents/DocumentCheckTest.php`
+- `resources/lang/{en,fr,es,pt_BR,ar}/...` for the new strings, quoted
+  numeric keys where the English file uses them
+
+#### Files to modify
+
+- `src/Services/DispatchService.php` (`assertDispatchable` only)
+- `src/Models/CompanySetting.php` (`$attributes` and `$fillable`)
+- `src/LogisticsServiceProvider.php` (migration list and the schedule)
+- the Fleet cluster's widget registration
+- the shipment dispatch action, so warn-mode messages are shown
+
+No change to Sales, Inventory, or the GPS client.
+- **WP-15 Fuel:**
+  - Table `logistics_fuel_entries`, linked to the vehicle, trip and expense.
+  - `FuelLogService` creates the `Expense` in the same transaction.
+  - Consumption report.
+- **WP-16 Notifications:**
+  - A `ShipmentWorkflow` event listener.
+  - Notification per customer contact (`Partner::recipientsForCompany()`,
+    under the protected email rule).
+  - Mail goes out after commit, from the application address.
+  - Table `logistics_tracking_links`, storing a hash only, using the fragment
+    flow.
+- **WP-17 Inventory:**
+  - "Create shipment" from a done or ready delivery operation, and "Add to
+    trip" in bulk.
+  - Inventory files are untouched where an extension point exists. Otherwise
+    the Logistics side gets a picker, the same as the sales order picker in
+    §2a.
+- **WP-18 Routing:**
+  - `Stop.is_locked` and `distance_km`, `Trip.total_distance_km`.
+  - `RoutingProvider` contract with a `ManualRoutingProvider`.
+  - Reorder on the dispatch board.
+- **WP-19 Rates:**
+  - Tables `logistics_rate_cards` and `logistics_rate_lines`.
+  - `RateCalculator`, called by a "Price from rate card" action on charges.
+- **WP-20 Parcels:** default dimensions on `logistics_package_types`, and a
+  packing list view.
+- **WP-21 Import:**
+  - `FleetImporter` gains a CSV path.
+  - One import service per record type, using the column-definition pattern.
+- **WP-22 Trailers:** `vehicle_types.is_trailer`, `trips.trailer_id`, and a
+  manifest PDF.
+
+Order of value: **WP-14, WP-16, WP-17, WP-21** first. These are what
+customers moving from ERPNext notice first: compliance, customer updates,
+deliveries from stock, and their own data. Then WP-15, WP-19, WP-18, WP-20,
+WP-22.
+
+## 6b. Odoo comparison: additions beyond §6a (2026-11-11)
+
+Phase 1 already took from Odoo: quotations through Sales (D1), cost lines and
+a bill per vendor (D2), `paid_by` expenses (D3), vehicle capacity on dispatch
+(D5) and the driver as a contact (D6). The rows below come from Odoo 17–19
+**Fleet**, **Inventory** (delivery methods, batch and dispatch, packages,
+tracking) and **SMS on delivery**, from knowledge of those apps rather than
+pages re-read this session. Verify them against Odoo's documentation before
+building.
+
+| # | Odoo has | Gives DEKA | Fits into |
+| --- | --- | --- | --- |
+| O1 | **Fleet contracts:** leasing, insurance or rental, with a recurring cost (monthly or yearly), start and end dates, and a renewal alert | Recurring vehicle cost, posted per period as an expense, which feeds margin and cost per kilometre | WP-14: a document gains `recurring_amount` and `period`. The posting reuses the WP-8 expense path |
+| O2 | **Services log:** repairs and maintenance per vehicle, with vendor and cost | Repairs as expenses against the vehicle. Work orders stay in Maintenance, through `equipment_id` | WP-15: a service entry is a sibling of the fuel entry |
+| O3 | **Odometer history**, its own list per vehicle | One odometer timeline, fed by trips, fuel and services. It catches typing mistakes (a reading lower than the last one) | WP-15 |
+| O4 | **Driver history and "future driver"** | Who drove which vehicle when, for fines and incidents | WP-14: an assignment log on the vehicle |
+| O5 | **Vehicle cost analysis**: cost per vehicle by type and month | A total cost of ownership report: fuel, services, contracts and subcontracting against revenue, per vehicle | WP-11 follow-up report, after WP-15 |
+| O6 | **Delivery methods with pricing rules:** fixed, or rules on weight, volume, quantity or price, with destination country, state or postal-code conditions, and a free-over threshold | Confirms the WP-19 shape. Adds the **free-over threshold** and **destination conditions** as zone definitions | WP-19 |
+| O7 | **Batch and wave transfers with dispatch:** a batch with vehicle, dock and capacity check, built from several delivery orders | The same idea as WP-17's "add to trip" in bulk. Adds a **loading dock** field and the loading order | WP-17 |
+| O8 | **Packages:** package types with maximum weight and dimensions. "Put in pack" | Package types gain maximum weight, and lines warn when exceeded | WP-20 |
+| O9 | **SMS confirmation and tracking link** sent when a delivery is validated | Confirms D16. The tracking link is the WP-16 page | WP-16 |
+| O10 | **Signature on the delivery order** at validation | Already better in DEKA (D8 per-stop proof of delivery). No change | — |
+| O11 | **Return labels and returns** | A **return shipment** created from a delivered or failed one, in reverse, linked to the original | New, small. Suggest WP-24 |
+| O12 | **Incoterms** on orders and deliveries | `incoterm_id` on the shipment, for cross-border jobs (Ghana, Zambia, Congo) and customs costs. Sales already carries incoterms, so check `ShipmentFromOrder` copies it | WP-17 or WP-24 |
+| O13 | **Field Service and Planning** Gantt for people | A **driver availability and duty** view: leave from Time Off, plus hours per day. Dispatch warns on an unavailable driver | Later. Needs Time Off read access |
+| O14 | **Carbon (CO2) per vehicle** | CO2 per trip, from fuel litres times a factor per fuel type. Cheap once WP-15 exists, and asked for in tenders | WP-15 option |
+
+**Recommended picks from Odoo:**
+- O1, O3, O4 and O6 strengthen packages already planned at little cost.
+- O11 (returns) and O12 (incoterms) are small additions that customers moving
+  from Odoo expect.
+- O5 is the report owners ask for once fuel and services are recorded.
 
 ---
 
@@ -1587,6 +2099,8 @@ Requests for other packages:
 
 - WP-12: translate `resources/lang/en/delivery.php`.
 - WP-5b (optional, D15): the stop link for POD capture is still `todo`.
+  *Superseded 2026-09-24 through 2026-10-20:* WP-5b is done, including the
+  fragment URL. The status row is the current state.
 
 ### WP-7 - Charges and shipment invoicing - 2026-09-22 - Claude
 
@@ -2293,6 +2807,13 @@ Left for later (not changed here):
   `->map->permission` while `transformPages()` writes `permissions`. Nothing in
   this application calls it, so it is dead upstream code, but do not build on it.
 
+*Verified 2026-11-10, not reopened.* `total_costs` and `total_charges` do not
+appear in logistics PHP or migrations; WP-13 dropped them. The nine page
+permission names are pinned in `tests/Feature/Reports/ReportsTest.php`.
+`FilamentShield::getEntitiesPermissions()` still has no caller in this
+application. Leave it. The WP-1a label follow-up is already in the English
+enum file: "Arrived at Destination" and "Departed from Origin".
+
 Requests for other packages:
 - **WP-12:** translate `resources/lang/en/reports.php` and
   `resources/lang/en/filament/clusters/reporting.php`. Note that `reports.php`
@@ -2368,6 +2889,7 @@ before the run and left empty afterwards.
   `review` until that is complete.
 - **WP-9b/user:** decide and implement the customer-page integration; it remains
   genuinely `todo`.
+  *Superseded 2026-11-10:* done. See the handoff of that date.
 - **WP-12:** resolve the complete checker output, including the 17 missing files
   per locale plus `exceptions.php` and company-settings key/structure drift.
 - **User:** rehearse install -> enable one company -> use -> disable -> verify
@@ -2764,6 +3286,10 @@ partners base resource, a guarded contribution from Logistics, a relation manage
 filters by `customer_id` with the switch and permission applied, and a test that a
 customer shared between two companies sees only the active company's shipments.
 
+*Superseded 2026-11-10.* The registry arrived as `PartnerSchemaRegistry`, with
+infolist slots and no relation-manager slot. The tab shipped without editing
+partners. See "WP-9b - 2026-11-10 - Grok".
+
 ### WP-13 - flaky workflow assertion closed - 2026-09-30 - Claude
 
 Codex's independent WP-5b review reported the complete `LogisticsFeature` run as
@@ -2833,3 +3359,98 @@ LogisticsFeature: **195 passed, 0 failed, 751 assertions** (command: `php artisa
 
 - Smart-quote corruption in the test file: the Edit tool converted ASCII `'` delimiters to Unicode LEFT/RIGHT SINGLE QUOTATION MARKS in three test names and their body code during the implementation session. Fixed with `perl -i -pe 's/\xe2\x80\x98/\x27/g; s/\xe2\x80\x99(?!s)/\x27/g'` — 28 corrupted opening quotes and 28 corrupted closing quotes replaced; 7 legitimate smart apostrophes (e.g. `company's`) preserved.
 - The Sentry redaction (`AppServiceProvider::redactStopLinkTokensFromSentry`) now guards the backward-compat URL pattern rather than the primary flow.
+
+### WP-9b - 2026-11-10 - Grok
+
+Status: `done`. Test database: `aureuserp_testing_logistics`.
+
+#### Why
+
+D11 asks for a customer's shipments and charges on the customer page. The
+2026-09-30 deferral found no Partners extension point. Partners has since
+gained `PartnerSchemaRegistry`, the same `AbstractSchemaRegistry` pattern as
+the company form. It has form, infolist, table and action slots, and no
+relation-manager slot. A relation-manager tab would mean editing partners and
+support, and a `Partner::shipments()` method that points at an optional
+plugin. That was not done.
+
+#### How
+
+`PartnerContributions` registers one infolist tab on `tabs.append`, once.
+`packageBooted()` can run again, and the registry is static, so a second
+registration would draw the tab twice. The tab is visible only when
+`CustomerPage::visible()` is true: the user holds
+`view_any_logistics_shipment` and `LogisticsAccess::enabledFor()` is true for
+the company the rows will be read from. Hiding the tab is not the only check.
+The entries call the same gate. Charge amounts also need
+`view_financials_logistics_shipment`, the same permission as the margin widget
+and the profitability report.
+
+The query drops only `CompanyScope` and then filters `customer_id` plus an
+explicit `company_id`. Soft deletes stay. A partner that belongs to a company
+shows that company's jobs. A shared contact (no company) shows only
+`current_company_id()`. No current company shows nothing. Names in the HTML
+are escaped. Links go to the shipment view. Eight recent shipments and eight
+open (uninvoiced, billable) charges.
+
+No new cluster, page or resource. Existing Logistics clusters still return
+`NavigationGroup::Logistics`. The menu regroup is untouched.
+
+#### Benefit
+
+A clerk opening a customer sees that customer's recent shipments, and the
+open charges when they may see money. Another tenant's shipments do not
+appear on a shared contact. A company without Logistics, and a user without
+the view permission, see no tab. The other company's shipment URL does not
+resolve.
+
+#### Trade-off / risk
+
+This is not a relation-manager tab. It lists eight rows and links out. It
+appears on every partner infolist that uses the base schema, including
+contacts, because those resources do not override `infolist()`. The gate
+still hides it unless the partner passes `visible()`. A direct shipment URL
+for another company is a missing model (`ModelNotFoundException` from
+Filament's record resolution), which the test pins. There is no migration.
+
+The `tenant-s3` branch of POD file URLs is still untested: `phpunit.xml`
+does not set `FILESYSTEM_PUBLIC_DRIVER`. That coverage gap is unchanged.
+`FilamentShield::getEntitiesPermissions()` is still unused. PILOT was not
+started. `docs/handover-actions.md` §0a is still a production check for the
+user. Section 9 still lists the fragment POD flow as pending, and that is
+accurate: `StopLinkService::issue()` still returns the path route. The
+2026-10-20 handoff that records the fragment flow as shipped does not match
+this tree.
+
+#### Verification
+
+- Focused `CustomerPageTest`: **4 passed, 20 assertions**, 810.61s, exit 0,
+  after the direct-URL assertion was changed to expect
+  `ModelNotFoundException`. The first run of that file was 3 passed, 1
+  failed, 19 assertions, exit 2.
+- `LogisticsFeature`: **201 passed, 833 assertions**, 5689.51s, exit 0, on
+  `aureuserp_testing_logistics`.
+- `php artisan translations:check --plugin=logistics --details`: 4 passed
+  (ar, es, fr, pt_BR). The first run failed Arabic on a missing trailing
+  newline; the file was given the same closing line as English.
+- `vendor/bin/pint --dirty --format agent`: passed.
+- Browser: not run.
+- PartnerFeature was not run. Partners was not edited.
+
+Tests: `shows a customer their own shipments and open charges`,
+`hides another company's shipments on a shared contact`,
+`hides the shipments tab when logistics is off or the user cannot view shipments`,
+`hides open charges without view_financials`.
+
+#### Rollback
+
+Remove `PartnerContributions::register()` from `LogisticsServiceProvider` and
+delete `CustomerPage`, `PartnerContributions`, the customer-page test and
+`resources/lang/*/filament/partner.php`. No migration.
+
+#### Files outside `plugins/webkul/logistics`
+
+`AGENTS.md`, `docs/logistics-plan.md`, `docs/logistics.md`,
+`docs/change-log.md`, `docs/agent-reminders.md`, and the shared skill
+`dekaerp-plugin-architecture`. No partners, support, security or
+platform-billing source.

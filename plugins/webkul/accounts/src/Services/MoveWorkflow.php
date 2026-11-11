@@ -283,6 +283,18 @@ class MoveWorkflow
         if (! $move->currency) {
             throw new Exception(__('accounts::account-manager.post-action-validate.currency-archived'));
         }
+
+        // A manual journal entry whose debits and credits differ must never
+        // be posted: it puts the books out of balance. Ported alone from
+        // upstream 99fd7c7e8 (review, 2026-11-11). Invoices and bills are
+        // balanced by computeAccountMove() and are not checked here.
+        if ($move->move_type === MoveType::ENTRY) {
+            $balance = $move->lines->sum(fn (MoveLine $line) => (float) $line->debit - (float) $line->credit);
+
+            if (! float_is_zero($balance, precisionRounding: $move->currency->rounding)) {
+                throw new Exception(__('accounts::account-manager.post-action-validate.unbalanced'));
+            }
+        }
     }
 
     protected function assertNotExchangeDifference(AccountMove $move): void

@@ -65,6 +65,16 @@ class CompanyResource extends Resource
 
     protected static bool $shouldRegisterNavigation = false;
 
+    /**
+     * Not registered with the panel: Security (a core plugin) registers its
+     * subclass on the same slug. With both registered, this base won the
+     * /admin/companies routes, so Security's create and edit pages never ran
+     * and the Administrator section's email and password were silently
+     * dropped - no administrator or invitation was ever created in
+     * production (2026-11-11). Pinned by security CompanyRouteTest.
+     */
+    protected static bool $isDiscovered = false;
+
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function getEloquentQuery(): Builder

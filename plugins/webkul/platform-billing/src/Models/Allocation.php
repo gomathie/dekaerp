@@ -31,7 +31,7 @@ class Allocation extends Model
     {
         return [
             'amount_minor' => 'integer',
-            'posted_at' => 'immutable_datetime',
+            'posted_at'    => 'immutable_datetime',
         ];
     }
 

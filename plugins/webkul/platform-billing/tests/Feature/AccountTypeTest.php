@@ -46,17 +46,17 @@ function actAsInstallationStaff(User $user): void
 function trialPrice(): Price
 {
     $plan = Plan::query()->create([
-        'name' => 'Trial switch plan',
-        'code' => 'trial-'.uniqid(),
+        'name'             => 'Trial switch plan',
+        'code'             => 'trial-'.uniqid(),
         'included_plugins' => [],
-        'seat_limit' => 3,
+        'seat_limit'       => 3,
     ]);
 
     return Price::query()->create([
-        'plan_id' => $plan->id,
-        'currency' => 'USD',
+        'plan_id'         => $plan->id,
+        'currency'        => 'USD',
         'interval_months' => 1,
-        'amount_minor' => 1000,
+        'amount_minor'    => 1000,
     ]);
 }
 
@@ -77,8 +77,8 @@ it('makes an expired test company read-only and leaves an open trial writable', 
 
     expect($tenant->isSuperAdmin())->toBeFalse()
         ->and(fn () => Calendar::query()->create([
-            'name' => 'expired trial write',
-            'timezone' => 'UTC',
+            'name'       => 'expired trial write',
+            'timezone'   => 'UTC',
             'company_id' => $company->getKey(),
         ]))->toThrow(ValidationException::class, CompanyReadOnlyWriteGuard::MESSAGE);
 
@@ -109,8 +109,8 @@ it('lets installation staff add days and refuses a company administrator', funct
 
     $mca = User::withoutEvents(fn (): User => User::factory()->create([
         'default_company_id' => $company->getKey(),
-        'is_active' => true,
-        'is_default' => false,
+        'is_active'          => true,
+        'is_default'         => false,
     ]));
     $mca->allowedCompanies()->sync([$company->getKey()]);
     $mca->syncRoles([app(MultiCompanyAdminRoleProvisioner::class)->provision()->getKey()]);
@@ -154,8 +154,8 @@ it('lets an assigned multi-company admin switch a test company to commercial', f
     $at = new DateTimeImmutable('2026-11-09T00:00:00Z');
     $mca = User::withoutEvents(fn (): User => User::factory()->create([
         'default_company_id' => $company->getKey(),
-        'is_active' => true,
-        'is_default' => false,
+        'is_active'          => true,
+        'is_default'         => false,
     ]));
     $mca->allowedCompanies()->sync([$company->getKey()]);
     $mca->syncRoles([app(MultiCompanyAdminRoleProvisioner::class)->provision()->getKey()]);
@@ -185,8 +185,8 @@ it('refuses a multi-company admin switching a company they are not assigned to',
     $at = new DateTimeImmutable('2026-11-09T00:00:00Z');
     $mca = User::withoutEvents(fn (): User => User::factory()->create([
         'default_company_id' => $assigned->getKey(),
-        'is_active' => true,
-        'is_default' => false,
+        'is_active'          => true,
+        'is_default'         => false,
     ]));
     $mca->allowedCompanies()->sync([$assigned->getKey()]);
     $mca->syncRoles([app(MultiCompanyAdminRoleProvisioner::class)->provision()->getKey()]);
@@ -216,8 +216,8 @@ it('refuses a multi-company admin using the commercial switch entries on a comme
     $draft = app(SubscriptionDrafts::class)->create($admin, $company, $price, $at);
     $mca = User::withoutEvents(fn (): User => User::factory()->create([
         'default_company_id' => $company->getKey(),
-        'is_active' => true,
-        'is_default' => false,
+        'is_active'          => true,
+        'is_default'         => false,
     ]));
     $mca->allowedCompanies()->sync([$company->getKey()]);
     $mca->syncRoles([app(MultiCompanyAdminRoleProvisioner::class)->provision()->getKey()]);
@@ -242,7 +242,7 @@ it('keeps a manually granted module when a test company switches to commercial',
     );
     DB::table('company_plugin')->insert([
         'company_id' => $company->getKey(),
-        'plugin_id' => $plugin->getKey(),
+        'plugin_id'  => $plugin->getKey(),
         'created_at' => now(),
         'updated_at' => now(),
     ]);
@@ -250,8 +250,8 @@ it('keeps a manually granted module when a test company switches to commercial',
     $before = app(PluginEntitlementService::class)->grantedPluginIds((int) $company->getKey());
     $mca = User::withoutEvents(fn (): User => User::factory()->create([
         'default_company_id' => $company->getKey(),
-        'is_active' => true,
-        'is_default' => false,
+        'is_active'          => true,
+        'is_default'         => false,
     ]));
     $mca->allowedCompanies()->sync([$company->getKey()]);
     $mca->syncRoles([app(MultiCompanyAdminRoleProvisioner::class)->provision()->getKey()]);

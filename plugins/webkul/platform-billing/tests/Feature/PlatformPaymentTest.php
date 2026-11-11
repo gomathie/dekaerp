@@ -24,8 +24,8 @@ require_once __DIR__.'/../../../support/tests/Helpers/TestBootstrapHelper.php';
 beforeEach(function (): void {
     TestBootstrapHelper::ensureERPInstalled();
     config([
-        'platform-billing.issuer.name' => 'DEKA',
-        'platform-billing.issuer.tax_rate' => '15.0000',
+        'platform-billing.issuer.name'        => 'DEKA',
+        'platform-billing.issuer.tax_rate'    => '15.0000',
         'platform-billing.issuer.tax_enabled' => true,
     ]);
 });
@@ -35,16 +35,16 @@ function paymentFixture(): array
     $company = Company::factory()->create();
     $actor = User::query()->where('email', 'admin@example.com')->firstOrFail();
     $plan = Plan::query()->create([
-        'name' => 'Payment plan',
-        'code' => 'pay-'.uniqid(),
+        'name'             => 'Payment plan',
+        'code'             => 'pay-'.uniqid(),
         'included_plugins' => [],
-        'seat_limit' => 3,
+        'seat_limit'       => 3,
     ]);
     $price = Price::query()->create([
-        'plan_id' => $plan->id,
-        'currency' => 'USD',
+        'plan_id'         => $plan->id,
+        'currency'        => 'USD',
         'interval_months' => 1,
-        'amount_minor' => 10000,
+        'amount_minor'    => 10000,
     ]);
     $draft = app(SubscriptionDrafts::class)->create($actor, $company, $price, new DateTimeImmutable('2026-01-01T00:00:00Z'));
     $active = app(SubscriptionLifecycle::class)->activate($draft, $actor, new DateTimeImmutable('2026-01-01T00:00:00Z'));
@@ -77,8 +77,8 @@ it('refuses a multi-company admin even though credit notes can be delegated', fu
     [$company] = paymentFixture();
     $actor = User::withoutEvents(fn (): User => User::factory()->create([
         'default_company_id' => $company->getKey(),
-        'is_active' => true,
-        'is_default' => false,
+        'is_active'          => true,
+        'is_default'         => false,
     ]));
     $actor->allowedCompanies()->sync([$company->getKey()]);
     $actor->syncRoles([app(MultiCompanyAdminRoleProvisioner::class)->provision()->getKey()]);

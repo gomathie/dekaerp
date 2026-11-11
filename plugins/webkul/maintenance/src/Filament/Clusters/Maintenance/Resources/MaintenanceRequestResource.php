@@ -283,7 +283,7 @@ class MaintenanceRequestResource extends Resource
 
                                 Select::make('user_id')
                                     ->label(__('maintenance::filament/clusters/maintenance/resources/maintenance-request.form.sections.settings.fields.responsible'))
-                                    ->relationship('user', 'name')
+                                    ->relationship('user', 'name', fn ($query) => \Webkul\Support\Filament\CompanyMembers::scope($query))
                                     ->native(false)
                                     ->searchable()
                                     ->preload()

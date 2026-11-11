@@ -2,7 +2,7 @@
 
 return [
     'capacity-error' => 'Esta empresa atingiu o limite de :limit usuários (:used em uso, incluindo convites pendentes). Aumente o limite para adicionar mais usuários.',
-    'title' => 'Empresas',
+    'title'          => 'Empresas',
 
     'navigation' => [
         'title' => 'Empresas',

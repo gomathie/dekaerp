@@ -3,6 +3,7 @@
 namespace Webkul\Security\Services;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Spatie\Permission\PermissionRegistrar;
 use Webkul\Security\Models\Role;
 use Webkul\Security\Models\User;
@@ -79,6 +80,13 @@ class TenantRoleAssigner
         $user->unsetRelation('roles');
 
         app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+        // A readable password is kept only for Company Admins. When this sync
+        // removes the role, delete the copy now rather than at their next
+        // password change (review, 2026-11-11).
+        if (! $user->isCompanyAdmin() && Schema::hasTable('security_user_password_vault')) {
+            app(CompanyAdminPasswordVault::class)->forget($user);
+        }
     }
 
     /**

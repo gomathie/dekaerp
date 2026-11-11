@@ -93,7 +93,7 @@ it('refuses a tenant creator membership when a programmatic company has no free 
     $name = 'Capped programmatic company';
 
     expect(fn () => Company::factory()->create([
-        'name' => $name,
+        'name'       => $name,
         'creator_id' => $creator->getKey(),
         'seat_limit' => 0,
     ]))->toThrow(ValidationException::class, 'user seats');

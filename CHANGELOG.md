@@ -5,6 +5,7 @@
 * Added a multi-company Logistics module for shipments, fleet records, trip dispatch, delivery tracking, proof of delivery, waybills, customer invoicing, operating expenses, dashboards, and reports
 * Added per-company Logistics settings, numbering sequences, service products, capacity warnings, delivery requirements, and accounting defaults
 * Added one-time, expiring driver links for mobile proof-of-delivery capture without requiring a driver login
+* A customer record lists that customer's recent shipments, and open charges when the viewer may see shipment money. A contact with no company shows only the company the viewer is working in
 * Added shipment register, delivery performance, profitability, vehicle trip history, and driver trip history reports with filtered exports
 * Added Invoice, Sales and Purchase dashboards, and expanded the Recruitment dashboard, with filters, trend cards, charts and top-record lists. Each shows only the current company's figures
 
@@ -21,7 +22,7 @@
 * The Project "Tasks by state" and "Tasks by stage" charts load faster: each counts in one query instead of one per state or stage
 * The Project "Tasks by stage" chart no longer shows zero for every stage when no start date is chosen
 * [Security] Enforced company isolation and server-side authorization across Logistics actions, reports, exports, widgets, documents, and delivery files
-* [Security] Added hashed, single-use, revocable, expiring, and rate-limited public delivery links whose token travels in the URL fragment so it never appears in HTTP access logs, edge CDN logs, or any other layer that records request paths
+* [Security] Added hashed, single-use, revocable, expiring, and rate-limited public delivery links. The token is stored only as a hash. New links are still path URLs (`/logistics/pod/{token}`); the fragment exchange described in the 2026-10-20 notes is not in this tree
 
 # 🚀 CHANGELOG — v1.6.0
 

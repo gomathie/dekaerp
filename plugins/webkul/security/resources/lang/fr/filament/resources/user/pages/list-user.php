@@ -8,16 +8,16 @@ return [
 
     'header-actions' => [
         'invitation' => 'Invitation en attente',
-        'resend' => [
-            'title' => 'Renvoyer l’invitation',
-            'invited' => 'Invitation renvoyée',
+        'resend'     => [
+            'title'         => 'Renvoyer l’invitation',
+            'invited'       => 'Invitation renvoyée',
             'invite-failed' => 'Impossible de renvoyer l’invitation',
-            'mail-failed' => 'Échec de l’envoi',
-            'recovery' => 'L’invitation est toujours active. Partagez ce lien par un canal sûr : :link',
+            'mail-failed'   => 'Échec de l’envoi',
+            'recovery'      => 'L’invitation est toujours active. Partagez ce lien par un canal sûr : :link',
         ],
         'revoke' => [
             'title' => 'Révoquer l’invitation',
-            'done' => 'Invitation révoquée',
+            'done'  => 'Invitation révoquée',
         ],
         'invite' => [
             'title' => 'Inviter un utilisateur',

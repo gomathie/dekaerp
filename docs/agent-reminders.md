@@ -9,6 +9,58 @@ Boost guidelines the agent follows) and [`CHANGELOG.md`](../CHANGELOG.md)
 
 ## 2026-11-10
 
+**Requested:** Look at production on a phone and write a plan to improve the
+mobile layout, for review before any code.
+
+**Decision:** Every recommendation is in `docs/mobile-view-plan.md`
+(R1–R9). The first patch is the top bar and the scrolling tabs. Stat cards
+two-per-row, a list that has rows, cell wrapping, logical truncation, and
+a 320px check are the second pass. The module drawer stays. No layout code
+was changed.
+
+## 2026-11-10
+
+**Requested:** Update the records for Logistics work that is actually done.
+
+**Decision:** The customer-page tab goes in the v1.7.0 release notes. The
+fragment proof-of-delivery flow stays open: `issue()` still returns the path
+route, so the 2026-10-20 "resolved" note is corrected rather than treated as
+shipped.
+
+**Implementation and verification:** `CHANGELOG.md`, `docs/handover-actions.md`
+§0b, the WP-5b status row, and `docs/change-log.md`. Code was read, not
+changed. No test run.
+
+## 2026-11-10
+
+**Requested:** Close the Logistics plan. The open package was WP-9b, the
+customer page (D11).
+
+**Decision:** Use the partner infolist slot `tabs.append`. Do not add a
+relation-manager slot or edit `PartnerResource`. A shared contact shows only
+the company the viewer is working in.
+
+**Implementation and verification:** See the WP-9b handoff in
+`docs/logistics-plan.md` and `docs/change-log.md`. Database
+`aureuserp_testing_logistics`. LogisticsFeature 201 passed (833 assertions).
+No browser smoke. No navigation change. PILOT was not started.
+
+## 2026-11-10
+
+**Requested:** SAAS-12 platform administration screens, then SAAS-13
+company-administration screens.
+
+**Decision:** Screens call the existing services and add no second rule.
+The company page is limited to the signed-in company. Seat-limit authority
+stays on the screen because `setLimit()` does not check the caller.
+
+**Implementation and verification:** See the SAAS-12/13 handoff in
+`docs/saas-administration-billing-audit-plan.md` and `docs/change-log.md`.
+Database `aureuserp_testing_saas11`. PlatformBillingFeature 116 passed
+(620 assertions). No browser smoke.
+
+## 2026-11-10
+
 **Requested:** A Company Admin may extend after the lock. A Super Admin
 extension is a number of days, weeks, or months that they enter.
 

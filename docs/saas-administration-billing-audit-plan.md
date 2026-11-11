@@ -196,6 +196,7 @@ Record the user's answer before unblocking dependent packages.
 | D-SAAS-11 | What is a test account, and who chooses it? | Installation staff choose at creation; trial then commercial only | **Accepted 2026-11-09 (user).** The type is `test` or `commercial`, chosen only by installation staff who may create the company, inside `CompanyOnboarding::create()`. A tenant Company Admin is not offered the choice. When the test days end, the company is read-only and its data stays; staff can add days or switch the type. A test company is not charged and gets no platform invoice. Switching to commercial picks a plan and price. Billing starts at the next period, with no back-billing of the trial. There is no switch from commercial back to test. Existing companies are backfilled as `commercial`. The columns are `account_type` and `test_ends_at` on the company. Adding days is an audited update by a Super Admin, or by a Multi-Company Admin for an assigned company. *Switch actor, 2026-11-09 (user):* those same people may switch an assigned test company to commercial. Impersonation is a separate slice. |
 | D-SAAS-12 | May the read-only guard block platform billing's own writes? | Exempt only the billing records the invoice job must save | **Accepted 2026-11-09 (user).** Only platform billing's own subscription and invoice writes pass `CompanyReadOnlyWriteGuard`. Claude is implementing that exemption for `Subscription`, `Invoice` and `InvoiceLine`. |
 | D-SAAS-13 | When do the D-SAAS-04 grace extensions exist? | A package of their own, after payments and account type | **Accepted 2026-11-09 (user).** Company Admin and Super Admin extensions are a separate small package, SAAS-10B, done next after this one. They change when `isReadOnly()` becomes true. They are not part of SAAS-11 or the account-type work. |
+| D-SAAS-14 | Tenant impersonation: who, whom, how long, what is blocked? | Staff only; tenant users only; re-authenticate; time-limited | **Accepted 2026-11-10 (user).** A Super Admin may impersonate by default. A Multi-Company Admin needs the explicit `tenant.impersonate` grant, which only a Super Admin gives or removes, and acts only in assigned companies. No other user may impersonate, whatever permission they hold. The target is an active tenant member of that company. It is never a Super Admin, a Multi-Company Admin, or the administrator themselves. Every start needs the administrator's own password and a reason. A session ends after 60 minutes. Nothing extra is blocked while impersonating: the administrator can do exactly what the target can, and every write is logged with the administrator's id. |
 
 ### Status board
 
@@ -211,18 +212,18 @@ Record the user's answer before unblocking dependent packages.
 | SAAS-05A | Plugin enforcement: finance | SAAS-04 | SAAS-05B/C/D | review (verified 2026-11-05/06: every suite run; review findings 1–4 resolved. See "Suite runs" and "Remaining suites") | Codex 2026-11-05 / isolated Sail databases `aureuserp_testing_verify_*` |
 | SAAS-05B | Plugin enforcement: commercial | SAAS-04 | SAAS-05A/C/D | review (verified 2026-11-05/06: every suite run; review findings 1–4 resolved. See "Suite runs" and "Remaining suites") | Codex 2026-11-05 / isolated Sail database `aureuserp_testing_verify_product` |
 | SAAS-05C | Plugin enforcement: operations | SAAS-04 | SAAS-05A/B/D | review (verified 2026-11-05/06: every suite run; review findings 1–4 resolved. See "Suite runs" and "Remaining suites") | Codex 2026-11-05 / isolated Sail databases `aureuserp_testing_verify_*` |
-| SAAS-05D | Plugin enforcement: people/work tools | SAAS-04 | SAAS-05A/B/C | review (suites executed 2026-11-05/06; TimesheetFeature failed and reproduced alone; see "Remaining suites") | Codex 2026-11-05 / isolated Sail databases `aureuserp_testing_verify_*` and `aureuserp_testing_a7_*` |
+| SAAS-05D | Plugin enforcement: people/work tools | SAAS-04 | SAAS-05A/B/C | review (suites executed 2026-11-05/06; the TimesheetFeature failure was a test importing the wrong model, fixed 2026-11-07 in `5906f2269`, re-run passed; see "Remaining suites") | Codex 2026-11-05 / isolated Sail databases `aureuserp_testing_verify_*` and `aureuserp_testing_a7_*` |
 | SAAS-06 | Seat limit and invitation lifecycle | SAAS-01, D-SAAS-03, D-SAAS-04 | SAAS-05A/B/C/D | review | Copilot 2026-10-28; Claude review 2026-10-29 / `aureuserp_testing_saas_review`; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
 | SAAS-07 | Onboarding and all seat-enforcement paths | SAAS-06 | — | review (complete) | Codex 2026-11-09 on `aureuserp_testing_saas07b`; see onboarding and mail handoff below |
 | SAAS-08 | Platform-billing plugin foundation | SAAS-00, D-SAAS-01, D-SAAS-05 | — | review (foundation complete) | Copilot 2026-10-28; all 17 suites green on `7bbf65741`, deployed in production batch 28 and verified 2026-11-03 |
-| SAAS-09 | Plans, prices and subscriptions | SAAS-08, D-SAAS-04 | — | review (activation built; cross-plugin read-only enforcement remains open) | Codex 2026-11-07 / `aureuserp_testing_saas09`; read-only rollout assessment 2026-11-09 below |
+| SAAS-09 | Plans, prices and subscriptions | SAAS-08, D-SAAS-04 | — | review (activation built; read-only enforcement closed 2026-11-10 / `aureuserp_testing_claude`, see "SAAS-09/14 handoff") | Codex 2026-11-07 / `aureuserp_testing_saas09`; read-only rollout assessment 2026-11-09 below |
 | SAAS-09A | Discount codes and tenant redemptions | SAAS-09, D-SAAS-08 | — | review (2026-11-09 / `aureuserp_testing_saas10`; gaps listed in the handoff, not fixed here) | commit `4f6284396` |
 | SAAS-10 | Idempotent recurring invoices | SAAS-09, SAAS-09A | — | review (2026-11-09 / `aureuserp_testing_saas10`; invoice tests passed; four read-only-guard failures left untouched) | commit `4d7b611b9`; schedule-hook fix still uncommitted |
 | SAAS-10B | Grace extensions that move the read-only instant | SAAS-10, D-SAAS-04, D-SAAS-13 | — | review (2026-11-09 / `aureuserp_testing_saas11`) | service and tests; screens stay SAAS-12 |
 | SAAS-11 | Payments, allocations, credit and reversals | SAAS-08, SAAS-10, D-SAAS-05, D-SAAS-06, D-SAAS-10 | — | review (2026-11-09 / `aureuserp_testing_saas11`) | commits `47c750cd7`, `028fe0148`, `a6b78e405`; company-form fixtures still uncommitted |
-| SAAS-12 | Platform administration screens | SAAS-03, SAAS-07, SAAS-09/10/11 | — | todo | — |
-| SAAS-13 | Company-administration screens | SAAS-01, SAAS-07, SAAS-09/10/11 | — | todo | — |
-| SAAS-15 | Backfill, shadow mode, release hardening, tenant impersonation, and test-or-commercial account type | All implementation packages | — | review (account type only, 2026-11-09 / `aureuserp_testing_saas11`; impersonation, backfill, shadow mode and release hardening stay out) | commits `47c750cd7`, `028fe0148`; company-form fixtures still uncommitted |
+| SAAS-12 | Platform administration screens | SAAS-03, SAAS-07, SAAS-09/10/11 | — | review (2026-11-10 / `aureuserp_testing_saas11`) | Grok; screens over the existing services; browser smoke not run |
+| SAAS-13 | Company-administration screens | SAAS-01, SAAS-07, SAAS-09/10/11 | — | review (2026-11-10 / `aureuserp_testing_saas11`) | Grok; company account page for the signed-in company; browser smoke not run |
+| SAAS-15 | Backfill, shadow mode, release hardening, tenant impersonation, and test-or-commercial account type | All implementation packages | — | review (account type 2026-11-09 / `aureuserp_testing_saas11`; tenant impersonation 2026-11-10 / `aureuserp_testing_claude`, D-SAAS-14; backfill and shadow mode replaced by a readiness report 2026-11-10, see "SAAS-09/14 handoff") | commits `47c750cd7`, `028fe0148`; company-form fixtures still uncommitted |
 
 Additional requirement: Tenant impersonation
 
@@ -1794,6 +1795,21 @@ calculations; changing or disabling a code does not alter posted invoices.
   immutability function. Do not run it once a redemption has been issued.
   `migrate:fresh` does not run `down()`, so the migration drops the
   function before creating it again.
+- *Decided 2026-11-11 (user), superseding the open list below:*
+  - Point 1: free months mean **the next N invoices are free**, as built.
+  - Point 3: a code's terms **lock once any company has redeemed it**
+    (`DiscountCode` updating hook, `LOCKED_TERMS_MESSAGE`). Deactivating it
+    stays allowed.
+  - Point 4: the database refuses a company-list code with no company. The
+    deferred constraint triggers come from platform-billing migration
+    `2026_11_11_000001`.
+  - Point 5: the cap was already database-enforced by
+    `platform_billing_discount_codes_count_check`, and redemption locks the
+    code row. A test now pins the check instead of a timing-dependent
+    two-connection test.
+  - Point 2 (basis points) is unchanged.
+  - Tests are in `DiscountCodeTest`: 12 passed, 43 assertions, on
+    `aureuserp_testing_claude_backfill` (2026-11-11).
 - D-SAAS-08 points the code does not enforce, left for a decision:
   1. Free-month calendar. The decision names "free months" and leaves the
      calendar to the invoice run. SAAS-10 waives the next
@@ -2490,6 +2506,139 @@ Questions:
 - Test: `OverdueExtensionTest` "does not carry an extension from an earlier overdue episode into a later grace".
 - Tests run: see the change log entry for the same date.
 - Rollback: remove the `granted_at` condition. Extensions then stack again.
+
+#### SAAS-09/14 handoff — read-only gaps and readiness report — 2026-11-10 (Claude)
+
+- **Why:** two gaps found while closing SAAS-09. A Multi-Company Admin passed
+  the read-only guard in every company. Company settings rows are written by
+  query, so a locked company still saved its accounting and tax settings.
+  Shadow mode (SAAS-14) had nothing to compare against: production has six
+  commercial companies, no subscriptions and no seat limits.
+- **Decisions (user, 2026-11-10):** a Multi-Company Admin passes only in
+  assigned companies. Shadow mode and backfill are replaced by a read-only
+  report and the deployment checklist below.
+- **How:**
+  - `CompanyReadOnlyWriteGuard::assertCompanyMayWrite(int)` holds the
+    per-company rule. `assertMayWrite()` calls it for each company id.
+  - `CompanyAwareSettingsRepository::updatePropertiesPayload()` fires
+    `support.company-settings.writing` for a company-scoped group. The
+    platform-billing provider listens and calls the guard.
+  - The bulk-write inventory found 43 single-line bulk writes. Most run
+    inside a parent model save that the guard already refuses. Platform-level
+    ones (install, cleanup, roles, seat limits) are not tenant writes.
+    *Closed later on 2026-11-10 (user): moves are now removed one model at a
+    time, so the guard sees them; see `docs/change-log.md`.* One remaining
+    edge: an inventory operation API update whose payload only
+    removes moves skips the parent save. It is listed, not fixed.
+  - `platform-billing:readiness-report` prints, per company: type, trial end,
+    seats used and limit, over limit, modules granted, subscription status
+    and whether it is read-only now. It writes nothing.
+- **Verification:** on `aureuserp_testing_claude`.
+  `SubscriptionReadOnlyEnforcementTest` 11 passed (27 assertions), including
+  "lets a multi-company admin write only into the read-only companies
+  assigned to them" and "refuses a read-only company saving its own company
+  settings". `BillingReadinessReportTest` 1 passed (6 assertions). Pint
+  passed. Full suites run in the joint verification.
+- **Deployment checklist:**
+  1. Deploy and run migrations (includes `tenant.impersonate`).
+  2. Run `php artisan platform-billing:readiness-report`. Expect every company
+     "Read-only now: no". Any "YES" is a lockout; stop and review it.
+  3. Set seat limits only through `SeatCapacityService::setLimit()`.
+  4. Create subscriptions per company only once commercial terms are known.
+     Never infer a plan from installed modules.
+  5. Run the report again after each billing change.
+- **Rollback:** remove the event call and listener; restore the staff
+  exemption in `assertMayWrite()`; delete the command and its test.
+
+#### SAAS-15 handoff — tenant impersonation — 2026-11-10 (Claude)
+
+- Owner / database: Claude, `aureuserp_testing_claude`
+- Status: review
+- Implemented: D-SAAS-14.
+  - `Security\Services\TenantImpersonation` holds every rule: who may impersonate, who may be impersonated, start, end, the per-request validity check, and grant/revoke.
+  - Start: **Impersonate** on the company's Users and logins list. It asks for a reason and the administrator's own password.
+  - While active: a banner on every admin page names the target, the company and the administrator, shows the end time, and has an **End impersonation** button (POST `security.impersonation.end`).
+  - `EnforceImpersonationSession` (admin `authMiddleware`, after `Authenticate`) ends the session on the first request after 60 minutes. It also ends it as soon as the grant is revoked, either account is deactivated, or the membership is removed. It adds the administrator's id to the log context and to a Sentry tag.
+  - Audit through `SecurityAuditLogger`: `security.impersonation_started`, `…_ended` (with `end_reason`: ended, expired, invalid or logout), `…_granted`, `…_revoked`. A `Log::notice` "Write during impersonation." records every Eloquent create, update and delete with the administrator's id.
+  - Grant: **Allow impersonation** and **Remove impersonation access** actions on the Users list. They are visible to a Super Admin on a Multi-Company Admin's row.
+  - Migration `2026_11_10_000001_create_tenant_impersonate_permission` creates the permission row.
+- Why / How / Benefit: support can reproduce a client's problem as that client's user without knowing or resetting their password.
+  - The session runs as the target: their roles, their company, and the read-only guard.
+  - Starting and switching back each migrate the session id. The `AuthenticateSession` password hash is cleared, so the next request stores the new user's hash instead of logging the session out.
+  - The administrator's company selection is saved at the start and restored at the end.
+  - `RequirePasswordChange` skips an impersonating session. Otherwise the administrator would be held on the target's change-password page and pushed to choose the client's password.
+- Design notes:
+  - The Multi-Company Admin `Gate::before` and `User::hasPermissionTo()` both deny any ability containing `impersonate`. That stays: it is what stops every Multi-Company Admin receiving the permission automatically. `holdsGrant()` therefore reads the permission store directly with `getAllPermissions()`.
+  - The target's membership is read without global scopes. A scoped read follows the administrator's own company selection and reported real members as strangers; that was found by the first test run.
+  - `InstallERP` syncs every permission onto the Admin role, which is a Super Admin role. That grants nothing new, and the test states it.
+- Protected decisions added: `AGENTS.md`, "Tenant impersonation".
+- Files changed:
+  - New: `TenantImpersonation.php`, `EnforceImpersonationSession.php`, `ImpersonationController.php`, `impersonation-banner.blade.php`, `lang/{en,fr,es,pt_BR,ar}/impersonation.php`, the migration, `TenantImpersonationTest.php`.
+  - Edited: `SecurityServiceProvider.php` (migration, banner hook, logout listener, write log; guarded per application), `routes/web.php`, `RequirePasswordChange.php`, `UsersRelationManager.php`, `UserResource.php`, `app/Providers/Filament/AdminPanelProvider.php`.
+- Tests run: see the change log entry for 2026-11-10 (tenant impersonation).
+- Reviewed but not executed: no browser session. The banner layout on a phone and the End button were checked as markup only.
+- Security review:
+  - The target's password and session are never read.
+  - The end route is POST with CSRF.
+  - A tenant user holding the permission is still refused.
+  - Nested impersonation is refused.
+  - The audit names both people.
+- Risks and rollback:
+  - With nothing extra blocked, an impersonating administrator can change the target's password or email. Those writes are logged with the administrator's id.
+  - Rollback: remove the two actions and the middleware registration. Roll back the migration to drop the permission and every grant of it, since the pivots cascade.
+- Suggested next: a browser smoke run of start, banner and end. Then SAAS-12 and SAAS-13 can list impersonation sessions from the audit messages.
+
+#### SAAS-12/13 handoff — 2026-11-10 (Grok)
+
+- Owner / database: Grok, `aureuserp_testing_saas11`
+- Status: review
+- Implemented: Super Admin billing screens over the services that already exist, and one Company Admin page for the signed-in company.
+  - Plans and prices (`PlanCatalog`): create, add a price, deactivate. No delete and no price edit.
+  - Subscriptions (`SubscriptionDrafts`, `SubscriptionLifecycle`): draft, activate, schedule a price, cancel at period end, reactivate. Two drafts are allowed. The screen does not call `activateForCommercialSwitch()` or `advance()`.
+  - Invoices: list and view. Posted invoices have no edit. A Super Admin extension takes a length, a unit (day, week, month) and a reason (`OverdueExtensions::extendAsSuperAdmin`).
+  - Payments (`PlatformPayments`): enter by hand, allocate, reverse, refund unused credit. The reference is the existing idempotency key. There is no second credit-note resource; a refund is a reversal, and the payment view shows `reconcile()`.
+  - Discount codes (`DiscountCodeService`): create and deactivate.
+  - Billing audit: chatter messages whose event starts with `platform_billing.`, still under `CompanyScope`.
+  - Company form, for an existing company: add trial days, switch to commercial (`CompanyAccountType::switchToCommercial` only), set a seat limit. Modules stay on the plugin-manager contribution.
+  - Company Admin page `CompanyAccount` (not in the billing cluster): seats used and limit, unapplied credit, the latest subscription, pending invitations (resend and revoke through `UserInvitationService`), own invoices, and the one 10-day extension (`extendAsCompanyAdmin`).
+- Why / How / Benefit: D-SAAS-06 keeps catalog, subscription, invoice and payment writes with a Super Admin, and the screens were the missing way to use the services. Each screen calls the service and maps `ValidationException` onto the form and `AuthorizationException` to a danger notification (`ReportsServiceFailure`). The company page resolves its company from the signed-in user on every request and reads with `withoutGlobalScopes()` plus that `company_id`, because a global Company Admin role is true for every company id and `CompanyScope` would hide another tenant's rows rather than prove they were excluded.
+- Protected decisions added (`AGENTS.md`, "Platform administration screens"):
+  - `DocumentNumberPolicy` allows an active Super Admin to view, create and update, and refuses every delete. Do not turn Shield's super-admin gate on.
+  - `PlanCatalog` is the only catalog writer, and it checks the actor.
+  - The seat-limit actor check stays on the screen. `SeatCapacityService::setLimit()` does not check the caller, and this slice does not add a second capacity rule in security.
+  - `CompanyAccount` does not take a company id from the browser.
+  - Do not gate `PlatformBillingPlugin::register()` on `isPluginInstalled()`. A core plugin has no `plugins` row.
+  - Reason fields for reverse, refund and the Super Admin extension are not Filament `required()`. Laravel treats a blank reason as empty and the service's own message never appears.
+- Files changed:
+  - New, under `plugins/webkul/platform-billing`: `PlanCatalog.php`, the Billing cluster, Plan, Subscription, Invoice, Payment and DiscountCode resources (split layout), `BillingAudit`, `CompanyAccount`, `ReportsServiceFailure`, `BillingCompanyContributions`, the table page view, `AdministrationScreensTest.php`, `BillingScreensTest.php`, and the five `filament/billing.php` locales.
+  - Edited in the plugin: `DocumentNumberPolicy.php`, `PlatformBillingPlugin.php`, `PlatformBillingServiceProvider.php`, `config/filament-shield.php`.
+  - Outside the plugin: `plugins/webkul/plugin-manager/tests/Feature/CompanyModulesTest.php` (one test: a Multi-Company Admin does not see the modules section and the grants stay put). `AGENTS.md`, this plan, `docs/change-log.md`, `docs/agent-reminders.md`.
+- Tests run with pass/assertion counts:
+  - `BillingScreensTest` 7 passed (93 assertions), 238.38s, exit 0, `aureuserp_testing_saas11`.
+  - `AdministrationScreensTest` is included in the suite run below (it had already passed alone: 12 passed, 159 assertions, 253.49s, same database).
+  - PlatformBillingFeature 116 passed (620 assertions), 1832.94s, exit 0, `aureuserp_testing_saas11`.
+  - `CompanyModulesTest` 9 passed (45 assertions), 277.94s, exit 0, same database. This is the one file outside the plugin.
+  - `php artisan translations:check --plugin=platform-billing --details`: ar, es, fr, pt_BR all PASS.
+  - `vendor/bin/pint --dirty --format agent` passed, then Pint on the screen paths fixed three files (`PaymentInfolist`, `PlatformBillingServiceProvider` imports, `BillingScreensTest` imports) before the suite run.
+- Reviewed but not executed: no browser smoke. SecurityFeature was not run. SupportFeature was not run. `ResourceStructureSnapshotTest` will drift because the company form gained a billing section; do not regenerate `support.json` from a filtered run.
+- Failures investigated:
+  - `isPluginInstalled('platform-billing')` is always false for a core plugin, so the cluster never registered. The check was removed.
+  - Filament integer inputs dehydrate to a float after validation. `PlanCatalog::seatLimit()` accepts a whole float.
+  - A hidden action cannot be called in a test, so refusals that must be seen stay visible and the service throws.
+  - A Filament `required()` reason blocked a whitespace reason before the service. The `required()` calls were removed.
+  - Shield resource permissions are real (`view_any_platform_billing_invoice`, `view_any_platform_billing_discount::code`). A test that `flatMap`s them without `values()` keeps the affix as the key, and a later resource overwrites an earlier one. The assertion now calls `values()`.
+  - A forged invoice or invitation id is rejected by the select's option list before the action's 404. The test pins that the other company's invitation stays pending and no extension is written.
+- Security/tenant/concurrency review: policies and services re-check the actor. The company page's company id is not a public Livewire property. Lists for a Super Admin keep `CompanyScope`. The company page drops scopes and filters `company_id`. Money actions confirm. Reverse, refund and extensions ask for a reason. The same payment reference does not post twice. Draft subscriptions have no idempotency key, and a test pins that two creates make two drafts.
+- Risks and rollback:
+  - Production has commercial companies and no subscriptions. These screens can post real money. They do not seed plans.
+  - `schedulePrice()` still requires the literal currency `USD`. Drafts use `config('platform-billing.currency')`. Not changed.
+  - A deactivated price interval cannot be replaced. The unique key includes inactive rows. There is no price edit.
+  - `SeatCapacityService::setLimit()` still succeeds for a Multi-Company Admin who calls it directly. The screen refuses first.
+  - `DiscountCodeService` allows an assigned Multi-Company Admin to create a code. The policy and the cluster do not, so the screen is Super Admin only.
+  - `UserInvitationService` was not changed. Resend and revoke succeed for a Company Admin who has `create_security_user` and a membership row, because `assignedCompanyIds()` is membership. A forged id for another company is not in the select.
+  - Rollback: remove the cluster, the two pages, the company-form section and `PlanCatalog`. No migration.
+- Cross-package requests: none. `CompanyReadOnlyWriteGuard`, `SubscriptionLifecycle::isReadOnly`, security `user.php` / `accept-invitation.php`, and structure-snapshot fixtures were not edited.
+- Suggested next package: SAAS-14 release hardening. A browser smoke of the billing cluster and the company account page is still outstanding.
 
 ### Handoff template
 

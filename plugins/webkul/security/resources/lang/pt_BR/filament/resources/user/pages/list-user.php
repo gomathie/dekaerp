@@ -8,16 +8,16 @@ return [
 
     'header-actions' => [
         'invitation' => 'Convite pendente',
-        'resend' => [
-            'title' => 'Reenviar convite',
-            'invited' => 'Convite reenviado',
+        'resend'     => [
+            'title'         => 'Reenviar convite',
+            'invited'       => 'Convite reenviado',
             'invite-failed' => 'Não foi possível reenviar o convite',
-            'mail-failed' => 'Falha no envio do e-mail',
-            'recovery' => 'O convite continua ativo. Compartilhe este link por um canal seguro: :link',
+            'mail-failed'   => 'Falha no envio do e-mail',
+            'recovery'      => 'O convite continua ativo. Compartilhe este link por um canal seguro: :link',
         ],
         'revoke' => [
             'title' => 'Revogar convite',
-            'done' => 'Convite revogado',
+            'done'  => 'Convite revogado',
         ],
         'invite' => [
             'title' => 'Convidar usuário',

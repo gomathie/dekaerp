@@ -1522,9 +1522,35 @@ log named):
     branch while its parent contact belongs to the parent company. Child
     contacts get the owner's company where they are created: `AddressResource`,
     `ManageContacts` and the address API.
-  - Existing contacts are never reassigned. One with no company stays shared,
-    and one with a company stays there. Example employees 1 to 10 and their
-    contacts 5 to 14 stay shared.
+  - *Superseded 2026-11-10 (user: shared contacts made isolation look
+    broken):* "Existing contacts are never reassigned. One with no company
+    stays shared, and one with a company stays there. Example employees 1 to
+    10 and their contacts 5 to 14 stay shared." Now: partners migration
+    `2026_11_10_000001` gives each shared contact the one company whose sales
+    orders, purchase orders or account moves use it, else the default
+    company, and leaves a contact two companies use shared (logged). Employees
+    migration `2026_11_10_000003` gives a shared employee its contact's
+    company. A contact with a company still stays where it is.
+  - Pickers and filters that list people read `Support\Filament\CompanyMembers`
+    (2026-11-10): members of the companies the viewer is working in, all of
+    them in "All companies" mode. Never `User::pluck()` or a bare
+    `->relationship('user', 'name')`: User is not company-scoped, so those
+    listed other tenants' staff. Test: support `CompanyMembersTest`.
+  - The Admin role is a plain role (Shield's gate super admin is disabled),
+    so it sees a page only through a permission row. Laravel Cloud must run
+    `php artisan erp:sync-permissions` after `migrate` on every deploy, or a
+    page or widget added after install answers 403 even for the Super Admin.
+    `bypass_company_scope` is created and granted to the Super Admin roles by
+    security migration `2026_11_10_000002`. Tests: plugin-manager
+    `SyncAdminPermissionsTest`.
+  - `bypass_company_scope` and `bypass_ownership_scope` are platform-only
+    (`User::PLATFORM_ONLY_ABILITIES`): `hasPermissionTo()` answers them from
+    the global store and never asks the tenant-role resolver. Do not remove
+    this. The resolver reads the active companies, which ask
+    `bypass_company_scope` first, so once the permission row existed every
+    ordinary user's request recursed until PHP crashed (caught in tests
+    2026-11-10, before release). It also stops a tenant role granting
+    cross-company visibility. Test: security `PlatformOnlyAbilityTest`.
   - The company field is required on the product and employee forms. Stamping
     happens only on create, so clearing the field on edit would share the
     record again.
@@ -1568,12 +1594,34 @@ log named):
     `administrators($company)` lists" (`NOT_ADMINISTRATOR`). The company's edit
     page now has a **Users and logins** list (`UsersRelationManager`, visible
     to installation staff only) with **Set password** on each member, for
-    when invitation emails do not arrive. Current passwords are never shown:
-    they are one-way hashes.
+    when invitation emails do not arrive. *Superseded 2026-11-10 (user, after
+    the risk was explained and show-once was offered):* "Current passwords are
+    never shown: they are one-way hashes." Now a **Company Admin's** password
+    is also kept encrypted with APP_KEY in `security_user_password_vault`
+    (never on `users`), captured by `User::setAttribute` on every change and
+    by `CompanyAdministratorAccount` on create. Only an active Super Admin
+    reads it, by re-entering their own password ("Show password" on Users and
+    logins); each read is audited without the value. Every rule is in
+    `CompanyAdminPasswordVault`. Do not widen it to other roles or let
+    Multi-Company Admins read it without asking the user. Anyone with APP_KEY
+    and the database can read these passwords: rotate APP_KEY with care.
+    Test: security `CompanyAdminPasswordVaultTest`.
   - The password is **never emailed**. The person who sets it hands it over.
   - On edit, a blank email does nothing. Only create falls back to the
     company's address, or every save would invite the company mailbox.
   - Tests: `security/tests/Feature/Authorization/CompanyAdministratorPasswordTest.php`.
+  - Security's `CompanyResource` alone owns `/admin/companies` (2026-11-11).
+    Support's base sets `$isDiscovered = false`. With both discovered, Support's
+    pages won the routes, and the Administrator section was silently dropped:
+    production never created an administrator. Test: security
+    `CompanyRouteTest`.
+  - A new company administrator gets "Company Admin" **plus** the business role
+    in `UserSettings::company_admin_business_role_id` (user, 2026-11-11).
+    Production preselects "Admin2". One list, used by both the invitation and
+    the password path: `CompanyAdministratorInviter::administratorRoleIds()`. It
+    never hands out a system or super-admin role, or one holding a
+    platform-only ability. Do not reuse `default_role_id` for this: it is
+    "Admin", the platform role. Test: `CompanyAdministratorBusinessRoleTest`.
 
 • Module switch boundaries, 2026-11-05 (user decisions; SaaS plan, SAAS-05
   review):
@@ -1625,6 +1673,16 @@ log named):
     failed with "550-From header sender domain not verified" for every tenant
     address (Sentry 158147606). The author is still the From **name**.
   - Tests: `chatter/tests/Feature/MailSenderTest.php`.
+  - *Planned change (user decision D16, 2026-11-11; `docs/logistics-plan.md`
+    §6a; not built):* a Super Admin may give a company its own SMTP, and SMS
+    provider. Once set, all of that company's mail and SMS use it, chosen by
+    the **record's** company. The From is then that company's configured
+    address. Without one, nothing changes: the application SMTP and
+    `mail.from.address` are used. Build it as one resolver that every sender
+    calls. Do not change the From rule above until that resolver exists.
+    If a company's own server or SMS provider fails, **never** fall back to
+    the application's (user, 2026-11-11). Record the failure for the Super
+    Admin, without secrets, and leave the message failed so it can be retried.
   - A tampered Livewire update is a client error, not a server fault:
     `CannotUpdateLockedPropertyException` is excluded from reporting and answers
     400 (`bootstrap/app.php`). Sentry 151536596 came from an unauthenticated
@@ -1658,6 +1716,16 @@ log named):
     it a read-only company is never invoiced again and a cancelled
     subscription never expires. Do not widen it to tenant models. Test:
     `SubscriptionReadOnlyEnforcementTest`.
+  - A Multi-Company Admin passes the read-only guard only in companies
+    assigned to them (user, 2026-11-10). A Super Admin passes everywhere.
+    Do not restore the blanket staff exemption.
+  - Company settings rows are not company models, so no model event reaches
+    the guard. `CompanyAwareSettingsRepository` fires
+    `support.company-settings.writing`, and platform-billing calls
+    `assertCompanyMayWrite()` from it (2026-11-10). Keep the event: without
+    it a locked company still saves its accounting and tax settings. Bulk
+    query writes elsewhere run inside a guarded parent save; a new bulk
+    write outside one needs the same call.
 
 • Platform payments, 2026-11-09 (`docs/saas-administration-billing-audit-plan.md`,
   SAAS-11 handoff, D-SAAS-10):
@@ -1691,6 +1759,55 @@ log named):
   - `Payment`, `Allocation` and `Reversal` are not in
     `CompanyReadOnlyWriteGuard::EXEMPT_MODELS`. The signed-in Super Admin
     already passes. Do not add them so a job with no user can post money.
+
+• Platform administration screens, 2026-11-10 (`docs/saas-administration-billing-audit-plan.md`,
+  SAAS-12/13 handoff):
+  - `DocumentNumberPolicy` allows an active Super Admin to view, create and
+    update platform billing records, and refuses every delete. Do not enable
+    Shield's super-admin intercept gate. It would skip the per-record checks.
+  - `PlanCatalog` is the only writer for plans and prices, and it checks the
+    actor. Screens do not call `Plan::query()->create()`.
+  - The seat-limit actor check stays on the company form
+    (`BillingCompanyContributions::ONLY_SUPER_ADMIN_SEATS`).
+    `SeatCapacityService::setLimit()` does not check the caller. Do not add a
+    second capacity rule in security for this screen.
+  - `CompanyAccount` resolves the company from the signed-in user on every
+    request: session company, Company Admin of that id, and a membership row.
+    A global Company Admin role is true for every company id, so membership
+    is the tenant boundary. Reads use `withoutGlobalScopes()` plus that
+    `company_id`. Do not store the company id as a Livewire property.
+  - Do not gate `PlatformBillingPlugin::register()` on
+    `Package::isPluginInstalled()`. A core plugin is skipped by
+    `Plugin::getAllPluginPackages()`, so the check is always false and the
+    billing routes never register.
+  - Reason fields for a reversal, a refund and the Super Admin overdue
+    extension are not Filament `required()`. Laravel treats a blank reason
+    as empty, and the service's own message never appears.
+  - Tests: `platform-billing/tests/Feature/AdministrationScreensTest.php`
+    and `BillingScreensTest.php`.
+
+• Tenant impersonation, 2026-11-10 (`docs/saas-administration-billing-audit-plan.md`,
+  SAAS-15 handoff, D-SAAS-14):
+  - Every rule is in `Security\Services\TenantImpersonation`. A screen
+    calls it and repeats nothing.
+  - A Super Admin may impersonate without a grant. A Multi-Company Admin
+    needs `tenant.impersonate`, given or removed only by a Super Admin, and
+    acts only in assigned companies. Any other user is refused, even
+    holding the permission. Keep `impersonate` in
+    `MultiCompanyAdminService::deniesAbility()`: without it the
+    Multi-Company Admin `Gate::before` grants it to all of them. Read the
+    grant with `holdsGrant()`, never `can()`.
+  - A target is an active tenant member of that company, read scope-free.
+    Never a Super Admin, a Multi-Company Admin or the administrator.
+  - Start needs the administrator's own password and a reason. The session
+    lasts 60 minutes. `EnforceImpersonationSession` re-checks every panel
+    request and ends it when time is up or the grant, an account or the
+    membership is gone.
+  - Nothing extra is blocked (user). Do not add a block without asking;
+    every write is logged with the administrator's id instead.
+  - Each switch migrates the session id and clears `password_hash_web`.
+    Leaving the old hash logs the session out on the next request.
+  - Tests: `security/tests/Feature/SaaSAdministration/TenantImpersonationTest.php`.
 
 • Account type, 2026-11-09 (`docs/saas-administration-billing-audit-plan.md`,
   SAAS-15 handoff, D-SAAS-11):
@@ -1758,7 +1875,29 @@ log named):
     creating it again.
   - Tests: `plugins/webkul/platform-billing/tests/Feature/OverdueExtensionTest.php`.
 
+• Customer page shipments, 2026-11-10 (`docs/logistics-plan.md`, WP-9b, D11):
+  - The customer infolist tab is `PartnerSchemaRegistry` slot `tabs.append`.
+    Do not add a relation-manager slot, and do not edit `PartnerResource` or
+    add `Partner::shipments()`. Logistics is optional; a core model must not
+    reference it.
+  - `CustomerPage` drops only `CompanyScope`, then filters `customer_id` and
+    an explicit `company_id`. Soft deletes stay. A shared contact
+    (`company_id` null) uses `current_company_id()` only. No current company
+    shows nothing. Do not use `withoutGlobalScopes()` here: it would also
+    drop soft deletes, and an unfiltered scope would list every tenant on a
+    shared contact.
+  - The tab needs `view_any_logistics_shipment` and
+    `LogisticsAccess::enabledFor()` for that company. Charge amounts also
+    need `view_financials_logistics_shipment`. Hiding the tab is not the
+    only check; the entries call the same gate.
+  - Register the contribution once. `packageBooted()` runs again, and the
+    registry is static.
+  - Tests: `logistics/tests/Feature/Customers/CustomerPageTest.php`.
+
 DONE RECENTLY (newest first; details in docs/change-log.md)
+
+• 2026-11-10 — Logistics customer page (WP-9b): a read-only shipments tab on
+  the customer infolist. See the protected decision above.
 
 • 2026-11-03 — Administrator password from the company form, for existing
   companies too: see the protected decision above.

@@ -91,7 +91,7 @@ class ActivityTemplateRelationManager extends RelationManager
                                             ->preload(),
                                         Select::make('responsible_id')
                                             ->label(__('employees::filament/clusters/configurations/resources/activity-plan/relation-managers/activity-template.form.sections.assignment.fields.assignee'))
-                                            ->options(fn () => User::pluck('name', 'id'))
+                                            ->options(fn () => \Webkul\Support\Filament\CompanyMembers::options())
                                             ->hidden(fn (Get $get) => $get('responsible_type') !== ActivityResponsibleType::OTHER->value)
                                             ->searchable()
                                             ->preload(),

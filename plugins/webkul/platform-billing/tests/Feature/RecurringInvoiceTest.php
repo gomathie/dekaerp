@@ -24,8 +24,8 @@ require_once __DIR__.'/../../../support/tests/Helpers/TestBootstrapHelper.php';
 beforeEach(function (): void {
     TestBootstrapHelper::ensureERPInstalled();
     config([
-        'platform-billing.issuer.name' => 'DEKA',
-        'platform-billing.issuer.tax_rate' => '15.0000',
+        'platform-billing.issuer.name'        => 'DEKA',
+        'platform-billing.issuer.tax_rate'    => '15.0000',
         'platform-billing.issuer.tax_enabled' => true,
     ]);
 });
@@ -35,16 +35,16 @@ function invoiceBillingFixture(int $amount = 10000): array
     $company = Company::factory()->create();
     $actor = User::query()->where('email', 'admin@example.com')->firstOrFail();
     $plan = Plan::query()->create([
-        'name' => 'Invoice plan',
-        'code' => 'invoice-'.uniqid(),
+        'name'             => 'Invoice plan',
+        'code'             => 'invoice-'.uniqid(),
         'included_plugins' => [],
-        'seat_limit' => 3,
+        'seat_limit'       => 3,
     ]);
     $price = Price::query()->create([
-        'plan_id' => $plan->id,
-        'currency' => 'USD',
+        'plan_id'         => $plan->id,
+        'currency'        => 'USD',
         'interval_months' => 1,
-        'amount_minor' => $amount,
+        'amount_minor'    => $amount,
     ]);
     $draft = app(SubscriptionDrafts::class)->create(
         $actor,
@@ -109,24 +109,24 @@ it('does not consume an invoice number when posting fails', function () {
 it('snapshots issuer, VAT and a pre-tax discount and ignores a later configuration change', function () {
     [$company, $actor, , , $active] = invoiceBillingFixture();
     config([
-        'platform-billing.issuer.name' => 'DEKA Labs',
+        'platform-billing.issuer.name'        => 'DEKA Labs',
         'platform-billing.issuer.tax_enabled' => true,
     ]);
     $code = app(DiscountCodeService::class)->create($actor, [
-        'code' => 'SNAP-'.strtoupper(fake()->bothify('????')),
-        'discount_type' => 'percentage',
-        'discount_value' => 1500,
-        'duration_type' => 'forever',
-        'duration_months' => null,
+        'code'             => 'SNAP-'.strtoupper(fake()->bothify('????')),
+        'discount_type'    => 'percentage',
+        'discount_value'   => 1500,
+        'duration_type'    => 'forever',
+        'duration_months'  => null,
         'eligibility_type' => 'any_company',
-        'company_ids' => [],
+        'company_ids'      => [],
     ]);
     app(DiscountCodeService::class)->redeem($code->code, $company, $actor, invoiceAt('2026-01-15T00:00:00Z'));
 
     app(RecurringInvoiceGenerator::class)->generateDue((int) $active->getKey(), invoiceAt());
     config([
-        'platform-billing.issuer.name' => 'Changed Issuer',
-        'platform-billing.issuer.tax_rate' => '0.0000',
+        'platform-billing.issuer.name'        => 'Changed Issuer',
+        'platform-billing.issuer.tax_rate'    => '0.0000',
         'platform-billing.issuer.tax_enabled' => false,
     ]);
     $invoice = Invoice::withoutGlobalScopes()->where('subscription_id', $active->getKey())->first();
@@ -150,13 +150,13 @@ it('snapshots issuer, VAT and a pre-tax discount and ignores a later configurati
 it('applies a fixed discount before VAT', function () {
     [$company, $actor, , , $active] = invoiceBillingFixture();
     $code = app(DiscountCodeService::class)->create($actor, [
-        'code' => 'FIX-'.strtoupper(fake()->bothify('????')),
-        'discount_type' => 'fixed_usd',
-        'discount_value' => 2500,
-        'duration_type' => 'forever',
-        'duration_months' => null,
+        'code'             => 'FIX-'.strtoupper(fake()->bothify('????')),
+        'discount_type'    => 'fixed_usd',
+        'discount_value'   => 2500,
+        'duration_type'    => 'forever',
+        'duration_months'  => null,
         'eligibility_type' => 'any_company',
-        'company_ids' => [],
+        'company_ids'      => [],
     ]);
     app(DiscountCodeService::class)->redeem($code->code, $company, $actor);
 
@@ -171,13 +171,13 @@ it('applies a fixed discount before VAT', function () {
 it('waives the next N invoices for a free-month redemption and then charges the full period', function () {
     [$company, $actor, , , $active] = invoiceBillingFixture();
     $code = app(DiscountCodeService::class)->create($actor, [
-        'code' => 'FREE-'.strtoupper(fake()->bothify('????')),
-        'discount_type' => 'free_months',
-        'discount_value' => 1,
-        'duration_type' => 'forever',
-        'duration_months' => null,
+        'code'             => 'FREE-'.strtoupper(fake()->bothify('????')),
+        'discount_type'    => 'free_months',
+        'discount_value'   => 1,
+        'duration_type'    => 'forever',
+        'duration_months'  => null,
         'eligibility_type' => 'any_company',
-        'company_ids' => [],
+        'company_ids'      => [],
     ]);
     app(DiscountCodeService::class)->redeem($code->code, $company, $actor, invoiceAt('2026-01-02T00:00:00Z'));
     $generator = app(RecurringInvoiceGenerator::class);
@@ -199,13 +199,13 @@ it('waives the next N invoices for a free-month redemption and then charges the 
 it('releases a one-invoice discount after the invoice that uses it', function () {
     [$company, $actor, , , $active] = invoiceBillingFixture();
     $code = app(DiscountCodeService::class)->create($actor, [
-        'code' => 'ONCE-'.strtoupper(fake()->bothify('????')),
-        'discount_type' => 'percentage',
-        'discount_value' => 1000,
-        'duration_type' => 'one_invoice',
-        'duration_months' => null,
+        'code'             => 'ONCE-'.strtoupper(fake()->bothify('????')),
+        'discount_type'    => 'percentage',
+        'discount_value'   => 1000,
+        'duration_type'    => 'one_invoice',
+        'duration_months'  => null,
         'eligibility_type' => 'any_company',
-        'company_ids' => [],
+        'company_ids'      => [],
     ]);
     app(DiscountCodeService::class)->redeem($code->code, $company, $actor);
     $generator = app(RecurringInvoiceGenerator::class);
@@ -227,10 +227,10 @@ it('invoices the elapsed period at the old price when a plan change is scheduled
     // A plan may have one USD price per interval, so the next period is a
     // different interval. The invoice still covers the elapsed month.
     $next = Price::query()->create([
-        'plan_id' => $plan->id,
-        'currency' => 'USD',
+        'plan_id'         => $plan->id,
+        'currency'        => 'USD',
         'interval_months' => 3,
-        'amount_minor' => 2400,
+        'amount_minor'    => 2400,
     ]);
     app(SubscriptionLifecycle::class)->schedulePrice($active, $next, $actor);
     $next->update(['amount_minor' => 9900]);
@@ -326,7 +326,7 @@ it('queues due subscriptions and leaves a dry run unposted', function () {
 
     $this->artisan('platform-billing:invoice-subscriptions', [
         '--dry-run' => true,
-        '--at' => '2026-02-01T00:00:00Z',
+        '--at'      => '2026-02-01T00:00:00Z',
     ])->assertSuccessful();
 
     expect(Invoice::withoutGlobalScopes()->where('subscription_id', $active->getKey())->count())->toBe(0);

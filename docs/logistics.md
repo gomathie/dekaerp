@@ -45,6 +45,10 @@ application queue, so a queue worker must be running.
    plugin is installed.
 2. Create a shipment manually or from a sales order. Review its customer,
    route, cargo, dates, charges, and assigned dispatcher, then confirm it.
+   The customer record lists that customer's recent shipments when Logistics
+   is enabled for the customer's company and the viewer can view shipments.
+   Open charge amounts also need the shipment financials permission. A
+   contact with no company shows only the company the viewer is working in.
 3. Create a trip, assign confirmed shipments, select an active vehicle and an
    eligible driver, and dispatch the trip. Capacity overruns warn rather than
    block when the company uses warning mode.

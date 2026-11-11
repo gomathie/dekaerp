@@ -4,24 +4,29 @@ namespace Webkul\Security\Filament\Resources\CompanyResource\RelationManagers;
 
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Schemas\Components\Utilities\Set;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\ValidationException;
 use Webkul\Security\CompanyAdminContributions;
-use Webkul\Security\Models\User;
 use Webkul\Security\Models\Invitation;
+use Webkul\Security\Models\User;
+use Webkul\Security\Services\CompanyAdminPasswordVault;
 use Webkul\Security\Services\CompanyAdministratorAccount;
 use Webkul\Security\Services\CompanyAdministratorInviter;
+use Webkul\Security\Services\TenantImpersonation;
 
 /**
  * The company's users and their logins, with a password button per user
@@ -128,6 +133,127 @@ class UsersRelationManager extends RelationManager
                     ->modalSubmitAction(false),
             ])
             ->recordActions([
+                Action::make('impersonate')
+                    ->label(__('security::impersonation.actions.impersonate.label'))
+                    ->icon('heroicon-o-eye')
+                    ->color('warning')
+                    ->modalHeading(fn (User $record): string => __('security::impersonation.actions.impersonate.modal-heading', ['name' => $record->name]))
+                    ->modalDescription(__('security::impersonation.actions.impersonate.modal-description', ['minutes' => TenantImpersonation::SESSION_MINUTES]))
+                    ->modalSubmitActionLabel(__('security::impersonation.actions.impersonate.submit'))
+                    // Hidden where the service would refuse; start() checks
+                    // again, since a hidden button is not a guard.
+                    ->visible(function (User $record): bool {
+                        $actor = Auth::user();
+
+                        return $actor instanceof User
+                            && app(TenantImpersonation::class)->mayImpersonate($actor, $record, (int) $this->getOwnerRecord()->getKey());
+                    })
+                    ->schema([
+                        Textarea::make('reason')
+                            ->label(__('security::impersonation.actions.impersonate.form.reason'))
+                            ->required()
+                            ->maxLength(1000),
+                        TextInput::make('password')
+                            ->label(__('security::impersonation.actions.impersonate.form.password'))
+                            ->password()
+                            ->required()
+                            ->autocomplete('current-password'),
+                    ])
+                    ->action(function (User $record, array $data, Action $action) {
+                        $actor = Auth::user();
+
+                        if (! $actor instanceof User) {
+                            return null;
+                        }
+
+                        try {
+                            app(TenantImpersonation::class)->start(
+                                $actor,
+                                $record,
+                                $this->getOwnerRecord(),
+                                (string) $data['password'],
+                                (string) $data['reason'],
+                            );
+                        } catch (ValidationException $exception) {
+                            // Shown on the modal's own fields, which carry
+                            // the same names as the service's error keys.
+                            throw ValidationException::withMessages(collect($exception->errors())
+                                ->mapWithKeys(fn (array $messages, string $key): array => ['mountedActions.0.data.'.$key => $messages])
+                                ->all());
+                        } catch (AuthorizationException $exception) {
+                            Notification::make()
+                                ->danger()
+                                ->title(__('security::impersonation.notifications.refused'))
+                                ->body($exception->getMessage())
+                                ->send();
+
+                            $action->halt();
+                        }
+
+                        Notification::make()
+                            ->success()
+                            ->title(__('security::impersonation.notifications.started', ['name' => $record->name]))
+                            ->send();
+
+                        return redirect()->to(filament()->getPanel('admin')->getUrl());
+                    }),
+                // A company administrator's stored password, readable by a
+                // Super Admin only (user, 2026-11-10). Every rule is in
+                // CompanyAdminPasswordVault; hidden here is not a guard.
+                Action::make('showPassword')
+                    ->label(__(static::$lang.'.table.actions.show-password.label'))
+                    ->icon('heroicon-o-lock-open')
+                    ->color('gray')
+                    ->modalHeading(fn (User $record): string => __(static::$lang.'.table.actions.show-password.modal-heading', ['email' => $record->email]))
+                    ->modalDescription(__(static::$lang.'.table.actions.show-password.modal-description'))
+                    ->modalSubmitActionLabel(__(static::$lang.'.table.actions.show-password.submit'))
+                    ->visible(function (User $record): bool {
+                        $actor = Auth::user();
+
+                        return $actor instanceof User
+                            && app(CompanyAdminPasswordVault::class)->mayReveal($actor)
+                            && $record->isCompanyAdmin((int) $this->getOwnerRecord()->getKey());
+                    })
+                    ->schema([
+                        TextInput::make('password')
+                            ->label(__(static::$lang.'.table.actions.show-password.form.password'))
+                            ->password()
+                            ->required()
+                            ->autocomplete('current-password'),
+                    ])
+                    ->action(function (User $record, array $data, Action $action): void {
+                        $actor = Auth::user();
+
+                        if (! $actor instanceof User) {
+                            return;
+                        }
+
+                        try {
+                            $password = app(CompanyAdminPasswordVault::class)->reveal(
+                                $actor,
+                                $record,
+                                (string) $data['password'],
+                                (int) $this->getOwnerRecord()->getKey(),
+                            );
+                        } catch (ValidationException $exception) {
+                            throw ValidationException::withMessages(collect($exception->errors())
+                                ->mapWithKeys(fn (array $messages, string $key): array => ['mountedActions.0.data.'.$key => $messages])
+                                ->all());
+                        } catch (AuthorizationException $exception) {
+                            Notification::make()->danger()->title($exception->getMessage())->send();
+
+                            $action->halt();
+
+                            return;
+                        }
+
+                        Notification::make()
+                            ->title(__(static::$lang.'.table.actions.show-password.shown', ['email' => $record->email]))
+                            ->body($password)
+                            ->info()
+                            ->persistent()
+                            ->send();
+                    }),
                 Action::make('setPassword')
                     ->label(__(static::$lang.'.table.actions.set-password.label'))
                     ->icon('heroicon-o-key')

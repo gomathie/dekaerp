@@ -8,6 +8,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Schema;
 use Webkul\Security\Models\Role;
+use Webkul\Security\Services\CompanyAdministratorInviter;
 use Webkul\Security\Settings\UserSettings;
 use Webkul\Support\Filament\Clusters\Settings;
 use Webkul\Support\Models\Company;
@@ -65,6 +66,25 @@ class ManageUsers extends SettingsPage
                     ->label(__('security::filament/clusters/manage-users.form.default-role.label'))
                     ->helperText(__('security::filament/clusters/manage-users.form.default-role.helper-text'))
                     ->options(Role::all()->pluck('name', 'id')->map(fn ($name) => ucfirst($name)))
+                    ->searchable(),
+                // Given to each new company administrator with "Company Admin"
+                // (user, 2026-11-11). Lists only roles that are safe to hand
+                // to a client; the service re-checks when it assigns.
+                Select::make('company_admin_business_role_id')
+                    ->label(__('security::filament/clusters/manage-users.form.company-admin-business-role.label'))
+                    ->helperText(__('security::filament/clusters/manage-users.form.company-admin-business-role.helper-text'))
+                    ->options(fn (): array => Role::query()
+                        ->where('guard_name', 'web')
+                        ->orderBy('name')
+                        ->get()
+                        ->filter(fn (Role $role): bool => CompanyAdministratorInviter::isEligibleBusinessRole($role))
+                        ->mapWithKeys(fn (Role $role): array => [$role->getKey() => $role->name])
+                        ->all())
+                    ->in(fn (): array => Role::query()
+                        ->where('guard_name', 'web')
+                        ->get()
+                        ->filter(fn (Role $role): bool => CompanyAdministratorInviter::isEligibleBusinessRole($role))
+                        ->modelKeys())
                     ->searchable(),
                 Select::make('default_company_id')
                     ->label(__('security::filament/clusters/manage-users.form.default-company.label'))

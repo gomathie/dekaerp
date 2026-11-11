@@ -111,11 +111,6 @@ return [
                 'notification' => [
                     'title' => 'Devises supprimées',
                     'body'  => 'Les devises ont été supprimées avec succès.',
-
-                    'error' => [
-                        'title' => 'Impossible de supprimer les devises',
-                        'body'  => 'Certaines des devises sélectionnées sont utilisées et ne peuvent pas être supprimées.',
-                    ],
                 ],
             ],
         ],

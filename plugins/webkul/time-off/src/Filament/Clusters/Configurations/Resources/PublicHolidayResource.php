@@ -142,7 +142,7 @@ class PublicHolidayResource extends Resource
                     ->preload()
                     ->label(__('time-off::filament/clusters/configurations/resources/public-holiday.table.filters.company-name')),
                 SelectFilter::make('creator_id')
-                    ->relationship('creator', 'name')
+                    ->relationship('creator', 'name', fn ($query) => \Webkul\Support\Filament\CompanyMembers::scope($query))
                     ->searchable()
                     ->preload()
                     ->label(__('time-off::filament/clusters/configurations/resources/public-holiday.table.filters.created-by')),

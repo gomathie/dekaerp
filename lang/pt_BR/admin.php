@@ -21,4 +21,18 @@ return [
         'help'          => 'Ajuda',
         'barcode'       => 'Código de barras',
     ],
+
+    'navigation-sections' => [
+        'sales-purchases' => 'Vendas e compras',
+        'finance'         => 'Finanças',
+        'operations'      => 'Operações',
+        'projects'        => 'Projetos',
+        'human-resources' => 'RH',
+        'administration'  => 'Administração',
+    ],
+
+    'mobile-menu' => [
+        'menu'    => 'Menu',
+        'modules' => 'Módulos',
+    ],
 ];

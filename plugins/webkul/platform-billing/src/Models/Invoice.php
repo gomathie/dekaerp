@@ -32,19 +32,19 @@ class Invoice extends Model
     protected function casts(): array
     {
         return [
-            'period_start_at' => 'immutable_datetime',
-            'period_end_at' => 'immutable_datetime',
-            'document_year' => 'integer',
-            'sequence' => 'integer',
-            'issued_at' => 'immutable_datetime',
-            'due_at' => 'immutable_datetime',
-            'grace_starts_at' => 'immutable_datetime',
-            'tax_enabled' => 'boolean',
-            'subtotal_minor' => 'integer',
-            'discount_minor' => 'integer',
-            'tax_minor' => 'integer',
-            'total_minor' => 'integer',
-            'discount_value' => 'integer',
+            'period_start_at'    => 'immutable_datetime',
+            'period_end_at'      => 'immutable_datetime',
+            'document_year'      => 'integer',
+            'sequence'           => 'integer',
+            'issued_at'          => 'immutable_datetime',
+            'due_at'             => 'immutable_datetime',
+            'grace_starts_at'    => 'immutable_datetime',
+            'tax_enabled'        => 'boolean',
+            'subtotal_minor'     => 'integer',
+            'discount_minor'     => 'integer',
+            'tax_minor'          => 'integer',
+            'total_minor'        => 'integer',
+            'discount_value'     => 'integer',
             'free_month_applied' => 'boolean',
         ];
     }

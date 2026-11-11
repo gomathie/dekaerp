@@ -2,21 +2,33 @@
 
 namespace Webkul\Security;
 
+use DateTimeImmutable;
 use Filament\Panel;
+use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Auth\Events\Logout;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\AliasLoader;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
 use Webkul\Security\Facades\Bouncer as BouncerFacade;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\MultiCompanyAdminService;
+use Webkul\Security\Services\TenantImpersonation;
 use Webkul\Security\Services\TenantRoleResolver;
+use Webkul\Support\Models\Company;
 
 class SecurityServiceProvider extends PackageServiceProvider
 {
     public static string $name = 'security';
 
     public static string $viewNamespace = 'security';
+
+    protected static ?object $impersonationHooksApp = null;
 
     public function configureCustomPackage(Package $package): void
     {
@@ -54,10 +66,19 @@ class SecurityServiceProvider extends PackageServiceProvider
                 // SAAS-06: invitations get a lifecycle (pending/accepted/
                 // revoked/expired) so a seat count has something to count.
                 '2026_10_28_000005_add_lifecycle_to_user_invitations_table',
+                // SAAS-15: the explicit grant for tenant impersonation.
+                '2026_11_10_000001_create_tenant_impersonate_permission',
+                // The Super Admin's company-scope bypass, never created outside tests.
+                '2026_11_10_000002_grant_bypass_company_scope_to_super_admins',
+                // Readable company administrator passwords (user, 2026-11-10).
+                '2026_11_10_000003_create_security_user_password_vault_table',
+                // Existing companies' own administrators become Company Admin (user, 2026-11-11).
+                '2026_11_11_000001_make_existing_business_admins_company_admins',
             ])
             ->hasSettings([
                 '2024_11_05_042358_create_user_settings',
                 '2025_07_29_064223_create_currency_settings',
+                '2026_11_11_000001_add_company_admin_business_role_to_user_settings',
             ])
             ->runsSettings();
     }
@@ -112,6 +133,74 @@ class SecurityServiceProvider extends PackageServiceProvider
         // not reference `security`; the register() call is idempotent because
         // packageBooted() can run more than once.
         CompanyAdminContributions::register();
+
+        $this->registerImpersonationHooks();
+    }
+
+    /**
+     * Tenant impersonation (SAAS-15, 2026-11-10). The banner names both
+     * people on every admin page. A logout while impersonating is recorded as
+     * the end of the session, or the audit would show a start with no end.
+     * Every model write made while impersonating is logged with the
+     * administrator's id: the user chose to block nothing extra, so this is
+     * what keeps those writes traceable to the person who made them.
+     */
+    protected function registerImpersonationHooks(): void
+    {
+        // packageBooted() can run more than once on one application, which
+        // would show the banner twice and log every write twice. Keyed on the
+        // application, not a process-wide flag, because Pest builds a new
+        // application per test (same shape as PlatformBillingServiceProvider).
+        if (static::$impersonationHooksApp === $this->app) {
+            return;
+        }
+
+        static::$impersonationHooksApp = $this->app;
+
+        FilamentView::registerRenderHook(PanelsRenderHook::BODY_START, function (): string {
+            $impersonation = app(TenantImpersonation::class);
+            $state = $impersonation->state();
+
+            if ($state === null || filament()->getCurrentPanel()?->getId() !== 'admin') {
+                return '';
+            }
+
+            return view('security::impersonation-banner', [
+                'target'       => Auth::guard('web')->user(),
+                'impersonator' => $impersonation->impersonator(),
+                'company'      => Company::withoutGlobalScopes()->find($state['company_id']),
+                'expiresAt'    => new DateTimeImmutable($state['expires_at']),
+            ])->render();
+        });
+
+        Event::listen(Logout::class, function (): void {
+            app(TenantImpersonation::class)->end('logout');
+        });
+
+        foreach (['created', 'updated', 'deleted'] as $event) {
+            Event::listen('eloquent.'.$event.': *', function (string $name, array $payload) use ($event): void {
+                $model = $payload[0] ?? null;
+
+                if (! $model instanceof Model || app()->runningInConsole() && ! app()->runningUnitTests()) {
+                    return;
+                }
+
+                $state = app(TenantImpersonation::class)->state();
+
+                if ($state === null) {
+                    return;
+                }
+
+                Log::notice('Write during impersonation.', [
+                    'event'           => $event,
+                    'model'           => $model::class,
+                    'key'             => $model->getKey(),
+                    'impersonator_id' => $state['impersonator_id'],
+                    'impersonated_id' => $state['target_id'],
+                    'company_id'      => $state['company_id'],
+                ]);
+            });
+        }
     }
 
     public function packageRegistered(): void

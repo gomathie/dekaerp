@@ -13,6 +13,8 @@ class CompanyAwareSettingsRepository extends DatabaseSettingsRepository
         'accounts_taxes',
     ];
 
+    public const COMPANY_SETTINGS_WRITING = 'support.company-settings.writing';
+
     protected static ?bool $hasCompanyColumn = null;
 
     public function getPropertiesInGroup(string $group): array
@@ -91,6 +93,14 @@ class CompanyAwareSettingsRepository extends DatabaseSettingsRepository
         $companyId = $hasCompanyColumn && $this->isCompanyScoped($group)
             ? $this->currentCompanyId()
             : null;
+
+        // A company's own settings are written by query, so no model event
+        // reaches the read-only guard and a locked company could still save
+        // them (2026-11-10). Listeners may refuse by throwing; support names
+        // no listener, because platform-billing depends on support.
+        if ($companyId !== null && $properties !== []) {
+            event(self::COMPANY_SETTINGS_WRITING, [$companyId]);
+        }
 
         foreach ($properties as $name => $payload) {
             $match = ['group' => $group, 'name' => $name];

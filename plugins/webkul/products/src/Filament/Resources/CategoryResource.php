@@ -137,7 +137,7 @@ class CategoryResource extends Resource
                     ->preload(),
                 SelectFilter::make('creator_id')
                     ->label(__('products::filament/resources/category.table.filters.creator'))
-                    ->relationship('creator', 'name')
+                    ->relationship('creator', 'name', fn ($query) => \Webkul\Support\Filament\CompanyMembers::scope($query))
                     ->searchable()
                     ->preload(),
             ])

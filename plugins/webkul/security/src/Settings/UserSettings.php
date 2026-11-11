@@ -14,6 +14,14 @@ class UserSettings extends Settings
 
     public ?int $default_company_id;
 
+    /**
+     * Given to every new company administrator alongside "Company Admin"
+     * (user, 2026-11-11). Read only through
+     * CompanyAdministratorInviter::administratorRoleIds(), which refuses a
+     * platform role.
+     */
+    public ?int $company_admin_business_role_id;
+
     public static function group(): string
     {
         return 'general';

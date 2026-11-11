@@ -10,6 +10,7 @@ use Webkul\PlatformBilling\Models\InvoiceLine;
 use Webkul\PlatformBilling\Models\OverdueExtension;
 use Webkul\PlatformBilling\Models\Subscription;
 use Webkul\Security\Models\User;
+use Webkul\Security\Services\MultiCompanyAdminService;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Services\CompanyContext;
 use Webkul\Support\Traits\BelongsToCompany;
@@ -48,9 +49,6 @@ class CompanyReadOnlyWriteGuard
         }
 
         $actor = app(CompanyContext::class)->internalUser();
-        if ($actor instanceof User && $actor->is_active && ($actor->isSuperAdmin() || $actor->isMultiCompanyAdmin())) {
-            return;
-        }
 
         // A Company Admin of this company may record the one overdue
         // extension after the lock (user, 2026-11-10). The model stays out
@@ -75,19 +73,46 @@ class CompanyReadOnlyWriteGuard
         }
 
         foreach (array_unique($companyIds) as $companyId) {
-            $company = Company::withoutGlobalScopes()->find($companyId);
-            if ($company && app(SubscriptionLifecycle::class)->isReadOnly($company)) {
-                // A user-facing field error survives both Livewire and JSON API
-                // exception rendering and names the recovery cause.
-                // In a Filament form the field is prefixed (for example
-                // mountedActions.0.data.company_id), so the error matches no
-                // field and the user saw nothing happen. Say it as a
-                // notification too; outside a browser session it is an
-                // unused session flash. (Review of 54d606a4b, 2026-11-09)
-                Notification::make()->danger()->title(self::MESSAGE)->send();
+            $this->assertCompanyMayWrite($companyId);
+        }
+    }
 
-                throw ValidationException::withMessages(['company_id' => self::MESSAGE]);
-            }
+    /**
+     * The per-company half of the rule, for writes that are not company
+     * models: company settings rows are written by query, so no model event
+     * reaches the guard and a locked company could still save every settings
+     * page (2026-11-10). Support fires `support.company-settings.writing`,
+     * which calls this.
+     */
+    public function assertCompanyMayWrite(int $companyId): void
+    {
+        $actor = app(CompanyContext::class)->internalUser();
+
+        if ($actor instanceof User && $actor->is_active && $actor->isSuperAdmin()) {
+            return;
+        }
+
+        // A Multi-Company Admin passes only in companies assigned to them
+        // (user, 2026-11-10). Exempting them everywhere let staff write into
+        // a locked company they do not administer, while every other rule
+        // limits them to their assignment.
+        if ($actor instanceof User && $actor->is_active && $actor->isMultiCompanyAdmin()
+            && app(MultiCompanyAdminService::class)->isCompanyAssigned($actor, $companyId)) {
+            return;
+        }
+
+        $company = Company::withoutGlobalScopes()->find($companyId);
+        if ($company && app(SubscriptionLifecycle::class)->isReadOnly($company)) {
+            // A user-facing field error survives both Livewire and JSON API
+            // exception rendering and names the recovery cause.
+            // In a Filament form the field is prefixed (for example
+            // mountedActions.0.data.company_id), so the error matches no
+            // field and the user saw nothing happen. Say it as a
+            // notification too; outside a browser session it is an
+            // unused session flash. (Review of 54d606a4b, 2026-11-09)
+            Notification::make()->danger()->title(self::MESSAGE)->send();
+
+            throw ValidationException::withMessages(['company_id' => self::MESSAGE]);
         }
     }
 

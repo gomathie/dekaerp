@@ -295,14 +295,14 @@ class EmployeeResource extends Resource
                                                 Fieldset::make(__('employees::filament/resources/employee.form.tabs.work-information.fields.approver'))
                                                     ->schema([
                                                         Select::make('leave_manager_id')
-                                                            ->options(fn () => User::pluck('name', 'id'))
+                                                            ->options(fn () => \Webkul\Support\Filament\CompanyMembers::options())
                                                             ->searchable()
                                                             ->preload()
                                                             ->live()
                                                             ->suffixIcon('heroicon-o-clock')
                                                             ->label(__('employees::filament/resources/employee.form.tabs.work-information.fields.time-off')),
                                                         Select::make('attendance_manager_id')
-                                                            ->options(fn () => User::pluck('name', 'id'))
+                                                            ->options(fn () => \Webkul\Support\Filament\CompanyMembers::options())
                                                             ->searchable()
                                                             ->preload()
                                                             ->live()

@@ -59,7 +59,7 @@ class TeamResource extends Resource
 
                 Select::make('users')
                     ->label(__('maintenance::filament/clusters/configurations/resources/team.form.users'))
-                    ->relationship('users', 'name')
+                    ->relationship('users', 'name', fn ($query) => \Webkul\Support\Filament\CompanyMembers::scope($query))
                     ->multiple()
                     ->searchable()
                     ->preload(),

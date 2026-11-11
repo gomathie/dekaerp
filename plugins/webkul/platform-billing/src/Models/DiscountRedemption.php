@@ -25,9 +25,9 @@ class DiscountRedemption extends Model
     protected function casts(): array
     {
         return [
-            'discount_value' => 'integer',
-            'duration_months' => 'integer',
-            'redeemed_at' => 'immutable_datetime',
+            'discount_value'   => 'integer',
+            'duration_months'  => 'integer',
+            'redeemed_at'      => 'immutable_datetime',
             'duration_ends_at' => 'immutable_datetime',
         ];
     }

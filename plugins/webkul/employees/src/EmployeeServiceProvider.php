@@ -38,6 +38,8 @@ class EmployeeServiceProvider extends PackageServiceProvider
                 '2025_01_15_045708_create_job_position_skills_table',
                 '2025_01_24_052852_add_department_id_to_activity_plans_table',
                 '2025_08_20_082638_add_unique_user_id_to_employees_employees_table',
+                // Shared employees follow their contact's company (user, 2026-11-10).
+                '2026_11_10_000003_assign_shared_employees_to_their_contact_company',
             ])
             ->runsMigrations()
             ->hasSeeder('Webkul\\Employee\\Database\Seeders\\DatabaseSeeder')

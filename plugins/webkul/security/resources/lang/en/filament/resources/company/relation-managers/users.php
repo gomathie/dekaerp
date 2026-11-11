@@ -19,9 +19,20 @@ return [
 
         'actions' => [
             'copy-invitation-link' => [
-                'label' => 'Copy invitation link',
+                'label'      => 'Copy invitation link',
                 'invitation' => 'Pending invitation',
-                'link' => 'Invitation link',
+                'link'       => 'Invitation link',
+            ],
+            'show-password' => [
+                'label'             => 'Show password',
+                'modal-heading'     => 'Show the password for :email',
+                'modal-description' => 'Enter your own password to continue. This view is recorded in the audit log.',
+                'submit'            => 'Show password',
+                'shown'             => 'Password for :email',
+
+                'form' => [
+                    'password' => 'Your password',
+                ],
             ],
             'set-password' => [
                 'label'             => 'Set password',
