@@ -17,17 +17,19 @@ company, never the session's.
 the initial registration/test files were already present and tracked when this
 continuation resumed. They have not yet been verified here.
 
-- **Done in this continuation:** recorded this status and the package board in
-  this plan. No feature code has been changed in this continuation yet.
+- **Done in this continuation:** recorded the status and package board here;
+  corrected the helper include path in both AttendanceFeature test files after
+  the initial run failed before discovery.
 - **Present, pending verification:** the three migrations, models, access and
   company provisioning classes, policy, clock-in/out and correction service,
   schedule reader, payroll adapter, auto-checkout command, provider and
   Filament plugin registration, Shield configuration, English strings,
   `AttendanceFeature` suite registration, test helper, and initial installation
   and service tests.
-- **In progress:** AT-1; the Shield resource target and install path still need
-  verification, including a real install test. AT-2's existing service has
-  unverified edge cases; its existing tests must run before service changes.
+- **In progress:** AT-1; migration installation passes, but provisioning a
+  newly created company's default-off settings row currently fails.
+  AT-2's service test exposed a forced-context fallback defect; service changes
+  remain queued until AT-1 is handed off.
 - **Not started:** AT-3 through AT-7. The tagged topbar override is owned by a
   concurrent agent and is out of scope.
 - **Verification:** local PostgreSQL is running and the isolated database
@@ -35,10 +37,32 @@ continuation resumed. They have not yet been verified here.
   `docker compose run --rm --no-deps --user root --entrypoint composer
   laravel.test dump-autoload --no-scripts` completed successfully (exit 0).
   Composer emitted PSR-4 warnings for global test helper classes, including
-  `AttendanceHelper`, and unrelated plugin helpers. No tests or translation
-  checks have run yet.
-- **Current file scope:** only `docs/attendance-plan.md` has been changed in
-  this continuation. Further files will be recorded as they change.
+  `AttendanceHelper`, and unrelated plugin helpers. The first
+  `AttendanceFeature` attempt exited before test discovery: the tests require
+  `tests/Helpers/AttendanceHelper.php` from the wrong relative path. No
+  assertions ran. After correcting that path, an isolated install assertion
+  passed (1 test, 4 assertions, 449.40s) on
+  `aureuserp_testing_attendance`. `PluginInstallationTest.php` then stopped
+  with 1 passed, 1 failed, 3 pending, 5 assertions in 412.04s; creating a
+  company did not create its default-off `CompanySetting` row. Root cause is
+  under investigation. The full service suite's debug run stopped at
+  `does not fall back to the default company inside an empty forced context`:
+  3 passed, 1 failed, 11 pending, 7 assertions, 545.85s. The exception was not
+  thrown because `employeeForCurrentCompany()` falls back from `currentId()` to
+  `default_company_id`; this confirms a violation of the forced-context
+  boundary. No service code has been changed yet. The earlier non-debug full
+  attempt also ended in PHP's `Maximum call stack size ... reached during
+  compilation` fatal at `Illuminate/Database/ConcurrencyErrorDetector.php:20`;
+  whether that was downstream of continued failures remains unverified. A
+  separate direct `migrate:fresh` diagnostic failed on the existing ordering
+  where the Employee migration references `calendars` before Support creates
+  it; this bypassed the test helper's migration-path filtering and is not
+  evidence against the attendance install path. Full Shield generation is
+  intentionally not bypassed. Translation checks have not run.
+- **Current file scope:** `docs/attendance-plan.md`,
+  `plugins/webkul/attendances/tests/Feature/AttendanceServiceTest.php`, and
+  `plugins/webkul/attendances/tests/Feature/PluginInstallationTest.php`.
+  Further files will be recorded as they change.
 
 ---
 

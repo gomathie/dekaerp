@@ -14,7 +14,7 @@ use Webkul\Employee\Models\Employee;
 use Webkul\Security\Models\User;
 use Webkul\Support\Services\CompanyContext;
 
-require_once __DIR__.'/../../Helpers/AttendanceHelper.php';
+require_once __DIR__.'/../Helpers/AttendanceHelper.php';
 
 beforeEach(function (): void {
     AttendanceHelper::install();

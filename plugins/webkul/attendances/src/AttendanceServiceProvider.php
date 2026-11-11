@@ -23,8 +23,6 @@ class AttendanceServiceProvider extends PackageServiceProvider
 
     public static string $viewNamespace = 'attendances';
 
-    protected static bool $companyProvisioningRegistered = false;
-
     public function configureCustomPackage(Package $package): void
     {
         $package->name(static::$name)
@@ -61,11 +59,13 @@ class AttendanceServiceProvider extends PackageServiceProvider
     {
         Gate::policy(Attendance::class, AttendancePolicy::class);
 
-        if (static::$companyProvisioningRegistered) {
+        if ($this->app->bound('attendances.company_provisioning_registered')) {
             return;
         }
 
-        static::$companyProvisioningRegistered = true;
+        // A static flag survives test application rebuilds while Eloquent's
+        // event dispatcher does not, leaving later applications unprovisioned.
+        $this->app->instance('attendances.company_provisioning_registered', true);
 
         Company::created(function (Company $company): void {
             // Provision only after the global install; the default-off row is
