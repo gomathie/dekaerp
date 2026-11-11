@@ -20,6 +20,10 @@ use Webkul\Invoice\Filament\Overview\OverviewRegistry;
  */
 class OverviewHeadlineWidget extends StatsOverviewWidget
 {
+    // No 5-second refresh (Filament default): every open dashboard re-ran all
+    // its queries 12 times a minute (Sentry DEKAERP-11). Filters reload it.
+    protected ?string $pollingInterval = null;
+
     use InteractsWithPageFilters;
 
     protected static bool $isLazy = false;

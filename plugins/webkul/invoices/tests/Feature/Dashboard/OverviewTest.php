@@ -126,6 +126,28 @@ it('needs no permission of its own, so existing roles keep their dashboards', fu
         ->and(Invoices::shouldRegisterNavigation())->toBeFalse();
 });
 
+/**
+ * Sentry DEKAERP-11 (2026-11-11): Filament stats and chart widgets refresh
+ * every 5 seconds by default, so each open Overview re-ran every query 12
+ * times a minute. None of them may poll; changing a filter reloads them.
+ */
+it('does not poll any widget on the overview', function (): void {
+    CompanyHelper::actingAsCompanyUser(Company::factory()->create(), ['page_invoice_invoices']);
+
+    $page = new Overview;
+    $page->filters = [];
+
+    $widgets = array_merge($page->getWidgets(), array_filter(array_column(OverviewRegistry::visible(), 'headline')));
+
+    foreach ($widgets as $widget) {
+        $defaults = (new ReflectionClass($widget))->getDefaultProperties();
+
+        if (array_key_exists('pollingInterval', $defaults)) {
+            expect($defaults['pollingInterval'])->toBeNull($widget);
+        }
+    }
+});
+
 it('refuses the overview to a user who may see no section', function (): void {
     CompanyHelper::actingAsCompanyUser(Company::factory()->create(), []);
 
