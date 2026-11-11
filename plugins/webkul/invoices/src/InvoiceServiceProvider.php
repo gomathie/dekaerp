@@ -4,6 +4,8 @@ namespace Webkul\Invoice;
 
 use Filament\Panel;
 use Livewire\Livewire;
+use Webkul\Invoice\Filament\Overview\OverviewRegistry;
+use Webkul\Invoice\Filament\Pages\Invoices;
 use Webkul\Invoice\Livewire\InvoiceSummary;
 use Webkul\PluginManager\Console\Commands\InstallCommand;
 use Webkul\PluginManager\Console\Commands\UninstallCommand;
@@ -33,6 +35,17 @@ class InvoiceServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         Livewire::component('invoice-invoice-summary', InvoiceSummary::class);
+
+        // The Invoices section of the combined Overview dashboard. Keyed, so
+        // a second packageBooted() replaces it rather than adding a copy.
+        OverviewRegistry::register(
+            'invoices',
+            fn (): string => __('invoices::filament/pages/overview.sections.invoices'),
+            Invoices::sectionWidgets(),
+            fn (): array => Invoices::sectionFilterFields(),
+            fn (): bool  => Invoices::canAccess(),
+            sort: 30,
+        );
     }
 
     public function packageRegistered(): void

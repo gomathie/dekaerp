@@ -10,6 +10,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
+use Webkul\Invoice\Filament\Pages\Overview;
 use Webkul\Partner\Models\Partner;
 use Webkul\Product\Models\Category;
 use Webkul\Product\Models\Product;
@@ -58,6 +59,21 @@ class Purchases extends BaseDashboard
             && static::hasPagePermission();
     }
 
+    /**
+     * Replaced in the menu by the combined Overview (user, 2026-11-11). The
+     * page stays so old links work: it opens the Overview with the Purchases
+     * section chosen. Its permission still decides that section.
+     */
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
+    public function mount(): void
+    {
+        $this->redirect(Overview::getUrl(['section' => 'purchases']));
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('purchases::filament/admin/pages/dashboard.navigation.title');
@@ -85,28 +101,12 @@ class Purchases extends BaseDashboard
                         columnSpan: ['xl' => 2],
                     ),
 
-                    Select::make('country_id')
-                        ->label(__('purchases::filament/admin/pages/dashboard.filters.country'))
-                        ->options(fn () => Country::pluck('name', 'id')->toArray())
-                        ->multiple()
-                        ->searchable()
-                        ->placeholder(__('purchases::filament/admin/pages/dashboard.filters.all-countries'))
-                        ->live(),
-
                     Select::make('product_id')
                         ->label(__('purchases::filament/admin/pages/dashboard.filters.product'))
                         ->options(fn () => Product::pluck('name', 'id')->toArray())
                         ->multiple()
                         ->searchable()
                         ->placeholder(__('purchases::filament/admin/pages/dashboard.filters.all-products'))
-                        ->live(),
-
-                    Select::make('partner_id')
-                        ->label(__('purchases::filament/admin/pages/dashboard.filters.vendor'))
-                        ->options(fn () => Partner::where('supplier_rank', '>', 0)->pluck('name', 'id')->toArray())
-                        ->multiple()
-                        ->searchable()
-                        ->placeholder(__('purchases::filament/admin/pages/dashboard.filters.all-vendors'))
                         ->live(),
 
                     Select::make('category_id')
@@ -117,24 +117,7 @@ class Purchases extends BaseDashboard
                         ->placeholder(__('purchases::filament/admin/pages/dashboard.filters.all-categories'))
                         ->live(),
 
-                    Select::make('buyer_id')
-                        ->label(__('purchases::filament/admin/pages/dashboard.filters.buyer'))
-                        ->options(fn () => User::whereIn('id', Order::distinct()->pluck('user_id')->filter())
-                            ->pluck('name', 'id')
-                            ->toArray())
-                        ->multiple()
-                        ->searchable()
-                        ->placeholder(__('purchases::filament/admin/pages/dashboard.filters.all-buyers'))
-                        ->live(),
-
-                    Select::make('state')
-                        ->label(__('purchases::filament/admin/pages/dashboard.filters.state'))
-                        ->options(OrderState::options())
-                        ->multiple()
-                        ->searchable()
-                        ->placeholder(__('purchases::filament/admin/pages/dashboard.filters.all-states'))
-                        ->live(),
-
+                    ...static::sectionFilterFields(),
                 ])
                 ->columnSpanFull()
                 ->columns([
@@ -157,6 +140,63 @@ class Purchases extends BaseDashboard
     }
 
     public function getWidgets(): array
+    {
+        return static::sectionWidgets();
+    }
+
+    /**
+     * The filters only Purchases has. Also shown on the Overview page when
+     * the Purchases section alone is chosen, so both pages build them here.
+     *
+     * @return array<int, Select>
+     */
+    public static function sectionFilterFields(): array
+    {
+        return [
+            Select::make('country_id')
+                ->label(__('purchases::filament/admin/pages/dashboard.filters.country'))
+                ->options(fn () => Country::pluck('name', 'id')->toArray())
+                ->multiple()
+                ->searchable()
+                ->placeholder(__('purchases::filament/admin/pages/dashboard.filters.all-countries'))
+                ->live(),
+
+            Select::make('partner_id')
+                ->label(__('purchases::filament/admin/pages/dashboard.filters.vendor'))
+                ->options(fn () => Partner::where('supplier_rank', '>', 0)->pluck('name', 'id')->toArray())
+                ->multiple()
+                ->searchable()
+                ->placeholder(__('purchases::filament/admin/pages/dashboard.filters.all-vendors'))
+                ->live(),
+
+            // Only buyers on this company's orders: Order is company-scoped,
+            // so other tenants' staff never appear.
+            Select::make('buyer_id')
+                ->label(__('purchases::filament/admin/pages/dashboard.filters.buyer'))
+                ->options(fn () => User::whereIn('id', Order::distinct()->pluck('user_id')->filter())
+                    ->pluck('name', 'id')
+                    ->toArray())
+                ->multiple()
+                ->searchable()
+                ->placeholder(__('purchases::filament/admin/pages/dashboard.filters.all-buyers'))
+                ->live(),
+
+            Select::make('state')
+                ->label(__('purchases::filament/admin/pages/dashboard.filters.state'))
+                ->options(OrderState::options())
+                ->multiple()
+                ->searchable()
+                ->placeholder(__('purchases::filament/admin/pages/dashboard.filters.all-states'))
+                ->live(),
+        ];
+    }
+
+    /**
+     * The widgets this dashboard shows, also used by its Overview section.
+     *
+     * @return list<class-string>
+     */
+    public static function sectionWidgets(): array
     {
         return [
             PurchaseStatsWidget::class,
