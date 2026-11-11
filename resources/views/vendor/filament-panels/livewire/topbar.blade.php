@@ -44,6 +44,7 @@
                 {{-- Module menu trigger: toggles sidebar collapse on desktop/tablet, opens the drawer on mobile --}}
                 <x-filament::icon-button
                     icon="icon-menu"
+                    color="gray"
                     x-data="{}"
                     x-on:click="$store.moduleSidebar.primaryToggle()"
                     :label="__('filament-panels::layout.actions.sidebar.expand.label')"
