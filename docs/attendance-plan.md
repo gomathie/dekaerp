@@ -1,7 +1,7 @@
 # Attendance — Plan
 
-Status: **approved for build (2026-11-11, user: "build all of it from A to
-Z, step by step").** Decisions AT-D1 to AT-D6 were answered by the user on
+Status: **in progress (2026-11-11, user: "build all of it from A to Z, step
+by step").** Decisions AT-D1 to AT-D6 were answered by the user on
 2026-11-11, each as recommended (§5). *Superseded the same day: "plan only,
 no code".* Requested by the user together
 with a welcome banner on every module dashboard (the banner shows the
@@ -10,6 +10,114 @@ clock-in control once attendance exists).
 Read `AGENTS.md` (project memory and protected decisions) first. Multi-company
 rules apply throughout: an attendance row belongs to the **employee's**
 company, never the session's.
+
+## Progress log
+
+**2026-11-11 — continuation status.** The Attendance plugin's data layer and
+the initial registration/test files were already present and tracked when this
+continuation resumed. They have not yet been verified here.
+
+- **Done in this continuation:** recorded the status and package board here;
+  corrected the helper include path in both AttendanceFeature test files after
+  the initial run failed before discovery.
+- **Present, pending verification:** the three migrations, models, access and
+  company provisioning classes, policy, clock-in/out and correction service,
+  schedule reader, payroll adapter, auto-checkout command, provider and
+  Filament plugin registration, Shield configuration, English strings,
+  `AttendanceFeature` suite registration, test helper, and initial installation
+  and service tests.
+- **In progress:** AT-1; the migration and company provisioning checks pass,
+  including the application-rebuild sequence. Shield permission generation
+  and the complete installation test file remain unverified.
+  AT-2's forced-context fallback is fixed and its focused regression test
+  passes; other service behaviors remain to be verified.
+- **Not started:** AT-3 through AT-7. The tagged topbar override is owned by a
+  concurrent agent and is out of scope.
+- **Verification:** local PostgreSQL is running and the isolated database
+  `aureuserp_testing_attendance` was created. In Sail,
+  `docker compose run --rm --no-deps --user root --entrypoint composer
+  laravel.test dump-autoload --no-scripts` completed successfully (exit 0).
+  Composer emitted PSR-4 warnings for global test helper classes, including
+  `AttendanceHelper`, and unrelated plugin helpers. The first
+  `AttendanceFeature` attempt exited before test discovery: the tests require
+  `tests/Helpers/AttendanceHelper.php` from the wrong relative path. No
+  assertions ran. After correcting that path, an isolated install assertion
+  passed (1 test, 4 assertions, 449.40s) on
+  `aureuserp_testing_attendance`. `PluginInstallationTest.php` then stopped
+  with 1 passed, 1 failed, 3 pending, 5 assertions in 412.04s; creating a
+  company did not create its default-off `CompanySetting` row. The provider's
+  process-static listener guard was the cause: application rebuilds replace
+  Eloquent's dispatcher but preserve the static flag. The guard is now stored
+  in the application container, so repeat boots in one application remain
+  idempotent while a rebuilt application registers its own listener. The
+  focused provisioning test passed after that change (1 test, 3 assertions,
+  546.96s) using the clean `aureuserp_testing_attendance` database. Then the
+  install-table and company-provisioning tests passed together (2 tests, 7
+  assertions, 435.66s), and all three install/provisioning tests passed (3
+  tests, 9 assertions, 437.60s), also on
+  `aureuserp_testing_attendance`. A full `PluginInstallationTest.php` attempt
+  exited with a PHP stack-size fatal at
+  `Illuminate/Database/ConcurrencyErrorDetector.php:20`; it did not provide a
+  complete suite result. The full service suite's debug run stopped at
+  `does not fall back to the default company inside an empty forced context`:
+  3 passed, 1 failed, 11 pending, 7 assertions, 545.85s. The exception was not
+  thrown because `employeeForCurrentCompany()` fell back from `currentId()` to
+  `default_company_id`, violating the forced-context boundary. The fallback is
+  removed; the focused test passed (1 test, 2 assertions, 498.21s) using
+  `aureuserp_testing_attendance`. Remaining service behaviors are still
+  unverified. A subsequent full `AttendanceServiceTest.php` run also exited
+  with the PHP stack-size fatal at `ConcurrencyErrorDetector.php:20`, before it
+  returned test counts. The earlier non-debug full
+  attempt also ended in PHP's `Maximum call stack size ... reached during
+  compilation` fatal at `Illuminate/Database/ConcurrencyErrorDetector.php:20`;
+  whether that was downstream of continued failures remains unverified. A
+  separate direct `migrate:fresh` diagnostic failed on the existing ordering
+  where the Employee migration references `calendars` before Support creates
+  it; this bypassed the test helper's migration-path filtering and is not
+  evidence against the attendance install path. Full Shield generation is
+  intentionally not bypassed. Translation checks have not run.
+
+**AT-1 rationale — company listener registration (2026-11-11).** **Why:** a
+process-static flag survives Laravel test application rebuilds, but rebuilding
+the application replaces Eloquent's event dispatcher; later companies then
+miss their settings row. **How:** `AttendanceServiceProvider` records listener
+registration in the current application container; the existing
+`provisions each new company with attendance disabled by default` test pins
+the behavior. **Benefit:** settings are provisioned in each application
+lifecycle without duplicate callbacks when a provider boots twice in one
+application. **Trade-off / risk:** container state is intentionally not shared
+between application instances, so each new instance registers one callback.
+**Verification:** the application-rebuild sequence passed (2 tests, 7
+assertions) and the three install/provisioning tests passed (3 tests, 9
+assertions), on `aureuserp_testing_attendance`. The complete installation file
+still needs a successful run; a later attempt ended in PHP's stack-size fatal
+at Laravel's `ConcurrencyErrorDetector`. **Rollback:** revert the guard to the
+previous static flag only if the application lifecycle is changed so the
+Eloquent dispatcher outlives the provider; otherwise that reintroduces the
+missing-listener regression.
+
+**AT-2 rationale — empty forced company context (2026-11-11).** **Why:** a
+forced context that resolves to no active company must not fall through to the
+user's default company; that would clock them into a different tenant.
+`CompanyContext::currentId()` already enforces this boundary. **How:**
+`AttendanceService::employeeForCurrentCompany()` now refuses the empty context
+with the existing no-employee refusal and always filters by the resolved
+company. The behavior-focused test pins the refusal message. **Benefit:** no
+cross-company clock-in/out when a forced company is invalid or disallowed.
+**Trade-off / risk:** callers must provide a valid active company to use the
+banner; absence now refuses rather than selecting a default. **Verification:**
+the focused regression passed (1 test, 2 assertions, 498.21s,
+`aureuserp_testing_attendance`). The complete service file remains
+unverified; it exited with a PHP stack-size fatal at Laravel's
+`ConcurrencyErrorDetector` before returning test counts.
+**Rollback:** restoring the `default_company_id` fallback would violate the
+existing `CompanyContext` forced-context decision and reintroduce the
+cross-tenant fallback.
+
+- **Current file scope:** `docs/attendance-plan.md`,
+  `plugins/webkul/attendances/src/AttendanceServiceProvider.php`,
+  `plugins/webkul/attendances/src/Services/AttendanceService.php`, and the two
+  attendance feature test files. Further files will be recorded as they change.
 
 ---
 
@@ -111,16 +219,16 @@ writes payroll tables.
 
 ## 6. Work packages
 
-| Package | Scope | Depends on |
-| --- | --- | --- |
-| AT-0 | Decisions AT-D1..D6 | — |
-| AT-1 | Plugin skeleton, tables, models, per-company switch, provisioner, policies, Shield config, translations (en first) | AT-0 |
-| AT-2 | `AttendanceService` (clock in/out, idempotence, one-open rule, auto check-out job) + tests | AT-1 |
-| AT-3 | Welcome banner widget in `support` + attendance contribution (status pill, clock button) on every module dashboard | AT-2 (banner greeting part can ship first without attendance) |
-| AT-4 | Manager views: who is in now, daily list, corrections with reason and audit, export | AT-2 |
-| AT-5 | Kiosk mode (PIN / badge) | AT-2, AT-D2 |
-| AT-6 | Reports: lateness, absence, overtime against schedule; payroll hand-off contract | AT-2, payroll A0 gate |
-| AT-7 | Translations ar/es/fr/pt_BR, hardening, release | all |
+| Package | Scope | Depends on | Status |
+| --- | --- | --- | --- |
+| AT-0 | Decisions AT-D1..D6 | — | done |
+| AT-1 | Plugin skeleton, tables, models, per-company switch, provisioner, policies, Shield config, translations (en first) | AT-0 | in progress |
+| AT-2 | `AttendanceService` (clock in/out, idempotence, one-open rule, auto check-out job) + tests | AT-1 | in progress |
+| AT-3 | Welcome banner widget in `support` + attendance contribution (status pill, clock button) on every module dashboard | AT-2 (banner greeting part can ship first without attendance) | pending |
+| AT-4 | Manager views: who is in now, daily list, corrections with reason and audit, export | AT-2 | pending |
+| AT-5 | Kiosk mode (PIN / badge) | AT-2, AT-D2 | design note only |
+| AT-6 | Reports: lateness, absence, overtime against schedule; payroll hand-off contract | AT-2, payroll A0 gate | pending |
+| AT-7 | Translations ar/es/fr/pt_BR, hardening, release | all | pending |
 
 **Order:** the greeting banner (AT-3 without the attendance part) can ship
 on its own straight away; attendance follows AT-1 → AT-2 → AT-3 → AT-4.
