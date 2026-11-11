@@ -10,6 +10,7 @@ use Webkul\Security\Models\User;
 use Webkul\Security\Services\CompanyAdministratorAccount;
 use Webkul\Security\Services\CompanyAdminPasswordVault;
 use Webkul\Security\Services\CompanyAdminRoleProvisioner;
+use Webkul\Security\Services\TenantRoleAssigner;
 use Webkul\Security\Settings\UserSettings;
 
 require_once __DIR__.'/../Authorization/MultiCompanyAdminTest.php';
@@ -119,4 +120,32 @@ it('refuses anyone but an active super admin, and a wrong own password', functio
         ->toBe(CompanyAdminPasswordVault::ONLY_SUPER_ADMIN)
         ->and(vaultRevealFailure(fn () => $vault->reveal($superAdmin, $admin, 'wrong-password')))
         ->toBe(CompanyAdminPasswordVault::WRONG_PASSWORD);
+});
+
+/**
+ * A password stored while someone was a Company Admin must not stay readable
+ * after they lose the role (review, 2026-11-11). Removing the role deletes
+ * the copy, and reveal() refuses anyone who is no longer a Company Admin.
+ */
+it('stops showing and deletes the password once the person is no longer a company administrator', function () {
+    $superAdmin = vaultSuperAdmin();
+    multiCompanyAdminTestAuthenticate($superAdmin, []);
+    $company = multiCompanyAdminTestCompany();
+
+    app(CompanyAdministratorAccount::class)->setPassword($company, $superAdmin, 'yaa.admin@vault.test', 'Demoted-Pass-42');
+    $admin = User::query()->where('email', 'yaa.admin@vault.test')->firstOrFail();
+
+    // A role removed outside the assigner still cannot be read back.
+    DB::table('company_membership_roles')->where('user_id', $admin->getKey())->delete();
+    $admin->unsetRelation('roles');
+
+    expect(vaultRevealFailure(fn () => app(CompanyAdminPasswordVault::class)->reveal($superAdmin, $admin, VAULT_ACTOR_PASSWORD)))
+        ->toBe(CompanyAdminPasswordVault::NOT_STORED)
+        ->and(app(CompanyAdminPasswordVault::class)->has($admin))->toBeFalse();
+
+    // And the assigner deletes the copy as soon as it removes the role.
+    app(CompanyAdminPasswordVault::class)->store($admin, 'Stale-Copy-42');
+    app(TenantRoleAssigner::class)->sync($admin, [], [(int) $company->getKey()]);
+
+    expect(app(CompanyAdminPasswordVault::class)->has($admin))->toBeFalse();
 });

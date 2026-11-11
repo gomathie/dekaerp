@@ -9,6 +9,88 @@ return [
     'heading'    => 'Ayuda y recursos',
     'subheading' => 'Todo lo necesario para aprovechar al máximo :app.',
 
+    'guides' => [
+        'group' => 'Guías',
+
+        'superadmin' => [
+            'title'       => 'Guía del superadministrador',
+            'description' => 'Administrar la propia instalación de :app: módulos, empresas, roles de administrador, actualizaciones y mantenimiento.',
+            'button'      => 'Abrir la guía del superadministrador',
+        ],
+
+        'admin' => [
+            'title'       => 'Guía del administrador',
+            'description' => 'Configurar :app para la empresa, los equipos, los módulos y los controles antes de comenzar el trabajo diario.',
+            'button'      => 'Lista de configuración del administrador',
+            'sections'    => [
+                [
+                    'title' => 'Configurar la empresa',
+                    'items' => [
+                        'Crear o revisar empresas, almacenes, monedas, impuestos y ajustes fiscales.',
+                        'Asignar los usuarios a las empresas a las que pueden acceder y comprobar el selector de empresa activa.',
+                        'Configurar secuencias, condiciones de pago, productos, unidades de medida y plantillas de documentos antes de empezar a operar.',
+                    ],
+                ],
+                [
+                    'title' => 'Controlar el acceso',
+                    'items' => [
+                        'Crear roles para los equipos de finanzas, ventas, inventario, RR. HH., proyectos y dirección.',
+                        'Conceder permisos de módulo solo a los usuarios que los necesitan.',
+                        'Revisar campos personalizados, importaciones, exportaciones y tokens de API antes de dar acceso amplio.',
+                    ],
+                ],
+                [
+                    'title' => 'Operar y mantener',
+                    'items' => [
+                        'Instalar solo los módulos que usa la empresa y ocultar o quitar los demás.',
+                        'Supervisar conversaciones, adjuntos, aprobaciones y propietarios de registros durante la implantación.',
+                        'Mantener los ajustes de correo, PDF, copias de seguridad y actualizaciones acordes con la política de despliegue.',
+                    ],
+                ],
+            ],
+        ],
+
+        'user' => [
+            'title'          => 'Guía del usuario',
+            'description'    => 'Usar la guía integrada con los recorridos de DEKA y las páginas de referencia de cada módulo para el trabajo diario en :app.',
+            'button'         => 'Abrir la guía del usuario',
+            'full_heading'   => 'Guía completa del usuario',
+            'count'          => '{0} Ninguna página de guía|{1} 1 página de guía|[2,*] :count páginas de guía',
+            'category_count' => '{0} Ninguna página|{1} 1 página|[2,*] :count páginas',
+            'callouts'       => [
+                'tip'       => 'Consejo',
+                'note'      => 'Nota',
+                'important' => 'Importante',
+            ],
+            'sections'    => [
+                [
+                    'title' => 'Primeros pasos',
+                    'items' => [
+                        'Visión general de la plataforma y navegación',
+                        'Configuración multiempresa y selector de empresa',
+                    ],
+                ],
+                [
+                    'title' => 'Procesos principales',
+                    'items' => [
+                        'Vender: ventas y facturación',
+                        'Comprar: compras y contabilidad',
+                        'Fabricar y mover: inventario y producción',
+                        'Gestionar: proyectos, RR. HH. y mantenimiento',
+                        'Plataforma, API y alojamiento propio',
+                    ],
+                ],
+                [
+                    'title' => 'Referencia de módulos: 12 módulos / 69 páginas',
+                    'items' => [
+                        'Facturas, Ventas, Compras, Inventario, Fabricación, Mantenimiento',
+                        'Contactos, Proyectos, Empleados, Contratación, Ausencias',
+                    ],
+                ],
+            ],
+        ],
+    ],
+
     'services' => [
         'group' => 'Servicios',
 
@@ -59,12 +141,12 @@ return [
         ],
     ],
 
+    'empty' => 'Todavía no se han configurado los enlaces de ayuda para esta instalación de :app. Póngase en contacto con el administrador del sistema.',
+
     'contact' => [
         'title'       => '¿Aún se necesita ayuda?',
         'description' => 'Hablar con nuestro equipo sobre alojamiento, implementación, desarrollo personalizado o cualquier otra cosa.',
         'live_chat'   => 'Chat en vivo',
         'button'      => 'Contáctanos',
     ],
-
-    'empty' => 'Todavía no se han configurado los enlaces de ayuda para esta instalación de :app. Póngase en contacto con el administrador del sistema.',
 ];
