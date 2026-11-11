@@ -88,14 +88,16 @@ it('lists every attendance in the company to a view-any user', function (): void
 
     CompanyHelper::actingAsCompanyUser($company, ['view_any_attendance_attendance']);
 
+    // The factory gives every employee the first user, and `user_id` is unique
+    // on employees; two employees in one test must be given none.
     $first = Attendance::factory()->create([
         'company_id'  => $company->id,
-        'employee_id' => AttendanceHelper::employee($company)->id,
+        'employee_id' => AttendanceHelper::employee($company, ['user_id' => null])->id,
     ]);
 
     $second = Attendance::factory()->create([
         'company_id'  => $company->id,
-        'employee_id' => AttendanceHelper::employee($company)->id,
+        'employee_id' => AttendanceHelper::employee($company, ['user_id' => null])->id,
     ]);
 
     $ids = AttendanceResource::getEloquentQuery()->pluck('id')->all();
