@@ -102,6 +102,26 @@ in SIGSEGV (exit 139), so this is a genuine unbounded stack use somewhere in
 that file's path, not a limit that is merely set too low. Nothing in it is
 claimed as verified; the next attempt raises the limit instead of removing it.
 
+**2026-11-11 — what a step-by-step probe of the service paths showed.** A
+throwaway probe test (since deleted) replayed the service scenarios in one
+process with a marker before each. It confirmed, by observation rather than by
+the pinned assertions:
+
+- the disabled switch refuses with `AttendanceNotEnabledException`;
+- a supplied `employee_id` for another person refuses with
+  `NotYourAttendanceException`;
+- an empty forced company context refuses with
+  `CorrectionRefusedException::NO_EMPLOYEE` - the AT-2 boundary;
+- clock-in then clock-out complete, including the employee's own time zone.
+
+Nothing in that run exhausted the stack, so the fatal in
+`AttendanceServiceTest` is not one of those service paths as such. The probe
+also showed that `CompanyContext::forceActive()` persists for the rest of the
+process, so a test that forces a context changes the ones after it - which is
+why the probe's later scenarios all refused with "the acting user has no active
+company". That is a probe artefact, but it is worth knowing before writing more
+service tests.
+
 **2026-11-11 — banner tests: a stale switch reads as off.**
 `DashboardBannerTest` enabled attendance with `CompanyProvisioner::enable()`
 directly after `appliesToViewer()` had already cached the company's flag, so

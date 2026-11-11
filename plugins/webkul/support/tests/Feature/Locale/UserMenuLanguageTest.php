@@ -24,13 +24,16 @@ it('shows the current language once and offers every other language below it', f
     $html = (string) FilamentView::renderHook(PanelsRenderHook::USER_MENU_PROFILE_AFTER);
     $locales = config('app.supported_locales');
 
-    expect(substr_count($html, e($locales['fr']['native'])))->toBe(1)
-        ->and($html)->not->toContain('?lang=fr"')
-        ->and($html)->toContain('aria-expanded');
+    // The row shows the current code once; the strip lists every code as a
+    // chip named by its full native language, the current one marked.
+    expect($html)->toContain('class="uml-current" lang="fr">FR<')
+        ->and($html)->toContain('aria-expanded')
+        ->and(substr_count($html, 'aria-current="true"'))->toBe(1);
 
-    foreach (array_diff_key($locales, ['fr' => true]) as $code => $locale) {
+    foreach ($locales as $code => $locale) {
         expect($html)->toContain('?lang='.$code.'"')
-            ->and($html)->toContain(e($locale['native']));
+            ->and($html)->toContain('aria-label="'.e($locale['native']).'"')
+            ->and($html)->toContain('>'.strtoupper(str_replace('_', '-', $code)).'</a>');
     }
 
     // The click handler must be plain JavaScript once rendered: an
