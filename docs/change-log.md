@@ -26,6 +26,13 @@ for the task/question log this change log is paired with.
   - `--module-sidebar-width` changed. The content padding follows the same
     variable, and the phone drawer uses it too. Collapsed stays 72px.
   - Not browser-tested.
+- **Larger module icons (user: compared with a reference sidebar, chose to
+  keep our coloured icons, larger).**
+  - `.module-sidebar-icon` goes from 24px to 32px, and link padding is
+    trimmed to `0.3125rem 0.5rem`. The artwork fills only the middle ~62%
+    of its tile, so it now shows at about 20px instead of 15px.
+  - Collapsed (72px) still fits.
+  - Previewed on production at 1366px with injected CSS only.
 - **Browser logs no longer tracked (user).**
   - `/.playwright-mcp/` is now in `.gitignore`, and its 13 committed files
     were removed from the index with `git rm --cached`. They stay on disk.
