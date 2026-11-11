@@ -440,7 +440,9 @@
             <style>
                 @verbatim
                 :root {
-                    --module-sidebar-width: 200px;
+                    /* 240px, up from 200px: customers found module names
+                       too cramped (user, 2026-11-11). */
+                    --module-sidebar-width: 240px;
                     --module-sidebar-width-collapsed: 72px;
                     --module-topbar-height: 4rem;
                 }
@@ -789,6 +791,17 @@
 
                     .fi-topbar:has(.fi-global-search-field:focus-within) .company-switcher-name {
                         display: none;
+                    }
+
+                    /* The company switcher's 320px panel opened from the
+                       button's left edge and ran past the right of a 390px
+                       screen, cutting off its Reset button (user, 2026-11-11).
+                       On phones it is placed from the right with the page
+                       gutter, and never starts left of the screen. Only
+                       `left` is overridden: Filament sets its width inside a
+                       cascade layer, which this sheet cannot outrank. */
+                    .fi-dropdown-panel:has(.company-switcher-form) {
+                        left: max(0px, calc(100% - 20rem - 1rem)) !important;
                     }
 
                     .fi-topbar-end .fi-icon-btn,

@@ -30,5 +30,8 @@ it('renders one labelled menu button and the current module pages in the drawer'
         ->assertSee('<div class="module-sidebar-current">', false)
         ->assertSee('module-sidebar-link module-sidebar-page-link', false)
         ->assertSee(__('admin.mobile-menu.modules'))
-        ->assertSee('class="company-switcher-name"', false);
+        ->assertSee('class="company-switcher-name"', false)
+        // The phone CSS finds the switcher's panel by this class, to keep it
+        // on screen (2026-11-11: its Reset button was cut off at 390px).
+        ->assertSee('class="company-switcher-form"', false);
 });

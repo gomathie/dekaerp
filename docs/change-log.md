@@ -6,6 +6,31 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-11 (company switcher on phones, wider sidebar, browser logs out of git)
+
+- **Company switcher cut off on phones (user report, checked on
+  production at 390px).**
+  - Cause: the 320px panel was placed from x=115 and ended at x=435, which
+    hid the Reset button.
+  - Fix: under 768px, the panel's `left` is
+    `max(0px, calc(100% - 20rem - 1rem))`. It now sits 16px from the right
+    edge and never starts left of the screen. Only `left` can be overridden:
+    Filament sets the width inside a cascade layer, and an `!important` in a
+    layer outranks this sheet.
+  - The form carries `company-switcher-form` for the selector.
+    `MobileNavigationTest` asserts it: 1 passed, 8 assertions, on
+    `aureuserp_testing_claude_backfill`.
+  - Previewed in the browser on production with injected CSS only: the
+    panel ran from x=39 to 359 of 375. Nothing on the server changed.
+- **Module sidebar 200px → 240px (user: customers found it too short).**
+  - `--module-sidebar-width` changed. The content padding follows the same
+    variable, and the phone drawer uses it too. Collapsed stays 72px.
+  - Not browser-tested.
+- **Browser logs no longer tracked (user).**
+  - `/.playwright-mcp/` is now in `.gitignore`, and its 13 committed files
+    were removed from the index with `git rm --cached`. They stay on disk.
+  - This ends the merge conflicts those logs caused today.
+
 ## 2026-11-11 (agent review follow-ups: vault, phone search, journal balance, work orders, translations)
 
 From `docs/agent-review-2026-11-11.md`, approved by the user.
