@@ -66,6 +66,10 @@ class AdminPanelProvider extends PanelProvider
                 PanelsRenderHook::HEAD_END,
                 fn () => view('filament.components.web-app-meta'),
             )
+            ->renderHook(
+                PanelsRenderHook::USER_MENU_PROFILE_AFTER,
+                fn () => view('filament.components.user-menu-language'),
+            )
             ->userMenuItems([
                 'profile' => Action::make('profile')
                     ->label(fn () => Auth::user()?->name)

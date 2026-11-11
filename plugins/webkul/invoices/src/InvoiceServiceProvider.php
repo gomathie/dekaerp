@@ -6,6 +6,7 @@ use Filament\Panel;
 use Livewire\Livewire;
 use Webkul\Invoice\Filament\Overview\OverviewRegistry;
 use Webkul\Invoice\Filament\Pages\Invoices;
+use Webkul\Invoice\Filament\Widgets\InvoiceHeadlineWidget;
 use Webkul\Invoice\Livewire\InvoiceSummary;
 use Webkul\PluginManager\Console\Commands\InstallCommand;
 use Webkul\PluginManager\Console\Commands\UninstallCommand;
@@ -45,6 +46,7 @@ class InvoiceServiceProvider extends PackageServiceProvider
             fn (): array => Invoices::sectionFilterFields(),
             fn (): bool  => Invoices::canAccess(),
             sort: 30,
+            headline: InvoiceHeadlineWidget::class,
         );
     }
 
