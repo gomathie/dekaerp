@@ -16,7 +16,7 @@ require_once __DIR__.'/../../Helpers/ResourceStructureHelper.php';
  * all. The risk is silent: a move that drops a field, a company scope or a
  * visibleFrom() still passes the existing suites, because they assert what a
  * permitted user can see rather than the whole declared shape.
- * docs/restructure-backlog.md compares code as sets, so it cannot see field
+ * docs/planned/restructure-backlog.md compares code as sets, so it cannot see field
  * order either - and in Filament, field order is display order.
  *
  * Fixtures are per plugin so converting one plugin re-runs only that plugin,
@@ -98,7 +98,7 @@ it('records the declared structure of a plugin’s resources', function (string 
 ]);
 
 it('keeps declaration order instead of sorting', function () {
-    // The property docs/restructure-backlog.md's set comparison cannot check.
+    // The property docs/planned/restructure-backlog.md's set comparison cannot check.
     $described = ResourceStructureHelper::describeSchema(Schema::make()->components([
         TextInput::make('zebra'),
         TextInput::make('alpha'),
