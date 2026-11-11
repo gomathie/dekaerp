@@ -6,6 +6,9 @@ use Filament\Panel;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
+use Livewire\Livewire;
+use Webkul\Attendance\Filament\AttendanceBannerContribution;
+use Webkul\Attendance\Livewire\ClockButton;
 use Webkul\Attendance\Models\Attendance;
 use Webkul\Attendance\Policies\AttendancePolicy;
 use Webkul\Attendance\Services\CompanyProvisioner;
@@ -59,6 +62,9 @@ class AttendanceServiceProvider extends PackageServiceProvider
     {
         Gate::policy(Attendance::class, AttendancePolicy::class);
 
+        // Keyed registry entries, so a second boot replaces rather than duplicates.
+        AttendanceBannerContribution::register();
+
         if ($this->app->bound('attendances.company_provisioning_registered')) {
             return;
         }
@@ -81,6 +87,8 @@ class AttendanceServiceProvider extends PackageServiceProvider
     public function packageRegistered(): void
     {
         $this->app->scoped(AttendanceAccess::class);
+
+        Livewire::component('attendance-clock', ClockButton::class);
 
         Panel::configureUsing(function (Panel $panel): void {
             $panel->plugin(AttendancePlugin::make());
