@@ -13,6 +13,52 @@ company, never the session's.
 
 ## Progress log
 
+**2026-11-11 — AT-3 to AT-7 built; verification running.** Everything below is
+code-complete. Nothing is claimed as verified until a run is named here.
+
+- **Built:** AT-3 banner (shared `DashboardBannerRegistry` in `support`, one
+  `PAGE_START` hook scoped to every dashboard, attendance status pill and clock
+  button through it), AT-4 manager screens (read-only resource narrowed to
+  `visibleEmployeeIds()`, "Clocked in now" filter, audited correction,
+  privacy-safe export), AT-5 kiosk (design note only, per AT-D2), AT-6 reports
+  (Lateness, Overtime, Absence in a Reporting cluster, each behind its own
+  Shield page permission and the company switch) plus the payroll hand-off
+  contract, AT-7 five locales and the release notes.
+- **Verification so far:** PHP lint clean on every new file;
+  `translations:check --plugin=attendances` and `--plugin=support` each passed
+  4 of 4 locales. Database `aureuserp_testing_attendance`.
+- **Suite:** run one file at a time (the user asked for that, the machine also
+  runs another agent's suite). Results are appended below as they arrive.
+- **Not yet run:** Pint, `SupportFeature`, `EmployeeFeature`, the structure
+  snapshot comparison.
+
+**2026-11-11 — report tests, first run: five failures, all in the test itself.**
+`AttendanceReportsTest` failed with a `TypeError` before any assertion:
+`AttendanceHelper::enable()` returns the company setting, and the test passed
+that to `AttendanceHelper::employee()`, which takes a company. The helper now
+returns the `Company` it enabled (5 failed, 0 assertions, 546.68s). Three more
+defects were found by reading while it ran, and are fixed with it:
+
+- `CalendarAttendanceFactory` fills `display_type`, and the schedule reader
+  skips any line that has one, so the test calendar had no working hours at
+  all. The fixture now sets `display_type` to null explicitly.
+- The report queries dropped `whereNotNull('check_out_at')`: someone who
+  arrived late and has not left yet is late, and someone still clocked in has
+  not been absent. Overtime still needs `worked_minutes`, so an open row simply
+  reports none. Pinned by "counts someone still clocked in as late, and not as
+  absent".
+- `lateRows`/`overtimeRows`/`absenceRows` no longer accept a null employee
+  list. `null` used to mean "every employee in every company" while the query
+  deliberately reads scope-free - one caller away from a cross-tenant report.
+  The pages always passed an explicit list; now the signature requires one.
+
+**2026-11-11 — banner tests: a stale switch reads as off.**
+`DashboardBannerTest` enabled attendance with `CompanyProvisioner::enable()`
+directly after `appliesToViewer()` had already cached the company's flag, so
+the second assertion would have read the pre-enable value.
+`AttendanceAccess` caches every company's flag for the request; the helper's
+`AttendanceHelper::enable()` flushes it, and the tests now use that.
+
 **2026-11-11 — continuation status.** The Attendance plugin's data layer and
 the initial registration/test files were already present and tracked when this
 continuation resumed. They have not yet been verified here.
@@ -144,6 +190,30 @@ fatal at `Illuminate/Database/ConcurrencyErrorDetector.php:20`, before test
 counts were returned; the behavior remains unverified. **Rollback:** removing
 either call would reopen a path for a global correction permission to cross
 the selected tenant boundary.
+
+**AT-6 rationale — reports read only what the viewer may see (2026-11-11).**
+**Why:** `AttendanceReports` reads attendance and employee rows with
+`withoutGlobalScopes()`, because a report must read the same rows the schedule
+reader does whoever is acting. That is only safe if the caller says which
+employees it may see: an optional list defaulting to null meant "every employee
+in every company", one careless caller away from a cross-tenant report.
+**How:** `lateRows()`, `overtimeRows()` and `absenceRows()` require
+`array $employeeIds`; the pages pass
+`AttendanceService::visibleEmployeeIds()`, which returns an empty list for a
+guest, so nothing shows rather than everything. The same change stopped
+dropping open rows: lateness is known at check-in, so someone who arrived late
+and has not left yet must appear, and someone still clocked in has not been
+absent. Overtime already needs `worked_minutes`, so an open row reports none.
+Dates are rendered in the employee's calendar timezone resolved by
+`ScheduleReader`, not `Attendance::checkInLocal()`, which reads the employee
+through a company-scoped relation and would silently fall back to the server
+zone for an actor outside that company. **Benefit:** a manager's report cannot
+leak another tenant and no longer misses the person still at work.
+**Trade-off / risk:** a caller that genuinely wants every employee must build
+the full id list itself. **Verification:** the report test file is being run on
+`aureuserp_testing_attendance`; results are in the progress log above.
+**Rollback:** restoring the null default or the `check_out_at` filter
+reintroduces an unbounded cross-tenant read and the missing-late-arrival bug.
 
 The reusable listener-lifecycle rationale was also added to `AGENTS.md`, and
 the shared workflow library was updated with the same app-scoped registration

@@ -22,10 +22,13 @@ function attendanceCalendar(string $timezone = 'Africa/Lusaka'): Calendar
 
     foreach (['monday', 'tuesday', 'wednesday', 'thursday', 'friday'] as $day) {
         CalendarAttendance::factory()->create([
-            'calendar_id' => $calendar->id,
-            'day_of_week' => $day,
-            'hour_from'   => '08:00',
-            'hour_to'     => '17:00',
+            'calendar_id'  => $calendar->id,
+            'day_of_week'  => $day,
+            'hour_from'    => '08:00',
+            'hour_to'      => '17:00',
+            // The factory fills a display type, and a calendar line with one is
+            // a leave or a detail line, not working time; the reader skips it.
+            'display_type' => null,
         ]);
     }
 
