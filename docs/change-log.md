@@ -6,6 +6,46 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-11 (Overview "At a glance", all filters shown, profile menu languages)
+
+- **Why:** user: the Overview should show every section's filters by default
+  and the most relevant figures first, without scrolling, and phones should
+  show only the combined figures. Separately, the profile avatar was hard to
+  find in dark mode in production, and the admin panel had no language
+  switcher.
+- **How:**
+  - `Invoice\Filament\Widgets\OverviewHeadlineWidget` ("At a glance") collects
+    one or two figures from each visible section through
+    `OverviewRegistry::register(..., headline:)`: `SaleHeadlineWidget`
+    (revenue, open quotations), `PurchaseHeadlineWidget` (spend, open RFQs),
+    `InvoiceHeadlineWidget` (to collect, to pay, with overdue counts). Each
+    card follows its section's page `canAccess()`.
+  - `Overview::getWidgets()` orders: At a glance, then charts, stats and lists
+    across sections. `filtersForm()` shows every section's filters; same-meaning
+    names (`vendor_id`/`partner_id`, `salesperson_id`/`salesPersons`,
+    `country_id`/`countries`) show once and `updatedFilters()` copies the
+    changed value, so clearing clears all names.
+  - Phones: on the Overview only (`data-overview`), everything but At a glance
+    is hidden behind a "Show details" button. The earlier phone rule hid lists
+    on every dashboard, which left Projects and Recruitment lists unreachable;
+    it is now scoped to the Overview.
+  - Profile menu: `resources/views/filament/components/user-menu-language.blade.php`
+    on `USER_MENU_PROFILE_AFTER` (AdminPanelProvider) lists the supported
+    languages; the link is built in the browser because the menu is
+    re-rendered through Livewire. The avatar gets an accent ring in both
+    themes (topbar CSS).
+- **Benefit:** one screen shows sales, purchases and invoices at once; phone
+  scroll is short; the profile menu is visible and offers languages.
+- **Trade-off / risk:** headline figures add a few queries per Overview load.
+  Language choice is per session (SetLocale), not saved to the profile.
+- **Verification actually run:** `invoices/tests/Feature/Dashboard` 12 passed
+  (46 assertions) on `aureuserp_testing_claude_backfill`;
+  `support/tests/Feature/Locale` 26 passed (54 assertions, incl. new
+  `UserMenuLanguageTest`) on `aureuserp_testing_claude_vault`. Pint passed.
+  Not yet checked in a browser.
+- **Rollback:** remove the render hook and view; drop `headline:` from the
+  three registrations.
+
 ## 2026-11-11 (unified product and contact screens: shared custom fields, purchase tabs everywhere)
 
 Planned item #1, `docs/planned/01-unified-product-resource-plan.md` (user:
