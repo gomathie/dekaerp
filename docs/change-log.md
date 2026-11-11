@@ -6,6 +6,50 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-11 (attendance plugin: banner, manager screens, reports)
+
+- **Why:** the user asked for the whole of `docs/attendance-plan.md` (AT-1 to
+  AT-7). Presence had no record at all in this fork, so payroll had nothing to
+  read and managers could not tell who was in.
+- **How:**
+  - New plugin `attendances` (`Webkul\Attendance`, namespace singular for
+    permissions) depending on `employees`, with a per-company switch
+    (`attendances_company_settings`, default off) layered on
+    `PluginEntitlement`, exactly like Logistics.
+  - `AttendanceService` is the only write path: idempotent clock-in backed by a
+    partial unique index, clock-out storing worked minutes, a correction that
+    refuses a blank reason and appends to `attendances_corrections`, and an
+    auto check-out at the company limit flagged `needs_review`.
+  - `support` gained the shared welcome banner: a keyed
+    `DashboardBannerRegistry` and one `PAGE_START` render hook scoped to every
+    `Filament\Pages\Dashboard` subclass, so no dashboard file was edited.
+    Attendance contributes the status pill and clock button through that
+    registry and a `ClockButton` Livewire component; `support` never references
+    the plugin.
+  - Manager screens: a read-only `AttendanceResource` narrowed to
+    `visibleEmployeeIds()` (team or own rows without `view_any`), a "Clocked in
+    now" filter, the audited correction action, and an exporter whose
+    location/IP columns are off by default.
+  - Reports: an `Attendance` reporting cluster with Lateness, Overtime and
+    Absence pages, each behind its own Shield page permission and the company
+    switch, computed at read time from the employee's calendar.
+  - Translations in en/ar/es/fr/pt_BR.
+- **Benefit:** presence is recorded once, audited, and readable by the person
+  and their manager; payroll has a single contract instead of a second source.
+- **Trade-off / risk:** the banner uses inline CSS rather than Tailwind
+  utilities, so it renders without rebuilding `support.css`; a later restyle
+  should keep that property. `PAGE_START` is registered once per application
+  (container marker), because a process-static flag survives a rebuilt test
+  application while Filament's view manager does not.
+- **Verification:** see the handoffs and the per-run results in
+  `docs/attendance-plan.md` (database `aureuserp_testing_attendance`).
+  `translations:check --plugin=attendances` and `--plugin=support` each passed
+  4 of 4 locales. Pint and the suite results are recorded there.
+- **Rollback:** uninstall refuses while attendance rows exist
+  (`attendances.allow_uninstall_with_data`). The banner can be switched off by
+  removing `DashboardBannerContributions::register()` from
+  `SupportPlugin::boot()`.
+
 ## 2026-11-11 (Overview "At a glance", all filters shown, profile menu languages)
 
 - **Why:** user: the Overview should show every section's filters by default
