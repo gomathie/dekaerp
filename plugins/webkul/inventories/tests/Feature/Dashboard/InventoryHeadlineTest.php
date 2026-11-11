@@ -5,15 +5,20 @@ use Webkul\Inventory\Filament\Widgets\InventoryHeadlineWidget;
 use Webkul\Inventory\Models\Location;
 use Webkul\Inventory\Models\OrderPoint;
 use Webkul\Inventory\Models\ProductQuantity;
+use Webkul\Inventory\Models\Warehouse;
 use Webkul\Product\Models\Product;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Support\Models\Company;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/CompanyHelper.php';
+require_once __DIR__.'/../../../../support/tests/Helpers/FilamentHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
 
 beforeEach(function (): void {
     TestBootstrapHelper::ensurePluginInstalled('inventories');
+    // Shield names a page permission only once the panel is booted; without it
+    // hasPagePermission() has nothing to check and allows every user.
+    FilamentHelper::bootAdminPanel();
     PluginAccess::flush();
 });
 
@@ -61,6 +66,8 @@ it('counts low stock against the reorder minimum and values internal stock at co
     CompanyHelper::actingAsCompanyUser($company, ['page_inventory_overview']);
 
     $internal = Location::factory()->internal()->create(['company_id' => $company->id]);
+    // The warehouse factory cannot build one on its own here; the install seeds one, and neither card reads it.
+    $warehouseId = Warehouse::withoutGlobalScopes()->value('id');
     $customer = Location::factory()->customer()->create(['company_id' => $company->id]);
 
     $low = Product::factory()->create(['company_id' => $company->id, 'cost' => 10]);
@@ -71,12 +78,12 @@ it('counts low stock against the reorder minimum and values internal stock at co
     // Already delivered to a customer: not on hand.
     ProductQuantity::factory()->create(['company_id' => $company->id, 'product_id' => $fine->id, 'location_id' => $customer->id, 'quantity' => 999]);
 
-    OrderPoint::factory()->create(['company_id' => $company->id, 'product_id' => $low->id, 'product_min_qty' => 5]);
-    OrderPoint::factory()->create(['company_id' => $company->id, 'product_id' => $fine->id, 'product_min_qty' => 5]);
+    OrderPoint::factory()->create(['company_id' => $company->id, 'product_id' => $low->id, 'product_min_qty' => 5, 'warehouse_id' => $warehouseId, 'location_id' => $internal->id]);
+    OrderPoint::factory()->create(['company_id' => $company->id, 'product_id' => $fine->id, 'product_min_qty' => 5, 'warehouse_id' => $warehouseId, 'location_id' => $internal->id]);
 
     // Another company's low rule must not count here.
     $otherProduct = Product::factory()->create(['company_id' => $other->id]);
-    OrderPoint::withoutEvents(fn () => OrderPoint::factory()->create(['company_id' => $other->id, 'product_id' => $otherProduct->id, 'product_min_qty' => 5]));
+    OrderPoint::withoutEvents(fn () => OrderPoint::factory()->create(['company_id' => $other->id, 'product_id' => $otherProduct->id, 'product_min_qty' => 5, 'warehouse_id' => $warehouseId, 'location_id' => $internal->id]));
 
     $widget = new InventoryHeadlineWidget;
 

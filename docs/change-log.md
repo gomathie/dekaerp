@@ -6,6 +6,33 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-11 (Employee contact recursion; Inventory low stock and stock value)
+
+- **Why (CRITICAL, data):** the Attendance suite's "Maximum call stack size"
+  fatal was not in Attendance. `Employee`'s saved hook updated the employee's
+  contact with `Partner::updateOrCreate(['id' => partner_id])`, a
+  company-scoped lookup. When the actor works in another company than the
+  employee's, the lookup missed the contact, created a new one, changed
+  `partner_id`, saved again and recursed - duplicate contacts and followers
+  each turn until PHP crashed. In production: any save of another company's
+  employee (queued job, Multi-Company Admin, all-companies mode edge).
+  Diagnosed with `pest --debug` (culprit test), a STDERR-marker probe (culprit
+  step) and `pg_stat_activity` (an endless `chatter_followers` insert).
+- **How:** `Employee::handlePartnerUpdation()` reads the contact
+  `Partner::withoutGlobalScopes()->find()`, fills and saves it, and creates one
+  only when none exists. Why comment at the code; AGENTS.md list of fixed
+  scoped-parent reads updated.
+- **Inventory cards (user, recommendations accepted):** "Low stock" counts
+  products at or below their reorder rule minimum, on-hand across the
+  company's internal locations; "Stock value" is on-hand in internal locations
+  times product cost, company currency (no valuation layers exist yet; the
+  card says "at cost price"). Five languages.
+- **Verification:** see the runs below. Tests: employees
+  `EmployeeContactCompanyTest`; inventories `InventoryHeadlineTest` (low-stock
+  count, internal-only value, other company excluded).
+- **Rollback:** restore `Partner::updateOrCreate` (reintroduces the recursion);
+  drop the two cards.
+
 ## 2026-11-11 (dashboard polling stopped; filters closed; 4 cards across; compact charts; card icons and sparklines)
 
 - **Why:** Sentry DEKAERP-11 (364 events) and -13: Filament stats and chart
