@@ -47,6 +47,27 @@ for the task/question log this change log is paired with.
 - **Trade-off / risk:** Support's resource is no longer registered on its
   own. Security is a core plugin, so this matters only if Security is ever
   removed. URLs and route names are unchanged.
+- **Visible effects of serving Security's pages** (found by the suite run,
+  2026-11-11):
+  - Creating a company now **requires an administrator**: the company's own
+    email, or one typed in the Administrator section. Otherwise the create is
+    refused and rolled back.
+  - A Multi-Company Admin opening an unassigned company gets "not found"
+    instead of "forbidden".
+  - The page checks `*_security_company` permissions. Production Admin, Admin2,
+    Company Admin and Multi-Company Admin already hold view, create and update
+    (checked read-only). Admin2 lacks `delete_security_company`, so tenant
+    administrators can no longer delete a company.
+  - Tests updated to mount Security's pages:
+    - platform-billing `AdministrationScreensTest` (20 passed, 202
+      assertions, together with plugin-manager `CompanyModulesTest`, all but
+      one `CompanyModulesTest` case, which the next run fixed);
+    - plugin-manager `CompanyModulesTest` (9 passed, 45 assertions);
+    - support `ResourceGlobalSearchSmokeTest` (3 passed).
+
+    All ran on `aureuserp_testing_claude_backfill` or `_vault`. The smoke
+    test now covers Security's registered company resource, because Support
+    registers none with its own search details.
 - **Business role (user decision, same day: "new administrators should get
   the business role"):**
   - New setting `general.company_admin_business_role_id`, chosen on Settings >
