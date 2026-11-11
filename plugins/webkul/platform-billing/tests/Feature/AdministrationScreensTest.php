@@ -3,6 +3,7 @@
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -23,12 +24,12 @@ use Webkul\PlatformBilling\Services\PlanCatalog;
 use Webkul\PlatformBilling\Services\SubscriptionDrafts;
 use Webkul\PluginManager\CompanyContributions;
 use Webkul\PluginManager\Models\Plugin;
+use Webkul\Security\Filament\Resources\CompanyResource\Pages\EditCompany;
 use Webkul\Security\Models\Permission;
 use Webkul\Security\Models\Role;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\MultiCompanyAdminRoleProvisioner;
 use Webkul\Security\Services\SeatCapacityService;
-use Webkul\Support\Filament\Resources\CompanyResource\Pages\EditCompany;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Services\CompanyContext;
 
@@ -420,7 +421,11 @@ it('adds trial days, switches an assigned company, and refuses the other company
 
     expect(app(SeatCapacityService::class)->limitFor($company->fresh()))->toBe(6);
 
-    Livewire::test(EditCompany::class, ['record' => $stranger->getRouteKey()])->assertForbidden();
+    // Security's company page (the one production serves since 2026-11-11)
+    // lists only a Multi-Company Admin's assigned companies, so another
+    // company is not found rather than forbidden: its existence is not shown.
+    expect(fn () => Livewire::test(EditCompany::class, ['record' => $stranger->getRouteKey()]))
+        ->toThrow(ModelNotFoundException::class);
 
     Livewire::test(EditCompany::class, ['record' => $company->getRouteKey()])
         ->callAction(billingCompanyAction('switchToCommercial'), data: ['price_id' => $priceId])

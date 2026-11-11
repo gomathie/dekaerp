@@ -398,7 +398,7 @@ you claim a package, finish it, or get blocked.
 | WP-10 | Dashboard widgets | WP-4, WP-5 | WP-9, WP-11 | done (125/506 pass, whole suite green) | Claude 2026-09-24, db `aureuserp_testing_wp10` |
 | WP-11 | Reports | WP-4, WP-5, WP-7, WP-8b | WP-10 | done (176/676 pass, whole suite green) | Claude 2026-09-25, db `aureuserp_testing_wp11` |
 | WP-12 | Translations ar/es/fr/pt_BR | each finished package | anything | done (`translations:check`: 4/4 pass; TTL regression 1/1 pass) | Codex 2026-09-30, db `aureuserp_testing_wp12` |
-| WP-14 | Vehicle and driver documents (§6a) | — | WP-15..WP-21 | todo | |
+| WP-14 | Vehicle and driver documents (§6a) | — | WP-15..WP-21 | spec written (2026-11-11, detail under §6a; no code) | |
 | WP-15 | Fuel and vehicle log (§6a) | — | WP-14, WP-16 | todo | |
 | WP-16 | Customer notifications and tracking page (§6a) | — | WP-14, WP-15 | todo | |
 | WP-17 | Inventory delivery link (§6a) | — | WP-14..WP-16 | todo | |
@@ -1144,6 +1144,222 @@ behaviour identical.
   - `DispatchService` calls the check.
   - Expiry widget.
   - Tests pin the warn and block messages.
+  - Detail: "WP-14 detail" below. That subsection is the specification.
+    This list stays the summary.
+
+### WP-14 detail
+
+Specification only (2026-11-11). No code in this change. D17 is warn by
+default, switchable to block. O1 and O4 from §6b are in this package. D21
+is not: GPS sync does not add documents, and this package does not call a
+telematics provider.
+
+#### Tables and columns
+
+`logistics_documents`, one row per paper. `BelongsToCompany`. Soft deletes.
+The company comes from the vehicle or the driver through
+`InheritsParentCompany`, which reads the parent with
+`withoutGlobalScopes()`. A document is never filed under the session's
+company.
+
+| Column | Type | Notes |
+| --- | --- | --- |
+| `company_id` | foreign key, not null | Parent's company |
+| `documentable_type`, `documentable_id` | morph | Only `Vehicle` or `Driver`. A mismatch with `company_id` is refused |
+| `type` | string | Vehicle: `insurance`, `roadworthiness`, `permit`, `other`. Driver: `licence`, `medical`. A vehicle type on a driver is refused, and the reverse |
+| `number` | string, nullable | The paper's own number |
+| `issued_at` | date, nullable | |
+| `expires_at` | date, nullable | Null means it does not expire, so it never warns or blocks |
+| `file_path` | string, nullable | Stored through `CompanyStorage`, the same way proof-of-delivery files are. No `storage_path()` |
+| `recurring_amount` | decimal, nullable | O1. Null means the document is not a contract |
+| `period` | string, nullable | `monthly` or `yearly`, required when `recurring_amount` is set |
+| `currency_id` | foreign key, nullable | The company's currency when a recurring amount is set |
+| `next_post_at` | date, nullable | The next contract period that has not been posted |
+| `creator_id` | foreign key, nullable | |
+
+Index `(documentable_type, documentable_id)` and `(company_id, expires_at)`.
+
+Saving a driver document of type `licence` also writes `expires_at` onto
+`logistics_drivers.license_expires_at`. `Driver::isLicenseExpired()` already
+refuses dispatch, and that column stays the licence date. Other document
+types do not touch it.
+
+`logistics_vehicle_assignments`, the O4 log. Who drove which vehicle, and
+who is planned to.
+
+| Column | Type | Notes |
+| --- | --- | --- |
+| `company_id` | foreign key, not null | The vehicle's company |
+| `vehicle_id` | foreign key | |
+| `driver_id` | foreign key | Same company as the vehicle, or the row is refused |
+| `started_at` | timestamp | |
+| `ended_at` | timestamp, nullable | Null means this is the open assignment |
+| `is_planned` | boolean, default false | A future driver. Not the person on the road yet |
+| `trip_id` | foreign key, nullable | Set when the row was opened by a trip |
+| `creator_id` | foreign key, nullable | |
+
+One open unplanned row per vehicle (`ended_at` null and `is_planned` false).
+A second open row is refused. A planned row may sit beside the open one.
+
+`logistics_company_settings` gains:
+
+| Column | Default | Notes |
+| --- | --- | --- |
+| `document_check` | `warn` | `warn` or `block`, same shape as `capacity_check`. D17. No `off` |
+| `document_alert_days` | `30` | Widget and warn window |
+
+Both go on `CompanySetting::$attributes`, or a company with no saved row
+reads them as null and the check silently does nothing.
+
+#### Services
+
+`DocumentChecker` is the only place that decides expired or expiring.
+
+- `issues(Trip $trip): array` reads the trip's vehicle and driver with
+  `withoutGlobalScopes()`, filtered by the trip's `company_id`. A document
+  with `expires_at` before today is expired. One whose `expires_at` is
+  within `document_alert_days` is expiring. A null `expires_at` is fine.
+- `assertForDispatch(Trip $trip): void` reads
+  `CompanySetting::forCompany($trip->company_id)->document_check`.
+  `warn` returns without throwing. `block` throws
+  `TripNotDispatchable` when any required document is expired. The message
+  names the vehicle or the driver and the document type.
+- A missing document is not an expiry. Block mode refuses only an expired
+  date, not a vehicle that has no insurance row yet. The widget still lists
+  vehicles with nothing on file, as a separate count, so staff can see the
+  gap without being unable to dispatch on the first day.
+
+`ContractPoster` posts O1. For each document with a `recurring_amount` whose
+`next_post_at` is due, it creates one `Expense` in the document's company:
+`vehicle_id` set, `shipment_id` null (the expenses table already allows
+that), `paid_by` the company, amount and currency copied from the document.
+The expense then follows the existing approval path. `ExpensePoster` is not
+given a second writer. One expense per document per period: insert, and a
+unique `(document_id, period_start)` conflict means it was already posted.
+`next_post_at` moves forward only after that insert commits. A failed post
+does not consume the period. The job has no user, so it calls
+`LogisticsAccess::ensureEnabled($document->company_id)` and does not log a
+person in.
+
+`AssignmentLog` opens and closes O4 rows. It does not infer history from
+GPS.
+
+#### The DispatchService hook
+
+`assertDispatchable()` already refuses a missing crew, an inactive vehicle
+or driver, and `Driver::isLicenseExpired()`. After those, it calls
+`DocumentChecker::assertForDispatch($trip)`.
+
+`dispatch()` and `start()` both reach that method through `move(..., requireCrew: true)`.
+`complete()` does not. An expired document stops a trip leaving and stops
+it starting, and does not block completing one that is already out.
+
+Warn mode does not throw, so the dispatch action must show `issues()`
+before it calls `dispatch()`, the same way capacity warnings are shown and
+the trip still proceeds. The service does not hide the messages inside
+`dispatch()`'s return value, which is the trip.
+
+The check uses the trip's company, not the session's.
+
+#### Policies and permissions
+
+`DocumentPolicy` follows `LogisticsPolicy`: `viewAny` is
+`view_any_logistics_document` and `LogisticsAccess::enabledForCurrent()`.
+Create, update and delete repeat `enabledFor` on the record's company.
+The service repeats the check, because a super-admin `Gate::before` skips
+policies.
+
+Assignment rows use the same permission as the vehicle
+(`view_any_logistics_vehicle` / `update_logistics_vehicle`). They are not a
+second permission.
+
+Shield names, to be pinned the way the report pages are:
+`view_any_logistics_document`, `view_logistics_document`,
+`create_logistics_document`, `update_logistics_document`,
+`delete_logistics_document`. The widget permission is
+`widget_logistics_expiring_documents_widget`.
+
+The recurring amount is money. Showing it on the document form requires
+`view_financials_logistics_shipment`, the same permission as the margin
+widget. Hiding the field is not the only check. `ContractPoster` does not
+ask a user for that permission. It is a job.
+
+#### Widgets
+
+`ExpiringDocumentsWidget` on the Logistics dashboard, next to
+`FleetStatsWidget`. `canView()` is `LogisticsAccess::enabledForCurrent()`
+and `can('widget_logistics_expiring_documents_widget')`. It counts, for the
+companies in scope:
+
+- documents expired and not replaced
+- documents expiring inside `document_alert_days`
+- vehicles and drivers with no document on file
+
+`CompanyScope` does the company cut. The widget does not call
+`withoutGlobalScopes()`.
+
+#### Resource layout
+
+`DocumentResource` under the Fleet cluster, split as §2a requires:
+`DocumentResource.php`, `Schemas/DocumentForm.php`,
+`Schemas/DocumentInfolist.php`, `Tables/DocumentsTable.php`, and the
+usual pages. `getNavigationGroup()` matches the other Fleet resources.
+The assignment log is a relation manager on the vehicle, not its own
+navigation item.
+
+#### Tests
+
+Names are the behaviour. Each pins the message where the code refuses.
+
+- `warns and still dispatches a trip whose vehicle insurance is expired`
+- `blocks dispatch when the company's document check is block and the insurance is expired`
+- `does not block dispatch for a document with no expiry date`
+- `does not treat a missing document as an expired one`
+- `keeps the driver's licence date in step with the licence document`
+- `refuses a driver document typed as vehicle insurance`
+- `files the document under the vehicle's company, not the session's`
+- `hides another company's documents`
+- `hides the expiring-documents widget when logistics is off`
+- `hides the recurring amount without view_financials`
+- `posts one expense per contract period and does not post the same period twice`
+- `does not move next_post_at when the expense insert fails`
+- `refuses a second open driver on the same vehicle`
+- `records the trip's driver as the vehicle's open assignment when the trip starts`
+- `closes that assignment when the trip completes`
+- `a planned driver does not become the open assignment`
+
+#### Files to create
+
+- `database/migrations/*_create_logistics_documents_table.php`
+- `database/migrations/*_create_logistics_vehicle_assignments_table.php`
+- `database/migrations/*_add_document_check_to_logistics_company_settings.php`
+- `src/Models/Document.php`
+- `src/Models/VehicleAssignment.php`
+- `src/Enums/DocumentType.php`
+- `src/Enums/DocumentCheck.php`
+- `src/Enums/ContractPeriod.php`
+- `src/Services/DocumentChecker.php`
+- `src/Services/ContractPoster.php`
+- `src/Services/AssignmentLog.php`
+- `src/Policies/DocumentPolicy.php`
+- `src/Filament/Clusters/Fleet/Resources/DocumentResource.php` and its
+  schema, table and page classes
+- `src/Filament/Widgets/ExpiringDocumentsWidget.php`
+- `src/Console/Commands/PostDueContracts.php`
+- `database/factories/DocumentFactory.php`
+- `tests/Feature/Documents/DocumentCheckTest.php`
+- `resources/lang/{en,fr,es,pt_BR,ar}/...` for the new strings, quoted
+  numeric keys where the English file uses them
+
+#### Files to modify
+
+- `src/Services/DispatchService.php` (`assertDispatchable` only)
+- `src/Models/CompanySetting.php` (`$attributes` and `$fillable`)
+- `src/LogisticsServiceProvider.php` (migration list and the schedule)
+- the Fleet cluster's widget registration
+- the shipment dispatch action, so warn-mode messages are shown
+
+No change to Sales, Inventory, or the GPS client.
 - **WP-15 Fuel:**
   - Table `logistics_fuel_entries`, linked to the vehicle, trip and expense.
   - `FuelLogService` creates the `Expense` in the same transaction.

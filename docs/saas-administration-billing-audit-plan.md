@@ -1808,7 +1808,8 @@ calculations; changing or disabling a code does not alter posted invoices.
     code row. A test now pins the check instead of a timing-dependent
     two-connection test.
   - Point 2 (basis points) is unchanged.
-  - Tests are in `DiscountCodeTest`.
+  - Tests are in `DiscountCodeTest`: 12 passed, 43 assertions, on
+    `aureuserp_testing_claude_backfill` (2026-11-11).
 - D-SAAS-08 points the code does not enforce, left for a decision:
   1. Free-month calendar. The decision names "free months" and leaves the
      calendar to the invoice run. SAAS-10 waives the next

@@ -8,11 +8,11 @@ use Webkul\PluginManager\CompanyContributions;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Services\PluginEntitlementService;
 use Webkul\PluginManager\Support\PluginAccess;
+use Webkul\Security\Filament\Resources\CompanyResource\Pages\CreateCompany;
+use Webkul\Security\Filament\Resources\CompanyResource\Pages\EditCompany;
 use Webkul\Security\Models\Role;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\MultiCompanyAdminRoleProvisioner;
-use Webkul\Support\Filament\Resources\CompanyResource\Pages\CreateCompany;
-use Webkul\Support\Filament\Resources\CompanyResource\Pages\EditCompany;
 use Webkul\Support\Filament\Resources\CompanyResource\Support\CompanySchemaRegistry;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Currency;
@@ -223,7 +223,7 @@ it('flushes the access cache so a revoked grant is not served from memory', func
 });
 
 it('refuses an untick a granted plugin depends on on the field, before the company saves', function () {
-    companyModulesActAsSuperAdmin(['view_any_support_company', 'view_support_company', 'update_support_company']);
+    companyModulesActAsSuperAdmin(['view_any_security_company', 'view_security_company', 'update_security_company']);
 
     $company = Company::factory()->create(['name' => 'Modules Before']);
     $child = companyModulesPlugin('test-plugin-child');
@@ -251,7 +251,7 @@ it('refuses an untick a granted plugin depends on on the field, before the compa
 });
 
 it('adds the dependencies of a plugin chosen on a new company instead of refusing', function () {
-    companyModulesActAsSuperAdmin(['view_any_support_company', 'create_support_company']);
+    companyModulesActAsSuperAdmin(['view_any_security_company', 'create_security_company']);
 
     $child = companyModulesPlugin('test-plugin-child');
     $parent = companyModulesPlugin('test-plugin-parent');
@@ -268,6 +268,10 @@ it('adds the dependencies of a plugin chosen on a new company instead of refusin
             'name'            => $name,
             'currency_id'     => Currency::query()->value('id'),
             'company_modules' => [$child->id],
+            // Security's create page (served since 2026-11-11) creates the
+            // company's administrator in the same step and refuses a company
+            // with none.
+            'administrator_email' => 'modules-admin-'.fake()->unique()->numerify('####').'@tenant.test',
         ])
         ->call('create')
         ->assertHasNoFormErrors();
