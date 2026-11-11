@@ -22,7 +22,7 @@
                 </x-filament::link>
             </x-slot>
 
-            <form method="POST" action="{{ route('company-context.set') }}" x-data>
+            <form method="POST" action="{{ route('company-context.set') }}" x-data class="company-switcher-form">
                 @csrf
 
                 <div style="display:flex;flex-direction:column;gap:0.125rem;padding:0.5rem;max-height:18rem;overflow-y:auto;">
