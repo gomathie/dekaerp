@@ -26,25 +26,25 @@ return [
                 [
                     'title' => 'Configurar a empresa',
                     'items' => [
-                        'Crie ou revise empresas, armazéns, moedas, impostos e configurações fiscais.',
-                        'Atribua os usuários às empresas que podem acessar e confirme o seletor de empresa ativa.',
-                        'Configure sequências, condições de pagamento, produtos, unidades de medida e modelos de documento antes de iniciar as transações.',
+                        '0' => 'Crie ou revise empresas, armazéns, moedas, impostos e configurações fiscais.',
+                        '1' => 'Atribua os usuários às empresas que podem acessar e confirme o seletor de empresa ativa.',
+                        '2' => 'Configure sequências, condições de pagamento, produtos, unidades de medida e modelos de documento antes de iniciar as transações.',
                     ],
                 ],
                 [
                     'title' => 'Controlar o acesso',
                     'items' => [
-                        'Crie funções para as equipes de finanças, vendas, estoque, RH, projetos e gestão.',
-                        'Conceda permissões de módulo apenas aos usuários que precisam delas.',
-                        'Revise campos personalizados, importações, exportações e tokens de API antes de liberar acesso amplo.',
+                        '0' => 'Crie funções para as equipes de finanças, vendas, estoque, RH, projetos e gestão.',
+                        '1' => 'Conceda permissões de módulo apenas aos usuários que precisam delas.',
+                        '2' => 'Revise campos personalizados, importações, exportações e tokens de API antes de liberar acesso amplo.',
                     ],
                 ],
                 [
                     'title' => 'Operar e manter',
                     'items' => [
-                        'Instale apenas os módulos que a empresa usa e oculte ou remova os demais.',
-                        'Acompanhe conversas, anexos, aprovações e responsáveis pelos registros durante a implantação.',
-                        'Mantenha as configurações de e-mail, PDF, backup e atualização alinhadas à política de implantação.',
+                        '0' => 'Instale apenas os módulos que a empresa usa e oculte ou remova os demais.',
+                        '1' => 'Acompanhe conversas, anexos, aprovações e responsáveis pelos registros durante a implantação.',
+                        '2' => 'Mantenha as configurações de e-mail, PDF, backup e atualização alinhadas à política de implantação.',
                     ],
                 ],
             ],
@@ -66,25 +66,25 @@ return [
                 [
                     'title' => 'Primeiros passos',
                     'items' => [
-                        'Visão geral da plataforma e navegação',
-                        'Configuração multiempresa e seletor de empresa',
+                        '0' => 'Visão geral da plataforma e navegação',
+                        '1' => 'Configuração multiempresa e seletor de empresa',
                     ],
                 ],
                 [
                     'title' => 'Processos principais',
                     'items' => [
-                        'Vender: vendas e faturamento',
-                        'Comprar: compras e contabilidade',
-                        'Produzir e movimentar: estoque e produção',
-                        'Gerir: projetos, RH e manutenção',
-                        'Plataforma, API e hospedagem própria',
+                        '0' => 'Vender: vendas e faturamento',
+                        '1' => 'Comprar: compras e contabilidade',
+                        '2' => 'Produzir e movimentar: estoque e produção',
+                        '3' => 'Gerir: projetos, RH e manutenção',
+                        '4' => 'Plataforma, API e hospedagem própria',
                     ],
                 ],
                 [
                     'title' => 'Referência dos módulos: 12 módulos / 69 páginas',
                     'items' => [
-                        'Faturas, Vendas, Compras, Estoque, Fabricação, Manutenção',
-                        'Contatos, Projetos, Funcionários, Recrutamento, Ausências',
+                        '0' => 'Faturas, Vendas, Compras, Estoque, Fabricação, Manutenção',
+                        '1' => 'Contatos, Projetos, Funcionários, Recrutamento, Ausências',
                     ],
                 ],
             ],
