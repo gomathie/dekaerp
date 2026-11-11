@@ -8,6 +8,7 @@ use Webkul\PlatformBilling\Models\Plan;
 use Webkul\PlatformBilling\Models\Price;
 use Webkul\PlatformBilling\Models\Subscription;
 use Webkul\PlatformBilling\Services\SubscriptionDrafts;
+use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 
 require_once __DIR__.'/../../../support/tests/Helpers/TestBootstrapHelper.php';
@@ -19,7 +20,7 @@ beforeEach(function (): void {
 
 it('keeps a company scoped immutable snapshot when a Super Admin drafts a subscription', function () {
     $company = Company::factory()->create();
-    $actor = \Webkul\Security\Models\User::query()->where('email', 'admin@example.com')->firstOrFail();
+    $actor = User::query()->where('email', 'admin@example.com')->firstOrFail();
     expect($actor->isSuperAdmin())->toBeTrue();
 
     $plan = Plan::query()->create(['name' => 'Growth', 'code' => 'growth', 'included_plugins' => ['products']]);
@@ -51,7 +52,7 @@ it('refuses a tenant subscription mutation even with an unrelated permission', f
 
 it('hides another company subscription from a tenant query', function () {
     $company = Company::factory()->create();
-    $actor = \Webkul\Security\Models\User::query()->where('email', 'admin@example.com')->firstOrFail();
+    $actor = User::query()->where('email', 'admin@example.com')->firstOrFail();
     $plan = Plan::query()->create(['name' => 'Basic', 'code' => 'basic', 'included_plugins' => []]);
     $price = Price::query()->create(['plan_id' => $plan->id, 'currency' => 'USD', 'interval_months' => 1, 'amount_minor' => 1000]);
     $subscription = app(SubscriptionDrafts::class)->create($actor, $company, $price, new DateTimeImmutable('2026-01-01'));

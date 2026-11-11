@@ -8,9 +8,11 @@ use Webkul\PluginManager\CompanyContributions;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Services\PluginEntitlementService;
 use Webkul\PluginManager\Support\PluginAccess;
+use Webkul\Security\Filament\Resources\CompanyResource\Pages\CreateCompany;
+use Webkul\Security\Filament\Resources\CompanyResource\Pages\EditCompany;
 use Webkul\Security\Models\Role;
-use Webkul\Support\Filament\Resources\CompanyResource\Pages\CreateCompany;
-use Webkul\Support\Filament\Resources\CompanyResource\Pages\EditCompany;
+use Webkul\Security\Models\User;
+use Webkul\Security\Services\MultiCompanyAdminRoleProvisioner;
 use Webkul\Support\Filament\Resources\CompanyResource\Support\CompanySchemaRegistry;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Currency;
@@ -221,7 +223,7 @@ it('flushes the access cache so a revoked grant is not served from memory', func
 });
 
 it('refuses an untick a granted plugin depends on on the field, before the company saves', function () {
-    companyModulesActAsSuperAdmin(['view_any_support_company', 'view_support_company', 'update_support_company']);
+    companyModulesActAsSuperAdmin(['view_any_security_company', 'view_security_company', 'update_security_company']);
 
     $company = Company::factory()->create(['name' => 'Modules Before']);
     $child = companyModulesPlugin('test-plugin-child');
@@ -249,7 +251,7 @@ it('refuses an untick a granted plugin depends on on the field, before the compa
 });
 
 it('adds the dependencies of a plugin chosen on a new company instead of refusing', function () {
-    companyModulesActAsSuperAdmin(['view_any_support_company', 'create_support_company']);
+    companyModulesActAsSuperAdmin(['view_any_security_company', 'create_security_company']);
 
     $child = companyModulesPlugin('test-plugin-child');
     $parent = companyModulesPlugin('test-plugin-parent');
@@ -266,6 +268,10 @@ it('adds the dependencies of a plugin chosen on a new company instead of refusin
             'name'            => $name,
             'currency_id'     => Currency::query()->value('id'),
             'company_modules' => [$child->id],
+            // Security's create page (served since 2026-11-11) creates the
+            // company's administrator in the same step and refuses a company
+            // with none.
+            'administrator_email' => 'modules-admin-'.fake()->unique()->numerify('####').'@tenant.test',
         ])
         ->call('create')
         ->assertHasNoFormErrors();
@@ -274,4 +280,37 @@ it('adds the dependencies of a plugin chosen on a new company instead of refusin
 
     expect(companyModulesGrants($company))->toContain($child->id)
         ->and(companyModulesGrants($company))->toContain($parent->id);
+});
+
+it('hides the modules section from a multi-company admin and leaves the grants unchanged', function () {
+    $company = Company::factory()->create(['name' => 'Modules MCA']);
+    $plugin = companyModulesPlugin('mca-cannot-grant');
+    DB::table('company_plugin')->insert([
+        'company_id' => $company->getKey(),
+        'plugin_id'  => $plugin->getKey(),
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+    PluginAccess::flush();
+    $before = companyModulesGrants($company);
+
+    $user = FilamentHelper::actingAs();
+    Auth::shouldUse('web');
+    $user->syncRoles([app(MultiCompanyAdminRoleProvisioner::class)->provision()->getKey()]);
+    $user->unsetRelation('roles');
+    $user->allowedCompanies()->sync([$company->getKey()]);
+    Auth::guard('web')->setUser($user->fresh());
+    Auth::guard('sanctum')->setUser($user);
+
+    expect(auth()->user()?->isMultiCompanyAdmin())->toBeTrue()
+        ->and(auth()->user()?->isSuperAdmin())->toBeFalse();
+
+    $sections = companyModulesSections();
+
+    expect($sections)->toHaveCount(1)
+        ->and($sections[0]->isVisible())->toBeFalse();
+
+    CompanyContributions::syncGrants($company, []);
+
+    expect(companyModulesGrants($company))->toBe($before);
 });

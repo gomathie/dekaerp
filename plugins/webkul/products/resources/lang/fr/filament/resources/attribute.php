@@ -67,8 +67,7 @@ return [
 
                     'error' => [
                         'title' => 'L\'attribut n\'a pas pu être supprimé',
-                        'body'  => 'L\'attribut ne peut pas être supprimé car il est actuellement utilisé par le produit : :products',
-                        'more'  => '... +:count de plus',
+                        'body'  => 'L\'attribut ne peut pas être supprimé car il est actuellement utilisé.',
                     ],
                 ],
             ],
@@ -99,11 +98,6 @@ return [
                     'error' => [
                         'title' => 'Les attributs n\'ont pas pu être supprimés',
                         'body'  => 'Les attributs ne peuvent pas être supprimés car ils sont actuellement utilisés.',
-                    ],
-
-                    'partial' => [
-                        'title' => 'Certains attributs n\'ont pas pu être supprimés',
-                        'body'  => 'L\'attribut ":attributes" ne peut pas être supprimé car il est actuellement utilisé par le produit : :products',
                     ],
                 ],
             ],

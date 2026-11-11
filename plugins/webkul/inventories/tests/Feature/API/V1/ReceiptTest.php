@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Event;
 use Webkul\Inventory\Enums\OperationState;
+use Webkul\Inventory\Models\Move;
 use Webkul\Inventory\Models\Delivery;
 use Webkul\Inventory\Models\Operation;
 use Webkul\Inventory\Models\OperationType;
@@ -118,6 +120,44 @@ it('creates a receipt with valid payload', function () {
         ->assertJsonPath('message', 'Receipt created successfully.');
 
     expect(Receipt::query()->whereKey($response->json('data.id'))->exists())->toBeTrue();
+});
+
+/**
+ * Removed moves used to go by bulk query, which fires no model events: the
+ * read-only guard never saw a payload that only removed moves, and Move's
+ * own deleting hook (which removes its lines) did not run (2026-11-10).
+ */
+it('removes a dropped move through the model so its delete events run', function () {
+    actingAsInventoryReceiptApiUser(['create_inventory_receipt', 'update_inventory_receipt', 'view_inventory_receipt']);
+
+    $payload = receiptPayload();
+    $second = Product::factory()->create();
+    $payload['moves'][] = ['product_id' => $second->id, 'product_uom_qty' => 1, 'uom_id' => $second->uom_id];
+
+    $created = $this->postJson(receiptRoute('store'), $payload)->assertCreated();
+    $receiptId = $created->json('data.id');
+    $moves = Operation::query()->findOrFail($receiptId)->moves()->orderBy('id')->get();
+    expect($moves)->toHaveCount(2);
+
+    $deletingEvents = 0;
+    Event::listen('eloquent.deleting: '.Move::class, function () use (&$deletingEvents): void {
+        $deletingEvents++;
+    });
+
+    $kept = $moves->first();
+
+    $this->putJson(receiptRoute('update', $receiptId), [
+        'moves' => [[
+            'id'              => $kept->id,
+            'product_id'      => $kept->product_id,
+            'product_uom_qty' => 1,
+            'uom_id'          => $kept->uom_id,
+        ]],
+    ])->assertOk();
+
+    expect($deletingEvents)->toBe(1)
+        ->and(Move::query()->whereKey($moves->last()->id)->exists())->toBeFalse()
+        ->and(Move::query()->whereKey($kept->id)->exists())->toBeTrue();
 });
 
 it('shows a receipt for authorized users', function () {

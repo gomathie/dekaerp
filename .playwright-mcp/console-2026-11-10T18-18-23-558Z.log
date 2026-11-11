@@ -1,2 +1,3560 @@
-[46759068ms] Object
-[46774064ms] Object
+[ 1264129ms] Object
+[ 1639074ms] Object
+[ 1654066ms] Object
+[ 1655617ms] Object
+[ 1669068ms] Object
+[ 1684066ms] Object
+[ 1685619ms] Object
+[ 1699066ms] Object
+[ 1714067ms] Object
+[ 1725649ms] [ERROR] Failed to load resource: net::ERR_HTTP2_PING_FAILED @ https://cloud.dekaerp.com/livewire-70e0a63d/update:0
+[ 1725684ms] Failed to fetch
+[ 1729066ms] Object
+[ 1744063ms] Object
+[ 1745614ms] Object
+[ 1759073ms] Object
+[ 1774065ms] Object
+[ 1775614ms] Object
+[ 1789065ms] Object
+[ 1804061ms] Object
+[ 1805620ms] Object
+[ 1819070ms] Object
+[ 1834066ms] Object
+[ 1835624ms] Object
+[ 1849067ms] Object
+[ 1864063ms] Object
+[ 1865620ms] Object
+[ 1879057ms] Object
+[ 1894069ms] Object
+[ 1895611ms] Object
+[ 1909071ms] Object
+[ 1924063ms] Object
+[ 1925609ms] Object
+[ 1939066ms] Object
+[ 1954067ms] Object
+[ 1955610ms] Object
+[ 1969058ms] Object
+[ 1984060ms] Object
+[ 1985612ms] Object
+[ 1999059ms] Object
+[ 2014092ms] Object
+[ 2015613ms] Object
+[ 2029064ms] Object
+[ 2044060ms] Object
+[ 2045607ms] Object
+[ 2059062ms] Object
+[ 2074060ms] Object
+[ 2075619ms] Object
+[ 2089060ms] Object
+[ 2104056ms] Object
+[ 2105613ms] Object
+[ 2119071ms] Object
+[ 2134058ms] Object
+[ 2135618ms] Object
+[ 2149056ms] Object
+[ 2164070ms] Object
+[ 2165613ms] Object
+[ 2179065ms] Object
+[ 2194068ms] Object
+[ 2195608ms] Object
+[ 2209071ms] Object
+[ 2224062ms] Object
+[ 2225624ms] Object
+[ 2239057ms] Object
+[ 2254060ms] Object
+[ 2255618ms] Object
+[ 2269055ms] Object
+[ 2284059ms] Object
+[ 2285607ms] Object
+[ 2299068ms] Object
+[ 2314069ms] Object
+[ 2315612ms] Object
+[ 2329059ms] Object
+[ 2344059ms] Object
+[ 2345620ms] Object
+[ 2359067ms] Object
+[ 2374067ms] Object
+[ 2375622ms] Object
+[ 2389073ms] Object
+[ 2404071ms] Object
+[ 2405619ms] Object
+[ 2419064ms] Object
+[ 2434062ms] Object
+[ 2435618ms] Object
+[ 2449066ms] Object
+[ 2464059ms] Object
+[ 2465622ms] Object
+[ 2479066ms] Object
+[ 2494062ms] Object
+[ 2495613ms] Object
+[ 2509064ms] Object
+[ 2524067ms] Object
+[ 2525614ms] Object
+[ 2539067ms] Object
+[ 2554066ms] Object
+[ 2555610ms] Object
+[ 2569059ms] Object
+[ 2584062ms] Object
+[ 2585613ms] Object
+[ 2599067ms] Object
+[ 2614068ms] Object
+[ 2615613ms] Object
+[ 2627934ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_RESET @ https://cloud.dekaerp.com/livewire-70e0a63d/update:0
+[ 2627950ms] Failed to fetch
+[ 2629068ms] Object
+[ 2644063ms] Object
+[ 2645622ms] Object
+[ 2659061ms] Object
+[ 2674061ms] Object
+[ 2675608ms] Object
+[ 2689067ms] Object
+[ 2704068ms] Object
+[ 2705618ms] Object
+[ 2719069ms] Object
+[ 2734068ms] Object
+[ 2735612ms] Object
+[ 2749069ms] Object
+[ 2764066ms] Object
+[ 2765610ms] Object
+[ 2779056ms] Object
+[ 2794070ms] Object
+[ 2795613ms] Object
+[ 2809069ms] Object
+[ 2824061ms] Object
+[ 2825619ms] Object
+[ 2839070ms] Object
+[ 2854065ms] Object
+[ 2855615ms] Object
+[ 2869058ms] Object
+[ 2884067ms] Object
+[ 2885612ms] Object
+[ 2899063ms] Object
+[ 2914056ms] Object
+[ 2915610ms] Object
+[ 2929059ms] Object
+[ 2944055ms] Object
+[ 2945619ms] Object
+[ 2959064ms] Object
+[ 2974070ms] Object
+[ 2975611ms] Object
+[ 2989070ms] Object
+[ 3004066ms] Object
+[ 3005615ms] Object
+[ 3019068ms] Object
+[ 3034069ms] Object
+[ 3035617ms] Object
+[ 3049055ms] Object
+[ 3064069ms] Object
+[ 3065612ms] Object
+[ 3079071ms] Object
+[ 3094063ms] Object
+[ 3095622ms] Object
+[ 3109069ms] Object
+[ 3124069ms] Object
+[ 3125623ms] Object
+[ 3139070ms] Object
+[ 3154069ms] Object
+[ 3155617ms] Object
+[ 3169068ms] Object
+[ 3184068ms] Object
+[ 3185621ms] Object
+[ 3199069ms] Object
+[ 3214068ms] Object
+[ 3215612ms] Object
+[ 3229058ms] Object
+[ 3244059ms] Object
+[ 3245628ms] Object
+[ 3259069ms] Object
+[ 3274067ms] Object
+[ 3275616ms] Object
+[ 3289059ms] Object
+[ 3304068ms] Object
+[ 3305608ms] Object
+[ 3319058ms] Object
+[ 3334060ms] Object
+[ 3335612ms] Object
+[ 3349070ms] Object
+[ 3364054ms] Object
+[ 3365622ms] Object
+[ 3379067ms] Object
+[ 3394069ms] Object
+[ 3395618ms] Object
+[ 3409064ms] Object
+[ 3424058ms] Object
+[ 3425619ms] Object
+[ 3439063ms] Object
+[ 3454061ms] Object
+[ 3455611ms] Object
+[ 3469063ms] Object
+[ 3484064ms] Object
+[ 3485616ms] Object
+[ 3499056ms] Object
+[ 3514062ms] Object
+[ 3515616ms] Object
+[ 3529068ms] Object
+[ 3544069ms] Object
+[ 3545619ms] Object
+[ 3559060ms] Object
+[ 3574062ms] Object
+[ 3575620ms] Object
+[ 3589061ms] Object
+[ 3604069ms] Object
+[ 3605612ms] Object
+[ 3619066ms] Object
+[ 3634067ms] Object
+[ 3635616ms] Object
+[ 3649061ms] Object
+[ 3664067ms] Object
+[ 3665631ms] Object
+[ 3679059ms] Object
+[ 3694061ms] Object
+[ 3695612ms] Object
+[ 3709065ms] Object
+[ 3724066ms] Object
+[ 3725615ms] Object
+[ 3739058ms] Object
+[ 3754059ms] Object
+[ 3755620ms] Object
+[ 3769065ms] Object
+[ 3784057ms] Object
+[ 3785619ms] Object
+[ 3799062ms] Object
+[ 3814057ms] Object
+[ 3815617ms] Object
+[ 3829058ms] Object
+[ 3844066ms] Object
+[ 3845610ms] Object
+[ 3859072ms] Object
+[ 3874066ms] Object
+[ 3875609ms] Object
+[ 3889068ms] Object
+[ 3904057ms] Object
+[ 3905607ms] Object
+[ 3919058ms] Object
+[ 3934070ms] Object
+[ 3935608ms] Object
+[ 3949067ms] Object
+[ 3964069ms] Object
+[ 3965619ms] Object
+[ 3979058ms] Object
+[ 3994058ms] Object
+[ 3995621ms] Object
+[ 4009065ms] Object
+[ 4024060ms] Object
+[ 4025608ms] Object
+[ 4039070ms] Object
+[ 4054069ms] Object
+[ 4055616ms] Object
+[ 4069068ms] Object
+[ 4084056ms] Object
+[ 4085609ms] Object
+[ 4099054ms] Object
+[ 4114059ms] Object
+[ 4115623ms] Object
+[ 4129062ms] Object
+[ 4144066ms] Object
+[ 4145618ms] Object
+[ 4159056ms] Object
+[ 4174056ms] Object
+[ 4175616ms] Object
+[ 4189058ms] Object
+[ 4204054ms] Object
+[ 4205613ms] Object
+[ 4219060ms] Object
+[ 4234057ms] Object
+[ 4235607ms] Object
+[ 4249059ms] Object
+[ 4264055ms] Object
+[ 4265616ms] Object
+[ 4279064ms] Object
+[ 4294061ms] Object
+[ 4295616ms] Object
+[ 4309063ms] Object
+[ 4324063ms] Object
+[ 4325615ms] Object
+[ 4339063ms] Object
+[ 4354070ms] Object
+[ 4355618ms] Object
+[ 4369063ms] Object
+[ 4384065ms] Object
+[ 4385614ms] Object
+[ 4399058ms] Object
+[ 4414069ms] Object
+[ 4415609ms] Object
+[ 4429067ms] Object
+[ 4444068ms] Object
+[ 4445614ms] Object
+[ 4459065ms] Object
+[ 4474068ms] Object
+[ 4475613ms] Object
+[ 4489056ms] Object
+[ 4504058ms] Object
+[ 4505615ms] Object
+[ 4519069ms] Object
+[ 4534064ms] Object
+[ 4535617ms] Object
+[ 4549060ms] Object
+[ 4564066ms] Object
+[ 4565617ms] Object
+[ 4579069ms] Object
+[ 4594058ms] Object
+[ 4595633ms] Object
+[ 4609058ms] Object
+[ 4624060ms] Object
+[ 4625614ms] Object
+[ 4639058ms] Object
+[ 4654074ms] Object
+[ 4655611ms] Object
+[ 4669098ms] Object
+[ 4684074ms] Object
+[ 4685622ms] Object
+[ 4699055ms] Object
+[ 4714062ms] Object
+[ 4715608ms] Object
+[ 4729056ms] Object
+[ 4744067ms] Object
+[ 4745613ms] Object
+[ 4759069ms] Object
+[ 4774070ms] Object
+[ 4775608ms] Object
+[ 4789057ms] Object
+[ 4804071ms] Object
+[ 4805611ms] Object
+[ 4819066ms] Object
+[ 4834071ms] Object
+[ 4835608ms] Object
+[ 4849070ms] Object
+[ 4864056ms] Object
+[ 4865616ms] Object
+[ 4879070ms] Object
+[ 4894067ms] Object
+[ 4895608ms] Object
+[ 4909062ms] Object
+[ 4924070ms] Object
+[ 4925620ms] Object
+[ 4939060ms] Object
+[ 4954057ms] Object
+[ 4955613ms] Object
+[ 4969067ms] Object
+[ 4984063ms] Object
+[ 4985620ms] Object
+[ 4999066ms] Object
+[ 5014059ms] Object
+[ 5015609ms] Object
+[ 5029069ms] Object
+[ 5044067ms] Object
+[ 5045606ms] Object
+[ 5059057ms] Object
+[ 5074069ms] Object
+[ 5075617ms] Object
+[ 5089067ms] Object
+[ 5104067ms] Object
+[ 5105619ms] Object
+[ 5119058ms] Object
+[ 5134064ms] Object
+[ 5135611ms] Object
+[ 5149068ms] Object
+[ 5164069ms] Object
+[ 5165610ms] Object
+[ 5179067ms] Object
+[ 5194070ms] Object
+[ 5195613ms] Object
+[ 5209056ms] Object
+[ 5224066ms] Object
+[ 5225616ms] Object
+[ 5239066ms] Object
+[ 5254068ms] Object
+[ 5255618ms] Object
+[ 5269069ms] Object
+[ 5284064ms] Object
+[ 5285619ms] Object
+[ 5299066ms] Object
+[ 5314064ms] Object
+[ 5315619ms] Object
+[ 5329066ms] Object
+[ 5344063ms] Object
+[ 5345616ms] Object
+[ 5359066ms] Object
+[ 5374070ms] Object
+[ 5375620ms] Object
+[ 5389055ms] Object
+[ 5404060ms] Object
+[ 5405613ms] Object
+[ 5419072ms] Object
+[ 5434059ms] Object
+[ 5435618ms] Object
+[ 5449069ms] Object
+[ 5464067ms] Object
+[ 5465619ms] Object
+[ 5479061ms] Object
+[ 5494056ms] Object
+[ 5495615ms] Object
+[ 5509071ms] Object
+[ 5524062ms] Object
+[ 5525612ms] Object
+[ 5539059ms] Object
+[ 5554055ms] Object
+[ 5555613ms] Object
+[ 5569069ms] Object
+[ 5584058ms] Object
+[ 5585612ms] Object
+[ 5599057ms] Object
+[ 5614063ms] Object
+[ 5615609ms] Object
+[ 5629061ms] Object
+[ 5644055ms] Object
+[ 5645609ms] Object
+[ 5659061ms] Object
+[ 5674061ms] Object
+[ 5675621ms] Object
+[ 5689063ms] Object
+[ 5704056ms] Object
+[ 5705615ms] Object
+[ 5719063ms] Object
+[ 5734071ms] Object
+[ 5735611ms] Object
+[ 5749064ms] Object
+[ 5764055ms] Object
+[ 5765611ms] Object
+[ 5779063ms] Object
+[ 5794062ms] Object
+[ 5795613ms] Object
+[ 5809067ms] Object
+[ 5824054ms] Object
+[ 5825607ms] Object
+[ 5839070ms] Object
+[ 5854068ms] Object
+[ 5855622ms] Object
+[ 5869069ms] Object
+[ 5884063ms] Object
+[ 5885619ms] Object
+[ 5899063ms] Object
+[ 5914064ms] Object
+[ 5915608ms] Object
+[ 5929055ms] Object
+[ 5944064ms] Object
+[ 5945621ms] Object
+[ 5959065ms] Object
+[ 5974054ms] Object
+[ 5975623ms] Object
+[ 5989065ms] Object
+[ 6004065ms] Object
+[ 6005608ms] Object
+[ 6019068ms] Object
+[ 6034063ms] Object
+[ 6035607ms] Object
+[ 6049063ms] Object
+[ 6064056ms] Object
+[ 6065608ms] Object
+[ 6079056ms] Object
+[ 6094063ms] Object
+[ 6095620ms] Object
+[ 6109065ms] Object
+[ 6124065ms] Object
+[ 6125615ms] Object
+[ 6139058ms] Object
+[ 6154065ms] Object
+[ 6155617ms] Object
+[ 6169060ms] Object
+[ 6184058ms] Object
+[ 6185621ms] Object
+[ 6199067ms] Object
+[ 6214057ms] Object
+[ 6215616ms] Object
+[ 6229056ms] Object
+[ 6244060ms] Object
+[ 6245615ms] Object
+[ 6259061ms] Object
+[ 6274070ms] Object
+[ 6275613ms] Object
+[ 6289064ms] Object
+[ 6304058ms] Object
+[ 6305614ms] Object
+[ 6319062ms] Object
+[ 6334060ms] Object
+[ 6335609ms] Object
+[ 6349065ms] Object
+[ 6364058ms] Object
+[ 6365611ms] Object
+[ 6379061ms] Object
+[ 6394056ms] Object
+[ 6395609ms] Object
+[ 6409057ms] Object
+[ 6424068ms] Object
+[ 6425613ms] Object
+[ 6439058ms] Object
+[ 6454055ms] Object
+[ 6455613ms] Object
+[ 6469058ms] Object
+[ 6484057ms] Object
+[ 6485608ms] Object
+[ 6499071ms] Object
+[ 6514071ms] Object
+[ 6515617ms] Object
+[ 6529059ms] Object
+[ 6544069ms] Object
+[ 6545615ms] Object
+[ 6559068ms] Object
+[ 6574063ms] Object
+[ 6575607ms] Object
+[ 6589070ms] Object
+[ 6604068ms] Object
+[ 6605608ms] Object
+[ 6619068ms] Object
+[ 6634057ms] Object
+[ 6635614ms] Object
+[ 6649070ms] Object
+[ 6664068ms] Object
+[ 6665609ms] Object
+[ 6679068ms] Object
+[ 6694068ms] Object
+[ 6695613ms] Object
+[ 6709066ms] Object
+[ 6724061ms] Object
+[ 6725620ms] Object
+[ 6739057ms] Object
+[ 6754057ms] Object
+[ 6755612ms] Object
+[ 6769069ms] Object
+[ 6784055ms] Object
+[ 6785610ms] Object
+[ 6799074ms] Object
+[ 6814062ms] Object
+[ 6815615ms] Object
+[ 6829068ms] Object
+[ 6844063ms] Object
+[ 6845624ms] Object
+[ 6859067ms] Object
+[ 6874063ms] Object
+[ 6875617ms] Object
+[ 6889056ms] Object
+[ 6904068ms] Object
+[ 6905621ms] Object
+[ 6919067ms] Object
+[ 6934068ms] Object
+[ 6935611ms] Object
+[ 6949066ms] Object
+[ 6964069ms] Object
+[ 6965615ms] Object
+[ 6979068ms] Object
+[ 6994064ms] Object
+[ 6995614ms] Object
+[ 7009064ms] Object
+[ 7024065ms] Object
+[ 7025617ms] Object
+[ 7039061ms] Object
+[ 7054065ms] Object
+[ 7055616ms] Object
+[ 7069062ms] Object
+[ 7084058ms] Object
+[ 7085614ms] Object
+[ 7099065ms] Object
+[ 7114061ms] Object
+[ 7115608ms] Object
+[ 7129057ms] Object
+[ 7144070ms] Object
+[ 7145613ms] Object
+[ 7159063ms] Object
+[ 7174053ms] Object
+[ 7175609ms] Object
+[ 7189054ms] Object
+[ 7204058ms] Object
+[ 7205610ms] Object
+[ 7219062ms] Object
+[ 7234055ms] Object
+[ 7235608ms] Object
+[ 7249060ms] Object
+[ 7264056ms] Object
+[ 7265610ms] Object
+[ 7279066ms] Object
+[ 7294064ms] Object
+[ 7295608ms] Object
+[ 7309062ms] Object
+[ 7324056ms] Object
+[ 7325610ms] Object
+[ 7339058ms] Object
+[ 7354056ms] Object
+[ 7355623ms] Object
+[ 7369071ms] Object
+[ 7384070ms] Object
+[ 7385609ms] Object
+[ 7399061ms] Object
+[ 7414064ms] Object
+[ 7415609ms] Object
+[ 7429062ms] Object
+[ 7444055ms] Object
+[ 7445609ms] Object
+[ 7459057ms] Object
+[ 7474055ms] Object
+[ 7475613ms] Object
+[ 7489058ms] Object
+[ 7504070ms] Object
+[ 7505606ms] Object
+[ 7519070ms] Object
+[ 7534071ms] Object
+[ 7535608ms] Object
+[ 7549071ms] Object
+[ 7564058ms] Object
+[ 7565621ms] Object
+[ 7579057ms] Object
+[ 7594057ms] Object
+[ 7595617ms] Object
+[ 7609068ms] Object
+[ 7624070ms] Object
+[ 7625618ms] Object
+[ 7639070ms] Object
+[ 7654070ms] Object
+[ 7655619ms] Object
+[ 7669062ms] Object
+[ 7684069ms] Object
+[ 7685607ms] Object
+[ 7699071ms] Object
+[ 7714057ms] Object
+[ 7715619ms] Object
+[ 7729068ms] Object
+[ 7744059ms] Object
+[ 7745606ms] Object
+[ 7759056ms] Object
+[ 7774065ms] Object
+[ 7775608ms] Object
+[ 7789057ms] Object
+[ 7804064ms] Object
+[ 7805617ms] Object
+[ 7819070ms] Object
+[ 7834055ms] Object
+[ 7835619ms] Object
+[ 7849055ms] Object
+[ 7864066ms] Object
+[ 7865620ms] Object
+[ 7879057ms] Object
+[ 7894062ms] Object
+[ 7895621ms] Object
+[ 7909065ms] Object
+[ 7924062ms] Object
+[ 7925619ms] Object
+[ 7939067ms] Object
+[ 7954059ms] Object
+[ 7955621ms] Object
+[ 7969057ms] Object
+[ 7984067ms] Object
+[ 7985608ms] Object
+[ 7999063ms] Object
+[ 8014062ms] Object
+[ 8015611ms] Object
+[ 8029066ms] Object
+[ 8044063ms] Object
+[ 8045619ms] Object
+[ 8059061ms] Object
+[ 8074062ms] Object
+[ 8075613ms] Object
+[ 8089060ms] Object
+[ 8104055ms] Object
+[ 8105612ms] Object
+[ 8119069ms] Object
+[ 8134061ms] Object
+[ 8135610ms] Object
+[ 8149057ms] Object
+[ 8164057ms] Object
+[ 8165608ms] Object
+[ 8179069ms] Object
+[ 8194057ms] Object
+[ 8195611ms] Object
+[ 8209057ms] Object
+[ 8224056ms] Object
+[ 8225609ms] Object
+[ 8239063ms] Object
+[ 8254057ms] Object
+[ 8255623ms] Object
+[ 8269056ms] Object
+[ 8284071ms] Object
+[ 8285612ms] Object
+[ 8299066ms] Object
+[ 8314073ms] Object
+[ 8315619ms] Object
+[ 8329063ms] Object
+[ 8344070ms] Object
+[ 8345608ms] Object
+[ 8359071ms] Object
+[ 8374061ms] Object
+[ 8375608ms] Object
+[ 8389056ms] Object
+[ 8404058ms] Object
+[ 8405609ms] Object
+[ 8419067ms] Object
+[ 8434058ms] Object
+[ 8435612ms] Object
+[ 8449067ms] Object
+[ 8464066ms] Object
+[ 8465614ms] Object
+[ 8479070ms] Object
+[ 8494066ms] Object
+[ 8495613ms] Object
+[ 8509062ms] Object
+[ 8524062ms] Object
+[ 8525620ms] Object
+[ 8539058ms] Object
+[ 8554067ms] Object
+[ 8555608ms] Object
+[ 8569069ms] Object
+[ 8584069ms] Object
+[ 8585607ms] Object
+[ 8599057ms] Object
+[ 8614065ms] Object
+[ 8615619ms] Object
+[ 8629062ms] Object
+[ 8644066ms] Object
+[ 8645618ms] Object
+[ 8659066ms] Object
+[ 8674065ms] Object
+[ 8675611ms] Object
+[ 8689064ms] Object
+[ 8704066ms] Object
+[ 8705617ms] Object
+[ 8719072ms] Object
+[ 8734069ms] Object
+[ 8735608ms] Object
+[ 8749061ms] Object
+[ 8764066ms] Object
+[ 8765618ms] Object
+[ 8779061ms] Object
+[ 8794069ms] Object
+[ 8795618ms] Object
+[ 8809055ms] Object
+[ 8824064ms] Object
+[ 8825614ms] Object
+[ 8839067ms] Object
+[ 8854062ms] Object
+[ 8855607ms] Object
+[ 8869063ms] Object
+[ 8884061ms] Object
+[ 8885615ms] Object
+[ 8899064ms] Object
+[ 8914054ms] Object
+[ 8915619ms] Object
+[ 8929061ms] Object
+[ 8944065ms] Object
+[ 8945612ms] Object
+[ 8959056ms] Object
+[ 8974060ms] Object
+[ 8975611ms] Object
+[ 8989057ms] Object
+[ 9004063ms] Object
+[ 9005612ms] Object
+[ 9019064ms] Object
+[ 9034064ms] Object
+[ 9035611ms] Object
+[ 9049061ms] Object
+[ 9064065ms] Object
+[ 9065617ms] Object
+[ 9079064ms] Object
+[ 9094065ms] Object
+[ 9095614ms] Object
+[ 9109057ms] Object
+[ 9124055ms] Object
+[ 9125619ms] Object
+[ 9139056ms] Object
+[ 9154071ms] Object
+[ 9155613ms] Object
+[ 9169067ms] Object
+[ 9184056ms] Object
+[ 9185616ms] Object
+[ 9199067ms] Object
+[ 9214070ms] Object
+[ 9215624ms] Object
+[ 9229059ms] Object
+[ 9244071ms] Object
+[ 9245621ms] Object
+[ 9259061ms] Object
+[ 9274066ms] Object
+[ 9275612ms] Object
+[ 9289071ms] Object
+[ 9304064ms] Object
+[ 9305610ms] Object
+[ 9319063ms] Object
+[ 9334070ms] Object
+[ 9335613ms] Object
+[ 9349066ms] Object
+[ 9364066ms] Object
+[ 9365617ms] Object
+[ 9379070ms] Object
+[ 9394067ms] Object
+[ 9395611ms] Object
+[ 9409061ms] Object
+[ 9424068ms] Object
+[ 9425610ms] Object
+[ 9439070ms] Object
+[ 9454069ms] Object
+[ 9455626ms] Object
+[ 9469068ms] Object
+[ 9484063ms] Object
+[ 9485617ms] Object
+[ 9499056ms] Object
+[ 9514071ms] Object
+[ 9515615ms] Object
+[ 9529058ms] Object
+[ 9544059ms] Object
+[ 9545617ms] Object
+[ 9559071ms] Object
+[ 9574065ms] Object
+[ 9575621ms] Object
+[ 9589065ms] Object
+[ 9604068ms] Object
+[ 9605616ms] Object
+[ 9619058ms] Object
+[ 9634056ms] Object
+[ 9635616ms] Object
+[ 9649058ms] Object
+[ 9664057ms] Object
+[ 9665616ms] Object
+[ 9679064ms] Object
+[ 9694057ms] Object
+[ 9695614ms] Object
+[ 9709056ms] Object
+[ 9724064ms] Object
+[ 9725621ms] Object
+[ 9739070ms] Object
+[ 9754056ms] Object
+[ 9755616ms] Object
+[ 9769067ms] Object
+[ 9784069ms] Object
+[ 9785617ms] Object
+[ 9799062ms] Object
+[ 9814061ms] Object
+[ 9815610ms] Object
+[ 9829056ms] Object
+[ 9844063ms] Object
+[ 9845611ms] Object
+[ 9859070ms] Object
+[ 9874056ms] Object
+[ 9875609ms] Object
+[ 9889058ms] Object
+[ 9904062ms] Object
+[ 9905619ms] Object
+[ 9919061ms] Object
+[ 9934065ms] Object
+[ 9935615ms] Object
+[ 9949057ms] Object
+[ 9964062ms] Object
+[ 9965616ms] Object
+[ 9979065ms] Object
+[ 9994059ms] Object
+[ 9995616ms] Object
+[10009064ms] Object
+[10024056ms] Object
+[10025611ms] Object
+[10039067ms] Object
+[10054068ms] Object
+[10055616ms] Object
+[10069069ms] Object
+[10084055ms] Object
+[10085615ms] Object
+[10099056ms] Object
+[10114064ms] Object
+[10115612ms] Object
+[10129071ms] Object
+[10144061ms] Object
+[10145612ms] Object
+[10159057ms] Object
+[10174061ms] Object
+[10175609ms] Object
+[10189058ms] Object
+[10204060ms] Object
+[10205610ms] Object
+[10219065ms] Object
+[10234056ms] Object
+[10235621ms] Object
+[10249070ms] Object
+[10264067ms] Object
+[10265617ms] Object
+[10279063ms] Object
+[10294066ms] Object
+[10295620ms] Object
+[10309069ms] Object
+[10324067ms] Object
+[10325606ms] Object
+[10339068ms] Object
+[10354065ms] Object
+[10355618ms] Object
+[10369065ms] Object
+[10384057ms] Object
+[10385611ms] Object
+[10399060ms] Object
+[10414064ms] Object
+[10415608ms] Object
+[10429058ms] Object
+[10444070ms] Object
+[10445613ms] Object
+[10459071ms] Object
+[10474066ms] Object
+[10475610ms] Object
+[10489061ms] Object
+[10504064ms] Object
+[10505610ms] Object
+[10519070ms] Object
+[10534066ms] Object
+[10535615ms] Object
+[10549064ms] Object
+[10564056ms] Object
+[10565620ms] Object
+[10579066ms] Object
+[10594062ms] Object
+[10595611ms] Object
+[10609058ms] Object
+[10624060ms] Object
+[10625617ms] Object
+[10639069ms] Object
+[10654065ms] Object
+[10655611ms] Object
+[10669062ms] Object
+[10684057ms] Object
+[10685611ms] Object
+[10699063ms] Object
+[10714062ms] Object
+[10715622ms] Object
+[10729066ms] Object
+[10744058ms] Object
+[10745622ms] Object
+[10759108ms] Object
+[10774247ms] Object
+[10775681ms] Object
+[10789227ms] Object
+[10804087ms] Object
+[10805617ms] Object
+[10819066ms] Object
+[10834070ms] Object
+[10835627ms] Object
+[10849063ms] Object
+[10864065ms] Object
+[10865607ms] Object
+[10879061ms] Object
+[10894061ms] Object
+[10895612ms] Object
+[10909067ms] Object
+[10924065ms] Object
+[10925612ms] Object
+[10939069ms] Object
+[10954058ms] Object
+[10955626ms] Object
+[10969065ms] Object
+[10984071ms] Object
+[10985617ms] Object
+[10999067ms] Object
+[11014057ms] Object
+[11015610ms] Object
+[11029071ms] Object
+[11044068ms] Object
+[11045620ms] Object
+[11059068ms] Object
+[11074061ms] Object
+[11075619ms] Object
+[11089065ms] Object
+[11104064ms] Object
+[11105615ms] Object
+[11119075ms] Object
+[11134059ms] Object
+[11135619ms] Object
+[11149060ms] Object
+[11164059ms] Object
+[11165611ms] Object
+[11179061ms] Object
+[11194070ms] Object
+[11195622ms] Object
+[11209059ms] Object
+[11224069ms] Object
+[11225613ms] Object
+[11239068ms] Object
+[11254056ms] Object
+[11255608ms] Object
+[11269065ms] Object
+[11284057ms] Object
+[11285614ms] Object
+[11299071ms] Object
+[11314056ms] Object
+[11315621ms] Object
+[11329067ms] Object
+[11344056ms] Object
+[11345620ms] Object
+[11359056ms] Object
+[11374064ms] Object
+[11375655ms] Object
+[11389068ms] Object
+[11404117ms] Object
+[11405621ms] Object
+[11419274ms] Object
+[11434068ms] Object
+[11435607ms] Object
+[11449058ms] Object
+[11464060ms] Object
+[11465614ms] Object
+[11479066ms] Object
+[11494067ms] Object
+[11495619ms] Object
+[11509057ms] Object
+[11524055ms] Object
+[11525608ms] Object
+[11539065ms] Object
+[11554063ms] Object
+[11555621ms] Object
+[11569065ms] Object
+[11584062ms] Object
+[11585614ms] Object
+[11599062ms] Object
+[11614062ms] Object
+[11615614ms] Object
+[11629057ms] Object
+[11644062ms] Object
+[11645612ms] Object
+[11659070ms] Object
+[11674057ms] Object
+[11675621ms] Object
+[11689059ms] Object
+[11704056ms] Object
+[11705611ms] Object
+[11719069ms] Object
+[11734065ms] Object
+[11735619ms] Object
+[11749057ms] Object
+[11764068ms] Object
+[11765611ms] Object
+[11779067ms] Object
+[11794070ms] Object
+[11795615ms] Object
+[11809066ms] Object
+[11824061ms] Object
+[11825609ms] Object
+[11839059ms] Object
+[11854069ms] Object
+[11855615ms] Object
+[11869095ms] Object
+[11884061ms] Object
+[11885617ms] Object
+[11899067ms] Object
+[11914064ms] Object
+[11915611ms] Object
+[11929063ms] Object
+[11944066ms] Object
+[11945608ms] Object
+[11959056ms] Object
+[11974063ms] Object
+[11975618ms] Object
+[11989061ms] Object
+[12004055ms] Object
+[12005613ms] Object
+[12019069ms] Object
+[12034055ms] Object
+[12035622ms] Object
+[12049065ms] Object
+[12064054ms] Object
+[12065617ms] Object
+[12079070ms] Object
+[12094061ms] Object
+[12095611ms] Object
+[12109072ms] Object
+[12124054ms] Object
+[12125616ms] Object
+[12139056ms] Object
+[12154054ms] Object
+[12155615ms] Object
+[12169066ms] Object
+[12184056ms] Object
+[12185609ms] Object
+[12199069ms] Object
+[12214056ms] Object
+[12215617ms] Object
+[12229067ms] Object
+[12244055ms] Object
+[12245616ms] Object
+[12259065ms] Object
+[12274068ms] Object
+[12275615ms] Object
+[12289054ms] Object
+[12304068ms] Object
+[12305613ms] Object
+[12319062ms] Object
+[12334063ms] Object
+[12335612ms] Object
+[12349063ms] Object
+[12364061ms] Object
+[12365622ms] Object
+[12379065ms] Object
+[12394057ms] Object
+[12395620ms] Object
+[12409058ms] Object
+[12424063ms] Object
+[12425616ms] Object
+[12439057ms] Object
+[12454066ms] Object
+[12455621ms] Object
+[12469060ms] Object
+[12484063ms] Object
+[12485616ms] Object
+[12499062ms] Object
+[12514060ms] Object
+[12515613ms] Object
+[12529064ms] Object
+[12544071ms] Object
+[12545613ms] Object
+[12559065ms] Object
+[12574058ms] Object
+[12575618ms] Object
+[12589070ms] Object
+[12604062ms] Object
+[12605611ms] Object
+[12619072ms] Object
+[12634056ms] Object
+[12635621ms] Object
+[12649061ms] Object
+[12664069ms] Object
+[12665614ms] Object
+[12679073ms] Object
+[12694128ms] Object
+[12695619ms] Object
+[12709065ms] Object
+[12724063ms] Object
+[12725625ms] Object
+[12739064ms] Object
+[12754064ms] Object
+[12755612ms] Object
+[12769063ms] Object
+[12784071ms] Object
+[12785611ms] Object
+[12799067ms] Object
+[12814071ms] Object
+[12815613ms] Object
+[12829064ms] Object
+[12844059ms] Object
+[12845620ms] Object
+[12859062ms] Object
+[12874062ms] Object
+[12875609ms] Object
+[12889064ms] Object
+[12904055ms] Object
+[12905620ms] Object
+[12919056ms] Object
+[12934070ms] Object
+[12935620ms] Object
+[12949064ms] Object
+[12964054ms] Object
+[12965623ms] Object
+[12979069ms] Object
+[12994062ms] Object
+[12995619ms] Object
+[13009062ms] Object
+[13024059ms] Object
+[13025625ms] Object
+[13039072ms] Object
+[13054072ms] Object
+[13055609ms] Object
+[13069056ms] Object
+[13084059ms] Object
+[13085620ms] Object
+[13099066ms] Object
+[13114068ms] Object
+[13115616ms] Object
+[13129063ms] Object
+[13144065ms] Object
+[13145619ms] Object
+[13159064ms] Object
+[13174069ms] Object
+[13175608ms] Object
+[13189063ms] Object
+[13204068ms] Object
+[13205616ms] Object
+[13219066ms] Object
+[13234067ms] Object
+[13235637ms] Object
+[13249057ms] Object
+[13264065ms] Object
+[13265608ms] Object
+[13279079ms] Object
+[13294064ms] Object
+[13295628ms] Object
+[13309065ms] Object
+[13324067ms] Object
+[13325611ms] Object
+[13339063ms] Object
+[13354065ms] Object
+[13355613ms] Object
+[13369060ms] Object
+[13384071ms] Object
+[13385617ms] Object
+[13399057ms] Object
+[13414064ms] Object
+[13415613ms] Object
+[13429070ms] Object
+[13444057ms] Object
+[13445616ms] Object
+[13459073ms] Object
+[13474065ms] Object
+[13475609ms] Object
+[13489069ms] Object
+[13504070ms] Object
+[13505612ms] Object
+[13519062ms] Object
+[13534065ms] Object
+[13535607ms] Object
+[13549056ms] Object
+[13564067ms] Object
+[13565635ms] Object
+[13579055ms] Object
+[13594056ms] Object
+[13595618ms] Object
+[13609068ms] Object
+[13624066ms] Object
+[13625612ms] Object
+[13639064ms] Object
+[13654068ms] Object
+[13655613ms] Object
+[13669057ms] Object
+[13684055ms] Object
+[13685620ms] Object
+[13699056ms] Object
+[13714055ms] Object
+[13715622ms] Object
+[13729056ms] Object
+[13744061ms] Object
+[13745617ms] Object
+[13759061ms] Object
+[13774055ms] Object
+[13775610ms] Object
+[13789057ms] Object
+[13804057ms] Object
+[13805630ms] Object
+[13819071ms] Object
+[13834061ms] Object
+[13835609ms] Object
+[13849074ms] Object
+[13864063ms] Object
+[13865618ms] Object
+[13879071ms] Object
+[13894070ms] Object
+[13895620ms] Object
+[13909069ms] Object
+[13924068ms] Object
+[13925627ms] Object
+[13939123ms] Object
+[13954058ms] Object
+[13955621ms] Object
+[13969068ms] Object
+[13984258ms] Object
+[13985656ms] Object
+[13999271ms] Object
+[14014075ms] Object
+[14015607ms] Object
+[14029058ms] Object
+[14044068ms] Object
+[14045610ms] Object
+[14059058ms] Object
+[14074060ms] Object
+[14075626ms] Object
+[14089066ms] Object
+[14104056ms] Object
+[14105608ms] Object
+[14119072ms] Object
+[14134068ms] Object
+[14135615ms] Object
+[14149062ms] Object
+[14164057ms] Object
+[14165620ms] Object
+[14179068ms] Object
+[14194065ms] Object
+[14195616ms] Object
+[14209063ms] Object
+[14224061ms] Object
+[14225607ms] Object
+[14239064ms] Object
+[14254073ms] Object
+[14255611ms] Object
+[14269061ms] Object
+[14284061ms] Object
+[14285611ms] Object
+[14299055ms] Object
+[14314089ms] Object
+[14315610ms] Object
+[14329069ms] Object
+[14344057ms] Object
+[14345611ms] Object
+[14359070ms] Object
+[14374060ms] Object
+[14375617ms] Object
+[14389062ms] Object
+[14404061ms] Object
+[14405620ms] Object
+[14419061ms] Object
+[14434067ms] Object
+[14435609ms] Object
+[14449069ms] Object
+[14464068ms] Object
+[14465610ms] Object
+[14479070ms] Object
+[14494059ms] Object
+[14495620ms] Object
+[14509067ms] Object
+[14524061ms] Object
+[14525614ms] Object
+[14539057ms] Object
+[14554058ms] Object
+[14555609ms] Object
+[14569055ms] Object
+[14584067ms] Object
+[14585621ms] Object
+[14599058ms] Object
+[14614067ms] Object
+[14615607ms] Object
+[14629061ms] Object
+[14644068ms] Object
+[14645621ms] Object
+[14659057ms] Object
+[14674059ms] Object
+[14675611ms] Object
+[14689066ms] Object
+[14704063ms] Object
+[14705614ms] Object
+[14719065ms] Object
+[14734070ms] Object
+[14735613ms] Object
+[14749063ms] Object
+[14764057ms] Object
+[14765618ms] Object
+[14779071ms] Object
+[14794060ms] Object
+[14795618ms] Object
+[14809057ms] Object
+[14824070ms] Object
+[14825622ms] Object
+[14839062ms] Object
+[14854061ms] Object
+[14855613ms] Object
+[14869059ms] Object
+[14884056ms] Object
+[14885612ms] Object
+[14899072ms] Object
+[14914066ms] Object
+[14915610ms] Object
+[14929071ms] Object
+[14944069ms] Object
+[14945616ms] Object
+[14959058ms] Object
+[14974067ms] Object
+[14975622ms] Object
+[14989064ms] Object
+[15004061ms] Object
+[15005613ms] Object
+[15019068ms] Object
+[15034065ms] Object
+[15035613ms] Object
+[15049125ms] Object
+[15064063ms] Object
+[15065613ms] Object
+[15079064ms] Object
+[15094057ms] Object
+[15095626ms] Object
+[15109058ms] Object
+[15124062ms] Object
+[15125622ms] Object
+[15139063ms] Object
+[15154062ms] Object
+[15155615ms] Object
+[15169069ms] Object
+[15184056ms] Object
+[15185609ms] Object
+[15199071ms] Object
+[15214064ms] Object
+[15215609ms] Object
+[15229060ms] Object
+[15244058ms] Object
+[15245610ms] Object
+[15259068ms] Object
+[15274066ms] Object
+[15275616ms] Object
+[15289060ms] Object
+[15304060ms] Object
+[15305615ms] Object
+[15319061ms] Object
+[15334058ms] Object
+[15335626ms] Object
+[15349060ms] Object
+[15364059ms] Object
+[15365621ms] Object
+[15379062ms] Object
+[15394059ms] Object
+[15395613ms] Object
+[15409061ms] Object
+[15424065ms] Object
+[15425609ms] Object
+[15439059ms] Object
+[15454074ms] Object
+[15455629ms] Object
+[15469058ms] Object
+[15484065ms] Object
+[15485616ms] Object
+[15499075ms] Object
+[15514061ms] Object
+[15515623ms] Object
+[15529059ms] Object
+[15544067ms] Object
+[15545617ms] Object
+[15559066ms] Object
+[15574055ms] Object
+[15575609ms] Object
+[15589076ms] Object
+[15604056ms] Object
+[15605613ms] Object
+[15619064ms] Object
+[15634063ms] Object
+[15635617ms] Object
+[15649062ms] Object
+[15664112ms] Object
+[15665624ms] Object
+[15679070ms] Object
+[15694071ms] Object
+[15695622ms] Object
+[15709055ms] Object
+[15724061ms] Object
+[15725614ms] Object
+[15739060ms] Object
+[15754078ms] Object
+[15755610ms] Object
+[15769056ms] Object
+[15784071ms] Object
+[15785615ms] Object
+[15799063ms] Object
+[15814066ms] Object
+[15815622ms] Object
+[15829076ms] Object
+[15844069ms] Object
+[15845621ms] Object
+[15859088ms] Object
+[15874056ms] Object
+[15875616ms] Object
+[15889066ms] Object
+[15904058ms] Object
+[15905615ms] Object
+[15919057ms] Object
+[15934057ms] Object
+[15935621ms] Object
+[15949070ms] Object
+[15964070ms] Object
+[15965617ms] Object
+[15979057ms] Object
+[15994089ms] Object
+[15995617ms] Object
+[16009063ms] Object
+[16024062ms] Object
+[16025617ms] Object
+[16039097ms] Object
+[16054066ms] Object
+[16055613ms] Object
+[16069063ms] Object
+[16084067ms] Object
+[16085634ms] Object
+[16099058ms] Object
+[16114062ms] Object
+[16115614ms] Object
+[16129072ms] Object
+[16144076ms] Object
+[16145614ms] Object
+[16159058ms] Object
+[16174056ms] Object
+[16175615ms] Object
+[16189057ms] Object
+[16204058ms] Object
+[16205609ms] Object
+[16219067ms] Object
+[16234061ms] Object
+[16235608ms] Object
+[16249057ms] Object
+[16264057ms] Object
+[16265618ms] Object
+[16279063ms] Object
+[16294062ms] Object
+[16295616ms] Object
+[16309058ms] Object
+[16324071ms] Object
+[16325618ms] Object
+[16339066ms] Object
+[16354065ms] Object
+[16355621ms] Object
+[16369056ms] Object
+[16384057ms] Object
+[16385621ms] Object
+[16399071ms] Object
+[16414059ms] Object
+[16415609ms] Object
+[16429065ms] Object
+[16444063ms] Object
+[16445615ms] Object
+[16459066ms] Object
+[16474060ms] Object
+[16475616ms] Object
+[16489057ms] Object
+[16504065ms] Object
+[16505619ms] Object
+[16519065ms] Object
+[16534059ms] Object
+[16535609ms] Object
+[16549056ms] Object
+[16564071ms] Object
+[16565618ms] Object
+[16579065ms] Object
+[16594060ms] Object
+[16595618ms] Object
+[16609069ms] Object
+[16624068ms] Object
+[16625619ms] Object
+[16639063ms] Object
+[16654066ms] Object
+[16655617ms] Object
+[16669069ms] Object
+[16684068ms] Object
+[16685615ms] Object
+[16699069ms] Object
+[16714065ms] Object
+[16715615ms] Object
+[16729065ms] Object
+[16744069ms] Object
+[16745618ms] Object
+[16759058ms] Object
+[16774064ms] Object
+[16775606ms] Object
+[16789065ms] Object
+[16804055ms] Object
+[16805611ms] Object
+[16819058ms] Object
+[16834065ms] Object
+[16835620ms] Object
+[16849066ms] Object
+[16864063ms] Object
+[16865624ms] Object
+[16879056ms] Object
+[16894068ms] Object
+[16895619ms] Object
+[16909068ms] Object
+[16924061ms] Object
+[16925613ms] Object
+[16939062ms] Object
+[16954066ms] Object
+[16955612ms] Object
+[16969068ms] Object
+[16969935ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://cloud.dekaerp.com/livewire-70e0a63d/update:0
+[16977672ms] Object
+[16984060ms] Object
+[16999061ms] Object
+[17014059ms] Object
+[17029063ms] Object
+[17044068ms] Object
+[17059065ms] Object
+[17074059ms] Object
+[17089067ms] Object
+[17104060ms] Object
+[17119063ms] Object
+[17134057ms] Object
+[17149067ms] Object
+[17164058ms] Object
+[17179068ms] Object
+[17194057ms] Object
+[17209067ms] Object
+[17224055ms] Object
+[17239065ms] Object
+[17254068ms] Object
+[17269063ms] Object
+[17284061ms] Object
+[17299071ms] Object
+[17314059ms] Object
+[17329069ms] Object
+[17344068ms] Object
+[17359064ms] Object
+[17374063ms] Object
+[17389057ms] Object
+[17404073ms] Object
+[17419063ms] Object
+[17434069ms] Object
+[17449060ms] Object
+[17464076ms] Object
+[17479058ms] Object
+[17494062ms] Object
+[17509064ms] Object
+[17524064ms] Object
+[17539056ms] Object
+[17554062ms] Object
+[17569070ms] Object
+[17584068ms] Object
+[17599084ms] Object
+[17614065ms] Object
+[17629067ms] Object
+[17644061ms] Object
+[17659070ms] Object
+[17674059ms] Object
+[17689064ms] Object
+[17704065ms] Object
+[17719064ms] Object
+[17734066ms] Object
+[17749055ms] Object
+[17764065ms] Object
+[17779060ms] Object
+[17794055ms] Object
+[17809063ms] Object
+[17824061ms] Object
+[17839070ms] Object
+[17854068ms] Object
+[17869065ms] Object
+[17884066ms] Object
+[17899067ms] Object
+[17914071ms] Object
+[17929063ms] Object
+[17944065ms] Object
+[17959061ms] Object
+[17974058ms] Object
+[17989064ms] Object
+[18004070ms] Object
+[18019060ms] Object
+[18034058ms] Object
+[18049059ms] Object
+[18064068ms] Object
+[18079570ms] Object
+[18094066ms] Object
+[18109056ms] Object
+[18124056ms] Object
+[18139062ms] Object
+[18154065ms] Object
+[18169055ms] Object
+[18184066ms] Object
+[18199060ms] Object
+[18214108ms] Object
+[18229072ms] Object
+[18244065ms] Object
+[18259075ms] Object
+[18274060ms] Object
+[18289056ms] Object
+[18304062ms] Object
+[18319057ms] Object
+[18334146ms] Object
+[18349340ms] Object
+[18364077ms] Object
+[18379078ms] Object
+[18394069ms] Object
+[18409063ms] Object
+[18424063ms] Object
+[18439056ms] Object
+[18454058ms] Object
+[18469067ms] Object
+[18484060ms] Object
+[18499187ms] Object
+[18514056ms] Object
+[18529065ms] Object
+[18544073ms] Object
+[18559068ms] Object
+[18574068ms] Object
+[18589063ms] Object
+[18604067ms] Object
+[18619070ms] Object
+[18634069ms] Object
+[18649067ms] Object
+[18664058ms] Object
+[18679062ms] Object
+[18694059ms] Object
+[18709066ms] Object
+[18724056ms] Object
+[18739154ms] Object
+[18754064ms] Object
+[18769062ms] Object
+[18784099ms] Object
+[18799056ms] Object
+[18814068ms] Object
+[18829068ms] Object
+[18844061ms] Object
+[18859060ms] Object
+[18874071ms] Object
+[18889061ms] Object
+[18904062ms] Object
+[18919065ms] Object
+[18934068ms] Object
+[18949057ms] Object
+[18964063ms] Object
+[18979058ms] Object
+[18994065ms] Object
+[19009061ms] Object
+[19024054ms] Object
+[19039069ms] Object
+[19054064ms] Object
+[19069064ms] Object
+[19084059ms] Object
+[19099059ms] Object
+[19114070ms] Object
+[19129056ms] Object
+[19144061ms] Object
+[19159065ms] Object
+[19174069ms] Object
+[19189059ms] Object
+[19204066ms] Object
+[19219060ms] Object
+[19234071ms] Object
+[19249069ms] Object
+[19264065ms] Object
+[19279069ms] Object
+[19294065ms] Object
+[19309070ms] Object
+[19324069ms] Object
+[19339060ms] Object
+[19354060ms] Object
+[19369057ms] Object
+[19384067ms] Object
+[19399070ms] Object
+[19414055ms] Object
+[19429062ms] Object
+[19444066ms] Object
+[19459067ms] Object
+[19474083ms] Object
+[19489063ms] Object
+[19504057ms] Object
+[19519066ms] Object
+[19534062ms] Object
+[19549066ms] Object
+[19564066ms] Object
+[19579064ms] Object
+[19594064ms] Object
+[19609065ms] Object
+[19624062ms] Object
+[19639072ms] Object
+[19654066ms] Object
+[19669070ms] Object
+[19684060ms] Object
+[19699061ms] Object
+[19714066ms] Object
+[19729074ms] Object
+[19744065ms] Object
+[19759067ms] Object
+[19774065ms] Object
+[19789058ms] Object
+[19804067ms] Object
+[19819071ms] Object
+[19834060ms] Object
+[19849060ms] Object
+[19864061ms] Object
+[19879066ms] Object
+[19894064ms] Object
+[19909062ms] Object
+[19924066ms] Object
+[19939063ms] Object
+[19954056ms] Object
+[19969068ms] Object
+[19984070ms] Object
+[19999060ms] Object
+[20014063ms] Object
+[20029068ms] Object
+[20044072ms] Object
+[20059072ms] Object
+[20074055ms] Object
+[20089063ms] Object
+[20104064ms] Object
+[20119069ms] Object
+[20134066ms] Object
+[20149067ms] Object
+[20164070ms] Object
+[20179070ms] Object
+[20194066ms] Object
+[20209065ms] Object
+[20224055ms] Object
+[20239064ms] Object
+[20254062ms] Object
+[20269061ms] Object
+[20284063ms] Object
+[20299068ms] Object
+[20314054ms] Object
+[20329062ms] Object
+[20344060ms] Object
+[20359062ms] Object
+[20374062ms] Object
+[20389062ms] Object
+[20404057ms] Object
+[20419065ms] Object
+[20434056ms] Object
+[20449064ms] Object
+[20464057ms] Object
+[20479062ms] Object
+[20494070ms] Object
+[20509060ms] Object
+[20524061ms] Object
+[20539059ms] Object
+[20554060ms] Object
+[20569060ms] Object
+[20584067ms] Object
+[20599064ms] Object
+[20614057ms] Object
+[20629061ms] Object
+[20644061ms] Object
+[20659060ms] Object
+[20674064ms] Object
+[20689057ms] Object
+[20704070ms] Object
+[20719055ms] Object
+[20734059ms] Object
+[20749066ms] Object
+[20764054ms] Object
+[20779062ms] Object
+[20794064ms] Object
+[20809056ms] Object
+[20824070ms] Object
+[20839060ms] Object
+[20854071ms] Object
+[20869055ms] Object
+[20884070ms] Object
+[20899059ms] Object
+[20914070ms] Object
+[20929060ms] Object
+[20944069ms] Object
+[20959058ms] Object
+[20974058ms] Object
+[20989062ms] Object
+[21004070ms] Object
+[21019057ms] Object
+[21034056ms] Object
+[21049068ms] Object
+[21064063ms] Object
+[21079058ms] Object
+[21094059ms] Object
+[21109065ms] Object
+[21124066ms] Object
+[21139064ms] Object
+[21154056ms] Object
+[21169056ms] Object
+[21184071ms] Object
+[21199069ms] Object
+[21214065ms] Object
+[21229068ms] Object
+[21244064ms] Object
+[21259068ms] Object
+[21274073ms] Object
+[21289062ms] Object
+[21304061ms] Object
+[21319063ms] Object
+[21334068ms] Object
+[21349061ms] Object
+[21364057ms] Object
+[21379061ms] Object
+[21394065ms] Object
+[21409065ms] Object
+[21424057ms] Object
+[21439067ms] Object
+[21454065ms] Object
+[21469060ms] Object
+[21484059ms] Object
+[21499061ms] Object
+[21514061ms] Object
+[21529060ms] Object
+[21544062ms] Object
+[21559063ms] Object
+[21574081ms] Object
+[21589058ms] Object
+[21604061ms] Object
+[21619061ms] Object
+[21634057ms] Object
+[21649063ms] Object
+[21664058ms] Object
+[21679059ms] Object
+[21694060ms] Object
+[21709061ms] Object
+[21724066ms] Object
+[21739057ms] Object
+[21754078ms] Object
+[21769062ms] Object
+[21784071ms] Object
+[21799069ms] Object
+[21814057ms] Object
+[21829060ms] Object
+[21844064ms] Object
+[21859068ms] Object
+[21874069ms] Object
+[21889069ms] Object
+[21904070ms] Object
+[21919068ms] Object
+[21934073ms] Object
+[21949064ms] Object
+[21964060ms] Object
+[21979067ms] Object
+[21994057ms] Object
+[22009057ms] Object
+[22024058ms] Object
+[22039058ms] Object
+[22054063ms] Object
+[22069069ms] Object
+[22084067ms] Object
+[22099064ms] Object
+[22114070ms] Object
+[22129057ms] Object
+[22144069ms] Object
+[22159056ms] Object
+[22174067ms] Object
+[22189068ms] Object
+[22204064ms] Object
+[22219062ms] Object
+[22234062ms] Object
+[22249066ms] Object
+[22264169ms] Object
+[22279065ms] Object
+[22294059ms] Object
+[22309069ms] Object
+[22324057ms] Object
+[22339062ms] Object
+[22354071ms] Object
+[22369058ms] Object
+[22384310ms] Object
+[22399066ms] Object
+[22414060ms] Object
+[22429063ms] Object
+[22444063ms] Object
+[22459070ms] Object
+[22474060ms] Object
+[22489054ms] Object
+[22504065ms] Object
+[22519061ms] Object
+[22534073ms] Object
+[22549067ms] Object
+[22564063ms] Object
+[22579060ms] Object
+[22594058ms] Object
+[22609065ms] Object
+[22624072ms] Object
+[22639057ms] Object
+[22654056ms] Object
+[22669055ms] Object
+[22684061ms] Object
+[22699056ms] Object
+[22714062ms] Object
+[22729062ms] Object
+[22744067ms] Object
+[22759075ms] Object
+[22774062ms] Object
+[22789071ms] Object
+[22804068ms] Object
+[22819070ms] Object
+[22834065ms] Object
+[22849062ms] Object
+[22864072ms] Object
+[22879067ms] Object
+[22894070ms] Object
+[22909082ms] Object
+[22924062ms] Object
+[22939064ms] Object
+[22954069ms] Object
+[22969054ms] Object
+[22984064ms] Object
+[22999068ms] Object
+[23014068ms] Object
+[23029062ms] Object
+[23044065ms] Object
+[23059057ms] Object
+[23074067ms] Object
+[23089061ms] Object
+[23104061ms] Object
+[23119060ms] Object
+[23134069ms] Object
+[23149066ms] Object
+[23164066ms] Object
+[23179066ms] Object
+[23194067ms] Object
+[23209068ms] Object
+[23224060ms] Object
+[23239061ms] Object
+[23254057ms] Object
+[23269059ms] Object
+[23284070ms] Object
+[23299062ms] Object
+[23314062ms] Object
+[23329056ms] Object
+[23344052ms] Object
+[23359060ms] Object
+[23374060ms] Object
+[23389057ms] Object
+[23404067ms] Object
+[23419072ms] Object
+[23434064ms] Object
+[23449068ms] Object
+[23464058ms] Object
+[23479066ms] Object
+[23494057ms] Object
+[23509072ms] Object
+[23524069ms] Object
+[23539063ms] Object
+[23554059ms] Object
+[23569070ms] Object
+[23584055ms] Object
+[23599072ms] Object
+[23614064ms] Object
+[23629057ms] Object
+[23644069ms] Object
+[23659061ms] Object
+[23674055ms] Object
+[23689069ms] Object
+[23704061ms] Object
+[23719064ms] Object
+[23734069ms] Object
+[23749059ms] Object
+[23764064ms] Object
+[23779070ms] Object
+[23794067ms] Object
+[23809061ms] Object
+[23824064ms] Object
+[23839071ms] Object
+[23854065ms] Object
+[23869058ms] Object
+[23884062ms] Object
+[23899065ms] Object
+[23914064ms] Object
+[23929059ms] Object
+[23944062ms] Object
+[23959061ms] Object
+[23974060ms] Object
+[23989061ms] Object
+[24004062ms] Object
+[24019064ms] Object
+[24034066ms] Object
+[24049061ms] Object
+[24064061ms] Object
+[24079065ms] Object
+[24094070ms] Object
+[24109069ms] Object
+[24124059ms] Object
+[24139066ms] Object
+[24154063ms] Object
+[24169062ms] Object
+[24184066ms] Object
+[24199059ms] Object
+[24214066ms] Object
+[24229058ms] Object
+[24244070ms] Object
+[24259057ms] Object
+[24274058ms] Object
+[24289058ms] Object
+[24304060ms] Object
+[24319062ms] Object
+[24334056ms] Object
+[24349068ms] Object
+[24364069ms] Object
+[24379071ms] Object
+[24394064ms] Object
+[24409055ms] Object
+[24424062ms] Object
+[24439058ms] Object
+[24454059ms] Object
+[24469060ms] Object
+[24484070ms] Object
+[24499057ms] Object
+[24514057ms] Object
+[24529069ms] Object
+[24544056ms] Object
+[24559476ms] Object
+[24574062ms] Object
+[24589071ms] Object
+[24604064ms] Object
+[24619067ms] Object
+[24634068ms] Object
+[24649061ms] Object
+[24664070ms] Object
+[24679067ms] Object
+[24694066ms] Object
+[24709057ms] Object
+[24724068ms] Object
+[24739057ms] Object
+[24754096ms] Object
+[24769071ms] Object
+[24784064ms] Object
+[24799066ms] Object
+[24814055ms] Object
+[24829069ms] Object
+[24844062ms] Object
+[24859061ms] Object
+[24874063ms] Object
+[24889065ms] Object
+[24904066ms] Object
+[24919067ms] Object
+[24934062ms] Object
+[24949061ms] Object
+[24964063ms] Object
+[24979064ms] Object
+[24994065ms] Object
+[25009069ms] Object
+[25024067ms] Object
+[25039060ms] Object
+[25054057ms] Object
+[25069063ms] Object
+[25084068ms] Object
+[25099069ms] Object
+[25114064ms] Object
+[25129055ms] Object
+[25144069ms] Object
+[25159061ms] Object
+[25174065ms] Object
+[25189064ms] Object
+[25204058ms] Object
+[25219063ms] Object
+[25234055ms] Object
+[25249071ms] Object
+[25264062ms] Object
+[25279061ms] Object
+[25294068ms] Object
+[25309062ms] Object
+[25324054ms] Object
+[25339054ms] Object
+[25354055ms] Object
+[25369068ms] Object
+[25384065ms] Object
+[25399055ms] Object
+[25414060ms] Object
+[25429065ms] Object
+[25444069ms] Object
+[25459063ms] Object
+[25474055ms] Object
+[25489067ms] Object
+[25504067ms] Object
+[25519072ms] Object
+[25534069ms] Object
+[25549070ms] Object
+[25564261ms] Object
+[25579062ms] Object
+[25594064ms] Object
+[25609065ms] Object
+[25624067ms] Object
+[25639064ms] Object
+[25654063ms] Object
+[25669064ms] Object
+[25684069ms] Object
+[25699060ms] Object
+[25714066ms] Object
+[25729071ms] Object
+[25744060ms] Object
+[25759058ms] Object
+[25774063ms] Object
+[25789060ms] Object
+[25804068ms] Object
+[25819062ms] Object
+[25834060ms] Object
+[25849067ms] Object
+[25864060ms] Object
+[25879060ms] Object
+[25894071ms] Object
+[25909062ms] Object
+[25924067ms] Object
+[25939064ms] Object
+[25954065ms] Object
+[25969070ms] Object
+[25984063ms] Object
+[25999060ms] Object
+[26014068ms] Object
+[26029066ms] Object
+[26044057ms] Object
+[26059054ms] Object
+[26074061ms] Object
+[26089058ms] Object
+[26104071ms] Object
+[26119062ms] Object
+[26134071ms] Object
+[26149069ms] Object
+[26164074ms] Object
+[26179066ms] Object
+[26194062ms] Object
+[26209058ms] Object
+[26224056ms] Object
+[26239061ms] Object
+[26254067ms] Object
+[26269066ms] Object
+[26284055ms] Object
+[26299059ms] Object
+[26314061ms] Object
+[26329068ms] Object
+[26344056ms] Object
+[26359062ms] Object
+[26374059ms] Object
+[26389063ms] Object
+[26404066ms] Object
+[26419072ms] Object
+[26434063ms] Object
+[26449069ms] Object
+[26464070ms] Object
+[26479066ms] Object
+[26494056ms] Object
+[26509066ms] Object
+[26524054ms] Object
+[26539062ms] Object
+[26554069ms] Object
+[26569055ms] Object
+[26584069ms] Object
+[26599064ms] Object
+[26614071ms] Object
+[26629058ms] Object
+[26644061ms] Object
+[26659062ms] Object
+[26674058ms] Object
+[26689069ms] Object
+[26704069ms] Object
+[26719064ms] Object
+[26734059ms] Object
+[26749068ms] Object
+[26764059ms] Object
+[26779070ms] Object
+[26794064ms] Object
+[26809110ms] Object
+[26824066ms] Object
+[26839068ms] Object
+[26854063ms] Object
+[26869059ms] Object
+[26884059ms] Object
+[26899068ms] Object
+[26914068ms] Object
+[26929060ms] Object
+[26944059ms] Object
+[26959061ms] Object
+[26974057ms] Object
+[26989059ms] Object
+[27004060ms] Object
+[27019058ms] Object
+[27034065ms] Object
+[27049056ms] Object
+[27064065ms] Object
+[27079067ms] Object
+[27094066ms] Object
+[27109058ms] Object
+[27124059ms] Object
+[27139071ms] Object
+[27154062ms] Object
+[27169071ms] Object
+[27184059ms] Object
+[27199065ms] Object
+[27214072ms] Object
+[27229068ms] Object
+[27244068ms] Object
+[27259071ms] Object
+[27274063ms] Object
+[27289066ms] Object
+[27304057ms] Object
+[27319063ms] Object
+[27334067ms] Object
+[27349068ms] Object
+[27364065ms] Object
+[27379067ms] Object
+[27394061ms] Object
+[27409067ms] Object
+[27424065ms] Object
+[27439063ms] Object
+[27454064ms] Object
+[27469064ms] Object
+[27484068ms] Object
+[27499056ms] Object
+[27514059ms] Object
+[27529069ms] Object
+[27544062ms] Object
+[27559066ms] Object
+[27574062ms] Object
+[27589065ms] Object
+[27604065ms] Object
+[27619062ms] Object
+[27634067ms] Object
+[27649060ms] Object
+[27664059ms] Object
+[27679059ms] Object
+[27694061ms] Object
+[27709063ms] Object
+[27724056ms] Object
+[27739057ms] Object
+[27754060ms] Object
+[27769064ms] Object
+[27784066ms] Object
+[27799061ms] Object
+[27814059ms] Object
+[27829064ms] Object
+[27844057ms] Object
+[27859058ms] Object
+[27874057ms] Object
+[27889067ms] Object
+[27904070ms] Object
+[27919069ms] Object
+[27934065ms] Object
+[27949055ms] Object
+[27964065ms] Object
+[27979065ms] Object
+[27994068ms] Object
+[28009062ms] Object
+[28024067ms] Object
+[28039068ms] Object
+[28054055ms] Object
+[28069066ms] Object
+[28084066ms] Object
+[28099069ms] Object
+[28114059ms] Object
+[28129065ms] Object
+[28144068ms] Object
+[28159070ms] Object
+[28174058ms] Object
+[28189062ms] Object
+[28204067ms] Object
+[28219057ms] Object
+[28234068ms] Object
+[28249068ms] Object
+[28264068ms] Object
+[28279068ms] Object
+[28294063ms] Object
+[28309062ms] Object
+[28324069ms] Object
+[28339069ms] Object
+[28354054ms] Object
+[28369062ms] Object
+[28384066ms] Object
+[28399060ms] Object
+[28414058ms] Object
+[28429056ms] Object
+[28444055ms] Object
+[28459058ms] Object
+[28474066ms] Object
+[28489056ms] Object
+[28504059ms] Object
+[28519072ms] Object
+[28534066ms] Object
+[28549065ms] Object
+[28564063ms] Object
+[28579065ms] Object
+[28594063ms] Object
+[28609071ms] Object
+[28624064ms] Object
+[28639065ms] Object
+[28654065ms] Object
+[28669060ms] Object
+[28684055ms] Object
+[28699074ms] Object
+[28714057ms] Object
+[28729059ms] Object
+[28744063ms] Object
+[28759064ms] Object
+[28774067ms] Object
+[28789073ms] Object
+[28804062ms] Object
+[28819060ms] Object
+[28834065ms] Object
+[28849066ms] Object
+[28864059ms] Object
+[28879065ms] Object
+[28894070ms] Object
+[28909065ms] Object
+[28924055ms] Object
+[28939061ms] Object
+[28954072ms] Object
+[28969064ms] Object
+[28984066ms] Object
+[28999064ms] Object
+[29014065ms] Object
+[29029066ms] Object
+[29044057ms] Object
+[29059057ms] Object
+[29074068ms] Object
+[29089062ms] Object
+[29104058ms] Object
+[29119055ms] Object
+[29134059ms] Object
+[29149060ms] Object
+[29164067ms] Object
+[29179070ms] Object
+[29194071ms] Object
+[29209069ms] Object
+[29224059ms] Object
+[29239060ms] Object
+[29254056ms] Object
+[29269056ms] Object
+[29284064ms] Object
+[29299058ms] Object
+[29314060ms] Object
+[29329061ms] Object
+[29344067ms] Object
+[29359068ms] Object
+[29374062ms] Object
+[29389066ms] Object
+[29404065ms] Object
+[29419067ms] Object
+[29434070ms] Object
+[29449059ms] Object
+[29464068ms] Object
+[29479070ms] Object
+[29494069ms] Object
+[29509065ms] Object
+[29524069ms] Object
+[29539067ms] Object
+[29554070ms] Object
+[29569059ms] Object
+[29584067ms] Object
+[29599060ms] Object
+[29614056ms] Object
+[29629059ms] Object
+[29644067ms] Object
+[29659065ms] Object
+[29674060ms] Object
+[29689060ms] Object
+[29704056ms] Object
+[29719059ms] Object
+[29734069ms] Object
+[29749056ms] Object
+[29764070ms] Object
+[29779058ms] Object
+[29794063ms] Object
+[29809061ms] Object
+[29824057ms] Object
+[29839055ms] Object
+[29854058ms] Object
+[29869069ms] Object
+[29884069ms] Object
+[29899068ms] Object
+[29914062ms] Object
+[29929070ms] Object
+[29944057ms] Object
+[29959059ms] Object
+[29974067ms] Object
+[29989069ms] Object
+[30004065ms] Object
+[30019059ms] Object
+[30034067ms] Object
+[30049062ms] Object
+[30064069ms] Object
+[30079056ms] Object
+[30094068ms] Object
+[30109068ms] Object
+[30124067ms] Object
+[30139071ms] Object
+[30154069ms] Object
+[30169063ms] Object
+[30184059ms] Object
+[30199062ms] Object
+[30214063ms] Object
+[30229061ms] Object
+[30244069ms] Object
+[30259060ms] Object
+[30274060ms] Object
+[30289061ms] Object
+[30304060ms] Object
+[30319062ms] Object
+[30334063ms] Object
+[30349064ms] Object
+[30364065ms] Object
+[30379064ms] Object
+[30394060ms] Object
+[30409065ms] Object
+[30424070ms] Object
+[30439069ms] Object
+[30454065ms] Object
+[30469057ms] Object
+[30484057ms] Object
+[30499083ms] Object
+[30514056ms] Object
+[30529070ms] Object
+[30544057ms] Object
+[30559057ms] Object
+[30574056ms] Object
+[30589056ms] Object
+[30604057ms] Object
+[30619071ms] Object
+[30634071ms] Object
+[30649065ms] Object
+[30664071ms] Object
+[30679067ms] Object
+[30694060ms] Object
+[30709068ms] Object
+[30724062ms] Object
+[30739070ms] Object
+[30754056ms] Object
+[30769066ms] Object
+[30784069ms] Object
+[30799070ms] Object
+[30814064ms] Object
+[30829056ms] Object
+[30844071ms] Object
+[30859067ms] Object
+[30874070ms] Object
+[30889069ms] Object
+[30904066ms] Object
+[30919064ms] Object
+[30934065ms] Object
+[30949066ms] Object
+[30964059ms] Object
+[30979071ms] Object
+[30994057ms] Object
+[31009057ms] Object
+[31024055ms] Object
+[31039068ms] Object
+[31054053ms] Object
+[31069065ms] Object
+[31084067ms] Object
+[31099058ms] Object
+[31114061ms] Object
+[31129062ms] Object
+[31144094ms] Object
+[31159070ms] Object
+[31174061ms] Object
+[31189061ms] Object
+[31204071ms] Object
+[31219068ms] Object
+[31234066ms] Object
+[31249062ms] Object
+[31264068ms] Object
+[31279068ms] Object
+[31294058ms] Object
+[31309060ms] Object
+[31324061ms] Object
+[31339058ms] Object
+[31354055ms] Object
+[31369065ms] Object
+[31384067ms] Object
+[31399060ms] Object
+[31414056ms] Object
+[31429056ms] Object
+[31444057ms] Object
+[31459071ms] Object
+[31474069ms] Object
+[31489055ms] Object
+[31504067ms] Object
+[31519070ms] Object
+[31534055ms] Object
+[31549064ms] Object
+[31564058ms] Object
+[31579070ms] Object
+[31594057ms] Object
+[31609059ms] Object
+[31624063ms] Object
+[31639067ms] Object
+[31654068ms] Object
+[31669064ms] Object
+[31684069ms] Object
+[31699060ms] Object
+[31714062ms] Object
+[31729069ms] Object
+[31744055ms] Object
+[31759056ms] Object
+[31774070ms] Object
+[31789059ms] Object
+[31804058ms] Object
+[31819065ms] Object
+[31834065ms] Object
+[31849054ms] Object
+[31864058ms] Object
+[31879091ms] Object
+[31894069ms] Object
+[31909068ms] Object
+[31924056ms] Object
+[31939062ms] Object
+[31954108ms] Object
+[31969063ms] Object
+[31984064ms] Object
+[31999065ms] Object
+[32014062ms] Object
+[32029101ms] Object
+[32044066ms] Object
+[32059060ms] Object
+[32074067ms] Object
+[32089062ms] Object
+[32104064ms] Object
+[32119067ms] Object
+[32134065ms] Object
+[32149064ms] Object
+[32164062ms] Object
+[32179068ms] Object
+[32194064ms] Object
+[32209060ms] Object
+[32224065ms] Object
+[32239058ms] Object
+[32254063ms] Object
+[32269056ms] Object
+[32284060ms] Object
+[32299061ms] Object
+[32314062ms] Object
+[32329056ms] Object
+[32344062ms] Object
+[32359069ms] Object
+[32374060ms] Object
+[32389079ms] Object
+[32404066ms] Object
+[32419070ms] Object
+[32434064ms] Object
+[32449063ms] Object
+[32464070ms] Object
+[32479071ms] Object
+[32494068ms] Object
+[32509063ms] Object
+[32524068ms] Object
+[32539067ms] Object
+[32554067ms] Object
+[32569064ms] Object
+[32584067ms] Object
+[32599064ms] Object
+[32614067ms] Object
+[32629069ms] Object
+[32644069ms] Object
+[32659061ms] Object
+[32674067ms] Object
+[32689060ms] Object
+[32704056ms] Object
+[32719062ms] Object
+[32734056ms] Object
+[32749070ms] Object
+[32764071ms] Object
+[32779057ms] Object
+[32794109ms] Object
+[32809062ms] Object
+[32824068ms] Object
+[32839066ms] Object
+[32854061ms] Object
+[32869061ms] Object
+[32884059ms] Object
+[32899063ms] Object
+[32914068ms] Object
+[32929062ms] Object
+[32944062ms] Object
+[32959055ms] Object
+[32974069ms] Object
+[32989062ms] Object
+[33004061ms] Object
+[33019058ms] Object
+[33034059ms] Object
+[33049058ms] Object
+[33064057ms] Object
+[33079065ms] Object
+[33094058ms] Object
+[33109061ms] Object
+[33124061ms] Object
+[33139057ms] Object
+[33154068ms] Object
+[33169067ms] Object
+[33184057ms] Object
+[33199060ms] Object
+[33214058ms] Object
+[33229067ms] Object
+[33244071ms] Object
+[33259071ms] Object
+[33274061ms] Object
+[33289058ms] Object
+[33304055ms] Object
+[33319074ms] Object
+[33334056ms] Object
+[33349056ms] Object
+[33364057ms] Object
+[33379068ms] Object
+[33394058ms] Object
+[33409070ms] Object
+[33424055ms] Object
+[33439065ms] Object
+[33454056ms] Object
+[33469061ms] Object
+[33484057ms] Object
+[33499060ms] Object
+[33514067ms] Object
+[33529067ms] Object
+[33544065ms] Object
+[33559063ms] Object
+[33574061ms] Object
+[33589067ms] Object
+[33604065ms] Object
+[33619064ms] Object
+[33634059ms] Object
+[33649066ms] Object
+[33664065ms] Object
+[33679066ms] Object
+[33694062ms] Object
+[33709067ms] Object
+[33724062ms] Object
+[33739055ms] Object
+[33754065ms] Object
+[33769069ms] Object
+[33784066ms] Object
+[33799065ms] Object
+[33814056ms] Object
+[33829067ms] Object
+[33844072ms] Object
+[33859060ms] Object
+[33874065ms] Object
+[33889060ms] Object
+[33904058ms] Object
+[33919070ms] Object
+[33934060ms] Object
+[33949060ms] Object
+[33964060ms] Object
+[33979067ms] Object
+[33994058ms] Object
+[34009067ms] Object
+[34024057ms] Object
+[34039058ms] Object
+[34054057ms] Object
+[34069060ms] Object
+[34084063ms] Object
+[34099069ms] Object
+[34114069ms] Object
+[34129060ms] Object
+[34144069ms] Object
+[34159056ms] Object
+[34174069ms] Object
+[34189070ms] Object
+[34204067ms] Object
+[34219071ms] Object
+[34234071ms] Object
+[34249058ms] Object
+[34264058ms] Object
+[34279062ms] Object
+[34294069ms] Object
+[34309065ms] Object
+[34324067ms] Object
+[34339064ms] Object
+[34354064ms] Object
+[34369065ms] Object
+[34384064ms] Object
+[34399055ms] Object
+[34414065ms] Object
+[34429065ms] Object
+[34444065ms] Object
+[34459071ms] Object
+[34474065ms] Object
+[34489066ms] Object
+[34504064ms] Object
+[34519056ms] Object
+[34534064ms] Object
+[34549062ms] Object
+[34564063ms] Object
+[34579069ms] Object
+[34594056ms] Object
+[34609069ms] Object
+[34624058ms] Object
+[34639066ms] Object
+[34654070ms] Object
+[34669069ms] Object
+[34684056ms] Object
+[34699065ms] Object
+[34714079ms] Object
+[34729058ms] Object
+[34744055ms] Object
+[34759059ms] Object
+[34774058ms] Object
+[34789063ms] Object
+[34804060ms] Object
+[34819068ms] Object
+[34834066ms] Object
+[34849062ms] Object
+[34864064ms] Object
+[34879059ms] Object
+[34894066ms] Object
+[34909056ms] Object
+[34924056ms] Object
+[34939060ms] Object
+[34954057ms] Object
+[34969063ms] Object
+[34984055ms] Object
+[34999058ms] Object
+[35014056ms] Object
+[35029058ms] Object
+[35044070ms] Object
+[35059067ms] Object
+[35074063ms] Object
+[35089056ms] Object
+[35104065ms] Object
+[35119073ms] Object
+[35134068ms] Object
+[35149066ms] Object
+[35164067ms] Object
+[35179068ms] Object
+[35194062ms] Object
+[35209063ms] Object
+[35224070ms] Object
+[35239069ms] Object
+[35254068ms] Object
+[35269064ms] Object
+[35284063ms] Object
+[35299069ms] Object
+[35314064ms] Object
+[35329064ms] Object
+[35344057ms] Object
+[35359066ms] Object
+[35374064ms] Object
+[35389068ms] Object
+[35404069ms] Object
+[35419068ms] Object
+[35434064ms] Object
+[35449064ms] Object
+[35464070ms] Object
+[35479062ms] Object
+[35494069ms] Object
+[35509064ms] Object
+[35524068ms] Object
+[35539071ms] Object
+[35554057ms] Object
+[35569056ms] Object
+[35584060ms] Object
+[35599068ms] Object
+[35614067ms] Object
+[35629059ms] Object
+[35644058ms] Object
+[35659061ms] Object
+[35674061ms] Object
+[35689056ms] Object
+[35704061ms] Object
+[35719065ms] Object
+[35734070ms] Object
+[35749060ms] Object
+[35764067ms] Object
+[35779064ms] Object
+[35794066ms] Object
+[35809057ms] Object
+[35824068ms] Object
+[35839062ms] Object
+[35854068ms] Object
+[35869057ms] Object
+[35884063ms] Object
+[35899060ms] Object
+[35914057ms] Object
+[35929060ms] Object
+[35944060ms] Object
+[35959064ms] Object
+[35974063ms] Object
+[35989069ms] Object
+[36004070ms] Object
+[36019065ms] Object
+[36034067ms] Object
+[36049058ms] Object
+[36064065ms] Object
+[36079063ms] Object
+[36094056ms] Object
+[36109060ms] Object
+[36124069ms] Object
+[36139070ms] Object
+[36154065ms] Object
+[36169066ms] Object
+[36184066ms] Object
+[36199065ms] Object
+[36214056ms] Object
+[36229063ms] Object
+[36244061ms] Object
+[36259059ms] Object
+[36274063ms] Object
+[36289062ms] Object
+[36304057ms] Object
+[36319062ms] Object
+[36334064ms] Object
+[36349066ms] Object
+[36364061ms] Object
+[36379067ms] Object
+[36394064ms] Object
+[36409061ms] Object
+[36424065ms] Object
+[36439069ms] Object
+[36454069ms] Object
+[36469056ms] Object
+[36484066ms] Object
+[36499059ms] Object
+[36514060ms] Object
+[36529060ms] Object
+[36544066ms] Object
+[36559056ms] Object
+[36574062ms] Object
+[36589069ms] Object
+[36604066ms] Object
+[36619068ms] Object
+[36634063ms] Object
+[36649057ms] Object
+[36664064ms] Object
+[36679058ms] Object
+[36694055ms] Object
+[36709060ms] Object
+[36724059ms] Object
+[36739066ms] Object
+[36754063ms] Object
+[36769070ms] Object
+[36784069ms] Object
+[36799064ms] Object
+[36814059ms] Object
+[36829064ms] Object
+[36844069ms] Object
+[36859055ms] Object
+[36874070ms] Object
+[36889055ms] Object
+[36904055ms] Object
+[36919063ms] Object
+[36934063ms] Object
+[36949060ms] Object
+[36964066ms] Object
+[36979071ms] Object
+[36994069ms] Object
+[37009056ms] Object
+[37024060ms] Object
+[37039055ms] Object
+[37054063ms] Object
+[37069068ms] Object
+[37084061ms] Object
+[37099068ms] Object
+[37114056ms] Object
+[37129056ms] Object
+[37144067ms] Object
+[37159062ms] Object
+[37174057ms] Object
+[37189059ms] Object
+[37204059ms] Object
+[37219067ms] Object
+[37234065ms] Object
+[37249056ms] Object
+[37264062ms] Object
+[37279062ms] Object
+[37294059ms] Object
+[37309063ms] Object
+[37324068ms] Object
+[37339069ms] Object
+[37354065ms] Object
+[37369056ms] Object
+[37384059ms] Object
+[37399061ms] Object
+[37414056ms] Object
+[37429057ms] Object
+[37444065ms] Object
+[37459059ms] Object
+[37474062ms] Object
+[37489059ms] Object
+[37504066ms] Object
+[37519067ms] Object
+[37534062ms] Object
+[37549066ms] Object
+[37564060ms] Object
+[37579063ms] Object
+[37594054ms] Object
+[37609057ms] Object
+[37624064ms] Object
+[37639073ms] Object
+[37654071ms] Object
+[37669068ms] Object
+[37684065ms] Object
+[37699059ms] Object
+[37714055ms] Object
+[37729064ms] Object
+[37744056ms] Object
+[37759075ms] Object
+[37774060ms] Object
+[37789067ms] Object
+[37804062ms] Object
+[37819071ms] Object
+[37834065ms] Object
+[37849059ms] Object
+[37864069ms] Object
+[37879056ms] Object
+[37894067ms] Object
+[37909063ms] Object
+[37924069ms] Object
+[37939068ms] Object
+[37954067ms] Object
+[37969057ms] Object
+[37984056ms] Object
+[37999067ms] Object
+[38014067ms] Object
+[38029055ms] Object
+[38044067ms] Object
+[38059066ms] Object
+[38074067ms] Object
+[38089058ms] Object
+[38104065ms] Object
+[38119056ms] Object
+[38134064ms] Object
+[38149068ms] Object
+[38164057ms] Object
+[38179056ms] Object
+[38194056ms] Object
+[38209061ms] Object
+[38224067ms] Object
+[38239070ms] Object
+[38254063ms] Object
+[38269066ms] Object
+[38284068ms] Object
+[38299055ms] Object
+[38314062ms] Object
+[38329066ms] Object
+[38344058ms] Object
+[38359059ms] Object
+[38374061ms] Object
+[38389055ms] Object
+[38404058ms] Object
+[38419064ms] Object
+[38434060ms] Object
+[38449065ms] Object
+[38464067ms] Object
+[38479055ms] Object
+[38494056ms] Object
+[38509058ms] Object
+[38522331ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://cloud.dekaerp.com/livewire-70e0a63d/update:0
+[38522376ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://cloud.dekaerp.com/livewire-70e0a63d/update:0
+[38522397ms] Object
+[38522419ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://cloud.dekaerp.com/livewire-70e0a63d/update:0
+[38522422ms] Object
+[38522458ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://cloud.dekaerp.com/livewire-70e0a63d/update:0
+[38522460ms] Object
+[38522495ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://cloud.dekaerp.com/livewire-70e0a63d/update:0
+[38522497ms] Object
+[38522534ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://cloud.dekaerp.com/livewire-70e0a63d/update:0
+[38522536ms] Object
+[38522583ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://cloud.dekaerp.com/livewire-70e0a63d/update:0
+[38522586ms] Object
+[38522636ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://cloud.dekaerp.com/livewire-70e0a63d/update:0
+[38522639ms] Object
+[38522683ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://cloud.dekaerp.com/livewire-70e0a63d/update:0
+[38522684ms] Object
+[38522733ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://cloud.dekaerp.com/livewire-70e0a63d/update:0
+[38522735ms] Object
+[38522789ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://cloud.dekaerp.com/livewire-70e0a63d/update:0
+[38522792ms] Object
+[38522840ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://cloud.dekaerp.com/livewire-70e0a63d/update:0
+[38522842ms] Object
+[38522884ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://cloud.dekaerp.com/livewire-70e0a63d/update:0
+[38522887ms] Object
+[38522928ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://cloud.dekaerp.com/livewire-70e0a63d/update:0
+[38522930ms] Object
+[38522974ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://cloud.dekaerp.com/livewire-70e0a63d/update:0
+[38522976ms] Object
+[38523033ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://cloud.dekaerp.com/livewire-70e0a63d/update:0
+[38523035ms] Object
+[38523075ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://cloud.dekaerp.com/livewire-70e0a63d/update:0
+[38523077ms] Object
+[38523137ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://cloud.dekaerp.com/livewire-70e0a63d/update:0
+[38523139ms] Object
+[38523178ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://cloud.dekaerp.com/livewire-70e0a63d/update:0
+[38523179ms] Object
+[38523228ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://cloud.dekaerp.com/livewire-70e0a63d/update:0
+[38523229ms] Object
+[38523268ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://cloud.dekaerp.com/livewire-70e0a63d/update:0
+[38523269ms] Object
+[38523312ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://cloud.dekaerp.com/livewire-70e0a63d/update:0
+[38523312ms] Object
+[38524070ms] Object
+[38539067ms] Object
+[38554058ms] Object
+[38569056ms] Object
+[38584056ms] Object
+[38599056ms] Object
+[38614055ms] Object
+[38629057ms] Object
+[38644070ms] Object
+[38659057ms] Object
+[38674069ms] Object
+[38689072ms] Object
+[38704064ms] Object
+[38719067ms] Object
+[38734066ms] Object
+[38749067ms] Object
+[38764067ms] Object
+[38779066ms] Object
+[38794067ms] Object
+[38809069ms] Object
+[38824065ms] Object
+[38839068ms] Object
+[38854064ms] Object
+[38869059ms] Object
+[38884066ms] Object
+[38899065ms] Object
+[38914069ms] Object
+[38929066ms] Object
+[38944055ms] Object
+[38959065ms] Object
+[38974063ms] Object
+[38989063ms] Object
+[39004057ms] Object
+[39019063ms] Object
+[39034062ms] Object
+[39049056ms] Object
+[39064061ms] Object
+[39079061ms] Object
+[39094064ms] Object
+[39109059ms] Object
+[39124056ms] Object
+[39139066ms] Object
+[39154067ms] Object
+[39169058ms] Object
+[39184062ms] Object
+[39199056ms] Object
+[39214058ms] Object
+[39229064ms] Object
+[39244060ms] Object
+[39259069ms] Object
+[39274068ms] Object
+[39289059ms] Object
+[39304068ms] Object
+[39319058ms] Object
+[39334065ms] Object
+[39349061ms] Object
+[39364060ms] Object
+[39379068ms] Object
+[39394064ms] Object
+[39409065ms] Object
+[39424061ms] Object
+[39439064ms] Object
+[39454070ms] Object
+[39469059ms] Object
+[39484061ms] Object
+[39499065ms] Object
+[39514058ms] Object
+[39529062ms] Object
+[39544064ms] Object
+[39559069ms] Object
+[39574063ms] Object
+[39589058ms] Object
+[39604067ms] Object
+[39619075ms] Object
+[39634068ms] Object
+[39649070ms] Object
+[39664056ms] Object
+[39679071ms] Object
+[39694068ms] Object
+[39709061ms] Object
+[39724068ms] Object
+[39739056ms] Object
+[39754067ms] Object
+[39769067ms] Object
+[39784055ms] Object
+[39799062ms] Object
+[39814070ms] Object
+[39829060ms] Object
+[39844063ms] Object
+[39859063ms] Object
+[39874054ms] Object
+[39889067ms] Object
+[39904067ms] Object
+[39919061ms] Object
+[39934066ms] Object
+[39949057ms] Object
+[39964068ms] Object
+[39979063ms] Object
+[39994067ms] Object
+[40009062ms] Object
+[40024065ms] Object
+[40039065ms] Object
+[40054060ms] Object
+[40069060ms] Object
+[40084060ms] Object
+[40099057ms] Object
+[40114058ms] Object
+[40129058ms] Object
+[40144063ms] Object
+[40159056ms] Object
+[40174070ms] Object
+[40189066ms] Object
+[40204056ms] Object
+[40219065ms] Object
+[40234058ms] Object
+[40249055ms] Object
+[40264066ms] Object
+[40279061ms] Object
+[40294059ms] Object
+[40309060ms] Object
+[40324055ms] Object
+[40339063ms] Object
+[40354057ms] Object
+[40369070ms] Object
+[40384065ms] Object
+[40399065ms] Object
+[40414063ms] Object
+[40429054ms] Object
+[40444062ms] Object
+[40459071ms] Object
+[40474063ms] Object
+[40489060ms] Object
+[40504067ms] Object
+[40519068ms] Object
+[40534055ms] Object
+[40549066ms] Object
+[40564059ms] Object
+[40579067ms] Object
+[40594058ms] Object
+[40609068ms] Object
+[40624062ms] Object
+[40639058ms] Object
+[40654057ms] Object
+[40669063ms] Object
+[40684063ms] Object
+[40699061ms] Object
+[40714055ms] Object
+[40729063ms] Object
+[40744066ms] Object
+[40759059ms] Object
+[40774064ms] Object
+[40789066ms] Object
+[40804071ms] Object
+[40819093ms] Object
+[40834065ms] Object
+[40849056ms] Object
+[40864064ms] Object
+[40879065ms] Object
+[40894056ms] Object
+[40909082ms] Object
+[40924083ms] Object
+[40939066ms] Object
+[40954068ms] Object
+[40969065ms] Object
+[40984066ms] Object
+[40999064ms] Object
+[41014063ms] Object
+[41029059ms] Object
+[41044063ms] Object
+[41059069ms] Object
+[41074070ms] Object
+[41089068ms] Object
+[41104063ms] Object
+[41119060ms] Object
+[41134056ms] Object
+[41149131ms] Object
+[41164069ms] Object
+[41179059ms] Object
+[41194066ms] Object
+[41209063ms] Object
+[41224058ms] Object
+[41239058ms] Object
+[41254067ms] Object
+[41269060ms] Object
+[41284059ms] Object
+[41299072ms] Object
+[41314062ms] Object
+[41329063ms] Object
+[41344057ms] Object
+[41359058ms] Object
+[41374057ms] Object
+[41389070ms] Object
+[41404064ms] Object
+[41419059ms] Object
+[41434059ms] Object
+[41449059ms] Object
+[41464056ms] Object
+[41479070ms] Object
+[41494069ms] Object
+[41509060ms] Object
+[41524068ms] Object
+[41539067ms] Object
+[41554067ms] Object
+[41569054ms] Object
+[41584063ms] Object
+[41599057ms] Object
+[41614061ms] Object
+[41629060ms] Object
+[41644060ms] Object
+[41659070ms] Object
+[41674071ms] Object
+[41689064ms] Object
+[41704063ms] Object
+[41719057ms] Object
+[41734070ms] Object
+[41749063ms] Object
+[41764072ms] Object
+[41779067ms] Object
+[41794068ms] Object
+[41809068ms] Object
+[41824070ms] Object
+[41839066ms] Object
+[41854065ms] Object
+[41869061ms] Object
+[41884068ms] Object
+[41899063ms] Object
+[41914064ms] Object
+[41929060ms] Object
+[41944064ms] Object
+[41959063ms] Object
+[41974059ms] Object
+[41989063ms] Object
+[42004060ms] Object
+[42019068ms] Object
+[42034060ms] Object
+[42049058ms] Object
+[42064063ms] Object
+[42079067ms] Object
+[42094057ms] Object
+[42109061ms] Object
+[42124065ms] Object
+[42139057ms] Object
+[42154068ms] Object
+[42169062ms] Object
+[42184060ms] Object
+[42199070ms] Object
+[42214067ms] Object
+[42229067ms] Object
+[42244059ms] Object
+[42259067ms] Object
+[42274068ms] Object
+[42289067ms] Object
+[42304063ms] Object
+[42319069ms] Object
+[42334061ms] Object
+[42349058ms] Object
+[42364062ms] Object
+[42379064ms] Object
+[42394068ms] Object
+[42409057ms] Object
+[42424063ms] Object
+[42439067ms] Object
+[42454061ms] Object
+[42469066ms] Object
+[42484063ms] Object
+[42499063ms] Object
+[42514055ms] Object
+[42529065ms] Object
+[42544059ms] Object
+[42559056ms] Object
+[42574070ms] Object
+[42589063ms] Object
+[42604066ms] Object
+[42619069ms] Object
+[42634069ms] Object
+[42649064ms] Object
+[42664064ms] Object
+[42679058ms] Object
+[42694071ms] Object
+[42709067ms] Object
+[42724085ms] Object
+[42739056ms] Object
+[42754064ms] Object
+[42769065ms] Object
+[42784061ms] Object
+[42799066ms] Object
+[42814062ms] Object
+[42829065ms] Object
+[42844059ms] Object
+[42859068ms] Object
+[42874102ms] Object
+[42889063ms] Object
+[42904060ms] Object
+[42919055ms] Object
+[42934067ms] Object
+[42949058ms] Object
+[42964062ms] Object
+[42979079ms] Object
+[42994076ms] Object
+[43009061ms] Object
+[43024062ms] Object
+[43039067ms] Object
+[43054064ms] Object
+[43069061ms] Object
+[43084073ms] Object
+[43099063ms] Object
+[43114071ms] Object
+[43129063ms] Object
+[43144073ms] Object
+[43159064ms] Object
+[43174064ms] Object
+[43189062ms] Object
+[43204057ms] Object
+[43219071ms] Object
+[43234059ms] Object
+[43249070ms] Object
+[43264108ms] Object
+[43279507ms] Object
+[43294062ms] Object
+[43309068ms] Object
+[43324069ms] Object
+[43339066ms] Object
+[43354068ms] Object
+[43369062ms] Object
+[43384065ms] Object
+[43399070ms] Object
+[43414058ms] Object
+[43429069ms] Object
+[43444060ms] Object
+[43459066ms] Object
+[43474061ms] Object
+[43489063ms] Object
+[43504071ms] Object
+[43519064ms] Object
+[43534063ms] Object
+[43549059ms] Object
+[43564085ms] Object
+[43579065ms] Object
+[43594063ms] Object
+[43609067ms] Object
+[43624060ms] Object
+[43639063ms] Object
+[43654071ms] Object
+[43669061ms] Object
+[43684060ms] Object
+[43699067ms] Object
+[43714059ms] Object
+[43729061ms] Object
+[43744064ms] Object
+[43759061ms] Object
+[43774056ms] Object
+[43789065ms] Object
+[43804061ms] Object
+[43819066ms] Object
+[43834072ms] Object
+[43849068ms] Object
+[43864070ms] Object
+[43879060ms] Object
+[43894062ms] Object
+[43909061ms] Object
+[43924058ms] Object
+[43939066ms] Object
+[43954062ms] Object
+[43969073ms] Object
+[43984172ms] Object
+[43999097ms] Object
+[44014083ms] Object
+[44029859ms] Object
+[44044068ms] Object
+[44059061ms] Object
+[44074070ms] Object
+[44089058ms] Object
+[44104066ms] Object
+[44119059ms] Object
+[44134059ms] Object
+[44149068ms] Object
+[44164070ms] Object
+[44179066ms] Object
+[44194055ms] Object
+[44209069ms] Object
+[44224055ms] Object
+[44239068ms] Object
+[44254068ms] Object
+[44269066ms] Object
+[44284065ms] Object
+[44299069ms] Object
+[44314059ms] Object
+[44329070ms] Object
+[44344062ms] Object
+[44359061ms] Object
+[44374063ms] Object
+[44389063ms] Object
+[44404073ms] Object
+[44419056ms] Object
+[44434062ms] Object
+[44449061ms] Object
+[44464062ms] Object
+[44479063ms] Object
+[44494063ms] Object
+[44509062ms] Object
+[44524059ms] Object
+[44539057ms] Object
+[44554061ms] Object
+[44569058ms] Object
+[44584066ms] Object
+[44599059ms] Object
+[44614065ms] Object
+[44629061ms] Object
+[44644068ms] Object
+[44659063ms] Object
+[44674060ms] Object
+[44689058ms] Object
+[44704057ms] Object
+[44719060ms] Object
+[44734070ms] Object
+[44749066ms] Object
+[44764063ms] Object
+[44779058ms] Object
+[44794067ms] Object
+[44809069ms] Object
+[44824070ms] Object
+[44839056ms] Object
+[44854060ms] Object
+[44869066ms] Object
+[44884054ms] Object
+[44899059ms] Object
+[44914067ms] Object
+[44929055ms] Object
+[44944055ms] Object
+[44959068ms] Object
+[44974068ms] Object
+[44989070ms] Object
+[45004069ms] Object
+[45019069ms] Object
+[45034062ms] Object
+[45049063ms] Object
+[45064065ms] Object
+[45079068ms] Object
+[45094070ms] Object
+[45109064ms] Object
+[45124056ms] Object
+[45139062ms] Object
+[45154071ms] Object
+[45169072ms] Object
+[45184069ms] Object
+[45199066ms] Object
+[45214066ms] Object
+[45229066ms] Object
+[45244061ms] Object
+[45259065ms] Object
+[45274069ms] Object
+[45289057ms] Object
+[45304064ms] Object
+[45319064ms] Object
+[45334056ms] Object
+[45349819ms] Object
+[45364063ms] Object
+[45379069ms] Object
+[45394071ms] Object
+[45409060ms] Object
+[45424068ms] Object
+[45439062ms] Object
+[45454061ms] Object
+[45469058ms] Object
+[45484059ms] Object
+[45499057ms] Object
+[45514064ms] Object
+[45529068ms] Object
+[45544060ms] Object
+[45559057ms] Object
+[45574077ms] Object
+[45589067ms] Object
+[45604068ms] Object
+[45619132ms] Object
+[45634056ms] Object
+[45649058ms] Object
+[45664108ms] Object
+[45679061ms] Object
+[45694071ms] Object
+[45709068ms] Object
+[45724059ms] Object
+[45739058ms] Object
+[45754059ms] Object
+[45769064ms] Object
+[45784064ms] Object
+[45799057ms] Object
+[45814058ms] Object
+[45829065ms] Object
+[45844069ms] Object
+[45859056ms] Object
+[45874066ms] Object
+[45889062ms] Object
+[45904138ms] Object
+[45919070ms] Object
+[45934069ms] Object
+[45949070ms] Object
+[45964071ms] Object
+[45979084ms] Object
+[45994071ms] Object
+[46009056ms] Object
+[46024066ms] Object
+[46039058ms] Object
+[46054074ms] Object
+[46069076ms] Object
+[46084065ms] Object
+[46099064ms] Object
+[46114066ms] Object
+[46129068ms] Object
+[46144065ms] Object
+[46159063ms] Object
+[46174060ms] Object
+[46189055ms] Object
+[46204058ms] Object
+[46219067ms] Object
+[46234067ms] Object
+[46249072ms] Object
+[46264070ms] Object
+[46279062ms] Object
+[46294069ms] Object
+[46309058ms] Object
+[46324060ms] Object
+[46339062ms] Object
+[46354065ms] Object
+[46369062ms] Object
+[46384099ms] Object
+[46399067ms] Object
+[46414058ms] Object
+[46429064ms] Object
+[46444056ms] Object
+[46459057ms] Object
+[46474066ms] Object
+[46489069ms] Object
+[46504060ms] Object
+[46519064ms] Object
+[46534071ms] Object
+[46549064ms] Object
+[46564054ms] Object
+[46579056ms] Object
+[46594067ms] Object
+[46609070ms] Object
+[46624059ms] Object

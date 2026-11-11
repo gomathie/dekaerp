@@ -87,6 +87,31 @@
                                         "type": "Filament\\Schemas\\Components\\Text"
                                     },
                                     {
+                                        "type": "Filament\\Schemas\\Components\\Actions",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Actions\\Action",
+                                                "name": "addTrialDays"
+                                            },
+                                            {
+                                                "type": "Filament\\Actions\\Action",
+                                                "name": "switchToCommercial"
+                                            },
+                                            {
+                                                "type": "Filament\\Actions\\Action",
+                                                "name": "setSeatLimit"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Text"
+                                    },
+                                    {
                                         "type": "Filament\\Forms\\Components\\TextInput",
                                         "name": "administrator_email"
                                     },
@@ -428,6 +453,61 @@
                                                 "children": [
                                                     {
                                                         "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\PlatformBilling\\Filament\\Clusters\\Billing\\Resources\\DiscountCodeResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\PlatformBilling\\Filament\\Clusters\\Billing\\Resources\\InvoiceResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\PlatformBilling\\Filament\\Clusters\\Billing\\Resources\\PaymentResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\PlatformBilling\\Filament\\Clusters\\Billing\\Resources\\PlanResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\PlatformBilling\\Filament\\Clusters\\Billing\\Resources\\SubscriptionResource"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
                                                         "name": "Webkul\\PluginManager\\Filament\\Resources\\PluginResource"
                                                     }
                                                 ]
@@ -520,15 +600,6 @@
                                                 "children": [
                                                     {
                                                         "type": "Filament\\Forms\\Components\\CheckboxList",
-                                                        "name": "Webkul\\Support\\Filament\\Resources\\CompanyResource"
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                "type": "Filament\\Schemas\\Components\\Fieldset",
-                                                "children": [
-                                                    {
-                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
                                                         "name": "Webkul\\Support\\Filament\\Resources\\CountryResource"
                                                     }
                                                 ]
@@ -578,6 +649,20 @@
                     {
                         "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
                         "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                "name": "PlatformBilling_pages_tab"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
                             {
                                 "type": "Filament\\Schemas\\Components\\Section",
                                 "children": [

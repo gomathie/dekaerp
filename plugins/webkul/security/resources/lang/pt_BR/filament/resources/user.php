@@ -13,8 +13,15 @@ return [
 
     'form' => [
         'validation' => [
-            'cannot-remove-last-admin' => 'Não é possível remover a função de administrador do último usuário administrador.',
-            'first-user-must-be-admin' => 'O primeiro usuário do sistema deve receber uma função de administrador.',
+            'cannot-remove-last-admin'        => 'Não é possível remover a função de administrador do último usuário administrador.',
+            'company-invalid'                 => 'Uma ou mais empresas selecionadas são inválidas.',
+            'company-not-assigned'            => 'Você só pode atribuir usuários às empresas atribuídas à sua conta.',
+            'company-required'                => 'Selecione pelo menos uma empresa.',
+            'first-user-must-be-admin'        => 'O primeiro usuário do sistema deve receber uma função de administrador.',
+            'role-invalid'                    => 'Selecione pelo menos uma função válida.',
+            'role-not-assignable'             => 'Você só pode atribuir funções não protegidas cujas permissões você possui.',
+            'self-administration-forbidden'   => 'Você não pode alterar suas próprias funções ou atribuições de empresa.',
+            'target-administration-forbidden' => 'Somente um Super Admin pode modificar um administrador protegido.',
         ],
 
         'sections' => [

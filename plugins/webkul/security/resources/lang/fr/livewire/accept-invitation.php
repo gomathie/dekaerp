@@ -11,6 +11,8 @@ return [
 
     'heading' => 'Créer un compte',
 
+    'invitation-no-longer-authorized' => 'Cette invitation n’est plus autorisée. Demandez à un administrateur d’envoyer une nouvelle invitation.',
+
     'actions' => [
 
         'login' => [

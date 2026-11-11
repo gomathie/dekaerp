@@ -24,6 +24,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Webkul\Security\Http\Middleware\EnforceImpersonationSession;
 use Webkul\Security\Http\Middleware\RequirePasswordChange;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Filament\AvatarProviders\DefaultAvatarProvider;
@@ -115,6 +116,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                // Ends an expired or no-longer-allowed impersonation before
+                // anything runs as the tenant user, and labels the logs.
+                EnforceImpersonationSession::class,
                 // After Authenticate, so there is a user to inspect: holds
                 // anyone with must_change_password on the profile page until
                 // they replace a password an administrator set for them.

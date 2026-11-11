@@ -88,7 +88,7 @@ class Dashboard extends BaseDashboard
                             ->multiple()
                             ->searchable()
                             ->preload()
-                            ->options(fn () => User::pluck('name', 'id'))
+                            ->options(fn () => \Webkul\Support\Filament\CompanyMembers::options())
                             ->reactive(),
                         Select::make('selectedTags')
                             ->label(__('projects::filament/pages/dashboard.filters-form.tags'))

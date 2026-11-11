@@ -76,7 +76,7 @@ class TripForm
 
                         Select::make('dispatcher_id')
                             ->label(__(static::$lang.'.form.fields.dispatcher'))
-                            ->options(fn (): array => User::query()->pluck('name', 'id')->all())
+                            ->options(fn (): array => \Webkul\Support\Filament\CompanyMembers::options())
                             ->searchable()
                             ->preload(),
                     ]),

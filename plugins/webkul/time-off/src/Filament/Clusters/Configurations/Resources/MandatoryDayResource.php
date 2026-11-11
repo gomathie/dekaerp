@@ -106,7 +106,7 @@ class MandatoryDayResource extends Resource
                     ->preload()
                     ->label(__('time-off::filament/clusters/configurations/resources/mandatory-days.table.filters.company-name')),
                 SelectFilter::make('creator_id')
-                    ->relationship('creator', 'name')
+                    ->relationship('creator', 'name', fn ($query) => \Webkul\Support\Filament\CompanyMembers::scope($query))
                     ->searchable()
                     ->preload()
                     ->label(__('time-off::filament/clusters/configurations/resources/mandatory-days.table.filters.created-by')),

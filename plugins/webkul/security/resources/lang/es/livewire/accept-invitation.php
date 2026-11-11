@@ -11,6 +11,8 @@ return [
 
     'heading' => 'Crear cuenta',
 
+    'invitation-no-longer-authorized' => 'Esta invitación ya no está autorizada. Pida a un administrador que envíe una nueva invitación.',
+
     'actions' => [
 
         'login' => [

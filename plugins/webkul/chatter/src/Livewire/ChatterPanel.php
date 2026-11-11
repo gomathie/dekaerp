@@ -610,7 +610,7 @@ class ChatterPanel extends Component implements HasActions, HasForms, HasInfolis
                                         ->hidden(fn (Get $get) => $get('activity_type_id') ? ActivityType::find($get('activity_type_id'))?->category == 'meeting' : false)
                                         ->live()
                                         ->visible(fn (Get $get) => ! $get('activity_plan_id'))
-                                        ->options(User::all()->pluck('name', 'id')->toArray())
+                                        ->options(\Webkul\Support\Filament\CompanyMembers::options())
                                         ->required(),
                                 ])->columns(2),
                             RichEditor::make('body')

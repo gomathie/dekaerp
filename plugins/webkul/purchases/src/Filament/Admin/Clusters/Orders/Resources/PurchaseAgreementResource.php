@@ -148,7 +148,7 @@ class PurchaseAgreementResource extends Resource
                                     ->disabled(fn ($record): bool => $record && $record?->state != RequisitionState::DRAFT),
                                 Select::make('user_id')
                                     ->label(__('purchases::filament/admin/clusters/orders/resources/purchase-agreement.form.sections.general.fields.buyer'))
-                                    ->relationship('user', 'name')
+                                    ->relationship('user', 'name', fn ($query) => \Webkul\Support\Filament\CompanyMembers::scope($query))
                                     ->searchable()
                                     ->preload()
                                     ->disabled(fn ($record): bool => $record && $record?->state != RequisitionState::DRAFT),

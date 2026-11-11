@@ -2,12 +2,15 @@
 
 namespace Webkul\PlatformBilling;
 
+use Filament\Panel;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+use Webkul\PlatformBilling\Console\Commands\BillingReadinessReport;
 use Webkul\PlatformBilling\Console\Commands\InvoiceSubscriptions;
 use Webkul\PlatformBilling\Models\Allocation;
+use Webkul\PlatformBilling\Models\DiscountCode;
 use Webkul\PlatformBilling\Models\DocumentNumber;
 use Webkul\PlatformBilling\Models\Invoice;
 use Webkul\PlatformBilling\Models\InvoiceLine;
@@ -21,6 +24,7 @@ use Webkul\PlatformBilling\Policies\DocumentNumberPolicy;
 use Webkul\PlatformBilling\Services\CompanyReadOnlyWriteGuard;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
+use Webkul\Support\Settings\CompanyAwareSettingsRepository;
 
 /**
  * DEKA's own billing: plans, subscriptions and the invoices it issues to
@@ -46,6 +50,8 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
     {
         $package->name(static::$name)
             ->isCore()
+            ->hasTranslations()
+            ->hasViews()
             ->hasConfigFile('platform-billing')
             ->hasMigrations([
                 '2026_10_28_000006_create_platform_billing_document_numbers_table',
@@ -55,15 +61,28 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
                 '2026_11_09_000002_create_platform_billing_invoices_tables',
                 '2026_11_09_000003_create_platform_billing_payments_tables',
                 '2026_11_09_000005_create_platform_billing_overdue_extensions_table',
+                '2026_11_11_000001_require_company_for_company_list_discount_codes',
             ])
             ->hasCommands([
                 InvoiceSubscriptions::class,
+                BillingReadinessReport::class,
             ])
             ->runsMigrations();
     }
 
+    public function packageRegistered(): void
+    {
+        Panel::configureUsing(function (Panel $panel): void {
+            $panel->plugin(PlatformBillingPlugin::make());
+        });
+    }
+
     public function packageBooted(): void
     {
+        // Once per process. packageBooted runs again from the installer and
+        // the test bootstrapper, and the schema registry does not reset.
+        BillingCompanyContributions::register();
+
         // Policies are registered explicitly in this codebase (see `support` and
         // `fields`); Laravel's namespace guessing only covers App\Models.
         Gate::policy(DocumentNumber::class, DocumentNumberPolicy::class);
@@ -77,6 +96,7 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
         Gate::policy(Allocation::class, DocumentNumberPolicy::class);
         Gate::policy(Reversal::class, DocumentNumberPolicy::class);
         Gate::policy(OverdueExtension::class, DocumentNumberPolicy::class);
+        Gate::policy(DiscountCode::class, DocumentNumberPolicy::class);
 
         // A process-wide boolean would skip every application after the first.
         // Pest builds a new application per test, so the hook has to follow the
@@ -133,6 +153,10 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
             if ($model instanceof Model && $model->exists) {
                 app(CompanyReadOnlyWriteGuard::class)->assertMayWrite($model);
             }
+        });
+        // Company settings are rows written by query, not company models.
+        Event::listen(CompanyAwareSettingsRepository::COMPANY_SETTINGS_WRITING, function (int $companyId): void {
+            app(CompanyReadOnlyWriteGuard::class)->assertCompanyMayWrite($companyId);
         });
         Event::listen('eloquent.deleting: *', function (string $event, array $payload): void {
             $model = $payload[0] ?? null;

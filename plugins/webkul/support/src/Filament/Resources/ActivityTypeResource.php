@@ -87,7 +87,7 @@ class ActivityTypeResource extends Resource
                                             ->preload(),
                                         Select::make('default_user_id')
                                             ->label(__('support::filament/resources/activity-type.form.sections.activity-type-details.fields.default-user'))
-                                            ->options(fn () => User::query()->pluck('name', 'id'))
+                                            ->options(fn () => \Webkul\Support\Filament\CompanyMembers::options())
                                             ->searchable()
                                             ->preload(),
                                         Textarea::make('summary')

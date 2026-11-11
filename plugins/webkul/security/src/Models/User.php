@@ -18,11 +18,14 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Spatie\Permission\Traits\HasRoles;
 use Webkul\Employee\Models\Department;
 use Webkul\Employee\Models\Employee;
 use Webkul\Partner\Models\Partner;
 use Webkul\Security\Enums\PermissionType;
+use Webkul\Security\Services\CompanyAdminPasswordVault;
 use Webkul\Security\Services\MultiCompanyAdminService;
 use Webkul\Security\Services\SecurityAuditLogger;
 use Webkul\Security\Services\TenantRoleResolver;
@@ -180,7 +183,7 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
             return true;
         }
 
-        if ($permissionName === null || ! app(TenantRoleResolver::class)->supported()) {
+        if ($permissionName === null || $this->isPlatformOnlyAbility($permissionName) || ! app(TenantRoleResolver::class)->supported()) {
             return false;
         }
 
@@ -220,7 +223,7 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
             return true;
         }
 
-        if ($permissionName === null || ! app(TenantRoleResolver::class)->supported()) {
+        if ($permissionName === null || $this->isPlatformOnlyAbility($permissionName) || ! app(TenantRoleResolver::class)->supported()) {
             return false;
         }
 
@@ -251,6 +254,27 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
             ->sort()
             ->values()
             ->all();
+    }
+
+    /**
+     * Abilities only a platform (global) role may hold, never a tenant role.
+     *
+     * A tenant role granting one would let a client's administrator see
+     * across companies. It also broke every request once the
+     * `bypass_company_scope` row existed (2026-11-10): the tenant lookup
+     * reads the active companies, which ask this same ability first, so
+     * the two called each other until the process crashed. Answer these
+     * from the global store alone. Test: SecurityFeature
+     * PlatformOnlyAbilityTest.
+     */
+    public const PLATFORM_ONLY_ABILITIES = [
+        'bypass_company_scope',
+        'bypass_ownership_scope',
+    ];
+
+    protected function isPlatformOnlyAbility(string $permissionName): bool
+    {
+        return in_array($permissionName, self::PLATFORM_ONLY_ABILITIES, true);
     }
 
     protected function normalizePermissionName($permission): ?string
@@ -309,9 +333,39 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
         return $this->belongsTo(Company::class, 'default_company_id');
     }
 
+    /**
+     * The password as typed, held only until this save finishes, so a
+     * company administrator's readable copy (CompanyAdminPasswordVault) follows
+     * every change: profile, reset link, invitation, staff reset. Not an
+     * attribute, so it is never serialized, cast or written to `users`.
+     */
+    protected ?string $pendingPlainPassword = null;
+
+    public function setAttribute($key, $value)
+    {
+        if ($key === 'password' && is_string($value) && $value !== '' && ! Hash::isHashed($value)) {
+            $this->pendingPlainPassword = $value;
+        }
+
+        return parent::setAttribute($key, $value);
+    }
+
     protected static function boot()
     {
         parent::boot();
+
+        static::saved(function (self $user): void {
+            if ($user->pendingPlainPassword === null) {
+                return;
+            }
+
+            $plain = $user->pendingPlainPassword;
+            $user->pendingPlainPassword = null;
+
+            if (Schema::hasTable('security_user_password_vault')) {
+                app(CompanyAdminPasswordVault::class)->capture($user, $plain);
+            }
+        });
 
         static::creating(function ($user) {
             $user->creator_id ??= Auth::id();

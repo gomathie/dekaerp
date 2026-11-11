@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Webkul\Chatter\Services\ChatterCleanupService;
+use Webkul\Logistics\Filament\PartnerContributions;
 use Webkul\Logistics\Listeners\CreateShipmentFromOrder;
 use Webkul\Logistics\Models\Expense;
 use Webkul\Logistics\Models\Shipment;
@@ -93,6 +94,7 @@ class LogisticsServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         $this->registerStopLinkRateLimiter();
+        PartnerContributions::register();
     }
 
     /**

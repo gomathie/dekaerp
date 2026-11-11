@@ -19,9 +19,20 @@ return [
 
         'actions' => [
             'copy-invitation-link' => [
-                'label' => 'Copiar enlace de invitación',
+                'label'      => 'Copiar enlace de invitación',
                 'invitation' => 'Invitación pendiente',
-                'link' => 'Enlace de invitación',
+                'link'       => 'Enlace de invitación',
+            ],
+            'show-password' => [
+                'label'             => 'Mostrar contraseña',
+                'modal-heading'     => 'Mostrar la contraseña de :email',
+                'modal-description' => 'Introduzca su propia contraseña para continuar. Esta consulta queda registrada en el registro de auditoría.',
+                'submit'            => 'Mostrar contraseña',
+                'shown'             => 'Contraseña de :email',
+
+                'form' => [
+                    'password' => 'Su contraseña',
+                ],
             ],
             'set-password' => [
                 'label'             => 'Establecer contraseña',

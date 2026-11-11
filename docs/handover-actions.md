@@ -281,6 +281,13 @@ Background: `docs/company-admin-role-plan.md` sections 4f-4h.
 
 ## 0b. Stop POD link tokens being retained in edge logs — RESOLVED 2026-10-20
 
+*Correction 2026-11-10.* The resolution below is not what the current tree
+does. `StopLinkService::issue()` returns
+`route('logistics.stop-link.show', ['token' => $token])`, and
+`routes/web.php` still registers `GET` and `POST /logistics/pod/{token}`.
+There is no landing page and no exchange route. The token is still in the
+request path. Section 9 stays pending for the fragment work.
+
 **Resolved in code by WP-5b (fragment-based POD). No production configuration
 needed.**
 

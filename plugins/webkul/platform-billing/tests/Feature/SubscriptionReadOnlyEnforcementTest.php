@@ -5,6 +5,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Livewire\Livewire;
+use Webkul\Account\Settings\TaxesSettings;
 use Webkul\PlatformBilling\Models\Plan;
 use Webkul\PlatformBilling\Models\Price;
 use Webkul\PlatformBilling\Models\Subscription;
@@ -13,6 +14,7 @@ use Webkul\PlatformBilling\Services\SubscriptionDrafts;
 use Webkul\PlatformBilling\Services\SubscriptionLifecycle;
 use Webkul\Project\Models\Task;
 use Webkul\Project\Models\TaskStage;
+use Webkul\Security\Models\Role;
 use Webkul\Security\Models\User;
 use Webkul\Support\Filament\Resources\CalendarResource\Pages\ListCalendars;
 use Webkul\Support\Models\Calendar;
@@ -30,8 +32,8 @@ class WriteCalendarForCompanyJob implements ShouldQueue
     {
         $companyContext->runFor($this->companyId, function (): void {
             Calendar::query()->create([
-                'name' => 'queued read-only write',
-                'timezone' => 'UTC',
+                'name'       => 'queued read-only write',
+                'timezone'   => 'UTC',
                 'company_id' => $this->companyId,
             ]);
         });
@@ -48,15 +50,15 @@ function makeCompanyWithActiveSubscription(): array
     $company = Company::factory()->create();
     $staff = User::query()->where('email', 'admin@example.com')->firstOrFail();
     $plan = Plan::query()->create([
-        'name' => 'Read only test plan',
-        'code' => 'readonly-'.fake()->unique()->numerify('######'),
+        'name'             => 'Read only test plan',
+        'code'             => 'readonly-'.fake()->unique()->numerify('######'),
         'included_plugins' => [],
     ]);
     $price = Price::query()->create([
-        'plan_id' => $plan->getKey(),
-        'currency' => 'USD',
+        'plan_id'         => $plan->getKey(),
+        'currency'        => 'USD',
         'interval_months' => 1,
-        'amount_minor' => 1000,
+        'amount_minor'    => 1000,
     ]);
     $draft = app(SubscriptionDrafts::class)->create(
         $staff,
@@ -93,7 +95,7 @@ function makeCompanyCalendar(Company $company, string $name = 'Existing calendar
 {
     return Calendar::factory()->create([
         'company_id' => $company->getKey(),
-        'name' => $name,
+        'name'       => $name,
     ]);
 }
 
@@ -116,8 +118,8 @@ it('refuses a read-only company user from creating a tenant model with a recover
     authenticateForReadOnlyCompany($company);
 
     expectReadOnlyRefusal(fn () => Calendar::query()->create([
-        'name' => 'Forbidden calendar',
-        'timezone' => 'UTC',
+        'name'       => 'Forbidden calendar',
+        'timezone'   => 'UTC',
         'company_id' => $company->getKey(),
     ]));
 });
@@ -147,9 +149,9 @@ it('refuses a read-only company Filament create action', function () {
 
     Livewire::test(ListCalendars::class)
         ->callAction(CreateAction::class, [
-            'name' => 'Action calendar',
-            'timezone' => 'UTC',
-            'company_id' => $company->getKey(),
+            'name'          => 'Action calendar',
+            'timezone'      => 'UTC',
+            'company_id'    => $company->getKey(),
             'hours_per_day' => 8,
         ])
         ->assertNotified(CompanyReadOnlyWriteGuard::MESSAGE);
@@ -168,8 +170,8 @@ it('lets platform billing write its own subscription and invoice records for a r
     expect($subscription->refresh()->cancel_at_period_end)->toBeTrue();
 
     expectReadOnlyRefusal(fn () => Calendar::query()->create([
-        'name' => 'Still refused',
-        'timezone' => 'UTC',
+        'name'       => 'Still refused',
+        'timezone'   => 'UTC',
         'company_id' => $company->getKey(),
     ]));
 });
@@ -197,8 +199,8 @@ it('refuses an API write for a read-only company and keeps reads available', fun
         ->assertJsonPath('data.id', $existingTask->getKey());
 
     $this->postJson(route('admin.api.v1.projects.tasks.store'), [
-        'title' => 'API write refused',
-        'state' => 'in_progress',
+        'title'    => 'API write refused',
+        'state'    => 'in_progress',
         'stage_id' => $stage->getKey(),
     ])
         ->assertUnprocessable()
@@ -210,7 +212,7 @@ it('allows active companies and installation staff to write tenant models', func
     authenticateForReadOnlyCompany($company);
 
     $activeCalendar = Calendar::factory()->create([
-        'name' => 'Active company calendar',
+        'name'       => 'Active company calendar',
         'company_id' => $company->getKey(),
     ]);
     expect($activeCalendar->exists)->toBeTrue();
@@ -221,10 +223,55 @@ it('allows active companies and installation staff to write tenant models', func
     app()->forgetInstance(CompanyContext::class);
 
     $staffCalendar = Calendar::factory()->create([
-        'name' => 'Installation staff recovery calendar',
+        'name'       => 'Installation staff recovery calendar',
         'company_id' => $company->getKey(),
     ]);
     expect($staffCalendar->exists)->toBeTrue();
+});
+
+/**
+ * A Multi-Company Admin used to pass in every company. They pass now only in
+ * companies assigned to them (user, 2026-11-10), as every other rule limits
+ * them to their assignment.
+ */
+it('lets a multi-company admin write only into the read-only companies assigned to them', function () {
+    [$assigned, $staff, $assignedSubscription] = makeCompanyWithActiveSubscription();
+    [$unassigned, , $unassignedSubscription] = makeCompanyWithActiveSubscription();
+    markCompanyReadOnly($assignedSubscription, $staff);
+    markCompanyReadOnly($unassignedSubscription, $staff);
+
+    $admin = authenticateForReadOnlyCompany($assigned);
+    $admin->assignRole(Role::query()->whereRaw('LOWER(name) = ?', [mb_strtolower(Role::MULTI_COMPANY_ADMIN)])->firstOrFail());
+    $admin->unsetRelation('roles');
+    app()->forgetInstance(CompanyContext::class);
+
+    expect($admin->isMultiCompanyAdmin())->toBeTrue();
+
+    $calendar = Calendar::factory()->create([
+        'name'       => 'Assigned recovery calendar',
+        'company_id' => $assigned->getKey(),
+    ]);
+    expect($calendar->exists)->toBeTrue();
+
+    expectReadOnlyRefusal(fn () => Calendar::query()->create([
+        'name'       => 'Unassigned calendar',
+        'timezone'   => 'UTC',
+        'company_id' => $unassigned->getKey(),
+    ]));
+});
+
+/**
+ * Company settings are rows written by query, so no model event reached the
+ * guard and a locked company could still save them (2026-11-10).
+ */
+it('refuses a read-only company saving its own company settings', function () {
+    TestBootstrapHelper::ensurePluginInstalled('accounts');
+
+    [$company, $staff, $subscription] = makeCompanyWithActiveSubscription();
+    markCompanyReadOnly($subscription, $staff);
+    authenticateForReadOnlyCompany($company);
+
+    expectReadOnlyRefusal(fn () => app(TaxesSettings::class)->save());
 });
 
 it('refuses expired and cancelled subscriptions while leaving active subscriptions writable', function () {
@@ -234,7 +281,7 @@ it('refuses expired and cancelled subscriptions while leaving active subscriptio
     $expired->forceFill(['status' => 'expired'])->saveQuietly();
     $cancelled->forceFill([
         'cancel_at_period_end' => true,
-        'period_end_at' => new DateTimeImmutable('2026-01-02T00:00:00Z'),
+        'period_end_at'        => new DateTimeImmutable('2026-01-02T00:00:00Z'),
     ])->saveQuietly();
 
     expect(app(SubscriptionLifecycle::class)->isReadOnly($expiredCompany))->toBeTrue()

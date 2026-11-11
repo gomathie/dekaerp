@@ -21,4 +21,18 @@ return [
         'help'          => 'Help',
         'barcode'       => 'Barcode',
     ],
+
+    'navigation-sections' => [
+        'sales-purchases' => 'Sales & Purchases',
+        'finance'         => 'Finance',
+        'operations'      => 'Operations',
+        'projects'        => 'Projects',
+        'human-resources' => 'HR',
+        'administration'  => 'Administration',
+    ],
+
+    'mobile-menu' => [
+        'menu'    => 'Menu',
+        'modules' => 'Modules',
+    ],
 ];

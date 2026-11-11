@@ -19,9 +19,20 @@ return [
 
         'actions' => [
             'copy-invitation-link' => [
-                'label' => 'نسخ رابط الدعوة',
+                'label'      => 'نسخ رابط الدعوة',
                 'invitation' => 'دعوة معلقة',
-                'link' => 'رابط الدعوة',
+                'link'       => 'رابط الدعوة',
+            ],
+            'show-password' => [
+                'label'             => 'إظهار كلمة المرور',
+                'modal-heading'     => 'إظهار كلمة مرور :email',
+                'modal-description' => 'أدخل كلمة المرور الخاصة بك للمتابعة. يُسجَّل هذا العرض في سجل التدقيق.',
+                'submit'            => 'إظهار كلمة المرور',
+                'shown'             => 'كلمة مرور :email',
+
+                'form' => [
+                    'password' => 'كلمة المرور الخاصة بك',
+                ],
             ],
             'set-password' => [
                 'label'             => 'تعيين كلمة المرور',

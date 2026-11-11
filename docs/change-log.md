@@ -6,6 +6,237 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-11 (agent review follow-ups: vault, phone search, journal balance, work orders, translations)
+
+From `docs/agent-review-2026-11-11.md`, approved by the user.
+
+- **Readable passwords outlived the role.**
+  - Fix: `CompanyAdminPasswordVault::reveal()` refuses anyone who is no
+    longer a Company Admin, and deletes their copy. `TenantRoleAssigner::sync()`
+    deletes the copy when it removes the role.
+  - Test: `CompanyAdminPasswordVaultTest`, "stops showing and deletes the
+    password once the person is no longer a company administrator". 46
+    passed, 134 assertions, on `aureuserp_testing_claude_backfill`.
+- **Phone search crowding the top bar.**
+  - Fix: the focused search is capped at `min(11rem, 40vw)`, and the company
+    name hides while searching (topbar CSS).
+  - Not browser-tested.
+- **Unbalanced manual journal entries could be posted.**
+  - Fix: upstream `99fd7c7e8` ported alone. `MoveWorkflow::assertPostable()`
+    refuses an `ENTRY` whose debits minus credits is not zero at the
+    currency's rounding. Invoices and bills are not affected.
+  - The message is translated in five languages, from upstream's text.
+  - Test: `JournalEntryTest`, "refuses to post a manual journal entry whose
+    debits and credits differ". 11 passed with `MoveLifecycleTest`, on
+    `aureuserp_testing_claude_accounts`.
+  - Rollback: remove the block.
+- **Zero-duration work order crash.**
+  - Fix: upstream `38268a2b8` ported. Decimals arrive as strings and `"0.00"`
+    is truthy, so they are cast before three checks in `WorkOrder`.
+  - Tests: upstream's three cases, in `WorkOrderTest`.
+- **Translations.**
+  - Support's Help page guide block was added in fr, es, pt_BR and ar, and
+    `empty` was moved to the English position. French also now uses `:app`
+    instead of a hard-coded "AureusERP".
+  - Removed French-only keys that no code reads: products
+    `exceptions/product-in-use.php` and `variant-in-use.php`; the attribute
+    `more` and `partial` keys; the currency bulk-delete `error` keys; the
+    employee resume tab; the resume attachment keys. The resume `type`/`name`
+    order was matched to English.
+- **Not changed:**
+  - `ResourceStructureSnapshotTest` fixtures, already re-recorded from the
+    full SupportFeature suite and confirmed on a clean database.
+  - Upstream's reversal swap (`10776eb0e`), which needs a line-by-line read
+    first.
+  - `CompanyMembers` listing deactivated users (low).
+- **Deploy note:** the 2026-11-11 settings migration must run before this
+  code serves traffic. `UserSettings` is read on every panel request, so an
+  unmigrated database answers 500 (`MissingSettings`).
+  *Corrected the same day:* the Laravel Cloud Deploy commands were empty, and
+  `migrate` was commented out, so nothing migrated on deploy. The user is
+  setting them to `php artisan migrate --force` followed by
+  `php artisan erp:sync-permissions`. Deploy commands run before a release
+  goes live. A local database needs `php artisan migrate`.
+
+## 2026-11-11 (existing companies' administrators become Company Admin)
+
+- **Why:** the user asked for it. TRACE365, APEX and Nestem each have one
+  administrator, given "Admin2" by hand, and none holds "Company Admin". So
+  the company page listed nobody, and Show password could not apply to them.
+- **How:** security migration
+  `2026_11_11_000001_make_existing_business_admins_company_admins`. A company
+  qualifies only when it has no Company Admin yet. Its one active member who
+  holds Admin2 there and no platform role then gets Company Admin, added
+  beside their existing roles. A company with two or more candidates is
+  skipped and logged. It is idempotent, and rollback leaves the rows (they
+  cannot be told apart from rows the form creates later).
+- **Unchanged:** passwords. Show password works for these administrators only
+  after a password is set once through Set password.
+- **Expected in production:** TRACE365, APEX and Nestem each get their one
+  member as Company Admin. My Company, HITRACE and Naviafri have no
+  candidate.
+- **Test:** security `SaaSAdministration/BusinessAdminBackfillMigrationTest`.
+
+## 2026-11-11 (company administrator never created: wrong pages on the company routes)
+
+- **Why:** the user entered an administrator in the Administrator section on
+  the edit pages for HITRACE (5) and Naviafri (6), and nobody could sign in.
+  Production has no user and no invitation for either company, and no
+  invitation at all. Root cause: Support's `CompanyResource` and Security's
+  subclass were both discovered on the `companies` slug, and Support's pages
+  won `/admin/companies/create` and `/{record}/edit` (`route:list` showed the
+  `Webkul\Support\...\Pages\EditCompany` action). The section is drawn by the
+  shared form (through `CompanySchemaRegistry`), but only Security's pages act
+  on it, in `afterSave`/`afterCreate`. Its fields are `dehydrated(false)`, so
+  the email and password were discarded without a message. Company onboarding
+  on create was dead for the same reason. The page tests mounted Security's
+  classes directly, so they passed.
+- **How:** Support `CompanyResource::$isDiscovered = false` and Security's
+  subclass `$isDiscovered = true`, each with a why comment.
+- **Benefit:** a company created with an administrator email gets that
+  administrator, or the company's own address when none is given. Saving the
+  section on edit creates or invites the administrator.
+- **Trade-off / risk:** Support's resource is no longer registered on its
+  own. Security is a core plugin, so this matters only if Security is ever
+  removed. URLs and route names are unchanged.
+- **Visible effects of serving Security's pages** (found by the suite run,
+  2026-11-11):
+  - Creating a company now **requires an administrator**: the company's own
+    email, or one typed in the Administrator section. Otherwise the create is
+    refused and rolled back.
+  - A Multi-Company Admin opening an unassigned company gets "not found"
+    instead of "forbidden".
+  - The page checks `*_security_company` permissions. Production Admin, Admin2,
+    Company Admin and Multi-Company Admin already hold view, create and update
+    (checked read-only). Admin2 lacks `delete_security_company`, so tenant
+    administrators can no longer delete a company.
+  - Tests updated to mount Security's pages:
+    - platform-billing `AdministrationScreensTest` (20 passed, 202
+      assertions, together with plugin-manager `CompanyModulesTest`, all but
+      one `CompanyModulesTest` case, which the next run fixed);
+    - plugin-manager `CompanyModulesTest` (9 passed, 45 assertions);
+    - support `ResourceGlobalSearchSmokeTest` (3 passed).
+
+    All ran on `aureuserp_testing_claude_backfill` or `_vault`. The smoke
+    test now covers Security's registered company resource, because Support
+    registers none with its own search details.
+- **Business role (user decision, same day: "new administrators should get
+  the business role"):**
+  - New setting `general.company_admin_business_role_id`, chosen on Settings >
+    Users. Its settings migration preselects "Admin2" where it exists.
+  - `CompanyAdministratorInviter::administratorRoleIds()` returns "Company
+    Admin" plus that role. Both the invitation and
+    `CompanyAdministratorAccount` use it.
+  - A system, super-admin or Multi-Company Admin role, or one holding
+    `bypass_company_scope` or `bypass_ownership_scope`, is never handed out.
+    The settings field lists only eligible roles.
+  - `default_role_id` is deliberately not reused: in production it is "Admin",
+    the platform role.
+  - Existing administrators are unchanged.
+  - Test: `CompanyAdministratorBusinessRoleTest`.
+- **Verification:** route fix: 64 passed, 208 assertions, on
+  `aureuserp_testing_claude_vault` (`CompanyRouteTest`, the password test and
+  the onboarding test). Business role: 76 passed, 240 assertions, same
+  database (`CompanyAdministratorBusinessRoleTest`, the invitation, password,
+  route and vault tests).
+- **Rollback:** remove the two `$isDiscovered` lines.
+- **Test:** security `Authorization/CompanyRouteTest.php`.
+
+## 2026-11-10 (records of finished Logistics work)
+
+- **Why:** the customer-page tab was missing from the release notes, and the 2026-10-20 fragment proof-of-delivery notes say the token left the request path. The current `StopLinkService::issue()` still returns `route('logistics.stop-link.show', ['token' => $token])`.
+- **How:** `CHANGELOG.md` v1.7.0 now names the customer shipments tab and describes the delivery link as a path URL. `docs/handover-actions.md` §0b and the WP-5b status row carry a dated correction. The fragment routes were not added.
+- **Benefit:** the release notes match the customer page that shipped, and the next reader is not told the token is already out of access logs.
+- **Trade-off / risk:** the fragment design remains the open security item in handover section 9. Production rollout of that design has not started.
+- **Verification:** read `StopLinkService::issue()`, `routes/web.php`, and `StopLinkController` (show and store only). No new test run.
+- **Rollback:** restore the previous changelog sentence and remove the dated corrections.
+
+## 2026-11-10 (Logistics WP-9b, customer page)
+
+- **Why:** D11 asks for a customer's shipments and charges on the customer page. The 2026-09-30 deferral found no Partners extension point. `PartnerSchemaRegistry` now has infolist slots and no relation-manager slot.
+- **How:** `PartnerContributions` adds one read-only tab on `tabs.append`, registered once. `CustomerPage` requires `view_any_logistics_shipment` and `LogisticsAccess::enabledFor()` for the company being read. Charge amounts also require `view_financials_logistics_shipment`. The query drops only `CompanyScope` and filters `customer_id` plus that company. A shared contact uses `current_company_id()` only. Details are in the WP-9b handoff.
+- **Benefit:** the customer page shows that customer's recent shipments and open charges, and a shared contact cannot show another tenant's jobs. A company without Logistics, or a user without the view permission, sees no tab.
+- **Trade-off / risk:** eight rows and links, not a relation manager. The tab is contributed to every partner infolist that uses the base schema; the gate hides it. The `tenant-s3` POD coverage gap, the unused Shield `getEntitiesPermissions()` method, and PILOT are unchanged. No new navigation item.
+- **Verification:** LogisticsFeature 201 passed (833 assertions), 5689.51s, exit 0, on `aureuserp_testing_logistics`. Focused `CustomerPageTest` 4 passed (20 assertions), 810.61s, exit 0, same database. `translations:check --plugin=logistics` 4 passed. Pint passed. No browser smoke. Partners was not edited.
+- **Test:** `plugins/webkul/logistics/tests/Feature/Customers/CustomerPageTest.php`.
+- **Rollback:** remove the `PartnerContributions` registration and delete `CustomerPage`, the contribution class, the test and `filament/partner.php`. No migration.
+
+## 2026-11-10 (SAAS-12 and SAAS-13 screens)
+
+- **Why:** the billing services had no screens. A Super Admin could not post a plan, a subscription, an invoice view, a payment or a discount without a service call, and a Company Admin could not see their own bill or grant the one 10-day extension.
+- **How:** Filament resources in the Billing cluster call `PlanCatalog`, `SubscriptionDrafts`, `SubscriptionLifecycle`, `PlatformPayments`, `DiscountCodeService` and `OverdueExtensions`. `CompanyAccount` is outside the cluster and reads one company. The company form gains trial days, the commercial switch and the seat limit. Details are in the SAAS-12/13 handoff.
+- **Benefit:** platform money and the company bill are operable from the admin panel, and each refusal is still the service's own message.
+- **Trade-off / risk:** the screens can post real money on production, which has commercial companies and no subscriptions. `setLimit()` still does not check its caller. A deactivated price interval cannot be replaced. `schedulePrice()` still says USD. Support's structure snapshot will drift and must not be regenerated from a filtered run.
+- **Verification:** PlatformBillingFeature 116 passed (620 assertions), 1832.94s, exit 0, on `aureuserp_testing_saas11`. `CompanyModulesTest` 9 passed (45 assertions), 277.94s, same database. `translations:check --plugin=platform-billing` 4 passed. Pint passed on the screen paths. No browser smoke.
+- **Test:** `AdministrationScreensTest.php`, `BillingScreensTest.php`.
+- **Rollback:** remove the cluster, the two pages, the company-form section and `PlanCatalog`. No migration.
+
+## 2026-11-10 (mobile view P1-P6)
+
+- **Why:** customers report the app is unusable on phones. Deep audit in production (docs/mobile-view-plan.md, F1-F7): iPhone zooms on every 14px field; navigation was two unlabelled 24px icons; the top bar clipped the avatar; tabs and the status bar clipped.
+- **How:** phone-only CSS and markup in the admin top-bar override; a labelled Menu button and a "this module" section in the module drawer; the company name truncates. Desktop from 768px up is unchanged.
+- **Benefit:** fields no longer zoom, one obvious menu reaches every page and module, the top bar fits.
+- **Trade-off / risk:** the top-bar template is a local Filament override; re-diff it on every Filament upgrade. Rendered layout is checked by eye on phones, not by tests.
+- **Verification:** `MobileNavigationTest` 1 passed (7 assertions) on `aureuserp_testing_claude_vault`; in-browser preview on production at 390 × 844 (no server change). A real iPhone and Android check remains after deploy.
+- **Rollback:** revert the two Blade files and the `mobile-menu` keys.
+
+## 2026-11-10 (readable company administrator passwords; administrator login investigation)
+
+- **Why:** user requirement: a Super Admin must be able to see a company administrator's password. The user chose encrypted, viewable storage over show-once and reset-only after the risk was explained (anyone with APP_KEY and the database can read every stored password).
+- **How:** `security_user_password_vault` (security migration `2026_11_10_000003`), one row per Company Admin, value encrypted with `Crypt` (APP_KEY), on its own table so it never travels with a user record. `User::setAttribute` notes the typed password and the `saved` hook hands it to `CompanyAdminPasswordVault::capture()`, which stores it for a Company Admin and removes any copy for anyone else; `CompanyAdministratorAccount` stores it after assigning the role on create. "Show password" on the company's Users and logins: active Super Admin only, re-enter own password, audited as `security.user.password_revealed` without the value. A copy unreadable after an APP_KEY rotation answers "No password is stored", not a 500.
+- **Login investigation (production, read-only):** no user has ever been created for HITRACE (5) or Naviafri (6); there are no invitations at all. The "Company Admin" role holds 7 permissions (users and company view only), by design of `CompanyAdminRoleProvisioner` ("assign business roles alongside"): an administrator created from the company form signs in to an almost empty panel. The three working tenant administrators hold "Admin2" (1,038 permissions). See the session report for the decision needed.
+- **Trade-off / risk:** readable passwords are a deliberate weakening; it is limited to Company Admins and Super Admin readers. Rotating APP_KEY makes stored copies unreadable until the password is set again.
+- **Verification:** `CompanyAdminPasswordVaultTest` (see the run recorded in the handoff).
+- **Rollback:** roll back the migration (drops every stored copy), remove the `setAttribute` override and `saved` hook, the action and the service.
+
+## 2026-11-10 (company isolation, missing permissions, user pickers)
+
+- **Why (found in production, read-only checks):**
+  1. The Sales, Purchases and Invoices dashboards (added 2026-11-07) answered 403 for the Super Admin. Their page and widget permission rows were never created in production: Shield permissions were generated only at plugin install, and the Admin role is a plain role (`filament-shield.super_admin.enabled = false`).
+  2. `bypass_company_scope` was never created outside the test helper, so the Super Admin was treated as an ordinary member: company 3 was missing from the switcher and "All companies" never appeared.
+  3. Ten demo contacts and ten demo employees had no company and appeared in every company.
+  4. People pickers read every user on the installation, e.g. the Project dashboard's Assignees filter listed other tenants' users.
+- **How:**
+  1. `erp:sync-permissions` (plugin-manager) runs `shield:generate --all --option=permissions --panel=admin` and adds any missing permission to the Admin role. It only adds. **Add it to the Laravel Cloud deploy commands after `migrate`.**
+  2. Security migration `2026_11_10_000002` creates `bypass_company_scope` and grants it to the Super Admin role names.
+  3. Partners migration `2026_11_10_000001`: each shared contact goes to the single company whose documents use it, otherwise the default company; a contact used by two companies stays shared and is logged. In production: Paul Williams → TRACE365 (its sales order and invoice), the other nine → My Company. Employees migration `2026_11_10_000003`: shared employees take their contact's company.
+  4. `Support\Filament\CompanyMembers` (`scope()`, `options()`) lists members of the active companies; 35 pickers in 20 plugins use it, and `ListsCompanyMembers` delegates to it (now active, not allowed, companies).
+  5. Found while testing 2: once `bypass_company_scope` existed, `User::hasPermissionTo()` asked the tenant-role resolver for it, the resolver read the active companies, and those asked the same ability first, so every ordinary user's request recursed until PHP crashed (segfault in `CompanyMembersTest`). `User::PLATFORM_ONLY_ABILITIES` now answers the two bypass abilities from the global store only, which also stops a tenant role granting cross-company visibility. Test: security `PlatformOnlyAbilityTest`. **The security migration must not ship without this change.**
+  6. User decisions the same day: `EmployeeSeeder` stamps demo employees (and, through the model hook, their contacts) with the first company, so a fresh installation does not bring shared demo people back. The inventory operation API removes dropped moves one model at a time (`OperationController::syncMoves`), so a payload that only removes moves now passes the read-only guard and Move's own line-removing hook runs. Test: inventories `ReceiptTest` "removes a dropped move through the model so its delete events run". The Super Admin default stays one selected company; a combined Finance dashboard follows after deploy.
+- **Benefit:** the Super Admin sees every dashboard and every company and can choose "All companies"; selecting a company shows only its records and people.
+- **Trade-off / risk:** both data migrations are not reversible (which rows were shared is not recorded). Pickers no longer offer users outside the active companies, including a former member who created old records. The Admin role now holds `bypass_company_scope` in tests too, so suites using `admin@example.com` run with it.
+- **Superseded:** AGENTS.md "Existing contacts are never reassigned… example employees stay shared" (2026-10-29).
+- **Verification:** see the handoff entry below once the suites have run.
+- **Rollback:** remove the deploy command; revert the security migration (`down` removes the role grants only); the contact and employee assignments must be undone by hand.
+
+## 2026-11-10 (module sidebar section headings)
+
+- **Why:** user request. Group the 18 modules in the left module sidebar (Sales & Purchases, Finance, Operations, Projects, HR, Administration) without moving any module away from where customers find it today.
+- **How:** `Support\Enums\NavigationGroup::section()` names each module's section. Case order is the sidebar order, so Invoice moved next to Purchase and Barcode into Operations. The module sidebar in `resources/views/vendor/filament-panels/livewire/topbar.blade.php` prints a heading when the section changes. In collapsed (icon-only) mode the heading shrinks to a divider. Labels are in `lang/{en,fr,es,pt_BR,ar}/admin.php` under `navigation-sections`. No plugin file and no top-bar entry changed.
+- **Benefit:** a shorter visual scan; every module keeps its name, icon, link and pages.
+- **Trade-off / risk:** that template is a local override of Filament's top bar, so re-diff it on every Filament upgrade (already true). A new module case must be given a section and placed beside its siblings, which the test enforces.
+- **Verification:** `support/tests/Feature/Filament/ModuleSidebarSectionsTest.php`, 20 passed (101 assertions), on `aureuserp_testing_claude`. Pint passed. A visual preview was made by applying the same markup and CSS in the browser to the production page (nothing on the server changed). The rendered template itself was not viewed: the local server takes about 135 s per page.
+- **Rollback:** revert the enum order and `section()`, the heading block and CSS in the template, and the `navigation-sections` keys.
+
+## 2026-11-10 (read-only gaps, readiness report, security translations)
+
+- **Why:** a Multi-Company Admin passed the read-only guard in every company. Company settings bypassed the guard because they are written by query. The security translations lacked eight keys in four locales, which failed `translations:check` and showed raw keys to fr/es/pt_BR/ar users.
+- **How:** see "SAAS-09/14 handoff" in the SaaS plan. The guard rule is now `assertCompanyMayWrite()`; support fires `support.company-settings.writing`; `platform-billing:readiness-report` replaces shadow mode. The translations were added to `user.php` and `accept-invitation.php`.
+- **Benefit:** a locked company cannot change its settings, staff stay within their assignment, and the release has a check to run before billing goes live.
+- **Trade-off / risk:** an inventory operation API update that only removes moves is still unguarded. It is listed in the handoff.
+- **Verification:** `SubscriptionReadOnlyEnforcementTest` 11 passed (27 assertions), `BillingReadinessReportTest` 1 passed (6 assertions), `translations:check --plugin=security` all PASS, on `aureuserp_testing_claude`. Pint passed.
+- **Rollback:** see the handoff.
+
+## 2026-11-10 (tenant impersonation)
+
+- **Why:** SAAS-15 open item, D-SAAS-14. Support staff needed to see a tenant user's screens without asking for that user's password. User decisions: tenant targets only, Super Admins by default, the administrator's password plus a reason to start, 60 minutes, nothing extra blocked.
+- **How:** all rules are in `Security\Services\TenantImpersonation`. A Multi-Company Admin needs the `tenant.impersonate` grant (migration `2026_11_10_000001`), which only a Super Admin gives or removes from the user page. The grant is read with `holdsGrant()`, because the Multi-Company Admin `Gate::before` denies every "impersonate" ability. The **Impersonate** action is on the company's Users and logins list. `EnforceImpersonationSession` sits after `Authenticate` in the admin panel. It ends a session that has expired or lost its grant, account or membership. While a session is active, every Eloquent write is logged with the administrator's id, a banner offers **End** (`POST security.impersonation.end`), and logout ends the session. Each switch migrates the session id and clears `password_hash_web`. `RequirePasswordChange` skips while impersonating.
+- **Benefit:** support works as the user, with an audit trail of start, end and every write.
+- **Trade-off / risk:** nothing is blocked during a session (user decision). An impersonating administrator can change the target's email or password. Those writes are logged but not prevented.
+- **Verification:** `TenantImpersonationTest`, 17 passed (74 assertions), on `aureuserp_testing_claude`. Pint passed. SupportFeature: 201 passed and 2 failed. Both failures are `ResourceStructureSnapshotTest` drift from the billing company-form actions committed after fixture `33dee850c`, not from this change. The SecurityFeature result is in the handoff.
+- **Test:** `security/tests/Feature/SaaSAdministration/TenantImpersonationTest.php`.
+- **Rollback:** remove the middleware from `AdminPanelProvider`, the hooks in `SecurityServiceProvider`, the two record actions and the route, then roll back the migration.
+
 ## 2026-11-10 (overdue extensions do not stack across episodes)
 
 - **Why:** found in review of `1fecd51c2`. `SubscriptionLifecycle::overdueReadOnlyAt()` applied every extension on every invoice of the subscription. An extension on an invoice paid long ago lengthened each later grace, which contradicts D-SAAS-04's one non-stackable extension per overdue invoice.
