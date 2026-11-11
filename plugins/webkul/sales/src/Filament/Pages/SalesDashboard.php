@@ -11,6 +11,8 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Widgets\Widget;
 use Illuminate\Contracts\Support\Htmlable;
+use Webkul\Invoice\Filament\Pages\Overview;
+use Webkul\PluginManager\Support\PluginEntitlement;
 use Webkul\Product\Models\Category;
 use Webkul\Sale\Filament\Widgets\MonthlySalesChart;
 use Webkul\Sale\Filament\Widgets\RevenueByCategoryChart;
@@ -22,7 +24,6 @@ use Webkul\Sale\Filament\Widgets\TopQuotationsTable;
 use Webkul\Sale\Filament\Widgets\TopSalesOrdersTable;
 use Webkul\Sale\Models\Product;
 use Webkul\Sale\Models\Team;
-use Webkul\PluginManager\Support\PluginEntitlement;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 use Webkul\Support\Filament\Concerns\ListsCompanyMembers;
@@ -51,12 +52,28 @@ class SalesDashboard extends BaseDashboard
     /**
      * Module switch (SAAS-05) plus the page permission. This replaces
      * HasPageShield::canAccess(), so the permission half must be checked here
-     * (ChecksPagePermission explains why).
+     * (ChecksPagePermission explains why). Also decides the Sales section of
+     * the combined Overview.
      */
     public static function canAccess(): bool
     {
         return PluginEntitlement::enabledForCurrent('sales')
             && static::hasPagePermission();
+    }
+
+    /**
+     * Replaced in the menu by the combined Overview (user, 2026-11-11). The
+     * page stays so old links work: it opens the Overview with the Sales
+     * section chosen.
+     */
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
+    public function mount(): void
+    {
+        $this->redirect(Overview::getUrl(['section' => 'sales']));
     }
 
     public static function getNavigationLabel(): string
@@ -83,12 +100,6 @@ class SalesDashboard extends BaseDashboard
                         ...DashboardDateRange::make(
                             __('sales::filament/pages/sales-dashboard.filters.date-range'),
                         ),
-                        Select::make('countries')
-                            ->label(__('sales::filament/pages/sales-dashboard.filters.countries'))
-                            ->multiple()
-                            ->searchable()
-                            ->preload()
-                            ->options(fn () => Country::pluck('name', 'id')),
                         Select::make('products')
                             ->label(__('sales::filament/pages/sales-dashboard.filters.products'))
                             ->multiple()
@@ -101,18 +112,7 @@ class SalesDashboard extends BaseDashboard
                             ->searchable()
                             ->preload()
                             ->options(fn () => Category::pluck('name', 'id')),
-                        Select::make('teams')
-                            ->label(__('sales::filament/pages/sales-dashboard.filters.teams'))
-                            ->multiple()
-                            ->searchable()
-                            ->preload()
-                            ->options(fn () => Team::pluck('name', 'id')),
-                        Select::make('salesPersons')
-                            ->label(__('sales::filament/pages/sales-dashboard.filters.sales-persons'))
-                            ->multiple()
-                            ->searchable()
-                            ->preload()
-                            ->options(fn () => static::companyMemberOptions()),
+                        ...static::sectionFilterFields(),
                     ])
                     ->columnSpanFull()
                     ->columns([
@@ -122,6 +122,36 @@ class SalesDashboard extends BaseDashboard
                         'xl'      => 6,
                     ]),
             ]);
+    }
+
+    /**
+     * The filters only Sales has. Also shown on the Overview page when the
+     * Sales section alone is chosen, so both pages build them here.
+     *
+     * @return array<int, Select>
+     */
+    public static function sectionFilterFields(): array
+    {
+        return [
+            Select::make('countries')
+                ->label(__('sales::filament/pages/sales-dashboard.filters.countries'))
+                ->multiple()
+                ->searchable()
+                ->preload()
+                ->options(fn () => Country::pluck('name', 'id')),
+            Select::make('teams')
+                ->label(__('sales::filament/pages/sales-dashboard.filters.teams'))
+                ->multiple()
+                ->searchable()
+                ->preload()
+                ->options(fn () => Team::pluck('name', 'id')),
+            Select::make('salesPersons')
+                ->label(__('sales::filament/pages/sales-dashboard.filters.sales-persons'))
+                ->multiple()
+                ->searchable()
+                ->preload()
+                ->options(fn () => static::companyMemberOptions()),
+        ];
     }
 
     public function getWidgetsContentComponent(): Component
@@ -138,6 +168,16 @@ class SalesDashboard extends BaseDashboard
      * @return array<class-string<Widget>>
      */
     public function getWidgets(): array
+    {
+        return static::sectionWidgets();
+    }
+
+    /**
+     * The widgets this dashboard shows, also used by its Overview section.
+     *
+     * @return list<class-string<Widget>>
+     */
+    public static function sectionWidgets(): array
     {
         return [
             SaleStatsOverview::class,

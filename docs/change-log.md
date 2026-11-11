@@ -26,13 +26,30 @@ for the task/question log this change log is paired with.
   - `--module-sidebar-width` changed. The content padding follows the same
     variable, and the phone drawer uses it too. Collapsed stays 72px.
   - Not browser-tested.
-- **Larger module icons (user: compared with a reference sidebar, chose to
-  keep our coloured icons, larger).**
-  - `.module-sidebar-icon` goes from 24px to 32px, and link padding is
-    trimmed to `0.3125rem 0.5rem`. The artwork fills only the middle ~62%
-    of its tile, so it now shows at about 20px instead of 15px.
-  - Collapsed (72px) still fits.
-  - Previewed on production at 1366px with injected CSS only.
+- **Outline module icons in our colours (user, after a 32px trial of the old
+  tiled icons).**
+  - The 18 navigation icons in `resources/svg` (dashboard to help) were
+    redrawn as 24px outline icons.
+  - Main strokes are `currentColor`: dark, light in dark mode, and the
+    brand colour when active. Each keeps an accent stroke in `#F59E0B`.
+  - `.module-sidebar-icon` is 22px, and link padding is back to
+    `0.5rem 0.625rem`.
+  - The same files feed the top-bar module tabs. `menu`, `pin`, `un-pin`,
+    `website` and the Plugins page images (`public/svg`) are unchanged.
+  - Rollback: `git checkout` the old SVGs.
+  - Previewed on production by swapping the SVGs in the browser only.
+- **Card lists compact on phones (user: contacts too big, worse with a
+  picture; mobile plan P7).**
+  - This covers every `contentGrid` list: contacts, customers, vendors,
+    employees, departments, candidates, jobs, projects and plugins.
+  - Under 768px:
+    - the checkbox moves to the top corner;
+    - the card's outer stack goes sideways;
+    - a picture is a 48px thumbnail beside the text;
+    - an empty picture column is hidden.
+  - Contacts cards went from 212px (or 300px or more with a logo) to 164px.
+  - Previewed on production (Contacts, Employees, Plugins) with injected
+    CSS only. Not run on a real phone.
 - **Browser logs no longer tracked (user).**
   - `/.playwright-mcp/` is now in `.gitignore`, and its 13 committed files
     were removed from the index with `git rm --cached`. They stay on disk.

@@ -13,6 +13,7 @@ use Webkul\Account\Events\MoveReversed;
 use Webkul\Chatter\Services\ChatterCleanupService;
 use Webkul\Inventory\Events\OperationBackOrdered;
 use Webkul\Inventory\Events\OperationDone;
+use Webkul\Invoice\Filament\Overview\OverviewRegistry;
 use Webkul\PluginManager\Console\Commands\InstallCommand;
 use Webkul\PluginManager\Console\Commands\UninstallCommand;
 use Webkul\PluginManager\Package;
@@ -20,6 +21,7 @@ use Webkul\PluginManager\PackageServiceProvider;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\ProductSupplier;
 use Webkul\Purchase\Facades\PurchaseOrder as PurchaseOrderFacade;
+use Webkul\Purchase\Filament\Admin\Pages\Purchases;
 use Webkul\Purchase\Listeners\ComputePurchaseOrderFromMoveListener;
 use Webkul\Purchase\Listeners\ComputePurchaseOrderListener;
 use Webkul\Purchase\Livewire\Customer\ListProducts;
@@ -89,6 +91,17 @@ class PurchaseServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         Livewire::component('order-summary', OrderSummary::class);
+
+        // The Purchases section of the combined Overview dashboard (Invoices
+        // owns the page; Purchases depends on Invoices, so it contributes).
+        OverviewRegistry::register(
+            'purchases',
+            fn (): string => __('invoices::filament/pages/overview.sections.purchases'),
+            Purchases::sectionWidgets(),
+            fn (): array => Purchases::sectionFilterFields(),
+            fn (): bool  => Purchases::canAccess(),
+            sort: 20,
+        );
 
         Livewire::component('list-products', ListProducts::class);
 

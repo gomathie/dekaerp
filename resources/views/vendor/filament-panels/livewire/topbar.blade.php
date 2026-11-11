@@ -805,6 +805,55 @@
                        gutter, and never starts left of the screen. Only
                        `left` is overridden: Filament sets its width inside a
                        cascade layer, which this sheet cannot outrank. */
+                    /* Card lists (contentGrid: contacts, customers, vendors,
+                       employees, departments, candidates, jobs, projects,
+                       plugins) on phones (user, 2026-11-11; mobile plan P7).
+                       Cards were 212px with an empty picture row, and over
+                       300px with a logo drawn 200px tall, so a screen held
+                       about three. Now: the checkbox sits in the corner,
+                       a picture is a 48px thumbnail beside the name, and a
+                       missing picture takes no space. Only the card's outer
+                       stack turns sideways; its text column stays stacked. */
+                    .fi-ta-content-grid .fi-ta-record {
+                        position: relative;
+                    }
+
+                    .fi-ta-content-grid .fi-ta-record > .fi-ta-record-checkbox {
+                        position: absolute;
+                        top: 0.75rem;
+                        inset-inline-end: 0.75rem;
+                        margin: 0;
+                    }
+
+                    .fi-ta-content-grid .fi-ta-record-content > .fi-grid-col > .fi-ta-stack {
+                        flex-direction: row;
+                        align-items: flex-start;
+                        gap: 0.75rem;
+                        padding-inline-end: 1.5rem;
+                    }
+
+                    .fi-ta-content-grid .fi-ta-record-content > .fi-grid-col > .fi-ta-stack > .fi-ta-col:has(.fi-ta-image) {
+                        flex: 0 0 auto;
+                        width: auto;
+                    }
+
+                    .fi-ta-content-grid .fi-ta-record-content > .fi-grid-col > .fi-ta-stack > .fi-ta-col:has(.fi-ta-image):not(:has(img)) {
+                        display: none;
+                    }
+
+                    .fi-ta-content-grid .fi-ta-record-content > .fi-grid-col > .fi-ta-stack > .fi-grid-col:not(:has(.fi-ta-image)) {
+                        min-width: 0;
+                        flex: 1 1 auto;
+                    }
+
+                    .fi-ta-content-grid .fi-ta-image img {
+                        width: 3rem !important;
+                        height: 3rem !important;
+                        max-width: 3rem !important;
+                        object-fit: contain;
+                        border-radius: 0.5rem;
+                    }
+
                     .fi-dropdown-panel:has(.company-switcher-form) {
                         left: max(0px, calc(100% - 20rem - 1rem)) !important;
                     }
