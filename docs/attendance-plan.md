@@ -150,10 +150,183 @@ the shared workflow library was updated with the same app-scoped registration
 lesson. The latter is outside this repository.
 
 - **Current file scope:** `docs/attendance-plan.md`,
-  `plugins/webkul/attendances/src/AttendanceServiceProvider.php`,
-  `plugins/webkul/attendances/src/Services/AttendanceService.php`, and the two
-  attendance feature test files, plus `AttendanceAccess` and
-  `AttendancePolicy`. Further files will be recorded as they change.
+  `plugins/webkul/attendances/**`, `plugins/webkul/support/src/Filament/Contributions/**`,
+  `plugins/webkul/support/src/SupportPlugin.php`,
+  `plugins/webkul/support/resources/views/dashboard-banner.blade.php`,
+  `plugins/webkul/support/resources/lang/*/dashboard-banner.php`, and
+  `AGENTS.md` (project-memory trap). Nothing outside the plan's allowance was
+  edited.
+
+---
+
+## 8. Handoffs
+
+### AT-1 — plugin skeleton, data, switch
+
+- **Why:** attendance is a separate plugin (AT-D1) so a company that does not
+  track presence is not given a screen it does not use. Installing a plugin is
+  global, so availability is the per-company `attendances_company_settings` row,
+  default off, exactly like Logistics.
+- **How:** provider `AttendanceServiceProvider` (name `attendances`) with the
+  three migrations, `employees` dependency, install/uninstall commands and an
+  uninstall guard; `AttendancePlugin` for panel discovery; `AttendanceAccess`
+  (per-company switch layered on `PluginEntitlement`); `CompanyProvisioner`;
+  models `Attendance`, `CompanySetting`, `Correction`; `AttendancePolicy`;
+  `config/filament-shield.php` with the resource's abilities and the Reporting
+  cluster excluded.
+- **Benefit:** no company sees attendance until it switches it on, and no
+  attendance row can be created for a company that has it off — the service
+  re-checks because a super-admin `Gate::before` skips policies.
+- **Trade-off / risk:** the `companies` trigger only provisions the row for
+  companies created while the plugin is installed; an older company gets one
+  the first time its settings are opened (`CompanyProvisioner::provision()`).
+- **Verification (database `aureuserp_testing_attendance`):** tables exist after
+  install (1 test, 4 assertions, 449.40 s); new company provisioned disabled
+  (1 test, 3 assertions, 546.96 s); re-provisioning keeps it enabled and the
+  app-rebuild sequence passes (2 tests, 7 assertions, 435.66 s; 3 tests, 9
+  assertions, 437.60 s); partial unique index refuses a second open row (1 test,
+  1 assertion, 368.60 s).
+- **Rollback:** `php artisan attendances:uninstall` refuses while rows exist
+  (`attendances.allow_uninstall_with_data`); removing the provider from
+  `bootstrap/providers.php` leaves the tables inert.
+
+### AT-2 — the service
+
+- **Why:** every write must pass one place, because the banner, a manager
+  correction and the nightly job all touch the same row, and the one-open rule
+  has to hold under a double click.
+- **How:** `AttendanceService` (clock in idempotent on the partial unique index,
+  clock out stores worked minutes, correction requires a reason and writes
+  `attendances_corrections`, auto check-out at the company limit flagged
+  `needs_review`); `AutoCheckOutAttendances` scheduled every 15 minutes behind
+  `Package::isPluginInstalled`.
+- **Benefit:** one open row per person, a double click returns the same row, and
+  a forgotten check-out is closed and flagged rather than paying infinite hours.
+- **Trade-off / risk:** the scheduled command runs only where the scheduler runs;
+  a missing cron leaves rows open until the next run.
+- **Verification:** the two boundary defects found here are fixed and pinned
+  (see the two AT-2 rationale blocks above). The complete
+  `AttendanceServiceTest.php` still has to run without the PHP stack-size fatal
+  noted in the progress log.
+- **Rollback:** the command and the scheduling clause can be removed together;
+  nothing else depends on them.
+
+### AT-3 — the welcome banner
+
+- **Why:** the user asked for a greeting banner on every module dashboard, with
+  the clock control once attendance exists. `support` is the base plugin, so it
+  may not reference `attendances`; the banner is therefore shared and the clock
+  is contributed.
+- **How:** `Webkul\Support\Filament\Contributions\DashboardBannerRegistry`
+  (keyed sections, so a repeated `packageBooted()` replaces rather than
+  duplicates, plus a location resolver);
+  `DashboardBannerContributions::register()` registers one `PAGE_START` render
+  hook scoped to the panel's `Filament\Pages\Dashboard` subclasses, so no
+  dashboard file is edited and a dashboard added later is picked up;
+  `support::dashboard-banner` renders greeting, role · company · date chips and
+  "You are working at …". Attendance contributes through
+  `AttendanceBannerContribution` (its own plugin) and a `ClockButton` Livewire
+  component registered as `attendance-clock`.
+- **Benefit:** every dashboard gains the banner with no edit to any module, and
+  a company without attendance sees only the greeting.
+- **Trade-off / risk:** the banner is inline CSS, not Tailwind utilities, so it
+  renders without rebuilding `support.css`; changing it later should keep that
+  property or the rebuild step becomes mandatory. The `PAGE_START` hook is
+  registered once per application (container marker), because a process-static
+  flag would survive a rebuilt test application while Filament's view manager
+  does not.
+- **Verification:** `Banner/DashboardBannerTest.php` (greeting, one section per
+  key, gating by switch + employee record, clock in/out, hidden control).
+- **Rollback:** remove `DashboardBannerContributions::register()` from
+  `SupportPlugin::boot()`; the Attendance contribution then renders nowhere.
+
+### AT-4 — manager screens
+
+- **Why:** managers need to see who is in, correct a mistake with an audit
+  trail, and export the list — without a second write path.
+- **How:** read-only `AttendanceResource` (split `Tables/` layout, no create
+  page) whose `getEloquentQuery()` narrows to
+  `AttendanceService::visibleEmployeeIds()` (team managers see their team, an
+  "own rows" user sees themselves, `view_any` sees the company);
+  `AttendancesTable` with a "Clocked in now" toggle, needs-review toggle,
+  employee and day filters; `CorrectAttendanceAction` calling
+  `AttendanceService::correct()` with a reason the service refuses when blank;
+  `AttendanceExporter` whose location/IP columns are off by default.
+- **Benefit:** one audited write path, and the export matches the filtered query
+  Filament runs — filters, search and sort included.
+- **Trade-off / risk:** the reason is not `required()` on the field on purpose:
+  Laravel treats whitespace as empty and the action would never run, hiding the
+  service's own message.
+- **Verification:** `Reports/ReportsTest.php` covers the row scoping for an own-rows
+  user and a view-any user.
+- **Rollback:** the resource is read-only; removing it leaves the underlying rows
+  and the service untouched.
+
+### AT-5 — kiosk (design note only, per AT-D2)
+
+A shared tablet at the door, one badge or PIN per person, is deliberately not
+built. When it is:
+
+1. `attendances_kiosks` (company, name, `work_location_id?`, a hashed device
+   token, active flag) and a kiosk page reachable without a panel login but with
+   the device token, rate-limited per token *and* per IP like the Logistics stop
+   link.
+2. Identification by employee `barcode` (already on `employees_employees`) or a
+   PIN held the same way passwords are — hashed, never stored in clear.
+3. Every punch records `source_in`/`source_out = kiosk`, and the kiosk's work
+   location becomes the attendance's location evidence, so "who was at which
+   site" is answerable without GPS.
+4. Kiosk mode is a per-company setting (`kiosk_enabled` already exists), off by
+   default, and the device token is revocable.
+5. It still goes through `AttendanceService`; a kiosk punch is a self-punch with
+   a different source, never a correction.
+
+Risks to settle before building it: a badge is transferable (so kiosk punches
+need the same `needs_review` treatment as auto check-outs when they look
+implausible), and a shared tablet is a shared session, so the kiosk must never
+hold a panel login.
+
+### AT-6 — reports and the payroll hand-off
+
+- **Why:** lateness, absence and overtime have to be answerable without payroll
+  being built; and payroll must not read a second source.
+- **How:** `AttendanceReports` computes late/overtime rows and absence days at
+  read time through `ScheduleReader` (the employee's calendar, in the
+  calendar's timezone, after the company tolerance). `Filament/Clusters/Reporting`
+  holds three pages (`Lateness`, `Overtime`, `Absence`), each behind its own
+  Shield page permission and the company switch, with a from/until range clamped
+  to 92 days. Approved leave is not an absence.
+- **Payroll hand-off contract (no payroll tables are written here):** at period
+  close, payroll asks `AttendancePayroll::unitsFor(Employee, from, to)` for
+  `worked_minutes` and `overtime_minutes` per employee and applies the company's
+  `payroll_policies` of kind `attendance` and `overtime`. Attendance never
+  writes a payroll table, and payroll never recomputes presence from raw clock
+  times. Numbers are frozen by payroll at that moment, so a later calendar
+  change cannot rewrite a closed period.
+- **Benefit:** one definition of lateness/overtime, shared by the screens and
+  the future payroll run.
+- **Trade-off / risk:** absence is a per-employee, per-day loop; the 92-day cap
+  keeps an accidental wide range from becoming a slow request.
+- **Verification:** `Reports/AttendanceReportsTest.php` (schedule timezone,
+  tolerance, scheduled-day absence, non-scheduled day, no false overtime) plus
+  the generated page-permission test in `Reports/ReportsTest.php`.
+- **Rollback:** the cluster and pages can be removed without touching stored
+  data; nothing is persisted.
+
+### AT-7 — translations, hardening, release
+
+- **Why:** the fork ships five locales, and untranslated keys show raw keys to
+  fr/es/pt_BR/ar users.
+- **How:** English plus ar/es/fr/pt_BR for `attendance.php`, the resource
+  strings, the cluster label and `reports.php`, in the same key order as English
+  so the parity checker compares structures rather than treating a missing key
+  as a change. `support::dashboard-banner` is translated in the same five
+  locales.
+- **Verification:** `php artisan translations:check --plugin=attendances` (and
+  `--plugin=support`) to be run with the suite; no numeric keys are used, so the
+  quoted-numeric-key rule does not apply here.
+- **Rollback:** translations are additive; removing a locale file falls back to
+  English.
 
 ---
 
@@ -258,13 +431,13 @@ writes payroll tables.
 | Package | Scope | Depends on | Status |
 | --- | --- | --- | --- |
 | AT-0 | Decisions AT-D1..D6 | — | done |
-| AT-1 | Plugin skeleton, tables, models, per-company switch, provisioner, policies, Shield config, translations (en first) | AT-0 | in progress |
-| AT-2 | `AttendanceService` (clock in/out, idempotence, one-open rule, auto check-out job) + tests | AT-1 | in progress |
-| AT-3 | Welcome banner widget in `support` + attendance contribution (status pill, clock button) on every module dashboard | AT-2 (banner greeting part can ship first without attendance) | research in progress; implementation not started |
-| AT-4 | Manager views: who is in now, daily list, corrections with reason and audit, export | AT-2 | pending |
-| AT-5 | Kiosk mode (PIN / badge) | AT-2, AT-D2 | design note only |
-| AT-6 | Reports: lateness, absence, overtime against schedule; payroll hand-off contract | AT-2, payroll A0 gate | pending |
-| AT-7 | Translations ar/es/fr/pt_BR, hardening, release | all | pending |
+| AT-1 | Plugin skeleton, tables, models, per-company switch, provisioner, policies, Shield config, translations (en first) | AT-0 | built; install/provisioning checks pass |
+| AT-2 | `AttendanceService` (clock in/out, idempotence, one-open rule, auto check-out job) + tests | AT-1 | built; focused checks pass, full file blocked by a PHP stack fatal |
+| AT-3 | Welcome banner widget in `support` + attendance contribution (status pill, clock button) on every module dashboard | AT-2 (banner greeting part can ship first without attendance) | built; tests written |
+| AT-4 | Manager views: who is in now, daily list, corrections with reason and audit, export | AT-2 | built; tests written |
+| AT-5 | Kiosk mode (PIN / badge) | AT-2, AT-D2 | design note only (no code, per AT-D2) |
+| AT-6 | Reports: lateness, absence, overtime against schedule; payroll hand-off contract | AT-2, payroll A0 gate | built; tests written |
+| AT-7 | Translations ar/es/fr/pt_BR, hardening, release | all | built (en/ar/es/fr/pt_BR); release notes pending |
 
 **Order:** the greeting banner (AT-3 without the attendance part) can ship
 on its own straight away; attendance follows AT-1 → AT-2 → AT-3 → AT-4.
