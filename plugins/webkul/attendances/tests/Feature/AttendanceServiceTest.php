@@ -8,6 +8,7 @@ use Webkul\Attendance\Exceptions\CorrectionRefusedException;
 use Webkul\Attendance\Exceptions\LocationRequiredException;
 use Webkul\Attendance\Exceptions\NotYourAttendanceException;
 use Webkul\Attendance\Models\Attendance;
+use Webkul\Attendance\Policies\AttendancePolicy;
 use Webkul\Attendance\Services\AttendanceService;
 use Webkul\Attendance\Services\CompanyProvisioner;
 use Webkul\Employee\Models\Employee;
@@ -54,7 +55,7 @@ it('refuses an employee id supplied for another person from the banner', functio
     [$user] = attendanceEmployeeForCompany($company);
     $other = Employee::factory()->create([
         'company_id' => $company->id,
-        'user_id' => User::factory(),
+        'user_id'    => User::factory(),
     ]);
     app(CompanyProvisioner::class)->enable($company);
 
@@ -78,13 +79,13 @@ it('refuses a correction when the target company is outside the active context',
     [$actor] = attendanceEmployeeForCompany($activeCompany, ['correct_attendance_attendance']);
     $employee = AttendanceHelper::employee($recordCompany);
     $attendance = Attendance::factory()->create([
-        'company_id' => $recordCompany->id,
+        'company_id'  => $recordCompany->id,
         'employee_id' => $employee->id,
     ]);
     app(CompanyProvisioner::class)->enable($activeCompany);
     app(CompanyProvisioner::class)->enable($recordCompany);
 
-    expect(app(\Webkul\Attendance\Policies\AttendancePolicy::class)->correct($actor, $attendance))
+    expect(app(AttendancePolicy::class)->correct($actor, $attendance))
         ->toBeFalse();
 
     expect(fn () => app(AttendanceService::class)->correct($actor, $attendance, [
@@ -109,10 +110,10 @@ it('does not retain submitted location evidence while capture is off', function 
     app(CompanyProvisioner::class)->enable($company);
 
     $attendance = app(AttendanceService::class)->clockIn($user, [
-        'latitude' => -15.4,
+        'latitude'  => -15.4,
         'longitude' => 28.3,
-        'accuracy' => 12,
-        'ip' => '203.0.113.8',
+        'accuracy'  => 12,
+        'ip'        => '203.0.113.8',
     ]);
 
     expect($attendance->latitude_in)->toBeNull()
@@ -144,6 +145,27 @@ it('stores open and closed times in UTC and records the worked minutes on check-
         ->and($closed->checkInLocal()->format('H:i'))->toBe('10:00');
 });
 
+/**
+ * 2026-11-11: a clock-out in the same second as the clock-in was later in
+ * memory (microseconds) but equal once stored, and the database check
+ * attendances_check_out_after_check_in refused it.
+ */
+it('closes an attendance clocked out within the same second as the clock-in', function (): void {
+    $company = AttendanceHelper::company();
+    [$user] = attendanceEmployeeForCompany($company);
+    app(CompanyProvisioner::class)->enable($company);
+
+    $this->travelTo(Carbon::parse('2026-11-11 09:00:00.250000', 'UTC'));
+    $service = app(AttendanceService::class);
+    $service->clockIn($user);
+
+    $this->travelTo(Carbon::parse('2026-11-11 09:00:00.900000', 'UTC'));
+    $closed = $service->clockOut($user);
+
+    expect($closed->check_out_at->copy()->utc()->format('H:i:s'))->toBe('09:00:01')
+        ->and($closed->check_out_at->gt($closed->check_in_at))->toBeTrue();
+});
+
 it('closes overdue rows at each company limit and flags them for review', function (): void {
     $company = AttendanceHelper::company();
     $employee = AttendanceHelper::employee($company);
@@ -151,7 +173,7 @@ it('closes overdue rows at each company limit and flags them for review', functi
     $setting->forceFill(['auto_checkout_after_hours' => 8])->save();
     $startedAt = Carbon::parse('2026-11-11 00:00:00', 'UTC');
     $attendance = Attendance::factory()->create([
-        'company_id' => $company->id,
+        'company_id'  => $company->id,
         'employee_id' => $employee->id,
         'check_in_at' => $startedAt,
     ]);
@@ -172,7 +194,7 @@ it('does not auto-check-out an attendance that is still within its company limit
     $setting = app(CompanyProvisioner::class)->enable($company);
     $setting->forceFill(['auto_checkout_after_hours' => 12])->save();
     $attendance = Attendance::factory()->create([
-        'company_id' => $company->id,
+        'company_id'  => $company->id,
         'employee_id' => $employee->id,
         'check_in_at' => Carbon::parse('2026-11-11 00:00:00', 'UTC'),
     ]);

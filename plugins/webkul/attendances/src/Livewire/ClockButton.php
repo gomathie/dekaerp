@@ -12,6 +12,7 @@ use Webkul\Attendance\Services\AttendanceService;
 use Webkul\Attendance\Services\ScheduleReader;
 use Webkul\Attendance\Support\AttendanceAccess;
 use Webkul\Employee\Models\Employee;
+use Webkul\Security\Models\User;
 use Webkul\Support\Services\CompanyContext;
 
 /**
@@ -35,7 +36,7 @@ class ClockButton extends Component
     }
 
     /**
-     * @param  callable(AttendanceService, \Webkul\Security\Models\User): Attendance  $action
+     * @param  callable(AttendanceService, User): Attendance  $action
      */
     protected function run(callable $action): void
     {

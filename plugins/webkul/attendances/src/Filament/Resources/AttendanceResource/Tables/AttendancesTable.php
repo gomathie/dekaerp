@@ -3,6 +3,7 @@
 namespace Webkul\Attendance\Filament\Resources\AttendanceResource\Tables;
 
 use Filament\Actions\ExportAction;
+use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -83,7 +84,7 @@ class AttendancesTable
                 Filter::make('day')
                     ->label(__(static::$lang.'.table.filters.day'))
                     ->schema([
-                        \Filament\Forms\Components\DatePicker::make('on')
+                        DatePicker::make('on')
                             ->label(__(static::$lang.'.table.filters.on')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {

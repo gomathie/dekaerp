@@ -1,13 +1,13 @@
 <?php
 
-use Webkul\Invoice\Filament\Overview\OverviewRegistry;
 use Webkul\Inventory\Filament\Widgets\InventoryHeadlineWidget;
 use Webkul\Inventory\Models\Location;
 use Webkul\Inventory\Models\OrderPoint;
 use Webkul\Inventory\Models\ProductQuantity;
 use Webkul\Inventory\Models\Warehouse;
-use Webkul\Product\Models\Product;
+use Webkul\Invoice\Filament\Overview\OverviewRegistry;
 use Webkul\PluginManager\Support\PluginAccess;
+use Webkul\Product\Models\Product;
 use Webkul\Support\Models\Company;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/CompanyHelper.php';

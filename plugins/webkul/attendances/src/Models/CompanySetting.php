@@ -27,12 +27,12 @@ class CompanySetting extends Model
      * @var array<string, mixed>
      */
     protected $attributes = [
-        'is_enabled' => false,
-        'late_tolerance_minutes' => 0,
+        'is_enabled'                 => false,
+        'late_tolerance_minutes'     => 0,
         'overtime_tolerance_minutes' => 0,
-        'auto_checkout_after_hours' => 12,
-        'capture_location' => 'off',
-        'kiosk_enabled' => false,
+        'auto_checkout_after_hours'  => 12,
+        'capture_location'           => 'off',
+        'kiosk_enabled'              => false,
     ];
 
     protected $fillable = [
@@ -51,14 +51,14 @@ class CompanySetting extends Model
     protected function casts(): array
     {
         return [
-            'is_enabled' => 'boolean',
-            'enabled_at' => 'datetime',
-            'disabled_at' => 'datetime',
-            'late_tolerance_minutes' => 'integer',
+            'is_enabled'                 => 'boolean',
+            'enabled_at'                 => 'datetime',
+            'disabled_at'                => 'datetime',
+            'late_tolerance_minutes'     => 'integer',
             'overtime_tolerance_minutes' => 'integer',
-            'auto_checkout_after_hours' => 'integer',
-            'capture_location' => CaptureLocation::class,
-            'kiosk_enabled' => 'boolean',
+            'auto_checkout_after_hours'  => 'integer',
+            'capture_location'           => CaptureLocation::class,
+            'kiosk_enabled'              => 'boolean',
         ];
     }
 

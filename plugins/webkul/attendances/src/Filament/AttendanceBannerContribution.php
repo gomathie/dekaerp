@@ -3,7 +3,6 @@
 namespace Webkul\Attendance\Filament;
 
 use Illuminate\Support\Facades\Blade;
-use Webkul\Attendance\Livewire\ClockButton;
 use Webkul\Attendance\Support\AttendanceAccess;
 use Webkul\Employee\Models\Employee;
 use Webkul\Support\Filament\Contributions\DashboardBannerRegistry;

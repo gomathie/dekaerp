@@ -1,6 +1,6 @@
 <?php
 
-use Webkul\Attendance\Models\CompanySetting;
+use Webkul\Attendance\Services\CompanyProvisioner;
 use Webkul\Attendance\Support\AttendanceAccess;
 use Webkul\Employee\Models\Employee;
 use Webkul\Support\Models\Company;
@@ -36,7 +36,7 @@ class AttendanceHelper
 
     public static function enable(Company $company): Company
     {
-        app(\Webkul\Attendance\Services\CompanyProvisioner::class)->enable($company);
+        app(CompanyProvisioner::class)->enable($company);
 
         AttendanceAccess::flush();
 

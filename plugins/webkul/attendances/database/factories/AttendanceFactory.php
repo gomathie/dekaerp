@@ -20,12 +20,12 @@ class AttendanceFactory extends Factory
     public function definition(): array
     {
         return [
-            'employee_id' => Employee::factory(),
-            'check_in_at' => now()->subHour(),
+            'employee_id'  => Employee::factory(),
+            'check_in_at'  => now()->subHour(),
             'check_out_at' => null,
-            'source_in' => Source::Banner,
+            'source_in'    => Source::Banner,
             'needs_review' => false,
-            'on_leave' => false,
+            'on_leave'     => false,
             'is_corrected' => false,
         ];
     }
@@ -33,10 +33,10 @@ class AttendanceFactory extends Factory
     public function closed(): static
     {
         return $this->state(fn (): array => [
-            'check_in_at' => now()->subHours(8),
-            'check_out_at' => now(),
+            'check_in_at'    => now()->subHours(8),
+            'check_out_at'   => now(),
             'worked_minutes' => 480,
-            'source_out' => Source::Banner,
+            'source_out'     => Source::Banner,
         ]);
     }
 }
