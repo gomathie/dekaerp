@@ -7,6 +7,23 @@ Note: this is a working log, separate from [`AGENTS.md`](../AGENTS.md) (Laravel
 Boost guidelines the agent follows) and [`CHANGELOG.md`](../CHANGELOG.md)
 (release notes). Code-change details go in [`docs/change-log.md`](change-log.md).
 
+## 2026-11-11
+
+**Requested:** Build the whole attendance plan (AT-1 to AT-7), then run all the
+checks.
+
+**Decision:** Attendance is its own plugin with a per-company switch, default
+off. Every write goes through `AttendanceService`. The dashboard banner lives in
+`support` and Attendance contributes into it through a keyed registry, because
+`support` is the base plugin and may not reference a plugin above it. Kiosk mode
+stays a design note only (AT-D2).
+
+**Implementation and verification:** See the handoffs in
+`docs/attendance-plan.md` §8 and `docs/change-log.md`. Database
+`aureuserp_testing_attendance`. `translations:check --plugin=attendances` and
+`--plugin=support` each passed 4 of 4 locales. Suite and Pint results are
+recorded in the plan's progress log.
+
 ## 2026-11-10
 
 **Requested:** Look at production on a phone and write a plan to improve the

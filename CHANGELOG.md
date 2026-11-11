@@ -8,9 +8,14 @@
 * A customer record lists that customer's recent shipments, and open charges when the viewer may see shipment money. A contact with no company shows only the company the viewer is working in
 * Added shipment register, delivery performance, profitability, vehicle trip history, and driver trip history reports with filtered exports
 * Added Invoice, Sales and Purchase dashboards, and expanded the Recruitment dashboard, with filters, trend cards, charts and top-record lists. Each shows only the current company's figures
+* Added an Attendance module: clock in and clock out from the dashboard, manager views of who is in, audited corrections with a reason, lateness/absence/overtime reports, and a filtered export
+* Added a welcome banner to every module dashboard, greeting the signed-in person by name and showing their role, company, date and work location
 
 ### Improvements
 
+* Attendance can be enabled or disabled independently for each company, and a person without an employee record in the company they are working in is not shown the clock control
+* A forgotten check-out is closed automatically at the company's limit (12 hours by default) and flagged for review, so it cannot silently inflate worked hours
+* Attendance location and IP evidence is captured only when a company turns it on, and those columns are off by default in the export
 * Logistics can be enabled or disabled independently for each company while preserving its existing records
 * POD files use tenant-prefixed private object storage and authenticated company-aware downloads
 * Sales orders containing Logistics service products can create draft shipments without automatically committing operations to a route or delivery date
