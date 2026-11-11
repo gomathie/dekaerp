@@ -65,7 +65,9 @@ continuation resumed. They have not yet been verified here.
   `default_company_id`, violating the forced-context boundary. The fallback is
   removed; the focused test passed (1 test, 2 assertions, 498.21s) using
   `aureuserp_testing_attendance`. Remaining service behaviors are still
-  unverified. The earlier non-debug full
+  unverified. A subsequent full `AttendanceServiceTest.php` run also exited
+  with the PHP stack-size fatal at `ConcurrencyErrorDetector.php:20`, before it
+  returned test counts. The earlier non-debug full
   attempt also ended in PHP's `Maximum call stack size ... reached during
   compilation` fatal at `Illuminate/Database/ConcurrencyErrorDetector.php:20`;
   whether that was downstream of continued failures remains unverified. A
@@ -105,7 +107,9 @@ cross-company clock-in/out when a forced company is invalid or disallowed.
 **Trade-off / risk:** callers must provide a valid active company to use the
 banner; absence now refuses rather than selecting a default. **Verification:**
 the focused regression passed (1 test, 2 assertions, 498.21s,
-`aureuserp_testing_attendance`). Other service behavior tests remain to be run.
+`aureuserp_testing_attendance`). The complete service file remains
+unverified; it exited with a PHP stack-size fatal at Laravel's
+`ConcurrencyErrorDetector` before returning test counts.
 **Rollback:** restoring the `default_company_id` fallback would violate the
 existing `CompanyContext` forced-context decision and reintroduce the
 cross-tenant fallback.
