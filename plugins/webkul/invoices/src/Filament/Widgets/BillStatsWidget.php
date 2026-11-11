@@ -2,15 +2,19 @@
 
 namespace Webkul\Invoice\Filament\Widgets;
 
-use Webkul\Invoice\Filament\Widgets\Concerns\GuardsInvoiceDashboardWidget;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
+use Webkul\Invoice\Filament\Widgets\Concerns\GuardsInvoiceDashboardWidget;
 use Webkul\Invoice\Filament\Widgets\Concerns\HasInvoiceDashboardFilters;
 
 class BillStatsWidget extends BaseWidget
 {
-    use HasInvoiceDashboardFilters, GuardsInvoiceDashboardWidget;
+    // No 5-second refresh (Filament default): every open dashboard re-ran all
+    // its queries 12 times a minute (Sentry DEKAERP-11). Filters reload it.
+    protected ?string $pollingInterval = null;
+
+    use GuardsInvoiceDashboardWidget, HasInvoiceDashboardFilters;
 
     protected static ?int $sort = 2;
 
