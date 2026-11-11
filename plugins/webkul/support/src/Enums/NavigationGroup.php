@@ -58,13 +58,16 @@ enum NavigationGroup: string implements HasIcon, HasLabel
     public function section(): ?string
     {
         return match ($this) {
-            self::Dashboard, self::Contact => null,
-            self::Sale, self::Purchase, self::Invoice => 'sales-purchases',
-            self::Accounting => 'finance',
+            self::Dashboard => null,
+            // Contacts under its own heading (user, 2026-11-11), where a CRM
+            // module will join it (docs/crm-plan.md).
+            self::Contact                                                                           => 'contacts-crm',
+            self::Sale, self::Purchase, self::Invoice                                               => 'sales-purchases',
+            self::Accounting                                                                        => 'finance',
             self::Maintenance, self::Manufacturing, self::Inventory, self::Logistics, self::Barcode => 'operations',
-            self::Project => 'projects',
-            self::Employee, self::TimeOff, self::Recruitment => 'human-resources',
-            self::Plugin, self::Setting, self::Help => 'administration',
+            self::Project                                                                           => 'projects',
+            self::Employee, self::TimeOff, self::Recruitment                                        => 'human-resources',
+            self::Plugin, self::Setting, self::Help                                                 => 'administration',
         };
     }
 
