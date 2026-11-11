@@ -29,8 +29,8 @@ continuation resumed. They have not yet been verified here.
 - **In progress:** AT-1; the migration and company provisioning checks pass,
   including the application-rebuild sequence. Shield permission generation
   and the complete installation test file remain unverified.
-  AT-2's service test exposed a forced-context fallback defect; service changes
-  remain queued until AT-1 is handed off.
+  AT-2's forced-context fallback is fixed and its focused regression test
+  passes; other service behaviors remain to be verified.
 - **Not started:** AT-3 through AT-7. The tagged topbar override is owned by a
   concurrent agent and is out of scope.
 - **Verification:** local PostgreSQL is running and the isolated database
@@ -61,9 +61,11 @@ continuation resumed. They have not yet been verified here.
   complete suite result. The full service suite's debug run stopped at
   `does not fall back to the default company inside an empty forced context`:
   3 passed, 1 failed, 11 pending, 7 assertions, 545.85s. The exception was not
-  thrown because `employeeForCurrentCompany()` falls back from `currentId()` to
-  `default_company_id`; this confirms a violation of the forced-context
-  boundary. No service code has been changed yet. The earlier non-debug full
+  thrown because `employeeForCurrentCompany()` fell back from `currentId()` to
+  `default_company_id`, violating the forced-context boundary. The fallback is
+  removed; the focused test passed (1 test, 2 assertions, 498.21s) using
+  `aureuserp_testing_attendance`. Remaining service behaviors are still
+  unverified. The earlier non-debug full
   attempt also ended in PHP's `Maximum call stack size ... reached during
   compilation` fatal at `Illuminate/Database/ConcurrencyErrorDetector.php:20`;
   whether that was downstream of continued failures remains unverified. A
@@ -91,10 +93,27 @@ at Laravel's `ConcurrencyErrorDetector`. **Rollback:** revert the guard to the
 previous static flag only if the application lifecycle is changed so the
 Eloquent dispatcher outlives the provider; otherwise that reintroduces the
 missing-listener regression.
+
+**AT-2 rationale — empty forced company context (2026-11-11).** **Why:** a
+forced context that resolves to no active company must not fall through to the
+user's default company; that would clock them into a different tenant.
+`CompanyContext::currentId()` already enforces this boundary. **How:**
+`AttendanceService::employeeForCurrentCompany()` now refuses the empty context
+with the existing no-employee refusal and always filters by the resolved
+company. The behavior-focused test pins the refusal message. **Benefit:** no
+cross-company clock-in/out when a forced company is invalid or disallowed.
+**Trade-off / risk:** callers must provide a valid active company to use the
+banner; absence now refuses rather than selecting a default. **Verification:**
+the focused regression passed (1 test, 2 assertions, 498.21s,
+`aureuserp_testing_attendance`). Other service behavior tests remain to be run.
+**Rollback:** restoring the `default_company_id` fallback would violate the
+existing `CompanyContext` forced-context decision and reintroduce the
+cross-tenant fallback.
+
 - **Current file scope:** `docs/attendance-plan.md`,
-  `plugins/webkul/attendances/tests/Feature/AttendanceServiceTest.php`, and
-  `plugins/webkul/attendances/tests/Feature/PluginInstallationTest.php`.
-  Further files will be recorded as they change.
+  `plugins/webkul/attendances/src/AttendanceServiceProvider.php`,
+  `plugins/webkul/attendances/src/Services/AttendanceService.php`, and the two
+  attendance feature test files. Further files will be recorded as they change.
 
 ---
 
@@ -200,7 +219,7 @@ writes payroll tables.
 | --- | --- | --- | --- |
 | AT-0 | Decisions AT-D1..D6 | — | done |
 | AT-1 | Plugin skeleton, tables, models, per-company switch, provisioner, policies, Shield config, translations (en first) | AT-0 | in progress |
-| AT-2 | `AttendanceService` (clock in/out, idempotence, one-open rule, auto check-out job) + tests | AT-1 | pending verification |
+| AT-2 | `AttendanceService` (clock in/out, idempotence, one-open rule, auto check-out job) + tests | AT-1 | in progress |
 | AT-3 | Welcome banner widget in `support` + attendance contribution (status pill, clock button) on every module dashboard | AT-2 (banner greeting part can ship first without attendance) | pending |
 | AT-4 | Manager views: who is in now, daily list, corrections with reason and audit, export | AT-2 | pending |
 | AT-5 | Kiosk mode (PIN / badge) | AT-2, AT-D2 | design note only |
