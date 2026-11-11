@@ -48,7 +48,7 @@ it('shows the attendance control only when attendance is enabled and the person 
     expect(AttendanceBannerContribution::appliesToViewer())->toBeFalse();
 
     AttendanceHelper::employee($company, ['user_id' => $user->id]);
-    app(CompanyProvisioner::class)->enable($company);
+    AttendanceHelper::enable($company);
 
     expect(AttendanceBannerContribution::appliesToViewer())->toBeTrue();
 });
@@ -58,7 +58,7 @@ it('clocks the signed-in employee in and out from the banner control', function 
     $user = CompanyHelper::actingAsCompanyUser($company);
 
     AttendanceHelper::employee($company, ['user_id' => $user->id]);
-    app(CompanyProvisioner::class)->enable($company);
+    AttendanceHelper::enable($company);
 
     Livewire::test(ClockButton::class)
         ->assertOk()
@@ -76,7 +76,7 @@ it('clocks the signed-in employee in and out from the banner control', function 
 it('shows no clock control to a person with no employee record in the active company', function (): void {
     $company = AttendanceHelper::company();
     CompanyHelper::actingAsCompanyUser($company);
-    app(CompanyProvisioner::class)->enable($company);
+    AttendanceHelper::enable($company);
 
     Livewire::test(ClockButton::class)
         ->assertOk()

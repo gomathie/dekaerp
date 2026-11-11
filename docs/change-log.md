@@ -6,6 +6,29 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-11 (top bar at ~1039px, modern dashboard charts)
+
+- **Why:** user: between about 1024px and 1200px the module page strip
+  wrapped and put "Logistics" under the title; and "modernise the charts".
+  Seen in production: empty charts drew a flat line on a 0..1 axis with ten
+  0.1 steps, and month labels were slanted.
+- **How:** `topbar.blade.php` keeps `.fi-topbar-nav-groups` on one line with
+  sideways scroll (plain links, no dropdown to clip). `HasChartTheme::cartesianScales()`:
+  flat x labels, auto-skip, faint dashed value lines, no y border, at most
+  five value ticks. New `dashboardChartEmptyState` plugin in
+  `support/resources/js/dashboard-charts.js` (copied to `public/js/support/`)
+  hides the axes and writes "No data for this period" when every value is
+  zero; `DashboardChartWidget::chartEmptyState()` passes the translated text
+  (`support::filament/dashboard.no-chart-data`, five languages) to bar, line
+  and doughnut options.
+- **Note:** the top-bar and `HasChartTheme` edits were swept into the
+  Attendance agent's commit `51dfc31b6` while uncommitted; a production
+  cherry-pick needs that commit's non-attendance hunks or a fresh commit.
+- **Verification:** top-bar CSS injected into production at 1039px: the strip
+  is one line (36px high). Chart theme: `DashboardChartThemeTest`; see the run
+  below. Charts not yet seen in a browser with data.
+- **Rollback:** revert the CSS block, the scales hunk and the plugin.
+
 ## 2026-11-11 (reply greeting uses the developer's own name)
 
 - **Why:** user: several developers work on this project, and `AGENTS.md`
