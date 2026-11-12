@@ -5,6 +5,8 @@ namespace Webkul\Invoice\Filament\Widgets;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
+use Webkul\Invoice\Filament\Clusters\Customers\Resources\InvoiceResource;
+use Webkul\Invoice\Filament\Clusters\Vendors\Resources\BillResource;
 use Webkul\Invoice\Filament\Pages\Invoices;
 use Webkul\Invoice\Filament\Widgets\Concerns\HasInvoiceDashboardFilters;
 
@@ -69,12 +71,14 @@ class InvoiceHeadlineWidget extends StatsOverviewWidget
 
         return [
             Stat::make(__('invoices::filament/pages/overview.headline.to-collect'), compact_money($this->owed($receivable), $currency))
+                ->url(InvoiceResource::canViewAny() ? InvoiceResource::getUrl('index') : null)
                 ->icon('heroicon-o-arrow-down-tray')
                 ->description(trans_choice('invoices::filament/pages/overview.headline.overdue', $overdue = $this->overdue($receivable), ['count' => $overdue]))
                 ->color($overdue > 0 ? 'warning' : 'success')
                 ->extraAttributes(['class' => 'overview-headline-stat']),
 
             Stat::make(__('invoices::filament/pages/overview.headline.to-pay'), compact_money($this->owed($payable), $currency))
+                ->url(BillResource::canViewAny() ? BillResource::getUrl('index') : null)
                 ->icon('heroicon-o-arrow-up-tray')
                 ->description(trans_choice('invoices::filament/pages/overview.headline.overdue', $overdueBills = $this->overdue($payable), ['count' => $overdueBills]))
                 ->color($overdueBills > 0 ? 'danger' : 'success')

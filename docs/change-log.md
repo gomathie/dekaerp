@@ -272,7 +272,7 @@ Attendance settings page and plugin icons; `9639d7818` auto check-out command;
 
 ## 2026-11-11 (unified product and contact screens: shared custom fields, purchase tabs everywhere)
 
-Planned item #1, `docs/planned/01-unified-product-resource-plan.md` (user:
+Planned item #1, `docs/completed/unified-product-resource-plan.md` (user:
 high priority).
 
 - **Checked first:** on production, all four product edit screens (Sales,
@@ -2335,7 +2335,7 @@ Reconciled by marking superseded claims, not deleting them:
   contributes registry entries from `website/src/PortalContributions.php`. The
   argument the table supports is unaffected.
 
-Left alone as still true: `planned/01-unified-product-resource-plan.md`'s
+Left alone as still true: `planned/../completed/unified-product-resource-plan.md`'s
 "Contacts/Website partner screens", and the historical Website references in
 this file and in the adoption plan.
 
