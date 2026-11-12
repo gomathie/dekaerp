@@ -43,6 +43,14 @@ it('shows the banner on dashboards and opted-in overviews only', function (): vo
  */
 it('greets from the viewer clock and names the company once', function (): void {
     FilamentHelper::bootAdminPanel();
+
+    // State it explicitly: neither plugin installed, whatever an earlier run
+    // left in this database. Package caches the plugin list per process.
+    Webkul\PluginManager\Models\Plugin::query()
+        ->whereIn('name', ['attendances', 'employees'])
+        ->update(['is_installed' => false]);
+    Webkul\PluginManager\Package::$plugins = Webkul\PluginManager\Models\Plugin::all()->keyBy('name');
+
     $company = CompanyHelper::company(['name' => 'TRACE365']);
     $user = CompanyHelper::actingAsCompanyUser($company);
 
