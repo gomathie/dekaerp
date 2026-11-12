@@ -52,6 +52,7 @@ use Webkul\Support\Filament\Resources\CompanyResource\Pages\ViewCompany;
 use Webkul\Support\Filament\Resources\CompanyResource\RelationManagers\BranchesRelationManager;
 use Webkul\Support\Filament\Resources\CompanyResource\Support\CompanySchemaRegistry;
 use Webkul\Support\Models\Company;
+use Webkul\Support\Models\Country;
 use Webkul\Support\Models\Currency;
 use Webkul\Support\Models\Scopes\AllowedCompanyScope;
 
@@ -164,7 +165,21 @@ class CompanyResource extends Resource
                                                 Select::make('country_id')
                                                     ->label(__('support::filament/resources/company.form.sections.address-information.fields.country'))
                                                     ->relationship(name: 'country', titleAttribute: 'name')
-                                                    ->afterStateUpdated(fn (Set $set) => $set('state_id', null))
+                                                    ->afterStateUpdated(function (Set $set, $state, ?Model $record): void {
+                                                        $set('state_id', null);
+
+                                                        // New company: the country's currency becomes the default
+                                                        // (2.1 plan CR-4, D-CR-1: Ghana GHS, Zambia ZMW). Create
+                                                        // only: changing an existing company's base currency is a
+                                                        // deliberate, warned action (D-CR-4), never a side effect.
+                                                        if ($record === null && $state) {
+                                                            $currencyId = Country::query()->whereKey($state)->value('currency_id');
+
+                                                            if ($currencyId) {
+                                                                $set('currency_id', $currencyId);
+                                                            }
+                                                        }
+                                                    })
                                                     ->searchable()
                                                     ->preload()
                                                     ->live(),
