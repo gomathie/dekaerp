@@ -15,6 +15,7 @@ When work on one begins, mark its status "in progress" here and in the plan.
 | 7 | [Accounting](07-accounting-plan.md) | Fill the real gaps only: known-figure tests, lock date, bank reconciliation screen, accounting dashboard, cash flow, country chart templates | Plan written 2026-11-12 from the user's audit brief, kept lean on the user's instruction ("no overkill, an easy workflow"). Decisions ACC-D1..4 made 2026-11-12; package A1 (known-figure tests) runs early, alongside #1 |
 | 8 | [Reports](08-reports-plan.md) | One Reports page listing every report the user can open, plus Sales and Purchases reports | Plan written 2026-11-12 from the user's reporting brief, kept lean the same way. Decisions REP-D1..3 made 2026-11-12 |
 | 9 | [Landing page](09-landing-page-brief.md) | Public landing page | Not started; content decisions made 2026-11-11. Hosting and screenshots to be discussed after all other tasks |
+| 10 | [Rebrand Webkul → 365 Systems](10-rebrand-namespace-plan.md) | Ownership and brand | Plan written 2026-11-13; all decisions accepted 2026-11-13; licence fixed; brand sweep queued |
 
 Also waiting, but kept where it is because code and tests reference it:
 Logistics phase 2 (WP-14 to WP-24) in [`../logistics-plan.md`](../logistics-plan.md) §6a/§6b.
