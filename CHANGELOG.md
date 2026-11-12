@@ -17,6 +17,12 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 * What's New has moved from the top bar into your profile menu, next to the version. A red dot on your picture means there is something new to read.
 * On the Overview, Sales, Purchases and Invoices are now tabs above the filters. Pick one, or All.
 * The dashboard greeting has a soft gradient in your company's colour behind it.
+* On a phone, the Overview tabs fade at the edge when there are more to scroll to.
+* In What's New, clearing the search or filters goes back to showing only the latest release open, and the search box no longer shows its label twice.
+
+### Fixes
+
+* A mistyped record address now shows "Not found" instead of a server error.
 
 # CHANGELOG — v1.7.1 — 2026-11-12
 
