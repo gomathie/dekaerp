@@ -249,7 +249,7 @@ class WhatsNew extends Page
                     && ! Str::contains(Str::lower($heading[1]), 'unreleased')) {
                     $skipping = false;
                     $release = [
-                        'id'       => Str::slug($version[1]),
+                        'id'       => Str::slug(str_replace('.', '-', $version[1])),
                         'version'  => 'v'.$version[1],
                         'date'     => isset($version[2]) ? trim($version[2]) : null,
                         'sections' => [],

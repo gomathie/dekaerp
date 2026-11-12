@@ -85,6 +85,6 @@ enum GuideAudience: string implements HasIcon, HasLabel
 
     public static function allowsUser(?object $user, ?self $audience): bool
     {
-        return in_array($audience ?? self::default(), static::visibleTo($user), true);
+        return in_array($audience ?? self::default(), self::visibleTo($user), true);
     }
 }
