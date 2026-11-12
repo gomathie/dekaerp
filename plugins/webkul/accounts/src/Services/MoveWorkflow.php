@@ -314,7 +314,7 @@ class MoveWorkflow
     }
 
     /**
-     * Accounting plan #7, A2b (user, 2026-11-13, "like Zoho Books"): undoing
+     * Accounting plan, A2b (user, 2026-11-13, "like Zoho Books"): undoing
      * a confirmed document needs a reason, because customers ask for price
      * changes after the fact and the history must say why the figures moved.
      * Drafts and cancelled documents need none: they were never in the books.

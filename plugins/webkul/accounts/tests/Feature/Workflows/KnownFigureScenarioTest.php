@@ -16,7 +16,7 @@ require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php
 require_once __DIR__.'/../../Helpers/AccountHelper.php';
 
 /**
- * Accounting plan #7, package A1: known figures, end to end.
+ * Accounting plan, package A1: known figures, end to end.
  *
  * The brief's Ghana example (VAT Act 2025, Act 1151: VAT 15%, NHIL 2.5% and
  * GETFund 2.5%, all on the same taxable value): GHS 1,000 excluding tax is

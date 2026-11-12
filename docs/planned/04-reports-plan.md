@@ -53,7 +53,7 @@ filtered query, never `getTable()->getQuery()`). Each states what it counts
 company, shown first. Only if R1 is liked in use.
 
 Later, when asked: stock valuation and ageing come with Inventory I1/I4
-(plan #4); payroll reports come with Payroll (plan #3); platform (Super
+(Inventory plan); payroll reports come with Payroll (Payroll plan); platform (Super
 Admin) revenue reports with the SaaS remainder (CR-10, plan #1).
 
 Not planned (overkill now): custom report builder, scheduled delivery, pivot
