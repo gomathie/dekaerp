@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'companies' => 'الشركات',
+    'companies'     => 'الشركات',
     'all_companies' => 'كل الشركات',
-    'confirm'   => 'تأكيد',
-    'reset'     => 'إعادة تعيين',
+    'confirm'       => 'تأكيد',
+    'reset'         => 'إعادة تعيين',
 ];

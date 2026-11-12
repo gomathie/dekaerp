@@ -2,6 +2,7 @@
 
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
+use Webkul\Support\Filament\Pages\WhatsNew;
 
 require_once __DIR__.'/../../Helpers/TestBootstrapHelper.php';
 require_once __DIR__.'/../../Helpers/FilamentHelper.php';
@@ -18,9 +19,8 @@ beforeEach(function (): void {
  * row links to What's New.
  */
 it('shows the changelog version in the profile menu, linked to the release notes', function (): void {
-    preg_match('/^#\s.*?v(\d+\.\d+\.\d+[\w.\-]*)\s*$/m', (string) file_get_contents(base_path('CHANGELOG.md')), $matches);
-
-    expect($matches[1] ?? null)->toBe(config('app.version'));
+    // The page's own parser, so "Unreleased" and dated headings count the same way.
+    expect(ltrim((string) WhatsNew::latestVersion(), 'v'))->toBe(config('app.version'));
 
     FilamentHelper::bootAdminPanel();
     CompanyHelper::actingAsCompanyUser(CompanyHelper::company(), []);
