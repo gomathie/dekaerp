@@ -1,13 +1,5 @@
-<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="0.5" y="0.5" width="63" height="63" rx="12.5" fill="white"/>
-<rect x="0.5" y="0.5" width="63" height="63" rx="12.5" stroke="#DCE0E5"/>
-<rect x="12" y="13" width="28" height="38" rx="6" fill="#212A31"/>
-<rect x="16" y="18" width="14" height="2.5" rx="1.25" fill="#F59E0B"/>
-<rect x="16" y="24" width="18" height="2.5" rx="1.25" fill="white"/>
-<rect x="16" y="30" width="13" height="2.5" rx="1.25" fill="white" fill-opacity="0.6"/>
-<rect x="16" y="36" width="10" height="2.5" rx="1.25" fill="#78716C"/>
-<circle cx="42" cy="40" r="11" fill="#F59E0B" stroke="white" stroke-width="2.5"/>
-<path d="M37 37.5H47L45.5 45.5H38.5L37 37.5Z" fill="white"/>
-<path d="M39.5 37.5V35C39.5 33.6193 40.6193 32.5 42 32.5C43.3807 32.5 44.5 33.6193 44.5 35V37.5" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-<circle cx="42" cy="41" r="1.2" fill="#F59E0B"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+<path d="M3 4h2.2l2.3 11.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.1L21 8H6.2"/>
+<circle cx="9.5" cy="20" r="1.3" stroke="#F59E0B"/>
+<circle cx="17" cy="20" r="1.3" stroke="#F59E0B"/>
 </svg>
