@@ -10,6 +10,9 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+
+# CHANGELOG — v1.7.1 — 2026-11-12
+
 ### Improvements
 
 * The "At a glance" cards on the Overview open the list they count, such as open quotations or invoices to collect
