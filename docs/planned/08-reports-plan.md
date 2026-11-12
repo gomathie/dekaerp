@@ -1,3 +1,80 @@
+# Reports — Improvement Plan
+
+Status: **plan written 2026-11-12; not started.** Built from the brief below
+(added by the user 2026-11-12), cut to the gaps after the user's instruction
+the same day: "if what we have is enough don't plan an overkill, just an
+improvement and an easy workflow."
+
+Read `AGENTS.md` first: page permissions (`page_<plugin>_<page>`, assert the
+generated set), `ChecksPagePermission`, and the module switch on every page.
+
+---
+
+## 1. What exists (keep)
+
+Reports already live in each module's own Reporting cluster, behind the
+module switch and a Shield page permission, most with filters and export:
+
+| Module | Reports (verified 2026-11-12) |
+| --- | --- |
+| Accounting | Balance Sheet, Profit and Loss, Trial Balance, General Ledger, Partner Ledger, Aged Receivable, Aged Payable |
+| Logistics | Shipment Register, Shipment Profitability, Delivery Performance, Trip History, Driver and Vehicle Trip History |
+| Attendance | Absence, Lateness, Overtime |
+| Inventory | Moves analysis, Stock quantities |
+| Time Off | By employee |
+| Employees | Skills |
+| Overview | Combined dashboard with sections per module (`OverviewRegistry`) |
+
+So the brief's "plugin-aware, entitlement-aware, permission-aware" rule is
+already how every report is guarded. What is missing is **one place to find
+them**, and reports for Sales and Purchases.
+
+## 2. Packages
+
+**R1 — Reports page (the easy workflow).**
+One "Reports" entry in the main navigation. It lists every report page the
+user can open, grouped by module, each with a one-line description, plus a
+search box. Plugins add their pages to a small registry (same shape as
+`OverviewRegistry`: key, module, label, description, page class); the page
+shows an entry only when that page's own `canAccess()` passes, so module
+switch, Shield permission and company come for free and there is no second
+permission rule. A disabled module's reports disappear by themselves. Opening
+a report goes to its existing page; nothing is moved. Phone layout: one
+column, search at the top.
+
+**R2 — Sales and Purchases reports.**
+Sales: by customer, by product, by salesperson, by month; open quotations.
+Purchases: by vendor, by product, open purchase orders, received vs ordered.
+Built like the Logistics report pages (filtered table, export through the
+filtered query, never `getTable()->getQuery()`). Each states what it counts
+(ordered, delivered or invoiced amounts) in its description.
+
+**R3 — Favourites** (small): a star on each entry, stored per user and
+company, shown first. Only if R1 is liked in use.
+
+Later, when asked: stock valuation and ageing come with Inventory I1/I4
+(plan #4); payroll reports come with Payroll (plan #3); platform (Super
+Admin) revenue reports with the SaaS remainder (CR-10, plan #1).
+
+Not planned (overkill now): custom report builder, scheduled delivery, pivot
+tables, report definitions in the database, cached results.
+
+## 3. Order and decisions
+
+R1 → R2 → R3.
+
+| ID | Question | Recommendation |
+| --- | --- | --- |
+| REP-D1 | One "Reports" page linking to the existing reports, not a rebuilt report engine? | Yes |
+| REP-D2 | Keep each module's own Reporting cluster too? | Yes; the Reports page links to them |
+| REP-D3 | Sales/Purchases reports in R2 enough to start? | Yes; add more as clients ask |
+
+---
+
+## Original brief (user, 2026-11-12)
+
+Kept as written. The plan above supersedes its phases and deliverables.
+
 # DEKA ERP — MASTER AGENT PROMPT
 # Comprehensive ERP Reporting, Analytics, Report Discovery, and Plugin-Aware Reporting Engine
 

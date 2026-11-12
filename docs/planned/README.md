@@ -12,7 +12,9 @@ When work on one begins, mark its status "in progress" here and in the plan.
 | 4 | [Inventory improvements](04-inventory-plan.md) | Gaps against Odoo and ERPNext: dashboard and reports, lot dates, stock valuation, landed costs, count sessions, material requests, batch picking | Decisions accepted 2026-11-11 |
 | 5 | [CRM](05-crm-plan.md) | Phased port of upstream's core (leads, pipeline, teams, won/lost, quotation link) | Decisions accepted 2026-11-11. Starts after Attendance, once upstream CRM is stable |
 | 6 | [Point of Sale](06-pos-extraction-plan.md) | Point of Sale from upstream | Planning only; first-version scope decided 2026-11-11 (cash and mobile money, offline, printer and drawer, barcode) |
-| 7 | [Landing page](07-landing-page-brief.md) | Public landing page | Not started; content decisions made 2026-11-11. Hosting and screenshots to be discussed after all other tasks |
+| 7 | [Accounting](07-accounting-plan.md) | Fill the real gaps only: known-figure tests, lock date, bank reconciliation screen, accounting dashboard, cash flow, country chart templates | Plan written 2026-11-12 from the user's audit brief, kept lean on the user's instruction ("no overkill, an easy workflow"). Decisions ACC-D1..4 open |
+| 8 | [Reports](08-reports-plan.md) | One Reports page listing every report the user can open, plus Sales and Purchases reports | Plan written 2026-11-12 from the user's reporting brief, kept lean the same way. Decisions REP-D1..3 open |
+| 9 | [Landing page](09-landing-page-brief.md) | Public landing page | Not started; content decisions made 2026-11-11. Hosting and screenshots to be discussed after all other tasks |
 
 Also waiting, but kept where it is because code and tests reference it:
 Logistics phase 2 (WP-14 to WP-24) in [`../logistics-plan.md`](../logistics-plan.md) §6a/§6b.

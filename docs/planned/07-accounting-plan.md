@@ -1,3 +1,105 @@
+# Accounting — Improvement Plan
+
+Status: **plan written 2026-11-12; not started.** Built from the brief below
+(added by the user 2026-11-12), cut to the gaps after the user's instruction
+the same day: "if what we have is enough don't plan an overkill, just an
+improvement and an easy workflow."
+
+Read `AGENTS.md` first, especially the `Move` / `MoveLine` rules
+(`display_type`, balancing lines). Every package needs AccountFeature,
+InvoiceFeature, Sales and Purchases green.
+
+---
+
+## 1. What DEKA Accounting already has (keep, do not rebuild)
+
+The engine is a port of Odoo's: one ledger (`accounts_account_moves` /
+`accounts_account_move_lines`) that invoices, bills, payments, credit notes
+and Logistics expenses all post into. The brief's "centralised ledger"
+question is answered: there is one, and no second engine is needed.
+
+| Area | DEKA has (verified in code 2026-11-12) |
+| --- | --- |
+| Ledger | Moves and lines, draft / posted / cancelled (`MoveWorkflow`), reversals (`MoveReversal`), per-company numbering |
+| Receivables / payables | Invoices, bills, credit notes, refunds, payments, partial and full reconciliation (`Reconciler`, `PaymentRegistrar`), write-off |
+| Tax | Taxes, groups, formulas (`TaxComputer`, `TaxFormulaEvaluator`), fiscal positions, cash rounding |
+| Currency | Company and transaction currency, rates (support), realized exchange difference (`ExchangeDifferenceRecorder`) |
+| Setup | New company gets a copy of the template company's chart (51 accounts), taxes, journals and default accounts (`AccountingSetupService`) |
+| Reports | Balance Sheet, Profit and Loss, Trial Balance, General Ledger, Partner Ledger, Aged Receivable, Aged Payable, each with export |
+
+## 2. Real gaps (what this plan does)
+
+| # | Gap | Why it matters | Size |
+| --- | --- | --- | --- |
+| A1 | **Proof with known figures.** No test walks the brief's Ghana example (GHS 1,000 + VAT 15% + NHIL 2.5% + GETFund 2.5% = 1,200; pay 500, then 700) through ledger, partner ledger and trial balance | Trust: the investor demo and real clients rely on these numbers | S |
+| A2 | **Lock date.** Nothing stops posting or editing in a closed month | An accountant closes a month and a clerk changes it later | S |
+| A3 | **Bank reconciliation screen.** `BankStatement` models exist, no screen | Daily task; brief and every client expect it | M |
+| A4 | **Country chart templates.** One template for every company | Ghana / Zambia (IFRS-style) and Congo (SYSCOHADA) need different charts and taxes | M |
+| A5 | **Accounting dashboard.** Cash and bank, receivables, payables, bills due, unreconciled lines on one screen | Easy daily workflow; uses `OverviewRegistry` | S |
+| A6 | **Cash flow statement** (indirect method, from the ledger) | Completes the statement set | S |
+
+Not planned now (enough exists, or no client has asked): competitor
+benchmark study, approval workflows, budgets, bank feeds, unrealized FX
+revaluation, year-end closing entries (the Balance Sheet already rolls
+current earnings), tax effective dates (posted documents already store their
+own tax amounts, so a rate change does not rewrite them; create the new tax
+and archive the old one). Revisit any of these when a client needs it.
+
+## 3. Packages
+
+**A1 — Known-figure tests (first; no product change).**
+Pest tests for scenarios A–D, F and H of the brief: capital, credit sale with
+Ghana taxes and two payments, supplier purchase, credit note, USD invoice paid
+at a different rate. Assert move lines, partner ledger, trial balance totals
+(debits = credits) and balance sheet (assets = liabilities + equity). Any
+failure becomes a fix in this package. Also a two-company isolation test on
+the reports.
+
+**A2 — Lock date.**
+One company setting "Lock entries up to" (per company, in
+`logistics_company_settings` style, not the fallback settings repository).
+Posting, editing, deleting or reversing a move dated on or before it is
+refused in the service (`MoveWorkflow`), not only on the screen. Only a
+role with a new `unlock_period` permission can change the date; every
+change is logged in chatter.
+
+**A3 — Bank reconciliation.**
+Import a statement (CSV, mapped columns; OFX later if asked), list lines,
+suggest the matching open payment or invoice by amount and partner, confirm
+with one click, or create a counterpart entry (bank charge, interest) from
+the line. Reuses `Reconciler`; no new ledger logic.
+
+**A4 — Country templates.**
+Seeded template sets: Ghana, Zambia, OHADA (Congo). Chosen from the
+company's country when Accounting is set up; the current copy stays the
+fallback. Existing companies are not touched. Taxes ship as data and must be
+checked by a local accountant before being called compliant.
+
+**A5 — Accounting dashboard** and **A6 — cash flow statement.**
+Dashboard section through `OverviewRegistry`, same rules as the other
+sections (module switch, page permission, mobile layout). Cash flow as an
+eighth page in the existing Reporting cluster with export.
+
+## 4. Order
+
+A1 → A2 → A3 → A5 → A6 → A4. A1 first because it may turn up defects that
+change the rest; A4 last because it needs the local accountant's review.
+
+## 5. Decisions needed (user)
+
+| ID | Question | Recommendation |
+| --- | --- | --- |
+| ACC-D1 | Order above? | Yes |
+| ACC-D2 | Who may move the lock date? | Company Admin and a new "Accountant" grant; never a clerk |
+| ACC-D3 | Statement import formats for A3 | CSV first; OFX when a client's bank needs it |
+| ACC-D4 | Who reviews the Ghana / Zambia / OHADA templates? | A local accountant per country before A4 ships |
+
+---
+
+## Original brief (user, 2026-11-12)
+
+Kept as written. The plan above supersedes its phases and deliverables.
+
 # DEKA ERP — MASTER ACCOUNTING SYSTEM AUDIT, BENCHMARKING, VALIDATION AND IMPROVEMENT PLAN
 
 ## PROJECT OBJECTIVE
