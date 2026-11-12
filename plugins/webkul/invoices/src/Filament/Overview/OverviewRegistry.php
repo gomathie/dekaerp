@@ -26,12 +26,8 @@ class OverviewRegistry
      * @param  list<class-string>  $widgets
      * @param  Closure(): array<int, mixed>  $filters  extra filter fields, shown when only this section is selected
      * @param  Closure(): bool  $visible
-     */
-    /**
-     * @param  (Closure(): list<array{label: string, count: int, url: ?string, tone: string}>)|null  $attention
-     *                                                                                                           what needs someone today (Needs attention list and the greeting's summary line)
-     * @param  (Closure(): list<array{label: string, url: string, icon: string}>)|null  $actions
-     *                                                                                            quick "new" actions for the greeting
+     * @param  (Closure(): list<array{label: string, count: int, url: ?string, tone: string}>)|null  $attention  what needs someone today (Needs attention and the greeting's summary line)
+     * @param  (Closure(): list<array{label: string, url: string, icon: string}>)|null  $actions  quick "new" actions for the greeting
      */
     public static function register(string $key, Closure $label, array $widgets, Closure $filters, Closure $visible, int $sort = 0, ?string $headline = null, ?Closure $attention = null, ?Closure $actions = null): void
     {

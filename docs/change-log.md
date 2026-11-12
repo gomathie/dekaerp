@@ -6,6 +6,36 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-13 (greeting "today" line and quick actions; Overview All as a summary; Sentry DEKAERP-16)
+
+- **Why:** user asked for Dribbble-level polish of the greeting and the All
+  tab. Finance dashboards there share three habits: the greeting says what
+  needs you, each figure shows a trend, and the home tab summarises instead
+  of stacking every chart. Separately, Sentry DEKAERP-16: All sent 23 widgets
+  in one Livewire update and `config/livewire.php` capped batches at 20
+  (copied in with the Filament 5 upgrade; Livewire's own default is 200).
+- **How:** `OverviewRegistry::register()` takes optional `attention` and
+  `actions` closures; `attentionItems()` / `quickActions()` read them.
+  Invoices (`Overview\InvoiceAttention`: overdue invoices, overdue bills,
+  bills due within 7 days), Sales (quotations sent over 7 days ago) and
+  Purchases (orders to approve) contribute. `DashboardBannerRegistry` gained
+  `summary()` and `actions()` (max three); Invoices feeds both from the
+  registry, so banner and list never disagree. All tab =
+  `OverviewHeadlineWidget` + new `OverviewCashFlowChart` (paid invoices vs
+  paid bills; uses Revenue over time's Shield permission) + new
+  `OverviewAttentionWidget`. Sales revenue and purchase spend cards show the
+  trend vs the previous period through the existing `statTrend()`.
+  `max_components` 20 → 100. Translations in five languages.
+- **Benefit:** the first screen answers "what needs me today" and links to
+  it; All loads 3 widgets instead of 23, and filter changes no longer fail.
+- **Trade-off / risk:** All no longer shows each module's charts (they are
+  one tab away). Attention counts run on every dashboard view (four small
+  counts per module). Not yet seen in a browser.
+- **Verification:** see the entry's test note (OverviewTest inverted on
+  purpose for All; new tests for attention, summary and the limit).
+- **Rollback:** drop the early return in `Overview::getWidgets()`; the
+  banner shows the old tagline when no summary is registered.
+
 ## 2026-11-12 (accounting A1 report isolation; A2 lock date; A7 planned)
 
 - **Why:** plan #7 A1 (reports build raw ledger joins, so CompanyScope does
