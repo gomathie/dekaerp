@@ -51,9 +51,14 @@
             --dw-line: rgb(15 23 42 / 0.08);
             --dw-pill: rgb(255 255 255 / 0.7);
             --dw-accent: #d97706;
-            --dw-glow-a: rgb(245 158 11 / 0.16);
-            --dw-glow-b: rgb(251 191 36 / 0.10);
             --dw-surface: #ffffff;
+            /* One diagonal wash in the panel's primary (branding) colour,
+               strongest behind the greeting and gone before the clock, so
+               the right side stays calm (user, 2026-11-12: "gradient behind
+               the greeting, clean design"). color-mix keeps it a tint of the
+               surface rather than a saturated band. */
+            --dw-tint-strong: color-mix(in oklab, var(--primary-500, #f59e0b) 16%, var(--dw-surface));
+            --dw-tint-soft: color-mix(in oklab, var(--primary-400, #fbbf24) 7%, var(--dw-surface));
 
             position: relative;
             overflow: hidden;
@@ -68,10 +73,7 @@
             padding: 1.25rem 1.5rem;
             border: 1px solid var(--dw-line);
             border-radius: 1rem;
-            background:
-                radial-gradient(60% 120% at 0% 0%, var(--dw-glow-a), transparent 70%),
-                radial-gradient(40% 90% at 100% 100%, var(--dw-glow-b), transparent 70%),
-                var(--dw-surface);
+            background: linear-gradient(115deg, var(--dw-tint-strong) 0%, var(--dw-tint-soft) 38%, var(--dw-surface) 72%);
             color: var(--dw-ink);
             box-shadow: 0 1px 2px rgb(15 23 42 / 0.04), 0 8px 24px -12px rgb(15 23 42 / 0.10);
         }
@@ -81,9 +83,9 @@
             --dw-line: rgb(255 255 255 / 0.08);
             --dw-pill: rgb(255 255 255 / 0.04);
             --dw-accent: #fbbf24;
-            --dw-glow-a: rgb(245 158 11 / 0.18);
-            --dw-glow-b: rgb(251 191 36 / 0.07);
             --dw-surface: rgb(24 24 27);
+            --dw-tint-strong: color-mix(in oklab, var(--primary-500, #f59e0b) 20%, var(--dw-surface));
+            --dw-tint-soft: color-mix(in oklab, var(--primary-600, #d97706) 8%, var(--dw-surface));
             box-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -12px rgb(0 0 0 / 0.5);
         }
         .deka-welcome__who {
