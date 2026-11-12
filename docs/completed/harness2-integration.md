@@ -92,7 +92,7 @@ docker compose run --rm --no-deps -e DB_DATABASE=aureuserp_testing_eval \
   laravel.test php artisan test --testsuite=SupportFeature --compact
 ```
 
-One suite at a time, one database, as [running-tests.md](running-tests.md)
+One suite at a time, one database, as [running-tests.md](../running-tests.md)
 requires. See that document for why two `migrate:fresh` runs on one database
 corrupt each other's results.
 
@@ -128,7 +128,7 @@ are not something an agent should obtain, store, or pass around.
 ### 3. Controlled hand-off of lessons
 
 A lesson learned while evaluating anything — Harness², a review, or a failed
-run — reaches [AGENTS.md](../AGENTS.md) only through an approval gate:
+run — reaches [AGENTS.md](../../AGENTS.md) only through an approval gate:
 
 1. Record the original problem.
 2. Record what was attempted.
@@ -141,7 +141,7 @@ run — reaches [AGENTS.md](../AGENTS.md) only through an approval gate:
    permanent lesson.
 
 This is the same discipline the project already applies per session, in
-[change-log.md](change-log.md) and [agent-reminders.md](agent-reminders.md).
+[change-log.md](../change-log.md) and [agent-reminders.md](../agent-reminders.md).
 
 ## What this document does not claim
 
@@ -157,7 +157,7 @@ This is the same discipline the project already applies per session, in
 
 This change is documentation only.
 
-- Delete this file and the REFERENCES line in [AGENTS.md](../AGENTS.md).
+- Delete this file and the REFERENCES line in [AGENTS.md](../../AGENTS.md).
 - Nothing else was added: no dependency, no container, no config, no migration,
   no test.
 - If the sandbox route is ever used, `rm -rf ~/harness2-sandbox` removes the
@@ -184,4 +184,4 @@ project they belong to. No application code is copied between repositories.
 - Harness² repository: <https://github.com/google-research/harness2>
 - Its setup guide: `docs/SETUP.md` in that repository
 - Its benchmark guides: `docs/BENCHMARKS.md` in that repository
-- This project's test procedure: [running-tests.md](running-tests.md)
+- This project's test procedure: [running-tests.md](../running-tests.md)
