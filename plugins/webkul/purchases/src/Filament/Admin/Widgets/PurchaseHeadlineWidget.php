@@ -6,6 +6,8 @@ use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
 use Webkul\Purchase\Enums\OrderState;
+use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\PurchaseOrderResource;
+use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\QuotationResource;
 use Webkul\Purchase\Filament\Admin\Pages\Purchases;
 use Webkul\Purchase\Filament\Admin\Widgets\Concerns\HasPurchaseDashboardFilters;
 
@@ -80,6 +82,7 @@ class PurchaseHeadlineWidget extends StatsOverviewWidget
 
         return [
             Stat::make(__('invoices::filament/pages/overview.headline.spend'), compact_money($spend, $currency))
+                ->url(PurchaseOrderResource::canViewAny() ? PurchaseOrderResource::getUrl('index') : null)
                 ->icon('heroicon-o-shopping-cart')
                 ->description(trans_choice('invoices::filament/pages/overview.headline.orders', $orders, ['count' => $orders]))
                 ->chart($this->dailySpend(clone $confirmed))
@@ -87,6 +90,7 @@ class PurchaseHeadlineWidget extends StatsOverviewWidget
                 ->extraAttributes(['class' => 'overview-headline-stat']),
 
             Stat::make(__('invoices::filament/pages/overview.headline.open-rfqs'), number_format($openRequests))
+                ->url(QuotationResource::canViewAny() ? QuotationResource::getUrl('index') : null)
                 ->icon('heroicon-o-clipboard-document-list')
                 ->color('info')
                 ->extraAttributes(['class' => 'overview-headline-stat']),

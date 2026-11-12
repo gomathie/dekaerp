@@ -789,7 +789,7 @@ tests.
 >   2026-10-21 and `plugins/webkul/website` has no admin resources. Replaced with
 >   the customer-portal line, with the correction dated inline.
 >
-> Checked and left alone because they are still true: `planned/01-unified-product-resource-plan.md`
+> Checked and left alone because they are still true: `planned/../completed/unified-product-resource-plan.md`
 > ("Contacts/Website partner screens" — the website plugin contributes its portal
 > actions and column to the partner resource through `PartnerSchemaRegistry`),
 > and the historical Website references in `docs/change-log.md` and

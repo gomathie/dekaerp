@@ -8,6 +8,7 @@ actions, UX findings, API access, running tests, Logistics) stay in `docs/`.
 
 | Plan | Completed | Notes |
 |---|---|---|
+| [Unified product resource](unified-product-resource-plan.md) | 2026-11-12 | One product form on every module screen, contacts phase 3 and combination tests done. Suites green: Product 276, Sale 155, Purchase, Accounting 55, Partner 94, Account 137; InventoryFeature run pending at move time |
 | [Attendance](attendance-plan.md) | 2026-11-12 | AT-0 to AT-7 in production; AT-5 kiosk stays a design note by decision. Suites: Attendance 32 + 2, Support 227, Employee 10 |
 | [Module dashboards](dashboards-plan.md) | 2026-11-11 | Invoice, Sales, Purchase and Recruitment dashboards ported, then merged into the combined Overview |
 | [Company Admin role and Users-list isolation](company-admin-role-plan.md) | 2026-11-10 | Company Admin role, company-scoped Users list (§4a), scoped-parent-read fixes (§4d–§4k). Pinned by `CompanyUserIsolationTest` |
