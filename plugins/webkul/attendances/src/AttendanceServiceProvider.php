@@ -7,6 +7,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Livewire\Livewire;
+use Webkul\Attendance\Console\Commands\AutoCheckOutAttendances;
 use Webkul\Attendance\Filament\AttendanceBannerContribution;
 use Webkul\Attendance\Livewire\ClockButton;
 use Webkul\Attendance\Models\Attendance;
@@ -39,6 +40,10 @@ class AttendanceServiceProvider extends PackageServiceProvider
             ])
             ->runsMigrations()
             ->hasDependencies(['employees'])
+            // Registered 2026-11-12 (Sentry DEKAERP-14): the scheduler below
+            // ran attendances:auto-check-out every 15 minutes, but the command
+            // was never registered, so forgotten check-outs were never closed.
+            ->hasCommand(AutoCheckOutAttendances::class)
             ->hasSeeder('Webkul\\Attendance\\Database\\Seeders\\DatabaseSeeder')
             ->hasInstallCommand(function (InstallCommand $command): void {
                 $command

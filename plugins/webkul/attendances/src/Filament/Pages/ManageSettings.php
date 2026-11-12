@@ -53,7 +53,7 @@ class ManageSettings extends Page
 
     public static function getNavigationGroup(): string|UnitEnum
     {
-        return NavigationGroup::Employee;
+        return NavigationGroup::Attendance;
     }
 
     public static function getNavigationLabel(): string
