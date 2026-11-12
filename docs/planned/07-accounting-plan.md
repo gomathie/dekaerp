@@ -84,6 +84,17 @@ both cases a member of the company; no future dates. "Lock date" button on the
 Journal Entries list. Paying an old invoice and editing drafts stay allowed.
 Tests: `accounts/tests/Feature/Workflows/LockDateTest.php`, 11 tests.*
 
+**A2b — Reason on reset to draft and cancel** (added 2026-11-13, user: "like
+Zoho Books; customers ask to reduce or increase a price"). Resetting or
+cancelling a *posted* invoice, bill, credit note, refund or payment asks for
+a reason, for every confirmed document (not only sent ones, user decision).
+`MoveWorkflow::resetToDraft()` / `cancel()` take the reason and refuse a
+blank one for a posted move; the reason is written to the document's chatter
+with who and when, and feeds CR-11. Drafts need none. The lock date still
+wins. API: the four document controllers accept an optional `reason`; without
+one the API records "Changed through the API" so existing clients keep
+working (no contract break).
+
 **A3 — Bank reconciliation.**
 Import a statement (CSV, mapped columns; OFX later if asked), list lines,
 suggest the matching open payment or invoice by amount and partner, confirm
@@ -113,7 +124,7 @@ layouts (GRA, ZRA) only when a client asks.
 
 ## 4. Order
 
-A1 → A2 → A7 → A3 → A5 → A6 → A4 (A7 placed after A2 by the user,
+A1 → A2 → A2b → (CR-11 activity log, plan #1) → A7 → A3 → A5 → A6 → A4 (A7 placed after A2 by the user,
 2026-11-12). A1 first because it may turn up defects that
 change the rest; A4 last because it needs the local accountant's review.
 

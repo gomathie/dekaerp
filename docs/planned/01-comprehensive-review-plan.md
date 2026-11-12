@@ -64,6 +64,7 @@ calendar days of agent work, including tests.
 | CR-8 | Partners / resellers | P2 | 5–7 | D-CR-5 |
 | CR-9 | Deliverables and investor demo | P0 (demo) | 1.5 | CR-3…CR-7 |
 | CR-10 | Finish the SaaS administration plan | P0 defects / P1 | 3 | CR-3 for the smoke |
+| CR-11 | Company activity log (added 2026-11-13, user) | P1 | 2 | Reason on reset/cancel (accounting A2b) |
 
 ### CR-1 — AS-IS walk-through, measured (P0)
 
@@ -226,6 +227,40 @@ Decided 2026-11-12 (D-CR-7). Every SAAS package is built but in "review".
 4. SAAS-14 documentation, including the stale `AGENTS.md` note it owns.
 5. Browser smoke (done inside CR-3); mark each SAAS package "done" as it
    passes.
+
+### CR-11 — Company activity log (P1)
+
+*Added 2026-11-13 at the user's request: "every company may need an activity
+section to find out who changes what, who deleted what." Order agreed: after
+the accounting reset/cancel reason (plan #7, A2b), before A7.*
+
+**Already there (reuse, no second log).** `HasLogActivity` on 25 models
+writes create / update / delete rows to `chatter_messages` (`company_id`,
+`causer`, `event`, `properties` old → new). `SecurityAuditLogger` records
+user, role, password and impersonation events. Today both are readable only
+per record, so a deleted record's history cannot be found.
+
+**Build.**
+1. *Audit first (half a day).* List models without `HasLogActivity` that
+   matter (manual journal entries, settings, lock date, roles) and add it to
+   the important ones. Count `chatter_messages` activity rows with a null
+   `company_id`; backfill from the owning record where it can be read, and
+   report the rest.
+2. *Page.* "Activity Log" in Settings: one table over activity messages and
+   security audit rows. Columns: when, who, module, record (name kept for
+   deleted records), action, changes (old → new), reason. Filters: user,
+   module, action, date range. Click opens the record when it still exists.
+   Export to Excel. Read-only: no edit or delete anywhere.
+3. *Access.* Company Admin of that company plus a new page permission;
+   always filtered to the active company, read scope-free by `company_id`
+   (an actor's scope must not hide or widen it). Installation staff see all
+   companies in "All companies" mode. Module switch does not apply (core).
+4. *Tests.* Two-company isolation; a deleted record still listed; reason
+   shown; export scope equals the filtered table
+   (`getTableQueryForExport()`); generated page permission asserted.
+
+**Not now.** Retention or archiving (keep everything until storage says
+otherwise); a field-by-field diff for every model (only logged attributes).
 
 ### CR-9 — Deliverables and investor demo (P0 for the demo)
 

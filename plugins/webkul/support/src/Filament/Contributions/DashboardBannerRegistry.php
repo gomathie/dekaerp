@@ -28,9 +28,67 @@ class DashboardBannerRegistry
      */
     protected static array $locations = [];
 
+    /**
+     * @var array<string, Closure(): list<string>>
+     */
+    protected static array $summaries = [];
+
+    /**
+     * @var array<string, Closure(): list<array{label: string, url: string, icon: string}>>
+     */
+    protected static array $actions = [];
+
     public static function section(string $key, Closure $render): void
     {
         static::$sections[$key] = $render;
+    }
+
+    /**
+     * Short "today" phrases under the greeting, e.g. "3 invoices overdue"
+     * (user, 2026-11-13). Keyed like section(), so re-booting replaces.
+     */
+    public static function summary(string $key, Closure $phrases): void
+    {
+        static::$summaries[$key] = $phrases;
+    }
+
+    /**
+     * Quick "new" actions shown in the banner. The contributor decides what
+     * the viewer may create; the banner only renders.
+     */
+    public static function actions(string $key, Closure $actions): void
+    {
+        static::$actions[$key] = $actions;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public static function summaryPhrases(): array
+    {
+        $phrases = [];
+
+        foreach (static::$summaries as $resolve) {
+            array_push($phrases, ...array_values(array_filter((array) $resolve(), 'is_string')));
+        }
+
+        return $phrases;
+    }
+
+    /**
+     * At most three: more buttons than that turned the banner into a toolbar.
+     *
+     * @return list<array{label: string, url: string, icon: string}>
+     */
+    public static function quickActions(): array
+    {
+        $actions = [];
+
+        foreach (static::$actions as $resolve) {
+            array_push($actions, ...(array) $resolve());
+        }
+
+        return array_slice($actions, 0, 3);
     }
 
     /**
@@ -70,5 +128,7 @@ class DashboardBannerRegistry
     {
         static::$sections = [];
         static::$locations = [];
+        static::$summaries = [];
+        static::$actions = [];
     }
 }

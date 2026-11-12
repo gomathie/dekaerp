@@ -28,6 +28,7 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ### Fixes
 
+* Changing a filter on a dashboard with many charts no longer fails.
 * A mistyped record address now shows "Not found" instead of a server error.
 
 # CHANGELOG — v1.7.1 — 2026-11-12

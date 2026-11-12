@@ -119,6 +119,8 @@ class PurchaseServiceProvider extends PackageServiceProvider
             fn (): bool  => Purchases::canAccess(),
             sort: 20,
             headline: PurchaseHeadlineWidget::class,
+            attention: fn (): array => PurchaseHeadlineWidget::attention(),
+            actions: fn (): array => PurchaseHeadlineWidget::actions(),
         );
 
         Livewire::component('list-products', ListProducts::class);

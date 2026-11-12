@@ -27,17 +27,61 @@ class OverviewRegistry
      * @param  Closure(): array<int, mixed>  $filters  extra filter fields, shown when only this section is selected
      * @param  Closure(): bool  $visible
      */
-    public static function register(string $key, Closure $label, array $widgets, Closure $filters, Closure $visible, int $sort = 0, ?string $headline = null): void
+    /**
+     * @param  (Closure(): list<array{label: string, count: int, url: ?string, tone: string}>)|null  $attention
+     *                                                                                                           what needs someone today (Needs attention list and the greeting's summary line)
+     * @param  (Closure(): list<array{label: string, url: string, icon: string}>)|null  $actions
+     *                                                                                            quick "new" actions for the greeting
+     */
+    public static function register(string $key, Closure $label, array $widgets, Closure $filters, Closure $visible, int $sort = 0, ?string $headline = null, ?Closure $attention = null, ?Closure $actions = null): void
     {
         static::$sections[$key] = [
-            'label'    => $label,
-            'widgets'  => $widgets,
-            'filters'  => $filters,
-            'visible'  => $visible,
-            'sort'     => $sort,
+            'label'     => $label,
+            'widgets'   => $widgets,
+            'filters'   => $filters,
+            'visible'   => $visible,
+            'sort'      => $sort,
             // The section's card in the "At a glance" row, shown first.
-            'headline' => $headline,
+            'headline'  => $headline,
+            'attention' => $attention,
+            'actions'   => $actions,
         ];
+    }
+
+    /**
+     * Every visible section's open items, only those with something to do.
+     * One source for the Needs attention list and the greeting's summary,
+     * so the two never disagree.
+     *
+     * @return list<array{label: string, count: int, url: ?string, tone: string}>
+     */
+    public static function attentionItems(): array
+    {
+        $items = [];
+
+        foreach (static::visible() as $section) {
+            foreach ((($section['attention'] ?? null) ?: fn (): array => [])() as $item) {
+                if (($item['count'] ?? 0) > 0) {
+                    $items[] = $item;
+                }
+            }
+        }
+
+        return $items;
+    }
+
+    /**
+     * @return list<array{label: string, url: string, icon: string}>
+     */
+    public static function quickActions(): array
+    {
+        $actions = [];
+
+        foreach (static::visible() as $section) {
+            array_push($actions, ...((($section['actions'] ?? null) ?: fn (): array => [])()));
+        }
+
+        return $actions;
     }
 
     /**
