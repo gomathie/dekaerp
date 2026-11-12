@@ -1426,7 +1426,7 @@ DOCUMENTATION AND UPSTREAM REVIEW (ALL AGENTS)
   earlier "eight still open" wording predated the 2026-10-22 work. Consult the
   register when working in an affected plugin, and update a finding's Local state
   when you touch one.
-• `docs/planned/02-restructure-backlog.md` is the resource-restructure analysis: which
+• `docs/planned/05-restructure-backlog.md` is the resource-restructure analysis: which
   resources adopt upstream's split layout mechanically and which carry local
   changes that must be moved by hand.
 • When you do review upstream, tell the user what is new, whether DEKA ERP needs
@@ -1908,7 +1908,7 @@ log named):
     creating it again.
   - Tests: `plugins/webkul/platform-billing/tests/Feature/OverdueExtensionTest.php`.
 
-• Accounting lock date, 2026-11-12 (`docs/planned/07-accounting-plan.md`, A2):
+• Accounting lock date, 2026-11-12 (`docs/planned/02-accounting-plan.md`, A2):
   - Enforced in the `Move` and `MoveLine` saving/deleting hooks through
     `Account\Services\PeriodLock`, not on screens. Do not move it to an
     action: the API, imports and Logistics' `ExpensePoster` save directly.
@@ -2036,7 +2036,7 @@ REFERENCES
   landing page, restructure backlog, unified product resource; accounting
   (#7) and reports (#8) added 2026-11-12, both kept lean on the user's
   instruction: fill real gaps, no overkill.
-• docs/planned/02-restructure-backlog.md — deferred upstream restructures.
+• docs/planned/05-restructure-backlog.md — deferred upstream restructures.
 • Package F, resource structure alignment — the plan lives on the
   `chore/resource-structure` branch, not on main:
   `git show chore/resource-structure:docs/upstream-structure-alignment-plan.md`.
