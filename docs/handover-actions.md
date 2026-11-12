@@ -588,7 +588,7 @@ database password.
 - ~~**Filament 5.7.6** - needs `composer update`~~ - **DONE (2026-09-19).**
   `composer.lock` holds Filament `v5.7.6`; see upstream-adoption Package A in
   `docs/upstream-fix-adoption-plan.md`.
-- **Restructure backlog** - `docs/planned/03-restructure-backlog.md`. After the Website and
+- **Restructure backlog** - `docs/planned/02-restructure-backlog.md`. After the Website and
   Blogs removal on 2026-10-21 the real totals are 68 mechanically safe to adopt
   and 49 that hold local changes to carry over by hand (the lists themselves
   predate the removal and still count those four entries). Pure merge-debt

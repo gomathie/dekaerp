@@ -56,7 +56,7 @@ class ResourceStructureHelper
      * The declared component tree, in declaration order.
      *
      * Order is preserved and never keyed by name, because in Filament field
-     * order is display order, and docs/planned/03-restructure-backlog.md compares code as
+     * order is display order, and docs/planned/02-restructure-backlog.md compares code as
      * sets and so cannot detect a reordering.
      *
      * @return array<int, array<string, mixed>>

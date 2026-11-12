@@ -1,6 +1,6 @@
 # What's New page: improvement plan
 
-Written 2026-11-12. Status: **decided 2026-11-12; starts after the comprehensive review plan's (#2) first block.**
+Written 2026-11-12. Status: **done 2026-11-12** (WN-1 to WN-6; see docs/change-log.md). Verified: WhatsNewPageTest, VersionMatchesChangelogTest, OverviewTest, InventoryHeadlineTest, 21 passed.
 
 Reference: the shared library's `whats-new-changelog-page` skill and workflow
 (`C:\Users\gomat\OneDrive\Documents\Workflow and skills\`), built from Pilot

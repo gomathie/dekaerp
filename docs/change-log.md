@@ -6,6 +6,46 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-12 (What's New page, WN-1 to WN-6; clickable At-a-glance cards)
+
+Plan: `docs/completed/whats-new-plan.md` (decisions D-WN-1..5).
+
+- **Why:** the page rendered changelog markdown without stripping HTML or
+  refusing `javascript:` links (G1), had no tests (G2), dropped wrapped bullet
+  lines (G4), showed the same category under different labels (G8), had no
+  search, PDF, shortcut or unread signal, and listed develop-only work as
+  released (G10).
+- **How:** `Support\Filament\Pages\WhatsNew` has one static parser
+  (`parseChangelog()`, cached on the file's mtime) used by the page and by the new
+  `WhatsNewPdfController` (`support.whats-new.pdf`, inline stream, 404 for an
+  unknown release, font subsetting). Items render through
+  `Str::markdown(html_input=strip, allow_unsafe_links=false)`. Categories are
+  fixed (new / improved / fixed / upgrade, else the heading's own text) and
+  translated at render time, because the parsed result is cached for every
+  locale. `## Unreleased` and HTML comments are never shown (D-WN-1). The view
+  filters with Alpine: item → section → release → "Nothing matches". Top-bar
+  megaphone on `GLOBAL_SEARCH_AFTER` with a dot from the new nullable
+  `users.whats_new_seen_version` (support migration `2026_11_12_000001`).
+  Opening the page writes it without model events (D-WN-2).
+- **Content:** v1.7.0 and v1.6.0 were rewritten in user language (D-WN-3), and
+  v1.7.0 is dated. Work not yet in production sits under `## Unreleased`.
+  `VersionMatchesChangelogTest` now reads the version through the page parser.
+- **At-a-glance cards (U14):** each Overview card links to the list it counts
+  (orders, quotations, invoices, bills, receipts, deliveries). A card is a link
+  only when the viewer may open that resource (`canViewAny()`).
+- **Guest PDF:** no `auth` middleware, because this app has no `login` route
+  (the guest got a 500). The controller redirects guests to the admin panel login.
+- **Benefit:** release notes cannot run injected markup. They are searchable,
+  printable and announced. Users see only what production has.
+- **Trade-off / risk:** the migration must run before the dot shows. Until
+  then `canTrackSeen()` keeps the dot off rather than failing. Every existing
+  user sees the dot once.
+- **Verification:** support `WhatsNewPageTest` (9 tests: parser, sanitising,
+  Unreleased, code fence, real file, page and dot, shortcut, PDF, guest) and
+  `VersionMatchesChangelogTest`, plus `OverviewTest` and `InventoryHeadlineTest`,
+  on `aureuserp_testing_claude_vault`.
+- **Rollback:** revert the files. The migration's `down()` drops the column.
+
 ## 2026-11-12 (Attendance go-live fixes, modern greeting, queue worker, background plugin install)
 
 Production pushes today (all from develop working-tree files, Attendance code
@@ -1259,7 +1299,7 @@ readiness tracked per country and per company. The 2026-10-26 plan copied
 statutory rates into company-owned pay components, which let a company lower
 a legal minimum and left statutory updates to be retyped company by company.
 
-**How.** `docs/planned/04-payroll.md` is now the single payroll document. The scope note
+**How.** `docs/planned/03-payroll.md` is now the single payroll document. The scope note
 (`REVIEW all THIS WITH SKILLs + i have.md`) is merged into it, verbatim, as
 Appendix A. The document was reviewed with the `engineering:system-design`,
 `engineering:testing-strategy` and `devil-advocate` skills, after inspecting
@@ -1296,7 +1336,7 @@ conceded:
 The fourth attack, an unnamed practitioner and no shadow-run date, is open
 until the user supplies them.
 
-**Decisions recorded the same day (user, 2026-11-02; `docs/planned/04-payroll.md` §6).**
+**Decisions recorded the same day (user, 2026-11-02; `docs/planned/03-payroll.md` §6).**
 
 - **DP-09:** both Congos, as two separate packages (`CD` and `CG`). Each
   package's currency (CDF or XAF) is activated when that package starts.
@@ -1376,7 +1416,7 @@ Worth recording because it is not obvious and cost the investigation: 168 of the
 provider filling `currency_rates` — rates are typed into the currency form. A
 non-base currency therefore also needs a rate before conversion works.
 
-### `docs/planned/04-payroll.md` — a plan, not a decision
+### `docs/planned/03-payroll.md` — a plan, not a decision
 
 The user asked whether payroll exists (it does not, here or upstream) and then
 for a build plan to pick up later. The document records the evidence —
@@ -2318,14 +2358,14 @@ Reconciled by marking superseded claims, not deleting them:
   of `AccountFeature`, plus project and product" (superseded 2026-09-29, when
   all thirteen suites ran green together — AccountFeature 526, ProjectFeature
   86, ProductFeature 250, zero failures).
-- **`docs/planned/03-restructure-backlog.md`** — already reconciled on 2026-10-21; the four
+- **`docs/planned/02-restructure-backlog.md`** — already reconciled on 2026-10-21; the four
   dead entries are now also marked `REMOVED 2026-10-21, moot` inline, because a
   header note is easy to skim past when the list is the thing being worked from.
 - **`docs/running-tests.md`** — documented one shared database and serial runs
   only. Now documents the per-work-package database and the `-e DB_DATABASE`
   override (`phpunit.xml` sets it without `force="true"`, so the env var wins),
   and keeps the interleaving warning scoped to one database.
-- **`docs/planned/08-landing-page-brief.md`** — "Website and blog pages managed from the
+- **`docs/planned/07-landing-page-brief.md`** — "Website and blog pages managed from the
   same admin" was false: Blogs and the CMS pages were removed 2026-10-21 and
   `plugins/webkul/website` has no admin resources, only portal actions/pages.
   Replaced with the customer-portal line, correction dated inline.
@@ -4962,7 +5002,7 @@ lost) and **51 do** - including `InvoiceResource` (19 fork-only lines),
    operations on top, on a live ERP, makes the eventual test run harder to
    attribute.
 
-The analysis is the deliverable: `docs/planned/03-restructure-backlog.md` lists both
+The analysis is the deliverable: `docs/planned/02-restructure-backlog.md` lists both
 sets, the rule for adopting, the method, and its known limit. Do it after the
 runtime is fixed, plugin by plugin.
 
