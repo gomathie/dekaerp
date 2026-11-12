@@ -53,6 +53,7 @@ it('places each module under the section the user approved', function (Navigatio
     [NavigationGroup::Project, 'projects'],
     [NavigationGroup::Employee, 'human-resources'],
     [NavigationGroup::TimeOff, 'human-resources'],
+    [NavigationGroup::Attendance, 'human-resources'],
     [NavigationGroup::Recruitment, 'human-resources'],
     [NavigationGroup::Setting, 'administration'],
 ]);

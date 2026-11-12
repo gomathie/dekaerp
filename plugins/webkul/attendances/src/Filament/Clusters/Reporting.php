@@ -27,6 +27,6 @@ class Reporting extends Cluster
 
     public static function getNavigationGroup(): string|\UnitEnum
     {
-        return NavigationGroup::Employee;
+        return NavigationGroup::Attendance;
     }
 }

@@ -47,7 +47,7 @@ class AttendanceResource extends Resource
 
     public static function getNavigationGroup(): string|UnitEnum
     {
-        return NavigationGroup::Employee;
+        return NavigationGroup::Attendance;
     }
 
     /**
