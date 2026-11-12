@@ -13,6 +13,7 @@ use Spatie\EloquentSortable\SortableTrait;
 use Webkul\Account\Database\Factories\MoveLineFactory;
 use Webkul\Account\Enums\AccountType;
 use Webkul\Account\Enums\DisplayType;
+use Webkul\Account\Services\PeriodLock;
 use Webkul\Account\Enums\DocumentType;
 use Webkul\Account\Enums\JournalType;
 use Webkul\Account\Enums\MoveState;
@@ -286,6 +287,14 @@ class MoveLine extends Model implements Sortable
             $line->computeName();
 
             $line->computeTaxTagInvert();
+
+            // A2 lock date: no line of a posted entry in a closed month may
+            // gain, lose or change an amount or account.
+            app(PeriodLock::class)->assertLineWritable($line);
+        });
+
+        static::deleting(function (MoveLine $line) {
+            app(PeriodLock::class)->assertLineWritable($line, deleting: true);
         });
     }
 
