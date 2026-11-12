@@ -57,8 +57,8 @@ it('greets from the viewer clock and names the company once', function (): void 
     $html = view('support::dashboard-banner')->render();
 
     expect($html)->toContain('x-text="greeting"')
-        ->and($html)->toContain('x-text="today"')
-        ->and($html)->toContain('deka-welcome__avatar')
+        ->and($html)->toContain('deka-welcome__time')
+        ->and($html)->not->toContain('deka-welcome__avatar')
         ->and(substr_count($html, 'TRACE365'))->toBe(1)
         ->and($html)->not->toContain('@js(');
 });
