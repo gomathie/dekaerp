@@ -7,6 +7,7 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
+use Webkul\Support\Filament\Contracts\ShowsDashboardBanner;
 
 /**
  * Puts the welcome banner at the top of every module dashboard.
@@ -31,25 +32,40 @@ class DashboardBannerContributions
 
         app()->instance($marker, true);
 
-        $scopes = array_values(array_filter(
-            $panel->getPages(),
-            fn (string $page): bool => is_subclass_of($page, Dashboard::class),
-        ));
-
-        if ($scopes === []) {
-            return;
-        }
-
+        // Decided per request from the page being rendered (2026-11-12, user:
+        // "not tied to any plugin"). Scoping to the Dashboard subclasses in
+        // $panel->getPages() at boot missed module overviews built on a plain
+        // Page (Accounting, Inventory), and depended on every plugin having
+        // added its pages before Support booted. The hook receives the current
+        // page's classes as $scopes: every Dashboard subclass shows the
+        // banner, and a plain-Page overview opts in with ShowsDashboardBanner.
         FilamentView::registerRenderHook(
             PanelsRenderHook::PAGE_START,
-            function (): string {
-                if (! Filament::auth()->check()) {
+            function (array $scopes = []): string {
+                if (! Filament::auth()->check() || ! static::isDashboardPage($scopes)) {
                     return '';
                 }
 
                 return view('support::dashboard-banner')->render();
             },
-            scopes: $scopes,
         );
+    }
+
+    /**
+     * @param  array<int, string>  $scopes
+     */
+    public static function isDashboardPage(array $scopes): bool
+    {
+        foreach ($scopes as $scope) {
+            if (! is_string($scope) || ! class_exists($scope)) {
+                continue;
+            }
+
+            if (is_subclass_of($scope, Dashboard::class) || is_subclass_of($scope, ShowsDashboardBanner::class)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
