@@ -54,6 +54,20 @@ Attendance settings page and plugin icons; `9639d7818` auto check-out command;
   because a detached process on Laravel Cloud cannot be proven without a real
   production install; push after one supervised install.
 - **Not real:** CR-10's two "known defects" were already fixed (October).
+- **Write-off payments failed in production (`a47847043`).** Found by the full
+  AccountFeature run (1 failed, 542 passed): `InvoiceTest` "writes off the
+  shortfall…". `PaymentRegistrar` builds write-off lines with `balance` only;
+  on a journal entry `MoveLine::computeBalance()` recomputes balance from
+  debit - credit, so the write-off saved as 0 and the payment entry was off by
+  the write-off. Hidden until the unbalanced-entry guard (`MoveWorkflow`,
+  upstream 99fd7c7e8) started refusing it, so "mark as fully paid" failed in
+  production. Fix: `Payment::buildDefaultMoveLineAttributes()` gives write-off
+  lines debit, credit and maturity from their balance. Verified: accounts
+  Workflows 137 passed, 275 assertions (`aureuserp_testing_claude_vault`).
+  Rollback: revert the block (the guard would then refuse write-offs again).
+- **Docs:** finished plans moved to `docs/completed/` (index README); SaaS
+  administration plan merged into 2.1 as CR-10; mobile-view proposal moved to
+  `docs/planned/`; 50 files' references updated.
 - **Verification:** banner 7, sidebar + settings 24, version 1, icon 1, install
   6, background install 4 passed; full suites Support 227, Employee 10,
   Product 276, Security 167, Attendance 32 + 2 passed. Live checks in
