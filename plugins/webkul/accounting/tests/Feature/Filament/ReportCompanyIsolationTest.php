@@ -19,7 +19,7 @@ require_once __DIR__.'/../../../../accounts/tests/Helpers/AccountHelper.php';
 require_once __DIR__.'/../../Helpers/ReportHelper.php';
 
 /**
- * Accounting plan #7, A1 (2026-11-12): the report pages build raw joins over
+ * Accounting plan, A1 (2026-11-12): the report pages build raw joins over
  * the ledger rather than reading scoped models, so CompanyScope does not
  * protect them. Each one filters on the active companies itself. These tests
  * pin that a company's reports never contain another company's postings,

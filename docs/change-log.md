@@ -38,7 +38,7 @@ for the task/question log this change log is paired with.
 
 ## 2026-11-12 (accounting A1 report isolation; A2 lock date; A7 planned)
 
-- **Why:** plan #7 A1 (reports build raw ledger joins, so CompanyScope does
+- **Why:** accounting plan A1 (reports build raw ledger joins, so CompanyScope does
   not protect them) and A2 (nothing stopped changes in a closed month;
   ACC-D2). A7 tax summary added to the plan on the user's approval.
 - **How:** `accounting/tests/Feature/Filament/ReportCompanyIsolationTest.php`
@@ -89,7 +89,7 @@ for the task/question log this change log is paired with.
 - **Optional sections fold on create (CR-4).** Address, Branding and Contact
   start collapsed on the create form, open on edit. Required fields and the
   currency stay visible.
-- **Accounting A1 (plan #7, run early per ACC-D1).** `accounts`
+- **Accounting A1 (accounting plan, run early per ACC-D1).** `accounts`
   `KnownFigureScenarioTest`: the brief's Ghana invoice (GHS 1,000 + VAT 15% +
   NHIL 2.5% + GETFund 2.5% = 1,200, each tax on its own account), paid 500
   then 700 with the customer's receivable back to zero and debits = credits;

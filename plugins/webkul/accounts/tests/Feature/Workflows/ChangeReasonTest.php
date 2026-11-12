@@ -13,7 +13,7 @@ require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php
 require_once __DIR__.'/../../Helpers/AccountHelper.php';
 
 /**
- * Accounting plan #7, A2b (user, 2026-11-13, "like Zoho Books; customers ask
+ * Accounting plan, A2b (user, 2026-11-13, "like Zoho Books; customers ask
  * to reduce or increase a price"): reopening a confirmed document needs a
  * reason, enforced in MoveWorkflow, and the reason is kept in the
  * document's history under the document's company.

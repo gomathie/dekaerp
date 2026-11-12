@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Accounting plan #7, A2 (2026-11-12): a per-company "lock entries up to" date.
+ * Accounting plan, A2 (2026-11-12): a per-company "lock entries up to" date.
  *
  * Append-only: every change is a new row, and the company's lock is its latest
  * row. The history is the audit trail of who closed or reopened a period, so

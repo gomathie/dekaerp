@@ -95,7 +95,7 @@ class ListJournalEntries extends ListRecords
     }
 
     /**
-     * Accounting plan #7, A2: set or clear the current company's lock date.
+     * Accounting plan, A2: set or clear the current company's lock date.
      * Visibility is a convenience; PeriodLock::setLockDate() re-checks who may.
      */
     protected function lockDateAction(): Action

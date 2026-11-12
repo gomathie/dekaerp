@@ -232,7 +232,7 @@ Decided 2026-11-12 (D-CR-7). Every SAAS package is built but in "review".
 
 *Added 2026-11-13 at the user's request: "every company may need an activity
 section to find out who changes what, who deleted what." Order agreed: after
-the accounting reset/cancel reason (plan #7, A2b), before A7.*
+the accounting reset/cancel reason (accounting plan, A2b), before A7.*
 
 **Already there (reuse, no second log).** `HasLogActivity` on 25 models
 writes create / update / delete rows to `chatter_messages` (`company_id`,

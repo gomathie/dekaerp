@@ -19,7 +19,7 @@ require_once __DIR__.'/../../../../support/tests/Helpers/CompanyHelper.php';
 require_once __DIR__.'/../../Helpers/AccountHelper.php';
 
 /**
- * Accounting plan #7, A2 (2026-11-12): once a period is locked, nothing in it
+ * Accounting plan, A2 (2026-11-12): once a period is locked, nothing in it
  * that is posted may change, from any path. Paying an old invoice stays
  * allowed, and drafts stay editable.
  */

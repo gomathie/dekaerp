@@ -14,7 +14,7 @@ use Webkul\Account\Models\MoveLine;
 use Webkul\Security\Models\User;
 
 /**
- * The company lock date (accounting plan #7, A2, 2026-11-12): once an
+ * The company lock date (accounting plan, A2, 2026-11-12): once an
  * accountant closes a month, nobody may post, change, reset, cancel or delete
  * a posted entry dated on or before it.
  *
