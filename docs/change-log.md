@@ -6,6 +6,32 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-12 (phone page strip; What's New from v1.5.0)
+
+- **Why:** user, after the production check of What's New: the phone menu was
+  cumbersome. The drawer listed the current module's pages (up to dozens)
+  above every module, so reaching another module meant scrolling past them.
+  Also, What's New should start at v1.5.0: the older entries are upstream
+  history from before the fork.
+- **How:** `resources/views/vendor/filament-panels/livewire/topbar.blade.php`
+  (local Filament override): the drawer's `module-sidebar-current` block and
+  its CSS are removed. A phone-only `<nav class="module-mobile-tabs">` under
+  the top bar lists the active module's pages and child pages, scrolls on one
+  line and scrolls the current page (`aria-current="page"`) into view. It shows
+  only when the module has more than one page. Desktop is unchanged.
+  `CHANGELOG.md`: v1.0.0 to v1.4.0 removed (git history keeps them). The
+  `admin.mobile-menu.modules` translation key is now unused; left in place.
+- **Benefit:** one tap to change page, one tap plus the Menu to change module.
+- **Trade-off / risk:** the strip adds about 52px of height under the top bar
+  on phones. The drawer and its backdrop still start at 4rem and cover it.
+- **Verification:** `MobileNavigationTest` (inverted in the same change, see
+  its docblock), the What's New tests and `VersionMatchesChangelogTest`:
+  10 passed (46 assertions) and 10 passed (40), on
+  `aureuserp_testing_claude_vault`. Not yet seen on a phone: the local
+  app answers in about 3 minutes per page, too slow for the browser.
+- **Rollback:** restore the drawer block from git; restore the older
+  CHANGELOG entries from git.
+
 ## 2026-11-12 (read-only guard on an installation behind on migrations)
 
 - **Why:** the local database, which was behind on migrations since August,
