@@ -4,6 +4,9 @@
     <style>
         .wn-toolbar { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; justify-content: space-between; }
         .wn-search { flex: 1 1 16rem; max-width: 28rem; }
+        /* The compiled support.css has no sr-only utility, so the label showed
+           beside its own placeholder (U17). Visually hidden, still read aloud. */
+        .wn-search .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
         .wn-search input { width: 100%; border-radius: .5rem; border: 1px solid rgb(209 213 219); background: #fff; padding: .5rem .75rem; font-size: .875rem; color: rgb(17 24 39); }
         .dark .wn-search input { border-color: rgb(55 65 81); background: rgb(17 24 39); color: #fff; }
         .wn-pills { display: flex; flex-wrap: wrap; gap: .5rem; }
@@ -102,7 +105,12 @@
                 <details
                     @if ($r === 0) open @endif
                     x-show="releaseVisible({{ $r }})"
-                    x-effect="if (filtering() && releaseVisible({{ $r }})) $el.open = true"
+                    {{-- Clearing the search or filters returns to the starting
+                         view, only the latest release open (U16): before, every
+                         release stayed expanded. The effect reruns only when the
+                         query or filters change, so a release opened by hand
+                         stays open while browsing. --}}
+                    x-effect="if (filtering()) { if (releaseVisible({{ $r }})) $el.open = true } else { $el.open = {{ $r === 0 ? 'true' : 'false' }} }"
                     class="group rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900"
                 >
                     <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4">
