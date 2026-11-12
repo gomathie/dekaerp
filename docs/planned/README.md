@@ -14,6 +14,7 @@ When work on one begins, mark its status "in progress" here and in the plan.
 | 5 | [CRM](05-crm-plan.md) | Phased port of upstream's core (leads, pipeline, teams, won/lost, quotation link) | Decisions accepted 2026-11-11. Starts after Attendance, once upstream CRM is stable |
 | 6 | [Point of Sale](06-pos-extraction-plan.md) | Point of Sale from upstream | Planning only; first-version scope decided 2026-11-11 (cash and mobile money, offline, printer and drawer, barcode) |
 | 7 | [Landing page](07-landing-page-brief.md) | Public landing page | Not started; content decisions made 2026-11-11. Hosting and screenshots to be discussed after all other tasks |
+| 8 | [What's New page](08-whats-new-plan.md) | Bring the in-app release notes up to the library's What's New skill: safe rendering, tests, search and filters, PDF, top-bar shortcut with a "new" dot, plain-language content tied to production releases | Plan written and decided 2026-11-12 (D-WN-1..5); about 3.5 days; starts after the 2.0 plan's first block |
 
 Also waiting, but kept where it is because code and tests reference it:
 Logistics phase 2 (WP-14 to WP-24) in [`../logistics-plan.md`](../logistics-plan.md) §6a/§6b.
