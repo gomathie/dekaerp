@@ -40,7 +40,7 @@ return [
     ],
 
     'footer' => [
-        'description'   => 'Designed to optimize and streamline business operations, Aureus ERP is suitable for enterprises of all sizes.',
+        'description'   => 'Designed to optimize and streamline business operations, DEKA ERP is suitable for enterprises of all sizes.',
         'description_2' => 'The platform emphasizes reporting for insights, security, localization flexibility, and integration with CRMs, BI tools, and APIs.',
         'useful_links'  => 'Useful Links',
         'contact_us'    => 'Contact Us',

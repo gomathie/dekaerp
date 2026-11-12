@@ -163,7 +163,7 @@ return [
         'manufacturing'  => 'Gestion de la fabrication et de la production',
         'partners'       => 'Gérer les partenaires commerciaux',
         'payments'       => 'Gérer les paiements et les transactions',
-        'plugin-manager' => 'Gestionnaire de plugins pour Aureus ERP',
+        'plugin-manager' => 'Gestionnaire de plugins pour DEKA ERP',
         'products'       => 'Catalogue de produits et gestion des variantes',
         'projects'       => 'Planification et gestion de projets',
         'purchases'      => "Gestion des achats et des commandes d'approvisionnement",
