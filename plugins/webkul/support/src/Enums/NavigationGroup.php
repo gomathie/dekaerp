@@ -35,6 +35,10 @@ enum NavigationGroup: string implements HasIcon, HasLabel
 
     case TimeOff = 'time-off';
 
+    // Its own HR module entry (user, 2026-11-12: Attendance was not in the
+    // sidebar; its screens sat inside Employees).
+    case Attendance = 'attendance';
+
     case Recruitment = 'recruitment';
 
     case Plugin = 'plugin';
@@ -66,7 +70,7 @@ enum NavigationGroup: string implements HasIcon, HasLabel
             self::Accounting                                                                        => 'finance',
             self::Maintenance, self::Manufacturing, self::Inventory, self::Logistics, self::Barcode => 'operations',
             self::Project                                                                           => 'projects',
-            self::Employee, self::TimeOff, self::Recruitment                                        => 'human-resources',
+            self::Employee, self::TimeOff, self::Attendance, self::Recruitment                      => 'human-resources',
             self::Plugin, self::Setting, self::Help                                                 => 'administration',
         };
     }
@@ -94,6 +98,7 @@ enum NavigationGroup: string implements HasIcon, HasLabel
             self::Project       => 'icon-projects',
             self::Employee      => 'icon-employees',
             self::TimeOff       => 'icon-time-offs',
+            self::Attendance    => 'icon-attendance',
             self::Recruitment   => 'icon-recruitments',
             self::Barcode       => 'icon-barcode',
             self::Plugin        => 'icon-plugin',
