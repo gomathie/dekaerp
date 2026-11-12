@@ -4,14 +4,21 @@ use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\TableWidget;
 use Illuminate\Support\Facades\DB;
+use Webkul\Account\Enums\MoveState;
+use Webkul\Account\Enums\MoveType;
+use Webkul\Account\Models\Move;
+use Webkul\Invoice\Filament\Overview\InvoiceAttention;
 use Webkul\Invoice\Filament\Overview\OverviewRegistry;
 use Webkul\Invoice\Filament\Pages\Invoices;
 use Webkul\Invoice\Filament\Pages\Overview;
+use Webkul\Invoice\Filament\Widgets\InvoiceHeadlineWidget;
 use Webkul\Invoice\Filament\Widgets\OverviewAttentionWidget;
 use Webkul\Invoice\Filament\Widgets\OverviewCashFlowChart;
 use Webkul\Invoice\Filament\Widgets\OverviewHeadlineWidget;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
+use Webkul\Support\Filament\Contributions\DashboardBannerRegistry;
+use Webkul\Support\Filament\Forms\Components\DashboardFilters;
 use Webkul\Support\Models\Company;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/CompanyHelper.php';
@@ -161,11 +168,11 @@ it('does not poll any widget on the overview', function (): void {
 it('starts with filters closed, four cards across and an icon on every card', function (): void {
     CompanyHelper::actingAsCompanyUser(Company::factory()->create(), ['page_invoice_invoices']);
 
-    expect(Webkul\Support\Filament\Forms\Components\DashboardFilters::make([], [])->isCollapsed())->toBeTrue()
+    expect(DashboardFilters::make([], [])->isCollapsed())->toBeTrue()
         ->and((new Overview)->getColumns())->toBe(['md' => 2, 'xl' => 3])
         ->and((fn () => $this->getColumns())->call(new OverviewHeadlineWidget))->toBe(['default' => 2, 'lg' => 4]);
 
-    $stats = app(Webkul\Invoice\Filament\Widgets\InvoiceHeadlineWidget::class)->headlineStats([]);
+    $stats = app(InvoiceHeadlineWidget::class)->headlineStats([]);
 
     foreach ($stats as $stat) {
         expect($stat->getIcon())->not->toBeNull();
@@ -219,7 +226,7 @@ it('lists only sections\' items that need someone, and the greeting reads the sa
         fn (): string => 'Test',
         [],
         fn (): array => [],
-        fn (): bool => true,
+        fn (): bool  => true,
         sort: 99,
         attention: fn (): array => [
             ['label' => '2 things late', 'count' => 2, 'url' => null, 'tone' => 'danger'],
@@ -237,28 +244,28 @@ it('lists only sections\' items that need someone, and the greeting reads the sa
 
     expect($labels)->toContain('2 things late')
         ->and($labels)->not->toContain('nothing here')
-        ->and(Webkul\Support\Filament\Contributions\DashboardBannerRegistry::summaryPhrases())->toContain('2 things late')
-        ->and(Webkul\Support\Filament\Contributions\DashboardBannerRegistry::quickActions())->toHaveCount(3);
+        ->and(DashboardBannerRegistry::summaryPhrases())->toContain('2 things late')
+        ->and(DashboardBannerRegistry::quickActions())->toHaveCount(3);
 });
 
 it('counts an overdue customer invoice in Needs attention', function (): void {
     $company = Company::factory()->create();
     CompanyHelper::actingAsCompanyUser($company, ['page_invoice_invoices', 'view_any_invoice_invoice']);
 
-    $move = Webkul\Account\Models\Move::factory()->create(['company_id' => $company->getKey()]);
+    $move = Move::factory()->create(['company_id' => $company->getKey()]);
 
     // Written past the model hooks, as InvoiceDashboardTest does: only the
     // columns Needs attention reads matter here.
-    Webkul\Account\Models\Move::withoutGlobalScopes()->whereKey($move->getKey())->update([
+    Move::withoutGlobalScopes()->whereKey($move->getKey())->update([
         'company_id'       => $company->getKey(),
-        'move_type'        => Webkul\Account\Enums\MoveType::OUT_INVOICE,
-        'state'            => Webkul\Account\Enums\MoveState::POSTED,
+        'move_type'        => MoveType::OUT_INVOICE,
+        'state'            => MoveState::POSTED,
         'payment_state'    => 'not_paid',
         'invoice_date_due' => now()->subDays(3)->toDateString(),
         'creator_id'       => auth()->id(),
     ]);
 
-    $overdue = collect(Webkul\Invoice\Filament\Overview\InvoiceAttention::items())->firstWhere('tone', 'warning');
+    $overdue = collect(InvoiceAttention::items())->firstWhere('tone', 'warning');
 
     expect($overdue['count'])->toBe(1);
 });

@@ -7,11 +7,11 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Carbon;
 use Webkul\Sale\Enums\OrderState;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\OrderResource;
-use Webkul\Sale\Models\Order;
-use Webkul\Support\Filament\Concerns\BuildsDashboardStats;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource;
 use Webkul\Sale\Filament\Pages\SalesDashboard;
 use Webkul\Sale\Filament\Widgets\Concerns\HasSaleDashboardFilters;
+use Webkul\Sale\Models\Order;
+use Webkul\Support\Filament\Concerns\BuildsDashboardStats;
 
 /**
  * The Sales card in the Overview's "At a glance" row (user, 2026-11-11).

@@ -6,7 +6,6 @@ use Filament\Panel;
 use Livewire\Livewire;
 use Webkul\Invoice\Filament\Overview\InvoiceAttention;
 use Webkul\Invoice\Filament\Overview\OverviewRegistry;
-use Webkul\Support\Filament\Contributions\DashboardBannerRegistry;
 use Webkul\Invoice\Filament\Pages\Invoices;
 use Webkul\Invoice\Filament\Widgets\InvoiceHeadlineWidget;
 use Webkul\Invoice\Livewire\InvoiceSummary;
@@ -14,6 +13,7 @@ use Webkul\PluginManager\Console\Commands\InstallCommand;
 use Webkul\PluginManager\Console\Commands\UninstallCommand;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
+use Webkul\Support\Filament\Contributions\DashboardBannerRegistry;
 
 class InvoiceServiceProvider extends PackageServiceProvider
 {

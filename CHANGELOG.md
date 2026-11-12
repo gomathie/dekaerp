@@ -16,6 +16,8 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ### Improvements
 
+* The dashboard greeting now tells you what needs you today (for example "3 invoices overdue · 2 bills due this week") and has quick buttons for a new invoice, bill, quotation or purchase request.
+* The Overview's All tab is now a short summary: the headline figures with their trend against the previous period, one chart of money in and out, and a "Needs attention" list that links to each item. Each module's tab still has all its charts and lists.
 * On a phone, the pages of the module you are in now show as a row of tabs under the top bar. The Menu lists only the modules, so switching module takes fewer taps.
 * What's New starts at version 1.5.0.
 * What's New has moved from the top bar into your profile menu, next to the version. A red dot on your picture means there is something new to read.
