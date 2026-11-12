@@ -28,7 +28,7 @@ function clearCatalogue(): void
 }
 
 /**
- * Production before the backfill (docs/company-admin-role-plan.md §4k): the
+ * Production before the backfill (docs/completed/company-admin-role-plan.md §4k): the
  * seeded category tree, shared; product 1 shared and pointing at category 2; no
  * tags at all.
  */

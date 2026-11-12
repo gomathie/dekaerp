@@ -10,7 +10,7 @@ use Illuminate\Support\Carbon;
 
 /**
  * Ported from upstream (aureus/master c31a0db21) for the module dashboards;
- * see docs/dashboards-plan.md. dailyBuckets() deliberately differs.
+ * see docs/completed/dashboards-plan.md. dailyBuckets() deliberately differs.
  *
  * Query factories passed to buildStat() must return an unselected builder:
  * dailyBuckets() adds its own select.

@@ -11,7 +11,7 @@ use Webkul\Support\Models\Company;
 
 /**
  * Files this installation's existing categories and product 1 under their
- * company (docs/company-admin-role-plan.md §4k, "Revised backfill").
+ * company (docs/completed/company-admin-role-plan.md §4k, "Revised backfill").
  *
  * A command rather than a migration on purpose: the rows are named by id, so it
  * is one installation's data, and a migration would also run on test and fresh

@@ -174,7 +174,7 @@ Attendance settings page and plugin icons; `9639d7818` auto check-out command;
 
 ## 2026-11-11 (attendance plugin: banner, manager screens, reports)
 
-- **Why:** the user asked for the whole of `docs/attendance-plan.md` (AT-1 to
+- **Why:** the user asked for the whole of `docs/completed/attendance-plan.md` (AT-1 to
   AT-7). Presence had no record at all in this fork, so payroll had nothing to
   read and managers could not tell who was in.
 - **How:**
@@ -208,7 +208,7 @@ Attendance settings page and plugin icons; `9639d7818` auto check-out command;
   (container marker), because a process-static flag survives a rebuilt test
   application while Filament's view manager does not.
 - **Verification:** see the handoffs and the per-run results in
-  `docs/attendance-plan.md` (database `aureuserp_testing_attendance`).
+  `docs/completed/attendance-plan.md` (database `aureuserp_testing_attendance`).
   `translations:check --plugin=attendances` and `--plugin=support` each passed
   4 of 4 locales. Pint and the suite results are recorded there.
 - **Rollback:** uninstall refuses while attendance rows exist
@@ -411,7 +411,7 @@ high priority).
 
 ## 2026-11-11 (agent review follow-ups: vault, phone search, journal balance, work orders, translations)
 
-From `docs/agent-review-2026-11-11.md`, approved by the user.
+From `docs/completed/agent-review-2026-11-11.md`, approved by the user.
 
 - **Readable passwords outlived the role.**
   - Fix: `CompanyAdminPasswordVault::reveal()` refuses anyone who is no
@@ -576,7 +576,7 @@ From `docs/agent-review-2026-11-11.md`, approved by the user.
 
 ## 2026-11-10 (mobile view P1-P6)
 
-- **Why:** customers report the app is unusable on phones. Deep audit in production (docs/mobile-view-plan.md, F1-F7): iPhone zooms on every 14px field; navigation was two unlabelled 24px icons; the top bar clipped the avatar; tabs and the status bar clipped.
+- **Why:** customers report the app is unusable on phones. Deep audit in production (docs/planned/mobile-view-plan.md, F1-F7): iPhone zooms on every 14px field; navigation was two unlabelled 24px icons; the top bar clipped the avatar; tabs and the status bar clipped.
 - **How:** phone-only CSS and markup in the admin top-bar override; a labelled Menu button and a "this module" section in the module drawer; the company name truncates. Desktop from 768px up is unchanged.
 - **Benefit:** fields no longer zoom, one obvious menu reaches every page and module, the top bar fits.
 - **Trade-off / risk:** the top-bar template is a local Filament override; re-diff it on every Filament upgrade. Rendered layout is checked by eye on phones, not by tests.
@@ -743,7 +743,7 @@ payments and the test-or-commercial account type. SAAS-10B stays unbuilt.
 
 **Cause:** Platform invoices had no way to be settled, and a new company had
 no trial. The decisions are in
-`docs/saas-administration-billing-audit-plan.md`.
+`docs/completed/saas-administration-billing-audit-plan.md`.
 
 **Implemented:** `PlatformPayments` posts, allocates, refunds and reverses
 by hand, Super Admin only, with derived credit and a database immutability
@@ -976,7 +976,7 @@ guard test with it). Nothing else depends on it.
 
 Implemented SAAS-04 enforcement across the SAAS-05 plugin slices. Detailed
 ownership, scope and per-slice handoffs are in
-[`docs/saas-administration-billing-audit-plan.md`](saas-administration-billing-audit-plan.md).
+[`docs/completed/saas-administration-billing-audit-plan.md`](saas-administration-billing-audit-plan.md).
 
 - **05B commercial:** Products, Sales and Purchases enforce entitlement at
   navigation/policy, API and write-service boundaries. Customer portal checks
@@ -1045,7 +1045,7 @@ have them needs the page permission ticked.
 `plugin-manager/tests/Feature/Entitlements/EntitledPagePermissionTest.php`
 checks every one of the 13 pages: a company user without the permission is
 refused, and one with it is allowed. Results are in
-`docs/dashboards-plan.md`.
+`docs/completed/dashboards-plan.md`.
 
 **Rollback.** Revert the commit. That reopens the pages, so do not.
 
@@ -1386,7 +1386,7 @@ storage, API boundaries and scheduler against the proposed SaaS subscription
 and billing requirements. No production behaviour or schema changed.
 
 The persistent evidence matrix and phased adoption checklist are in
-[`docs/saas-administration-billing-audit-plan.md`](saas-administration-billing-audit-plan.md).
+[`docs/completed/saas-administration-billing-audit-plan.md`](saas-administration-billing-audit-plan.md).
 The main findings are that company/plugin grant management exists but plugin
 entry points do not enforce it, tenant roles are global to a user rather than
 scoped to each company membership, and SaaS plans, seat limits, recurring
@@ -2183,7 +2183,7 @@ its own models, and are not transferable claims about Copilot on Laravel.
 
 ### What was adopted
 
-- `docs/harness2-integration.md` — the assessment with the evidence above, the
+- `docs/completed/harness2-integration.md` — the assessment with the evidence above, the
   safe sandbox route (a throwaway `python:3.12-slim` container with the clone
   **outside** the repo, so no dependency, config, or application file changes),
   the rollback, and the split of what is shareable across repositories versus
@@ -2822,7 +2822,7 @@ files were not changed in WP-13.
 
 One decision and one bug family, connected: switching the ownership scope on in
 tests exposed both. Full detail and the decision trail in
-[`docs/company-admin-role-plan.md`](company-admin-role-plan.md) sections 4d-4j.
+[`docs/completed/company-admin-role-plan.md`](company-admin-role-plan.md) sections 4d-4j.
 
 ### The decision: company-wide visibility is the default
 
@@ -3037,7 +3037,7 @@ the test count rather than the exit status.
 ## 2026-09-25 (Company Admin role, and avatars without a third party)
 
 Two decisions the user made after the tenant-isolation fix landed
-(`docs/company-admin-role-plan.md` §4b).
+(`docs/completed/company-admin-role-plan.md` §4b).
 
 ### Company Admin, provisioned
 
@@ -3110,7 +3110,7 @@ Raised by the user: *"when I create a user for a new company I onboard, I give
 them a role like Admin2, but they tend to see other companies."* Investigated,
 and the reason turned out to be a defect rather than a missing role. Full
 write-up and the plan for the "Company Admin" role itself:
-`docs/company-admin-role-plan.md`.
+`docs/completed/company-admin-role-plan.md`.
 
 ### The leak
 

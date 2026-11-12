@@ -43,7 +43,7 @@ it('stamps a new price list with the active company', function () {
 /**
  * Inverted 2026-10-29. This used to pin "leaves product packaging shared even
  * when its product belongs to a company". Each client has its own catalogue, so
- * a packaging now takes its product's company (docs/company-admin-role-plan.md
+ * a packaging now takes its product's company (docs/completed/company-admin-role-plan.md
  * §4k).
  */
 it('gives product packaging its product\'s company and hides it from another company', function () {

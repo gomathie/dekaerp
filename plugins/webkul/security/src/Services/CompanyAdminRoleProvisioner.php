@@ -30,7 +30,7 @@ use Webkul\Security\PermissionRegistrar as ForkPermissionRegistrar;
  * scope bypasses. Handing out roles is how an administrator escalates, and this
  * role is given to people outside DEKA ERP.
  *
- * @see docs/company-admin-role-plan.md
+ * @see docs/completed/company-admin-role-plan.md
  */
 class CompanyAdminRoleProvisioner
 {

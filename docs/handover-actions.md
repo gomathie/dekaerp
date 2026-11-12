@@ -308,7 +308,7 @@ left join user_team ut on ut.user_id = u.id
 where u.resource_permission = 'group' and ut.user_id is null;
 ```
 
-Background: `docs/company-admin-role-plan.md` sections 4f-4h.
+Background: `docs/completed/company-admin-role-plan.md` sections 4f-4h.
 
 ---
 
@@ -1006,7 +1006,7 @@ runbook only; no production commands are run from this session.
 **Tests.** All 17 suites passed on `develop` at the last code commit
 `7bbf65741`: 2,904 tests, 0 failed, each suite on its own database. Commits
 after it change only documentation. Per-suite counts are in
-docs/company-admin-role-plan.md §4k Verification.
+docs/completed/company-admin-role-plan.md §4k Verification.
 
 **Repository.**
 

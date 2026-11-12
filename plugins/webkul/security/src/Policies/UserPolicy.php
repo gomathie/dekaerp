@@ -187,7 +187,7 @@ class UserPolicy
      * from (`MultiCompanyAdminService::scopeManageableUsers`), so a record that
      * is invisible in the list cannot be reached by its URL either.
      *
-     * See docs/company-admin-role-plan.md.
+     * See docs/completed/company-admin-role-plan.md.
      */
     protected function sharesCompanies(User $user, User $record): bool
     {

@@ -1,4 +1,4 @@
-/* Module dashboard stat cards, tables and loading state (docs/dashboards-plan.md DB-1).
+/* Module dashboard stat cards, tables and loading state (docs/completed/dashboards-plan.md DB-1).
    Ported from upstream resources/css/filament/shared/theme.css at c31a0db21. Padding is
    logical (block/inline) because the icon tile uses inset-inline-start and Arabic is an
    active locale; upstream's physical left padding left RTL cards overlapping the icon. */

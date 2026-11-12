@@ -147,7 +147,7 @@ class SupportServiceProvider extends PackageServiceProvider
         FilamentAsset::register([
             Css::make('support', __DIR__.'/../resources/dist/support.css'),
             // Chart entrance animations and gradients for the module dashboards
-            // (docs/dashboards-plan.md DB-1). Published to public/js/support/.
+            // (docs/completed/dashboards-plan.md DB-1). Published to public/js/support/.
             Js::make('dashboard-charts', __DIR__.'/../resources/js/dashboard-charts.js'),
         ], 'support');
 

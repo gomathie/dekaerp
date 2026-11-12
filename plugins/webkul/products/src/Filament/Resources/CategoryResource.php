@@ -57,7 +57,7 @@ class CategoryResource extends Resource
                                     ->extraInputAttributes(['style' => 'font-size: 1.5rem;height: 3rem;'])
                                     // Per company, like the row itself: a global check
                                     // would refuse a second client's "All" while the
-                                    // database allows it (docs/company-admin-role-plan.md §4k).
+                                    // database allows it (docs/completed/company-admin-role-plan.md §4k).
                                     ->unique(
                                         ignoreRecord: true,
                                         modifyRuleUsing: fn (Unique $rule) => $rule->where('company_id', current_company_id()),

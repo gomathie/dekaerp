@@ -872,7 +872,7 @@ Kept from the first plan and extended. Every one has caused a real defect here.
 | 13 | **A factory default makes a test assert the opposite** | Set absent values explicitly (rates, ceilings, effective dates) |
 | 14 | **A listener or job runs under whoever acted** | Rollout and queued calculation read by explicit keys, scope-free, and stamp the run's company |
 | 15 | **An inactive currency is invisible to every picker** | Activate CDF or XAF with a migration when Congo is confirmed (the ZMW precedent) |
-| 16 | **Cross-company reads return null silently** | Payroll reads of `Employee`, `Partner` (bank) and `Company` in services use explicit, scope-free keyed reads (§4k read audit, docs/company-admin-role-plan.md) |
+| 16 | **Cross-company reads return null silently** | Payroll reads of `Employee`, `Partner` (bank) and `Company` in services use explicit, scope-free keyed reads (§4k read audit, docs/completed/company-admin-role-plan.md) |
 
 ---
 

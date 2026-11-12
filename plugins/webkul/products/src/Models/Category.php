@@ -29,7 +29,7 @@ class Category extends Model
     /*
      * Each client has its own catalogue, so a category belongs to the company
      * that creates it and a sub-category takes its parent's company, never the
-     * session's (docs/company-admin-role-plan.md §4k). InheritsParentCompany
+     * session's (docs/completed/company-admin-role-plan.md §4k). InheritsParentCompany
      * refuses a child filed under a different company from its parent.
      */
     protected static string $parentCompanyModel = self::class;

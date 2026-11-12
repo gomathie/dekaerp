@@ -1262,7 +1262,7 @@ MULTI-COMPANY FACTS THAT BITE
   with `withoutGlobalScopes()`. For any other field, read the parent scope-free the
   same way. Fixed in `TaskStage`, `Task`, `Account\MoveLine`, `Inventory\MoveLine`,
   `Inventory\ProductQuantity` and `Manufacturing\Move`; details in
-  docs/company-admin-role-plan.md §4e/§4i/§4j. Also `Employee`'s saved hook
+  docs/completed/company-admin-role-plan.md §4e/§4i/§4j. Also `Employee`'s saved hook
   (2026-11-11): `Partner::updateOrCreate(['id' => ...])` is a scoped read too,
   and a miss there created a contact, re-saved, and recursed until the stack ran
   out. Test: employees `EmployeeContactCompanyTest`.
@@ -1343,7 +1343,7 @@ MULTI-COMPANY FACTS THAT BITE
   Filter on `data_type IN ('bigint','integer','smallint')`, which excludes it on
   principle rather than by naming it. `Partner\Console\Commands\ContactCompanyReport`
   shows the shape.
-• *Superseded 2026-10-29 (user decision, §4k of docs/company-admin-role-plan.md):
+• *Superseded 2026-10-29 (user decision, §4k of docs/completed/company-admin-role-plan.md):
   contacts are now per company in this fork. New contacts are stamped with the
   creating company, while existing contacts with no company stay shared. The
   note below is kept as the record of upstream's design and of what the fork
@@ -1457,7 +1457,7 @@ Protected decisions (each has a why comment and a test; details in the plan or
 log named):
 
 • SaaS administration review, 2026-10-28
-  (`docs/saas-administration-billing-audit-plan.md`, review block):
+  (`docs/completed/saas-administration-billing-audit-plan.md`, review block):
   - A tenant role row exists only inside its membership: composite foreign key
     to `user_allowed_companies` with cascade. `TenantRoleAssigner` drops
     companies the user is not a member of.
@@ -1522,7 +1522,7 @@ log named):
     WORKING RULES), a `phpunit.xml` suite and a `bootstrap/providers.php` entry.
 
 • Per-company contacts, products, categories and tags, 2026-10-29
-  (`docs/company-admin-role-plan.md` §4k, user decision for unrelated clients):
+  (`docs/completed/company-admin-role-plan.md` §4k, user decision for unrelated clients):
   - `Partner`, `Product` and `Packaging` have **no** `autoAssignsCompany()`
     opt-out. They are stamped with the creating company. This is a deliberate
     fork from upstream 57e234223: re-apply it on every upstream merge, and keep
@@ -1701,7 +1701,7 @@ log named):
     probe of the login page and could be repeated without limit. Test:
     `support/tests/Feature/Http/LivewireLockedPropertyTest.php`.
 
-• Platform invoices, 2026-11-09 (`docs/saas-administration-billing-audit-plan.md`,
+• Platform invoices, 2026-11-09 (`docs/completed/saas-administration-billing-audit-plan.md`,
   SAAS-10 handoff):
   - Number them with `DocumentNumberGenerator`, not `SequenceService`.
     A company resetting its own sequences must not move a DEKA invoice
@@ -1739,7 +1739,7 @@ log named):
     query writes elsewhere run inside a guarded parent save; a new bulk
     write outside one needs the same call.
 
-• Platform payments, 2026-11-09 (`docs/saas-administration-billing-audit-plan.md`,
+• Platform payments, 2026-11-09 (`docs/completed/saas-administration-billing-audit-plan.md`,
   SAAS-11 handoff, D-SAAS-10):
   - A Super Admin enters the payment by hand. There is no provider. The
     service checks the actor: `Gate::before` lets a Super Admin skip a
@@ -1772,7 +1772,7 @@ log named):
     `CompanyReadOnlyWriteGuard::EXEMPT_MODELS`. The signed-in Super Admin
     already passes. Do not add them so a job with no user can post money.
 
-• Platform administration screens, 2026-11-10 (`docs/saas-administration-billing-audit-plan.md`,
+• Platform administration screens, 2026-11-10 (`docs/completed/saas-administration-billing-audit-plan.md`,
   SAAS-12/13 handoff):
   - `DocumentNumberPolicy` allows an active Super Admin to view, create and
     update platform billing records, and refuses every delete. Do not enable
@@ -1798,7 +1798,7 @@ log named):
   - Tests: `platform-billing/tests/Feature/AdministrationScreensTest.php`
     and `BillingScreensTest.php`.
 
-• Tenant impersonation, 2026-11-10 (`docs/saas-administration-billing-audit-plan.md`,
+• Tenant impersonation, 2026-11-10 (`docs/completed/saas-administration-billing-audit-plan.md`,
   SAAS-15 handoff, D-SAAS-14):
   - Every rule is in `Security\Services\TenantImpersonation`. A screen
     calls it and repeats nothing.
@@ -1821,7 +1821,7 @@ log named):
     Leaving the old hash logs the session out on the next request.
   - Tests: `security/tests/Feature/SaaSAdministration/TenantImpersonationTest.php`.
 
-• Account type, 2026-11-09 (`docs/saas-administration-billing-audit-plan.md`,
+• Account type, 2026-11-09 (`docs/completed/saas-administration-billing-audit-plan.md`,
   SAAS-15 handoff, D-SAAS-11):
   - `test` or `commercial` is chosen only inside
     `CompanyOnboarding::create()`, by a Super Admin or a Multi-Company
@@ -1856,7 +1856,7 @@ log named):
     the guard allows that partner write only while the staff member is
     the authenticated user. Do not `Auth::login()` inside the service.
 
-• Overdue extensions, 2026-11-09 (`docs/saas-administration-billing-audit-plan.md`,
+• Overdue extensions, 2026-11-09 (`docs/completed/saas-administration-billing-audit-plan.md`,
   SAAS-10B, D-SAAS-04, D-SAAS-13):
   - A Company Admin of that company may add exactly 10 days, once per
     overdue invoice. A second grant is refused with "This invoice already
@@ -1957,7 +1957,7 @@ DONE RECENTLY (newest first; details in docs/change-log.md)
   `InheritsParentCompany` promoted from Logistics to `Webkul\Support`, a `group`
   user with no team no longer sees everything, and `OwnershipScope` is finally
   testable at all. 13 suites, 2,500+ tests, zero failures. Details in
-  docs/change-log.md and docs/company-admin-role-plan.md §4d–§4j.
+  docs/change-log.md and docs/completed/company-admin-role-plan.md §4d–§4j.
 • 2026-09-25 — Logistics WP-11 Reports: five filtered table pages with export in a
   Reporting cluster, behind their own Shield page permissions, plus a test pinning
   that those permission names are actually generated. LogisticsFeature 177 passed.
@@ -1992,6 +1992,9 @@ REFERENCES
 
 • docs/agent-reminders.md — standing instructions and task log (read first).
 • docs/change-log.md — what changed and why, per session.
+• docs/ux-findings.md — running log of UI and ease-of-use improvements. User
+  rule (2026-11-12): every test session or browser check records what could
+  look better or be easier, judged by modern design standards, there.
 • docs/upstream-fix-adoption-plan.md — register of upstream findings UF-001..024
   and the decision on each. No P0/P1 open as of 2026-10-23; UF-003, UF-009 and
   UF-010 are the live ones. No review cadence.
@@ -2005,7 +2008,7 @@ REFERENCES
   Do that work only on that branch, in its own worktree, and only after
   Logistics is merged. The layout rule itself is in project memory above and in
   docs/logistics-plan.md, so new resources follow it everywhere meanwhile.
-• docs/company-admin-role-plan.md — the "Company Admin" request, and the tenant
+• docs/completed/company-admin-role-plan.md — the "Company Admin" request, and the tenant
   leak found while investigating it: the Users list is company-scoped only for
   Multi-Company Admins, so a customer admin with Resource Permission `Global`
   can see and edit other tenants' users. Mitigation available today; fix planned
@@ -2015,7 +2018,7 @@ REFERENCES
 • docs/planned/01-unified-product-resource-plan.md — cross-plugin product-resource plan.
 • docs/planned/07-landing-page-brief.md — public landing-page scope and constraints.
 • docs/running-tests.md — how to run tests.
-• docs/harness2-integration.md — assessment of Google's Harness² framework: why
+• docs/completed/harness2-integration.md — assessment of Google's Harness² framework: why
   it cannot integrate with this repo or agent, plus the repo-owned evaluation
   scenarios and the approval gate for instruction changes. Documentation only;
   nothing is installed.

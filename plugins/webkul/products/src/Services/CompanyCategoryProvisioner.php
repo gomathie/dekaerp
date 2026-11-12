@@ -12,7 +12,7 @@ use Webkul\Support\Models\Company;
  *
  * Why it is needed at all: the product form defaults `category_id` to
  * `Category::first()`, and once categories are per company each client has its
- * own tree (docs/company-admin-role-plan.md §4k). A company created after the
+ * own tree (docs/completed/company-admin-role-plan.md §4k). A company created after the
  * installation therefore has no category, and the required select on the
  * product form opens empty with nothing to choose.
  *

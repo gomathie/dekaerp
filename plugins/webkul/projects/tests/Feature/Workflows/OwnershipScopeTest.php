@@ -23,7 +23,7 @@ require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php
  * defaults to `individual` at the column level, so this is the common case for
  * real users, not an exotic one.
  *
- * See docs/company-admin-role-plan.md §4c and §4d.
+ * See docs/completed/company-admin-role-plan.md §4c and §4d.
  */
 beforeEach(function () {
     TestBootstrapHelper::ensurePluginInstalled('projects');
