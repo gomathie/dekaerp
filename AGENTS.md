@@ -1405,7 +1405,7 @@ DOCUMENTATION AND UPSTREAM REVIEW (ALL AGENTS)
   earlier "eight still open" wording predated the 2026-10-22 work. Consult the
   register when working in an affected plugin, and update a finding's Local state
   when you touch one.
-• `docs/planned/03-restructure-backlog.md` is the resource-restructure analysis: which
+• `docs/planned/02-restructure-backlog.md` is the resource-restructure analysis: which
   resources adopt upstream's split layout mechanically and which carry local
   changes that must be moved by hand.
 • When you do review upstream, tell the user what is new, whether DEKA ERP needs
@@ -2001,7 +2001,7 @@ REFERENCES
 • docs/planned/ — plans decided or drafted but not started (index in its
   README.md, 2026-11-11): CRM, Inventory improvements, payroll, POS,
   landing page, restructure backlog, unified product resource.
-• docs/planned/03-restructure-backlog.md — deferred upstream restructures.
+• docs/planned/02-restructure-backlog.md — deferred upstream restructures.
 • Package F, resource structure alignment — the plan lives on the
   `chore/resource-structure` branch, not on main:
   `git show chore/resource-structure:docs/upstream-structure-alignment-plan.md`.
@@ -2015,12 +2015,12 @@ REFERENCES
   `CompanyUserIsolationTest`; the plan is in `docs/completed/`.
 • docs/completed/ — finished plans (index in its README.md, 2026-11-12):
   Attendance, module dashboards, Company Admin, SaaS administration (merged:
-  its remainder is CR-10 in docs/planned/02-comprehensive-review-plan.md),
+  its remainder is CR-10 in docs/planned/01-comprehensive-review-plan.md),
   agent review 2026-11-11, Harness² assessment.
 • docs/logistics-plan.md — Logistics plan, decisions D1–D15, status board, work
   packages, handoff log.
 • docs/completed/unified-product-resource-plan.md — cross-plugin product-resource plan.
-• docs/planned/08-landing-page-brief.md — public landing-page scope and constraints.
+• docs/planned/07-landing-page-brief.md — public landing-page scope and constraints.
 • docs/running-tests.md — how to run tests.
 • docs/completed/harness2-integration.md — assessment of Google's Harness² framework: why
   it cannot integrate with this repo or agent, plus the repo-owned evaluation
@@ -2034,4 +2034,7 @@ REFERENCES
 • plugins/webkul/barcode/README.md — barcode plugin operation.
 • CODE_OF_CONDUCT.md — contributor conduct.
 • CHANGELOG.md — user-facing release notes; the in-app What's New page reads it.
+  Rule (D-WN-1, 2026-11-12): every user-visible change gets an entry in user
+  language under "## Unreleased" (hidden on the page). Move it under the dated
+  version heading in the same push that ships it to production.
 • Plan page (private artifact): https://claude.ai/artifact/2zJ4K1thSS6n1Qdt592wTN

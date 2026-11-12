@@ -64,7 +64,7 @@ enum NavigationGroup: string implements HasIcon, HasLabel
         return match ($this) {
             self::Dashboard => null,
             // Contacts under its own heading (user, 2026-11-11), where a CRM
-            // module will join it (docs/planned/06-crm-plan.md).
+            // module will join it (docs/planned/05-crm-plan.md).
             self::Contact                                                                           => 'contacts-crm',
             self::Sale, self::Purchase, self::Invoice                                               => 'sales-purchases',
             self::Accounting                                                                        => 'finance',
