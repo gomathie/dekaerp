@@ -6,6 +6,40 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-12 (CR-4: plan and administrator name on the create-company form; accounting A1 known figures)
+
+- **Plan chosen while creating a company (plan #1, CR-4).** Why: the AS-IS
+  walk-through (CR-1) found the plan was set on a second screen, so a new
+  company was not commercially complete in one step; Pilot puts the price
+  plan on the creation form (CR-2). How: `platform-billing` contributes a
+  create-only "Plan" select (`onboarding_price_id`, Super Admin, commercial
+  only, required whenever a price exists) through `CompanySchemaRegistry`.
+  Security cannot reference billing, so `CompanyOnboarding::create()` now
+  fires `Security\Events\CompanyOnboarded` **inside** its transaction, and
+  `PlatformBilling\Listeners\StartPlanAtOnboarding` starts the plan with the
+  existing Super Admin path (`SubscriptionDrafts::create()` +
+  `SubscriptionLifecycle::activate()`, which applies modules and seat limit).
+  A refusal rolls the company back. A test company given a plan is refused
+  (`StartPlanAtOnboarding::ONLY_COMMERCIAL`); it switches later. Test:
+  platform-billing `OnboardingPlanTest`. Trade-off: a Multi-Company Admin
+  does not see the field (only a Super Admin may start a subscription); they
+  keep using the commercial switch. Rollback: remove the listener line in
+  `PlatformBillingServiceProvider` and the section in
+  `BillingCompanyContributions`.
+- **Administrator name (CR-4).** Shown only when the Super Admin sets a
+  password (an invited administrator types their own name when accepting).
+  `CompanyAdministratorAccount::setPassword()` takes an optional name;
+  without one the account keeps the old mailbox name. Test: security
+  `CompanyOnboardingTest` "names a password-created administrator".
+- **Optional sections fold on create (CR-4).** Address, Branding and Contact
+  start collapsed on the create form, open on edit. Required fields and the
+  currency stay visible.
+- **Accounting A1 (plan #7, run early per ACC-D1).** `accounts`
+  `KnownFigureScenarioTest`: the brief's Ghana invoice (GHS 1,000 + VAT 15% +
+  NHIL 2.5% + GETFund 2.5% = 1,200, each tax on its own account), paid 500
+  then 700 with the customer's receivable back to zero and debits = credits;
+  the same taxes on a supplier bill; a GHS 240 credit note leaving 960 open.
+
 ## 2026-11-12 (record addresses 404; greeting gradient; Overview tab fade; What's New U16/U17)
 
 - **Record addresses accept digits only (Sentry DEKAERP-15).** Why: any

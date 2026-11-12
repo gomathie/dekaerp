@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Webkul\PlatformBilling\Console\Commands\BillingReadinessReport;
 use Webkul\PlatformBilling\Console\Commands\InvoiceSubscriptions;
+use Webkul\PlatformBilling\Listeners\StartPlanAtOnboarding;
 use Webkul\PlatformBilling\Models\Allocation;
 use Webkul\PlatformBilling\Models\DiscountCode;
 use Webkul\PlatformBilling\Models\DocumentNumber;
@@ -24,6 +25,7 @@ use Webkul\PlatformBilling\Policies\DocumentNumberPolicy;
 use Webkul\PlatformBilling\Services\CompanyReadOnlyWriteGuard;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
+use Webkul\Security\Events\CompanyOnboarded;
 use Webkul\Support\Settings\CompanyAwareSettingsRepository;
 
 /**
@@ -154,6 +156,9 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
                 app(CompanyReadOnlyWriteGuard::class)->assertMayWrite($model);
             }
         });
+        // CR-4: start the plan chosen on the create-company form, inside the
+        // onboarding transaction. Same once-per-dispatcher guard as above.
+        Event::listen(CompanyOnboarded::class, StartPlanAtOnboarding::class);
         // Company settings are rows written by query, not company models.
         Event::listen(CompanyAwareSettingsRepository::COMPANY_SETTINGS_WRITING, function (int $companyId): void {
             app(CompanyReadOnlyWriteGuard::class)->assertCompanyMayWrite($companyId);

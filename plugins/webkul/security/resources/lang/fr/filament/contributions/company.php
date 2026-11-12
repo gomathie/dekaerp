@@ -16,6 +16,7 @@ return [
             'password'             => 'Mot de passe de l’administrateur',
             'password-helper'      => 'Facultatif. Définit le mot de passe maintenant au lieu d’envoyer une invitation, ou le réinitialise pour l’administrateur de cette société. Il n’est jamais envoyé par e-mail : transmettez-le vous-même.',
             'must-change-password' => 'Doit changer ce mot de passe à la prochaine connexion',
+            'name'                 => 'Nom de l’administrateur',
         ],
     ],
 

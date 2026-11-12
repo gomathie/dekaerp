@@ -16,6 +16,7 @@ return [
             'password'             => 'Contraseña del administrador',
             'password-helper'      => 'Opcional. Establece la contraseña ahora en lugar de enviar una invitación, o la restablece para el administrador de esta empresa. Nunca se envía por correo: entréguesela usted mismo.',
             'must-change-password' => 'Debe cambiar esta contraseña en el próximo inicio de sesión',
+            'name'                 => 'Nombre del administrador',
         ],
     ],
 
