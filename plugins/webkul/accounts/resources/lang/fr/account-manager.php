@@ -15,6 +15,15 @@ return [
         'unbalanced'           => 'Cette écriture comptable n\'est pas équilibrée et ne peut pas être comptabilisée. Le total des débits doit être égal au total des crédits.',
     ],
 
+    'change-reason' => [
+        'required'  => 'Indiquez la raison de la modification d\'un document confirmé.',
+        'field'     => 'Raison de la modification',
+        'helper'    => 'Enregistrée dans l\'historique du document, par exemple « Le client a demandé une remise de 10 % ».',
+        'reset'     => 'Remis en brouillon. Raison : :reason',
+        'cancelled' => 'Annulé. Raison : :reason',
+        'api'       => 'Modifié via l\'API',
+    ],
+
     'lock-date' => [
         'locked'        => 'Les écritures datées du :date ou avant sont verrouillées. Demandez d\'abord à votre administrateur de déplacer la date de verrouillage.',
         'not-allowed'   => 'Seul un administrateur de la société ou un comptable disposant de l\'autorisation de déverrouillage peut modifier la date de verrouillage.',

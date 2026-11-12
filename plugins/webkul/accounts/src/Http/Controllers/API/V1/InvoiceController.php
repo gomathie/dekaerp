@@ -29,12 +29,15 @@ use Webkul\Account\Models\Invoice;
 use Webkul\Account\Models\MoveReversal;
 use Webkul\Account\Models\PaymentRegister;
 use Webkul\Accounting\Models\Journal;
+use Webkul\Account\Http\Controllers\API\V1\Concerns\ReadsChangeReason;
 
 #[Group('Account API Management')]
 #[Subgroup('Invoices', 'Manage customer invoices')]
 #[Authenticated]
 class InvoiceController extends Controller
 {
+    use ReadsChangeReason;
+
     #[Endpoint('List invoices', 'Retrieve a paginated list of customer invoices with filtering and sorting')]
     #[QueryParam('include', 'string', 'Comma-separated list of relationships to include. </br></br><b>Available options:</b> partner, currency, journal, company, invoicePaymentTerm, fiscalPosition, invoiceUser, partnerShipping, partnerBank, invoiceIncoterm, invoiceCashRounding, paymentMethodLine, campaign, source, medium, creator, invoiceLines, invoiceLines.product, invoiceLines.uom, invoiceLines.taxes, invoiceLines.account, invoiceLines.currency, invoiceLines.companyCurrency, invoiceLines.partner, invoiceLines.creator, invoiceLines.journal, invoiceLines.company, invoiceLines.groupTax, invoiceLines.taxGroup, invoiceLines.payment, invoiceLines.taxRepartitionLine', required: false, example: 'partner,invoiceLines.product')]
     #[QueryParam('filter[id]', 'string', 'Comma-separated list of IDs to filter by', required: false, example: 'No-example')]
@@ -462,7 +465,7 @@ class InvoiceController extends Controller
         }
 
         try {
-            $invoice = AccountFacade::resetToDraftMove($invoice);
+            $invoice = AccountFacade::resetToDraftMove($invoice, $this->changeReason());
         } catch (Exception $exception) {
             return response()->json([
                 'message' => $exception->getMessage(),

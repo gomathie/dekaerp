@@ -148,12 +148,12 @@ class SaleHelper
 
     public static function cancelInvoice(Move $move): Move
     {
-        return AccountFacade::cancelMove($move->refresh());
+        return AccountFacade::cancelMove($move->refresh(), 'Correction in a test');
     }
 
     public static function resetInvoiceToDraft(Move $move): Move
     {
-        return AccountFacade::resetToDraftMove($move->refresh());
+        return AccountFacade::resetToDraftMove($move->refresh(), 'Correction in a test');
     }
 
     public static function reverseInvoice(Move $move): Move

@@ -92,3 +92,8 @@ docker exec dekaerp-pgsql-1 psql -U sail -d postgres -c "CREATE DATABASE aureuse
 Each test re-runs `migrate:fresh` and the installer, so a six-test file takes
 around 6-7 minutes. Budget accordingly and run the suite you need rather than
 everything, unless you have the time for a full pass.
+
+Measured on Windows + Docker Desktop (bind-mounted repo), 2026-11-13:
+AccountFeature, 558 tests, took 8,554 s (2 h 22 min). A two-file focused run
+takes about 10 minutes, almost all of it the one-off install at the start.
+Use a second test database (see AGENTS.md) to run another suite meanwhile.

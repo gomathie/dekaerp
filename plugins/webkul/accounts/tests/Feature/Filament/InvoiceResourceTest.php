@@ -140,9 +140,25 @@ it('resets a posted invoice to draft through the action', function () {
 
     Livewire::test(EditInvoice::class, ['record' => $invoice->id])
         ->assertOk()
-        ->callAction(ResetToDraftAction::class);
+        ->callAction(ResetToDraftAction::class, data: ['reason' => 'Customer asked for a lower price']);
 
     expect($invoice->refresh()->state)->toBe(MoveState::DRAFT);
+});
+
+/**
+ * Accounting A2b (user, 2026-11-13): reopening a confirmed invoice asks why,
+ * like Zoho Books; the screen requires the field.
+ */
+it('requires a reason before resetting a posted invoice from the screen', function () {
+    FilamentHelper::actingAs(['view_any_account_invoice', 'update_account_invoice']);
+
+    $invoice = postedInvoiceRecord();
+
+    Livewire::test(EditInvoice::class, ['record' => $invoice->id])
+        ->callAction(ResetToDraftAction::class, data: ['reason' => ''])
+        ->assertHasActionErrors(['reason' => 'required']);
+
+    expect($invoice->refresh()->state)->toBe(MoveState::POSTED);
 });
 
 it('marks a posted invoice as checked through the action', function () {

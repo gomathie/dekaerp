@@ -25,9 +25,9 @@ class AccountManager
         protected ExchangeDifferenceRecorder $exchangeDifferences,
     ) {}
 
-    public function cancelMove(AccountMove $record): AccountMove
+    public function cancelMove(AccountMove $record, ?string $reason = null): AccountMove
     {
-        return $this->workflow->cancel($record);
+        return $this->workflow->cancel($record, $reason);
     }
 
     public function confirmMove(AccountMove $record): AccountMove
@@ -40,9 +40,9 @@ class AccountManager
         return $this->workflow->markChecked($record);
     }
 
-    public function resetToDraftMove(AccountMove $record): AccountMove
+    public function resetToDraftMove(AccountMove $record, ?string $reason = null): AccountMove
     {
-        return $this->workflow->resetToDraft($record);
+        return $this->workflow->resetToDraft($record, $reason);
     }
 
     public function printAndSendMove(AccountMove $record, array $data): AccountMove

@@ -157,12 +157,12 @@ class PurchaseHelper
 
     public static function cancelBill(AccountMove $move): AccountMove
     {
-        return AccountFacade::cancelMove($move->refresh());
+        return AccountFacade::cancelMove($move->refresh(), 'Correction in a test');
     }
 
     public static function resetBillToDraft(AccountMove $move): AccountMove
     {
-        return AccountFacade::resetToDraftMove($move->refresh());
+        return AccountFacade::resetToDraftMove($move->refresh(), 'Correction in a test');
     }
 
     public static function reverseBill(AccountMove $move): AccountMove
