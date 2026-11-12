@@ -19,5 +19,9 @@ When work on one begins, mark its status "in progress" here and in the plan.
 Also waiting, but kept where it is because code and tests reference it:
 Logistics phase 2 (WP-14 to WP-24) in [`../logistics-plan.md`](../logistics-plan.md) §6a/§6b.
 
-In progress elsewhere: [`../attendance-plan.md`](../attendance-plan.md),
-[`../dashboards-plan.md`](../dashboards-plan.md).
+Also waiting: [Mobile view](mobile-view-plan.md) (proposal, 2026-11-10; parts
+already built, see `docs/change-log.md`).
+
+Finished plans are in [`../completed/`](../completed/README.md) (2026-11-12).
+The SaaS administration plan's remaining work continues as CR-10 in
+[2.1](02.1-comprehensive-review-plan.md).

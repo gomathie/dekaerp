@@ -2008,11 +2008,15 @@ REFERENCES
   Do that work only on that branch, in its own worktree, and only after
   Logistics is merged. The layout rule itself is in project memory above and in
   docs/logistics-plan.md, so new resources follow it everywhere meanwhile.
-• docs/completed/company-admin-role-plan.md — the "Company Admin" request, and the tenant
-  leak found while investigating it: the Users list is company-scoped only for
-  Multi-Company Admins, so a customer admin with Resource Permission `Global`
-  can see and edit other tenants' users. Mitigation available today; fix planned
-  after Logistics.
+• docs/completed/company-admin-role-plan.md — the "Company Admin" request and
+  the Users-list tenant leak found while investigating it. *Superseded
+  2026-11-12:* "Mitigation available today; fix planned after Logistics." The
+  fix (§4a, company-scoped Users list for everyone) is built and pinned by
+  `CompanyUserIsolationTest`; the plan is in `docs/completed/`.
+• docs/completed/ — finished plans (index in its README.md, 2026-11-12):
+  Attendance, module dashboards, Company Admin, SaaS administration (merged:
+  its remainder is CR-10 in docs/planned/02.1-comprehensive-review-plan.md),
+  agent review 2026-11-11, Harness² assessment.
 • docs/logistics-plan.md — Logistics plan, decisions D1–D15, status board, work
   packages, handoff log.
 • docs/planned/01-unified-product-resource-plan.md — cross-plugin product-resource plan.

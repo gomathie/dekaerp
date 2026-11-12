@@ -1,6 +1,6 @@
 # Module dashboards — adoption plan
 
-Status: **in progress** (2026-11-07, user decision: port the Invoice, Sales,
+Status: **completed 2026-11-12; moved to docs/completed/.** Previously: **in progress** (2026-11-07, user decision: port the Invoice, Sales,
 Purchase and Recruitment dashboard tabs). Point of Sale, Website and CRM are
 out of scope: we do not have the first and the last, and our Website plugin is
 portal-only.
