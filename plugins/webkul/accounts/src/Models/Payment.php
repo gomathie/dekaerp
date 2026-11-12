@@ -574,6 +574,22 @@ class Payment extends Model
             ],
         ];
 
+        // Write-off lines arrive with `balance` only (PaymentRegistrar). On a
+        // journal entry MoveLine::computeBalance() recomputes balance as
+        // debit - credit, so without these the write-off saved as 0 and the
+        // payment entry was off by exactly the write-off: "mark as fully paid"
+        // posted an unbalanced entry, now refused by MoveWorkflow (found
+        // 2026-11-12 by InvoiceTest "writes off the shortfall...").
+        $writeOffLineValsList = array_map(function (array $line): array {
+            $balance = (float) ($line['balance'] ?? 0.0);
+
+            return $line + [
+                'debit'         => $balance > 0.0 ? $balance : 0.0,
+                'credit'        => $balance < 0.0 ? -$balance : 0.0,
+                'date_maturity' => $this->date,
+            ];
+        }, $writeOffLineValsList);
+
         return array_merge($lineValsList, $writeOffLineValsList);
     }
 
