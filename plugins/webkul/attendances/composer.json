@@ -1,0 +1,30 @@
+{
+    "name": "webkul/attendances",
+    "description": "Staff attendance: clock in, clock out, and manager corrections",
+    "authors": [
+        {
+            "name": "DEKA ERP",
+            "email": "support@dekaerp.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Webkul\\Attendance\\AttendanceServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Webkul\\Attendance\\": "src/",
+            "Webkul\\Attendance\\Database\\Factories\\": "database/factories/",
+            "Webkul\\Attendance\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Webkul\\Attendance\\Tests\\": "tests/"
+        }
+    }
+}
