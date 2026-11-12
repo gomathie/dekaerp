@@ -6,6 +6,27 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-12 (read-only guard on an installation behind on migrations)
+
+- **Why:** the local database, which was behind on migrations since August,
+  could not upgrade. `2026_08_03_130000_seed_accounts_sequences` saves a company
+  record. The save reached `CompanyReadOnlyWriteGuard` →
+  `SubscriptionLifecycle::isReadOnly()`, which queried
+  `platform_billing_subscriptions` before the migration that creates it, and
+  the whole run stopped.
+- **How:** `isReadOnly()` returns false when the subscriptions table does not
+  exist yet. The table check is memoised with `once()`. The trial check above
+  it is unchanged.
+- **Benefit:** any installation that is behind can upgrade in one
+  `migrate`. Production is unaffected, because the table already exists there.
+- **Trade-off / risk:** none for a live system. Without the table there can be
+  no subscription, so nothing could have been locked.
+- **Verification:** `SubscriptionReadOnlyEnforcementTest` 12 passed, including
+  the new test "treats a company as writable while the subscriptions table does
+  not exist yet". The test hides the table by renaming it. The local `dekaerp`
+  database then migrated fully, through `2026_11_12_000001`.
+- **Rollback:** remove the early return.
+
 ## 2026-11-12 (What's New page, WN-1 to WN-6; clickable At-a-glance cards)
 
 Plan: `docs/completed/whats-new-plan.md` (decisions D-WN-1..5).
