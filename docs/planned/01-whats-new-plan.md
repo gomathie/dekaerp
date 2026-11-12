@@ -1,6 +1,6 @@
 # What's New page: improvement plan
 
-Written 2026-11-12. Status: **decided 2026-11-12; starts after the 2.0 plan's first block.**
+Written 2026-11-12. Status: **decided 2026-11-12; starts after the comprehensive review plan's (#2) first block.**
 
 Reference: the shared library's `whats-new-changelog-page` skill and workflow
 (`C:\Users\gomat\OneDrive\Documents\Workflow and skills\`), built from Pilot
@@ -112,4 +112,4 @@ Total: about 3.5 days.
 | D-WN-2 | "New" dot per user or per browser? | **Per user**, so it follows them across devices |
 | D-WN-3 | Rewrite the v1.7.0 and v1.6.0 entries in plain language? | **Yes.** Technical detail stays in docs/change-log.md |
 | D-WN-4 | Who may download the PDF? | **Everyone who can open the page** |
-| D-WN-5 | When does this run? | **After the 2.0 plan's first block** (CR-10 defects, CR-1, CR-3, CR-4) |
+| D-WN-5 | When does this run? | **After the comprehensive review plan's (#2) first block** (CR-10 defects, CR-1, CR-3, CR-4) |

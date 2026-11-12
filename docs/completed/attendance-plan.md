@@ -524,7 +524,7 @@ records, instead of a second source.
 | Work locations | `Employee\Models\WorkLocation`, `employees_employees.work_location_id` | "You are working at …" in the banner; optional geofence later |
 | Leave | Time Off `Leave`, `CalendarLeave` | Show "On leave" instead of "Not clocked in"; do not count as absent |
 | Timesheets | `timesheets` plugin | Separate: time spent **on projects**. Attendance is presence. Not merged |
-| Payroll design | `docs/planned/03-payroll.md` (`payroll_period_inputs`, `payroll_policies` kind `attendance` / `overtime`) | Consumer of worked and overtime units |
+| Payroll design | `docs/planned/04-payroll.md` (`payroll_period_inputs`, `payroll_policies` kind `attendance` / `overtime`) | Consumer of worked and overtime units |
 | Company context | `CompanyContext`, `BelongsToCompany`, `InheritsParentCompany` | Scoping |
 
 ## 3. Reference (from knowledge of Odoo Attendances, not re-read this session)
