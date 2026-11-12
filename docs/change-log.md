@@ -57,7 +57,8 @@ for the task/question log this change log is paired with.
   must run `erp:sync-permissions` after `migrate` so the new permission exists.
 - **Verification:** `aureuserp_testing_claude_vault`: report isolation 7
   passed (14 assertions); LockDateTest + KnownFigureScenarioTest 15 passed
-  (43 assertions); full AccountFeature run (see the entry's later note). Pint clean.
+  (43 assertions); full AccountFeature 558 passed (1471 assertions), 0
+  failed, 8,554 s (2 h 22 min) on the same database. Pint clean.
 - **Rollback:** remove the two hook calls; the table is inert without them.
 
 ## 2026-11-12 (CR-4: plan and administrator name on the create-company form; accounting A1 known figures)

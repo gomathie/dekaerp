@@ -99,7 +99,7 @@ it('resets a posted refund to draft through the action', function () {
 
     Livewire::test(EditRefund::class, ['record' => $refund->id])
         ->assertOk()
-        ->callAction(ResetToDraftAction::class);
+        ->callAction(ResetToDraftAction::class, data: ['reason' => 'Customer asked for a lower price']);
 
     expect($refund->refresh()->state)->toBe(MoveState::DRAFT);
 });

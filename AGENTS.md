@@ -1066,6 +1066,27 @@ SAAS-05 plugin entitlement rollout, 2026-11-04:
 • Translation source structure is checked line by line. Use quoted numeric keys
   (`'4' =>`) in both English and locale arrays: PHP casts them back to integers,
   while bare numeric keys make translated values look like structure changes.
+• **Apostrophes in translations (user rule, 2026-11-13).** French, Spanish,
+  Portuguese and English strings often contain `'` (d'un, l'API, l'historique,
+  don't). Inside a single-quoted PHP string every one must be written `\'`, or
+  the file is a parse error and the whole language breaks. It keeps happening,
+  so: write translation files with the editor, never with shell `sed`/`perl`/
+  heredoc insertion (the shell strips or doubles the backslash), and after every
+  change run `php -l` on each locale file you touched, in the Sail image:
+  `docker run --rm -v "$(pwd -W):/var/www/html" -w /var/www/html --entrypoint php sail-8.4/app -l <file>`.
+  Typographic apostrophes (’) and French guillemets (« ») need no escaping.
+• **Write every change as if an attacker will read it (user rule,
+  2026-11-13).** This is a public repository serving unrelated client
+  companies, so assume the code is read by someone looking for a way in.
+  Before finishing any change, check it for: a missing permission or company
+  check (another tenant's record by id, or a super-admin bypass reaching a
+  service with no guard); user text rendered unescaped (`{!! !!}`, `HtmlString`,
+  chatter bodies - escape with `e()`); raw SQL built from input; mass
+  assignment of fields a user must not set; uploads trusted by name or type;
+  secrets, tokens or personal data in logs, Sentry, errors or the repo; and
+  rate limits on anything an outsider can call repeatedly. Fail closed: when
+  unsure whether someone may do something, refuse. Name what you checked in
+  the handoff.
 • Test suites share one database: run one suite at a time **per database**. An
   interrupted run poisons `aureuserp_testing`; drop and recreate it before
   re-running.

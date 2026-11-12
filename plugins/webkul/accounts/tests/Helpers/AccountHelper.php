@@ -513,14 +513,14 @@ class AccountHelper
         return AccountFacade::confirmMove($move->refresh());
     }
 
-    public static function cancel(Move $move): Move
+    public static function cancel(Move $move, ?string $reason = 'Correction in a test'): Move
     {
-        return AccountFacade::cancelMove($move->refresh());
+        return AccountFacade::cancelMove($move->refresh(), $reason);
     }
 
-    public static function resetToDraft(Move $move): Move
+    public static function resetToDraft(Move $move, ?string $reason = 'Correction in a test'): Move
     {
-        return AccountFacade::resetToDraftMove($move->refresh());
+        return AccountFacade::resetToDraftMove($move->refresh(), $reason);
     }
 
     public static function reverse(Move $move): Move
