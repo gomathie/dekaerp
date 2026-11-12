@@ -1,68 +1,90 @@
-# CHANGELOG - v1.7.0
+<!--
+Authoring notes (not shown on the What's New page, which strips HTML comments):
+- Write for the people who use DEKA, not for developers. Technical detail
+  belongs in docs/change-log.md.
+- New entries go under "## Unreleased" (hidden from users). Move them under the
+  version heading in the same push that ships them to production, and date it.
+- Headings: "# CHANGELOG — vX.Y.Z — YYYY-MM-DD", sections "### Features",
+  "### Improvements", "### Fixes". Start a security fix with "[Security]".
+-->
 
-### Features
+## Unreleased
 
-* Added a multi-company Logistics module for shipments, fleet records, trip dispatch, delivery tracking, proof of delivery, waybills, customer invoicing, operating expenses, dashboards, and reports
-* Added per-company Logistics settings, numbering sequences, service products, capacity warnings, delivery requirements, and accounting defaults
-* Added one-time, expiring driver links for mobile proof-of-delivery capture without requiring a driver login
-* A customer record lists that customer's recent shipments, and open charges when the viewer may see shipment money. A contact with no company shows only the company the viewer is working in
-* Added shipment register, delivery performance, profitability, vehicle trip history, and driver trip history reports with filtered exports
-* Added Invoice, Sales and Purchase dashboards, and expanded the Recruitment dashboard, with filters, trend cards, charts and top-record lists. Each shows only the current company's figures
+
+# CHANGELOG — v1.7.1 — 2026-11-12
 
 ### Improvements
 
-* Logistics can be enabled or disabled independently for each company while preserving its existing records
-* POD files use tenant-prefixed private object storage and authenticated company-aware downloads
-* Sales orders containing Logistics service products can create draft shipments without automatically committing operations to a route or delivery date
+* The "At a glance" cards on the Overview open the list they count, such as open quotations or invoices to collect
+* What's New has a search box, category filters, a PDF download and a megaphone in the top bar that shows a dot when there is a release you have not read
+
+# CHANGELOG — v1.7.0 — 2026-11-12
+
+### Features
+
+* Logistics: plan and track shipments, vehicles, trips and deliveries, collect proof of delivery on a phone, print waybills, invoice customers and record trip expenses, with a dashboard and reports
+* Drivers can capture proof of delivery from a one-time link, without an account
+* A customer's page shows their recent shipments, and their open charges for people allowed to see shipment amounts
+* Shipment, delivery performance, profitability, vehicle and driver reports, each exportable with its filters
+* New dashboards for Invoices, Sales and Purchases, and a richer Recruitment dashboard, showing only your company's figures
+* Attendance: clock in and out from the dashboard, see who is in, correct entries with a reason, and report lateness, absence and overtime
+* A welcome banner on the dashboards greets you by name, with your role, company, date and work location
+
+### Improvements
+
+* Attendance and Logistics can each be switched on or off per company, without losing existing records
+* A forgotten clock-out is closed automatically after 12 hours (you can change the limit) and flagged for review, so it does not inflate worked hours
+* Attendance records location and network details only when the company turns that on
+* Proof-of-delivery photos and signatures are stored privately and can only be opened by people in the same company
+* A sales order for a delivery service can create a draft shipment, without fixing its route or date yet
 
 ### Fixes
 
-* [Security] Settings pages, overviews and dashboards in Sales, Purchases, Accounting, Inventory, Projects, Recruitment and Time Off require their page permission again; a recent change had let any user of the company open them
+* [Security] Settings pages, overviews and dashboards in Sales, Purchases, Accounting, Inventory, Projects, Recruitment and Time Off again require their own permission
 * [Security] Dashboard widgets check both the module and their own permission
-* The Project "Tasks by state" and "Tasks by stage" charts load faster: each counts in one query instead of one per state or stage
-* The Project "Tasks by stage" chart no longer shows zero for every stage when no start date is chosen
-* [Security] Enforced company isolation and server-side authorization across Logistics actions, reports, exports, widgets, documents, and delivery files
-* [Security] Added hashed, single-use, revocable, expiring, and rate-limited public delivery links. The token is stored only as a hash. New links are still path URLs (`/logistics/pod/{token}`); the fragment exchange described in the 2026-10-20 notes is not in this tree
+* The Project charts "Tasks by state" and "Tasks by stage" load faster, and "Tasks by stage" no longer shows zero for every stage when no start date is chosen
+* [Security] Logistics actions, reports, exports, documents and delivery files are limited to your own company
+* [Security] Delivery links work once, expire, can be revoked, and are protected against guessing
 
-# 🚀 CHANGELOG — v1.6.0
+# CHANGELOG — v1.6.0
 
-### 🧩 Features
+### Features
 
-* Added document sequences for invoices, sales orders, purchase orders, scraps and manufacturing orders — configurable prefix, padding, step and reset frequency, managed under Settings → Sequences. Numbering previously derived from the database id, which left gaps and could not be reset or controlled
-* Added custom tax formulas: a tax can compute from an arithmetic expression over `price_unit`, `quantity` and `price_subtotal`, with `min()` and `max()` for capping
-* Added API token management (Settings → API Tokens) — issue a token against a specific user, scope it read-only or read/write, see when it was last used, and revoke it
-* Added an in-app "What's New" page rendering the release notes, under Help
-* Added a "Late" view to inventory operations, listing everything past its deadline or scheduled date
-* Added Employee / Customer / Vendor filters to partner-based lists
-* Added Sentry error monitoring, with performance tracing and optional log forwarding
-* Added a public branding asset route so custom logos render on the login and password-reset pages
+* Document numbering for invoices, sales and purchase orders, scraps and manufacturing orders: choose the prefix, length, step and when it restarts (Settings → Sequences). Numbers no longer skip or depend on internal record ids
+* Taxes can be calculated from a formula based on unit price, quantity and subtotal, with a minimum or maximum
+* API tokens (Settings → API Tokens): give an integration its own token, read-only or read/write, see when it was last used, and revoke it
+* A What's New page under Help shows these release notes
+* A "Late" view in Inventory lists every operation past its deadline or scheduled date
+* Contact lists can be filtered to employees, customers or vendors
+* Errors are reported automatically to the support team, so problems are found and fixed sooner
+* Your company logo now shows on the login and password-reset pages
 
-### ✨ Improvements
+### Improvements
 
-* API endpoints are now rate limited per token, so one client integration cannot exhaust another's budget
-* API tokens can be scoped: a read-only token cannot POST, PATCH or DELETE
-* API errors now return JSON on every endpoint rather than depending on the client sending an `Accept` header
-* Money columns default to the configured company currency instead of a fixed default
-* Password fields in the user form can be revealed while typing
-* Sending a purchase order now warns when vendors have no email address, instead of reporting success while sending nothing
-* Raised the Livewire nesting limit, fixing errors in deeply nested repeaters
-* Multi-company: a new company's journals no longer inherit another company's bank account, and copied records are aligned to the owning company's currency
-* Variant generation failures are now reported to the log rather than silently swallowed
+* Each API token has its own request limit, so one busy integration cannot slow down another
+* A read-only API token cannot change data
+* The API always answers errors in a format integrations can read
+* Amounts use your company's currency by default
+* You can show a password while typing it in the user form
+* Sending a purchase order warns you when a vendor has no email address, instead of reporting success
+* Fixed errors on forms with many nested rows
+* A new company's journals no longer pick up another company's bank account, and copied records use the right company's currency
+* Problems while creating product variants are now recorded instead of being hidden
 
-### 🐛 Fixes
+### Fixes
 
-* [Security] Escaped field values in chatter change summaries and notifications, which could execute markup entered elsewhere in the application
-* [Security] Constrained the branding asset route to a filename, closing a path that could return other stored files
-* #1478 [fixed] - Payment state never updated after an invoice was paid; the check compared two different enum types and could never be true
-* #1481 [fixed] - Recipient bank account was blank in the Pay modal when paying a vendor
-* #1490 [fixed] - Saved filter views threw a LogicException across list resources
-* #1491 [fixed] - Foreign key violation when editing an employee, caused by copying an employee id into a partner reference
-* #1497 [fixed] - Currency conversion not applied in RFQ, purchase order and quotation summaries
-* #1500 [fixed] - Prevented changing a company's currency once journal items exist for it
-* #1514 [fixed] - Exception when deleting a currency still in use; now reports why
-* [fixed] - Invoice print returned a server error when object storage was in use
-* [fixed] - Applicant categories list failed when ordering by a column the table does not have
-* [fixed] - Company records with no currency no longer error on save
+* [Security] Text shown in record history and notifications can no longer run code entered elsewhere in the application
+* [Security] The logo address can no longer be used to open other stored files
+* An invoice's payment status now updates once it is paid
+* The vendor's bank account now shows in the Pay window
+* Saved list views no longer cause an error
+* Editing an employee no longer fails with a database error
+* Currency conversion is applied in requests for quotation, purchase order and quotation totals
+* A company's currency can no longer be changed once it has journal entries
+* Deleting a currency that is still in use now explains why it cannot be deleted
+* Printing an invoice no longer fails when files are kept in cloud storage
+* The applicant categories list no longer fails when sorted
+* Saving a company with no currency no longer causes an error
 
 # 🚀 CHANGELOG — v1.5.0
 
