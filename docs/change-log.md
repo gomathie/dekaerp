@@ -6,6 +6,59 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-12 (Attendance go-live fixes, modern greeting, queue worker, background plugin install)
+
+Production pushes today (all from develop working-tree files, Attendance code
+only after its suites were green): `049d8fe07` Attendance + banner;
+`0a413a84e` banner on every dashboard, not tied to any plugin; `8875263cd`
+Attendance settings page and plugin icons; `9639d7818` auto check-out command;
+`cc4df38c1` modern greeting, Attendance HR sidebar group, version from config.
+
+- **Banner not tied to a plugin.** `DashboardBannerContributions` decides per
+  request from the rendered page's `$scopes`: every `Dashboard` subclass, plus
+  plain-Page overviews that implement `ShowsDashboardBanner` (Accounting,
+  Inventory). Attendance's clock/location contribution runs only when
+  Attendance and Employees are installed (`AttendanceBannerContribution::isAvailable()`);
+  it queried `employees_employees` otherwise and broke every dashboard.
+  Tests: support `DashboardBannerScopeTest`.
+- **Modern greeting** (user): headline, one line, outline pills, live local
+  time and date from the browser clock (server clock said "Good morning" in the
+  evening for other timezones), no avatar, 24px under the top bar, page title
+  under it 20px. Company shown once.
+- **Attendance could not be switched on.** `CompanyProvisioner::enable()` had
+  no screen. New `ManageSettings` page (`page_attendance_manage_settings`),
+  reachable while off: switch on/off, auto check-out hours, location capture,
+  late/overtime tolerances; five languages. Tests: `SettingsPageTest`.
+- **Attendance in the HR sidebar:** new `NavigationGroup::Attendance` (HR
+  section, `icon-attendance`); list, reports and settings moved into it.
+  Pinned in `ModuleSidebarSectionsTest`.
+- **Sentry DEKAERP-14:** `attendances:auto-check-out` was scheduled but never
+  registered. `->hasCommand(AutoCheckOutAttendances::class)`; test in
+  `PluginInstallationTest`.
+- **Icons:** `attendance.svg` and `timesheet.svg` drawn in the outline set;
+  `public/svg` (Plugins page `<img>`) refreshed from `resources/svg` with
+  `#64748B` strokes so they read on dark backgrounds.
+- **Version** in the profile menu from `config('app.version')` (was literal
+  1.5.0), linked to What's New; `VersionMatchesChangelogTest` keeps it equal to
+  the newest `CHANGELOG.md` heading.
+- **Queue:** production had no worker; 6 chatter notifications since 2026-08-26
+  were never delivered. Laravel Cloud managed queue created (worker clusters
+  need the Growth plan), old jobs drained; scheduler enabled. See
+  `docs/handover-actions.md` 0e.
+- **Background plugin install (built, NOT pushed):** the Plugins page ran the
+  install inside the request; the browser gave up and the dialog hung though
+  the install finished. New `PluginInstallRunner` + `plugins:install-in-background`
+  (per-plugin lock, marks installed, database notification on success or
+  failure); the page starts it detached (`nohup … &`) and returns; Windows keeps
+  the in-request path. Tests: `InstallInBackgroundTest` 4 passed. Held back
+  because a detached process on Laravel Cloud cannot be proven without a real
+  production install; push after one supervised install.
+- **Not real:** CR-10's two "known defects" were already fixed (October).
+- **Verification:** banner 7, sidebar + settings 24, version 1, icon 1, install
+  6, background install 4 passed; full suites Support 227, Employee 10,
+  Product 276, Security 167, Attendance 32 + 2 passed. Live checks in
+  production after each push (greeting, heading 20px, Attendance in sidebar).
+
 ## 2026-11-11 (Employee contact recursion; Inventory low stock and stock value)
 
 - **Why (CRITICAL, data):** the Attendance suite's "Maximum call stack size"

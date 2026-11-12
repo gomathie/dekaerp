@@ -163,6 +163,15 @@
             padding-left: 1.25rem;
             border-left: 1px solid var(--dw-line);
         }
+        /* Under the greeting the page title ("Overview") competed with it at
+           Filament's 30px (user, 2026-11-12). This style tag exists only on
+           pages that show the banner, so other pages keep their headings. */
+        .fi-page:has(.deka-welcome) .fi-header-heading {
+            font-size: 1.25rem;
+            line-height: 1.75rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
         @media (max-width: 640px) {
             .deka-welcome { margin-top: 1rem; padding: 1rem; gap: 0.875rem; }
             .deka-welcome__title { font-size: 1.1875rem; }

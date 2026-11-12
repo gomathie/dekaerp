@@ -10,6 +10,7 @@ use Filament\Support\Facades\FilamentView;
 use Filament\Tables\Table;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Support\Facades\Blade;
+use Webkul\Support\Filament\Pages\WhatsNew;
 
 trait HasFilamentDefaults
 {
@@ -28,18 +29,17 @@ trait HasFilamentDefaults
 
     protected function registerHooks(): void
     {
-        $version = '1.5.0';
-
         FilamentView::registerRenderHook(
             PanelsRenderHook::USER_MENU_PROFILE_BEFORE,
             fn (): string => Blade::render(<<<'BLADE'
                 <x-filament::dropdown.list>
-                    <x-filament::dropdown.list.item>
+                    <x-filament::dropdown.list.item tag="a" :href="$whatsNewUrl">
                         <div class="flex items-center gap-2">
                             <img
                                 src="{{ url('cache/logo.png') }}"
                                 width="24"
                                 height="24"
+                                alt=""
                             />
 
                             {{ __('support::support.version', ['version' => $version]) }}
@@ -47,7 +47,10 @@ trait HasFilamentDefaults
                     </x-filament::dropdown.list.item>
                 </x-filament::dropdown.list>
             BLADE, [
-                'version' => $version,
+                // From config, not a literal here: this said 1.5.0 while
+                // production ran 1.7.0 (2026-11-12). Links to the notes.
+                'version'     => (string) config('app.version'),
+                'whatsNewUrl' => WhatsNew::getUrl(),
             ]),
         );
     }
