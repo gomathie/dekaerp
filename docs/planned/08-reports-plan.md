@@ -1,6 +1,6 @@
 # Reports — Improvement Plan
 
-Status: **plan written 2026-11-12; not started.** Built from the brief below
+Status: **plan written 2026-11-12; decisions made the same day; not started.** Built from the brief below
 (added by the user 2026-11-12), cut to the gaps after the user's instruction
 the same day: "if what we have is enough don't plan an overkill, just an
 improvement and an easy workflow."
@@ -63,11 +63,11 @@ tables, report definitions in the database, cached results.
 
 R1 → R2 → R3.
 
-| ID | Question | Recommendation |
+| ID | Question | Answer (user, 2026-11-12) |
 | --- | --- | --- |
-| REP-D1 | One "Reports" page linking to the existing reports, not a rebuilt report engine? | Yes |
-| REP-D2 | Keep each module's own Reporting cluster too? | Yes; the Reports page links to them |
-| REP-D3 | Sales/Purchases reports in R2 enough to start? | Yes; add more as clients ask |
+| REP-D1 | One "Reports" page linking to the existing reports, not a rebuilt report engine? | **Accepted:** link the existing reports |
+| REP-D2 | Keep each module's own Reporting cluster too? | **Accepted:** keep both |
+| REP-D3 | Which new reports first? | **Accepted:** Sales and Purchases (R2); more as clients ask |
 
 ---
 

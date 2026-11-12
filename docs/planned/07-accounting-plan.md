@@ -1,6 +1,7 @@
 # Accounting — Improvement Plan
 
-Status: **plan written 2026-11-12; not started.** Built from the brief below
+Status: **plan written 2026-11-12; decisions made the same day; not started.
+A1 runs early, alongside plan #1 (ACC-D1).** Built from the brief below
 (added by the user 2026-11-12), cut to the gaps after the user's instruction
 the same day: "if what we have is enough don't plan an overkill, just an
 improvement and an easy workflow."
@@ -87,12 +88,12 @@ change the rest; A4 last because it needs the local accountant's review.
 
 ## 5. Decisions needed (user)
 
-| ID | Question | Recommendation |
+| ID | Question | Answer (user, 2026-11-12) |
 | --- | --- | --- |
-| ACC-D1 | Order above? | Yes |
-| ACC-D2 | Who may move the lock date? | Company Admin and a new "Accountant" grant; never a clerk |
-| ACC-D3 | Statement import formats for A3 | CSV first; OFX when a client's bank needs it |
-| ACC-D4 | Who reviews the Ghana / Zambia / OHADA templates? | A local accountant per country before A4 ships |
+| ACC-D1 | Order above? | **Accepted:** A1 first. Also: run A1 early, alongside plan #1, since real clients rely on the numbers; the rest of this plan keeps its place in the queue |
+| ACC-D2 | Who may move the lock date? | **Accepted:** Company Admin and a new `unlock_period` permission grantable to an accountant role; never a clerk |
+| ACC-D3 | Statement import formats for A3 | **Accepted:** CSV first with column mapping; OFX when a client's bank needs it |
+| ACC-D4 | Who reviews the Ghana / Zambia / OHADA templates? | **Ship, review later** (not the recommendation): release them as starting templates, never labelled compliant; a local accountant reviews when clients ask. The template screen and the docs must say "starting template, check with your accountant" |
 
 ---
 
