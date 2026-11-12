@@ -6,6 +6,30 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-12 (accounting A1 report isolation; A2 lock date; A7 planned)
+
+- **Why:** plan #7 A1 (reports build raw ledger joins, so CompanyScope does
+  not protect them) and A2 (nothing stopped changes in a closed month;
+  ACC-D2). A7 tax summary added to the plan on the user's approval.
+- **How:** `accounting/tests/Feature/Filament/ReportCompanyIsolationTest.php`
+  (all seven report pages; no code change needed). A2:
+  `accounts/src/Services/PeriodLock.php`, model `LockDate`, append-only table
+  `accounts_lock_dates` (migration `2026_11_12_100000`, listed in
+  `AccountServiceProvider`), `PeriodLockedException`, checks in the `Move` and
+  `MoveLine` saving/deleting hooks (only ledger fields count, so paying and
+  reconciling a locked invoice still works), Shield affix `unlock_period` on
+  the accounting `JournalEntryResource`, "Lock date" header action on
+  `ListJournalEntries`, translations in five languages.
+- **Benefit:** a closed month stays closed on every path (screens, API,
+  imports, Logistics). Who moved the lock and from what is kept.
+- **Trade-off / risk:** one extra query per ledger-relevant save of a move or
+  line. History table instead of chatter (immutable, complete). Laravel Cloud
+  must run `erp:sync-permissions` after `migrate` so the new permission exists.
+- **Verification:** `aureuserp_testing_claude_vault`: report isolation 7
+  passed (14 assertions); LockDateTest + KnownFigureScenarioTest 15 passed
+  (43 assertions); full AccountFeature run (see the entry's later note). Pint clean.
+- **Rollback:** remove the two hook calls; the table is inert without them.
+
 ## 2026-11-12 (CR-4: plan and administrator name on the create-company form; accounting A1 known figures)
 
 - **Plan chosen while creating a company (plan #1, CR-4).** Why: the AS-IS

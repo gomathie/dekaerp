@@ -1887,6 +1887,18 @@ log named):
     creating it again.
   - Tests: `plugins/webkul/platform-billing/tests/Feature/OverdueExtensionTest.php`.
 
+• Accounting lock date, 2026-11-12 (`docs/planned/07-accounting-plan.md`, A2):
+  - Enforced in the `Move` and `MoveLine` saving/deleting hooks through
+    `Account\Services\PeriodLock`, not on screens. Do not move it to an
+    action: the API, imports and Logistics' `ExpensePoster` save directly.
+  - Only ledger fields (`PeriodLock::MOVE_LEDGER_FIELDS` / `LINE_LEDGER_FIELDS`)
+    are refused. Residuals and payment state stay writable, so paying a
+    locked invoice works. Do not widen the lists to "any change".
+  - `accounts_lock_dates` is append-only history; never update a row.
+  - Moving the date needs Company Admin or `unlock_period_accounting_journal::entry`
+    **and** membership of that company (a global role is true for every id).
+  - Tests: `accounts/tests/Feature/Workflows/LockDateTest.php`.
+
 • Customer page shipments, 2026-11-10 (`docs/logistics-plan.md`, WP-9b, D11):
   - The customer infolist tab is `PartnerSchemaRegistry` slot `tabs.append`.
     Do not add a relation-manager slot, and do not edit `PartnerResource` or

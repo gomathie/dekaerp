@@ -74,6 +74,15 @@ Posting, editing, deleting or reversing a move dated on or before it is
 refused in the service (`MoveWorkflow`), not only on the screen. Only a
 role with a new `unlock_period` permission can change the date; every
 change is logged in chatter.
+*Built 2026-11-12: `Account\Services\PeriodLock`, enforced from the `Move`
+and `MoveLine` saving/deleting hooks (one rule for screens, API, imports and
+Logistics). Table `accounts_lock_dates` is append-only history (who, previous
+date) — chosen instead of chatter because it cannot be edited and is always
+complete. Permission `unlock_period_accounting_journal::entry` (Shield affix on
+the accounting JournalEntryResource); Company Admin or that permission, and in
+both cases a member of the company; no future dates. "Lock date" button on the
+Journal Entries list. Paying an old invoice and editing drafts stay allowed.
+Tests: `accounts/tests/Feature/Workflows/LockDateTest.php`, 11 tests.*
 
 **A3 — Bank reconciliation.**
 Import a statement (CSV, mapped columns; OFX later if asked), list lines,

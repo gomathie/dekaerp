@@ -10,6 +10,10 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+### Features
+
+* Accounting: lock a closed period. "Lock date" on Journal Entries stops anyone posting, changing, cancelling or deleting entries dated on or before it. Old invoices can still be paid. Only a Company Admin, or someone given "Unlock period", can move it.
+
 ### Improvements
 
 * On a phone, the pages of the module you are in now show as a row of tabs under the top bar. The Menu lists only the modules, so switching module takes fewer taps.
