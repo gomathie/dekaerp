@@ -167,6 +167,35 @@ it('starts with filters closed, four cards across and an icon on every card', fu
     }
 });
 
+/**
+ * Sections are tabs above the filters (user, 2026-11-12), not a filter. A
+ * tab picks one section or All, and only a section this user may see.
+ */
+it('chooses one section from the tabs, and refuses a section the user may not see', function (): void {
+    CompanyHelper::actingAsCompanyUser(Company::factory()->create(), ['page_invoice_invoices']);
+
+    $page = new Overview;
+    $page->filters = [];
+
+    $page->selectSection('invoices');
+    expect($page->filters['sections'])->toBe(['invoices']);
+
+    $page->selectSection('no-such-section');
+    expect($page->filters['sections'])->toBe([]);
+
+    $page->selectSection('invoices');
+    $page->selectSection();
+    expect($page->filters['sections'])->toBe([]);
+
+    // The tabs show once there is more than one section to choose from.
+    OverviewRegistry::register('test-section', fn (): string => 'Test', [], fn (): array => [], fn (): bool => true, sort: 99);
+    FilamentHelper::bootAdminPanel();
+
+    $this->get(Overview::getUrl())->assertOk()
+        ->assertSee('wire:click="selectSection(\'invoices\')"', false)
+        ->assertDontSee(__('invoices::filament/pages/overview.filters.sections').'</label>', false);
+});
+
 it('refuses the overview to a user who may see no section', function (): void {
     CompanyHelper::actingAsCompanyUser(Company::factory()->create(), []);
 
