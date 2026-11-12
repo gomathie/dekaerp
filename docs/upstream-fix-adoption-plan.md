@@ -777,7 +777,7 @@ tests.
 >   plus project and product" is marked SUPERSEDED, pointing at the
 >   2026-09-29 all-thirteen-suites table in `docs/change-log.md` (AccountFeature
 >   526, ProjectFeature 86, ProductFeature 250, zero failures).
-> - `docs/planned/02-restructure-backlog.md` — already carried the 2026-10-21 removal note
+> - `docs/planned/05-restructure-backlog.md` — already carried the 2026-10-21 removal note
 >   and the Package A PHP 8.4 statement; the four dead entries are now marked
 >   `REMOVED 2026-10-21, moot` inline so nobody adopts a resource that no longer
 >   exists.
@@ -805,7 +805,7 @@ tests.
 The audit found status drift between project documents. For example,
 `docs/handover-actions.md` still describes remaining optional suites while
 `docs/change-log.md` records all ten suites passing on 2026-09-04, and
-`docs/planned/02-restructure-backlog.md` still describes the PHP 8.4 runtime as unavailable
+`docs/planned/05-restructure-backlog.md` still describes the PHP 8.4 runtime as unavailable
 even though Sail is now the documented test path. `AGENTS.md` also contains an
 auto-generated Laravel Boost version block that is older than the explicit
 DEKA ERP project-memory versions.
