@@ -9,6 +9,7 @@ use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Enums\PaymentState;
 use Webkul\Account\Exceptions\PeriodLockedException;
 use Webkul\Account\Models\LockDate;
+use Webkul\Account\Models\Move;
 use Webkul\Account\Services\PeriodLock;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Package;
@@ -40,7 +41,7 @@ beforeEach(function () {
     $this->company = AccountHelper::company();
 });
 
-function lockDateTestInvoice(string $date, float $price = 100): Webkul\Account\Models\Move
+function lockDateTestInvoice(string $date, float $price = 100): Move
 {
     $move = AccountHelper::invoice(MoveType::OUT_INVOICE, null, null, ['invoice_date' => $date, 'date' => $date]);
 
