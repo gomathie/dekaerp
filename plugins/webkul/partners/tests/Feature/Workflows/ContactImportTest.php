@@ -263,7 +263,7 @@ it('refuses a file with no column it recognises', function () {
  * Inverted 2026-10-29. This used to pin "leaves company_id null so imported
  * contacts match typed ones", from when Partner opted out of automatic company
  * assignment. Contacts now belong to the company that creates them (user
- * decision; docs/company-admin-role-plan.md §4k), so an import is stamped with
+ * decision; docs/completed/company-admin-role-plan.md §4k), so an import is stamped with
  * the importing company. Another client must not receive a spreadsheet's worth
  * of this client's customers.
  */

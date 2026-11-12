@@ -19,7 +19,7 @@ off. Every write goes through `AttendanceService`. The dashboard banner lives in
 stays a design note only (AT-D2).
 
 **Implementation and verification:** See the handoffs in
-`docs/attendance-plan.md` §8 and `docs/change-log.md`. Database
+`docs/completed/attendance-plan.md` §8 and `docs/change-log.md`. Database
 `aureuserp_testing_attendance`. `translations:check --plugin=attendances` and
 `--plugin=support` each passed 4 of 4 locales. Suite and Pint results are
 recorded in the plan's progress log.
@@ -29,7 +29,7 @@ recorded in the plan's progress log.
 **Requested:** Look at production on a phone and write a plan to improve the
 mobile layout, for review before any code.
 
-**Decision:** Every recommendation is in `docs/mobile-view-plan.md`
+**Decision:** Every recommendation is in `docs/planned/mobile-view-plan.md`
 (R1–R9). The first patch is the top bar and the scrolling tabs. Stat cards
 two-per-row, a list that has rows, cell wrapping, logical truncation, and
 a 320px check are the second pass. The module drawer stays. No layout code
@@ -72,7 +72,7 @@ The company page is limited to the signed-in company. Seat-limit authority
 stays on the screen because `setLimit()` does not check the caller.
 
 **Implementation and verification:** See the SAAS-12/13 handoff in
-`docs/saas-administration-billing-audit-plan.md` and `docs/change-log.md`.
+`docs/completed/saas-administration-billing-audit-plan.md` and `docs/change-log.md`.
 Database `aureuserp_testing_saas11`. PlatformBillingFeature 116 passed
 (620 assertions). No browser smoke.
 
@@ -86,7 +86,7 @@ own Company Admin. The model is not generally exempt. The length keeps
 its unit.
 
 **Implementation and verification:** See the SAAS-10B addendum in
-`docs/saas-administration-billing-audit-plan.md` and `docs/change-log.md`.
+`docs/completed/saas-administration-billing-audit-plan.md` and `docs/change-log.md`.
 Database `aureuserp_testing_saas11`.
 
 ## 2026-11-09
@@ -100,7 +100,7 @@ Company Admin may add 10 days once per overdue invoice. A Super Admin
 names the days of one separate extension. Neither is a screen.
 
 **Implementation and verification:** See the two 2026-11-09 handoffs in
-`docs/saas-administration-billing-audit-plan.md` and the matching entries
+`docs/completed/saas-administration-billing-audit-plan.md` and the matching entries
 in `docs/change-log.md`. Database `aureuserp_testing_saas11`.
 
 ## 2026-11-09
@@ -117,7 +117,7 @@ Multi-Company Admin may switch that company to commercial. `create()`,
 
 **Implementation and verification:** See the SAAS-11 and SAAS-15 handoffs,
 including the two same-day addenda, in
-`docs/saas-administration-billing-audit-plan.md`, and the matching entries in
+`docs/completed/saas-administration-billing-audit-plan.md`, and the matching entries in
 `docs/change-log.md`. Database `aureuserp_testing_saas11`.
 
 ## 2026-11-09
@@ -340,7 +340,7 @@ or credentials in the query.
 
 **Company-wide visibility, the scoped-parent bug family, and WP-5b's second
 security pass.** Detail in `docs/change-log.md` (2026-09-29) and
-`docs/company-admin-role-plan.md` sections 4d–4j.
+`docs/completed/company-admin-role-plan.md` sections 4d–4j.
 
 **User decisions this session**
 

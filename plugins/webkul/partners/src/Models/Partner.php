@@ -175,7 +175,7 @@ class Partner extends Authenticatable implements FilamentUser
      * (57e234223 returned false, which made every new contact shared across
      * companies). Clients are unrelated businesses (user decision,
      * 2026-10-29), so BelongsToCompany stamps the creating company. See
-     * docs/company-admin-role-plan.md §4k.
+     * docs/completed/company-admin-role-plan.md §4k.
      *
      * Not InheritsParentCompany either. A branch company's own contact
      * legitimately belongs to the branch while its parent contact belongs to

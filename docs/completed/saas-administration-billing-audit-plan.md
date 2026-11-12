@@ -2669,7 +2669,7 @@ Replace `SAAS-XX` and paste this with the repository context:
 
 ```text
 You are assigned work package SAAS-XX in
-docs/saas-administration-billing-audit-plan.md.
+docs/completed/saas-administration-billing-audit-plan.md.
 
 Read AGENTS.md, docs/agent-reminders.md, docs/running-tests.md, the audit
 plan's evidence matrix, multi-agent rules, status board, and the complete

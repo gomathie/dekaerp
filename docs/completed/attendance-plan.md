@@ -324,7 +324,7 @@ The reusable listener-lifecycle rationale was also added to `AGENTS.md`, and
 the shared workflow library was updated with the same app-scoped registration
 lesson. The latter is outside this repository.
 
-- **Current file scope:** `docs/attendance-plan.md`,
+- **Current file scope:** `docs/completed/attendance-plan.md`,
   `plugins/webkul/attendances/**`, `plugins/webkul/support/src/Filament/Contributions/**`,
   `plugins/webkul/support/src/SupportPlugin.php`,
   `plugins/webkul/support/resources/views/dashboard-banner.blade.php`,

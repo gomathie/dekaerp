@@ -16,7 +16,7 @@ require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php
  * list. SAAS-03 must add a configurable default set without revoking existing
  * grants.
  *
- * See: docs/saas-administration-billing-audit-plan.md § ENT-02.
+ * See: docs/completed/saas-administration-billing-audit-plan.md § ENT-02.
  *
  * SAAS-03 update: the first test still holds, because `null` in
  * `config('plugin-manager.default_company_plugins')` deliberately means "every

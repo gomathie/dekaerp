@@ -23,7 +23,7 @@ use Webkul\Security\Enums\PermissionType;
  * was the column default and a hard-coded value in `UserInvitationService` - but
  * `group` has to be picked in the form *and* given a team, so it is a real
  * decision by whoever configured that user. Widening it here would silently
- * override them. See docs/company-admin-role-plan.md section 4h.
+ * override them. See docs/completed/company-admin-role-plan.md section 4h.
  */
 return new class extends Migration
 {

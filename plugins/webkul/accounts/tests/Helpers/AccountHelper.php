@@ -129,7 +129,7 @@ class AccountHelper
      *
      * Creating with `company_id => null` no longer achieves that while someone is
      * acting, because contacts, products and categories are now stamped with the
-     * creating company (docs/company-admin-role-plan.md §4k). Per-company account
+     * creating company (docs/completed/company-admin-role-plan.md §4k). Per-company account
      * properties exist for exactly these shared records, so the tests that pin
      * them start from one.
      *

@@ -7,7 +7,7 @@ $plugin = 'products';
 
 /*
  * Empty since 2026-10-29: Product and Packaging used to be declared shared.
- * Each client has its own catalogue (docs/company-admin-role-plan.md §4k).
+ * Each client has its own catalogue (docs/completed/company-admin-role-plan.md §4k).
  */
 $shared = [];
 
