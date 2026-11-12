@@ -40,7 +40,7 @@ return [
     ],
 
     'footer' => [
-        'description'   => 'Conçu pour optimiser et rationaliser les opérations commerciales, Aureus ERP convient aux entreprises de toutes tailles.',
+        'description'   => 'Conçu pour optimiser et rationaliser les opérations commerciales, DEKA ERP convient aux entreprises de toutes tailles.',
         'description_2' => 'La plateforme met l\'accent sur les rapports pour obtenir des informations, la sécurité, la flexibilité de localisation, ainsi que l\'intégration avec les CRM, les outils BI et les API.',
         'useful_links'  => 'Liens utiles',
         'contact_us'    => 'Contactez-nous',

@@ -40,7 +40,7 @@ return [
     ],
 
     'footer' => [
-        'description'   => 'Projetado para otimizar e simplificar as operações do negócio, o Aureus ERP é adequado para empresas de todos os portes.',
+        'description'   => 'Projetado para otimizar e simplificar as operações do negócio, o DEKA ERP é adequado para empresas de todos os portes.',
         'description_2' => 'A plataforma enfatiza relatórios para insights, segurança, flexibilidade de localização e integração com CRMs, ferramentas de BI e APIs.',
         'useful_links'  => 'Links úteis',
         'contact_us'    => 'Fale Conosco',
