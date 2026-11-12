@@ -316,6 +316,33 @@
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_END) }}
     </nav>
 
+    {{-- Phones only (user, 2026-11-12: the drawer listing this module's pages
+         above every module was cumbersome). The current module's pages sit in
+         a one-line strip under the top bar, as on desktop; the drawer lists
+         modules only. Under 768px the top bar itself hides these links. --}}
+    @if ($isAdminPanel && $hasNavigation)
+        @php
+            $activeModuleGroup = collect($navigation)->first(fn ($group) => $group->isActive());
+            $modulePages = $activeModuleGroup
+                ? $activeModuleGroup->getItems()->flatMap(fn ($item) => [$item, ...$item->getChildItems()])->filter(fn ($entry) => filled($entry->getUrl()))
+                : collect();
+        @endphp
+
+        @if ($modulePages->count() > 1)
+            <nav class="module-mobile-tabs" aria-label="{{ $activeModuleGroup->getLabel() }}"
+                x-data="{}"
+                x-init="$el.querySelector('[aria-current=page]')?.scrollIntoView({ block: 'nearest', inline: 'center' })">
+                @foreach ($modulePages as $entry)
+                    <a href="{{ $entry->getUrl() }}"
+                        @class(['module-mobile-tab', 'is-active' => $entry->isActive()])
+                        @if ($entry->isActive()) aria-current="page" @endif>
+                        {{ $entry->getLabel() }}
+                    </a>
+                @endforeach
+            </nav>
+        @endif
+    @endif
+
     <x-filament-actions::modals />
 
 @if ($isAdminPanel && $hasNavigation)
@@ -354,34 +381,7 @@
             <nav class="module-sidebar-nav">
                 @php
                     $previousSection = null;
-                    $activeModuleGroup = collect($navigation)->first(fn ($group) => $group->isActive());
                 @endphp
-
-                {{-- Phones only (mobile plan P2): the current module's pages, which
-                     the top bar hides under 768px. Desktop shows them in the top bar. --}}
-                @if ($activeModuleGroup && $activeModuleGroup->getItems()->isNotEmpty())
-                    <div class="module-sidebar-current">
-                        <div class="module-sidebar-section" role="presentation">
-                            <span class="module-sidebar-section-label">{{ $activeModuleGroup->getLabel() }}</span>
-                        </div>
-
-                        @foreach ($activeModuleGroup->getItems() as $pageItem)
-                            @foreach ([$pageItem, ...$pageItem->getChildItems()] as $entry)
-                                @if ($entry->getUrl())
-                                    <div @class(['module-sidebar-item', 'fi-active' => $entry->isActive()])>
-                                        <a href="{{ $entry->getUrl() }}" class="module-sidebar-link module-sidebar-page-link">
-                                            <span class="module-sidebar-label">{{ $entry->getLabel() }}</span>
-                                        </a>
-                                    </div>
-                                @endif
-                            @endforeach
-                        @endforeach
-
-                        <div class="module-sidebar-section" role="presentation">
-                            <span class="module-sidebar-section-label">{{ __('admin.mobile-menu.modules') }}</span>
-                        </div>
-                    </div>
-                @endif
 
                 @foreach ($navigation as $group)
                     @php
@@ -756,9 +756,9 @@
                 /* ---- Mobile plan P1-P6 (2026-11-10). Phones only; desktop from
                    768px up is untouched. See docs/mobile-view-plan.md. ---- */
 
-                /* P2: the labelled Menu button and "This module" exist on phones only. */
+                /* P2: the labelled Menu button and the page strip exist on phones only. */
                 .module-mobile-menu-btn,
-                .module-sidebar-current {
+                .module-mobile-tabs {
                     display: none;
                 }
 
@@ -795,18 +795,63 @@
                         block-size: 1.5rem;
                     }
 
-                    .module-sidebar-current {
-                        display: block;
+                    /* This module's pages: one scrolling line under the top bar. */
+                    .module-mobile-tabs {
+                        display: flex;
+                        gap: 0.25rem;
+                        padding: 0.375rem 0.5rem;
+                        overflow-x: auto;
+                        scrollbar-width: none;
+                        background-color: var(--color-white, #fff);
+                        border-block-end: 1px solid var(--gray-200, #e5e7eb);
+                        mask-image: linear-gradient(to right, #000 90%, transparent);
                     }
 
-                    .module-sidebar-current .module-sidebar-section:first-child {
-                        margin-block-start: 0;
-                        border-block-start: 0;
+                    [dir='rtl'] .module-mobile-tabs {
+                        mask-image: linear-gradient(to left, #000 90%, transparent);
                     }
 
-                    .module-sidebar-page-link {
-                        padding-inline-start: 0.875rem;
-                        min-block-size: 44px;
+                    .module-mobile-tabs::-webkit-scrollbar {
+                        display: none;
+                    }
+
+                    .dark .module-mobile-tabs {
+                        background-color: var(--gray-900, #111827);
+                        border-block-end-color: var(--gray-800, #1f2937);
+                    }
+
+                    .module-mobile-tab {
+                        flex-shrink: 0;
+                        display: inline-flex;
+                        align-items: center;
+                        min-block-size: 40px;
+                        padding-inline: 0.75rem;
+                        border-radius: 999px;
+                        color: var(--gray-600, #4b5563);
+                        font-size: 0.875rem;
+                        font-weight: 500;
+                        white-space: nowrap;
+                        text-decoration: none;
+                    }
+
+                    .dark .module-mobile-tab {
+                        color: var(--gray-300, #d1d5db);
+                    }
+
+                    .module-mobile-tab.is-active {
+                        background-color: var(--primary-50, #eff6ff);
+                        color: var(--primary-600, #2563eb);
+                        font-weight: 600;
+                    }
+
+                    .dark .module-mobile-tab.is-active {
+                        background-color: color-mix(in srgb, var(--primary-500, #3b82f6) 18%, transparent);
+                        color: var(--primary-300, #93c5fd);
+                    }
+
+                    .module-mobile-tab:focus-visible {
+                        outline: 2px solid var(--primary-500, #3b82f6);
+                        outline-offset: -2px;
                     }
 
                     .module-sidebar-link {

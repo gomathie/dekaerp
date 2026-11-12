@@ -45,3 +45,12 @@ by modern design standards). Each entry: flow, what was seen, proposal, effort
 | # | Seen | Proposal | Effort | Status |
 |---|---|---|---|---|
 | U15 | Version showed 1.5.0 | Version from config, linked to What's New | S | **Done** 2026-11-12 |
+
+## What's New
+
+Checked on production 2026-11-12 (desktop and 390 px): search, category pills, no-match message, page and per-release PDFs all work.
+
+| # | Seen | Proposal | Effort | Status |
+|---|---|---|---|---|
+| U16 | Clearing the search or a filter leaves every release expanded (721 items) instead of returning to the latest one open | On clear, restore the starting state: only the latest release open | S | Proposed |
+| U17 | "Search release notes" appears twice: as a visible label and as the placeholder | Keep the label for screen readers only (sr-only), placeholder stays | S | Proposed |
