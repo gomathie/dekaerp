@@ -163,7 +163,7 @@ return [
         'manufacturing'  => 'Gerenciamento de produção e manufatura',
         'partners'       => 'Gerencie parceiros comerciais',
         'payments'       => 'Gerencie pagamentos e transações',
-        'plugin-manager' => 'Gerenciador de plugins para o DEKA ERP',
+        'plugin-manager' => 'Gerenciador de plugins para o DEKA Central',
         'products'       => 'Catálogo de produtos e gerenciamento de variantes',
         'projects'       => 'Planejamento e gerenciamento de projetos',
         'purchases'      => 'Gerenciamento de compras e pedidos de compra',
