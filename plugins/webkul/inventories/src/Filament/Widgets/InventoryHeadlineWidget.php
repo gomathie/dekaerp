@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Webkul\Inventory\Enums\LocationType;
 use Webkul\Inventory\Enums\OperationState;
 use Webkul\Inventory\Enums\OperationType as OperationTypeEnum;
+use Webkul\Inventory\Filament\Clusters\Operations\Resources\DeliveryResource;
+use Webkul\Inventory\Filament\Clusters\Operations\Resources\ReceiptResource;
 use Webkul\Inventory\Filament\Pages\Overview;
 use Webkul\Inventory\Models\Operation;
 use Webkul\Inventory\Models\OrderPoint;
@@ -64,12 +66,14 @@ class InventoryHeadlineWidget extends StatsOverviewWidget
 
         return [
             Stat::make(__('inventories::filament/widgets/inventory-headline.to-receive'), number_format((clone $receipts)->count()))
+                ->url(ReceiptResource::canViewAny() ? ReceiptResource::getUrl('index') : null)
                 ->icon('heroicon-o-inbox-arrow-down')
                 ->description(trans_choice('inventories::filament/widgets/inventory-headline.late', $lateReceipts, ['count' => $lateReceipts]))
                 ->color($lateReceipts > 0 ? 'warning' : 'success')
                 ->extraAttributes(['class' => 'overview-headline-stat']),
 
             Stat::make(__('inventories::filament/widgets/inventory-headline.to-deliver'), number_format((clone $deliveries)->count()))
+                ->url(DeliveryResource::canViewAny() ? DeliveryResource::getUrl('index') : null)
                 ->icon('heroicon-o-truck')
                 ->description(trans_choice('inventories::filament/widgets/inventory-headline.late', $lateDeliveries, ['count' => $lateDeliveries]))
                 ->color($lateDeliveries > 0 ? 'danger' : 'success')

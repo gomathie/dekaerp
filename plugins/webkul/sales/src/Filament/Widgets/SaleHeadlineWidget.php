@@ -4,6 +4,8 @@ namespace Webkul\Sale\Filament\Widgets;
 
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Webkul\Sale\Filament\Clusters\Orders\Resources\OrderResource;
+use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource;
 use Webkul\Sale\Filament\Pages\SalesDashboard;
 use Webkul\Sale\Filament\Widgets\Concerns\HasSaleDashboardFilters;
 
@@ -70,6 +72,7 @@ class SaleHeadlineWidget extends StatsOverviewWidget
 
         return [
             Stat::make(__('invoices::filament/pages/overview.headline.revenue'), compact_money($revenue, $currency))
+                ->url(OrderResource::canViewAny() ? OrderResource::getUrl('index') : null)
                 ->icon('heroicon-o-banknotes')
                 ->description(trans_choice('invoices::filament/pages/overview.headline.orders', $orders, ['count' => $orders]))
                 ->chart($this->dailyRevenue())
@@ -77,6 +80,7 @@ class SaleHeadlineWidget extends StatsOverviewWidget
                 ->extraAttributes(['class' => 'overview-headline-stat']),
 
             Stat::make(__('invoices::filament/pages/overview.headline.open-quotations'), number_format($this->quotations()->count()))
+                ->url(QuotationResource::canViewAny() ? QuotationResource::getUrl('index') : null)
                 ->icon('heroicon-o-document-text')
                 ->color('info')
                 ->extraAttributes(['class' => 'overview-headline-stat']),
