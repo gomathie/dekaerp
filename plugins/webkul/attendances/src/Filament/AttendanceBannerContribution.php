@@ -5,6 +5,7 @@ namespace Webkul\Attendance\Filament;
 use Illuminate\Support\Facades\Blade;
 use Webkul\Attendance\Support\AttendanceAccess;
 use Webkul\Employee\Models\Employee;
+use Webkul\PluginManager\Package;
 use Webkul\Support\Filament\Contributions\DashboardBannerRegistry;
 use Webkul\Support\Services\CompanyContext;
 
@@ -23,14 +24,28 @@ class AttendanceBannerContribution
     public static function register(): void
     {
         DashboardBannerRegistry::section(static::SECTION, function (): string {
-            if (! static::appliesToViewer()) {
+            if (! static::isAvailable() || ! static::appliesToViewer()) {
                 return '';
             }
 
             return Blade::render("@livewire('attendance-clock')");
         });
 
-        DashboardBannerRegistry::location(fn (): ?string => static::workLocation());
+        DashboardBannerRegistry::location(fn (): ?string => static::isAvailable() ? static::workLocation() : null);
+    }
+
+    /**
+     * Checked per request, inside the banner closures (2026-11-12). The
+     * provider boots whether or not the plugin is installed, so these closures
+     * ran on every dashboard and queried employees_employees even where that
+     * table did not exist - one missing table took down every dashboard's
+     * banner. Not in register(): installing or uninstalling changes the answer
+     * while the application is running.
+     */
+    public static function isAvailable(): bool
+    {
+        return Package::isPluginInstalled('attendances')
+            && Package::isPluginInstalled('employees');
     }
 
     /**

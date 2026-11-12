@@ -182,6 +182,30 @@ customer.
 
 ---
 
+## 0e. Turn on a queue worker (and check the scheduler) in Laravel Cloud (2026-11-12)
+
+**Found:** production's `jobs` table holds 6 jobs that were never attempted
+(`attempts = 0`), the oldest from 2026-08-26. All are
+`Chatter\Notifications\ChatterDatabaseNotification`: in-app chatter
+notifications (mentions and messages) have never been delivered in production.
+Nothing processes the `database` queue (`QUEUE_CONNECTION` default).
+
+**Do, in the Laravel Cloud dashboard (application → environment):**
+1. Enable a queue worker for the `database` connection (`php artisan
+   queue:work --tries=3`), or Laravel Cloud's worker toggle.
+2. Confirm the scheduler is enabled (`schedule:run` every minute). Attendance's
+   auto check-out (every 15 minutes) and the platform invoice run depend on it.
+
+**Check afterwards (read-only):**
+`SELECT count(*) FROM jobs;` should drop to 0 within a minute;
+`SELECT count(*) FROM failed_jobs;` should stay 0.
+
+**Also related:** the Plugins page installs a plugin inside the web request
+(up to 5 minutes, because it regenerates every permission). The browser gives
+up first, so the install dialog stays open although the install finishes
+(Attendance, 2026-11-12 01:04 UTC). Until the install runs as a queued job,
+wait a minute and refresh the Plugins page.
+
 ## 0c. Set TRUSTED_PROXIES, or the POD throttle is one shared bucket (2026-09-30)
 
 **Found by the second WP-5b security pass** (`docs/logistics-plan.md`, handoff log).
