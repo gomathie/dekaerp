@@ -3,6 +3,7 @@
 namespace Webkul\Support\Http\Controllers;
 
 use Barryvdh\DomPDF\Facade\Pdf;
+use Filament\Facades\Filament;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\Support\Filament\Pages\WhatsNew;
 
@@ -15,6 +16,10 @@ class WhatsNewPdfController
 {
     public function __invoke(?string $release = null): Response
     {
+        if (! auth()->guard('web')->check()) {
+            return redirect()->to(Filament::getPanel('admin')->getLoginUrl());
+        }
+
         abort_unless(WhatsNew::canAccess(), 403);
 
         $releases = WhatsNew::loadReleases();
