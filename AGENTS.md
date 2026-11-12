@@ -2000,7 +2000,9 @@ REFERENCES
   UF-010 are the live ones. No review cadence.
 • docs/planned/ — plans decided or drafted but not started (index in its
   README.md, 2026-11-11): CRM, Inventory improvements, payroll, POS,
-  landing page, restructure backlog, unified product resource.
+  landing page, restructure backlog, unified product resource; accounting
+  (#7) and reports (#8) added 2026-11-12, both kept lean on the user's
+  instruction: fill real gaps, no overkill.
 • docs/planned/02-restructure-backlog.md — deferred upstream restructures.
 • Package F, resource structure alignment — the plan lives on the
   `chore/resource-structure` branch, not on main:
@@ -2020,7 +2022,7 @@ REFERENCES
 • docs/logistics-plan.md — Logistics plan, decisions D1–D15, status board, work
   packages, handoff log.
 • docs/completed/unified-product-resource-plan.md — cross-plugin product-resource plan.
-• docs/planned/07-landing-page-brief.md — public landing-page scope and constraints.
+• docs/planned/09-landing-page-brief.md — public landing-page scope and constraints.
 • docs/running-tests.md — how to run tests.
 • docs/completed/harness2-integration.md — assessment of Google's Harness² framework: why
   it cannot integrate with this repo or agent, plus the repo-owned evaluation
