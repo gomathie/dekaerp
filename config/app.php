@@ -16,6 +16,14 @@ return [
     'name' => env('APP_NAME', 'Laravel'),
 
     /*
+    | The released version shown in the profile menu, linked to What's New.
+    | Keep it equal to the newest released heading in CHANGELOG.md
+    | (VersionMatchesChangelogTest). It was hard-coded at 1.5.0 in
+    | HasFilamentDefaults while production ran 1.7.0 (2026-11-12).
+    */
+    'version' => env('APP_VERSION', '1.7.0'),
+
+    /*
     |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------

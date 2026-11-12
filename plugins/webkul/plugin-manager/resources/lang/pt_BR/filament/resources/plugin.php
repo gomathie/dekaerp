@@ -57,6 +57,13 @@ return [
             'title' => 'Plugin instalado com sucesso',
             'body'  => "O plugin ':name' foi instalado.",
         ],
+        'installing' => [
+            'title' => 'Instalando :name',
+            'body'  => 'Leva um ou dois minutos. Você receberá uma notificação ao terminar e pode continuar trabalhando.',
+        ],
+        'installing-already' => [
+            'title' => ':name já está sendo instalado',
+        ],
         'installed-failed' => [
             'title' => 'Falha na instalação',
         ],

@@ -26,17 +26,20 @@ use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema as DBSchema;
 use RuntimeException;
 use Throwable;
+use Webkul\PluginManager\Console\Commands\InstallInBackground;
 use Webkul\PluginManager\Console\Commands\UninstallCommand;
 use Webkul\PluginManager\Filament\Resources\PluginResource\Pages\ListPlugins;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\Services\PluginEntitlementService;
+use Webkul\PluginManager\Services\PluginInstallRunner;
 use Webkul\Security\Models\User;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Models\Company;
@@ -210,33 +213,50 @@ class PluginResource extends Resource
                             // DDL on locks this connection still held - which surfaced
                             // as an install that failed once and then succeeded on a
                             // later attempt.
-                            try {
-                                $phpPath = self::getPhpExecutablePath();
+                            //
+                            // In the background since 2026-11-12: the install takes
+                            // minutes (it regenerates every permission), the browser
+                            // gave up first, and the dialog stayed open although the
+                            // install finished. The page now starts
+                            // plugins:install-in-background detached and returns at
+                            // once; that command notifies the user when it is done.
+                            // Windows (local development) keeps the in-request path.
+                            if (PHP_OS_FAMILY !== 'Windows') {
+                                if (Cache::lock(InstallInBackground::lockKey($record->name), 1)->get() === false) {
+                                    Notification::make()
+                                        ->warning()
+                                        ->title(__('plugin-manager::filament/resources/plugin.notifications.installing-already.title', ['name' => $record->name]))
+                                        ->send();
 
-                                $php = escapeshellarg($phpPath);
-
-                                $artisan = escapeshellarg(base_path('artisan'));
-
-                                $commandName = escapeshellarg("{$record->name}:install");
-
-                                $cmd = self::buildTimeoutCommand(300, "$php $artisan $commandName --no-interaction 2>&1");
-
-                                $output = [];
-
-                                $exitCode = 0;
-
-                                exec($cmd, $output, $exitCode);
-
-                                if ($exitCode === 124) {
-                                    throw new RuntimeException('Installation timed out after 5 minutes.');
+                                    return;
                                 }
 
-                                if ($exitCode !== 0) {
-                                    $errorOutput = implode(PHP_EOL, array_slice($output, -10));
+                                // The probe above took the lock for one second only;
+                                // release it so the background command can take it.
+                                Cache::lock(InstallInBackground::lockKey($record->name))->forceRelease();
 
+                                app(PluginInstallRunner::class)->startInBackground($record->name, auth()->id());
+
+                                Notification::make()
+                                    ->info()
+                                    ->title(__('plugin-manager::filament/resources/plugin.notifications.installing.title', ['name' => $record->name]))
+                                    ->body(__('plugin-manager::filament/resources/plugin.notifications.installing.body'))
+                                    ->send();
+
+                                return;
+                            }
+
+                            try {
+                                $result = app(PluginInstallRunner::class)->install($record->name);
+
+                                if ($result['exitCode'] === 124) {
+                                    throw new RuntimeException('Installation timed out after '.intdiv(PluginInstallRunner::TIMEOUT_SECONDS, 60).' minutes.');
+                                }
+
+                                if (! $result['ok']) {
                                     throw new RuntimeException(
-                                        "Installation failed with exit code {$exitCode}.".
-                                            ($errorOutput ? " Last output: {$errorOutput}" : '')
+                                        "Installation failed with exit code {$result['exitCode']}.".
+                                            ($result['output'] ? " Last output: {$result['output']}" : '')
                                     );
                                 }
 
