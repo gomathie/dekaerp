@@ -39,6 +39,9 @@ by modern design standards). Each entry: flow, what was seen, proposal, effort
 | U12 | Page title under the greeting as large as the greeting | Title reduced to 20px under the banner | S | **Done** 2026-11-12 |
 | U13 | Charts show "No data for this period" but give no next step | Empty state with one action ("Create a quotation", "Record a bill") per chart | S | Proposed |
 | U14 | At-a-glance cards are not clickable | Each card links to its list (orders, quotations, invoices, bills, receipts, deliveries), only for viewers who may open it | S | Done 2026-11-12 |
+| U18 | Greeting background barely visible (two faint glows) | One soft diagonal gradient in the panel's primary colour, fading out before the clock | S | **Done** 2026-11-12 |
+| U19 | Overview section tabs run past the edge at 390 px ("Invoices &…" cut mid-word), no sign the row scrolls | Edge fade only on the side with hidden tabs; selected tab scrolled into view | S | **Done** 2026-11-12 |
+| U20 | A mistyped record address (/admin/invoices/overview) showed "Server Error" (Sentry DEKAERP-15) | Record addresses accept digits only, so it is a normal "Not found" | S | **Done** 2026-11-12 |
 
 ## Profile menu
 

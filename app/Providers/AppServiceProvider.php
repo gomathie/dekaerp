@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
@@ -30,6 +31,17 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(Authenticatable::class, User::class);
+
+        // Every record key in this application is an integer id. Without this
+        // pattern an address like /admin/invoices/overview reached PostgreSQL as
+        // `id = 'overview'` on a bigint column and answered 500 (Sentry
+        // DEKAERP-15) instead of 404. Set in register(), not boot(): the router
+        // copies global patterns onto a route when the route is added, and the
+        // panel routes are added while providers boot. If a resource ever uses
+        // a non-numeric key (slug, UUID), widen this pattern rather than drop it.
+        $this->app->booting(function (): void {
+            Route::pattern('record', '[0-9]+');
+        });
     }
 
     public function boot(): void
