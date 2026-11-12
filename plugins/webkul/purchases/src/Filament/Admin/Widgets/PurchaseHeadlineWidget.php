@@ -10,6 +10,8 @@ use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\PurchaseOrderResour
 use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\QuotationResource;
 use Webkul\Purchase\Filament\Admin\Pages\Purchases;
 use Webkul\Purchase\Filament\Admin\Widgets\Concerns\HasPurchaseDashboardFilters;
+use Webkul\Purchase\Models\PurchaseOrder;
+use Webkul\Support\Filament\Concerns\BuildsDashboardStats;
 
 /**
  * The Purchases card in the Overview's "At a glance" row (user, 2026-11-11).
@@ -25,7 +27,7 @@ class PurchaseHeadlineWidget extends StatsOverviewWidget
     // its queries 12 times a minute (Sentry DEKAERP-11). Filters reload it.
     protected ?string $pollingInterval = null;
 
-    use HasPurchaseDashboardFilters;
+    use BuildsDashboardStats, HasPurchaseDashboardFilters;
 
     protected static bool $isLazy = false;
 
@@ -62,6 +64,35 @@ class PurchaseHeadlineWidget extends StatsOverviewWidget
         return $this->getStats();
     }
 
+    /**
+     * Overview "Needs attention" (2026-11-13): purchases waiting for approval.
+     *
+     * @return list<array{label: string, count: int, url: ?string, tone: string}>
+     */
+    public static function attention(): array
+    {
+        $toApprove = PurchaseOrder::query()->where('state', OrderState::TO_APPROVE)->count();
+
+        return [[
+            'label' => trans_choice('invoices::filament/pages/overview.attention.rfqs-to-approve', $toApprove, ['count' => $toApprove]),
+            'count' => $toApprove,
+            'url'   => QuotationResource::canViewAny() ? QuotationResource::getUrl('index') : null,
+            'tone'  => 'warning',
+        ]];
+    }
+
+    /**
+     * @return list<array{label: string, url: string, icon: string}>
+     */
+    public static function actions(): array
+    {
+        return QuotationResource::canCreate() ? [[
+            'label' => __('invoices::filament/pages/overview.actions.new-rfq'),
+            'url'   => QuotationResource::getUrl('create'),
+            'icon'  => 'heroicon-m-clipboard-document-list',
+        ]] : [];
+    }
+
     protected function getStats(): array
     {
         $currency = $this->dashboardCurrency();
@@ -76,6 +107,16 @@ class PurchaseHeadlineWidget extends StatsOverviewWidget
 
         $orders = (clone $confirmed)->count();
 
+        // Trend against the period of the same length just before (user,
+        // 2026-11-13). The same states as $confirmed, on the earlier dates.
+        [$previousStart, $previousEnd] = $this->previousPeriodRange();
+
+        $previousSpend = (float) $this->purchaseOrders($previousStart, $previousEnd)
+            ->whereIn('state', [OrderState::PURCHASE->value, OrderState::DONE->value])
+            ->sum('total_cc_amount');
+
+        [$change, $trendIcon, $trendColor] = $this->statTrend($spend, $previousSpend);
+
         $openRequests = $this->purchaseOrders()
             ->whereIn('state', [OrderState::DRAFT->value, OrderState::SENT->value, OrderState::TO_APPROVE->value])
             ->count();
@@ -84,7 +125,10 @@ class PurchaseHeadlineWidget extends StatsOverviewWidget
             Stat::make(__('invoices::filament/pages/overview.headline.spend'), compact_money($spend, $currency))
                 ->url(PurchaseOrderResource::canViewAny() ? PurchaseOrderResource::getUrl('index') : null)
                 ->icon('heroicon-o-shopping-cart')
-                ->description(trans_choice('invoices::filament/pages/overview.headline.orders', $orders, ['count' => $orders]))
+                ->description(trans_choice('invoices::filament/pages/overview.headline.orders', $orders, ['count' => $orders])
+                    .' · '.__('invoices::filament/pages/overview.trend', ['change' => $change]))
+                ->descriptionIcon($trendIcon)
+                ->descriptionColor($trendColor)
                 ->chart($this->dailySpend(clone $confirmed))
                 ->color('primary')
                 ->extraAttributes(['class' => 'overview-headline-stat']),

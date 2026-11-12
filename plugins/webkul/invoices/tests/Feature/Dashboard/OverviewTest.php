@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\DB;
 use Webkul\Invoice\Filament\Overview\OverviewRegistry;
 use Webkul\Invoice\Filament\Pages\Invoices;
 use Webkul\Invoice\Filament\Pages\Overview;
+use Webkul\Invoice\Filament\Widgets\OverviewAttentionWidget;
+use Webkul\Invoice\Filament\Widgets\OverviewCashFlowChart;
 use Webkul\Invoice\Filament\Widgets\OverviewHeadlineWidget;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
@@ -56,9 +58,12 @@ it('limits the widgets to the chosen section and shows every visible section by 
 
     $page = new Overview;
 
+    // Inverted 2026-11-13 (user): "All" is a summary, not every section's
+    // widgets: headline cards, the money in/out chart and Needs attention.
+    // It also kept 23 widgets in one Livewire update (Sentry DEKAERP-16).
     $page->filters = [];
-    expect($page->getWidgets())->toContain('TestOnlyWidget')
-        ->and($page->getWidgets())->toContain(...Invoices::sectionWidgets());
+    expect($page->getWidgets())->toBe([OverviewHeadlineWidget::class, OverviewCashFlowChart::class, OverviewAttentionWidget::class])
+        ->and($page->getWidgets())->not->toContain('TestOnlyWidget');
 
     // Changed 2026-11-11 (user): "At a glance" comes first, then widgets are
     // grouped by kind across sections (charts, stats, lists).
@@ -200,4 +205,60 @@ it('refuses the overview to a user who may see no section', function (): void {
     CompanyHelper::actingAsCompanyUser(Company::factory()->create(), []);
 
     expect(Overview::canAccess())->toBeFalse();
+});
+
+/**
+ * Needs attention and the greeting's "today" line (user, 2026-11-13): one
+ * source, only items with something to do, and at most three quick actions.
+ */
+it('lists only sections\' items that need someone, and the greeting reads the same list', function (): void {
+    CompanyHelper::actingAsCompanyUser(Company::factory()->create(), ['page_invoice_invoices']);
+
+    OverviewRegistry::register(
+        'test-section',
+        fn (): string => 'Test',
+        [],
+        fn (): array => [],
+        fn (): bool => true,
+        sort: 99,
+        attention: fn (): array => [
+            ['label' => '2 things late', 'count' => 2, 'url' => null, 'tone' => 'danger'],
+            ['label' => 'nothing here', 'count' => 0, 'url' => null, 'tone' => 'info'],
+        ],
+        actions: fn (): array => [
+            ['label' => 'A', 'url' => '#a', 'icon' => 'heroicon-m-plus'],
+            ['label' => 'B', 'url' => '#b', 'icon' => 'heroicon-m-plus'],
+            ['label' => 'C', 'url' => '#c', 'icon' => 'heroicon-m-plus'],
+            ['label' => 'D', 'url' => '#d', 'icon' => 'heroicon-m-plus'],
+        ],
+    );
+
+    $labels = array_column(OverviewRegistry::attentionItems(), 'label');
+
+    expect($labels)->toContain('2 things late')
+        ->and($labels)->not->toContain('nothing here')
+        ->and(Webkul\Support\Filament\Contributions\DashboardBannerRegistry::summaryPhrases())->toContain('2 things late')
+        ->and(Webkul\Support\Filament\Contributions\DashboardBannerRegistry::quickActions())->toHaveCount(3);
+});
+
+it('counts an overdue customer invoice in Needs attention', function (): void {
+    $company = Company::factory()->create();
+    CompanyHelper::actingAsCompanyUser($company, ['page_invoice_invoices', 'view_any_invoice_invoice']);
+
+    $move = Webkul\Account\Models\Move::factory()->create(['company_id' => $company->getKey()]);
+
+    // Written past the model hooks, as InvoiceDashboardTest does: only the
+    // columns Needs attention reads matter here.
+    Webkul\Account\Models\Move::withoutGlobalScopes()->whereKey($move->getKey())->update([
+        'company_id'       => $company->getKey(),
+        'move_type'        => Webkul\Account\Enums\MoveType::OUT_INVOICE,
+        'state'            => Webkul\Account\Enums\MoveState::POSTED,
+        'payment_state'    => 'not_paid',
+        'invoice_date_due' => now()->subDays(3)->toDateString(),
+        'creator_id'       => auth()->id(),
+    ]);
+
+    $overdue = collect(Webkul\Invoice\Filament\Overview\InvoiceAttention::items())->firstWhere('tone', 'warning');
+
+    expect($overdue['count'])->toBe(1);
 });

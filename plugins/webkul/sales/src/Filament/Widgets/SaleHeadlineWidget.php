@@ -4,7 +4,11 @@ namespace Webkul\Sale\Filament\Widgets;
 
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Carbon;
+use Webkul\Sale\Enums\OrderState;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\OrderResource;
+use Webkul\Sale\Models\Order;
+use Webkul\Support\Filament\Concerns\BuildsDashboardStats;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource;
 use Webkul\Sale\Filament\Pages\SalesDashboard;
 use Webkul\Sale\Filament\Widgets\Concerns\HasSaleDashboardFilters;
@@ -23,7 +27,7 @@ class SaleHeadlineWidget extends StatsOverviewWidget
     // its queries 12 times a minute (Sentry DEKAERP-11). Filters reload it.
     protected ?string $pollingInterval = null;
 
-    use HasSaleDashboardFilters;
+    use BuildsDashboardStats, HasSaleDashboardFilters;
 
     protected static bool $isLazy = false;
 
@@ -53,6 +57,39 @@ class SaleHeadlineWidget extends StatsOverviewWidget
      * @param  array<string, mixed>  $filters
      * @return array<int, Stat>
      */
+    /**
+     * Overview "Needs attention" (2026-11-13): quotations sent more than a
+     * week ago and still unanswered, today's state, not the date filter.
+     *
+     * @return list<array{label: string, count: int, url: ?string, tone: string}>
+     */
+    public static function attention(): array
+    {
+        $waiting = Order::query()
+            ->where('state', OrderState::SENT)
+            ->where('date_order', '<', now()->subDays(7))
+            ->count();
+
+        return [[
+            'label' => trans_choice('invoices::filament/pages/overview.attention.old-quotations', $waiting, ['count' => $waiting]),
+            'count' => $waiting,
+            'url'   => QuotationResource::canViewAny() ? QuotationResource::getUrl('index') : null,
+            'tone'  => 'info',
+        ]];
+    }
+
+    /**
+     * @return list<array{label: string, url: string, icon: string}>
+     */
+    public static function actions(): array
+    {
+        return QuotationResource::canCreate() ? [[
+            'label' => __('invoices::filament/pages/overview.actions.new-quotation'),
+            'url'   => QuotationResource::getUrl('create'),
+            'icon'  => 'heroicon-m-document-text',
+        ]] : [];
+    }
+
     public function headlineStats(array $filters): array
     {
         $this->pageFilters = $filters;
@@ -64,9 +101,12 @@ class SaleHeadlineWidget extends StatsOverviewWidget
     {
         $currency = current_company()?->currency?->name;
 
-        $revenue = (float) ($this->saleOrders()
-            ->selectRaw('SUM(CASE WHEN currency_rate > 0 THEN amount_total / currency_rate ELSE amount_total END) as cc_total')
-            ->value('cc_total') ?? 0.0);
+        $revenue = $this->revenueBetween();
+
+        // Trend against the period of the same length just before (user,
+        // 2026-11-13: every card on finance dashboards shows direction).
+        [$previousStart, $previousEnd] = $this->previousPeriodRange();
+        [$change, $trendIcon, $trendColor] = $this->statTrend($revenue, $this->revenueBetween($previousStart, $previousEnd));
 
         $orders = $this->saleOrders()->count();
 
@@ -74,7 +114,10 @@ class SaleHeadlineWidget extends StatsOverviewWidget
             Stat::make(__('invoices::filament/pages/overview.headline.revenue'), compact_money($revenue, $currency))
                 ->url(OrderResource::canViewAny() ? OrderResource::getUrl('index') : null)
                 ->icon('heroicon-o-banknotes')
-                ->description(trans_choice('invoices::filament/pages/overview.headline.orders', $orders, ['count' => $orders]))
+                ->description(trans_choice('invoices::filament/pages/overview.headline.orders', $orders, ['count' => $orders])
+                    .' · '.__('invoices::filament/pages/overview.trend', ['change' => $change]))
+                ->descriptionIcon($trendIcon)
+                ->descriptionColor($trendColor)
                 ->chart($this->dailyRevenue())
                 ->color('success')
                 ->extraAttributes(['class' => 'overview-headline-stat']),
@@ -95,6 +138,14 @@ class SaleHeadlineWidget extends StatsOverviewWidget
      *
      * @return array<int, float>|null
      */
+    /** Confirmed revenue in company currency; the page period when no dates are given. */
+    protected function revenueBetween(?Carbon $start = null, ?Carbon $end = null): float
+    {
+        return (float) ($this->saleOrders($start, $end)
+            ->selectRaw('SUM(CASE WHEN currency_rate > 0 THEN amount_total / currency_rate ELSE amount_total END) as cc_total')
+            ->value('cc_total') ?? 0.0);
+    }
+
     protected function dailyRevenue(): ?array
     {
         $query = $this->saleOrders();

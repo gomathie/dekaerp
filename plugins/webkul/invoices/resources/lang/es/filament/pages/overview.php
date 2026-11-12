@@ -37,4 +37,30 @@ return [
         'to-pay'          => 'Por pagar',
         'overdue'         => '{0} Ninguno vencido|{1} 1 vencido|[2,*] :count vencidos',
     ],
+
+    'attention' => [
+        'heading'          => 'Requiere atención',
+        'empty'            => 'Todo en orden. Nada está esperando por usted.',
+        'overdue-invoices' => '{1} 1 factura vencida|[2,*] :count facturas vencidas',
+        'overdue-bills'    => '{1} 1 factura de proveedor vencida|[2,*] :count facturas de proveedor vencidas',
+        'bills-due-soon'   => '{1} 1 factura de proveedor vence esta semana|[2,*] :count facturas de proveedor vencen esta semana',
+        'old-quotations'   => '{1} 1 presupuesto espera más de 7 días|[2,*] :count presupuestos esperan más de 7 días',
+        'rfqs-to-approve'  => '{1} 1 compra por aprobar|[2,*] :count compras por aprobar',
+    ],
+
+    'actions' => [
+        'new-invoice'   => 'Nueva factura',
+        'new-bill'      => 'Nueva factura de proveedor',
+        'new-quotation' => 'Nuevo presupuesto',
+        'new-rfq'       => 'Nueva solicitud de presupuesto',
+    ],
+
+    'cash' => [
+        'heading'     => 'Entradas y salidas de dinero',
+        'description' => 'Facturas cobradas y facturas de proveedor pagadas por día',
+        'in'          => 'Entradas',
+        'out'         => 'Salidas',
+    ],
+
+    'trend' => ':change frente al periodo anterior',
 ];

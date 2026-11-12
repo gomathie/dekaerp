@@ -7,6 +7,7 @@ return [
     'tagline'      => 'Veja o que está acontecendo hoje em :company.',
     'tagline-solo' => 'Veja o que está acontecendo hoje.',
     'local-time'   => 'Seu horário local',
+    'quick-actions' => 'Ações rápidas',
     'greetings'    => [
         'morning'   => 'Bom dia',
         'afternoon' => 'Boa tarde',
