@@ -38,6 +38,7 @@ question is answered: there is one, and no second engine is needed.
 | A4 | **Country chart templates.** One template for every company | Ghana / Zambia (IFRS-style) and Congo (SYSCOHADA) need different charts and taxes | M |
 | A5 | **Accounting dashboard.** Cash and bank, receivables, payables, bills due, unreconciled lines on one screen | Easy daily workflow; uses `OverviewRegistry` | S |
 | A6 | **Cash flow statement** (indirect method, from the ledger) | Completes the statement set | S |
+| A7 | **Tax summary report** (added 2026-11-12, user approved). Taxes and groups already fit any country (Zoho-style); no report shows tax collected and paid per tax for a period | Every filing period; clients compare with Zoho Books | S |
 
 Not planned now (enough exists, or no client has asked): competitor
 benchmark study, approval workflows, budgets, bank feeds, unrealized FX
@@ -91,9 +92,20 @@ Dashboard section through `OverviewRegistry`, same rules as the other
 sections (module switch, page permission, mobile layout). Cash flow as an
 eighth page in the existing Reporting cluster with export.
 
+**A7 — Tax summary.**
+An eighth page in the Reporting cluster ("Tax Summary"): per tax, the base,
+tax on sales, tax on purchases and the net payable or reclaimable for the
+date range; a group tax shows its children and a group total. Read from the
+tax lines stored on posted documents (rate changes never rewrite a past
+period); credit notes and refunds reduce their period. Same filter, export,
+company isolation and page permission as the other reports. Proof: the A1
+Ghana figures give base 1,000, VAT 150, NHIL 25, GETFund 25. Country return
+layouts (GRA, ZRA) only when a client asks.
+
 ## 4. Order
 
-A1 → A2 → A3 → A5 → A6 → A4. A1 first because it may turn up defects that
+A1 → A2 → A7 → A3 → A5 → A6 → A4 (A7 placed after A2 by the user,
+2026-11-12). A1 first because it may turn up defects that
 change the rest; A4 last because it needs the local accountant's review.
 
 ## 5. Decisions needed (user)

@@ -15,6 +15,18 @@ return [
         'unbalanced'           => 'This journal entry is unbalanced and cannot be posted. Total debit must equal total credit.',
     ],
 
+    'lock-date' => [
+        'locked'        => 'Entries dated on or before :date are locked. Ask your administrator to move the lock date first.',
+        'not-allowed'   => 'Only a Company Admin or an accountant with the unlock permission can change the lock date.',
+        'future'        => 'The lock date cannot be in the future.',
+        'action'        => 'Lock date',
+        'field'         => 'Lock entries up to',
+        'helper'        => 'Posted entries dated on or before this date cannot be changed. Leave empty to unlock all periods.',
+        'current'       => 'Currently locked up to :date.',
+        'none'          => 'No period is locked.',
+        'saved'         => 'Lock date saved',
+    ],
+
     'documents' => [
         'titles' => [
             'invoice'     => 'Invoice ID #:name',

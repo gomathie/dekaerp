@@ -15,6 +15,18 @@ return [
         'unbalanced'           => 'Cette écriture comptable n\'est pas équilibrée et ne peut pas être comptabilisée. Le total des débits doit être égal au total des crédits.',
     ],
 
+    'lock-date' => [
+        'locked'        => 'Les écritures datées du :date ou avant sont verrouillées. Demandez d\'abord à votre administrateur de déplacer la date de verrouillage.',
+        'not-allowed'   => 'Seul un administrateur de la société ou un comptable disposant de l\'autorisation de déverrouillage peut modifier la date de verrouillage.',
+        'future'        => 'La date de verrouillage ne peut pas être dans le futur.',
+        'action'        => 'Date de verrouillage',
+        'field'         => 'Verrouiller les écritures jusqu\'au',
+        'helper'        => 'Les écritures comptabilisées datées de ce jour ou avant ne peuvent plus être modifiées. Laissez vide pour déverrouiller toutes les périodes.',
+        'current'       => 'Actuellement verrouillé jusqu\'au :date.',
+        'none'          => 'Aucune période n\'est verrouillée.',
+        'saved'         => 'Date de verrouillage enregistrée',
+    ],
+
     'documents' => [
         'titles' => [
             'invoice'     => 'Facture ID #:name',
