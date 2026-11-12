@@ -182,7 +182,16 @@ customer.
 
 ---
 
-## 0e. Turn on a queue worker (and check the scheduler) in Laravel Cloud (2026-11-12)
+## 0e. Turn on a queue worker (and check the scheduler) in Laravel Cloud (2026-11-12) — DONE (queue) 2026-11-12
+
+**Done:** worker clusters need the Growth plan, so a Laravel Cloud **managed
+queue** was created (queue `default`, 256 MiB, backoff 30 s, timeout 60 s,
+3 tries, scale to zero, max 1; cost ceiling $13.26/mo). `QUEUE_CONNECTION`
+is `cloud`. The 6 old jobs were drained once with
+`queue:work database --queue=default --stop-when-empty`. Verified read-only:
+`jobs` 0, `failed_jobs` 0, 6 notifications created. A future queued plugin
+install (up to 5 minutes) needs its own queue with a longer timeout.
+**Still to confirm:** the scheduler is enabled.
 
 **Found:** production's `jobs` table holds 6 jobs that were never attempted
 (`attempts = 0`), the oldest from 2026-08-26. All are
