@@ -976,7 +976,7 @@ guard test with it). Nothing else depends on it.
 
 Implemented SAAS-04 enforcement across the SAAS-05 plugin slices. Detailed
 ownership, scope and per-slice handoffs are in
-[`docs/completed/saas-administration-billing-audit-plan.md`](saas-administration-billing-audit-plan.md).
+[`docs/completed/saas-administration-billing-audit-plan.md`](completed/saas-administration-billing-audit-plan.md).
 
 - **05B commercial:** Products, Sales and Purchases enforce entitlement at
   navigation/policy, API and write-service boundaries. Customer portal checks
@@ -1386,7 +1386,7 @@ storage, API boundaries and scheduler against the proposed SaaS subscription
 and billing requirements. No production behaviour or schema changed.
 
 The persistent evidence matrix and phased adoption checklist are in
-[`docs/completed/saas-administration-billing-audit-plan.md`](saas-administration-billing-audit-plan.md).
+[`docs/completed/saas-administration-billing-audit-plan.md`](completed/saas-administration-billing-audit-plan.md).
 The main findings are that company/plugin grant management exists but plugin
 entry points do not enforce it, tenant roles are global to a user rather than
 scoped to each company membership, and SaaS plans, seat limits, recurring
@@ -2822,7 +2822,7 @@ files were not changed in WP-13.
 
 One decision and one bug family, connected: switching the ownership scope on in
 tests exposed both. Full detail and the decision trail in
-[`docs/completed/company-admin-role-plan.md`](company-admin-role-plan.md) sections 4d-4j.
+[`docs/completed/company-admin-role-plan.md`](completed/company-admin-role-plan.md) sections 4d-4j.
 
 ### The decision: company-wide visibility is the default
 

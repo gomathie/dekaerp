@@ -1,6 +1,6 @@
 # Attendance — Plan
 
-Status: **in progress (2026-11-11, user: "build all of it from A to Z, step
+Status: **completed 2026-11-12; moved to docs/completed/.** Previously: **in progress (2026-11-11, user: "build all of it from A to Z, step
 by step").** Decisions AT-D1 to AT-D6 were answered by the user on
 2026-11-11, each as recommended (§5). *Superseded the same day: "plan only,
 no code".* Requested by the user together

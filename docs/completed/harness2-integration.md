@@ -174,7 +174,7 @@ reference:
 | PHP/Laravel standards | each repo's `AGENTS.md` + `pint.json` | yes if the stack matches |
 | Database and tenant-isolation policy | each repo's `AGENTS.md` | adapt per tenancy model |
 | Project architecture and its own quirks | that repo's project memory and `docs/` | never portable |
-| Evaluation scenarios, baselines and results | that repo's `docs/completed/harness2-integration.md` | re-derive per test layout |
+| Evaluation scenarios, baselines and results | that repo's `docs/harness2-integration.md` | re-derive per test layout |
 
 Runtime dependencies, tests and deployment configuration always stay with the
 project they belong to. No application code is copied between repositories.
