@@ -9,7 +9,6 @@ use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentView;
 use Filament\Tables\Table;
 use Filament\View\PanelsRenderHook;
-use Illuminate\Support\Facades\Blade;
 use Webkul\Support\Filament\Pages\WhatsNew;
 
 trait HasFilamentDefaults
@@ -29,43 +28,22 @@ trait HasFilamentDefaults
 
     protected function registerHooks(): void
     {
+        // What's New and the version, in the profile menu (WN-5; moved out of
+        // the top bar, user 2026-11-12), with a dot while the newest release
+        // is one this user has not opened (D-WN-2).
         FilamentView::registerRenderHook(
             PanelsRenderHook::USER_MENU_PROFILE_BEFORE,
-            fn (): string => Blade::render(<<<'BLADE'
-                <x-filament::dropdown.list>
-                    <x-filament::dropdown.list.item tag="a" :href="$whatsNewUrl">
-                        <div class="flex items-center gap-2">
-                            <img
-                                src="{{ url('cache/logo.png') }}"
-                                width="24"
-                                height="24"
-                                alt=""
-                            />
-
-                            {{ __('support::support.version', ['version' => $version]) }}
-                        </div>
-                    </x-filament::dropdown.list.item>
-                </x-filament::dropdown.list>
-            BLADE, [
-                // From config, not a literal here: this said 1.5.0 while
-                // production ran 1.7.0 (2026-11-12). Links to the notes.
-                'version'     => (string) config('app.version'),
-                'whatsNewUrl' => WhatsNew::getUrl(),
-            ]),
-        );
-
-        // Top-bar shortcut to the release notes (WN-5), with a dot while the
-        // newest release is one this user has not opened (D-WN-2).
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::GLOBAL_SEARCH_AFTER,
             function (): string {
                 if (filament()->getCurrentPanel()?->getId() !== 'admin' || ! WhatsNew::canAccess()) {
                     return '';
                 }
 
                 return view('support::whats-new-shortcut', [
-                    'url'    => WhatsNew::getUrl(),
-                    'unseen' => WhatsNew::hasUnseenRelease(),
+                    'url'     => WhatsNew::getUrl(),
+                    'unseen'  => WhatsNew::hasUnseenRelease(),
+                    // From config, not a literal: this said 1.5.0 while
+                    // production ran 1.7.0 (2026-11-12).
+                    'version' => (string) config('app.version'),
                 ])->render();
             },
         );
