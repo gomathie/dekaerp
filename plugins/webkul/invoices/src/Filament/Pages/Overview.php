@@ -7,6 +7,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\TableWidget;
@@ -175,13 +176,6 @@ class Overview extends BaseDashboard
 
         return $form->schema([
             DashboardFilters::make([
-                Select::make('sections')
-                    ->label(__('invoices::filament/pages/overview.filters.sections'))
-                    ->options(array_map(fn (array $section): string => ($section['label'])(), $sections))
-                    ->multiple()
-                    ->placeholder(__('invoices::filament/pages/overview.filters.all-sections'))
-                    ->live(),
-
                 ...DashboardDateRange::make(
                     __('invoices::filament/pages/overview.filters.date-range'),
                     'start_date',
@@ -212,6 +206,33 @@ class Overview extends BaseDashboard
                 'xl'      => 4,
             ]),
         ]);
+    }
+
+    /**
+     * Sections are tabs above the filters, not a filter (user, 2026-11-12,
+     * matching the Accounting overview's journal tabs). One section or all;
+     * the value stays a list in filters['sections'], so old dashboard links
+     * (?section=) and getWidgets() are unchanged.
+     */
+    public function content(Schema $schema): Schema
+    {
+        return $schema->components([
+            View::make('invoices::filament.pages.overview-sections')
+                ->viewData(fn (): array => [
+                    'sections' => array_map(fn (array $section): string => ($section['label'])(), OverviewRegistry::visible()),
+                    'active'   => ((array) ($this->filters['sections'] ?? []))[0] ?? null,
+                ]),
+            $this->getFiltersFormContentComponent(),
+            $this->getWidgetsContentComponent(),
+        ]);
+    }
+
+    public function selectSection(?string $section = null): void
+    {
+        // Only a section this user may see; anything else means "All".
+        $this->filters['sections'] = $section !== null && array_key_exists($section, OverviewRegistry::visible())
+            ? [$section]
+            : [];
     }
 
     /**
