@@ -1,7 +1,7 @@
 # Comprehensive SaaS review: plan
 
-Plan for `02.0- Comprehensive-review.md` (the audit brief). Written 2026-11-12.
-Status: **decided 2026-11-12 (section 4); ready to start with CR-10's defects and CR-1.**
+Plan for `docs/completed/comprehensive-review-brief.md` (the audit brief). Written 2026-11-12.
+Status: **decided 2026-11-12 (section 4); in progress: CR-1 baseline taken, CR-10 defects already fixed. Coverage re-checked against the brief 2026-11-12 (section 7).**
 
 ## 1. What the review found
 
@@ -257,3 +257,25 @@ production pushes only after its suites are green.
 | Super Admin impersonates an authorized test user | Built; proven in CR-3 |
 | Impersonation ends and the session is restored | Built; proven in CR-3 |
 | Cross-company access and privilege-escalation tests pass | Existing suites; CR-3 adds the brief's negatives |
+
+## 7. Coverage check against the brief (2026-11-12)
+
+The plan was re-read against every phase of the brief. Status: **not done**.
+CR-1 has its baseline; CR-10's defects are already fixed. CR-1's timing and
+CR-2 to CR-9 are still open, so the plan stays in `planned/`.
+
+These brief items were missing or only implied, and now belong to a package:
+
+| Brief item | Added to | What it adds |
+|---|---|---|
+| 5.2 Commercial lifecycle, 17 steps (create → plan → invoice → pay → credit → renew → upgrade → downgrade → extra module → more seats → discount → overdue → suspend → reactivate → cancel) | CR-3 | Run as a second script next to the 15-step journey. PASS / FAIL / NOT IMPLEMENTED per step. Upgrade and downgrade proration, invoice correction, credit notes and duplicate payments are checked explicitly |
+| 5.2 Six separate balances and statuses (customer account balance, invoice balance, credit balance, subscription status, payment status, operational status) | CR-3, CR-9 | Show that each is shown separately on the Super Admin billing screens. A screen that merges two of them is a CR-3 finding |
+| 7.4 Three personas, measured (Super Admin, Company Admin, Partner) | CR-1, CR-3 | CR-1 measures the Super Admin. CR-3 measures the Company Admin's first login and user invite. The Partner persona waits for CR-8 (D-CR-5). Usability defects go into `docs/ux-findings.md` |
+| 8 Provisioning audit events | CR-7 | One audit row per step: company created, administrator invited, invitation accepted, plan applied. The lifecycle screen reads from these rows |
+| 8 Safe retries | CR-7 | "Resend invitation" and "retry provisioning" are idempotent. A second click does not create a second membership or invitation |
+| 4.2 High-risk actions while impersonating | D-CR-3 kept | Nothing is blocked (user decision). CR-3 shows that a password, role or bank-detail change made during impersonation is audited with the real administrator's id. If any is not, that is a defect |
+| 11 Tools inventory | CR-9 | One paragraph in the deliverables naming the tools used: Pest, Playwright MCP, Sentry, Supabase read-only. Nothing is installed for this |
+| Existing companies: migration tested against existing rows, rollback | Every package | Each migration gets a test that seeds pre-existing companies, plus a written rollback in its change-log entry. This is already in the project rules and is listed here so CR-6 and CR-7 do not miss it |
+
+No new package was needed. The estimate rises by about 0.5 day, for CR-3's
+second script.
