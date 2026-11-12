@@ -88,6 +88,7 @@ class SupportServiceProvider extends PackageServiceProvider
                 '2026_10_28_000004_add_seat_limit_to_companies_table',
                 // D-SAAS-11: test or commercial. Existing companies stay commercial.
                 '2026_11_09_000004_add_account_type_to_companies_table',
+                '2026_11_12_000001_add_whats_new_seen_version_to_users_table',
             ])
             ->runsMigrations()
             ->hasSettings([
@@ -125,10 +126,10 @@ class SupportServiceProvider extends PackageServiceProvider
                 }
 
                 return view('support::company-switcher', [
-                    'companies' => app(CompanyContext::class)->allowedCompanies(),
-                    'active'    => app(CompanyContext::class)->activeIds(),
-                    'canSwitch' => app(CompanyContext::class)->canSwitchCompanies(),
-                    'allCompaniesActive' => app(CompanyContext::class)->allCompaniesActive(),
+                    'companies'             => app(CompanyContext::class)->allowedCompanies(),
+                    'active'                => app(CompanyContext::class)->activeIds(),
+                    'canSwitch'             => app(CompanyContext::class)->canSwitchCompanies(),
+                    'allCompaniesActive'    => app(CompanyContext::class)->allCompaniesActive(),
                     'canSelectAllCompanies' => app(CompanyContext::class)->canSwitchCompanies()
                         && app(CompanyContext::class)->seesAllCompanies(),
                 ])->render();
