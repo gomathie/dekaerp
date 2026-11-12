@@ -1,7 +1,7 @@
 {
     "id": "/admin",
-    "name": "DEKA ERP",
-    "short_name": "DEKA ERP",
+    "name": "DEKA Central",
+    "short_name": "DEKA",
     "start_url": "/admin",
     "scope": "/",
     "display": "minimal-ui",

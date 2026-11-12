@@ -1,7 +1,7 @@
 {
     "name": "aureuserp/aureuserp",
     "type": "project",
-    "description": "DEKA ERP by 365 Integrated Systems: multi-company ERP for small, medium and large businesses, based on AureusERP.",
+    "description": "DEKA Central by 365 Systems: multi-company ERP for small, medium and large businesses, based on AureusERP.",
     "keywords": [
         "erp",
         "laravel",

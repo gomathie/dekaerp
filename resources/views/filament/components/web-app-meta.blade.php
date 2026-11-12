@@ -11,6 +11,6 @@
 --}}
 <link rel="manifest" href="{{ asset('manifest.webmanifest') }}">
 <link rel="apple-touch-icon" href="{{ asset('images/icons/apple-touch-icon.png') }}">
-<meta name="apple-mobile-web-app-title" content="DEKA ERP">
+<meta name="apple-mobile-web-app-title" content="DEKA Central">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#18181b" media="(prefers-color-scheme: dark)">
