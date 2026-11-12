@@ -49,6 +49,22 @@ it('creates a company and its administrator invitation in one transaction withou
     Mail::assertSent(UserInvitationMail::class);
 });
 
+it('names a password-created administrator from the form, not the mailbox', function () {
+    // CR-4: without a name the account was called after its mailbox ("owner").
+    $actor = User::query()->where('email', 'admin@example.com')->firstOrFail();
+
+    $company = app(CompanyOnboarding::class)->create(
+        $actor,
+        ['name' => 'Named administrator company', 'email' => 'named@example.test'],
+        'owner@named.test',
+        'Str0ng!Passw0rd#2026',
+        administratorName: 'Ama Mensah',
+    )['company'];
+
+    expect(User::query()->withoutGlobalScopes()->where('email', 'owner@named.test')->value('name'))->toBe('Ama Mensah')
+        ->and($company->exists)->toBeTrue();
+});
+
 it('rolls back a company and partner when its administrator invitation is refused', function () {
     $actor = User::query()->where('email', 'admin@example.com')->firstOrFail();
     $name = 'Refused atomic company';

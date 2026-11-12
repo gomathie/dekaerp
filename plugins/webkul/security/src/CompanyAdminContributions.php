@@ -99,6 +99,16 @@ class CompanyAdminContributions
                     ->dehydrated(false)
                     ->live(onBlur: true),
 
+                // CR-4: only with a password. An invited administrator types
+                // their own name when accepting; without this field a password
+                // account was named after its mailbox. Create only: on edit the
+                // person already exists and keeps the name they chose.
+                TextInput::make('administrator_name')
+                    ->label(__('security::filament/contributions/company.administrator.fields.name'))
+                    ->maxLength(255)
+                    ->visible(fn (Get $get, string $operation): bool => $operation === 'create' && filled($get('administrator_password')))
+                    ->dehydrated(false),
+
                 // On by default: a password someone else chose should be
                 // replaced by its owner, and the RequirePasswordChange middleware
                 // enforces it at their next sign-in.

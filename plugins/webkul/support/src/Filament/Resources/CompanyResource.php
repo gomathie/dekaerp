@@ -148,6 +148,9 @@ class CompanyResource extends Resource
                                     ])
                                     ->columns(2),
                                 Section::make(__('support::filament/resources/company.form.sections.address-information.title'))
+                                    // CR-4: optional details start closed on create so the required fields stand out; open on edit.
+                                    ->collapsible()
+                                    ->collapsed(fn (string $operation): bool => $operation === 'create')
                                     ->schema([
                                         Group::make()
                                             ->schema([
@@ -282,6 +285,9 @@ class CompanyResource extends Resource
                         Group::make()
                             ->schema([
                                 Section::make(__('support::filament/resources/company.form.sections.branding.title'))
+                                    // CR-4: optional details start closed on create so the required fields stand out; open on edit.
+                                    ->collapsible()
+                                    ->collapsed(fn (string $operation): bool => $operation === 'create')
                                     ->schema([
                                         Group::make()
                                             ->relationship('partner', 'avatar')
@@ -297,6 +303,9 @@ class CompanyResource extends Resource
                                             ->hexColor(),
                                     ]),
                                 Section::make(__('support::filament/resources/company.form.sections.contact-information.title'))
+                                    // CR-4: optional details start closed on create so the required fields stand out; open on edit.
+                                    ->collapsible()
+                                    ->collapsed(fn (string $operation): bool => $operation === 'create')
                                     ->schema([
                                         TextInput::make('phone')
                                             ->label(__('support::filament/resources/company.form.sections.contact-information.fields.phone'))

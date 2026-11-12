@@ -150,6 +150,18 @@ of it was tried in a live Pilot, Odoo or ERPNext system.
 - Acceptance: a Super Admin creates a working company from those five fields,
   and the administrator receives the invitation.
 
+**Built 2026-11-12 (not yet seen in a browser).** Country fills the currency
+(shipped in v1.7.1). The plan is chosen on the create form and starts in the
+onboarding transaction (`CompanyOnboarded` event →
+`StartPlanAtOnboarding`; Super Admin, commercial only). Administrator name
+appears when a password is set; an invited administrator gives their own
+name on acceptance, so the field is not required (decision taken while the
+user was away: requiring it would duplicate the acceptance form). Address,
+Branding and Contact fold on create. Language and timezone from country were
+**not** built: companies have no language or timezone column today, so it
+would be a new schema for a default nobody reads yet; revisit with CR-6.
+Details and tests: `docs/change-log.md` 2026-11-12.
+
 ### CR-5 — Role templates for company users (P1)
 
 - Seeded, editable templates: Finance Manager, Accountant, HR Manager,

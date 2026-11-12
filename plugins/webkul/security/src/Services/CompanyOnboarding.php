@@ -8,6 +8,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
+use Webkul\Security\Events\CompanyOnboarded;
 use Webkul\Security\Models\Company;
 use Webkul\Security\Models\User;
 
@@ -34,21 +35,23 @@ class CompanyOnboarding
         ?string $administratorEmail = null,
         ?string $administratorPassword = null,
         bool $mustChangePassword = true,
+        ?string $administratorName = null,
+        array $options = [],
     ): array {
         if (! $actor->is_active || ! Gate::forUser($actor)->allows('create', Company::class)) {
             throw new AuthorizationException('You may not create a company.');
         }
 
-        return DB::transaction(function () use ($actor, $attributes, $administratorEmail, $administratorPassword, $mustChangePassword): array {
+        return DB::transaction(function () use ($actor, $attributes, $administratorEmail, $administratorPassword, $mustChangePassword, $administratorName, $options): array {
             $attributes = $this->accountTypeAttributes($actor, $attributes);
             $attributes['creator_id'] = $actor->getKey();
             $company = Company::query()->create($attributes);
 
-            $outcome = $this->capacity->withLockedCompany($company, function () use ($company, $actor, $administratorEmail, $administratorPassword, $mustChangePassword): string {
+            $outcome = $this->capacity->withLockedCompany($company, function () use ($company, $actor, $administratorEmail, $administratorPassword, $mustChangePassword, $administratorName): string {
                 if ($administratorPassword !== null && $administratorPassword !== '') {
                     return $this->accounts->setPassword(
                         $company, $actor, trim((string) $administratorEmail),
-                        $administratorPassword, $mustChangePassword,
+                        $administratorPassword, $mustChangePassword, $administratorName,
                     );
                 }
 
@@ -74,6 +77,11 @@ class CompanyOnboarding
                     'administrator_email' => __('Company onboarding could not create the administrator invitation.'),
                 ]);
             }
+
+            // Inside the transaction on purpose (CR-4): a plugin that cannot
+            // finish its part, such as starting the chosen plan, rolls the
+            // company back instead of leaving one created without it.
+            event(new CompanyOnboarded($company, $actor, $options));
 
             return ['company' => $company, 'outcome' => $outcome, 'password' => $password];
         });

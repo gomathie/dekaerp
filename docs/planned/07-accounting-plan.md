@@ -48,7 +48,16 @@ and archive the old one). Revisit any of these when a client needs it.
 
 ## 3. Packages
 
-**A1 — Known-figure tests (first; no product change).**
+**A1 — Known-figure tests (first; no product change).** *Done 2026-11-12:
+`accounts/tests/Feature/Workflows/KnownFigureScenarioTest.php`, 4 tests
+(Ghana invoice 1,000 → 1,200 with each tax on its own account; paid 500 then
+700, receivable back to zero, debits = credits; same taxes on a supplier
+bill; GHS 240 credit note leaving 960). All passed first time: no ledger
+defect found. A foreign-currency invoice paid at another rate is already
+pinned by `CurrencyTest` ("creates an exchange-difference entry when
+reconciling foreign documents at different rates"). Still open inside A1: a
+two-company isolation test on the report pages (existing
+`CompanyIsolationTest` covers the models).*
 Pest tests for scenarios A–D, F and H of the brief: capital, credit sale with
 Ghana taxes and two payments, supplier purchase, credit note, USD invoice paid
 at a different rate. Assert move lines, partner ledger, trial balance totals

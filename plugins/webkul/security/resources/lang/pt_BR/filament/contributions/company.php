@@ -16,6 +16,7 @@ return [
             'password'             => 'Senha do administrador',
             'password-helper'      => 'Opcional. Define a senha agora em vez de enviar um convite, ou a redefine para o administrador desta empresa. Nunca é enviada por e-mail: entregue-a você mesmo.',
             'must-change-password' => 'Deve alterar esta senha no próximo acesso',
+            'name'                 => 'Nome do administrador',
         ],
     ],
 

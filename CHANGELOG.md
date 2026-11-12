@@ -20,6 +20,8 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 * On a phone, the Overview tabs fade at the edge when there are more to scroll to.
 * In What's New, clearing the search or filters goes back to showing only the latest release open, and the search box no longer shows its label twice.
 
+* Creating a company is simpler: choose the plan on the same form (it starts at once and sets the modules and seat limit), give the administrator a name when you set their password, and the optional address, branding and contact details start folded away.
+
 ### Fixes
 
 * A mistyped record address now shows "Not found" instead of a server error.
