@@ -55,9 +55,10 @@ and archive the old one). Revisit any of these when a client needs it.
 bill; GHS 240 credit note leaving 960). All passed first time: no ledger
 defect found. A foreign-currency invoice paid at another rate is already
 pinned by `CurrencyTest` ("creates an exchange-difference entry when
-reconciling foreign documents at different rates"). Still open inside A1: a
-two-company isolation test on the report pages (existing
-`CompanyIsolationTest` covers the models).*
+reconciling foreign documents at different rates"). Report-page isolation:
+`accounting/tests/Feature/Filament/ReportCompanyIsolationTest.php`, all seven
+report pages, 7 passed (14 assertions) — a company's reports never contain
+another company's postings. A1 complete.*
 Pest tests for scenarios A–D, F and H of the brief: capital, credit sale with
 Ghana taxes and two payments, supplier purchase, credit note, USD invoice paid
 at a different rate. Assert move lines, partner ledger, trial balance totals
