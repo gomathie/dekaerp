@@ -14,6 +14,8 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 * On a phone, the pages of the module you are in now show as a row of tabs under the top bar. The Menu lists only the modules, so switching module takes fewer taps.
 * What's New starts at version 1.5.0.
+* What's New has moved from the top bar into your profile menu, next to the version. A red dot on your picture means there is something new to read.
+* On the Overview, Sales, Purchases and Invoices are now tabs above the filters. Pick one, or All.
 
 # CHANGELOG — v1.7.1 — 2026-11-12
 

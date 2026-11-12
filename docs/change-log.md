@@ -6,6 +6,36 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-12 (Overview section tabs; What's New in the profile menu)
+
+- **Why:** user: the Overview's section choice (Sales, Purchases, Invoices)
+  should leave the filters and sit as tabs, like the Accounting overview's
+  journal tabs; and the What's New megaphone should go into the profile menu.
+- **How:** `Invoice\Filament\Pages\Overview`: the `sections` multi-select is
+  removed from `filtersForm()`. `content()` puts a view
+  (`invoices::filament.pages.overview-sections`, Filament `x-filament::tabs`,
+  centred, shown when more than one section is visible) above the filters.
+  `selectSection()` sets `filters['sections']` to one visible key or `[]`
+  (All); an unknown or hidden key means All. The value stays a list, so
+  `?section=` links and `getWidgets()` are unchanged. Picking several sections
+  at once is no longer possible. `InvoiceServiceProvider` now calls
+  `hasViews()` (it had no views before).
+  `Support\Traits\HasFilamentDefaults`: the `GLOBAL_SEARCH_AFTER` shortcut is
+  removed. The `USER_MENU_PROFILE_BEFORE` version row became "What's New ·
+  Version x" with the megaphone icon and the unread dot, admin panel and
+  `WhatsNew::canAccess()` only (it previously showed to everyone). While
+  unread, a CSS `:has()` rule also puts the dot on the avatar.
+- **Benefit:** a shorter top bar, mostly on phones. Sections are one tap.
+- **Trade-off / risk:** the avatar dot relies on `:has()` (all current
+  browsers).
+- **Verification:** invoices `OverviewTest` 9 passed (51 assertions), including
+  the new "chooses one section from the tabs, and refuses a section the user
+  may not see". The What's New tests (the shortcut test is rewritten for the
+  profile menu and asserts the top bar no longer has it) and
+  `MobileNavigationTest` passed in the same run: 18 passed. All on
+  `aureuserp_testing_claude_vault`. Not seen in a browser.
+- **Rollback:** restore the Select and the render hook from git.
+
 ## 2026-11-12 (phone page strip; What's New from v1.5.0)
 
 - **Why:** user, after the production check of What's New: the phone menu was

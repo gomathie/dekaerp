@@ -133,21 +133,28 @@ it('opens for a company user and clears the new dot', function (): void {
     expect(WhatsNew::hasUnseenRelease())->toBeFalse();
 });
 
-it('shows the top-bar shortcut, with a dot only while a release is unread', function (): void {
+/**
+ * Moved from the top bar to the profile menu (user, 2026-11-12); the top bar
+ * must no longer carry it.
+ */
+it('shows What\'s New in the profile menu, with a dot only while a release is unread', function (): void {
     FilamentHelper::bootAdminPanel();
     $user = CompanyHelper::actingAsCompanyUser(CompanyHelper::company(), []);
 
     User::query()->whereKey($user->getKey())->update(['whats_new_seen_version' => 'v0.0.1']);
     auth()->setUser($user->fresh());
 
-    $html = (string) FilamentView::renderHook(PanelsRenderHook::GLOBAL_SEARCH_AFTER);
+    $html = (string) FilamentView::renderHook(PanelsRenderHook::USER_MENU_PROFILE_BEFORE);
 
-    expect($html)->toContain('whats-new')->and($html)->toContain('data-whats-new-dot');
+    expect($html)->toContain(WhatsNew::getUrl())
+        ->and($html)->toContain('data-whats-new-dot')
+        ->and($html)->toContain((string) config('app.version'))
+        ->and((string) FilamentView::renderHook(PanelsRenderHook::GLOBAL_SEARCH_AFTER))->not->toContain(WhatsNew::getUrl());
 
     User::query()->whereKey($user->getKey())->update(['whats_new_seen_version' => WhatsNew::latestVersion()]);
     auth()->setUser($user->fresh());
 
-    expect((string) FilamentView::renderHook(PanelsRenderHook::GLOBAL_SEARCH_AFTER))
+    expect((string) FilamentView::renderHook(PanelsRenderHook::USER_MENU_PROFILE_BEFORE))
         ->not->toContain('data-whats-new-dot');
 });
 
