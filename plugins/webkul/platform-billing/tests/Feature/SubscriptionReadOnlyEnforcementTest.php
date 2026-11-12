@@ -3,6 +3,8 @@
 use Filament\Actions\CreateAction;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Once;
 use Illuminate\Validation\ValidationException;
 use Livewire\Livewire;
 use Webkul\Account\Settings\TaxesSettings;
@@ -287,4 +289,28 @@ it('refuses expired and cancelled subscriptions while leaving active subscriptio
     expect(app(SubscriptionLifecycle::class)->isReadOnly($expiredCompany))->toBeTrue()
         ->and(app(SubscriptionLifecycle::class)->isReadOnly($cancelledCompany))->toBeTrue()
         ->and(app(SubscriptionLifecycle::class)->isReadOnly($activeCompany))->toBeFalse();
+});
+
+/**
+ * An installation behind on migrations has no subscriptions table yet. A
+ * company save in an older migration (accounts sequences) reached the guard,
+ * which queried the missing table and stopped the upgrade (2026-11-12).
+ */
+it('treats a company as writable while the subscriptions table does not exist yet', function () {
+    $company = Company::factory()->create();
+
+    DB::statement('ALTER TABLE platform_billing_subscriptions RENAME TO platform_billing_subscriptions_hidden');
+
+    try {
+        Once::flush();
+
+        expect(app(SubscriptionLifecycle::class)->isReadOnly($company))->toBeFalse();
+
+        $company->forceFill(['name' => 'Saved before billing tables exist'])->save();
+
+        expect($company->fresh()->name)->toBe('Saved before billing tables exist');
+    } finally {
+        DB::statement('ALTER TABLE platform_billing_subscriptions_hidden RENAME TO platform_billing_subscriptions');
+        Once::flush();
+    }
 });

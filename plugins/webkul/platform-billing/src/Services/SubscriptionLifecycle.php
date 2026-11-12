@@ -7,6 +7,7 @@ use DateTimeInterface;
 use DateTimeZone;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
 use Webkul\PlatformBilling\Models\OverdueExtension;
 use Webkul\PlatformBilling\Models\Price;
@@ -258,6 +259,14 @@ class SubscriptionLifecycle
         // The read-only guard calls this method, so Claude should review the change.
         if ($company->account_type === 'test' && $company->test_ends_at instanceof DateTimeInterface && $at >= $company->test_ends_at) {
             return true;
+        }
+
+        // An installation still running older migrations has no subscriptions
+        // table yet. Without this, any earlier migration that saves a company
+        // record failed the whole upgrade (2026-11-12, local database behind
+        // since August). No table means no subscription, so nothing is locked.
+        if (! once(fn (): bool => Schema::hasTable((new Subscription)->getTable()))) {
+            return false;
         }
 
         $subscription = Subscription::withoutGlobalScopes()->where('company_id', $company->id)
