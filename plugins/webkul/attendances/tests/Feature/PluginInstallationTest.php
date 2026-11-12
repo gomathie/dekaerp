@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Webkul\Attendance\Models\Attendance;
@@ -86,4 +87,16 @@ it('enforces the single-open database index even when model scopes are bypassed'
         'created_at'  => now()->toDateTimeString(),
         'updated_at'  => now()->toDateTimeString(),
     ]))->toThrow(QueryException::class);
+});
+
+/**
+ * Sentry DEKAERP-14 (2026-11-12): the scheduler ran attendances:auto-check-out
+ * every 15 minutes, but the provider never registered the command, so it
+ * failed with "There are no commands defined in the attendances namespace" and
+ * forgotten check-outs were never closed.
+ */
+it('registers the auto check-out command the scheduler runs', function (): void {
+    expect(array_key_exists('attendances:auto-check-out', Artisan::all()))->toBeTrue();
+
+    $this->artisan('attendances:auto-check-out')->assertSuccessful();
 });
