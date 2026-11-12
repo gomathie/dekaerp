@@ -59,6 +59,9 @@
         <testsuite name="LogisticsFeature">
             <directory>plugins/webkul/logistics/tests/Feature</directory>
         </testsuite>
+        <testsuite name="AttendanceFeature">
+            <directory>plugins/webkul/attendances/tests/Feature</directory>
+        </testsuite>
         <testsuite name="EmployeeFeature">
             <directory>plugins/webkul/employees/tests/Feature</directory>
         </testsuite>
