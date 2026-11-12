@@ -6,6 +6,29 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-12 (record addresses 404; greeting gradient; Overview tab fade; What's New U16/U17)
+
+- **Record addresses accept digits only (Sentry DEKAERP-15).** Why: any
+  Filament `{record}` route took any text, so `/admin/invoices/overview`
+  queried `id = 'overview'` on a bigint column and PostgreSQL answered 500.
+  How: `AppServiceProvider::register()` sets `Route::pattern('record',
+  '[0-9]+')` in a `booting` callback, before panel routes are added (the
+  router copies global patterns onto a route when it is added). No model uses
+  a non-numeric key today; widen the pattern if one ever does. Benefit: a
+  mistyped address is a 404 and no longer a Sentry issue. Test: support
+  `Plugins/RecordRouteKeyTest.php` (every `{record}` route carries the
+  pattern; a non-numeric address answers 404). Rollback: remove the callback.
+- **Greeting gradient (U18).** One diagonal wash from the panel primary colour
+  (`color-mix` with the card surface), gone by 72%, replacing two faint amber
+  glows. Light and dark checked on production at 390 px.
+- **Overview tab fade (U19).** The phone tab row now fades only on the side
+  that still hides tabs, and scrolls the selected tab into view.
+- **What's New (U16, U17).** Clearing search or filters closes every release
+  but the latest again. The search label showed because the compiled
+  support.css has no `sr-only` utility; the page now defines it locally.
+- Removed the stray committed `storage/attendance-suite.log` and
+  `storage/lint-attendance.php`.
+
 ## 2026-11-12 (Overview section tabs; What's New in the profile menu)
 
 - **Why:** user: the Overview's section choice (Sales, Purchases, Invoices)
