@@ -6,6 +6,29 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-13, company currencies enforced in the API (CR-6)
+
+- **Why:** the screens offered only a company's permitted currencies, but the
+  API still accepted any currency id, so a token holder could walk around the
+  list.
+- **How:** `Support\Rules\PermittedCurrency`, built on the same
+  `Currency::permittedFor()` scope (one rule). Applied to `currency_id` in
+  the invoice/bill, sales order, purchase order and payment API requests via
+  `PermittedCurrency::forRequest()`. The currency must be permitted for the
+  request's active company **and** for any `company_id` in the body, so
+  naming a company with no list cannot widen the active company's.
+  Message `support::exceptions.currency-not-permitted` in 5 languages. No
+  spreadsheet import sets a currency today, so there was nothing to change
+  there.
+- **Benefit:** the list now holds on every write path that takes a currency.
+- **Trade-off / risk:** an API client that was sending a currency outside a
+  company's list now gets 422. Companies without a list are unaffected.
+- **Verification:** support `CompanyCurrenciesTest` 5 passed, 11 assertions
+  (`aureuserp_testing_claude_ui`). API regression: see the line below.
+- **Rollback:** remove the rule from the four requests.
+- Remaining CR-6 pickers (journals, payments screen, Logistics) are still
+  unrestricted.
+
 ## 2026-11-13, base currency change after posting (CR-6, D-CR-4)
 
 - **Why:** D-CR-4 (user): a company's base currency may still change after
