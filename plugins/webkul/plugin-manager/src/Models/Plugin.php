@@ -50,6 +50,29 @@ class Plugin extends Model implements Sortable
             ->withTimestamps();
     }
 
+    /**
+     * The version shown on the Plugins page.
+     *
+     * Read from the plugin's own composer.json on every view (user,
+     * 2026-11-13: a plugin we improved must not show upstream's number).
+     * The stored `latest_version` only changes on install or sync, so
+     * reading the file means a release needs no deploy step to show its
+     * number. Rule: when a release changes a plugin, set that plugin's
+     * composer.json "version" to the release version.
+     */
+    public function currentVersion(): string
+    {
+        $path = base_path('plugins/webkul/'.basename($this->name).'/composer.json');
+
+        $version = is_file($path)
+            ? data_get(json_decode((string) file_get_contents($path), true), 'version')
+            : null;
+
+        return is_string($version) && $version !== ''
+            ? $version
+            : ($this->latest_version ?: '1.0.0');
+    }
+
     public function dependencies(): BelongsToMany
     {
         return $this->belongsToMany(

@@ -97,7 +97,7 @@ class PluginResource extends Resource
 
                             TextColumn::make('latest_version')
                                 ->label(__('plugin-manager::filament/resources/plugin.table.version'))
-                                ->default('1.0.0')
+                                ->state(fn (Plugin $record): string => $record->currentVersion())
                                 ->badge()
                                 ->color('info'),
                         ]),
@@ -373,6 +373,7 @@ class PluginResource extends Resource
 
                             TextEntry::make('latest_version')
                                 ->label(__('plugin-manager::filament/resources/plugin.infolist.version'))
+                                ->state(fn (Plugin $record): string => $record->currentVersion())
                                 ->badge()
                                 ->color('info'),
                         ]),

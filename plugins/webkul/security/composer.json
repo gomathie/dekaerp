@@ -1,6 +1,7 @@
 {
     "name": "webkul/security",
     "description": "",
+    "version": "1.8.1",
     "authors": [
         {
             "name": "365 Systems"
