@@ -63,4 +63,37 @@ return [
     ],
 
     'trend' => ':change vs previous period',
+
+    'modules' => [
+        'heading' => 'Across the company',
+        'open'    => 'Open',
+    ],
+
+    'board' => [
+        'updated'     => 'Updated :time',
+        'orders'      => 'Orders',
+        'conversion'  => 'Quote → order',
+        'by-supplier' => 'Spend by supplier',
+        'other'       => 'Other',
+        'paid'        => 'Paid',
+        'open'        => 'Open',
+        'overdue'     => 'Overdue',
+        'show'        => 'Show',
+        'tab-overdue' => 'Overdue',
+        'tab-soon'    => 'Due this week',
+        'tab-open'    => 'All open',
+        'nothing'     => 'Nothing here.',
+        'customer'    => 'Customer',
+        'due'         => 'Due',
+        'no-due-date' => 'No due date',
+        'due-today'   => 'Due today',
+        'due-on'      => 'Due :date',
+        'days-late'   => '{1} 1 day late|[2,*] :count days late',
+    ],
+
+    'cash-compare' => [
+        'previous'    => 'Previous period',
+        'this-period' => 'This period',
+        'vs-previous' => 'Vs previous period',
+    ],
 ];

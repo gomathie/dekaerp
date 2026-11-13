@@ -6,6 +6,549 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-13, evening (A3 bank reconciliation; plugin versions; Attendance menu)
+
+- **Why:** accounting plan A3 (ACC-D3: CSV first); user: improved plugins
+  must not show upstream's number, each plugin its own version; Attendance
+  should feel part of Employees without merging the plugin.
+- **How:**
+  - Bank reconciliation: page `Accounting\...\Pages\BankReconciliation`,
+    service `Accounting\Services\BankReconciliation`, exception
+    `CannotReconcile` (one constructor per refusal), `BankStatementLine`
+    model filled in (fillable, casts, relations, `InheritsParentCompany`
+    from the statement). Migration `2026_11_13_000001` adds nullable `date`
+    and `payment_id` to statement lines (production had 0 statements and 0
+    payments, checked read-only). Entries go through Move, MoveWorkflow and
+    Reconciler, so lock date and balance checks apply; lines set
+    `display_type` PRODUCT explicitly. Every entry point re-checks the page
+    permission, the module switch and the company.
+  - `Support\Filament\ImportUpload` now holds the upload resolver that was in
+    Partners' `ListPartners`; both imports use it.
+  - Plugin versions: `"version"` in each plugin's composer.json, read by
+    `Plugin::currentVersion()` on the Plugins page. Starting numbers from
+    history (upstream v1.5.0 base; one bump per fork release that touched the
+    plugin). Rule added to AGENTS.md.
+  - Attendance resource, reporting and settings moved to the Employees menu
+    (sort 5-7).
+- **Benefit:** bank lines can be checked off against payments and charges
+  without a spreadsheet; payments waiting for the bank turn Paid when the
+  bank confirms them. Plugin page shows real versions.
+- **Risk:** not seen in a browser. Foreign-currency bank journals refused for
+  now. No "unmatch" yet: a wrong match is undone by reversing the bank entry.
+- **Verification (Sail, `aureuserp_testing_claude_ui`):**
+  BankReconciliationTest 15 passed (36 assertions) after one fix (migration
+  missing from the provider's list: 10 failed with "column date does not
+  exist"). ContactImportTest 11 passed (36) after the upload-resolver move.
+  PluginVersionTest 4 passed (63). Attendance NavigationTest 3
+  passed. Pint; `php -l` on all 10 new language files.
+- **Deploy:** `migrate`, then `erp:sync-permissions` (new page permission).
+- **Rollback:** remove the page; the migration only adds nullable columns.
+
+## 2026-11-13, later (Overview board from the approved mockup; module cards; Activity log; Tax Summary; deletes logged)
+
+- **Why:** user approved the Dribbble-based mockup (greeting, one panel per
+  module, other modules as cards, render cleanly without some modules,
+  5-minute refresh); plan #1 CR-11 (activity log); accounting A7 (tax
+  summary).
+- **How:**
+  - Greeting rebuilt (`support/resources/views/dashboard-banner.blade.php`):
+    date and place line, "N things need you today", linked chips by urgency
+    (`DashboardBannerRegistry::summaryItems()`), clock, one primary action.
+  - All tab = `OverviewBoard` (Sales, money in/out with "vs previous" filter,
+    Purchases with spend by supplier, Needs attention, Invoices split and
+    lists) + `OverviewModuleCards`. Figures come from each module's
+    `panel()` (sales, purchases, invoices headline widgets) and
+    `Support\...\DashboardCardRegistry` cards from Inventory, Projects,
+    Recruitment, Time Off, Logistics. `OverviewAttentionWidget` removed
+    (folded into the board). 5-minute polling.
+  - Activity log page (security Settings) over `chatter_messages`; deletes
+    now recorded (`HasLogActivity`); messages stamped with the record's
+    company (`HasChatter::addMessage`); reopen reasons carry an event.
+  - Tax Summary page (accounting Reporting) with Excel export.
+- **Decisions taken while the user was away:** spend by supplier instead of
+  by category (always available); Employees card from Time Off (more
+  widely used than Attendance); tax rows per child tax (no group row);
+  nothing pushed to production without the user present.
+- **Benefit:** first screen shows each module at a glance and what to act on;
+  who deleted what is now on record; tax per period without a spreadsheet.
+- **Risk:** not seen in a browser yet; module-card figures are new queries
+  (smoke test runs each one). Old activity rows without a company stay out
+  of the log.
+- **Verification (2026-11-13, Sail, `aureuserp_testing_claude_vault` and
+  `_claude_ui`):** invoices Dashboard folder + ActivityLogTest +
+  LivewireComponentLimitTest: 26 passed on the first run, 6 failed (1 test
+  used Partner, which tracks no fields on update; Inventory card linked to a
+  record-only resource URL, fixed to the Operations cluster; 4 card tests
+  without routes for plugins installed mid-run, resolved like the other
+  report tests); after fixes ActivityLogTest 7/7 and ModuleCardsTest 5 passed
+  (30 assertions). TaxSummaryTest + ChangeReasonTest 9 passed (24
+  assertions). ReportsPageTest 2 passed (5 assertions) on its own; when run
+  after another plugin's test in one process it misses the accounting pages
+  (a panel is configured once per process, so a plugin installed later adds
+  no pages), which cannot happen in its own suite or in production.
+  SalesAnalysisTest 2 passed (4), PurchaseAnalysisTest 2 passed. Pint and `php -l` on
+  every changed PHP and language file. Not seen in a browser.
+  Full regression for the shared chatter changes (deletes logged,
+  record-company stamping), one suite at a time: ChatterFeature 10 passed,
+  SecurityFeature 177 passed (613 assertions), PartnerFeature 94 passed
+  (208), InvoiceFeature 25 passed (99), AccountingFeature 69 passed (125).
+  Zero failures.
+- **Rollback:** Overview `getWidgets()` early return; remove the card
+  registrations; the activity page and tax page are additive.
+
+## 2026-11-13 (greeting "today" line and quick actions; Overview All as a summary; Sentry DEKAERP-16)
+
+- **Why:** user asked for Dribbble-level polish of the greeting and the All
+  tab. Finance dashboards there share three habits: the greeting says what
+  needs you, each figure shows a trend, and the home tab summarises instead
+  of stacking every chart. Separately, Sentry DEKAERP-16: All sent 23 widgets
+  in one Livewire update and `config/livewire.php` capped batches at 20
+  (copied in with the Filament 5 upgrade; Livewire's own default is 200).
+- **How:** `OverviewRegistry::register()` takes optional `attention` and
+  `actions` closures; `attentionItems()` / `quickActions()` read them.
+  Invoices (`Overview\InvoiceAttention`: overdue invoices, overdue bills,
+  bills due within 7 days), Sales (quotations sent over 7 days ago) and
+  Purchases (orders to approve) contribute. `DashboardBannerRegistry` gained
+  `summary()` and `actions()` (max three); Invoices feeds both from the
+  registry, so banner and list never disagree. All tab =
+  `OverviewHeadlineWidget` + new `OverviewCashFlowChart` (paid invoices vs
+  paid bills; uses Revenue over time's Shield permission) + new
+  `OverviewAttentionWidget`. Sales revenue and purchase spend cards show the
+  trend vs the previous period through the existing `statTrend()`.
+  `max_components` 20 → 100. Translations in five languages.
+- **Benefit:** the first screen answers "what needs me today" and links to
+  it; All loads 3 widgets instead of 23, and filter changes no longer fail.
+- **Trade-off / risk:** All no longer shows each module's charts (they are
+  one tab away). Attention counts run on every dashboard view (four small
+  counts per module). Not yet seen in a browser.
+- **Verification:** see the entry's test note (OverviewTest inverted on
+  purpose for All; new tests for attention, summary and the limit).
+- **Rollback:** drop the early return in `Overview::getWidgets()`; the
+  banner shows the old tagline when no summary is registered.
+
+## 2026-11-12 (accounting A1 report isolation; A2 lock date; A7 planned)
+
+- **Why:** accounting plan A1 (reports build raw ledger joins, so CompanyScope does
+  not protect them) and A2 (nothing stopped changes in a closed month;
+  ACC-D2). A7 tax summary added to the plan on the user's approval.
+- **How:** `accounting/tests/Feature/Filament/ReportCompanyIsolationTest.php`
+  (all seven report pages; no code change needed). A2:
+  `accounts/src/Services/PeriodLock.php`, model `LockDate`, append-only table
+  `accounts_lock_dates` (migration `2026_11_12_100000`, listed in
+  `AccountServiceProvider`), `PeriodLockedException`, checks in the `Move` and
+  `MoveLine` saving/deleting hooks (only ledger fields count, so paying and
+  reconciling a locked invoice still works), Shield affix `unlock_period` on
+  the accounting `JournalEntryResource`, "Lock date" header action on
+  `ListJournalEntries`, translations in five languages.
+- **Benefit:** a closed month stays closed on every path (screens, API,
+  imports, Logistics). Who moved the lock and from what is kept.
+- **Trade-off / risk:** one extra query per ledger-relevant save of a move or
+  line. History table instead of chatter (immutable, complete). Laravel Cloud
+  must run `erp:sync-permissions` after `migrate` so the new permission exists.
+- **Verification:** `aureuserp_testing_claude_vault`: report isolation 7
+  passed (14 assertions); LockDateTest + KnownFigureScenarioTest 15 passed
+  (43 assertions); full AccountFeature 558 passed (1471 assertions), 0
+  failed, 8,554 s (2 h 22 min) on the same database. Pint clean.
+- **Rollback:** remove the two hook calls; the table is inert without them.
+
+## 2026-11-12 (CR-4: plan and administrator name on the create-company form; accounting A1 known figures)
+
+- **Plan chosen while creating a company (plan #1, CR-4).** Why: the AS-IS
+  walk-through (CR-1) found the plan was set on a second screen, so a new
+  company was not commercially complete in one step; Pilot puts the price
+  plan on the creation form (CR-2). How: `platform-billing` contributes a
+  create-only "Plan" select (`onboarding_price_id`, Super Admin, commercial
+  only, required whenever a price exists) through `CompanySchemaRegistry`.
+  Security cannot reference billing, so `CompanyOnboarding::create()` now
+  fires `Security\Events\CompanyOnboarded` **inside** its transaction, and
+  `PlatformBilling\Listeners\StartPlanAtOnboarding` starts the plan with the
+  existing Super Admin path (`SubscriptionDrafts::create()` +
+  `SubscriptionLifecycle::activate()`, which applies modules and seat limit).
+  A refusal rolls the company back. A test company given a plan is refused
+  (`StartPlanAtOnboarding::ONLY_COMMERCIAL`); it switches later. Test:
+  platform-billing `OnboardingPlanTest`. Trade-off: a Multi-Company Admin
+  does not see the field (only a Super Admin may start a subscription); they
+  keep using the commercial switch. Rollback: remove the listener line in
+  `PlatformBillingServiceProvider` and the section in
+  `BillingCompanyContributions`.
+- **Administrator name (CR-4).** Shown only when the Super Admin sets a
+  password (an invited administrator types their own name when accepting).
+  `CompanyAdministratorAccount::setPassword()` takes an optional name;
+  without one the account keeps the old mailbox name. Test: security
+  `CompanyOnboardingTest` "names a password-created administrator".
+- **Optional sections fold on create (CR-4).** Address, Branding and Contact
+  start collapsed on the create form, open on edit. Required fields and the
+  currency stay visible.
+- **Accounting A1 (accounting plan, run early per ACC-D1).** `accounts`
+  `KnownFigureScenarioTest`: the brief's Ghana invoice (GHS 1,000 + VAT 15% +
+  NHIL 2.5% + GETFund 2.5% = 1,200, each tax on its own account), paid 500
+  then 700 with the customer's receivable back to zero and debits = credits;
+  the same taxes on a supplier bill; a GHS 240 credit note leaving 960 open.
+
+## 2026-11-12 (record addresses 404; greeting gradient; Overview tab fade; What's New U16/U17)
+
+- **Record addresses accept digits only (Sentry DEKAERP-15).** Why: any
+  Filament `{record}` route took any text, so `/admin/invoices/overview`
+  queried `id = 'overview'` on a bigint column and PostgreSQL answered 500.
+  How: `AppServiceProvider::register()` sets `Route::pattern('record',
+  '[0-9]+')` in a `booting` callback, before panel routes are added (the
+  router copies global patterns onto a route when it is added). No model uses
+  a non-numeric key today; widen the pattern if one ever does. Benefit: a
+  mistyped address is a 404 and no longer a Sentry issue. Test: support
+  `Plugins/RecordRouteKeyTest.php` (every `{record}` route carries the
+  pattern; a non-numeric address answers 404). Rollback: remove the callback.
+- **Greeting gradient (U18).** One diagonal wash from the panel primary colour
+  (`color-mix` with the card surface), gone by 72%, replacing two faint amber
+  glows. Light and dark checked on production at 390 px.
+- **Overview tab fade (U19).** The phone tab row now fades only on the side
+  that still hides tabs, and scrolls the selected tab into view.
+- **What's New (U16, U17).** Clearing search or filters closes every release
+  but the latest again. The search label showed because the compiled
+  support.css has no `sr-only` utility; the page now defines it locally.
+- Removed the stray committed `storage/attendance-suite.log` and
+  `storage/lint-attendance.php`.
+
+## 2026-11-12 (Overview section tabs; What's New in the profile menu)
+
+- **Why:** user: the Overview's section choice (Sales, Purchases, Invoices)
+  should leave the filters and sit as tabs, like the Accounting overview's
+  journal tabs; and the What's New megaphone should go into the profile menu.
+- **How:** `Invoice\Filament\Pages\Overview`: the `sections` multi-select is
+  removed from `filtersForm()`. `content()` puts a view
+  (`invoices::filament.pages.overview-sections`, Filament `x-filament::tabs`,
+  centred, shown when more than one section is visible) above the filters.
+  `selectSection()` sets `filters['sections']` to one visible key or `[]`
+  (All); an unknown or hidden key means All. The value stays a list, so
+  `?section=` links and `getWidgets()` are unchanged. Picking several sections
+  at once is no longer possible. `InvoiceServiceProvider` now calls
+  `hasViews()` (it had no views before).
+  `Support\Traits\HasFilamentDefaults`: the `GLOBAL_SEARCH_AFTER` shortcut is
+  removed. The `USER_MENU_PROFILE_BEFORE` version row became "What's New ·
+  Version x" with the megaphone icon and the unread dot, admin panel and
+  `WhatsNew::canAccess()` only (it previously showed to everyone). While
+  unread, a CSS `:has()` rule also puts the dot on the avatar.
+- **Benefit:** a shorter top bar, mostly on phones. Sections are one tap.
+- **Trade-off / risk:** the avatar dot relies on `:has()` (all current
+  browsers).
+- **Verification:** invoices `OverviewTest` 9 passed (51 assertions), including
+  the new "chooses one section from the tabs, and refuses a section the user
+  may not see". The What's New tests (the shortcut test is rewritten for the
+  profile menu and asserts the top bar no longer has it) and
+  `MobileNavigationTest` passed in the same run: 18 passed. All on
+  `aureuserp_testing_claude_vault`. Not seen in a browser.
+- **Rollback:** restore the Select and the render hook from git.
+
+## 2026-11-12 (phone page strip; What's New from v1.5.0)
+
+- **Why:** user, after the production check of What's New: the phone menu was
+  cumbersome. The drawer listed the current module's pages (up to dozens)
+  above every module, so reaching another module meant scrolling past them.
+  Also, What's New should start at v1.5.0: the older entries are upstream
+  history from before the fork.
+- **How:** `resources/views/vendor/filament-panels/livewire/topbar.blade.php`
+  (local Filament override): the drawer's `module-sidebar-current` block and
+  its CSS are removed. A phone-only `<nav class="module-mobile-tabs">` under
+  the top bar lists the active module's pages and child pages, scrolls on one
+  line and scrolls the current page (`aria-current="page"`) into view. It shows
+  only when the module has more than one page. Desktop is unchanged.
+  `CHANGELOG.md`: v1.0.0 to v1.4.0 removed (git history keeps them). The
+  `admin.mobile-menu.modules` translation key is now unused; left in place.
+- **Benefit:** one tap to change page, one tap plus the Menu to change module.
+- **Trade-off / risk:** the strip adds about 52px of height under the top bar
+  on phones. The drawer and its backdrop still start at 4rem and cover it.
+- **Verification:** `MobileNavigationTest` (inverted in the same change, see
+  its docblock), the What's New tests and `VersionMatchesChangelogTest`:
+  10 passed (46 assertions) and 10 passed (40), on
+  `aureuserp_testing_claude_vault`. Not yet seen on a phone: the local
+  app answers in about 3 minutes per page, too slow for the browser.
+- **Rollback:** restore the drawer block from git; restore the older
+  CHANGELOG entries from git.
+
+## 2026-11-12 (read-only guard on an installation behind on migrations)
+
+- **Why:** the local database, which was behind on migrations since August,
+  could not upgrade. `2026_08_03_130000_seed_accounts_sequences` saves a company
+  record. The save reached `CompanyReadOnlyWriteGuard` →
+  `SubscriptionLifecycle::isReadOnly()`, which queried
+  `platform_billing_subscriptions` before the migration that creates it, and
+  the whole run stopped.
+- **How:** `isReadOnly()` returns false when the subscriptions table does not
+  exist yet. The table check is memoised with `once()`. The trial check above
+  it is unchanged.
+- **Benefit:** any installation that is behind can upgrade in one
+  `migrate`. Production is unaffected, because the table already exists there.
+- **Trade-off / risk:** none for a live system. Without the table there can be
+  no subscription, so nothing could have been locked.
+- **Verification:** `SubscriptionReadOnlyEnforcementTest` 12 passed, including
+  the new test "treats a company as writable while the subscriptions table does
+  not exist yet". The test hides the table by renaming it. The local `dekaerp`
+  database then migrated fully, through `2026_11_12_000001`.
+- **Rollback:** remove the early return.
+
+## 2026-11-12 (What's New page, WN-1 to WN-6; clickable At-a-glance cards)
+
+Plan: `docs/completed/whats-new-plan.md` (decisions D-WN-1..5).
+
+- **Why:** the page rendered changelog markdown without stripping HTML or
+  refusing `javascript:` links (G1), had no tests (G2), dropped wrapped bullet
+  lines (G4), showed the same category under different labels (G8), had no
+  search, PDF, shortcut or unread signal, and listed develop-only work as
+  released (G10).
+- **How:** `Support\Filament\Pages\WhatsNew` has one static parser
+  (`parseChangelog()`, cached on the file's mtime) used by the page and by the new
+  `WhatsNewPdfController` (`support.whats-new.pdf`, inline stream, 404 for an
+  unknown release, font subsetting). Items render through
+  `Str::markdown(html_input=strip, allow_unsafe_links=false)`. Categories are
+  fixed (new / improved / fixed / upgrade, else the heading's own text) and
+  translated at render time, because the parsed result is cached for every
+  locale. `## Unreleased` and HTML comments are never shown (D-WN-1). The view
+  filters with Alpine: item → section → release → "Nothing matches". Top-bar
+  megaphone on `GLOBAL_SEARCH_AFTER` with a dot from the new nullable
+  `users.whats_new_seen_version` (support migration `2026_11_12_000001`).
+  Opening the page writes it without model events (D-WN-2).
+- **Content:** v1.7.0 and v1.6.0 were rewritten in user language (D-WN-3), and
+  v1.7.0 is dated. Work not yet in production sits under `## Unreleased`.
+  `VersionMatchesChangelogTest` now reads the version through the page parser.
+- **At-a-glance cards (U14):** each Overview card links to the list it counts
+  (orders, quotations, invoices, bills, receipts, deliveries). A card is a link
+  only when the viewer may open that resource (`canViewAny()`).
+- **Guest PDF:** no `auth` middleware, because this app has no `login` route
+  (the guest got a 500). The controller redirects guests to the admin panel login.
+- **Benefit:** release notes cannot run injected markup. They are searchable,
+  printable and announced. Users see only what production has.
+- **Trade-off / risk:** the migration must run before the dot shows. Until
+  then `canTrackSeen()` keeps the dot off rather than failing. Every existing
+  user sees the dot once.
+- **Verification:** support `WhatsNewPageTest` (9 tests: parser, sanitising,
+  Unreleased, code fence, real file, page and dot, shortcut, PDF, guest) and
+  `VersionMatchesChangelogTest`, plus `OverviewTest` and `InventoryHeadlineTest`,
+  on `aureuserp_testing_claude_vault`.
+- **Rollback:** revert the files. The migration's `down()` drops the column.
+
+## 2026-11-12 (Attendance go-live fixes, modern greeting, queue worker, background plugin install)
+
+Production pushes today (all from develop working-tree files, Attendance code
+only after its suites were green): `049d8fe07` Attendance + banner;
+`0a413a84e` banner on every dashboard, not tied to any plugin; `8875263cd`
+Attendance settings page and plugin icons; `9639d7818` auto check-out command;
+`cc4df38c1` modern greeting, Attendance HR sidebar group, version from config.
+
+- **Banner not tied to a plugin.** `DashboardBannerContributions` decides per
+  request from the rendered page's `$scopes`: every `Dashboard` subclass, plus
+  plain-Page overviews that implement `ShowsDashboardBanner` (Accounting,
+  Inventory). Attendance's clock/location contribution runs only when
+  Attendance and Employees are installed (`AttendanceBannerContribution::isAvailable()`);
+  it queried `employees_employees` otherwise and broke every dashboard.
+  Tests: support `DashboardBannerScopeTest`.
+- **Modern greeting** (user): headline, one line, outline pills, live local
+  time and date from the browser clock (server clock said "Good morning" in the
+  evening for other timezones), no avatar, 24px under the top bar, page title
+  under it 20px. Company shown once.
+- **Attendance could not be switched on.** `CompanyProvisioner::enable()` had
+  no screen. New `ManageSettings` page (`page_attendance_manage_settings`),
+  reachable while off: switch on/off, auto check-out hours, location capture,
+  late/overtime tolerances; five languages. Tests: `SettingsPageTest`.
+- **Attendance in the HR sidebar:** new `NavigationGroup::Attendance` (HR
+  section, `icon-attendance`); list, reports and settings moved into it.
+  Pinned in `ModuleSidebarSectionsTest`.
+- **Sentry DEKAERP-14:** `attendances:auto-check-out` was scheduled but never
+  registered. `->hasCommand(AutoCheckOutAttendances::class)`; test in
+  `PluginInstallationTest`.
+- **Icons:** `attendance.svg` and `timesheet.svg` drawn in the outline set;
+  `public/svg` (Plugins page `<img>`) refreshed from `resources/svg` with
+  `#64748B` strokes so they read on dark backgrounds.
+- **Version** in the profile menu from `config('app.version')` (was literal
+  1.5.0), linked to What's New; `VersionMatchesChangelogTest` keeps it equal to
+  the newest `CHANGELOG.md` heading.
+- **Queue:** production had no worker; 6 chatter notifications since 2026-08-26
+  were never delivered. Laravel Cloud managed queue created (worker clusters
+  need the Growth plan), old jobs drained; scheduler enabled. See
+  `docs/handover-actions.md` 0e.
+- **Background plugin install (built, NOT pushed):** the Plugins page ran the
+  install inside the request; the browser gave up and the dialog hung though
+  the install finished. New `PluginInstallRunner` + `plugins:install-in-background`
+  (per-plugin lock, marks installed, database notification on success or
+  failure); the page starts it detached (`nohup … &`) and returns; Windows keeps
+  the in-request path. Tests: `InstallInBackgroundTest` 4 passed. Held back
+  because a detached process on Laravel Cloud cannot be proven without a real
+  production install; push after one supervised install.
+- **Not real:** CR-10's two "known defects" were already fixed (October).
+- **Write-off payments failed in production (`a47847043`).** Found by the full
+  AccountFeature run (1 failed, 542 passed): `InvoiceTest` "writes off the
+  shortfall…". `PaymentRegistrar` builds write-off lines with `balance` only;
+  on a journal entry `MoveLine::computeBalance()` recomputes balance from
+  debit - credit, so the write-off saved as 0 and the payment entry was off by
+  the write-off. Hidden until the unbalanced-entry guard (`MoveWorkflow`,
+  upstream 99fd7c7e8) started refusing it, so "mark as fully paid" failed in
+  production. Fix: `Payment::buildDefaultMoveLineAttributes()` gives write-off
+  lines debit, credit and maturity from their balance. Verified: accounts
+  Workflows 137 passed, 275 assertions (`aureuserp_testing_claude_vault`).
+  Rollback: revert the block (the guard would then refuse write-offs again).
+- **Docs:** finished plans moved to `docs/completed/` (index README); SaaS
+  administration plan merged into 2.1 as CR-10; mobile-view proposal moved to
+  `docs/planned/`; 50 files' references updated.
+- **Verification:** banner 7, sidebar + settings 24, version 1, icon 1, install
+  6, background install 4 passed; full suites Support 227, Employee 10,
+  Product 276, Security 167, Attendance 32 + 2 passed. Live checks in
+  production after each push (greeting, heading 20px, Attendance in sidebar).
+
+## 2026-11-11 (Employee contact recursion; Inventory low stock and stock value)
+
+- **Why (CRITICAL, data):** the Attendance suite's "Maximum call stack size"
+  fatal was not in Attendance. `Employee`'s saved hook updated the employee's
+  contact with `Partner::updateOrCreate(['id' => partner_id])`, a
+  company-scoped lookup. When the actor works in another company than the
+  employee's, the lookup missed the contact, created a new one, changed
+  `partner_id`, saved again and recursed - duplicate contacts and followers
+  each turn until PHP crashed. In production: any save of another company's
+  employee (queued job, Multi-Company Admin, all-companies mode edge).
+  Diagnosed with `pest --debug` (culprit test), a STDERR-marker probe (culprit
+  step) and `pg_stat_activity` (an endless `chatter_followers` insert).
+- **How:** `Employee::handlePartnerUpdation()` reads the contact
+  `Partner::withoutGlobalScopes()->find()`, fills and saves it, and creates one
+  only when none exists. Why comment at the code; AGENTS.md list of fixed
+  scoped-parent reads updated.
+- **Inventory cards (user, recommendations accepted):** "Low stock" counts
+  products at or below their reorder rule minimum, on-hand across the
+  company's internal locations; "Stock value" is on-hand in internal locations
+  times product cost, company currency (no valuation layers exist yet; the
+  card says "at cost price"). Five languages.
+- **Verification:** see the runs below. Tests: employees
+  `EmployeeContactCompanyTest`; inventories `InventoryHeadlineTest` (low-stock
+  count, internal-only value, other company excluded).
+- **Rollback:** restore `Partner::updateOrCreate` (reintroduces the recursion);
+  drop the two cards.
+
+## 2026-11-11 (dashboard polling stopped; filters closed; 4 cards across; compact charts; card icons and sparklines)
+
+- **Why:** Sentry DEKAERP-11 (364 events) and -13: Filament stats and chart
+  widgets poll every 5 s by default (`CanPoll`), so every open dashboard re-ran
+  all its queries 12 times a minute. User: filters closed by default, four
+  cards across, Monthly Sales too big, modern widgets for a competitive market.
+- **How:** `$pollingInterval = null` on `Support` `DashboardChartWidget` and
+  `DashboardStatsWidget` and on the ten Overview widgets that extend Filament
+  directly (why comment on each). `DashboardFilters` is `collapsed()` on every
+  screen. `OverviewHeadlineWidget` four across from `lg`; `Overview::getColumns()`
+  `md` 2, `xl` 3. Chart `maxHeight` 300/320px to 240px. Headline cards get
+  outline icons; Revenue and Purchase spend get a daily sparkline from one
+  grouped query over the same filtered rows as the total (null under two
+  points). Profile menu shows only the codes (no "Preferred Language" text).
+  Inventory joins the Overview (user): `InventoryHeadlineWidget` gives "To
+  receive" and "To deliver" (open operations, with the late count, same rule as
+  `OperationTypeCardWidget`), registered from `InventoryServiceProvider` only
+  when the Invoices `OverviewRegistry` class exists, because Inventory does not
+  depend on Invoices. Visible with the Inventory overview's access. The "Show"
+  placeholder now reads "All sections" (five languages).
+- **Benefit:** idle dashboards no longer load the database; the first screen
+  shows all headline figures; cards show direction.
+- **Trade-off / risk:** figures no longer refresh by themselves; reload or
+  change a filter. Two extra grouped queries per Overview load.
+- **Verification:** see the dashboard run recorded below when it finishes.
+  Tests added: no Overview widget polls; filters closed, column counts and
+  card icons.
+- **Not reproduced:** the top-bar gap at the far right on large screens (fills
+  1920 and 2560px in Playwright); waiting for a screenshot.
+- **Library:** lessons added to the shared Workflow and skills library
+  (`laravel-filament-app.md` steps 7–9, `frontend-ui-engineering.md` step 3a).
+
+## 2026-11-11 (profile-menu language shown once; dashboard scrollbar hidden)
+
+- **Why:** user: many complaints about five language rows in the profile
+  menu; asked that the language show once and the others open on click. Also
+  asked to hide the scrollbar on dashboards. Found in production while
+  checking: the language links' click handler used `@js()` inside a component
+  attribute, which Blade does not compile, so it threw and the plain
+  `?lang=` link dropped other query values.
+- **How:** `user-menu-language.blade.php` is one row ("Language" with the current code in an amber pill) that reveals a strip of code chips (EN AR ES FR PT-BR; full native name as tooltip and accessible name; current one filled amber; light and dark styles; reduced-motion respected). Superseded wording: one row (icon, current language,
+  chevron) that expands the other languages in place (Alpine), not a nested
+  dropdown. Codes are echoed directly (config values, letters and
+  underscores). `topbar.blade.php` hides the page scrollbar on pages with
+  widgets that are not resource pages (`fi-resource-*`), so record lists keep
+  theirs.
+- **Verification:** `UserMenuLanguageTest` 1 passed (19 assertions) on
+  `aureuserp_testing_claude_vault`; scrollbar CSS injected into the
+  production Overview (computed `scrollbar-width: none`). The new menu has not
+  been seen in a browser yet.
+- **Rollback:** restore the previous view; remove the two CSS rules.
+
+## 2026-11-11 (top bar at ~1039px, modern dashboard charts)
+
+- **Why:** user: between about 1024px and 1200px the module page strip
+  wrapped and put "Logistics" under the title; and "modernise the charts".
+  Seen in production: empty charts drew a flat line on a 0..1 axis with ten
+  0.1 steps, and month labels were slanted.
+- **How:** `topbar.blade.php` keeps `.fi-topbar-nav-groups` on one line with
+  sideways scroll (plain links, no dropdown to clip). `HasChartTheme::cartesianScales()`:
+  flat x labels, auto-skip, faint dashed value lines, no y border, at most
+  five value ticks. New `dashboardChartEmptyState` plugin in
+  `support/resources/js/dashboard-charts.js` (copied to `public/js/support/`)
+  hides the axes and writes "No data for this period" when every value is
+  zero; `DashboardChartWidget::chartEmptyState()` passes the translated text
+  (`support::filament/dashboard.no-chart-data`, five languages) to bar, line
+  and doughnut options.
+- **Note:** the top-bar and `HasChartTheme` edits were swept into the
+  Attendance agent's commit `51dfc31b6` while uncommitted; a production
+  cherry-pick needs that commit's non-attendance hunks or a fresh commit.
+- **Verification:** top-bar CSS injected into production at 1039px: the strip
+  is one line (36px high). Chart theme: `support/tests/Feature/Dashboard`
+  6 passed (15 assertions), including the new `DashboardChartThemeTest`, on
+  `aureuserp_testing_claude_vault`. Charts not yet seen in a browser with data.
+- **Rollback:** revert the CSS block, the scales hunk and the plugin.
+
+## 2026-11-11 (reply greeting uses the developer's own name)
+
+- **Why:** user: several developers work on this project, and `AGENTS.md`
+  told every agent to open each reply with one fixed name.
+- **How:** the Replies rule in `AGENTS.md` now says to use the name of the
+  developer in that session (git user name or account), and to ask once if
+  none is available.
+- **Verification:** documentation only; searched the repository for other
+  copies of the old rule, and there were none.
+
+## 2026-11-11 (attendance plugin: banner, manager screens, reports)
+
+- **Why:** the user asked for the whole of `docs/completed/attendance-plan.md` (AT-1 to
+  AT-7). Presence had no record at all in this fork, so payroll had nothing to
+  read and managers could not tell who was in.
+- **How:**
+  - New plugin `attendances` (`Webkul\Attendance`, namespace singular for
+    permissions) depending on `employees`, with a per-company switch
+    (`attendances_company_settings`, default off) layered on
+    `PluginEntitlement`, exactly like Logistics.
+  - `AttendanceService` is the only write path: idempotent clock-in backed by a
+    partial unique index, clock-out storing worked minutes, a correction that
+    refuses a blank reason and appends to `attendances_corrections`, and an
+    auto check-out at the company limit flagged `needs_review`.
+  - `support` gained the shared welcome banner: a keyed
+    `DashboardBannerRegistry` and one `PAGE_START` render hook scoped to every
+    `Filament\Pages\Dashboard` subclass, so no dashboard file was edited.
+    Attendance contributes the status pill and clock button through that
+    registry and a `ClockButton` Livewire component; `support` never references
+    the plugin.
+  - Manager screens: a read-only `AttendanceResource` narrowed to
+    `visibleEmployeeIds()` (team or own rows without `view_any`), a "Clocked in
+    now" filter, the audited correction action, and an exporter whose
+    location/IP columns are off by default.
+  - Reports: an `Attendance` reporting cluster with Lateness, Overtime and
+    Absence pages, each behind its own Shield page permission and the company
+    switch, computed at read time from the employee's calendar.
+  - Translations in en/ar/es/fr/pt_BR.
+- **Benefit:** presence is recorded once, audited, and readable by the person
+  and their manager; payroll has a single contract instead of a second source.
+- **Trade-off / risk:** the banner uses inline CSS rather than Tailwind
+  utilities, so it renders without rebuilding `support.css`; a later restyle
+  should keep that property. `PAGE_START` is registered once per application
+  (container marker), because a process-static flag survives a rebuilt test
+  application while Filament's view manager does not.
+- **Verification:** see the handoffs and the per-run results in
+  `docs/completed/attendance-plan.md` (database `aureuserp_testing_attendance`).
+  `translations:check --plugin=attendances` and `--plugin=support` each passed
+  4 of 4 locales. Pint and the suite results are recorded there.
+- **Rollback:** uninstall refuses while attendance rows exist
+  (`attendances.allow_uninstall_with_data`). The banner can be switched off by
+  removing `DashboardBannerContributions::register()` from
+  `SupportPlugin::boot()`.
+
 ## 2026-11-11 (Overview "At a glance", all filters shown, profile menu languages)
 
 - **Why:** user: the Overview should show every section's filters by default
@@ -48,7 +591,7 @@ for the task/question log this change log is paired with.
 
 ## 2026-11-11 (unified product and contact screens: shared custom fields, purchase tabs everywhere)
 
-Planned item #1, `docs/planned/01-unified-product-resource-plan.md` (user:
+Planned item #1, `docs/completed/unified-product-resource-plan.md` (user:
 high priority).
 
 - **Checked first:** on production, all four product edit screens (Sales,
@@ -201,7 +744,7 @@ high priority).
 
 ## 2026-11-11 (agent review follow-ups: vault, phone search, journal balance, work orders, translations)
 
-From `docs/agent-review-2026-11-11.md`, approved by the user.
+From `docs/completed/agent-review-2026-11-11.md`, approved by the user.
 
 - **Readable passwords outlived the role.**
   - Fix: `CompanyAdminPasswordVault::reveal()` refuses anyone who is no
@@ -366,7 +909,7 @@ From `docs/agent-review-2026-11-11.md`, approved by the user.
 
 ## 2026-11-10 (mobile view P1-P6)
 
-- **Why:** customers report the app is unusable on phones. Deep audit in production (docs/mobile-view-plan.md, F1-F7): iPhone zooms on every 14px field; navigation was two unlabelled 24px icons; the top bar clipped the avatar; tabs and the status bar clipped.
+- **Why:** customers report the app is unusable on phones. Deep audit in production (docs/planned/mobile-view-plan.md, F1-F7): iPhone zooms on every 14px field; navigation was two unlabelled 24px icons; the top bar clipped the avatar; tabs and the status bar clipped.
 - **How:** phone-only CSS and markup in the admin top-bar override; a labelled Menu button and a "this module" section in the module drawer; the company name truncates. Desktop from 768px up is unchanged.
 - **Benefit:** fields no longer zoom, one obvious menu reaches every page and module, the top bar fits.
 - **Trade-off / risk:** the top-bar template is a local Filament override; re-diff it on every Filament upgrade. Rendered layout is checked by eye on phones, not by tests.
@@ -533,7 +1076,7 @@ payments and the test-or-commercial account type. SAAS-10B stays unbuilt.
 
 **Cause:** Platform invoices had no way to be settled, and a new company had
 no trial. The decisions are in
-`docs/saas-administration-billing-audit-plan.md`.
+`docs/completed/saas-administration-billing-audit-plan.md`.
 
 **Implemented:** `PlatformPayments` posts, allocates, refunds and reverses
 by hand, Super Admin only, with derived credit and a database immutability
@@ -766,7 +1309,7 @@ guard test with it). Nothing else depends on it.
 
 Implemented SAAS-04 enforcement across the SAAS-05 plugin slices. Detailed
 ownership, scope and per-slice handoffs are in
-[`docs/saas-administration-billing-audit-plan.md`](saas-administration-billing-audit-plan.md).
+[`docs/completed/saas-administration-billing-audit-plan.md`](completed/saas-administration-billing-audit-plan.md).
 
 - **05B commercial:** Products, Sales and Purchases enforce entitlement at
   navigation/policy, API and write-service boundaries. Customer portal checks
@@ -835,7 +1378,7 @@ have them needs the page permission ticked.
 `plugin-manager/tests/Feature/Entitlements/EntitledPagePermissionTest.php`
 checks every one of the 13 pages: a company user without the permission is
 refused, and one with it is allowed. Results are in
-`docs/dashboards-plan.md`.
+`docs/completed/dashboards-plan.md`.
 
 **Rollback.** Revert the commit. That reopens the pages, so do not.
 
@@ -1035,7 +1578,7 @@ readiness tracked per country and per company. The 2026-10-26 plan copied
 statutory rates into company-owned pay components, which let a company lower
 a legal minimum and left statutory updates to be retyped company by company.
 
-**How.** `docs/planned/03-payroll.md` is now the single payroll document. The scope note
+**How.** `docs/planned/07-payroll.md` is now the single payroll document. The scope note
 (`REVIEW all THIS WITH SKILLs + i have.md`) is merged into it, verbatim, as
 Appendix A. The document was reviewed with the `engineering:system-design`,
 `engineering:testing-strategy` and `devil-advocate` skills, after inspecting
@@ -1072,7 +1615,7 @@ conceded:
 The fourth attack, an unnamed practitioner and no shadow-run date, is open
 until the user supplies them.
 
-**Decisions recorded the same day (user, 2026-11-02; `docs/planned/03-payroll.md` §6).**
+**Decisions recorded the same day (user, 2026-11-02; `docs/planned/07-payroll.md` §6).**
 
 - **DP-09:** both Congos, as two separate packages (`CD` and `CG`). Each
   package's currency (CDF or XAF) is activated when that package starts.
@@ -1152,7 +1695,7 @@ Worth recording because it is not obvious and cost the investigation: 168 of the
 provider filling `currency_rates` — rates are typed into the currency form. A
 non-base currency therefore also needs a rate before conversion works.
 
-### `docs/planned/03-payroll.md` — a plan, not a decision
+### `docs/planned/07-payroll.md` — a plan, not a decision
 
 The user asked whether payroll exists (it does not, here or upstream) and then
 for a build plan to pick up later. The document records the evidence —
@@ -1176,7 +1719,7 @@ storage, API boundaries and scheduler against the proposed SaaS subscription
 and billing requirements. No production behaviour or schema changed.
 
 The persistent evidence matrix and phased adoption checklist are in
-[`docs/saas-administration-billing-audit-plan.md`](saas-administration-billing-audit-plan.md).
+[`docs/completed/saas-administration-billing-audit-plan.md`](completed/saas-administration-billing-audit-plan.md).
 The main findings are that company/plugin grant management exists but plugin
 entry points do not enforce it, tenant roles are global to a user rather than
 scoped to each company membership, and SaaS plans, seat limits, recurring
@@ -1973,7 +2516,7 @@ its own models, and are not transferable claims about Copilot on Laravel.
 
 ### What was adopted
 
-- `docs/harness2-integration.md` — the assessment with the evidence above, the
+- `docs/completed/harness2-integration.md` — the assessment with the evidence above, the
   safe sandbox route (a throwaway `python:3.12-slim` container with the clone
   **outside** the repo, so no dependency, config, or application file changes),
   the rollback, and the split of what is shareable across repositories versus
@@ -2094,14 +2637,14 @@ Reconciled by marking superseded claims, not deleting them:
   of `AccountFeature`, plus project and product" (superseded 2026-09-29, when
   all thirteen suites ran green together — AccountFeature 526, ProjectFeature
   86, ProductFeature 250, zero failures).
-- **`docs/planned/02-restructure-backlog.md`** — already reconciled on 2026-10-21; the four
+- **`docs/planned/05-restructure-backlog.md`** — already reconciled on 2026-10-21; the four
   dead entries are now also marked `REMOVED 2026-10-21, moot` inline, because a
   header note is easy to skim past when the list is the thing being worked from.
 - **`docs/running-tests.md`** — documented one shared database and serial runs
   only. Now documents the per-work-package database and the `-e DB_DATABASE`
   override (`phpunit.xml` sets it without `force="true"`, so the env var wins),
   and keeps the interleaving warning scoped to one database.
-- **`docs/planned/07-landing-page-brief.md`** — "Website and blog pages managed from the
+- **`docs/planned/09-landing-page-brief.md`** — "Website and blog pages managed from the
   same admin" was false: Blogs and the CMS pages were removed 2026-10-21 and
   `plugins/webkul/website` has no admin resources, only portal actions/pages.
   Replaced with the customer-portal line, correction dated inline.
@@ -2111,7 +2654,7 @@ Reconciled by marking superseded claims, not deleting them:
   contributes registry entries from `website/src/PortalContributions.php`. The
   argument the table supports is unaffected.
 
-Left alone as still true: `planned/01-unified-product-resource-plan.md`'s
+Left alone as still true: `planned/../completed/unified-product-resource-plan.md`'s
 "Contacts/Website partner screens", and the historical Website references in
 this file and in the adoption plan.
 
@@ -2612,7 +3155,7 @@ files were not changed in WP-13.
 
 One decision and one bug family, connected: switching the ownership scope on in
 tests exposed both. Full detail and the decision trail in
-[`docs/company-admin-role-plan.md`](company-admin-role-plan.md) sections 4d-4j.
+[`docs/completed/company-admin-role-plan.md`](completed/company-admin-role-plan.md) sections 4d-4j.
 
 ### The decision: company-wide visibility is the default
 
@@ -2827,7 +3370,7 @@ the test count rather than the exit status.
 ## 2026-09-25 (Company Admin role, and avatars without a third party)
 
 Two decisions the user made after the tenant-isolation fix landed
-(`docs/company-admin-role-plan.md` §4b).
+(`docs/completed/company-admin-role-plan.md` §4b).
 
 ### Company Admin, provisioned
 
@@ -2900,7 +3443,7 @@ Raised by the user: *"when I create a user for a new company I onboard, I give
 them a role like Admin2, but they tend to see other companies."* Investigated,
 and the reason turned out to be a defect rather than a missing role. Full
 write-up and the plan for the "Company Admin" role itself:
-`docs/company-admin-role-plan.md`.
+`docs/completed/company-admin-role-plan.md`.
 
 ### The leak
 
@@ -4738,7 +5281,7 @@ lost) and **51 do** - including `InvoiceResource` (19 fork-only lines),
    operations on top, on a live ERP, makes the eventual test run harder to
    attribute.
 
-The analysis is the deliverable: `docs/planned/02-restructure-backlog.md` lists both
+The analysis is the deliverable: `docs/planned/05-restructure-backlog.md` lists both
 sets, the rule for adopting, the method, and its known limit. Do it after the
 runtime is fixed, plugin by plugin.
 

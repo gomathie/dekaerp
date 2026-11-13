@@ -57,10 +57,7 @@ class InvoiceServiceProvider extends PackageServiceProvider
         // The greeting's "today" line and quick actions come from the same
         // registry the Needs attention list reads (support cannot name
         // Invoices, so the contribution goes this way round).
-        DashboardBannerRegistry::summary('overview', fn (): array => array_map(
-            fn (array $item): string => $item['label'],
-            OverviewRegistry::attentionItems(),
-        ));
+        DashboardBannerRegistry::summary('overview', fn (): array => OverviewRegistry::attentionItems());
 
         DashboardBannerRegistry::actions('overview', fn (): array => OverviewRegistry::quickActions());
     }

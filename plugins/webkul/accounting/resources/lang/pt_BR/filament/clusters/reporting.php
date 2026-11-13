@@ -136,6 +136,25 @@ return [
                 'journals'   => 'Diários',
             ],
         ],
+        'tax-summary' => [
+            'navigation' => [
+                'title' => 'Resumo de impostos',
+                'group' => 'Relatórios de auditoria',
+            ],
+            'actions'  => ['export-excel' => 'Exportar para Excel'],
+            'filters'  => ['date-range' => 'Período'],
+            'columns'  => ['tax' => 'Imposto', 'rate' => 'Alíquota', 'base' => 'Base de cálculo', 'amount' => 'Imposto'],
+            'sections' => ['sales' => 'Sobre vendas (recolhido)', 'purchases' => 'Sobre compras (pago)'],
+            'totals'   => [
+                'collected'       => 'Total recolhido',
+                'paid'            => 'Total pago',
+                'net'             => 'Líquido',
+                'net-payable'     => 'Imposto líquido a pagar',
+                'net-reclaimable' => 'Imposto líquido a recuperar',
+            ],
+            'empty' => 'Nenhum imposto neste período.',
+            'note'  => 'Com base em faturas, contas, notas de crédito e reembolsos lançados e datados no período. Notas de crédito e reembolsos reduzem os totais. Confirme com seu contador antes de declarar.',
+        ],
         'trial-balance' => [
             'navigation' => [
                 'title' => 'Balancete',

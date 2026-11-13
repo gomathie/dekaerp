@@ -1,6 +1,7 @@
 {
     "name": "webkul/recruitments",
     "description": "Applicant tracking and hiring",
+    "version": "1.8.0",
     "authors": [
         {
             "name": "365 Systems"

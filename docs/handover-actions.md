@@ -182,6 +182,39 @@ customer.
 
 ---
 
+## 0e. Turn on a queue worker (and check the scheduler) in Laravel Cloud (2026-11-12) — DONE (queue) 2026-11-12
+
+**Done:** worker clusters need the Growth plan, so a Laravel Cloud **managed
+queue** was created (queue `default`, 256 MiB, backoff 30 s, timeout 60 s,
+3 tries, scale to zero, max 1; cost ceiling $13.26/mo). `QUEUE_CONNECTION`
+is `cloud`. The 6 old jobs were drained once with
+`queue:work database --queue=default --stop-when-empty`. Verified read-only:
+`jobs` 0, `failed_jobs` 0, 6 notifications created. A future queued plugin
+install (up to 5 minutes) needs its own queue with a longer timeout.
+**Still to confirm:** the scheduler is enabled.
+
+**Found:** production's `jobs` table holds 6 jobs that were never attempted
+(`attempts = 0`), the oldest from 2026-08-26. All are
+`Chatter\Notifications\ChatterDatabaseNotification`: in-app chatter
+notifications (mentions and messages) have never been delivered in production.
+Nothing processes the `database` queue (`QUEUE_CONNECTION` default).
+
+**Do, in the Laravel Cloud dashboard (application → environment):**
+1. Enable a queue worker for the `database` connection (`php artisan
+   queue:work --tries=3`), or Laravel Cloud's worker toggle.
+2. Confirm the scheduler is enabled (`schedule:run` every minute). Attendance's
+   auto check-out (every 15 minutes) and the platform invoice run depend on it.
+
+**Check afterwards (read-only):**
+`SELECT count(*) FROM jobs;` should drop to 0 within a minute;
+`SELECT count(*) FROM failed_jobs;` should stay 0.
+
+**Also related:** the Plugins page installs a plugin inside the web request
+(up to 5 minutes, because it regenerates every permission). The browser gives
+up first, so the install dialog stays open although the install finishes
+(Attendance, 2026-11-12 01:04 UTC). Until the install runs as a queued job,
+wait a minute and refresh the Plugins page.
+
 ## 0c. Set TRUSTED_PROXIES, or the POD throttle is one shared bucket (2026-09-30)
 
 **Found by the second WP-5b security pass** (`docs/logistics-plan.md`, handoff log).
@@ -275,7 +308,7 @@ left join user_team ut on ut.user_id = u.id
 where u.resource_permission = 'group' and ut.user_id is null;
 ```
 
-Background: `docs/company-admin-role-plan.md` sections 4f-4h.
+Background: `docs/completed/company-admin-role-plan.md` sections 4f-4h.
 
 ---
 
@@ -555,7 +588,7 @@ database password.
 - ~~**Filament 5.7.6** - needs `composer update`~~ - **DONE (2026-09-19).**
   `composer.lock` holds Filament `v5.7.6`; see upstream-adoption Package A in
   `docs/upstream-fix-adoption-plan.md`.
-- **Restructure backlog** - `docs/planned/02-restructure-backlog.md`. After the Website and
+- **Restructure backlog** - `docs/planned/05-restructure-backlog.md`. After the Website and
   Blogs removal on 2026-10-21 the real totals are 68 mechanically safe to adopt
   and 49 that hold local changes to carry over by hand (the lists themselves
   predate the removal and still count those four entries). Pure merge-debt
@@ -973,7 +1006,7 @@ runbook only; no production commands are run from this session.
 **Tests.** All 17 suites passed on `develop` at the last code commit
 `7bbf65741`: 2,904 tests, 0 failed, each suite on its own database. Commits
 after it change only documentation. Per-suite counts are in
-docs/company-admin-role-plan.md §4k Verification.
+docs/completed/company-admin-role-plan.md §4k Verification.
 
 **Repository.**
 

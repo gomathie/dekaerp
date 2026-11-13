@@ -38,7 +38,7 @@ class ManageSettings extends Page
 
     protected static string|BackedEnum|null $navigationIcon = 'icon-attendance';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 7;
 
     protected static ?string $slug = 'attendances/settings';
 
@@ -53,7 +53,7 @@ class ManageSettings extends Page
 
     public static function getNavigationGroup(): string|UnitEnum
     {
-        return NavigationGroup::Attendance;
+        return NavigationGroup::Employee;
     }
 
     public static function getNavigationLabel(): string

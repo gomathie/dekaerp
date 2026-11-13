@@ -14,6 +14,11 @@ class OverviewCashFlowChart extends RevenueOverTimeWidget
 {
     protected static bool $isDiscovered = false;
 
+    // Every 5 minutes on the Overview (user, 2026-11-13); see OverviewHeadlineWidget.
+    protected ?string $pollingInterval = '300s';
+
+    public ?string $filter = 'current';
+
     protected int|string|array $columnSpan = ['default' => 'full', 'md' => 2, 'xl' => 2];
 
     /**
@@ -62,13 +67,75 @@ class OverviewCashFlowChart extends RevenueOverTimeWidget
             'borderDash'           => [4, 4],
         ]);
 
-        return [
-            'datasets' => [
-                $this->gradientLineDataset($in, __('invoices::filament/pages/overview.cash.in')),
-                $outDataset,
-            ],
-            'labels' => $labels,
+        $datasets = [
+            $this->gradientLineDataset($in, __('invoices::filament/pages/overview.cash.in')),
+            $outDataset,
         ];
+
+        // "vs previous period" (approved mockup): the money in of the period
+        // of the same length just before, day by day, as a faint line.
+        if ($this->filter === 'compare') {
+            // The invoice query takes its own date range: without it the
+            // page period would filter the earlier dates away.
+            $previous = $this->customerInvoices(...$this->previousPeriodRange());
+
+            $datasets[] = [
+                'label'       => __('invoices::filament/pages/overview.cash-compare.previous'),
+                'data'        => $this->previousDailyPaid($previous->where($previous->qualifyColumn('payment_state'), 'paid'), count($labels)),
+                'borderColor' => $this->brandColor('primary', 500, 0.45),
+                'fill'        => false,
+                'tension'     => 0.4,
+                'borderWidth' => 1.5,
+                'pointRadius' => 0,
+            ];
+        }
+
+        return [
+            'datasets' => $datasets,
+            'labels'   => $labels,
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function getFilters(): ?array
+    {
+        return [
+            'current' => __('invoices::filament/pages/overview.cash-compare.this-period'),
+            'compare' => __('invoices::filament/pages/overview.cash-compare.vs-previous'),
+        ];
+    }
+
+    /**
+     * Daily paid totals of the previous period, aligned to this period's days
+     * (day 1 against day 1), so the two lines share one axis.
+     *
+     * @return list<float>
+     */
+    protected function previousDailyPaid(\Illuminate\Database\Eloquent\Builder $query, int $days): array
+    {
+        [$start, $end] = $this->previousPeriodRange();
+
+        $dateColumn = $query->qualifyColumn($this->dashboardDateColumn());
+        $valueColumn = $query->qualifyColumn($this->dashboardValueColumn());
+        $grammar = $query->getQuery()->getGrammar();
+        $day = 'DATE('.$grammar->wrap($dateColumn).')';
+
+        $byDay = $query->toBase()
+            ->whereBetween($dateColumn, [$start, $end])
+            ->selectRaw($day.' as bucket_day, SUM('.$grammar->wrap($valueColumn).') as bucket_value')
+            ->groupByRaw($day)
+            ->pluck('bucket_value', 'bucket_day')
+            ->mapWithKeys(fn ($value, $key): array => [\Illuminate\Support\Carbon::parse($key)->format('Y-m-d') => abs((float) $value)]);
+
+        $series = [];
+
+        for ($i = 0, $date = (clone $start)->startOfDay(); $i < $days; $i++, $date->addDay()) {
+            $series[] = round($byDay->get($date->format('Y-m-d'), 0.0), 2);
+        }
+
+        return $series;
     }
 
     protected function getOptions(): array
