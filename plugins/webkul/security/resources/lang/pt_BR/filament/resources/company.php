@@ -8,6 +8,27 @@ return [
         'title' => 'Empresas',
     ],
 
+    'provisioning' => [
+        'column' => 'Status de implantação',
+        'filter' => 'Status de implantação',
+
+        'statuses' => [
+            'active'           => 'Ativa',
+            'invited'          => 'Convidada, ainda não ativa',
+            'expired'          => 'Convite expirado',
+            'no-administrator' => 'Sem administrador',
+            'closed'           => 'Encerrada',
+        ],
+
+        'resend' => [
+            'label'         => 'Reenviar convite',
+            'heading'       => 'Reenviar o convite do administrador?',
+            'description'   => 'O convite para :email é enviado novamente e continua válido por mais 7 dias.',
+            'invited'       => 'Convite reenviado',
+            'invite-failed' => 'Não foi possível reenviar o convite. Ele pode ter sido aceito ou revogado nesse meio-tempo.',
+        ],
+    ],
+
     'global-search' => [
         'email' => 'E-mail',
     ],
