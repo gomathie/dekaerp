@@ -1,6 +1,7 @@
 {
     "name": "webkul/barcode",
     "description": "Barcode operations app for inventory and manufacturing",
+    "version": "1.8.1",
     "type": "nativephp-plugin",
     "authors": [
         {

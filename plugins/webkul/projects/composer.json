@@ -1,6 +1,7 @@
 {
     "name": "webkul/projects",
     "description": "Project planning and management",
+    "version": "1.8.1",
     "authors": [
         {
             "name": "365 Systems"

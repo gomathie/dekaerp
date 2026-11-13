@@ -1,6 +1,7 @@
 {
     "name": "webkul/inventories",
     "description": "Inventory and warehouse management",
+    "version": "1.8.1",
     "authors": [
         {
             "name": "Jitendra Singh",
