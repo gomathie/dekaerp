@@ -119,6 +119,15 @@
              hasDsnSet() false, so no client, transport or integration is built
              at all - a before_send filter would still boot and still trace. -->
         <env name="SENTRY_LARAVEL_DSN" value="" force="true"/>
+        <!-- Tests compile views into their own folder (2026-11-13, Sentry
+             DEKAERP-19..1J). The suite installs plugins, which runs
+             optimize:clear and empties the compiled-views folder; with the
+             default folder that is the one the local dev container serves
+             from (same bind mount), so its /admin/login failed with "File
+             does not exist at path storage/framework/views/....php" during
+             every test run. force="true" so a shell value cannot point the
+             suite back at the shared folder. -->
+        <env name="VIEW_COMPILED_PATH" value="storage/framework/testing/views" force="true"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
     </php>
