@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Schema;
 /**
  * Read-only report: which contacts have no company, and which companies use them.
  *
- * Superseded framing, 2026-10-29 (docs/company-admin-role-plan.md §4k): contacts
+ * Superseded framing, 2026-10-29 (docs/completed/company-admin-role-plan.md §4k): contacts
  * are now per company for **new** records, and the user decided that existing
  * contacts are **never reassigned**. One with no company stays shared, one with
  * a company stays there. So this report is no longer the input to a contact
@@ -80,7 +80,7 @@ class ContactCompanyReport extends Command
         $this->newLine();
         // Existing contacts are never reassigned (user decision, 2026-10-29): this
         // report informs, it does not prepare a step.
-        $this->components->warn('This command changed nothing. Shared contacts stay shared by decision (docs/company-admin-role-plan.md §4k).');
+        $this->components->warn('This command changed nothing. Shared contacts stay shared by decision (docs/completed/company-admin-role-plan.md §4k).');
 
         return self::SUCCESS;
     }

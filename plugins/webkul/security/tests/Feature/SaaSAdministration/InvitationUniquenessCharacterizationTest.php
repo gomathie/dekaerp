@@ -25,7 +25,7 @@ require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php
  * on `email` (the protection is a locked service check, not a constraint that
  * would forbid re-inviting an address after a revoke).
  *
- * See: docs/saas-administration-billing-audit-plan.md § Known related defects.
+ * See: docs/completed/saas-administration-billing-audit-plan.md § Known related defects.
  */
 beforeEach(function (): void {
     Auth::forgetGuards();

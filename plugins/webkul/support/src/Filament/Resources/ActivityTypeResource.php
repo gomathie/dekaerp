@@ -36,13 +36,13 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Guava\IconPicker\Forms\Components\IconPicker;
 use Illuminate\Database\QueryException;
-use Webkul\Security\Models\User;
 use Webkul\Support\Enums\ActivityChainingType;
 use Webkul\Support\Enums\ActivityDecorationType;
 use Webkul\Support\Enums\ActivityDelayFrom;
 use Webkul\Support\Enums\ActivityDelayUnit;
 use Webkul\Support\Enums\ActivityTypeAction;
 use Webkul\Support\Filament\Clusters\Settings;
+use Webkul\Support\Filament\CompanyMembers;
 use Webkul\Support\Filament\Resources\ActivityTypeResource\Pages\CreateActivityType;
 use Webkul\Support\Filament\Resources\ActivityTypeResource\Pages\EditActivityType;
 use Webkul\Support\Filament\Resources\ActivityTypeResource\Pages\ListActivityTypes;
@@ -87,7 +87,7 @@ class ActivityTypeResource extends Resource
                                             ->preload(),
                                         Select::make('default_user_id')
                                             ->label(__('support::filament/resources/activity-type.form.sections.activity-type-details.fields.default-user'))
-                                            ->options(fn () => \Webkul\Support\Filament\CompanyMembers::options())
+                                            ->options(fn () => CompanyMembers::options())
                                             ->searchable()
                                             ->preload(),
                                         Textarea::make('summary')

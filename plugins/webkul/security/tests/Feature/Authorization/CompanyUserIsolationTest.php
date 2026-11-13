@@ -27,7 +27,7 @@ require_once __DIR__.'/MultiCompanyAdminTest.php';
  *
  * These tests use a plain role - not Multi-Company Admin, not super admin -
  * because that is the actor that was exposed. See
- * docs/company-admin-role-plan.md.
+ * docs/completed/company-admin-role-plan.md.
  */
 beforeEach(function (): void {
     Auth::forgetGuards();
@@ -184,7 +184,7 @@ it('applies the company boundary whatever the resource permission', function () 
     // AllowedCompanyScope, which exempts tests with `&& ! runningUnitTests()`,
     // OwnershipScope has no such exemption, so ownership() is inert under Pest
     // and every ownership rule in this application is untested. Recorded in
-    // docs/company-admin-role-plan.md; not changed here, because switching it on
+    // docs/completed/company-admin-role-plan.md; not changed here, because switching it on
     // would alter the visible data of every existing test at once.
     expect(visibleUserIds())->not->toContain($stranger->getKey());
 });

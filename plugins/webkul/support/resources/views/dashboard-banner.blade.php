@@ -41,6 +41,13 @@
 
     $locale = str_replace('_', '-', app()->getLocale());
     $aside = \Webkul\Support\Filament\Contributions\DashboardBannerRegistry::renderedSections();
+
+    // 2026-11-13 (user, after Dribbble finance dashboards): the line under the
+    // greeting says what needs you today instead of a generic welcome, and
+    // up to three "new" shortcuts sit beside it. Nothing to do keeps the
+    // friendly tagline, so the banner never looks like an alarm.
+    $summary = \Webkul\Support\Filament\Contributions\DashboardBannerRegistry::summaryPhrases();
+    $quickActions = \Webkul\Support\Filament\Contributions\DashboardBannerRegistry::quickActions();
 @endphp
 
 @if ($user)
@@ -135,6 +142,57 @@
             height: 0.875rem;
             color: var(--dw-accent);
         }
+        .deka-welcome__today {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--dw-ink);
+            font-weight: 500;
+        }
+        .deka-welcome__dot {
+            flex: none;
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 9999px;
+            background: var(--dw-accent);
+            box-shadow: 0 0 0 3px color-mix(in oklab, var(--dw-accent) 22%, transparent);
+        }
+        .deka-welcome__actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.875rem;
+        }
+        .deka-welcome__actions a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            min-height: 2.25rem;
+            padding: 0.375rem 0.875rem;
+            border: 1px solid var(--dw-line);
+            border-radius: 0.625rem;
+            background: var(--dw-surface);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--dw-ink);
+            text-decoration: none;
+            transition: border-color 120ms ease, box-shadow 120ms ease;
+        }
+        .deka-welcome__actions a svg {
+            width: 1rem;
+            height: 1rem;
+            color: var(--primary-600, #d97706);
+        }
+        @media (hover: hover) {
+            .deka-welcome__actions a:hover {
+                border-color: color-mix(in oklab, var(--primary-500, #f59e0b) 45%, var(--dw-line));
+                box-shadow: 0 2px 8px -4px rgb(15 23 42 / 0.18);
+            }
+        }
+        .deka-welcome__actions a:focus-visible {
+            outline: 2px solid var(--primary-500, #f59e0b);
+            outline-offset: 2px;
+        }
         .deka-welcome__side {
             display: flex;
             align-items: center;
@@ -216,7 +274,14 @@
                     <span x-text="greeting">{{ $fallbackGreeting }}</span>{{ $firstName ? ', '.$firstName : '' }}
                 </p>
 
-                <p class="deka-welcome__tagline">{{ $tagline }}</p>
+                @if ($summary !== [])
+                    <p class="deka-welcome__tagline deka-welcome__today">
+                        <span class="deka-welcome__dot" aria-hidden="true"></span>
+                        {{ implode(' · ', $summary) }}
+                    </p>
+                @else
+                    <p class="deka-welcome__tagline">{{ $tagline }}</p>
+                @endif
 
                 <ul class="deka-welcome__pills">
                     @if ($role)
@@ -240,6 +305,17 @@
                         </li>
                     @endif
                 </ul>
+
+                @if ($quickActions !== [])
+                    <nav class="deka-welcome__actions" aria-label="{{ __('support::dashboard-banner.quick-actions') }}">
+                        @foreach ($quickActions as $quickAction)
+                            <a href="{{ $quickAction['url'] }}" wire:navigate>
+                                <x-filament::icon :icon="$quickAction['icon']" />
+                                <span>{{ $quickAction['label'] }}</span>
+                            </a>
+                        @endforeach
+                    </nav>
+                @endif
             </div>
         </div>
 

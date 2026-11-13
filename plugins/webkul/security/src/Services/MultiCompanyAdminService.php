@@ -77,7 +77,7 @@ class MultiCompanyAdminService
         // ownership() alone: a customer's administrator whose resource
         // permission is "global" has no ownership restriction at all, so they
         // listed, opened and edited every user in the installation, including
-        // other tenants'. See docs/company-admin-role-plan.md.
+        // other tenants'. See docs/completed/company-admin-role-plan.md.
         if (! $actor->isMultiCompanyAdmin()) {
             // ownership() still applies on top, so "individual" and "group"
             // users see no more of their own company than they did before: this

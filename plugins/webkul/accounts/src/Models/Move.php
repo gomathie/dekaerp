@@ -19,6 +19,7 @@ use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Enums\PaymentState;
 use Webkul\Account\Enums\PaymentStatus;
 use Webkul\Account\Exceptions\MissingJournalException;
+use Webkul\Account\Services\PeriodLock;
 use Webkul\Chatter\Traits\HasChatter;
 use Webkul\Chatter\Traits\HasLogActivity;
 use Webkul\Field\Traits\HasCustomFields;
@@ -508,6 +509,14 @@ class Move extends Model implements Sortable
             $move->computeInvoiceDateDue();
 
             $move->computePaymentState();
+
+            // Last, after the computes, so it sees the values actually saved.
+            // A2 lock date: a closed month cannot be changed from any path.
+            app(PeriodLock::class)->assertMoveSavable($move);
+        });
+
+        static::deleting(function ($move) {
+            app(PeriodLock::class)->assertMoveDeletable($move);
         });
     }
 

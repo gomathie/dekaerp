@@ -3,8 +3,7 @@
     "description": "Plugin Manager for Aureus ERP",
     "authors": [
         {
-            "name": "Aureus ERP",
-            "email": "support@aureuserp.in"
+            "name": "365 Systems"
         }
     ],
     "extra": {

@@ -42,7 +42,7 @@ class RevenueOverTimeWidget extends ChartWidget
 
         // Upstream loaded every paid invoice of the period to add them up per
         // day in PHP. dailyBuckets() asks the database for one total per day
-        // (docs/dashboards-plan.md §2.4), with the company scope intact.
+        // (docs/completed/dashboards-plan.md §2.4), with the company scope intact.
         $data = $this->dailyBuckets($query->where($query->qualifyColumn('payment_state'), 'paid'), true);
 
         $labels = [];

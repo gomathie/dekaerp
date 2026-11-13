@@ -30,7 +30,7 @@ it('hides partners owned by another company', function () {
  * Inverted 2026-10-29. This used to pin "leaves a new partner shared instead of
  * stamping the active company", which was upstream's design (57e234223). Clients
  * are unrelated businesses, so a contact now belongs to the company that created
- * it (user decision; docs/company-admin-role-plan.md §4k).
+ * it (user decision; docs/completed/company-admin-role-plan.md §4k).
  */
 it('stamps the active company on a new partner', function () {
     $companyB = CompanyHelper::company();

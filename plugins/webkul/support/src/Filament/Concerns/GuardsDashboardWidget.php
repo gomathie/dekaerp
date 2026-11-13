@@ -7,7 +7,7 @@ use Filament\Facades\Filament;
 use Webkul\PluginManager\Support\PluginEntitlement;
 
 /**
- * Who may see a module dashboard widget (docs/dashboards-plan.md §2).
+ * Who may see a module dashboard widget (docs/completed/dashboards-plan.md §2).
  *
  * Two departures from Shield's own HasWidgetShield::canView():
  * - the company must hold the widget's module (SAAS-05). A widget is reachable

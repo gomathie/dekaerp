@@ -8,6 +8,7 @@ use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\Facades\Event;
 use Webkul\PluginManager\Console\Commands\FindMissingTranslations;
 use Webkul\PluginManager\Console\Commands\InstallERP;
+use Webkul\PluginManager\Console\Commands\InstallInBackground;
 use Webkul\PluginManager\Console\Commands\SyncAdminPermissions;
 use Webkul\PluginManager\Http\Middleware\EnsurePluginIsEntitled;
 use Webkul\PluginManager\Services\CompanyPluginProvisioner;
@@ -38,6 +39,7 @@ class PluginManagerServiceProvider extends PackageServiceProvider
                 InstallERP::class,
                 FindMissingTranslations::class,
                 SyncAdminPermissions::class,
+                InstallInBackground::class,
             ]);
     }
 

@@ -16,6 +16,7 @@ return [
             'password'             => 'Administrator password',
             'password-helper'      => 'Optional. Sets the password now instead of sending an invitation, or resets it for this company’s administrator. It is never emailed: give it to them yourself.',
             'must-change-password' => 'Must change this password at next sign-in',
+            'name'                 => 'Administrator name',
         ],
     ],
 

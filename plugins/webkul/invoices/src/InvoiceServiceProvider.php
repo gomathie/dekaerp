@@ -4,6 +4,7 @@ namespace Webkul\Invoice;
 
 use Filament\Panel;
 use Livewire\Livewire;
+use Webkul\Invoice\Filament\Overview\InvoiceAttention;
 use Webkul\Invoice\Filament\Overview\OverviewRegistry;
 use Webkul\Invoice\Filament\Pages\Invoices;
 use Webkul\Invoice\Filament\Widgets\InvoiceHeadlineWidget;
@@ -12,6 +13,7 @@ use Webkul\PluginManager\Console\Commands\InstallCommand;
 use Webkul\PluginManager\Console\Commands\UninstallCommand;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
+use Webkul\Support\Filament\Contributions\DashboardBannerRegistry;
 
 class InvoiceServiceProvider extends PackageServiceProvider
 {
@@ -48,7 +50,19 @@ class InvoiceServiceProvider extends PackageServiceProvider
             fn (): bool  => Invoices::canAccess(),
             sort: 30,
             headline: InvoiceHeadlineWidget::class,
+            attention: fn (): array => InvoiceAttention::items(),
+            actions: fn (): array => InvoiceAttention::actions(),
         );
+
+        // The greeting's "today" line and quick actions come from the same
+        // registry the Needs attention list reads (support cannot name
+        // Invoices, so the contribution goes this way round).
+        DashboardBannerRegistry::summary('overview', fn (): array => array_map(
+            fn (array $item): string => $item['label'],
+            OverviewRegistry::attentionItems(),
+        ));
+
+        DashboardBannerRegistry::actions('overview', fn (): array => OverviewRegistry::quickActions());
     }
 
     public function packageRegistered(): void

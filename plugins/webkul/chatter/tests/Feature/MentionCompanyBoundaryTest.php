@@ -12,7 +12,7 @@ require_once __DIR__.'/../../../support/tests/Helpers/TestBootstrapHelper.php';
 
 /**
  * A mention outside the record's company is not delivered (user decision,
- * 2026-10-30; §4k read audit in docs/company-admin-role-plan.md).
+ * 2026-10-30; §4k read audit in docs/completed/company-admin-role-plan.md).
  *
  * A mention notification carries the record's name and the message body, and
  * makes the person a follower. Delivered to someone who is not a member of the

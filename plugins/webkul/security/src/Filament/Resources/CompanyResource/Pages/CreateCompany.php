@@ -41,6 +41,9 @@ class CreateCompany extends BaseCreateCompany
             $email === '' ? null : $email,
             (string) ($this->data['administrator_password'] ?? ''),
             (bool) ($this->data['administrator_must_change_password'] ?? true),
+            (string) ($this->data['administrator_name'] ?? ''),
+            // Read by plugins listening to CompanyOnboarded (CR-4: the plan).
+            $this->data ?? [],
         );
 
         return $this->onboardingResult['company'];

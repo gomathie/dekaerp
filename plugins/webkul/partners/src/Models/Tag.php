@@ -22,7 +22,7 @@ class Tag extends Model
     /*
      * Each client has its own contacts, so a tag belongs to the company that
      * creates it; a null company would share it with every other client
-     * (docs/company-admin-role-plan.md §4k).
+     * (docs/completed/company-admin-role-plan.md §4k).
      */
 
     protected $fillable = [

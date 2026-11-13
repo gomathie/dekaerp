@@ -15,6 +15,27 @@ return [
         'unbalanced'           => 'Este lançamento contábil está desbalanceado e não pode ser lançado. O total de débito deve ser igual ao total de crédito.',
     ],
 
+    'change-reason' => [
+        'required' => 'Informe o motivo para alterar um documento confirmado.',
+        'field'    => 'Motivo da alteração',
+        'helper'   => 'Fica no histórico do documento, por exemplo "O cliente pediu 10% de desconto".',
+        'reset'    => 'Voltou para rascunho. Motivo: :reason',
+        'cancelled' => 'Cancelado. Motivo: :reason',
+        'api'      => 'Alterado pela API',
+    ],
+
+    'lock-date' => [
+        'locked'        => 'Lançamentos com data em ou antes de :date estão bloqueados. Peça ao seu administrador para mover a data de bloqueio primeiro.',
+        'not-allowed'   => 'Somente um administrador da empresa ou um contador com a permissão de desbloqueio pode alterar a data de bloqueio.',
+        'future'        => 'A data de bloqueio não pode estar no futuro.',
+        'action'        => 'Data de bloqueio',
+        'field'         => 'Bloquear lançamentos até',
+        'helper'        => 'Lançamentos registrados com esta data ou anterior não podem ser alterados. Deixe vazio para desbloquear todos os períodos.',
+        'current'       => 'Bloqueado atualmente até :date.',
+        'none'          => 'Nenhum período está bloqueado.',
+        'saved'         => 'Data de bloqueio salva',
+    ],
+
     'documents' => [
         'titles' => [
             'invoice'     => 'Fatura nº :name',

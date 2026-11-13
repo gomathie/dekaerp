@@ -74,6 +74,7 @@ class CompanyAdministratorAccount
         string $email,
         string $password,
         bool $mustChangePassword = true,
+        ?string $name = null,
     ): string {
         $email = trim($email);
 
@@ -109,7 +110,7 @@ class CompanyAdministratorAccount
             return $this->resetPassword($company, $actor, $existing, $password, $mustChangePassword);
         }
 
-        return $this->createAdministrator($company, $actor, $roleIds, $email, $password, $mustChangePassword);
+        return $this->createAdministrator($company, $actor, $roleIds, $email, $password, $mustChangePassword, $name);
     }
 
     /**
@@ -250,6 +251,7 @@ class CompanyAdministratorAccount
         string $email,
         string $password,
         bool $mustChangePassword,
+        ?string $name = null,
     ): string {
         $companyId = (int) $company->getKey();
 
@@ -266,7 +268,7 @@ class CompanyAdministratorAccount
         $capacity = app(SeatCapacityService::class);
 
         try {
-            $user = $capacity->withLockedCompany($companyId, function () use ($actor, $companyId, $roleIds, $email, $password, $mustChangePassword, $capacity): User {
+            $user = $capacity->withLockedCompany($companyId, function () use ($actor, $companyId, $roleIds, $email, $password, $mustChangePassword, $capacity, $name): User {
                 // A pending invitation to the same address would keep holding a
                 // seat for a person who now has an account, and its link would
                 // fail on the unique email. Revoked first so the seat check
@@ -281,7 +283,10 @@ class CompanyAdministratorAccount
                 $capacity->assertCanAttachMembership($companyId);
 
                 $user = User::query()->create([
-                    'name'                 => Str::before($email, '@'),
+                    // CR-4: the name typed on the company form. Without one the
+                    // account was called after its mailbox ("info"), which is
+                    // what every colleague then saw in pickers and chatter.
+                    'name'                 => trim((string) $name) !== '' ? trim((string) $name) : Str::before($email, '@'),
                     'email'                => $email,
                     'password'             => $password,
                     'default_company_id'   => $companyId,

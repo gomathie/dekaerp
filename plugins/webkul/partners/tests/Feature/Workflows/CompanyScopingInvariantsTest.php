@@ -8,7 +8,7 @@ $plugin = 'partners';
 /*
  * Empty since 2026-10-29: Partner used to be declared shared, upstream's design
  * (57e234223). Contacts now belong to the company that creates them
- * (docs/company-admin-role-plan.md §4k).
+ * (docs/completed/company-admin-role-plan.md §4k).
  */
 $shared = [];
 

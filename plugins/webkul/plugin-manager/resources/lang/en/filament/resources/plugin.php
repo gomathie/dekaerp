@@ -57,6 +57,13 @@ return [
             'title' => 'Plugin Installed Successfully',
             'body'  => "The ':name' plugin has been installed.",
         ],
+        'installing' => [
+            'title' => 'Installing :name',
+            'body'  => 'This takes a minute or two. You will get a notification when it is done, and can keep working meanwhile.',
+        ],
+        'installing-already' => [
+            'title' => ':name is already being installed',
+        ],
         'installed-failed' => [
             'title' => 'Installation Failed',
         ],
@@ -156,7 +163,7 @@ return [
         'manufacturing'  => 'Manufacturing and production management',
         'partners'       => 'Manage business partners',
         'payments'       => 'Manage payments and transactions',
-        'plugin-manager' => 'Plugin Manager for Aureus ERP',
+        'plugin-manager' => 'Plugin Manager for DEKA Central',
         'products'       => 'Product catalog and variant management',
         'projects'       => 'Project planning and management',
         'purchases'      => 'Procurement and purchase order management',

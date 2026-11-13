@@ -11,6 +11,7 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Text;
+use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Auth\Access\AuthorizationException;
 use Throwable;
 use Webkul\PlatformBilling\Filament\Clusters\Billing\Resources\SubscriptionResource\Schemas\SubscriptionForm;
@@ -49,7 +50,33 @@ class BillingCompanyContributions
 
         static::$registered = true;
 
-        CompanySchemaRegistry::form('main.after', fn (): array => [static::section()]);
+        CompanySchemaRegistry::form('main.after', fn (): array => [static::planAtCreateSection(), static::section()]);
+    }
+
+    /**
+     * CR-4: choose the plan while creating the company. Super Admin only,
+     * because only they may start a subscription; a commercial company only,
+     * because a test company switches later. Started by StartPlanAtOnboarding
+     * inside the onboarding transaction. Not a company column.
+     */
+    protected static function planAtCreateSection(): Section
+    {
+        return Section::make(__(static::$lang.'.plan-title'))
+            ->description(__(static::$lang.'.plan-description'))
+            ->icon('heroicon-o-banknotes')
+            ->visible(fn (string $operation, Get $get): bool => $operation === 'create'
+                && auth()->user() instanceof User && auth()->user()->isSuperAdmin()
+                && $get('account_type') !== 'test')
+            ->schema([
+                Select::make('onboarding_price_id')
+                    ->label(__(static::$lang.'.price'))
+                    ->options(fn (): array => SubscriptionForm::priceOptions())
+                    // Required whenever there is a plan to choose: a fresh
+                    // installation with no prices must still create companies.
+                    ->required(fn (): bool => SubscriptionForm::priceOptions() !== [])
+                    ->native(false)
+                    ->dehydrated(false),
+            ]);
     }
 
     protected static function section(): Section

@@ -17,7 +17,7 @@ require_once __DIR__.'/../../Helpers/ManufacturingHelper.php';
  * and `Inventory\Models\OperationType` carries `CompanyScope`.
  *
  * These tests exist to establish whether that is actually reachable, rather than
- * infer it from reading the code. See docs/company-admin-role-plan.md section 4i.
+ * infer it from reading the code. See docs/completed/company-admin-role-plan.md section 4i.
  */
 beforeEach(function () {
     TestBootstrapHelper::ensurePluginInstalled('inventories');

@@ -112,6 +112,8 @@ class SaleServiceProvider extends PackageServiceProvider
             fn (): bool  => SalesDashboard::canAccess(),
             sort: 10,
             headline: SaleHeadlineWidget::class,
+            attention: fn (): array => SaleHeadlineWidget::attention(),
+            actions: fn (): array => SaleHeadlineWidget::actions(),
         );
 
         Event::listen(OperationDone::class, ComputeSaleOrderListener::class);

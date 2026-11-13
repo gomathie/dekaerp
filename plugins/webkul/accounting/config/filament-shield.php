@@ -38,7 +38,7 @@ $reorder = ['reorder'];
 return [
     'resources' => [
         'manage' => [
-            JournalEntryResource::class     => [...$basic, ...$delete, ...$reorder],
+            JournalEntryResource::class     => [...$basic, ...$delete, ...$reorder, 'unlock_period'],
             JournalItemResource::class      => [...$basic, ...$delete, ...$reorder],
             AccountResource::class          => [...$basic, ...$delete],
             CashRoundingResource::class     => [...$basic, ...$delete],

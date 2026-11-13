@@ -10,8 +10,17 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.8.0 — 2026-11-13
+
+### Features
+
+* Accounting: lock a closed period. "Lock date" on Journal Entries stops anyone posting, changing, cancelling or deleting entries dated on or before it. Old invoices can still be paid. Only a Company Admin, or someone given "Unlock period", can move it.
+
 ### Improvements
 
+* The app is now called DEKA Central, by 365 Systems.
+* The dashboard greeting now tells you what needs you today (for example "3 invoices overdue · 2 bills due this week") and has quick buttons for a new invoice, bill, quotation or purchase request.
+* The Overview's All tab is now a short summary: the headline figures with their trend against the previous period, one chart of money in and out, and a "Needs attention" list that links to each item. Each module's tab still has all its charts and lists.
 * On a phone, the pages of the module you are in now show as a row of tabs under the top bar. The Menu lists only the modules, so switching module takes fewer taps.
 * What's New starts at version 1.5.0.
 * What's New has moved from the top bar into your profile menu, next to the version. A red dot on your picture means there is something new to read.
@@ -20,8 +29,11 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 * On a phone, the Overview tabs fade at the edge when there are more to scroll to.
 * In What's New, clearing the search or filters goes back to showing only the latest release open, and the search box no longer shows its label twice.
 
+* Creating a company is simpler: choose the plan on the same form (it starts at once and sets the modules and seat limit), give the administrator a name when you set their password, and the optional address, branding and contact details start folded away.
+
 ### Fixes
 
+* Changing a filter on a dashboard with many charts no longer fails.
 * A mistyped record address now shows "Not found" instead of a server error.
 
 # CHANGELOG — v1.7.1 — 2026-11-12

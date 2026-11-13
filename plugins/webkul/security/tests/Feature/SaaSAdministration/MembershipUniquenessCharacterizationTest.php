@@ -18,7 +18,7 @@ require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php
  * the per-company role table now references, so the duplicate is refused by the
  * database rather than avoided by Eloquent's `sync()`.
  *
- * See: docs/saas-administration-billing-audit-plan.md § Known related defects.
+ * See: docs/completed/saas-administration-billing-audit-plan.md § Known related defects.
  */
 it('refuses a duplicate membership row in user_allowed_companies', function () {
     expect(Schema::hasTable('user_allowed_companies'))->toBeTrue();
