@@ -10,6 +10,7 @@ use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
 use Webkul\Recruitment\Models\Applicant;
 use Webkul\Recruitment\Models\Candidate;
+use Webkul\Support\Filament\Contributions\DashboardCardRegistry;
 
 class RecruitmentServiceProvider extends PackageServiceProvider
 {
@@ -67,9 +68,9 @@ class RecruitmentServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         // The Recruitment card on the Overview (2026-11-13). Keyed: re-booting replaces it.
-        \Webkul\Support\Filament\Contributions\DashboardCardRegistry::card(
+        DashboardCardRegistry::card(
             'recruitment',
-            fn (): bool => Filament\OverviewCard::visible(),
+            fn (): bool  => Filament\OverviewCard::visible(),
             fn (): array => Filament\OverviewCard::data(),
             sort: 30,
         );

@@ -15,9 +15,11 @@ use Webkul\Invoice\Filament\Widgets\InvoiceHeadlineWidget;
 use Webkul\Invoice\Filament\Widgets\OverviewAttentionWidget;
 use Webkul\Invoice\Filament\Widgets\OverviewCashFlowChart;
 use Webkul\Invoice\Filament\Widgets\OverviewHeadlineWidget;
+use Webkul\Invoice\Filament\Widgets\OverviewModuleCards;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Support\Filament\Contributions\DashboardBannerRegistry;
+use Webkul\Support\Filament\Contributions\DashboardCardRegistry;
 use Webkul\Support\Filament\Forms\Components\DashboardFilters;
 use Webkul\Support\Models\Company;
 
@@ -69,7 +71,7 @@ it('limits the widgets to the chosen section and shows every visible section by 
     // widgets: headline cards, the money in/out chart and Needs attention.
     // It also kept 23 widgets in one Livewire update (Sentry DEKAERP-16).
     $page->filters = [];
-    expect($page->getWidgets())->toBe([OverviewHeadlineWidget::class, OverviewCashFlowChart::class, OverviewAttentionWidget::class, Webkul\Invoice\Filament\Widgets\OverviewModuleCards::class])
+    expect($page->getWidgets())->toBe([OverviewHeadlineWidget::class, OverviewCashFlowChart::class, OverviewAttentionWidget::class, OverviewModuleCards::class])
         ->and($page->getWidgets())->not->toContain('TestOnlyWidget');
 
     // Changed 2026-11-11 (user): "At a glance" comes first, then widgets are
@@ -280,7 +282,7 @@ it('counts an overdue customer invoice in Needs attention', function (): void {
 it('shows only the module cards the user may see, and survives a failing card', function (): void {
     CompanyHelper::actingAsCompanyUser(Company::factory()->create(), ['page_invoice_invoices']);
 
-    $registry = Webkul\Support\Filament\Contributions\DashboardCardRegistry::class;
+    $registry = DashboardCardRegistry::class;
 
     $registry::card('test-visible', fn (): bool => true, fn (): array => ['label' => 'Shown', 'url' => null, 'items' => []]);
     $registry::card('test-hidden', fn (): bool => false, fn (): array => ['label' => 'Hidden', 'url' => null, 'items' => []]);
