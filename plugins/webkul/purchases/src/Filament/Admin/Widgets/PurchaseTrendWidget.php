@@ -35,7 +35,7 @@ class PurchaseTrendWidget extends DashboardChartWidget
 
         // Upstream loaded every order of the period and counted them per day and
         // state in PHP. One grouped query returns those counts instead
-        // (docs/dashboards-plan.md §2.4); toBase() keeps the company scope.
+        // (docs/completed/dashboards-plan.md §2.4); toBase() keeps the company scope.
         $query = $this->purchaseOrders();
 
         $grammar = $query->getQuery()->getGrammar();

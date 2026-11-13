@@ -13,6 +13,8 @@ use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\TableWidget;
 use Illuminate\Contracts\Support\Htmlable;
 use Webkul\Invoice\Filament\Overview\OverviewRegistry;
+use Webkul\Invoice\Filament\Widgets\OverviewAttentionWidget;
+use Webkul\Invoice\Filament\Widgets\OverviewCashFlowChart;
 use Webkul\Invoice\Filament\Widgets\OverviewHeadlineWidget;
 use Webkul\Product\Models\Category;
 use Webkul\Product\Models\Product;
@@ -291,6 +293,20 @@ class Overview extends BaseDashboard
     {
         $sections = OverviewRegistry::visible();
         $chosen = array_values(array_intersect((array) ($this->filters['sections'] ?? []), array_keys($sections)));
+
+        // "All" is a summary, not every module's charts stacked (user,
+        // 2026-11-13, after Dribbble finance dashboards): the headline cards
+        // with their trends, one money in/out chart, and Needs attention.
+        // The module tabs keep the full sets. This also keeps a filter change
+        // well under Livewire's per-request component limit: All used to
+        // send 23 widgets in one update (Sentry DEKAERP-16).
+        if ($chosen === [] && count($sections) > 1) {
+            return [
+                OverviewHeadlineWidget::class,
+                ...(array_key_exists('invoices', $sections) ? [OverviewCashFlowChart::class] : []),
+                OverviewAttentionWidget::class,
+            ];
+        }
 
         $charts = $stats = $tables = [];
 

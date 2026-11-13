@@ -23,7 +23,7 @@ class Packaging extends Model implements Sortable
     /*
      * A packaging is part of its product, so it takes the product's company,
      * never the session's. It used to be shared (autoAssignsCompany() returned
-     * false) like the product itself; see docs/company-admin-role-plan.md §4k.
+     * false) like the product itself; see docs/completed/company-admin-role-plan.md §4k.
      */
     protected static string $parentCompanyModel = Product::class;
 

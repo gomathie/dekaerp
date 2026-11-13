@@ -19,7 +19,7 @@ require_once __DIR__.'/../../Helpers/AccountHelper.php';
  * invoices they raised, and invoices assigned to them as the salesperson.
  *
  * Whether `individual` should be the default is a separate, open product question
- * (docs/company-admin-role-plan.md §4g). These tests set the permission
+ * (docs/completed/company-admin-role-plan.md §4g). These tests set the permission
  * explicitly, so they hold either way.
  */
 beforeEach(function () {

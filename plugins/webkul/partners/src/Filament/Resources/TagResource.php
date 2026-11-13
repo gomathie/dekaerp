@@ -42,7 +42,7 @@ class TagResource extends Resource
                     ->maxLength(255)
                     // Per company, like the row itself: each client names its own
                     // tags, and two of them may pick the same words
-                    // (docs/company-admin-role-plan.md §4k).
+                    // (docs/completed/company-admin-role-plan.md §4k).
                     ->unique(
                         ignoreRecord: true,
                         modifyRuleUsing: fn (Unique $rule) => $rule->where('company_id', current_company_id()),

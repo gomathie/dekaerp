@@ -8,7 +8,7 @@ require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php
 
 /**
  * Who a company's document may be emailed to (user decision, 2026-10-30; §4k
- * read audit in docs/company-admin-role-plan.md).
+ * read audit in docs/completed/company-admin-role-plan.md).
  *
  * Partner::recipientsForCompany() is the one rule for the invoice, sales order
  * and purchase order email actions: the record's own contacts and shared ones,

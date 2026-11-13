@@ -37,4 +37,30 @@ return [
         'to-pay'          => 'A pagar',
         'overdue'         => '{0} Nenhuma vencida|{1} 1 vencida|[2,*] :count vencidas',
     ],
+
+    'attention' => [
+        'heading'          => 'Precisa de atenção',
+        'empty'            => 'Tudo em dia. Nada está esperando por você.',
+        'overdue-invoices' => '{1} 1 fatura vencida|[2,*] :count faturas vencidas',
+        'overdue-bills'    => '{1} 1 conta vencida|[2,*] :count contas vencidas',
+        'bills-due-soon'   => '{1} 1 conta vence esta semana|[2,*] :count contas vencem esta semana',
+        'old-quotations'   => '{1} 1 cotação aguardando há mais de 7 dias|[2,*] :count cotações aguardando há mais de 7 dias',
+        'rfqs-to-approve'  => '{1} 1 compra para aprovar|[2,*] :count compras para aprovar',
+    ],
+
+    'actions' => [
+        'new-invoice'   => 'Nova fatura',
+        'new-bill'      => 'Nova conta',
+        'new-quotation' => 'Nova cotação',
+        'new-rfq'       => 'Nova solicitação de cotação',
+    ],
+
+    'cash' => [
+        'heading'     => 'Entradas e saídas de dinheiro',
+        'description' => 'Faturas recebidas e contas pagas por dia',
+        'in'          => 'Entradas',
+        'out'         => 'Saídas',
+    ],
+
+    'trend' => ':change em relação ao período anterior',
 ];

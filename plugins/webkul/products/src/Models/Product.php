@@ -37,7 +37,7 @@ class Product extends Model implements Sortable
     /*
      * No autoAssignsCompany() override: BelongsToCompany stamps the creating
      * company, because each client has its own catalogue (user decision,
-     * 2026-10-29; docs/company-admin-role-plan.md §4k). A variant takes its
+     * 2026-10-29; docs/completed/company-admin-role-plan.md §4k). A variant takes its
      * template's company through InheritsParentCompany, never the session's.
      */
     protected static string $parentCompanyModel = self::class;

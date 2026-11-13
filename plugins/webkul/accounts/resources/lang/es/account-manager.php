@@ -15,6 +15,27 @@ return [
         'unbalanced'           => 'Este asiento contable está descuadrado y no se puede contabilizar. El total del debe debe ser igual al total del haber.',
     ],
 
+    'change-reason' => [
+        'required' => 'Indique un motivo para modificar un documento confirmado.',
+        'field'    => 'Motivo del cambio',
+        'helper'   => 'Se guarda en el historial del documento, por ejemplo "El cliente pidió un descuento del 10%".',
+        'reset'    => 'Devuelto a borrador. Motivo: :reason',
+        'cancelled' => 'Cancelado. Motivo: :reason',
+        'api'      => 'Modificado a través de la API',
+    ],
+
+    'lock-date' => [
+        'locked'        => 'Los asientos con fecha igual o anterior al :date están bloqueados. Pida a su administrador que mueva primero la fecha de bloqueo.',
+        'not-allowed'   => 'Solo un administrador de la empresa o un contable con el permiso de desbloqueo puede cambiar la fecha de bloqueo.',
+        'future'        => 'La fecha de bloqueo no puede ser futura.',
+        'action'        => 'Fecha de bloqueo',
+        'field'         => 'Bloquear asientos hasta',
+        'helper'        => 'Los asientos contabilizados con esta fecha o anterior no se pueden modificar. Déjelo vacío para desbloquear todos los periodos.',
+        'current'       => 'Bloqueado actualmente hasta el :date.',
+        'none'          => 'Ningún periodo está bloqueado.',
+        'saved'         => 'Fecha de bloqueo guardada',
+    ],
+
     'documents' => [
         'titles' => [
             'invoice'     => 'ID de factura n.º :name',
