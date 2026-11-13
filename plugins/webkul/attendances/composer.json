@@ -1,7 +1,7 @@
 {
     "name": "webkul/attendances",
     "description": "Staff attendance: clock in, clock out, and manager corrections",
-    "version": "1.8.1",
+    "version": "1.0.0",
     "authors": [
         {
             "name": "DEKA ERP",

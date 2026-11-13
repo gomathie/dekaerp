@@ -57,8 +57,8 @@ class Plugin extends Model implements Sortable
      * 2026-11-13: a plugin we improved must not show upstream's number).
      * The stored `latest_version` only changes on install or sync, so
      * reading the file means a release needs no deploy step to show its
-     * number. Rule: when a release changes a plugin, set that plugin's
-     * composer.json "version" to the release version.
+     * number. Each plugin has its own version (user, 2026-11-13): a release
+     * that adds a feature to a plugin bumps its minor, fixes only its patch.
      */
     public function currentVersion(): string
     {
