@@ -21,7 +21,7 @@ return [
     | (VersionMatchesChangelogTest). It was hard-coded at 1.5.0 in
     | HasFilamentDefaults while production ran 1.7.0 (2026-11-12).
     */
-    'version' => env('APP_VERSION', '1.8.0'),
+    'version' => env('APP_VERSION', '1.8.1'),
 
     /*
     |--------------------------------------------------------------------------
