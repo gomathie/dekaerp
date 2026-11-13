@@ -15,6 +15,7 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 * Accounting: Tax Summary report. For any period, each tax (for example VAT, NHIL and GETFund) with its taxable amount, the tax collected on sales and paid on purchases, and the net to pay or reclaim. Credit notes reduce it. Export to Excel.
 * Reports: one page listing every report you can open, grouped by module, with a search box.
 * Sales analysis and Purchase analysis reports: confirmed orders in company currency, grouped by customer or supplier, salesperson or buyer, or month, with totals and Excel export.
+* Accounting: Bank Reconciliation. Import your bank statement (CSV), then match each line to the payment it confirms (the payment becomes Paid) or book it to an account, for example bank charges or interest.
 * Activity log (Settings): see who created, changed or deleted what in your company, with the old and new values and the reason given. Filter by person, record type, action and date, and export to Excel. Deletions are now recorded too.
 
 ### Improvements
