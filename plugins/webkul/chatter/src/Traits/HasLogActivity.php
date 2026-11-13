@@ -48,7 +48,15 @@ trait HasLogActivity
         try {
             $changes = $this->determineChanges($event);
 
-            if (collect($changes)->isEmpty()) {
+            // A delete carries no field changes, so this check used to drop
+            // every delete: "who deleted what" left no trace at all (found
+            // building the company activity log, CR-11, 2026-11-13). A delete
+            // now records what was deleted, as the create does.
+            if (in_array($event, ['deleted', 'soft_deleted', 'hard_deleted'], true)) {
+                $changes = $this->getModelAttributes();
+            }
+
+            if (collect($changes)->isEmpty() && ! in_array($event, ['deleted', 'soft_deleted', 'hard_deleted', 'restored'], true)) {
                 return null;
             }
 
