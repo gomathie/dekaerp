@@ -10,6 +10,12 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.8.1 — 2026-11-13
+
+### Improvements
+
+* Reopening a confirmed invoice, bill, credit note, refund or payment (Reset to draft) now asks for a reason, for example "customer asked for a 10% discount". The reason is kept in the document history.
+
 # CHANGELOG — v1.8.0 — 2026-11-13
 
 ### Features

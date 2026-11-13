@@ -26,8 +26,12 @@ use Webkul\Support\Services\EmailService;
 
 class MoveWorkflow
 {
-    public function cancel(AccountMove $move): AccountMove
+    public function cancel(AccountMove $move, ?string $reason = null): AccountMove
     {
+        $wasPosted = $move->state === MoveState::POSTED;
+
+        $this->assertReasonGiven($move, $reason);
+
         $move->state = MoveState::CANCEL;
 
         $move->save();
@@ -37,6 +41,10 @@ class MoveWorkflow
         $move->refresh();
 
         $this->stampLineStates($move, MoveState::CANCEL);
+
+        if ($wasPosted) {
+            $this->recordReason($move, 'cancelled', (string) $reason);
+        }
 
         MoveCancelled::dispatch($move);
 
@@ -81,11 +89,15 @@ class MoveWorkflow
         return app(MoveCalculator::class)->recompute($move);
     }
 
-    public function resetToDraft(AccountMove $move): AccountMove
+    public function resetToDraft(AccountMove $move, ?string $reason = null): AccountMove
     {
         if (! in_array($move->state, [MoveState::CANCEL, MoveState::POSTED])) {
             throw new Exception('Only posted/cancelled journal entries can be reset to draft.');
         }
+
+        $wasPosted = $move->state === MoveState::POSTED;
+
+        $this->assertReasonGiven($move, $reason);
 
         $this->assertNotExchangeDifference($move);
 
@@ -110,6 +122,10 @@ class MoveWorkflow
         $move->refresh();
 
         $this->stampLineStates($move, MoveState::DRAFT);
+
+        if ($wasPosted) {
+            $this->recordReason($move, 'reset', (string) $reason);
+        }
 
         MoveDrafted::dispatch($move);
 
@@ -295,6 +311,37 @@ class MoveWorkflow
                 throw new Exception(__('accounts::account-manager.post-action-validate.unbalanced'));
             }
         }
+    }
+
+    /**
+     * Accounting plan, A2b (user, 2026-11-13, "like Zoho Books"): undoing
+     * a confirmed document needs a reason, because customers ask for price
+     * changes after the fact and the history must say why the figures moved.
+     * Drafts and cancelled documents need none: they were never in the books.
+     * Checked here, not on the screen, so every caller is held to it; the API
+     * supplies its own wording when a client sends none.
+     *
+     * @throws Exception
+     */
+    protected function assertReasonGiven(AccountMove $move, ?string $reason): void
+    {
+        if ($move->state === MoveState::POSTED && trim((string) $reason) === '') {
+            throw new Exception(__('accounts::account-manager.change-reason.required'));
+        }
+    }
+
+    /**
+     * Written to the document's own history with who and when, under the
+     * document's company (not the session's), so the company activity log
+     * (plan #1, CR-11) finds it.
+     */
+    protected function recordReason(AccountMove $move, string $action, string $reason): void
+    {
+        $move->addMessage([
+            'type'       => 'comment',
+            'company_id' => $move->company_id,
+            'body'       => e(__('accounts::account-manager.change-reason.'.$action, ['reason' => trim($reason)])),
+        ]);
     }
 
     protected function assertNotExchangeDifference(AccountMove $move): void

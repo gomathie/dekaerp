@@ -4,6 +4,7 @@ namespace Webkul\Account\Filament\Resources\InvoiceResource\Actions;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Livewire\Component;
 use Throwable;
@@ -28,13 +29,24 @@ class ResetToDraftAction extends Action
             ->label(__('accounts::filament/resources/invoice/actions/reset-to-draft-action.title'))
             ->color('gray')
             ->icon('heroicon-o-arrow-path')
-            ->action(function (Move $record, Component $livewire): void {
+            // A2b (user, 2026-11-13): a confirmed document asks why, like Zoho
+            // Books. MoveWorkflow refuses a blank reason too; this field is
+            // only how the screen collects it.
+            ->schema(fn (Move $record): array => $record->state === MoveState::POSTED ? [
+                Textarea::make('reason')
+                    ->label(__('accounts::account-manager.change-reason.field'))
+                    ->helperText(__('accounts::account-manager.change-reason.helper'))
+                    ->required()
+                    ->maxLength(500)
+                    ->rows(3),
+            ] : [])
+            ->action(function (Move $record, Component $livewire, array $data): void {
                 if (! $this->validateMove($record)) {
                     return;
                 }
 
                 try {
-                    $record = AccountFacade::resetToDraftMove($record);
+                    $record = AccountFacade::resetToDraftMove($record, $data['reason'] ?? null);
 
                     $record->save();
 

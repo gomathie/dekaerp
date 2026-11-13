@@ -26,12 +26,15 @@ use Webkul\Account\Http\Resources\V1\MoveResource;
 use Webkul\Account\Models\PaymentRegister;
 use Webkul\Account\Models\Refund;
 use Webkul\Accounting\Models\Journal;
+use Webkul\Account\Http\Controllers\API\V1\Concerns\ReadsChangeReason;
 
 #[Group('Account API Management')]
 #[Subgroup('Refunds', 'Manage vendor refunds')]
 #[Authenticated]
 class RefundController extends Controller
 {
+    use ReadsChangeReason;
+
     #[Endpoint('List refunds', 'Retrieve a paginated list of vendor refunds with filtering and sorting')]
     #[QueryParam('include', 'string', 'Comma-separated list of relationships to include. </br></br><b>Available options:</b> partner, currency, journal, company, invoicePaymentTerm, fiscalPosition, invoiceUser, partnerShipping, partnerBank, invoiceIncoterm, invoiceCashRounding, paymentMethodLine, campaign, source, medium, creator, invoiceLines, invoiceLines.product, invoiceLines.uom, invoiceLines.taxes, invoiceLines.account, invoiceLines.currency, invoiceLines.companyCurrency, invoiceLines.partner, invoiceLines.creator, invoiceLines.journal, invoiceLines.company, invoiceLines.groupTax, invoiceLines.taxGroup, invoiceLines.payment, invoiceLines.taxRepartitionLine', required: false, example: 'partner,invoiceLines.product')]
     #[QueryParam('filter[id]', 'string', 'Comma-separated list of IDs to filter by', required: false, example: 'No-example')]
@@ -397,7 +400,7 @@ class RefundController extends Controller
         }
 
         try {
-            $refund = AccountFacade::resetToDraftMove($refund);
+            $refund = AccountFacade::resetToDraftMove($refund, $this->changeReason());
         } catch (Exception $exception) {
             return response()->json([
                 'message' => $exception->getMessage(),
