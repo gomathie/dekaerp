@@ -63,4 +63,9 @@ return [
     ],
 
     'trend' => ':change par rapport à la période précédente',
+
+    'modules' => [
+        'heading' => 'Dans toute l\'entreprise',
+        'open'    => 'Ouvrir',
+    ],
 ];

@@ -16,6 +16,7 @@ use Webkul\Invoice\Filament\Overview\OverviewRegistry;
 use Webkul\Invoice\Filament\Widgets\OverviewAttentionWidget;
 use Webkul\Invoice\Filament\Widgets\OverviewCashFlowChart;
 use Webkul\Invoice\Filament\Widgets\OverviewHeadlineWidget;
+use Webkul\Invoice\Filament\Widgets\OverviewModuleCards;
 use Webkul\Product\Models\Category;
 use Webkul\Product\Models\Product;
 use Webkul\Support\Enums\NavigationGroup;
@@ -305,6 +306,10 @@ class Overview extends BaseDashboard
                 OverviewHeadlineWidget::class,
                 ...(array_key_exists('invoices', $sections) ? [OverviewCashFlowChart::class] : []),
                 OverviewAttentionWidget::class,
+                // Every other module's key items (mockup approved 2026-11-13).
+                // Only modules the company has and the user may see; with
+                // none, the widget's canView() hides the whole section.
+                OverviewModuleCards::class,
             ];
         }
 

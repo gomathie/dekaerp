@@ -4,7 +4,8 @@
     plugin views are not all in the compiled theme, and a missing class
     renders silently unstyled. Tones follow the panel colours in both themes.
 --}}
-<x-filament-widgets::widget>
+{{-- Refreshes itself every 5 minutes (user, 2026-11-13). --}}
+<x-filament-widgets::widget wire:poll.300s>
     <style>
         .ov-attn { list-style: none; margin: -0.25rem -0.5rem; padding: 0; }
         .ov-attn li + li { border-top: 1px solid rgb(15 23 42 / 0.06); }

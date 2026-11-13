@@ -19,7 +19,9 @@ require_once __DIR__.'/../../../../support/tests/Helpers/FilamentHelper.php';
  * actor's session; the export covers exactly the filtered rows.
  */
 beforeEach(function (): void {
-    TestBootstrapHelper::ensurePluginInstalled('partners');
+    // Partners is a core plugin with no install command; the ERP install
+    // brings it, as in the other security tests.
+    TestBootstrapHelper::ensureERPInstalled();
 });
 
 function activityRow(?int $companyId, string $event = 'updated', array $properties = []): Message

@@ -58,4 +58,15 @@ class TimeOffServiceProvider extends PackageServiceProvider
             $panel->plugin(TimeOffPlugin::make());
         });
     }
+
+    public function packageBooted(): void
+    {
+        // The Employees card on the Overview (2026-11-13). Keyed: re-booting replaces it.
+        \Webkul\Support\Filament\Contributions\DashboardCardRegistry::card(
+            'employees',
+            fn (): bool => Filament\OverviewCard::visible(),
+            fn (): array => Filament\OverviewCard::data(),
+            sort: 40,
+        );
+    }
 }

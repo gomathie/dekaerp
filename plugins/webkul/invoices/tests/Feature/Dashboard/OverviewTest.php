@@ -69,7 +69,7 @@ it('limits the widgets to the chosen section and shows every visible section by 
     // widgets: headline cards, the money in/out chart and Needs attention.
     // It also kept 23 widgets in one Livewire update (Sentry DEKAERP-16).
     $page->filters = [];
-    expect($page->getWidgets())->toBe([OverviewHeadlineWidget::class, OverviewCashFlowChart::class, OverviewAttentionWidget::class])
+    expect($page->getWidgets())->toBe([OverviewHeadlineWidget::class, OverviewCashFlowChart::class, OverviewAttentionWidget::class, Webkul\Invoice\Filament\Widgets\OverviewModuleCards::class])
         ->and($page->getWidgets())->not->toContain('TestOnlyWidget');
 
     // Changed 2026-11-11 (user): "At a glance" comes first, then widgets are
@@ -141,9 +141,10 @@ it('needs no permission of its own, so existing roles keep their dashboards', fu
 /**
  * Sentry DEKAERP-11 (2026-11-11): Filament stats and chart widgets refresh
  * every 5 seconds by default, so each open Overview re-ran every query 12
- * times a minute. None of them may poll; changing a filter reloads them.
+ * times a minute. Changed 2026-11-13 (user): the All tab may refresh every
+ * 5 minutes; nothing may poll more often than that.
  */
-it('does not poll any widget on the overview', function (): void {
+it('never polls an overview widget more often than every 5 minutes', function (): void {
     CompanyHelper::actingAsCompanyUser(Company::factory()->create(), ['page_invoice_invoices']);
 
     $page = new Overview;
@@ -154,8 +155,8 @@ it('does not poll any widget on the overview', function (): void {
     foreach ($widgets as $widget) {
         $defaults = (new ReflectionClass($widget))->getDefaultProperties();
 
-        if (array_key_exists('pollingInterval', $defaults)) {
-            expect($defaults['pollingInterval'])->toBeNull($widget);
+        if (array_key_exists('pollingInterval', $defaults) && $defaults['pollingInterval'] !== null) {
+            expect((int) $defaults['pollingInterval'])->toBeGreaterThanOrEqual(300, $widget);
         }
     }
 });
@@ -268,4 +269,32 @@ it('counts an overdue customer invoice in Needs attention', function (): void {
     $overdue = collect(InvoiceAttention::items())->firstWhere('tone', 'warning');
 
     expect($overdue['count'])->toBe(1);
+});
+
+/**
+ * "Across the company" cards (mockup approved 2026-11-13; user: the page must
+ * render cleanly when a company does not have some modules). A card shows
+ * only when its module is visible to this user; one failing card is left
+ * out without taking the dashboard down.
+ */
+it('shows only the module cards the user may see, and survives a failing card', function (): void {
+    CompanyHelper::actingAsCompanyUser(Company::factory()->create(), ['page_invoice_invoices']);
+
+    $registry = Webkul\Support\Filament\Contributions\DashboardCardRegistry::class;
+
+    $registry::card('test-visible', fn (): bool => true, fn (): array => ['label' => 'Shown', 'url' => null, 'items' => []]);
+    $registry::card('test-hidden', fn (): bool => false, fn (): array => ['label' => 'Hidden', 'url' => null, 'items' => []]);
+    $registry::card('test-broken', fn (): bool => true, fn (): array => throw new RuntimeException('query failed'));
+
+    try {
+        $labels = array_column($registry::visible(), 'label');
+
+        expect($labels)->toContain('Shown')
+            ->and($labels)->not->toContain('Hidden')
+            ->and(count(array_filter($labels, fn (string $label): bool => $label === 'Shown')))->toBe(1);
+    } finally {
+        $registry::forget('test-visible');
+        $registry::forget('test-hidden');
+        $registry::forget('test-broken');
+    }
 });

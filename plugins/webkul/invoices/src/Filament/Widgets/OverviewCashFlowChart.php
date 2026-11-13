@@ -14,6 +14,9 @@ class OverviewCashFlowChart extends RevenueOverTimeWidget
 {
     protected static bool $isDiscovered = false;
 
+    // Every 5 minutes on the Overview (user, 2026-11-13); see OverviewHeadlineWidget.
+    protected ?string $pollingInterval = '300s';
+
     protected int|string|array $columnSpan = ['default' => 'full', 'md' => 2, 'xl' => 2];
 
     /**
