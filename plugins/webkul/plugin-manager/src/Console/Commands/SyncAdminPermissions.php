@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\PermissionRegistrar;
 use Webkul\Security\PermissionRegistrar as SecurityPermissionRegistrar;
+use Webkul\Security\Services\RoleTemplateProvisioner;
 
 /**
  * Creates every missing Shield permission and gives it to the Admin role.
@@ -76,6 +77,16 @@ class SyncAdminPermissions extends Command
         }
 
         $this->components->info(sprintf('Admin role given %d missing permission(s).', $missing->count()));
+
+        // Role templates (CR-5, 2026-11-13) are created here, after the
+        // permissions exist, because this already runs on every deploy. Only
+        // missing templates are created: an existing one is never changed,
+        // so edits made on the Roles screen survive.
+        $created = app(RoleTemplateProvisioner::class)->provision();
+
+        if ($created !== []) {
+            $this->components->info('Role templates created: '.implode(', ', $created).'.');
+        }
 
         return self::SUCCESS;
     }

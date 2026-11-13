@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'title'            => 'AureusERP - Enterprise Resource Planning',
-    'meta_description' => 'AureusERP - Modern Enterprise Resource Planning System',
+    'title'            => 'DEKA Central - Enterprise Resource Planning',
+    'meta_description' => 'DEKA Central - Modern Enterprise Resource Planning System',
 
     'nav' => [
         'dashboard' => 'Dashboard',
@@ -11,7 +11,7 @@ return [
     ],
 
     'hero' => [
-        'title'         => 'Welcome to AureusERP',
+        'title'         => 'Welcome to DEKA Central',
         'subtitle'      => 'A Modern Enterprise Resource Planning Solution',
         'description'   => 'Streamline your business operations with our comprehensive ERP system. Manage sales, purchases, inventory, accounting, and more from a single platform.',
         'cta_primary'   => 'Get Started',
@@ -55,7 +55,7 @@ return [
 
     'cta' => [
         'title'       => 'Ready to Transform Your Business?',
-        'description' => 'Join thousands of businesses that trust AureusERP for their daily operations.',
+        'description' => 'Join thousands of businesses that trust DEKA Central for their daily operations.',
         'button'      => 'Start Free Trial',
     ],
 
