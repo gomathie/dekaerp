@@ -81,6 +81,7 @@ use Webkul\Sale\Models\Product;
 use Webkul\Sale\Models\Quotation as Order;
 use Webkul\Sale\Settings\PriceSettings;
 use Webkul\Sale\Settings\QuotationAndOrderSettings;
+use Webkul\Support\Filament\CompanyMembers;
 use Webkul\Support\Filament\Forms\Components\Repeater;
 use Webkul\Support\Filament\Forms\Components\Repeater\TableColumn;
 use Webkul\Support\Filament\Infolists\Components\RepeatableEntry;
@@ -250,7 +251,7 @@ class QuotationResource extends Resource
                                 Fieldset::make(__('sales::filament/clusters/orders/resources/quotation.form.tabs.other-information.fieldset.sales.title'))
                                     ->schema([
                                         Select::make('user_id')
-                                            ->relationship('user', 'name', fn ($query) => \Webkul\Support\Filament\CompanyMembers::scope($query))
+                                            ->relationship('user', 'name', fn ($query) => CompanyMembers::scope($query))
                                             ->searchable()
                                             ->preload()
                                             ->label(__('sales::filament/clusters/orders/resources/quotation.form.tabs.other-information.fieldset.sales.fields.sales-person')),
@@ -340,7 +341,8 @@ class QuotationResource extends Resource
                                             ->relationship(
                                                 name: 'currency',
                                                 titleAttribute: 'name',
-                                                modifyQueryUsing: fn (Builder $query) => $query->active(),
+                                                // CR-6: only the company's permitted currencies, when it has a list.
+                                                modifyQueryUsing: fn (Builder $query, Get $get) => $query->active()->permittedFor((int) ($get('company_id') ?: current_company_id())),
                                             )
                                             ->required()
                                             ->searchable()

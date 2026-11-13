@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use Webkul\Field\Traits\HasCustomFields;
 use Webkul\Support\Database\Factories\CurrencyFactory;
@@ -36,6 +37,32 @@ class Currency extends Model
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('active', true);
+    }
+
+    /**
+     * Currencies a company may pick on a document (CR-6, 2026-11-13).
+     *
+     * No list for the company means no restriction, which is what every
+     * company had before. With a list, the base currency is always added, so
+     * a company can never be locked out of its own accounting currency.
+     * Both reads skip global scopes: the actor's company scope must not
+     * decide what another company's document may use.
+     */
+    public function scopePermittedFor(Builder $query, ?int $companyId): Builder
+    {
+        if (! $companyId) {
+            return $query;
+        }
+
+        $ids = DB::table('company_currencies')->where('company_id', $companyId)->pluck('currency_id');
+
+        if ($ids->isEmpty()) {
+            return $query;
+        }
+
+        $baseId = DB::table('companies')->where('id', $companyId)->value('currency_id');
+
+        return $query->whereIn($query->qualifyColumn('id'), $ids->push($baseId)->filter()->unique()->all());
     }
 
     public static function findByCode(?string $code): ?self
