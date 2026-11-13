@@ -10,6 +10,8 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.9.0 — 2026-11-13
+
 ### Features
 
 * Accounting: Tax Summary report. For any period, each tax (for example VAT, NHIL and GETFund) with its taxable amount, the tax collected on sales and paid on purchases, and the net to pay or reclaim. Credit notes reduce it. Export to Excel.
