@@ -217,8 +217,10 @@ invite" acceptance is the existing invitation form; not rebuilt.
 
 **Part 1 built 2026-11-13:** `company_currencies`, `Currency::permittedFor()`,
 staff-only "Currencies" section on the company form, applied to invoice, bill,
-quotation and purchase-order pickers. Still to do: the audited base-currency
-change (D-CR-4), the API/imports, and the remaining pickers.
+quotation and purchase-order pickers. **D-CR-4 built the same day:**
+`Account\Services\BaseCurrencyChange` plus a Super Admin "Base currency"
+section on the company edit page (change log entry). Still to do: the
+API/imports and the remaining pickers.
 - Acceptance: Ghana GHS + USD/EUR, Zambia ZMW + USD/ZAR, DRC CDF + USD/EUR
   configured and used on an invoice; a base-currency change after posting
   asks for confirmation and is audited.

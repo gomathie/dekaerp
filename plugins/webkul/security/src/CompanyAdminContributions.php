@@ -124,10 +124,6 @@ class CompanyAdminContributions
     }
 
     /**
-     * Chosen once, at creation, by installation staff (D-SAAS-11). A tenant
-     * Company Admin never sees it. The day count is only for a test account.
-     */
-    /**
      * Extra transaction currencies (CR-6, 2026-11-13). Installation staff
      * choose them, not the company's own administrator (plan decision): a
      * hidden field is not saved by Filament, so a Company Admin's save cannot
@@ -155,6 +151,10 @@ class CompanyAdminContributions
             ->columns(1);
     }
 
+    /**
+     * Chosen once, at creation, by installation staff (D-SAAS-11). A tenant
+     * Company Admin never sees it. The day count is only for a test account.
+     */
     protected static function accountTypeSection(): Section
     {
         return Section::make(__('security::filament/contributions/company.account.title'))
