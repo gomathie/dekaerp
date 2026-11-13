@@ -2067,7 +2067,9 @@ REFERENCES
   `chore/resource-structure` branch, not on main:
   `git show chore/resource-structure:docs/upstream-structure-alignment-plan.md`.
   Do that work only on that branch, in its own worktree, and only after
-  Logistics is merged. The layout rule itself is in project memory above and in
+  Logistics is merged (*met 2026-11-13: Logistics is on `develop` and in
+  production; `main` lags behind develop, so base the branch on `develop`*).
+  The layout rule itself is in project memory above and in
   docs/logistics-plan.md, so new resources follow it everywhere meanwhile.
 • docs/completed/company-admin-role-plan.md — the "Company Admin" request and
   the Users-list tenant leak found while investigating it. *Superseded
@@ -2088,6 +2090,8 @@ REFERENCES
   scenarios and the approval gate for instruction changes. Documentation only;
   nothing is installed.
 • docs/api-access.md — client API tokens and abilities.
+• docs/saas-operations.md — operator guide for client companies: onboarding,
+  setup status, seats, role templates, impersonation, billing checks.
 • docs/supabase-database.md — database hardening and the Data API.
 • docs/handover-actions.md — actions the user must take in the dashboards.
 • README.md — repository setup and product overview.

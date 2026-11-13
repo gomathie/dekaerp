@@ -6,6 +6,51 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-13, rebrand sweep follow-up (plan #3, option A)
+
+- **Why:** a sweep for "Webkul"/"Aureus" in visible text found three
+  leftovers: the welcome translations (5 languages, unused by any route but
+  shipped), the generated API docs `<title>`, and the plugin-manager
+  `composer.json` description.
+- **How:** replaced with "DEKA Central" (RB-D5). `config/scribe.php` already
+  takes its title from `app.name`, so a regeneration keeps it. Package names
+  (`webkul/*`), namespaces, the root `composer.json` "name" and the README
+  logo URLs on the `dekaerp/temp-media` repo are left: names belong to
+  option B, and the logo files would need new images. Domains untouched
+  (RB-D6).
+- **Verification:** `php -l` on the five welcome files. No views or other
+  translation file contains "Webkul" or "Aureus" as visible text.
+- **Rollback:** revert the six files.
+
+## 2026-11-13, role templates (CR-5, option A)
+
+- **Why:** CR-5. New company users got hand-ticked permissions or the
+  configured business role only. Decision taken while the user was away:
+  option A (installation-wide templates) instead of D-CR-2's per-company
+  copies, because roles have no company column and `(name, guard)` is
+  unique; per-company roles would be a schema change to a security
+  boundary (option B in the plan, still open).
+- **How:** `Security\Services\RoleTemplateProvisioner::TEMPLATES` - Finance
+  Manager, Accountant, HR Manager, Payroll Officer, Sales Manager, Inventory
+  Manager, Logistics Manager, Standard Employee - each a map of permission
+  plugin key to full / standard / view. Plugin keys match on underscores, so
+  `account` never reaches `accounting`. A forbidden-fragment backstop drops
+  security, role, plugin, bypass and impersonation names. `provision()`
+  creates only missing roles; `erp:sync-permissions` calls it after it
+  generates permissions, so it runs on every deploy without a new step.
+- **Benefit:** eight ready roles on the next deploy; staff can edit them on
+  the Roles screen and the edit sticks.
+- **Trade-off / risk:** a template gets the permissions that exist when it
+  is first created; a plugin installed later is not added to it (an
+  existing role is never touched). Payroll Officer is mostly empty until the
+  payroll plugin exists. Company Admins still assign a template only if they
+  hold all its permissions themselves.
+- **Verification:** `security/tests/Feature/SaaSAdministration/RoleTemplateTest.php`
+  4 passed on `aureuserp_testing_claude_ui` (access mapping, no forbidden
+  permission, created once and edits kept, created by the deploy sync).
+- **Rollback:** remove the provisioner call from `SyncAdminPermissions`;
+  delete the eight roles on the Roles screen if unwanted.
+
 ## 2026-11-13, billing health check (CR-10 item 3)
 
 - **Why:** two billing failures are silent: balances that stop adding up,

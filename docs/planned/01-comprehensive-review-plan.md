@@ -187,6 +187,15 @@ company cannot even share a name. Options:
   touches Shield's role resource, so 2–3 days with tests.
 Recommendation: A now, B only if a client actually asks to edit a role.
 
+**Built 2026-11-13, option A (decided while the user was away; reverse by
+asking for B).** `Security\Services\RoleTemplateProvisioner`: eight
+installation-wide roles, created by `erp:sync-permissions` on deploy only when
+missing, so Roles-screen edits survive. Access per plugin is full / standard
+(no delete or restore) / view. Never a security, role, plugin, bypass or
+impersonation permission. Assignment is unchanged: a Company Admin can give
+only a role whose permissions they hold. The "one modal: name, email, role →
+invite" acceptance is the existing invitation form; not rebuilt.
+
 ### CR-6 — Company currencies (P1)
 
 - Platform: the existing `currencies` catalog (no second table); add a
@@ -256,7 +265,9 @@ Decided 2026-11-12 (D-CR-7). Every SAAS package is built but in "review".
    `PlatformPayments::reconcile()`) or an active subscription more than a day
    past `next_invoice_at` (scheduler or invoice job stalled). Not scheduled
    yet: wiring it to an alert is a deploy choice.
-4. SAAS-14 documentation, including the stale `AGENTS.md` note it owns.
+4. *Done 2026-11-13:* operator guide `docs/saas-operations.md`; the stale
+   `accepted_at` note in `AGENTS.md` was already marked superseded.
+   SAAS-14 documentation, including the stale `AGENTS.md` note it owns.
 5. Browser smoke (done inside CR-3); mark each SAAS package "done" as it
    passes.
 
