@@ -8,6 +8,27 @@ return [
         'title' => 'Empresas',
     ],
 
+    'provisioning' => [
+        'column' => 'Estado de alta',
+        'filter' => 'Estado de alta',
+
+        'statuses' => [
+            'active'           => 'Activa',
+            'invited'          => 'Invitada, aún no activa',
+            'expired'          => 'Invitación caducada',
+            'no-administrator' => 'Sin administrador',
+            'closed'           => 'Cerrada',
+        ],
+
+        'resend' => [
+            'label'         => 'Reenviar invitación',
+            'heading'       => '¿Reenviar la invitación del administrador?',
+            'description'   => 'La invitación a :email se envía de nuevo y sigue siendo válida 7 días más.',
+            'invited'       => 'Invitación reenviada',
+            'invite-failed' => 'No se pudo reenviar la invitación. Puede que se haya aceptado o revocado mientras tanto.',
+        ],
+    ],
+
     'global-search' => [
         'email' => 'Correo electrónico',
     ],

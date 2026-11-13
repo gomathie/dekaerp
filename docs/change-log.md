@@ -6,6 +6,38 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-13, company setup status and resend invitation (CR-7)
+
+- **Why:** comprehensive review CR-7. Staff could not see which new companies
+  still had nobody able to sign in; the only clue was opening each company's
+  Users and logins list. Acceptance: no company shows Active while its
+  administrator cannot log in.
+- **How:** `Security\Services\CompanyProvisioningStatus` derives the status;
+  nothing is stored. Closed = archived or `is_active` off; Active = an
+  enabled administrator from `CompanyAdministratorAccount::administrators()`
+  (the one rule for who administers a company); Invited = otherwise a pending
+  invitation; Invitation expired = only lapsed, unaccepted, unrevoked ones;
+  else No administrator. Security's `CompanyResource::table()` pushes a badge
+  column, a multi-select filter (ids worked out by the same service, so filter
+  and column cannot disagree) and a "Resend invitation" row action on Invited
+  companies, which calls the existing `CompanyAdministratorInviter::resend()`
+  (its service re-checks who may manage the invitation and that it is still
+  pending). All three only for installation staff
+  (`CompanyAdminContributions::administersInstallation()`). Five languages.
+- **Not built:** a Suspended state from billing's read-only: security must not
+  depend on platform-billing; billing screens already show it. An expired
+  invitation is not resent (the service refuses non-pending rows by design):
+  staff invite again from the company form.
+- **Benefit:** "Invited, not yet active" is one filter; recovery is one click.
+- **Trade-off / risk:** status is worked out per row (a few queries each) and
+  the filter evaluates every company the actor may list. Fine for tens or low
+  hundreds of companies; batch it if the list grows past that.
+- **Verification:** `security/tests/Feature/SaaSAdministration/CompanyProvisioningStatusTest.php`
+  4 passed on `aureuserp_testing_claude_ui` (stages, a disabled administrator
+  is not Active, closed, list filter + resend renews the window and mails).
+  `php -l` on the five language files. Full SecurityFeature run: see below.
+- **Rollback:** remove the `table()` override and the service; no schema.
+
 ## 2026-11-13, Sentry DEKAERP-19..1J (local only: test runs emptied the dev server's compiled views)
 
 - **Why:** ten new Sentry issues, all `/admin/login`, "File does not exist /

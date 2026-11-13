@@ -201,10 +201,16 @@ Details and tests: `docs/change-log.md` 2026-11-12.
   action (links already exist in Users and logins).
 - Acceptance: no company shows Active while its administrator cannot log in.
 
+**Built 2026-11-13 (not yet seen in a browser).** Derived status column,
+filter and "Resend invitation" on the companies list, installation staff
+only (`CompanyProvisioningStatus`). Draft was dropped (a company exists only
+once created); Suspended is left to the billing screens so security does not
+depend on platform-billing. Details: `docs/change-log.md` 2026-11-13.
+
 ### CR-8 — Partners / resellers (P2)
 
 - DEKA → Partner → client companies. A partner user can create companies and
-  assign plans within a partner price list; sees commercial status only,
+  assign plans within a partner price list; sees commercial status only, if the branch feature can work we may leave it that way for now. That way the multicompany admin can be termed as a reseller to reduce the work load at this moment.
   never the client's accounting, HR or payroll records.
 - Largest package; needs its own design document first.
 

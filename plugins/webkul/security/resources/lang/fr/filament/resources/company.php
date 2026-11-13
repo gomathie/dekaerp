@@ -8,6 +8,27 @@ return [
         'title' => 'Sociétés',
     ],
 
+    'provisioning' => [
+        'column' => 'État de mise en service',
+        'filter' => 'État de mise en service',
+
+        'statuses' => [
+            'active'           => 'Active',
+            'invited'          => 'Invitée, pas encore active',
+            'expired'          => 'Invitation expirée',
+            'no-administrator' => 'Aucun administrateur',
+            'closed'           => 'Fermée',
+        ],
+
+        'resend' => [
+            'label'         => 'Renvoyer l’invitation',
+            'heading'       => 'Renvoyer l’invitation de l’administrateur ?',
+            'description'   => 'L’invitation à :email est renvoyée et reste valable 7 jours de plus.',
+            'invited'       => 'Invitation renvoyée',
+            'invite-failed' => 'L’invitation n’a pas pu être renvoyée. Elle a peut-être été acceptée ou révoquée entre-temps.',
+        ],
+    ],
+
     'global-search' => [
         'email' => 'E-mail',
     ],
