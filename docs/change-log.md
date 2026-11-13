@@ -35,7 +35,8 @@ for the task/question log this change log is paired with.
 - **Verification:** `security/tests/Feature/SaaSAdministration/CompanyProvisioningStatusTest.php`
   4 passed on `aureuserp_testing_claude_ui` (stages, a disabled administrator
   is not Active, closed, list filter + resend renews the window and mails).
-  `php -l` on the five language files. Full SecurityFeature run: see below.
+  `php -l` on the five language files. Full SecurityFeature: 181 passed
+  (630 assertions), same database.
 - **Rollback:** remove the `table()` override and the service; no schema.
 
 ## 2026-11-13, Sentry DEKAERP-19..1J (local only: test runs emptied the dev server's compiled views)

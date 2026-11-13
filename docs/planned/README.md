@@ -17,6 +17,11 @@ When work on one begins, mark its status "in progress" here and in the plan.
 | 9 | [Landing page](09-landing-page-brief.md) | Public landing page | Not started; content decisions made 2026-11-11. Hosting and screenshots after the other tasks |
 | 10 | [Point of Sale](10-pos-extraction-plan.md) | Point of Sale from upstream | Planning only; first-version scope decided 2026-11-11. Least needed (user, 2026-11-13) |
 
+**Owned elsewhere (user, 2026-11-13):** Inventory (#6), Payroll (#7) and CRM
+(#8) are built by another developer on a separate branch. Agents on this
+branch do not start them; keep shared code (products, employees, partners,
+accounting) compatible and note any change there in `docs/change-log.md`.
+
 Order re-set 2026-11-13 (user: "POS to the end; arrange the rest by ease of
 completion and need"). Previous order: review, restructure, payroll,
 inventory, CRM, POS, accounting, reports, landing page, rebrand.
