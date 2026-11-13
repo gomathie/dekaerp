@@ -26,7 +26,7 @@ class AttendanceResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'icon-attendance';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 5;
 
     protected static string $lang = 'attendances::filament/resources/attendance';
 
@@ -47,7 +47,7 @@ class AttendanceResource extends Resource
 
     public static function getNavigationGroup(): string|UnitEnum
     {
-        return NavigationGroup::Attendance;
+        return NavigationGroup::Employee;
     }
 
     /**

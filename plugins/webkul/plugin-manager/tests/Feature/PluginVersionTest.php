@@ -2,6 +2,8 @@
 
 use Webkul\PluginManager\Models\Plugin;
 
+require_once __DIR__.'/../../../support/tests/Helpers/TestBootstrapHelper.php';
+
 /**
  * Plugin versions (user, 2026-11-13): each plugin has its own version, read
  * from its own composer.json, never upstream's number or the old "1.0.0"

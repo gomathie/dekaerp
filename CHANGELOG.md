@@ -23,6 +23,8 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 * The Overview's All tab is now one board: Sales (revenue, orders and how many quotations became orders, each with its trend and a small chart), money in and out with an optional comparison to the previous period, Purchases with spend by supplier, Needs attention, and Invoices with paid, open and overdue amounts and the invoices to chase.
 * Below it, "Across the company" shows the key figures of Inventory, Projects, Recruitment, Employees and Logistics. Only the modules your company uses appear.
 * The Overview refreshes itself every 5 minutes.
+* Attendance now appears inside the Employees menu.
+* The Plugins page shows each module's own version number.
 
 # CHANGELOG — v1.8.1 — 2026-11-13
 
