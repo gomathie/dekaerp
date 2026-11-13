@@ -56,7 +56,13 @@ class ProjectServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        //
+        // The Projects card on the Overview (2026-11-13). Keyed: re-booting replaces it.
+        \Webkul\Support\Filament\Contributions\DashboardCardRegistry::card(
+            'projects',
+            fn (): bool => Filament\OverviewCard::visible(),
+            fn (): array => Filament\OverviewCard::data(),
+            sort: 20,
+        );
     }
 
     public function packageRegistered(): void
