@@ -6,6 +6,26 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-13, billing health check (CR-10 item 3)
+
+- **Why:** two billing failures are silent: balances that stop adding up,
+  and invoicing that stops because the scheduler or the invoice job is down.
+  Neither shows until a client is billed wrongly or late.
+- **How:** `PlatformBilling\Console\Commands\BillingHealthCheck`
+  (`platform-billing:health-check`), registered in the service provider.
+  Drift comes from `PlatformPayments::reconcile()` for each company with
+  payments (no second balance rule); stalled = active subscription with
+  `next_invoice_at` more than `LATE_AFTER_HOURS` (24) in the past. Exits
+  non-zero when anything is found. Writes nothing.
+- **Also checked (CR-10 item 2):** every membership write already checks
+  seats; nothing to build (plan, CR-10).
+- **Benefit:** one command an operator or a scheduled alert can run.
+- **Trade-off / risk:** not scheduled; someone has to run it or wire it.
+- **Verification:** `platform-billing/tests/Feature/BillingHealthCheckTest.php`
+  2 passed on `aureuserp_testing_claude_vault` (healthy passes; stalled
+  subscription named, exit failure, schedule untouched).
+- **Rollback:** delete the command and its registration line.
+
 ## 2026-11-13, company setup status and resend invitation (CR-7)
 
 - **Why:** comprehensive review CR-7. Staff could not see which new companies

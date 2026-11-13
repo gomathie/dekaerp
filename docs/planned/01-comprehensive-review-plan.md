@@ -173,6 +173,20 @@ Details and tests: `docs/change-log.md` 2026-11-12.
   grant a platform-only ability (existing guard).
 - Acceptance: "Add user → name, email, role → invite" in one modal.
 
+**Blocked on a decision (2026-11-13).** D-CR-2 says each company gets its
+own editable copy, but roles are installation-wide: `roles` has no company
+column and Spatie keeps `(name, guard_name)` unique, so eight copies per
+company cannot even share a name. Options:
+- **A. Shared templates (smallest).** Eight global roles, editable only by
+  installation staff; a Company Admin assigns them inside a membership as
+  today. Changes D-CR-2 (a company cannot adjust its own copy).
+- **B. Per-company roles.** Add `roles.company_id` (null = global), make the
+  unique key `(company_id, name, guard_name)`, scope the Roles screen and
+  every role picker to the current company, and refuse a role from another
+  company in `TenantRoleAssigner`. Matches D-CR-2; security-sensitive and
+  touches Shield's role resource, so 2–3 days with tests.
+Recommendation: A now, B only if a client actually asks to edit a role.
+
 ### CR-6 — Company currencies (P1)
 
 - Platform: the existing `currencies` catalog (no second table); add a
@@ -230,6 +244,18 @@ Decided 2026-11-12 (D-CR-7). Every SAAS package is built but in "review".
 3. Operational controls: alerts (scheduler not running, invoice generation
    failing, oldest due subscription) and a reconciliation report recomputing
    invoice balances and credit from immutable rows.
+
+   *Checked 2026-11-13: nothing to build.* Every path that writes
+   `user_allowed_companies` already goes through `SeatCapacityService`: user
+   create/edit pages, invitation create and accept, company creator attach,
+   `CompanyAdministratorAccount`. There is no user API and no import of
+   users; employees do not create users. `erp:install` attaches only the
+   platform administrator, who uses no seat (D-SAAS-03).
+   *Item 3 built 2026-11-13:* `php artisan platform-billing:health-check`,
+   read-only, exits non-zero on balance drift (through
+   `PlatformPayments::reconcile()`) or an active subscription more than a day
+   past `next_invoice_at` (scheduler or invoice job stalled). Not scheduled
+   yet: wiring it to an alert is a deploy choice.
 4. SAAS-14 documentation, including the stale `AGENTS.md` note it owns.
 5. Browser smoke (done inside CR-3); mark each SAAS package "done" as it
    passes.
