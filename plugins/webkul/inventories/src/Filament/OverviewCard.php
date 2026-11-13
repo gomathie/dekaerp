@@ -5,7 +5,8 @@ namespace Webkul\Inventory\Filament;
 use Illuminate\Database\Eloquent\Builder;
 use Webkul\Inventory\Enums\OperationState;
 use Webkul\Inventory\Enums\OperationType;
-use Webkul\Inventory\Filament\Clusters\Operations\Resources\OperationResource;
+use Webkul\Inventory\Filament\Clusters\Operations;
+use Webkul\Inventory\Filament\Pages\Overview;
 use Webkul\Inventory\Models\Operation;
 
 /**
@@ -15,9 +16,15 @@ use Webkul\Inventory\Models\Operation;
  */
 class OverviewCard
 {
+    /**
+     * The Inventory overview page's own rule: module switch plus its page
+     * permission. Not OperationResource::canViewAny(): Operation has no
+     * policy, and Filament answers true without one, so the card showed to
+     * every user, even in companies without Inventory (found 2026-11-13).
+     */
     public static function visible(): bool
     {
-        return OperationResource::canViewAny();
+        return Overview::canAccess();
     }
 
     /**
@@ -51,7 +58,7 @@ class OverviewCard
             'label' => __($lang.'.label'),
             // The Operations section, not OperationResource::getUrl(): that
             // resource builds its URL from a record and fails without one.
-            'url'   => \Webkul\Inventory\Filament\Clusters\Operations::getUrl(),
+            'url'   => Operations::getUrl(),
             'items' => [
                 ['label' => __($lang.'.receipts-today'), 'value' => number_format($receiptsToday)],
                 ['label' => __($lang.'.ready-to-ship'), 'value' => number_format($toShip)],

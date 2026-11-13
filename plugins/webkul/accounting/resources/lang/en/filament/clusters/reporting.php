@@ -155,6 +155,25 @@ return [
             'empty' => 'No tax in this period.',
             'note'  => 'From posted invoices, bills, credit notes and refunds dated in the period. Credit notes and refunds reduce the totals. Check with your accountant before filing.',
         ],
+        'cash-flow' => [
+            'navigation' => [
+                'title' => 'Cash Flow',
+                'group' => 'Statement Reports',
+            ],
+            'actions'  => ['export-excel' => 'Export to Excel'],
+            'filters'  => ['date-range' => 'Date Range'],
+            'columns'  => ['account' => 'From or to', 'in' => 'Money in', 'out' => 'Money out', 'net' => 'Net'],
+            'sections' => ['operating' => 'Operating activities', 'investing' => 'Investing activities', 'financing' => 'Financing activities'],
+            'totals'   => [
+                'opening' => 'Cash at start of period',
+                'section' => 'Net cash',
+                'net'     => 'Net change in cash',
+                'closing' => 'Cash at end of period',
+            ],
+            'other' => 'Other',
+            'empty' => 'No cash movement in this period.',
+            'note'  => 'From posted entries on bank and cash accounts. Each entry is shown under the account on its other side. Transfers between your own bank and cash accounts are left out.',
+        ],
         'trial-balance' => [
             'navigation' => [
                 'title' => 'Trial Balance',

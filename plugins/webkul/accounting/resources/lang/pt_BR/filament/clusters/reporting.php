@@ -155,6 +155,25 @@ return [
             'empty' => 'Nenhum imposto neste período.',
             'note'  => 'Com base em faturas, contas, notas de crédito e reembolsos lançados e datados no período. Notas de crédito e reembolsos reduzem os totais. Confirme com seu contador antes de declarar.',
         ],
+        'cash-flow' => [
+            'navigation' => [
+                'title' => 'Fluxo de caixa',
+                'group' => 'Relatórios de demonstrações',
+            ],
+            'actions'  => ['export-excel' => 'Exportar para Excel'],
+            'filters'  => ['date-range' => 'Período'],
+            'columns'  => ['account' => 'Origem ou destino', 'in' => 'Entradas', 'out' => 'Saídas', 'net' => 'Líquido'],
+            'sections' => ['operating' => 'Atividades operacionais', 'investing' => 'Atividades de investimento', 'financing' => 'Atividades de financiamento'],
+            'totals'   => [
+                'opening' => 'Caixa no início do período',
+                'section' => 'Caixa líquido',
+                'net'     => 'Variação líquida do caixa',
+                'closing' => 'Caixa no fim do período',
+            ],
+            'other' => 'Outros',
+            'empty' => 'Nenhum movimento de caixa neste período.',
+            'note'  => 'Com base em lançamentos nas contas de banco e caixa. Cada lançamento aparece sob a conta da contrapartida. Transferências entre suas próprias contas de banco e caixa ficam de fora.',
+        ],
         'trial-balance' => [
             'navigation' => [
                 'title' => 'Balancete',
