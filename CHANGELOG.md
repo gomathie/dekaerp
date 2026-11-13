@@ -10,6 +10,11 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+### Features
+
+* Accounting: Cash Flow report. Cash at the start and end of a period, and the money in and out in between, grouped as operating, investing and financing. Export to Excel.
+* The Overview has an Accounting section and card: cash at bank, bank lines still to reconcile and draft journal entries, with a "Reconcile bank" shortcut.
+
 # CHANGELOG — v1.9.0 — 2026-11-13
 
 ### Features

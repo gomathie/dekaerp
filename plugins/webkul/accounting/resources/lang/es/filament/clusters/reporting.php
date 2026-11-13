@@ -155,6 +155,25 @@ return [
             'empty' => 'No hay impuestos en este periodo.',
             'note'  => 'A partir de facturas, facturas de proveedor, notas de crédito y reembolsos contabilizados con fecha en el periodo. Las notas de crédito y los reembolsos reducen los totales. Consulte con su contable antes de declarar.',
         ],
+        'cash-flow' => [
+            'navigation' => [
+                'title' => 'Flujo de efectivo',
+                'group' => 'Informes de estados',
+            ],
+            'actions'  => ['export-excel' => 'Exportar a Excel'],
+            'filters'  => ['date-range' => 'Rango de fechas'],
+            'columns'  => ['account' => 'Origen o destino', 'in' => 'Entradas', 'out' => 'Salidas', 'net' => 'Neto'],
+            'sections' => ['operating' => 'Actividades de operación', 'investing' => 'Actividades de inversión', 'financing' => 'Actividades de financiación'],
+            'totals'   => [
+                'opening' => 'Efectivo al inicio del periodo',
+                'section' => 'Efectivo neto',
+                'net'     => 'Variación neta del efectivo',
+                'closing' => 'Efectivo al final del periodo',
+            ],
+            'other' => 'Otros',
+            'empty' => 'No hay movimientos de efectivo en este periodo.',
+            'note'  => 'A partir de asientos contabilizados en cuentas de banco y caja. Cada asiento aparece bajo la cuenta de su contrapartida. Las transferencias entre sus propias cuentas de banco y caja se excluyen.',
+        ],
         'trial-balance' => [
             'navigation' => [
                 'title' => 'Balance de comprobación',

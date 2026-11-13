@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\URL;
 use Webkul\Inventory\Filament\OverviewCard;
 use Webkul\Support\Models\Company;
 
@@ -20,6 +21,23 @@ dataset('module cards', [
     'logistics'   => ['logistics', Webkul\Logistics\Filament\OverviewCard::class],
 ]);
 
+/**
+ * Operation has no policy and Filament allows a resource without one, so a
+ * card gated on OperationResource::canViewAny() showed to everyone (found
+ * 2026-11-13). It now follows the Inventory overview page's rule.
+ */
+it('hides the inventory card from a user who may not open the inventory overview', function (): void {
+    TestBootstrapHelper::ensurePluginInstalled('inventories');
+
+    CompanyHelper::actingAsCompanyUser(Company::factory()->create(), []);
+
+    // The page's permission name comes from the panel, which must include
+    // the plugin installed in this run.
+    FilamentHelper::bootAdminPanel();
+
+    expect(OverviewCard::visible())->toBeFalse();
+});
+
 it('builds the module card from real queries', function (string $plugin, string $card): void {
     TestBootstrapHelper::ensurePluginInstalled($plugin);
 
@@ -29,7 +47,7 @@ it('builds the module card from real queries', function (string $plugin, string 
     // run has no routes in it (they register at boot), so links resolve to
     // '#' here, as in the accounting report tests; the queries are the point.
     FilamentHelper::bootAdminPanel();
-    Illuminate\Support\Facades\URL::resolveMissingNamedRoutesUsing(fn () => '#');
+    URL::resolveMissingNamedRoutesUsing(fn () => '#');
 
     $data = $card::data();
 

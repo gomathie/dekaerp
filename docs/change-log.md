@@ -6,6 +6,34 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-13, night (A6 cash flow; A5 Accounting on the Overview)
+
+- **Why:** accounting plan A5 and A6, next in the agreed order; user away,
+  decisions delegated.
+- **How:** `Reporting/Pages/CashFlow.php` + `CashFlowExport` + view
+  (`page_accounting_cash_flow`, direct method, classification by main
+  counterpart; see the plan). `Accounting\Filament\OverviewCard` (one source
+  for three figures), `AccountingHeadlineWidget`, registered from
+  `AccountingServiceProvider::contributeOverview()` into
+  `DashboardCardRegistry` and, when Invoices is present, `OverviewRegistry`.
+  Language: `cash-flow` block in reporting.php and `filament/overview-card.php`,
+  five languages each.
+- **Decisions:** no journal charts on the Overview (Livewire component limit,
+  Sentry DEKAERP-16); cash = "Bank and cash" accounts only, so money parked
+  in outstanding receipts counts when the bank confirms it.
+- **Benefit:** a cash flow statement without a spreadsheet; accounting work
+  waiting (lines to reconcile, drafts) visible on the first screen.
+- **Risk:** not seen in a browser.
+- **Verification (Sail, `aureuserp_testing_claude_ui`):** CashFlowTest +
+  BankReconciliationTest 26 passed (53 assertions); the bank match test now
+  asserts the posted bank entry unconditionally (the default set-up uses
+  outstanding receipts). AccountingOverviewTest + invoices Dashboard folder:
+  26 passed, 1 failed - the test called `DashboardCardRegistry::visible()`,
+  which ran Inventory's card against tables absent from this suite and
+  aborted the transaction; the test now checks the Accounting card only.
+  AccountingOverviewTest then 3 passed (12 assertions). `php -l` on all new language files; Pint.
+- **Rollback:** remove the page and the `contributeOverview()` call.
+
 ## 2026-11-13, evening (A3 bank reconciliation; plugin versions; Attendance menu)
 
 - **Why:** accounting plan A3 (ACC-D3: CSV first); user: improved plugins

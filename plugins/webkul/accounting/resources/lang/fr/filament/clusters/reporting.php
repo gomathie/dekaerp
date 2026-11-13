@@ -155,6 +155,25 @@ return [
             'empty' => 'Aucune taxe sur cette période.',
             'note'  => 'Calculé à partir des factures, factures fournisseur, avoirs et remboursements comptabilisés et datés dans la période. Les avoirs et remboursements réduisent les totaux. Vérifiez avec votre comptable avant toute déclaration.',
         ],
+        'cash-flow' => [
+            'navigation' => [
+                'title' => 'Flux de trésorerie',
+                'group' => 'Rapports de synthèse',
+            ],
+            'actions'  => ['export-excel' => 'Exporter vers Excel'],
+            'filters'  => ['date-range' => 'Période'],
+            'columns'  => ['account' => 'Provenance ou destination', 'in' => 'Entrées', 'out' => 'Sorties', 'net' => 'Net'],
+            'sections' => ['operating' => 'Activités opérationnelles', 'investing' => 'Activités d’investissement', 'financing' => 'Activités de financement'],
+            'totals'   => [
+                'opening' => 'Trésorerie en début de période',
+                'section' => 'Trésorerie nette',
+                'net'     => 'Variation nette de trésorerie',
+                'closing' => 'Trésorerie en fin de période',
+            ],
+            'other' => 'Autre',
+            'empty' => 'Aucun mouvement de trésorerie dans la période.',
+            'note'  => 'Calculé à partir des écritures comptabilisées sur les comptes de banque et de caisse. Chaque écriture apparaît sous le compte de sa contrepartie. Les virements entre vos propres comptes de banque et de caisse sont exclus.',
+        ],
         'trial-balance' => [
             'navigation' => [
                 'title' => 'Balance générale',
