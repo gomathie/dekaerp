@@ -6,6 +6,44 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-13, evening (A3 bank reconciliation; plugin versions; Attendance menu)
+
+- **Why:** accounting plan A3 (ACC-D3: CSV first); user: improved plugins
+  must not show upstream's number, each plugin its own version; Attendance
+  should feel part of Employees without merging the plugin.
+- **How:**
+  - Bank reconciliation: page `Accounting\...\Pages\BankReconciliation`,
+    service `Accounting\Services\BankReconciliation`, exception
+    `CannotReconcile` (one constructor per refusal), `BankStatementLine`
+    model filled in (fillable, casts, relations, `InheritsParentCompany`
+    from the statement). Migration `2026_11_13_000001` adds nullable `date`
+    and `payment_id` to statement lines (production had 0 statements and 0
+    payments, checked read-only). Entries go through Move, MoveWorkflow and
+    Reconciler, so lock date and balance checks apply; lines set
+    `display_type` PRODUCT explicitly. Every entry point re-checks the page
+    permission, the module switch and the company.
+  - `Support\Filament\ImportUpload` now holds the upload resolver that was in
+    Partners' `ListPartners`; both imports use it.
+  - Plugin versions: `"version"` in each plugin's composer.json, read by
+    `Plugin::currentVersion()` on the Plugins page. Starting numbers from
+    history (upstream v1.5.0 base; one bump per fork release that touched the
+    plugin). Rule added to AGENTS.md.
+  - Attendance resource, reporting and settings moved to the Employees menu
+    (sort 5-7).
+- **Benefit:** bank lines can be checked off against payments and charges
+  without a spreadsheet; payments waiting for the bank turn Paid when the
+  bank confirms them. Plugin page shows real versions.
+- **Risk:** not seen in a browser. Foreign-currency bank journals refused for
+  now. No "unmatch" yet: a wrong match is undone by reversing the bank entry.
+- **Verification (Sail, `aureuserp_testing_claude_ui`):**
+  BankReconciliationTest 15 passed (36 assertions) after one fix (migration
+  missing from the provider's list: 10 failed with "column date does not
+  exist"). ContactImportTest 11 passed (36) after the upload-resolver move.
+  PluginVersionTest 4 passed (63). Attendance NavigationTest 3
+  passed. Pint; `php -l` on all 10 new language files.
+- **Deploy:** `migrate`, then `erp:sync-permissions` (new page permission).
+- **Rollback:** remove the page; the migration only adds nullable columns.
+
 ## 2026-11-13, later (Overview board from the approved mockup; module cards; Activity log; Tax Summary; deletes logged)
 
 - **Why:** user approved the Dribbble-based mockup (greeting, one panel per

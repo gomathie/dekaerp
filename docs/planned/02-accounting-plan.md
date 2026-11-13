@@ -2,7 +2,7 @@
 
 Status: **in progress. Done: A1 (known figures, report isolation), A2 (lock
 date, v1.8.0), A2b (reason on reset, v1.8.1). Built 2026-11-13, awaiting push:
-A7 (Tax Summary). Next: A3 bank reconciliation, then A5, A6, A4.** Built from the brief below
+A7 (Tax Summary), A3 (bank reconciliation). Next: A5, A6, A4.** Built from the brief below
 (added by the user 2026-11-12), cut to the gaps after the user's instruction
 the same day: "if what we have is enough don't plan an overkill, just an
 improvement and an easy workflow."
@@ -101,6 +101,21 @@ Import a statement (CSV, mapped columns; OFX later if asked), list lines,
 suggest the matching open payment or invoice by amount and partner, confirm
 with one click, or create a counterpart entry (bank charge, interest) from
 the line. Reuses `Reconciler`; no new ledger logic.
+*Built 2026-11-13: page Accounting → Bank Reconciliation
+(`page_accounting_bank_reconciliation`), rules in
+`accounting/src/Services/BankReconciliation.php`. CSV import with column
+numbers (one amount column or money in/out), five date formats, comma or
+semicolon files, both number styles, 5,000 lines max; lines take the
+journal's company. Match: payments in the same bank journal, same amount
+and direction, not yet matched; posts bank / outstanding and reconciles with
+the payment, so it turns Paid; a payment posted straight to the bank account
+is only linked. Book: bank / chosen account (receivable and payable
+refused). Decisions: invoice matching goes through registering the payment
+first (reuses the payment flow, no second rule); company currency only for
+now (foreign-currency bank journals refused with a message). Upload handling
+shared with the contact import (`Support\Filament\ImportUpload`). Tests:
+`accounting/tests/Feature/Filament/BankReconciliationTest.php`. Not yet:
+OFX, unmatching, auto-match.*
 
 **A4 — Country templates.**
 Seeded template sets: Ghana, Zambia, OHADA (Congo). Chosen from the
