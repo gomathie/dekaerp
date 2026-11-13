@@ -131,13 +131,98 @@ class SaleHeadlineWidget extends StatsOverviewWidget
     }
 
     /**
-     * Revenue per day over the filtered period, for the card's sparkline
-     * (user, 2026-11-11: modern cards show direction, not only a total). One
-     * grouped query over the same rows as the total, so the two agree. Fewer
-     * than two days of sales draws no line.
+     * The Sales panel on the Overview's All tab (mockup approved 2026-11-13):
+     * revenue with its daily line, orders with a daily bar strip, and the
+     * share of the period's quotations that became orders, each with its
+     * change against the previous period of the same length. Plain values;
+     * the Overview board renders them.
      *
-     * @return array<int, float>|null
+     * @param  array<string, mixed>  $filters
+     * @return array<string, mixed>
      */
+    public function panel(array $filters): array
+    {
+        $this->pageFilters = $filters;
+
+        [$previousStart, $previousEnd] = $this->previousPeriodRange();
+
+        $revenue = $this->revenueBetween();
+        $orders = $this->saleOrders()->count();
+        $previousOrders = $this->saleOrders($previousStart, $previousEnd)->count();
+
+        $conversion = $this->conversionRate();
+        $previousConversion = $this->conversionRate($previousStart, $previousEnd);
+
+        $lang = 'invoices::filament/pages/overview.board';
+
+        return [
+            'label'   => __('invoices::filament/pages/overview.sections.sales'),
+            'url'     => OrderResource::canViewAny() ? OrderResource::getUrl('index') : null,
+            'metrics' => [
+                [
+                    'label'    => __('invoices::filament/pages/overview.headline.revenue'),
+                    'value'    => compact_money($revenue, current_company()?->currency?->name),
+                    'trend'    => $this->trendOf($revenue, $this->revenueBetween($previousStart, $previousEnd)),
+                    'viz'      => ['type' => 'line', 'values' => $this->dailyRevenue() ?? []],
+                ],
+                [
+                    'label' => __($lang.'.orders'),
+                    'value' => number_format($orders),
+                    'trend' => $this->trendOf((float) $orders, (float) $previousOrders),
+                    'viz'   => ['type' => 'bars', 'values' => $this->dailyOrders()],
+                ],
+                [
+                    'label' => __($lang.'.conversion'),
+                    'value' => $conversion === null ? '—' : $conversion.'%',
+                    'trend' => $conversion === null || $previousConversion === null ? null : $this->trendOf((float) $conversion, (float) $previousConversion),
+                    'viz'   => ['type' => 'gauge', 'percent' => $conversion ?? 0],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @return array{text: string, direction: string}
+     */
+    protected function trendOf(float $current, float $previous): array
+    {
+        [$text, $icon] = $this->statTrend($current, $previous);
+
+        return ['text' => $text, 'direction' => str_contains($icon, 'down') ? 'down' : (str_contains($icon, 'up') ? 'up' : 'flat')];
+    }
+
+    /**
+     * Confirmed orders as a share of all quotations dated in the period
+     * (orders plus those still open). Null when there were none, so an empty
+     * month reads "—" rather than 0%.
+     */
+    protected function conversionRate(?Carbon $start = null, ?Carbon $end = null): ?int
+    {
+        $orders = $this->saleOrders($start, $end)->count();
+        $open = $this->quotations($start, $end)->count();
+
+        return ($orders + $open) > 0 ? (int) round($orders / ($orders + $open) * 100) : null;
+    }
+
+    /**
+     * Confirmed orders per day, for the bar strip.
+     *
+     * @return list<int>
+     */
+    protected function dailyOrders(): array
+    {
+        $query = $this->saleOrders();
+        $day = 'DATE('.$query->qualifyColumn('date_order').')';
+
+        return $query->toBase()
+            ->selectRaw($day.' as day, COUNT(*) as total')
+            ->groupByRaw($day)
+            ->orderByRaw($day)
+            ->pluck('total')
+            ->map(fn ($total): int => (int) $total)
+            ->all();
+    }
+
     /** Confirmed revenue in company currency; the page period when no dates are given. */
     protected function revenueBetween(?Carbon $start = null, ?Carbon $end = null): float
     {
@@ -146,6 +231,14 @@ class SaleHeadlineWidget extends StatsOverviewWidget
             ->value('cc_total') ?? 0.0);
     }
 
+    /**
+     * Revenue per day over the filtered period, for the card's sparkline
+     * (user, 2026-11-11: modern cards show direction, not only a total). One
+     * grouped query over the same rows as the total, so the two agree. Fewer
+     * than two days of sales draws no line.
+     *
+     * @return array<int, float>|null
+     */
     protected function dailyRevenue(): ?array
     {
         $query = $this->saleOrders();

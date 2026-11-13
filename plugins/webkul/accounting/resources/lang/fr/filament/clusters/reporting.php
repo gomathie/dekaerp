@@ -136,6 +136,25 @@ return [
                 'journals'   => 'Journaux',
             ],
         ],
+        'tax-summary' => [
+            'navigation' => [
+                'title' => 'Récapitulatif des taxes',
+                'group' => 'Rapports d\'audit',
+            ],
+            'actions'  => ['export-excel' => 'Exporter vers Excel'],
+            'filters'  => ['date-range' => 'Période'],
+            'columns'  => ['tax' => 'Taxe', 'rate' => 'Taux', 'base' => 'Montant imposable', 'amount' => 'Taxe'],
+            'sections' => ['sales' => 'Sur les ventes (collectée)', 'purchases' => 'Sur les achats (payée)'],
+            'totals'   => [
+                'collected'       => 'Total collecté',
+                'paid'            => 'Total payé',
+                'net'             => 'Net',
+                'net-payable'     => 'Taxe nette à payer',
+                'net-reclaimable' => 'Taxe nette à récupérer',
+            ],
+            'empty' => 'Aucune taxe sur cette période.',
+            'note'  => 'Calculé à partir des factures, factures fournisseur, avoirs et remboursements comptabilisés et datés dans la période. Les avoirs et remboursements réduisent les totaux. Vérifiez avec votre comptable avant toute déclaration.',
+        ],
         'trial-balance' => [
             'navigation' => [
                 'title' => 'Balance générale',

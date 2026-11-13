@@ -6,6 +6,58 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-13, later (Overview board from the approved mockup; module cards; Activity log; Tax Summary; deletes logged)
+
+- **Why:** user approved the Dribbble-based mockup (greeting, one panel per
+  module, other modules as cards, render cleanly without some modules,
+  5-minute refresh); plan #1 CR-11 (activity log); accounting A7 (tax
+  summary).
+- **How:**
+  - Greeting rebuilt (`support/resources/views/dashboard-banner.blade.php`):
+    date and place line, "N things need you today", linked chips by urgency
+    (`DashboardBannerRegistry::summaryItems()`), clock, one primary action.
+  - All tab = `OverviewBoard` (Sales, money in/out with "vs previous" filter,
+    Purchases with spend by supplier, Needs attention, Invoices split and
+    lists) + `OverviewModuleCards`. Figures come from each module's
+    `panel()` (sales, purchases, invoices headline widgets) and
+    `Support\...\DashboardCardRegistry` cards from Inventory, Projects,
+    Recruitment, Time Off, Logistics. `OverviewAttentionWidget` removed
+    (folded into the board). 5-minute polling.
+  - Activity log page (security Settings) over `chatter_messages`; deletes
+    now recorded (`HasLogActivity`); messages stamped with the record's
+    company (`HasChatter::addMessage`); reopen reasons carry an event.
+  - Tax Summary page (accounting Reporting) with Excel export.
+- **Decisions taken while the user was away:** spend by supplier instead of
+  by category (always available); Employees card from Time Off (more
+  widely used than Attendance); tax rows per child tax (no group row);
+  nothing pushed to production without the user present.
+- **Benefit:** first screen shows each module at a glance and what to act on;
+  who deleted what is now on record; tax per period without a spreadsheet.
+- **Risk:** not seen in a browser yet; module-card figures are new queries
+  (smoke test runs each one). Old activity rows without a company stay out
+  of the log.
+- **Verification (2026-11-13, Sail, `aureuserp_testing_claude_vault` and
+  `_claude_ui`):** invoices Dashboard folder + ActivityLogTest +
+  LivewireComponentLimitTest: 26 passed on the first run, 6 failed (1 test
+  used Partner, which tracks no fields on update; Inventory card linked to a
+  record-only resource URL, fixed to the Operations cluster; 4 card tests
+  without routes for plugins installed mid-run, resolved like the other
+  report tests); after fixes ActivityLogTest 7/7 and ModuleCardsTest 5 passed
+  (30 assertions). TaxSummaryTest + ChangeReasonTest 9 passed (24
+  assertions). ReportsPageTest 2 passed (5 assertions) on its own; when run
+  after another plugin's test in one process it misses the accounting pages
+  (a panel is configured once per process, so a plugin installed later adds
+  no pages), which cannot happen in its own suite or in production.
+  SalesAnalysisTest 2 passed (4), PurchaseAnalysisTest 2 passed. Pint and `php -l` on
+  every changed PHP and language file. Not seen in a browser.
+  Full regression for the shared chatter changes (deletes logged,
+  record-company stamping), one suite at a time: ChatterFeature 10 passed,
+  SecurityFeature 177 passed (613 assertions), PartnerFeature 94 passed
+  (208), InvoiceFeature 25 passed (99), AccountingFeature 69 passed (125).
+  Zero failures.
+- **Rollback:** Overview `getWidgets()` early return; remove the card
+  registrations; the activity page and tax page are additive.
+
 ## 2026-11-13 (greeting "today" line and quick actions; Overview All as a summary; Sentry DEKAERP-16)
 
 - **Why:** user asked for Dribbble-level polish of the greeting and the All

@@ -136,6 +136,25 @@ return [
                 'journals'   => 'Journals',
             ],
         ],
+        'tax-summary' => [
+            'navigation' => [
+                'title' => 'Tax Summary',
+                'group' => 'Audit Reports',
+            ],
+            'actions'  => ['export-excel' => 'Export to Excel'],
+            'filters'  => ['date-range' => 'Date Range'],
+            'columns'  => ['tax' => 'Tax', 'rate' => 'Rate', 'base' => 'Taxable amount', 'amount' => 'Tax'],
+            'sections' => ['sales' => 'On sales (collected)', 'purchases' => 'On purchases (paid)'],
+            'totals'   => [
+                'collected'       => 'Total collected',
+                'paid'            => 'Total paid',
+                'net'             => 'Net',
+                'net-payable'     => 'Net tax to pay',
+                'net-reclaimable' => 'Net tax to reclaim',
+            ],
+            'empty' => 'No tax in this period.',
+            'note'  => 'From posted invoices, bills, credit notes and refunds dated in the period. Credit notes and refunds reduce the totals. Check with your accountant before filing.',
+        ],
         'trial-balance' => [
             'navigation' => [
                 'title' => 'Trial Balance',

@@ -68,4 +68,32 @@ return [
         'heading' => 'En toda la empresa',
         'open'    => 'Abrir',
     ],
+
+    'board' => [
+        'updated'     => 'Actualizado a las :time',
+        'orders'      => 'Pedidos',
+        'conversion'  => 'Presupuesto → pedido',
+        'by-supplier' => 'Gasto por proveedor',
+        'other'       => 'Otros',
+        'paid'        => 'Pagadas',
+        'open'        => 'Abiertas',
+        'overdue'     => 'Vencidas',
+        'show'        => 'Mostrar',
+        'tab-overdue' => 'Vencidas',
+        'tab-soon'    => 'Vencen esta semana',
+        'tab-open'    => 'Todas abiertas',
+        'nothing'     => 'Nada aquí.',
+        'customer'    => 'Cliente',
+        'due'         => 'Vencimiento',
+        'no-due-date' => 'Sin vencimiento',
+        'due-today'   => 'Vence hoy',
+        'due-on'      => 'Vence el :date',
+        'days-late'   => '{1} 1 día de retraso|[2,*] :count días de retraso',
+    ],
+
+    'cash-compare' => [
+        'previous'    => 'Periodo anterior',
+        'this-period' => 'Este periodo',
+        'vs-previous' => 'Frente al periodo anterior',
+    ],
 ];

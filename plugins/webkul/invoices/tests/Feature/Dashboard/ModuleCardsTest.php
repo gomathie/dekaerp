@@ -5,6 +5,7 @@ use Webkul\Support\Models\Company;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/CompanyHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
+require_once __DIR__.'/../../../../support/tests/Helpers/FilamentHelper.php';
 
 /**
  * Every "Across the company" card runs its real queries (2026-11-13). The
@@ -23,6 +24,12 @@ it('builds the module card from real queries', function (string $plugin, string 
     TestBootstrapHelper::ensurePluginInstalled($plugin);
 
     CompanyHelper::actingAsCompanyUser(Company::factory()->create(), []);
+
+    // The cards link to their lists. A plugin installed inside this test
+    // run has no routes in it (they register at boot), so links resolve to
+    // '#' here, as in the accounting report tests; the queries are the point.
+    FilamentHelper::bootAdminPanel();
+    Illuminate\Support\Facades\URL::resolveMissingNamedRoutesUsing(fn () => '#');
 
     $data = $card::data();
 

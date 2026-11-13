@@ -1,7 +1,8 @@
 # Accounting — Improvement Plan
 
-Status: **plan written 2026-11-12; decisions made the same day; not started.
-A1 runs early, alongside plan #1 (ACC-D1).** Built from the brief below
+Status: **in progress. Done: A1 (known figures, report isolation), A2 (lock
+date, v1.8.0), A2b (reason on reset, v1.8.1). Built 2026-11-13, awaiting push:
+A7 (Tax Summary). Next: A3 bank reconciliation, then A5, A6, A4.** Built from the brief below
 (added by the user 2026-11-12), cut to the gaps after the user's instruction
 the same day: "if what we have is enough don't plan an overkill, just an
 improvement and an easy workflow."
@@ -121,6 +122,15 @@ period); credit notes and refunds reduce their period. Same filter, export,
 company isolation and page permission as the other reports. Proof: the A1
 Ghana figures give base 1,000, VAT 150, NHIL 25, GETFund 25. Country return
 layouts (GRA, ZRA) only when a client asks.
+*Built 2026-11-13: `accounting/.../Reporting/Pages/TaxSummary.php`, view,
+`TaxSummaryExport`, five languages. Sales and purchase taxes in two sections,
+each child tax its own row, totals and net to pay or reclaim. Decision: rows
+are per tax rather than "group with children": the tax lines carry the child
+tax, so VAT, NHIL and GETFund already appear separately, and a group-total
+row added nothing a reader could not see. Company isolation like the other
+report pages (`whereIn(company_id, activeIds)`). Tests:
+`accounting/tests/Feature/Filament/TaxSummaryTest.php` (permission generated,
+renders, Ghana figures, credit note reduces, purchases net off).*
 
 ## 4. Order
 

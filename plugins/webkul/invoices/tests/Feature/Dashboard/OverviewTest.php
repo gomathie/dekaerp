@@ -12,8 +12,7 @@ use Webkul\Invoice\Filament\Overview\OverviewRegistry;
 use Webkul\Invoice\Filament\Pages\Invoices;
 use Webkul\Invoice\Filament\Pages\Overview;
 use Webkul\Invoice\Filament\Widgets\InvoiceHeadlineWidget;
-use Webkul\Invoice\Filament\Widgets\OverviewAttentionWidget;
-use Webkul\Invoice\Filament\Widgets\OverviewCashFlowChart;
+use Webkul\Invoice\Filament\Widgets\OverviewBoard;
 use Webkul\Invoice\Filament\Widgets\OverviewHeadlineWidget;
 use Webkul\Invoice\Filament\Widgets\OverviewModuleCards;
 use Webkul\PluginManager\Models\Plugin;
@@ -68,10 +67,11 @@ it('limits the widgets to the chosen section and shows every visible section by 
     $page = new Overview;
 
     // Inverted 2026-11-13 (user): "All" is a summary, not every section's
-    // widgets: headline cards, the money in/out chart and Needs attention.
-    // It also kept 23 widgets in one Livewire update (Sentry DEKAERP-16).
+    // widgets: one board (panels per module, chart, Needs attention, the
+    // invoices to act on) and the module cards. It also kept 23 widgets in
+    // one Livewire update (Sentry DEKAERP-16).
     $page->filters = [];
-    expect($page->getWidgets())->toBe([OverviewHeadlineWidget::class, OverviewCashFlowChart::class, OverviewAttentionWidget::class, OverviewModuleCards::class])
+    expect($page->getWidgets())->toBe([OverviewBoard::class, OverviewModuleCards::class])
         ->and($page->getWidgets())->not->toContain('TestOnlyWidget');
 
     // Changed 2026-11-11 (user): "At a glance" comes first, then widgets are
@@ -299,4 +299,24 @@ it('shows only the module cards the user may see, and survives a failing card', 
         $registry::forget('test-hidden');
         $registry::forget('test-broken');
     }
+});
+
+/**
+ * The All tab board (mockup approved 2026-11-13) renders for a user who
+ * sees only Invoices: no Sales or Purchases panel, the money in/out chart,
+ * Needs attention and the invoices to act on (user: "render cleanly when
+ * certain modules are not active").
+ */
+it('renders the board with only the panels the user may see', function (): void {
+    CompanyHelper::actingAsCompanyUser(Company::factory()->create(), ['page_invoice_invoices']);
+
+    FilamentHelper::bootAdminPanel();
+
+    $board = Livewire\Livewire::test(OverviewBoard::class, ['pageFilters' => []])->assertOk();
+
+    $data = (fn (): array => $this->getViewData())->call($board->instance());
+
+    expect(array_keys($data['panels']))->toBe(['invoices'])
+        ->and($data['panels']['invoices']['split'])->toHaveCount(3)
+        ->and(array_keys($data['panels']['invoices']['list']['tabs']))->toBe(['overdue', 'soon', 'open']);
 });

@@ -1908,6 +1908,32 @@ log named):
     creating it again.
   - Tests: `plugins/webkul/platform-billing/tests/Feature/OverdueExtensionTest.php`.
 
+• Activity history and the company Activity log, 2026-11-13 (plan #1, CR-11):
+  - `HasLogActivity` records **deletes** with a snapshot of the record. It
+    used to drop them (a delete has no field changes, so the "nothing
+    changed" check discarded it): "who deleted what" left no trace.
+  - `HasChatter::addMessage()` stamps the **record's** `company_id`, falling
+    back to the session's only when the record has none. With the session's,
+    a Multi-Company Admin's change landed in the wrong company's log.
+  - The Activity log page reads `chatter_messages` past the global scopes
+    and filters `whereIn(company_id, activeIds())`, which deliberately
+    excludes rows with no company. Do not switch it back to the scoped
+    model: CompanyScope shows null-company rows to everyone, which would leak
+    one tenant's history to all. Access: page permission, or Company Admin
+    who is a member of the current company.
+  - Tests: security `Authorization/ActivityLogTest.php`.
+
+• Overview "All" tab board, 2026-11-13 (mockup approved by the user):
+  - All = `OverviewBoard` + `OverviewModuleCards`, two components. Do not
+    go back to stacking every section's widgets: that sent 23 components in
+    one update and broke filtering (Sentry DEKAERP-16).
+  - Each module contributes its own figures (`panel()` on its headline
+    widget; module cards through `Support\...\DashboardCardRegistry`), with
+    visibility from that module's existing `canViewAny()`. No dashboard
+    permission of its own; no module names another.
+  - Refresh every 5 minutes at most (user). Never Filament's 5-second
+    default (Sentry DEKAERP-11). Test: `OverviewTest` polling test.
+
 • Accounting lock date, 2026-11-12 (`docs/planned/02-accounting-plan.md`, A2):
   - Enforced in the `Move` and `MoveLine` saving/deleting hooks through
     `Account\Services\PeriodLock`, not on screens. Do not move it to an
