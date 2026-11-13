@@ -6,6 +6,36 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-13, base currency change after posting (CR-6, D-CR-4)
+
+- **Why:** D-CR-4 (user): a company's base currency may still change after
+  it has entries, but only by a Super Admin, after a warning naming the
+  posted entries, and audited. Until now `accounts` `CompanyObserver`
+  refused every change once journal items existed, with no way past it.
+- **How:** `Account\Services\BaseCurrencyChange::change()` checks an active
+  Super Admin on the **web** guard (an API token never qualifies), a
+  non-blank reason, and an active, different currency. It then saves while
+  holding that company id, which is the only thing `CompanyObserver` lets
+  through, and records `company.base-currency-changed` through
+  `SecurityAuditLogger` (old and new currency, reason, posted entry count,
+  actor) in the company's chatter. UI: `Account\CompanyCurrencyContributions`,
+  a collapsed "Base currency" section on the company edit page (Super Admin
+  only) with a confirmation modal whose text names the posted entries.
+  Translations in 5 languages. Also moved a misplaced docblock in
+  `Security\CompanyAdminContributions` (no behaviour change).
+- **Benefit:** a client who switches accounting currency is no longer stuck,
+  and the change is attributable.
+- **Trade-off / risk:** posted entries keep their old currency and rate;
+  reports after the change are in the new base currency. Nothing converts
+  history. The plain currency field, API and imports stay refused.
+- **Verification:** `CompanyCurrencyGuardTest` 12 passed, 19 assertions
+  (8 existing, 4 new), `aureuserp_testing_claude_vault`. `php -l` on all 10
+  locale files. Pint on the changed files. The modal itself was **reviewed,
+  not run** in a browser (CR-3 is still blocked by the slow local machine).
+- **Rollback:** remove the `BaseCurrencyChange::authorizes()` check from
+  `CompanyObserver` and the `CompanyCurrencyContributions::register()` call;
+  no schema change.
+
 ## 2026-11-13, company currencies, first part (CR-6)
 
 - **Why:** CR-6. A Ghana company should invoice in GHS plus USD/EUR, a Zambia

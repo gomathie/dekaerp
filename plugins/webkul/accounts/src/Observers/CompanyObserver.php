@@ -5,6 +5,7 @@ namespace Webkul\Account\Observers;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 use Webkul\Account\Models\MoveLine;
+use Webkul\Account\Services\BaseCurrencyChange;
 use Webkul\PluginManager\Package;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Scopes\CompanyScope;
@@ -18,6 +19,12 @@ class CompanyObserver
         }
 
         if (! $company->isDirty('currency_id')) {
+            return;
+        }
+
+        // D-CR-4: the one audited exception. It holds only while
+        // BaseCurrencyChange has checked the Super Admin and the reason.
+        if (BaseCurrencyChange::authorizes($company)) {
             return;
         }
 

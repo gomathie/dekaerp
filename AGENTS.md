@@ -1946,6 +1946,15 @@ log named):
     **and** membership of that company (a global role is true for every id).
   - Tests: `accounts/tests/Feature/Workflows/LockDateTest.php`.
 
+• Base currency after posted entries, 2026-11-13 (D-CR-4, `docs/change-log.md`):
+  - `CompanyObserver` still refuses every currency change once journal items
+    exist. The only way past it is `Account\Services\BaseCurrencyChange`,
+    for an active Super Admin on the web guard, with a reason, audited as
+    `company.base-currency-changed`. Do not relax the observer for a
+    Multi-Company Admin, the API or imports without asking the user.
+  - Posted entries keep their own currency and rate. Nothing converts them.
+  - Tests: `accounts/tests/Feature/Workflows/CompanyCurrencyGuardTest.php`.
+
 • Customer page shipments, 2026-11-10 (`docs/logistics-plan.md`, WP-9b, D11):
   - The customer infolist tab is `PartnerSchemaRegistry` slot `tabs.append`.
     Do not add a relation-manager slot, and do not edit `PartnerResource` or
