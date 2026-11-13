@@ -9,8 +9,6 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Storage;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Maatwebsite\Excel\Excel as ExcelFormat;
 use Maatwebsite\Excel\Facades\Excel;
 use Webkul\Partner\Enums\AccountType;
@@ -18,6 +16,7 @@ use Webkul\Partner\Filament\Resources\PartnerResource;
 use Webkul\Partner\Filament\Resources\PartnerResource\Exports\ContactTemplateExport;
 use Webkul\Partner\Services\ContactImporter;
 use Webkul\PluginManager\Package;
+use Webkul\Support\Filament\ImportUpload;
 use Webkul\TableViews\Filament\Components\PresetView;
 use Webkul\TableViews\Filament\Concerns\HasTableViews;
 
@@ -111,13 +110,7 @@ class ListPartners extends ListRecords
                 $action->getModalAction('downloadTemplateExcel'),
             ])
             ->action(function (array $data): void {
-                $file = $data['file'] ?? null;
-
-                if (is_array($file)) {
-                    $file = reset($file);
-                }
-
-                $resolved = $this->resolveUploadedImportFile($file);
+                $resolved = ImportUpload::resolve($data['file'] ?? null, 'contact-import-');
 
                 if ($resolved === null) {
                     Notification::make()
@@ -143,51 +136,6 @@ class ListPartners extends ListRecords
 
                 $this->sendImportResultNotification($result);
             });
-    }
-
-    /**
-     * Resolve the uploaded file to a readable local path.
-     *
-     * In an action modal Filament leaves the state as a TemporaryUploadedFile,
-     * which is the normal case and needs no copy. The string branch covers a
-     * file that has already been stored on a disk: that disk may be S3, where
-     * there is no local path at all, so the contents are streamed to a
-     * temporary file and the caller deletes it afterwards.
-     *
-     * @return array{0: string, 1: string, 2: bool}|null
-     */
-    protected function resolveUploadedImportFile(mixed $file): ?array
-    {
-        if ($file instanceof TemporaryUploadedFile) {
-            $path = $file->getRealPath();
-
-            if (! is_string($path) || ! is_file($path)) {
-                return null;
-            }
-
-            return [$path, $file->getClientOriginalExtension(), false];
-        }
-
-        if (! is_string($file) || $file === '') {
-            return null;
-        }
-
-        $disk = Storage::disk(config('filament.default_filesystem_disk'));
-
-        if (! $disk->exists($file)) {
-            return null;
-        }
-
-        $extension = pathinfo($file, PATHINFO_EXTENSION);
-        $temporaryPath = tempnam(sys_get_temp_dir(), 'contact-import-');
-
-        if ($temporaryPath === false) {
-            return null;
-        }
-
-        file_put_contents($temporaryPath, $disk->get($file));
-
-        return [$temporaryPath, $extension, true];
     }
 
     /**
