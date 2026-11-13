@@ -8,6 +8,7 @@ return [
     'tagline-solo'  => 'إليك ما يحدث اليوم.',
     'local-time'    => 'وقتك المحلي',
     'quick-actions' => 'إجراءات سريعة',
+    'needs-you'     => '{1} أمر واحد بانتظارك اليوم.|[2,*] :count أمور بانتظارك اليوم.',
     'greetings'     => [
         'morning'   => 'صباح الخير',
         'afternoon' => 'مساء الخير',

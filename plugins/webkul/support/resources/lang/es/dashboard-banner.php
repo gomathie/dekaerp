@@ -8,6 +8,7 @@ return [
     'tagline-solo'  => 'Esto es lo que pasa hoy.',
     'local-time'    => 'Su hora local',
     'quick-actions' => 'Acciones rápidas',
+    'needs-you'     => '{1} Una cosa necesita su atención hoy.|[2,*] :count cosas necesitan su atención hoy.',
     'greetings'     => [
         'morning'   => 'Buenos días',
         'afternoon' => 'Buenas tardes',
