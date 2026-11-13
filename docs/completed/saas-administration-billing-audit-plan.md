@@ -1,5 +1,8 @@
 # SaaS Administration and Billing Audit / Adoption Plan
 
+> **Completed and merged, 2026-11-12.** SAAS-00 to SAAS-15 are built and tested. The remaining work (browser smoke, seat checks on imports and API, alerts and reconciliation, SAAS-14 docs) continues as **CR-10** in [`../planned/01-comprehensive-review-plan.md`](../planned/01-comprehensive-review-plan.md). This file stays as the record of decisions and handoffs.
+
+
 Date: 2026-10-26  
 Branch inspected: `develop`  
 Scope: architecture and implementation plan only; no application behaviour or schema was changed.
@@ -2669,7 +2672,7 @@ Replace `SAAS-XX` and paste this with the repository context:
 
 ```text
 You are assigned work package SAAS-XX in
-docs/saas-administration-billing-audit-plan.md.
+docs/completed/saas-administration-billing-audit-plan.md.
 
 Read AGENTS.md, docs/agent-reminders.md, docs/running-tests.md, the audit
 plan's evidence matrix, multi-agent rules, status board, and the complete

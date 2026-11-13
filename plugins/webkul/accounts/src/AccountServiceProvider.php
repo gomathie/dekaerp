@@ -125,6 +125,7 @@ class AccountServiceProvider extends PackageServiceProvider
                 '2026_07_30_120001_create_partners_partner_company_properties_table',
                 '2026_08_03_130000_seed_accounts_sequences',
                 '2026_11_12_100000_create_accounts_lock_dates_table',
+                '2026_11_13_000001_add_date_and_payment_to_accounts_bank_statement_lines',
             ])
             ->runsMigrations()
             ->hasSettings([

@@ -13,9 +13,9 @@ use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\TableWidget;
 use Illuminate\Contracts\Support\Htmlable;
 use Webkul\Invoice\Filament\Overview\OverviewRegistry;
-use Webkul\Invoice\Filament\Widgets\OverviewAttentionWidget;
-use Webkul\Invoice\Filament\Widgets\OverviewCashFlowChart;
+use Webkul\Invoice\Filament\Widgets\OverviewBoard;
 use Webkul\Invoice\Filament\Widgets\OverviewHeadlineWidget;
+use Webkul\Invoice\Filament\Widgets\OverviewModuleCards;
 use Webkul\Product\Models\Category;
 use Webkul\Product\Models\Product;
 use Webkul\Support\Enums\NavigationGroup;
@@ -301,10 +301,14 @@ class Overview extends BaseDashboard
         // well under Livewire's per-request component limit: All used to
         // send 23 widgets in one update (Sentry DEKAERP-16).
         if ($chosen === [] && count($sections) > 1) {
+            // Rebuilt from the approved mockup (2026-11-13): one board with a
+            // panel per module (Sales, money in and out, Purchases, Needs
+            // attention, Invoices), then every other module's key items. Two
+            // Livewire components (plus the chart inside the board) instead
+            // of 23. Only modules the company has and the user may see.
             return [
-                OverviewHeadlineWidget::class,
-                ...(array_key_exists('invoices', $sections) ? [OverviewCashFlowChart::class] : []),
-                OverviewAttentionWidget::class,
+                OverviewBoard::class,
+                OverviewModuleCards::class,
             ];
         }
 

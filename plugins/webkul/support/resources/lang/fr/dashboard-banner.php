@@ -8,6 +8,7 @@ return [
     'tagline-solo'  => 'Voici ce qui se passe aujourd\'hui.',
     'local-time'    => 'Votre heure locale',
     'quick-actions' => 'Actions rapides',
+    'needs-you'     => '{1} Une chose vous attend aujourd\'hui.|[2,*] :count choses vous attendent aujourd\'hui.',
     'greetings'     => [
         'morning'   => 'Bonjour',
         'afternoon' => 'Bon après-midi',

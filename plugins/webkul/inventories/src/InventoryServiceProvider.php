@@ -14,6 +14,8 @@ use Webkul\Inventory\Facades\Inventory as InventoryFacade;
 use Webkul\Inventory\Filament\Clusters\Products\Resources\ProductResource\Actions\UpdateQuantityAction;
 use Webkul\Inventory\Filament\Clusters\Products\Resources\ProductResource\Schemas\InventoryProductSchema;
 use Webkul\Inventory\Filament\Clusters\Products\Resources\ProductResource\Support\QuantityResolver;
+use Webkul\Inventory\Filament\Pages\Overview;
+use Webkul\Inventory\Filament\Widgets\InventoryHeadlineWidget;
 use Webkul\Inventory\Filament\Widgets\OperationTypeCardWidget;
 use Webkul\Inventory\Models\Move;
 use Webkul\Inventory\Models\MoveLine;
@@ -25,6 +27,7 @@ use Webkul\Inventory\Models\Scrap;
 use Webkul\Inventory\Observers\CompanyObserver;
 use Webkul\Inventory\Observers\ProductObserver;
 use Webkul\Inventory\Observers\UOMObserver;
+use Webkul\Invoice\Filament\Overview\OverviewRegistry;
 use Webkul\PluginManager\Console\Commands\InstallCommand;
 use Webkul\PluginManager\Console\Commands\UninstallCommand;
 use Webkul\PluginManager\Package;
@@ -32,6 +35,7 @@ use Webkul\PluginManager\PackageServiceProvider;
 use Webkul\Product\Filament\Resources\ProductResource\Support\ProductSchemaRegistry;
 use Webkul\Product\Models\Product;
 use Webkul\Security\Models\User;
+use Webkul\Support\Filament\Contributions\DashboardCardRegistry;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\UOM;
 use Webkul\Support\Services\SequenceService;
@@ -161,6 +165,14 @@ class InventoryServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        // The Inventory card on the Overview (2026-11-13). Keyed: re-booting replaces it.
+        DashboardCardRegistry::card(
+            'inventory',
+            fn (): bool  => Filament\OverviewCard::visible(),
+            fn (): array => Filament\OverviewCard::data(),
+            sort: 10,
+        );
+
         $this->registerObservers();
 
         $this->contributeProductSchema();
@@ -178,18 +190,18 @@ class InventoryServiceProvider extends PackageServiceProvider
      */
     protected function contributeOverviewSection(): void
     {
-        if (! class_exists(\Webkul\Invoice\Filament\Overview\OverviewRegistry::class)) {
+        if (! class_exists(OverviewRegistry::class)) {
             return;
         }
 
-        \Webkul\Invoice\Filament\Overview\OverviewRegistry::register(
+        OverviewRegistry::register(
             'inventory',
             fn (): string => __('inventories::filament/widgets/inventory-headline.section'),
             [],
             fn (): array => [],
-            fn (): bool => \Webkul\Inventory\Filament\Pages\Overview::canAccess(),
+            fn (): bool  => Overview::canAccess(),
             sort: 40,
-            headline: \Webkul\Inventory\Filament\Widgets\InventoryHeadlineWidget::class,
+            headline: InventoryHeadlineWidget::class,
         );
     }
 

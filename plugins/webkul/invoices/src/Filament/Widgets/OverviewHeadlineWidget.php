@@ -20,9 +20,10 @@ use Webkul\Invoice\Filament\Overview\OverviewRegistry;
  */
 class OverviewHeadlineWidget extends StatsOverviewWidget
 {
-    // No 5-second refresh (Filament default): every open dashboard re-ran all
-    // its queries 12 times a minute (Sentry DEKAERP-11). Filters reload it.
-    protected ?string $pollingInterval = null;
+    // Every 5 minutes (user, 2026-11-13), never Filament's 5-second default:
+    // that re-ran every dashboard query 12 times a minute (Sentry DEKAERP-11).
+    // Livewire slows polling down in a hidden browser tab.
+    protected ?string $pollingInterval = '300s';
 
     use InteractsWithPageFilters;
 

@@ -433,7 +433,11 @@ trait HasChatter
             'date_deadline' => $data['date_deadline'] ?? now(),
             'causer_type'   => $user?->getMorphClass(),
             'causer_id'     => $user?->id,
-            'company_id'    => $data['company_id'] ?? (current_company()?->id ?? null),
+            // The record's company, not the session's (CR-11, 2026-11-13).
+            // Under the session's, a Multi-Company Admin's change to company
+            // B's record was filed under company A: B's activity log missed
+            // it and A's showed someone else's record.
+            'company_id'    => $data['company_id'] ?? ($this->getAttribute('company_id') ?? current_company()?->id),
         ], $data));
 
         $this->messages()->save($message);

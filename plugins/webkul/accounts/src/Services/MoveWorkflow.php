@@ -341,6 +341,10 @@ class MoveWorkflow
             'type'       => 'comment',
             'company_id' => $move->company_id,
             'body'       => e(__('accounts::account-manager.change-reason.'.$action, ['reason' => trim($reason)])),
+            // An event and the reason as data put it in the company Activity
+            // log (CR-11), which lists rows with an event and shows the reason.
+            'event'      => $action,
+            'properties' => ['reason' => trim($reason)],
         ]);
     }
 

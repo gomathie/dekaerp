@@ -148,6 +148,85 @@ class PurchaseHeadlineWidget extends StatsOverviewWidget
      *
      * @return array<int, float>|null
      */
+    /**
+     * The Purchases panel on the Overview's All tab (mockup approved
+     * 2026-11-13): spend with its daily line and trend, open requests, and
+     * where the money went by supplier (top three plus the rest). The mockup
+     * said "by category"; supplier is used because every purchase order has
+     * one, while a category depends on how products were set up.
+     *
+     * @param  array<string, mixed>  $filters
+     * @return array<string, mixed>
+     */
+    public function panel(array $filters): array
+    {
+        $this->pageFilters = $filters;
+
+        $states = [OrderState::PURCHASE->value, OrderState::DONE->value];
+        $currency = $this->dashboardCurrency();
+
+        $confirmed = $this->purchaseOrders()->whereIn('state', $states);
+        $spend = (float) (clone $confirmed)->sum('total_cc_amount');
+
+        [$previousStart, $previousEnd] = $this->previousPeriodRange();
+        $previousSpend = (float) $this->purchaseOrders($previousStart, $previousEnd)->whereIn('state', $states)->sum('total_cc_amount');
+
+        [$text, $icon] = $this->statTrend($spend, $previousSpend);
+
+        $openRequests = $this->purchaseOrders()
+            ->whereIn('state', [OrderState::DRAFT->value, OrderState::SENT->value, OrderState::TO_APPROVE->value])
+            ->count();
+
+        $bySupplier = (clone $confirmed)->toBase()
+            ->join('partners_partners', 'partners_partners.id', '=', $confirmed->qualifyColumn('partner_id'))
+            ->selectRaw('partners_partners.name as name, SUM('.$confirmed->qualifyColumn('total_cc_amount').') as total')
+            ->groupBy('partners_partners.name')
+            ->orderByDesc('total')
+            ->get();
+
+        $breakdown = [];
+
+        foreach ($bySupplier->take(3) as $row) {
+            $breakdown[] = ['label' => (string) $row->name, 'amount' => (float) $row->total];
+        }
+
+        $rest = (float) $bySupplier->slice(3)->sum('total');
+
+        if ($rest > 0) {
+            $breakdown[] = ['label' => __('invoices::filament/pages/overview.board.other'), 'amount' => $rest];
+        }
+
+        foreach ($breakdown as &$item) {
+            $item['percent'] = $spend > 0 ? (int) round($item['amount'] / $spend * 100) : 0;
+            $item['value'] = compact_money($item['amount'], $currency);
+        }
+
+        unset($item);
+
+        return [
+            'label'   => __('invoices::filament/pages/overview.sections.purchases'),
+            'url'     => PurchaseOrderResource::canViewAny() ? PurchaseOrderResource::getUrl('index') : null,
+            'metrics' => [
+                [
+                    'label' => __('invoices::filament/pages/overview.headline.spend'),
+                    'value' => compact_money($spend, $currency),
+                    'trend' => ['text' => $text, 'direction' => str_contains($icon, 'down') ? 'down' : (str_contains($icon, 'up') ? 'up' : 'flat')],
+                    'viz'   => ['type' => 'line', 'values' => $this->dailySpend(clone $confirmed) ?? []],
+                ],
+                [
+                    'label' => __('invoices::filament/pages/overview.headline.open-rfqs'),
+                    'value' => number_format($openRequests),
+                    'trend' => null,
+                    'viz'   => null,
+                ],
+            ],
+            'breakdown' => [
+                'label' => __('invoices::filament/pages/overview.board.by-supplier'),
+                'items' => $breakdown,
+            ],
+        ];
+    }
+
     protected function dailySpend(Builder $confirmed): ?array
     {
         $day = 'DATE('.$confirmed->qualifyColumn('ordered_at').')';

@@ -136,6 +136,25 @@ return [
                 'journals'   => 'Diarios',
             ],
         ],
+        'tax-summary' => [
+            'navigation' => [
+                'title' => 'Resumen de impuestos',
+                'group' => 'Informes de auditoría',
+            ],
+            'actions'  => ['export-excel' => 'Exportar a Excel'],
+            'filters'  => ['date-range' => 'Rango de fechas'],
+            'columns'  => ['tax' => 'Impuesto', 'rate' => 'Tasa', 'base' => 'Base imponible', 'amount' => 'Impuesto'],
+            'sections' => ['sales' => 'En ventas (cobrado)', 'purchases' => 'En compras (pagado)'],
+            'totals'   => [
+                'collected'       => 'Total cobrado',
+                'paid'            => 'Total pagado',
+                'net'             => 'Neto',
+                'net-payable'     => 'Impuesto neto a pagar',
+                'net-reclaimable' => 'Impuesto neto a recuperar',
+            ],
+            'empty' => 'No hay impuestos en este periodo.',
+            'note'  => 'A partir de facturas, facturas de proveedor, notas de crédito y reembolsos contabilizados con fecha en el periodo. Las notas de crédito y los reembolsos reducen los totales. Consulte con su contable antes de declarar.',
+        ],
         'trial-balance' => [
             'navigation' => [
                 'title' => 'Balance de comprobación',

@@ -86,6 +86,101 @@ class InvoiceHeadlineWidget extends StatsOverviewWidget
         ];
     }
 
+    /**
+     * The Invoices panel on the Overview's All tab (mockup approved
+     * 2026-11-13): the period's invoices split into paid, still open and
+     * overdue (company currency), and the open invoices to act on in three
+     * lists. The lists are today's state, not the date filter: an invoice
+     * overdue since last quarter still needs chasing.
+     *
+     * @param  array<string, mixed>  $filters
+     * @return array<string, mixed>
+     */
+    public function panel(array $filters): array
+    {
+        $this->pageFilters = $filters;
+
+        $lang = 'invoices::filament/pages/overview.board';
+        $currency = current_company()?->currency?->name;
+        $today = now()->toDateString();
+
+        $period = $this->customerInvoices();
+
+        $paid = abs((float) (clone $period)->where($period->qualifyColumn('payment_state'), 'paid')->sum($period->qualifyColumn('amount_total_signed')));
+        $openPeriod = $this->open(clone $period);
+        $overdue = abs((float) (clone $openPeriod)->whereDate($period->qualifyColumn('invoice_date_due'), '<', $today)->sum($period->qualifyColumn('amount_residual_signed')));
+        $notDue = abs((float) (clone $openPeriod)->where(fn (Builder $q) => $q
+            ->whereNull($period->qualifyColumn('invoice_date_due'))
+            ->orWhereDate($period->qualifyColumn('invoice_date_due'), '>=', $today))
+            ->sum($period->qualifyColumn('amount_residual_signed')));
+
+        $total = $paid + $notDue + $overdue;
+        $share = fn (float $amount): int => $total > 0 ? (int) round($amount / $total * 100) : 0;
+
+        $openNow = fn (): Builder => $this->open(
+            \Webkul\Invoice\Models\Invoice::query()
+                ->where('move_type', \Webkul\Account\Enums\MoveType::OUT_INVOICE)
+                ->where('state', \Webkul\Account\Enums\MoveState::POSTED)
+        );
+
+        $lists = [
+            'overdue' => $openNow()->whereDate('invoice_date_due', '<', $today)->orderBy('invoice_date_due'),
+            'soon'    => $openNow()->whereDate('invoice_date_due', '>=', $today)->whereDate('invoice_date_due', '<=', now()->addDays(7)->toDateString())->orderBy('invoice_date_due'),
+            'open'    => $openNow()->orderBy('invoice_date_due'),
+        ];
+
+        $rows = [];
+        $counts = [];
+
+        foreach ($lists as $key => $query) {
+            $counts[$key] = (clone $query)->count();
+            $rows[$key] = $query->with('partner:id,name')->limit(5)->get()
+                ->map(fn ($invoice): array => [
+                    'name'   => $invoice->partner?->name ?? $invoice->name,
+                    'detail' => $this->dueLabel($invoice->invoice_date_due),
+                    'late'   => $invoice->invoice_date_due !== null && $invoice->invoice_date_due->lt(now()->startOfDay()),
+                    'amount' => number_format(abs((float) $invoice->amount_residual_signed), 2),
+                    'url'    => InvoiceResource::canView($invoice) ? InvoiceResource::getUrl('view', ['record' => $invoice]) : null,
+                ])->all();
+        }
+
+        return [
+            'label' => __('invoices::filament/pages/overview.sections.invoices'),
+            'url'   => InvoiceResource::canViewAny() ? InvoiceResource::getUrl('index') : null,
+            'split' => [
+                ['label' => __($lang.'.paid'), 'value' => compact_money($paid, $currency), 'percent' => $share($paid), 'tone' => 'success'],
+                ['label' => __($lang.'.open'), 'value' => compact_money($notDue, $currency), 'percent' => $share($notDue), 'tone' => 'warning'],
+                ['label' => __($lang.'.overdue'), 'value' => compact_money($overdue, $currency), 'percent' => $share($overdue), 'tone' => 'danger'],
+            ],
+            'list' => [
+                'currency' => $currency,
+                'tabs'     => [
+                    'overdue' => ['label' => __($lang.'.tab-overdue'), 'count' => $counts['overdue']],
+                    'soon'    => ['label' => __($lang.'.tab-soon'), 'count' => $counts['soon']],
+                    'open'    => ['label' => __($lang.'.tab-open'), 'count' => $counts['open']],
+                ],
+                'rows' => $rows,
+            ],
+        ];
+    }
+
+    protected function dueLabel(mixed $due): string
+    {
+        $lang = 'invoices::filament/pages/overview.board';
+
+        if ($due === null) {
+            return __($lang.'.no-due-date');
+        }
+
+        $days = (int) now()->startOfDay()->diffInDays($due->copy()->startOfDay(), false);
+
+        return match (true) {
+            $days < 0  => trans_choice($lang.'.days-late', -$days, ['count' => -$days]),
+            $days === 0 => __($lang.'.due-today'),
+            default    => __($lang.'.due-on', ['date' => $due->translatedFormat('j M')]),
+        };
+    }
+
     /** Posted documents not yet fully paid. */
     protected function open(Builder $query): Builder
     {

@@ -1,6 +1,7 @@
 {
     "name": "webkul/accounting",
     "description": "",
+    "version": "1.8.0",
     "authors": [
         {
             "name": "365 Systems"

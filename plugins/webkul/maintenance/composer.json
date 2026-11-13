@@ -1,6 +1,7 @@
 {
     "name": "webkul/maintenance",
     "description": "Maintenance management",
+    "version": "1.7.1",
     "authors": [
         {
             "name": "365 Systems"

@@ -62,17 +62,40 @@ class DashboardBannerRegistry
     }
 
     /**
+     * The "today" items under the greeting, as chips (mockup approved
+     * 2026-11-13). A contributor returns either plain phrases or items with
+     * a link and an urgency tone; both are normalised here.
+     *
+     * @return list<array{label: string, count: ?int, url: ?string, tone: string}>
+     */
+    public static function summaryItems(): array
+    {
+        $items = [];
+
+        foreach (static::$summaries as $resolve) {
+            foreach ((array) $resolve() as $item) {
+                if (is_string($item)) {
+                    $items[] = ['label' => $item, 'count' => null, 'url' => null, 'tone' => 'warning'];
+                } elseif (is_array($item) && isset($item['label'])) {
+                    $items[] = [
+                        'label' => (string) $item['label'],
+                        'count' => isset($item['count']) ? (int) $item['count'] : null,
+                        'url'   => $item['url'] ?? null,
+                        'tone'  => in_array($item['tone'] ?? null, ['danger', 'warning', 'info', 'success'], true) ? $item['tone'] : 'warning',
+                    ];
+                }
+            }
+        }
+
+        return $items;
+    }
+
+    /**
      * @return list<string>
      */
     public static function summaryPhrases(): array
     {
-        $phrases = [];
-
-        foreach (static::$summaries as $resolve) {
-            array_push($phrases, ...array_values(array_filter((array) $resolve(), 'is_string')));
-        }
-
-        return $phrases;
+        return array_column(static::summaryItems(), 'label');
     }
 
     /**

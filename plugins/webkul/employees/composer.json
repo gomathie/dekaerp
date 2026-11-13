@@ -1,6 +1,7 @@
 {
     "name": "webkul/employees",
     "description": "Employees management",
+    "version": "1.7.2",
     "authors": [
         {
             "name": "365 Systems"

@@ -10,7 +10,7 @@ class Reporting extends Cluster
 {
     protected static ?string $slug = 'attendances/reporting';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 6;
 
     /**
      * Hidden for companies that have not switched attendance on.
@@ -27,6 +27,6 @@ class Reporting extends Cluster
 
     public static function getNavigationGroup(): string|\UnitEnum
     {
-        return NavigationGroup::Attendance;
+        return NavigationGroup::Employee;
     }
 }

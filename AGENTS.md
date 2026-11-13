@@ -1066,6 +1066,27 @@ SAAS-05 plugin entitlement rollout, 2026-11-04:
 • Translation source structure is checked line by line. Use quoted numeric keys
   (`'4' =>`) in both English and locale arrays: PHP casts them back to integers,
   while bare numeric keys make translated values look like structure changes.
+• **Apostrophes in translations (user rule, 2026-11-13).** French, Spanish,
+  Portuguese and English strings often contain `'` (d'un, l'API, l'historique,
+  don't). Inside a single-quoted PHP string every one must be written `\'`, or
+  the file is a parse error and the whole language breaks. It keeps happening,
+  so: write translation files with the editor, never with shell `sed`/`perl`/
+  heredoc insertion (the shell strips or doubles the backslash), and after every
+  change run `php -l` on each locale file you touched, in the Sail image:
+  `docker run --rm -v "$(pwd -W):/var/www/html" -w /var/www/html --entrypoint php sail-8.4/app -l <file>`.
+  Typographic apostrophes (’) and French guillemets (« ») need no escaping.
+• **Write every change as if an attacker will read it (user rule,
+  2026-11-13).** This is a public repository serving unrelated client
+  companies, so assume the code is read by someone looking for a way in.
+  Before finishing any change, check it for: a missing permission or company
+  check (another tenant's record by id, or a super-admin bypass reaching a
+  service with no guard); user text rendered unescaped (`{!! !!}`, `HtmlString`,
+  chatter bodies - escape with `e()`); raw SQL built from input; mass
+  assignment of fields a user must not set; uploads trusted by name or type;
+  secrets, tokens or personal data in logs, Sentry, errors or the repo; and
+  rate limits on anything an outsider can call repeatedly. Fail closed: when
+  unsure whether someone may do something, refuse. Name what you checked in
+  the handoff.
 • Test suites share one database: run one suite at a time **per database**. An
   interrupted run poisons `aureuserp_testing`; drop and recreate it before
   re-running.
@@ -1262,7 +1283,10 @@ MULTI-COMPANY FACTS THAT BITE
   with `withoutGlobalScopes()`. For any other field, read the parent scope-free the
   same way. Fixed in `TaskStage`, `Task`, `Account\MoveLine`, `Inventory\MoveLine`,
   `Inventory\ProductQuantity` and `Manufacturing\Move`; details in
-  docs/company-admin-role-plan.md §4e/§4i/§4j.
+  docs/completed/company-admin-role-plan.md §4e/§4i/§4j. Also `Employee`'s saved hook
+  (2026-11-11): `Partner::updateOrCreate(['id' => ...])` is a scoped read too,
+  and a miss there created a contact, re-saved, and recursed until the stack ran
+  out. Test: employees `EmployeeContactCompanyTest`.
 • `withoutGlobalScope(CompanyScope::class)` **reads as careful and is not.** Several
   parents carry a global `OwnershipScope` too - `Account\Move`,
   `Inventory\Operation`, `Manufacturing\Order`, `Sale\Order`, `Project`, `Task` -
@@ -1340,7 +1364,7 @@ MULTI-COMPANY FACTS THAT BITE
   Filter on `data_type IN ('bigint','integer','smallint')`, which excludes it on
   principle rather than by naming it. `Partner\Console\Commands\ContactCompanyReport`
   shows the shape.
-• *Superseded 2026-10-29 (user decision, §4k of docs/company-admin-role-plan.md):
+• *Superseded 2026-10-29 (user decision, §4k of docs/completed/company-admin-role-plan.md):
   contacts are now per company in this fork. New contacts are stamped with the
   creating company, while existing contacts with no company stay shared. The
   note below is kept as the record of upstream's design and of what the fork
@@ -1402,7 +1426,7 @@ DOCUMENTATION AND UPSTREAM REVIEW (ALL AGENTS)
   earlier "eight still open" wording predated the 2026-10-22 work. Consult the
   register when working in an affected plugin, and update a finding's Local state
   when you touch one.
-• `docs/planned/02-restructure-backlog.md` is the resource-restructure analysis: which
+• `docs/planned/05-restructure-backlog.md` is the resource-restructure analysis: which
   resources adopt upstream's split layout mechanically and which carry local
   changes that must be moved by hand.
 • When you do review upstream, tell the user what is new, whether DEKA ERP needs
@@ -1454,7 +1478,7 @@ Protected decisions (each has a why comment and a test; details in the plan or
 log named):
 
 • SaaS administration review, 2026-10-28
-  (`docs/saas-administration-billing-audit-plan.md`, review block):
+  (`docs/completed/saas-administration-billing-audit-plan.md`, review block):
   - A tenant role row exists only inside its membership: composite foreign key
     to `user_allowed_companies` with cascade. `TenantRoleAssigner` drops
     companies the user is not a member of.
@@ -1519,7 +1543,7 @@ log named):
     WORKING RULES), a `phpunit.xml` suite and a `bootstrap/providers.php` entry.
 
 • Per-company contacts, products, categories and tags, 2026-10-29
-  (`docs/company-admin-role-plan.md` §4k, user decision for unrelated clients):
+  (`docs/completed/company-admin-role-plan.md` §4k, user decision for unrelated clients):
   - `Partner`, `Product` and `Packaging` have **no** `autoAssignsCompany()`
     opt-out. They are stamped with the creating company. This is a deliberate
     fork from upstream 57e234223: re-apply it on every upstream merge, and keep
@@ -1698,7 +1722,7 @@ log named):
     probe of the login page and could be repeated without limit. Test:
     `support/tests/Feature/Http/LivewireLockedPropertyTest.php`.
 
-• Platform invoices, 2026-11-09 (`docs/saas-administration-billing-audit-plan.md`,
+• Platform invoices, 2026-11-09 (`docs/completed/saas-administration-billing-audit-plan.md`,
   SAAS-10 handoff):
   - Number them with `DocumentNumberGenerator`, not `SequenceService`.
     A company resetting its own sequences must not move a DEKA invoice
@@ -1736,7 +1760,7 @@ log named):
     query writes elsewhere run inside a guarded parent save; a new bulk
     write outside one needs the same call.
 
-• Platform payments, 2026-11-09 (`docs/saas-administration-billing-audit-plan.md`,
+• Platform payments, 2026-11-09 (`docs/completed/saas-administration-billing-audit-plan.md`,
   SAAS-11 handoff, D-SAAS-10):
   - A Super Admin enters the payment by hand. There is no provider. The
     service checks the actor: `Gate::before` lets a Super Admin skip a
@@ -1769,7 +1793,7 @@ log named):
     `CompanyReadOnlyWriteGuard::EXEMPT_MODELS`. The signed-in Super Admin
     already passes. Do not add them so a job with no user can post money.
 
-• Platform administration screens, 2026-11-10 (`docs/saas-administration-billing-audit-plan.md`,
+• Platform administration screens, 2026-11-10 (`docs/completed/saas-administration-billing-audit-plan.md`,
   SAAS-12/13 handoff):
   - `DocumentNumberPolicy` allows an active Super Admin to view, create and
     update platform billing records, and refuses every delete. Do not enable
@@ -1795,7 +1819,7 @@ log named):
   - Tests: `platform-billing/tests/Feature/AdministrationScreensTest.php`
     and `BillingScreensTest.php`.
 
-• Tenant impersonation, 2026-11-10 (`docs/saas-administration-billing-audit-plan.md`,
+• Tenant impersonation, 2026-11-10 (`docs/completed/saas-administration-billing-audit-plan.md`,
   SAAS-15 handoff, D-SAAS-14):
   - Every rule is in `Security\Services\TenantImpersonation`. A screen
     calls it and repeats nothing.
@@ -1818,7 +1842,7 @@ log named):
     Leaving the old hash logs the session out on the next request.
   - Tests: `security/tests/Feature/SaaSAdministration/TenantImpersonationTest.php`.
 
-• Account type, 2026-11-09 (`docs/saas-administration-billing-audit-plan.md`,
+• Account type, 2026-11-09 (`docs/completed/saas-administration-billing-audit-plan.md`,
   SAAS-15 handoff, D-SAAS-11):
   - `test` or `commercial` is chosen only inside
     `CompanyOnboarding::create()`, by a Super Admin or a Multi-Company
@@ -1853,7 +1877,7 @@ log named):
     the guard allows that partner write only while the staff member is
     the authenticated user. Do not `Auth::login()` inside the service.
 
-• Overdue extensions, 2026-11-09 (`docs/saas-administration-billing-audit-plan.md`,
+• Overdue extensions, 2026-11-09 (`docs/completed/saas-administration-billing-audit-plan.md`,
   SAAS-10B, D-SAAS-04, D-SAAS-13):
   - A Company Admin of that company may add exactly 10 days, once per
     overdue invoice. A second grant is refused with "This invoice already
@@ -1883,6 +1907,44 @@ log named):
     drop `platform_billing_overdue_extensions_are_immutable()` before
     creating it again.
   - Tests: `plugins/webkul/platform-billing/tests/Feature/OverdueExtensionTest.php`.
+
+• Activity history and the company Activity log, 2026-11-13 (plan #1, CR-11):
+  - `HasLogActivity` records **deletes** with a snapshot of the record. It
+    used to drop them (a delete has no field changes, so the "nothing
+    changed" check discarded it): "who deleted what" left no trace.
+  - `HasChatter::addMessage()` stamps the **record's** `company_id`, falling
+    back to the session's only when the record has none. With the session's,
+    a Multi-Company Admin's change landed in the wrong company's log.
+  - The Activity log page reads `chatter_messages` past the global scopes
+    and filters `whereIn(company_id, activeIds())`, which deliberately
+    excludes rows with no company. Do not switch it back to the scoped
+    model: CompanyScope shows null-company rows to everyone, which would leak
+    one tenant's history to all. Access: page permission, or Company Admin
+    who is a member of the current company.
+  - Tests: security `Authorization/ActivityLogTest.php`.
+
+• Overview "All" tab board, 2026-11-13 (mockup approved by the user):
+  - All = `OverviewBoard` + `OverviewModuleCards`, two components. Do not
+    go back to stacking every section's widgets: that sent 23 components in
+    one update and broke filtering (Sentry DEKAERP-16).
+  - Each module contributes its own figures (`panel()` on its headline
+    widget; module cards through `Support\...\DashboardCardRegistry`), with
+    visibility from that module's existing `canViewAny()`. No dashboard
+    permission of its own; no module names another.
+  - Refresh every 5 minutes at most (user). Never Filament's 5-second
+    default (Sentry DEKAERP-11). Test: `OverviewTest` polling test.
+
+• Accounting lock date, 2026-11-12 (`docs/planned/02-accounting-plan.md`, A2):
+  - Enforced in the `Move` and `MoveLine` saving/deleting hooks through
+    `Account\Services\PeriodLock`, not on screens. Do not move it to an
+    action: the API, imports and Logistics' `ExpensePoster` save directly.
+  - Only ledger fields (`PeriodLock::MOVE_LEDGER_FIELDS` / `LINE_LEDGER_FIELDS`)
+    are refused. Residuals and payment state stay writable, so paying a
+    locked invoice works. Do not widen the lists to "any change".
+  - `accounts_lock_dates` is append-only history; never update a row.
+  - Moving the date needs Company Admin or `unlock_period_accounting_journal::entry`
+    **and** membership of that company (a global role is true for every id).
+  - Tests: `accounts/tests/Feature/Workflows/LockDateTest.php`.
 
 • Customer page shipments, 2026-11-10 (`docs/logistics-plan.md`, WP-9b, D11):
   - The customer infolist tab is `PartnerSchemaRegistry` slot `tabs.append`.
@@ -1954,7 +2016,7 @@ DONE RECENTLY (newest first; details in docs/change-log.md)
   `InheritsParentCompany` promoted from Logistics to `Webkul\Support`, a `group`
   user with no team no longer sees everything, and `OwnershipScope` is finally
   testable at all. 13 suites, 2,500+ tests, zero failures. Details in
-  docs/change-log.md and docs/company-admin-role-plan.md §4d–§4j.
+  docs/change-log.md and docs/completed/company-admin-role-plan.md §4d–§4j.
 • 2026-09-25 — Logistics WP-11 Reports: five filtered table pages with export in a
   Reporting cluster, behind their own Shield page permissions, plus a test pinning
   that those permission names are actually generated. LogisticsFeature 177 passed.
@@ -1989,30 +2051,39 @@ REFERENCES
 
 • docs/agent-reminders.md — standing instructions and task log (read first).
 • docs/change-log.md — what changed and why, per session.
+• docs/ux-findings.md — running log of UI and ease-of-use improvements. User
+  rule (2026-11-12): every test session or browser check records what could
+  look better or be easier, judged by modern design standards, there.
 • docs/upstream-fix-adoption-plan.md — register of upstream findings UF-001..024
   and the decision on each. No P0/P1 open as of 2026-10-23; UF-003, UF-009 and
   UF-010 are the live ones. No review cadence.
 • docs/planned/ — plans decided or drafted but not started (index in its
   README.md, 2026-11-11): CRM, Inventory improvements, payroll, POS,
-  landing page, restructure backlog, unified product resource.
-• docs/planned/02-restructure-backlog.md — deferred upstream restructures.
+  landing page, restructure backlog, unified product resource; accounting
+  (#7) and reports (#8) added 2026-11-12, both kept lean on the user's
+  instruction: fill real gaps, no overkill.
+• docs/planned/05-restructure-backlog.md — deferred upstream restructures.
 • Package F, resource structure alignment — the plan lives on the
   `chore/resource-structure` branch, not on main:
   `git show chore/resource-structure:docs/upstream-structure-alignment-plan.md`.
   Do that work only on that branch, in its own worktree, and only after
   Logistics is merged. The layout rule itself is in project memory above and in
   docs/logistics-plan.md, so new resources follow it everywhere meanwhile.
-• docs/company-admin-role-plan.md — the "Company Admin" request, and the tenant
-  leak found while investigating it: the Users list is company-scoped only for
-  Multi-Company Admins, so a customer admin with Resource Permission `Global`
-  can see and edit other tenants' users. Mitigation available today; fix planned
-  after Logistics.
+• docs/completed/company-admin-role-plan.md — the "Company Admin" request and
+  the Users-list tenant leak found while investigating it. *Superseded
+  2026-11-12:* "Mitigation available today; fix planned after Logistics." The
+  fix (§4a, company-scoped Users list for everyone) is built and pinned by
+  `CompanyUserIsolationTest`; the plan is in `docs/completed/`.
+• docs/completed/ — finished plans (index in its README.md, 2026-11-12):
+  Attendance, module dashboards, Company Admin, SaaS administration (merged:
+  its remainder is CR-10 in docs/planned/01-comprehensive-review-plan.md),
+  agent review 2026-11-11, Harness² assessment.
 • docs/logistics-plan.md — Logistics plan, decisions D1–D15, status board, work
   packages, handoff log.
-• docs/planned/01-unified-product-resource-plan.md — cross-plugin product-resource plan.
-• docs/planned/07-landing-page-brief.md — public landing-page scope and constraints.
+• docs/completed/unified-product-resource-plan.md — cross-plugin product-resource plan.
+• docs/planned/09-landing-page-brief.md — public landing-page scope and constraints.
 • docs/running-tests.md — how to run tests.
-• docs/harness2-integration.md — assessment of Google's Harness² framework: why
+• docs/completed/harness2-integration.md — assessment of Google's Harness² framework: why
   it cannot integrate with this repo or agent, plus the repo-owned evaluation
   scenarios and the approval gate for instruction changes. Documentation only;
   nothing is installed.
@@ -2024,4 +2095,16 @@ REFERENCES
 • plugins/webkul/barcode/README.md — barcode plugin operation.
 • CODE_OF_CONDUCT.md — contributor conduct.
 • CHANGELOG.md — user-facing release notes; the in-app What's New page reads it.
+  Rule (D-WN-1, 2026-11-12): every user-visible change gets an entry in user
+  language under "## Unreleased" (hidden on the page). Move it under the dated
+  version heading in the same push that ships it to production.
+• Plugin versions (user, 2026-11-13): each plugin has its own semver in its
+  `composer.json` "version", shown on the Plugins page
+  (`Plugin::currentVersion()`). In the push that ships a release, bump every
+  plugin that release changed: a feature raises the minor (patch to 0), fixes
+  only raise the patch. The app version in `config/app.php` stays the overall
+  release. Starting numbers (2026-11-13) came from history: upstream v1.5.0
+  as the base (1.0.0 for Attendances, Logistics, Platform Billing), one bump
+  per fork release that touched the plugin. Test: plugin-manager
+  `PluginVersionTest`.
 • Plan page (private artifact): https://claude.ai/artifact/2zJ4K1thSS6n1Qdt592wTN

@@ -22,6 +22,7 @@ use Webkul\PluginManager\Console\Commands\UninstallCommand;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
 use Webkul\Sale\Events\OrderConfirmed;
+use Webkul\Support\Filament\Contributions\DashboardCardRegistry;
 use Webkul\Support\Services\SequenceService;
 
 class LogisticsServiceProvider extends PackageServiceProvider
@@ -93,6 +94,14 @@ class LogisticsServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        // The Logistics card on the Overview (2026-11-13). Keyed: re-booting replaces it.
+        DashboardCardRegistry::card(
+            'logistics',
+            fn (): bool  => Filament\OverviewCard::visible(),
+            fn (): array => Filament\OverviewCard::data(),
+            sort: 50,
+        );
+
         $this->registerStopLinkRateLimiter();
         PartnerContributions::register();
     }
