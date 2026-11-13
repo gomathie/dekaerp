@@ -1,7 +1,9 @@
 <?php
 
+use Illuminate\Support\Facades\Validator;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Currency;
+use Webkul\Support\Rules\PermittedCurrency;
 
 require_once __DIR__.'/../../Helpers/TestBootstrapHelper.php';
 
@@ -52,4 +54,34 @@ it('does not let one company list narrow another company', function () {
 
     expect(Currency::query()->permittedFor((int) $neighbour->getKey())->pluck('id')->all())
         ->toContain($other->getKey());
+});
+
+/*
+ * The API rule (CR-6): what the screens hide must also be refused by the API,
+ * and a body company_id with a wider list must not widen the active company's.
+ */
+function permittedCurrencyPasses(PermittedCurrency $rule, int $currencyId): bool
+{
+    return Validator::make(['currency_id' => $currencyId], ['currency_id' => [$rule]])->passes();
+}
+
+it('refuses through the API rule a currency outside the company list', function () {
+    [$company, $base, $usd, $other] = companyCurrencyFixture();
+    $company->permittedCurrencies()->sync([$usd->getKey()]);
+
+    $rule = new PermittedCurrency($company->getKey());
+
+    expect(permittedCurrencyPasses($rule, (int) $usd->getKey()))->toBeTrue()
+        ->and(permittedCurrencyPasses($rule, (int) $base->getKey()))->toBeTrue()
+        ->and(permittedCurrencyPasses($rule, (int) $other->getKey()))->toBeFalse();
+});
+
+it('does not let a body company with no list widen the active company list', function () {
+    [$company, , $usd, $other] = companyCurrencyFixture();
+    $company->permittedCurrencies()->sync([$usd->getKey()]);
+    $open = Company::factory()->create();
+
+    $rule = new PermittedCurrency($company->getKey(), $open->getKey());
+
+    expect(permittedCurrencyPasses($rule, (int) $other->getKey()))->toBeFalse();
 });

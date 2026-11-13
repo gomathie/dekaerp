@@ -4,6 +4,7 @@ namespace Webkul\Account\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Webkul\Support\Rules\PermittedCurrency;
 
 class MovePaymentRequest extends FormRequest
 {
@@ -26,7 +27,7 @@ class MovePaymentRequest extends FormRequest
             'journal_id'             => ['sometimes', 'required', 'integer', 'exists:accounts_journals,id'],
             'payment_method_line_id' => ['sometimes', 'required', 'integer', 'exists:accounts_payment_method_lines,id'],
             'partner_bank_id'        => ['nullable', 'integer', 'exists:partners_bank_accounts,id'],
-            'currency_id'            => ['sometimes', 'required', 'integer', 'exists:currencies,id'],
+            'currency_id'            => ['sometimes', 'required', 'integer', 'exists:currencies,id', PermittedCurrency::forRequest()],
             'payment_date'           => ['sometimes', 'required', 'date'],
             'communication'          => ['sometimes', 'required', 'string', 'max:255'],
             'installments_mode'      => ['nullable', 'string', 'in:full,overdue,before_date,next'],

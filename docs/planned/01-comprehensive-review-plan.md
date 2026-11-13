@@ -219,8 +219,10 @@ invite" acceptance is the existing invitation form; not rebuilt.
 staff-only "Currencies" section on the company form, applied to invoice, bill,
 quotation and purchase-order pickers. **D-CR-4 built the same day:**
 `Account\Services\BaseCurrencyChange` plus a Super Admin "Base currency"
-section on the company edit page (change log entry). Still to do: the
-API/imports and the remaining pickers.
+section on the company edit page (change log entry). **API built the same
+day:** `Support\Rules\PermittedCurrency` on the invoice, sales order,
+purchase order and payment requests; no import sets a currency. Still to do:
+the remaining pickers (journals, payment screen, Logistics).
 - Acceptance: Ghana GHS + USD/EUR, Zambia ZMW + USD/ZAR, DRC CDF + USD/EUR
   configured and used on an invoice; a base-currency change after posting
   asks for confirmation and is audited.
