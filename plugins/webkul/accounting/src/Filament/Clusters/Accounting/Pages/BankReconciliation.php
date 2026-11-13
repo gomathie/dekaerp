@@ -18,7 +18,6 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Storage;
 use Webkul\Account\Enums\AccountType;
 use Webkul\Account\Enums\JournalType;
 use Webkul\Account\Models\Account;
@@ -30,6 +29,7 @@ use Webkul\Accounting\Filament\Clusters\Accounting;
 use Webkul\Accounting\Services\BankReconciliation as Reconciliation;
 use Webkul\PluginManager\Support\PluginEntitlement;
 use Webkul\Support\Filament\Concerns\ChecksPagePermission;
+use Webkul\Support\Filament\ImportUpload;
 use Webkul\Support\Services\CompanyContext;
 
 /**
@@ -93,10 +93,10 @@ class BankReconciliation extends Page implements HasTable
                         ->required(),
                     FileUpload::make('file')
                         ->label(__(self::LANG.'.import.file'))
-                        ->disk('local')
-                        ->directory('bank-statement-imports')
-                        ->visibility('private')
                         ->acceptedFileTypes(['text/csv', 'text/plain', 'application/vnd.ms-excel', 'application/csv'])
+                        // The browser hint above is trivially bypassed; the
+                        // `mimes` rule sniffs the content server-side.
+                        ->rules(['file', 'mimes:csv,txt', 'max:2048'])
                         ->maxSize(2048)
                         ->required(),
                     TextInput::make('name')
@@ -125,7 +125,15 @@ class BankReconciliation extends Page implements HasTable
                     ]),
                 ])
                 ->action(function (array $data, Reconciliation $service): void {
-                    $path = (string) $data['file'];
+                    $resolved = ImportUpload::resolve($data['file'] ?? null, 'bank-statement-');
+
+                    if ($resolved === null) {
+                        Notification::make()->danger()->title(__('accounting::bank-reconciliation.errors.empty-file'))->send();
+
+                        return;
+                    }
+
+                    [$path, , $isTemporaryCopy] = $resolved;
 
                     try {
                         $journal = Journal::query()->findOrFail($data['journal_id']);
@@ -140,7 +148,7 @@ class BankReconciliation extends Page implements HasTable
                             throw CannotReconcile::badRow(1, __('accounting::bank-reconciliation.fields.amount'));
                         }
 
-                        $statement = $service->import($journal, Storage::disk('local')->path($path), array_filter($map, fn ($value) => $value !== null));
+                        $statement = $service->import($journal, $path, array_filter($map, fn ($value) => $value !== null));
 
                         Notification::make()
                             ->success()
@@ -151,9 +159,11 @@ class BankReconciliation extends Page implements HasTable
                     } catch (CannotReconcile $exception) {
                         Notification::make()->danger()->title($exception->getMessage())->send();
                     } finally {
-                        // The statement is in the database now; the uploaded
+                        // The statement is in the database now; a copy of the
                         // file holds bank data and is not kept.
-                        Storage::disk('local')->delete($path);
+                        if ($isTemporaryCopy) {
+                            @unlink($path);
+                        }
                     }
                 }),
         ];
