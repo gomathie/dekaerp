@@ -27,4 +27,29 @@ return [
             'until' => 'Hasta',
         ],
     ],
+
+    'by-product' => [
+        'title'      => 'Compras por producto',
+        'subheading' => 'Líneas de órdenes de compra confirmadas en la moneda de la empresa. Agrupe por producto o categoría para ver cantidades pedidas y recibidas.',
+        'export'     => 'Exportar',
+        'sum'        => 'Total',
+        'columns'    => [
+            'product'  => 'Producto',
+            'category' => 'Categoría',
+            'order'    => 'Orden de compra',
+            'date'     => 'Fecha',
+            'supplier' => 'Proveedor',
+            'ordered'  => 'Pedido',
+            'received' => 'Recibido',
+            'untaxed'  => 'Sin impuestos',
+        ],
+        'groups' => [
+            'product'  => 'Producto',
+            'category' => 'Categoría',
+        ],
+        'filters' => [
+            'from'  => 'Desde',
+            'until' => 'Hasta',
+        ],
+    ],
 ];

@@ -6,6 +6,27 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-13, late night (by-product reports; Inventory card visibility)
+
+- **Why:** reports plan R2 "by product" (next open item); Inventory card leak
+  found while testing A5.
+- **How:** `Sale\...\Reporting\Pages\SalesByProduct` and
+  `Purchase\...\Reporting\Pages\PurchasesByProduct` with exporters; order
+  lines of confirmed orders (`whereHas('order')` keeps the order's company
+  and ownership scopes), groups product and category, SQL totals divide by
+  the order's rate. Language blocks `by-product` in five languages each.
+  `Inventory\Filament\OverviewCard::visible()` now returns
+  `Inventory\Filament\Pages\Overview::canAccess()`.
+- **Root cause (Inventory card):** it used `OperationResource::canViewAny()`;
+  `Operation` has no policy, and Filament allows a resource with none, so
+  the card (counts of receipts, shipments, late operations) showed to every
+  user, including companies without Inventory. Counts only, no records.
+- **Verification (Sail):** AccountingFeature full suite 98 passed (190
+  assertions) on `aureuserp_testing_claude_ui` after A5/A6.
+  ModuleCardsTest and the by-product tests: results below.
+- **Rollback:** remove the two pages; restore the old `visible()` (not
+  advised).
+
 ## 2026-11-13, night (A6 cash flow; A5 Accounting on the Overview)
 
 - **Why:** accounting plan A5 and A6, next in the agreed order; user away,

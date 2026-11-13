@@ -27,4 +27,28 @@ return [
             'until' => 'Au',
         ],
     ],
+
+    'by-product' => [
+        'title'      => 'Ventes par produit',
+        'subheading' => 'Lignes des commandes confirmées, en devise de la société. Regroupez par produit ou catégorie pour voir les quantités et les totaux.',
+        'export'     => 'Exporter',
+        'sum'        => 'Total',
+        'columns'    => [
+            'product'  => 'Produit',
+            'category' => 'Catégorie',
+            'order'    => 'Commande',
+            'date'     => 'Date',
+            'customer' => 'Client',
+            'quantity' => 'Quantité',
+            'untaxed'  => 'Hors taxes',
+        ],
+        'groups' => [
+            'product'  => 'Produit',
+            'category' => 'Catégorie',
+        ],
+        'filters' => [
+            'from'  => 'Du',
+            'until' => 'Au',
+        ],
+    ],
 ];

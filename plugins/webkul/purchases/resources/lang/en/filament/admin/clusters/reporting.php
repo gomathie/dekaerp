@@ -27,4 +27,29 @@ return [
             'until' => 'Until',
         ],
     ],
+
+    'by-product' => [
+        'title'      => 'Purchases by product',
+        'subheading' => 'Lines of confirmed purchase orders in company currency. Group by product or category to see quantities ordered and received.',
+        'export'     => 'Export',
+        'sum'        => 'Total',
+        'columns'    => [
+            'product'  => 'Product',
+            'category' => 'Category',
+            'order'    => 'Purchase order',
+            'date'     => 'Date',
+            'supplier' => 'Supplier',
+            'ordered'  => 'Ordered',
+            'received' => 'Received',
+            'untaxed'  => 'Untaxed',
+        ],
+        'groups' => [
+            'product'  => 'Product',
+            'category' => 'Category',
+        ],
+        'filters' => [
+            'from'  => 'From',
+            'until' => 'Until',
+        ],
+    ],
 ];
