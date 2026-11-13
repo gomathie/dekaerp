@@ -3,9 +3,9 @@
 use Webkul\PluginManager\Models\Plugin;
 
 /**
- * Plugin versions (user, 2026-11-13): a plugin we improved shows the app
- * release that last changed it, read from its own composer.json, never
- * upstream's number or the old "1.0.0" fallback.
+ * Plugin versions (user, 2026-11-13): each plugin has its own version, read
+ * from its own composer.json, never upstream's number or the old "1.0.0"
+ * fallback.
  */
 it('gives every plugin a version in its composer.json', function () {
     foreach (glob(base_path('plugins/webkul/*/composer.json')) as $file) {

@@ -2098,4 +2098,13 @@ REFERENCES
   Rule (D-WN-1, 2026-11-12): every user-visible change gets an entry in user
   language under "## Unreleased" (hidden on the page). Move it under the dated
   version heading in the same push that ships it to production.
+• Plugin versions (user, 2026-11-13): each plugin has its own semver in its
+  `composer.json` "version", shown on the Plugins page
+  (`Plugin::currentVersion()`). In the push that ships a release, bump every
+  plugin that release changed: a feature raises the minor (patch to 0), fixes
+  only raise the patch. The app version in `config/app.php` stays the overall
+  release. Starting numbers (2026-11-13) came from history: upstream v1.5.0
+  as the base (1.0.0 for Attendances, Logistics, Platform Billing), one bump
+  per fork release that touched the plugin. Test: plugin-manager
+  `PluginVersionTest`.
 • Plan page (private artifact): https://claude.ai/artifact/2zJ4K1thSS6n1Qdt592wTN

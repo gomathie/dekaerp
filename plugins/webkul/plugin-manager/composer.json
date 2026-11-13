@@ -1,7 +1,7 @@
 {
     "name": "webkul/plugin-manager",
     "description": "Plugin Manager for Aureus ERP",
-    "version": "1.8.1",
+    "version": "1.7.2",
     "authors": [
         {
             "name": "365 Systems"

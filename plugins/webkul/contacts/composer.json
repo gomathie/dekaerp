@@ -1,7 +1,7 @@
 {
     "name": "webkul/contacts",
     "description": "Contact management for customers and vendors",
-    "version": "1.8.1",
+    "version": "1.6.1",
     "authors": [
         {
             "name": "365 Systems"
