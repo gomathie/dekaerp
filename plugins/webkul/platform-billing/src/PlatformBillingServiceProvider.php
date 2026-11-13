@@ -7,6 +7,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+use Webkul\PlatformBilling\Console\Commands\BillingHealthCheck;
 use Webkul\PlatformBilling\Console\Commands\BillingReadinessReport;
 use Webkul\PlatformBilling\Console\Commands\InvoiceSubscriptions;
 use Webkul\PlatformBilling\Listeners\StartPlanAtOnboarding;
@@ -68,6 +69,7 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
             ->hasCommands([
                 InvoiceSubscriptions::class,
                 BillingReadinessReport::class,
+                BillingHealthCheck::class,
             ])
             ->runsMigrations();
     }
