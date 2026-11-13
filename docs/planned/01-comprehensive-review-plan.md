@@ -234,6 +234,17 @@ Decided 2026-11-12 (D-CR-7). Every SAAS package is built but in "review".
 section to find out who changes what, who deleted what." Order agreed: after
 the accounting reset/cancel reason (accounting plan, A2b), before A7.*
 
+*Built 2026-11-13 (awaiting push): `security/.../Settings/Pages/ActivityLog.php`
+with filters, Excel export (`ActivityLogExporter`), five languages. Two
+defects found and fixed at the source while auditing (step 1): deletes were
+never recorded (`HasLogActivity` dropped events without field changes), and
+every chatter message took the actor's session company instead of the
+record's (`HasChatter::addMessage`). Reasons for reopening a document now
+carry an event, so they appear too. Not done from step 1: the coverage list
+of models without `HasLogActivity` and the backfill of old rows with a null
+company; old rows with no company simply stay out of the log (safe default).
+Tests: `security/tests/Feature/Authorization/ActivityLogTest.php`.*
+
 **Already there (reuse, no second log).** `HasLogActivity` on 25 models
 writes create / update / delete rows to `chatter_messages` (`company_id`,
 `causer`, `event`, `properties` old → new). `SecurityAuditLogger` records

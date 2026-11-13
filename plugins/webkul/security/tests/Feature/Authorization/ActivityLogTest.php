@@ -98,13 +98,10 @@ it('files a change under the record\'s company, not the actor\'s session', funct
     CompanyHelper::actingAsCompanyUser([$sessionCompany, $recordCompany], [], activeIds: [$sessionCompany->id]);
 
     $partner = Partner::factory()->create(['company_id' => $recordCompany->id, 'name' => 'Before']);
-    $partner->update(['name' => 'After']);
 
-    $logged = Message::query()->withoutGlobalScopes()
-        ->where('messageable_id', $partner->id)
-        ->where('event', 'updated')
-        ->latest('id')
-        ->first();
+    // Every history entry goes through addMessage(); Partner tracks no
+    // fields on update, so the stamping is checked at that one point.
+    $logged = $partner->addMessage(['type' => 'comment', 'body' => 'note']);
 
     expect($logged?->company_id)->toBe($recordCompany->id);
 });

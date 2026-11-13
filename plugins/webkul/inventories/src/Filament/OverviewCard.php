@@ -49,7 +49,9 @@ class OverviewCard
 
         return [
             'label' => __($lang.'.label'),
-            'url'   => OperationResource::getUrl('index'),
+            // The Operations section, not OperationResource::getUrl(): that
+            // resource builds its URL from a record and fails without one.
+            'url'   => \Webkul\Inventory\Filament\Clusters\Operations::getUrl(),
             'items' => [
                 ['label' => __($lang.'.receipts-today'), 'value' => number_format($receiptsToday)],
                 ['label' => __($lang.'.ready-to-ship'), 'value' => number_format($toShip)],

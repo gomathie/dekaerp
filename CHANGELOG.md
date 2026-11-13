@@ -10,6 +10,20 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+### Features
+
+* Accounting: Tax Summary report. For any period, each tax (for example VAT, NHIL and GETFund) with its taxable amount, the tax collected on sales and paid on purchases, and the net to pay or reclaim. Credit notes reduce it. Export to Excel.
+* Reports: one page listing every report you can open, grouped by module, with a search box.
+* Sales analysis and Purchase analysis reports: confirmed orders in company currency, grouped by customer or supplier, salesperson or buyer, or month, with totals and Excel export.
+* Activity log (Settings): see who created, changed or deleted what in your company, with the old and new values and the reason given. Filter by person, record type, action and date, and export to Excel. Deletions are now recorded too.
+
+### Improvements
+
+* The Overview has a new design. The greeting shows the date, how many things need you today as clickable chips, your local time, and a "New invoice" button with other shortcuts beside it.
+* The Overview's All tab is now one board: Sales (revenue, orders and how many quotations became orders, each with its trend and a small chart), money in and out with an optional comparison to the previous period, Purchases with spend by supplier, Needs attention, and Invoices with paid, open and overdue amounts and the invoices to chase.
+* Below it, "Across the company" shows the key figures of Inventory, Projects, Recruitment, Employees and Logistics. Only the modules your company uses appear.
+* The Overview refreshes itself every 5 minutes.
+
 # CHANGELOG — v1.8.1 — 2026-11-13
 
 ### Improvements

@@ -1,6 +1,17 @@
 # Reports — Improvement Plan
 
-Status: **plan written 2026-11-12; decisions made the same day; not started.** Built from the brief below
+Status: **in progress. R1 built 2026-11-13 (awaiting push):
+`support/src/Filament/Pages/Reports.php`. Decision: the page discovers every
+page or resource in a module's `Reporting` cluster instead of a registry
+each plugin must remember to fill; each entry still shows only when its own
+`canAccess()`/`canViewAny()` passes. One-line descriptions were left out (no
+report has one today; adding them is a per-report text job). Test:
+`accounting/tests/Feature/Filament/ReportsPageTest.php`. R2 built the same
+day: `Sales analysis` and `Purchase analysis`, one page each in a new
+`Reporting` cluster per module. Decision: one groupable page (by customer or
+supplier, salesperson or buyer, month) instead of a page per view, totals
+in company currency. Not built: "by product" (needs line-level data) and
+"received vs ordered"; add when a client asks. Next: R3 only if R1 is used.** Built from the brief below
 (added by the user 2026-11-12), cut to the gaps after the user's instruction
 the same day: "if what we have is enough don't plan an overkill, just an
 improvement and an easy workflow."

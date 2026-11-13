@@ -68,4 +68,32 @@ return [
         'heading' => 'Dans toute l\'entreprise',
         'open'    => 'Ouvrir',
     ],
+
+    'board' => [
+        'updated'     => 'Mis à jour à :time',
+        'orders'      => 'Commandes',
+        'conversion'  => 'Devis → commande',
+        'by-supplier' => 'Dépenses par fournisseur',
+        'other'       => 'Autres',
+        'paid'        => 'Payées',
+        'open'        => 'Ouvertes',
+        'overdue'     => 'En retard',
+        'show'        => 'Afficher',
+        'tab-overdue' => 'En retard',
+        'tab-soon'    => 'Échéance cette semaine',
+        'tab-open'    => 'Toutes ouvertes',
+        'nothing'     => 'Rien ici.',
+        'customer'    => 'Client',
+        'due'         => 'Échéance',
+        'no-due-date' => 'Sans échéance',
+        'due-today'   => 'Échéance aujourd\'hui',
+        'due-on'      => 'Échéance le :date',
+        'days-late'   => '{1} 1 jour de retard|[2,*] :count jours de retard',
+    ],
+
+    'cash-compare' => [
+        'previous'    => 'Période précédente',
+        'this-period' => 'Cette période',
+        'vs-previous' => 'Comparer à la période précédente',
+    ],
 ];
