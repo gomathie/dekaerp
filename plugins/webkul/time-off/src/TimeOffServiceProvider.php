@@ -8,6 +8,7 @@ use Webkul\PluginManager\Console\Commands\InstallCommand;
 use Webkul\PluginManager\Console\Commands\UninstallCommand;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
+use Webkul\Support\Filament\Contributions\DashboardCardRegistry;
 use Webkul\TimeOff\Models\Leave;
 use Webkul\TimeOff\Models\LeaveAllocation;
 
@@ -62,9 +63,9 @@ class TimeOffServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         // The Employees card on the Overview (2026-11-13). Keyed: re-booting replaces it.
-        \Webkul\Support\Filament\Contributions\DashboardCardRegistry::card(
+        DashboardCardRegistry::card(
             'employees',
-            fn (): bool => Filament\OverviewCard::visible(),
+            fn (): bool  => Filament\OverviewCard::visible(),
             fn (): array => Filament\OverviewCard::data(),
             sort: 40,
         );

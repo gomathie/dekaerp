@@ -130,9 +130,9 @@ class ActivityLog extends Page implements HasTable
                     ->formatStateUsing(fn (?string $state): string => static::eventLabel($state))
                     ->color(fn (?string $state): string => match (true) {
                         str_contains((string) $state, 'deleted')                               => 'danger',
-                        $state === 'created'                                                  => 'success',
-                        str_starts_with((string) $state, 'security.')                         => 'warning',
-                        default                                                               => 'gray',
+                        $state === 'created'                                                   => 'success',
+                        str_starts_with((string) $state, 'security.')                          => 'warning',
+                        default                                                                => 'gray',
                     }),
                 TextColumn::make('properties')
                     ->label(__($lang.'.columns.changes'))
