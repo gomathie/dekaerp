@@ -13,7 +13,12 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 ### Features
 
 * Accounting: Cash Flow report. Cash at the start and end of a period, and the money in and out in between, grouped as operating, investing and financing. Export to Excel.
+* Sales by product and Purchases by product reports: quantities and amounts per product or category, in company currency, with Excel export. Purchases also shows how much was received.
 * The Overview has an Accounting section and card: cash at bank, bank lines still to reconcile and draft journal entries, with a "Reconcile bank" shortcut.
+
+### Fixes
+
+* The Inventory card on the Overview now shows only to people who may open the Inventory overview, and only in companies that use Inventory.
 
 # CHANGELOG — v1.9.0 — 2026-11-13
 
