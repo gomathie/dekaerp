@@ -6,6 +6,42 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-13, company currencies, first part (CR-6)
+
+- **Why:** CR-6. A Ghana company should invoice in GHS plus USD/EUR, a Zambia
+  one in ZMW plus USD/ZAR; until now every picker listed every active
+  currency for every company.
+- **Decision changed from the plan (taken by the agent, user away):** the
+  plan said "backfill each company with its base currency as its only
+  permitted currency, so nothing changes". That is wrong: it would have
+  stopped every company already invoicing in USD or EUR. Instead there is
+  no backfill, and **no list means every active currency** (today's
+  behaviour); a list narrows the pickers to it plus the base currency.
+- **How:** support migration `2026_11_13_000001_create_company_currencies_table`
+  (composite primary key, cascades), `Company::permittedCurrencies()`,
+  `Currency::scopePermittedFor($companyId)` (reads scope-free, always adds the
+  base currency). Security contributes a "Currencies" section to the company
+  form, visible only to installation staff; a hidden Filament field is not
+  saved, so a Company Admin cannot change the list. Applied to the currency
+  picker on invoices, bills, quotations and purchase orders, using the form's
+  company, else the current company.
+- **Not done yet (rest of CR-6):** the audited base-currency change with a
+  warning naming posted entries (D-CR-4); the API and imports do not apply
+  the list (they validate against all currencies, as before); other pickers
+  (journals, payments, logistics) are unchanged. An existing document whose
+  currency is later removed from the list may need its currency re-chosen
+  when edited.
+- **Side change:** Pint replaced a fully qualified `CompanyMembers` call by
+  an import in `QuotationResource` and `OrderResource` (style only).
+- **Verification:** support `Tenancy/CompanyCurrenciesTest.php` 3 passed
+  (`aureuserp_testing_claude_ui`); security
+  `SaaSAdministration/CompanyCurrenciesFormTest.php` 1 passed. Form
+  regression: Sales quotation/order resource tests 29 passed, Purchases
+  order resource 14 passed (`aureuserp_testing_claude_ui`), Accounts
+  invoice/bill resource 21 passed (`aureuserp_testing_claude_vault`).
+- **Rollback:** roll back the migration; revert the four pickers, the
+  section and the scope.
+
 ## 2026-11-13, rebrand sweep follow-up (plan #3, option A)
 
 - **Why:** a sweep for "Webkul"/"Aureus" in visible text found three

@@ -89,6 +89,7 @@ class SupportServiceProvider extends PackageServiceProvider
                 // D-SAAS-11: test or commercial. Existing companies stay commercial.
                 '2026_11_09_000004_add_account_type_to_companies_table',
                 '2026_11_12_000001_add_whats_new_seen_version_to_users_table',
+                '2026_11_13_000001_create_company_currencies_table',
             ])
             ->runsMigrations()
             ->hasSettings([

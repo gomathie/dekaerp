@@ -211,6 +211,14 @@ invite" acceptance is the existing invitation form; not rebuilt.
   (already snapshotted).
 - Backfill: each existing company gets its current base currency as its only
   permitted currency, so nothing changes until someone adds more.
+  *Superseded 2026-11-13 (agent, user away): that backfill would block
+  companies already invoicing in other currencies. No backfill; an empty
+  list means every active currency.*
+
+**Part 1 built 2026-11-13:** `company_currencies`, `Currency::permittedFor()`,
+staff-only "Currencies" section on the company form, applied to invoice, bill,
+quotation and purchase-order pickers. Still to do: the audited base-currency
+change (D-CR-4), the API/imports, and the remaining pickers.
 - Acceptance: Ghana GHS + USD/EUR, Zambia ZMW + USD/ZAR, DRC CDF + USD/EUR
   configured and used on an invoice; a base-currency change after posting
   asks for confirmation and is audited.
