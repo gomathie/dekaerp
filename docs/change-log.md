@@ -6,6 +6,32 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-13, Sentry DEKAERP-19..1J (local only: test runs emptied the dev server's compiled views)
+
+- **Why:** ten new Sentry issues, all `/admin/login`, "File does not exist /
+  Failed to open stream at storage/framework/views/....php". Every event is
+  `environment: local`, `http://localhost`, curl, server a Docker container
+  id: the local dev container, not production (production had none).
+- **Root cause:** the test suite installs plugins through their install
+  commands, which call `Package::refreshPluginCaches()` → `optimize:clear`,
+  emptying the compiled-views folder. Tests and the dev container share
+  `storage/framework/views` through the same bind mount, so a request to the
+  dev server during a test run found its compiled view gone. Times match
+  today's test runs.
+- **How:** `phpunit.xml` sets `VIEW_COMPILED_PATH=storage/framework/testing/views`
+  (force), so tests compile and clear their own folder (already git-ignored).
+- **Benefit:** test runs no longer break the local app or flood Sentry.
+- **Note (user action, optional):** the local `.env` sends the dev server's
+  errors to the production Sentry project (environment `local`). Blank
+  `SENTRY_LARAVEL_DSN` locally, or filter `environment:production` in alerts.
+- **Verification:** a SalesByProductTest run left the shared folder at 40
+  compiled views before and after, and wrote 25 into
+  `storage/framework/testing/views`. All ten issues marked resolved.
+  Same-session results: ModuleCardsTest 6 passed (31 assertions, including
+  the new Inventory visibility test); SalesByProductTest +
+  PurchasesByProductTest 4 passed (8).
+- **Rollback:** remove the line.
+
 ## 2026-11-13, late night (by-product reports; Inventory card visibility)
 
 - **Why:** reports plan R2 "by product" (next open item); Inventory card leak
