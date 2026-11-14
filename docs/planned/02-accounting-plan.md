@@ -135,7 +135,7 @@ country's extra accounts, sets the standard VAT and adds an exempt 0 % pair.
 Data in `accounts/resources/data/charts/`: `gh.php` (IFRS-style, GRA/SSNIT/
 Tier 2 names, VAT 20 % = 15 + NHIL 2.5 + GETFund 2.5), `zm.php` (ZRA/NAPSA/
 NHIMA/SDL, VAT 16 %), `ohada.php` (SYSCOHADA revised, 17 states; TVA 16 % CD,
-18 % CG, other states keep the copied rate). No template: unchanged. After
+18 % CG; *2026-11-14: every OHADA state now has its standard published rate*). No template: unchanged. After
 setup the chart is the company's own and fully editable. Also fixed: setup
 copied taxes **without their distribution lines**, now copied with remapped
 accounts. Tests: `accounts/tests/Feature/Workflows/CountryChartTest.php`.
