@@ -1,6 +1,7 @@
 # Reports — Improvement Plan
 
-Status: **in progress. R1 built 2026-11-13 (awaiting push):
+Status: **completed 2026-11-15** (moved from planned #4; in production since
+v1.10.0; R3 only if R1 is used). *History:* **in progress. R1 built 2026-11-13 (awaiting push):
 `support/src/Filament/Pages/Reports.php`. Decision: the page discovers every
 page or resource in a module's `Reporting` cluster instead of a registry
 each plugin must remember to fill; each entry still shows only when its own
