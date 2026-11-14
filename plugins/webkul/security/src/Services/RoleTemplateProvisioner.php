@@ -101,7 +101,9 @@ class RoleTemplateProvisioner
             }
         });
 
-        if ($created !== []) {
+        $stripped = $this->stripAdminDenied();
+
+        if ($created !== [] || $stripped > 0) {
             app(PermissionRegistrar::class)->forgetCachedPermissions();
 
             if (app()->bound(ForkPermissionRegistrar::class)) {
@@ -110,6 +112,44 @@ class RoleTemplateProvisioner
         }
 
         return $created;
+    }
+
+    /**
+     * Remove from the templates every permission a Company Admin may never
+     * hold or hand out (force delete, roles, security pages...).
+     *
+     * Why (CR-3 production check, 2026-11-14): "full" templates carried
+     * force_delete_*, which MultiCompanyAdminService::deniesAbility() forbids
+     * to Company Admins, so Finance, HR, Sales, Inventory and Logistics
+     * Manager never appeared in their role list. This only ever removes
+     * those abilities; any other edit made on the Roles screen is kept.
+     *
+     * @return int permissions removed
+     */
+    public function stripAdminDenied(): int
+    {
+        $templateIds = Role::query()
+            ->where('guard_name', 'web')
+            ->whereIn(DB::raw('LOWER(name)'), array_map('mb_strtolower', array_keys(self::TEMPLATES)))
+            ->pluck('id');
+
+        if ($templateIds->isEmpty()) {
+            return 0;
+        }
+
+        $denied = Permission::query()
+            ->get(['id', 'name'])
+            ->filter(fn (Permission $permission): bool => app(MultiCompanyAdminService::class)->deniesAbility((string) $permission->name))
+            ->pluck('id');
+
+        if ($denied->isEmpty()) {
+            return 0;
+        }
+
+        return DB::table('role_has_permissions')
+            ->whereIn('role_id', $templateIds)
+            ->whereIn('permission_id', $denied)
+            ->delete();
     }
 
     /**
@@ -173,6 +213,12 @@ class RoleTemplateProvisioner
     /** @param  array<string, string>  $plugins */
     public function grants(array $plugins, string $permission): bool
     {
+        // One rule, one place: a template may hold nothing a Company Admin is
+        // denied, or no Company Admin can assign it.
+        if (app(MultiCompanyAdminService::class)->deniesAbility($permission)) {
+            return false;
+        }
+
         foreach (self::FORBIDDEN_FRAGMENTS as $fragment) {
             if (str_contains($permission, $fragment)) {
                 return false;
