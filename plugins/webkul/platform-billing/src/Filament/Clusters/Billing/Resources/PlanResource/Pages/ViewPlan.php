@@ -85,6 +85,16 @@ class ViewPlan extends ViewRecord
                         app(PlanCatalog::class)->deactivatePlan($actor, $record);
                     });
                 }),
+            Action::make('activatePlan')
+                ->label(__(static::$lang.'.actions.activate-plan'))
+                ->color('success')
+                ->requiresConfirmation()
+                ->visible(fn (Plan $record): bool => ! $record->is_active)
+                ->action(function (Plan $record): void {
+                    $this->run(function (User $actor) use ($record): void {
+                        app(PlanCatalog::class)->activatePlan($actor, $record);
+                    });
+                }),
         ];
     }
 

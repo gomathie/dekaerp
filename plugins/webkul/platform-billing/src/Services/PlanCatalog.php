@@ -138,6 +138,36 @@ class PlanCatalog
         });
     }
 
+    /**
+     * The way back from deactivatePlan() (2026-11-15). Without it a plan
+     * created as a draft, or deactivated by mistake, could never be offered
+     * again, and its code stayed taken because billing records are never
+     * deleted. Same guard and audit as deactivation.
+     */
+    public function activatePlan(User $actor, Plan $plan): Plan
+    {
+        $this->assertSuperAdmin($actor);
+
+        return DB::transaction(function () use ($actor, $plan): Plan {
+            $locked = Plan::query()->lockForUpdate()->findOrFail($plan->getKey());
+
+            if ($locked->is_active) {
+                return $locked;
+            }
+
+            $locked->forceFill(['is_active' => true])->save();
+            app(SecurityAuditLogger::class)->record(
+                'platform_billing.plan_activated',
+                $locked,
+                $actor,
+                before: ['is_active' => false],
+                after: ['is_active' => true],
+            );
+
+            return $locked;
+        });
+    }
+
     public function deactivatePrice(User $actor, Price $price): Price
     {
         $this->assertSuperAdmin($actor);

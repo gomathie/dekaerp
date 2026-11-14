@@ -170,7 +170,10 @@ class CurrencyResource extends Resource
                                     ->required()
                                     ->numeric()
                                     ->step(0.000001)
-                                    ->minValue(1)
+                                    // Units per base currency: a currency stronger than the
+                                    // base (EUR, GBP per USD) is below 1. minValue(1) refused
+                                    // them (2026-11-14, EUR 0.9084). Any positive rate is valid.
+                                    ->minValue(0.000001)
                                     ->default(1.000000)
                                     ->live(onBlur: true)
                                     ->afterStateUpdated(function ($state, callable $set) {

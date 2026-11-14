@@ -67,6 +67,10 @@ class AdminPanelProvider extends PanelProvider
                 fn () => view('filament.components.web-app-meta'),
             )
             ->renderHook(
+                PanelsRenderHook::HEAD_END,
+                fn () => view('filament.components.hidden-scrollbars'),
+            )
+            ->renderHook(
                 PanelsRenderHook::USER_MENU_PROFILE_AFTER,
                 fn () => view('filament.components.user-menu-language'),
             )

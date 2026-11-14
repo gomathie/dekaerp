@@ -107,12 +107,12 @@ class Dashboard extends BaseDashboard
     /** Out of the menu when the Overview exists; old links open its tab. */
     public static function shouldRegisterNavigation(): bool
     {
-        return ! class_exists(Overview::class);
+        return ! Overview::isAvailable();
     }
 
     public function mount(): void
     {
-        if (class_exists(Overview::class)) {
+        if (Overview::isAvailable()) {
             $this->redirect(Overview::getUrl(['section' => 'logistics']));
         }
     }

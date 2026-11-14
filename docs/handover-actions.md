@@ -4,6 +4,29 @@ Everything below needs a person with access this session does not have -
 Supabase's dashboard, Laravel Cloud, or production data. Ordered by urgency.
 
 ---
+
+### URGENT (2026-11-15): production cannot send any e-mail
+
+Found while testing invitations: the mail relay refuses every message with
+`550 From header sender domain not verified (dekacentral.com)` (Sentry
+DEKAERP-1N). The From address is `config('mail.from.address')`
+(`MAIL_FROM_ADDRESS` in Laravel Cloud), now on `@dekacentral.com`, a domain
+the relay has not verified. Invitations, password resets, invoice and order
+e-mails all fail.
+
+Fix one of two ways:
+1. **Verify `dekacentral.com` at the mail provider** (add its SPF/DKIM DNS
+   records), then retry an invitation. Keeps the new brand address.
+2. **Or** set `MAIL_FROM_ADDRESS` in Laravel Cloud back to an address on a
+   domain the relay already verifies, and redeploy. No `#` comment on the
+   env line.
+
+Then: re-send the CR-3 test invitation (Users → Invite User,
+`gochairman2+cr3invite@gmail.com`, company CR3 Test Ghana Ltd) and resolve
+DEKAERP-1N. The code is right: mail leaves as the application, never as the
+person (protected decision, 2026-11-04).
+
+---
 ---
 
 
