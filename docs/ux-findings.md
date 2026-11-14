@@ -57,3 +57,21 @@ Checked on production 2026-11-12 (desktop and 390 px): search, category pills, n
 |---|---|---|---|---|
 | U16 | Clearing the search or a filter leaves every release expanded (721 items) instead of returning to the latest one open | On clear, restore the starting state: only the latest release open | S | **Done** 2026-11-12 |
 | U17 | "Search release notes" appears twice: as a visible label and as the placeholder | Keep the label for screen readers only (sr-only), placeholder stays. Cause: the label already had `sr-only`, but the compiled support.css lacks that utility; the page now defines it | S | **Done** 2026-11-12 |
+
+## Production acceptance run (CR-3, 2026-11-14)
+
+Throwaway "test" company in production, Super Admin creating it, administrator
+and a second user signing in with set passwords (no e-mail).
+
+| # | Seen | Proposal | Effort | Status |
+|---|---|---|---|---|
+| U21 | Choosing Ghana as country left the currency on USD: the form presets USD, so "country fills currency" (U4) only works on an empty field | Fill currency from the country whenever the currency was not touched by hand | S | Proposed |
+| U22 | Country sits inside the collapsed "Address Information" section | Country next to the company name in the first card | S | Proposed (U1) |
+| U23 | "Administrator name" and "must change password" appear only after a password is typed | Show the name field always; it is needed for invitations too | S | Proposed |
+| U24 | Module checkboxes show internal keys (`inventories`, `time-off`, `accounts`) | Show the plugin's display name and icon | S | Proposed |
+| U25 | Plan list is empty with no hint why (no plans exist in production) | Empty state: "No plans yet - create one under Billing → Plans" with a link | S | Proposed |
+| U26 | After first sign-in the administrator lands on Profile with no explanation that the password must be changed | Banner: "Choose your own password to continue" with the dialog already open | S | Proposed |
+| U27 | Changing the password signs the user out without saying so | Notification "Password changed - sign in again with your new password" on the login page | S | Proposed |
+| U28 | Companies list "Status" column shows a bare "Yes" | Badge "Active" / "Inactive" | S | Proposed |
+| U29 | Role "HR Manager" displays as "Hr Manager" | Show the stored name instead of a headline-cased one | S | Proposed |
+| U30 | Activity log subject shows "User #6" instead of the person's name | Show the record's name with the id as a tooltip | S | Proposed |

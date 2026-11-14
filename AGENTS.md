@@ -1934,6 +1934,18 @@ log named):
   - Refresh every 5 minutes at most (user). Never Filament's 5-second
     default (Sentry DEKAERP-11). Test: `OverviewTest` polling test.
 
+• Country chart templates, 2026-11-14 (`docs/planned/02-accounting-plan.md`, A4):
+  - A country with no template, or a company with no country, keeps the
+    standard chart unchanged (user: every country must be usable). Do not
+    refuse setup or require a country.
+  - `ChartLocalizer` recodes copied accounts **in place**; never delete and
+    recreate them, or journals and settings lose their accounts.
+  - It runs only during first setup. Never re-apply a template to a company
+    that is set up: its chart is its own and may have been edited.
+  - Tax rates in `resources/data/charts/` are unreviewed by a local
+    accountant; say so, do not call them compliant.
+  - Tests: `accounts/tests/Feature/Workflows/CountryChartTest.php`.
+
 • Accounting lock date, 2026-11-12 (`docs/planned/02-accounting-plan.md`, A2):
   - Enforced in the `Move` and `MoveLine` saving/deleting hooks through
     `Account\Services\PeriodLock`, not on screens. Do not move it to an

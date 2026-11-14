@@ -10,6 +10,16 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.11.0 — 2026-11-14
+
+### Features
+
+* Accounting set up for your country: companies in Ghana and Zambia start with local tax and payroll accounts (for example SSNIT, Tier 2, NAPSA, PAYE) and their VAT rate; companies in Congo and the other OHADA countries start with the SYSCOHADA chart in French. Every other country keeps the standard chart. Everything stays editable under Accounting → Configuration.
+
+### Fixes
+
+* Taxes copied when a new company sets up its accounting now keep their posting accounts.
+
 # CHANGELOG — v1.10.0 — 2026-11-14
 
 ### Features

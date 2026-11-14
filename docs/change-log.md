@@ -6,6 +6,33 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-14, country chart templates (accounting A4)
+
+- **Why:** every company started on one generic chart and one 15 % tax,
+  while Ghana, Zambia and the OHADA states need local accounts and rates.
+  No local accountant yet; user: follow standards an accountant knows, and
+  keep every other country usable without restriction.
+- **How:** `Account\Services\ChartLocalizer`, called at the end of
+  `AccountingSetupService::setUp()` in the same transaction. Recodes the
+  copied accounts in place by their standard code (ids looked up first, so a
+  new code equal to another's old code cannot redirect a rename), adds extra
+  accounts, sets the country VAT on the copied percent sale/purchase taxes
+  and adds an exempt 0 % copy with the same distribution lines. Data:
+  `accounts/resources/data/charts/{gh,zm,ohada}.php`.
+- **Fixed on the way:** `copyTaxes()` did not copy
+  `accounts_tax_partition_lines`, so a newly set up company's taxes had no
+  account to post to. Now copied, account remapped to the company's own.
+- **Benefit:** a Ghana, Zambia or OHADA company starts on a chart its
+  accountant recognises; nothing changes for other countries.
+- **Trade-off / risk:** rates unreviewed by a local accountant. A shared
+  (no-company) product whose account is resolved by code finds no match in
+  an OHADA company and leaves the field empty. Existing companies are not
+  changed.
+- **Verification:** `CountryChartTest` 5 passed, 41 assertions
+  (`aureuserp_testing_claude_ui`; an earlier run failed only on row order in
+  the comparison, fixed in the test). Version tests 5 passed. Pint passed.
+- **Rollback:** remove the `ChartLocalizer` call in `setUp()`.
+
 ## 2026-11-14, billing health check scheduled (CR-10 item 3)
 
 - **Why:** `platform-billing:health-check` existed but nothing ran it, so a

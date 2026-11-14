@@ -105,6 +105,10 @@ it('leaves a company from a country without a template on the standard chart', f
     $standard = countryChartAccounts(countryChartCompany(null));
     $kenya = countryChartAccounts(countryChartCompany('KE'));
 
+    // Same accounts and names; row order from the database is not part of it.
+    ksort($standard);
+    ksort($kenya);
+
     expect($kenya)->toBe($standard)
         ->toHaveKey('121000', 'Account Receivable');
 });
