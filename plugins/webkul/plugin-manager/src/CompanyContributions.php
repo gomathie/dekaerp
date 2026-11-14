@@ -6,6 +6,7 @@ use Closure;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Schemas\Components\Section;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Services\PluginEntitlementService;
@@ -62,10 +63,12 @@ class CompanyContributions
                     ->hiddenLabel()
                     ->columns(2)
                     ->bulkToggleable()
+                    // Readable names ("Time Off"), not package keys ("time-off") (U24).
                     ->options(fn (): array => Plugin::query()
                         ->where('is_installed', true)
                         ->orderBy('name')
                         ->pluck('name', 'id')
+                        ->map(fn (string $name): string => Str::headline($name))
                         ->all())
                     // Not a column on companies, so it must never be dehydrated
                     // into the model's attributes.

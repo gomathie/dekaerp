@@ -51,6 +51,13 @@ return [
 
         'current-helper' => 'Digite sua senha atual para verificar sua identidade.',
 
+        'must-change' => [
+            'title' => 'Escolha sua própria senha',
+            'body'  => 'Seu administrador definiu esta senha para você. Abra "Atualizar senha" e escolha a sua para continuar.',
+        ],
+
+        'signed-out' => 'Sua senha foi atualizada. Entre novamente com a nova senha.',
+
         'notification' => [
             'success' => [
                 'title' => 'Senha atualizada',

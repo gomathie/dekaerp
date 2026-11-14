@@ -1934,6 +1934,16 @@ log named):
   - Refresh every 5 minutes at most (user). Never Filament's 5-second
     default (Sentry DEKAERP-11). Test: `OverviewTest` polling test.
 
+• Business role covers the role templates, 2026-11-14 (user; `docs/change-log.md`):
+  - `erp:sync-permissions` gives the company administrators' business role
+    (`UserSettings::company_admin_business_role_id`, "Business
+    Administrator", formerly "Admin2") every template permission, adding
+    only. Without it no Company Admin can assign any template, because they
+    may assign only what they hold. Do not remove the call or make it
+    replace the role's permissions.
+  - Test: security `RoleTemplateTest` "gives the administrators business role
+    every template permission".
+
 • Country chart templates, 2026-11-14 (`docs/planned/02-accounting-plan.md`, A4):
   - A country with no template, or a company with no country, keeps the
     standard chart unchanged (user: every country must be usable). Do not

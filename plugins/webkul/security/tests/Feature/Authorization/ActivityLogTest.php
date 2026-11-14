@@ -126,3 +126,16 @@ it('exports exactly the filtered rows', function (): void {
 
     expect($page->getTableQueryForExport()->pluck('event')->all())->toBe(['hard_deleted']);
 });
+
+it('names the record it logged, and falls back to the id', function (): void {
+    // U30 (2026-11-14): "Partner: Ada Mensah" instead of "Partner #12".
+    $partner = Partner::factory()->create(['name' => 'Ada Mensah']);
+
+    $named = (new Message)->forceFill(['messageable_type' => Partner::class, 'messageable_id' => $partner->getKey()]);
+    $gone = (new Message)->forceFill(['messageable_type' => Partner::class, 'messageable_id' => 999999999]);
+    $uninstalled = (new Message)->forceFill(['messageable_type' => 'Webkul\\Removed\\Models\\Thing', 'messageable_id' => 5]);
+
+    expect(ActivityLog::recordLabel($named))->toBe('Partner: Ada Mensah')
+        ->and(ActivityLog::recordLabel($gone))->toBe('Partner #999999999')
+        ->and(ActivityLog::recordLabel($uninstalled))->toBe('Thing #5');
+});

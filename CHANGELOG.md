@@ -10,6 +10,17 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+### Improvements
+
+* Company administrators can now give their users the ready-made roles (Finance Manager, Accountant, HR Manager and the others), and see every module their company has. The administrators' role is now called "Business Administrator".
+* The Activity log names the record that changed ("Partner: Ada Mensah") instead of a number.
+* Module names on the company form are readable ("Time Off" instead of "time-off"), and the plan list explains when no plans exist yet.
+* When an administrator set your password, a message now says to choose your own; after changing it you are told to sign in again.
+
+### Fixes
+
+* Role names show as written ("HR Manager", not "Hr Manager").
+
 # CHANGELOG — v1.11.0 — 2026-11-14
 
 ### Features

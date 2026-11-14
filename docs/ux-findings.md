@@ -65,13 +65,13 @@ and a second user signing in with set passwords (no e-mail).
 
 | # | Seen | Proposal | Effort | Status |
 |---|---|---|---|---|
-| U21 | Choosing Ghana as country left the currency on USD: the form presets USD, so "country fills currency" (U4) only works on an empty field | Fill currency from the country whenever the currency was not touched by hand | S | Proposed |
+| U21 | Choosing Ghana as country left the currency on USD: the form presets USD, so "country fills currency" (U4) only works on an empty field | Fill currency from the country whenever the currency was not touched by hand | S | Not a bug: works, the server round trip took about 5 s |
 | U22 | Country sits inside the collapsed "Address Information" section | Country next to the company name in the first card | S | Proposed (U1) |
-| U23 | "Administrator name" and "must change password" appear only after a password is typed | Show the name field always; it is needed for invitations too | S | Proposed |
-| U24 | Module checkboxes show internal keys (`inventories`, `time-off`, `accounts`) | Show the plugin's display name and icon | S | Proposed |
-| U25 | Plan list is empty with no hint why (no plans exist in production) | Empty state: "No plans yet - create one under Billing → Plans" with a link | S | Proposed |
-| U26 | After first sign-in the administrator lands on Profile with no explanation that the password must be changed | Banner: "Choose your own password to continue" with the dialog already open | S | Proposed |
-| U27 | Changing the password signs the user out without saying so | Notification "Password changed - sign in again with your new password" on the login page | S | Proposed |
-| U28 | Companies list "Status" column shows a bare "Yes" | Badge "Active" / "Inactive" | S | Proposed |
-| U29 | Role "HR Manager" displays as "Hr Manager" | Show the stored name instead of a headline-cased one | S | Proposed |
-| U30 | Activity log subject shows "User #6" instead of the person's name | Show the record's name with the id as a tooltip | S | Proposed |
+| U23 | "Administrator name" and "must change password" appear only after a password is typed | Show the name field always; it is needed for invitations too | S | By design: invited people choose their own name |
+| U24 | Module checkboxes show internal keys (`inventories`, `time-off`, `accounts`) | Show the plugin's display name and icon | S | **Done** 2026-11-14 |
+| U25 | Plan list is empty with no hint why (no plans exist in production) | Empty state: "No plans yet - create one under Billing → Plans" with a link | S | **Done** 2026-11-14 |
+| U26 | After first sign-in the administrator lands on Profile with no explanation that the password must be changed | Banner: "Choose your own password to continue" with the dialog already open | S | **Done** 2026-11-14 |
+| U27 | Changing the password signs the user out without saying so | Notification "Password changed - sign in again with your new password" on the login page | S | **Done** 2026-11-14 |
+| U28 | Companies list "Status" column shows a bare "Yes" | Badge "Active" / "Inactive" | S | Not a bug: check icon, "Yes" is its screen-reader text |
+| U29 | Role "HR Manager" displays as "Hr Manager" | Show the stored name instead of a headline-cased one | S | **Done** 2026-11-14 |
+| U30 | Activity log subject shows "User #6" instead of the person's name | Show the record's name with the id as a tooltip | S | **Done** 2026-11-14 |
