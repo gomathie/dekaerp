@@ -126,6 +126,30 @@ class CompanyResource extends Resource
                                                 'unique' => 'Company name already exists. Please use a unique name.',
                                             ])
                                             ->live(onBlur: true),
+                                        // Next to the name, not inside the collapsed address (U22,
+                                        // CR-3 run 2026-11-14): it sets the currency, and from A4 the
+                                        // chart and taxes, so it belongs with the essentials.
+                                        Select::make('country_id')
+                                            ->label(__('support::filament/resources/company.form.sections.address-information.fields.country'))
+                                            ->relationship(name: 'country', titleAttribute: 'name')
+                                            ->afterStateUpdated(function (Set $set, $state, ?Model $record): void {
+                                                $set('state_id', null);
+
+                                                // New company: the country's currency becomes the default
+                                                // (2.1 plan CR-4, D-CR-1: Ghana GHS, Zambia ZMW). Create
+                                                // only: changing an existing company's base currency is a
+                                                // deliberate, warned action (D-CR-4), never a side effect.
+                                                if ($record === null && $state) {
+                                                    $currencyId = Country::query()->whereKey($state)->value('currency_id');
+
+                                                    if ($currencyId) {
+                                                        $set('currency_id', $currencyId);
+                                                    }
+                                                }
+                                            })
+                                            ->searchable()
+                                            ->preload()
+                                            ->live(),
                                         TextInput::make('registration_number')
                                             ->label(__('support::filament/resources/company.form.sections.company-information.fields.registration-number'))
                                             ->maxLength(255),
@@ -165,27 +189,6 @@ class CompanyResource extends Resource
                                                     ->live()
                                                     ->label(__('support::filament/resources/company.form.sections.address-information.fields.zipcode'))
                                                     ->maxLength(255),
-                                                Select::make('country_id')
-                                                    ->label(__('support::filament/resources/company.form.sections.address-information.fields.country'))
-                                                    ->relationship(name: 'country', titleAttribute: 'name')
-                                                    ->afterStateUpdated(function (Set $set, $state, ?Model $record): void {
-                                                        $set('state_id', null);
-
-                                                        // New company: the country's currency becomes the default
-                                                        // (2.1 plan CR-4, D-CR-1: Ghana GHS, Zambia ZMW). Create
-                                                        // only: changing an existing company's base currency is a
-                                                        // deliberate, warned action (D-CR-4), never a side effect.
-                                                        if ($record === null && $state) {
-                                                            $currencyId = Country::query()->whereKey($state)->value('currency_id');
-
-                                                            if ($currencyId) {
-                                                                $set('currency_id', $currencyId);
-                                                            }
-                                                        }
-                                                    })
-                                                    ->searchable()
-                                                    ->preload()
-                                                    ->live(),
                                                 Select::make('state_id')
                                                     ->label(__('support::filament/resources/company.form.sections.address-information.fields.state'))
                                                     ->relationship(

@@ -16,6 +16,10 @@
                                         "name": "name"
                                     },
                                     {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "country_id"
+                                    },
+                                    {
                                         "type": "Filament\\Forms\\Components\\TextInput",
                                         "name": "registration_number"
                                     },
@@ -57,10 +61,6 @@
                                             },
                                             {
                                                 "type": "Filament\\Forms\\Components\\Select",
-                                                "name": "country_id"
-                                            },
-                                            {
-                                                "type": "Filament\\Forms\\Components\\Select",
                                                 "name": "state_id"
                                             }
                                         ]
@@ -77,6 +77,15 @@
                                     {
                                         "type": "Filament\\Forms\\Components\\DatePicker",
                                         "name": "founded_date"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "onboarding_price_id"
                                     }
                                 ]
                             },
@@ -120,6 +129,10 @@
                                         "name": "administrator_password"
                                     },
                                     {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "administrator_name"
+                                    },
+                                    {
                                         "type": "Filament\\Forms\\Components\\Toggle",
                                         "name": "administrator_must_change_password"
                                     }
@@ -135,6 +148,15 @@
                                     {
                                         "type": "Filament\\Forms\\Components\\TextInput",
                                         "name": "test_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "permittedCurrencies"
                                     }
                                 ]
                             },
