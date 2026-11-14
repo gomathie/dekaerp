@@ -3,8 +3,9 @@
 Status: **in progress. Done: A1 (known figures, report isolation), A2 (lock
 date, v1.8.0), A2b (reason on reset, v1.8.1). Built 2026-11-13, awaiting push:
 A7 (Tax Summary), A3 (bank reconciliation) — shipped in v1.9.0. Built
-2026-11-13, awaiting push: A5 (Overview section), A6 (cash flow). Next: A4
-(country templates, needs a local accountant).** Built from the brief below
+2026-11-13: A5 (Overview section), A6 (cash flow), shipped in v1.10.0.
+A4 (country templates) built 2026-11-14 on published standards, no local
+accountant yet (user decision); tax rates still to be confirmed by one.** Built from the brief below
 (added by the user 2026-11-12), cut to the gaps after the user's instruction
 the same day: "if what we have is enough don't plan an overkill, just an
 improvement and an easy workflow."
@@ -124,6 +125,20 @@ Seeded template sets: Ghana, Zambia, OHADA (Congo). Chosen from the
 company's country when Accounting is set up; the current copy stays the
 fallback. Existing companies are not touched. Taxes ship as data and must be
 checked by a local accountant before being called compliant.
+*Built 2026-11-14 (user: no accountant yet, use a standard an accountant
+already knows; any other country keeps working unrestricted).*
+`Account\Services\ChartLocalizer`, run inside `AccountingSetupService::setUp()`
+after the standard copy, recodes and renames the copied accounts **in place**
+(ids kept, so journals, settings and taxes stay pointed at them), adds the
+country's extra accounts, sets the standard VAT and adds an exempt 0 % pair.
+Data in `accounts/resources/data/charts/`: `gh.php` (IFRS-style, GRA/SSNIT/
+Tier 2 names, VAT 20 % = 15 + NHIL 2.5 + GETFund 2.5), `zm.php` (ZRA/NAPSA/
+NHIMA/SDL, VAT 16 %), `ohada.php` (SYSCOHADA revised, 17 states; TVA 16 % CD,
+18 % CG, other states keep the copied rate). No template: unchanged. After
+setup the chart is the company's own and fully editable. Also fixed: setup
+copied taxes **without their distribution lines**, now copied with remapped
+accounts. Tests: `accounts/tests/Feature/Workflows/CountryChartTest.php`.
+Not yet: a "chart template" choice at setup (country decides today).
 
 **A5 — Accounting dashboard** and **A6 — cash flow statement.**
 Dashboard section through `OverviewRegistry`, same rules as the other
