@@ -289,7 +289,9 @@ JS,
             ->columns([
                 TextColumn::make('name')
                     ->label(__('filament-shield::filament-shield.column.name'))
-                    ->formatStateUsing(fn ($state): string => Str::headline($state))
+                    // Names people typed ("HR Manager") show as typed; only
+                    // snake_case system names are prettified (U29, 2026-11-14).
+                    ->formatStateUsing(fn ($state): string => str_contains((string) $state, '_') ? Str::headline($state) : (string) $state)
                     ->searchable(),
                 TextColumn::make('guard_name')
                     ->label(__('filament-shield::filament-shield.column.guard_name')),

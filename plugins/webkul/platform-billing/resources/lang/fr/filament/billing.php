@@ -108,6 +108,7 @@ return [
         'saved'            => 'Enregistré.',
         'plan-title'       => 'Offre',
         'plan-description' => 'L’offre démarre à la création de la société et fixe ses modules et sa limite de sièges.',
+        'no-plans'         => 'Aucune offre pour le moment. Créez-en une sous Facturation → Offres, ou créez la société maintenant et démarrez son offre plus tard.',
     ],
 
     'invoices' => [

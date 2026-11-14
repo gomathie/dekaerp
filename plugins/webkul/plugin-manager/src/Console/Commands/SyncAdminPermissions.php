@@ -10,6 +10,7 @@ use Spatie\Permission\Models\Permission;
 use Spatie\Permission\PermissionRegistrar;
 use Webkul\Security\PermissionRegistrar as SecurityPermissionRegistrar;
 use Webkul\Security\Services\RoleTemplateProvisioner;
+use Webkul\Security\Settings\UserSettings;
 
 /**
  * Creates every missing Shield permission and gives it to the Admin role.
@@ -86,6 +87,16 @@ class SyncAdminPermissions extends Command
 
         if ($created !== []) {
             $this->components->info('Role templates created: '.implode(', ', $created).'.');
+        }
+
+        // The administrators' business role must cover the templates, or no
+        // Company Admin can assign one (CR-3 finding, 2026-11-14).
+        $added = app(RoleTemplateProvisioner::class)->coverBusinessRole(
+            settings(UserSettings::class)->company_admin_business_role_id ?? null
+        );
+
+        if ($added > 0) {
+            $this->components->info(sprintf('Business role given %d template permission(s).', $added));
         }
 
         return self::SUCCESS;

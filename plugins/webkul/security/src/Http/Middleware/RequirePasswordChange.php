@@ -3,6 +3,7 @@
 namespace Webkul\Security\Http\Middleware;
 
 use Closure;
+use Filament\Notifications\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
@@ -56,6 +57,19 @@ class RequirePasswordChange
 
         if ($this->isAllowed($request, $profileUrl)) {
             return $next($request);
+        }
+
+        // Say why they landed here, once per session: in the CR-3 run the
+        // administrator arrived on Profile with no explanation (U26).
+        if ($request->hasSession() && ! $request->session()->get('password_change_notice_shown')) {
+            $request->session()->put('password_change_notice_shown', true);
+
+            Notification::make()
+                ->title(__('support::filament/pages/profile.password.must-change.title'))
+                ->body(__('support::filament/pages/profile.password.must-change.body'))
+                ->warning()
+                ->persistent()
+                ->send();
         }
 
         return redirect()->to($profileUrl);

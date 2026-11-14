@@ -14,6 +14,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
+use Throwable;
 use Webkul\Chatter\Models\Message;
 use Webkul\Security\Filament\Exports\ActivityLogExporter;
 use Webkul\Security\Models\User;
@@ -187,7 +188,25 @@ class ActivityLog extends Page implements HasTable
     {
         $type = Str::headline(class_basename((string) $message->messageable_type));
 
-        return $type.' #'.$message->messageable_id;
+        // "User: Kofi Mensah" reads better than "User #6" (U30, 2026-11-14).
+        // Loaded per row (25 a page) with the record's own global scopes, so a
+        // record the viewer may not see, a deleted one, or one whose plugin
+        // was uninstalled keeps the id. Never eager-load: one missing class
+        // would take the whole page down.
+        $name = null;
+
+        if (class_exists((string) $message->messageable_type)) {
+            try {
+                $record = $message->messageable;
+                $name = $record ? ($record->name ?? $record->title ?? $record->reference ?? null) : null;
+            } catch (Throwable) {
+                $name = null;
+            }
+        }
+
+        return filled($name) && is_string($name)
+            ? $type.': '.$name
+            : $type.' #'.$message->messageable_id;
     }
 
     public static function eventLabel(?string $event): string

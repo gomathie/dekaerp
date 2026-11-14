@@ -73,6 +73,32 @@ it('creates each template once and never resets an edited one', function () {
         ->toBe(count(RoleTemplateProvisioner::TEMPLATES));
 });
 
+it('gives the administrators business role every template permission, adding only', function () {
+    // CR-3 production finding (2026-11-14): a narrower business role hid every
+    // template from Company Admins, who may assign only what they hold.
+    $provisioner = app(RoleTemplateProvisioner::class);
+    $provisioner->provision();
+
+    $business = Role::query()->create(['name' => 'Business Test '.uniqid(), 'guard_name' => 'web']);
+    $own = Permission::query()->where('name', 'like', 'view\_%')->first();
+    $business->permissions()->sync([$own->getKey()]);
+
+    $added = $provisioner->coverBusinessRole((int) $business->getKey());
+    $held = $business->fresh()->permissions()->pluck('id');
+
+    $templateIds = DB::table('role_has_permissions')
+        ->whereIn('role_id', Role::query()->whereIn('name', array_keys(RoleTemplateProvisioner::TEMPLATES))->pluck('id'))
+        ->distinct()->pluck('permission_id');
+
+    expect($added)->toBeGreaterThan(0)
+        ->and($templateIds->diff($held)->all())->toBe([])
+        ->and($held)->toContain($own->getKey())
+        ->and($business->fresh()->permissions()->pluck('name')->filter(fn (string $n): bool => str_contains($n, '_security_') || in_array($n, User::PLATFORM_ONLY_ABILITIES, true))->all())->toBe([])
+        // A second run adds nothing, and an unknown role is ignored.
+        ->and($provisioner->coverBusinessRole((int) $business->getKey()))->toBe(0)
+        ->and($provisioner->coverBusinessRole(null))->toBe(0);
+});
+
 it('is created by the deploy permission sync', function () {
     Role::query()->whereIn('name', array_keys(RoleTemplateProvisioner::TEMPLATES))->get()->each->delete();
 
