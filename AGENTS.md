@@ -2133,6 +2133,14 @@ REFERENCES
   Rule (D-WN-1, 2026-11-12): every user-visible change gets an entry in user
   language under "## Unreleased" (hidden on the page). Move it under the dated
   version heading in the same push that ships it to production.
+• Release train (user, 2026-11-14; three versions in one day before it):
+  work collects under "## Unreleased" on develop and gets no version. A
+  minor release (vX.Y.0) ships on a release day the user names, carrying
+  everything collected, with each changed plugin bumped once. Between
+  releases only a hotfix goes to production: a patch (vX.Y.Z, plugins
+  x.y.Z), fixes only, no new features, approved by the user or urgent
+  (a user-facing Sentry error), and said so in the handoff. Do not push to
+  production just because a task finished.
 • Plugin versions (user, 2026-11-13): each plugin has its own semver in its
   `composer.json` "version", shown on the Plugins page
   (`Plugin::currentVersion()`). In the push that ships a release, bump every
