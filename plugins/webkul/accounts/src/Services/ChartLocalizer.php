@@ -22,8 +22,9 @@ use Webkul\Support\Models\Company;
  * exactly as the copy made it: every country can use the system (user,
  * 2026-11-14). Companies set up before A4 are never touched.
  *
- * Templates live in resources/data/charts/*.php. Their tax rates have not
- * been reviewed by a local accountant.
+ * Templates live in resources/data/charts/*.php. Their tax rates are
+ * starting values; each company's users maintain their own (user,
+ * 2026-11-14).
  */
 class ChartLocalizer
 {

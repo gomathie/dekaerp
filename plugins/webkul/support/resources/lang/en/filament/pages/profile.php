@@ -51,6 +51,13 @@ return [
 
         'current-helper' => 'Enter your current password to verify your identity.',
 
+        'must-change' => [
+            'title' => 'Choose your own password',
+            'body'  => 'Your administrator set this password for you. Open "Update Password" and choose your own to continue.',
+        ],
+
+        'signed-out' => 'Your password has been updated. Sign in again with your new password.',
+
         'notification' => [
             'success' => [
                 'title' => 'Password Updated',

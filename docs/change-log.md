@@ -6,6 +6,49 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-14, fixes from the CR-3 production run
+
+- **Why:** the run (plan #1, CR-3 table) found that no Company Admin could
+  assign a ready-made role, plus UX findings U21-U30.
+- **How:**
+  - `RoleTemplateProvisioner::coverBusinessRole()`, called by
+    `erp:sync-permissions` on every deploy, adds to the business role in
+    `UserSettings::company_admin_business_role_id` every permission any
+    template holds. Additive only; the template filter keeps security,
+    roles, plugins, bypasses and impersonation out. Cause: production's
+    Admin2 lacked all of HR, Payroll and Standard Employee and most of
+    Logistics/Inventory, and a Company Admin may assign only what they hold.
+  - Security migration `2026_11_14_000001` renames that role from "Admin2"
+    to "Business Administrator" (user), found by the setting's id; only the
+    exact old name, never over an existing "Business Administrator".
+  - U29 role names show as typed ("HR Manager"); snake_case system names are
+    still prettified. U30 Activity log names the record ("Partner: Ada
+    Mensah"), loaded per row with its own scopes, never eager-loaded (one
+    uninstalled plugin class would break the page); falls back to the id.
+  - U24 module checkboxes show readable names. U25 plan list explains when
+    no plans exist (5 languages). U26 a warning says why a user is held on
+    Profile, once per session. U27 the password-changed notice is sent after
+    the session is renewed (it was thrown away) and says to sign in again.
+  - U21 not a bug (country did fill GHS; the server round trip took ~5 s and
+    the first check looked too early). U23 by design (invited people choose
+    their own name). U28 not a bug ("Yes" was the icon's screen-reader text).
+- **Not done, needs the user:** EUR, ZAR and CDF stay inactive: the currency
+  form requires at least one exchange rate and no rate was invented.
+- **Benefit:** administrators can hand out the eight templates and see the
+  modules their company is granted.
+- **Trade-off / risk:** every existing holder of the business role gains the
+  template permissions (module switches still gate per company).
+- **Verification:** security RoleTemplate, ActivityLog and MustChangePassword
+  tests 60 run, 59 passed; the one failure was the new test's own fixture
+  (it picked `view_any_security_user` as the role's starting permission),
+  fixed, then RoleTemplateTest 5 passed, 27 assertions (`claude_ui`).
+  Plugin-manager SyncAdminPermissions and CompanyModules plus support
+  MigrationRegistration and PanelMiddleware 16 passed, 65 assertions
+  (`claude_vault`). OHADA rates for all 17 states added as standard
+  published rates (user, 2026-11-14). Released as hotfix v1.11.1.
+- **Rollback:** remove the `coverBusinessRole()` call (permissions already
+  added stay until removed on the Roles screen); roll back the migration.
+
 ## 2026-11-14, country chart templates (accounting A4)
 
 - **Why:** every company started on one generic chart and one 15 % tax,
@@ -24,7 +67,8 @@ for the task/question log this change log is paired with.
   account to post to. Now copied, account remapped to the company's own.
 - **Benefit:** a Ghana, Zambia or OHADA company starts on a chart its
   accountant recognises; nothing changes for other countries.
-- **Trade-off / risk:** rates unreviewed by a local accountant. A shared
+- **Trade-off / risk:** rates are starting values each company's users
+  maintain (user, 2026-11-14: no accountant review needed). A shared
   (no-company) product whose account is resolved by code finds no match in
   an OHADA company and leaves the field empty. Existing companies are not
   changed.

@@ -108,6 +108,7 @@ return [
         'saved'            => 'Guardado.',
         'plan-title'       => 'Plano',
         'plan-description' => 'O plano começa ao criar a empresa e define seus módulos e o limite de lugares.',
+        'no-plans'         => 'Ainda não há planos. Crie um em Faturamento → Planos, ou crie a empresa agora e inicie o plano depois.',
     ],
 
     'invoices' => [

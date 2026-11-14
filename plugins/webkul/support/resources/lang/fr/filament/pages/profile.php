@@ -51,6 +51,13 @@ return [
 
         'current-helper' => 'Saisissez votre mot de passe actuel pour vérifier votre identité.',
 
+        'must-change' => [
+            'title' => 'Choisissez votre propre mot de passe',
+            'body'  => 'Votre administrateur a défini ce mot de passe pour vous. Ouvrez « Mettre à jour le mot de passe » et choisissez le vôtre pour continuer.',
+        ],
+
+        'signed-out' => 'Votre mot de passe a été mis à jour. Reconnectez-vous avec votre nouveau mot de passe.',
+
         'notification' => [
             'success' => [
                 'title' => 'Mot de passe mis à jour',

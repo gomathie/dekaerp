@@ -113,6 +113,50 @@ class RoleTemplateProvisioner
     }
 
     /**
+     * Give the company administrators' business role every permission a
+     * template holds (user, 2026-11-14, after the CR-3 production run).
+     *
+     * Why: a Company Admin may assign only roles within their own
+     * permissions (MultiCompanyAdminService::scopeAssignableRoles). The
+     * business role every new administrator receives was narrower than every
+     * template, so no administrator could hand out any of them, and their own
+     * menu showed 5 of 19 granted modules. Only adds, never removes; the same
+     * template filter keeps security, roles, plugins, bypasses and
+     * impersonation out. Module switches still decide what a company opens.
+     *
+     * @return int number of permissions added
+     */
+    public function coverBusinessRole(?int $roleId): int
+    {
+        if (! $roleId || ! Role::query()->whereKey($roleId)->exists()) {
+            return 0;
+        }
+
+        $ids = collect(self::TEMPLATES)
+            ->flatMap(fn (array $plugins): Collection => $this->permissionIdsFor($plugins))
+            ->unique();
+
+        $held = DB::table('role_has_permissions')->where('role_id', $roleId)->pluck('permission_id')->map(fn ($id): int => (int) $id);
+        $missing = $ids->diff($held)->values();
+
+        if ($missing->isEmpty()) {
+            return 0;
+        }
+
+        DB::table('role_has_permissions')->insertOrIgnore(
+            $missing->map(fn (int $id): array => ['permission_id' => $id, 'role_id' => $roleId])->all()
+        );
+
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+        if (app()->bound(ForkPermissionRegistrar::class)) {
+            app(ForkPermissionRegistrar::class)->forgetCachedPermissions();
+        }
+
+        return $missing->count();
+    }
+
+    /**
      * @param  array<string, string>  $plugins
      * @return Collection<int, int>
      */

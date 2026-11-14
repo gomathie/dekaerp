@@ -1934,6 +1934,16 @@ log named):
   - Refresh every 5 minutes at most (user). Never Filament's 5-second
     default (Sentry DEKAERP-11). Test: `OverviewTest` polling test.
 
+• Business role covers the role templates, 2026-11-14 (user; `docs/change-log.md`):
+  - `erp:sync-permissions` gives the company administrators' business role
+    (`UserSettings::company_admin_business_role_id`, "Business
+    Administrator", formerly "Admin2") every template permission, adding
+    only. Without it no Company Admin can assign any template, because they
+    may assign only what they hold. Do not remove the call or make it
+    replace the role's permissions.
+  - Test: security `RoleTemplateTest` "gives the administrators business role
+    every template permission".
+
 • Country chart templates, 2026-11-14 (`docs/planned/02-accounting-plan.md`, A4):
   - A country with no template, or a company with no country, keeps the
     standard chart unchanged (user: every country must be usable). Do not
@@ -1942,8 +1952,10 @@ log named):
     recreate them, or journals and settings lose their accounts.
   - It runs only during first setup. Never re-apply a template to a company
     that is set up: its chart is its own and may have been edited.
-  - Tax rates in `resources/data/charts/` are unreviewed by a local
-    accountant; say so, do not call them compliant.
+  - Tax rates in `resources/data/charts/` are starting values. Each
+    company's own users set and maintain their rates under Accounting →
+    Configuration (user, 2026-11-14: no accountant review needed). Keep
+    them editable; do not lock or overwrite a company's taxes.
   - Tests: `accounts/tests/Feature/Workflows/CountryChartTest.php`.
 
 • Accounting lock date, 2026-11-12 (`docs/planned/02-accounting-plan.md`, A2):
@@ -2123,6 +2135,14 @@ REFERENCES
   Rule (D-WN-1, 2026-11-12): every user-visible change gets an entry in user
   language under "## Unreleased" (hidden on the page). Move it under the dated
   version heading in the same push that ships it to production.
+• Release train (user, 2026-11-14; three versions in one day before it):
+  work collects under "## Unreleased" on develop and gets no version. A
+  minor release (vX.Y.0) ships **monthly** (user, 2026-11-14), carrying
+  everything collected, with each changed plugin bumped once. Between
+  releases only a hotfix goes to production: a patch (vX.Y.Z, plugins
+  x.y.Z), fixes only, no new features, approved by the user or urgent
+  (a user-facing Sentry error), and said so in the handoff. Do not push to
+  production just because a task finished.
 • Plugin versions (user, 2026-11-13): each plugin has its own semver in its
   `composer.json` "version", shown on the Plugins page
   (`Plugin::currentVersion()`). In the push that ships a release, bump every
