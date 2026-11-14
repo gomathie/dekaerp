@@ -10,6 +10,12 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.11.2 — 2026-11-14
+
+### Fixes
+
+* Company administrators now see all eight ready-made roles, including Finance Manager, HR Manager, Sales Manager, Inventory Manager and Logistics Manager. Permanently deleting records stays with installation staff.
+
 # CHANGELOG — v1.11.1 — 2026-11-14
 
 ### Improvements

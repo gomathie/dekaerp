@@ -1943,6 +1943,12 @@ log named):
     replace the role's permissions.
   - Test: security `RoleTemplateTest` "gives the administrators business role
     every template permission".
+  - A template never holds anything `MultiCompanyAdminService::deniesAbility()`
+    forbids (force delete, roles, security pages...): `grants()` checks it,
+    and every sync strips it from existing templates. "Full" therefore
+    stops at delete. Without this, five templates never reached a Company
+    Admin's list (production check, 2026-11-14). Test: "keeps every template
+    free of what a Company Admin may not hand out".
 
 • Country chart templates, 2026-11-14 (`docs/planned/02-accounting-plan.md`, A4):
   - A country with no template, or a company with no country, keeps the
