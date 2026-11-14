@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\DB;
 use Webkul\Security\Models\Permission;
 use Webkul\Security\Models\Role;
 use Webkul\Security\Models\User;
+use Webkul\Security\Services\MultiCompanyAdminService;
 use Webkul\Security\Services\RoleTemplateProvisioner;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
@@ -103,6 +104,33 @@ it('gives the administrators business role every template permission, adding onl
         // A second run adds nothing, and an unknown role is ignored.
         ->and($provisioner->coverBusinessRole((int) $business->getKey()))->toBe(0)
         ->and($provisioner->coverBusinessRole(null))->toBe(0);
+});
+
+it('keeps every template free of what a Company Admin may not hand out', function () {
+    // CR-3 production check (2026-11-14): "full" templates carried
+    // force_delete_*, so five of the eight never reached a Company Admin's
+    // role list. Existing templates are cleaned on the next sync.
+    $provisioner = app(RoleTemplateProvisioner::class);
+    $provisioner->provision();
+
+    $finance = Role::query()->where('name', 'Finance Manager')->firstOrFail();
+    $forceDelete = Permission::query()->where('name', 'like', 'force\_delete\_%')->first();
+
+    if ($forceDelete) {
+        $finance->permissions()->attach($forceDelete->getKey());
+    }
+
+    $provisioner->provision();
+
+    $denied = Role::query()->whereIn('name', array_keys(RoleTemplateProvisioner::TEMPLATES))->get()
+        ->flatMap(fn (Role $role) => $role->permissions()->pluck('name'))
+        ->filter(fn (string $name): bool => app(MultiCompanyAdminService::class)->deniesAbility($name))
+        ->values()
+        ->all();
+
+    expect($denied)->toBe([])
+        ->and($provisioner->grants(['account' => RoleTemplateProvisioner::FULL], 'force_delete_any_account_journal'))->toBeFalse()
+        ->and($provisioner->grants(['account' => RoleTemplateProvisioner::FULL], 'delete_account_journal'))->toBeTrue();
 });
 
 it('is created by the deploy permission sync', function () {

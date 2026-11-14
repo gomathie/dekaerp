@@ -6,6 +6,24 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-14, five role templates unassignable (hotfix v1.11.2)
+
+- **Why:** checked in production after v1.11.1: Ama (Company Admin) saw only
+  Accountant, Payroll Officer and Standard Employee. The "full" templates
+  carried `force_delete_*`, which `MultiCompanyAdminService::deniesAbility()`
+  forbids to Company Admins, so `scopeAssignableRoles()` hid them.
+- **How:** `RoleTemplateProvisioner::grants()` refuses anything
+  `deniesAbility()` forbids (one rule, reused); `stripAdminDenied()`, run in
+  every `provision()`, removes such permissions from existing templates.
+  Only those are removed; other Roles-screen edits stay.
+- **Benefit:** all eight templates assignable by a Company Admin.
+- **Trade-off / risk:** template roles lose permanent delete (soft delete
+  and restore stay for "full"); a Super Admin can still grant it per role.
+- **Verification:** RoleTemplateTest (now 6 tests) plus plugin-manager
+  SyncAdminPermissionsTest: 9 passed, 39 assertions (`claude_vault`). Pint
+  passed. Production check after deploy: see the plan's CR-3 notes.
+- **Rollback:** revert `grants()` and remove the `stripAdminDenied()` call.
+
 ## 2026-11-14, fixes from the CR-3 production run
 
 - **Why:** the run (plan #1, CR-3 table) found that no Company Admin could
