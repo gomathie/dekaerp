@@ -10,7 +10,7 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
-# CHANGELOG — v1.12.0 — 2026-11-14
+# CHANGELOG — v1.11.1 — 2026-11-14
 
 ### Improvements
 
