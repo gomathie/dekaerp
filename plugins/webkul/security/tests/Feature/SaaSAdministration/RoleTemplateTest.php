@@ -80,7 +80,13 @@ it('gives the administrators business role every template permission, adding onl
     $provisioner->provision();
 
     $business = Role::query()->create(['name' => 'Business Test '.uniqid(), 'guard_name' => 'web']);
-    $own = Permission::query()->where('name', 'like', 'view\_%')->first();
+    // A business permission the role already had; it must survive. Not a
+    // security one, or the "nothing security was added" check below would
+    // flag the fixture instead of the code.
+    $own = Permission::query()
+        ->where('name', 'like', 'view\_%')
+        ->where('name', 'not like', '%\_security\_%')
+        ->firstOrFail();
     $business->permissions()->sync([$own->getKey()]);
 
     $added = $provisioner->coverBusinessRole((int) $business->getKey());

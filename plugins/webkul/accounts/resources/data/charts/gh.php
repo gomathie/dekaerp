@@ -6,8 +6,8 @@
  * 2026-11-14). Account ids are kept; see ChartLocalizer.
  *
  * Tax: VAT 15 % with NHIL 2.5 % and GETFund 2.5 %, 20 % in total, as one
- * rate. Not reviewed by a local accountant yet: check the rate and how the
- * levies are reported to GRA before calling a company's setup compliant.
+ * rate. A starting value: the company's users adjust it, or split the
+ * levies into separate taxes, under Accounting → Configuration.
  */
 return [
     'name'      => 'Ghana',

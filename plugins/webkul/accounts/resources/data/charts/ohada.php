@@ -11,9 +11,9 @@
  * to the SYSCOHADA class (1 capital, 2 fixed assets, 3 stock, 4 third
  * parties, 5 treasury, 6 expenses, 7 income). Codes are padded to six digits.
  *
- * Taxes: the standard VAT rate per country. Not reviewed by a local
- * accountant yet: check the rates and levies (for example Congo's
- * "centime additionnel") before calling a company's setup compliant.
+ * Taxes: the standard VAT rate per country, as a starting value. The
+ * company's users adjust it and add levies (for example Congo's "centime
+ * additionnel") under Accounting → Configuration.
  */
 return [
     'name'      => 'SYSCOHADA',
@@ -81,9 +81,27 @@ return [
         ['706000', 'Services vendus', 'income', false],
     ],
 
+    // Standard published VAT rates (user, 2026-11-14: use standard available
+    // information; each company edits its own afterwards). Cameroon's 19.25 %
+    // is 17.5 % VAT plus the 10 % council surcharge on it.
     'taxes' => [
-        'CD' => ['TVA 16 %', 16],
+        'BJ' => ['TVA 18 %', 18],
+        'BF' => ['TVA 18 %', 18],
+        'CM' => ['TVA 19,25 %', 19.25],
+        'CF' => ['TVA 19 %', 19],
+        'KM' => ['TVA 10 %', 10],
         'CG' => ['TVA 18 %', 18],
+        'CD' => ['TVA 16 %', 16],
+        'CI' => ['TVA 18 %', 18],
+        'GA' => ['TVA 18 %', 18],
+        'GN' => ['TVA 18 %', 18],
+        'GW' => ['IVA 19 %', 19],
+        'GQ' => ['IVA 15 %', 15],
+        'ML' => ['TVA 18 %', 18],
+        'NE' => ['TVA 19 %', 19],
+        'SN' => ['TVA 18 %', 18],
+        'TD' => ['TVA 18 %', 18],
+        'TG' => ['TVA 18 %', 18],
     ],
 
     'exempt_tax' => 'Exonéré 0 %',

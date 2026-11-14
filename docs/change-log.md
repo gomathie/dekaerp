@@ -60,7 +60,8 @@ for the task/question log this change log is paired with.
   account to post to. Now copied, account remapped to the company's own.
 - **Benefit:** a Ghana, Zambia or OHADA company starts on a chart its
   accountant recognises; nothing changes for other countries.
-- **Trade-off / risk:** rates unreviewed by a local accountant. A shared
+- **Trade-off / risk:** rates are starting values each company's users
+  maintain (user, 2026-11-14: no accountant review needed). A shared
   (no-company) product whose account is resolved by code finds no match in
   an OHADA company and leaves the field empty. Existing companies are not
   changed.

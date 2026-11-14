@@ -1952,8 +1952,10 @@ log named):
     recreate them, or journals and settings lose their accounts.
   - It runs only during first setup. Never re-apply a template to a company
     that is set up: its chart is its own and may have been edited.
-  - Tax rates in `resources/data/charts/` are unreviewed by a local
-    accountant; say so, do not call them compliant.
+  - Tax rates in `resources/data/charts/` are starting values. Each
+    company's own users set and maintain their rates under Accounting →
+    Configuration (user, 2026-11-14: no accountant review needed). Keep
+    them editable; do not lock or overwrite a company's taxes.
   - Tests: `accounts/tests/Feature/Workflows/CountryChartTest.php`.
 
 • Accounting lock date, 2026-11-12 (`docs/planned/02-accounting-plan.md`, A2):
@@ -2135,7 +2137,7 @@ REFERENCES
   version heading in the same push that ships it to production.
 • Release train (user, 2026-11-14; three versions in one day before it):
   work collects under "## Unreleased" on develop and gets no version. A
-  minor release (vX.Y.0) ships on a release day the user names, carrying
+  minor release (vX.Y.0) ships **monthly** (user, 2026-11-14), carrying
   everything collected, with each changed plugin bumped once. Between
   releases only a hotfix goes to production: a patch (vX.Y.Z, plugins
   x.y.Z), fixes only, no new features, approved by the user or urgent
