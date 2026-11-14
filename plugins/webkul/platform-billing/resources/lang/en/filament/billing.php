@@ -108,6 +108,7 @@ return [
         'saved'            => 'Saved.',
         'plan-title'       => 'Plan',
         'plan-description' => 'The plan starts when the company is created and sets its modules and seat limit.',
+        'no-plans'         => 'No plans yet. Create one under Billing → Plans, or create the company now and start its plan later.',
     ],
 
     'invoices' => [

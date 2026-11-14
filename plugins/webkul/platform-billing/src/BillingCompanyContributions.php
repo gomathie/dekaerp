@@ -74,6 +74,8 @@ class BillingCompanyContributions
                     // Required whenever there is a plan to choose: a fresh
                     // installation with no prices must still create companies.
                     ->required(fn (): bool => SubscriptionForm::priceOptions() !== [])
+                    // An empty list alone looked broken in the CR-3 run (U25).
+                    ->helperText(fn (): ?string => SubscriptionForm::priceOptions() === [] ? __(static::$lang.'.no-plans') : null)
                     ->native(false)
                     ->dehydrated(false),
             ]);

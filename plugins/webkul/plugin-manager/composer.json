@@ -1,7 +1,7 @@
 {
     "name": "webkul/plugin-manager",
     "description": "Plugin Manager for DEKA Central",
-    "version": "1.9.0",
+    "version": "1.9.1",
     "authors": [
         {
             "name": "365 Systems"

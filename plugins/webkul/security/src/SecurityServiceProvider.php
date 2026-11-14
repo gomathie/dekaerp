@@ -74,6 +74,8 @@ class SecurityServiceProvider extends PackageServiceProvider
                 '2026_11_10_000003_create_security_user_password_vault_table',
                 // Existing companies' own administrators become Company Admin (user, 2026-11-11).
                 '2026_11_11_000001_make_existing_business_admins_company_admins',
+                // "Admin2" becomes "Business Administrator" (user, 2026-11-14).
+                '2026_11_14_000001_rename_admin2_business_role',
             ])
             ->hasSettings([
                 '2024_11_05_042358_create_user_settings',

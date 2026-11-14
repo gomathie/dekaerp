@@ -161,12 +161,15 @@ GHS + USD, all 19 modules; users #5 (administrator) and #6 (accountant),
 | Base currency section (D-CR-4) | PASS: "Change base currency" on the edit page for Super Admin |
 | Billing lifecycle | NOT RUN in production on purpose: posted invoices and payments are immutable, a test would leave permanent records; covered by `platform-billing` tests |
 | Currencies GH/ZM/DRC (CR-6 acceptance) | PARTIAL: only GHS, USD, ZMW are active in production; EUR, ZAR, CDF need activating |
+| Invoice currency follows the company list (CR-6) | PASS: new invoice defaults to GHS, offers GHS and USD only (ZMW excluded) |
+| Accounting setup with the Ghana template (A4, v1.11.0) | PASS: GRA/SSNIT/Tier 2/WHT accounts, VAT 20 % sale and purchase, exempt 0 % pair, 16 tax distribution lines copied |
 
 **Open from the run:** (1) user decision: give Admin2 the template
 permissions (Roles screen) or choose another business role for new
 administrators; (2) activate EUR, ZAR, CDF; (3) create real plans; (4) U21-U30
-in `docs/ux-findings.md`. The test company stays until A4 is deployed, so its
-accounting setup can confirm the Ghana chart, then it is deactivated.
+in `docs/ux-findings.md`. The test company is left active for the user to
+look at; as a Test account it turns read-only by itself when its 14 days end
+(2026-11-28). Its two users can then be archived from Users and logins.
 
 ### CR-4 — Five-field company creation (P0)
 

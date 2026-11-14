@@ -4,8 +4,9 @@ Status: **in progress. Done: A1 (known figures, report isolation), A2 (lock
 date, v1.8.0), A2b (reason on reset, v1.8.1). Built 2026-11-13, awaiting push:
 A7 (Tax Summary), A3 (bank reconciliation) — shipped in v1.9.0. Built
 2026-11-13: A5 (Overview section), A6 (cash flow), shipped in v1.10.0.
-A4 (country templates) built 2026-11-14 on published standards, no local
-accountant yet (user decision); tax rates still to be confirmed by one.** Built from the brief below
+A4 (country templates) built 2026-11-14 on published standards and shipped
+in v1.11.0; tax rates are starting values each company's users maintain
+(user, 2026-11-14: no accountant review needed).** Built from the brief below
 (added by the user 2026-11-12), cut to the gaps after the user's instruction
 the same day: "if what we have is enough don't plan an overkill, just an
 improvement and an easy workflow."
@@ -134,7 +135,7 @@ country's extra accounts, sets the standard VAT and adds an exempt 0 % pair.
 Data in `accounts/resources/data/charts/`: `gh.php` (IFRS-style, GRA/SSNIT/
 Tier 2 names, VAT 20 % = 15 + NHIL 2.5 + GETFund 2.5), `zm.php` (ZRA/NAPSA/
 NHIMA/SDL, VAT 16 %), `ohada.php` (SYSCOHADA revised, 17 states; TVA 16 % CD,
-18 % CG, other states keep the copied rate). No template: unchanged. After
+18 % CG; *2026-11-14: every OHADA state now has its standard published rate*). No template: unchanged. After
 setup the chart is the company's own and fully editable. Also fixed: setup
 copied taxes **without their distribution lines**, now copied with remapped
 accounts. Tests: `accounts/tests/Feature/Workflows/CountryChartTest.php`.
@@ -189,7 +190,7 @@ change the rest; A4 last because it needs the local accountant's review.
 | ACC-D1 | Order above? | **Accepted:** A1 first. Also: run A1 early, alongside plan #1, since real clients rely on the numbers; the rest of this plan keeps its place in the queue |
 | ACC-D2 | Who may move the lock date? | **Accepted:** Company Admin and a new `unlock_period` permission grantable to an accountant role; never a clerk |
 | ACC-D3 | Statement import formats for A3 | **Accepted:** CSV first with column mapping; OFX when a client's bank needs it |
-| ACC-D4 | Who reviews the Ghana / Zambia / OHADA templates? | **Ship, review later** (not the recommendation): release them as starting templates, never labelled compliant; a local accountant reviews when clients ask. The template screen and the docs must say "starting template, check with your accountant" |
+| ACC-D4 | Who reviews the Ghana / Zambia / OHADA templates? | **Ship, review later** (not the recommendation): release them as starting templates, never labelled compliant; a local accountant reviews when clients ask. The template screen and the docs must say "starting template, check with your accountant". *Superseded 2026-11-14 (user): no accountant review; each company's users set their own rates.* |
 
 ---
 
