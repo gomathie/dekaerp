@@ -17,9 +17,13 @@ for the task/question log this change log is paired with.
   Sentry gets the alert and the details stay in the command output. The same
   once-per-scheduler guard as the invoice run.
 - **Benefit:** balance drift and stalled invoicing reach Sentry within a day.
-- **Trade-off / risk:** if the scheduler itself is down, this does not run
-  either; the stalled-invoice check catches that only once the scheduler
-  runs again. A Sentry cron monitor would close that gap (deploy choice).
+- **Scheduler down (D-CR-11, user 2026-11-14):** both billing jobs carry
+  sentry-laravel's `sentryMonitor()` (30 min check-in margin, 60 min max
+  runtime). Sentry creates the monitors on the first check-in and alerts on
+  a missed or failed one. Applied only when the macro exists, so a run with
+  no Sentry (tests) schedules the jobs unmonitored.
+- **Trade-off / risk:** the monitors appear in Sentry only after the first
+  production run; set their alert recipients there once they show up.
 - **Verification:** see the line below.
 - **Rollback:** remove the second `$schedule->command(...)` block.
 

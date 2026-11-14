@@ -350,6 +350,10 @@ otherwise); a field-by-field diff for every model (only logged attributes).
 | D-CR-5 | Partners/resellers when? | **After the investor demo** (P2) |
 | D-CR-6 | Where does CR-3 run? | **Local, plus one throwaway company in production** with account type "test", invitations only to an address the user provides; deleted or closed afterwards |
 | D-CR-7 | Finish the SaaS administration plan inside this one? | **Yes, as CR-10** |
+| D-CR-8 | (2026-11-14) CR-3 is blocked locally: run it in production? | **Yes**, on the D-CR-6 throwaway "test" company, invitations to `+alias` addresses of the user's own mailbox; closed afterwards |
+| D-CR-9 | (2026-11-14) Measure clicks and time (CR-2)? | **Yes**, during the CR-3 run |
+| D-CR-10 | (2026-11-14) Partners/resellers model? | **Postponed** until after the demo (confirms D-CR-5) |
+| D-CR-11 | (2026-11-14) Alert when the scheduler stops? | **Yes:** Sentry cron monitors on the invoice run and the health check |
 
 ## 5. Order and estimate
 
