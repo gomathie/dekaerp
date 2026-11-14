@@ -10,6 +10,13 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+### Improvements
+
+* The Overview now has Projects, Recruitment and Logistics tabs next to Accounting and Inventory; the separate dashboards are gone from the top bar (old links open the matching tab).
+* The Overview "All" page matches the approved design: Sales shows its three figures side by side, and the module cards fill even rows.
+* Tax groups now live under Taxes: open them with the "Tax groups" button on the Taxes list.
+* On the new-company form, Country sits next to the company name.
+
 # CHANGELOG — v1.11.2 — 2026-11-14
 
 ### Fixes

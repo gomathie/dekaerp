@@ -6,6 +6,41 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-15, Overview tabs, board layout, tax groups under taxes (collected for the monthly release)
+
+- **Why (user, 2026-11-14/15):** the production Overview did not match the
+  approved mockup; Projects, Recruitment and Logistics should be Overview
+  tabs like Accounting and Inventory; tax groups should live under Taxes as
+  in Zoho Books; Country belongs next to the company name. A first attempt
+  to move Reports into the sidebar was reverted the same session at the
+  user's request (with the module dashboards gone, the top bar has room).
+- **How:**
+  - `overview-board.blade.php`: `.ovb__col` pinned to one track. Root cause:
+    the embedded chart widget carries Filament's grid-column classes, which
+    split the main column into two implicit tracks and squeezed Sales to
+    ~280 px with its figures stacked. Verified by injecting the rule into
+    the live production page.
+  - `overview-module-cards.blade.php`: balanced columns from the card count
+    (6 cards = 3 + 3), 2 below 1080 px, 1 on phones.
+  - Projects `Dashboard`, Recruitment `Recruitments`, Logistics `Dashboard`:
+    `sectionWidgets()`; registered as Overview sections (sort 50/60/70) from
+    each provider when the Overview exists; out of the menu and redirecting
+    to `?section=` like Sales/Purchases did (2026-11-11). Access stays each
+    page's own `canAccess()`; each widget keeps its own guard.
+  - Accounts `ListTaxes`/`ListTaxGroups`: a switch button to the sibling
+    resource in the same cluster (shown only when the user may open it);
+    cluster `TaxGroupResource`s leave the menu; `TaxResource` keeps Taxes
+    highlighted on tax-group routes.
+  - Support `CompanyResource`: Country moved into Company Information (user
+    commit `b8bac3d81`); `security.json` structure snapshot re-recorded from
+    the full SupportFeature suite (also picked up three earlier fields the
+    old snapshot lacked).
+- **Trade-off / risk:** the three module tabs show no module-specific
+  filters yet (the widgets read missing filters as "all").
+- **Verification:** SupportFeature full suite 248 passed, 1205 assertions
+  (`claude_ui`) for the form/snapshot. Remaining: see the line below.
+- **Rollback:** revert the files above.
+
 ## 2026-11-14, five role templates unassignable (hotfix v1.11.2)
 
 - **Why:** checked in production after v1.11.1: Ama (Company Admin) saw only

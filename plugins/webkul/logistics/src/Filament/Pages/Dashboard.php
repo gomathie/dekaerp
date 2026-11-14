@@ -7,6 +7,7 @@ use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Filament\Panel;
 use Illuminate\Contracts\Support\Htmlable;
+use Webkul\Invoice\Filament\Pages\Overview;
 use Webkul\Logistics\Filament\Widgets\FleetStatsWidget;
 use Webkul\Logistics\Filament\Widgets\ShipmentStatsWidget;
 use Webkul\Logistics\Filament\Widgets\UnbilledRevenueWidget;
@@ -74,7 +75,8 @@ class Dashboard extends BaseDashboard
 
     public static function getNavigationIcon(): string|BackedEnum|Htmlable|null
     {
-        return 'heroicon-o-truck';
+        // Text only, like the other dashboard-bar entries (user, 2026-11-15).
+        return null;
     }
 
     public function getTitle(): string
@@ -84,10 +86,34 @@ class Dashboard extends BaseDashboard
 
     public function getWidgets(): array
     {
+        return static::sectionWidgets();
+    }
+
+    /**
+     * The Logistics tab of the combined Overview (user, 2026-11-14). Each
+     * widget keeps its own guard, so the finance one still hides itself.
+     *
+     * @return list<class-string>
+     */
+    public static function sectionWidgets(): array
+    {
         return [
             ShipmentStatsWidget::class,
             FleetStatsWidget::class,
             UnbilledRevenueWidget::class,
         ];
+    }
+
+    /** Out of the menu when the Overview exists; old links open its tab. */
+    public static function shouldRegisterNavigation(): bool
+    {
+        return ! class_exists(Overview::class);
+    }
+
+    public function mount(): void
+    {
+        if (class_exists(Overview::class)) {
+            $this->redirect(Overview::getUrl(['section' => 'logistics']));
+        }
     }
 }
