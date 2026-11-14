@@ -221,8 +221,12 @@ quotation and purchase-order pickers. **D-CR-4 built the same day:**
 `Account\Services\BaseCurrencyChange` plus a Super Admin "Base currency"
 section on the company edit page (change log entry). **API built the same
 day:** `Support\Rules\PermittedCurrency` on the invoice, sales order,
-purchase order and payment requests; no import sets a currency. Still to do:
-the remaining pickers (journals, payment screen, Logistics).
+purchase order and payment requests; no import sets a currency. **Remaining
+pickers built 2026-11-14:** journal, journal entry line, payment screen, pay
+action (the invoice's own company), Logistics shipment and expense. Left
+unrestricted on purpose: the account and vendor-price pickers (configuration,
+not transactions) and the company's own base-currency fields. Still to do:
+the browser acceptance below.
 - Acceptance: Ghana GHS + USD/EUR, Zambia ZMW + USD/ZAR, DRC CDF + USD/EUR
   configured and used on an invoice; a base-currency change after posting
   asks for confirmation and is audited.

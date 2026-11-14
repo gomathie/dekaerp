@@ -51,7 +51,8 @@ class ExpenseForm
                             ->required(),
                         Select::make('currency_id')
                             ->label(__(static::$lang.'.form.fields.currency'))
-                            ->relationship('currency', 'name')
+                            // CR-6: only the company's permitted currencies, when it has a list.
+                            ->relationship('currency', 'name', fn (Builder $query) => $query->active()->permittedFor(current_company_id()))
                             ->searchable()
                             ->preload(),
                         Select::make('category_id')

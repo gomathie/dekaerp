@@ -6,6 +6,28 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-14, company currencies on the remaining pickers (CR-6)
+
+- **Why:** the journal, journal entry, payment, pay-invoice and Logistics
+  shipment/expense pickers still listed every currency, so a user could
+  pick one outside the company's list on those screens.
+- **How:** each picker now filters with the same `Currency::permittedFor()`
+  scope (one rule) as the invoice picker: the form's company where it has
+  one, the invoice's company in the pay action, otherwise the current
+  company. Files: accounts `PaymentResource`, `JournalResource`,
+  `InvoiceResource\Actions\PayAction`; accounting `JournalEntryResource`;
+  logistics `ShipmentResource`, `ExpenseForm`. The shipment picker also
+  hides inactive currencies now, which matches the other pickers.
+- **Not changed on purpose:** the account and vendor-price pickers
+  (configuration, not transactions) and the company form's base currency.
+- **Benefit:** the list holds on every transaction screen as well as the API.
+- **Trade-off / risk:** a record saved earlier with a currency that is now
+  outside the list shows that currency without a label on edit. Companies
+  without a list are unaffected.
+- **Verification:** `php -l` and Pint on the six files. Screen regression:
+  see the line below.
+- **Rollback:** restore the previous `modifyQueryUsing` / `options` closures.
+
 ## 2026-11-13, company currencies enforced in the API (CR-6)
 
 - **Why:** the screens offered only a company's permitted currencies, but the
@@ -24,10 +46,11 @@ for the task/question log this change log is paired with.
 - **Trade-off / risk:** an API client that was sending a currency outside a
   company's list now gets 422. Companies without a list are unaffected.
 - **Verification:** support `CompanyCurrenciesTest` 5 passed, 11 assertions
-  (`aureuserp_testing_claude_ui`). API regression: see the line below.
+  (`aureuserp_testing_claude_ui`). API regression: Accounts Invoice
+  and Bill API tests 62 passed (166 assertions, `claude_vault`); Sales Order
+  and Purchases PurchaseOrder API tests 50 passed (157 assertions, `claude_ui`).
 - **Rollback:** remove the rule from the four requests.
-- Remaining CR-6 pickers (journals, payments screen, Logistics) are still
-  unrestricted.
+- Remaining CR-6 pickers: *superseded 2026-11-14, built (entry above).*
 
 ## 2026-11-13, base currency change after posting (CR-6, D-CR-4)
 
