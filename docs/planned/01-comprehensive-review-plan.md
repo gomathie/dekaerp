@@ -152,7 +152,7 @@ GHS + USD, all 19 modules; users #5 (administrator) and #6 (accountant),
 | Setup status on the list (CR-7) | PASS: "Active" (admin can sign in) |
 | Administrator first sign-in, forced password change | PASS (13.5 s); no explanation shown (U26, U27) |
 | Users list isolation | PASS: administrator sees only their company's users |
-| Administrator assigns a ready-made role (CR-5) | **FAIL**: only "Company Admin" offered. Production's Admin2 (the administrator's business role) lacks part of every template (all of HR, Payroll, Standard Employee; 124/142 Logistics; 108/333 Inventory), and a Company Admin may assign only roles within their own permissions. Same cause: the administrator's menu shows 5 modules of 19 granted |
+| Administrator assigns a ready-made role (CR-5) | **PASS after hotfixes v1.11.1 + v1.11.2** (rechecked in production 2026-11-14: all eight templates offered, menu shows 13 modules). Was **FAIL**: only "Company Admin" offered. Production's Admin2 (the administrator's business role) lacks part of every template (all of HR, Payroll, Standard Employee; 124/142 Logistics; 108/333 Inventory), and a Company Admin may assign only roles within their own permissions. Same cause: the administrator's menu shows 5 modules of 19 granted |
 | Second user created with Accountant (by Super Admin) | PASS |
 | Accountant least privilege | PASS: Sales, Invoices, Accounting only; Users and Companies 403 |
 | View as user (impersonation) | PASS: password + reason, banner with end time, user's own permissions |
