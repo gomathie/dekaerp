@@ -112,18 +112,31 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
             // The console kernel can resolve the scheduler before this provider
             // finishes booting; afterResolving does not replay that instance.
             $register = function (Schedule $schedule): void {
-                $already = collect($schedule->events())->contains(
-                    fn ($event): bool => str_contains((string) $event->command, 'platform-billing:invoice-subscriptions'),
+                $has = fn (string $command): bool => collect($schedule->events())->contains(
+                    fn ($event): bool => str_contains((string) $event->command, $command),
                 );
 
-                if ($already) {
-                    return;
+                if (! $has('platform-billing:invoice-subscriptions')) {
+                    $schedule->command('platform-billing:invoice-subscriptions')
+                        ->dailyAt('02:15')
+                        ->withoutOverlapping()
+                        ->name('platform-billing-invoice-subscriptions');
                 }
 
-                $schedule->command('platform-billing:invoice-subscriptions')
-                    ->dailyAt('02:15')
-                    ->withoutOverlapping()
-                    ->name('platform-billing-invoice-subscriptions');
+                // CR-10 item 3 (2026-11-14): the health check only helps if it
+                // runs. A stalled invoice job or balance drift is otherwise seen
+                // when a client is billed late. It runs after the 02:15 invoice
+                // run, and a failure is reported to Sentry. The message names no
+                // company or amount: the details stay in the command output.
+                if (! $has('platform-billing:health-check')) {
+                    $schedule->command('platform-billing:health-check')
+                        ->dailyAt('06:00')
+                        ->withoutOverlapping()
+                        ->name('platform-billing-health-check')
+                        ->onFailure(function (): void {
+                            report(new \RuntimeException('Platform billing health check found problems. Run php artisan platform-billing:health-check for details.'));
+                        });
+                }
             };
 
             $this->app->afterResolving(Schedule::class, $register);

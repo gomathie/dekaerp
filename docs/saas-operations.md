@@ -56,7 +56,7 @@ your id. Never a Super Admin, Multi-Company Admin or yourself as the target.
 
 | Command | When | What it tells you |
 | --- | --- | --- |
-| `php artisan platform-billing:health-check` | Daily, or when something looks off | Exits with an error if balances do not reconcile or an invoice is more than a day late (scheduler or invoice job stopped). Read-only |
+| `php artisan platform-billing:health-check` | Runs itself daily at 06:00 and reports a failure to Sentry; run it by hand when something looks off | Exits with an error if balances do not reconcile or an invoice is more than a day late (scheduler or invoice job stopped). Read-only |
 | `php artisan platform-billing:readiness-report` | Before turning billing on for a company | Seats, modules, subscription and read-only state per company. Read-only |
 | `php artisan partners:company-report` | Before changing contact sharing | Which contacts more than one company uses |
 | `php artisan erp:sync-permissions` | Every deploy (already in the deploy commands) | Creates missing permissions and role templates |

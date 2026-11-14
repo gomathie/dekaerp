@@ -6,6 +6,23 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-14, billing health check scheduled (CR-10 item 3)
+
+- **Why:** `platform-billing:health-check` existed but nothing ran it, so a
+  stopped scheduler or a failing invoice job would only be noticed when a
+  client was billed late or never.
+- **How:** `PlatformBillingServiceProvider` registers it next to the invoice
+  run, daily at 06:00 (after 02:15), `withoutOverlapping()`. `onFailure`
+  calls `report()` with a fixed message that names no company or amount, so
+  Sentry gets the alert and the details stay in the command output. The same
+  once-per-scheduler guard as the invoice run.
+- **Benefit:** balance drift and stalled invoicing reach Sentry within a day.
+- **Trade-off / risk:** if the scheduler itself is down, this does not run
+  either; the stalled-invoice check catches that only once the scheduler
+  runs again. A Sentry cron monitor would close that gap (deploy choice).
+- **Verification:** see the line below.
+- **Rollback:** remove the second `$schedule->command(...)` block.
+
 ## 2026-11-14, company currencies on the remaining pickers (CR-6)
 
 - **Why:** the journal, journal entry, payment, pay-invoice and Logistics
@@ -25,7 +42,10 @@ for the task/question log this change log is paired with.
   outside the list shows that currency without a label on edit. Companies
   without a list are unaffected.
 - **Verification:** `php -l` and Pint on the six files. Screen regression:
-  see the line below.
+  Logistics ShipmentResource, Screens and Expenses tests 45 passed (133
+  assertions, `claude_ui`); Accounts Invoice and Bill resource tests 21
+  passed (90 assertions, `claude_vault`). No dedicated picker test: the
+  pickers only call the already-tested scope. Not seen in a browser.
 - **Rollback:** restore the previous `modifyQueryUsing` / `options` closures.
 
 ## 2026-11-13, company currencies enforced in the API (CR-6)

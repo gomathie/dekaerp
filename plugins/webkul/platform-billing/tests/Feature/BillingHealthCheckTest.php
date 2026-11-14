@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Console\Scheduling\Schedule;
 use Webkul\PlatformBilling\Models\Plan;
 use Webkul\PlatformBilling\Models\Price;
 use Webkul\PlatformBilling\Models\Subscription;
@@ -60,4 +61,12 @@ it('fails and names the subscription whose invoice is more than a day overdue', 
 
     // Read-only: the check must not move the schedule it is reporting on.
     expect($subscription->fresh()->next_invoice_at->equalTo($before))->toBeTrue();
+});
+
+it('schedules the health check once a day after the invoice run', function () {
+    $events = collect(app(Schedule::class)->events())
+        ->filter(fn ($event): bool => str_contains((string) $event->command, 'platform-billing:health-check'));
+
+    expect($events)->toHaveCount(1)
+        ->and($events->first()->expression)->toBe('0 6 * * *');
 });

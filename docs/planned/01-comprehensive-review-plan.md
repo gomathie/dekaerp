@@ -279,8 +279,9 @@ Decided 2026-11-12 (D-CR-7). Every SAAS package is built but in "review".
    *Item 3 built 2026-11-13:* `php artisan platform-billing:health-check`,
    read-only, exits non-zero on balance drift (through
    `PlatformPayments::reconcile()`) or an active subscription more than a day
-   past `next_invoice_at` (scheduler or invoice job stalled). Not scheduled
-   yet: wiring it to an alert is a deploy choice.
+   past `next_invoice_at` (scheduler or invoice job stalled). *Scheduled
+   2026-11-14 (agent, user away):* daily at 06:00, after the 02:15 invoice
+   run; a failure is reported to Sentry, whose alert rules carry it.
 4. *Done 2026-11-13:* operator guide `docs/saas-operations.md`; the stale
    `accepted_at` note in `AGENTS.md` was already marked superseded.
    SAAS-14 documentation, including the stale `AGENTS.md` note it owns.
