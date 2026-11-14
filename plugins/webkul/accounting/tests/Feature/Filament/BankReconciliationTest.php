@@ -168,13 +168,13 @@ it('matches a line to its payment and the payment becomes paid', function () {
         ->and($line->payment_id)->toBe($payment->id)
         ->and($payment->state)->toBe(PaymentStatus::PAID);
 
-    if ($line->move_id) {
-        $move = Move::query()->findOrFail($line->move_id);
-        $bankSide = $move->lines()->where('account_id', $journal->default_account_id)->firstOrFail();
+    // The default set-up parks payments in "outstanding receipts", so the
+    // match posts the bank side.
+    $move = Move::query()->findOrFail($line->move_id);
+    $bankSide = $move->lines()->where('account_id', $journal->default_account_id)->firstOrFail();
 
-        expect($move->state)->toBe(MoveState::POSTED)
-            ->and((float) $bankSide->debit)->toBe(500.0);
-    }
+    expect($move->state)->toBe(MoveState::POSTED)
+        ->and((float) $bankSide->debit)->toBe(500.0);
 });
 
 it('refuses a payment for a different amount', function () {

@@ -8,6 +8,27 @@ return [
         'title' => 'Companies',
     ],
 
+    'provisioning' => [
+        'column' => 'Setup status',
+        'filter' => 'Setup status',
+
+        'statuses' => [
+            'active'           => 'Active',
+            'invited'          => 'Invited, not yet active',
+            'expired'          => 'Invitation expired',
+            'no-administrator' => 'No administrator',
+            'closed'           => 'Closed',
+        ],
+
+        'resend' => [
+            'label'         => 'Resend invitation',
+            'heading'       => 'Resend the administrator invitation?',
+            'description'   => 'The invitation to :email is sent again and stays valid for 7 more days.',
+            'invited'       => 'Invitation sent again',
+            'invite-failed' => 'The invitation could not be sent again. It may have been accepted or revoked in the meantime.',
+        ],
+    ],
+
     'global-search' => [
         'email' => 'Email',
     ],

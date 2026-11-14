@@ -51,8 +51,8 @@ use Webkul\Logistics\Models\Shipment;
 use Webkul\Logistics\Support\LogisticsAccess;
 use Webkul\Partner\Enums\AccountType;
 use Webkul\Partner\Models\Partner;
-use Webkul\Product\Models\Product;
 use Webkul\PluginManager\Package;
+use Webkul\Product\Models\Product;
 use Webkul\Sale\Enums\OrderState;
 use Webkul\Sale\Models\Order;
 use Webkul\Security\Models\User;
@@ -155,7 +155,8 @@ class ShipmentResource extends Resource
                             ->native(false),
                         Select::make('currency_id')
                             ->label(__(static::$lang.'.form.fields.currency'))
-                            ->options(fn (): array => Currency::query()->orderBy('name')->pluck('name', 'id')->all())
+                            // CR-6: only the company's permitted currencies, when it has a list.
+                            ->options(fn (): array => Currency::query()->active()->permittedFor(current_company_id())->orderBy('name')->pluck('name', 'id')->all())
                             ->searchable(),
                     ])
                     ->columns(2),

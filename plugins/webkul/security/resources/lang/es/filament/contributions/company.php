@@ -20,6 +20,14 @@ return [
         ],
     ],
 
+    'currencies' => [
+        'title'       => 'Monedas',
+        'description' => 'Monedas que esta empresa puede usar en facturas, facturas de proveedor, presupuestos y pedidos de compra, además de su moneda predeterminada. Déjelo vacío para permitir todas las monedas activas.',
+        'fields'      => [
+            'permitted' => 'Monedas adicionales',
+        ],
+    ],
+
     'account' => [
         'title'       => 'Tipo de cuenta',
         'description' => 'Si esta empresa está en prueba o es comercial. Solo el personal de instalación puede elegirlo, y solo al crear la empresa.',

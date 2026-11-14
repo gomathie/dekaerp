@@ -20,6 +20,14 @@ return [
         ],
     ],
 
+    'currencies' => [
+        'title'       => 'Currencies',
+        'description' => 'Currencies this company may use on invoices, bills, quotations and purchase orders, besides its default currency. Leave empty to allow every active currency.',
+        'fields'      => [
+            'permitted' => 'Additional currencies',
+        ],
+    ],
+
     'account' => [
         'title'       => 'Account type',
         'description' => 'Whether this company is on a trial or a commercial account. Only installation staff can choose this, and only when the company is created.',

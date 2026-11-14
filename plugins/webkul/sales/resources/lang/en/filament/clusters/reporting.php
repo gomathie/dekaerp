@@ -27,4 +27,28 @@ return [
             'until' => 'Until',
         ],
     ],
+
+    'by-product' => [
+        'title'      => 'Sales by product',
+        'subheading' => 'Lines of confirmed orders in company currency. Group by product or category to see quantities and totals.',
+        'export'     => 'Export',
+        'sum'        => 'Total',
+        'columns'    => [
+            'product'  => 'Product',
+            'category' => 'Category',
+            'order'    => 'Order',
+            'date'     => 'Date',
+            'customer' => 'Customer',
+            'quantity' => 'Quantity',
+            'untaxed'  => 'Untaxed',
+        ],
+        'groups' => [
+            'product'  => 'Product',
+            'category' => 'Category',
+        ],
+        'filters' => [
+            'from'  => 'From',
+            'until' => 'Until',
+        ],
+    ],
 ];

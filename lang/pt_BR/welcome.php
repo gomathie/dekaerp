@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'title'            => 'AureusERP - Planejamento de Recursos Empresariais',
-    'meta_description' => 'AureusERP - Sistema moderno de planejamento de recursos empresariais',
+    'title'            => 'DEKA Central - Planejamento de Recursos Empresariais',
+    'meta_description' => 'DEKA Central - Sistema moderno de planejamento de recursos empresariais',
 
     'nav' => [
         'dashboard' => 'Dashboard',
@@ -11,7 +11,7 @@ return [
     ],
 
     'hero' => [
-        'title'         => 'Bem-vindo ao AureusERP',
+        'title'         => 'Bem-vindo ao DEKA Central',
         'subtitle'      => 'Uma solução moderna de planejamento de recursos empresariais',
         'description'   => 'Otimize as operações da sua empresa com nosso sistema ERP completo. Gerencie vendas, compras, estoque, contabilidade e muito mais em uma única plataforma.',
         'cta_primary'   => 'Começar',
@@ -55,7 +55,7 @@ return [
 
     'cta' => [
         'title'       => 'Pronto para transformar sua empresa?',
-        'description' => 'Junte-se a milhares de empresas que confiam no AureusERP em suas operações diárias.',
+        'description' => 'Junte-se a milhares de empresas que confiam no DEKA Central em suas operações diárias.',
         'button'      => 'Iniciar teste grátis',
     ],
 

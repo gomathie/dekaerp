@@ -27,4 +27,29 @@ return [
             'until' => 'Au',
         ],
     ],
+
+    'by-product' => [
+        'title'      => 'Achats par produit',
+        'subheading' => 'Lignes des bons de commande confirmés, en devise de la société. Regroupez par produit ou catégorie pour voir les quantités commandées et reçues.',
+        'export'     => 'Exporter',
+        'sum'        => 'Total',
+        'columns'    => [
+            'product'  => 'Produit',
+            'category' => 'Catégorie',
+            'order'    => 'Bon de commande',
+            'date'     => 'Date',
+            'supplier' => 'Fournisseur',
+            'ordered'  => 'Commandé',
+            'received' => 'Reçu',
+            'untaxed'  => 'Hors taxes',
+        ],
+        'groups' => [
+            'product'  => 'Produit',
+            'category' => 'Catégorie',
+        ],
+        'filters' => [
+            'from'  => 'Du',
+            'until' => 'Au',
+        ],
+    ],
 ];

@@ -27,4 +27,28 @@ return [
             'until' => 'Até',
         ],
     ],
+
+    'by-product' => [
+        'title'      => 'Vendas por produto',
+        'subheading' => 'Linhas de pedidos confirmados na moeda da empresa. Agrupe por produto ou categoria para ver quantidades e totais.',
+        'export'     => 'Exportar',
+        'sum'        => 'Total',
+        'columns'    => [
+            'product'  => 'Produto',
+            'category' => 'Categoria',
+            'order'    => 'Pedido',
+            'date'     => 'Data',
+            'customer' => 'Cliente',
+            'quantity' => 'Quantidade',
+            'untaxed'  => 'Sem impostos',
+        ],
+        'groups' => [
+            'product'  => 'Produto',
+            'category' => 'Categoria',
+        ],
+        'filters' => [
+            'from'  => 'De',
+            'until' => 'Até',
+        ],
+    ],
 ];

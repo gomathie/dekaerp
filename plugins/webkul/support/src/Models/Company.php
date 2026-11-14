@@ -5,6 +5,7 @@ namespace Webkul\Support\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\UniqueConstraintViolationException;
@@ -130,6 +131,15 @@ class Company extends Model implements Sortable
     public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class);
+    }
+
+    /**
+     * Extra currencies this company may transact in (CR-6). Empty means every
+     * active currency; see Currency::scopePermittedFor().
+     */
+    public function permittedCurrencies(): BelongsToMany
+    {
+        return $this->belongsToMany(Currency::class, 'company_currencies');
     }
 
     public function partner()

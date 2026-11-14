@@ -198,6 +198,8 @@ class AccountServiceProvider extends PackageServiceProvider
         }
 
         Company::observe(CompanyObserver::class);
+
+        CompanyCurrencyContributions::register();
     }
 
     protected function contributePartnerSchema(): void
