@@ -1,7 +1,7 @@
 {
     "name": "webkul/platform-billing",
     "description": "DEKA platform billing: plans, subscriptions and platform receivables",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "authors": [
         {
             "name": "DEKA ERP"
