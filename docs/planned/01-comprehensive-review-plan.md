@@ -138,6 +138,36 @@ of it was tried in a live Pilot, Odoo or ERPNext system.
   rest. Record PASS / FAIL / BLOCKED / NOT IMPLEMENTED per step.
 - Every FAIL becomes a fix with a test, recorded the four-place way.
 
+**Run 2026-11-14 in production, v1.10.0** (D-CR-8; local server was
+crashing). Super Admin `smooth@admin.local` (user-provided test admin).
+Throwaway company **#7 "CR3 Test Ghana Ltd"**, account type Test (14 days),
+GHS + USD, all 19 modules; users #5 (administrator) and #6 (accountant),
+`+cr3` aliases of the user's mailbox, passwords set on the forms, no e-mail.
+
+| Step | Result |
+|---|---|
+| Super Admin sign-in | PASS (11.4 s) |
+| Create company: country, currency, admin password, Test type, modules | PASS, ~13 actions, saved in 9.7 s. Country did not change the preset USD (U21) |
+| Plan on the form | BLOCKED: no plans exist in production; Test type hides the plan anyway |
+| Setup status on the list (CR-7) | PASS: "Active" (admin can sign in) |
+| Administrator first sign-in, forced password change | PASS (13.5 s); no explanation shown (U26, U27) |
+| Users list isolation | PASS: administrator sees only their company's users |
+| Administrator assigns a ready-made role (CR-5) | **FAIL**: only "Company Admin" offered. Production's Admin2 (the administrator's business role) lacks part of every template (all of HR, Payroll, Standard Employee; 124/142 Logistics; 108/333 Inventory), and a Company Admin may assign only roles within their own permissions. Same cause: the administrator's menu shows 5 modules of 19 granted |
+| Second user created with Accountant (by Super Admin) | PASS |
+| Accountant least privilege | PASS: Sales, Invoices, Accounting only; Users and Companies 403 |
+| View as user (impersonation) | PASS: password + reason, banner with end time, user's own permissions |
+| End impersonation, session restored | PASS |
+| Company Activity log (CR-11), as administrator | PASS: user created, modules granted, impersonation start/end by Smooth; shows "User #6" (U30) |
+| Base currency section (D-CR-4) | PASS: "Change base currency" on the edit page for Super Admin |
+| Billing lifecycle | NOT RUN in production on purpose: posted invoices and payments are immutable, a test would leave permanent records; covered by `platform-billing` tests |
+| Currencies GH/ZM/DRC (CR-6 acceptance) | PARTIAL: only GHS, USD, ZMW are active in production; EUR, ZAR, CDF need activating |
+
+**Open from the run:** (1) user decision: give Admin2 the template
+permissions (Roles screen) or choose another business role for new
+administrators; (2) activate EUR, ZAR, CDF; (3) create real plans; (4) U21-U30
+in `docs/ux-findings.md`. The test company stays until A4 is deployed, so its
+accounting setup can confirm the Ghana chart, then it is deactivated.
+
 ### CR-4 — Five-field company creation (P0)
 
 - One form: company name, plan, administrator name, administrator email;
