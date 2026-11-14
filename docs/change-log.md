@@ -38,7 +38,14 @@ for the task/question log this change log is paired with.
   modules their company is granted.
 - **Trade-off / risk:** every existing holder of the business role gains the
   template permissions (module switches still gate per company).
-- **Verification:** see the line below.
+- **Verification:** security RoleTemplate, ActivityLog and MustChangePassword
+  tests 60 run, 59 passed; the one failure was the new test's own fixture
+  (it picked `view_any_security_user` as the role's starting permission),
+  fixed, then RoleTemplateTest 5 passed, 27 assertions (`claude_ui`).
+  Plugin-manager SyncAdminPermissions and CompanyModules plus support
+  MigrationRegistration and PanelMiddleware 16 passed, 65 assertions
+  (`claude_vault`). OHADA rates for all 17 states added as standard
+  published rates (user, 2026-11-14). Released as hotfix v1.11.1.
 - **Rollback:** remove the `coverBusinessRole()` call (permissions already
   added stay until removed on the Roles screen); roll back the migration.
 
