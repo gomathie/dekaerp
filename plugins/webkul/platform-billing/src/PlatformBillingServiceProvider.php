@@ -3,6 +3,7 @@
 namespace Webkul\PlatformBilling;
 
 use Filament\Panel;
+use Illuminate\Console\Scheduling\Event as SchedulingEvent;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
@@ -116,11 +117,22 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
                     fn ($event): bool => str_contains((string) $event->command, $command),
                 );
 
+                // User decision 2026-11-14: a Sentry cron monitor on each billing
+                // job, because a stopped scheduler stops both the invoices and
+                // the health check that would report it. A missed check-in is
+                // the only signal left. The macro exists only when sentry-laravel
+                // is booted; without it the job still runs, unmonitored.
+                $monitor = function (SchedulingEvent $event, string $slug): void {
+                    if (SchedulingEvent::hasMacro('sentryMonitor')) {
+                        $event->sentryMonitor($slug, checkInMargin: 30, maxRuntime: 60);
+                    }
+                };
+
                 if (! $has('platform-billing:invoice-subscriptions')) {
-                    $schedule->command('platform-billing:invoice-subscriptions')
+                    $monitor($schedule->command('platform-billing:invoice-subscriptions')
                         ->dailyAt('02:15')
                         ->withoutOverlapping()
-                        ->name('platform-billing-invoice-subscriptions');
+                        ->name('platform-billing-invoice-subscriptions'), 'platform-billing-invoice-subscriptions');
                 }
 
                 // CR-10 item 3 (2026-11-14): the health check only helps if it
@@ -129,13 +141,13 @@ class PlatformBillingServiceProvider extends PackageServiceProvider
                 // run, and a failure is reported to Sentry. The message names no
                 // company or amount: the details stay in the command output.
                 if (! $has('platform-billing:health-check')) {
-                    $schedule->command('platform-billing:health-check')
+                    $monitor($schedule->command('platform-billing:health-check')
                         ->dailyAt('06:00')
                         ->withoutOverlapping()
                         ->name('platform-billing-health-check')
                         ->onFailure(function (): void {
                             report(new \RuntimeException('Platform billing health check found problems. Run php artisan platform-billing:health-check for details.'));
-                        });
+                        }), 'platform-billing-health-check');
                 }
             };
 
