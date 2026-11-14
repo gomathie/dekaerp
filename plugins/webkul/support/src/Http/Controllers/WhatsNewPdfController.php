@@ -25,7 +25,7 @@ class WhatsNewPdfController
         $releases = WhatsNew::groupedReleases();
 
         if ($release !== null) {
-            $releases = array_values(array_filter($releases, fn (array $candidate): bool => $candidate['id'] === $release));
+            $releases = array_values(array_filter($releases, fn (array $candidate): bool => in_array($release, $candidate['ids'] ?? [$candidate['id']], true)));
 
             abort_if($releases === [], 404);
         }

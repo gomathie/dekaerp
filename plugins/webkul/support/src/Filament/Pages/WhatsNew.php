@@ -138,6 +138,10 @@ class WhatsNew extends Page
                 }
             }
 
+            // Old links to the hotfix's own PDF (/whats-new/pdf/1-11-2) must
+            // keep working: the release remembers the ids it absorbed.
+            $grouped[$parent]['ids'] = [...($grouped[$parent]['ids'] ?? [$grouped[$parent]['id']]), $release['id']];
+
             unset($grouped[$index]);
         }
 
