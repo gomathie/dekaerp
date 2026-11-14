@@ -10,8 +10,12 @@ report has one today; adding them is a per-report text job). Test:
 day: `Sales analysis` and `Purchase analysis`, one page each in a new
 `Reporting` cluster per module. Decision: one groupable page (by customer or
 supplier, salesperson or buyer, month) instead of a page per view, totals
-in company currency. Not built: "by product" (needs line-level data) and
-"received vs ordered"; add when a client asks. Next: R3 only if R1 is used.** Built from the brief below
+in company currency. "By product" built later on 2026-11-13 (user away,
+decision delegated): `Sales by product` and `Purchases by product`, order
+lines of confirmed orders grouped by product or category, quantity and
+untaxed totals in company currency, export; Purchases also shows quantity
+received next to ordered, which covers "received vs ordered" per line.
+Permissions `page_sale_sales_by_product`, `page_purchase_purchases_by_product`. Next: R3 only if R1 is used.** Built from the brief below
 (added by the user 2026-11-12), cut to the gaps after the user's instruction
 the same day: "if what we have is enough don't plan an overkill, just an
 improvement and an easy workflow."

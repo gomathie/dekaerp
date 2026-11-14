@@ -54,6 +54,7 @@ class CompanyAdminContributions
 
         CompanySchemaRegistry::form('main.after', fn (): array => [static::administratorSection()]);
         CompanySchemaRegistry::form('main.after', fn (): array => [static::accountTypeSection()]);
+        CompanySchemaRegistry::form('main.after', fn (): array => [static::currenciesSection()]);
     }
 
     protected static function administratorSection(): Section
@@ -119,6 +120,34 @@ class CompanyAdminContributions
                         && filled($get('administrator_password')))
                     ->dehydrated(false),
             ])
+            ->columns(1);
+    }
+
+    /**
+     * Extra transaction currencies (CR-6, 2026-11-13). Installation staff
+     * choose them, not the company's own administrator (plan decision): a
+     * hidden field is not saved by Filament, so a Company Admin's save cannot
+     * change the list. Empty keeps every active currency available.
+     */
+    protected static function currenciesSection(): Section
+    {
+        return Section::make(__('security::filament/contributions/company.currencies.title'))
+            ->description(__('security::filament/contributions/company.currencies.description'))
+            ->icon('heroicon-o-currency-dollar')
+            ->visible(fn (): bool => static::administersInstallation())
+            ->schema([
+                Select::make('permittedCurrencies')
+                    ->label(__('security::filament/contributions/company.currencies.fields.permitted'))
+                    ->relationship(
+                        name: 'permittedCurrencies',
+                        titleAttribute: 'full_name',
+                        modifyQueryUsing: fn ($query) => $query->where('active', true),
+                    )
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
+            ])
+            ->collapsible()
             ->columns(1);
     }
 

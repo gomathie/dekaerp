@@ -6,6 +6,315 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-14, billing health check scheduled (CR-10 item 3)
+
+- **Why:** `platform-billing:health-check` existed but nothing ran it, so a
+  stopped scheduler or a failing invoice job would only be noticed when a
+  client was billed late or never.
+- **How:** `PlatformBillingServiceProvider` registers it next to the invoice
+  run, daily at 06:00 (after 02:15), `withoutOverlapping()`. `onFailure`
+  calls `report()` with a fixed message that names no company or amount, so
+  Sentry gets the alert and the details stay in the command output. The same
+  once-per-scheduler guard as the invoice run.
+- **Benefit:** balance drift and stalled invoicing reach Sentry within a day.
+- **Scheduler down (D-CR-11, user 2026-11-14):** both billing jobs carry
+  sentry-laravel's `sentryMonitor()` (30 min check-in margin, 60 min max
+  runtime). Sentry creates the monitors on the first check-in and alerts on
+  a missed or failed one. Applied only when the macro exists, so a run with
+  no Sentry (tests) schedules the jobs unmonitored.
+- **Trade-off / risk:** the monitors appear in Sentry only after the first
+  production run; set their alert recipients there once they show up.
+- **Verification:** see the line below.
+- **Rollback:** remove the second `$schedule->command(...)` block.
+
+## 2026-11-14, company currencies on the remaining pickers (CR-6)
+
+- **Why:** the journal, journal entry, payment, pay-invoice and Logistics
+  shipment/expense pickers still listed every currency, so a user could
+  pick one outside the company's list on those screens.
+- **How:** each picker now filters with the same `Currency::permittedFor()`
+  scope (one rule) as the invoice picker: the form's company where it has
+  one, the invoice's company in the pay action, otherwise the current
+  company. Files: accounts `PaymentResource`, `JournalResource`,
+  `InvoiceResource\Actions\PayAction`; accounting `JournalEntryResource`;
+  logistics `ShipmentResource`, `ExpenseForm`. The shipment picker also
+  hides inactive currencies now, which matches the other pickers.
+- **Not changed on purpose:** the account and vendor-price pickers
+  (configuration, not transactions) and the company form's base currency.
+- **Benefit:** the list holds on every transaction screen as well as the API.
+- **Trade-off / risk:** a record saved earlier with a currency that is now
+  outside the list shows that currency without a label on edit. Companies
+  without a list are unaffected.
+- **Verification:** `php -l` and Pint on the six files. Screen regression:
+  Logistics ShipmentResource, Screens and Expenses tests 45 passed (133
+  assertions, `claude_ui`); Accounts Invoice and Bill resource tests 21
+  passed (90 assertions, `claude_vault`). No dedicated picker test: the
+  pickers only call the already-tested scope. Not seen in a browser.
+- **Rollback:** restore the previous `modifyQueryUsing` / `options` closures.
+
+## 2026-11-13, company currencies enforced in the API (CR-6)
+
+- **Why:** the screens offered only a company's permitted currencies, but the
+  API still accepted any currency id, so a token holder could walk around the
+  list.
+- **How:** `Support\Rules\PermittedCurrency`, built on the same
+  `Currency::permittedFor()` scope (one rule). Applied to `currency_id` in
+  the invoice/bill, sales order, purchase order and payment API requests via
+  `PermittedCurrency::forRequest()`. The currency must be permitted for the
+  request's active company **and** for any `company_id` in the body, so
+  naming a company with no list cannot widen the active company's.
+  Message `support::exceptions.currency-not-permitted` in 5 languages. No
+  spreadsheet import sets a currency today, so there was nothing to change
+  there.
+- **Benefit:** the list now holds on every write path that takes a currency.
+- **Trade-off / risk:** an API client that was sending a currency outside a
+  company's list now gets 422. Companies without a list are unaffected.
+- **Verification:** support `CompanyCurrenciesTest` 5 passed, 11 assertions
+  (`aureuserp_testing_claude_ui`). API regression: Accounts Invoice
+  and Bill API tests 62 passed (166 assertions, `claude_vault`); Sales Order
+  and Purchases PurchaseOrder API tests 50 passed (157 assertions, `claude_ui`).
+- **Rollback:** remove the rule from the four requests.
+- Remaining CR-6 pickers: *superseded 2026-11-14, built (entry above).*
+
+## 2026-11-13, base currency change after posting (CR-6, D-CR-4)
+
+- **Why:** D-CR-4 (user): a company's base currency may still change after
+  it has entries, but only by a Super Admin, after a warning naming the
+  posted entries, and audited. Until now `accounts` `CompanyObserver`
+  refused every change once journal items existed, with no way past it.
+- **How:** `Account\Services\BaseCurrencyChange::change()` checks an active
+  Super Admin on the **web** guard (an API token never qualifies), a
+  non-blank reason, and an active, different currency. It then saves while
+  holding that company id, which is the only thing `CompanyObserver` lets
+  through, and records `company.base-currency-changed` through
+  `SecurityAuditLogger` (old and new currency, reason, posted entry count,
+  actor) in the company's chatter. UI: `Account\CompanyCurrencyContributions`,
+  a collapsed "Base currency" section on the company edit page (Super Admin
+  only) with a confirmation modal whose text names the posted entries.
+  Translations in 5 languages. Also moved a misplaced docblock in
+  `Security\CompanyAdminContributions` (no behaviour change).
+- **Benefit:** a client who switches accounting currency is no longer stuck,
+  and the change is attributable.
+- **Trade-off / risk:** posted entries keep their old currency and rate;
+  reports after the change are in the new base currency. Nothing converts
+  history. The plain currency field, API and imports stay refused.
+- **Verification:** `CompanyCurrencyGuardTest` 12 passed, 19 assertions
+  (8 existing, 4 new), `aureuserp_testing_claude_vault`. `php -l` on all 10
+  locale files. Pint on the changed files. The modal itself was **reviewed,
+  not run** in a browser (CR-3 is still blocked by the slow local machine).
+- **Rollback:** remove the `BaseCurrencyChange::authorizes()` check from
+  `CompanyObserver` and the `CompanyCurrencyContributions::register()` call;
+  no schema change.
+
+## 2026-11-13, company currencies, first part (CR-6)
+
+- **Why:** CR-6. A Ghana company should invoice in GHS plus USD/EUR, a Zambia
+  one in ZMW plus USD/ZAR; until now every picker listed every active
+  currency for every company.
+- **Decision changed from the plan (taken by the agent, user away):** the
+  plan said "backfill each company with its base currency as its only
+  permitted currency, so nothing changes". That is wrong: it would have
+  stopped every company already invoicing in USD or EUR. Instead there is
+  no backfill, and **no list means every active currency** (today's
+  behaviour); a list narrows the pickers to it plus the base currency.
+- **How:** support migration `2026_11_13_000001_create_company_currencies_table`
+  (composite primary key, cascades), `Company::permittedCurrencies()`,
+  `Currency::scopePermittedFor($companyId)` (reads scope-free, always adds the
+  base currency). Security contributes a "Currencies" section to the company
+  form, visible only to installation staff; a hidden Filament field is not
+  saved, so a Company Admin cannot change the list. Applied to the currency
+  picker on invoices, bills, quotations and purchase orders, using the form's
+  company, else the current company.
+- **Not done yet (rest of CR-6):** the audited base-currency change with a
+  warning naming posted entries (D-CR-4); the API and imports do not apply
+  the list (they validate against all currencies, as before); other pickers
+  (journals, payments, logistics) are unchanged. An existing document whose
+  currency is later removed from the list may need its currency re-chosen
+  when edited.
+- **Side change:** Pint replaced a fully qualified `CompanyMembers` call by
+  an import in `QuotationResource` and `OrderResource` (style only).
+- **Verification:** support `Tenancy/CompanyCurrenciesTest.php` 3 passed
+  (`aureuserp_testing_claude_ui`); security
+  `SaaSAdministration/CompanyCurrenciesFormTest.php` 1 passed. Form
+  regression: Sales quotation/order resource tests 29 passed, Purchases
+  order resource 14 passed (`aureuserp_testing_claude_ui`), Accounts
+  invoice/bill resource 21 passed (`aureuserp_testing_claude_vault`).
+- **Rollback:** roll back the migration; revert the four pickers, the
+  section and the scope.
+
+## 2026-11-13, rebrand sweep follow-up (plan #3, option A)
+
+- **Why:** a sweep for "Webkul"/"Aureus" in visible text found three
+  leftovers: the welcome translations (5 languages, unused by any route but
+  shipped), the generated API docs `<title>`, and the plugin-manager
+  `composer.json` description.
+- **How:** replaced with "DEKA Central" (RB-D5). `config/scribe.php` already
+  takes its title from `app.name`, so a regeneration keeps it. Package names
+  (`webkul/*`), namespaces, the root `composer.json` "name" and the README
+  logo URLs on the `dekaerp/temp-media` repo are left: names belong to
+  option B, and the logo files would need new images. Domains untouched
+  (RB-D6).
+- **Verification:** `php -l` on the five welcome files. No views or other
+  translation file contains "Webkul" or "Aureus" as visible text.
+- **Rollback:** revert the six files.
+
+## 2026-11-13, role templates (CR-5, option A)
+
+- **Why:** CR-5. New company users got hand-ticked permissions or the
+  configured business role only. Decision taken while the user was away:
+  option A (installation-wide templates) instead of D-CR-2's per-company
+  copies, because roles have no company column and `(name, guard)` is
+  unique; per-company roles would be a schema change to a security
+  boundary (option B in the plan, still open).
+- **How:** `Security\Services\RoleTemplateProvisioner::TEMPLATES` - Finance
+  Manager, Accountant, HR Manager, Payroll Officer, Sales Manager, Inventory
+  Manager, Logistics Manager, Standard Employee - each a map of permission
+  plugin key to full / standard / view. Plugin keys match on underscores, so
+  `account` never reaches `accounting`. A forbidden-fragment backstop drops
+  security, role, plugin, bypass and impersonation names. `provision()`
+  creates only missing roles; `erp:sync-permissions` calls it after it
+  generates permissions, so it runs on every deploy without a new step.
+- **Benefit:** eight ready roles on the next deploy; staff can edit them on
+  the Roles screen and the edit sticks.
+- **Trade-off / risk:** a template gets the permissions that exist when it
+  is first created; a plugin installed later is not added to it (an
+  existing role is never touched). Payroll Officer is mostly empty until the
+  payroll plugin exists. Company Admins still assign a template only if they
+  hold all its permissions themselves.
+- **Verification:** `security/tests/Feature/SaaSAdministration/RoleTemplateTest.php`
+  4 passed on `aureuserp_testing_claude_ui` (access mapping, no forbidden
+  permission, created once and edits kept, created by the deploy sync).
+- **Rollback:** remove the provisioner call from `SyncAdminPermissions`;
+  delete the eight roles on the Roles screen if unwanted.
+
+## 2026-11-13, billing health check (CR-10 item 3)
+
+- **Why:** two billing failures are silent: balances that stop adding up,
+  and invoicing that stops because the scheduler or the invoice job is down.
+  Neither shows until a client is billed wrongly or late.
+- **How:** `PlatformBilling\Console\Commands\BillingHealthCheck`
+  (`platform-billing:health-check`), registered in the service provider.
+  Drift comes from `PlatformPayments::reconcile()` for each company with
+  payments (no second balance rule); stalled = active subscription with
+  `next_invoice_at` more than `LATE_AFTER_HOURS` (24) in the past. Exits
+  non-zero when anything is found. Writes nothing.
+- **Also checked (CR-10 item 2):** every membership write already checks
+  seats; nothing to build (plan, CR-10).
+- **Benefit:** one command an operator or a scheduled alert can run.
+- **Trade-off / risk:** not scheduled; someone has to run it or wire it.
+- **Verification:** `platform-billing/tests/Feature/BillingHealthCheckTest.php`
+  2 passed on `aureuserp_testing_claude_vault` (healthy passes; stalled
+  subscription named, exit failure, schedule untouched).
+- **Rollback:** delete the command and its registration line.
+
+## 2026-11-13, company setup status and resend invitation (CR-7)
+
+- **Why:** comprehensive review CR-7. Staff could not see which new companies
+  still had nobody able to sign in; the only clue was opening each company's
+  Users and logins list. Acceptance: no company shows Active while its
+  administrator cannot log in.
+- **How:** `Security\Services\CompanyProvisioningStatus` derives the status;
+  nothing is stored. Closed = archived or `is_active` off; Active = an
+  enabled administrator from `CompanyAdministratorAccount::administrators()`
+  (the one rule for who administers a company); Invited = otherwise a pending
+  invitation; Invitation expired = only lapsed, unaccepted, unrevoked ones;
+  else No administrator. Security's `CompanyResource::table()` pushes a badge
+  column, a multi-select filter (ids worked out by the same service, so filter
+  and column cannot disagree) and a "Resend invitation" row action on Invited
+  companies, which calls the existing `CompanyAdministratorInviter::resend()`
+  (its service re-checks who may manage the invitation and that it is still
+  pending). All three only for installation staff
+  (`CompanyAdminContributions::administersInstallation()`). Five languages.
+- **Not built:** a Suspended state from billing's read-only: security must not
+  depend on platform-billing; billing screens already show it. An expired
+  invitation is not resent (the service refuses non-pending rows by design):
+  staff invite again from the company form.
+- **Benefit:** "Invited, not yet active" is one filter; recovery is one click.
+- **Trade-off / risk:** status is worked out per row (a few queries each) and
+  the filter evaluates every company the actor may list. Fine for tens or low
+  hundreds of companies; batch it if the list grows past that.
+- **Verification:** `security/tests/Feature/SaaSAdministration/CompanyProvisioningStatusTest.php`
+  4 passed on `aureuserp_testing_claude_ui` (stages, a disabled administrator
+  is not Active, closed, list filter + resend renews the window and mails).
+  `php -l` on the five language files. Full SecurityFeature: 181 passed
+  (630 assertions), same database.
+- **Rollback:** remove the `table()` override and the service; no schema.
+
+## 2026-11-13, Sentry DEKAERP-19..1J (local only: test runs emptied the dev server's compiled views)
+
+- **Why:** ten new Sentry issues, all `/admin/login`, "File does not exist /
+  Failed to open stream at storage/framework/views/....php". Every event is
+  `environment: local`, `http://localhost`, curl, server a Docker container
+  id: the local dev container, not production (production had none).
+- **Root cause:** the test suite installs plugins through their install
+  commands, which call `Package::refreshPluginCaches()` → `optimize:clear`,
+  emptying the compiled-views folder. Tests and the dev container share
+  `storage/framework/views` through the same bind mount, so a request to the
+  dev server during a test run found its compiled view gone. Times match
+  today's test runs.
+- **How:** `phpunit.xml` sets `VIEW_COMPILED_PATH=storage/framework/testing/views`
+  (force), so tests compile and clear their own folder (already git-ignored).
+- **Benefit:** test runs no longer break the local app or flood Sentry.
+- **Note (user action, optional):** the local `.env` sends the dev server's
+  errors to the production Sentry project (environment `local`). Blank
+  `SENTRY_LARAVEL_DSN` locally, or filter `environment:production` in alerts.
+- **Verification:** a SalesByProductTest run left the shared folder at 40
+  compiled views before and after, and wrote 25 into
+  `storage/framework/testing/views`. All ten issues marked resolved.
+  Same-session results: ModuleCardsTest 6 passed (31 assertions, including
+  the new Inventory visibility test); SalesByProductTest +
+  PurchasesByProductTest 4 passed (8).
+- **Rollback:** remove the line.
+
+## 2026-11-13, late night (by-product reports; Inventory card visibility)
+
+- **Why:** reports plan R2 "by product" (next open item); Inventory card leak
+  found while testing A5.
+- **How:** `Sale\...\Reporting\Pages\SalesByProduct` and
+  `Purchase\...\Reporting\Pages\PurchasesByProduct` with exporters; order
+  lines of confirmed orders (`whereHas('order')` keeps the order's company
+  and ownership scopes), groups product and category, SQL totals divide by
+  the order's rate. Language blocks `by-product` in five languages each.
+  `Inventory\Filament\OverviewCard::visible()` now returns
+  `Inventory\Filament\Pages\Overview::canAccess()`.
+- **Root cause (Inventory card):** it used `OperationResource::canViewAny()`;
+  `Operation` has no policy, and Filament allows a resource with none, so
+  the card (counts of receipts, shipments, late operations) showed to every
+  user, including companies without Inventory. Counts only, no records.
+- **Verification (Sail):** AccountingFeature full suite 98 passed (190
+  assertions) on `aureuserp_testing_claude_ui` after A5/A6.
+  ModuleCardsTest and the by-product tests: results below.
+- **Rollback:** remove the two pages; restore the old `visible()` (not
+  advised).
+
+## 2026-11-13, night (A6 cash flow; A5 Accounting on the Overview)
+
+- **Why:** accounting plan A5 and A6, next in the agreed order; user away,
+  decisions delegated.
+- **How:** `Reporting/Pages/CashFlow.php` + `CashFlowExport` + view
+  (`page_accounting_cash_flow`, direct method, classification by main
+  counterpart; see the plan). `Accounting\Filament\OverviewCard` (one source
+  for three figures), `AccountingHeadlineWidget`, registered from
+  `AccountingServiceProvider::contributeOverview()` into
+  `DashboardCardRegistry` and, when Invoices is present, `OverviewRegistry`.
+  Language: `cash-flow` block in reporting.php and `filament/overview-card.php`,
+  five languages each.
+- **Decisions:** no journal charts on the Overview (Livewire component limit,
+  Sentry DEKAERP-16); cash = "Bank and cash" accounts only, so money parked
+  in outstanding receipts counts when the bank confirms it.
+- **Benefit:** a cash flow statement without a spreadsheet; accounting work
+  waiting (lines to reconcile, drafts) visible on the first screen.
+- **Risk:** not seen in a browser.
+- **Verification (Sail, `aureuserp_testing_claude_ui`):** CashFlowTest +
+  BankReconciliationTest 26 passed (53 assertions); the bank match test now
+  asserts the posted bank entry unconditionally (the default set-up uses
+  outstanding receipts). AccountingOverviewTest + invoices Dashboard folder:
+  26 passed, 1 failed - the test called `DashboardCardRegistry::visible()`,
+  which ran Inventory's card against tables absent from this suite and
+  aborted the transaction; the test now checks the Accounting card only.
+  AccountingOverviewTest then 3 passed (12 assertions). `php -l` on all new language files; Pint.
+- **Rollback:** remove the page and the `contributeOverview()` call.
+
 ## 2026-11-13, evening (A3 bank reconciliation; plugin versions; Attendance menu)
 
 - **Why:** accounting plan A3 (ACC-D3: CSV first); user: improved plugins

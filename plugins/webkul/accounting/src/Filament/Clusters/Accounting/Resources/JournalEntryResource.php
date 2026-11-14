@@ -694,7 +694,8 @@ class JournalEntryResource extends Resource
                     ->relationship(
                         name: 'currency',
                         titleAttribute: 'name',
-                        modifyQueryUsing: fn (Builder $query) => $query->active(),
+                        // CR-6: only the company's permitted currencies, when it has a list.
+                        modifyQueryUsing: fn (Builder $query) => $query->active()->permittedFor(current_company_id()),
                     )
                     ->default(current_company()?->currency_id)
                     ->required()

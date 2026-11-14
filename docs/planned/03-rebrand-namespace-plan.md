@@ -4,7 +4,10 @@ Status: **plan written 2026-11-13 (user: "change anything Webkul to
 365Systems to maintain ownership of our app"); all four recommendations
 accepted by the user the same day (section 6). Licence notice fixed 2026-11-13;
 Option A (visible brand) queued after accounting A2b; B after the Logistics
-merge.**
+merge.** *Update 2026-11-13: option A is done - the last visible leftovers
+(welcome translations, API docs title, plugin-manager description) were fixed;
+only the README logo images and package names remain, which belong to B or
+need new artwork. B waits only on the restructure branch.*
 
 ---
 
@@ -82,6 +85,6 @@ the original licence notice.
 | RB-D1 | Visible brand now, namespace later (A, then C+B)? | **Accepted (user, 2026-11-13)** |
 | RB-D2 | Namespace name (must start with a letter) | **Accepted: `Systems365`** |
 | RB-D3 | Licence notice: keep Webkul's line and add yours? | **Accepted**; done in `LICENSE` 2026-11-13; lawyer to confirm |
-| RB-D4 | When to run B | **Accepted:** after the Logistics merge and the restructure branch, in a quiet week |
+| RB-D4 | When to run B | **Accepted:** after the Logistics merge and the restructure branch, in a quiet week. *Note 2026-11-13: the Logistics condition is met - Logistics is on `develop` and in production (releases go develop → production; `main` lags and has none of it). B now waits only on the restructure branch.* |
 | RB-D5 | Names (user, 2026-11-13) | Company: **365 Systems** (not "365 Integrated Systems"). App: **DEKA Central** (was "DEKA ERP"). Applied to `LICENSE`, every plugin `composer.json` author, the root description, the web-app name and title, the in-app guide and the remaining translations. Production's `APP_NAME` is an environment variable: set it to `DEKA Central` in Laravel Cloud (done by the user, 2026-11-13) |
 | RB-D6 | Domains (user, 2026-11-13) | **`dekaerp.com` and its subdomains (`cloud.dekaerp.com`, …) stay as they are for now; they change later.** Do not rename URLs, mail addresses, `APP_URL` or links to them in this sweep |

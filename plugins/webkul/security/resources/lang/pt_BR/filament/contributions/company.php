@@ -20,6 +20,14 @@ return [
         ],
     ],
 
+    'currencies' => [
+        'title'       => 'Moedas',
+        'description' => 'Moedas que esta empresa pode usar em faturas, contas a pagar, cotações e pedidos de compra, além da moeda padrão. Deixe vazio para permitir todas as moedas ativas.',
+        'fields'      => [
+            'permitted' => 'Moedas adicionais',
+        ],
+    ],
+
     'account' => [
         'title'       => 'Tipo de conta',
         'description' => 'Se esta empresa está em teste ou é comercial. Somente a equipe de instalação pode escolher, e apenas na criação.',

@@ -20,6 +20,14 @@ return [
         ],
     ],
 
+    'currencies' => [
+        'title'       => 'Devises',
+        'description' => 'Devises que cette société peut utiliser sur les factures, factures fournisseurs, devis et bons de commande, en plus de sa devise par défaut. Laissez vide pour autoriser toutes les devises actives.',
+        'fields'      => [
+            'permitted' => 'Devises supplémentaires',
+        ],
+    ],
+
     'account' => [
         'title'       => 'Type de compte',
         'description' => 'Indique si cette société est en essai ou commerciale. Seul le personnel d’installation peut le choisir, et seulement à la création.',

@@ -2,7 +2,9 @@
 
 Status: **in progress. Done: A1 (known figures, report isolation), A2 (lock
 date, v1.8.0), A2b (reason on reset, v1.8.1). Built 2026-11-13, awaiting push:
-A7 (Tax Summary), A3 (bank reconciliation). Next: A5, A6, A4.** Built from the brief below
+A7 (Tax Summary), A3 (bank reconciliation) — shipped in v1.9.0. Built
+2026-11-13, awaiting push: A5 (Overview section), A6 (cash flow). Next: A4
+(country templates, needs a local accountant).** Built from the brief below
 (added by the user 2026-11-12), cut to the gaps after the user's instruction
 the same day: "if what we have is enough don't plan an overkill, just an
 improvement and an easy workflow."
@@ -127,6 +129,18 @@ checked by a local accountant before being called compliant.
 Dashboard section through `OverviewRegistry`, same rules as the other
 sections (module switch, page permission, mobile layout). Cash flow as an
 eighth page in the existing Reporting cluster with export.
+*Built 2026-11-13. A6: `Reporting/Pages/CashFlow.php`
+(`page_accounting_cash_flow`), direct method: cash = "Bank and cash"
+accounts; each entry that moves cash goes under its main counterpart
+(largest non-cash line): fixed and non-current assets investing, equity and
+non-current liabilities financing, everything else operating; transfers
+between cash accounts left out; opening + net = closing. Excel export.
+A5: `Filament/OverviewCard.php` computes three figures once (cash at bank,
+bank lines to reconcile, draft entries) for a card on the All tab, an
+Accounting section with `AccountingHeadlineWidget`, a "needs attention"
+item and a "Reconcile bank" quick action. Decision: no journal charts on
+the Overview (each is its own Livewire component, the limit behind Sentry
+DEKAERP-16). Tests: `CashFlowTest`, `AccountingOverviewTest`.*
 
 **A7 — Tax summary.**
 An eighth page in the Reporting cluster ("Tax Summary"): per tax, the base,

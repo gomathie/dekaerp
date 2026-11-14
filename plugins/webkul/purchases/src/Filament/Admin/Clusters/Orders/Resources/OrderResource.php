@@ -71,6 +71,7 @@ use Webkul\Purchase\Models\Product;
 use Webkul\Purchase\Models\Requisition;
 use Webkul\Purchase\Settings\OrderSettings;
 use Webkul\Purchase\Settings\ProductSettings;
+use Webkul\Support\Filament\CompanyMembers;
 use Webkul\Support\Filament\Forms\Components\Repeater;
 use Webkul\Support\Filament\Forms\Components\Repeater\TableColumn;
 use Webkul\Support\Filament\Infolists\Components\RepeatableEntry;
@@ -197,7 +198,8 @@ class OrderResource extends Resource
                                     ->relationship(
                                         name: 'currency',
                                         titleAttribute: 'name',
-                                        modifyQueryUsing: fn (Builder $query) => $query->active(),
+                                        // CR-6: only the company's permitted currencies, when it has a list.
+                                        modifyQueryUsing: fn (Builder $query, Get $get) => $query->active()->permittedFor((int) ($get('company_id') ?: current_company_id())),
                                     )
                                     ->required()
                                     ->searchable()
@@ -289,7 +291,7 @@ class OrderResource extends Resource
                                     ->schema([
                                         Select::make('user_id')
                                             ->label(__('purchases::filament/admin/clusters/orders/resources/order.form.tabs.additional.fields.buyer'))
-                                            ->relationship('user', 'name', fn ($query) => \Webkul\Support\Filament\CompanyMembers::scope($query))
+                                            ->relationship('user', 'name', fn ($query) => CompanyMembers::scope($query))
                                             ->searchable()
                                             ->preload()
                                             ->default(Auth::id())

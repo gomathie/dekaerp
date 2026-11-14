@@ -272,7 +272,8 @@ class PayAction extends Action
                                         ->relationship(
                                             name: 'currency',
                                             titleAttribute: 'name',
-                                            modifyQueryUsing: fn (Builder $query) => $query->active(),
+                                            // CR-6: the invoice's company decides which currencies may pay it.
+                                            modifyQueryUsing: fn (Builder $query, $record) => $query->active()->permittedFor($record?->company_id ?: current_company_id()),
                                         )
                                         ->default(function ($record, Get $get) {
                                             $journal = Journal::find($get('journal_id'));

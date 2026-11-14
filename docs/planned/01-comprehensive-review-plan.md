@@ -173,6 +173,29 @@ Details and tests: `docs/change-log.md` 2026-11-12.
   grant a platform-only ability (existing guard).
 - Acceptance: "Add user → name, email, role → invite" in one modal.
 
+**Blocked on a decision (2026-11-13).** D-CR-2 says each company gets its
+own editable copy, but roles are installation-wide: `roles` has no company
+column and Spatie keeps `(name, guard_name)` unique, so eight copies per
+company cannot even share a name. Options:
+- **A. Shared templates (smallest).** Eight global roles, editable only by
+  installation staff; a Company Admin assigns them inside a membership as
+  today. Changes D-CR-2 (a company cannot adjust its own copy).
+- **B. Per-company roles.** Add `roles.company_id` (null = global), make the
+  unique key `(company_id, name, guard_name)`, scope the Roles screen and
+  every role picker to the current company, and refuse a role from another
+  company in `TenantRoleAssigner`. Matches D-CR-2; security-sensitive and
+  touches Shield's role resource, so 2–3 days with tests.
+Recommendation: A now, B only if a client actually asks to edit a role.
+
+**Built 2026-11-13, option A (decided while the user was away; reverse by
+asking for B).** `Security\Services\RoleTemplateProvisioner`: eight
+installation-wide roles, created by `erp:sync-permissions` on deploy only when
+missing, so Roles-screen edits survive. Access per plugin is full / standard
+(no delete or restore) / view. Never a security, role, plugin, bypass or
+impersonation permission. Assignment is unchanged: a Company Admin can give
+only a role whose permissions they hold. The "one modal: name, email, role →
+invite" acceptance is the existing invitation form; not rebuilt.
+
 ### CR-6 — Company currencies (P1)
 
 - Platform: the existing `currencies` catalog (no second table); add a
@@ -188,6 +211,22 @@ Details and tests: `docs/change-log.md` 2026-11-12.
   (already snapshotted).
 - Backfill: each existing company gets its current base currency as its only
   permitted currency, so nothing changes until someone adds more.
+  *Superseded 2026-11-13 (agent, user away): that backfill would block
+  companies already invoicing in other currencies. No backfill; an empty
+  list means every active currency.*
+
+**Part 1 built 2026-11-13:** `company_currencies`, `Currency::permittedFor()`,
+staff-only "Currencies" section on the company form, applied to invoice, bill,
+quotation and purchase-order pickers. **D-CR-4 built the same day:**
+`Account\Services\BaseCurrencyChange` plus a Super Admin "Base currency"
+section on the company edit page (change log entry). **API built the same
+day:** `Support\Rules\PermittedCurrency` on the invoice, sales order,
+purchase order and payment requests; no import sets a currency. **Remaining
+pickers built 2026-11-14:** journal, journal entry line, payment screen, pay
+action (the invoice's own company), Logistics shipment and expense. Left
+unrestricted on purpose: the account and vendor-price pickers (configuration,
+not transactions) and the company's own base-currency fields. Still to do:
+the browser acceptance below.
 - Acceptance: Ghana GHS + USD/EUR, Zambia ZMW + USD/ZAR, DRC CDF + USD/EUR
   configured and used on an invoice; a base-currency change after posting
   asks for confirmation and is audited.
@@ -201,10 +240,16 @@ Details and tests: `docs/change-log.md` 2026-11-12.
   action (links already exist in Users and logins).
 - Acceptance: no company shows Active while its administrator cannot log in.
 
+**Built 2026-11-13 (not yet seen in a browser).** Derived status column,
+filter and "Resend invitation" on the companies list, installation staff
+only (`CompanyProvisioningStatus`). Draft was dropped (a company exists only
+once created); Suspended is left to the billing screens so security does not
+depend on platform-billing. Details: `docs/change-log.md` 2026-11-13.
+
 ### CR-8 — Partners / resellers (P2)
 
 - DEKA → Partner → client companies. A partner user can create companies and
-  assign plans within a partner price list; sees commercial status only,
+  assign plans within a partner price list; sees commercial status only, if the branch feature can work we may leave it that way for now. That way the multicompany admin can be termed as a reseller to reduce the work load at this moment.
   never the client's accounting, HR or payroll records.
 - Largest package; needs its own design document first.
 
@@ -224,7 +269,22 @@ Decided 2026-11-12 (D-CR-7). Every SAAS package is built but in "review".
 3. Operational controls: alerts (scheduler not running, invoice generation
    failing, oldest due subscription) and a reconciliation report recomputing
    invoice balances and credit from immutable rows.
-4. SAAS-14 documentation, including the stale `AGENTS.md` note it owns.
+
+   *Checked 2026-11-13: nothing to build.* Every path that writes
+   `user_allowed_companies` already goes through `SeatCapacityService`: user
+   create/edit pages, invitation create and accept, company creator attach,
+   `CompanyAdministratorAccount`. There is no user API and no import of
+   users; employees do not create users. `erp:install` attaches only the
+   platform administrator, who uses no seat (D-SAAS-03).
+   *Item 3 built 2026-11-13:* `php artisan platform-billing:health-check`,
+   read-only, exits non-zero on balance drift (through
+   `PlatformPayments::reconcile()`) or an active subscription more than a day
+   past `next_invoice_at` (scheduler or invoice job stalled). *Scheduled
+   2026-11-14 (agent, user away):* daily at 06:00, after the 02:15 invoice
+   run; a failure is reported to Sentry, whose alert rules carry it.
+4. *Done 2026-11-13:* operator guide `docs/saas-operations.md`; the stale
+   `accepted_at` note in `AGENTS.md` was already marked superseded.
+   SAAS-14 documentation, including the stale `AGENTS.md` note it owns.
 5. Browser smoke (done inside CR-3); mark each SAAS package "done" as it
    passes.
 
@@ -290,6 +350,10 @@ otherwise); a field-by-field diff for every model (only logged attributes).
 | D-CR-5 | Partners/resellers when? | **After the investor demo** (P2) |
 | D-CR-6 | Where does CR-3 run? | **Local, plus one throwaway company in production** with account type "test", invitations only to an address the user provides; deleted or closed afterwards |
 | D-CR-7 | Finish the SaaS administration plan inside this one? | **Yes, as CR-10** |
+| D-CR-8 | (2026-11-14) CR-3 is blocked locally: run it in production? | **Yes**, on the D-CR-6 throwaway "test" company, invitations to `+alias` addresses of the user's own mailbox; closed afterwards |
+| D-CR-9 | (2026-11-14) Measure clicks and time (CR-2)? | **Yes**, during the CR-3 run |
+| D-CR-10 | (2026-11-14) Partners/resellers model? | **Postponed** until after the demo (confirms D-CR-5) |
+| D-CR-11 | (2026-11-14) Alert when the scheduler stops? | **Yes:** Sentry cron monitors on the invoice run and the health check |
 
 ## 5. Order and estimate
 

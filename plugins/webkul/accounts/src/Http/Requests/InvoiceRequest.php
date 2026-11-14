@@ -5,6 +5,7 @@ namespace Webkul\Account\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Webkul\Account\Models\Product;
+use Webkul\Support\Rules\PermittedCurrency;
 
 class InvoiceRequest extends FormRequest
 {
@@ -28,7 +29,7 @@ class InvoiceRequest extends FormRequest
 
         $rules = [
             'partner_id'                       => [...$requiredRule, 'integer', 'exists:partners_partners,id'],
-            'currency_id'                      => [...$requiredRule, 'integer', 'exists:currencies,id'],
+            'currency_id'                      => [...$requiredRule, 'integer', 'exists:currencies,id', PermittedCurrency::forRequest()],
             'journal_id'                       => [...$requiredRule, 'integer', 'exists:accounts_journals,id'],
             'invoice_date'                     => [...$requiredRule, 'date'],
             'invoice_date_due'                 => ['nullable', 'date', 'prohibited_if:invoice_payment_term_id,*'],

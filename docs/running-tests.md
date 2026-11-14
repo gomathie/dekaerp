@@ -97,3 +97,17 @@ Measured on Windows + Docker Desktop (bind-mounted repo), 2026-11-13:
 AccountFeature, 558 tests, took 8,554 s (2 h 22 min). A two-file focused run
 takes about 10 minutes, almost all of it the one-off install at the start.
 Use a second test database (see AGENTS.md) to run another suite meanwhile.
+
+**Why it is this slow (measured 2026-11-13).** One application boot in the
+dev container takes about 125 s, and it is disk, not code: the boot process
+sits in `p9_client_rpc` (Docker Desktop's Windows-to-Linux file share), not
+on the CPU. By stage: autoload 5 s, registering providers 9 s, booting
+providers 104 s, of which 81 s is the first build of the Filament admin panel
+(it loads every plugin's classes). Ruled out: Xdebug (`XDEBUG_MODE=off`
+gives the same 125 s), the database (a query takes 0 s), and Filament
+discovery (`filament:cache-components` changed nothing; it was cleared
+again). The local site at `http://localhost/admin` therefore takes 75-85 s
+per request. Fixes are machine-level and the developer's call: keep the repo
+inside the WSL file system (`\\wsl$\...`) instead of `C:\Users\...`, exclude
+the folder from Windows Defender real-time scanning, or restart Docker
+Desktop / `wsl --shutdown` if it was fast before.
