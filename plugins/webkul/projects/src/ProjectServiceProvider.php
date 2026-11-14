@@ -4,6 +4,8 @@ namespace Webkul\Project;
 
 use Filament\Panel;
 use Webkul\Chatter\Services\ChatterCleanupService;
+use Webkul\Invoice\Filament\Overview\OverviewRegistry;
+use Webkul\Project\Filament\Pages\Dashboard as ProjectDashboard;
 use Webkul\PluginManager\Console\Commands\InstallCommand;
 use Webkul\PluginManager\Console\Commands\UninstallCommand;
 use Webkul\PluginManager\Package;
@@ -64,6 +66,20 @@ class ProjectServiceProvider extends PackageServiceProvider
             fn (): array => Filament\OverviewCard::data(),
             sort: 20,
         );
+
+        // A Projects tab on the Overview, next to Accounting and Inventory
+        // (user, 2026-11-14). Invoices owns the Overview and Projects does not
+        // depend on it, so only when it is installed.
+        if (class_exists(OverviewRegistry::class)) {
+            OverviewRegistry::register(
+                'projects',
+                fn (): string => __('projects::filament/pages/dashboard.navigation.title'),
+                ProjectDashboard::sectionWidgets(),
+                fn (): array => [],
+                fn (): bool  => ProjectDashboard::canAccess(),
+                sort: 50,
+            );
+        }
     }
 
     public function packageRegistered(): void

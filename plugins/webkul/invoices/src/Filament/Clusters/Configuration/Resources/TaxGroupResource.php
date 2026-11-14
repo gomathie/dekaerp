@@ -14,7 +14,8 @@ class TaxGroupResource extends BaseTaxGroupResource
 {
     protected static ?string $model = TaxGroup::class;
 
-    protected static bool $shouldRegisterNavigation = true;
+    // Reached from the Taxes list, as in Zoho Books (user, 2026-11-14).
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static ?int $navigationSort = 7;
 

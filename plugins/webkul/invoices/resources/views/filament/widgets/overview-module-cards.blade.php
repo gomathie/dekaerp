@@ -8,7 +8,10 @@
     <style>
         .ov-mods-h { margin: 0.25rem 0 0.75rem; font-size: 0.6875rem; font-weight: 650; letter-spacing: 0.08em; text-transform: uppercase; color: rgb(113 113 122); }
         .dark .ov-mods-h { color: rgb(161 161 170); }
-        .ov-mods { display: grid; gap: 0.875rem; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
+        /* Balanced rows: 6 cards are 3 + 3, never 5 + 1 alone (production check 2026-11-14). */
+        .ov-mods { display: grid; gap: 0.875rem; grid-template-columns: repeat(var(--ov-cols, 3), minmax(0, 1fr)); }
+        @media (max-width: 1080px) { .ov-mods { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 640px) { .ov-mods { grid-template-columns: minmax(0, 1fr); } }
         .ov-mod { min-width: 0; padding: 1.125rem 1.25rem; border: 1px solid rgb(24 24 27 / 0.09); border-radius: 1rem; background: #fff; }
         .dark .ov-mod { border-color: rgb(255 255 255 / 0.08); background: rgb(24 24 27); }
         .ov-mod__head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.875rem; }
@@ -35,7 +38,9 @@
 
     <h3 class="ov-mods-h">{{ __('invoices::filament/pages/overview.modules.heading') }}</h3>
 
-    <div class="ov-mods">
+    @php($count = count($cards))
+    @php($cols = $count <= 4 ? max(1, $count) : (int) ceil($count / ceil($count / 4)))
+    <div class="ov-mods" style="--ov-cols: {{ $cols }}">
         @foreach ($cards as $card)
             <section class="ov-mod" aria-label="{{ $card['label'] }}">
                 <div class="ov-mod__head">
