@@ -22,7 +22,7 @@ class WhatsNewPdfController
 
         abort_unless(WhatsNew::canAccess(), 403);
 
-        $releases = WhatsNew::loadReleases();
+        $releases = WhatsNew::groupedReleases();
 
         if ($release !== null) {
             $releases = array_values(array_filter($releases, fn (array $candidate): bool => $candidate['id'] === $release));

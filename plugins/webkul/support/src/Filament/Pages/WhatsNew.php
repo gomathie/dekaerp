@@ -77,7 +77,71 @@ class WhatsNew extends Page
      */
     public function releases(): array
     {
-        return static::loadReleases();
+        return static::groupedReleases();
+    }
+
+    /**
+     * Releases as people read them: a hotfix (vX.Y.Z, Z > 0) is folded into
+     * its release vX.Y.0, each of its items tagged with the hotfix version,
+     * instead of being a section of its own (user, 2026-11-15: too many
+     * release sections). A hotfix whose release is not in the file stays on
+     * its own. CHANGELOG.md keeps one heading per version, and loadReleases()
+     * stays ungrouped: the newest version still drives the "new" dot.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function groupedReleases(?array $releases = null): array
+    {
+        $releases ??= static::loadReleases();
+        $byMinor = [];
+
+        foreach ($releases as $index => $release) {
+            if (preg_match('/^v(\d+)\.(\d+)\.0$/', $release['version'], $m)) {
+                $byMinor[$m[1].'.'.$m[2]] = $index;
+            }
+        }
+
+        $grouped = $releases;
+
+        foreach ($releases as $index => $release) {
+            if (! preg_match('/^v(\d+)\.(\d+)\.(\d+)$/', $release['version'], $m) || (int) $m[3] === 0) {
+                continue;
+            }
+
+            $parent = $byMinor[$m[1].'.'.$m[2]] ?? null;
+
+            if ($parent === null) {
+                continue;
+            }
+
+            foreach ($release['sections'] as $section) {
+                $items = array_map(fn (array $item): array => [
+                    ...$item,
+                    'html' => $item['html'].' <span class="fi-whats-new-hotfix">('.e($release['version']).')</span>',
+                    'text' => $item['text'].' ('.$release['version'].')',
+                ], $section['items']);
+
+                $target = null;
+
+                foreach ($grouped[$parent]['sections'] as $i => $existing) {
+                    if ($existing['category'] === $section['category']) {
+                        $target = $i;
+
+                        break;
+                    }
+                }
+
+                if ($target === null) {
+                    $grouped[$parent]['sections'][] = [...$section, 'items' => $items];
+                } else {
+                    $grouped[$parent]['sections'][$target]['items'] = [...$items, ...$grouped[$parent]['sections'][$target]['items']];
+                }
+            }
+
+            unset($grouped[$index]);
+        }
+
+        return array_values($grouped);
     }
 
     public function hasReleases(): bool
