@@ -5,8 +5,8 @@
  * payroll accounts, plus the statutory payables (accounting plan A4,
  * 2026-11-14). Account ids are kept; see ChartLocalizer.
  *
- * Tax: VAT 16 %. Not reviewed by a local accountant yet: check the rate
- * before calling a company's setup compliant.
+ * Tax: VAT 16 %, a starting value the company's users adjust under
+ * Accounting → Configuration.
  */
 return [
     'name'      => 'Zambia',
