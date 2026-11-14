@@ -65,6 +65,10 @@ class AccountingSetupService
             $taxMap = $this->copyTaxes($company, $templateId, $groupMap, $accountMap);
             $journalMap = $this->copyJournals($company, $templateId, $accountMap);
             $this->copySettings($company, $templateId, $accountMap, $taxMap, $journalMap);
+
+            // A4: a country template adjusts the copy; a country without one
+            // keeps the standard chart unchanged (user, 2026-11-14).
+            app(ChartLocalizer::class)->apply($company, $taxMap);
         });
 
         return true;
@@ -129,6 +133,20 @@ class AccountingSetupService
                     'cash_basis_transition_account_id' => $this->remap($row->cash_basis_transition_account_id, $accountMap),
                 ])
             );
+        }
+
+        // A copied tax without its distribution lines computes an amount but
+        // has no line telling an invoice which account the tax goes to
+        // (A4, 2026-11-14). Copy them with the account remapped to the new
+        // company's own copy, never left on the template company's account.
+        $lines = DB::table('accounts_tax_partition_lines')->whereIn('tax_id', array_keys($map))->get();
+
+        foreach ($lines as $line) {
+            DB::table('accounts_tax_partition_lines')->insert($this->rowFor($line, $company, [
+                'tax_id'     => $map[$line->tax_id],
+                'company_id' => $company->id,
+                'account_id' => $line->account_id === null ? null : ($accountMap[$line->account_id] ?? null),
+            ]));
         }
 
         return $map;
