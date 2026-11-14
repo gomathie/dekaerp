@@ -22,6 +22,7 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 ### Fixes
 
 * Role names show as written ("HR Manager", not "Hr Manager").
+* Companies in every OHADA country (Cameroon, Senegal, Côte d'Ivoire and the others) now start with their country's standard VAT rate, not a generic 15 %. You can change it under Accounting → Configuration.
 
 # CHANGELOG — v1.11.0 — 2026-11-14
 
