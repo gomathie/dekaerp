@@ -10,6 +10,8 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.12.0 — 2026-11-14
+
 ### Improvements
 
 * Company administrators can now give their users the ready-made roles (Finance Manager, Accountant, HR Manager and the others), and see every module their company has. The administrators' role is now called "Business Administrator".
