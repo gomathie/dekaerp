@@ -75,3 +75,12 @@ and a second user signing in with set passwords (no e-mail).
 | U28 | Companies list "Status" column shows a bare "Yes" | Badge "Active" / "Inactive" | S | Not a bug: check icon, "Yes" is its screen-reader text |
 | U29 | Role "HR Manager" displays as "Hr Manager" | Show the stored name instead of a headline-cased one | S | **Done** 2026-11-14 |
 | U30 | Activity log subject shows "User #6" instead of the person's name | Show the record's name with the id as a tooltip | S | **Done** 2026-11-14 |
+
+## Invitation e-mail (seen in Gmail, 2026-11-16)
+
+| # | Seen | Proposal | Effort | Status |
+|---|---|---|---|---|
+| U31 | "You have been invited to join DEKA Central To accept the invitation - click on the button below": missing full stop, a dash where a colon belongs | "You have been invited to join {company} on DEKA Central. To accept, click the button below and create your account." | S | Proposed |
+| U32 | The e-mail never names the company or who invited you | Name the company and the inviting person; a stranger's invite with no names looks like phishing | S | Proposed |
+| U33 | "If you did not expect to receive an invitation to this team" in a monospace font, and "team" is the wrong word | Same font as the body; "this company" | S | Proposed |
+| U34 | No expiry date or plain link | Add "This link expires on {date}" and a copyable link under the button | S | Proposed |
