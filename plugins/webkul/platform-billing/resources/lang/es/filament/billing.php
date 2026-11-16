@@ -43,6 +43,7 @@ return [
             'add-price'        => 'Añadir precio',
             'deactivate-price' => 'Desactivar precio',
             'deactivate-plan'  => 'Desactivar plan',
+            'activate-plan'    => 'Activar plan',
             'saved'            => 'Guardado.',
         ],
     ],

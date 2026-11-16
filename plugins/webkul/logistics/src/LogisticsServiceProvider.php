@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Webkul\Chatter\Services\ChatterCleanupService;
+use Webkul\Invoice\Filament\Overview\OverviewRegistry;
+use Webkul\Logistics\Filament\Pages\Dashboard as LogisticsDashboard;
 use Webkul\Logistics\Filament\PartnerContributions;
 use Webkul\Logistics\Listeners\CreateShipmentFromOrder;
 use Webkul\Logistics\Models\Expense;
@@ -101,6 +103,19 @@ class LogisticsServiceProvider extends PackageServiceProvider
             fn (): array => Filament\OverviewCard::data(),
             sort: 50,
         );
+
+        // A Logistics tab on the Overview (user, 2026-11-14), only when
+        // Invoices, which owns the Overview, is installed.
+        if (class_exists(OverviewRegistry::class)) {
+            OverviewRegistry::register(
+                'logistics',
+                fn (): string => __('logistics::filament/pages/dashboard.navigation.title'),
+                LogisticsDashboard::sectionWidgets(),
+                fn (): array => [],
+                fn (): bool  => LogisticsDashboard::canAccess(),
+                sort: 70,
+            );
+        }
 
         $this->registerStopLinkRateLimiter();
         PartnerContributions::register();

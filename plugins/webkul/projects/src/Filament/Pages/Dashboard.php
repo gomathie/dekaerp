@@ -11,6 +11,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
+use Webkul\Invoice\Filament\Pages\Overview;
 use Webkul\Partner\Models\Partner;
 use Webkul\PluginManager\Support\PluginEntitlement;
 use Webkul\Project\Filament\Widgets\StatsOverviewWidget;
@@ -123,6 +124,18 @@ class Dashboard extends BaseDashboard
 
     public function getWidgets(): array
     {
+        return static::sectionWidgets();
+    }
+
+    /**
+     * The Projects tab of the combined Overview (user, 2026-11-14: Projects,
+     * Logistics and Recruitment join Accounting and Inventory there instead
+     * of being separate top-bar dashboards).
+     *
+     * @return list<class-string>
+     */
+    public static function sectionWidgets(): array
+    {
         return [
             StatsOverviewWidget::class,
             TaskByStageChart::class,
@@ -130,6 +143,19 @@ class Dashboard extends BaseDashboard
             TopAssigneesWidget::class,
             TopProjectsWidget::class,
         ];
+    }
+
+    /** Out of the menu when the Overview exists; old links open its tab. */
+    public static function shouldRegisterNavigation(): bool
+    {
+        return ! Overview::isAvailable();
+    }
+
+    public function mount(): void
+    {
+        if (Overview::isAvailable()) {
+            $this->redirect(Overview::getUrl(['section' => 'projects']));
+        }
     }
 
     public static function canAccess(): bool

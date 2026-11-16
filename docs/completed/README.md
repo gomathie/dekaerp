@@ -8,6 +8,8 @@ actions, UX findings, API access, running tests, Logistics) stay in `docs/`.
 
 | Plan | Completed | Notes |
 |---|---|---|
+| [Accounting](accounting-plan.md) | 2026-11-15 | A1–A7 in production; A4 country charts (Ghana, Zambia, SYSCOHADA for 17 OHADA states) in v1.11.0, standard VAT for every OHADA state in v1.11.1; rates are starting values each company maintains. Was planned #2 |
+| [Reports](reports-plan.md) | 2026-11-15 | R1 Reports page, R2 cash flow, sales and purchases by product, in production since v1.10.0. R3 only if R1 is used. Was planned #4 |
 | [What's New page](whats-new-plan.md) | 2026-11-12 | WN-1 to WN-6: safe rendering, parser fixes, search and filters, PDF, top-bar dot, plain-language notes, Unreleased rule. 21 tests passed |
 | [Comprehensive SaaS review brief](comprehensive-review-brief.md) | 2026-11-12 | The audit brief itself. Reviewed against the code and checked phase by phase; its remaining work is the [#1 plan](../planned/01-comprehensive-review-plan.md), which stays in planned |
 | [Unified product resource](unified-product-resource-plan.md) | 2026-11-12 | One product form on every module screen, contacts phase 3 and combination tests done. Suites green: Product 276, Sale 155, Purchase, Accounting 55, Partner 94, Account 137; InventoryFeature run pending at move time |

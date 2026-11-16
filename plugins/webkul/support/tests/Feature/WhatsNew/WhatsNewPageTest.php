@@ -54,6 +54,49 @@ it('parses releases newest first, with dates, mapped categories and security bad
         ->and($releases[1]['sections'][0]['items'][0]['text'])->toBe('run the migration first.');
 });
 
+it('folds hotfixes into their release instead of separate sections', function (): void {
+    // User, 2026-11-15: a hotfix appears inside its release, tagged, so the
+    // page does not grow one section per patch.
+    $grouped = WhatsNew::groupedReleases(WhatsNew::parseChangelog(<<<'MD'
+        # CHANGELOG — v1.11.2 — 2026-11-14
+
+        ### Fixes
+
+        * Second hotfix
+
+        # CHANGELOG — v1.11.1 — 2026-11-14
+
+        ### Improvements
+
+        * First hotfix
+
+        # CHANGELOG — v1.11.0 — 2026-11-14
+
+        ### Features
+
+        * The release
+
+        ### Fixes
+
+        * Release fix
+
+        # CHANGELOG — v1.10.3 — 2026-11-01
+
+        ### Fixes
+
+        * Orphan hotfix
+        MD));
+
+    expect(array_column($grouped, 'version'))->toBe(['v1.11.0', 'v1.10.3']);
+
+    $texts = collect($grouped[0]['sections'])->flatMap(fn (array $s): array => array_column($s['items'], 'text'))->all();
+
+    // `text` is the lowercased search index; `html` carries the display text.
+    expect($texts)->toContain('second hotfix (v1.11.2)', 'first hotfix (v1.11.1)', 'the release', 'release fix')
+        // The newest version still drives the unread dot and the version check.
+        ->and(WhatsNew::parseChangelog("# CHANGELOG — v1.11.2 — 2026-11-14\n\n### Fixes\n\n* x")[0]['version'])->toBe('v1.11.2');
+});
+
 it('hides the Unreleased block and HTML comments from users (D-WN-1)', function (): void {
     $releases = WhatsNew::parseChangelog(<<<'MD'
         <!-- authoring note: secret plan -->

@@ -1426,7 +1426,7 @@ DOCUMENTATION AND UPSTREAM REVIEW (ALL AGENTS)
   earlier "eight still open" wording predated the 2026-10-22 work. Consult the
   register when working in an affected plugin, and update a finding's Local state
   when you touch one.
-• `docs/planned/05-restructure-backlog.md` is the resource-restructure analysis: which
+• `docs/planned/03-restructure-backlog.md` is the resource-restructure analysis: which
   resources adopt upstream's split layout mechanically and which carry local
   changes that must be moved by hand.
 • When you do review upstream, tell the user what is new, whether DEKA ERP needs
@@ -1934,6 +1934,18 @@ log named):
   - Refresh every 5 minutes at most (user). Never Filament's 5-second
     default (Sentry DEKAERP-11). Test: `OverviewTest` polling test.
 
+• No writes into another client's company, 2026-11-16 (UF-025, hotfix v1.11.3):
+  - `BelongsToCompany` refuses creating a record in, or moving one into, a
+    company the acting user is not a member of (`CompanyContext::mayWriteTo()`,
+    `CrossCompanyException`, 422 on the API). Before, a body `company_id`
+    was taken unchecked. Do not remove it or move it to the screens only.
+  - It passes: no acting user (jobs, console, seeders), staff who see all
+    companies, a shared (null) company, and a company created in the same
+    request (`markProvisioned()` from `Company`'s first `created` listener,
+    so onboarding works before the creator is a member). Keep that listener
+    first.
+  - Test: support `Tenancy/CrossCompanyWriteTest.php`.
+
 • Business role covers the role templates, 2026-11-14 (user; `docs/change-log.md`):
   - `erp:sync-permissions` gives the company administrators' business role
     (`UserSettings::company_admin_business_role_id`, "Business
@@ -1950,7 +1962,7 @@ log named):
     Admin's list (production check, 2026-11-14). Test: "keeps every template
     free of what a Company Admin may not hand out".
 
-• Country chart templates, 2026-11-14 (`docs/planned/02-accounting-plan.md`, A4):
+• Country chart templates, 2026-11-14 (`docs/completed/accounting-plan.md`, A4):
   - A country with no template, or a company with no country, keeps the
     standard chart unchanged (user: every country must be usable). Do not
     refuse setup or require a country.
@@ -1964,7 +1976,7 @@ log named):
     them editable; do not lock or overwrite a company's taxes.
   - Tests: `accounts/tests/Feature/Workflows/CountryChartTest.php`.
 
-• Accounting lock date, 2026-11-12 (`docs/planned/02-accounting-plan.md`, A2):
+• Accounting lock date, 2026-11-12 (`docs/completed/accounting-plan.md`, A2):
   - Enforced in the `Move` and `MoveLine` saving/deleting hooks through
     `Account\Services\PeriodLock`, not on screens. Do not move it to an
     action: the API, imports and Logistics' `ExpensePoster` save directly.
@@ -2098,10 +2110,10 @@ REFERENCES
   UF-010 are the live ones. No review cadence.
 • docs/planned/ — plans decided or drafted but not started (index in its
   README.md, 2026-11-11): CRM, Inventory improvements, payroll, POS,
-  landing page, restructure backlog, unified product resource; accounting
-  (#7) and reports (#8) added 2026-11-12, both kept lean on the user's
-  instruction: fill real gaps, no overkill.
-• docs/planned/05-restructure-backlog.md — deferred upstream restructures.
+  landing page, restructure backlog, rebrand. *Updated 2026-11-15:*
+  accounting and reports are finished and in `docs/completed/` (both kept
+  lean on the user's instruction: fill real gaps, no overkill).
+• docs/planned/03-restructure-backlog.md — deferred upstream restructures.
 • Package F, resource structure alignment — the plan lives on the
   `chore/resource-structure` branch, not on main:
   `git show chore/resource-structure:docs/upstream-structure-alignment-plan.md`.
@@ -2122,7 +2134,7 @@ REFERENCES
 • docs/logistics-plan.md — Logistics plan, decisions D1–D15, status board, work
   packages, handoff log.
 • docs/completed/unified-product-resource-plan.md — cross-plugin product-resource plan.
-• docs/planned/09-landing-page-brief.md — public landing-page scope and constraints.
+• docs/planned/07-landing-page-brief.md — public landing-page scope and constraints.
 • docs/running-tests.md — how to run tests.
 • docs/completed/harness2-integration.md — assessment of Google's Harness² framework: why
   it cannot integrate with this repo or agent, plus the repo-owned evaluation

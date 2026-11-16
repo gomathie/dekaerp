@@ -12,6 +12,8 @@ use Filament\Schemas\Schema;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\TableWidget;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\Route;
+use Throwable;
 use Webkul\Invoice\Filament\Overview\OverviewRegistry;
 use Webkul\Invoice\Filament\Widgets\OverviewBoard;
 use Webkul\Invoice\Filament\Widgets\OverviewHeadlineWidget;
@@ -44,6 +46,22 @@ class Overview extends BaseDashboard
     public static function canAccess(): bool
     {
         return OverviewRegistry::visible() !== [];
+    }
+
+    /**
+     * Whether this page is registered on the panel. The class exists even
+     * when Invoices is not installed, so a module redirecting here must ask
+     * this, not class_exists(): otherwise its dashboard fails with "Route
+     * [filament.admin.pages.overview] not defined" (caught by the Logistics
+     * dashboard tests, 2026-11-15).
+     */
+    public static function isAvailable(): bool
+    {
+        try {
+            return Route::has(static::getRouteName());
+        } catch (Throwable) {
+            return false;
+        }
     }
 
     /**

@@ -1,6 +1,7 @@
 # Accounting — Improvement Plan
 
-Status: **in progress. Done: A1 (known figures, report isolation), A2 (lock
+Status: **completed 2026-11-15** (moved from planned #2; A4 shipped in
+v1.11.0, standard OHADA VAT rates in v1.11.1). *History:* **in progress. Done: A1 (known figures, report isolation), A2 (lock
 date, v1.8.0), A2b (reason on reset, v1.8.1). Built 2026-11-13, awaiting push:
 A7 (Tax Summary), A3 (bank reconciliation) — shipped in v1.9.0. Built
 2026-11-13: A5 (Overview section), A6 (cash flow), shipped in v1.10.0.

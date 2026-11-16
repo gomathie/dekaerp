@@ -34,7 +34,12 @@
         .ovb__grid { display: grid; gap: 0.875rem; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: start; }
         .ovb__grid--single { grid-template-columns: minmax(0, 1fr); }
         @media (max-width: 1080px) { .ovb__grid { grid-template-columns: minmax(0, 1fr); } }
-        .ovb__col { display: grid; gap: 0.875rem; min-width: 0; }
+        /* One track only: the embedded chart widget brings Filament's own
+           grid-column classes, which split the column into two implicit
+           tracks and squeezed Sales to a third of its width (production
+           check 2026-11-14 against the approved mockup). */
+        .ovb__col { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.875rem; min-width: 0; }
+        .ovb__col > * { grid-column: 1 / -1 !important; min-width: 0; }
         .ovb-panel { min-width: 0; padding: 1.125rem 1.25rem; border: 1px solid var(--ovb-line); border-radius: 1rem; background: var(--ovb-surface); }
         .ovb-panel__head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.875rem; }
         .ovb-panel__title { margin: 0; font-size: 0.9375rem; font-weight: 650; letter-spacing: -0.01em; }

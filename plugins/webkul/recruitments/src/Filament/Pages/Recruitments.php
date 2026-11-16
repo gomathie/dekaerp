@@ -14,6 +14,7 @@ use Filament\View\LegacyComponents\Widget;
 use Illuminate\Contracts\Support\Htmlable;
 use Webkul\Employee\Models\Department;
 use Webkul\Employee\Models\EmployeeJobPosition;
+use Webkul\Invoice\Filament\Pages\Overview;
 use Webkul\PluginManager\Support\PluginEntitlement;
 use Webkul\Recruitment\Filament\Widgets\ApplicantChartWidget;
 use Webkul\Recruitment\Filament\Widgets\ApplicantsByStageChart;
@@ -132,11 +133,34 @@ class Recruitments extends BaseDashboard
      */
     public function getWidgets(): array
     {
+        return static::sectionWidgets();
+    }
+
+    /**
+     * The Recruitment tab of the combined Overview (user, 2026-11-14).
+     *
+     * @return list<class-string<Widget>>
+     */
+    public static function sectionWidgets(): array
+    {
         return [
             JobPositionStatsWidget::class,
             ApplicantChartWidget::class,
             ApplicantsByStageChart::class,
         ];
+    }
+
+    /** Out of the menu when the Overview exists; old links open its tab. */
+    public static function shouldRegisterNavigation(): bool
+    {
+        return ! Overview::isAvailable();
+    }
+
+    public function mount(): void
+    {
+        if (Overview::isAvailable()) {
+            $this->redirect(Overview::getUrl(['section' => 'recruitment']));
+        }
     }
 
     public static function canAccess(): bool

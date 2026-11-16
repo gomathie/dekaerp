@@ -6,6 +6,105 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-16, no writes into another client's company (UF-025, hotfix v1.11.3)
+
+- **Why:** reviewing upstream's "multi-tenancy" (v1.7.0, PR #1575) found it
+  is company-id write checks only, and that we lacked one of them: a user of
+  company A could create or move a record into company B through an API body
+  `company_id` (validated only as existing). Security, P0; user approved
+  the hotfix.
+- **How:** `CompanyContext::mayWriteTo()` (one rule) +
+  `markProvisioned()`; `BelongsToCompany` calls it on creating and on a
+  company_id change and throws `CrossCompanyException::forCompany()` (new
+  message, 5 languages; id only, never the other company's name);
+  `Company` records each new company first, so onboarding's observers work.
+- **Benefit:** cross-tenant writes refused at the model, so screens, API,
+  imports and services are all covered by one check.
+- **Trade-off / risk:** a flow where an acting user legitimately writes into
+  a company they do not belong to would now be refused; the full Support and
+  Security suites were run to find any. Jobs and console are unaffected.
+- **Verification:** `CrossCompanyWriteTest` 5 passed, 11 assertions
+  (`claude_ui`). SecurityFeature 189 passed, 667 assertions
+  (`claude_vault`). SupportFeature 253 passed, 1 failed: `DashboardMetricsTest`
+  created company B's rows while signed in as a company A user, which the
+  guard now refuses (correctly); the fixture now creates them before
+  signing in, assertion unchanged; Dashboard tests 8 passed, 26 assertions.
+- **Rollback:** remove the two listeners in `BelongsToCompany`.
+
+## 2026-11-15/16, production setup and small fixes (collected for the monthly release)
+
+- **Why (user, 2026-11-15):** answers to the open questions (exchange rates,
+  draft plans, Sentry alerts, invitation test), plus scrollbars and hotfix
+  sections on What's New.
+- **Production data, done through the screens (no code):** ZAR 16.9762 and
+  CDF 2,260.96 per USD entered and switched on (Google Finance 14 Nov; Banque
+  Centrale du Congo 13 Nov). ZAR has the rate twice (identical; a retried
+  script); remove one row on the ZAR screen. EUR stays off until the rate
+  fix below ships. One plan, "Starter (draft)", created and deactivated.
+  Sentry: cron monitors `platform-billing-invoice-subscriptions` (active)
+  and `platform-billing-health-check` (disabled: no free monitor seat on the
+  plan), alert rule "Billing jobs missed or failed" e-mails the user.
+- **Found:** production sends no e-mail (DEKAERP-1N, `dekacentral.com` not
+  verified at the relay). Configuration; written up first in
+  `docs/handover-actions.md`.
+- **Code:**
+  - `CurrencyResource` rate `minValue(1)` → `0.000001`: rates are units per
+    USD, so EUR (0.9084) and GBP were refused.
+  - `PlanCatalog::activatePlan()` + "Activate plan" action (5 languages): a
+    deactivated plan had no way back and kept its code taken for good.
+  - `resources/views/filament/components/hidden-scrollbars.blade.php`,
+    registered on the admin panel's HEAD_END: no scrollbars drawn; scrolling
+    unchanged.
+  - `WhatsNew::groupedReleases()`: hotfixes folded into their vX.Y.0 with a
+    version tag; used by the page and the PDF, which also accepts an
+    absorbed hotfix id. `loadReleases()` stays ungrouped (unread dot,
+    version test).
+  - `Overview::isAvailable()`: the moved dashboards redirect only when the
+    Overview route exists (the class exists even without Invoices).
+- **Verification:** Logistics dashboard + Overview 24 passed, 76 assertions
+  (`claude_vault`); AdministrationScreens (activate plan) passed in the
+  billing/What's New run; What's New 10 passed, 45 assertions
+  (`claude_ui`, after fixing a lowercase expectation in the new test and the
+  hotfix-PDF 404); CurrencyDelete + PanelMiddleware + PageRouteName 5 passed,
+  19 assertions (`claude_vault`). Pint passed.
+- **Rollback:** revert the files above; production data changes are
+  reversible on their screens.
+
+## 2026-11-15, Overview tabs, board layout, tax groups under taxes (collected for the monthly release)
+
+- **Why (user, 2026-11-14/15):** the production Overview did not match the
+  approved mockup; Projects, Recruitment and Logistics should be Overview
+  tabs like Accounting and Inventory; tax groups should live under Taxes as
+  in Zoho Books; Country belongs next to the company name. A first attempt
+  to move Reports into the sidebar was reverted the same session at the
+  user's request (with the module dashboards gone, the top bar has room).
+- **How:**
+  - `overview-board.blade.php`: `.ovb__col` pinned to one track. Root cause:
+    the embedded chart widget carries Filament's grid-column classes, which
+    split the main column into two implicit tracks and squeezed Sales to
+    ~280 px with its figures stacked. Verified by injecting the rule into
+    the live production page.
+  - `overview-module-cards.blade.php`: balanced columns from the card count
+    (6 cards = 3 + 3), 2 below 1080 px, 1 on phones.
+  - Projects `Dashboard`, Recruitment `Recruitments`, Logistics `Dashboard`:
+    `sectionWidgets()`; registered as Overview sections (sort 50/60/70) from
+    each provider when the Overview exists; out of the menu and redirecting
+    to `?section=` like Sales/Purchases did (2026-11-11). Access stays each
+    page's own `canAccess()`; each widget keeps its own guard.
+  - Accounts `ListTaxes`/`ListTaxGroups`: a switch button to the sibling
+    resource in the same cluster (shown only when the user may open it);
+    cluster `TaxGroupResource`s leave the menu; `TaxResource` keeps Taxes
+    highlighted on tax-group routes.
+  - Support `CompanyResource`: Country moved into Company Information (user
+    commit `b8bac3d81`); `security.json` structure snapshot re-recorded from
+    the full SupportFeature suite (also picked up three earlier fields the
+    old snapshot lacked).
+- **Trade-off / risk:** the three module tabs show no module-specific
+  filters yet (the widgets read missing filters as "all").
+- **Verification:** SupportFeature full suite 248 passed, 1205 assertions
+  (`claude_ui`) for the form/snapshot. Remaining: see the line below.
+- **Rollback:** revert the files above.
+
 ## 2026-11-14, five role templates unassignable (hotfix v1.11.2)
 
 - **Why:** checked in production after v1.11.1: Ama (Company Admin) saw only
@@ -1976,7 +2075,7 @@ readiness tracked per country and per company. The 2026-10-26 plan copied
 statutory rates into company-owned pay components, which let a company lower
 a legal minimum and left statutory updates to be retyped company by company.
 
-**How.** `docs/planned/07-payroll.md` is now the single payroll document. The scope note
+**How.** `docs/planned/05-payroll.md` is now the single payroll document. The scope note
 (`REVIEW all THIS WITH SKILLs + i have.md`) is merged into it, verbatim, as
 Appendix A. The document was reviewed with the `engineering:system-design`,
 `engineering:testing-strategy` and `devil-advocate` skills, after inspecting
@@ -2013,7 +2112,7 @@ conceded:
 The fourth attack, an unnamed practitioner and no shadow-run date, is open
 until the user supplies them.
 
-**Decisions recorded the same day (user, 2026-11-02; `docs/planned/07-payroll.md` §6).**
+**Decisions recorded the same day (user, 2026-11-02; `docs/planned/05-payroll.md` §6).**
 
 - **DP-09:** both Congos, as two separate packages (`CD` and `CG`). Each
   package's currency (CDF or XAF) is activated when that package starts.
@@ -2093,7 +2192,7 @@ Worth recording because it is not obvious and cost the investigation: 168 of the
 provider filling `currency_rates` — rates are typed into the currency form. A
 non-base currency therefore also needs a rate before conversion works.
 
-### `docs/planned/07-payroll.md` — a plan, not a decision
+### `docs/planned/05-payroll.md` — a plan, not a decision
 
 The user asked whether payroll exists (it does not, here or upstream) and then
 for a build plan to pick up later. The document records the evidence —
@@ -3035,14 +3134,14 @@ Reconciled by marking superseded claims, not deleting them:
   of `AccountFeature`, plus project and product" (superseded 2026-09-29, when
   all thirteen suites ran green together — AccountFeature 526, ProjectFeature
   86, ProductFeature 250, zero failures).
-- **`docs/planned/05-restructure-backlog.md`** — already reconciled on 2026-10-21; the four
+- **`docs/planned/03-restructure-backlog.md`** — already reconciled on 2026-10-21; the four
   dead entries are now also marked `REMOVED 2026-10-21, moot` inline, because a
   header note is easy to skim past when the list is the thing being worked from.
 - **`docs/running-tests.md`** — documented one shared database and serial runs
   only. Now documents the per-work-package database and the `-e DB_DATABASE`
   override (`phpunit.xml` sets it without `force="true"`, so the env var wins),
   and keeps the interleaving warning scoped to one database.
-- **`docs/planned/09-landing-page-brief.md`** — "Website and blog pages managed from the
+- **`docs/planned/07-landing-page-brief.md`** — "Website and blog pages managed from the
   same admin" was false: Blogs and the CMS pages were removed 2026-10-21 and
   `plugins/webkul/website` has no admin resources, only portal actions/pages.
   Replaced with the customer-portal line, correction dated inline.
@@ -5679,7 +5778,7 @@ lost) and **51 do** - including `InvoiceResource` (19 fork-only lines),
    operations on top, on a live ERP, makes the eventual test run harder to
    attribute.
 
-The analysis is the deliverable: `docs/planned/05-restructure-backlog.md` lists both
+The analysis is the deliverable: `docs/planned/03-restructure-backlog.md` lists both
 sets, the rule for adopting, the method, and its known limit. Do it after the
 runtime is fixed, plugin by plugin.
 

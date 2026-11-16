@@ -4,6 +4,38 @@ Everything below needs a person with access this session does not have -
 Supabase's dashboard, Laravel Cloud, or production data. Ordered by urgency.
 
 ---
+
+### STILL OPEN 2026-11-16: production cannot send any e-mail
+
+*Update:* an invitation sent at 14:33 UTC on 2026-11-16 failed again with the
+same 550 (Sentry DEKAERP-1P), after `dekacentral.com` was added in SMTP2GO.
+"Resolved" earlier the same day was premature: no new send had happened.
+Check in SMTP2GO that every DNS record shows verified, that the verified
+domain is in the same account as the SMTP user in `MAIL_USERNAME`, and that
+the Cloudflare CNAMEs are DNS-only (grey cloud). Quick workaround: verify
+`hello@dekacentral.com` as a single sender. Also rotate the SMTP password
+(it was shared in chat) and update `MAIL_PASSWORD` in Laravel Cloud.
+
+Found while testing invitations: the mail relay refuses every message with
+`550 From header sender domain not verified (dekacentral.com)` (Sentry
+DEKAERP-1N). The From address is `config('mail.from.address')`
+(`MAIL_FROM_ADDRESS` in Laravel Cloud), now on `@dekacentral.com`, a domain
+the relay has not verified. Invitations, password resets, invoice and order
+e-mails all fail.
+
+Fix one of two ways:
+1. **Verify `dekacentral.com` at the mail provider** (add its SPF/DKIM DNS
+   records), then retry an invitation. Keeps the new brand address.
+2. **Or** set `MAIL_FROM_ADDRESS` in Laravel Cloud back to an address on a
+   domain the relay already verifies, and redeploy. No `#` comment on the
+   env line.
+
+Then: re-send the CR-3 test invitation (Users → Invite User,
+`gochairman2+cr3invite@gmail.com`, company CR3 Test Ghana Ltd) and resolve
+DEKAERP-1N. The code is right: mail leaves as the application, never as the
+person (protected decision, 2026-11-04).
+
+---
 ---
 
 
@@ -588,7 +620,7 @@ database password.
 - ~~**Filament 5.7.6** - needs `composer update`~~ - **DONE (2026-09-19).**
   `composer.lock` holds Filament `v5.7.6`; see upstream-adoption Package A in
   `docs/upstream-fix-adoption-plan.md`.
-- **Restructure backlog** - `docs/planned/05-restructure-backlog.md`. After the Website and
+- **Restructure backlog** - `docs/planned/03-restructure-backlog.md`. After the Website and
   Blogs removal on 2026-10-21 the real totals are 68 mechanically safe to adopt
   and 49 that hold local changes to carry over by hand (the lists themselves
   predate the removal and still count those four entries). Pure merge-debt

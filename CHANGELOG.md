@@ -10,6 +10,8 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.12.0 — 2026-11-16
+
 ### Improvements
 
 * The Overview now has Projects, Recruitment and Logistics tabs next to Accounting and Inventory; the separate dashboards are gone from the top bar (old links open the matching tab).

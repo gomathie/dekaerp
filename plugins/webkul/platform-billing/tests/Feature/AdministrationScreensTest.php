@@ -219,6 +219,15 @@ it('adds a price and deactivates the price and the plan', function () {
         ->assertNotified(__('platform-billing::filament/billing.plans.actions.saved'));
 
     expect($plan->fresh()->is_active)->toBeFalse();
+
+    // 2026-11-15: a deactivated plan can be offered again; before, there was
+    // no way back and its code stayed taken for good.
+    Livewire::test(ViewPlan::class, ['record' => $plan->getRouteKey()])
+        ->assertActionHidden('deactivatePlan')
+        ->callAction('activatePlan')
+        ->assertNotified(__('platform-billing::filament/billing.plans.actions.saved'));
+
+    expect($plan->fresh()->is_active)->toBeTrue();
 });
 
 it('refuses a multi-company admin and a company admin the plan screens', function () {
