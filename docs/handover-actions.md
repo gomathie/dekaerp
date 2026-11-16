@@ -5,7 +5,12 @@ Supabase's dashboard, Laravel Cloud, or production data. Ordered by urgency.
 
 ---
 
-### URGENT (2026-11-15): production cannot send any e-mail
+### DONE 2026-11-16: production cannot send any e-mail
+
+*Resolved:* the user verified `dekacentral.com` in SMTP2GO (DNS on
+Cloudflare); test sends on 2026-11-16 raised no new error, and DEKAERP-1N
+is resolved. Still to do: rotate the SMTP password (it was shared in chat)
+and update `MAIL_PASSWORD` in Laravel Cloud.
 
 Found while testing invitations: the mail relay refuses every message with
 `550 From header sender domain not verified (dekacentral.com)` (Sentry
