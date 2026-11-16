@@ -91,7 +91,8 @@ it('folds hotfixes into their release instead of separate sections', function ()
 
     $texts = collect($grouped[0]['sections'])->flatMap(fn (array $s): array => array_column($s['items'], 'text'))->all();
 
-    expect($texts)->toContain('Second hotfix (v1.11.2)', 'First hotfix (v1.11.1)', 'The release', 'Release fix')
+    // `text` is the lowercased search index; `html` carries the display text.
+    expect($texts)->toContain('second hotfix (v1.11.2)', 'first hotfix (v1.11.1)', 'the release', 'release fix')
         // The newest version still drives the unread dot and the version check.
         ->and(WhatsNew::parseChangelog("# CHANGELOG — v1.11.2 — 2026-11-14\n\n### Fixes\n\n* x")[0]['version'])->toBe('v1.11.2');
 });

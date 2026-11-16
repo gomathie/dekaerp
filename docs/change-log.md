@@ -6,6 +6,45 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-15/16, production setup and small fixes (collected for the monthly release)
+
+- **Why (user, 2026-11-15):** answers to the open questions (exchange rates,
+  draft plans, Sentry alerts, invitation test), plus scrollbars and hotfix
+  sections on What's New.
+- **Production data, done through the screens (no code):** ZAR 16.9762 and
+  CDF 2,260.96 per USD entered and switched on (Google Finance 14 Nov; Banque
+  Centrale du Congo 13 Nov). ZAR has the rate twice (identical; a retried
+  script); remove one row on the ZAR screen. EUR stays off until the rate
+  fix below ships. One plan, "Starter (draft)", created and deactivated.
+  Sentry: cron monitors `platform-billing-invoice-subscriptions` (active)
+  and `platform-billing-health-check` (disabled: no free monitor seat on the
+  plan), alert rule "Billing jobs missed or failed" e-mails the user.
+- **Found:** production sends no e-mail (DEKAERP-1N, `dekacentral.com` not
+  verified at the relay). Configuration; written up first in
+  `docs/handover-actions.md`.
+- **Code:**
+  - `CurrencyResource` rate `minValue(1)` → `0.000001`: rates are units per
+    USD, so EUR (0.9084) and GBP were refused.
+  - `PlanCatalog::activatePlan()` + "Activate plan" action (5 languages): a
+    deactivated plan had no way back and kept its code taken for good.
+  - `resources/views/filament/components/hidden-scrollbars.blade.php`,
+    registered on the admin panel's HEAD_END: no scrollbars drawn; scrolling
+    unchanged.
+  - `WhatsNew::groupedReleases()`: hotfixes folded into their vX.Y.0 with a
+    version tag; used by the page and the PDF, which also accepts an
+    absorbed hotfix id. `loadReleases()` stays ungrouped (unread dot,
+    version test).
+  - `Overview::isAvailable()`: the moved dashboards redirect only when the
+    Overview route exists (the class exists even without Invoices).
+- **Verification:** Logistics dashboard + Overview 24 passed, 76 assertions
+  (`claude_vault`); AdministrationScreens (activate plan) passed in the
+  billing/What's New run; What's New 10 passed, 45 assertions
+  (`claude_ui`, after fixing a lowercase expectation in the new test and the
+  hotfix-PDF 404); CurrencyDelete + PanelMiddleware + PageRouteName 5 passed,
+  19 assertions (`claude_vault`). Pint passed.
+- **Rollback:** revert the files above; production data changes are
+  reversible on their screens.
+
 ## 2026-11-15, Overview tabs, board layout, tax groups under taxes (collected for the monthly release)
 
 - **Why (user, 2026-11-14/15):** the production Overview did not match the

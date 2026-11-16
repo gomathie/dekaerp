@@ -16,6 +16,13 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 * The Overview "All" page matches the approved design: Sales shows its three figures side by side, and the module cards fill even rows.
 * Tax groups now live under Taxes: open them with the "Tax groups" button on the Taxes list.
 * On the new-company form, Country sits next to the company name.
+* Scrollbars are hidden throughout; pages still scroll as before.
+* What's New shows hotfixes inside their release, marked with the hotfix version, instead of as separate sections.
+* Billing plans can be switched back on after being deactivated.
+
+### Fixes
+
+* Exchange rates below 1 can be entered, so currencies stronger than the US dollar (euro, pound) can be switched on.
 
 # CHANGELOG — v1.11.2 — 2026-11-14
 
