@@ -777,14 +777,14 @@ tests.
 >   plus project and product" is marked SUPERSEDED, pointing at the
 >   2026-09-29 all-thirteen-suites table in `docs/change-log.md` (AccountFeature
 >   526, ProjectFeature 86, ProductFeature 250, zero failures).
-> - `docs/planned/05-restructure-backlog.md` — already carried the 2026-10-21 removal note
+> - `docs/planned/03-restructure-backlog.md` — already carried the 2026-10-21 removal note
 >   and the Package A PHP 8.4 statement; the four dead entries are now marked
 >   `REMOVED 2026-10-21, moot` inline so nobody adopts a resource that no longer
 >   exists.
 > - `docs/running-tests.md` — said one shared `aureuserp_testing` and serial runs
 >   only. Now documents the per-work-package database and the `-e DB_DATABASE`
 >   override, and keeps the interleaving warning scoped to one database.
-> - `docs/planned/09-landing-page-brief.md` — "Website and blog pages managed from the same
+> - `docs/planned/07-landing-page-brief.md` — "Website and blog pages managed from the same
 >   admin" was false: the Blogs plugin and the CMS pages were removed on
 >   2026-10-21 and `plugins/webkul/website` has no admin resources. Replaced with
 >   the customer-portal line, with the correction dated inline.
@@ -805,7 +805,7 @@ tests.
 The audit found status drift between project documents. For example,
 `docs/handover-actions.md` still describes remaining optional suites while
 `docs/change-log.md` records all ten suites passing on 2026-09-04, and
-`docs/planned/05-restructure-backlog.md` still describes the PHP 8.4 runtime as unavailable
+`docs/planned/03-restructure-backlog.md` still describes the PHP 8.4 runtime as unavailable
 even though Sail is now the documented test path. `AGENTS.md` also contains an
 auto-generated Laravel Boost version block that is older than the explicit
 DEKA ERP project-memory versions.
@@ -1125,6 +1125,25 @@ service products and any catalog item with variants.
 **Implementation:** Find the upstream fix, check local `Product` attribute
 write path, port the fix, and add a test that creates a variant and asserts
 the parent product name is unchanged.
+
+### UF-025 - Cross-company writes through a body company_id (security)
+
+**Decision:** Adopted, P0 (user, 2026-11-16)  
+**Upstream reference:** v1.7.0, PR #1575, commits `9ffd2a765`, `0b9cdc96b`
+("company ID tenant isolation"; `WithinAllowedCompanies` rule,
+`BelongsToCompany::assertCompanyAllowed()`, `CrossCompanyException`).  
+**Local state:** **Fixed in hotfix v1.11.3 (2026-11-16), adapted, not copied**
+
+> Our `BelongsToCompany` only filled a missing company, and API requests only
+> checked that a body `company_id` exists. A user of company A could create a
+> record stamped with company B, or move one there. Adapted as
+> `CompanyContext::mayWriteTo()` (one rule), called from `BelongsToCompany`
+> on creating and on a company_id change. Differences from upstream: staff in
+> "all companies" use `seesAllCompanies()`; no acting user (jobs, console)
+> passes; a company created in the request passes (`markProvisioned()`, so
+> onboarding's observers work before the creator is a member). The upstream
+> request rule was not added: every API write reaches the model guard, which
+> answers 422. Test: support `Tenancy/CrossCompanyWriteTest`.
 
 ## Already Present Locally
 

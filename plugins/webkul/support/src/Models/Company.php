@@ -22,6 +22,7 @@ use Webkul\Security\Services\SeatCapacityService;
 use Webkul\Security\Traits\HasOwnershipScope;
 use Webkul\Support\Database\Factories\CompanyFactory;
 use Webkul\Support\Models\Scopes\CompanyScope;
+use Webkul\Support\Services\CompanyContext;
 use Webkul\Support\Traits\RestrictToAllowedCompanies;
 
 class Company extends Model implements Sortable
@@ -229,6 +230,12 @@ class Company extends Model implements Sortable
             $company->currency?->update([
                 'active' => true,
             ]);
+        });
+
+        // First created listener: the observers that set up a new company's
+        // own records run before its creator is a member (mayWriteTo()).
+        static::created(function ($company) {
+            app(CompanyContext::class)->markProvisioned((int) $company->getKey());
         });
 
         static::created(function ($company) {
