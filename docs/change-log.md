@@ -25,7 +25,9 @@ for the task/question log this change log is paired with.
   mail views change. The logo URL uses `asset()`, so `APP_URL` must be the
   public host.
 - **Verification:** `php -l` on all 11 touched PHP files; Pint; new
-  security `InvitationMailBrandingTest` (see run below).
+  security `InvitationMailBrandingTest`. SecurityFeature filtered to the
+  branding, lifecycle and administrator-invitation tests on
+  `aureuserp_testing_claude_vault`: 18 passed, 76 assertions.
 - **Rollback:** delete `resources/views/vendor/mail` and revert the
   invitation view, mailable and language files.
 
