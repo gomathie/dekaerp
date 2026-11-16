@@ -24,7 +24,11 @@ for the task/question log this change log is paired with.
   a company they do not belong to would now be refused; the full Support and
   Security suites were run to find any. Jobs and console are unaffected.
 - **Verification:** `CrossCompanyWriteTest` 5 passed, 11 assertions
-  (`claude_ui`). Full suites: see the line below.
+  (`claude_ui`). SecurityFeature 189 passed, 667 assertions
+  (`claude_vault`). SupportFeature 253 passed, 1 failed: `DashboardMetricsTest`
+  created company B's rows while signed in as a company A user, which the
+  guard now refuses (correctly); the fixture now creates them before
+  signing in, assertion unchanged; Dashboard tests 8 passed, 26 assertions.
 - **Rollback:** remove the two listeners in `BelongsToCompany`.
 
 ## 2026-11-15/16, production setup and small fixes (collected for the monthly release)

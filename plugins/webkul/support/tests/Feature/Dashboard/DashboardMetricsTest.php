@@ -73,16 +73,19 @@ it('builds the daily series from one grouped query within the active company', f
     $company = CompanyHelper::company();
     $otherCompany = CompanyHelper::company();
 
-    CompanyHelper::actingAsCompanyUser($company);
-
     $create = function ($companyId, string $day, int $count = 1): void {
         Partner::factory()->count($count)->create(['company_id' => $companyId])
             ->each(fn (Partner $partner) => $partner->forceFill(['created_at' => Carbon::parse($day.' 10:00')])->saveQuietly());
     };
 
+    // Another client's rows exist before this user signs in: since UF-025
+    // (2026-11-16) a company A user may not write into company B.
+    $create($otherCompany->id, '2026-03-01', 5);
+
+    CompanyHelper::actingAsCompanyUser($company);
+
     $create($company->id, '2026-03-01', 2);
     $create($company->id, '2026-03-03');
-    $create($otherCompany->id, '2026-03-01', 5);
 
     $host = dashboardMetricsHost(['start_date' => '2026-03-01', 'end_date' => '2026-03-04']);
 
