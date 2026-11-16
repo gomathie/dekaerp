@@ -22,15 +22,31 @@ require_once __DIR__.'/../../Helpers/ResourceStructureHelper.php';
  * Fixtures are per plugin so converting one plugin re-runs only that plugin,
  * matching the plan's one-plugin-per-commit rule.
  *
- * CAVEAT, and it limits what this proves today: a resource is only reachable
- * here when its plugin is installed in the run, and this suite's bootstrap
- * does not install them all - most fixtures therefore record
- * `__not_installed` rather than a structure. Before relying on this as the net
- * for a plugin's conversion, run it in a context where that plugin is
- * installed, so its fixture holds a real tree. Tables are not captured at all
- * yet; see ResourceStructureHelper.
+ * Every covered plugin is installed first (STRUCTURE_PLUGINS), so fixtures
+ * hold real trees and come out the same from a filtered or a full run. A
+ * fixture that still records `__not_installed` means that install failed:
+ * treat it as a broken net, not a baseline.
  */
+/**
+ * Every plugin a fixture covers, installed before any snapshot is taken.
+ *
+ * Installing only the row's own plugin made the result depend on run order
+ * and on --filter: a plugin contributes fields into another's resource
+ * through the schema registries, so the same fixture came out different
+ * from a filtered run and a full one (the 50-vs-30 security.json incident).
+ * With the full set installed first, every run sees the same panel.
+ */
+const STRUCTURE_PLUGINS = [
+    'accounts', 'accounting', 'inventories', 'sales', 'purchases', 'manufacturing',
+    'products', 'partners', 'projects', 'employees', 'recruitments', 'time-off',
+    'timesheets', 'maintenance', 'fields', 'contacts', 'logistics',
+];
+
 beforeEach(function () {
+    foreach (STRUCTURE_PLUGINS as $plugin) {
+        TestBootstrapHelper::ensurePluginInstalled($plugin);
+    }
+
     FilamentHelper::actingAs();
 });
 
@@ -95,6 +111,15 @@ it('records the declared structure of a plugin’s resources', function (string 
     ['security', 'Webkul\\Security'],
     ['support', 'Webkul\\Support'],
     ['logistics', 'Webkul\\Logistics'],
+    ['recruitments', 'Webkul\\Recruitment'],
+    ['time-off', 'Webkul\\TimeOff'],
+    ['timesheets', 'Webkul\\Timesheet'],
+    ['maintenance', 'Webkul\\Maintenance'],
+    ['fields', 'Webkul\\Field'],
+    ['contacts', 'Webkul\\Contact'],
+    ['plugin-manager', 'Webkul\\PluginManager'],
+    ['invoices', 'Webkul\\Invoice'],
+    ['platform-billing', 'Webkul\\PlatformBilling'],
 ]);
 
 it('keeps declaration order instead of sorting', function () {
