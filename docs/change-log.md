@@ -6,6 +6,29 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-16, branded emails and a clearer invitation (U31–U34)
+
+- **Why:** user: emails showed only "DEKA" in plain black text, hard to
+  recognise; the invitation named neither company nor inviter (looks like
+  phishing) and its last line rendered as monospace.
+- **How:** override only Laravel's mail `header.blade.php` (logo PNG plus
+  name; Gmail and Outlook drop SVG) and `themes/default.css` (amber
+  `#d97706` primary button and panel, amber rule under the header) in
+  `resources/views/vendor/mail/html/`; the other components still come from
+  the framework. Invitation view: no indentation (four spaces made Markdown
+  code blocks), `{{ }}` instead of `@lang` (which echoes unescaped and the
+  names are user-typed), new keys in 5 languages. `UserInvitationMail` reads
+  company and inviter scope-free and puts the company in the subject.
+- **Benefit:** recognisable mail; invitee sees who invited them, to what,
+  until when, and a fallback link.
+- **Trade-off / risk:** the override files must be re-diffed when Laravel's
+  mail views change. The logo URL uses `asset()`, so `APP_URL` must be the
+  public host.
+- **Verification:** `php -l` on all 11 touched PHP files; Pint; new
+  security `InvitationMailBrandingTest` (see run below).
+- **Rollback:** delete `resources/views/vendor/mail` and revert the
+  invitation view, mailable and language files.
+
 ## 2026-11-16, no writes into another client's company (UF-025, hotfix v1.11.3)
 
 - **Why:** reviewing upstream's "multi-tenancy" (v1.7.0, PR #1575) found it

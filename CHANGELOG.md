@@ -10,6 +10,14 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+### Improvements
+
+- Emails from DEKA now carry the DEKA logo and name at the top and amber
+  buttons, so you can recognise them at a glance in your inbox.
+- Invitation emails name the company and the person who invited you, say
+  when the invitation expires, and include a plain link in case the button
+  does not work.
+
 # CHANGELOG — v1.12.0 — 2026-11-16
 
 ### Improvements
