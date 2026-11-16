@@ -13,18 +13,27 @@ return [
 
     'form' => [
         'validation' => [
-            'cannot-remove-last-admin' => 'Não é possível remover a função de administrador do último usuário administrador.',
-            'first-user-must-be-admin' => 'O primeiro usuário do sistema deve receber uma função de administrador.',
+            'cannot-remove-last-admin'        => 'Não é possível remover a função de administrador do último usuário administrador.',
+            'company-invalid'                 => 'Uma ou mais empresas selecionadas são inválidas.',
+            'company-not-assigned'            => 'Você só pode atribuir usuários às empresas atribuídas à sua conta.',
+            'company-required'                => 'Selecione pelo menos uma empresa.',
+            'first-user-must-be-admin'        => 'O primeiro usuário do sistema deve receber uma função de administrador.',
+            'role-invalid'                    => 'Selecione pelo menos uma função válida.',
+            'role-not-assignable'             => 'Você só pode atribuir funções não protegidas cujas permissões você possui.',
+            'self-administration-forbidden'   => 'Você não pode alterar suas próprias funções ou atribuições de empresa.',
+            'target-administration-forbidden' => 'Somente um Super Admin pode modificar um administrador protegido.',
         ],
 
         'sections' => [
             'general-information' => [
                 'title'  => 'Informações gerais',
                 'fields' => [
-                    'name'                  => 'Nome',
-                    'email'                 => 'E-mail',
-                    'password'              => 'Senha',
-                    'password-confirmation' => 'Confirmação de senha',
+                    'name'                        => 'Nome',
+                    'email'                       => 'E-mail',
+                    'password'                    => 'Senha',
+                    'password-confirmation'       => 'Confirmação de senha',
+                    'must-change-password'        => 'Exigir uma nova senha no próximo acesso',
+                    'must-change-password-helper' => 'Use quando você mesmo definir a senha e a repassar. A pessoa ficará na página de perfil até substituí-la, e a exigência é removida assim que isso acontecer.',
                 ],
             ],
 

@@ -4,6 +4,7 @@ namespace Webkul\Support;
 
 use Filament\Panel;
 use Filament\Support\Assets\Css;
+use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
@@ -21,8 +22,10 @@ use Webkul\Support\Database\Dialects\DatabaseDialect;
 use Webkul\Support\Database\Dialects\MySqlDialect;
 use Webkul\Support\Database\Dialects\PostgresDialect;
 use Webkul\Support\Http\Controllers\CompanyContextController;
+use Webkul\Support\Http\Middleware\ResolveApiCompany;
 use Webkul\Support\Livewire\QuickNavigation;
 use Webkul\Support\Services\CompanyContext;
+use Webkul\Support\Services\GuideLibrary;
 use Webkul\Support\Traits\HasFilamentDefaults;
 use Webkul\Support\Traits\HasRouterMacros;
 use Webkul\Support\Traits\HasRtlSupport;
@@ -80,6 +83,13 @@ class SupportServiceProvider extends PackageServiceProvider
                 '2026_07_16_000001_create_quick_navigation_favorites_table',
                 '2026_07_30_110000_null_company_on_utm_campaigns',
                 '2026_08_03_120000_create_sequences_table',
+                '2026_10_26_000001_activate_zambian_kwacha_currency',
+                // SAAS-06: seats are a per-company limit. `null` = unlimited.
+                '2026_10_28_000004_add_seat_limit_to_companies_table',
+                // D-SAAS-11: test or commercial. Existing companies stay commercial.
+                '2026_11_09_000004_add_account_type_to_companies_table',
+                '2026_11_12_000001_add_whats_new_seen_version_to_users_table',
+                '2026_11_13_000001_create_company_currencies_table',
             ])
             ->runsMigrations()
             ->hasSettings([
@@ -117,8 +127,12 @@ class SupportServiceProvider extends PackageServiceProvider
                 }
 
                 return view('support::company-switcher', [
-                    'companies' => app(CompanyContext::class)->allowedCompanies(),
-                    'active'    => app(CompanyContext::class)->activeIds(),
+                    'companies'             => app(CompanyContext::class)->allowedCompanies(),
+                    'active'                => app(CompanyContext::class)->activeIds(),
+                    'canSwitch'             => app(CompanyContext::class)->canSwitchCompanies(),
+                    'allCompaniesActive'    => app(CompanyContext::class)->allCompaniesActive(),
+                    'canSelectAllCompanies' => app(CompanyContext::class)->canSwitchCompanies()
+                        && app(CompanyContext::class)->seesAllCompanies(),
                 ])->render();
             },
         );
@@ -134,6 +148,9 @@ class SupportServiceProvider extends PackageServiceProvider
 
         FilamentAsset::register([
             Css::make('support', __DIR__.'/../resources/dist/support.css'),
+            // Chart entrance animations and gradients for the module dashboards
+            // (docs/completed/dashboards-plan.md DB-1). Published to public/js/support/.
+            Js::make('dashboard-charts', __DIR__.'/../resources/js/dashboard-charts.js'),
         ], 'support');
 
         $this->registerFilamentDefaults();
@@ -163,6 +180,16 @@ class SupportServiceProvider extends PackageServiceProvider
         });
 
         $this->app->scoped(CompanyContext::class);
+
+        // Applied to every plugin's API route file, before the plugin
+        // entitlement guard, so the selected company is what entitlement is
+        // judged against. Aliased here rather than in bootstrap/app.php so the
+        // middleware ships with the plugin that owns CompanyContext.
+        $this->app['router']->aliasMiddleware('api.company', ResolveApiCompany::class);
+
+        // Scoped: guide.json is around 620KB, so it is decoded once per request
+        // rather than once per page object asking for it.
+        $this->app->scoped(GuideLibrary::class);
 
         $this->registerLanguageSwitch();
 

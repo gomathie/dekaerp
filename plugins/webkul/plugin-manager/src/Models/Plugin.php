@@ -9,6 +9,7 @@ use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
+use Webkul\Support\Models\Company;
 
 class Plugin extends Model implements Sortable
 {
@@ -34,6 +35,43 @@ class Plugin extends Model implements Sortable
         'order_column_name'  => 'sort',
         'sort_when_creating' => true,
     ];
+
+    /**
+     * The companies allowed to use this plugin.
+     *
+     * Read without AllowedCompanyScope on purpose: this is the grant list
+     * itself, so scoping it to the acting user's companies would make the
+     * answer depend on who is asking.
+     */
+    public function companies(): BelongsToMany
+    {
+        return $this->belongsToMany(Company::class, 'company_plugin', 'plugin_id', 'company_id')
+            ->withoutGlobalScopes()
+            ->withTimestamps();
+    }
+
+    /**
+     * The version shown on the Plugins page.
+     *
+     * Read from the plugin's own composer.json on every view (user,
+     * 2026-11-13: a plugin we improved must not show upstream's number).
+     * The stored `latest_version` only changes on install or sync, so
+     * reading the file means a release needs no deploy step to show its
+     * number. Each plugin has its own version (user, 2026-11-13): a release
+     * that adds a feature to a plugin bumps its minor, fixes only its patch.
+     */
+    public function currentVersion(): string
+    {
+        $path = base_path('plugins/webkul/'.basename($this->name).'/composer.json');
+
+        $version = is_file($path)
+            ? data_get(json_decode((string) file_get_contents($path), true), 'version')
+            : null;
+
+        return is_string($version) && $version !== ''
+            ? $version
+            : ($this->latest_version ?: '1.0.0');
+    }
 
     public function dependencies(): BelongsToMany
     {

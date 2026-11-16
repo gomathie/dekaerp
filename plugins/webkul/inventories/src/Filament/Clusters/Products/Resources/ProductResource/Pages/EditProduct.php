@@ -58,8 +58,8 @@ class EditProduct extends BaseEditProduct
         if (isset($data['is_storable']) && ! $data['is_storable'] && ! float_is_zero($record->available_qty, precisionRounding: $record->uom->rounding)) {
             Notification::make()
                 ->danger()
-                ->title(__('inventories::filament/clusters/products/resources/product/pages/edit-product.before-save.notification.error.available-quantity.title'))
-                ->body(__('inventories::filament/clusters/products/resources/product/pages/edit-product.before-save.notification.error.available-quantity.body'))
+                ->title(__('inventories::filament/clusters/products/resources/product/pages/edit-product.before-save.notification.error.qty-not-zero.title'))
+                ->body(__('inventories::filament/clusters/products/resources/product/pages/edit-product.before-save.notification.error.qty-not-zero.body'))
                 ->persistent()
                 ->send();
 

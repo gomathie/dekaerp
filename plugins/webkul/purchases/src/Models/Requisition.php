@@ -54,8 +54,8 @@ class Requisition extends Model
         return [
             'state'        => trans('purchases::models/requisition.log-attributes.state'),
             'reference'    => trans('purchases::models/requisition.log-attributes.reference'),
-            'starts_at'    => trans('purchases::models/requisition.log-attributes.starts-at'),
-            'ends_at'      => trans('purchases::models/requisition.log-attributes.ends-at'),
+            'starts_at'    => trans('purchases::models/requisition.log-attributes.starts_at'),
+            'ends_at'      => trans('purchases::models/requisition.log-attributes.ends_at'),
             'partner.name' => trans('purchases::models/requisition.log-attributes.partner'),
             'user.name'    => trans('purchases::models/requisition.log-attributes.buyer'),
         ];

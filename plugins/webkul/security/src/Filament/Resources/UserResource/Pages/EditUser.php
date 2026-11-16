@@ -16,7 +16,9 @@ use Webkul\Security\Enums\PermissionType;
 use Webkul\Security\Filament\Resources\UserResource;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\MultiCompanyAdminService;
+use Webkul\Security\Services\SeatCapacityService;
 use Webkul\Security\Services\SecurityAuditLogger;
+use Webkul\Security\Services\TenantRoleAssigner;
 use Webkul\Security\Settings\UserSettings;
 
 class EditUser extends EditRecord
@@ -107,7 +109,18 @@ class EditUser extends EditRecord
     {
         $roleIds = (array) ($this->form->getRawState()['roles'] ?? []);
 
-        if (app(MultiCompanyAdminService::class)->includesMultiCompanyAdminRole($roleIds)) {
+        /*
+         * Both administration roles need `global`, exactly as CreateUser has
+         * always done it. Company Admin was missing here, so promoting an
+         * existing restricted user to Company Admin left them on `individual`
+         * while creating or inviting one left them on `global` - two different
+         * Users pages for the same role. Pinned by
+         * ResourcePermissionMismatchCharacterizationTest.
+         */
+        if (
+            app(MultiCompanyAdminService::class)->includesMultiCompanyAdminRole($roleIds)
+            || app(MultiCompanyAdminService::class)->includesCompanyAdminRole($roleIds)
+        ) {
             $data['resource_permission'] = PermissionType::GLOBAL;
         }
 
@@ -147,11 +160,38 @@ class EditUser extends EditRecord
             $defaultCompanyId ? (int) $defaultCompanyId : null,
         );
 
+        /*
+         * Seats (D-SAAS-03): only a *newly added* company consumes a seat.
+         * Re-saving a form for a company the person already belongs to must not
+         * be blocked by a full company.
+         */
+        $capacity = app(SeatCapacityService::class);
+        $currentCompanyIds = app(MultiCompanyAdminService::class)->assignedCompanyIds($this->record);
+
+        foreach (array_diff(array_unique(array_map('intval', $companyIds)), $currentCompanyIds) as $companyId) {
+            if ($companyId > 0) {
+                $capacity->assertCanAttachMembership($companyId);
+            }
+        }
+
         $this->administrationBefore = app(MultiCompanyAdminService::class)->userSnapshot($this->record);
     }
 
     protected function afterSave(): void
     {
+        /*
+         * Written before the audit snapshot below, so a role change is recorded
+         * as part of this save rather than disappearing from the before/after.
+         * TenantRoleAssigner needs the memberships as they stand *after* the
+         * form's company selection was persisted, which is why this is here and
+         * not in mutateFormDataBeforeSave().
+         */
+        app(TenantRoleAssigner::class)->sync(
+            $this->record,
+            (array) ($this->form->getRawState()['roles'] ?? []),
+            app(MultiCompanyAdminService::class)->assignedCompanyIds($this->record),
+        );
+
         $this->record->unsetRelation('roles');
 
         $administration = app(MultiCompanyAdminService::class);

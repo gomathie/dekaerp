@@ -30,6 +30,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Webkul\Logistics\Enums\LineType;
 use Webkul\Logistics\Enums\ShipmentPriority;
 use Webkul\Logistics\Enums\ShipmentState;
 use Webkul\Logistics\Enums\StopType;
@@ -40,6 +41,10 @@ use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Pag
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Pages\ListShipments;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Pages\ManageTimeline;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Pages\ViewShipment;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\RelationManagers\ChargesRelationManager;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\RelationManagers\DeliveryProofsRelationManager;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\RelationManagers\ExpensesRelationManager;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\RelationManagers\InvoicesRelationManager;
 use Webkul\Logistics\Models\PackageType;
 use Webkul\Logistics\Models\ServiceType;
 use Webkul\Logistics\Models\Shipment;
@@ -47,6 +52,8 @@ use Webkul\Logistics\Support\LogisticsAccess;
 use Webkul\Partner\Enums\AccountType;
 use Webkul\Partner\Models\Partner;
 use Webkul\PluginManager\Package;
+use Webkul\Product\Models\Product;
+use Webkul\Sale\Enums\OrderState;
 use Webkul\Sale\Models\Order;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Currency;
@@ -148,7 +155,8 @@ class ShipmentResource extends Resource
                             ->native(false),
                         Select::make('currency_id')
                             ->label(__(static::$lang.'.form.fields.currency'))
-                            ->options(fn (): array => Currency::query()->orderBy('name')->pluck('name', 'id')->all())
+                            // CR-6: only the company's permitted currencies, when it has a list.
+                            ->options(fn (): array => Currency::query()->active()->permittedFor(current_company_id())->orderBy('name')->pluck('name', 'id')->all())
                             ->searchable(),
                     ])
                     ->columns(2),
@@ -235,6 +243,38 @@ class ShipmentResource extends Resource
                             ->defaultItems(0)
                             ->itemLabel(fn (array $state): ?string => $state['description'] ?? null)
                             ->schema([
+                                Select::make('line_type')
+                                    ->label(__(static::$lang.'.form.fields.line-type'))
+                                    ->options(LineType::class)
+                                    ->default(LineType::External)
+                                    ->required()
+                                    ->native(false)
+                                    ->live()
+                                    ->afterStateUpdated(function (Set $set, string $state): void {
+                                        if ($state === LineType::External->value) {
+                                            $set('product_id', null);
+                                        }
+                                    }),
+                                Select::make('product_id')
+                                    ->label(__(static::$lang.'.form.fields.line-product'))
+                                    ->options(fn (): array => Product::query()->orderBy('name')->pluck('name', 'id')->all())
+                                    ->searchable()
+                                    ->visible(fn (Get $get): bool => $get('line_type') === LineType::Internal->value)
+                                    ->required(fn (Get $get): bool => $get('line_type') === LineType::Internal->value)
+                                    ->live()
+                                    ->afterStateUpdated(function (Set $set, ?int $state): void {
+                                        if ($state === null) {
+                                            return;
+                                        }
+                                        $product = Product::find($state);
+                                        if (! $product) {
+                                            return;
+                                        }
+                                        $set('description', $product->name);
+                                        if ($product->weight) {
+                                            $set('weight_kg', (float) $product->weight);
+                                        }
+                                    }),
                                 TextInput::make('description')
                                     ->label(__(static::$lang.'.form.fields.line-description'))
                                     ->required()
@@ -289,6 +329,30 @@ class ShipmentResource extends Resource
                             ->maxLength(64)
                             ->disabled()
                             ->dehydrated(false),
+                    ])
+                    ->columns(2),
+
+                Tab::make(__(static::$lang.'.form.tabs.confidential'))
+                    ->icon('heroicon-o-lock-closed')
+                    ->schema([
+                        Toggle::make('is_confidential')
+                            ->label(__(static::$lang.'.form.fields.is-confidential'))
+                            ->helperText(__(static::$lang.'.form.fields.is-confidential-helper'))
+                            ->live(),
+                        Textarea::make('confidential_description')
+                            ->label(__(static::$lang.'.form.fields.confidential-description'))
+                            ->helperText(__(static::$lang.'.form.fields.confidential-description-helper'))
+                            ->rows(3)
+                            ->maxLength(1000)
+                            ->columnSpanFull()
+                            ->visible(fn (Get $get): bool => (bool) $get('is_confidential')),
+                        Select::make('consignor_partner_id')
+                            ->label(__(static::$lang.'.form.fields.consignor'))
+                            ->helperText(__(static::$lang.'.form.fields.consignor-helper'))
+                            ->relationship('consignor', 'name', fn (Builder $query) => $query->where('account_type', '!=', AccountType::ADDRESS))
+                            ->searchable()
+                            ->preload()
+                            ->visible(fn (Get $get): bool => (bool) $get('is_confidential')),
                     ])
                     ->columns(2),
             ]),
@@ -388,6 +452,16 @@ class ShipmentResource extends Resource
             ->with(['customer:id,name', 'serviceType:id,name', 'dispatcher:id,name', 'company:id,name']);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            DeliveryProofsRelationManager::class,
+            ChargesRelationManager::class,
+            ExpensesRelationManager::class,
+            InvoicesRelationManager::class,
+        ];
+    }
+
     public static function getRecordSubNavigation(Page $page): array
     {
         return $page->generateNavigationItems([
@@ -452,6 +526,15 @@ class ShipmentResource extends Resource
         return Order::query()
             ->when($companyId, fn (Builder $query) => $query->where('company_id', $companyId))
             ->where('partner_id', $customerId)
+            // Confirmed only, as the docblock always claimed. A quotation is not
+            // yet work anyone agreed to, and picking one here would pre-fill a
+            // shipment from figures the customer has not accepted.
+            ->where('state', OrderState::SALE)
+            // And not one that already has a shipment. The D1 listener cannot
+            // create a duplicate, because it checks sale_order_id, but nothing
+            // stopped a person making a second shipment for the same order from
+            // this picker.
+            ->whereNotIn('id', Shipment::query()->whereNotNull('sale_order_id')->select('sale_order_id'))
             ->orderByDesc('id')
             ->limit(50)
             ->pluck('name', 'id')

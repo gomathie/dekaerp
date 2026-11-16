@@ -294,6 +294,11 @@ return [
         'max_size'          => 1024 * 1024,   // 1MB - maximum request payload size in bytes
         'max_nesting_depth' => 30,   // Maximum depth of dot-notation property paths
         'max_calls'         => 200,          // Maximum method calls per request
-        'max_components'    => 20,      // Maximum components per batch request
+        // 100, not 20 (Sentry DEKAERP-16, 2026-11-13). Changing a dashboard
+        // filter re-renders every widget on the page in one batched request;
+        // the Overview and module dashboards reached 23 and the whole update
+        // failed. 20 was copied in with the Filament 5 upgrade (7aabb2864);
+        // Livewire 4.3's own default is 200. 100 still caps abuse.
+        'max_components'    => 100,     // Maximum components per batch request
     ],
 ];

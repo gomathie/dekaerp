@@ -1,0 +1,49 @@
+<?php
+
+return [
+    'title' => 'Utilisateurs et identifiants',
+
+    'table' => [
+        'columns' => [
+            'name'                 => 'Nom',
+            'login'                => 'Identifiant (e-mail)',
+            'company-admin'        => 'Administrateur de la société',
+            'active'               => 'Actif',
+            'must-change-password' => 'Doit changer le mot de passe',
+        ],
+
+        'empty-state' => [
+            'heading'     => 'Aucun utilisateur pour le moment',
+            'description' => 'Invitez ou créez l’administrateur dans la section Administrateur ci-dessus.',
+        ],
+
+        'actions' => [
+            'copy-invitation-link' => [
+                'label'      => 'Copier le lien d’invitation',
+                'invitation' => 'Invitation en attente',
+                'link'       => 'Lien d’invitation',
+            ],
+            'show-password' => [
+                'label'             => 'Afficher le mot de passe',
+                'modal-heading'     => 'Afficher le mot de passe de :email',
+                'modal-description' => 'Saisissez votre propre mot de passe pour continuer. Cette consultation est enregistrée dans le journal d’audit.',
+                'submit'            => 'Afficher le mot de passe',
+                'shown'             => 'Mot de passe de :email',
+
+                'form' => [
+                    'password' => 'Votre mot de passe',
+                ],
+            ],
+            'set-password' => [
+                'label'             => 'Définir le mot de passe',
+                'modal-heading'     => 'Définir le mot de passe de :email',
+                'modal-description' => 'Les mots de passe actuels ne peuvent pas être affichés, car ils sont chiffrés de manière irréversible. Définissez-en un nouveau et transmettez-le vous-même à l’utilisateur : il n’est pas envoyé par e-mail.',
+
+                'form' => [
+                    'password'             => 'Nouveau mot de passe',
+                    'must-change-password' => 'Doit changer ce mot de passe à la prochaine connexion',
+                ],
+            ],
+        ],
+    ],
+];

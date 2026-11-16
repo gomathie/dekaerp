@@ -1,0 +1,82 @@
+[
+  {
+    "id": "company-administration",
+    "audience": "admin",
+    "name": "Company Administration",
+    "icon": "<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 3l8 4v5c0 4.5-3.2 8.3-8 9-4.8-.7-8-4.5-8-9V7l8-4z\"></path><path d=\"M9 12l2 2 4-4\"></path></svg>",
+    "source": "authored",
+    "items": [
+      {
+        "id": "admin-company-profile",
+        "title": "Company Profile and Letterhead",
+        "group": null,
+        "module": "Administration",
+        "readTime": "3 min read",
+        "summary": "Your company record supplies the name, address, tax identifiers and currency used on every document the system prints. Getting it right before the first invoice or waybill saves reissuing paperwork later.",
+        "toc": [
+          { "id": "where-to-edit", "text": "Where to edit it" },
+          { "id": "what-it-affects", "text": "What it affects" },
+          { "id": "multiple-companies", "text": "If you work in more than one company" }
+        ],
+        "htmlContent": "<h2 id=\"where-to-edit\" class=\"doc-heading doc-heading--h2\">Where to edit it<a class=\"doc-anchor\" href=\"#where-to-edit\" aria-label=\"Link to Where to edit it\">#</a></h2>\n<ol>\n<li><p>Go to <strong><span class=\"doc-path\">Settings &rarr; Companies</span></strong> and open your company.</p></li>\n<li><p>Complete the <strong>name</strong>, <strong>address</strong>, <strong>tax ID</strong>, <strong>currency</strong> and contact details.</p></li>\n<li><p>Upload the <strong>logo</strong>. It is used as the letterhead on printed documents, so prefer a wide image with a transparent background.</p></li>\n<li><p>Save. Changes apply to documents printed from that moment on; documents already issued keep the details they were printed with.</p></li>\n</ol>\n<h2 id=\"what-it-affects\" class=\"doc-heading doc-heading--h2\">What it affects<a class=\"doc-anchor\" href=\"#what-it-affects\" aria-label=\"Link to What it affects\">#</a></h2>\n<ul>\n<li><strong>Printed documents.</strong> Invoices, credit notes, purchase orders and waybills all take their letterhead from the company that owns the document, not from whichever company you are currently viewing. Printing another company's waybill shows that company's letterhead.</li>\n<li><strong>Currency.</strong> The company currency is the one amounts are reported in. Documents in a foreign currency are converted against it using the rate on the document date.</li>\n<li><strong>Document numbering.</strong> Each company counts its own documents. See <em>Document Numbering</em> in this guide.</li>\n</ul>\n<h2 id=\"multiple-companies\" class=\"doc-heading doc-heading--h2\">If you work in more than one company<a class=\"doc-anchor\" href=\"#multiple-companies\" aria-label=\"Link to If you work in more than one company\">#</a></h2>\n<p>The company switcher in the top bar decides which company's records you see and which company new records are filed under. Check it before creating anything: a record is stamped with the company that was active when it was created, and moving it afterwards is not a routine operation.</p>\n<p>Some records are deliberately shared by every company - units of measure, countries and currencies among them. Those are maintained once and appear everywhere.</p>"
+      },
+      {
+        "id": "admin-users",
+        "title": "Adding Users to Your Company",
+        "group": null,
+        "module": "Administration",
+        "readTime": "4 min read",
+        "summary": "You can add your own users without going through DEKA. Each user is invited by email, or given a username and password directly when email is not an option.",
+        "toc": [
+          { "id": "invite-a-user", "text": "Invite a user" },
+          { "id": "set-credentials-directly", "text": "Set credentials directly" },
+          { "id": "force-a-password-change", "text": "Force a password change" },
+          { "id": "removing-access", "text": "Removing access" }
+        ],
+        "htmlContent": "<h2 id=\"invite-a-user\" class=\"doc-heading doc-heading--h2\">Invite a user<a class=\"doc-anchor\" href=\"#invite-a-user\" aria-label=\"Link to Invite a user\">#</a></h2>\n<ol>\n<li><p>Go to <strong><span class=\"doc-path\">Settings &rarr; Users &rarr; New</span></strong>.</p></li>\n<li><p>Enter the person's name and email address.</p></li>\n<li><p>Choose the <strong>companies</strong> they may access. You can only grant companies you hold yourself.</p></li>\n<li><p>Choose their <strong>roles</strong>. You can only assign a role whose permissions are a subset of your own - this is what stops an administrator from granting more access than they have.</p></li>\n<li><p>Save. The user receives an invitation email with a link to set their own password.</p></li>\n</ol>\n<h2 id=\"set-credentials-directly\" class=\"doc-heading doc-heading--h2\">Set credentials directly<a class=\"doc-anchor\" href=\"#set-credentials-directly\" aria-label=\"Link to Set credentials directly\">#</a></h2>\n<p>When someone has no working email address, or the invitation did not arrive, you can set their sign-in details yourself and pass them on:</p>\n<ol>\n<li><p>On the user form, fill in the <strong>email</strong> (it is the username) and set a <strong>password</strong>.</p></li>\n<li><p>Give the details to the person over a channel you trust. Do not send a password and the address it works on in the same message.</p></li>\n</ol>\n<p>If an invitation email failed to send, the user is still created. The invitation link is shown to you in the notification so you can pass it on by hand.</p>\n<h2 id=\"force-a-password-change\" class=\"doc-heading doc-heading--h2\">Force a password change<a class=\"doc-anchor\" href=\"#force-a-password-change\" aria-label=\"Link to Force a password change\">#</a></h2>\n<p>Turn on <strong>Must change password</strong> when you have set a password yourself. The user is sent to their profile page on next sign-in and cannot use the rest of the application until they have chosen a new password. Changing it requires their current password, so the one you issued stops working as soon as they replace it.</p>\n<h2 id=\"removing-access\" class=\"doc-heading doc-heading--h2\">Removing access<a class=\"doc-anchor\" href=\"#removing-access\" aria-label=\"Link to Removing access\">#</a></h2>\n<p>Switch <strong>Active</strong> off rather than deleting the user. An inactive user cannot sign in, while the records they created keep a valid author. Delete only a user created in error who has no records to their name.</p>"
+      },
+      {
+        "id": "admin-roles-permissions",
+        "title": "Roles, Permissions and Record Visibility",
+        "group": null,
+        "module": "Administration",
+        "readTime": "5 min read",
+        "summary": "Two separate controls decide what a user can do: roles grant permissions on each type of record, and the resource permission setting decides how many of those records they see.",
+        "toc": [
+          { "id": "roles", "text": "Roles and permissions" },
+          { "id": "record-visibility", "text": "Record visibility" },
+          { "id": "which-to-use", "text": "Choosing between them" }
+        ],
+        "htmlContent": "<h2 id=\"roles\" class=\"doc-heading doc-heading--h2\">Roles and permissions<a class=\"doc-anchor\" href=\"#roles\" aria-label=\"Link to Roles and permissions\">#</a></h2>\n<p>A role is a named bundle of permissions. Create roles that match the jobs people do rather than one role per person:</p>\n<ol>\n<li><p>Go to <strong><span class=\"doc-path\">Settings &rarr; Roles &rarr; New</span></strong>.</p></li>\n<li><p>Name the role for the job - Finance, Sales, Warehouse, Human Resources.</p></li>\n<li><p>Tick the permissions it needs. Permissions are grouped per record type, with separate entries for viewing, creating, editing and deleting.</p></li>\n<li><p>Save, then assign the role on each user.</p></li>\n</ol>\n<p>Grant only what the job needs. It is much easier to add a permission when somebody asks than to work out afterwards who could see something they should not have.</p>\n<h2 id=\"record-visibility\" class=\"doc-heading doc-heading--h2\">Record visibility<a class=\"doc-anchor\" href=\"#record-visibility\" aria-label=\"Link to Record visibility\">#</a></h2>\n<p>Permissions say <em>what kinds of record</em> a user may work with. The <strong>Resource Permission</strong> field on the user says <em>how many of them</em> they see:</p>\n<ul>\n<li><strong>Global</strong> - every record belonging to their company. This is the default, and the company boundary is what separates tenants.</li>\n<li><strong>Individual</strong> - only the records that user created or owns.</li>\n<li><strong>Group</strong> - the records owned by their team. A user set to Group who belongs to no team sees only their own records.</li>\n</ul>\n<p>Whichever setting you choose, a user never sees another company's records. Company separation is enforced underneath all three.</p>\n<h2 id=\"which-to-use\" class=\"doc-heading doc-heading--h2\">Choosing between them<a class=\"doc-anchor\" href=\"#which-to-use\" aria-label=\"Link to Choosing between them\">#</a></h2>\n<p>Leave Resource Permission on <strong>Global</strong> unless you have a reason not to. It is what most teams expect: colleagues can cover for each other and nothing silently disappears from a list. Reach for Individual or Group when people genuinely must not see one another's work - commission-based sales, or an external contractor working on their own records only.</p>"
+      },
+      {
+        "id": "admin-numbering",
+        "title": "Document Numbering",
+        "group": null,
+        "module": "Administration",
+        "readTime": "3 min read",
+        "summary": "Invoices, orders, shipments and waybills are numbered by per-company counters you control. Set the prefix and starting number before the first document is issued.",
+        "toc": [
+          { "id": "how-numbering-works", "text": "How numbering works" },
+          { "id": "changing-a-prefix", "text": "Changing a prefix" },
+          { "id": "cautions", "text": "Cautions" }
+        ],
+        "htmlContent": "<h2 id=\"how-numbering-works\" class=\"doc-heading doc-heading--h2\">How numbering works<a class=\"doc-anchor\" href=\"#how-numbering-works\" aria-label=\"Link to How numbering works\">#</a></h2>\n<p>Each kind of document has a counter, and each company has its own copy of it. Two companies issuing their first invoice on the same day both get number 1, under their own prefixes.</p>\n<p>A number is made of a prefix, usually a year, and a padded counter - for example <code>INV-2026-00001</code>. Numbers use hyphens rather than slashes so that they are safe to use in file names and links.</p>\n<h2 id=\"changing-a-prefix\" class=\"doc-heading doc-heading--h2\">Changing a prefix<a class=\"doc-anchor\" href=\"#changing-a-prefix\" aria-label=\"Link to Changing a prefix\">#</a></h2>\n<ol>\n<li><p>Go to <strong><span class=\"doc-path\">Settings &rarr; Sequences</span></strong>.</p></li>\n<li><p>Open the sequence for the document type and company you want to change.</p></li>\n<li><p>Edit the <strong>prefix</strong>, the <strong>padding</strong>, or the <strong>next number</strong>.</p></li>\n<li><p>Save. The change applies to the next document issued.</p></li>\n</ol>\n<h2 id=\"cautions\" class=\"doc-heading doc-heading--h2\">Cautions<a class=\"doc-anchor\" href=\"#cautions\" aria-label=\"Link to Cautions\">#</a></h2>\n<ul>\n<li><strong>Do not lower the next number</strong> below one already used. Two documents sharing a number is a problem your accountant will find before you do.</li>\n<li><strong>Change prefixes at a period boundary</strong>, not in the middle of a month, so a run of documents is easy to follow.</li>\n<li><strong>Check tax rules</strong> before changing invoice numbering. Many jurisdictions require an unbroken sequence.</li>\n</ul>"
+      },
+      {
+        "id": "admin-api-tokens",
+        "title": "API Access Tokens",
+        "group": null,
+        "module": "Administration",
+        "readTime": "3 min read",
+        "summary": "Issue a token when another system needs to read or write your data. Tokens carry read or write abilities and can be revoked at any time.",
+        "toc": [
+          { "id": "creating-a-token", "text": "Creating a token" },
+          { "id": "abilities", "text": "Read and write abilities" },
+          { "id": "looking-after-tokens", "text": "Looking after tokens" }
+        ],
+        "htmlContent": "<h2 id=\"creating-a-token\" class=\"doc-heading doc-heading--h2\">Creating a token<a class=\"doc-anchor\" href=\"#creating-a-token\" aria-label=\"Link to Creating a token\">#</a></h2>\n<ol>\n<li><p>Open your profile and find <strong>API tokens</strong>.</p></li>\n<li><p>Name the token after the system that will use it, so an unexpected one is easy to trace.</p></li>\n<li><p>Choose its abilities and create it.</p></li>\n<li><p><strong>Copy the token now.</strong> It is shown once and cannot be retrieved afterwards. If you lose it, revoke it and issue another.</p></li>\n</ol>\n<h2 id=\"abilities\" class=\"doc-heading doc-heading--h2\">Read and write abilities<a class=\"doc-anchor\" href=\"#abilities\" aria-label=\"Link to Read and write abilities\">#</a></h2>\n<ul>\n<li><strong>Read</strong> lets the token list and fetch records. Give this to reporting tools and dashboards.</li>\n<li><strong>Write</strong> lets it create and change records as well. Give this only where the other system genuinely has to push data in.</li>\n</ul>\n<p>A token acts as the user who created it, so it is also limited by that user's roles, companies and record visibility. A token cannot reach data its owner could not see in the application.</p>\n<h2 id=\"looking-after-tokens\" class=\"doc-heading doc-heading--h2\">Looking after tokens<a class=\"doc-anchor\" href=\"#looking-after-tokens\" aria-label=\"Link to Looking after tokens\">#</a></h2>\n<ul>\n<li>Issue one token per integration rather than sharing one everywhere, so you can revoke a single system without breaking the rest.</li>\n<li>Revoke tokens belonging to people who have left, and tokens for integrations switched off.</li>\n<li>Never paste a token into a shared document, a ticket or a chat message.</li>\n</ul>"
+      }
+    ]
+  }
+]

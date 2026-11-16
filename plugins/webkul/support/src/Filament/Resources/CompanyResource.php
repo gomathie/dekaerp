@@ -50,7 +50,9 @@ use Webkul\Support\Filament\Resources\CompanyResource\Pages\EditCompany;
 use Webkul\Support\Filament\Resources\CompanyResource\Pages\ListCompanies;
 use Webkul\Support\Filament\Resources\CompanyResource\Pages\ViewCompany;
 use Webkul\Support\Filament\Resources\CompanyResource\RelationManagers\BranchesRelationManager;
+use Webkul\Support\Filament\Resources\CompanyResource\Support\CompanySchemaRegistry;
 use Webkul\Support\Models\Company;
+use Webkul\Support\Models\Country;
 use Webkul\Support\Models\Currency;
 use Webkul\Support\Models\Scopes\AllowedCompanyScope;
 
@@ -63,6 +65,16 @@ class CompanyResource extends Resource
     protected static ?int $navigationSort = 2;
 
     protected static bool $shouldRegisterNavigation = false;
+
+    /**
+     * Not registered with the panel: Security (a core plugin) registers its
+     * subclass on the same slug. With both registered, this base won the
+     * /admin/companies routes, so Security's create and edit pages never ran
+     * and the Administrator section's email and password were silently
+     * dropped - no administrator or invitation was ever created in
+     * production (2026-11-11). Pinned by security CompanyRouteTest.
+     */
+    protected static bool $isDiscovered = false;
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -114,6 +126,30 @@ class CompanyResource extends Resource
                                                 'unique' => 'Company name already exists. Please use a unique name.',
                                             ])
                                             ->live(onBlur: true),
+                                        // Next to the name, not inside the collapsed address (U22,
+                                        // CR-3 run 2026-11-14): it sets the currency, and from A4 the
+                                        // chart and taxes, so it belongs with the essentials.
+                                        Select::make('country_id')
+                                            ->label(__('support::filament/resources/company.form.sections.address-information.fields.country'))
+                                            ->relationship(name: 'country', titleAttribute: 'name')
+                                            ->afterStateUpdated(function (Set $set, $state, ?Model $record): void {
+                                                $set('state_id', null);
+
+                                                // New company: the country's currency becomes the default
+                                                // (2.1 plan CR-4, D-CR-1: Ghana GHS, Zambia ZMW). Create
+                                                // only: changing an existing company's base currency is a
+                                                // deliberate, warned action (D-CR-4), never a side effect.
+                                                if ($record === null && $state) {
+                                                    $currencyId = Country::query()->whereKey($state)->value('currency_id');
+
+                                                    if ($currencyId) {
+                                                        $set('currency_id', $currencyId);
+                                                    }
+                                                }
+                                            })
+                                            ->searchable()
+                                            ->preload()
+                                            ->live(),
                                         TextInput::make('registration_number')
                                             ->label(__('support::filament/resources/company.form.sections.company-information.fields.registration-number'))
                                             ->maxLength(255),
@@ -136,6 +172,9 @@ class CompanyResource extends Resource
                                     ])
                                     ->columns(2),
                                 Section::make(__('support::filament/resources/company.form.sections.address-information.title'))
+                                    // CR-4: optional details start closed on create so the required fields stand out; open on edit.
+                                    ->collapsible()
+                                    ->collapsed(fn (string $operation): bool => $operation === 'create')
                                     ->schema([
                                         Group::make()
                                             ->schema([
@@ -150,13 +189,6 @@ class CompanyResource extends Resource
                                                     ->live()
                                                     ->label(__('support::filament/resources/company.form.sections.address-information.fields.zipcode'))
                                                     ->maxLength(255),
-                                                Select::make('country_id')
-                                                    ->label(__('support::filament/resources/company.form.sections.address-information.fields.country'))
-                                                    ->relationship(name: 'country', titleAttribute: 'name')
-                                                    ->afterStateUpdated(fn (Set $set) => $set('state_id', null))
-                                                    ->searchable()
-                                                    ->preload()
-                                                    ->live(),
                                                 Select::make('state_id')
                                                     ->label(__('support::filament/resources/company.form.sections.address-information.fields.state'))
                                                     ->relationship(
@@ -250,11 +282,15 @@ class CompanyResource extends Resource
                                             ->label(__('support::filament/resources/company.form.sections.additional-information.fields.company-foundation-date')),
                                         ...static::getCustomFormFields(),
                                     ])->columns(2),
+                                ...CompanySchemaRegistry::renderForm('main.after'),
                             ])
                             ->columnSpan(['lg' => 2]),
                         Group::make()
                             ->schema([
                                 Section::make(__('support::filament/resources/company.form.sections.branding.title'))
+                                    // CR-4: optional details start closed on create so the required fields stand out; open on edit.
+                                    ->collapsible()
+                                    ->collapsed(fn (string $operation): bool => $operation === 'create')
                                     ->schema([
                                         Group::make()
                                             ->relationship('partner', 'avatar')
@@ -270,6 +306,9 @@ class CompanyResource extends Resource
                                             ->hexColor(),
                                     ]),
                                 Section::make(__('support::filament/resources/company.form.sections.contact-information.title'))
+                                    // CR-4: optional details start closed on create so the required fields stand out; open on edit.
+                                    ->collapsible()
+                                    ->collapsed(fn (string $operation): bool => $operation === 'create')
                                     ->schema([
                                         TextInput::make('phone')
                                             ->label(__('support::filament/resources/company.form.sections.contact-information.fields.phone'))

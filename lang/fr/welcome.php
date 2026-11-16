@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'title'            => 'AureusERP - Progiciel de gestion intégré',
-    'meta_description' => 'AureusERP - Système moderne de progiciel de gestion intégré',
+    'title'            => 'DEKA Central - Progiciel de gestion intégré',
+    'meta_description' => 'DEKA Central - Système moderne de progiciel de gestion intégré',
 
     'nav' => [
         'dashboard' => 'Tableau de bord',
@@ -11,7 +11,7 @@ return [
     ],
 
     'hero' => [
-        'title'         => 'Bienvenue sur AureusERP',
+        'title'         => 'Bienvenue sur DEKA Central',
         'subtitle'      => 'Une solution moderne de progiciel de gestion intégré',
         'description'   => "Simplifiez vos opérations commerciales avec notre système ERP complet. Gérez les ventes, les achats, l'inventaire, la comptabilité et bien plus depuis une seule plateforme.",
         'cta_primary'   => 'Commencer',
@@ -55,7 +55,7 @@ return [
 
     'cta' => [
         'title'       => 'Prêt à transformer votre entreprise ?',
-        'description' => 'Rejoignez des milliers d\'entreprises qui font confiance à AureusERP pour leurs opérations quotidiennes.',
+        'description' => 'Rejoignez des milliers d\'entreprises qui font confiance à DEKA Central pour leurs opérations quotidiennes.',
         'button'      => "Démarrer l'essai gratuit",
     ],
 

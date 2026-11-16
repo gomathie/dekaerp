@@ -9,7 +9,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentView;
 use Filament\Tables\Table;
 use Filament\View\PanelsRenderHook;
-use Illuminate\Support\Facades\Blade;
+use Webkul\Support\Filament\Pages\WhatsNew;
 
 trait HasFilamentDefaults
 {
@@ -28,27 +28,24 @@ trait HasFilamentDefaults
 
     protected function registerHooks(): void
     {
-        $version = '1.5.0';
-
+        // What's New and the version, in the profile menu (WN-5; moved out of
+        // the top bar, user 2026-11-12), with a dot while the newest release
+        // is one this user has not opened (D-WN-2).
         FilamentView::registerRenderHook(
             PanelsRenderHook::USER_MENU_PROFILE_BEFORE,
-            fn (): string => Blade::render(<<<'BLADE'
-                <x-filament::dropdown.list>
-                    <x-filament::dropdown.list.item>
-                        <div class="flex items-center gap-2">
-                            <img
-                                src="{{ url('cache/logo.png') }}"
-                                width="24"
-                                height="24"
-                            />
+            function (): string {
+                if (filament()->getCurrentPanel()?->getId() !== 'admin' || ! WhatsNew::canAccess()) {
+                    return '';
+                }
 
-                            {{ __('support::support.version', ['version' => $version]) }}
-                        </div>
-                    </x-filament::dropdown.list.item>
-                </x-filament::dropdown.list>
-            BLADE, [
-                'version' => $version,
-            ]),
+                return view('support::whats-new-shortcut', [
+                    'url'     => WhatsNew::getUrl(),
+                    'unseen'  => WhatsNew::hasUnseenRelease(),
+                    // From config, not a literal: this said 1.5.0 while
+                    // production ran 1.7.0 (2026-11-12).
+                    'version' => (string) config('app.version'),
+                ])->render();
+            },
         );
     }
 }

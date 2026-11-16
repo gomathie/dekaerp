@@ -6,7 +6,11 @@ use Filament\Panel;
 use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
 use Livewire\Livewire;
+use Webkul\Accounting\Filament\OverviewCard;
+use Webkul\Accounting\Filament\Widgets\AccountingHeadlineWidget;
 use Webkul\Accounting\Filament\Widgets\JournalChartWidget;
+use Webkul\Invoice\Filament\Overview\OverviewRegistry;
+use Webkul\Support\Filament\Contributions\DashboardCardRegistry;
 use Webkul\Accounting\Livewire\InvoiceSummary;
 use Webkul\PluginManager\Console\Commands\InstallCommand;
 use Webkul\PluginManager\Console\Commands\UninstallCommand;
@@ -39,6 +43,41 @@ class AccountingServiceProvider extends PackageServiceProvider
         $this->registerCustomCss();
 
         $this->registerLivewireComponents();
+
+        $this->contributeOverview();
+    }
+
+    /**
+     * Accounting on the combined Overview (plan A5): its card on the All tab,
+     * and a section with headline figures, a "needs attention" item and a
+     * quick action. The Overview belongs to Invoices, which Accounting does
+     * not depend on, so the section is added only when that registry exists.
+     * Both registries are keyed, so a second boot replaces, not duplicates.
+     */
+    protected function contributeOverview(): void
+    {
+        DashboardCardRegistry::card(
+            'accounting',
+            fn (): bool  => OverviewCard::visible(),
+            fn (): array => OverviewCard::data(),
+            sort: 5,
+        );
+
+        if (! class_exists(OverviewRegistry::class)) {
+            return;
+        }
+
+        OverviewRegistry::register(
+            'accounting',
+            fn (): string => __('accounting::filament/overview-card.label'),
+            [],
+            fn (): array => [],
+            fn (): bool  => OverviewCard::visible(),
+            sort: 35,
+            headline: AccountingHeadlineWidget::class,
+            attention: fn (): array => OverviewCard::attention(),
+            actions: fn (): array => OverviewCard::actions(),
+        );
     }
 
     public function packageRegistered(): void

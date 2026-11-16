@@ -19,6 +19,11 @@ use Malzariey\FilamentDaterangepickerFilter\Fields\DateRangePicker;
 class DashboardDateRange
 {
     /**
+     * A full range ("01/01/2026 - 31/12/2026") needs about twice a filter
+     * column on a seven-filter row, so dashboards with that many filters pass a
+     * wider span; the others keep the default single column.
+     *
+     * @param  array<string, int>|int|null  $columnSpan
      * @return array<int, Component>
      */
     public static function make(
@@ -26,10 +31,12 @@ class DashboardDateRange
         string $startKey = 'startDate',
         string $endKey = 'endDate',
         string $name = 'date_range',
+        array|int|null $columnSpan = null,
     ): array {
         return [
             DateRangePicker::make($name)
                 ->label($label)
+                ->columnSpan($columnSpan ?? 1)
                 ->suffixIcon('heroicon-o-calendar')
                 ->defaultThisYear()
                 ->ranges(static::ranges())

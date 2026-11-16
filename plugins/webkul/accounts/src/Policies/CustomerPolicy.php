@@ -8,7 +8,7 @@ use Webkul\Security\Models\User;
 
 class CustomerPolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, Concerns\ChecksAccountEntitlement;
 
     /**
      * Determine whether the user can view any models.

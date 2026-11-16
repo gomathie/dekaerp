@@ -2,6 +2,10 @@
 
 namespace Webkul\TimeOff\Filament\Pages;
 
+
+
+use Webkul\Support\Filament\Concerns\ChecksPagePermission;
+use Webkul\PluginManager\Support\PluginEntitlement;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Pages\Dashboard as BaseDashboard;
@@ -11,9 +15,22 @@ use Webkul\TimeOff\Filament\Widgets\MyTimeOffWidget;
 
 class Dashboard extends BaseDashboard
 {
+    use ChecksPagePermission;
     use HasPageShield;
 
     protected static string $routePath = 'time-off';
+
+    /*
+     * getRouteName() is deliberately NOT overridden.
+     *
+     * It used to return the hardcoded 'filament.admin.pages.time-off-dashboard'.
+     * This page lives in the MyTime cluster, so Filament registers it as
+     * 'filament.admin.time-off.dashboard...' - the hardcoded name was not in
+     * the route table at all, and Page::getUrl() calls route() on whatever
+     * getRouteName() returns, so building the navigation item threw
+     * RouteNotFoundException and the page 500'd. Letting Filament answer means
+     * the name can never drift from the one it registered.
+     */
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-squares-2x2';
 
@@ -43,5 +60,10 @@ class Dashboard extends BaseDashboard
         return [
             MyTimeOffWidget::make(),
         ];
+    }
+    public static function canAccess(): bool
+    {
+        return PluginEntitlement::enabledForCurrent('time-off')
+            && static::hasPagePermission();
     }
 }

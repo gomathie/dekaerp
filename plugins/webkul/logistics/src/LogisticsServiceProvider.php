@@ -3,10 +3,19 @@
 namespace Webkul\Logistics;
 
 use Filament\Panel;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\RateLimiter;
 use Webkul\Chatter\Services\ChatterCleanupService;
+use Webkul\Invoice\Filament\Overview\OverviewRegistry;
+use Webkul\Logistics\Filament\Pages\Dashboard as LogisticsDashboard;
+use Webkul\Logistics\Filament\PartnerContributions;
+use Webkul\Logistics\Listeners\CreateShipmentFromOrder;
 use Webkul\Logistics\Models\Expense;
 use Webkul\Logistics\Models\Shipment;
 use Webkul\Logistics\Models\Trip;
+use Webkul\Logistics\Services\StopLinkService;
 use Webkul\Logistics\Support\LogisticsAccess;
 use Webkul\Logistics\Support\LogisticsSequences;
 use Webkul\Logistics\Support\UninstallGuard;
@@ -14,6 +23,8 @@ use Webkul\PluginManager\Console\Commands\InstallCommand;
 use Webkul\PluginManager\Console\Commands\UninstallCommand;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
+use Webkul\Sale\Events\OrderConfirmed;
+use Webkul\Support\Filament\Contributions\DashboardCardRegistry;
 use Webkul\Support\Services\SequenceService;
 
 class LogisticsServiceProvider extends PackageServiceProvider
@@ -48,8 +59,15 @@ class LogisticsServiceProvider extends PackageServiceProvider
                 '2026_10_01_000017_create_logistics_shipment_charge_taxes_table',
                 '2026_10_01_000018_create_logistics_expenses_table',
                 '2026_10_01_000019_create_logistics_shipment_invoices_table',
+                '2026_10_01_000020_add_pod_capture_options_to_logistics_tables',
+                '2026_10_21_000001_add_confidential_fields_to_logistics_shipments_table',
+                '2026_10_21_000002_add_product_fields_to_logistics_shipment_lines_table',
+                '2026_10_21_000003_add_telematics_to_logistics_company_settings_table',
+                '2026_10_21_000004_add_location_to_logistics_vehicles_table',
+                '2026_10_21_000005_add_telematics_agent_id_to_logistics_vehicles_table',
             ])
             ->runsMigrations()
+            ->hasRoutes(['web'])
             ->hasDependencies([
                 'products',
                 'employees',
@@ -76,6 +94,69 @@ class LogisticsServiceProvider extends PackageServiceProvider
             ->icon('logistics');
     }
 
+    public function packageBooted(): void
+    {
+        // The Logistics card on the Overview (2026-11-13). Keyed: re-booting replaces it.
+        DashboardCardRegistry::card(
+            'logistics',
+            fn (): bool  => Filament\OverviewCard::visible(),
+            fn (): array => Filament\OverviewCard::data(),
+            sort: 50,
+        );
+
+        // A Logistics tab on the Overview (user, 2026-11-14), only when
+        // Invoices, which owns the Overview, is installed.
+        if (class_exists(OverviewRegistry::class)) {
+            OverviewRegistry::register(
+                'logistics',
+                fn (): string => __('logistics::filament/pages/dashboard.navigation.title'),
+                LogisticsDashboard::sectionWidgets(),
+                fn (): array => [],
+                fn (): bool  => LogisticsDashboard::canAccess(),
+                sort: 70,
+            );
+        }
+
+        $this->registerStopLinkRateLimiter();
+        PartnerContributions::register();
+    }
+
+    /**
+     * Throttle for the public POD capture route (WP-5b).
+     *
+     * Defined in this plugin rather than in AppServiceProvider so it goes away
+     * with the plugin. Two limits apply at once, and Laravel enforces both:
+     *
+     *  - **Per token**, the primary one. This is a multi-tenant application and
+     *    drivers share mobile carrier NAT addresses, so keying only on the IP
+     *    would let one company's drivers spend another company's budget. Each
+     *    company can set its own limit; the default covers a driver opening one
+     *    link and submitting it once, with room for a retry.
+     *  - **Per IP**, much higher, as a second layer against someone walking the
+     *    token space from one address.
+     *
+     * The token is hashed into the cache key. Keying on the plaintext would put
+     * a live credential into the cache store, where it does not belong.
+     *
+     * Laravel's ThrottleRequests answers a breach with 429 and a Retry-After
+     * header of its own, so nothing here has to build that response.
+     *
+     * @return array<int, Limit>
+     */
+    protected function registerStopLinkRateLimiter(): void
+    {
+        RateLimiter::for('logistics-stop-link', function (Request $request): array {
+            $token = (string) $request->route('token');
+
+            return [
+                Limit::perMinute(StopLinkService::rateLimitFor($token))
+                    ->by('logistics-stop-link:token:'.hash('sha256', $token)),
+                Limit::perMinute((int) config('logistics.stop_link.per_ip_per_minute', 120))
+                    ->by('logistics-stop-link:ip:'.$request->ip()),
+            ];
+        });
+    }
+
     public function packageRegistered(): void
     {
         $this->app->scoped(LogisticsAccess::class);
@@ -83,5 +164,34 @@ class LogisticsServiceProvider extends PackageServiceProvider
         Panel::configureUsing(function (Panel $panel): void {
             $panel->plugin(LogisticsPlugin::make());
         });
+
+        $this->registerSalesIntegration();
+    }
+
+    /**
+     * Listen for confirmed sales orders (D1).
+     *
+     * Registration is unconditional on purpose, and deliberately does NOT try
+     * to decide here whether Sales is in use:
+     *
+     *  - Plugin installation is global, not per company. Sales being installed
+     *    says nothing about whether *this* company sells, and Logistics being
+     *    installed says nothing about whether this company ships.
+     *  - `Package::isPluginInstalled()` reads the database. This runs at
+     *    register time, before the database is necessarily reachable, and a
+     *    boot-time query against the plugins table is what made
+     *    `package:discover` hang for five minutes once already.
+     *  - class_exists() would be no help either: every plugin's files are
+     *    present in this monorepo whether or not it is installed.
+     *
+     * Nothing is needed. If Sales is not installed its tables do not exist, no
+     * order can be confirmed, and the event never fires. If Sales is installed
+     * but a company does not use Logistics, ShipmentFromOrder::shouldConvert()
+     * declines on the per-company switch. The decision belongs there, once, in
+     * a place that can be tested - not spread across boot.
+     */
+    protected function registerSalesIntegration(): void
+    {
+        Event::listen(OrderConfirmed::class, CreateShipmentFromOrder::class);
     }
 }

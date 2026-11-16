@@ -2,6 +2,8 @@
 
 namespace Webkul\Purchase\Filament\Admin\Clusters\Settings\Pages;
 
+
+use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\SettingsPage;
@@ -10,10 +12,19 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\HtmlString;
 use Webkul\Purchase\Filament\Admin\Clusters\Configurations\Resources\PackagingResource;
 use Webkul\Purchase\Settings\ProductSettings;
+use Webkul\Purchase\Support\PurchasesAccess;
 use Webkul\Support\Filament\Clusters\Settings;
 
 class ManageProducts extends SettingsPage
 {
+    public static function canAccess(): bool
+    {
+        return PurchasesAccess::enabledForCurrent()
+            && static::hasPagePermission();
+    }
+
+    use ChecksPagePermission;
+
     use HasPageShield;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-cube';

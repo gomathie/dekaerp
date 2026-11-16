@@ -20,10 +20,13 @@ use Webkul\Account\Enums\JournalType;
 use Webkul\Account\Models\Account;
 use Webkul\Account\Models\Journal;
 use Webkul\Logistics\Enums\CapacityCheck;
+use Webkul\Logistics\Enums\TelematicsProvider;
 use Webkul\Logistics\Filament\Clusters\Configurations;
 use Webkul\Logistics\Models\CompanySetting;
 use Webkul\Logistics\Models\ServiceType;
 use Webkul\Logistics\Services\CompanyProvisioner;
+use Webkul\Logistics\Services\PilotClient;
+use Webkul\Logistics\Services\StopLinkService;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Services\CompanyContext;
 
@@ -87,6 +90,7 @@ class ManageCompanySettings extends Page
             ->disabled(! $companyId)
             ->components([
                 Section::make(__(static::$lang.'.sections.status'))
+                    ->compact()
                     ->schema([
                         TextEntry::make('status')
                             ->hiddenLabel()
@@ -104,22 +108,42 @@ class ManageCompanySettings extends Page
                     ]),
 
                 Section::make(__(static::$lang.'.sections.delivery'))
+                    ->compact()
                     ->columns(2)
                     ->schema([
                         Toggle::make('require_pod_for_delivery')
                             ->label(__(static::$lang.'.fields.require-pod-for-delivery')),
                         Toggle::make('require_pod_photo')
                             ->label(__(static::$lang.'.fields.require-pod-photo')),
-                        TextInput::make('stop_link_ttl_hours')
+                        Toggle::make('capture_driver_on_pod')
+                            ->label(__(static::$lang.'.fields.capture-driver-on-pod'))
+                            ->helperText(__(static::$lang.'.fields.capture-driver-on-pod-help')),
+                        Toggle::make('capture_recipient_id')
+                            ->label(__(static::$lang.'.fields.capture-recipient-id'))
+                            ->helperText(__(static::$lang.'.fields.capture-recipient-id-help')),
+                        // A fixed set rather than free text: the value is how
+                        // long a credential that travels in a URL stays usable,
+                        // so it is a deliberate choice from sensible options,
+                        // not a number to mistype.
+                        Select::make('stop_link_ttl_hours')
                             ->label(__(static::$lang.'.fields.stop-link-ttl-hours'))
+                            ->helperText(__(static::$lang.'.fields.stop-link-ttl-hours-help'))
+                            ->options(StopLinkService::ttlOptions())
+                            ->default(24)
+                            ->selectablePlaceholder(false)
+                            ->required(),
+                        TextInput::make('stop_link_rate_limit')
+                            ->label(__(static::$lang.'.fields.stop-link-rate-limit'))
+                            ->helperText(__(static::$lang.'.fields.stop-link-rate-limit-help'))
                             ->numeric()
                             ->integer()
                             ->minValue(1)
-                            ->maxValue(168)
-                            ->required(),
+                            ->maxValue(600)
+                            ->placeholder((string) config('logistics.stop_link.per_token_per_minute')),
                     ]),
 
                 Section::make(__(static::$lang.'.sections.operations'))
+                    ->compact()
                     ->columns(2)
                     ->schema([
                         Select::make('default_service_type_id')
@@ -146,6 +170,7 @@ class ManageCompanySettings extends Page
                     ]),
 
                 Section::make(__(static::$lang.'.sections.accounting'))
+                    ->compact()
                     ->columns(2)
                     ->schema([
                         Select::make('invoice_journal_id')
@@ -162,6 +187,50 @@ class ManageCompanySettings extends Page
                             ->searchable(),
                         Toggle::make('expense_approval_required')
                             ->label(__(static::$lang.'.fields.expense-approval-required')),
+                    ]),
+
+                Section::make(__(static::$lang.'.sections.integrations'))
+                    ->description(__(static::$lang.'.sections.integrations-description'))
+                    ->icon('heroicon-o-signal')
+                    ->compact()
+                    ->columns(2)
+                    ->schema([
+                        Select::make('telematics_provider')
+                            ->label(__(static::$lang.'.fields.telematics-provider'))
+                            ->helperText(__(static::$lang.'.fields.telematics-provider-helper'))
+                            ->options(TelematicsProvider::options())
+                            ->native(false)
+                            ->live()
+                            ->columnSpanFull(),
+                        TextInput::make('telematics_server')
+                            ->label(__(static::$lang.'.fields.telematics-server'))
+                            ->helperText(__(static::$lang.'.fields.telematics-server-helper'))
+                            ->placeholder(fn ($get): ?string => $get('telematics_provider') === TelematicsProvider::PILOT->value
+                                ? 'https://africa.pilot-gps.com'
+                                : null)
+                            ->url()
+                            ->maxLength(500)
+                            ->visible(fn ($get): bool => filled($get('telematics_provider'))),
+                        TextInput::make('telematics_options.node')
+                            ->label(__(static::$lang.'.fields.telematics-node'))
+                            ->helperText(__(static::$lang.'.fields.telematics-node-helper'))
+                            ->numeric()
+                            ->integer()
+                            ->minValue(1)
+                            ->default(1)
+                            ->visible(fn ($get): bool => $get('telematics_provider') === TelematicsProvider::PILOT->value),
+                        TextInput::make('telematics_username')
+                            ->label(__(static::$lang.'.fields.telematics-username'))
+                            ->autocomplete('off')
+                            ->maxLength(255)
+                            ->visible(fn ($get): bool => filled($get('telematics_provider'))),
+                        TextInput::make('telematics_password')
+                            ->label(__(static::$lang.'.fields.telematics-password'))
+                            ->password()
+                            ->revealable()
+                            ->autocomplete('new-password')
+                            ->maxLength(255)
+                            ->visible(fn ($get): bool => filled($get('telematics_provider'))),
                     ]),
             ]);
     }
@@ -194,6 +263,17 @@ class ManageCompanySettings extends Page
         $data = $this->form->getState();
 
         $setting = CompanySetting::forCompany($company->id);
+
+        // Credential fields are not pre-filled for security. Preserve the
+        // stored value when the user submits without entering a new one.
+        if (blank($data['telematics_username'] ?? null) && $setting->exists) {
+            unset($data['telematics_username']);
+        }
+
+        if (blank($data['telematics_password'] ?? null) && $setting->exists) {
+            unset($data['telematics_password']);
+        }
+
         $setting->fill(collect($data)->only(static::editableFields())->all());
         $setting->save();
 
@@ -206,6 +286,42 @@ class ManageCompanySettings extends Page
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('telematics_sync')
+                ->label(__(static::$lang.'.actions.telematics-sync.label'))
+                ->icon('heroicon-o-arrow-path')
+                ->color('info')
+                // Only PILOT has a driver today. A second provider needs its own
+                // client and a resolver here, not a widened condition.
+                ->visible(fn (): bool => $this->setting()?->hasTelematics()
+                    && $this->setting()?->telematics_provider === TelematicsProvider::PILOT)
+                ->requiresConfirmation()
+                ->modalHeading(__(static::$lang.'.actions.telematics-sync.heading'))
+                ->modalDescription(__(static::$lang.'.actions.telematics-sync.description'))
+                ->action(function (): void {
+                    $company = $this->company();
+
+                    if (! $company) {
+                        return;
+                    }
+
+                    $settings = CompanySetting::forCompany($company->id);
+
+                    try {
+                        $result = app(PilotClient::class)->syncFleet($company, $settings);
+
+                        Notification::make()
+                            ->success()
+                            ->title(__(static::$lang.'.actions.telematics-sync.notification', $result))
+                            ->send();
+                    } catch (\Throwable $e) {
+                        Notification::make()
+                            ->danger()
+                            ->title(__(static::$lang.'.actions.telematics-sync.error'))
+                            ->body($e->getMessage())
+                            ->send();
+                    }
+                }),
+
             Action::make('enable')
                 ->label(__(static::$lang.'.actions.enable.label'))
                 ->icon('heroicon-o-power')
@@ -255,6 +371,9 @@ class ManageCompanySettings extends Page
             'require_pod_for_delivery',
             'require_pod_photo',
             'stop_link_ttl_hours',
+            'stop_link_rate_limit',
+            'capture_driver_on_pod',
+            'capture_recipient_id',
             'default_service_type_id',
             'capacity_check',
             'overdue_grace_minutes',
@@ -263,6 +382,11 @@ class ManageCompanySettings extends Page
             'bill_journal_id',
             'default_expense_account_id',
             'expense_approval_required',
+            'telematics_provider',
+            'telematics_server',
+            'telematics_username',
+            'telematics_password',
+            'telematics_options',
         ];
     }
 

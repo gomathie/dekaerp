@@ -44,11 +44,26 @@
                 {{-- Module menu trigger: toggles sidebar collapse on desktop/tablet, opens the drawer on mobile --}}
                 <x-filament::icon-button
                     icon="icon-menu"
+                    color="gray"
                     x-data="{}"
                     x-on:click="$store.moduleSidebar.primaryToggle()"
                     :label="__('filament-panels::layout.actions.sidebar.expand.label')"
                     class="fi-topbar-module-sidebar-toggle"
                 />
+
+                {{-- Phones (2026-11-10, mobile plan P2): one labelled 44px Menu
+                     button replaces the two unlabelled 24px icons. It opens the
+                     module drawer, which also lists this module's pages. --}}
+                <button
+                    type="button"
+                    x-data="{}"
+                    x-on:click="$store.moduleSidebar.primaryToggle()"
+                    class="module-mobile-menu-btn"
+                    aria-label="{{ __('admin.mobile-menu.menu') }}"
+                >
+                    <x-filament::icon :icon="\Filament\Support\Icons\Heroicon::OutlinedBars3" class="module-mobile-menu-icon" />
+                    <span>{{ __('admin.mobile-menu.menu') }}</span>
+                </button>
             @endif
         @endif
 
@@ -301,6 +316,33 @@
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_END) }}
     </nav>
 
+    {{-- Phones only (user, 2026-11-12: the drawer listing this module's pages
+         above every module was cumbersome). The current module's pages sit in
+         a one-line strip under the top bar, as on desktop; the drawer lists
+         modules only. Under 768px the top bar itself hides these links. --}}
+    @if ($isAdminPanel && $hasNavigation)
+        @php
+            $activeModuleGroup = collect($navigation)->first(fn ($group) => $group->isActive());
+            $modulePages = $activeModuleGroup
+                ? $activeModuleGroup->getItems()->flatMap(fn ($item) => [$item, ...$item->getChildItems()])->filter(fn ($entry) => filled($entry->getUrl()))
+                : collect();
+        @endphp
+
+        @if ($modulePages->count() > 1)
+            <nav class="module-mobile-tabs" aria-label="{{ $activeModuleGroup->getLabel() }}"
+                x-data="{}"
+                x-init="$el.querySelector('[aria-current=page]')?.scrollIntoView({ block: 'nearest', inline: 'center' })">
+                @foreach ($modulePages as $entry)
+                    <a href="{{ $entry->getUrl() }}"
+                        @class(['module-mobile-tab', 'is-active' => $entry->isActive()])
+                        @if ($entry->isActive()) aria-current="page" @endif>
+                        {{ $entry->getLabel() }}
+                    </a>
+                @endforeach
+            </nav>
+        @endif
+    @endif
+
     <x-filament-actions::modals />
 
 @if ($isAdminPanel && $hasNavigation)
@@ -337,16 +379,33 @@
             </div>
 
             <nav class="module-sidebar-nav">
+                @php
+                    $previousSection = null;
+                @endphp
+
                 @foreach ($navigation as $group)
                     @php
                         $groupLabel = $group->getLabel();
                         $groupIcon = $group->getIcon();
                         $itemUrl = $group->getItems()->first()?->getUrl();
+                        $groupCase = $group->getItems()->first()?->getGroup();
+                        $section = $groupCase instanceof \Webkul\Support\Enums\NavigationGroup ? $groupCase->section() : null;
                     @endphp
 
                     @if (! $groupLabel || ! $itemUrl || ! $groupIcon)
                         @continue
                     @endif
+
+                    {{-- Section heading (user, 2026-11-10): modules keep their place; a heading groups them. --}}
+                    @if ($section !== null && $section !== $previousSection)
+                        <div class="module-sidebar-section" role="presentation">
+                            <span class="module-sidebar-section-label">{{ $groupCase->getSectionLabel() }}</span>
+                        </div>
+                    @endif
+
+                    @php
+                        $previousSection = $section;
+                    @endphp
 
                     <div
                         @class([
@@ -382,13 +441,78 @@
             <style>
                 @verbatim
                 :root {
-                    --module-sidebar-width: 200px;
+                    /* 240px, up from 200px: customers found module names
+                       too cramped (user, 2026-11-11). */
+                    --module-sidebar-width: 240px;
                     --module-sidebar-width-collapsed: 72px;
                     --module-topbar-height: 4rem;
                 }
 
+                /* The module's page strip wrapped onto a second line between
+                   about 1024px and 1200px, putting "Logistics" under the
+                   module title (user, 2026-11-11). Keep it on one line and
+                   let it scroll sideways; its entries are plain links, so
+                   there is no dropdown to clip. */
+                .fi-topbar-nav-groups {
+                    flex-wrap: nowrap;
+                    min-width: 0;
+                    overflow-x: auto;
+                    overflow-y: hidden;
+                    scrollbar-width: none;
+                }
+
+                .fi-topbar-nav-groups::-webkit-scrollbar {
+                    display: none;
+                }
+
+                .fi-topbar-nav-groups > li {
+                    flex-shrink: 0;
+                    white-space: nowrap;
+                }
+
+                /* Dashboards scroll without a visible scrollbar (user,
+                   2026-11-11). A dashboard is a page with widgets that is not
+                   a resource page; resource lists keep theirs, because their
+                   header widgets would otherwise match too. Scrolling by
+                   wheel, touch and keyboard is unchanged. */
+                html:has(.fi-wi-widget):not(:has(.fi-page[class*="fi-resource-"])) {
+                    scrollbar-width: none;
+                }
+
+                html:has(.fi-wi-widget):not(:has(.fi-page[class*="fi-resource-"]))::-webkit-scrollbar {
+                    display: none;
+                }
+
+                /* The profile avatar was a dark circle on a dark bar in dark
+                   mode, so people could not find the profile menu (user,
+                   2026-11-11). A ring in the accent colour marks it in both
+                   themes; a brighter one on hover and keyboard focus. */
+                .fi-topbar .fi-user-menu-trigger .fi-avatar {
+                    box-shadow: 0 0 0 2px var(--color-white, #fff), 0 0 0 4px #F59E0B;
+                }
+
+                .dark .fi-topbar .fi-user-menu-trigger .fi-avatar {
+                    box-shadow: 0 0 0 2px var(--color-gray-900, #111827), 0 0 0 4px #FBBF24;
+                }
+
+                .fi-topbar .fi-user-menu-trigger:hover .fi-avatar,
+                .fi-topbar .fi-user-menu-trigger:focus-visible .fi-avatar {
+                    box-shadow: 0 0 0 2px var(--color-white, #fff), 0 0 0 4px #D97706;
+                }
+
+                .dark .fi-topbar .fi-user-menu-trigger:hover .fi-avatar,
+                .dark .fi-topbar .fi-user-menu-trigger:focus-visible .fi-avatar {
+                    box-shadow: 0 0 0 2px var(--color-gray-900, #111827), 0 0 0 4px #FDE68A;
+                }
+
                 /* Topbar stays full-width and sits above the sidebar; only the content column is pushed over (tablet & up) */
                 @media (min-width: 768px) {
+                    /* Lists always show on wider screens, so their phone-only
+                       toggle is not offered there (2026-11-11). */
+                    .dashboard-lists-toggle {
+                        display: none !important;
+                    }
+
                     html.module-sidebar-ready .fi-layout {
                         padding-inline-start: var(--module-sidebar-width);
                         transition: padding-inline-start 0.25s ease;
@@ -471,6 +595,19 @@
                     padding: 0.5rem;
                 }
 
+                /* Sidebars still scroll (wheel, touch, keyboard) but show no
+                   scrollbar (user, 2026-11-11). */
+                .module-sidebar-nav,
+                .fi-sidebar-nav {
+                    scrollbar-width: none;
+                    -ms-overflow-style: none;
+                }
+
+                .module-sidebar-nav::-webkit-scrollbar,
+                .fi-sidebar-nav::-webkit-scrollbar {
+                    display: none;
+                }
+
                 .module-sidebar-link {
                     display: flex;
                     align-items: center;
@@ -500,9 +637,14 @@
                     color: #fff;
                 }
 
+                /* Outline module icons (resources/svg, user 2026-11-11):
+                   they fill their whole box, unlike the old tiled ones
+                   whose artwork showed at ~15px, so 22px reads clearly.
+                   Main strokes use currentColor (dark, light in dark mode,
+                   brand when active); the accent stays #F59E0B. */
                 .module-sidebar-icon {
-                    width: 1.5rem;
-                    height: 1.5rem;
+                    width: 1.375rem;
+                    height: 1.375rem;
                     flex-shrink: 0;
                 }
 
@@ -518,9 +660,41 @@
                     color: var(--primary-300, #93c5fd);
                 }
 
-                /* Collapsed: icons only */
-                .module-sidebar.is-collapsed .module-sidebar-label {
+                /* Section headings */
+                .module-sidebar-section {
+                    margin-block-start: 0.75rem;
+                    padding: 0.25rem 0.625rem;
+                    border-block-start: 1px solid var(--gray-200, #e5e7eb);
+                }
+
+                .dark .module-sidebar-section {
+                    border-block-start-color: var(--gray-800, #1f2937);
+                }
+
+                .module-sidebar-section-label {
+                    display: block;
+                    padding-block-start: 0.5rem;
+                    color: var(--gray-500, #6b7280);
+                    font-size: 0.6875rem;
+                    font-weight: 600;
+                    letter-spacing: 0.06em;
+                    text-transform: uppercase;
+                    white-space: nowrap;
+                }
+
+                .dark .module-sidebar-section-label {
+                    color: var(--gray-400, #9ca3af);
+                }
+
+                /* Collapsed: icons only; a heading shrinks to its divider */
+                .module-sidebar.is-collapsed .module-sidebar-label,
+                .module-sidebar.is-collapsed .module-sidebar-section-label {
                     display: none;
+                }
+
+                .module-sidebar.is-collapsed .module-sidebar-section {
+                    margin-block-start: 0.375rem;
+                    padding-block: 0.375rem 0;
                 }
 
                 .module-sidebar.is-collapsed .module-sidebar-link {
@@ -564,7 +738,8 @@
                         width: var(--module-sidebar-width);
                     }
 
-                    .module-sidebar.is-collapsed .module-sidebar-label {
+                    .module-sidebar.is-collapsed .module-sidebar-label,
+                    .module-sidebar.is-collapsed .module-sidebar-section-label {
                         display: inline;
                     }
 
@@ -575,6 +750,305 @@
 
                     .module-sidebar-header {
                         display: flex;
+                    }
+                }
+
+                /* ---- Mobile plan P1-P6 (2026-11-10). Phones only; desktop from
+                   768px up is untouched. See docs/mobile-view-plan.md. ---- */
+
+                /* P2: the labelled Menu button and the page strip exist on phones only. */
+                .module-mobile-menu-btn,
+                .module-mobile-tabs {
+                    display: none;
+                }
+
+                @media (max-width: 767px) {
+                    /* P2: one Menu button replaces the two unlabelled 24px icons.
+                       Filament's own page-sidebar toggles go: the drawer now lists
+                       this module's pages too. */
+                    .fi-topbar-open-sidebar-btn,
+                    .fi-topbar-close-sidebar-btn,
+                    .fi-topbar-module-sidebar-toggle {
+                        display: none !important;
+                    }
+
+                    .module-mobile-menu-btn {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 0.375rem;
+                        min-block-size: 44px;
+                        min-inline-size: 44px;
+                        padding-inline: 0.5rem;
+                        border-radius: 0.5rem;
+                        color: var(--gray-700, #374151);
+                        font-size: 0.875rem;
+                        font-weight: 600;
+                        flex-shrink: 0;
+                    }
+
+                    .dark .module-mobile-menu-btn {
+                        color: var(--gray-200, #e5e7eb);
+                    }
+
+                    .module-mobile-menu-icon {
+                        inline-size: 1.5rem;
+                        block-size: 1.5rem;
+                    }
+
+                    /* This module's pages: one scrolling line under the top bar. */
+                    .module-mobile-tabs {
+                        display: flex;
+                        gap: 0.25rem;
+                        padding: 0.375rem 0.5rem;
+                        overflow-x: auto;
+                        scrollbar-width: none;
+                        background-color: var(--color-white, #fff);
+                        border-block-end: 1px solid var(--gray-200, #e5e7eb);
+                        mask-image: linear-gradient(to right, #000 90%, transparent);
+                    }
+
+                    [dir='rtl'] .module-mobile-tabs {
+                        mask-image: linear-gradient(to left, #000 90%, transparent);
+                    }
+
+                    .module-mobile-tabs::-webkit-scrollbar {
+                        display: none;
+                    }
+
+                    .dark .module-mobile-tabs {
+                        background-color: var(--gray-900, #111827);
+                        border-block-end-color: var(--gray-800, #1f2937);
+                    }
+
+                    .module-mobile-tab {
+                        flex-shrink: 0;
+                        display: inline-flex;
+                        align-items: center;
+                        min-block-size: 40px;
+                        padding-inline: 0.75rem;
+                        border-radius: 999px;
+                        color: var(--gray-600, #4b5563);
+                        font-size: 0.875rem;
+                        font-weight: 500;
+                        white-space: nowrap;
+                        text-decoration: none;
+                    }
+
+                    .dark .module-mobile-tab {
+                        color: var(--gray-300, #d1d5db);
+                    }
+
+                    .module-mobile-tab.is-active {
+                        background-color: var(--primary-50, #eff6ff);
+                        color: var(--primary-600, #2563eb);
+                        font-weight: 600;
+                    }
+
+                    .dark .module-mobile-tab.is-active {
+                        background-color: color-mix(in srgb, var(--primary-500, #3b82f6) 18%, transparent);
+                        color: var(--primary-300, #93c5fd);
+                    }
+
+                    .module-mobile-tab:focus-visible {
+                        outline: 2px solid var(--primary-500, #3b82f6);
+                        outline-offset: -2px;
+                    }
+
+                    .module-sidebar-link {
+                        min-block-size: 44px;
+                    }
+
+                    .module-sidebar {
+                        inline-size: min(85vw, 300px);
+                    }
+
+                    /* P3: the top bar fits; bell and avatar stay whole. */
+                    .fi-topbar {
+                        gap: 0.25rem;
+                        padding-inline: 0.5rem;
+                    }
+
+                    .fi-topbar-start {
+                        min-inline-size: 0;
+                    }
+
+                    .fi-topbar-end {
+                        min-inline-size: 0;
+                        gap: 0.25rem;
+                    }
+
+                    .company-switcher-name {
+                        display: inline-block;
+                        max-inline-size: 5.5rem;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        vertical-align: middle;
+                    }
+
+                    /* Search is an icon until tapped, then takes the room it needs. */
+                    .fi-global-search-field {
+                        max-inline-size: 2.75rem;
+                        transition: max-inline-size 0.2s ease;
+                    }
+
+                    .fi-global-search-field input::placeholder {
+                        color: transparent;
+                    }
+
+                    /* Capped by the screen width, and the company name steps
+                       aside while searching, so the bell and avatar stay on
+                       screen at 390px (review, 2026-11-11). */
+                    .fi-global-search-field:focus-within {
+                        max-inline-size: min(11rem, 40vw);
+                    }
+
+                    .fi-topbar:has(.fi-global-search-field:focus-within) .company-switcher-name {
+                        display: none;
+                    }
+
+                    /* The company switcher's 320px panel opened from the
+                       button's left edge and ran past the right of a 390px
+                       screen, cutting off its Reset button (user, 2026-11-11).
+                       On phones it is placed from the right with the page
+                       gutter, and never starts left of the screen. Only
+                       `left` is overridden: Filament sets its width inside a
+                       cascade layer, which this sheet cannot outrank. */
+                    /* Card lists (contentGrid: contacts, customers, vendors,
+                       employees, departments, candidates, jobs, projects,
+                       plugins) on phones (user, 2026-11-11; mobile plan P7).
+                       Cards were 212px with an empty picture row, and over
+                       300px with a logo drawn 200px tall, so a screen held
+                       about three. Now: the checkbox sits in the corner,
+                       a picture is a 48px thumbnail beside the name, and a
+                       missing picture takes no space. Only the card's outer
+                       stack turns sideways; its text column stays stacked. */
+                    .fi-ta-content-grid .fi-ta-record {
+                        position: relative;
+                    }
+
+                    .fi-ta-content-grid .fi-ta-record > .fi-ta-record-checkbox {
+                        position: absolute;
+                        top: 0.75rem;
+                        inset-inline-end: 0.75rem;
+                        margin: 0;
+                    }
+
+                    .fi-ta-content-grid .fi-ta-record-content > .fi-grid-col > .fi-ta-stack {
+                        flex-direction: row;
+                        align-items: flex-start;
+                        gap: 0.75rem;
+                        padding-inline-end: 1.5rem;
+                    }
+
+                    .fi-ta-content-grid .fi-ta-record-content > .fi-grid-col > .fi-ta-stack > .fi-ta-col:has(.fi-ta-image) {
+                        flex: 0 0 auto;
+                        width: auto;
+                    }
+
+                    .fi-ta-content-grid .fi-ta-record-content > .fi-grid-col > .fi-ta-stack > .fi-ta-col:has(.fi-ta-image):not(:has(img)) {
+                        display: none;
+                    }
+
+                    .fi-ta-content-grid .fi-ta-record-content > .fi-grid-col > .fi-ta-stack > .fi-grid-col:not(:has(.fi-ta-image)) {
+                        min-width: 0;
+                        flex: 1 1 auto;
+                    }
+
+                    .fi-ta-content-grid .fi-ta-image img {
+                        width: 3rem !important;
+                        height: 3rem !important;
+                        max-width: 3rem !important;
+                        object-fit: contain;
+                        border-radius: 0.5rem;
+                    }
+
+                    /* Dashboards on phones (user, 2026-11-11: "don't make the
+                       dashboard too long"). The Invoice dashboard was about
+                       4.5 screens: stat cards now sit two per row, and the
+                       "Top" lists stay hidden until the page's Show lists
+                       button adds .dashboard-show-lists. Filters fold by
+                       themselves (DashboardFilters). Charts stay. */
+                    [data-dashboard-widgets] .fi-wi-stats-overview .fi-section-content.fi-grid {
+                        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                        gap: 0.5rem;
+                    }
+
+                    /* Overview only (it has the Show details button): on a
+                       phone just "At a glance" shows; charts, detailed stats
+                       and lists wait for the button (user, 2026-11-11).
+                       Scoped to [data-overview]: other dashboards have no
+                       button, so hiding there would make lists unreachable. */
+                    [data-overview]:not(.dashboard-show-lists) .fi-wi-table,
+                    [data-overview]:not(.dashboard-show-lists) .fi-wi-chart,
+                    [data-overview]:not(.dashboard-show-lists) .fi-wi-stats-overview:not(:has(.overview-headline-stat)) {
+                        display: none;
+                    }
+
+                    .fi-dropdown-panel:has(.company-switcher-form) {
+                        left: max(0px, calc(100% - 20rem - 1rem)) !important;
+                    }
+
+                    .fi-topbar-end .fi-icon-btn,
+                    .fi-topbar-end .fi-user-menu-trigger {
+                        flex-shrink: 0;
+                    }
+
+                    /* P1: 16px fields, so iPhone Safari does not zoom in on focus. */
+                    .fi-body input:not([type='checkbox']):not([type='radio']):not([type='range']),
+                    .fi-body select,
+                    .fi-body textarea {
+                        font-size: 16px !important;
+                    }
+
+                    /* P4: tab strips scroll on one line, with a fade showing more. */
+                    .fi-tabs {
+                        flex-wrap: nowrap;
+                        overflow-x: auto;
+                        scrollbar-width: none;
+                        -webkit-overflow-scrolling: touch;
+                        mask-image: linear-gradient(to right, #000 85%, transparent);
+                    }
+
+                    [dir='rtl'] .fi-tabs {
+                        mask-image: linear-gradient(to left, #000 85%, transparent);
+                    }
+
+                    .fi-tabs::-webkit-scrollbar {
+                        display: none;
+                    }
+
+                    .fi-tabs-item {
+                        flex-shrink: 0;
+                        white-space: nowrap;
+                    }
+
+                    /* P5: fingertip-sized hit areas (padding, not bigger icons). */
+                    .fi-icon-btn {
+                        min-inline-size: 40px;
+                        min-block-size: 40px;
+                    }
+
+                    .fi-ta-actions .fi-link,
+                    .fi-pagination-item-btn {
+                        min-block-size: 40px;
+                        padding-block: 0.5rem;
+                    }
+
+                    /* P6: the record status bar scrolls on one line, not wraps. */
+                    .state-container {
+                        flex-wrap: nowrap !important;
+                        justify-content: flex-start !important;
+                        overflow-x: auto;
+                        scrollbar-width: none;
+                    }
+
+                    .state-container::-webkit-scrollbar {
+                        display: none;
+                    }
+
+                    .state-container .state {
+                        flex-shrink: 0;
                     }
                 }
                 @endverbatim

@@ -79,7 +79,7 @@ class TimesheetResource extends Resource
                 Select::make('user_id')
                     ->label(__('timesheets::filament/resources/timesheet.form.employee'))
                     ->required()
-                    ->relationship('user', 'name')
+                    ->relationship('user', 'name', fn ($query) => \Webkul\Support\Filament\CompanyMembers::scope($query))
                     ->searchable()
                     ->preload(),
                 Select::make('project_id')
@@ -226,7 +226,7 @@ class TimesheetResource extends Resource
                     }),
                 SelectFilter::make('user_id')
                     ->label(__('timesheets::filament/resources/timesheet.table.filters.employee'))
-                    ->relationship('user', 'name')
+                    ->relationship('user', 'name', fn ($query) => \Webkul\Support\Filament\CompanyMembers::scope($query))
                     ->searchable()
                     ->preload(),
                 SelectFilter::make('project_id')
@@ -241,7 +241,7 @@ class TimesheetResource extends Resource
                     ->preload(),
                 SelectFilter::make('creator_id')
                     ->label(__('timesheets::filament/resources/timesheet.table.filters.creator'))
-                    ->relationship('creator', 'name')
+                    ->relationship('creator', 'name', fn ($query) => \Webkul\Support\Filament\CompanyMembers::scope($query))
                     ->searchable()
                     ->preload(),
             ]))

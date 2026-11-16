@@ -18,6 +18,7 @@ use Webkul\Account\Enums\JournalType;
 use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Enums\TypeTaxUse;
+use Webkul\Account\Services\PeriodLock;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Currency;
@@ -269,6 +270,8 @@ class MoveLine extends Model implements Sortable
         });
 
         static::saving(function (MoveLine $line) {
+            $line->loadParentMoveWithoutScopes();
+
             $line->inheritFromMove();
 
             $line->computeUOMId();
@@ -284,7 +287,54 @@ class MoveLine extends Model implements Sortable
             $line->computeName();
 
             $line->computeTaxTagInvert();
+
+            // A2 lock date: no line of a posted entry in a closed month may
+            // gain, lose or change an amount or account.
+            app(PeriodLock::class)->assertLineWritable($line);
         });
+
+        static::deleting(function (MoveLine $line) {
+            app(PeriodLock::class)->assertLineWritable($line, deleting: true);
+        });
+    }
+
+    /**
+     * Put the owning move on the relation, read without global scopes.
+     *
+     * Everything in the saving chain below reads `$this->move` - around forty
+     * times - and `Move` carries both `BelongsToCompany` and a global
+     * `OwnershipScope`. So for an actor who does not own the move - an
+     * `individual` or `group` user; the column default is `global` since
+     * 2026-09-28, but neither of the other two is rare - the
+     * relation resolves to **null** and `inheritFromMove()` dies on
+     * `$this->move->name`. It also takes `company_id` from that same null, which
+     * is the tenant boundary for the line.
+     *
+     * Resolved once here rather than by loosening `move()` itself: the relation
+     * is what Filament and every read path use, and widening it would show a
+     * move to anyone who can see one of its lines. This only affects the write
+     * path, where the parent row is a fact about the document being saved and
+     * not a question about what the actor may look at. Authorization happens in
+     * the policy, before any of this runs.
+     *
+     * An already-loaded relation is left alone, so an eager-loaded or explicitly
+     * set move is not silently replaced.
+     */
+    protected function loadParentMoveWithoutScopes(): void
+    {
+        if ($this->relationLoaded('move') && $this->getRelation('move') !== null) {
+            return;
+        }
+
+        if (! $this->move_id) {
+            return;
+        }
+
+        $move = Move::withoutGlobalScopes()->find($this->move_id);
+
+        if ($move !== null) {
+            $this->setRelation('move', $move);
+        }
     }
 
     protected function inheritFromMove(): void

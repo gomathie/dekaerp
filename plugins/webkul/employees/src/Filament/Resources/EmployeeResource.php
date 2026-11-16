@@ -295,14 +295,14 @@ class EmployeeResource extends Resource
                                                 Fieldset::make(__('employees::filament/resources/employee.form.tabs.work-information.fields.approver'))
                                                     ->schema([
                                                         Select::make('leave_manager_id')
-                                                            ->options(fn () => User::pluck('name', 'id'))
+                                                            ->options(fn () => \Webkul\Support\Filament\CompanyMembers::options())
                                                             ->searchable()
                                                             ->preload()
                                                             ->live()
                                                             ->suffixIcon('heroicon-o-clock')
                                                             ->label(__('employees::filament/resources/employee.form.tabs.work-information.fields.time-off')),
                                                         Select::make('attendance_manager_id')
-                                                            ->options(fn () => User::pluck('name', 'id'))
+                                                            ->options(fn () => \Webkul\Support\Filament\CompanyMembers::options())
                                                             ->searchable()
                                                             ->preload()
                                                             ->live()
@@ -344,6 +344,10 @@ class EmployeeResource extends Resource
                                                                     ->searchable()
                                                                     ->preload()
                                                                     ->default(current_company_id())
+                                                                    // Required: an employee saved with no company is visible to
+                                                                    // every company, and clearing the field on edit would do that
+                                                                    // (docs/completed/company-admin-role-plan.md §4k).
+                                                                    ->required()
                                                                     ->live()
                                                                     ->afterStateUpdated(fn (Set $set, Get $get, $state) => clear_foreign_company_values($set, $get, [
                                                                         'job_id'           => EmployeeJobPosition::class,
@@ -923,7 +927,7 @@ class EmployeeResource extends Resource
                             ->label(__('employees::filament/resources/employee.table.filters.job-title'))
                             ->icon('heroicon-o-user-circle'),
                         DateConstraint::make('birthday')
-                            ->label(__('employees::filament/resources/employee.table.filters.birthdate'))
+                            ->label(__('employees::filament/resources/employee.table.filters.birth-date'))
                             ->icon('heroicon-o-cake'),
                         TextConstraint::make('work_email')
                             ->label(__('employees::filament/resources/employee.table.filters.work-email'))

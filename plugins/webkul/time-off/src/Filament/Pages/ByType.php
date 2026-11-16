@@ -2,6 +2,10 @@
 
 namespace Webkul\TimeOff\Filament\Pages;
 
+
+
+use Webkul\Support\Filament\Concerns\ChecksPagePermission;
+use Webkul\PluginManager\Support\PluginEntitlement;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Pages\Dashboard as BaseDashboard;
@@ -10,9 +14,17 @@ use Webkul\TimeOff\Filament\Widgets\LeaveTypeWidget;
 
 class ByType extends BaseDashboard
 {
+    use ChecksPagePermission;
     use HasPageShield;
 
     protected static string $routePath = 'reporting/by-type';
+
+    /*
+     * getRouteName() is deliberately NOT overridden - same latent bug as the
+     * MyTime dashboard. This page is in the Reporting cluster, so the hardcoded
+     * 'filament.admin.pages.time-off-by-type' was never a registered route
+     * name. It had not surfaced yet only because nobody had opened the page.
+     */
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-folder';
 
@@ -40,5 +52,10 @@ class ByType extends BaseDashboard
         return [
             LeaveTypeWidget::class,
         ];
+    }
+    public static function canAccess(): bool
+    {
+        return PluginEntitlement::enabledForCurrent('time-off')
+            && static::hasPagePermission();
     }
 }

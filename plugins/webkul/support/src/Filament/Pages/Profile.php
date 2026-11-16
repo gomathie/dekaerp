@@ -456,17 +456,20 @@ class Profile extends Page implements HasForms
                         $user->password = $data['password'];
                         $user->save();
 
-                        Notification::make()
-                            ->title(__('support::filament/pages/profile.password.notification.success.title'))
-                            ->body(__('support::filament/pages/profile.password.notification.success.body'))
-                            ->success()
-                            ->duration(3000)
-                            ->send();
-
                         if (request()->hasSession()) {
                             request()->session()->invalidate();
                             request()->session()->regenerateToken();
                         }
+
+                        // Sent after the session is renewed: sent before, the
+                        // invalidate threw it away and the user was signed out
+                        // without a word (U27, CR-3 run 2026-11-14).
+                        Notification::make()
+                            ->title(__('support::filament/pages/profile.password.notification.success.title'))
+                            ->body(__('support::filament/pages/profile.password.notification.signed-out'))
+                            ->success()
+                            ->persistent()
+                            ->send();
 
                         $action->cancel();
 

@@ -8,6 +8,7 @@ use Filament\Panel;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
+use Webkul\Support\Filament\Contributions\DashboardBannerContributions;
 
 class SupportPlugin implements Plugin
 {
@@ -53,6 +54,8 @@ class SupportPlugin implements Plugin
 
     public function boot(Panel $panel): void
     {
+        DashboardBannerContributions::register($panel);
+
         FilamentView::registerRenderHook(
             name: 'panels::scripts.before',
             hook: fn () => new HtmlString(html: "

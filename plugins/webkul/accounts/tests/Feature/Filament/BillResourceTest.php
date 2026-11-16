@@ -145,7 +145,7 @@ it('resets a posted bill to draft through the action', function () {
 
     Livewire::test(EditBill::class, ['record' => $bill->id])
         ->assertOk()
-        ->callAction(ResetToDraftAction::class);
+        ->callAction(ResetToDraftAction::class, data: ['reason' => 'Customer asked for a lower price']);
 
     expect($bill->refresh()->state)->toBe(MoveState::DRAFT);
 });

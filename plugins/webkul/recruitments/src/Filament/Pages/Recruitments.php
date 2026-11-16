@@ -6,25 +6,38 @@ use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms\Components\Select;
 use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Panel;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\View\LegacyComponents\Widget;
 use Illuminate\Contracts\Support\Htmlable;
 use Webkul\Employee\Models\Department;
 use Webkul\Employee\Models\EmployeeJobPosition;
+use Webkul\Invoice\Filament\Pages\Overview;
+use Webkul\PluginManager\Support\PluginEntitlement;
 use Webkul\Recruitment\Filament\Widgets\ApplicantChartWidget;
+use Webkul\Recruitment\Filament\Widgets\ApplicantsByStageChart;
 use Webkul\Recruitment\Filament\Widgets\JobPositionStatsWidget;
 use Webkul\Recruitment\Models\Stage;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 use Webkul\Support\Filament\Forms\Components\DashboardDateRange;
+use Webkul\Support\Filament\Forms\Components\DashboardFilters;
 use Webkul\Support\Models\Company;
 
 class Recruitments extends BaseDashboard
 {
     use BaseDashboard\Concerns\HasFiltersForm;
+    use ChecksPagePermission;
     use HasPageShield;
 
     protected static string $routePath = 'recruitment';
+
+    public static function getRouteName(?Panel $panel = null): string
+    {
+        return 'filament.admin.pages.recruitments';
+    }
 
     protected static function getPagePermission(): ?string
     {
@@ -50,7 +63,7 @@ class Recruitments extends BaseDashboard
     {
         return $schema
             ->components([
-                Section::make()
+                DashboardFilters::apply(Section::make())
                     ->schema([
                         Select::make('selectedJobs')
                             ->label(__('recruitments::filament/pages/recruitment.filters-form.job-position'))
@@ -100,8 +113,18 @@ class Recruitments extends BaseDashboard
                         'default' => 1,
                         'sm'      => 2,
                         'md'      => 3,
-                        'xl'      => 7,
+                        'xl'      => 6,
                     ]),
+            ]);
+    }
+
+    public function getWidgetsContentComponent(): Component
+    {
+        return parent::getWidgetsContentComponent()
+            ->extraAttributes([
+                'data-dashboard-widgets' => 'true',
+                'wire:loading.class'     => 'dashboard-widgets--loading',
+                'wire:target'            => 'filters',
             ]);
     }
 
@@ -110,9 +133,39 @@ class Recruitments extends BaseDashboard
      */
     public function getWidgets(): array
     {
+        return static::sectionWidgets();
+    }
+
+    /**
+     * The Recruitment tab of the combined Overview (user, 2026-11-14).
+     *
+     * @return list<class-string<Widget>>
+     */
+    public static function sectionWidgets(): array
+    {
         return [
             JobPositionStatsWidget::class,
             ApplicantChartWidget::class,
+            ApplicantsByStageChart::class,
         ];
+    }
+
+    /** Out of the menu when the Overview exists; old links open its tab. */
+    public static function shouldRegisterNavigation(): bool
+    {
+        return ! Overview::isAvailable();
+    }
+
+    public function mount(): void
+    {
+        if (Overview::isAvailable()) {
+            $this->redirect(Overview::getUrl(['section' => 'recruitment']));
+        }
+    }
+
+    public static function canAccess(): bool
+    {
+        return PluginEntitlement::enabledForCurrent('recruitments')
+            && static::hasPagePermission();
     }
 }

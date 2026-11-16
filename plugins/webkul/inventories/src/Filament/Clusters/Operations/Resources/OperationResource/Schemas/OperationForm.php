@@ -221,7 +221,7 @@ class OperationForm
                             ->schema([
                                 Select::make('user_id')
                                     ->label(__('inventories::filament/clusters/operations/resources/operation.form.tabs.additional.fields.responsible'))
-                                    ->relationship('user', 'name')
+                                    ->relationship('user', 'name', fn ($query) => \Webkul\Support\Filament\CompanyMembers::scope($query))
                                     ->searchable()
                                     ->preload()
                                     ->default(Auth::id())

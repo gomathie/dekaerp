@@ -13,6 +13,7 @@ use Spatie\Permission\Models\Role;
 use Throwable;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Package;
+use Webkul\PluginManager\Services\PluginEntitlementService;
 
 class InstallCommand extends Command
 {
@@ -160,7 +161,25 @@ class InstallCommand extends Command
             }
         }
 
+        // Read before updateOrCreate() marks the row installed. This command also
+        // runs for a plugin that is already installed - directly, and as a
+        // dependency of every plugin that needs it - so granting on each run
+        // would silently undo a revocation the moment anything that depends on
+        // the plugin was installed.
+        $wasInstalled = Plugin::query()
+            ->where('name', $this->package->name)
+            ->where('is_installed', true)
+            ->exists();
+
         $package = $this->package->updateOrCreate();
+
+        // A first install makes the plugin available to every company, which is
+        // what the 2026-10-22 migration preserved and what the per-company grants
+        // are an *opt-out* from. Without this, a plugin installed after the
+        // tenants existed would be reachable by nobody.
+        if (! $wasInstalled) {
+            app(PluginEntitlementService::class)->grantToEveryCompany($package);
+        }
 
         foreach ($this->package->dependencies as $dependencyName) {
             $dependency = Plugin::where('name', $dependencyName)->first();

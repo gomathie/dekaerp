@@ -2,6 +2,8 @@
 
 namespace Webkul\Sale\Filament\Clusters\Settings\Pages;
 
+
+use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms\Components\Toggle;
@@ -9,10 +11,19 @@ use Filament\Pages\SettingsPage;
 use Filament\Schemas\Schema;
 use UnitEnum;
 use Webkul\Sale\Settings\PriceSettings;
+use Webkul\Sale\Support\SalesAccess;
 use Webkul\Support\Filament\Clusters\Settings;
 
 class ManagePricing extends SettingsPage
 {
+    public static function canAccess(): bool
+    {
+        return SalesAccess::enabledForCurrent()
+            && static::hasPagePermission();
+    }
+
+    use ChecksPagePermission;
+
     use HasPageShield;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-currency-dollar';

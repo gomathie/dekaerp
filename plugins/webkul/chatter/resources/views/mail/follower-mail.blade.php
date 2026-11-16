@@ -13,7 +13,7 @@
     <div class="notification">
         {{ __('chatter::views/mail/follower-mail.body', [
             'sender_name'  => $payload['from']['name'],
-            'sender_email_address' => $payload['from']['address'],
+            'sender_email_address' => $payload['from']['reply_to'] ?? $payload['from']['address'],
             'model_name'   => $payload['model_name'],
         ]) }}
 

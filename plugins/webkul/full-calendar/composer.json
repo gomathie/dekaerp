@@ -1,10 +1,10 @@
 {
     "name": "webkul/full-calendar",
     "description": "",
+    "version": "1.5.1",
     "authors": [
         {
-            "name": "Aureus ERP",
-            "email": "support@aureuserp.in"
+            "name": "365 Systems"
         }
     ],
     "extra": {

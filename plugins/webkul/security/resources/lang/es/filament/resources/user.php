@@ -13,18 +13,27 @@ return [
 
     'form' => [
         'validation' => [
-            'cannot-remove-last-admin'   => 'No se puede quitar el rol de administrador del último usuario administrador.',
-            'first-user-must-be-admin'   => 'Al primer usuario del sistema se le debe asignar un rol de administrador.',
+            'cannot-remove-last-admin'        => 'No se puede quitar el rol de administrador del último usuario administrador.',
+            'company-invalid'                 => 'Una o más empresas seleccionadas no son válidas.',
+            'company-not-assigned'            => 'Solo puede asignar usuarios a las empresas asignadas a su cuenta.',
+            'company-required'                => 'Seleccione al menos una empresa.',
+            'first-user-must-be-admin'        => 'Al primer usuario del sistema se le debe asignar un rol de administrador.',
+            'role-invalid'                    => 'Seleccione al menos un rol válido.',
+            'role-not-assignable'             => 'Solo puede asignar roles no protegidos cuyos permisos posea.',
+            'self-administration-forbidden'   => 'No puede cambiar sus propios roles ni asignaciones de empresa.',
+            'target-administration-forbidden' => 'Solo un Super Admin puede modificar a un administrador protegido.',
         ],
 
         'sections' => [
             'general-information' => [
                 'title'  => 'Información general',
                 'fields' => [
-                    'name'                  => 'Nombre',
-                    'email'                 => 'Correo electrónico',
-                    'password'              => 'Contraseña',
-                    'password-confirmation' => 'Confirmación de contraseña',
+                    'name'                        => 'Nombre',
+                    'email'                       => 'Correo electrónico',
+                    'password'                    => 'Contraseña',
+                    'password-confirmation'       => 'Confirmación de contraseña',
+                    'must-change-password'        => 'Exigir una contraseña nueva en el próximo inicio de sesión',
+                    'must-change-password-helper' => 'Úselo cuando establezca la contraseña usted mismo y la comunique. La persona permanecerá en su página de perfil hasta que la reemplace, y el requisito se borra en cuanto lo hace.',
                 ],
             ],
 

@@ -2,6 +2,8 @@
 
 namespace Webkul\Sale\Filament\Clusters\Settings\Pages;
 
+
+use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms;
@@ -10,10 +12,19 @@ use Filament\Pages\SettingsPage;
 use Filament\Schemas\Schema;
 use UnitEnum;
 use Webkul\Product\Settings\ProductSettings;
+use Webkul\Sale\Support\SalesAccess;
 use Webkul\Support\Filament\Clusters\Settings;
 
 class ManageProducts extends SettingsPage
 {
+    public static function canAccess(): bool
+    {
+        return SalesAccess::enabledForCurrent()
+            && static::hasPagePermission();
+    }
+
+    use ChecksPagePermission;
+
     use HasPageShield;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-cube';

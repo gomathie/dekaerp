@@ -10,10 +10,12 @@ return [
     'no-company' => 'Sélectionnez d’abord une société : les paramètres de logistique sont conservés par société.',
 
     'sections' => [
-        'status'     => 'Statut',
-        'delivery'   => 'Preuve de livraison',
-        'operations' => 'Opérations',
-        'accounting' => 'Comptabilité',
+        'status'                   => 'Statut',
+        'delivery'                 => 'Preuve de livraison',
+        'operations'               => 'Opérations',
+        'accounting'               => 'Comptabilité',
+        'integrations'             => 'Intégrations télématiques',
+        'integrations-description' => 'Connectez des fournisseurs GPS pour importer votre flotte.',
     ],
 
     'status' => [
@@ -30,6 +32,13 @@ return [
         'require-pod-for-delivery'    => 'Exiger une preuve de livraison pour marquer une expédition comme livrée',
         'require-pod-photo'           => 'Exiger une photo avec la preuve de livraison',
         'stop-link-ttl-hours'         => 'Validité du lien d’arrêt (heures)',
+        'stop-link-ttl-hours-help'    => 'Durée pendant laquelle un lien de preuve de livraison reste utilisable après sa création. Une durée plus courte est plus sûre : le lien est un identifiant et circule dans une URL.',
+        'stop-link-rate-limit'        => 'Requêtes du lien d’arrêt par minute',
+        'stop-link-rate-limit-help'   => 'Par lien et par minute. Laissez vide pour utiliser la valeur par défaut. Augmentez-la uniquement si l’accès est refusé à vos chauffeurs.',
+        'capture-driver-on-pod'       => 'Enregistrer le chauffeur sur les preuves de livraison',
+        'capture-driver-on-pod-help'  => 'Récupère le chauffeur du trajet de l’arrêt afin que la preuve indique qui était présent sur le lieu de livraison.',
+        'capture-recipient-id'        => 'Demander l’identifiant du destinataire',
+        'capture-recipient-id-help'   => 'Ajoute un champ d’identification obligatoire lors de la saisie de la preuve. Ne recueillez cette donnée que si vous avez une raison de le faire.',
         'default-service-type'        => 'Type de service par défaut',
         'capacity-check'              => 'Contrôle de la capacité du véhicule',
         'overdue-grace-minutes'       => 'En retard après (minutes suivant l’heure prévue)',
@@ -39,6 +48,14 @@ return [
         'bill-journal'                => 'Journal des factures fournisseurs',
         'default-expense-account'     => 'Compte de dépenses par défaut',
         'expense-approval-required'   => 'Les dépenses doivent être approuvées avant facturation',
+        'telematics-provider'         => 'Plateforme télématique',
+        'telematics-provider-helper'  => 'La plateforme de suivi GPS utilisée par cette société. Laissez vide si elle n’en utilise aucune.',
+        'telematics-server'           => 'URL du serveur',
+        'telematics-server-helper'    => 'URL de base de votre serveur télématique.',
+        'telematics-node'             => 'Nœud',
+        'telematics-node-helper'      => 'PILOT uniquement. Laissez à 1 sauf si votre compte utilise un autre nœud.',
+        'telematics-username'         => 'Identifiant',
+        'telematics-password'         => 'Mot de passe',
     ],
 
     'actions' => [
@@ -57,6 +74,14 @@ return [
             'heading'      => 'Désactiver la logistique pour cette société ?',
             'description'  => 'La logistique est masquée et aucun nouvel enregistrement ne peut être créé pour cette société. Les données existantes sont conservées et une nouvelle activation rétablit l’accès.',
             'notification' => 'Logistique désactivée',
+        ],
+
+        'telematics-sync' => [
+            'label'        => 'Synchroniser la flotte PILOT',
+            'heading'      => 'Synchroniser la flotte depuis PILOT ?',
+            'description'  => 'Les véhicules trouvés dans PILOT seront créés ou mis à jour dans la flotte de cette société.',
+            'notification' => ':created créés, :updated mis à jour, :skipped ignorés.',
+            'error'        => 'Échec de la synchronisation PILOT',
         ],
     ],
 

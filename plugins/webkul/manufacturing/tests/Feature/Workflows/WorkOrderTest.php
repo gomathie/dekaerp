@@ -7,6 +7,7 @@ use Webkul\Manufacturing\Enums\OperationTimeMode;
 use Webkul\Manufacturing\Enums\WorkCenterWorkingState;
 use Webkul\Manufacturing\Enums\WorkOrderState;
 use Webkul\Manufacturing\Models\Product as ManufacturingProduct;
+use Webkul\Manufacturing\Models\WorkCenterProductivityLoss;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Package;
 
@@ -223,4 +224,56 @@ it('accumulates duration across multiple productivity logs', function () {
 
     expect((float) $workOrder->duration)->toBe(50.0)
         ->and((int) $workOrder->duration_percent)->toBe(50);
+});
+
+/**
+ * A zero expected duration arrives as the string "0.00", which PHP treats as
+ * true, so it reached a division and crashed the work order (upstream
+ * 38268a2b8, ported 2026-11-11).
+ */
+it('sets duration_percent to zero without crashing when expected_duration is 0', function () {
+    $bom = ManufacturingHelper::bom($this->finished, [[$this->component, 1]]);
+    $order = ManufacturingHelper::order($this->warehouse, $this->finished, $bom, 5);
+
+    $workOrder = ManufacturingHelper::workOrder($order, $this->workCenter, null, [
+        'expected_duration' => 0,
+        'quantity_produced' => 1,
+    ]);
+
+    ManufacturingHelper::logProductivity($workOrder, 45, 'productive');
+
+    $workOrder->load('productivityLogs');
+    $workOrder->computeDuration();
+
+    expect((int) $workOrder->duration_percent)->toBe(0);
+});
+
+it('assigns productive loss type when expected_duration is 0', function () {
+    $bom = ManufacturingHelper::bom($this->finished, [[$this->component, 1]]);
+    $order = ManufacturingHelper::order($this->warehouse, $this->finished, $bom, 5);
+
+    $workOrder = ManufacturingHelper::workOrder($order, $this->workCenter, null, [
+        'expected_duration' => 0,
+    ]);
+
+    $attrs = $workOrder->buildProductivityLogAttributes(30, now());
+
+    $lossType = WorkCenterProductivityLoss::find($attrs['loss_id'])?->loss_type;
+
+    expect($lossType)->toBe('productive');
+});
+
+it('falls back to quantity_production when quantity_producing is zero in getExpectedDuration', function () {
+    $bom = ManufacturingHelper::bom($this->finished, [[$this->component, 1]]);
+    $operation = ManufacturingHelper::operation($bom, $this->workCenter, [
+        'time_mode'         => OperationTimeMode::MANUAL,
+        'manual_cycle_time' => 60,
+    ]);
+
+    $order = ManufacturingHelper::order($this->warehouse, $this->finished, $bom, 5);
+    $order->update(['quantity_producing' => 0]);
+
+    $workOrder = ManufacturingHelper::workOrder($order, $this->workCenter, $operation);
+
+    expect($workOrder->getExpectedDuration())->toBeGreaterThan(0);
 });

@@ -51,6 +51,13 @@ return [
 
         'current-helper' => 'Introduzca la contraseña actual para verificar su identidad.',
 
+        'must-change' => [
+            'title' => 'Elija su propia contraseña',
+            'body'  => 'Su administrador estableció esta contraseña por usted. Abra "Actualizar contraseña" y elija la suya para continuar.',
+        ],
+
+        'signed-out' => 'Su contraseña se ha actualizado. Vuelva a iniciar sesión con su nueva contraseña.',
+
         'notification' => [
             'success' => [
                 'title' => 'Contraseña actualizada',

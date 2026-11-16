@@ -1,10 +1,10 @@
 {
     "name": "webkul/accounts",
     "description": "",
+    "version": "1.12.0",
     "authors": [
         {
-            "name": "Aureus ERP",
-            "email": "support@aureuserp.in"
+            "name": "365 Systems"
         }
     ],
     "extra": {

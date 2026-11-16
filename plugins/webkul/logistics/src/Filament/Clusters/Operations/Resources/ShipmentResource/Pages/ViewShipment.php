@@ -13,8 +13,16 @@ use Webkul\Chatter\Filament\Actions\ChatterAction;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\CancelAction;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\ConfirmAction;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\CreateInvoiceAction;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\DeliverAction;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\FailDeliveryAction;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\HoldAction;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\PickupAction;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\PrintWaybillAction;
 use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\ReleaseAction;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\RevokeStopLinkAction;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Actions\SendStopLinkAction;
+use Webkul\Logistics\Filament\Clusters\Operations\Resources\ShipmentResource\Widgets\ShipmentMarginWidget;
 use Webkul\Support\Traits\HasRecordNavigationTabs;
 
 class ViewShipment extends ViewRecord
@@ -25,6 +33,15 @@ class ViewShipment extends ViewRecord
 
     protected static string $lang = 'logistics::filament/clusters/operations/resources/shipment';
 
+    protected function getHeaderWidgets(): array
+    {
+        // Filament hands the record to page widgets (InteractsWithRecord::
+        // getWidgetData), and the widget hides itself without view_financials.
+        return [
+            ShipmentMarginWidget::class,
+        ];
+    }
+
     protected function getHeaderActions(): array
     {
         return [
@@ -32,6 +49,16 @@ class ViewShipment extends ViewRecord
             ReleaseAction::make(),
             HoldAction::make(),
             CancelAction::make(),
+            // WP-5's delivery actions, in the order a shipment moves through
+            // them. Each hides itself on state and policy, so only the step
+            // that is actually available shows.
+            PickupAction::make(),
+            DeliverAction::make(),
+            FailDeliveryAction::make(),
+            SendStopLinkAction::make(),
+            RevokeStopLinkAction::make(),
+            PrintWaybillAction::make(),
+            CreateInvoiceAction::make(),
             ChatterAction::make()
                 ->resource(static::$resource)
                 ->activityPlans($this->getRecord()->activityPlans()),

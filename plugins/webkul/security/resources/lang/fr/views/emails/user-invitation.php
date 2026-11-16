@@ -1,7 +1,11 @@
 <?php
 
 return [
-    'body'           => 'Vous avez été invité(e) à rejoindre :app </br></br>Pour accepter l’invitation, cliquez sur le bouton ci-dessous et créez un compte :',
-    'create-account' => 'Créer un compte',
-    'discard-email'  => 'Si vous ne vous attendiez pas à recevoir une invitation à rejoindre cette équipe, vous pouvez ignorer cet e-mail.',
+    'body'                => 'Vous avez été invité(e) à rejoindre :company.',
+    'body-with-inviter'   => ':inviter vous a invité(e) à rejoindre :company.',
+    'instructions'        => 'Cliquez sur le bouton ci-dessous pour créer votre compte.',
+    'create-account'      => 'Créer un compte',
+    'expires'             => 'Cette invitation expire le :date.',
+    'link-fallback'       => 'Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :',
+    'discard-email'       => 'Si vous n’attendiez pas cette invitation, vous pouvez ignorer cet e-mail.',
 ];

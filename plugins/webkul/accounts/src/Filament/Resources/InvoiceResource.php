@@ -255,7 +255,8 @@ class InvoiceResource extends Resource
                                                     ->relationship(
                                                         name: 'currency',
                                                         titleAttribute: 'name',
-                                                        modifyQueryUsing: fn (Builder $query) => $query->active(),
+                                                        // CR-6: only the company's permitted currencies, when it has a list.
+                                                        modifyQueryUsing: fn (Builder $query, Get $get) => $query->active()->permittedFor((int) ($get('company_id') ?: current_company_id())),
                                                     )
                                                     ->required()
                                                     ->searchable()

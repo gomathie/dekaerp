@@ -84,14 +84,14 @@ function multiCompanyAdminTestUser(
     $roles = collect(match (true) {
         $roles instanceof Role => [$roles],
         is_array($roles)       => $roles,
-        default               => [multiCompanyAdminTestRole()],
+        default                => [multiCompanyAdminTestRole()],
     });
 
     $user = User::withoutEvents(fn (): User => User::factory()->create(array_merge([
-        'default_company_id' => $companies->first()->getKey(),
+        'default_company_id'  => $companies->first()->getKey(),
         'resource_permission' => PermissionType::INDIVIDUAL,
-        'is_active'          => true,
-        'is_default'         => false,
+        'is_active'           => true,
+        'is_default'          => false,
     ], $attributes)));
 
     $user->allowedCompanies()->sync($companies->pluck('id')->all());
@@ -394,9 +394,13 @@ it('can invite a user into an assigned company with a permitted company role', f
     $user = app(UserInvitationService::class)->accept($invitation, 'Invited User', 'password123');
 
     expect($user->allowedCompanies()->pluck('companies.id')->all())->toBe([$company->getKey()])
-        ->and($user->roles()->pluck('roles.id')->all())->toBe([$companyRole->getKey()])
+        // The role is a tenant role, so it lives on the membership since SAAS-01;
+        // the global pivot is no longer where it can be read.
+        ->and(app(MultiCompanyAdminService::class)->effectiveRoleIds($user))->toBe([$companyRole->getKey()])
         ->and($user->default_company_id)->toBe($company->getKey())
-        ->and(Invitation::query()->find($invitation->getKey()))->toBeNull();
+        // SAAS-06: the invitation is kept as *accepted* rather than deleted, so
+        // the history survives and the seat it reserved stops counting.
+        ->and(Invitation::query()->find($invitation->getKey())?->isAccepted())->toBeTrue();
 });
 
 it('creates a company user through the Filament relationship form', function () {
@@ -408,22 +412,25 @@ it('creates a company user through the Filament relationship form', function () 
 
     Livewire::test(CreateUser::class)
         ->fillForm([
-            'name'                => 'Created Company User',
-            'email'               => $email,
-            'password'            => 'password123',
+            'name'                  => 'Created Company User',
+            'email'                 => $email,
+            'password'              => 'password123',
             'password_confirmation' => 'password123',
-            'roles'               => [$companyRole->getKey()],
-            'resource_permission' => PermissionType::INDIVIDUAL->value,
-            'allowed_companies'   => [$company->getKey()],
-            'default_company_id'  => $company->getKey(),
-            'is_active'           => true,
+            'roles'                 => [$companyRole->getKey()],
+            'resource_permission'   => PermissionType::INDIVIDUAL->value,
+            'allowed_companies'     => [$company->getKey()],
+            'default_company_id'    => $company->getKey(),
+            'is_active'             => true,
         ])
         ->call('create')
         ->assertHasNoFormErrors();
 
     $createdUser = User::query()->where('email', $email)->firstOrFail();
 
-    expect($createdUser->roles()->pluck('roles.id')->all())->toBe([$companyRole->getKey()])
+    // A tenant role picked on the form is stored on the membership since SAAS-01
+    // (TenantRoleAssigner), not in the global model_has_roles pivot.
+    expect(app(MultiCompanyAdminService::class)->effectiveRoleIds($createdUser))->toBe([$companyRole->getKey()])
+        ->and($createdUser->roles()->pluck('roles.id')->all())->toBe([])
         ->and($createdUser->allowedCompanies()->pluck('companies.id')->all())->toBe([$company->getKey()]);
 });
 

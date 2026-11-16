@@ -33,6 +33,18 @@ return [
             'description' => "Tem certeza de que deseja instalar o plugin ':name'? Isso executará migrações e seeders.",
             'submit'      => 'Instalar plugin',
         ],
+
+        'companies' => [
+            'title'       => 'Empresas',
+            'heading'     => 'Quais empresas podem usar :name?',
+            'description' => 'Instalar um plugin disponibiliza seu código para toda a instalação. Isto decide quais empresas podem realmente usá-lo — conceda às empresas cuja assinatura o inclui. Remover uma empresa oculta o plugin de todos os seus usuários.',
+            'field'       => 'Empresas',
+
+            'notification' => [
+                'title' => 'Disponibilidade do plugin atualizada',
+                'body'  => ':name agora está disponível para :count empresa(s).',
+            ],
+        ],
         'uninstall' => [
             'title'      => 'Desinstalar',
             'heading'    => 'Desinstalar plugin',
@@ -45,12 +57,24 @@ return [
             'title' => 'Plugin instalado com sucesso',
             'body'  => "O plugin ':name' foi instalado.",
         ],
+        'installing' => [
+            'title' => 'Instalando :name',
+            'body'  => 'Leva um ou dois minutos. Você receberá uma notificação ao terminar e pode continuar trabalhando.',
+        ],
+        'installing-already' => [
+            'title' => ':name já está sendo instalado',
+        ],
         'installed-failed' => [
             'title' => 'Falha na instalação',
         ],
         'uninstalled' => [
             'title' => 'Plugin desinstalado com sucesso',
             'body'  => "O plugin ':name' foi desinstalado.",
+        ],
+
+        'cache-rebuild-failed' => [
+            'title' => 'Os caches foram limpos, mas não reconstruídos',
+            'body'  => 'A alteração do plugin em si foi concluída. A aplicação agora roda sem cache de configuração e de rotas, o que é mais lento mas correto. Execute "php artisan optimize" e leia a saída para descobrir por que falhou; o erro também foi reportado.',
         ],
         'uninstalled-failed' => [
             'title' => 'Falha na desinstalação',
@@ -139,7 +163,7 @@ return [
         'manufacturing'  => 'Gerenciamento de produção e manufatura',
         'partners'       => 'Gerencie parceiros comerciais',
         'payments'       => 'Gerencie pagamentos e transações',
-        'plugin-manager' => 'Gerenciador de plugins para o Aureus ERP',
+        'plugin-manager' => 'Gerenciador de plugins para o DEKA Central',
         'products'       => 'Catálogo de produtos e gerenciamento de variantes',
         'projects'       => 'Planejamento e gerenciamento de projetos',
         'purchases'      => 'Gerenciamento de compras e pedidos de compra',

@@ -28,6 +28,7 @@ use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Collection;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Filament\Forms\Components\Repeater;
 use Webkul\Support\Filament\Forms\Components\Repeater\TableColumn;
@@ -169,7 +170,10 @@ class CurrencyResource extends Resource
                                     ->required()
                                     ->numeric()
                                     ->step(0.000001)
-                                    ->minValue(1)
+                                    // Units per base currency: a currency stronger than the
+                                    // base (EUR, GBP per USD) is below 1. minValue(1) refused
+                                    // them (2026-11-14, EUR 0.9084). Any positive rate is valid.
+                                    ->minValue(0.000001)
                                     ->default(1.000000)
                                     ->live(onBlur: true)
                                     ->afterStateUpdated(function ($state, callable $set) {
@@ -298,6 +302,17 @@ class CurrencyResource extends Resource
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
+                        ->action(function (Collection $records): void {
+                            try {
+                                $records->each(fn (Currency $record): ?bool => $record->delete());
+                            } catch (QueryException) {
+                                Notification::make()
+                                    ->danger()
+                                    ->title(__('support::filament/resources/currency.table.actions.delete.notification.error.title'))
+                                    ->body(__('support::filament/resources/currency.table.actions.delete.notification.error.body'))
+                                    ->send();
+                            }
+                        })
                         ->successNotification(
                             Notification::make()
                                 ->success()

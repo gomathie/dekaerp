@@ -18,13 +18,17 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Spatie\Permission\Traits\HasRoles;
 use Webkul\Employee\Models\Department;
 use Webkul\Employee\Models\Employee;
 use Webkul\Partner\Models\Partner;
 use Webkul\Security\Enums\PermissionType;
+use Webkul\Security\Services\CompanyAdminPasswordVault;
 use Webkul\Security\Services\MultiCompanyAdminService;
 use Webkul\Security\Services\SecurityAuditLogger;
+use Webkul\Security\Services\TenantRoleResolver;
 use Webkul\Security\Support\OwnerSource;
 use Webkul\Security\Traits\HasOwnershipScope;
 use Webkul\Support\Models\Company;
@@ -54,7 +58,8 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
      * @var array<string, mixed>
      */
     protected $attributes = [
-        'is_active' => true,
+        'is_active'            => true,
+        'must_change_password' => false,
     ];
 
     public function __construct(array $attributes = [])
@@ -67,13 +72,15 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
             'default_company_id',
             'resource_permission',
             'is_default',
+            'must_change_password',
         ]);
 
         $this->mergeCasts([
-            'default_company_id'  => 'integer',
-            'resource_permission' => PermissionType::class,
-            'is_default'          => 'boolean',
-            'is_active'           => 'boolean',
+            'default_company_id'   => 'integer',
+            'resource_permission'  => PermissionType::class,
+            'is_default'           => 'boolean',
+            'is_active'            => 'boolean',
+            'must_change_password' => 'boolean',
         ]);
 
         parent::__construct($attributes);
@@ -114,18 +121,55 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
             ->contains(fn (string $name): bool => mb_strtolower(trim($name)) === mb_strtolower(Role::MULTI_COMPANY_ADMIN));
     }
 
-    public function hasPermissionTo($permission, ?string $guardName = null): bool
+    /**
+     * A customer's own administrator for their company.
+     *
+     * Deliberately only the role itself, with no super-admin or multi-company
+     * fallback: callers that mean "this person administers something" compose
+     * the three predicates themselves, so neither of the wider roles can be
+     * mistaken for a tenant-scoped one. See Role::COMPANY_ADMIN.
+     *
+     * Since tenant roles live on company memberships, pass the company whose
+     * administration is being judged. With no company this answers "somewhere",
+     * which is what navigation and the guide picker want - never authorization
+     * for a record. The global store is still consulted first because that is
+     * where a pre-migration assignment, and any user with no membership row,
+     * still lives.
+     */
+    public function isCompanyAdmin(?int $companyId = null): bool
+    {
+        $matchesCompanyAdmin = fn (string $name): bool => mb_strtolower(trim($name)) === mb_strtolower(Role::COMPANY_ADMIN);
+
+        if ($this->getRoleNames()->contains($matchesCompanyAdmin)) {
+            return true;
+        }
+
+        if (! app(TenantRoleResolver::class)->supported()) {
+            return false;
+        }
+
+        $resolver = app(TenantRoleResolver::class);
+
+        return $companyId === null
+            ? $resolver->hasRoleInAnyCompany($this, Role::COMPANY_ADMIN)
+            : $resolver->hasRoleInCompany($this, Role::COMPANY_ADMIN, $companyId);
+    }
+
+    /**
+     * A permission, answered for one company.
+     *
+     * This is the check a policy or a service must use when a record's company
+     * is known. Platform roles and directly assigned permissions are
+     * installation-wide and therefore count in every company; tenant roles count
+     * only where the membership grants them.
+     */
+    public function hasPermissionInCompany($permission, int $companyId): bool
     {
         if (! $this->is_active) {
             return false;
         }
 
-        $permissionName = match (true) {
-            $permission instanceof \BackedEnum => (string) $permission->value,
-            is_object($permission) && isset($permission->name) => (string) $permission->name,
-            is_string($permission) => $permission,
-            default => null,
-        };
+        $permissionName = $this->normalizePermissionName($permission);
 
         if (
             $permissionName !== null
@@ -135,7 +179,112 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
             return false;
         }
 
-        return $this->hasPermissionToWithoutMultiCompanyRestrictions($permission, $guardName);
+        if ($this->hasPermissionToWithoutMultiCompanyRestrictions($permission)) {
+            return true;
+        }
+
+        if ($permissionName === null || $this->isPlatformOnlyAbility($permissionName) || ! app(TenantRoleResolver::class)->supported()) {
+            return false;
+        }
+
+        return app(TenantRoleResolver::class)->holdsAbility($this, $permissionName, $companyId);
+    }
+
+    public function hasPermissionTo($permission, ?string $guardName = null): bool
+    {
+        if (! $this->is_active) {
+            return false;
+        }
+
+        $permissionName = $this->normalizePermissionName($permission);
+
+        if (
+            $permissionName !== null
+            && $this->isMultiCompanyAdmin()
+            && app(MultiCompanyAdminService::class)->deniesAbility($permissionName)
+        ) {
+            return false;
+        }
+
+        /*
+         * Two sources, unioned on purpose. Spatie answers for the global store -
+         * platform roles, direct permissions, and any tenant role the migration
+         * deliberately left global because the user has no membership row.
+         * `company_membership_roles` answers for tenant roles granted per
+         * company. Taking the union means this can only ever add to what the
+         * previous implementation returned, so the migration cannot lock a user
+         * out of something they held a moment before.
+         *
+         * With no company in scope this is the navigation question, so it
+         * considers the companies active in the session, falling back to all
+         * memberships outside a web request.
+         */
+        if ($this->hasPermissionToWithoutMultiCompanyRestrictions($permission, $guardName)) {
+            return true;
+        }
+
+        if ($permissionName === null || $this->isPlatformOnlyAbility($permissionName) || ! app(TenantRoleResolver::class)->supported()) {
+            return false;
+        }
+
+        return app(TenantRoleResolver::class)->holdsAbility($this, $permissionName);
+    }
+
+    /**
+     * Every role name that applies to this user, from both stores.
+     *
+     * The Users list and infolist show roles, and after the migration a tenant
+     * role is no longer in `model_has_roles`, so `roles.name` alone would show
+     * an empty column for every tenant user.
+     *
+     * @return array<int, string>
+     */
+    public function effectiveRoleNames(): array
+    {
+        $global = $this->getRoleNames()->all();
+
+        if (! app(TenantRoleResolver::class)->supported()) {
+            return array_values($global);
+        }
+
+        $tenant = app(TenantRoleResolver::class)->roleNamesFor($this);
+
+        return collect(array_merge($global, $tenant))
+            ->unique()
+            ->sort()
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Abilities only a platform (global) role may hold, never a tenant role.
+     *
+     * A tenant role granting one would let a client's administrator see
+     * across companies. It also broke every request once the
+     * `bypass_company_scope` row existed (2026-11-10): the tenant lookup
+     * reads the active companies, which ask this same ability first, so
+     * the two called each other until the process crashed. Answer these
+     * from the global store alone. Test: SecurityFeature
+     * PlatformOnlyAbilityTest.
+     */
+    public const PLATFORM_ONLY_ABILITIES = [
+        'bypass_company_scope',
+        'bypass_ownership_scope',
+    ];
+
+    protected function isPlatformOnlyAbility(string $permissionName): bool
+    {
+        return in_array($permissionName, self::PLATFORM_ONLY_ABILITIES, true);
+    }
+
+    protected function normalizePermissionName($permission): ?string
+    {
+        return match (true) {
+            $permission instanceof \BackedEnum                 => (string) $permission->value,
+            is_object($permission) && isset($permission->name) => (string) $permission->name,
+            is_string($permission)                             => $permission,
+            default                                            => null,
+        };
     }
 
     public function creator(): BelongsTo
@@ -184,12 +333,53 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
         return $this->belongsTo(Company::class, 'default_company_id');
     }
 
+    /**
+     * The password as typed, held only until this save finishes, so a
+     * company administrator's readable copy (CompanyAdminPasswordVault) follows
+     * every change: profile, reset link, invitation, staff reset. Not an
+     * attribute, so it is never serialized, cast or written to `users`.
+     */
+    protected ?string $pendingPlainPassword = null;
+
+    public function setAttribute($key, $value)
+    {
+        if ($key === 'password' && is_string($value) && $value !== '' && ! Hash::isHashed($value)) {
+            $this->pendingPlainPassword = $value;
+        }
+
+        return parent::setAttribute($key, $value);
+    }
+
     protected static function boot()
     {
         parent::boot();
 
+        static::saved(function (self $user): void {
+            if ($user->pendingPlainPassword === null) {
+                return;
+            }
+
+            $plain = $user->pendingPlainPassword;
+            $user->pendingPlainPassword = null;
+
+            if (Schema::hasTable('security_user_password_vault')) {
+                app(CompanyAdminPasswordVault::class)->capture($user, $plain);
+            }
+        });
+
         static::creating(function ($user) {
             $user->creator_id ??= Auth::id();
+        });
+
+        static::updating(function (self $user): void {
+            // Changing the password satisfies the requirement, so the flag
+            // clears itself and nobody has to remember to untick it. Skipped
+            // when the flag is also being set in the same save: an
+            // administrator who sets a password *and* ticks the box means the
+            // person must still replace it.
+            if ($user->isDirty('password') && ! $user->isDirty('must_change_password')) {
+                $user->must_change_password = false;
+            }
         });
 
         static::saved(function ($user) {

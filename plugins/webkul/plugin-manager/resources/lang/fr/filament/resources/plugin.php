@@ -33,6 +33,18 @@ return [
             'description' => "Êtes-vous sûr de vouloir installer le plugin ':name' ? Ceci exécutera les migrations et les seeders.",
             'submit'      => 'Installer le plugin',
         ],
+
+        'companies' => [
+            'title'       => 'Sociétés',
+            'heading'     => 'Quelles sociétés peuvent utiliser :name ?',
+            'description' => 'Installer un plugin rend son code disponible pour toute l’installation. Ceci décide quelles sociétés peuvent réellement l’utiliser : accordez-le aux sociétés dont l’abonnement l’inclut. Retirer une société masque le plugin pour tous ses utilisateurs.',
+            'field'       => 'Sociétés',
+
+            'notification' => [
+                'title' => 'Disponibilité du plugin mise à jour',
+                'body'  => ':name est maintenant disponible pour :count société(s).',
+            ],
+        ],
         'uninstall' => [
             'title'      => 'Désinstaller',
             'heading'    => 'Désinstaller le plugin',
@@ -45,12 +57,24 @@ return [
             'title' => 'Plugin installé avec succès',
             'body'  => "Le plugin ':name' a été installé.",
         ],
+        'installing' => [
+            'title' => 'Installation de :name en cours',
+            'body'  => 'Cela prend une ou deux minutes. Vous recevrez une notification à la fin et pouvez continuer à travailler.',
+        ],
+        'installing-already' => [
+            'title' => 'Installation de :name déjà en cours',
+        ],
         'installed-failed' => [
             'title' => "Échec de l'installation",
         ],
         'uninstalled' => [
             'title' => 'Plugin désinstallé avec succès',
             'body'  => "Le plugin ':name' a été désinstallé.",
+        ],
+
+        'cache-rebuild-failed' => [
+            'title' => 'Les caches ont été vidés mais non reconstruits',
+            'body'  => 'La modification du plugin a bien abouti. L’application fonctionne désormais sans cache de configuration ni de routes, ce qui est plus lent mais correct. Exécutez « php artisan optimize » et lisez sa sortie pour comprendre l’échec ; l’erreur a également été signalée.',
         ],
         'uninstalled-failed' => [
             'title' => 'Échec de la désinstallation',
@@ -139,7 +163,7 @@ return [
         'manufacturing'  => 'Gestion de la fabrication et de la production',
         'partners'       => 'Gérer les partenaires commerciaux',
         'payments'       => 'Gérer les paiements et les transactions',
-        'plugin-manager' => 'Gestionnaire de plugins pour Aureus ERP',
+        'plugin-manager' => 'Gestionnaire de plugins pour DEKA Central',
         'products'       => 'Catalogue de produits et gestion des variantes',
         'projects'       => 'Planification et gestion de projets',
         'purchases'      => "Gestion des achats et des commandes d'approvisionnement",

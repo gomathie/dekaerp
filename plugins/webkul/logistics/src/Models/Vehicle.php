@@ -24,6 +24,20 @@ class Vehicle extends Model
 
     protected $table = 'logistics_vehicles';
 
+    /**
+     * Mirrors the column defaults in the vehicles migration. See Trip for why.
+     *
+     * `is_active` matters most here: DispatchService refuses to dispatch an
+     * archived vehicle, and a freshly created one reading back null would be
+     * treated as archived until reloaded.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'ownership' => 'owned',
+        'is_active' => true,
+    ];
+
     protected $fillable = [
         'registration_no',
         'name',
@@ -32,6 +46,10 @@ class Vehicle extends Model
         'capacity_m3',
         'equipment_id',
         'telematics_device_ref',
+        'telematics_agent_id',
+        'last_latitude',
+        'last_longitude',
+        'last_located_at',
         'is_active',
         'vehicle_type_id',
         'carrier_id',
@@ -41,10 +59,13 @@ class Vehicle extends Model
     ];
 
     protected $casts = [
-        'ownership'   => VehicleOwnership::class,
-        'capacity_kg' => 'decimal:3',
-        'capacity_m3' => 'decimal:3',
-        'is_active'   => 'boolean',
+        'ownership'       => VehicleOwnership::class,
+        'capacity_kg'     => 'decimal:3',
+        'capacity_m3'     => 'decimal:3',
+        'last_latitude'   => 'decimal:7',
+        'last_longitude'  => 'decimal:7',
+        'last_located_at' => 'datetime',
+        'is_active'       => 'boolean',
     ];
 
     public function scopeActive(Builder $query): Builder

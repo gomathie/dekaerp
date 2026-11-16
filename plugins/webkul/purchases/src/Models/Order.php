@@ -253,7 +253,7 @@ class Order extends Model
 
         $this->name = SequenceService::next('purchases.order', $this->company_id, [
             'name'         => 'Purchase Order',
-            'prefix'       => 'PO/',
+            'prefix'       => 'PO-',
             'initial_from' => static::withoutGlobalScopes(),
         ]);
     }

@@ -5,9 +5,9 @@
 > **Initial review:** 2026-09-18  
 > **Local baseline:** `feature/logistics` at `e0ce9f6a8467`  
 > **Common v1.5 baseline:** `8409fde`  
-> **Upstream reviewed:** `aureus/master` at `d7d471894`  
+> **Upstream reviewed:** `aureus/master` at `36744b597`  
 > **Package A implemented:** 2026-09-20; focused local verification complete, first remote CI run pending
-> **Next review due:** 2026-09-25, or earlier when a trigger below occurs
+> **Next review due:** 2026-10-27, or earlier when a trigger below occurs
 
 ## Purpose
 
@@ -199,7 +199,14 @@ ignores, and the PostgreSQL 17 lanes reach and execute their test commands.
 ### UF-002 - Employee Factories and Missing Test Suite
 
 **Decision:** Required, P0  
-**Local state:** Open
+**Local state:** **Fixed 2026-10-22**
+
+> SetLocale now applies the precedence query language, session language,
+> authenticated user preference, then application fallback. Valid explicit
+> query choices persist in the session without changing the user's profile
+> language; invalid query and session values are ignored. The focused locale
+> coverage passed: 21 tests, 35 assertions, including profile update
+> compatibility.
 
 DEKA ERP has no `plugins/webkul/employees/tests` directory and no
 `EmployeeFeature` suite in `phpunit.xml`. The local employee factories contain
@@ -302,7 +309,15 @@ and API agree, with production data accounted for before deployment.
 ### UF-004 - Company Currency Guard Coverage
 
 **Decision:** Required regression coverage, P1  
-**Local state:** Runtime fix already present; tests missing
+**Local state:** **Fixed 2026-10-22**
+
+> Added plugins/webkul/accounts/tests/Feature/Workflows/CompanyCurrencyGuardTest.php
+> with coverage for permitted changes, blocked changes after journal entries,
+> preserved currencies, validation field errors, unrelated edits, parent/branch
+> hierarchies, and unrelated-company isolation. AccountHelper::company() now
+> orders by ID so hierarchy tests consistently select the seeded baseline
+> company. The existing CompanyObserver required no runtime change. The
+> focused test passed: 8 tests, 8 assertions.
 
 The local `CompanyObserver` matches the upstream guard that blocks a company
 currency change after accounting entries exist. The final upstream coverage is
@@ -336,7 +351,15 @@ test relies on an unspecified first-row order.
 ### UF-005 - Payment Register Bank Account Coverage
 
 **Decision:** Recommended, P1  
-**Local state:** Runtime fix already backported; tests missing
+**Local state:** **Fixed 2026-10-22**
+
+> Added the five final payment-register bank-account scenarios in
+> plugins/webkul/accounts/tests/Feature/Workflows/PaymentRegisterBankAccountTest.php:
+> inbound journal account selection and empty-journal behavior, outbound vendor
+> account selection, inbound batch-account resolution, and bill-preferred bank
+> account resolution. The earlier upstream cross-company bank-account case was
+> not ported because this fork's BankAccount schema has no company_id contract.
+> The focused test passed: 5 tests, 11 assertions.
 
 The local Pay/PaymentRegister behavior contains the root fix documented in
 `docs/change-log.md`, but it lacks the final upstream tests from
@@ -361,7 +384,13 @@ test because the current BankAccount model has no `company_id` contract.
 ### UF-006 - Authenticated Locale Persistence
 
 **Decision:** Recommended product fix, P1  
-**Local state:** Open
+**Local state:** **Fixed 2026-10-22**
+
+> SetLocale now applies query language, session language, authenticated user
+> preference, then application fallback. Valid explicit query choices persist
+> in the session without changing the user's profile language; invalid query
+> and session values are ignored. Focused locale coverage passed 21 tests and
+> 35 assertions, including profile update compatibility.
 
 The topbar locale switcher sends `?lang=...`. For authenticated users, the local
 `SetLocale` middleware applies that language only for the current request, then
@@ -394,7 +423,12 @@ of an explicit user choice.
 ### UF-007 - Website Publish/Draft E2E Assertions
 
 **Decision:** Recommended test hardening, P1  
-**Local state:** Open
+**Local state:** **Implemented 2026-10-22; browser execution pending**
+
+> Website page and blog publish/draft helpers now assert the edit URL and
+> required action visibility before clicking. Playwright discovery passed and
+> found all 18 targeted tests. A browser run was not executed because the
+> configured local application at 127.0.0.1:8000 was unavailable.
 
 The local Website page object conditionally skips publish and draft actions
 when their buttons are not visible. That can turn a broken route, missing
@@ -416,7 +450,91 @@ action is unavailable and pass through the real state transition.
 ### UF-008 - Translation Key Reference Audit
 
 **Decision:** Recommended local improvement, P2  
-**Local state:** Partial tooling only
+**Local state:** **Scanner delivered; all 84 broken references fixed 2026-10-22 — `translations:check --references` now reports 29/29 passing**
+
+> **Fixed 2026-10-22.** The 84 invalid references are all resolved and the
+> scanner reports `29 check(s), Passed: 29, Failed: 0`. Two distinct classes, and
+> the class decided the fix:
+>
+> - **Missing file or key — created.** `accounts::enums/display-type.*` (18 refs,
+>   no `resources/lang/en/enums/display-type.php` at all);
+>   `accounts::system.tax-formula.*` (9, keys absent from `system.php`);
+>   `support::enums/company-status.*`; the three `manufacturing::models/work-center-*`
+>   files; plus scalar keys in support `company.php`/`bank.php`, employees
+>   `employee.php`, chatter `activity-action.php`, accounting
+>   `journal-entry.php`, partners `industry.php`/`tag.php`, projects
+>   `view-task.php`, time-off filters and recruitments `job-position.php` /
+>   `edit-applicant.php`.
+> - **Wrong path — the reference was fixed, the lang files were left alone.**
+>   `accounting`'s vendor bank-account relation manager pointed at a
+>   `bank-account-relation-manager.php` that only exists under `accounts::`;
+>   `purchases`' ViewOrder pointed at `inventories::…/view-order.php` when the
+>   purchases plugin has its own copy; `inventories`' PackageResource referenced
+>   `receipt…delete.notification.title` when the file has `success`/`error`;
+>   `recruitments`' CandidateResource omitted `actions.` from
+>   `table.actions.empty-state-actions`; `fields` referenced kebab-case
+>   `textarea.helper-text`/`hint-color`/`hint-icon` where the file uses
+>   camelCase; `purchases` Requisition asked for `starts-at` where the key is
+>   `starts_at`; `chatter`'s `ChatterPanel` asked for a phantom `chatter::app.*`
+>   file.
+> - **Two keys were typos, not absences.** `fields`
+>   `datetime.first-fay-of-week` → `first-day-of-week` (5 locales);
+>   `inventories` `edit-product…error.available-quantity` had a never-referenced
+>   `qty-not-zero` sibling already translated in all five locales, so the
+>   reference was pointed at it instead of duplicating the string.
+>
+> Every new key exists in `en`, `ar`, `es`, `fr` and `pt_BR` with identical
+> structure; every lang file this fix touched is parity-clean. Two touched
+> plugins still fail the locale-parity check for reasons that predate it and are
+> unrelated to these keys (support and employees — see the drift note below).
+> Wording for keys upstream also had was taken from upstream rather than
+> invented.
+>
+> **Separate pre-existing drift, not part of this fix:** support
+> `filament/pages/help.php` is 147 lines in EN and 71 in each locale (the Help
+> page feature expanded EN without updating translations) and French
+> `currency.php` carries two extra `bulk-actions.delete.notification.error.*`
+> keys, so `translations:check --plugin=support` fails on those two files.
+> Employees French `employee.php` and `relation-manager/resume.php` carry
+> resume-attachment keys that English does not. Nothing to do with the reference
+> scanner, which ignores all of them.
+
+> **Already present.** The scanner is a `--references` mode on the existing
+> command, not a second command:
+> `plugins/webkul/plugin-manager/src/Console/Commands/FindMissingTranslations.php`
+> — `processTranslationReferences()` :134, `findInvalidTranslationReferences()`
+> :228, `validateTranslationReference()` :259. It resolves `__()`, `trans()`,
+> `trans_choice()` and `@lang` literals, skips dynamic keys (`$`, `{`, `}`), and
+> checks the flattened key against the plugin's canonical EN file. Command tests:
+> `plugins/webkul/plugin-manager/tests/Feature/TranslationReferenceCommandTest.php`,
+> run by the `PluginManagerFeature` suite (registered in `phpunit.xml`).
+>
+> **Extended 2026-10-22.** Root-scope references (`__('admin.key')`, no `::`)
+> were skipped outright; they now resolve against `lang/en` and are reported
+> when the key is missing. A missing root *file* stays silent on purpose:
+> `auth`, `validation`, `pagination` and `passwords` are translated inside the
+> framework, so reporting them would be a false positive. Three tests pin the
+> new behaviour. CI runs `translations:check --details`
+> (`translations_check.yml:44`), which is the locale-parity mode and is
+> unaffected by this change.
+>
+> **The audit result is the real finding.** `translations:check --references
+> --details` reports 13 of 29 groups failing, **84 invalid references**:
+> accounts 27, support 14, employees 7, purchases 6, recruitments 6, time-off 5,
+> fields 4, inventories 4, manufacturing 4, accounting 2, partners 2, projects 2,
+> chatter 1. Spot-checked as genuine, not scanner noise:
+> `accounts::enums/display-type.*` has no
+> `plugins/webkul/accounts/resources/lang/en/enums/display-type.php` at all;
+> `chatter::app.*` has no `resources/lang/en/app.php`; the
+> `fields::...settings.textarea.helper-text` key exists at a different depth.
+> Upstream `33ed6ac32` fixed ~48 of these across accounts, employees, fields and
+> support, and that commit is **not** ported here.
+>
+> **Deliberately not fixed now.** Each fix means adding or moving keys in five
+> locales per plugin, and this project checks translation source structure line
+> by line (numeric keys must stay quoted or a translation looks like a structure
+> change). That is its own change with its own full run, at P2 — see the change
+> log entry for 2026-10-22, which carries the per-plugin work list.
 
 The local `translations:check` command compares each locale with canonical
 English. It cannot detect a key that is missing from English too, or a literal
@@ -442,7 +560,41 @@ making it a required CI gate.
 ### UF-009 - Installer Country and Currency Resolution
 
 **Decision:** Optional feature with practical value, P2  
-**Local state:** Not implemented
+**Local state:** **Not implemented; investigated 2026-10-22 — recommendation below, installer not modified**
+
+> **Real here.** `plugins/webkul/plugin-manager/src/Console/Commands/InstallERP.php:30`
+> declares `--force`, `--admin-name`, `--admin-email`, `--admin-password` and
+> nothing else. There is no `configureLocalisation()`, no `--country`, no
+> `--currency`; the default currency is whatever `Currency::active()->first()`
+> returns when the `default_currency_id` setting is written
+> (`InstallERP.php:422`). The plumbing upstream relies on is already local:
+> `Currency::findByCode()` :41 and `Currency::resolveDefault()` :50 in
+> `plugins/webkul/support/src/Models/Currency.php`.
+>
+> **What the two commits contain.** `98b870ad7` adds `--country`, a
+> `configureLocalisation()` step after seeding that writes the first company's
+> `country_id`/`currency_id`, and feeds the resolved currency into
+> `default_currency_id`; it also touches `CompanySeeder`, `CompanyForm` and adds
+> `DefaultCurrencyResolutionTest`. `fa033899f` adds `--currency` plus a
+> `canPrompt()` guard built on `stream_isatty(STDIN)` — its commit message is
+> "Fixed failing test", which is the warning that matters.
+>
+> **Why it is not a drop-in.** `erp:install --force` bootstraps every test run
+> (`plugins/webkul/support/tests/Helpers/TestBootstrapHelper.php:248`), both CI
+> workflows (`pest_tests.yml:85`, `playwright_tests.yml:168`) and the production
+> image (`docker/production/README.md:234`, which passes `--no-interaction`). A
+> prompt that fires without the `isInteractive()`/`stream_isatty()` guard hangs
+> a bootstrap instead of failing it.
+>
+> **Recommendation.** Take the pair as one change: `--country` and `--currency`
+> options; resolution order `--currency` → the country's currency →
+> `Currency::resolveDefault()` → today's seeded default; prompt only when
+> `canPrompt()`; non-zero exit on an unknown code. Test matrix: known country,
+> known currency, both (currency wins), unknown country, unknown currency, and
+> a non-interactive install with neither option keeping current behaviour. Then
+> re-run the install path in `PluginManagerFeature`, the CI bootstrap step and a
+> `docker/production` build before calling it done.
+> **Nothing of that was exercised here — the installer was left untouched.**
 
 Upstream's failing-test commit
 [`fa033899f`](https://github.com/aureuserp/aureuserp/commit/fa033899f)
@@ -531,7 +683,27 @@ commits as one migration project with backups and rehearsal.
 ### UF-012 - Employee Resume Attachments
 
 **Decision:** Optional feature, defer  
-**Local state:** Not implemented
+**Local state:** **Deferral confirmed 2026-10-22 — no attachment path exists and nothing depends on one**
+
+> **Confirmed absent.** `employees_employee_resumes`
+> (`plugins/webkul/employees/database/migrations/2024_12_16_070029_create_employees_employee_resumes_table.php`)
+> is a structured record — title, resume type, duration, display type,
+> description — with no file, path, disk, size or MIME column. The employees
+> plugin contains no `FileUpload`, `Storage::` or attachment code at all, and
+> `EmployeeResumeRelation` / `ManageResume` are text-only forms and tables.
+>
+> **Nothing depends on it.** No migration, model, policy, translation tree or
+> test references a resume file; the `employees::...resume.*` keys describe the
+> structured record.
+>
+> **Why the deferral still holds.** The upload widget is the small part. The work
+> is tenant-S3 disk choice, MIME and size validation, cross-company authorization
+> on download, retention and deletion. This fork already has the pieces to reuse
+> instead of inventing — Logistics' `DeliveryProofsRelationManager` tenant-S3
+> path and Chatter attachments — and a known trap to remember: `phpunit.xml` does
+> not set `FILESYSTEM_PUBLIC_DRIVER`, so `tenant-s3` branches never execute in
+> tests (already recorded in the change log for Logistics). Reviewed as its own
+> security-reviewed feature, not as part of a register pass.
 
 Upstream commit
 [`3bfe42832`](https://github.com/aureuserp/aureuserp/commit/3bfe42832)
@@ -589,12 +761,51 @@ tests.
 ### UF-016 - Documentation Drift
 
 **Decision:** Required maintenance, P1  
-**Local state:** Open
+**Local state:** **Reconciled 2026-10-22 — the four known statements; drift is now a standing rule, not a one-off**
+
+> Reconciled on 2026-10-22, marking superseded claims rather than deleting them:
+>
+> - `AGENTS.md` — the generated Laravel Boost block still lists Laravel 11 /
+>   Filament 4 / Livewire 3 / PHP 8.3.21. A dated banner now sits above it
+>   pointing at the lockfile and the project-memory line
+>   (`AGENTS.md:301`): Laravel 13.21.1, Filament 5.7.6, Shield 4.2.0,
+>   Livewire 4.3.4, Pest 4.7.5, PHPUnit 12.5.30, PHP >= 8.4.1 (verified against
+>   `composer.lock` and `composer.json` this session).
+> - `docs/handover-actions.md` §5 — "Filament 5.7.6 needs a composer update" is
+>   marked DONE (it is locked); the restructure totals are corrected to the
+>   post-removal 68 safe / 49 review; "remaining suites: most of AccountFeature,
+>   plus project and product" is marked SUPERSEDED, pointing at the
+>   2026-09-29 all-thirteen-suites table in `docs/change-log.md` (AccountFeature
+>   526, ProjectFeature 86, ProductFeature 250, zero failures).
+> - `docs/planned/03-restructure-backlog.md` — already carried the 2026-10-21 removal note
+>   and the Package A PHP 8.4 statement; the four dead entries are now marked
+>   `REMOVED 2026-10-21, moot` inline so nobody adopts a resource that no longer
+>   exists.
+> - `docs/running-tests.md` — said one shared `aureuserp_testing` and serial runs
+>   only. Now documents the per-work-package database and the `-e DB_DATABASE`
+>   override, and keeps the interleaving warning scoped to one database.
+> - `docs/planned/07-landing-page-brief.md` — "Website and blog pages managed from the same
+>   admin" was false: the Blogs plugin and the CMS pages were removed on
+>   2026-10-21 and `plugins/webkul/website` has no admin resources. Replaced with
+>   the customer-portal line, with the correction dated inline.
+>
+> Checked and left alone because they are still true: `planned/../completed/unified-product-resource-plan.md`
+> ("Contacts/Website partner screens" — the website plugin contributes its portal
+> actions and column to the partner resource through `PartnerSchemaRegistry`),
+> and the historical Website references in `docs/change-log.md` and
+> `docs/upstream-fix-adoption-plan.md`, which record what happened rather than
+> what is.
+>
+> Also corrected while checking: `docs/logistics-plan.md` listed `website` as one
+> of three plugins that subclass `PartnerResource` to add a customer tab. It no
+> longer does — since the CMS removal it contributes only registry entries
+> (`plugins/webkul/website/src/PortalContributions.php`). The argument that table
+> supports still holds.
 
 The audit found status drift between project documents. For example,
 `docs/handover-actions.md` still describes remaining optional suites while
 `docs/change-log.md` records all ten suites passing on 2026-09-04, and
-`docs/restructure-backlog.md` still describes the PHP 8.4 runtime as unavailable
+`docs/planned/03-restructure-backlog.md` still describes the PHP 8.4 runtime as unavailable
 even though Sail is now the documented test path. `AGENTS.md` also contains an
 auto-generated Laravel Boost version block that is older than the explicit
 DEKA ERP project-memory versions.
@@ -608,6 +819,331 @@ handoff between agents.
 **Implementation:** During each work package, update the owning plan and any
 status document whose statement became false. Do not rewrite historical
 records; mark them superseded and link to the current source of truth.
+
+---
+
+*The following UF entries (UF-017 through UF-024) were identified during the
+v1.6.0 release review on 2026-10-20. They were not captured in the initial
+audit because the initial pass focused on failing-test commits rather than
+the full feature and fix set. Upstream commit SHAs must be confirmed during
+implementation by searching the aureuserp/aureuserp master history.*
+
+### UF-017 - XSS in Chatter Change Summaries
+
+**Decision:** Required, P0 — security  
+**Upstream reference:** v1.6.0 release note: "[Security] Escaped HTML entities
+in chatter change summaries to prevent XSS." Issue/commit TBD.  
+**Local state:** **Not applicable — investigated 2026-10-22, this fork was
+never exposed.** Guarded by a regression test rather than a code change; see
+below.
+
+### UF-017 investigation, 2026-10-22
+
+Every chatter rendering surface was traced. None of them puts user-controlled
+text into unescaped HTML:
+
+| Surface | How it renders | Verdict |
+|---|---|---|
+| `old_value`, `new_value`, field name in change summaries | `{{ }}` | Escaped |
+| Step `$icon` | hardcoded `match()` over static SVG path data, keyed on `$change['type']` | No user input reaches it |
+| Activity bodies | translation strings with `getModelTitle()` interpolated; all 37 implementations return a literal or a `match()` over an enum, never a model attribute | No user text reaches them |
+| Message `body` and `subject` | `sanitizeHtml()`, or Filament's `RichContentRenderer` for rich-editor documents | Sanitised; the renderer is the legitimate rich text the upstream note warns against breaking |
+
+Because there is nothing to fix, the risk is that someone reintroduces it. A
+test asserting "Blade escapes `{{ }}`" would be tautological, so
+`plugins/webkul/chatter/tests/Feature/ChatterEscapingTest.php` pins the
+decision instead:
+
+1. Every `{!! !!}` in a chatter view must match an allowlisted sink
+   (`sanitizeHtml()`, `ChatterMentions::render(`, `$icon`). A new unescaped
+   sink fails until it is justified and added.
+2. The three change-summary expressions are asserted to still use `{{ }}`, so
+   switching one to `{!! !!}` fails with a message saying why it matters.
+3. No `getModelTitle()` may `return $this->someAttribute;`, which is the one
+   way user text could reach the unescaped activity-body sink.
+
+Verified against 12 chatter views and 37 `getModelTitle()` implementations
+across 324 model files. A `ChatterFeature` suite was added to `phpunit.xml`;
+the plugin had tests nowhere before, so anything written here would never have
+run.
+
+Upstream escaped HTML entities written into chatter change-summary strings.
+Unescaped user-controlled content rendered as HTML in the activity log can
+allow stored XSS against any user who views a record's chatter.
+
+**Why DEKA ERP needs it:** DEKA ERP uses the chatter on shipments, trips,
+expenses, invoices, and most entity types. An unescaped string is a stored
+XSS vector for every tenant.
+
+**Benefits:** Eliminates a stored-XSS surface in one of the most-visited
+parts of the UI.
+
+**Implementation:**
+
+1. Find the upstream commit, identify the exact escaping change, and
+   determine which chatter helper or observer is the entry point.
+2. Check local `ChatterCleanupService` and any chatter-writing path in
+   `Webkul\Chatter` for the same unescaped write.
+3. Apply the equivalent escaping. Do not break Markdown or rich-text that is
+   legitimately rendered.
+4. Add a test that injects an HTML payload via a model update and asserts the
+   rendered chatter entry is escaped.
+
+**Acceptance:** A `<script>` or `<img onerror>` payload in a tracked field
+value appears in the chatter as literal text, not as executable HTML.
+
+### UF-018 - Payment State Not Updating After Invoice is Paid
+
+> **Already handled — confirmed 2026-10-22.** `Move::computePaymentState()`
+> (`Models/Move.php:675`) derives `payment_state` from the reconciliation
+> matchings and `amount_residual`, and it is called after a payment is
+> registered (`Services/PaymentRegistrar.php:342`) as well as from the move's
+> own recompute path (`Move.php:510`). Paying an invoice therefore advances
+> the state. `BLOCKED` is deliberately preserved rather than reset to
+> `NOT_PAID`.
+>
+> **A warning for whoever audits this next.** A grep for writes to
+> `payment_state` using array-key patterns (`'payment_state' =>`) finds only
+> factories and API resources, which makes it look as though nothing in
+> application code ever sets it - a false positive that reads like a P1
+> financial bug. The real assignments are object-property writes
+> (`$this->payment_state = ...`) inside `computePaymentState()`. Search for
+> the method, not the column.
+>
+> The regression is now pinned by `InvoiceTest.php`: it pays an invoice through
+> the normal registrar and asserts both `state === posted` and
+> `payment_state === paid`, plus a zero residual. The focused test passed on
+> `aureuserp_testing_uf18` (1 test, 3 assertions).
+
+**Decision:** Required, P1 — financial correctness  
+**Upstream reference:** v1.6.0 issue #1478. Commit TBD.  
+**Local state:** **Covered 2026-10-22**
+
+Upstream fixed a defect where paying an invoice did not advance its state
+field, leaving paid invoices still showing as "open" or "draft".
+
+**Why DEKA ERP needs it:** Payment state drives invoice filtering, aging
+reports, and the Logistics invoicing screen. A stale state can re-queue
+already-paid shipment invoices for billing.
+
+**Benefits:** Correct invoice lifecycle state for every payment path.
+
+**Implementation:**
+
+1. Find the upstream commit and the state-machine path it repairs.
+2. Check local `Account\Models\Move` state transitions and the payment
+   registration flow for the same defect.
+3. If already fixed locally (it may be part of the v1.5 backport), add a
+   regression test that pays an invoice and asserts `state === 'posted'` +
+   `payment_state === 'paid'`.
+
+### UF-019 - Livewire max_nesting_depth 10 → 30
+
+> **Already implemented — confirmed 2026-10-22.** `config/livewire.php:295`
+> already sets `'max_nesting_depth' => 30` inside the `payload` block. The
+> key is real in the installed Livewire 4.3.4 and is read as
+> `livewire.payload.max_nesting_depth` by
+> `HandleComponents::updateProperty()`, so the published value takes effect.
+> Nothing to do. The "Local state" line below was stale.
+>
+> Two details worth keeping: the key is nested under `payload`, not top level,
+> so setting a top-level `max_nesting_depth` would silently do nothing; and
+> the guard is `if ($maxDepth !== null && ...)`, so a published config that
+> omits the key disables the limit entirely rather than falling back to 10.
+
+**Decision:** Required, P1 — reliability  
+**Upstream reference:** v1.6.0 release note. Config location is
+`livewire.payload.max_nesting_depth`.  
+**Local state:** Already implemented — confirmed 2026-10-22 (see the note
+above; this line previously still read "Open — not investigated" after the
+investigation, which is the staleness this register keeps producing).
+
+Upstream increased Livewire's `max_nesting_depth` from 10 to 30 to fix
+crashes in deeply nested repeater components.
+
+**Why DEKA ERP needs it:** Logistics stops, trip forms, and shipment line
+repeaters are multi-level. Any user who adds enough nested components will
+hit the current limit silently (Livewire renders an error without a useful
+message).
+
+**Benefits:** Prevents cryptic repeater failures on complex forms without
+architectural changes.
+
+**Implementation:**
+
+1. Find the upstream config change (likely `config/livewire.php` or a
+   `Livewire::configure()` call in a service provider).
+2. Apply the same change locally. Check whether DEKA ERP already publishes
+   a `config/livewire.php`; if not, publish it first.
+3. Add a smoke test or note in manual QA that a five-stop trip with line items
+   renders without a nesting error.
+
+### UF-020 - Saved Filter Views Throw LogicException
+
+**Decision:** Required, P1 — UX correctness  
+**Upstream reference:** v1.6.0 issue #1490. Commit TBD.  
+**Local state:** **Fixed 2026-10-22**
+
+> `SavedView::getModel()` now honours Filament's `?string` model contract in
+> `plugins/webkul/table-views/src/Filament/Components/SavedView.php:20-29`,
+> while `HasTableViews.php:464` passes the saved record through
+> `getRecord()`. The previous implementation returned a `TableView` object
+> from a `?string` method while rendering the edit action, which made saved
+> views fail during hydration. `SavedViewTest.php` pins the contract: 1 test,
+> 2 assertions passed.
+
+Saved Filter Views across list resources threw a `LogicException`. This
+makes any saved filter unusable for the session.
+
+**Why DEKA ERP needs it:** Power users and operations staff rely on saved
+filters to segment shipments, expenses, and trips by company, driver, or
+state. A runtime crash blocks those workflows.
+
+**Benefits:** Reliable filter state across every list resource.
+
+**Implementation:**
+
+1. Find the upstream fix and the exception trigger (likely a null state or
+   missing key during filter hydration).
+2. Reproduce locally if possible (create a saved filter, navigate away, return).
+3. Port the minimal fix. Do not restructure the filter pipeline.
+4. Add a test that saves and reloads a filter without throwing.
+
+### UF-021 - FK Violation on partners_partners.parent_id Editing an Employee
+
+**Decision:** Required, P1 — data integrity  
+**Upstream reference:** v1.6.0 issue #1491. Commit TBD.  
+**Local state:** **Fixed 2026-10-22**
+
+> `plugins/webkul/employees/database/migrations/2024_12_12_063353_create_employees_employees_table.php:101`
+> constrains `parent_id` to `employees_employees.id`, and
+> `plugins/webkul/employees/src/Models/Employee.php:169-172` defines the same
+> employee-to-employee relation. `EmployeeFactory.php:43-44` was instead
+> assigning user IDs; its defaults now use `null`, while an explicit manager
+> uses an employee ID. The complete `FactoryTest.php` passed: 6 tests,
+> 10 assertions.
+
+Editing an employee could trigger a foreign key violation on
+`partners_partners.parent_id`. The defect likely arises from the Employee
+observer or partner-sync code writing a User ID into a column that expects a
+Partner ID.
+
+**Why DEKA ERP needs it:** Saving an employee with a manager selection
+currently risks a FK constraint error that aborts the save silently or with
+a 500.
+
+**Benefits:** Reliable employee editing across all HR workflows.
+
+**Implementation:**
+
+1. Trace the upstream commit to identify which column receives the wrong ID type.
+2. Check local `Employee` model, its observer, and any
+   `partner_id` / `parent_id` assignment path.
+3. Apply the fix and add a factory test that creates an employee with a manager
+   and persists without a FK error.
+
+### UF-022 - Currency Conversion Not Working in RFQ / Purchase Order
+
+**Decision:** Required, P1 — financial correctness  
+**Upstream reference:** v1.6.0 issue #1497, commit `a1b4679eb`.
+**Local state:** **Fixed 2026-10-22**
+
+Currency conversion was not applied when creating or editing an RFQ or
+Purchase Order in a currency different from the company's base currency.
+
+**Why DEKA ERP needs it:** DEKA ERP companies can operate in multiple
+currencies. Incorrect conversion produces wrong committed costs and payable
+amounts.
+
+**Benefits:** Correct multi-currency RFQ and PO line totals.
+
+**Implementation:**
+
+1. Find the upstream fix and identify the conversion call that was missing
+   or bypassed.
+2. Check local `Purchase\Models\Order` / `OrderLine` and the currency-rate
+   resolution path.
+3. Port the fix and add a test that creates a PO in a non-base currency and
+   asserts converted totals.
+
+> The upstream form fix is applied in the monolithic local `OrderResource`:
+> vendor prices and product fallback prices are converted into the selected
+> order currency, and changing the order currency refreshes existing lines.
+> The local `OrderCalculator` now persists the company-to-order conversion
+> rate before calculating `total_cc_amount`. `OrderCurrencyConversionTest.php`
+> covers company fallback, vendor prices, vendor filtering, UOM conversion,
+> and the exact converted totals; it passed with 8 tests and 8 assertions on
+> `aureuserp_testing_uf22`.
+
+### UF-023 - Exception Deleting an Active Currency
+
+**Decision:** Recommended, P2  
+**Upstream reference:** v1.6.0 issue #1514. Commit TBD.  
+**Local state:** **Fixed 2026-10-22**
+
+> Individual currency delete actions already caught `QueryException` in
+> `plugins/webkul/support/src/Filament/Resources/CurrencyResource.php:272-295`
+> and the edit/view pages. The remaining unhandled path was the default bulk
+> delete action at `CurrencyResource.php:300`; it now catches the same database
+> failure and sends the existing user-facing error notification. The
+> `CurrencyDeleteTest.php` bulk-action regression passed: 1 test, 7 assertions.
+
+Deleting a currency that is still marked active (or still in use) threw an
+unhandled exception instead of returning a validation error.
+
+**Why DEKA ERP needs it:** An admin who tries to remove a redundant currency
+currently gets a 500. The correct behavior is a user-facing error.
+
+**Benefits:** Graceful error handling for an infrequent but legitimate
+administrative action.
+
+**Implementation:** Locate the upstream guard, apply it locally, and add a
+test that attempts deletion of an active currency and asserts the error
+message.
+
+### UF-024 - Product Name Replaced by Variant ID After Creating Variants
+
+**Decision:** Recommended, P2  
+**Upstream reference:** v1.6.0 issue #1187. Commit TBD.  
+**Local state:** **Already handled — confirmed 2026-10-22**
+
+> `Product::generateVariants()` at
+> `plugins/webkul/products/src/Models/Product.php:194-282` derives each
+> variant name from `$this->name` and only writes variant records; it never
+> assigns a variant ID to the parent name. `ProductVariantNameTest.php` ran
+> generation twice and passed: 1 test, 2 assertions. No product code change
+> was necessary.
+
+After creating product variants, the product name field was overwritten with
+the variant's internal ID.
+
+**Why DEKA ERP needs it:** Affects the Products plugin used by Logistics
+service products and any catalog item with variants.
+
+**Benefits:** Correct product display names in all downstream resources.
+
+**Implementation:** Find the upstream fix, check local `Product` attribute
+write path, port the fix, and add a test that creates a variant and asserts
+the parent product name is unchanged.
+
+### UF-025 - Cross-company writes through a body company_id (security)
+
+**Decision:** Adopted, P0 (user, 2026-11-16)  
+**Upstream reference:** v1.7.0, PR #1575, commits `9ffd2a765`, `0b9cdc96b`
+("company ID tenant isolation"; `WithinAllowedCompanies` rule,
+`BelongsToCompany::assertCompanyAllowed()`, `CrossCompanyException`).  
+**Local state:** **Fixed in hotfix v1.11.3 (2026-11-16), adapted, not copied**
+
+> Our `BelongsToCompany` only filled a missing company, and API requests only
+> checked that a body `company_id` exists. A user of company A could create a
+> record stamped with company B, or move one there. Adapted as
+> `CompanyContext::mayWriteTo()` (one rule), called from `BelongsToCompany`
+> on creating and on a company_id change. Differences from upstream: staff in
+> "all companies" use `seesAllCompanies()`; no acting user (jobs, console)
+> passes; a company created in the request passes (`markProvisioned()`, so
+> onboarding's observers work before the creator is a member). The upstream
+> request rule was not added: every API write reaches the model guard, which
+> answers 422. Test: support `Tenancy/CrossCompanyWriteTest`.
 
 ## Already Present Locally
 
@@ -671,6 +1207,34 @@ targeted Website Playwright specs
 **Verification:** command tests, current translation parity, false-positive
 review, and CI artifact inspection
 
+### Package F - Resource Structure Alignment
+
+**Contains:** the Filament resource file layout only (no upstream features or
+fixes)
+**Dependencies:** Package A, and the Logistics plugin finished and merged
+**Risk:** Medium by volume (227 resource classes, 139 of them with inline
+schemas), low by nature - the refactor is meant to change no behaviour, and is
+verified against that
+**Plan:** `docs/upstream-structure-alignment-plan.md`, which lives on the
+**`chore/resource-structure`** branch, not here. Read it there before doing any
+of this work:
+
+```bash
+git show chore/resource-structure:docs/upstream-structure-alignment-plan.md
+```
+
+Do not start Package F on `feature/logistics` or `main`. It has its own branch
+so a 400-file mechanical refactor never mixes with feature work, and so it can
+be reverted as one merge. The scope decision is recorded there: **all 227
+resources**, not only the 139 with inline schemas.
+
+Recorded here because it is upstream-driven: upstream v1.6 moved every resource
+to `Schemas/`+`Tables/`, and while ours stay monolithic, every future upstream
+fix touching a form or table must be re-implemented by hand rather than applied
+as a patch. The governing rule is that our files are **restructured**, never
+replaced with upstream's - 59 of our resources carry company scoping, 33 carry
+custom fields and 14 carry responsive columns that upstream's versions do not.
+
 ### Separate Product Proposals
 
 Create independent plans and approval points for UF-009, UF-010, UF-011, and
@@ -711,12 +1275,31 @@ parallel isolation.
 
 ## Recurring Upstream Review Rule
 
+> **Superseded on 2026-10-21, user decision.** The seven-day due date below no
+> longer applies. This document was briefly deleted (commit ca1ff8905) to reduce
+> scope, then restored because it is the only record of eight open findings,
+> including UF-017, an unfixed P0 XSS. It is kept as a **bug register, not a
+> schedule**: the calendar trigger is dropped, the event-driven triggers below
+> still stand, and no agent owes a review merely because time has passed.
+>
+> **The "eight open findings" count above is itself superseded (2026-10-23).**
+> It was accurate on 2026-10-21 and was overtaken by the 2026-10-22 work the
+> same document records. Every Local state was re-read on 2026-10-23: UF-017 is
+> *not applicable* (this fork was never exposed; `ChatterEscapingTest` pins the
+> decision), UF-018/020/021/022/023 are fixed, UF-019/024 were already handled.
+> **No P0 or P1 is open.** Still live: UF-003 (open, not fixed upstream either),
+> UF-009 (needs an install-flow decision), UF-010 (partial), plus UF-001 and
+> UF-007 awaiting a remote CI run and browser execution respectively. The
+> restored-because-of-a-P0 rationale above is kept as the historical reason the
+> document survived deletion, not as a current risk statement.
+
 Agents cannot monitor the repository while no session is active. Therefore,
 the first active agent after the due date owns the review.
 
 Perform an upstream review when any of these triggers occurs:
 
-- Seven calendar days have passed since `Last reviewed` below.
+- ~~Seven calendar days have passed since `Last reviewed` below.~~ (dropped
+  2026-10-21; see the note above)
 - Before a production release or dependency refresh.
 - Before substantial work in a plugin that upstream changed since the recorded
   SHA.
@@ -774,6 +1357,7 @@ They must not claim tests or production checks that were not executed.
 | Last reviewed | Upstream SHA | Local SHA | Outcome | Next due |
 |---|---|---|---|---|
 | 2026-09-18 | `d7d471894` | `e0ce9f6a8467` | Initial whole-app test-fix audit. P0 CI/Employee gaps, P1 accounting/locale/E2E gaps, optional product initiatives, and explicit rejects recorded. | 2026-09-25 or earlier trigger |
+| 2026-10-20 | v1.6.0 release | `d66a7f0e1` | v1.6.0 full changelog review. Eight gaps not captured by the initial failing-test pass added as UF-017 through UF-024: XSS in chatter (P0 security), payment state bug (P1), Livewire nesting depth (P1), saved filter crash (P1), Employee parent_id FK (P1), RFQ/PO currency conversion (P1), active-currency delete error (P2), product variant name bug (P2). Upstream commit SHAs TBD during implementation. | 2026-10-27 or earlier trigger |
 
 ## Completion Criteria for This Plan
 

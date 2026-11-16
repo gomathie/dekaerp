@@ -216,7 +216,17 @@ abstract class PackageServiceProvider extends BasePackageServiceProvider
                 // file must not be re-registered.
                 if ($routeFileName === 'api') {
                     if (! ($this->app instanceof CachesRoutes && $this->app->routesAreCached())) {
-                        Route::middleware(['throttle:api', 'api.abilities'])->group($routeFile);
+                        // `api.company` first: the explicit selector decides which
+                        // company the request is for, and `plugin.entitlement`
+                        // then judges that company's grants. `plugin.entitlement`
+                        // exempts core plugins and lets a super admin through; see
+                        // Webkul\PluginManager\Support\PluginEntitlement.
+                        Route::middleware([
+                            'throttle:api',
+                            'api.abilities',
+                            'api.company',
+                            'plugin.entitlement:'.$this->package->name,
+                        ])->group($routeFile);
                     }
 
                     continue;

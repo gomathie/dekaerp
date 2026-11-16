@@ -13,6 +13,7 @@ use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\VendorResource\Page
 use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\VendorResource\Pages\EditVendor;
 use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\VendorResource\Pages\ListVendors;
 use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\VendorResource\Pages\ManageAddresses;
+use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\VendorResource\Pages\ManageBankAccounts;
 use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\VendorResource\Pages\ManageBills;
 use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\VendorResource\Pages\ManageContacts;
 use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\VendorResource\Pages\ManagePurchases;
@@ -49,8 +50,9 @@ class VendorResource extends BaseVendorResource
             EditVendor::class,
             ManageContacts::class,
             ManageAddresses::class,
-            ManageBills::class,
+            ManageBankAccounts::class,
             ManagePurchases::class,
+            ManageBills::class,
         ]);
     }
 
@@ -72,14 +74,15 @@ class VendorResource extends BaseVendorResource
     public static function getPages(): array
     {
         return [
-            'index'     => ListVendors::route('/'),
-            'create'    => CreateVendor::route('/create'),
-            'view'      => ViewVendor::route('/{record}'),
-            'edit'      => EditVendor::route('/{record}/edit'),
-            'contacts'  => ManageContacts::route('/{record}/contacts'),
-            'addresses' => ManageAddresses::route('/{record}/addresses'),
-            'bills'     => ManageBills::route('/{record}/bills'),
-            'purchases' => ManagePurchases::route('/{record}/purchases'),
+            'index'         => ListVendors::route('/'),
+            'create'        => CreateVendor::route('/create'),
+            'view'          => ViewVendor::route('/{record}'),
+            'edit'          => EditVendor::route('/{record}/edit'),
+            'contacts'      => ManageContacts::route('/{record}/contacts'),
+            'addresses'     => ManageAddresses::route('/{record}/addresses'),
+            'bank-accounts' => ManageBankAccounts::route('/{record}/bank-accounts'),
+            'bills'         => ManageBills::route('/{record}/bills'),
+            'purchases'     => ManagePurchases::route('/{record}/purchases'),
         ];
     }
 }

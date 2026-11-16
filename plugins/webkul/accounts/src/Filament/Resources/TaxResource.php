@@ -21,6 +21,19 @@ use Webkul\Account\Models\Tax;
 
 class TaxResource extends Resource
 {
+    /**
+     * Keep "Taxes" highlighted on the tax group screens, which are reached
+     * from the Taxes list rather than the menu (user, 2026-11-14).
+     */
+    public static function getNavigationItemActiveRoutePattern(): string|array
+    {
+        $groups = str_replace('\\TaxResource', '\\TaxGroupResource', static::class);
+
+        return class_exists($groups)
+            ? [static::getRouteBaseName().'.*', $groups::getRouteBaseName().'.*']
+            : static::getRouteBaseName().'.*';
+    }
+
     protected static ?string $model = Tax::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-receipt-percent';

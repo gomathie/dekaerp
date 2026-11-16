@@ -6,6 +6,7 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -25,16 +26,23 @@ use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema as DBSchema;
 use RuntimeException;
 use Throwable;
+use Webkul\PluginManager\Console\Commands\InstallInBackground;
 use Webkul\PluginManager\Console\Commands\UninstallCommand;
 use Webkul\PluginManager\Filament\Resources\PluginResource\Pages\ListPlugins;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Package;
+use Webkul\PluginManager\Services\PluginEntitlementService;
+use Webkul\PluginManager\Services\PluginInstallRunner;
+use Webkul\Security\Models\User;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Models\Company;
 
 class PluginResource extends Resource
 {
@@ -89,7 +97,7 @@ class PluginResource extends Resource
 
                             TextColumn::make('latest_version')
                                 ->label(__('plugin-manager::filament/resources/plugin.table.version'))
-                                ->default('1.0.0')
+                                ->state(fn (Plugin $record): string => $record->currentVersion())
                                 ->badge()
                                 ->color('info'),
                         ]),
@@ -132,6 +140,55 @@ class PluginResource extends Resource
                 ActionGroup::make([
                     ViewAction::make()->icon('heroicon-o-eye'),
 
+                    // Installing a plugin is global; this is which companies may
+                    // use it. Without this the company_plugin grants could only
+                    // be changed with SQL, which makes the feature unusable.
+                    Action::make('companies')
+                        ->label(__('plugin-manager::filament/resources/plugin.actions.companies.title'))
+                        ->icon('heroicon-o-building-office-2')
+                        ->color('info')
+                        ->visible(fn ($record): bool => (bool) $record->is_installed
+                            && auth()->user() instanceof User
+                            && auth()->user()->isSuperAdmin())
+                        ->modalHeading(fn ($record): string => __('plugin-manager::filament/resources/plugin.actions.companies.heading', [
+                            'name' => ucfirst($record->name),
+                        ]))
+                        ->modalDescription(__('plugin-manager::filament/resources/plugin.actions.companies.description'))
+                        ->schema([
+                            CheckboxList::make('company_ids')
+                                ->label(__('plugin-manager::filament/resources/plugin.actions.companies.field'))
+                                ->options(fn (): array => Company::query()
+                                    ->withoutGlobalScopes()
+                                    ->orderBy('name')
+                                    ->pluck('name', 'id')
+                                    ->all())
+                                ->bulkToggleable()
+                                ->columns(2),
+                        ])
+                        ->fillForm(fn ($record): array => [
+                            'company_ids' => $record->companies()->pluck('companies.id')->all(),
+                        ])
+                        ->action(function ($record, array $data): void {
+                            // One writer for company_plugin: this action and the
+                            // modules section on the company form both go through
+                            // PluginEntitlementService, so dependency closure,
+                            // authorization, the audit record and the cache flush
+                            // cannot differ between the two screens.
+                            app(PluginEntitlementService::class)->syncForPlugin(
+                                $record,
+                                $data['company_ids'] ?? [],
+                            );
+
+                            Notification::make()
+                                ->success()
+                                ->title(__('plugin-manager::filament/resources/plugin.actions.companies.notification.title'))
+                                ->body(__('plugin-manager::filament/resources/plugin.actions.companies.notification.body', [
+                                    'count' => count($data['company_ids'] ?? []),
+                                    'name'  => ucfirst($record->name),
+                                ]))
+                                ->send();
+                        }),
+
                     Action::make('install')
                         ->label(__('plugin-manager::filament/resources/plugin.actions.install.title'))
                         ->icon('heroicon-o-arrow-down-tray')
@@ -156,33 +213,50 @@ class PluginResource extends Resource
                             // DDL on locks this connection still held - which surfaced
                             // as an install that failed once and then succeeded on a
                             // later attempt.
-                            try {
-                                $phpPath = self::getPhpExecutablePath();
+                            //
+                            // In the background since 2026-11-12: the install takes
+                            // minutes (it regenerates every permission), the browser
+                            // gave up first, and the dialog stayed open although the
+                            // install finished. The page now starts
+                            // plugins:install-in-background detached and returns at
+                            // once; that command notifies the user when it is done.
+                            // Windows (local development) keeps the in-request path.
+                            if (PHP_OS_FAMILY !== 'Windows') {
+                                if (Cache::lock(InstallInBackground::lockKey($record->name), 1)->get() === false) {
+                                    Notification::make()
+                                        ->warning()
+                                        ->title(__('plugin-manager::filament/resources/plugin.notifications.installing-already.title', ['name' => $record->name]))
+                                        ->send();
 
-                                $php = escapeshellarg($phpPath);
-
-                                $artisan = escapeshellarg(base_path('artisan'));
-
-                                $commandName = escapeshellarg("{$record->name}:install");
-
-                                $cmd = self::buildTimeoutCommand(300, "$php $artisan $commandName --no-interaction 2>&1");
-
-                                $output = [];
-
-                                $exitCode = 0;
-
-                                exec($cmd, $output, $exitCode);
-
-                                if ($exitCode === 124) {
-                                    throw new RuntimeException('Installation timed out after 5 minutes.');
+                                    return;
                                 }
 
-                                if ($exitCode !== 0) {
-                                    $errorOutput = implode(PHP_EOL, array_slice($output, -10));
+                                // The probe above took the lock for one second only;
+                                // release it so the background command can take it.
+                                Cache::lock(InstallInBackground::lockKey($record->name))->forceRelease();
 
+                                app(PluginInstallRunner::class)->startInBackground($record->name, auth()->id());
+
+                                Notification::make()
+                                    ->info()
+                                    ->title(__('plugin-manager::filament/resources/plugin.notifications.installing.title', ['name' => $record->name]))
+                                    ->body(__('plugin-manager::filament/resources/plugin.notifications.installing.body'))
+                                    ->send();
+
+                                return;
+                            }
+
+                            try {
+                                $result = app(PluginInstallRunner::class)->install($record->name);
+
+                                if ($result['exitCode'] === 124) {
+                                    throw new RuntimeException('Installation timed out after '.intdiv(PluginInstallRunner::TIMEOUT_SECONDS, 60).' minutes.');
+                                }
+
+                                if (! $result['ok']) {
                                     throw new RuntimeException(
-                                        "Installation failed with exit code {$exitCode}.".
-                                            ($errorOutput ? " Last output: {$errorOutput}" : '')
+                                        "Installation failed with exit code {$result['exitCode']}.".
+                                            ($result['output'] ? " Last output: {$result['output']}" : '')
                                     );
                                 }
 
@@ -262,7 +336,21 @@ class PluginResource extends Resource
                             return view('plugin-manager::uninstall-modal', compact('record', 'dependents', 'installedDependents', 'tables'));
                         })
                         ->action(fn ($record) => self::uninstallPlugin($record))
-                        ->after(fn () => redirect(self::getUrl('index'))),
+                        // Guarded: this redirects to the page the user is
+                        // already on, and it runs immediately after the caches
+                        // were cleared. When the rebuild fails the route is
+                        // momentarily unresolvable and getUrl() throws
+                        // RouteNotFoundException, turning a completed uninstall
+                        // into an unhandled error (2026-10-21). Skipping the
+                        // redirect loses nothing: Livewire re-renders the table
+                        // either way.
+                        ->after(function () {
+                            if (! Route::has(self::getRouteBaseName().'.index')) {
+                                return null;
+                            }
+
+                            return redirect(self::getUrl('index'));
+                        }),
                 ]),
             ], position: RecordActionsPosition::BeforeColumns)
             ->recordActionsAlignment('end')
@@ -285,6 +373,7 @@ class PluginResource extends Resource
 
                             TextEntry::make('latest_version')
                                 ->label(__('plugin-manager::filament/resources/plugin.infolist.version'))
+                                ->state(fn (Plugin $record): string => $record->currentVersion())
                                 ->badge()
                                 ->color('info'),
                         ]),
@@ -423,7 +512,18 @@ class PluginResource extends Resource
                 }
             });
 
-        Package::refreshPluginCaches();
+        // A false return means the caches were cleared but not rebuilt, so the
+        // application is now running uncached. Said out loud rather than only
+        // reported: on 2026-10-21 this failed on production in silence, and the
+        // only visible sign was an unrelated-looking RouteNotFoundException.
+        if (! Package::refreshPluginCaches()) {
+            Notification::make()
+                ->title(__('plugin-manager::filament/resources/plugin.notifications.cache-rebuild-failed.title'))
+                ->body(__('plugin-manager::filament/resources/plugin.notifications.cache-rebuild-failed.body'))
+                ->warning()
+                ->persistent()
+                ->send();
+        }
 
         if (empty($errors)) {
             Notification::make()

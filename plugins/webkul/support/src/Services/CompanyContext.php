@@ -2,6 +2,8 @@
 
 namespace Webkul\Support\Services;
 
+use Closure;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use Webkul\Security\Models\User;
@@ -11,19 +13,36 @@ class CompanyContext
 {
     public const SESSION_KEY = 'active_company_ids';
 
+    public const SCOPE_MODE_SESSION_KEY = 'company_scope_mode';
+
+    public const SCOPE_MODE_COMPANY = 'company';
+
+    public const SCOPE_MODE_ALL = 'all';
+
     protected ?Collection $allowed = null;
 
     protected ?Company $currentCompany = null;
 
     protected bool $currentCompanyResolved = false;
 
+    /**
+     * An explicit company set for the current execution, overriding the session.
+     *
+     * Set by `runFor()` for queued work and by the API company selector, neither
+     * of which has a web session to write to. `null` means "no override, use the
+     * session as usual", which is why it is not an empty array by default.
+     *
+     * @var array<int, int>|null
+     */
+    protected ?array $forcedActiveIds = null;
+
     public function bypassed(): bool
     {
-        if ($this->internalUser()?->isMultiCompanyAdmin()) {
-            return false;
-        }
-
-        return Gate::allows('bypass_company_scope');
+        // Access to every company is a capability; skipping tenant scopes is a
+        // separate, explicit view mode. Forced API and job contexts always win.
+        return $this->forcedActiveIds === null
+            && $this->seesAllCompanies()
+            && session(self::SCOPE_MODE_SESSION_KEY) === self::SCOPE_MODE_ALL;
     }
 
     public function internalUser(): ?User
@@ -54,12 +73,74 @@ class CompanyContext
 
     public function seesAllCompanies(): bool
     {
+        return ! $this->internalUser()?->isMultiCompanyAdmin()
+            && Gate::allows('bypass_company_scope');
+    }
+
+    public function allCompaniesActive(): bool
+    {
         return $this->bypassed();
     }
 
     public function allowedIds(): array
     {
         return $this->allowedCompanies()->pluck('id')->all();
+    }
+
+    /**
+     * Companies created in this request. Their own records (partner, root
+     * category, grants) are written by the Company::created observers before
+     * the creator is attached as a member, so mayWriteTo() must accept them.
+     *
+     * @var list<int>
+     */
+    protected array $provisionedIds = [];
+
+    public function markProvisioned(int $companyId): void
+    {
+        $this->provisionedIds[] = $companyId;
+        $this->allowed = null;
+    }
+
+    /**
+     * May the acting user create a record in, or move one into, this company?
+     *
+     * Why (upstream PR #1575 adapted, 2026-11-16): BelongsToCompany only
+     * filled a missing company, and API requests only checked that a body
+     * company_id exists, so a user of company A could write a record stamped
+     * with company B (another client). Fail closed for an acting user outside
+     * their memberships. No acting user (jobs, console, seeders) and staff who
+     * see all companies pass; a shared record (null) is not a company.
+     */
+    public function mayWriteTo(mixed $companyId): bool
+    {
+        if (blank($companyId) || ! $this->internalUser() instanceof User || $this->seesAllCompanies()) {
+            return true;
+        }
+
+        $companyId = (int) $companyId;
+
+        return in_array($companyId, $this->provisionedIds, true)
+            || in_array($companyId, array_map('intval', $this->allowedIds()), true);
+    }
+
+    /**
+     * Who may change which companies are active (user decision, 2026-10-29).
+     *
+     * Installation staff only: a Super Admin, and a Multi-Company Admin within
+     * the companies assigned to them. A client's own users work in their
+     * default company - clients are unrelated businesses, and a switcher let a
+     * user who belonged to several companies widen one view across them. This
+     * is the one place the rule lives: the render hook hides the switcher with
+     * it and SetCompanyContextRequest refuses the switch with it.
+     */
+    public function canSwitchCompanies(): bool
+    {
+        $user = $this->internalUser();
+
+        return $user instanceof User
+            && $user->is_active
+            && ($user->isSuperAdmin() || $user->isMultiCompanyAdmin());
     }
 
     public function defaultId(): ?int
@@ -69,6 +150,22 @@ class CompanyContext
 
     public function activeIds(): array
     {
+        if ($this->forcedActiveIds !== null) {
+            // No acting user (a job or console command): the forced company is
+            // the context it was queued with, and there is nothing to intersect
+            // it against. With an acting user, membership still wins - a job
+            // must not be able to hand someone access to a company they do not
+            // belong to. That includes a user with no memberships at all, which
+            // is why this asks "is anyone acting" rather than "is the allow-list
+            // empty": the two used to be the same test and a memberless user
+            // was handed the forced company unchecked.
+            if (! $this->internalUser() instanceof User) {
+                return $this->forcedActiveIds;
+            }
+
+            return array_values(array_intersect($this->forcedActiveIds, $this->allowedIds()));
+        }
+
         $allowed = $this->allowedIds();
 
         if (empty($allowed)) {
@@ -85,12 +182,66 @@ class CompanyContext
 
         $active = array_values(array_intersect($stored, $allowed));
 
-        return empty($active) ? [$allowed[0]] : $active;
+        $active = empty($active) ? [$allowed[0]] : $active;
+
+        // Older sessions may contain several selected companies. Keep a
+        // Super Admin's normal mode to one tenant until they explicitly choose
+        // All companies; otherwise an old multi-select silently remains broad.
+        if ($this->seesAllCompanies() && session(self::SCOPE_MODE_SESSION_KEY) !== self::SCOPE_MODE_ALL) {
+            return [$active[0]];
+        }
+
+        return $active;
     }
 
     public function currentId(): ?int
     {
+        if ($this->forcedActiveIds !== null) {
+            // No default-company fallback: a forced context that resolved to
+            // nothing must read as "no company", or every fail-closed check
+            // downstream would quietly act on the user's default tenant instead.
+            return $this->activeIds()[0] ?? null;
+        }
+
         return $this->activeIds()[0] ?? $this->defaultId();
+    }
+
+    /**
+     * Run a callback with one company as the active context, restoring the
+     * previous context afterwards - including when the callback throws.
+     *
+     * This is the contract for queued work and console commands: the company has
+     * to be explicit, because `CompanyScope` is skipped outside tests in console
+     * execution and there is no session to fall back on. Without the `finally`,
+     * one early return would leave the next thing in the process - a second job
+     * on the same worker, the rest of a command - acting on the wrong tenant.
+     */
+    public function runFor(?int $companyId, Closure $callback): mixed
+    {
+        $previous = $this->forcedActiveIds;
+
+        $this->forcedActiveIds = $companyId === null ? [] : [$companyId];
+        $this->forgetCurrentCompany();
+
+        try {
+            return $callback();
+        } finally {
+            $this->forcedActiveIds = $previous;
+            $this->forgetCurrentCompany();
+        }
+    }
+
+    /**
+     * Pin the context for the rest of the request, without a restore step.
+     *
+     * Used by the API company selector: a request is its own process lifetime, so
+     * there is nothing to restore to. Prefer `runFor()` anywhere the process
+     * continues afterwards.
+     */
+    public function forceActive(?int $companyId): void
+    {
+        $this->forcedActiveIds = $companyId === null ? [] : [$companyId];
+        $this->forgetCurrentCompany();
     }
 
     public function currentCompany(): ?Company
@@ -133,12 +284,18 @@ class CompanyContext
         $unauthorized = array_diff($requested, $allowed);
 
         if ($unauthorized !== [] || ($current && ! in_array($current, $allowed, true))) {
-            throw new \Illuminate\Auth\Access\AuthorizationException;
+            throw new AuthorizationException;
         }
 
         $valid = array_values(array_intersect($requested, $allowed));
 
         $current ??= $this->activeIds()[0] ?? null;
+
+        if ($this->seesAllCompanies()) {
+            $current = $current && in_array($current, $valid, true) ? $current : ($valid[0] ?? null);
+            $valid = $current === null ? [] : [$current];
+            session([self::SCOPE_MODE_SESSION_KEY => self::SCOPE_MODE_COMPANY]);
+        }
 
         if ($current && in_array($current, $valid)) {
             $valid = array_values(array_unique([$current, ...$valid]));
@@ -149,9 +306,21 @@ class CompanyContext
         $this->forgetCurrentCompany();
     }
 
+    public function setAllCompanies(): void
+    {
+        if (! $this->canSwitchCompanies() || ! $this->seesAllCompanies()) {
+            throw new AuthorizationException;
+        }
+
+        session([self::SCOPE_MODE_SESSION_KEY => self::SCOPE_MODE_ALL]);
+
+        $this->forgetCurrentCompany();
+    }
+
     public function reset(): void
     {
         session()->forget(self::SESSION_KEY);
+        session()->forget(self::SCOPE_MODE_SESSION_KEY);
 
         $this->forgetCurrentCompany();
     }

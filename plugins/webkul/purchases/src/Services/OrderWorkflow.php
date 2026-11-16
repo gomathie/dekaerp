@@ -15,6 +15,7 @@ use Webkul\Purchase\Events\OrderUnlocked;
 use Webkul\Purchase\Mail\VendorPurchaseOrderMail;
 use Webkul\Purchase\Models\Order;
 use Webkul\Purchase\Settings\OrderSettings;
+use Webkul\Purchase\Support\PurchasesAccess;
 use Webkul\Security\Enums\PermissionType;
 
 class OrderWorkflow
@@ -27,9 +28,11 @@ class OrderWorkflow
 
     public function sendRequestForQuotation(Order $record, array $data): Order
     {
+        PurchasesAccess::assertForCompany((int) $record->company_id);
+
         $pdfPath = $this->documents->requestForQuotationPdf($record);
 
-        if (! $this->mailVendors($data, $pdfPath)) {
+        if (! $this->mailVendors($record, $data, $pdfPath)) {
             return $record;
         }
 
@@ -44,9 +47,11 @@ class OrderWorkflow
 
     public function sendOrder(Order $record, array $data): Order
     {
+        PurchasesAccess::assertForCompany((int) $record->company_id);
+
         $pdfPath = $this->documents->purchaseOrderPdf($record);
 
-        if ($this->mailVendors($data, $pdfPath)) {
+        if ($this->mailVendors($record, $data, $pdfPath)) {
             $this->attachToChatter($record, $data, $pdfPath);
         }
 
@@ -60,12 +65,11 @@ class OrderWorkflow
             ->count();
     }
 
-    protected function mailVendors(array $data, string $pdfPath): int
+    protected function mailVendors(Order $record, array $data, string $pdfPath): int
     {
-        $vendors = Partner::whereIn('id', $data['vendors'])
-            ->whereNotNull('email')
-            ->where('email', '!=', '')
-            ->get();
+        // The order's company decides who may receive it, whoever is acting.
+        $vendors = Partner::recipientsForCompany((array) $data['vendors'], $record->company_id)
+            ->filter(fn (Partner $vendor): bool => filled($vendor->email));
 
         foreach ($vendors as $vendor) {
             Mail::to($vendor->email)->send(new VendorPurchaseOrderMail($data['subject'], $data['message'], $pdfPath));
@@ -86,6 +90,8 @@ class OrderWorkflow
 
     public function confirm(Order $record): Order
     {
+        PurchasesAccess::assertForCompany((int) $record->company_id);
+
         $settings = settings(OrderSettings::class);
 
         $needsApproval = $settings->enable_order_approval
@@ -130,6 +136,8 @@ class OrderWorkflow
 
     public function cancel(Order $record): Order
     {
+        PurchasesAccess::assertForCompany((int) $record->company_id);
+
         $record->update([
             'state'                   => PurchaseEnums\OrderState::CANCELED,
             'mail_reminder_confirmed' => false,
@@ -146,16 +154,22 @@ class OrderWorkflow
 
     public function backToDraft(Order $record): Order
     {
+        PurchasesAccess::assertForCompany((int) $record->company_id);
+
         return $this->transitionTo($record, PurchaseEnums\OrderState::DRAFT, OrderDrafted::class);
     }
 
     public function lock(Order $record): Order
     {
+        PurchasesAccess::assertForCompany((int) $record->company_id);
+
         return $this->transitionTo($record, PurchaseEnums\OrderState::DONE, OrderLocked::class);
     }
 
     public function unlock(Order $record): Order
     {
+        PurchasesAccess::assertForCompany((int) $record->company_id);
+
         return $this->transitionTo($record, PurchaseEnums\OrderState::PURCHASE, OrderUnlocked::class);
     }
 

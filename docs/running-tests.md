@@ -19,10 +19,41 @@ docker compose run --rm --no-deps laravel.test php artisan test path/to/Test.php
 
 `phpunit.xml` pins the connection to the `pgsql` service and database
 `aureuserp_testing`, and blanks `DB_URL`/`DATABASE_URL` so `migrate:fresh`
-cannot reach a managed database. Do not override those.
+cannot reach a managed database. Never override the host, credentials or the
+blanked URLs.
 
-**Suites must run serially.** They share one database and each bootstraps with
-`migrate:fresh` plus a full install, so two at once corrupt each other.
+`phpunit.xml` also pins `SENTRY_LARAVEL_DSN` to an empty string with
+`force="true"` so test-triggered exceptions and transactions never reach
+Sentry, even when the developer's shell or `.env` has a real DSN. Do not add a
+DSN here: that reopens test-run noise in the production Sentry project. The
+guard is `plugins/webkul/support/tests/Feature/Observability/SentryTestEnvironmentTest.php`.
+
+**Give each work package its own database (superseded 2026-10-22).** This
+section used to say one shared `aureuserp_testing` and serial runs only. That
+is still true *per database*, but the enforced practice now is one database per
+work package, created once and reused:
+
+```bash
+docker compose exec -T pgsql psql -U sail -d postgres \
+  -c "CREATE DATABASE aureuserp_testing_wp<N> OWNER sail;"
+docker compose run --rm --no-deps -e DB_DATABASE=aureuserp_testing_wp<N> \
+  laravel.test php artisan test --testsuite=SUITE
+```
+
+`phpunit.xml` sets `DB_DATABASE` without `force="true"`, so a real environment
+variable wins and no shared file has to change. Forgetting `-e DB_DATABASE=...`
+silently lands you on `aureuserp_testing`, so treat that as a collision trap
+rather than as the default. List the names in use with:
+
+```bash
+docker compose exec -T pgsql psql -U sail -d postgres -tAc \
+  "SELECT datname FROM pg_database WHERE datname LIKE 'aureuserp%'"
+```
+
+**Two `migrate:fresh` runs on one database interleave**, producing errors that
+look like broken code - "relation X does not exist" on a table the migration
+just created, or "relation Y already exists". Waiting for the other container
+to exit is not enough; a new run can start on top of yours mid-suite.
 
 ## Two things that will bite
 
@@ -61,3 +92,22 @@ docker exec dekaerp-pgsql-1 psql -U sail -d postgres -c "CREATE DATABASE aureuse
 Each test re-runs `migrate:fresh` and the installer, so a six-test file takes
 around 6-7 minutes. Budget accordingly and run the suite you need rather than
 everything, unless you have the time for a full pass.
+
+Measured on Windows + Docker Desktop (bind-mounted repo), 2026-11-13:
+AccountFeature, 558 tests, took 8,554 s (2 h 22 min). A two-file focused run
+takes about 10 minutes, almost all of it the one-off install at the start.
+Use a second test database (see AGENTS.md) to run another suite meanwhile.
+
+**Why it is this slow (measured 2026-11-13).** One application boot in the
+dev container takes about 125 s, and it is disk, not code: the boot process
+sits in `p9_client_rpc` (Docker Desktop's Windows-to-Linux file share), not
+on the CPU. By stage: autoload 5 s, registering providers 9 s, booting
+providers 104 s, of which 81 s is the first build of the Filament admin panel
+(it loads every plugin's classes). Ruled out: Xdebug (`XDEBUG_MODE=off`
+gives the same 125 s), the database (a query takes 0 s), and Filament
+discovery (`filament:cache-components` changed nothing; it was cleared
+again). The local site at `http://localhost/admin` therefore takes 75-85 s
+per request. Fixes are machine-level and the developer's call: keep the repo
+inside the WSL file system (`\\wsl$\...`) instead of `C:\Users\...`, exclude
+the folder from Windows Defender real-time scanning, or restart Docker
+Desktop / `wsl --shutdown` if it was fast before.

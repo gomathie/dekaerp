@@ -2,6 +2,8 @@
 
 namespace Webkul\Purchase\Filament\Admin\Clusters\Settings\Pages;
 
+
+use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -10,10 +12,19 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Webkul\Purchase\Settings\OrderSettings;
+use Webkul\Purchase\Support\PurchasesAccess;
 use Webkul\Support\Filament\Clusters\Settings;
 
 class ManageOrders extends SettingsPage
 {
+    public static function canAccess(): bool
+    {
+        return PurchasesAccess::enabledForCurrent()
+            && static::hasPagePermission();
+    }
+
+    use ChecksPagePermission;
+
     use HasPageShield;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shopping-cart';

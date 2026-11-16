@@ -135,7 +135,7 @@ class ProjectResource extends Resource
                             ->schema(static::mergeCustomFormFields([
                                 Select::make('user_id')
                                     ->label(__('projects::filament/resources/project.form.sections.additional.fields.project-manager'))
-                                    ->relationship('user', 'name')
+                                    ->relationship('user', 'name', fn ($query) => \Webkul\Support\Filament\CompanyMembers::scope($query))
                                     ->searchable()
                                     ->preload()
                                     ->createOptionForm(fn (Schema $schema) => UserResource::form($schema)),

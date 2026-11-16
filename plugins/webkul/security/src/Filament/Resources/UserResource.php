@@ -14,6 +14,7 @@ use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -44,9 +45,10 @@ use Webkul\Security\Filament\Resources\UserResource\Pages\CreateUser;
 use Webkul\Security\Filament\Resources\UserResource\Pages\EditUser;
 use Webkul\Security\Filament\Resources\UserResource\Pages\ListUsers;
 use Webkul\Security\Filament\Resources\UserResource\Pages\ViewUsers;
-use Webkul\Security\Models\User;
 use Webkul\Security\Models\Role;
+use Webkul\Security\Models\User;
 use Webkul\Security\Services\MultiCompanyAdminService;
+use Webkul\Security\Services\TenantImpersonation;
 use Webkul\Security\Settings\UserSettings;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Models\Company;
@@ -130,6 +132,15 @@ class UserResource extends Resource
                                             ->hiddenOn('edit')
                                             ->rule('required', fn ($get) => (bool) $get('password'))
                                             ->same('password'),
+                                        // Shown on edit too, where the password
+                                        // fields are not: it is the only way to
+                                        // make an existing user rotate a
+                                        // password that was shared with them.
+                                        Toggle::make('must_change_password')
+                                            ->label(__('security::filament/resources/user.form.sections.general-information.fields.must-change-password'))
+                                            ->helperText(__('security::filament/resources/user.form.sections.general-information.fields.must-change-password-helper'))
+                                            ->default(false)
+                                            ->columnSpanFull(),
                                     ])
                                     ->columns(2),
 
@@ -137,14 +148,22 @@ class UserResource extends Resource
                                     ->schema([
                                         Select::make('roles')
                                             ->label(__('security::filament/resources/user.form.sections.permissions.fields.roles'))
-                                            ->relationship(
-                                                'roles',
-                                                'name',
-                                                fn (Builder $query): Builder => self::scopeAssignableRoles($query),
-                                            )
+                                            /*
+                                             * Deliberately not `->relationship('roles')`.
+                                             * Tenant roles live on company memberships, so the
+                                             * global pivot is only half the answer, and letting
+                                             * Filament sync it would detach every tenant role the
+                                             * user already holds the moment the form is saved.
+                                             * TenantRoleAssigner writes both stores.
+                                             */
+                                            ->options(fn (): array => self::assignableRoleOptions())
                                             ->multiple()
                                             ->required()
                                             ->preload()
+                                            ->dehydrated(false)
+                                            ->afterStateHydrated(function (Select $component, ?User $record): void {
+                                                $component->state($record ? self::currentRoleIds($record) : []);
+                                            })
                                             ->rule(function (?User $record) {
                                                 return function (string $attribute, $value, Closure $fail) use ($record): void {
                                                     try {
@@ -302,7 +321,15 @@ class UserResource extends Resource
             ->reorderableColumns()
             ->columns([
                 ImageColumn::make('partner.avatar')
-                    ->defaultImageUrl(fn ($record) => $record->avatar_url)
+                    // defaultImageUrl is what shows when there is no uploaded
+                    // avatar, so pointing it at $record->avatar_url made it the
+                    // same nothing it was meant to replace: that accessor
+                    // returns null when the partner has no avatar, and Filament
+                    // then rendered an <img> with no usable src - the broken
+                    // image icon in the Users table. Fall back to the avatar
+                    // Filament already shows for the signed-in user, so the
+                    // table and the user menu agree.
+                    ->defaultImageUrl(fn ($record): string => Filament::getUserAvatarUrl($record))
                     ->imageSize(50)
                     ->label(__('security::filament/resources/user.table.columns.avatar')),
                 TextColumn::make('name')
@@ -318,8 +345,10 @@ class UserResource extends Resource
                     ->label(__('security::filament/resources/user.table.columns.teams'))
                     ->badge()
                     ->listWithLineBreaks(),
-                TextColumn::make('roles.name')
-                    ->label(__('security::filament/resources/user.table.columns.role')),
+                TextColumn::make('effective_role_names')
+                    ->label(__('security::filament/resources/user.table.columns.role'))
+                    ->listWithLineBreaks()
+                    ->state(fn (User $record): array => $record->effectiveRoleNames()),
                 TextColumn::make('resource_permission')
                     ->label(__('security::filament/resources/user.table.columns.resource-permission'))
                     ->formatStateUsing(fn (PermissionType $state) => $state->getLabel())
@@ -414,6 +443,36 @@ class UserResource extends Resource
                                 ->title(__('security::filament/resources/user.table.actions.restore.notification.title'))
                                 ->body(__('security::filament/resources/user.table.actions.restore.notification.body')),
                         ),
+                    // Tenant impersonation grant (SAAS-15). Only a Super Admin
+                    // may give or take it, and only a Multi-Company Admin can
+                    // hold it; TenantImpersonation re-checks both.
+                    Action::make('grantImpersonation')
+                        ->label(__('security::impersonation.actions.grant.label'))
+                        ->icon('heroicon-o-eye')
+                        ->requiresConfirmation()
+                        ->modalDescription(__('security::impersonation.actions.grant.modal-description'))
+                        ->visible(fn (User $record): bool => self::managesImpersonationGrants()
+                            && ! $record->trashed()
+                            && $record->isMultiCompanyAdmin()
+                            && ! app(TenantImpersonation::class)->holdsGrant($record))
+                        ->action(function (User $record): void {
+                            app(TenantImpersonation::class)->grant(Auth::user(), $record);
+
+                            Notification::make()->success()->title(__('security::impersonation.notifications.granted'))->send();
+                        }),
+                    Action::make('revokeImpersonation')
+                        ->label(__('security::impersonation.actions.revoke.label'))
+                        ->icon('heroicon-o-eye-slash')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->modalDescription(__('security::impersonation.actions.revoke.modal-description'))
+                        ->visible(fn (User $record): bool => self::managesImpersonationGrants()
+                            && app(TenantImpersonation::class)->holdsGrant($record))
+                        ->action(function (User $record): void {
+                            app(TenantImpersonation::class)->revoke(Auth::user(), $record);
+
+                            Notification::make()->success()->title(__('security::impersonation.notifications.revoked'))->send();
+                        }),
                 ]),
             ])
             ->toolbarActions([
@@ -501,11 +560,12 @@ class UserResource extends Resource
 
                                 Section::make(__('security::filament/resources/user.infolist.sections.permissions.title'))
                                     ->schema([
-                                        TextEntry::make('roles.name')
+                                        TextEntry::make('effective_role_names')
                                             ->icon('heroicon-o-key')
                                             ->placeholder('—')
                                             ->label(__('security::filament/resources/user.infolist.sections.permissions.entries.roles'))
                                             ->listWithLineBreaks()
+                                            ->state(fn (User $record): array => $record->effectiveRoleNames())
                                             ->formatStateUsing(fn ($state) => ucfirst($state))
                                             ->bulleted(),
                                         TextEntry::make('teams.name')
@@ -553,6 +613,20 @@ class UserResource extends Resource
                     ]),
             ])
             ->columns(1);
+    }
+
+    /**
+     * Shows the impersonation grant actions. Only to an active Super Admin
+     * who is not impersonating; TenantImpersonation::grant() re-checks.
+     */
+    protected static function managesImpersonationGrants(): bool
+    {
+        $actor = Auth::user();
+
+        return $actor instanceof User
+            && $actor->is_active
+            && $actor->isSuperAdmin()
+            && ! app(TenantImpersonation::class)->isActive();
     }
 
     public static function canDeleteUser(User $record): bool
@@ -656,6 +730,30 @@ class UserResource extends Resource
         }
 
         return app(MultiCompanyAdminService::class)->scopeAssignableCompanies($query, $actor);
+    }
+
+    /**
+     * Roles an actor may hand out, as Filament select options.
+     *
+     * @return array<int, string>
+     */
+    protected static function assignableRoleOptions(): array
+    {
+        return static::scopeAssignableRoles(Role::query())
+            ->orderBy('name')
+            ->pluck('name', 'id')
+            ->all();
+    }
+
+    /**
+     * Every role the user holds today, from both stores, so editing a user does
+     * not present a half-filled role list and then save it back.
+     *
+     * @return array<int, int>
+     */
+    public static function currentRoleIds(User $record): array
+    {
+        return app(MultiCompanyAdminService::class)->effectiveRoleIds($record);
     }
 
     protected static function scopeAssignableRoles(Builder $query): Builder

@@ -24,7 +24,10 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Webkul\Security\Http\Middleware\EnforceImpersonationSession;
+use Webkul\Security\Http\Middleware\RequirePasswordChange;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Filament\AvatarProviders\DefaultAvatarProvider;
 use Webkul\Support\Filament\Pages\Profile;
 use Webkul\Support\GlobalSearchProvider;
 
@@ -42,6 +45,11 @@ class AdminPanelProvider extends PanelProvider
             ->favicon(asset('images/favicon.ico'))
             ->brandLogo(asset('images/logo.svg'))
             ->brandLogoHeight('2rem')
+            // Replaces Filament's UiAvatarsProvider, which puts the person's
+            // name in a URL to ui-avatars.com - one request per avatar, so a
+            // users table sends a page of customer employee names to a third
+            // party, and nothing renders offline.
+            ->defaultAvatarProvider(DefaultAvatarProvider::class)
             ->passwordReset()
             ->emailVerification()
             ->profile()
@@ -57,6 +65,14 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
                 fn () => view('filament.components.web-app-meta'),
+            )
+            ->renderHook(
+                PanelsRenderHook::HEAD_END,
+                fn () => view('filament.components.hidden-scrollbars'),
+            )
+            ->renderHook(
+                PanelsRenderHook::USER_MENU_PROFILE_AFTER,
+                fn () => view('filament.components.user-menu-language'),
             )
             ->userMenuItems([
                 'profile' => Action::make('profile')
@@ -108,6 +124,13 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                // Ends an expired or no-longer-allowed impersonation before
+                // anything runs as the tenant user, and labels the logs.
+                EnforceImpersonationSession::class,
+                // After Authenticate, so there is a user to inspect: holds
+                // anyone with must_change_password on the profile page until
+                // they replace a password an administrator set for them.
+                RequirePasswordChange::class,
             ])
             ->multiFactorAuthentication([
                 AppAuthentication::make()

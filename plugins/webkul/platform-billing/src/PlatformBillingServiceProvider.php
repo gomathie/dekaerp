@@ -1,0 +1,201 @@
+<?php
+
+namespace Webkul\PlatformBilling;
+
+use Filament\Panel;
+use Illuminate\Console\Scheduling\Event as SchedulingEvent;
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Gate;
+use Webkul\PlatformBilling\Console\Commands\BillingHealthCheck;
+use Webkul\PlatformBilling\Console\Commands\BillingReadinessReport;
+use Webkul\PlatformBilling\Console\Commands\InvoiceSubscriptions;
+use Webkul\PlatformBilling\Listeners\StartPlanAtOnboarding;
+use Webkul\PlatformBilling\Models\Allocation;
+use Webkul\PlatformBilling\Models\DiscountCode;
+use Webkul\PlatformBilling\Models\DocumentNumber;
+use Webkul\PlatformBilling\Models\Invoice;
+use Webkul\PlatformBilling\Models\InvoiceLine;
+use Webkul\PlatformBilling\Models\OverdueExtension;
+use Webkul\PlatformBilling\Models\Payment;
+use Webkul\PlatformBilling\Models\Plan;
+use Webkul\PlatformBilling\Models\Price;
+use Webkul\PlatformBilling\Models\Reversal;
+use Webkul\PlatformBilling\Models\Subscription;
+use Webkul\PlatformBilling\Policies\DocumentNumberPolicy;
+use Webkul\PlatformBilling\Services\CompanyReadOnlyWriteGuard;
+use Webkul\PluginManager\Package;
+use Webkul\PluginManager\PackageServiceProvider;
+use Webkul\Security\Events\CompanyOnboarded;
+use Webkul\Support\Settings\CompanyAwareSettingsRepository;
+
+/**
+ * DEKA's own billing: plans, subscriptions and the invoices it issues to
+ * customers. Not a tenant module - it is how the installation is paid for.
+ *
+ * `isCore()` because it is platform infrastructure rather than something a
+ * company subscribes to: core plugins are never offered on the Plugins page and
+ * are exempt from the per-company entitlement gate, which is exactly right for a
+ * plugin that administers tenants instead of serving one.
+ *
+ * Plans, subscriptions, discounts, recurring invoices and payments live here.
+ * Screens are SAAS-12 and SAAS-13.
+ */
+class PlatformBillingServiceProvider extends PackageServiceProvider
+{
+    public static string $name = 'platform-billing';
+
+    protected static ?object $readOnlyWriteGuardDispatcher = null;
+
+    protected static ?object $invoiceScheduleApp = null;
+
+    public function configureCustomPackage(Package $package): void
+    {
+        $package->name(static::$name)
+            ->isCore()
+            ->hasTranslations()
+            ->hasViews()
+            ->hasConfigFile('platform-billing')
+            ->hasMigrations([
+                '2026_10_28_000006_create_platform_billing_document_numbers_table',
+                '2026_11_07_000001_create_platform_billing_plans_prices_subscriptions_tables',
+                '2026_11_07_000002_add_subscription_activation_fields',
+                '2026_11_09_000001_create_platform_billing_discounts_tables',
+                '2026_11_09_000002_create_platform_billing_invoices_tables',
+                '2026_11_09_000003_create_platform_billing_payments_tables',
+                '2026_11_09_000005_create_platform_billing_overdue_extensions_table',
+                '2026_11_11_000001_require_company_for_company_list_discount_codes',
+            ])
+            ->hasCommands([
+                InvoiceSubscriptions::class,
+                BillingReadinessReport::class,
+                BillingHealthCheck::class,
+            ])
+            ->runsMigrations();
+    }
+
+    public function packageRegistered(): void
+    {
+        Panel::configureUsing(function (Panel $panel): void {
+            $panel->plugin(PlatformBillingPlugin::make());
+        });
+    }
+
+    public function packageBooted(): void
+    {
+        // Once per process. packageBooted runs again from the installer and
+        // the test bootstrapper, and the schema registry does not reset.
+        BillingCompanyContributions::register();
+
+        // Policies are registered explicitly in this codebase (see `support` and
+        // `fields`); Laravel's namespace guessing only covers App\Models.
+        Gate::policy(DocumentNumber::class, DocumentNumberPolicy::class);
+        // D-SAAS-06: catalog and subscription writes remain platform-only.
+        Gate::policy(Plan::class, DocumentNumberPolicy::class);
+        Gate::policy(Price::class, DocumentNumberPolicy::class);
+        Gate::policy(Subscription::class, DocumentNumberPolicy::class);
+        Gate::policy(Invoice::class, DocumentNumberPolicy::class);
+        Gate::policy(InvoiceLine::class, DocumentNumberPolicy::class);
+        Gate::policy(Payment::class, DocumentNumberPolicy::class);
+        Gate::policy(Allocation::class, DocumentNumberPolicy::class);
+        Gate::policy(Reversal::class, DocumentNumberPolicy::class);
+        Gate::policy(OverdueExtension::class, DocumentNumberPolicy::class);
+        Gate::policy(DiscountCode::class, DocumentNumberPolicy::class);
+
+        // A process-wide boolean would skip every application after the first.
+        // Pest builds a new application per test, so the hook has to follow the
+        // instance, the same way the read-only guard follows the dispatcher.
+        if (static::$invoiceScheduleApp !== $this->app) {
+            static::$invoiceScheduleApp = $this->app;
+            // packageBooted can run again on one application. One hook, and the
+            // callback itself refuses a second event on the same scheduler.
+            // The console kernel can resolve the scheduler before this provider
+            // finishes booting; afterResolving does not replay that instance.
+            $register = function (Schedule $schedule): void {
+                $has = fn (string $command): bool => collect($schedule->events())->contains(
+                    fn ($event): bool => str_contains((string) $event->command, $command),
+                );
+
+                // User decision 2026-11-14: a Sentry cron monitor on each billing
+                // job, because a stopped scheduler stops both the invoices and
+                // the health check that would report it. A missed check-in is
+                // the only signal left. The macro exists only when sentry-laravel
+                // is booted; without it the job still runs, unmonitored.
+                $monitor = function (SchedulingEvent $event, string $slug): void {
+                    if (SchedulingEvent::hasMacro('sentryMonitor')) {
+                        $event->sentryMonitor($slug, checkInMargin: 30, maxRuntime: 60);
+                    }
+                };
+
+                if (! $has('platform-billing:invoice-subscriptions')) {
+                    $monitor($schedule->command('platform-billing:invoice-subscriptions')
+                        ->dailyAt('02:15')
+                        ->withoutOverlapping()
+                        ->name('platform-billing-invoice-subscriptions'), 'platform-billing-invoice-subscriptions');
+                }
+
+                // CR-10 item 3 (2026-11-14): the health check only helps if it
+                // runs. A stalled invoice job or balance drift is otherwise seen
+                // when a client is billed late. It runs after the 02:15 invoice
+                // run, and a failure is reported to Sentry. The message names no
+                // company or amount: the details stay in the command output.
+                if (! $has('platform-billing:health-check')) {
+                    $monitor($schedule->command('platform-billing:health-check')
+                        ->dailyAt('06:00')
+                        ->withoutOverlapping()
+                        ->name('platform-billing-health-check')
+                        ->onFailure(function (): void {
+                            report(new \RuntimeException('Platform billing health check found problems. Run php artisan platform-billing:health-check for details.'));
+                        }), 'platform-billing-health-check');
+                }
+            };
+
+            $this->app->afterResolving(Schedule::class, $register);
+
+            if ($this->app->resolved(Schedule::class)) {
+                $register($this->app->make(Schedule::class));
+            }
+        }
+
+        $dispatcher = Event::getFacadeRoot();
+
+        if (static::$readOnlyWriteGuardDispatcher === $dispatcher) {
+            return;
+        }
+
+        // Test bootstrap can replace Laravel's dispatcher between app instances.
+        // Register once per dispatcher to avoid both stale guards and duplicates.
+        static::$readOnlyWriteGuardDispatcher = $dispatcher;
+
+        // Run after model-specific creating hooks have resolved the row's company.
+        Event::listen('eloquent.creating: *', function (string $event, array $payload): void {
+            $model = $payload[0] ?? null;
+
+            if ($model instanceof Model) {
+                app(CompanyReadOnlyWriteGuard::class)->assertMayWrite($model);
+            }
+        });
+        Event::listen('eloquent.saving: *', function (string $event, array $payload): void {
+            $model = $payload[0] ?? null;
+
+            if ($model instanceof Model && $model->exists) {
+                app(CompanyReadOnlyWriteGuard::class)->assertMayWrite($model);
+            }
+        });
+        // CR-4: start the plan chosen on the create-company form, inside the
+        // onboarding transaction. Same once-per-dispatcher guard as above.
+        Event::listen(CompanyOnboarded::class, StartPlanAtOnboarding::class);
+        // Company settings are rows written by query, not company models.
+        Event::listen(CompanyAwareSettingsRepository::COMPANY_SETTINGS_WRITING, function (int $companyId): void {
+            app(CompanyReadOnlyWriteGuard::class)->assertCompanyMayWrite($companyId);
+        });
+        Event::listen('eloquent.deleting: *', function (string $event, array $payload): void {
+            $model = $payload[0] ?? null;
+
+            if ($model instanceof Model) {
+                app(CompanyReadOnlyWriteGuard::class)->assertMayWrite($model);
+            }
+        });
+    }
+}

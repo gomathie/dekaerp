@@ -430,3 +430,38 @@ if (! function_exists('allowed_company_ids')) {
         return app(CompanyContext::class)->allowedIds();
     }
 }
+
+if (! function_exists('compact_money')) {
+    /**
+     * Abbreviate a money amount to a compact, locale-aware form (for example $786K).
+     *
+     * Ported from upstream for the module dashboards. Arabic falls back to
+     * Latin digits, as upstream does, and anything ICU cannot format (or a
+     * host without ext-intl, which composer.json does not require) falls back
+     * to the full money() string rather than failing the dashboard.
+     */
+    function compact_money(float $amount, ?string $currency = null): string
+    {
+        $currency ??= config('app.currency');
+
+        if (! class_exists(MessageFormatter::class)) {
+            return money($amount, $currency);
+        }
+
+        $locale = config('app.locale');
+
+        if (str_starts_with((string) $locale, 'ar')) {
+            $locale = 'en';
+        } elseif (! str_contains((string) $locale, '-u-nu-')) {
+            $locale .= '-u-nu-latn';
+        }
+
+        $formatted = MessageFormatter::formatMessage(
+            $locale,
+            '{0, number, :: compact-short currency/'.$currency.'}',
+            [$amount],
+        );
+
+        return $formatted !== false ? $formatted : money($amount, $currency);
+    }
+}

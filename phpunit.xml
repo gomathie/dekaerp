@@ -11,6 +11,9 @@
         <testsuite name="AccountingFeature">
             <directory>plugins/webkul/accounting/tests/Feature</directory>
         </testsuite>
+        <testsuite name="InvoiceFeature">
+            <directory>plugins/webkul/invoices/tests/Feature</directory>
+        </testsuite>
         <testsuite name="InventoryFeature">
             <directory>plugins/webkul/inventories/tests/Feature</directory>
         </testsuite>
@@ -26,6 +29,9 @@
         <testsuite name="ProjectFeature">
             <directory>plugins/webkul/projects/tests/Feature</directory>
         </testsuite>
+        <testsuite name="RecruitmentFeature">
+            <directory>plugins/webkul/recruitments/tests/Feature</directory>
+        </testsuite>
         <testsuite name="PartnerFeature">
             <directory>plugins/webkul/partners/tests/Feature</directory>
         </testsuite>
@@ -35,11 +41,38 @@
         <testsuite name="SupportFeature">
             <directory>plugins/webkul/support/tests/Feature</directory>
         </testsuite>
+        <testsuite name="TableViewsFeature">
+            <directory>plugins/webkul/table-views/tests/Feature</directory>
+        </testsuite>
+        <testsuite name="TimeOffFeature">
+            <directory>plugins/webkul/time-off/tests/Feature</directory>
+        </testsuite>
+        <testsuite name="TimesheetFeature">
+            <directory>plugins/webkul/timesheets/tests/Feature</directory>
+        </testsuite>
+        <testsuite name="MaintenanceFeature">
+            <directory>plugins/webkul/maintenance/tests/Feature</directory>
+        </testsuite>
         <testsuite name="SecurityFeature">
             <directory>plugins/webkul/security/tests/Feature</directory>
         </testsuite>
         <testsuite name="LogisticsFeature">
             <directory>plugins/webkul/logistics/tests/Feature</directory>
+        </testsuite>
+        <testsuite name="AttendanceFeature">
+            <directory>plugins/webkul/attendances/tests/Feature</directory>
+        </testsuite>
+        <testsuite name="EmployeeFeature">
+            <directory>plugins/webkul/employees/tests/Feature</directory>
+        </testsuite>
+        <testsuite name="PluginManagerFeature">
+            <directory>plugins/webkul/plugin-manager/tests/Feature</directory>
+        </testsuite>
+        <testsuite name="ChatterFeature">
+            <directory>plugins/webkul/chatter/tests/Feature</directory>
+        </testsuite>
+        <testsuite name="PlatformBillingFeature">
+            <directory>plugins/webkul/platform-billing/tests/Feature</directory>
         </testsuite>
     </testsuites>
     <source>
@@ -73,6 +106,28 @@
         <env name="MAIL_MAILER" value="array"/>
         <env name="PULSE_ENABLED" value="false"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
+        <!-- Sentry stays off while the suite runs. This file does not inherit
+             .env.example, so a developer's .env carries the real
+             SENTRY_LARAVEL_DSN and every `php artisan test` run shipped the
+             exceptions the application deliberately report()s - and its traced
+             transactions - to the production project, tagged
+             environment=testing. Sentry issue 155782383 ("RuntimeException:
+             smtp down") is one of those: a SecurityFeature test throwing a
+             simulated mail failure on purpose.
+             force="true" is required, because PHPUnit otherwise leaves a DSN
+             exported into the shell in place. An empty DSN makes the SDK's own
+             hasDsnSet() false, so no client, transport or integration is built
+             at all - a before_send filter would still boot and still trace. -->
+        <env name="SENTRY_LARAVEL_DSN" value="" force="true"/>
+        <!-- Tests compile views into their own folder (2026-11-13, Sentry
+             DEKAERP-19..1J). The suite installs plugins, which runs
+             optimize:clear and empties the compiled-views folder; with the
+             default folder that is the one the local dev container serves
+             from (same bind mount), so its /admin/login failed with "File
+             does not exist at path storage/framework/views/....php" during
+             every test run. force="true" so a shell value cannot point the
+             suite back at the shared folder. -->
+        <env name="VIEW_COMPILED_PATH" value="storage/framework/testing/views" force="true"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
     </php>

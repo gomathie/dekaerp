@@ -1,7 +1,11 @@
 <?php
 
 return [
-    'body'           => 'You have been invited to join :app </br></br>To accept the invitation - click on the button below and create an account:',
-    'create-account' => 'Create Account',
-    'discard-email'  => 'If you did not expect to receive an invitation to this team, you may discard this email.',
+    'body'                => 'You have been invited to join :company.',
+    'body-with-inviter'   => ':inviter has invited you to join :company.',
+    'instructions'        => 'Click the button below to create your account.',
+    'create-account'      => 'Create account',
+    'expires'             => 'This invitation expires on :date.',
+    'link-fallback'       => 'If the button does not work, copy this link into your browser:',
+    'discard-email'       => 'If you were not expecting this invitation, you can ignore this email.',
 ];

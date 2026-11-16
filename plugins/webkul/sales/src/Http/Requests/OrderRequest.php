@@ -5,6 +5,7 @@ namespace Webkul\Sale\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Webkul\Product\Models\Product;
+use Webkul\Support\Rules\PermittedCurrency;
 
 class OrderRequest extends FormRequest
 {
@@ -37,7 +38,7 @@ class OrderRequest extends FormRequest
             'note'                          => ['nullable', 'string'],
             'user_id'                       => ['nullable', 'integer', 'exists:users,id'],
             'company_id'                    => ['nullable', 'integer', 'exists:companies,id'],
-            'currency_id'                   => ['nullable', 'integer', 'exists:currencies,id'],
+            'currency_id'                   => ['nullable', 'integer', 'exists:currencies,id', PermittedCurrency::forRequest($this->input('company_id'))],
             'campaign_id'                   => ['nullable', 'integer', 'exists:utm_campaigns,id'],
             'utm_source_id'                 => ['nullable', 'integer', 'exists:utm_sources,id'],
             'medium_id'                     => ['nullable', 'integer', 'exists:utm_mediums,id'],

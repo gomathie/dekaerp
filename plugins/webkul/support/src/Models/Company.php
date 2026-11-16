@@ -5,10 +5,12 @@ namespace Webkul\Support\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
@@ -16,9 +18,11 @@ use Webkul\Chatter\Traits\HasChatter;
 use Webkul\Field\Traits\HasCustomFields;
 use Webkul\Partner\Models\Partner;
 use Webkul\Security\Models\User;
+use Webkul\Security\Services\SeatCapacityService;
 use Webkul\Security\Traits\HasOwnershipScope;
 use Webkul\Support\Database\Factories\CompanyFactory;
 use Webkul\Support\Models\Scopes\CompanyScope;
+use Webkul\Support\Services\CompanyContext;
 use Webkul\Support\Traits\RestrictToAllowedCompanies;
 
 class Company extends Model implements Sortable
@@ -54,7 +58,31 @@ class Company extends Model implements Sortable
         'currency_id',
         'partner_id',
         'website',
+        'account_type',
+        'test_ends_at',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'test_ends_at' => 'immutable_datetime',
+        ];
+    }
+
+    /**
+     * A created observer can refuse a creator membership after INSERT. Wrap
+     * every direct create so that refusal also removes its company and partner;
+     * the security onboarding coordinator adds administrator work in its own
+     * outer transaction (D-SAAS-03).
+     */
+    public function save(array $options = []): bool
+    {
+        if ($this->exists) {
+            return parent::save($options);
+        }
+
+        return DB::transaction(fn (): bool => parent::save($options));
+    }
 
     public $sortable = [
         'order_column_name'  => 'sort',
@@ -104,6 +132,15 @@ class Company extends Model implements Sortable
     public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class);
+    }
+
+    /**
+     * Extra currencies this company may transact in (CR-6). Empty means every
+     * active currency; see Currency::scopePermittedFor().
+     */
+    public function permittedCurrencies(): BelongsToMany
+    {
+        return $this->belongsToMany(Currency::class, 'company_currencies');
     }
 
     public function partner()
@@ -195,14 +232,44 @@ class Company extends Model implements Sortable
             ]);
         });
 
+        // First created listener: the observers that set up a new company's
+        // own records run before its creator is a member (mayWriteTo()).
+        static::created(function ($company) {
+            app(CompanyContext::class)->markProvisioned((int) $company->getKey());
+        });
+
         static::created(function ($company) {
             if (! $company->creator_id) {
                 return;
             }
 
-            User::find($company->creator_id)
-                ?->allowedCompanies()
-                ->syncWithoutDetaching([$company->id]);
+            $creator = User::find($company->creator_id);
+
+            if (! $creator instanceof User) {
+                return;
+            }
+
+            // During the installer, the seat and invitation migrations may not
+            // exist yet. Once they do, every programmatic company create uses
+            // the same lock and reservation rule as the Users page.
+            if (! Schema::hasColumn('companies', 'seat_limit') || ! Schema::hasTable('user_invitations')) {
+                $creator->allowedCompanies()->syncWithoutDetaching([$company->id]);
+
+                return;
+            }
+
+            $capacity = app(SeatCapacityService::class);
+
+            $capacity->withLockedCompany($company, function () use ($creator, $company, $capacity): void {
+                // Installation staff and inactive users do not consume seats
+                // (D-SAAS-03). A tenant creator does, including while an invite
+                // is pending, so check before attaching their membership.
+                if ($creator->is_active && ! $creator->isSuperAdmin() && ! $creator->isMultiCompanyAdmin()) {
+                    $capacity->assertCanAttachUser($creator, (int) $company->id);
+                }
+
+                $creator->allowedCompanies()->syncWithoutDetaching([$company->id]);
+            });
         });
 
         static::saved(function ($company) {

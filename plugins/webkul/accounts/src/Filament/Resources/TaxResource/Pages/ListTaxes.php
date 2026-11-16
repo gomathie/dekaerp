@@ -2,6 +2,7 @@
 
 namespace Webkul\Account\Filament\Resources\TaxResource\Pages;
 
+use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,7 +20,17 @@ class ListTaxes extends ListRecords
 
     protected function getHeaderActions(): array
     {
+        // Tax groups live under Taxes, as in Zoho Books (user, 2026-11-14):
+        // the groups screen is reached from here, not from the side menu.
+        $groups = str_replace('\\TaxResource', '\\TaxGroupResource', static::getResource());
+
         return [
+            Action::make('taxGroups')
+                ->label(fn (): string => $groups::getNavigationLabel())
+                ->icon('heroicon-o-rectangle-group')
+                ->color('gray')
+                ->url(fn (): string => $groups::getUrl('index'))
+                ->visible(fn (): bool => class_exists($groups) && $groups::canViewAny()),
             CreateAction::make()
                 ->icon('heroicon-o-plus-circle'),
         ];

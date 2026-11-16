@@ -1,10 +1,10 @@
 {
     "name": "webkul/logistics",
     "description": "Logistics management",
+    "version": "1.3.0",
     "authors": [
         {
-            "name": "Aureus ERP",
-            "email": "support@aureuserp.in"
+            "name": "365 Systems"
         }
     ],
     "extra": {

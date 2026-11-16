@@ -49,7 +49,10 @@ trait HasChatter
             try {
                 $partnerId = User::whereKey($this->getAttribute($column))->value('partner_id');
 
-                if ($partnerId && $partner = Partner::find($partnerId)) {
+                // A model hook may run while the actor's company differs from
+                // the responsible user's contact; the scoped read would drop
+                // the follower silently.
+                if ($partnerId && $partner = Partner::withoutGlobalScopes()->find($partnerId)) {
                     $this->addFollower($partner);
                 }
             } catch (Throwable $e) {
@@ -211,7 +214,11 @@ trait HasChatter
         }
 
         try {
-            $users = User::with('partner')->whereIn('id', $userIds)->get();
+            // Responsible user ids are explicit; their contacts may belong to
+            // a company other than the actor assigning them to this record.
+            $users = User::with(['partner' => fn ($query) => $query->withoutGlobalScopes()])
+                ->whereIn('id', $userIds)
+                ->get();
 
             if ($users->isEmpty()) {
                 return;
@@ -295,7 +302,9 @@ trait HasChatter
                 ->unique();
 
             foreach ($partnerIds as $partnerId) {
-                if ($partner = Partner::find($partnerId)) {
+                // Default followers belong to the created record, not to the
+                // session company that happened to trigger its hook.
+                if ($partner = Partner::withoutGlobalScopes()->find($partnerId)) {
                     $this->addFollower($partner);
                 }
             }
@@ -424,7 +433,11 @@ trait HasChatter
             'date_deadline' => $data['date_deadline'] ?? now(),
             'causer_type'   => $user?->getMorphClass(),
             'causer_id'     => $user?->id,
-            'company_id'    => $data['company_id'] ?? (current_company()?->id ?? null),
+            // The record's company, not the session's (CR-11, 2026-11-13).
+            // Under the session's, a Multi-Company Admin's change to company
+            // B's record was filed under company A: B's activity log missed
+            // it and A's showed someone else's record.
+            'company_id'    => $data['company_id'] ?? ($this->getAttribute('company_id') ?? current_company()?->id),
         ], $data));
 
         $this->messages()->save($message);

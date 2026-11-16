@@ -6,7 +6,9 @@ use Filament\Infolists\Components\ViewEntry;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
+use Webkul\Support\Enums\GuideAudience;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Services\GuideLibrary;
 
 class Help extends Page
 {
@@ -76,71 +78,68 @@ class Help extends Page
      *     sections: array<int, array{title: string, items: array<int, string>}>
      * }>
      */
+    /**
+     * One card per guide the viewer may read.
+     *
+     * Driven by the audiences GuideLibrary reports rather than by a hardcoded
+     * list, so a card appears only when that guide has content and the viewer
+     * is entitled to it. Each card links into the Guide page on its own tab;
+     * before this, the admin card linked nowhere at all and its only content
+     * was a static checklist in the translation files.
+     *
+     * @return array<int, array<string, mixed>>
+     */
     public function guides(): array
     {
+        $library = app(GuideLibrary::class);
+
         $guides = [];
 
-        if ($this->canViewAdminGuide()) {
+        foreach ($library->audiences() as $audience) {
+            $key = $audience->value;
+
             $guides[] = [
-                'icon'        => 'heroicon-o-shield-check',
-                'title'       => __('support::filament/pages/help.guides.admin.title'),
-                'description' => __('support::filament/pages/help.guides.admin.description', ['app' => $this->appName()]),
-                'button'      => __('support::filament/pages/help.guides.admin.button'),
-                'sections'    => $this->guideSections('admin'),
+                'icon'        => $audience->getIcon(),
+                'title'       => $audience->getLabel(),
+                'description' => __("support::filament/pages/help.guides.{$key}.description", ['app' => $this->appName()]),
+                'button'      => __("support::filament/pages/help.guides.{$key}.button"),
+                'url'         => Guide::getUrl(['audience' => $key]),
+                'count'       => $library->articleCount($audience),
+                // The admin checklist predates the admin guide and is still the
+                // best short answer to "what do I set up first", so it is kept
+                // where the translations already provide one.
+                'sections'    => $this->guideSections($key),
             ];
         }
-
-        $guides[] = [
-            'icon'        => 'heroicon-o-book-open',
-            'title'       => __('support::filament/pages/help.guides.user.title'),
-            'description' => __('support::filament/pages/help.guides.user.description', ['app' => $this->appName()]),
-            'button'      => __('support::filament/pages/help.guides.user.button'),
-            'sections'    => $this->guideSections('user'),
-        ];
 
         return $guides;
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function guideCategories(): array
     {
-        static $categories = null;
-
-        if ($categories !== null) {
-            return $categories;
-        }
-
-        $path = dirname(__DIR__, 3).'/resources/data/guide.json';
-
-        if (! file_exists($path)) {
-            return $categories = [];
-        }
-
-        $decoded = json_decode((string) file_get_contents($path), true);
-
-        return $categories = is_array($decoded) ? $decoded : [];
+        // Was a second copy of GuideLibrary's file read and decode. Two readers
+        // of the same 620KB asset meant the Help page silently missed anything
+        // the library learned to do - the audience filter among it.
+        return app(GuideLibrary::class)->visible();
     }
 
     public function guidePageCount(): int
     {
-        return array_reduce(
-            $this->guideCategories(),
-            fn (int $total, array $category): int => $total + count($category['items'] ?? []),
-            0,
-        );
+        return app(GuideLibrary::class)->articleCount();
     }
 
+    /**
+     * Whether the viewer may read the administrator guide.
+     *
+     * Was super-admin-only, which hid the admin guide from the very people it
+     * is written for: Role::COMPANY_ADMIN, a customer's own administrator.
+     */
     public function canViewAdminGuide(): bool
     {
-        $user = auth()->user();
-
-        if (! $user || ! method_exists($user, 'hasRole')) {
-            return false;
-        }
-
-        return $user->hasRole(array_filter([
-            config('filament-shield.super_admin.name'),
-            'super_admin',
-        ]));
+        return GuideAudience::allowsUser(auth()->user(), GuideAudience::Admin);
     }
 
     protected function guideSections(string $guide): array

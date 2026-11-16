@@ -610,7 +610,7 @@ class ChatterPanel extends Component implements HasActions, HasForms, HasInfolis
                                         ->hidden(fn (Get $get) => $get('activity_type_id') ? ActivityType::find($get('activity_type_id'))?->category == 'meeting' : false)
                                         ->live()
                                         ->visible(fn (Get $get) => ! $get('activity_plan_id'))
-                                        ->options(User::all()->pluck('name', 'id')->toArray())
+                                        ->options(\Webkul\Support\Filament\CompanyMembers::options())
                                         ->required(),
                                 ])->columns(2),
                             RichEditor::make('body')
@@ -618,7 +618,7 @@ class ChatterPanel extends Component implements HasActions, HasForms, HasInfolis
                                 ->mentions([ChatterMentions::provider()])
                                 ->hidden(fn (Get $get) => $get('activity_type_id') ? ActivityType::find($get('activity_type_id'))?->category == 'meeting' : false)
                                 ->visible(fn (Get $get) => ! $get('activity_plan_id'))
-                                ->label(__('chatter::app.filament.actions.chatter.activity.form.type-your-message-here'))
+                                ->label(__('chatter::filament/resources/actions/chatter/activity-action.setup.form.fields.body'))
                                 ->visible(fn (Get $get) => ! $get('activity_plan_id')),
                             Hidden::make('type')
                                 ->default('activity'),

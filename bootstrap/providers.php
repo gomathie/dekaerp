@@ -7,8 +7,8 @@ use App\Providers\TenantFilesystemServiceProvider;
 use Webkul\Account\AccountServiceProvider;
 use Webkul\Accounting\AccountingServiceProvider;
 use Webkul\Analytic\AnalyticServiceProvider;
+use Webkul\Attendance\AttendanceServiceProvider;
 use Webkul\Barcode\BarcodeServiceProvider;
-use Webkul\Blog\BlogServiceProvider;
 use Webkul\Chatter\ChatterServiceProvider;
 use Webkul\Contact\ContactServiceProvider;
 use Webkul\Employee\EmployeeServiceProvider;
@@ -21,6 +21,7 @@ use Webkul\Maintenance\MaintenanceServiceProvider;
 use Webkul\Manufacturing\ManufacturingServiceProvider;
 use Webkul\Partner\PartnerServiceProvider;
 use Webkul\Payment\PaymentServiceProvider;
+use Webkul\PlatformBilling\PlatformBillingServiceProvider;
 use Webkul\PluginManager\PluginManagerServiceProvider;
 use Webkul\Product\ProductServiceProvider;
 use Webkul\Project\ProjectServiceProvider;
@@ -42,8 +43,8 @@ return [
     AccountingServiceProvider::class,
     AccountServiceProvider::class,
     AnalyticServiceProvider::class,
+    AttendanceServiceProvider::class,
     BarcodeServiceProvider::class,
-    BlogServiceProvider::class,
     ChatterServiceProvider::class,
     ContactServiceProvider::class,
     EmployeeServiceProvider::class,
@@ -55,6 +56,7 @@ return [
     ManufacturingServiceProvider::class,
     PartnerServiceProvider::class,
     PaymentServiceProvider::class,
+    PlatformBillingServiceProvider::class,
     ProductServiceProvider::class,
     ProjectServiceProvider::class,
     PurchaseServiceProvider::class,
@@ -66,6 +68,10 @@ return [
     TimeOffServiceProvider::class,
     FullCalendarServiceProvider::class,
     TimesheetServiceProvider::class,
+    // Still named "website" but now only the customer/vendor portal: the CMS
+    // and blog were removed on 2026-10-22. It owns the `customer` guard's
+    // Partner model and the portal's login and password-reset pages, so the
+    // customer panel cannot register its routes without it.
     WebsiteServiceProvider::class,
     PluginManagerServiceProvider::class,
 ];

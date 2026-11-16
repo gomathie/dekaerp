@@ -3,6 +3,7 @@
 namespace Webkul\Partner;
 
 use Filament\Panel;
+use Webkul\Partner\Console\Commands\ContactCompanyReport;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
 
@@ -25,7 +26,11 @@ class PartnerServiceProvider extends PackageServiceProvider
                 '2024_12_11_111929_create_partners_partner_tag_table',
                 '2025_03_28_115218_add_address_columns_in_partners_partners_table',
                 '2026_07_30_100000_null_company_on_non_user_partners',
+                '2026_10_29_120001_add_company_id_to_partners_tags_table',
+                // Shared contacts go to the company that uses them (user, 2026-11-10).
+                '2026_11_10_000001_assign_shared_contacts_to_a_company',
             ])
+            ->hasCommand(ContactCompanyReport::class)
             ->runsMigrations();
     }
 

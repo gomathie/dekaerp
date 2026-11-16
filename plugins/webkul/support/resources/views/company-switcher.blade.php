@@ -1,12 +1,19 @@
 <div>
-    @if ($companies->isNotEmpty())
+    {{-- Only installation staff may switch (CompanyContext::canSwitchCompanies); everyone else sees which company they are in, with no form to post. --}}
+    @if ($companies->isNotEmpty() && ! $canSwitch)
+        <span style="display:inline-flex;align-items:center;gap:0.375rem;font-size:0.875rem;color:rgb(107 114 128);">
+            <x-filament::icon icon="heroicon-o-building-office-2" style="width:1.25rem;height:1.25rem;flex-shrink:0;" />
+
+            <span class="company-switcher-name">{{ $companies->firstWhere('id', $active[0] ?? null)?->name }}</span>
+        </span>
+    @elseif ($companies->isNotEmpty())
         <x-filament::dropdown placement="bottom-end" width="xs" teleport>
             <x-slot name="trigger">
                 <x-filament::link tag="button" size="sm" color="gray" style="text-decoration:none;">
                     <span style="display:inline-flex;align-items:center;gap:0.375rem;">
                         <x-filament::icon icon="heroicon-o-building-office-2" style="width:1.25rem;height:1.25rem;flex-shrink:0;" />
 
-                        <span>{{ $companies->firstWhere('id', $active[0] ?? null)?->name }}</span>
+                        <span class="company-switcher-name">{{ $allCompaniesActive ? __('support::company-switcher.all_companies') : $companies->firstWhere('id', $active[0] ?? null)?->name }}</span>
 
                         @if ($companies->count() > 1)
                             <x-filament::icon icon="heroicon-m-chevron-down" style="width:1rem;height:1rem;flex-shrink:0;" />
@@ -15,7 +22,7 @@
                 </x-filament::link>
             </x-slot>
 
-            <form method="POST" action="{{ route('company-context.set') }}" x-data>
+            <form method="POST" action="{{ route('company-context.set') }}" x-data class="company-switcher-form">
                 @csrf
 
                 <div style="display:flex;flex-direction:column;gap:0.125rem;padding:0.5rem;max-height:18rem;overflow-y:auto;">
@@ -51,10 +58,16 @@
                     @endforeach
                 </div>
 
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;padding:0.5rem;border-top:1px solid rgba(128,128,128,0.2);">
+                <div style="display:grid;grid-template-columns:repeat({{ $canSelectAllCompanies ? 3 : 2 }},1fr);gap:0.5rem;padding:0.5rem;border-top:1px solid rgba(128,128,128,0.2);">
                     <x-filament::button type="submit" size="sm" style="width:100%;justify-content:center;">
                         {{ __('support::company-switcher.confirm') }}
                     </x-filament::button>
+
+                    @if ($canSelectAllCompanies)
+                        <x-filament::button type="submit" name="action" value="all" color="gray" size="sm" style="width:100%;justify-content:center;">
+                            {{ __('support::company-switcher.all_companies') }}
+                        </x-filament::button>
+                    @endif
 
                     <x-filament::button type="submit" name="action" value="reset" color="gray" size="sm" style="width:100%;justify-content:center;">
                         {{ __('support::company-switcher.reset') }}

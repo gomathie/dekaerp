@@ -1,42 +1,216 @@
-# 🚀 CHANGELOG — v1.6.0
+<!--
+Authoring notes (not shown on the What's New page, which strips HTML comments):
+- Write for the people who use DEKA, not for developers. Technical detail
+  belongs in docs/change-log.md.
+- New entries go under "## Unreleased" (hidden from users). Move them under the
+  version heading in the same push that ships them to production, and date it.
+- Headings: "# CHANGELOG — vX.Y.Z — YYYY-MM-DD", sections "### Features",
+  "### Improvements", "### Fixes". Start a security fix with "[Security]".
+-->
 
-### 🧩 Features
+## Unreleased
 
-* Added document sequences for invoices, sales orders, purchase orders, scraps and manufacturing orders — configurable prefix, padding, step and reset frequency, managed under Settings → Sequences. Numbering previously derived from the database id, which left gaps and could not be reset or controlled
-* Added custom tax formulas: a tax can compute from an arithmetic expression over `price_unit`, `quantity` and `price_subtotal`, with `min()` and `max()` for capping
-* Added API token management (Settings → API Tokens) — issue a token against a specific user, scope it read-only or read/write, see when it was last used, and revoke it
-* Added an in-app "What's New" page rendering the release notes, under Help
-* Added a "Late" view to inventory operations, listing everything past its deadline or scheduled date
-* Added Employee / Customer / Vendor filters to partner-based lists
-* Added Sentry error monitoring, with performance tracing and optional log forwarding
-* Added a public branding asset route so custom logos render on the login and password-reset pages
+### Improvements
 
-### ✨ Improvements
+- Emails from DEKA now carry the DEKA logo and name at the top and amber
+  buttons, so you can recognise them at a glance in your inbox.
+- Invitation emails name the company and the person who invited you, say
+  when the invitation expires, and include a plain link in case the button
+  does not work.
 
-* API endpoints are now rate limited per token, so one client integration cannot exhaust another's budget
-* API tokens can be scoped: a read-only token cannot POST, PATCH or DELETE
-* API errors now return JSON on every endpoint rather than depending on the client sending an `Accept` header
-* Money columns default to the configured company currency instead of a fixed default
-* Password fields in the user form can be revealed while typing
-* Sending a purchase order now warns when vendors have no email address, instead of reporting success while sending nothing
-* Raised the Livewire nesting limit, fixing errors in deeply nested repeaters
-* Multi-company: a new company's journals no longer inherit another company's bank account, and copied records are aligned to the owning company's currency
-* Variant generation failures are now reported to the log rather than silently swallowed
+# CHANGELOG — v1.12.0 — 2026-11-16
 
-### 🐛 Fixes
+### Improvements
 
-* [Security] Escaped field values in chatter change summaries and notifications, which could execute markup entered elsewhere in the application
-* [Security] Constrained the branding asset route to a filename, closing a path that could return other stored files
-* #1478 [fixed] - Payment state never updated after an invoice was paid; the check compared two different enum types and could never be true
-* #1481 [fixed] - Recipient bank account was blank in the Pay modal when paying a vendor
-* #1490 [fixed] - Saved filter views threw a LogicException across list resources
-* #1491 [fixed] - Foreign key violation when editing an employee, caused by copying an employee id into a partner reference
-* #1497 [fixed] - Currency conversion not applied in RFQ, purchase order and quotation summaries
-* #1500 [fixed] - Prevented changing a company's currency once journal items exist for it
-* #1514 [fixed] - Exception when deleting a currency still in use; now reports why
-* [fixed] - Invoice print returned a server error when object storage was in use
-* [fixed] - Applicant categories list failed when ordering by a column the table does not have
-* [fixed] - Company records with no currency no longer error on save
+* The Overview now has Projects, Recruitment and Logistics tabs next to Accounting and Inventory; the separate dashboards are gone from the top bar (old links open the matching tab).
+* The Overview "All" page matches the approved design: Sales shows its three figures side by side, and the module cards fill even rows.
+* Tax groups now live under Taxes: open them with the "Tax groups" button on the Taxes list.
+* On the new-company form, Country sits next to the company name.
+* Scrollbars are hidden throughout; pages still scroll as before.
+* What's New shows hotfixes inside their release, marked with the hotfix version, instead of as separate sections.
+* Billing plans can be switched back on after being deactivated.
+
+### Fixes
+
+* Exchange rates below 1 can be entered, so currencies stronger than the US dollar (euro, pound) can be switched on.
+
+# CHANGELOG — v1.11.3 — 2026-11-16
+
+### Fixes
+
+* [Security] A record can only be saved in a company you belong to. Before, a request could place a record in another company.
+
+# CHANGELOG — v1.11.2 — 2026-11-14
+
+### Fixes
+
+* Company administrators now see all eight ready-made roles, including Finance Manager, HR Manager, Sales Manager, Inventory Manager and Logistics Manager. Permanently deleting records stays with installation staff.
+
+# CHANGELOG — v1.11.1 — 2026-11-14
+
+### Improvements
+
+* Company administrators can now give their users the ready-made roles (Finance Manager, Accountant, HR Manager and the others), and see every module their company has. The administrators' role is now called "Business Administrator".
+* The Activity log names the record that changed ("Partner: Ada Mensah") instead of a number.
+* Module names on the company form are readable ("Time Off" instead of "time-off"), and the plan list explains when no plans exist yet.
+* When an administrator set your password, a message now says to choose your own; after changing it you are told to sign in again.
+
+### Fixes
+
+* Role names show as written ("HR Manager", not "Hr Manager").
+* Companies in every OHADA country (Cameroon, Senegal, Côte d'Ivoire and the others) now start with their country's standard VAT rate, not a generic 15 %. You can change it under Accounting → Configuration.
+
+# CHANGELOG — v1.11.0 — 2026-11-14
+
+### Features
+
+* Accounting set up for your country: companies in Ghana and Zambia start with local tax and payroll accounts (for example SSNIT, Tier 2, NAPSA, PAYE) and their VAT rate; companies in Congo and the other OHADA countries start with the SYSCOHADA chart in French. Every other country keeps the standard chart. Everything stays editable under Accounting → Configuration.
+
+### Fixes
+
+* Taxes copied when a new company sets up its accounting now keep their posting accounts.
+
+# CHANGELOG — v1.10.0 — 2026-11-14
+
+### Features
+
+* Accounting: Cash Flow report. Cash at the start and end of a period, and the money in and out in between, grouped as operating, investing and financing. Export to Excel.
+* Sales by product and Purchases by product reports: quantities and amounts per product or category, in company currency, with Excel export. Purchases also shows how much was received.
+* The Overview has an Accounting section and card: cash at bank, bank lines still to reconcile and draft journal entries, with a "Reconcile bank" shortcut.
+* Company currencies (installation staff): choose which extra currencies a company may use on invoices, bills, quotations, purchase orders, payments, journals and Logistics shipments and expenses. Companies without a list keep every active currency. The API applies the same list.
+* Super Admins can change a company's base currency even after it has posted entries, from "Base currency" on the company page. You confirm a warning showing how many posted entries exist and give a reason; the change is recorded. Earlier entries keep their own currency and rate.
+* Ready-made roles: Finance Manager, Accountant, HR Manager, Payroll Officer, Sales Manager, Inventory Manager, Logistics Manager and Standard Employee. Edit them under Roles; your changes are kept.
+* Companies list (installation staff): a Setup status for each company (Active, Invited, Invitation expired, No administrator, Closed), a filter for it, and "Resend invitation" for a company whose administrator has not signed up yet.
+
+### Fixes
+
+* The Inventory card on the Overview now shows only to people who may open the Inventory overview, and only in companies that use Inventory.
+
+# CHANGELOG — v1.9.0 — 2026-11-13
+
+### Features
+
+* Accounting: Tax Summary report. For any period, each tax (for example VAT, NHIL and GETFund) with its taxable amount, the tax collected on sales and paid on purchases, and the net to pay or reclaim. Credit notes reduce it. Export to Excel.
+* Reports: one page listing every report you can open, grouped by module, with a search box.
+* Sales analysis and Purchase analysis reports: confirmed orders in company currency, grouped by customer or supplier, salesperson or buyer, or month, with totals and Excel export.
+* Accounting: Bank Reconciliation. Import your bank statement (CSV), then match each line to the payment it confirms (the payment becomes Paid) or book it to an account, for example bank charges or interest.
+* Activity log (Settings): see who created, changed or deleted what in your company, with the old and new values and the reason given. Filter by person, record type, action and date, and export to Excel. Deletions are now recorded too.
+
+### Improvements
+
+* The Overview has a new design. The greeting shows the date, how many things need you today as clickable chips, your local time, and a "New invoice" button with other shortcuts beside it.
+* The Overview's All tab is now one board: Sales (revenue, orders and how many quotations became orders, each with its trend and a small chart), money in and out with an optional comparison to the previous period, Purchases with spend by supplier, Needs attention, and Invoices with paid, open and overdue amounts and the invoices to chase.
+* Below it, "Across the company" shows the key figures of Inventory, Projects, Recruitment, Employees and Logistics. Only the modules your company uses appear.
+* The Overview refreshes itself every 5 minutes.
+* Attendance now appears inside the Employees menu.
+* The Plugins page shows each module's own version number.
+
+# CHANGELOG — v1.8.1 — 2026-11-13
+
+### Improvements
+
+* Reopening a confirmed invoice, bill, credit note, refund or payment (Reset to draft) now asks for a reason, for example "customer asked for a 10% discount". The reason is kept in the document history.
+
+# CHANGELOG — v1.8.0 — 2026-11-13
+
+### Features
+
+* Accounting: lock a closed period. "Lock date" on Journal Entries stops anyone posting, changing, cancelling or deleting entries dated on or before it. Old invoices can still be paid. Only a Company Admin, or someone given "Unlock period", can move it.
+
+### Improvements
+
+* The app is now called DEKA Central, by 365 Systems.
+* The dashboard greeting now tells you what needs you today (for example "3 invoices overdue · 2 bills due this week") and has quick buttons for a new invoice, bill, quotation or purchase request.
+* The Overview's All tab is now a short summary: the headline figures with their trend against the previous period, one chart of money in and out, and a "Needs attention" list that links to each item. Each module's tab still has all its charts and lists.
+* On a phone, the pages of the module you are in now show as a row of tabs under the top bar. The Menu lists only the modules, so switching module takes fewer taps.
+* What's New starts at version 1.5.0.
+* What's New has moved from the top bar into your profile menu, next to the version. A red dot on your picture means there is something new to read.
+* On the Overview, Sales, Purchases and Invoices are now tabs above the filters. Pick one, or All.
+* The dashboard greeting has a soft gradient in your company's colour behind it.
+* On a phone, the Overview tabs fade at the edge when there are more to scroll to.
+* In What's New, clearing the search or filters goes back to showing only the latest release open, and the search box no longer shows its label twice.
+
+* Creating a company is simpler: choose the plan on the same form (it starts at once and sets the modules and seat limit), give the administrator a name when you set their password, and the optional address, branding and contact details start folded away.
+
+### Fixes
+
+* Changing a filter on a dashboard with many charts no longer fails.
+* A mistyped record address now shows "Not found" instead of a server error.
+
+# CHANGELOG — v1.7.1 — 2026-11-12
+
+### Improvements
+
+* The "At a glance" cards on the Overview open the list they count, such as open quotations or invoices to collect
+* What's New has a search box, category filters, a PDF download and a megaphone in the top bar that shows a dot when there is a release you have not read
+
+# CHANGELOG — v1.7.0 — 2026-11-12
+
+### Features
+
+* Logistics: plan and track shipments, vehicles, trips and deliveries, collect proof of delivery on a phone, print waybills, invoice customers and record trip expenses, with a dashboard and reports
+* Drivers can capture proof of delivery from a one-time link, without an account
+* A customer's page shows their recent shipments, and their open charges for people allowed to see shipment amounts
+* Shipment, delivery performance, profitability, vehicle and driver reports, each exportable with its filters
+* New dashboards for Invoices, Sales and Purchases, and a richer Recruitment dashboard, showing only your company's figures
+* Attendance: clock in and out from the dashboard, see who is in, correct entries with a reason, and report lateness, absence and overtime
+* A welcome banner on the dashboards greets you by name, with your role, company, date and work location
+
+### Improvements
+
+* Attendance and Logistics can each be switched on or off per company, without losing existing records
+* A forgotten clock-out is closed automatically after 12 hours (you can change the limit) and flagged for review, so it does not inflate worked hours
+* Attendance records location and network details only when the company turns that on
+* Proof-of-delivery photos and signatures are stored privately and can only be opened by people in the same company
+* A sales order for a delivery service can create a draft shipment, without fixing its route or date yet
+
+### Fixes
+
+* [Security] Settings pages, overviews and dashboards in Sales, Purchases, Accounting, Inventory, Projects, Recruitment and Time Off again require their own permission
+* [Security] Dashboard widgets check both the module and their own permission
+* The Project charts "Tasks by state" and "Tasks by stage" load faster, and "Tasks by stage" no longer shows zero for every stage when no start date is chosen
+* [Security] Logistics actions, reports, exports, documents and delivery files are limited to your own company
+* [Security] Delivery links work once, expire, can be revoked, and are protected against guessing
+
+# CHANGELOG — v1.6.0
+
+### Features
+
+* Document numbering for invoices, sales and purchase orders, scraps and manufacturing orders: choose the prefix, length, step and when it restarts (Settings → Sequences). Numbers no longer skip or depend on internal record ids
+* Taxes can be calculated from a formula based on unit price, quantity and subtotal, with a minimum or maximum
+* API tokens (Settings → API Tokens): give an integration its own token, read-only or read/write, see when it was last used, and revoke it
+* A What's New page under Help shows these release notes
+* A "Late" view in Inventory lists every operation past its deadline or scheduled date
+* Contact lists can be filtered to employees, customers or vendors
+* Errors are reported automatically to the support team, so problems are found and fixed sooner
+* Your company logo now shows on the login and password-reset pages
+
+### Improvements
+
+* Each API token has its own request limit, so one busy integration cannot slow down another
+* A read-only API token cannot change data
+* The API always answers errors in a format integrations can read
+* Amounts use your company's currency by default
+* You can show a password while typing it in the user form
+* Sending a purchase order warns you when a vendor has no email address, instead of reporting success
+* Fixed errors on forms with many nested rows
+* A new company's journals no longer pick up another company's bank account, and copied records use the right company's currency
+* Problems while creating product variants are now recorded instead of being hidden
+
+### Fixes
+
+* [Security] Text shown in record history and notifications can no longer run code entered elsewhere in the application
+* [Security] The logo address can no longer be used to open other stored files
+* An invoice's payment status now updates once it is paid
+* The vendor's bank account now shows in the Pay window
+* Saved list views no longer cause an error
+* Editing an employee no longer fails with a database error
+* Currency conversion is applied in requests for quotation, purchase order and quotation totals
+* A company's currency can no longer be changed once it has journal entries
+* Deleting a currency that is still in use now explains why it cannot be deleted
+* Printing an invoice no longer fails when files are kept in cloud storage
+* The applicant categories list no longer fails when sorted
+* Saving a company with no currency no longer causes an error
 
 # 🚀 CHANGELOG — v1.5.0
 
@@ -217,607 +391,3 @@
 * #1255 [fixed] - Fixed sale order warehouse selection
 * #1252 [fixed] - Fixed inventory document creation issue when confirming sale order
 * #1186 [fixed] - Issue #1170 resolved
-
-# 🚀 CHANGELOG — v1.4.0
-
-### 🧩 Features
-
-* Added Manufacturing module with Bill of Materials (BOM), Manufacturing Orders, Work Orders, Work Centers, and Operations sub-navigation
-* Added Sharding and Reporting support 
-* #1175 Multi-language support with user preferences and session-based locale switching
-* #1160 Calendar management functionality refinements
-* #1198 Enhanced Package Type form with new fields for barcode, dimensions, and weight
-* #1178 Added parent-child relationship support for accounts
-* #1179 Added grouping for Chart of Accounts
-* #1194 Enhanced Activity Plans integration across multiple resources
-* Added support for Partial Return in inventory operations
-
-### ✨ Improvements
-
-* #1203 Upgraded framework and dependencies to Laravel 13
-* #1155 Added Playwright tests for Purchases plugin
-* #1150 Added translations consistency check command and CI workflow
-* #1149 Removed unused Arabic translation setup script
-* #1159 Refactored column manager component for improved readability and maintainability
-* #1164 Enhanced location model to update full name and parent path on creation and saving
-* #1200 Simplified top bar item button styling
-* #1176 Refactored message pinning logic and updated SVG icons in chatter
-* #1195 Updated chatter panel styles for improved header visibility in dark mode
-* #1177 Updated activity types URL and adjusted resource slug and cluster
-* #1174 Removed duplicate/unused Auth facade imports
-* Removed `phpunit` from `composer.json` (now managed via Laravel dev requirements)
-* Applied settings-driven values in place of hardcoded ones
-* Refactored `freeReservation` to use `update` instead of `decrement` for quantity adjustment
-
-### 🐛 Fixes
-
-* #1167 [fixed] - Issue #1167 resolved
-* #1188 [fixed] - Issue #1188 resolved
-* #1191 [fixed] - Issue #1191 resolved
-* #1192 [fixed] - Issue #1192 resolved
-* [fixed] - Sub-location issue in inventory
-* [fixed] - Sale order to inventory operation linking issue
-* [fixed] - Quantity availability and print package issues
-
-# 🚀 CHANGELOG — v1.3.1
-
-### ✨ Improvements
-
-* Refactor RTL support and add traits for Filament defaults and router macros and refactor providers.
-
-### 🐛 Fixes
-
-* [fixed] - Update temporary file upload configuration to set default disk and add authentication middleware
-* [fixed] - Fixed table views issue
-
-# 🚀 CHANGELOG — v1.3.0
-
-### 🧩 Features
-
-* Added REST API support  
-* Generated API documentation  
-
-### ✨ Improvements
-
-* Upgraded to Filament v5
-* Enhanced CompanyResource actions visibility and added archived tab handling in ListCompanies
-* Added Playwright tests for Companies and Users
-* Integrated Filament Shield configuration for plugins
-* Introduced User Active and Inactive status
-* Optimized roles management
-* Added full Arabic translation support
-
-### 🐛 Fixes
-
-* [fixed] - Resolved compatibility issues.
-* [fixed] - Fixed UI issues in the repeater select box.
-* [fixed] - Fixed top bar dropdown menu for small screen devices.
-* [fixed] - Resolved refund navigation issue.
-* [fixed] - Prevented logged-in users from deleting themselves and made roles a required field.
-* [fixed] - Improved role creation and update notifications and enhanced role management logic.
-* [fixed] - Fixed failing tests.
-* [fixed] - Resolved getUrl compatibility issue.
-* [fixed] - Fixed unique validation during updates for company and branch names.
-* [fixed] - Added support for multiple UOM (Units of Measure).
-* [fixed] - Added migration to update unit of measure factor precision and recalculate factors.
-* [fixed] - Added show/hide (eye icon) toggle for password field.
-* [fixed] - Fixed global search issue.
-* [fixed] - Resolved error in the project dashboard.
-
-* #1025 [fixed] - Purchase Agreement visible for all vendors in RFQ creation
-* #1037 [fixed] - Receipt Not Generated for Updated Quantity in Purchase Order
-* #1038 [fixed] - Edit Receipt Opens View Receipt Page
-* #1039 [fixed] - Unable to Add Product After Confirming Empty Purchase Order
-* #1040 [fixed] - Exception Error 500 When Deleting Product Line After RFQ Confirmation
-* #1043 [fixed] - Blanket Order Functionality Not Working as Expected
-* #1045 [fixed] - Purchase Order Approval Minimum Amount Not Triggering Approval Flow
-* #1051 [fixed] - Register Payment Wizard Error After Paying Invoice
-* #1053 [fixed] - 500 Server Error When Adding Bank Account to Journal 
-* #1055 [fixed] - Inactive Currencies Visible in Company/Branch Creation
-* #1057 [fixed] - Logged-in User Can Cause Deadlock When Changing Own Resource Permissions
-* #1058 [fixed] - Email Validation Conflict Between Contacts and Users
-* #1072 [fixed] - 500 Error When Force Deleting Used Company from Archived Tab
-* #1077 [fixed] - System Allows Creating Multiple Companies with Same Name (Name Should Be Unique)
-* #1079 [fixed] - Validation error when editing product attribute and adding new value
-* #1085 [fixed] - filament build artifacts neither gitignored nor committed 
-* #1086 [fixed] - Security: Missing Authorization on Multiple REST API Controllers 
-* #1094 [fixed] - Partner Not Saved in Journal Entry After Creation 
-* #1099 [fixed] - Bug: Invoice and Bill Datagrid Showing Incorrect Data 
-* #1101 [fixed] - Bug: Prevent Force Deleting a Product That Is Already in Use 
-* #1105 [fixed] - Bug: Quotation Attachment Not Visible in Email or Chatter 
-* #1110 [fixed] - Bug: Exception when removing product lines from RFQ with selected Purchase Agreement 
-* #1111 [fixed] - Bug: Deliveries not updating after quantity change in confirmed Sales Order 
-* #1114 [fixed] - Installation Failed Plugins 
-* #1116 [fixed] - Bug: Error when adding columns from Column Manager in Deliveries 
-* #1118 [fixed] - Bug: 500 Server Error When Sorting Roles Column in User List 
-* #1122 [fixed] - Bug: Product dropdown in repeaters shows variants of archived parent products  
-* #1123 [fixed] - Bug: Unit price updates incorrectly when changing quantity in RFQ created from Purchase Agreement  
-* #1130 [fixed] - Variant cost not updated when regenerating variants after product cost change 
-* #1131 [fixed] - Bug: Manage Stock Move Lines Vanish When Adding Multiple Entries 
-
-# 🚀 CHANGELOG — v1.3.0-BETA3
-
-### 🧩 Features
-
-* Added Two-Factor Authentication
-
-### ✨ Improvements
-
-* Upgraded to Filament v4.5
-* Added expand/collapse feature in accounting reporting
-* Now pages and widgets in roles are plugins based
-* Remove unnecessary actions from record pages
-* Pages and widgets under role form now will be appearing in plugin section
-* Reset active table view to default after deleting a table view
-* Updated color representation for SENT state in OrderState enums
-
-### 🐛 Fixes
-
-* [fixed] - Permission issues fixed
-* [fixed] - Fixed partner ranking issue if ranking column has null value
-* [fixed] - Pay invoice/bill issue fixed
-* [fixed] - Fixed global search issues
-* [fixed] - Fix query to use tableView ID instead of view_key for fetching favorites
-* [fixed] - Fixed print Picking Operation slip issue in inventory plugin
-* [fixed] - Fix the GUI installation plugins with php binary
-* [fixed] - Fix the chatter causer profile and user related issue
-* [fixed] - Fix the purhcase order pdf download forbidden issue
-* [fixed] - Fix the config serialization issue
-* [fixed] - Fixed vendor price list issue when updating the qty
-* [fixed] - Fix missing translation of incoterm
-* [fixed] - Fix the issue of reference name not showing proper refernce number
-* [fixed] - Fixed credit/refund reset to draft issue
-* [fixed] - Fix the name on null while creating the journal.
-
-* #554 [fixed] - Resource Permission Scope (Individual, Group, Global) Not Working as Expected
-* #889 [fixed] - Currency Management Resource
-* #964 [fixed] - Purchases Plugin: RFQ Print Missing Info & No PO Print Action
-* #1001 [fixed] - 500 Internal Server Error When Creating Journal from Create Invoice (Sale Type)
-* #1002 [fixed] - Journal Shows ID Instead of Name When Created from Invoice (Purchase Type)
-* #1026 [fixed] - Unable to view or download RFQ – 403 Error from Chatter
-
-# 🚀 CHANGELOG — v1.3.0-BETA2
-
-### 🧩 Features
-
-* Export feature added to the invoice/accounting tables
-
-### ✨ Improvements
-
-* Added progress stepper for infolist
-* Remove unused dependencies from composer.json and composer.lock
-* Refactor log attribute labels for move, payment, order, and requisition models to improve consistency and clarity
-* Optimized: accounting reporting optimized by lazy move lines loading
-* Added prices in RFQ template
-
-### 🐛 Fixes
-
-* [fixed] - Fixed customer login page issue
-* [fixed] - Fixed global search issues
-* #966 [fixed] - Accounting Plugin: Feature Request: Print Vendor Bill
-* #965 [fixed] - Invoices Plugin: Vendor Bill Purchase Tax Not Saved
-* #964 [fixed] - Purchases Plugin: RFQ Print Missing Info & No PO Print Action
-* #963 [fixed] - Support Plugin: CurrencyRate - Conflicting Date Field & Design Issue
-* #962 [fixed] - Employee Plugin: EmployeeSkill - Duplicate and Missing User Relationships Use
-* #961 [fixed] - Employees Plugin: SkillLevelRelationManager - Color Logic Gap
-* #960 [fixed] - Employees Plugin: SkillTypeResource - Color Select CSS Variable Not Rendering
-* #959 [fixed] - Employees Plugin: CalendarResource - Incorrect date() Formatting on Numeric Fields
-* #957 [fixed] - Employees Plugin: EmployeeCategory - Undefined fake() Function
-* #936 [fixed] - Cannot create quotations and invoices for resgistered Customer or created Contact
-* #889 [fixed] - Currency Management Resource
-
-
-# 🚀 CHANGELOG — v1.3.0-BETA1
-
-### 🧩 Features
-* Accounting plugin has been added
-
-### ✨ Improvements
-
-* Plugin system refactored to support multi-vendor architecture - removed hardcoded vendor paths and implemented dynamic plugin discovery using PHP reflection.
-* Enhanced plugin manager to automatically detect plugin directories regardless of vendor name, improving extensibility.
-* Improved plugin uninstallation - fixed migration rollback process and ensured proper cleanup of plugin data.
-* Fixed file path resolution issues in plugin operations for both web and CLI contexts.
-* Added robust third-party plugin filtering to prevent errors from non-PackageServiceProvider plugins.
-* Improved plugin icon display with proper fallback handling for custom and default icons.
-* Chatter functionality refactored with improved ownership tracking and fixed redundant logs.
-* Enhanced permission system and access control across multiple resources.
-* Added validation for scrap resource quantity (minimum of 1 required).
-* Improved inventory tracking validation and notifications in product editing.
-* Added payments functionality to invoices and bills.
-* Refactored bank account management and enhanced payment methods display.
-* Updated dashboard to be dynamic and core-plugin-driven.
-* Improved global search functionality.
-
-### 🐛 Fixes
-
-* #930 [fixed] - Internal Server Error when customer views their order.
-* #923 [fixed] - Error while adding customer bank account: Unknown column `partners_bank_accounts.customer_id`.
-* #918 [fixed] - Sales Plugin: Quotation/Sales Order - Total Not Updated When Line Items Deleted.
-* #917 [fixed] - Sales Plugin: Quotation/Sales Order - Margin Data Not Persisted After Saving.
-* #916 [fixed] - Missing Archive/Unarchive Bulk Actions in Configuration Resources.
-* #915 [fixed] - Inventories Plugin: Scrap - Allows Zero Quantity Operations.
-* #914 [fixed] - Inventories Plugin: Non-Storable Products - Stock Movements Not Prevented.
-* #894 [fixed] - Accounting Plugin: Journal Resource: Inbound & Outbound Payment Method Schema Order Mismatch.
-* #893 [fixed] - Invoices & Accounting Plugin: Null Date On Invoice Creation: Move::class.
-* #892 [fixed] - Sales Plugin: Cannot Delete Order Line & Table Display Issues.
-* #891 [fixed] - Accounting Plugin: Cannot Create Tax - Invalid Enum Access.
-* #890 [fixed] - Product Plugin: Cannot Print Labels For Product Variants.
-* #888 [fixed] - Missing Inventory Section In Sales & Invoices Plugin Product Edit/Create.
-* #886 [fixed] - Invoices Plugin: Division By Zero On Payment Confirmation.
-* #882 [fixed] - Invoices Plugin: Hardcoded Currency Dropdown In Invoice Creation.
-* #881 [fixed] - Sales Plugin: Null Journal On Invoice Creation Action.
-* #880 [fixed] - Sales Plugin: Missing Inventory Table On Sales Operations.
-* #879 [fixed] - Fresh installation not successful: CustomerResource Class Not Found.
-* #878 [fixed] - Type mismatch error in `TaxesSettings` class when attempting to assign a `TaxIncludeOverride` enum.
-* #868 [fixed] - Vendor Bill incorrectly uses Customer Invoice email template (Vendor shown as Customer).
-* #854 [fixed] - Customer ID displayed when editing an invoice linked to a soft-deleted customer.
-* #850 [fixed] - Prefilled data not loading automatically in form fields.
-* #848 [fixed] - Exception error when applying country filter on Company data grid.
-* #834 [fixed] - Getting server error when adding a rule in the filter of any data grid.
-* #833 [fixed] - Force deleting a single applicant deletes the entire data grid.
-* #832 [fixed] - "Favourite" label missing from column reordering settings.
-* #831 [fixed] - Translation appearing on the recruitment dashboard graph.
-* #827 [fixed] - Role permission automatically removed after creating a user from employee creation.
-* #824 [fixed] - Plugins hide quickly when browse by phone screen.
-* #823 [fixed] - Plugins not visible in the admin panel when APP_DEBUG=false.
-* #821 [fixed] - Internal server error when creating a quotation with optional products.
-* #818 [fixed] - Company dropdown in customer creation form shows all users, customers, employees, and companies.
-* #811 [fixed] - Sales invoices, credit notes, and payments.
-* #698 [fixed] - Make Dashboard Dynamic & Core-Plugin-Driven.
-* #541 [fixed] - Parent Products Should Not Be Displayed in Product Dropdown.
-* #536 [fixed] - Accounts plugin menu.
-* #520 [fixed] - Access Control Failure: Users Can View Restricted Sections Without Proper Permissions.
-* #510 [fixed] - Image Name and Size Displayed on Frontend in Website Content Page.
-* #458 [fixed] - Preceding Subtotal Field Accepts Invalid String Input in Tax Group Creation.
-* #454 [fixed] - First word must be capital.
-* #247 [fixed] - After the Fresh Installation of Aureus ERP, we can see the Dashboard is appearing. It should open up with Roles Section.
-* #171 [fixed] - Quantity Delivered and Quantity Invoiced Should Be Non-Editable After Quotation Confirmation.
-* Fixed plugin discovery to show both installed and uninstalled plugins correctly.
-* Fixed undefined variable error in plugin migration rollback process.
-* Fixed absolute vs relative path issues in file_exists() checks for plugin operations.
-* Fixed chatter scroll issues.
-* Fixed reverse redirect issues.
-* Fixed settings loading issues.
-* Fixed migration handling in install/uninstall commands.
-* Fixed global search issues.
-* Fixed typo errors.
-* Removed unused dependencies and policy classes.
-
-
-# 🚀 CHANGELOG — v1.2.0
-
-### Upgrade
-
-* Upgraded to **Filament v4.1** — added support for the new Compact Repeater layout, improved Column Manager synchronization in repeatable entries, and refined overall UI consistency for a smoother user experience.
-
-### 🧩 Features
-* #858 [fixed] - Plugin Manager with GUI Install/Uninstall.
-
-
-### 🐛 Fixes
-
-* #805 [fixed] - fix Bank model filename.
-* #806 [fixed] - issue_template_fixed.
-* #808 [fixed] - Fixed Route [login] not defined error.
-* #541 [fixed] - Parent Products Should Not Be Displayed in Product Dropdown.
-* #826 [fixed] - fix employee updation when related user already selected.
-* #817 [fixed] - Conflicting notifications.
-* #818 [fixed] - Company dropdown in customer creation form shows all users, customers, employees, and companies.
-* #831 [fixed] - Translation appearing on the recruitment dashboard graph.
-
-* #821 [fixed] - Internal server error when creating a quotation with optional products.
-* #833 [fixed] - Force deleting a single applicant deletes the entire data grid.
-* #834 [fixed] - Getting server error when adding a rule in the filter of any data grid.
-* #832 [fixed] - “Favourite” label missing from column reordering settings.
-* #824 [fixed] - Plugins hide quickly when browse by phone screen.
-* #827 [fixed] - Role permission automatically removed after creating a user from employee creation.
-* #848 [fixed] - Exception error when applying country filter on Company data grid.
-* #850 [fixed] - Prefilled data not loading automatically in form fields.
-* #854 [fixed] - Customer ID displayed when editing an invoice linked to a soft-deleted customer.
-
-
-### ✨ Improvements
-* #804 [fixed] - improved navigations.
-* #809 [fixed] - Refactor email notification handling for PO/RFQ with detailed status messages.
-* #857 [fixed] - update the ui of the chatter.
-* #856 [fixed] - fixed namespace issue in ci/cd.
-* #853 [fixed] - filament version upgrade 4.1.
-* #835 [fixed] - Add “Open Product” action in product repeater items.
-* #828 [fixed] - Update APP_NAME from AureusERP to YourERP.
-* #822 [fixed] - Reorderable Columns.
-* #812 [fixed] - fixed unique name issue.
-* #813 [fixed] - Improve Page Navigation Layout for Clustered and Record Views.
-* #816 [fixed] - refactor codebase.
-
-
-
-
-# 🚀 CHANGELOG — v1.1.0
-
-### 🐛 Fixes
-
-* #748 [fixed] - Internal server error when opening the dashboard calendar in Time-off plugin.
-* #754 [fixed] - Fixed installation issue.
-* #755 [fixed] - Exception error after changing admin password – "Route [login] not defined.
-* #756 [fixed] - Added Missing Translation.
-* #757 [fixed] - Form table repeater.
-* #759 [fixed] - remove redundant theme imports from plugins to reduce CSS size.
-* #762 [fixed] - Updated Readme.md.
-* #763 [fixed] - enhance ERP installation command with admin user options.
-* #764 [fixed] - updated permissions for various resources in filament-shield.
-* #767 [fixed] - time-off bug fix.
-* #770 [fixed] - Optimized role performance issue.
-* #771 [fixed] - Refactor TableView plugin.
-* #772 [fixed] - Refactored IconPicker.
-* #774 [fixed] - Database not wiped during reinstallation, causing duplicate UOM (Unit of Measure) entries.
-* #777 [fixed] - Terminal error during composer install due to missing SQLite database file.
-* #780 [fixed] - Access Control Failure: Users Can View Restricted Sections Without Proper Permissions.
-* #781 [fixed] - Update accept invitation translations.
-* #783 [fixed] - Added 'buy' action placeholder text in RuleResource.
-* #784 [fixed] - Fixed dashboard issue.
-* #785 [fixed] - fix double notification on Quotation mailing.
-* #786 [fixed] - remove the unused imports.
-* #787 [fixed] - fix label translation key.
-* #789 [fixed] - Navigation refactor.
-* #790 [fixed] - sale Invoice Creation Issue.
-* #794 [fixed] - made dashboard form responsive.
-* #795 [fixed] - Fixed logout issue.
-* #796 [fixed] - Fixed website login route issue.
-* #797 [fixed] - Removed double section from project dashboard.
-* #798 [fixed] - Emploment Type Create Modal, Translation need to be updated. #121
-* #799 [fixed] - Fix form submission in CancelQuotationAction to enable email sending.
-* #800 [fixed] - Refactor purchase order form.
-* #801 [fixed] - Added missing navigation icon in DepartmentResource .
-* #802 [fixed] - In Tags, View the tag there color should appear instead of icon. #152
-
-
-
-
-# 🚀 CHANGELOG — v1.0.0
-
-### Upgrade
-
-* Upgraded to **Filament v4** for improved performance, UI enhancements, and compatibility.
-
-### 🐛 Fixes
-
-* #745 [fixed] - Product dropdown in packaging shows all products instead of only tangible goods.
-* #742 [fixed] - Internal server error when force deleting a leave type that is already in use.
-* #738 [fixed] - Company ID displayed when editing quotation linked to a deleted company #738
-* #737 [fixed] - Company ID displayed when editing department linked to a deleted company #737
-* #736 [fixed] - Company field shows ID when linked company is soft deleted in purchase agreement #736
-* #735 [fixed] - Company data grid missing archived option and lacking validation for force delete #735
-* #733 [fixed] - Internal server error when sending sales order by email after confirmation #733
-* #732 [fixed] - Company ID is displayed when editing an invoice linked to a deleted company #732
-* #724 [fixed] - Bug: Timesheet table displays wrong minutes #724
-* #708 [fixed] - Internal Server Error When Clicking "Reorder Records" Button on Companies Data Grid Page #708
-* #704 [fixed] - Internal Server Error When Forcing Deletion of a User Assigned to an Employee #704
-* #696 [fixed] - Internal Server Error When Creating Role Without Guard Name #696
-* #695 [fixed] - Changing Guard Name of Role Assigned to Admin User Causes System Lockout #695
-* #693 [fixed] - System Fails to Assign Permissions Using "Select All" for Roles With More Than 6 Plugins #693
-* #690 [fixed] - System Allows Multiple Employees to Be Assigned to the Same User #690
-* #689 [fixed] - "Create Invoice" Button Not Visible After Confirming Sales Quotation in Sales Order Page #689
-* #688 [fixed] - Internal Server Error on Project Dashboard When Clicking Projects Dropdown #688
-* #687 [fixed] - Internal Server Error on Time-Off Dashboard When Leave Type Is Created Without Color #687
-* #686 [fixed] - Internal Server Error on Project Dashboard When Changing Data Limit to "All" in Top Assignees and Top Projects #686
-* #683 [fixed] - Admin User Should Not Be Deletable to Prevent System Lockout #683
-* #678 [fixed] - Default Admin role can be deleted, causing permanent system lockout #678
-* #677 [fixed] - Default Admin role allows removal of critical permissions from itself, leading to lockout #677
-* #675 [fixed] - System Allows "Request Date From" to Be Greater Than "Request Date To" Without Validation in Time-Off Creation #675
-* #672 [fixed] - Job Description and Job Requirements Display Data Inside <p> Tags #672
-* #665 [fixed] - Quotation Currency Not Updating Automatically Based on Selected Company #665
-* #664 [fixed] - Bill Currency Not Updating Automatically Based on Selected Company #664
-* #663 [fixed] - Company ID Displayed Instead of Name When Editing Routes Linked to a Deleted Company #663
-* #662 [fixed] - Check Availability Button Not Working on Delivery Page After Clicking "Mark as To Do #662
-* #661 [fixed] - Parent Department ID Displayed When Editing Child Department After Parent Deletion #661
-* #660 [fixed] - Internal Server Error When Adding Long External Notes While Creating Inventory Location #660
-* #659 [fixed] - Internal Server Error When Adding Long Description in Employee Time-Off #659
-* #657 [fixed] - No Success Message Displayed When Creating Time Off #657
-* #618 [fixed] - Filament Path Shown Instead of Success Message When Deleting Candidates #618
-* #615 [fixed] - Soft Deleted Applicants Still Visible in Data Grid Despite Success Message #615
-* #612 [fixed] - Internal Server Error When Adding Skills to an Applicant in Recruitment Plugin #612
-* #608 [fixed] - Internal Server Error When Adding Long Note While Creating Payment Terms #608
-* #605 [fixed] - Missing Route Validation on Sales Order Confirmation After Editing the Order #605
-* #649 [fixed] - Unnamed Checkboxes Displayed in Roles Widget Section #649
-* #642 [fixed] - Internal Server Error When Clicking "Set as Checked" After Confirming Credit Note in Bill Creation #642
-* #623 [fixed] - Extension Tab Overflows Screen on Applicants Page #623
-* #622 [fixed] - Internal Server Error When Deleting Employee Used in Time Off Records #622
-* #620 [fixed] - Edit Button on Delivery Opens View Page Instead of Edit Page #620
-* #603 [fixed] - RFQ Label Missing in Purchase Plugin – Displays Only "Quotation" Instead of "RFQ" #603
-* #602 [fixed] - No Success Message Displayed After Deleting Tax Group #602
-* #600 [fixed] - Internal Server Error When Adding Long Description While Creating Tax #600
-* #559 [fixed] - Sales Orders jump to Sales Orders State after Click confirm #559
-* #550 [fixed] - Company ID Displayed Instead of Name After Deleting Company in Product Creation #550
-* #549 [fixed] - Favorites Icon Not Visible on Product Page but Still Functioning on Click #549
-* #547 [fixed] - Internal Server Error When Editing Partner Linked to Deleted Company #547
-* #546 [fixed] - Account Holder Name Selection Not Working Correctly While Creating Bank Account
-* #545 [fixed] - "Configuration" Breadcrumb Disappears After Managing Due Terms in Payment Terms Module
-* #544 [fixed] - Translation Keys Displayed Instead of Labels in Payment Terms Sorting Dropdown
-* #543 [fixed] - Incorrect Labeling on Vendor Payments Page Showing Customer Fields Instead of Vendor
-* #542 [fixed] - Login and Register Buttons Missing on Mobile View After Installing Website Plugin
-* #540 [fixed] - Created Customer Not Visible in Vendor Dropdown During Bill Creation
-* #539 [fixed] - Product Icon Not Displayed in Invoicing Customer Products
-* #538 [fixed] - Incorrect Breadcrumb Hierarchy on Vendor Creation Page
-* #533 [fixed] - Server Error (500) When Trying to Add a Product to a Purchase Quotation
-* #519 [fixed] - Internal Server Error When Returning a Dropship Transfer
-* #515 [fixed] - Internal Server Error When Adding Products in Invoices Due to Missing Currency Value
-* #514 [fixed] - Unable to Recreate Category with Same Name After Deletion Due to Slug Conflict
-* #513 [fixed] - Internal Server Error on Blog Page After Deleting Associated Category
-* #512 [fixed] - Category ID Displayed Instead of Name After Deleting Used Blog Category
-* #511 [fixed] - Unpublished Pages Are Visible on Frontend Despite Not Clicking Publish
-* #509 [fixed] - Activity Types Count Displays Zero Despite Existing Records
-* #508 [fixed] - Terminal Error on Running `php artisan db:seed` After Installing Invoice Plugin
-* #507 [fixed] - Internal Server Error When Re-running `php artisan erp:install` and Attempting Login
-* #505 [fixed] - Incorrect Button Label on Public Holidays Page
-* #504 [fixed] - No Validation for Start Date Being Later Than End Date in Public Holiday Creation
-* #503 [fixed] - Internal Server Error When Creating Accrual Plan with Carry Over Date Set to Day 31
-* #502 [fixed] - Internal Server Error When Searching on Accrual Plans
-* #501 [fixed] - Incorrect Leave Count When Selecting Time Off Dates from Calendar
-* #500 [fixed] - Internal Server Error When Selecting "Created By" Filter in Job Positions
-* #499 [fixed] - Internal Server Error When Editing Activity Plan After Deleting Associated Company
-* #498 [fixed] - Department ID Visible Instead of Name After Department Deletion in Employee Creation
-* #497 [fixed] - Internal Server Error When Searching on Skills Page in Employees Plugin
-* #496 [fixed] - Internal Server Error When Selecting 'Group By Type' Filter on Manage Resume Page
-* #495 [fixed] - Internal Server Error Occurs Instead of Validation Message When Deleting Used Project Stage
-* #494 [fixed] - Project ID Visible in Task Stages After Deleting the Associated Project
-* #493 [fixed] - Internal Server Error When Deleting a Task Stage That Is in Use
-* #492 [fixed] - Internal Server Error When Creating a Task Due to Incorrect Data Type in `json_decode`
-* #491 [fixed] - Internal Server Error When Entering Non-Numeric Text in "Allocated Hours" Field During Project Creation
-* #489 [fixed] - Purchase Agreement Allows End Date Earlier Than Start Date Without Validation
-* #488 [fixed] - Vendor ID Displayed Instead of Name After Deleting Used Vendor in Purchase Agreement
-* #485 [fixed] - Internal Server Error When Adding Product in Quotation Creation in Purchase Plugin
-* #480 [fixed] - Lineitem Display UX Issue (Purchase/Order/Etc) - Design/Layout Fix
-* #479 [fixed] - Package ID Displayed Instead of Package Name When Selecting Non-Internal Location During Quantity Creation
-* #478 [fixed] - Internal Server Error When Searching in Scrap Moves Search Bar
-* #475 [fixed] - Internal Server Error When Selecting "Scheduled At" From Filter Dropdown on Receipt Page
-* #474 [fixed] - Internal Server Error When Editing Receipt With Deleted Product
-* #473 [fixed] - Contact ID Displayed Instead of Name After Deleting Contact in Receipt
-* #467 [fixed] - \[Clean Code] Removed Duplication from Task Model in Project Plugin
-* #466 [fixed] - Task Creation Error: `json_decode(): Argument #1 ($json) must be of type string, Webkul\Project\Enums\TaskState given`
-* #464 [fixed] - Internal Server Error When Editing Quotation After Deleting Associated Product
-* #463 [fixed] - Internal Server Error When Deleting Order Lines After Sales Order Confirmation
-* #462 [fixed] - Customer ID Visible After Customer Deletion During Quotation Creation
-* #461 [fixed] - Internal Server Error When Creating Refund with Payment Term Using 'Days After End of Next Month' Delay Type
-* #460 [fixed] - Exception Thrown When Clicking "Created By" Column in Resume Datagrid
-* #457 [fixed] - Tax Configuration Details Not Appearing on View Page After Save
-* #456 [fixed] - Exception Thrown When Editing and Saving Reporting by Employee
-* #455 [fixed] - Requested Date From, Requested Date To, and Requested Days/Hours not showing in Reporting by Employee
-* #444 [fixed] - Internal Server Error When Entering String in Lead Time Field While Creating Quotation
-* #443 [fixed] - Product ID Displayed in Edit Quotation After Deleting Associated Product
-* #437 [fixed] - Product ID Displayed Instead of Name in Packagings After Deleting the Associated Product
-* #432 [fixed] - Internal Server Error When Creating Activity Type with Out-of-Range Delay Count
-* #431 [fixed] - Internal Server Error When Selecting Associated Model in Activity Types Filter
-* #422 [fixed] - Internal Server Error When Saving Changes in Sales Orders
-* #420 [fixed] - No Validation Triggered for Negative Packaging Quantity in Quotation
-* #418 [fixed] - Internal Server Error When Searching in Quotations
-* #416 [fixed] - Internal Server Error When Deleting Tax Group Used in Taxes
-* #415 [fixed] - Internal Server Error When Deleting Taxes Used in Invoices or Credit Notes
-* #414 [fixed] - Translation Keys Displayed Instead of Success Message When Creating Payment Due Term
-* #413 [fixed] - Payment Term ID Displayed Instead of Payment Term (Deleted) After Deletion in Invoice
-* #412 [fixed] - Recipient Bank ID Displayed Instead of Label After Bank Account Deletion in Vendor Bills
-* #411 [fixed] - Customer Bank Account ID Displayed Instead of Account Number When Deleted in Invoices Section
-* #410 [fixed] - Internal Server Error When Searching on Payments Page in Invoices Under Customers Section
-* #409 [fixed] - Internal Server Error When Exceeding 350 Characters Limit in Credit Note (Reason displayed on Credit Note) on View Invoice
-* #408 [fixed] - Payment Method Dropdown Displays Blank When Attempting to Pay Invoice
-* #405 [fixed] - Tooltip Displays File Path Instead of Meaningful Suggestion
-* #404 [fixed] - Toggle buttons for "Is Visible Header Menu" and "Is Visible Footer Menu" are not working independently
-* #403 [fixed] - Old Attribute Values Still Visible After Changing Product Attribute
-* #402 [fixed] - Internal Server Error When Creating Storage Categories Under Inventory Configuration
-* #400 [fixed] - wrong link: in settings manage logistic goes to contacts
-* #399 [fixed] - Internal Server Error When Deleting a Variant Option from an Existing Attribute
-* #395 [fixed] - Description Content Wrapped in <p> Tags on View Lots Page After Lot Creation
-* #390 [fixed] - Internal Server Error When Searching on Manage Operation Page in Product Packages
-* #387 [fixed] - Product ID Visible Instead of Name After Product Deletion in Storage Categories (Capacity by Products)
-* #386 [fixed] - Exception error when creating a new My Time Offs
-* #385 [fixed] - Exception error when creating a new Time Off Allocation
-* #384 [fixed] - Exception error when creating "By Employees" Reporting with document upload
-* #379 [fixed] - Source and Destination Location IDs Shown Instead of Location Names After Deleting Locations in Operation Type
-* #378 [fixed] - Leave Accrual Levels not visible after saving a new Accrual Plan
-* #377 [fixed] - Inappropriate translation appearing in the Color section when creating a new Leave Type
-* #375 [fixed] - Internal Server Error When Editing Attribute and Deleting Variant Option inside the Product
-* #370 [fixed] - Internal Server Error When Creating Receipt with a Deleted Operation Type
-* #361 [fixed] - Internal Server Error When Editing Product After Deleting Assigned Attribute from Configuration
-* #356 [fixed] - Internal Server Error Occurs When Editing Receipt with Deleted Operation Type
-* #355 [fixed] - Internal Server Error Occurs When Editing Receipt With Deleted Location
-* #354 [fixed] - Incorrect or inappropriate translation in warning message when creating Activity Plan for Sales
-* #353 [fixed] - Disabled Fields Become Editable After Saving Stock Moves on Validated Receipt
-* #352 [fixed] - Internal Server Error When Selecting Destination Location with Non-Internal Location Type
-* #350 [fixed] - Internal Server Error When Searching with a Single alphabet in Mega Search
-* #349 [fixed] - Tooltip Displays File Path Instead of Proper Suggestion
-* #348 [fixed] - Internal Server Error When Creating Receipt with "Internal Transfers" After Deleting All Locations
-* #347 [fixed] - Source and Destination Location IDs Shown Instead of Location Names After Deletion in Internal Transfers
-* #346 [fixed] - Warehouse ID Displayed Instead of Warehouse Name in Operation Types After Deletion
-* #345 [fixed] - Internal Server Error When Creating Duplicate Product Quantity Instead of Validation Error
-* #340 [fixed] - Exception error appears when adding a skill while editing a candidate
-* #329 [fixed] - "Date From" and "Date To" missing on view page after creating Job Position
-* #328 [fixed] - Selected company in Activity Plan is not saved correctly — defaults to another company
-* #326 [fixed] - Unable to Create Quotation for Products with Cost Price Greater Than Sales Price
-* #325 [fixed] - Terminal Error on Running php artisan migrate:fresh When Sales Orders Exist
-* #324 [fixed] - Internal Server Error When Selecting Currency in Filter Dropdown
-* #320 [fixed] - Negative Price Value Allowed During Product Creation
-* #317 [fixed] - Internal Server Error When Creating a Warehouse
-* #316 [fixed] - Company Logo heading is missing when logo and color are not added during company creation
-* #315 [fixed] - Description and Deadline Fields Become Blank After Creating a Receipt
-* #314 [fixed] - Internal Server Error When Searching on Manage Variants Page
-* #313 [fixed] - Product ID Displayed After Deleting Product That Is in Use
-* #312 [fixed] - Internal Server Error on Applying Adjustment After Entering Counted Quantity
-* #310 [fixed] - Internal Server Error When Entering String in Counted Quantity Field in Adjustment Section
-* #309 [fixed] - Internal Server Error When Using Search Bar in Adjustment Section
-* #308 [fixed] - Internal Server Error When Generating Receipt with Negative Demand Value
-* #307 [fixed] - Destination Package Displays Index Value Instead of Name Upon Location Selection
-* #306 [fixed] - Internal Server Error When Creating a New Storage Category
-* #296 [fixed] - Exceptional Error While Creating a New Company with Logo Image
-* #294 [fixed] - Internal Server Error When Adding Vendor Price Inside Product
-* #293 [fixed] - Internal Server Error When Deleting Vendor Price Inside Product
-* #292 [fixed] - Internal Server Error When Confirming Order in Quotation
-* #289 [fixed] - Internal Server Error When Adding Duplicate Product Capacity in Storage Category
-* #288 [fixed] - Internal Server Error When Adding Duplicate Package Type Capacity in Storage Category
-* #287 [fixed] - Internal Server Error When Adding a New Warehouse Location with Certain Location Types
-* #283 [fixed] - Internal Server Error When Adding Replenishment Under Procurement
-* #275 [fixed] - Product edit on customer page redirected to vendor's product edit page #275
-* #274 [fixed] - Internal server error when clicking on preview button on edit invoice page #274
-* #271 [fixed] - Internal server error when deleting a receipt on the edit receipt page #271
-* #270 [fixed] - Internal server error when confirming back orders before validating receipts #270
-* #267 [fixed] - Internal server error when validating a receipt after deleting a warehouse #267
-* #266 [fixed] - Internal server error when force deleting a warehouse instead of validation message #266
-* #265 [fixed] - Internal server error when creating operation type in configuration #265
-* #264 [fixed] - Product moves can be deleted after validation in inventory operations #264
-* #257 [fixed] - Internal server error when creating a receipt with null operation type #257
-* #253 [fixed] - Internal server error when creating a new invoice: missing method `calculateDateMaturity` #253
-* #252 [fixed] - Error when uninstalling contacts plugin: "There are no commands defined in the 'contacts' namespace" #252
-* #213 [fixed] - Installation error when installing inventories plugin before purchases plugin #213
-* #204 [fixed] - Error running Laravel optimize command #204
-* #198 [fixed] - Internal server error when adding a product to a category #198
-* #195 [fixed] - Internal server error when changing parent of a parent category #195
-* #194 [fixed] - Internal server error when deleting parent or root category #194
-* #191 [fixed] - Internal server error when mass deleting products in inventory section #191
-* #189 [fixed] - Random number displays as bank name after deleting associated bank #189
-* #188 [fixed] - File does not exist at path when running `php artisan <plugin-name>:install` #188
-* #187 [fixed] - Archived count shows zero despite containing data in industries section #187
-* #186 [fixed] - Internal server error when forcing delete in archived contacts #186
-* #184 [fixed] - Internal server error when saving blank default quotation validity #184
-* #182 [fixed] - Variants toggle button not functioning in manage products settings #182
-* #181 [fixed] - Discount toggle button not functioning in manage pricing settings #181
-* #179 [fixed] - Exceptional error on adding skills in candidate edit page #179
-* #178 [fixed] - Archived count increases after deleting activity plans, but no activity types are visible #178
-* #174 [fixed] - Internal server error when manually adding a state #174
-* #173 [fixed] - Newly created customer not visible on customers page #173
-* #172 [fixed] - First product name displays as '6' in edit invoice page after sales order #172
-* #169 [fixed] - Status toggle button not visible when creating/editing job position #169
-* #165 [fixed] - Exceptional error when creating a UTM source with long name #165
-* #164 [fixed] - Exceptional error when creating a UTM medium with long name #164
-* #163 [fixed] - Incorrect success message displayed after deleting quotations #163
-* #161 [fixed] - Internal server error when adding a product with zero price in quotation #161
-* #160 [fixed] - Unable to install #160
-* #159 [fixed] - 500 internal server error when creating a refuse reason with long name (no spaces) #159
-* #158 [fixed] - 500 internal server error when creating a degree with long name (no spaces) #158
-* #154 [fixed] - Incorrect success message displayed after deleting tax group #154
-* #151 [fixed] - 500 internal server error when creating a tag with long name #151
-* #150 [fixed] - Internal server error when creating tax without selecting tax group #150
-* #148 [fixed] - 500 internal server error when saving activity type with long content #148
-* #147 [fixed] - Payment term created with negative early discount values without validation #147
-* #143 [fixed] - Default user missing after saving activity type in recruitment configurations #143
-* #142 [fixed] - Disabled payment terms still visible in invoice and credit note creation #142
-* #138 [fixed] - Incoterms exceeding three characters can be created #138
-* #137 [fixed] - Duplicate bank account numbers allowed in configuration section #137
-* #136 [fixed] - Add character validation for user name to prevent UI issues #136
-* #134 [fixed] - Add character validation for team name to prevent UI issues #134
-* #133 [fixed] - Internal server error when adding non-numeric long text in branch contact information #133
-* #132 [fixed] - Internal server error when entering large text in memo field in customer payments #132
-* #131 [fixed] - 500 internal server error when adding long text in company information #131
-* #129 [fixed] - Amount field allows text input and causes internal server error in customer payments #129
-* #128 [fixed] - Customer payments shows 'No Payments' even after successful payment creation #128
-* #126 [fixed] - Creating company: city heading changes to address after filling address field #126
-* #124 [fixed] - Color details not appearing on the view company page #124
-* #107 [fixed] - Internal server error when exceeding weight limit in product creation #107
-* #103 [fixed] - Product image not visible on products page after saving #103
-* #100 [fixed] - Unnecessary time displayed in due date on invoice preview #100
-* #91 [fixed] - Internal server error when selecting "10 days after end of next month" in payment term #91
-* #90 [fixed] - Incorrect display of due date and payment term on invoice view page #90
-* #88 [fixed] - Product name not visible when collapsing all in invoice creation #88
-* #82 [fixed] - No default value for the project tag color #82
-* #78 [fixed] - Global search error and its resolution #78
-* #77 [fixed] - Install plugins error #77
-* #30 [fixed] - Exception error in mega search admin panel #30
-* #29 [fixed] - Tags section accepting emojis & random alphanumeric text #29

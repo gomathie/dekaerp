@@ -8,7 +8,7 @@ use Webkul\Security\Models\User;
 
 class MaintenanceRequestPolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization, Concerns\ChecksMaintenanceEntitlement;
 
     public function viewAny(User $user): bool
     {

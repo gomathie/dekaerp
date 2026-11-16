@@ -2,13 +2,12 @@
 
 namespace Webkul\Security\Services;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Webkul\Security\Enums\PermissionType;
 use Webkul\Security\Models\Invitation;
-use Webkul\Security\Models\Role;
 use Webkul\Security\Models\User;
 use Webkul\Security\Settings\UserSettings;
 
@@ -40,13 +39,40 @@ class UserInvitationService
             $defaultCompanyId,
         );
 
-        $invitation = DB::transaction(fn (): Invitation => Invitation::query()->create([
-            'inviter_id'        => $actor->getKey(),
-            'email'             => $email,
-            'default_company_id' => $defaultCompanyId,
-            'company_ids'       => $companyIds,
-            'role_ids'          => $roleIds,
-        ]));
+        $capacity = app(SeatCapacityService::class);
+
+        /*
+         * Duplicate protection and the seat reservation happen under one lock on
+         * the company row. Without it two administrators inviting at the same
+         * moment both see "one seat free", both succeed, and the customer ends
+         * up with an invitation that cannot be accepted.
+         */
+        $invitation = $capacity->withLockedCompany($defaultCompanyId, function () use ($actor, $email, $defaultCompanyId, $companyIds, $roleIds, $capacity): Invitation {
+            // Case-insensitive: PostgreSQL compares text exactly, and
+            // "Ann@x.com" and "ann@x.com" are one mailbox holding two seats.
+            $alreadyPending = Invitation::query()
+                ->whereRaw('LOWER(email) = ?', [mb_strtolower(trim($email))])
+                ->where('default_company_id', $defaultCompanyId)
+                ->pending()
+                ->exists();
+
+            if ($alreadyPending) {
+                throw ValidationException::withMessages([
+                    'email' => __('This address already has a pending invitation for this company.'),
+                ]);
+            }
+
+            $capacity->assertCanReserve($defaultCompanyId);
+
+            return Invitation::query()->create([
+                'inviter_id'         => $actor->getKey(),
+                'email'              => $email,
+                'default_company_id' => $defaultCompanyId,
+                'company_ids'        => $companyIds,
+                'role_ids'           => $roleIds,
+                'expires_at'         => now()->addDays(Invitation::ACCEPT_WINDOW_DAYS),
+            ]);
+        });
 
         $this->audit->record(
             'security.user.invited',
@@ -65,13 +91,30 @@ class UserInvitationService
 
     public function accept(Invitation $invitation, string $name, string $password): User
     {
+        $this->assertStillPending($invitation);
+
         [$actor, $companyIds, $defaultCompanyId, $roleIds] = $this->resolveContext($invitation);
 
-        return DB::transaction(function () use ($invitation, $name, $password, $actor, $companyIds, $defaultCompanyId, $roleIds): User {
-            $isMultiCompanyAdmin = Role::query()
-                ->whereIn('id', $roleIds)
-                ->whereRaw('LOWER(name) = ?', [mb_strtolower(Role::MULTI_COMPANY_ADMIN)])
-                ->exists();
+        $capacity = app(SeatCapacityService::class);
+
+        // Accepting turns a *reservation* into a membership, so the seat is
+        // already accounted for; what has to be re-checked is that the company
+        // has not filled up from another direction while the link sat in an
+        // inbox. Hence `assertCanAccept()`, which counts active memberships only.
+        return $capacity->withLockedCompany($defaultCompanyId, function () use ($invitation, $name, $password, $actor, $companyIds, $defaultCompanyId, $roleIds, $capacity): User {
+            // Re-read under the lock: two clicks on the same link, or a revoke
+            // that landed a moment ago, must not both win.
+            $locked = Invitation::query()->lockForUpdate()->find($invitation->getKey());
+
+            if (! $locked instanceof Invitation) {
+                throw ValidationException::withMessages([
+                    'email' => __('security::livewire/accept-invitation.invitation-no-longer-authorized'),
+                ]);
+            }
+
+            $this->assertStillPending($locked);
+
+            $capacity->assertCanAccept($defaultCompanyId);
 
             $user = User::query()->create([
                 'creator_id'         => $actor?->getKey(),
@@ -79,13 +122,30 @@ class UserInvitationService
                 'password'           => $password,
                 'email'              => $invitation->email,
                 'default_company_id' => $defaultCompanyId,
-                'resource_permission' => $isMultiCompanyAdmin
-                    ? PermissionType::GLOBAL
-                    : PermissionType::INDIVIDUAL,
+                /*
+                 * Company-wide for everyone, not only Multi-Company Admins: people
+                 * in the same company are meant to see that company's records, and
+                 * `CompanyScope` is what keeps tenants apart. This used to write
+                 * `INDIVIDUAL` for anyone who was not a Multi-Company Admin, which
+                 * left an invited colleague unable to see any invoice they had not
+                 * raised themselves.
+                 *
+                 * The Multi-Company Admin lookup that used to pick between the two
+                 * values went with it - the role no longer changes the outcome here.
+                 */
+                'resource_permission' => PermissionType::GLOBAL,
             ]);
 
             $user->allowedCompanies()->sync($companyIds);
-            $user->syncRoles($roleIds);
+
+            /*
+             * Tenant roles go to the memberships, platform roles stay global.
+             * `syncRoles()` here used to write every role against the user and
+             * nothing else, which is why a role assigned for one company applied
+             * in all of them.
+             */
+            app(TenantRoleAssigner::class)->sync($user, $roleIds, $companyIds);
+
             $user->unsetRelation('roles');
 
             $snapshot = $this->administration->userSnapshot($user);
@@ -98,10 +158,124 @@ class UserInvitationService
                 after: $snapshot,
             );
 
-            $invitation->delete();
+            /*
+             * The row is kept. It used to be deleted on acceptance, which meant
+             * the only record that someone had been invited disappeared - and a
+             * seat count had nothing to count against.
+             */
+            $locked->forceFill(['accepted_at' => now()])->save();
 
             return $user;
         });
+    }
+
+    /**
+     * Revoke a pending invitation, releasing its reserved seat.
+     */
+    public function revoke(Invitation $invitation, User $actor): void
+    {
+        $this->assertMayManageInvitation($invitation, $actor);
+
+        // Release the reservation under the same company lock used by an
+        // invitation create. A concurrent resend must see the revoked state.
+        app(SeatCapacityService::class)->withLockedCompany((int) $invitation->default_company_id, function () use ($invitation, $actor): void {
+            $locked = Invitation::query()->lockForUpdate()->findOrFail($invitation->getKey());
+            $this->assertMayManageInvitation($locked, $actor);
+
+            if ((int) $locked->default_company_id !== (int) $invitation->default_company_id) {
+                throw new AuthorizationException('You may not manage invitations for this company.');
+            }
+
+            if (! $locked->isPending()) {
+                return;
+            }
+
+            $locked->revoke($actor);
+
+            $this->audit->record(
+                'security.user.invitation_revoked',
+                $locked,
+                $actor,
+                (int) $locked->default_company_id,
+                after: ['email' => $locked->email],
+            );
+        });
+    }
+
+    /**
+     * Send a pending invitation again, with a fresh accept window.
+     *
+     * The gap this closes: when the first mail failed, the only way to get the
+     * link to the customer was to revoke and re-invite - which threw away the
+     * original row (and, before SAAS-06, the only record that anyone had been
+     * invited at all). Resending keeps the row and its audit trail.
+     *
+     * The window is renewed deliberately: re-sending a link that expires in ten
+     * minutes would look like it worked and then fail for the recipient.
+     *
+     * Mail is sent by the caller's transport (the inviter), not here, so this
+     * service keeps one job: the row and its state.
+     *
+     * @throws ValidationException when the invitation is no longer pending
+     */
+    public function renew(Invitation $invitation, User $actor): Invitation
+    {
+        $this->assertMayManageInvitation($invitation, $actor);
+
+        // Renewal keeps the *same* reservation. Re-read after taking the lock
+        // so an accepted or revoked invitation cannot be revived by a stale UI.
+        return app(SeatCapacityService::class)->withLockedCompany((int) $invitation->default_company_id, function () use ($invitation, $actor): Invitation {
+            $locked = Invitation::query()->lockForUpdate()->findOrFail($invitation->getKey());
+            $this->assertMayManageInvitation($locked, $actor);
+
+            if ((int) $locked->default_company_id !== (int) $invitation->default_company_id) {
+                throw new AuthorizationException('You may not manage invitations for this company.');
+            }
+            $this->assertStillPending($locked);
+
+            $before = $locked->expires_at?->toIso8601String();
+
+            $locked->forceFill([
+                'expires_at' => now()->addDays(Invitation::ACCEPT_WINDOW_DAYS),
+            ])->save();
+
+            $this->audit->record(
+                'security.user.invitation_renewed',
+                $locked,
+                $actor,
+                (int) $locked->default_company_id,
+                before: ['expires_at' => $before],
+                after: ['expires_at' => $locked->expires_at?->toIso8601String()],
+            );
+
+            return $locked;
+        });
+    }
+
+    /**
+     * A forged Livewire action or direct service call must not let an actor
+     * extend or release another company's reserved seat (D-SAAS-02/03).
+     */
+    protected function assertMayManageInvitation(Invitation $invitation, User $actor): void
+    {
+        $companyId = (int) $invitation->default_company_id;
+
+        if (! $actor->is_active || ! ($actor->isSuperAdmin()
+            || (Gate::forUser($actor)->allows('create_security_user')
+                && $this->administration->isCompanyAssigned($actor, $companyId)))) {
+            throw new AuthorizationException('You may not manage invitations for this company.');
+        }
+    }
+
+    protected function assertStillPending(Invitation $invitation): void
+    {
+        if ($invitation->isPending()) {
+            return;
+        }
+
+        throw ValidationException::withMessages([
+            'email' => __('security::livewire/accept-invitation.invitation-no-longer-authorized'),
+        ]);
     }
 
     protected function resolveContext(Invitation $invitation): array

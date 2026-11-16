@@ -1,7 +1,8 @@
 <?php
 
 return [
-    'companies' => 'Companies',
-    'confirm'   => 'Confirm',
-    'reset'     => 'Reset',
+    'companies'     => 'Companies',
+    'all_companies' => 'All companies',
+    'confirm'       => 'Confirm',
+    'reset'         => 'Reset',
 ];

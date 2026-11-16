@@ -1,0 +1,211 @@
+<?php
+
+namespace Webkul\Purchase\Filament\Admin\Pages;
+
+use BackedEnum;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+use Filament\Forms\Components\Select;
+use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Illuminate\Contracts\Support\Htmlable;
+use Webkul\Invoice\Filament\Pages\Overview;
+use Webkul\Partner\Models\Partner;
+use Webkul\Product\Models\Category;
+use Webkul\Product\Models\Product;
+use Webkul\Purchase\Enums\OrderState;
+use Webkul\Purchase\Filament\Admin\Widgets\PurchaseStatsWidget;
+use Webkul\Purchase\Filament\Admin\Widgets\PurchaseTrendWidget;
+use Webkul\Purchase\Filament\Admin\Widgets\TopOrdersWidget;
+use Webkul\Purchase\Filament\Admin\Widgets\TopPurchasedProductsWidget;
+use Webkul\Purchase\Filament\Admin\Widgets\TopRfqsWidget;
+use Webkul\Purchase\Filament\Admin\Widgets\TopVendorsWidget;
+use Webkul\Purchase\Filament\Admin\Widgets\VendorSpendChart;
+use Webkul\Purchase\Models\Order;
+use Webkul\Purchase\Support\PurchasesAccess;
+use Webkul\Security\Models\User;
+use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Filament\Concerns\ChecksPagePermission;
+use Webkul\Support\Filament\Forms\Components\DashboardDateRange;
+use Webkul\Support\Models\Country;
+
+class Purchases extends BaseDashboard
+{
+    use BaseDashboard\Concerns\HasFiltersForm;
+    use ChecksPagePermission;
+    use HasPageShield;
+
+    protected static string $routePath = 'purchase';
+
+    /**
+     * The name PermissionManager generates for this page (plugin key
+     * "purchase" from the namespace). Pinned by PurchaseDashboardTest against
+     * FilamentShield::getPages().
+     */
+    protected static function getPagePermission(): ?string
+    {
+        return 'page_purchase_purchases';
+    }
+
+    /**
+     * Module switch (SAAS-05) plus the page permission. This replaces
+     * HasPageShield::canAccess(), so the permission half must be checked here
+     * (ChecksPagePermission explains why).
+     */
+    public static function canAccess(): bool
+    {
+        return PurchasesAccess::enabledForCurrent()
+            && static::hasPagePermission();
+    }
+
+    /**
+     * Replaced in the menu by the combined Overview (user, 2026-11-11). The
+     * page stays so old links work: it opens the Overview with the Purchases
+     * section chosen. Its permission still decides that section.
+     */
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
+    public function mount(): void
+    {
+        $this->redirect(Overview::getUrl(['section' => 'purchases']));
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('purchases::filament/admin/pages/dashboard.navigation.title');
+    }
+
+    public static function getNavigationGroup(): string|\UnitEnum
+    {
+        return NavigationGroup::Dashboard;
+    }
+
+    public static function getNavigationIcon(): string|BackedEnum|Htmlable|null
+    {
+        return null;
+    }
+
+    public function filtersForm(Schema $form): Schema
+    {
+        return $form->schema([
+            Section::make()
+                ->schema([
+                    ...DashboardDateRange::make(
+                        __('purchases::filament/admin/pages/dashboard.filters.date-range'),
+                        'start_date',
+                        'end_date',
+                        columnSpan: ['xl' => 2],
+                    ),
+
+                    Select::make('product_id')
+                        ->label(__('purchases::filament/admin/pages/dashboard.filters.product'))
+                        ->options(fn () => Product::pluck('name', 'id')->toArray())
+                        ->multiple()
+                        ->searchable()
+                        ->placeholder(__('purchases::filament/admin/pages/dashboard.filters.all-products'))
+                        ->live(),
+
+                    Select::make('category_id')
+                        ->label(__('purchases::filament/admin/pages/dashboard.filters.category'))
+                        ->options(fn () => Category::pluck('name', 'id')->toArray())
+                        ->multiple()
+                        ->searchable()
+                        ->placeholder(__('purchases::filament/admin/pages/dashboard.filters.all-categories'))
+                        ->live(),
+
+                    ...static::sectionFilterFields(),
+                ])
+                ->columnSpanFull()
+                ->columns([
+                    'default' => 1,
+                    'sm'      => 2,
+                    'md'      => 3,
+                    'xl'      => 4,
+                ]),
+        ]);
+    }
+
+    public function getWidgetsContentComponent(): Component
+    {
+        return parent::getWidgetsContentComponent()
+            ->extraAttributes([
+                'data-dashboard-widgets' => 'true',
+                'wire:loading.class'     => 'dashboard-widgets--loading',
+                'wire:target'            => 'filters',
+            ]);
+    }
+
+    public function getWidgets(): array
+    {
+        return static::sectionWidgets();
+    }
+
+    /**
+     * The filters only Purchases has. Also shown on the Overview page when
+     * the Purchases section alone is chosen, so both pages build them here.
+     *
+     * @return array<int, Select>
+     */
+    public static function sectionFilterFields(): array
+    {
+        return [
+            Select::make('country_id')
+                ->label(__('purchases::filament/admin/pages/dashboard.filters.country'))
+                ->options(fn () => Country::pluck('name', 'id')->toArray())
+                ->multiple()
+                ->searchable()
+                ->placeholder(__('purchases::filament/admin/pages/dashboard.filters.all-countries'))
+                ->live(),
+
+            Select::make('partner_id')
+                ->label(__('purchases::filament/admin/pages/dashboard.filters.vendor'))
+                ->options(fn () => Partner::where('supplier_rank', '>', 0)->pluck('name', 'id')->toArray())
+                ->multiple()
+                ->searchable()
+                ->placeholder(__('purchases::filament/admin/pages/dashboard.filters.all-vendors'))
+                ->live(),
+
+            // Only buyers on this company's orders: Order is company-scoped,
+            // so other tenants' staff never appear.
+            Select::make('buyer_id')
+                ->label(__('purchases::filament/admin/pages/dashboard.filters.buyer'))
+                ->options(fn () => User::whereIn('id', Order::distinct()->pluck('user_id')->filter())
+                    ->pluck('name', 'id')
+                    ->toArray())
+                ->multiple()
+                ->searchable()
+                ->placeholder(__('purchases::filament/admin/pages/dashboard.filters.all-buyers'))
+                ->live(),
+
+            Select::make('state')
+                ->label(__('purchases::filament/admin/pages/dashboard.filters.state'))
+                ->options(OrderState::options())
+                ->multiple()
+                ->searchable()
+                ->placeholder(__('purchases::filament/admin/pages/dashboard.filters.all-states'))
+                ->live(),
+        ];
+    }
+
+    /**
+     * The widgets this dashboard shows, also used by its Overview section.
+     *
+     * @return list<class-string>
+     */
+    public static function sectionWidgets(): array
+    {
+        return [
+            PurchaseStatsWidget::class,
+            PurchaseTrendWidget::class,
+            VendorSpendChart::class,
+            TopOrdersWidget::class,
+            TopRfqsWidget::class,
+            TopPurchasedProductsWidget::class,
+            TopVendorsWidget::class,
+        ];
+    }
+}

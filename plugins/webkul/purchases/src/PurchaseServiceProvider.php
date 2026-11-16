@@ -10,9 +10,12 @@ use Webkul\Account\Events\MoveCancelled;
 use Webkul\Account\Events\MoveConfirmed;
 use Webkul\Account\Events\MoveDrafted;
 use Webkul\Account\Events\MoveReversed;
+use Webkul\Account\Models\Move;
 use Webkul\Chatter\Services\ChatterCleanupService;
 use Webkul\Inventory\Events\OperationBackOrdered;
 use Webkul\Inventory\Events\OperationDone;
+use Webkul\Invoice\Filament\Overview\OverviewRegistry;
+use Webkul\Partner\Models\Partner;
 use Webkul\PluginManager\Console\Commands\InstallCommand;
 use Webkul\PluginManager\Console\Commands\UninstallCommand;
 use Webkul\PluginManager\Package;
@@ -20,6 +23,8 @@ use Webkul\PluginManager\PackageServiceProvider;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\ProductSupplier;
 use Webkul\Purchase\Facades\PurchaseOrder as PurchaseOrderFacade;
+use Webkul\Purchase\Filament\Admin\Pages\Purchases;
+use Webkul\Purchase\Filament\Admin\Widgets\PurchaseHeadlineWidget;
 use Webkul\Purchase\Listeners\ComputePurchaseOrderFromMoveListener;
 use Webkul\Purchase\Listeners\ComputePurchaseOrderListener;
 use Webkul\Purchase\Livewire\Customer\ListProducts;
@@ -89,6 +94,34 @@ class PurchaseServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         Livewire::component('order-summary', OrderSummary::class);
+
+        // The Bills and Purchases tabs on every contact screen (unified
+        // contacts, phase 3; user 2026-11-11) need these relations on every
+        // contact model, so they go on the base one. Laravel resolves them up
+        // the class chain. Named apart from "orders" and "accountMoves", which
+        // other contact models use for other records.
+        Partner::resolveRelationUsing(
+            'purchaseOrders',
+            fn ($partner) => $partner->hasMany(Order::class, 'partner_id'),
+        );
+        Partner::resolveRelationUsing(
+            'vendorBills',
+            fn ($partner) => $partner->hasMany(Move::class, 'partner_id'),
+        );
+
+        // The Purchases section of the combined Overview dashboard (Invoices
+        // owns the page; Purchases depends on Invoices, so it contributes).
+        OverviewRegistry::register(
+            'purchases',
+            fn (): string => __('invoices::filament/pages/overview.sections.purchases'),
+            Purchases::sectionWidgets(),
+            fn (): array => Purchases::sectionFilterFields(),
+            fn (): bool  => Purchases::canAccess(),
+            sort: 20,
+            headline: PurchaseHeadlineWidget::class,
+            attention: fn (): array => PurchaseHeadlineWidget::attention(),
+            actions: fn (): array => PurchaseHeadlineWidget::actions(),
+        );
 
         Livewire::component('list-products', ListProducts::class);
 

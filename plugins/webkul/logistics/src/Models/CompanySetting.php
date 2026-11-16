@@ -2,11 +2,14 @@
 
 namespace Webkul\Logistics\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Crypt;
 use Webkul\Account\Models\Account;
 use Webkul\Account\Models\Journal;
 use Webkul\Logistics\Enums\CapacityCheck;
+use Webkul\Logistics\Enums\TelematicsProvider;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Scopes\CompanyScope;
@@ -21,6 +24,32 @@ class CompanySetting extends Model
 
     protected $table = 'logistics_company_settings';
 
+    /**
+     * Mirrors the column defaults in the company settings migrations.
+     *
+     * forCompany() hands back an unsaved instance for a company that has no row
+     * yet, and without these every default-bearing column on it reads as null:
+     * stop_link_ttl_hours would be 0 rather than 24, and require_pod_for_delivery
+     * would be falsy although the schema defaults it to true - quietly dropping
+     * a delivery control for any company whose settings were never saved. Same
+     * trap as `users.is_active` and `logistics_shipments.state`. Keep this list
+     * in step with the migrations.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'is_enabled'                => false,
+        'require_pod_for_delivery'  => true,
+        'require_pod_photo'         => false,
+        'expense_approval_required' => true,
+        'overdue_grace_minutes'     => 30,
+        'free_waiting_minutes'      => 60,
+        'stop_link_ttl_hours'       => 24,
+        'capacity_check'            => 'warn',
+        'capture_driver_on_pod'     => false,
+        'capture_recipient_id'      => false,
+    ];
+
     protected $fillable = [
         'company_id',
         'is_enabled',
@@ -33,11 +62,19 @@ class CompanySetting extends Model
         'overdue_grace_minutes',
         'free_waiting_minutes',
         'stop_link_ttl_hours',
+        'stop_link_rate_limit',
+        'capture_driver_on_pod',
+        'capture_recipient_id',
         'capacity_check',
         'default_service_type_id',
         'invoice_journal_id',
         'bill_journal_id',
         'default_expense_account_id',
+        'telematics_provider',
+        'telematics_server',
+        'telematics_username',
+        'telematics_password',
+        'telematics_options',
     ];
 
     protected $casts = [
@@ -50,8 +87,44 @@ class CompanySetting extends Model
         'overdue_grace_minutes'     => 'integer',
         'free_waiting_minutes'      => 'integer',
         'stop_link_ttl_hours'       => 'integer',
+        'stop_link_rate_limit'      => 'integer',
+        'capture_driver_on_pod'     => 'boolean',
+        'capture_recipient_id'      => 'boolean',
         'capacity_check'            => CapacityCheck::class,
+        'telematics_provider'       => TelematicsProvider::class,
+        'telematics_options'        => 'array',
     ];
+
+    // Custom accessors so that null values (columns absent before migration,
+    // or credentials never set) do not crash Laravel's built-in encrypted cast,
+    // which calls Crypt::decrypt(null) and throws DecryptException.
+    protected function telematicsUsername(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value) => $value ? Crypt::decryptString($value) : null,
+            set: fn (?string $value) => $value ? Crypt::encryptString($value) : null,
+        );
+    }
+
+    protected function telematicsPassword(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value) => $value ? Crypt::decryptString($value) : null,
+            set: fn (?string $value) => $value ? Crypt::encryptString($value) : null,
+        );
+    }
+
+    /**
+     * A telematics platform is connected when a provider is selected and the
+     * connection has somewhere to go. Replaces the former pilot_enabled flag,
+     * which could be true with no server configured.
+     */
+    public function hasTelematics(): bool
+    {
+        return $this->telematics_provider !== null
+            && filled($this->telematics_server)
+            && filled($this->telematics_username);
+    }
 
     /**
      * The settings row of a given company, whether or not that company is active in

@@ -23,13 +23,16 @@ beforeEach(function () {
     $this->accountA = AccountHelper::account('income');
     $this->accountB = AccountHelper::account('income');
 
-    $this->sharedProduct = fn (array $overrides = []) => AccountHelper::product(array_merge([
-        'company_id' => null,
-    ], $overrides));
+    // Shared records (no company) are what per-company account properties exist
+    // for. Creating them with company_id null while acting now stamps company A,
+    // so they are made shared explicitly (AccountHelper::shared).
+    $this->sharedProduct = fn (array $overrides = []) => AccountHelper::shared(AccountHelper::product($overrides));
 
-    $this->category = fn (array $overrides = []) => Category::query()->create(array_merge([
+    $this->sharedPartner = fn () => AccountHelper::shared(Partner::factory()->create());
+
+    $this->category = fn (array $overrides = []) => AccountHelper::shared(Category::query()->create(array_merge([
         'name' => 'Company dependent '.uniqid(),
-    ], $overrides));
+    ], $overrides)));
 });
 
 afterEach(fn () => SecurityHelper::restoreUserEvents());
@@ -54,7 +57,7 @@ it('keeps a separate product account per company', function () {
 });
 
 it('keeps a separate partner account per company', function () {
-    $partner = Partner::factory()->create();
+    $partner = ($this->sharedPartner)();
 
     CompanyHelper::setActive([$this->companyA->id]);
     $partner->property_account_receivable_id = $this->accountA->id;
@@ -116,7 +119,7 @@ it('reads the same product account from the base and the accounts model class', 
 });
 
 it('reads the same partner account from the base and the accounts model class', function () {
-    $partner = Partner::factory()->create();
+    $partner = ($this->sharedPartner)();
 
     $partner->property_account_receivable_id = $this->accountA->id;
     $partner->save();
@@ -140,7 +143,7 @@ it('reads the same category account from the base and the accounts model class',
 });
 
 it('resolves the partner account through the belongs to relation', function () {
-    $partner = Partner::factory()->create();
+    $partner = ($this->sharedPartner)();
 
     $partner->property_account_receivable_id = $this->accountA->id;
     $partner->save();

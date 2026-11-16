@@ -1,0 +1,81 @@
+<?php
+
+namespace Webkul\Sale\Filament\Widgets;
+
+use BackedEnum;
+use Webkul\Sale\Filament\Widgets\Concerns\GuardsSaleDashboardWidget;
+use Filament\Support\Enums\FontWeight;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Filament\Widgets\TableWidget;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Builder;
+use Webkul\Sale\Filament\Clusters\Orders\Resources\OrderResource;
+use Webkul\Sale\Filament\Widgets\Concerns\HasSaleDashboardFilters;
+
+class TopSalesOrdersTable extends TableWidget
+{
+    use HasSaleDashboardFilters, GuardsSaleDashboardWidget;
+
+    protected static ?int $sort = 5;
+
+    protected static bool $isLazy = true;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->defaultKeySort(false)
+            ->recordClasses('dashboard-table-row')
+            ->recordUrl(fn ($record): ?string => OrderResource::canAccess()
+                ? OrderResource::getUrl('view', ['record' => $record->id])
+                : null);
+    }
+
+    protected function getTableHeading(): string|Htmlable|null
+    {
+        return __('sales::filament/widgets/sales-dashboard.top-sales-orders.heading');
+    }
+
+    protected function isTablePaginationEnabled(): bool
+    {
+        return false;
+    }
+
+    protected function getTableQuery(): Builder
+    {
+        return $this->saleOrders()
+            ->with(['partner', 'currency'])
+            ->where('amount_total', '>', 0)
+            ->orderByDesc('amount_total')
+            ->limit(5);
+    }
+
+    protected function getTableColumns(): array
+    {
+        return [
+            Tables\Columns\TextColumn::make('name')
+                ->label(__('sales::filament/widgets/sales-dashboard.top-sales-orders.columns.reference'))
+                ->weight(FontWeight::Bold)
+                ->color('primary')
+                ->description(fn ($record): string => $record->partner?->name ?: '—'),
+            Tables\Columns\TextColumn::make('delivery_status')
+                ->label(__('sales::filament/widgets/sales-dashboard.delivery-status'))
+                ->badge()
+                ->placeholder('-'),
+            Tables\Columns\TextColumn::make('invoice_status')
+                ->label(__('sales::filament/widgets/sales-dashboard.top-sales-orders.columns.invoice-status'))
+                ->badge()
+                ->formatStateUsing(fn ($state) => $state instanceof BackedEnum ? $state->getLabel() : $state)
+                ->color(fn ($state): string => match ($state instanceof BackedEnum ? $state->value : $state) {
+                    'invoiced'   => 'success',
+                    'to_invoice' => 'warning',
+                    default      => 'gray',
+                }),
+            Tables\Columns\TextColumn::make('amount_total')
+                ->label(__('sales::filament/widgets/sales-dashboard.top-sales-orders.columns.amount'))
+                ->money(fn ($record) => $record->currency?->name)
+                ->weight(FontWeight::Bold)
+                ->alignEnd(),
+        ];
+    }
+}

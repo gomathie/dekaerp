@@ -12,6 +12,28 @@ return [
         'lines-required'       => 'Please add at least one line to the invoice.',
         'draft-state-required' => 'Only invoices in draft state can be confirmed.',
         'journal-archived'     => 'You cannot confirm an invoice with an archived journal.',
+        'unbalanced'           => 'This journal entry is unbalanced and cannot be posted. Total debit must equal total credit.',
+    ],
+
+    'change-reason' => [
+        'required' => 'Give a reason for changing a confirmed document.',
+        'field'    => 'Reason for the change',
+        'helper'   => 'Saved in the document history, for example "Customer asked for a 10% discount".',
+        'reset'    => 'Reset to draft. Reason: :reason',
+        'cancelled' => 'Cancelled. Reason: :reason',
+        'api'      => 'Changed through the API',
+    ],
+
+    'lock-date' => [
+        'locked'        => 'Entries dated on or before :date are locked. Ask your administrator to move the lock date first.',
+        'not-allowed'   => 'Only a Company Admin or an accountant with the unlock permission can change the lock date.',
+        'future'        => 'The lock date cannot be in the future.',
+        'action'        => 'Lock date',
+        'field'         => 'Lock entries up to',
+        'helper'        => 'Posted entries dated on or before this date cannot be changed. Leave empty to unlock all periods.',
+        'current'       => 'Currently locked up to :date.',
+        'none'          => 'No period is locked.',
+        'saved'         => 'Lock date saved',
     ],
 
     'documents' => [

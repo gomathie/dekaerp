@@ -13,13 +13,13 @@ return [
 
     'form' => [
         'validation' => [
-            'cannot-remove-last-admin'   => 'Cannot remove the admin role from the last admin user.',
-            'company-invalid'            => 'One or more selected companies are invalid.',
-            'company-not-assigned'       => 'You may assign users only to companies assigned to your account.',
-            'company-required'           => 'Select at least one company.',
-            'first-user-must-be-admin'   => 'The first user in the system must be assigned an admin role.',
-            'role-invalid'               => 'Select at least one valid role.',
-            'role-not-assignable'        => 'You may assign only non-protected roles whose permissions you possess.',
+            'cannot-remove-last-admin'        => 'Cannot remove the admin role from the last admin user.',
+            'company-invalid'                 => 'One or more selected companies are invalid.',
+            'company-not-assigned'            => 'You may assign users only to companies assigned to your account.',
+            'company-required'                => 'Select at least one company.',
+            'first-user-must-be-admin'        => 'The first user in the system must be assigned an admin role.',
+            'role-invalid'                    => 'Select at least one valid role.',
+            'role-not-assignable'             => 'You may assign only non-protected roles whose permissions you possess.',
             'self-administration-forbidden'   => 'You cannot change your own roles or company assignments.',
             'target-administration-forbidden' => 'Only a Super Admin may modify a protected administrator.',
         ],
@@ -28,10 +28,12 @@ return [
             'general-information' => [
                 'title'  => 'General Information',
                 'fields' => [
-                    'name'                  => 'Name',
-                    'email'                 => 'Email',
-                    'password'              => 'Password',
-                    'password-confirmation' => 'Password Confirmation',
+                    'name'                         => 'Name',
+                    'email'                        => 'Email',
+                    'password'                     => 'Password',
+                    'password-confirmation'        => 'Password Confirmation',
+                    'must-change-password'         => 'Require a new password at next sign-in',
+                    'must-change-password-helper'  => 'Use this when you set the password yourself and passed it on. They will be held on their profile page until they replace it, and the requirement clears as soon as they do.',
                 ],
             ],
 

@@ -4,12 +4,15 @@ namespace Webkul\Recruitment;
 
 use Filament\Panel;
 use Webkul\Chatter\Services\ChatterCleanupService;
+use Webkul\Invoice\Filament\Overview\OverviewRegistry;
 use Webkul\PluginManager\Console\Commands\InstallCommand;
 use Webkul\PluginManager\Console\Commands\UninstallCommand;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
+use Webkul\Recruitment\Filament\Pages\Recruitments as RecruitmentDashboard;
 use Webkul\Recruitment\Models\Applicant;
 use Webkul\Recruitment\Models\Candidate;
+use Webkul\Support\Filament\Contributions\DashboardCardRegistry;
 
 class RecruitmentServiceProvider extends PackageServiceProvider
 {
@@ -62,5 +65,29 @@ class RecruitmentServiceProvider extends PackageServiceProvider
         Panel::configureUsing(function (Panel $panel): void {
             $panel->plugin(RecruitmentPlugin::make());
         });
+    }
+
+    public function packageBooted(): void
+    {
+        // The Recruitment card on the Overview (2026-11-13). Keyed: re-booting replaces it.
+        DashboardCardRegistry::card(
+            'recruitment',
+            fn (): bool  => Filament\OverviewCard::visible(),
+            fn (): array => Filament\OverviewCard::data(),
+            sort: 30,
+        );
+
+        // A Recruitment tab on the Overview (user, 2026-11-14), only when
+        // Invoices, which owns the Overview, is installed.
+        if (class_exists(OverviewRegistry::class)) {
+            OverviewRegistry::register(
+                'recruitment',
+                fn (): string => __('recruitments::filament/pages/recruitment.navigation.title'),
+                RecruitmentDashboard::sectionWidgets(),
+                fn (): array => [],
+                fn (): bool  => RecruitmentDashboard::canAccess(),
+                sort: 60,
+            );
+        }
     }
 }

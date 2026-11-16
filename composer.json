@@ -1,7 +1,7 @@
 {
     "name": "aureuserp/aureuserp",
     "type": "project",
-    "description": "Open Source ERP Solution built on Laravel for Small and Medium Enterprises (SMEs) and large-scale enterprises.",
+    "description": "DEKA Central by 365 Systems: multi-company ERP for small, medium and large businesses, based on AureusERP.",
     "keywords": [
         "erp",
         "laravel",
@@ -104,9 +104,7 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "support": {
-        "issues": "https://github.com/aureuserp/aureuserp/issues",
-        "forum": "https://forums.aureuserp.com",
-        "source": "https://github.com/aureuserp/aureuserp",
-        "docs": "https://devdocs.aureuserp.com"
+        "issues": "https://github.com/gomathie/dekaerp/issues",
+        "source": "https://github.com/gomathie/dekaerp"
     }
 }

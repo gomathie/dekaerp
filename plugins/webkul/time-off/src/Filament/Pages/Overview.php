@@ -2,18 +2,31 @@
 
 namespace Webkul\TimeOff\Filament\Pages;
 
+
+
+use Webkul\Support\Filament\Concerns\ChecksPagePermission;
+use Webkul\PluginManager\Support\PluginEntitlement;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Panel;
 use Illuminate\Contracts\Support\Htmlable;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\TimeOff\Filament\Widgets\OverviewCalendarWidget;
 
 class Overview extends BaseDashboard
 {
+    use ChecksPagePermission;
     use HasPageShield;
 
     protected static string $routePath = 'time-off';
+
+    protected static ?string $slug = 'time-off-overview';
+
+    public static function getRouteName(?Panel $panel = null): string
+    {
+        return 'filament.admin.pages.time-off-overview';
+    }
 
     protected static ?int $navigationSort = 2;
 
@@ -47,5 +60,10 @@ class Overview extends BaseDashboard
         return [
             OverviewCalendarWidget::class,
         ];
+    }
+    public static function canAccess(): bool
+    {
+        return PluginEntitlement::enabledForCurrent('time-off')
+            && static::hasPagePermission();
     }
 }

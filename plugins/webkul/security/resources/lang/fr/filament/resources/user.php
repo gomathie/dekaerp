@@ -13,18 +13,27 @@ return [
 
     'form' => [
         'validation' => [
-            'cannot-remove-last-admin'   => 'Impossible de retirer le rôle administrateur du dernier utilisateur administrateur.',
-            'first-user-must-be-admin'   => 'Le premier utilisateur du système doit se voir attribuer un rôle administrateur.',
+            'cannot-remove-last-admin'        => 'Impossible de retirer le rôle administrateur du dernier utilisateur administrateur.',
+            'company-invalid'                 => 'Une ou plusieurs sociétés sélectionnées ne sont pas valides.',
+            'company-not-assigned'            => 'Vous ne pouvez affecter des utilisateurs qu’aux sociétés attribuées à votre compte.',
+            'company-required'                => 'Sélectionnez au moins une société.',
+            'first-user-must-be-admin'        => 'Le premier utilisateur du système doit se voir attribuer un rôle administrateur.',
+            'role-invalid'                    => 'Sélectionnez au moins un rôle valide.',
+            'role-not-assignable'             => 'Vous ne pouvez attribuer que des rôles non protégés dont vous possédez les autorisations.',
+            'self-administration-forbidden'   => 'Vous ne pouvez pas modifier vos propres rôles ou affectations de sociétés.',
+            'target-administration-forbidden' => 'Seul un Super Admin peut modifier un administrateur protégé.',
         ],
 
         'sections' => [
             'general-information' => [
                 'title'  => 'Informations générales',
                 'fields' => [
-                    'name'                  => 'Nom',
-                    'email'                 => 'E-mail',
-                    'password'              => 'Mot de passe',
-                    'password-confirmation' => 'Confirmation du mot de passe',
+                    'name'                        => 'Nom',
+                    'email'                       => 'E-mail',
+                    'password'                    => 'Mot de passe',
+                    'password-confirmation'       => 'Confirmation du mot de passe',
+                    'must-change-password'        => 'Exiger un nouveau mot de passe à la prochaine connexion',
+                    'must-change-password-helper' => 'À utiliser lorsque vous définissez vous-même le mot de passe et le transmettez. La personne restera sur sa page de profil jusqu’à ce qu’elle le remplace, et l’exigence disparaît dès qu’elle le fait.',
                 ],
             ],
 

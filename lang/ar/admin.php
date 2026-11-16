@@ -15,11 +15,26 @@ return [
         'project'       => 'المشاريع',
         'employee'      => 'الموظفين',
         'time-off'      => 'الإجازات',
+        'attendance'    => 'الحضور',
         'recruitment'   => 'التوظيف',
-        'website'       => 'الموقع الإلكتروني',
         'plugin'        => 'الإضافات',
         'setting'       => 'الإعدادات',
         'help'          => 'المساعدة',
         'barcode'       => 'الباركود',
+    ],
+
+    'navigation-sections' => [
+        'contacts-crm'    => 'جهات الاتصال وإدارة العملاء',
+        'sales-purchases' => 'المبيعات والمشتريات',
+        'finance'         => 'المالية',
+        'operations'      => 'العمليات',
+        'projects'        => 'المشاريع',
+        'human-resources' => 'الموارد البشرية',
+        'administration'  => 'الإدارة',
+    ],
+
+    'mobile-menu' => [
+        'menu'    => 'القائمة',
+        'modules' => 'الوحدات',
     ],
 ];

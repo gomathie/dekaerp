@@ -1,10 +1,10 @@
 {
     "name": "webkul/plugin-manager",
-    "description": "Plugin Manager for Aureus ERP",
+    "description": "Plugin Manager for DEKA Central",
+    "version": "1.9.1",
     "authors": [
         {
-            "name": "Aureus ERP",
-            "email": "support@aureuserp.in"
+            "name": "365 Systems"
         }
     ],
     "extra": {

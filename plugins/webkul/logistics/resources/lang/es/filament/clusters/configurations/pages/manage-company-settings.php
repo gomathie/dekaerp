@@ -10,10 +10,12 @@ return [
     'no-company' => 'Seleccione primero una empresa: la configuración de Logística se guarda por empresa.',
 
     'sections' => [
-        'status'     => 'Estado',
-        'delivery'   => 'Comprobante de entrega',
-        'operations' => 'Operaciones',
-        'accounting' => 'Contabilidad',
+        'status'                   => 'Estado',
+        'delivery'                 => 'Comprobante de entrega',
+        'operations'               => 'Operaciones',
+        'accounting'               => 'Contabilidad',
+        'integrations'             => 'Integraciones de telemática',
+        'integrations-description' => 'Conecte proveedores de seguimiento GPS para importar su flota.',
     ],
 
     'status' => [
@@ -30,6 +32,13 @@ return [
         'require-pod-for-delivery'    => 'Exigir comprobante de entrega para marcar un envío como entregado',
         'require-pod-photo'           => 'Exigir una foto con el comprobante de entrega',
         'stop-link-ttl-hours'         => 'Validez del enlace de parada (horas)',
+        'stop-link-ttl-hours-help'    => 'Cuánto tiempo permanece utilizable un enlace de comprobante de entrega después de emitirse. Un plazo más corto es más seguro: el enlace es una credencial y viaja en una URL.',
+        'stop-link-rate-limit'        => 'Solicitudes del enlace de parada por minuto',
+        'stop-link-rate-limit-help'   => 'Por enlace y por minuto. Déjelo vacío para usar el valor predeterminado. Auméntelo solo si se rechaza el acceso a sus conductores.',
+        'capture-driver-on-pod'       => 'Registrar al conductor en los comprobantes de entrega',
+        'capture-driver-on-pod-help'  => 'Toma el conductor del viaje de la parada para que el comprobante muestre quién estuvo en el lugar de entrega.',
+        'capture-recipient-id'        => 'Solicitar la identificación del destinatario',
+        'capture-recipient-id-help'   => 'Añade un campo de identificación obligatorio al registrar el comprobante. Recójala solo cuando tenga un motivo para hacerlo.',
         'default-service-type'        => 'Tipo de servicio predeterminado',
         'capacity-check'              => 'Comprobación de capacidad del vehículo',
         'overdue-grace-minutes'       => 'Atrasado después de (minutos posteriores a la hora prevista)',
@@ -39,6 +48,14 @@ return [
         'bill-journal'                => 'Diario para facturas de proveedor',
         'default-expense-account'     => 'Cuenta de gastos predeterminada',
         'expense-approval-required'   => 'Los gastos necesitan aprobación antes de facturarse',
+        'telematics-provider'         => 'Plataforma de telemática',
+        'telematics-provider-helper'  => 'La plataforma de rastreo GPS que usa esta empresa. Déjelo vacío si no usa ninguna.',
+        'telematics-server'           => 'URL del servidor',
+        'telematics-server-helper'    => 'URL base de su servidor de telemática.',
+        'telematics-node'             => 'Nodo',
+        'telematics-node-helper'      => 'Solo PILOT. Déjelo en 1 salvo que su cuenta use otro nodo.',
+        'telematics-username'         => 'Usuario',
+        'telematics-password'         => 'Contraseña',
     ],
 
     'actions' => [
@@ -57,6 +74,14 @@ return [
             'heading'      => '¿Desactivar Logística para esta empresa?',
             'description'  => 'Logística se oculta y no se pueden crear nuevos registros para esta empresa. Los datos existentes se conservan y, al activarla de nuevo, se restaura el acceso.',
             'notification' => 'Logística desactivada',
+        ],
+
+        'telematics-sync' => [
+            'label'        => 'Sincronizar flota PILOT',
+            'heading'      => '¿Sincronizar flota desde PILOT?',
+            'description'  => 'Los vehículos encontrados en PILOT se crearán o actualizarán en la flota de esta empresa.',
+            'notification' => ':created creados, :updated actualizados, :skipped omitidos.',
+            'error'        => 'Error al sincronizar con PILOT',
         ],
     ],
 

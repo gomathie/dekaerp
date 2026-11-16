@@ -12,6 +12,7 @@ use Webkul\Chatter\Notifications\ChatterDatabaseNotification;
 use Webkul\Chatter\Support\ChatterMentions;
 use Webkul\Partner\Models\Partner;
 use Webkul\Security\Models\User;
+use Webkul\Security\Services\MultiCompanyAdminService;
 
 class ChatterNotificationService
 {
@@ -26,13 +27,19 @@ class ChatterNotificationService
 
     protected function viaEmail(Message $message): void
     {
-        $record = $message->messageable;
+        // Delivery can run after the actor or company context changes; the
+        // stored morph key identifies the record even when its scopes hide it.
+        $record = $message->messageable()->withoutGlobalScopes()->first();
 
         if (! $record || ! method_exists($record, 'followers')) {
             return;
         }
 
-        $followers = $record->followers()->with('partner')->get();
+        // Notifications can be delivered outside the record's company
+        // context; a scoped eager load would silently omit its recipients.
+        $followers = $record->followers()
+            ->with(['partner' => fn ($query) => $query->withoutGlobalScopes()])
+            ->get();
 
         if ($followers->isEmpty()) {
             return;
@@ -82,7 +89,7 @@ class ChatterNotificationService
 
     protected function viaDatabase(Message $message): void
     {
-        $record = $message->messageable;
+        $record = $message->messageable()->withoutGlobalScopes()->first();
 
         if (! $record || ! method_exists($record, 'followers')) {
             return;
@@ -206,7 +213,13 @@ class ChatterNotificationService
         $users = User::with('partner')
             ->whereIn('id', $mentionedIds)
             ->when($causerUserId, fn ($query) => $query->where('id', '!=', $causerUserId))
-            ->get();
+            ->get()
+            // A mention sends the record's name and the message body, and adds a
+            // follower, so someone outside the record's company would learn
+            // another client's business from it (user decision, 2026-10-30,
+            // §4k read audit). Mentions of them are dropped, not delivered.
+            ->filter(fn (User $user): bool => $this->mayBeToldAbout($user, $record))
+            ->values();
 
         if ($users->isEmpty()) {
             return [];
@@ -224,6 +237,23 @@ class ChatterNotificationService
         }
 
         return $users->pluck('id')->all();
+    }
+
+    /**
+     * Whether a mentioned user may be told about this record: it has no
+     * company, or the user is installation staff or a member of its company.
+     * The same rule CompanyPolicy applies to a company itself.
+     */
+    protected function mayBeToldAbout(User $user, Model $record): bool
+    {
+        $companyId = $record->getAttribute('company_id');
+
+        if ($companyId === null) {
+            return true;
+        }
+
+        return $user->isSuperAdmin()
+            || app(MultiCompanyAdminService::class)->isCompanyAssigned($user, (int) $companyId);
     }
 
     protected function notifyActivityAssignee(Message $message, ?int $causerUserId, array $mentionedUserIds, string $causerName, string $recordName, string $recordUrl): void
@@ -253,8 +283,10 @@ class ChatterNotificationService
     {
         $excludedIds = array_filter($excludedIds);
 
+        // Followers are explicit recipients and may belong to a different
+        // company than the actor whose change triggered this notification.
         return $record->followers()
-            ->with('partner.user')
+            ->with(['partner' => fn ($query) => $query->withoutGlobalScopes()->with('user')])
             ->get()
             ->map(fn ($follower) => $follower->partner?->user)
             ->filter()
@@ -347,9 +379,15 @@ class ChatterNotificationService
 
     protected function resolveFrom(Message $message, mixed $causer, mixed $record): array
     {
+        // Same rule as Support\Services\EmailService: the relay only sends as a
+        // domain it has verified, so the author's own address cannot be the
+        // sender (Sentry 158147606 - "550-From header sender domain not
+        // verified"). The author is still named in the message and stays
+        // reachable as the reply-to.
         $from = [
-            'address' => $causer?->email ?? config('mail.from.address'),
-            'name'    => $causer?->name ?? config('mail.from.name'),
+            'address'  => config('mail.from.address'),
+            'name'     => $causer?->name ?? config('mail.from.name'),
+            'reply_to' => $causer?->email,
         ];
 
         $company = $message->company ?? ($record->company ?? null);

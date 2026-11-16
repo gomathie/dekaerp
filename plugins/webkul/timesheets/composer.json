@@ -1,10 +1,10 @@
 {
     "name": "webkul/timesheets",
     "description": "Employee work hour tracking",
+    "version": "1.6.1",
     "authors": [
         {
-            "name": "Aureus ERP",
-            "email": "support@aureuserp.in"
+            "name": "365 Systems"
         }
     ],
     "extra": {

@@ -6,10 +6,14 @@ use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms\Components\Select;
 use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Panel;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
+use Webkul\Invoice\Filament\Pages\Overview;
 use Webkul\Partner\Models\Partner;
+use Webkul\PluginManager\Support\PluginEntitlement;
 use Webkul\Project\Filament\Widgets\StatsOverviewWidget;
 use Webkul\Project\Filament\Widgets\TaskByStageChart;
 use Webkul\Project\Filament\Widgets\TaskByStateChart;
@@ -17,16 +21,26 @@ use Webkul\Project\Filament\Widgets\TopAssigneesWidget;
 use Webkul\Project\Filament\Widgets\TopProjectsWidget;
 use Webkul\Project\Models\Project;
 use Webkul\Project\Models\Tag;
-use Webkul\Security\Models\User;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Filament\CompanyMembers;
+use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 use Webkul\Support\Filament\Forms\Components\DashboardDateRange;
+use Webkul\Support\Filament\Forms\Components\DashboardFilters;
 
 class Dashboard extends BaseDashboard
 {
     use BaseDashboard\Concerns\HasFiltersForm;
+    use ChecksPagePermission;
     use HasPageShield;
 
     protected static string $routePath = 'project';
+
+    protected static ?string $slug = 'project-dashboard';
+
+    public static function getRouteName(?Panel $panel = null): string
+    {
+        return 'filament.admin.pages.project-dashboard';
+    }
 
     protected static function getPagePermission(): ?string
     {
@@ -53,7 +67,7 @@ class Dashboard extends BaseDashboard
         return $schema
             ->components([
 
-                Section::make()
+                DashboardFilters::apply(Section::make())
                     ->columns([
                         'default' => 1,
                         'sm'      => 2,
@@ -74,7 +88,7 @@ class Dashboard extends BaseDashboard
                             ->multiple()
                             ->searchable()
                             ->preload()
-                            ->options(fn () => User::pluck('name', 'id'))
+                            ->options(fn () => CompanyMembers::options())
                             ->reactive(),
                         Select::make('selectedTags')
                             ->label(__('projects::filament/pages/dashboard.filters-form.tags'))
@@ -98,7 +112,29 @@ class Dashboard extends BaseDashboard
             ]);
     }
 
+    public function getWidgetsContentComponent(): Component
+    {
+        return parent::getWidgetsContentComponent()
+            ->extraAttributes([
+                'data-dashboard-widgets' => 'true',
+                'wire:loading.class'     => 'dashboard-widgets--loading',
+                'wire:target'            => 'filters',
+            ]);
+    }
+
     public function getWidgets(): array
+    {
+        return static::sectionWidgets();
+    }
+
+    /**
+     * The Projects tab of the combined Overview (user, 2026-11-14: Projects,
+     * Logistics and Recruitment join Accounting and Inventory there instead
+     * of being separate top-bar dashboards).
+     *
+     * @return list<class-string>
+     */
+    public static function sectionWidgets(): array
     {
         return [
             StatsOverviewWidget::class,
@@ -107,5 +143,24 @@ class Dashboard extends BaseDashboard
             TopAssigneesWidget::class,
             TopProjectsWidget::class,
         ];
+    }
+
+    /** Out of the menu when the Overview exists; old links open its tab. */
+    public static function shouldRegisterNavigation(): bool
+    {
+        return ! Overview::isAvailable();
+    }
+
+    public function mount(): void
+    {
+        if (Overview::isAvailable()) {
+            $this->redirect(Overview::getUrl(['section' => 'projects']));
+        }
+    }
+
+    public static function canAccess(): bool
+    {
+        return PluginEntitlement::enabledForCurrent('projects')
+            && static::hasPagePermission();
     }
 }

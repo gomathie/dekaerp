@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Webkul\Account\Enums\AccountType;
 use Webkul\Account\Enums\AmountType;
@@ -44,7 +45,7 @@ class AccountHelper
 {
     public static function company(): Company
     {
-        return Company::query()->firstOrFail();
+        return Company::query()->orderBy('id')->firstOrFail();
     }
 
     public static function actingAsAdmin(): User
@@ -120,6 +121,31 @@ class AccountHelper
             'uom_po_id'  => $uom->id,
             'company_id' => static::company()->id,
         ], $overrides));
+    }
+
+    /**
+     * Turn a created record into a shared one (no company): the state of example
+     * data and of records created before 2026-10-29.
+     *
+     * Creating with `company_id => null` no longer achieves that while someone is
+     * acting, because contacts, products and categories are now stamped with the
+     * creating company (docs/completed/company-admin-role-plan.md §4k). Per-company account
+     * properties exist for exactly these shared records, so the tests that pin
+     * them start from one.
+     *
+     * @template T of Model
+     *
+     * @param  T  $record
+     * @return T
+     */
+    public static function shared(Model $record): Model
+    {
+        $record::withoutGlobalScopes()->whereKey($record->getKey())->update(['company_id' => null]);
+
+        $record->setAttribute('company_id', null);
+        $record->syncOriginalAttribute('company_id');
+
+        return $record;
     }
 
     public static function tax(
@@ -487,14 +513,14 @@ class AccountHelper
         return AccountFacade::confirmMove($move->refresh());
     }
 
-    public static function cancel(Move $move): Move
+    public static function cancel(Move $move, ?string $reason = 'Correction in a test'): Move
     {
-        return AccountFacade::cancelMove($move->refresh());
+        return AccountFacade::cancelMove($move->refresh(), $reason);
     }
 
-    public static function resetToDraft(Move $move): Move
+    public static function resetToDraft(Move $move, ?string $reason = 'Correction in a test'): Move
     {
-        return AccountFacade::resetToDraftMove($move->refresh());
+        return AccountFacade::resetToDraftMove($move->refresh(), $reason);
     }
 
     public static function reverse(Move $move): Move

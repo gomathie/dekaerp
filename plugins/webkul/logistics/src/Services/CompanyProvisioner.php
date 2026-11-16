@@ -10,8 +10,8 @@ use Webkul\Logistics\Models\CompanySetting;
 use Webkul\Logistics\Support\LogisticsAccess;
 use Webkul\Logistics\Support\LogisticsSequences;
 use Webkul\Product\Enums\ProductType;
-use Webkul\Product\Models\Category;
 use Webkul\Product\Models\Product;
+use Webkul\Product\Services\CompanyCategoryProvisioner;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Scopes\CompanyScope;
 use Webkul\Support\Models\UOM;
@@ -25,6 +25,8 @@ use Webkul\Support\Models\UOM;
  */
 class CompanyProvisioner
 {
+    public function __construct(private CompanyCategoryProvisioner $categoryProvisioner) {}
+
     /**
      * Default service products per company (D14), keyed by product reference.
      */
@@ -58,7 +60,7 @@ class CompanyProvisioner
             $problems[] = 'missing-purchase-journal';
         }
 
-        if (! $this->unitsUomId() || ! $this->rootCategoryId()) {
+        if (! $this->unitsUomId() || ! $this->rootCategoryId($company)) {
             $problems[] = 'missing-product-defaults';
         }
 
@@ -129,7 +131,7 @@ class CompanyProvisioner
     protected function ensureServiceProducts(Company $company): void
     {
         $uomId = $this->unitsUomId();
-        $categoryId = $this->rootCategoryId();
+        $categoryId = $this->rootCategoryId($company);
 
         if (! $uomId || ! $categoryId) {
             return;
@@ -177,8 +179,18 @@ class CompanyProvisioner
         return UOM::query()->where('name', 'Units')->orderBy('id')->value('id');
     }
 
-    protected function rootCategoryId(): ?int
+    protected function rootCategoryId(Company $company): ?int
     {
-        return Category::query()->whereNull('parent_id')->orderBy('id')->value('id');
+        $categoryId = $this->categoryProvisioner->defaultCategoryId($company->id);
+
+        if ($categoryId !== null) {
+            return $categoryId;
+        }
+
+        // The old unfiltered root lookup could file LOG-* products under a
+        // different client's category, or leave them without a category.
+        $this->categoryProvisioner->provision($company);
+
+        return $this->categoryProvisioner->defaultCategoryId($company->id);
     }
 }

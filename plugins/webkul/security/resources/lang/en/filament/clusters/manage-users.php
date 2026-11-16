@@ -24,6 +24,10 @@ return [
             'label'       => 'Default Role',
             'helper-text' => 'The default role assigned to new users.',
         ],
+        'company-admin-business-role' => [
+            'label'       => 'Company Administrator Business Role',
+            'helper-text' => 'Given to every new company administrator alongside Company Admin, so they can run their company. Platform roles are not offered.',
+        ],
 
         'default-company' => [
             'label'       => 'Default Company',

@@ -15,11 +15,13 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Validation\Rules\Unique;
 use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Filament\Resources\CategoryResource;
 use Webkul\Product\Filament\Resources\ProductResource;
 use Webkul\Product\Filament\Resources\ProductResource\Support\ProductSchemaRegistry as Registry;
 use Webkul\Product\Models\Category;
+use Webkul\Product\Models\Tag;
 use Webkul\Support\Models\UOM;
 
 class ProductForm
@@ -81,7 +83,13 @@ class ProductForm
                             ->label(__('products::filament/resources/product.form.sections.general.fields.name'))
                             ->required()
                             ->maxLength(255)
-                            ->unique('products_tags'),
+                            // Per company: tags are company-scoped and the table's
+                            // unique index is (company_id, name), so a global rule
+                            // refused a name another client already uses.
+                            ->unique(
+                                'products_tags',
+                                modifyRuleUsing: fn (Unique $rule) => $rule->where('company_id', current_company_id()),
+                            ),
                     ]),
             ]);
     }
@@ -163,6 +171,12 @@ class ProductForm
                     })
                     ->disableOptionWhen(fn ($label) => str_contains($label, ' (Deleted)'))
                     ->placeholder(__('products::filament/resources/product.form.sections.settings.fields.company-placeholder'))
+                    // Required with the current company as default: a product
+                    // saved with no company is visible to every company, and the
+                    // model only stamps one on create, so clearing it on edit
+                    // would share the product again (docs/completed/company-admin-role-plan.md §4k).
+                    ->default(fn (): ?int => current_company_id())
+                    ->required()
                     ->searchable()
                     ->preload()
                     ->live()
@@ -170,7 +184,14 @@ class ProductForm
                         clear_foreign_company_values(
                             $set,
                             $get,
-                            Registry::companyDependentFieldsFor(),
+                            [
+                                ...Registry::companyDependentFieldsFor(),
+                                // Categories and tags are per company too, so a
+                                // product moved to another company must not keep
+                                // the previous company's.
+                                'category_id' => Category::class,
+                                'tags'        => Tag::class,
+                            ],
                             $state,
                         );
 

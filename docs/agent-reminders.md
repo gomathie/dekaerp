@@ -7,12 +7,170 @@ Note: this is a working log, separate from [`AGENTS.md`](../AGENTS.md) (Laravel
 Boost guidelines the agent follows) and [`CHANGELOG.md`](../CHANGELOG.md)
 (release notes). Code-change details go in [`docs/change-log.md`](change-log.md).
 
+## 2026-11-11
+
+**Requested:** Build the whole attendance plan (AT-1 to AT-7), then run all the
+checks.
+
+**Decision:** Attendance is its own plugin with a per-company switch, default
+off. Every write goes through `AttendanceService`. The dashboard banner lives in
+`support` and Attendance contributes into it through a keyed registry, because
+`support` is the base plugin and may not reference a plugin above it. Kiosk mode
+stays a design note only (AT-D2).
+
+**Implementation and verification:** See the handoffs in
+`docs/completed/attendance-plan.md` §8 and `docs/change-log.md`. Database
+`aureuserp_testing_attendance`. `translations:check --plugin=attendances` and
+`--plugin=support` each passed 4 of 4 locales. Suite and Pint results are
+recorded in the plan's progress log.
+
+## 2026-11-10
+
+**Requested:** Look at production on a phone and write a plan to improve the
+mobile layout, for review before any code.
+
+**Decision:** Every recommendation is in `docs/planned/mobile-view-plan.md`
+(R1–R9). The first patch is the top bar and the scrolling tabs. Stat cards
+two-per-row, a list that has rows, cell wrapping, logical truncation, and
+a 320px check are the second pass. The module drawer stays. No layout code
+was changed.
+
+## 2026-11-10
+
+**Requested:** Update the records for Logistics work that is actually done.
+
+**Decision:** The customer-page tab goes in the v1.7.0 release notes. The
+fragment proof-of-delivery flow stays open: `issue()` still returns the path
+route, so the 2026-10-20 "resolved" note is corrected rather than treated as
+shipped.
+
+**Implementation and verification:** `CHANGELOG.md`, `docs/handover-actions.md`
+§0b, the WP-5b status row, and `docs/change-log.md`. Code was read, not
+changed. No test run.
+
+## 2026-11-10
+
+**Requested:** Close the Logistics plan. The open package was WP-9b, the
+customer page (D11).
+
+**Decision:** Use the partner infolist slot `tabs.append`. Do not add a
+relation-manager slot or edit `PartnerResource`. A shared contact shows only
+the company the viewer is working in.
+
+**Implementation and verification:** See the WP-9b handoff in
+`docs/logistics-plan.md` and `docs/change-log.md`. Database
+`aureuserp_testing_logistics`. LogisticsFeature 201 passed (833 assertions).
+No browser smoke. No navigation change. PILOT was not started.
+
+## 2026-11-10
+
+**Requested:** SAAS-12 platform administration screens, then SAAS-13
+company-administration screens.
+
+**Decision:** Screens call the existing services and add no second rule.
+The company page is limited to the signed-in company. Seat-limit authority
+stays on the screen because `setLimit()` does not check the caller.
+
+**Implementation and verification:** See the SAAS-12/13 handoff in
+`docs/completed/saas-administration-billing-audit-plan.md` and `docs/change-log.md`.
+Database `aureuserp_testing_saas11`. PlatformBillingFeature 116 passed
+(620 assertions). No browser smoke.
+
+## 2026-11-10
+
+**Requested:** A Company Admin may extend after the lock. A Super Admin
+extension is a number of days, weeks, or months that they enter.
+
+**Decision:** The guard allows that one new extension for the company's
+own Company Admin. The model is not generally exempt. The length keeps
+its unit.
+
+**Implementation and verification:** See the SAAS-10B addendum in
+`docs/completed/saas-administration-billing-audit-plan.md` and `docs/change-log.md`.
+Database `aureuserp_testing_saas11`.
+
+## 2026-11-09
+
+**Requested:** Close the commercial-switch gap in `45636cfcf`, then build
+SAAS-10B overdue extensions.
+
+**Decision:** The three switch helpers run only inside
+`switchToCommercial()`. The module helper cannot remove a grant. A
+Company Admin may add 10 days once per overdue invoice. A Super Admin
+names the days of one separate extension. Neither is a screen.
+
+**Implementation and verification:** See the two 2026-11-09 handoffs in
+`docs/completed/saas-administration-billing-audit-plan.md` and the matching entries
+in `docs/change-log.md`. Database `aureuserp_testing_saas11`.
+
+## 2026-11-09
+
+**Requested:** Record D-SAAS-10 to D-SAAS-13, build SAAS-11 payments, then
+the SAAS-15 account type. Leave SAAS-10B and impersonation unbuilt.
+
+**Decision:** Manual Super Admin payments, with derived credit and one-person
+reversals. A reversal that reopens an invoice already past day 8 starts a
+fresh 10-day overdue grace from the reversal. Test or commercial is chosen
+by installation staff at creation. An expired test is read-only. An assigned
+Multi-Company Admin may switch that company to commercial. `create()`,
+`activate()` and `syncForCompany()` stay Super Admin.
+
+**Implementation and verification:** See the SAAS-11 and SAAS-15 handoffs,
+including the two same-day addenda, in
+`docs/completed/saas-administration-billing-audit-plan.md`, and the matching entries in
+`docs/change-log.md`. Database `aureuserp_testing_saas11`.
+
+## 2026-11-09
+
+**Requested:** Make a Super Admin's selected company scope tenant data, while
+keeping an explicit All companies mode.
+
+**Decision:** Super Admin reads default to one company; All companies is an
+explicit platform-wide mode. Forced API and queued company contexts stay
+scoped to their forced company. The protected decision is in `AGENTS.md`.
+
+**Implementation and verification:** See `docs/change-log.md`, entry
+"2026-11-09 (Super Admin company data scope)". The corrected tenancy directory
+passed **20 tests / 69 assertions**, CompanyIsolation passed **9 / 26**, the
+isolated scoping test passed **1 / 21**, and Pint passed. The initial test
+failure and two fixture-only retry failures are documented there.
+
 ## Standing instructions
 
 Set by the user 2026-09-03. These apply to every session, not one task.
 
 **This fork is in production, with multi-tenancy in use.** Real customers, real
 data, a public repo. Nothing here is a sandbox.
+
+## 2026-11-04
+
+**Requested:** Continue triage of Sentry issues and finish verification of four
+related fixes. The reviewed issues were 155782383, 148912476 and 157505669
+(test-run noise); 158147606 (unverified sender domain); 158146393 (backfill
+against a partially migrated schema); and 151536596 (unauthenticated locked
+Livewire-property probe).
+
+**Implemented before this continuation:** Test runs pin `SENTRY_LARAVEL_DSN` to
+empty; outgoing mail uses the configured application sender with the author as
+Reply-To where supported; the products backfill checks required columns before
+writing; and tampered locked-property updates return 400 without Sentry
+reporting. See the two 2026-11-04 entries in `docs/change-log.md` for rationale
+and pinned tests.
+
+**Verification in the prior continuation and retry (2026-11-04):** Not run.
+`docker compose up -d pgsql` and a later `docker compose ps` both failed to
+connect to `npipe:////./pipe/docker_engine` (`permission denied`). `docker
+context ls` also could not read `C:\Users\gomat\.docker\contexts\meta`, so no
+alternate configured context could be checked. The interrupted SAAS
+AccountFeature run is incomplete and does not count as Sentry-fix verification.
+No Mailpit, admin-panel, fresh DSN, or broader package-suite check was performed.
+The requested broader suites remain ChatterFeature, SupportFeature,
+ProductFeature, SaleFeature and AccountFeature, serially on a dedicated local
+PostgreSQL test database; RecruitmentsFeature is not registered in `phpunit.xml`.
+
+**Still external:** Verify the sender domain with the mail provider and set
+`MAIL_FROM_ADDRESS` in Laravel Cloud; perform production Sentry housekeeping and
+deploy only after the test handoff is complete.
 
 1. **Go through all of it.** When working from a list - a release's notes, a
    linter's findings, a review - check every item against the code. Report
@@ -42,12 +200,41 @@ data, a public repo. Nothing here is a sandbox.
    root cause, decisions, changed behavior, verification actually executed,
    failures, risks, and handoff. Route user-visible released behavior to root
    `CHANGELOG.md`; route engineering history to `docs/change-log.md`.
-8. **Review upstream on a trigger-based cadence.** Follow
-   `docs/upstream-fix-adoption-plan.md`. The first active agent after its
-   seven-day due date, and every agent preparing a release, dependency refresh,
-   or major change in an upstream-modified plugin, must review new upstream
-   commits. Update the SHA/date and tell the user what changed, why it is or is
-   not needed, benefits, risks, and priority. Never copy upstream wholesale.
+8. **Treat the upstream register as a bug list, not a schedule.**
+   `docs/upstream-fix-adoption-plan.md` holds findings UF-001..UF-024 and the
+   decision on each. The recurring seven-day review due date was dropped on
+   2026-10-21 to keep focus, so there is no cadence to satisfy. Consult it when
+   you work in an affected plugin, and update a finding's Local state when you
+   touch one. Eight are still open; UF-017 is an unfixed P0 XSS in Chatter change
+   summaries. When you do review upstream, tell the user what changed, why it is
+   or is not needed, benefits, risks, and priority. Never copy upstream wholesale.
+
+9. **Prove it before you fix it, and prove it before you trust a comment.** Two
+   rules that earned their place on 2026-09-29/30. First: when reading suggests a
+   defect, write the failing test before the fix. Twice in one session a
+   plausible-looking "bug" turned out to be working code
+   (`Inventory\MoveLine`'s company derivation, `Manufacturing\Move`'s creating
+   hook), and the fix would have changed behaviour for no reason. Second: a
+   comment asserting a security property is a claim, not evidence. `asIssuer()`
+   said `onceUsingId()` rejects deactivated users; it does not - the protection
+   came from somewhere else entirely. Check the mechanism, then correct the
+   comment.
+10. **Read the exception, not the pattern.** When a change produces many failures
+    that share a theme, run a single one and read its error before theorising.
+    Thirteen failures all named after action visibility looked like a
+    state-machine regression and were one wrong return type.
+11. **A public-route test needs a fresh request identity and scoped context.** Logging
+    out and flushing the session are not enough in this test harness:
+    `SecurityHelper` also leaves a cached Sanctum user and `CompanyContext` instance.
+    Clear both web and Sanctum guards, restore the web default guard, and forget
+    `CompanyContext`. WP-5b's tests passed while a real anonymous POD request failed
+    because the fixture retained the issuer's allowed company.
+12. **Use quoted numeric keys in translation arrays.** The translation checker
+    normalizes quoted keys but treats a bare numeric-key line as literal source,
+    so a valid translation such as `4 => '4 horas'` is falsely reported as a
+    structure mismatch against `4 => '4 hours'`. Write both canonical and locale
+    keys as `'4' =>`; PHP still exposes the runtime key as integer `4`. Do not
+    leave user-facing values in English merely to satisfy the checker.
 
 **Vendor view overrides to re-diff on every Filament upgrade:**
 `resources/views/vendor/filament-panels/livewire/{sidebar,topbar}.blade.php`
@@ -55,10 +242,27 @@ and `resources/views/vendor/filament-tables/components/summary/row.blade.php`
 (responsive summary cells - see `docs/change-log.md`, 2026-09-14). A stale
 override silently keeps old vendor markup.
 
+**Development documentation fallback:** this project configures Context7 as a
+read-only MCP server. Use Laravel Boost `search-docs` first when available; use
+Context7 only when Boost is unavailable or missing coverage, always naming the
+locked package version. Confirm conflicts against official package docs/source,
+and never send secrets, customer data or environment-file contents.
+
 **Project memory for agents** (traps, multi-company facts, recent work,
 references) is kept at the end of `AGENTS.md` under "DEKA ERP — PROJECT
 MEMORY". Update it when a session finds a new trap or finishes a significant
 piece of work.
+
+**Workflow and skills library contribution check.** After completing any task
+**and** after invoking any skill from the library during the session, check
+whether a new workflow, skill, or update belongs in the shared library at
+`C:\Users\gomat\OneDrive\Documents\Workflow and skills\`. See
+`AGENT-INSTRUCTIONS.md` in that folder. Write content only when the check
+surfaces something worth saving (a new trap, a corrected step, a stack pattern
+not yet covered). The folder is on the owner's machine only: where it is not
+reachable (CI, cloud agents, another contributor), record that in the handoff
+and carry on. This standing instruction was added 2026-10-28 and is pointed to
+from `AGENTS.md` so every agent that loads that file sees it.
 
 **Logistics plugin** work follows `docs/logistics-plan.md`: claim a package on
 its status board, touch only the files that package owns, and fill in the
@@ -66,8 +270,124 @@ handoff log.
 
 **Whole-application upstream work** follows
 `docs/upstream-fix-adoption-plan.md`. It is the decision register for fixes
-already present, required gaps, optional product features, explicit rejects,
-and the next review date.
+already present, required gaps, optional product features and explicit
+rejects. Its recurring review due date was dropped on 2026-10-21; the register
+itself stands.
+
+---
+
+## 2026-10-23
+
+- Resolved the last four `KNOWN_UNREGISTERED_MIGRATIONS` entries. Three
+  `employees` calendar migrations deleted as superseded by
+  `support/2026_04_02_000001_create_calendars_table`;
+  `time-off/2026_08_04_100000_share_default_time_off_leave_types` registered -
+  it was a **live defect**, not dead code, so on any database seeded before
+  2026-08-04 the default leave types were owned by the first company and
+  invisible to the others. One entry left (`companies.name` unique index),
+  pending a production duplicate-name check.
+- Corrected a false claim of my own: I said the SupportFeature run exercised
+  that registration. It did not - plugin migrations load only when the package
+  `isCore` or `isInstalled()`, and `time-off` is neither in tests. Verified by
+  installing the plugin and running the migration against dirtied data instead.
+- Built the three guides (user/admin/superadmin) and the per-company plugin
+  section on the company form. Found and fixed two bugs in the existing Help
+  page while doing it: `canViewAdminGuide()` was super-admin-only (hiding the
+  admin guide from Company Admins) and `guideCategories()` was a second copy of
+  the guide-file decode that bypassed the audience filter.
+- Fixed three production 500s: the `/admin` outage (unimported middleware), the
+  `view_model` crash in `HasTableViews`, and the time-off clustered-page route
+  names. Added `PanelMiddlewareTest`, `PageRouteNameTest` and
+  `SharedTimeOffLeaveTypesTest` as guards, all in `SupportFeature` because
+  `time-off` has no suite of its own.
+- Corrected `AGENTS.md`, which told every agent there was an unfixed P0 Chatter
+  XSS and open financial bugs. Re-read all 24 UF Local states: no P0 or P1 is
+  open.
+- Resolved a conflicted merge of `develop` into `production` found mid-session,
+  on the deploy branch, with a non-parsing `SecurityServiceProvider.php` that
+  made every artisan command fail. Also recorded that **production is 16 commits
+  ahead of develop**, including the logistics POD-token and stop-link security
+  work, so develop holds the older version of those views until it is
+  back-merged.
+- Investigated the Filament 5.7.6 → 5.10.3 upgrade (13 explicit packages,
+  Livewire 4.3.4 → 4.4.8 is the unlock). **Not applied** - deferred to its own
+  change so a regression stays bisectable, and because it republishes assets and
+  the three local Filament view overrides need re-diffing.
+- Not fixed, flagged only: `employees`' `CalendarFactory` (stale columns, would
+  throw if used) and its two calendar seeders (write to renamed-away tables);
+  the doubled `reporting/reporting` segment in the time-off ByType URL; and the
+  three non-clustered `getRouteName()` overrides that are correct only by
+  coincidence.
+
+## 2026-10-19
+
+**Requested:** Review Agent Skills, Context7, Graphify, 21st MCP and Strix, then
+selectively configure useful development tooling without adding production
+dependencies.
+
+**Done:** Added anonymous, read-only Context7 configuration for Codex and the
+existing portable MCP manifest. The other four candidates were deliberately not
+installed: the generic Agent Skills pack duplicates/conflicts with project rules;
+21st targets React UI; local Graphify needs a missing Python/uv toolchain and its
+Codex installer has open mutation/path defects; Strix needs credentials/login and
+an explicitly authorized isolated target before active security testing.
+
+**Usage:** Ask for the exact locked version, for example, "Use Context7 to find
+Laravel 13.21.1 middleware configuration guidance." Do not put application data
+or credentials in the query.
+
+## 2026-09-29 → 2026-09-30
+
+**Company-wide visibility, the scoped-parent bug family, and WP-5b's second
+security pass.** Detail in `docs/change-log.md` (2026-09-29) and
+`docs/completed/company-admin-role-plan.md` sections 4d–4j.
+
+**User decisions this session**
+
+- *"all users in the same company should be able to see each others invoices and
+  details in the company"*, clarified with *"if its currently individual, and can be
+  given as rights then its also good"* (2026-09-28). `users.resource_permission` now
+  defaults to `global`; `individual` and `group` stay grantable per user. The old
+  value came from `UserInvitationService` hard-coding it and from the column default
+  — **not** from the Users page, which already defaulted to `global`.
+- *"promote all green to done as needed"* (2026-09-29). WP-1 through WP-11 moved to
+  `done` on the strength of that day's full runs. WP-5b, WP-9b and WP-12 were held,
+  each with the reason recorded on the board.
+- *"you have my permission to review the WP-5b"* (2026-09-30). Claude's delegated
+  pass was same-author review; Codex then completed the independent adversarial pass.
+  It found a production-only anonymous `CompanyContext` failure hidden by cached test
+  identity, plus issuance concurrency and response-hardening gaps. Those are fixed;
+  all 34 WP-5b tests passed in the integrated run. Full details and the exact suite
+  caveat are in the newest WP-5b handoff and `docs/change-log.md`.
+- *"fix this"* for WP-12 (2026-09-30). The 68 missing locale files and all
+  later exception/company-setting keys were translated. The focused checker now
+  passes ar/es/fr/pt_BR **4/4**, and the quoted-TTL-key runtime regression passes.
+
+**Asked and answered**
+
+- Whether `individual` was the right default: the user asked to see the impact first,
+  so the analysis and the queries went into section 4g before the decision. Worth
+  repeating as a pattern — the question was a product one, not a code one, and
+  guessing it would have been the wrong kind of initiative.
+
+**Open, and owned by the user**
+
+- `docs/handover-actions.md` 0a (who is left narrower than their colleagues),
+  0b (POD tokens in edge logs), and new **0c (set `TRUSTED_PROXIES`)**.
+- WP-5b stays at `review` until 0b and 0c are settled; its independent application
+  review is complete, but edge-log retention and trusted proxy configuration need
+  production access.
+- WP-13 is at `review`; local hardening and `docs/logistics.md` are complete. The
+  production-copy install rehearsal and Supabase advisor still need access no agent
+  session has.
+
+**Housekeeping left behind**
+
+`aureuserp_testing_own1` was dropped and recreated for this review. The complete
+Logistics run ended **190 passed, 1 failed / 734 assertions** because an outside-owned
+workflow test cumulatively ordered by `occurred_at ASC, id DESC`; that exact case
+then passed alone (**1 / 5**). The requested one-line test correction is in the
+WP-5b handoff. The database is no longer held by a running test process.
 
 ---
 

@@ -36,21 +36,12 @@ function taskRoute(string $action, mixed $task = null): string
 
 function taskPayload(array $overrides = []): array
 {
-    $payload = Task::factory()->make($overrides)->toArray();
-
-    unset($payload['visibility']);
-
-    return $payload;
+    return Task::factory()->make($overrides)->toArray();
 }
 
 function createTaskRecord(array $overrides = [], int $count = 1): Task|EloquentCollection
 {
-    $tasks = Task::factory()
-        ->count($count)
-        ->afterMaking(function (Task $task): void {
-            unset($task['visibility']);
-        })
-        ->create($overrides);
+    $tasks = Task::factory()->count($count)->create($overrides);
 
     return $count === 1 ? $tasks->first() : $tasks;
 }
