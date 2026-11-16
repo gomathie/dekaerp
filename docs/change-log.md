@@ -6,6 +6,27 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-16, no writes into another client's company (UF-025, hotfix v1.11.3)
+
+- **Why:** reviewing upstream's "multi-tenancy" (v1.7.0, PR #1575) found it
+  is company-id write checks only, and that we lacked one of them: a user of
+  company A could create or move a record into company B through an API body
+  `company_id` (validated only as existing). Security, P0; user approved
+  the hotfix.
+- **How:** `CompanyContext::mayWriteTo()` (one rule) +
+  `markProvisioned()`; `BelongsToCompany` calls it on creating and on a
+  company_id change and throws `CrossCompanyException::forCompany()` (new
+  message, 5 languages; id only, never the other company's name);
+  `Company` records each new company first, so onboarding's observers work.
+- **Benefit:** cross-tenant writes refused at the model, so screens, API,
+  imports and services are all covered by one check.
+- **Trade-off / risk:** a flow where an acting user legitimately writes into
+  a company they do not belong to would now be refused; the full Support and
+  Security suites were run to find any. Jobs and console are unaffected.
+- **Verification:** `CrossCompanyWriteTest` 5 passed, 11 assertions
+  (`claude_ui`). Full suites: see the line below.
+- **Rollback:** remove the two listeners in `BelongsToCompany`.
+
 ## 2026-11-15/16, production setup and small fixes (collected for the monthly release)
 
 - **Why (user, 2026-11-15):** answers to the open questions (exchange rates,

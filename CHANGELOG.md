@@ -24,6 +24,12 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 * Exchange rates below 1 can be entered, so currencies stronger than the US dollar (euro, pound) can be switched on.
 
+# CHANGELOG — v1.11.3 — 2026-11-16
+
+### Fixes
+
+* [Security] A record can only be saved in a company you belong to. Before, a request could place a record in another company.
+
 # CHANGELOG — v1.11.2 — 2026-11-14
 
 ### Fixes

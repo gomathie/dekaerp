@@ -1934,6 +1934,18 @@ log named):
   - Refresh every 5 minutes at most (user). Never Filament's 5-second
     default (Sentry DEKAERP-11). Test: `OverviewTest` polling test.
 
+• No writes into another client's company, 2026-11-16 (UF-025, hotfix v1.11.3):
+  - `BelongsToCompany` refuses creating a record in, or moving one into, a
+    company the acting user is not a member of (`CompanyContext::mayWriteTo()`,
+    `CrossCompanyException`, 422 on the API). Before, a body `company_id`
+    was taken unchecked. Do not remove it or move it to the screens only.
+  - It passes: no acting user (jobs, console, seeders), staff who see all
+    companies, a shared (null) company, and a company created in the same
+    request (`markProvisioned()` from `Company`'s first `created` listener,
+    so onboarding works before the creator is a member). Keep that listener
+    first.
+  - Test: support `Tenancy/CrossCompanyWriteTest.php`.
+
 • Business role covers the role templates, 2026-11-14 (user; `docs/change-log.md`):
   - `erp:sync-permissions` gives the company administrators' business role
     (`UserSettings::company_admin_business_role_id`, "Business

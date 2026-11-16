@@ -1126,6 +1126,25 @@ service products and any catalog item with variants.
 write path, port the fix, and add a test that creates a variant and asserts
 the parent product name is unchanged.
 
+### UF-025 - Cross-company writes through a body company_id (security)
+
+**Decision:** Adopted, P0 (user, 2026-11-16)  
+**Upstream reference:** v1.7.0, PR #1575, commits `9ffd2a765`, `0b9cdc96b`
+("company ID tenant isolation"; `WithinAllowedCompanies` rule,
+`BelongsToCompany::assertCompanyAllowed()`, `CrossCompanyException`).  
+**Local state:** **Fixed in hotfix v1.11.3 (2026-11-16), adapted, not copied**
+
+> Our `BelongsToCompany` only filled a missing company, and API requests only
+> checked that a body `company_id` exists. A user of company A could create a
+> record stamped with company B, or move one there. Adapted as
+> `CompanyContext::mayWriteTo()` (one rule), called from `BelongsToCompany`
+> on creating and on a company_id change. Differences from upstream: staff in
+> "all companies" use `seesAllCompanies()`; no acting user (jobs, console)
+> passes; a company created in the request passes (`markProvisioned()`, so
+> onboarding's observers work before the creator is a member). The upstream
+> request rule was not added: every API write reaches the model guard, which
+> answers 422. Test: support `Tenancy/CrossCompanyWriteTest`.
+
 ## Already Present Locally
 
 The following upstream runtime work does not need to be reimplemented:

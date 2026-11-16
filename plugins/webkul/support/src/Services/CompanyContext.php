@@ -88,6 +88,43 @@ class CompanyContext
     }
 
     /**
+     * Companies created in this request. Their own records (partner, root
+     * category, grants) are written by the Company::created observers before
+     * the creator is attached as a member, so mayWriteTo() must accept them.
+     *
+     * @var list<int>
+     */
+    protected array $provisionedIds = [];
+
+    public function markProvisioned(int $companyId): void
+    {
+        $this->provisionedIds[] = $companyId;
+        $this->allowed = null;
+    }
+
+    /**
+     * May the acting user create a record in, or move one into, this company?
+     *
+     * Why (upstream PR #1575 adapted, 2026-11-16): BelongsToCompany only
+     * filled a missing company, and API requests only checked that a body
+     * company_id exists, so a user of company A could write a record stamped
+     * with company B (another client). Fail closed for an acting user outside
+     * their memberships. No acting user (jobs, console, seeders) and staff who
+     * see all companies pass; a shared record (null) is not a company.
+     */
+    public function mayWriteTo(mixed $companyId): bool
+    {
+        if (blank($companyId) || ! $this->internalUser() instanceof User || $this->seesAllCompanies()) {
+            return true;
+        }
+
+        $companyId = (int) $companyId;
+
+        return in_array($companyId, $this->provisionedIds, true)
+            || in_array($companyId, array_map('intval', $this->allowedIds()), true);
+    }
+
+    /**
      * Who may change which companies are active (user decision, 2026-10-29).
      *
      * Installation staff only: a Super Admin, and a Multi-Company Admin within
