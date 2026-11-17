@@ -1,0 +1,528 @@
+{
+    "Webkul\\PlatformBilling\\Filament\\Clusters\\Billing\\Resources\\DiscountCodeResource": {
+        "model": "Webkul\\PlatformBilling\\Models\\DiscountCode",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "code"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "discount_type"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "discount_value"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "duration_type"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "duration_months"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "eligibility_type"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "company_ids"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "max_redemptions"
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "code"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "discount_type"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "discount_value"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "duration_type"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "eligibility_type"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\IconEntry",
+                "name": "is_active"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "redemption_count"
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "code",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "discount_type"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "eligibility_type"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\IconColumn",
+                    "name": "is_active"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "redemption_count"
+                }
+            ],
+            "filters": [],
+            "groups": [],
+            "defaultSort": "code",
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ViewAction",
+                    "name": "view"
+                }
+            ],
+            "toolbarActions": [],
+            "headerActions": []
+        }
+    },
+    "Webkul\\PlatformBilling\\Filament\\Clusters\\Billing\\Resources\\InvoiceResource": {
+        "model": "Webkul\\PlatformBilling\\Models\\Invoice",
+        "form": [],
+        "infolist": [
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "number"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "company.name"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "status"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "currency"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "issuer_name"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "tax_rate"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "tax_enabled"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "subtotal_minor"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "discount_minor"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "discount_code"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "tax_minor"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "total_minor"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "issued_at"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "due_at"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "grace_starts_at"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "lines_summary"
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "number",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "company.name",
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "status"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "total_minor"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "currency"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "issued_at",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "due_at"
+                }
+            ],
+            "filters": [],
+            "groups": [],
+            "defaultSort": "issued_at",
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ViewAction",
+                    "name": "view"
+                }
+            ],
+            "toolbarActions": [],
+            "headerActions": []
+        }
+    },
+    "Webkul\\PlatformBilling\\Filament\\Clusters\\Billing\\Resources\\PaymentResource": {
+        "model": "Webkul\\PlatformBilling\\Models\\Payment",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "company_id"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "amount"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "reference"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\DateTimePicker",
+                "name": "received_at"
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "company.name"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "idempotency_key"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "status"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "amount_minor"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "unapplied"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "reconciliation"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "received_at"
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "idempotency_key",
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "company.name",
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "amount_minor"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "currency"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "status"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "received_at",
+                    "sortable": true
+                }
+            ],
+            "filters": [],
+            "groups": [],
+            "defaultSort": "received_at",
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ViewAction",
+                    "name": "view"
+                }
+            ],
+            "toolbarActions": [],
+            "headerActions": []
+        }
+    },
+    "Webkul\\PlatformBilling\\Filament\\Clusters\\Billing\\Resources\\PlanResource": {
+        "model": "Webkul\\PlatformBilling\\Models\\Plan",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "code"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\CheckboxList",
+                "name": "included_plugins"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "seat_limit"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "amount"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "interval_months"
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "name"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "code"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\IconEntry",
+                "name": "is_active"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "seat_limit"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "included_plugins"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "prices_summary"
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "code",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\IconColumn",
+                    "name": "is_active"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "seat_limit"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "prices_count"
+                }
+            ],
+            "filters": [],
+            "groups": [],
+            "defaultSort": "name",
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ViewAction",
+                    "name": "view"
+                }
+            ],
+            "toolbarActions": [],
+            "headerActions": []
+        }
+    },
+    "Webkul\\PlatformBilling\\Filament\\Clusters\\Billing\\Resources\\SubscriptionResource": {
+        "model": "Webkul\\PlatformBilling\\Models\\Subscription",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "company_id"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "price_id"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\DateTimePicker",
+                "name": "anchor_at"
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "company.name"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "plan_name"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "status"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "amount_minor"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "currency"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "interval_months"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "anchor_at"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "period_start_at"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "period_end_at"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "next_invoice_at"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\IconEntry",
+                "name": "cancel_at_period_end"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "scheduled_price_id"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "seat_limit"
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "company.name",
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "plan_name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "status"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "amount_minor",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "interval_months"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "period_end_at"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\IconColumn",
+                    "name": "cancel_at_period_end"
+                }
+            ],
+            "filters": [],
+            "groups": [],
+            "defaultSort": "id",
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ViewAction",
+                    "name": "view"
+                }
+            ],
+            "toolbarActions": [],
+            "headerActions": []
+        }
+    }
+}

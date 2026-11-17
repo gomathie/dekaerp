@@ -2,40 +2,25 @@
 
 namespace Webkul\Field\Filament\Resources;
 
-use Filament\Actions\ActionGroup;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreAction;
-use Filament\Actions\RestoreBulkAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Fieldset;
-use Filament\Schemas\Components\Group;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\TextSize;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use Webkul\Field\FieldsColumnManager;
 use Webkul\Field\Filament\Resources\FieldResource\Pages\CreateField;
 use Webkul\Field\Filament\Resources\FieldResource\Pages\EditField;
 use Webkul\Field\Filament\Resources\FieldResource\Pages\ListFields;
+use Webkul\Field\Filament\Resources\FieldResource\Schemas\FieldForm;
+use Webkul\Field\Filament\Resources\FieldResource\Tables\FieldsTable;
 use Webkul\Field\Filament\Traits\HasCustomFields;
 use Webkul\Field\Models\Field;
 use Webkul\Support\Enums\NavigationGroup;
@@ -63,259 +48,15 @@ class FieldResource extends Resource
 
     public static function form(\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
     {
-        return $schema
-            ->components([
-                Group::make()
-                    ->schema([
-                        Section::make()
-                            ->schema([
-                                TextInput::make('name')
-                                    ->label(__('fields::filament/resources/field.form.sections.general.fields.name'))
-                                    ->required()
-                                    ->maxLength(255),
-                                TextInput::make('code')
-                                    ->required()
-                                    ->label(__('fields::filament/resources/field.form.sections.general.fields.code'))
-                                    ->maxLength(255)
-                                    ->disabledOn('edit')
-                                    ->helperText(__('fields::filament/resources/field.form.sections.general.fields.code-helper-text'))
-                                    ->unique(ignoreRecord: true)
-                                    ->notIn(function (Get $get) {
-                                        if ($get('id') || ! $get('customizable_type')) {
-                                            return [];
-                                        }
-
-                                        $table = app($get('customizable_type'))->getTable();
-
-                                        return Schema::getColumnListing($table);
-                                    })
-                                    ->rules([
-                                        'regex:/^[a-zA-Z_][a-zA-Z0-9_]*$/',
-                                    ]),
-                            ])
-                            ->columns(2),
-
-                        Section::make(__('fields::filament/resources/field.form.sections.options.title'))
-                            ->visible(fn (Get $get): bool => in_array($get('type'), [
-                                'select',
-                                'checkbox_list',
-                                'radio',
-                            ]))
-                            ->schema([
-                                Repeater::make('options')
-                                    ->hiddenLabel()
-                                    ->simple(
-                                        TextInput::make('name')
-                                            ->required()
-                                            ->maxLength(255),
-                                    )
-                                    ->addActionLabel(__('fields::filament/resources/field.form.sections.options.fields.add-option')),
-                            ]),
-
-                        Section::make(__('fields::filament/resources/field.form.sections.form-settings.title'))
-                            ->schema([
-                                Group::make()
-                                    ->schema(static::getFormSettingsSchema())
-                                    ->statePath('form_settings'),
-                            ]),
-
-                        Section::make(__('fields::filament/resources/field.form.sections.table-settings.title'))
-                            ->schema(static::getTableSettingsSchema()),
-
-                        Section::make(__('fields::filament/resources/field.form.sections.infolist-settings.title'))
-                            ->schema(static::getInfolistSettingsSchema()),
-                    ])
-                    ->columnSpan(['lg' => 2]),
-
-                Group::make()
-                    ->schema([
-                        Section::make(__('fields::filament/resources/field.form.sections.settings.title'))
-                            ->schema([
-                                Select::make('type')
-                                    ->label(__('fields::filament/resources/field.form.sections.settings.fields.type'))
-                                    ->required()
-                                    ->disabledOn('edit')
-                                    ->searchable()
-                                    ->native(false)
-                                    ->live()
-                                    ->options([
-                                        'text'          => __('fields::filament/resources/field.form.sections.settings.fields.type-options.text'),
-                                        'textarea'      => __('fields::filament/resources/field.form.sections.settings.fields.type-options.textarea'),
-                                        'select'        => __('fields::filament/resources/field.form.sections.settings.fields.type-options.select'),
-                                        'checkbox'      => __('fields::filament/resources/field.form.sections.settings.fields.type-options.checkbox'),
-                                        'radio'         => __('fields::filament/resources/field.form.sections.settings.fields.type-options.radio'),
-                                        'toggle'        => __('fields::filament/resources/field.form.sections.settings.fields.type-options.toggle'),
-                                        'checkbox_list' => __('fields::filament/resources/field.form.sections.settings.fields.type-options.checkbox-list'),
-                                        'datetime'      => __('fields::filament/resources/field.form.sections.settings.fields.type-options.datetime'),
-                                        'editor'        => __('fields::filament/resources/field.form.sections.settings.fields.type-options.editor'),
-                                        'markdown'      => __('fields::filament/resources/field.form.sections.settings.fields.type-options.markdown'),
-                                        'color'         => __('fields::filament/resources/field.form.sections.settings.fields.type-options.color'),
-                                    ]),
-                                Select::make('input_type')
-                                    ->label(__('fields::filament/resources/field.form.sections.settings.fields.input-type'))
-                                    ->required()
-                                    ->disabledOn('edit')
-                                    ->native(false)
-                                    ->visible(fn (Get $get): bool => $get('type') == 'text')
-                                    ->options([
-                                        'text'     => __('fields::filament/resources/field.form.sections.settings.fields.input-type-options.text'),
-                                        'email'    => __('fields::filament/resources/field.form.sections.settings.fields.input-type-options.email'),
-                                        'numeric'  => __('fields::filament/resources/field.form.sections.settings.fields.input-type-options.numeric'),
-                                        'integer'  => __('fields::filament/resources/field.form.sections.settings.fields.input-type-options.integer'),
-                                        'password' => __('fields::filament/resources/field.form.sections.settings.fields.input-type-options.password'),
-                                        'tel'      => __('fields::filament/resources/field.form.sections.settings.fields.input-type-options.tel'),
-                                        'url'      => __('fields::filament/resources/field.form.sections.settings.fields.input-type-options.url'),
-                                        'color'    => __('fields::filament/resources/field.form.sections.settings.fields.input-type-options.color'),
-                                    ]),
-                                Toggle::make('is_multiselect')
-                                    ->label(__('fields::filament/resources/field.form.sections.settings.fields.is-multiselect'))
-                                    ->required()
-                                    ->visible(fn (Get $get): bool => $get('type') == 'select')
-                                    ->live(),
-                                TextInput::make('sort')
-                                    ->label(__('fields::filament/resources/field.form.sections.settings.fields.sort-order'))
-                                    ->required()
-                                    ->integer()
-                                    ->maxLength(255),
-                            ]),
-
-                        Section::make(__('fields::filament/resources/field.form.sections.resource.title'))
-                            ->schema([
-                                Select::make('plugin')
-                                    ->label(__('fields::filament/resources/field.form.sections.resource.fields.plugin'))
-                                    ->required(fn (string $operation): bool => $operation === 'create')
-                                    ->searchable()
-                                    ->native(false)
-                                    ->live()
-                                    ->dehydrated(false)
-                                    ->disabledOn('edit')
-                                    ->options(fn () => static::getPluginOptions())
-                                    ->afterStateHydrated(fn (Set $set, $record) => $record?->customizable_type
-                                        ? $set('plugin', static::pluginForModel($record->customizable_type))
-                                        : null)
-                                    ->afterStateUpdated(fn (Set $set) => $set('customizable_type', null)),
-                                Select::make('customizable_type')
-                                    ->label(__('fields::filament/resources/field.form.sections.resource.fields.resource'))
-                                    ->required()
-                                    ->searchable()
-                                    ->native(false)
-                                    ->disabledOn('edit')
-                                    ->visible(fn (Get $get): bool => filled($get('plugin')))
-                                    ->options(fn (Get $get): array => static::getCustomizableResourceOptions($get('plugin'))),
-                            ]),
-                    ])
-                    ->columnSpan(['lg' => 1]),
-            ])
-            ->columns(3);
+        return FieldForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->columns([
-                TextColumn::make('code')
-                    ->label(__('fields::filament/resources/field.table.columns.code'))
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('name')
-                    ->label(__('fields::filament/resources/field.table.columns.name'))
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('type')
-                    ->label(__('fields::filament/resources/field.table.columns.type'))
-                    ->sortable(),
-                TextColumn::make('customizable_type')
-                    ->label(__('fields::filament/resources/field.table.columns.resource'))
-                    ->description(fn (Field $record): string => str($record->customizable_type)->afterLast('\\')->toString().'Resource')
-                    ->sortable(),
-                TextColumn::make('created_at')
-                    ->label(__('fields::filament/resources/field.table.columns.created-at'))
-                    ->sortable(),
-            ])
-            ->filters([
-                SelectFilter::make('type')
-                    ->label(__('fields::filament/resources/field.table.filters.type'))
-                    ->options([
-                        'text'          => __('fields::filament/resources/field.table.filters.type-options.text'),
-                        'textarea'      => __('fields::filament/resources/field.table.filters.type-options.textarea'),
-                        'select'        => __('fields::filament/resources/field.table.filters.type-options.select'),
-                        'checkbox'      => __('fields::filament/resources/field.table.filters.type-options.checkbox'),
-                        'radio'         => __('fields::filament/resources/field.table.filters.type-options.radio'),
-                        'toggle'        => __('fields::filament/resources/field.table.filters.type-options.toggle'),
-                        'checkbox_list' => __('fields::filament/resources/field.table.filters.type-options.checkbox-list'),
-                        'datetime'      => __('fields::filament/resources/field.table.filters.type-options.datetime'),
-                        'editor'        => __('fields::filament/resources/field.table.filters.type-options.editor'),
-                        'markdown'      => __('fields::filament/resources/field.table.filters.type-options.markdown'),
-                        'color'         => __('fields::filament/resources/field.table.filters.type-options.color'),
-                    ]),
-                SelectFilter::make('customizable_type')
-                    ->label(__('fields::filament/resources/field.table.filters.resource'))
-                    ->options(fn () => static::getCustomizableResourceOptions()),
-            ])
-            ->recordActions([
-                ActionGroup::make([
-                    EditAction::make()
-                        ->hidden(fn ($record) => $record->trashed()),
-                    RestoreAction::make()
-                        ->successNotification(
-                            Notification::make()
-                                ->success()
-                                ->title(__('fields::filament/resources/field.table.actions.restore.notification.title'))
-                                ->body(__('fields::filament/resources/field.table.actions.restore.notification.body')),
-                        ),
-                    DeleteAction::make()
-                        ->successNotification(
-                            Notification::make()
-                                ->success()
-                                ->title(__('fields::filament/resources/field.table.actions.delete.notification.title'))
-                                ->body(__('fields::filament/resources/field.table.actions.delete.notification.body')),
-                        ),
-                    ForceDeleteAction::make()
-                        ->before(function ($record) {
-                            FieldsColumnManager::deleteColumn($record);
-                        })
-                        ->successNotification(
-                            Notification::make()
-                                ->success()
-                                ->title(__('fields::filament/resources/field.table.actions.force-delete.notification.title'))
-                                ->body(__('fields::filament/resources/field.table.actions.force-delete.notification.body')),
-                        ),
-                ]),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    RestoreBulkAction::make()
-                        ->successNotification(
-                            Notification::make()
-                                ->success()
-                                ->title(__('fields::filament/resources/field.table.bulk-actions.restore.notification.title'))
-                                ->body(__('fields::filament/resources/field.table.bulk-actions.restore.notification.body')),
-                        ),
-                    DeleteBulkAction::make()
-                        ->successNotification(
-                            Notification::make()
-                                ->success()
-                                ->title(__('fields::filament/resources/field.table.bulk-actions.delete.notification.title'))
-                                ->body(__('fields::filament/resources/field.table.bulk-actions.delete.notification.body')),
-                        ),
-                    ForceDeleteBulkAction::make()
-                        ->before(function ($records) {
-                            foreach ($records as $record) {
-                                FieldsColumnManager::deleteColumn($record);
-                            }
-                        })
-                        ->successNotification(
-                            Notification::make()
-                                ->success()
-                                ->title(__('fields::filament/resources/field.table.bulk-actions.force-delete.notification.title'))
-                                ->body(__('fields::filament/resources/field.table.bulk-actions.force-delete.notification.body')),
-                        ),
-                ]),
-            ])
-            ->defaultSort('created_at', 'desc');
+        return FieldsTable::configure($table);
     }
 
-    protected static function getPluginOptions(): array
+    public static function getPluginOptions(): array
     {
         return collect(static::customizableResources())
             ->map(fn ($resource) => static::resourcePluginDirectory($resource))
@@ -330,7 +71,7 @@ class FieldResource extends Resource
         return Filament::getPanel('admin')->getResources();
     }
 
-    protected static function getCustomizableResourceOptions(?string $plugin = null): array
+    public static function getCustomizableResourceOptions(?string $plugin = null): array
     {
         return collect(static::customizableResources())
             ->when(filled($plugin), fn ($resources) => $resources->filter(
@@ -428,7 +169,7 @@ class FieldResource extends Resource
         return str(class_basename($resource))->beforeLast('Resource')->headline()->toString();
     }
 
-    protected static function pluginForModel(string $type): ?string
+    public static function pluginForModel(string $type): ?string
     {
         foreach (static::customizableResources() as $resource) {
             if ($resource::getModel() === $type) {

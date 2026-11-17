@@ -6,6 +6,39 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-17, resource restructure to upstream's layout (Package F, branch `chore/resource-structure`)
+
+- **Why:** user: start the restructure backlog. Upstream v1.6 moved every
+  resource's form/infolist/table into `Schemas/` and `Tables/` classes;
+  while ours stayed inline, no upstream form or table fix could be applied
+  as a patch (docs/upstream-structure-alignment-plan.md).
+- **How:** a one-off script moved each body **verbatim** into
+  `XResource/Schemas/XForm.php`, `XInfolist.php` and `XResource/Tables/XsTable.php`
+  (`configure()`), leaving the resource method as a one-line delegation;
+  `static::`/`self::` became `XResource::`. 319 methods across 127
+  resources. Helpers those bodies call were made `public` (the custom-field
+  methods actually used, in `Fields\Filament\Traits\HasCustomFields`, and
+  about 40 resource helpers such as `getDefaultStageId()`), plus the
+  subclasses that redeclare them (the three ActivityType resources'
+  `$pluginName`). Not moved: 6 tables that extend `parent::table()`
+  (Account `PartnerResource`, Purchase `PurchaseOrderResource` and
+  `ProductResource`, Sale `ProductResource`, Security `CompanyResource`,
+  TimeOff `ByEmployeeResource`); upstream keeps those inline too. Resources
+  already split were left alone.
+- **Benefit:** upstream form and table changes now land in the same file
+  shape; resource classes shrank by about 35,000 lines.
+- **Trade-off / risk:** visibility widening is a small divergence from
+  upstream, which passes custom fields into `configure()` as an argument
+  instead. A resource is not a Livewire component, so a public static helper
+  is not callable from the browser; no guard moved. Field order, scoping and
+  `visibleFrom()` are covered by the structure snapshot, not by eye.
+- **Verification:** `php -l` on all 446 changed files; Pint clean; a token
+  scan found 0 class names that no longer resolve (negative control: a
+  planted unknown name was reported). Structure snapshot: baseline recorded
+  from `ddf2a821d` (pre-conversion), compared on the converted tree; result
+  below.
+- **Rollback:** revert the branch commit; the conversion is self-contained.
+
 ## 2026-11-16, branded emails and a clearer invitation (U31–U34)
 
 - **Why:** user: emails showed only "DEKA" in plain black text, hard to

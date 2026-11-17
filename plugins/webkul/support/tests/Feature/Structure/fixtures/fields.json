@@ -1,0 +1,320 @@
+{
+    "Webkul\\Field\\Filament\\Resources\\FieldResource": {
+        "model": "Webkul\\Field\\Models\\Field",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "name"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "code"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\Repeater",
+                                "name": "options",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "name"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Group",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Fieldset",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Repeater",
+                                                "name": "validations",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Select",
+                                                        "name": "validation"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                                        "name": "field"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                                        "name": "value"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Fieldset",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Repeater",
+                                                "name": "settings",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Select",
+                                                        "name": "setting"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                                        "name": "value"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                                        "name": "value"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Select",
+                                                        "name": "value"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Select",
+                                                        "name": "value"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Select",
+                                                        "name": "value"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\Toggle",
+                                "name": "use_in_table"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Repeater",
+                                "name": "table_settings",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "setting"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "value"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "value"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "value"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "value"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "value"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "value"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "value"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\Repeater",
+                                "name": "infolist_settings",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "setting"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "value"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "value"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "value"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "value"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "value"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "value"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "type"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "input_type"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Toggle",
+                                "name": "is_multiselect"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "sort"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "plugin"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "customizable_type"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "infolist": [],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "code",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "type",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "customizable_type",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "created_at",
+                    "sortable": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "type"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "customizable_type"
+                }
+            ],
+            "groups": [],
+            "defaultSort": "created_at",
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\EditAction",
+                            "name": "edit"
+                        },
+                        {
+                            "type": "Filament\\Actions\\RestoreAction",
+                            "name": "restore"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteAction",
+                            "name": "forceDelete"
+                        }
+                    ]
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\RestoreBulkAction",
+                            "name": "restore"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteBulkAction",
+                            "name": "forceDelete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    }
+}

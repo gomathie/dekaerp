@@ -35,11 +35,14 @@ require_once __DIR__.'/../../Helpers/ResourceStructureHelper.php';
  * through the schema registries, so the same fixture came out different
  * from a filtered run and a full one (the 50-vs-30 security.json incident).
  * With the full set installed first, every run sees the same panel.
+ *
+ * Partners and Fields are absent on purpose: they are core, installed with
+ * the ERP, and have no install command - listing them failed every test.
  */
 const STRUCTURE_PLUGINS = [
     'accounts', 'accounting', 'inventories', 'sales', 'purchases', 'manufacturing',
-    'products', 'partners', 'projects', 'employees', 'recruitments', 'time-off',
-    'timesheets', 'maintenance', 'fields', 'contacts', 'logistics',
+    'products', 'projects', 'employees', 'recruitments', 'time-off',
+    'timesheets', 'maintenance', 'contacts', 'logistics',
 ];
 
 beforeEach(function () {

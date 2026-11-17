@@ -1,6 +1,9 @@
 # Upstream Structure Alignment Plan
 
-> **Status:** Proposed, not started
+> **Status:** Conversion done 2026-11-17 (all plugins in one pass, by script,
+> at the user's request rather than one plugin per commit); verification in
+> progress. See docs/change-log.md 2026-11-17 for what moved, what stayed
+> inline and why.
 > **Scope:** Filament resource file layout across all plugins
 > **Starts:** after the Logistics plugin is finished and merged
 > **Branch:** `chore/resource-structure` - created 2026-09-20 from

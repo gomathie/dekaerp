@@ -20,7 +20,7 @@ class ActivityTypeResource extends BaseActivityTypeResource
 
     protected static bool $shouldRegisterNavigation = true;
 
-    protected static ?string $pluginName = 'recruitments';
+    public static ?string $pluginName = 'recruitments';
 
     public static function getNavigationGroup(): string
     {

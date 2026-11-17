@@ -11,6 +11,7 @@ use Webkul\Account\Filament\Resources\CustomerResource\Pages\ManageAddresses;
 use Webkul\Account\Filament\Resources\CustomerResource\Pages\ManageBankAccounts;
 use Webkul\Account\Filament\Resources\CustomerResource\Pages\ManageContacts;
 use Webkul\Account\Filament\Resources\CustomerResource\Pages\ViewCustomer;
+use Webkul\Account\Filament\Resources\CustomerResource\Tables\CustomersTable;
 use Webkul\Account\Models\Customer;
 
 class CustomerResource extends PartnerResource
@@ -19,11 +20,7 @@ class CustomerResource extends PartnerResource
 
     public static function table(Table $table): Table
     {
-        $table = PartnerResource::table($table);
-
-        $table->modifyQueryUsing(fn ($query) => $query->where('customer_rank', '>', 0));
-
-        return $table;
+        return CustomersTable::configure($table);
     }
 
     public static function getRecordSubNavigation(Page $page): array
