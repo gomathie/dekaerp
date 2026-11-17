@@ -10,7 +10,7 @@ class TimeOffForm
 {
     public static function configure(Schema $schema): Schema
     {
-        $schema = $schema->components((new self)->getFormSchema(true));
+        $schema = $schema->components((new TimeOffResource)->getFormSchema(true));
 
         $components = $schema->getComponents();
 

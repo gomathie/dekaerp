@@ -35,8 +35,18 @@ for the task/question log this change log is paired with.
 - **Verification:** `php -l` on all 446 changed files; Pint clean; a token
   scan found 0 class names that no longer resolve (negative control: a
   planted unknown name was reported). Structure snapshot: baseline recorded
-  from `ddf2a821d` (pre-conversion), compared on the converted tree; result
-  below.
+  from `ddf2a821d` (pre-conversion), compared on the converted tree, on
+  `aureuserp_testing_structure`. First comparison: 20 of 22 plugins
+  identical. Time-off differed for a real bug - `TimeOffForm` and
+  `MyTimeOffForm` called `(new self)->getFormSchema()`, which after the move
+  meant the new class, so both forms would have failed to open; fixed to
+  name the resource. Security differed only in the position of the
+  accounts-contributed base-currency section: contribution order follows
+  plugin boot order, which differs between a fresh-install run and one on an
+  installed database; the contributing files were not changed. Security was
+  re-baselined from the pre-conversion code on the installed database.
+  Final comparison: 26 passed (27 assertions), all 22 plugins identical.
+  Note for later runs: the security fixture depends on that boot order.
 - **Rollback:** revert the branch commit; the conversion is self-contained.
 
 ## 2026-11-16, branded emails and a clearer invitation (U31–U34)

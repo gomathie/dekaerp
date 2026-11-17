@@ -84,6 +84,20 @@
                                 "type": "Filament\\Schemas\\Components\\Section",
                                 "children": [
                                     {
+                                        "type": "Filament\\Schemas\\Components\\Actions",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Actions\\Action",
+                                                "name": "changeBaseCurrency"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
                                         "type": "Filament\\Forms\\Components\\Select",
                                         "name": "onboarding_price_id"
                                     }
@@ -166,20 +180,6 @@
                                     {
                                         "type": "Filament\\Forms\\Components\\CheckboxList",
                                         "name": "company_modules"
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "Filament\\Schemas\\Components\\Section",
-                                "children": [
-                                    {
-                                        "type": "Filament\\Schemas\\Components\\Actions",
-                                        "children": [
-                                            {
-                                                "type": "Filament\\Actions\\Action",
-                                                "name": "changeBaseCurrency"
-                                            }
-                                        ]
                                     }
                                 ]
                             }
