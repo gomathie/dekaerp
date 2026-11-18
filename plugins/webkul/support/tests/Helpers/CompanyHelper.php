@@ -70,6 +70,49 @@ class CompanyHelper
         }
     }
 
+    /**
+     * Write fixture rows the way a seeder or job does: with nobody signed in.
+     *
+     * Since UF-025 (2026-11-16) a signed-in user may not write into a company
+     * they are not a member of, and a job or seeder with no acting user is
+     * exempt. A fixture that seeds another company's rows - or a project owned
+     * by a user from outside the company - belongs on that exempt path, not
+     * under whoever the test signed in last. The previous user is restored.
+     */
+    public static function asNobody(callable $callback): mixed
+    {
+        // Both guards: SecurityHelper makes Sanctum the default, and Sanctum's
+        // guard resolves its user through the web session guard, which in turn
+        // re-reads the login id from the session. Clearing only the default
+        // guard therefore signed the user straight back in.
+        $web = auth()->guard('web');
+        $sanctum = auth()->guard('sanctum');
+        $previousWeb = $web->user();
+        $previousSanctum = $sanctum->user();
+
+        $sessionKey = $web->getName();
+        $loginId = session()->pull($sessionKey);
+
+        $web->forgetUser();
+        $sanctum->forgetUser();
+
+        try {
+            return $callback();
+        } finally {
+            if ($loginId !== null) {
+                session([$sessionKey => $loginId]);
+            }
+
+            if ($previousWeb !== null) {
+                $web->setUser($previousWeb);
+            }
+
+            if ($previousSanctum !== null) {
+                $sanctum->setUser($previousSanctum);
+            }
+        }
+    }
+
     public static function setActive(array $ids): void
     {
         session([CompanyContext::SESSION_KEY => $ids]);

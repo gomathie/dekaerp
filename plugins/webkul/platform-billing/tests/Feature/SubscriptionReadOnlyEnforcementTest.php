@@ -18,6 +18,7 @@ use Webkul\Project\Models\Task;
 use Webkul\Project\Models\TaskStage;
 use Webkul\Security\Models\Role;
 use Webkul\Security\Models\User;
+use Webkul\Support\Exceptions\CrossCompanyException;
 use Webkul\Support\Filament\Resources\CalendarResource\Pages\ListCalendars;
 use Webkul\Support\Models\Calendar;
 use Webkul\Support\Models\Company;
@@ -255,11 +256,17 @@ it('lets a multi-company admin write only into the read-only companies assigned 
     ]);
     expect($calendar->exists)->toBeTrue();
 
-    expectReadOnlyRefusal(fn () => Calendar::query()->create([
+    // Still refused, now one guard earlier: since UF-025 (2026-11-16) a write
+    // into a company the actor is not a member of throws CrossCompanyException
+    // before the read-only guard runs. Either way the unassigned company is
+    // not written.
+    expect(fn () => Calendar::query()->create([
         'name'       => 'Unassigned calendar',
         'timezone'   => 'UTC',
         'company_id' => $unassigned->getKey(),
-    ]));
+    ]))->toThrow(CrossCompanyException::class);
+
+    expect(Calendar::withoutGlobalScopes()->where('name', 'Unassigned calendar')->exists())->toBeFalse();
 });
 
 /**

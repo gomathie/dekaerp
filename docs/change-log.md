@@ -6,6 +6,41 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-18, tests brought in line with the cross-company write guard (UF-025)
+
+- **Why:** 16 tests across Projects, Products, Logistics, Employees and
+  Platform Billing failed with `CrossCompanyException` since hotfix v1.11.3.
+  Their fixtures wrote into a company the signed-in user is not a member of,
+  which the guard now refuses. Not caused by the restructure; the same tests
+  fail on `develop`.
+- **How:** test files only. New `CompanyHelper::asNobody()` writes fixture
+  rows with nobody signed in, as a seeder or job does (the guard's exempt
+  path). It must clear the web guard, the Sanctum guard and the session login
+  key: SecurityHelper makes Sanctum the default, and Sanctum resolves its user
+  through the web session, so clearing one guard signed the user back in.
+  Used in OwnershipScopeTest, Projects CompanyIsolationTest, TaskByStateChartTest,
+  CategoryCompanyScopingTest, Products CompanyIsolationTest, StopLinkTest and
+  AdoptionTest. EmployeeContactCompanyTest makes the actor a member of both
+  companies, active in one, so the old recursion is still reproduced.
+  AccountTypeTest makes the tenant a member of the expired company so the
+  write reaches the read-only guard.
+- **Decision (user, 2026-11-18):** a Multi-Company Admin writing into a
+  company not assigned to them gets the cross-company refusal, which now
+  fires before the read-only guard, rather than the read-only message - it
+  says nothing about another client's billing state. Pinned test
+  `SubscriptionReadOnlyEnforcementTest` "lets a multi-company admin write only
+  into the read-only companies assigned to them" now expects
+  `CrossCompanyException` and checks nothing was written. No application
+  change.
+- **Verification:** on `aureuserp_testing_structure`: ProjectFeature 89
+  passed (216 assertions), ProductFeature 276 passed (640), LogisticsFeature
+  201 passed (833), EmployeeFeature 10 passed (22), PlatformBillingFeature
+  126 passed (656). Earlier in the same run: SecurityFeature 191, PartnerFeature
+  94, PluginManagerFeature 69, RecruitmentFeature 4, TimeOff, Maintenance and
+  Timesheet 1 each, all passed. The seven large suites (Account, Accounting,
+  Invoice, Inventory, Sale, Purchase, Manufacturing) were not run.
+- **Rollback:** revert the test files and the helper.
+
 ## 2026-11-17, resource restructure to upstream's layout (Package F, branch `chore/resource-structure`)
 
 - **Why:** user: start the restructure backlog. Upstream v1.6 moved every

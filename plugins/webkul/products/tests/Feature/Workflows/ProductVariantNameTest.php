@@ -1,12 +1,12 @@
 <?php
 
+use Webkul\PluginManager\Models\Plugin;
+use Webkul\PluginManager\Package;
 use Webkul\Product\Models\Attribute;
 use Webkul\Product\Models\AttributeOption;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\ProductAttribute;
 use Webkul\Product\Models\ProductAttributeValue;
-use Webkul\PluginManager\Models\Plugin;
-use Webkul\PluginManager\Package;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
 

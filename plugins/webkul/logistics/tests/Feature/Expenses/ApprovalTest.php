@@ -177,12 +177,12 @@ it('stores a receipt while another allowed company is current', function () {
 
     Livewire::test(CreateExpense::class)
         ->fillForm([
-            'company_id'  => $owner->id,
-            'date'        => now()->toDateString(),
-            'amount'      => 25,
-            'category_id' => $category->id,
-            'paid_by'     => ExpensePaidBy::COMPANY->value,
-            'shipment_id' => $shipment->id,
+            'company_id'   => $owner->id,
+            'date'         => now()->toDateString(),
+            'amount'       => 25,
+            'category_id'  => $category->id,
+            'paid_by'      => ExpensePaidBy::COMPANY->value,
+            'shipment_id'  => $shipment->id,
             'receipt_path' => UploadedFile::fake()->image('attacker-name.jpg'),
         ], 'form')
         ->call('create')

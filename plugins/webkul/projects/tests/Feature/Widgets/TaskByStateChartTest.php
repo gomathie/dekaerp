@@ -38,7 +38,9 @@ it('counts tasks per state in one query, within the active company', function ()
     $user = CompanyHelper::actingAsCompanyUser($company);
 
     $project = Project::factory()->create(['company_id' => $company->id]);
-    $otherProject = Project::factory()->create(['company_id' => $otherCompany->id]);
+    // Another client's rows are seeded as nobody: the signed-in user may not
+    // write into a company they are not a member of (UF-025).
+    $otherProject = CompanyHelper::asNobody(fn (): Project => Project::factory()->create(['company_id' => $otherCompany->id]));
 
     $states = TaskState::cases();
     $first = $states[0];
@@ -46,7 +48,7 @@ it('counts tasks per state in one query, within the active company', function ()
 
     Task::factory()->count(2)->create(['project_id' => $project->id, 'company_id' => $company->id, 'creator_id' => $user->id, 'state' => $first->value]);
     Task::factory()->create(['project_id' => $project->id, 'company_id' => $company->id, 'creator_id' => $user->id, 'state' => $second->value]);
-    Task::factory()->count(3)->create(['project_id' => $otherProject->id, 'company_id' => $otherCompany->id, 'state' => $first->value]);
+    CompanyHelper::asNobody(fn () => Task::factory()->count(3)->create(['project_id' => $otherProject->id, 'company_id' => $otherCompany->id, 'state' => $first->value]));
 
     DB::flushQueryLog();
     DB::enableQueryLog();
