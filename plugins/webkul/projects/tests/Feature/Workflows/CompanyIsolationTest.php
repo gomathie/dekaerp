@@ -61,11 +61,12 @@ it('derives a task stage company from a project the actor does not own', functio
     // The stage saved and looked correct, which is what made it dangerous.
     $owner = SecurityHelper::authenticateWithPermissions([]);
 
-    $project = Project::factory()->create([
+    // Seeded as nobody: the owner is not a member of $company (UF-025).
+    $project = CompanyHelper::asNobody(fn (): Project => Project::factory()->create([
         'company_id' => $company->id,
         'creator_id' => $owner->getKey(),
         'user_id'    => $owner->getKey(),
-    ]);
+    ]));
 
     $actor = CompanyHelper::actingAsCompanyUser($company);
 

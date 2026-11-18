@@ -19,6 +19,7 @@ use Webkul\Security\Models\User;
 use Webkul\Security\Services\MultiCompanyAdminRoleProvisioner;
 use Webkul\Support\Models\Calendar;
 use Webkul\Support\Models\Company;
+use Webkul\Support\Services\CompanyContext;
 
 require_once __DIR__.'/../../../support/tests/Helpers/SecurityHelper.php';
 require_once __DIR__.'/../../../support/tests/Helpers/TestBootstrapHelper.php';
@@ -74,6 +75,13 @@ it('makes an expired test company read-only and leaves an open trial writable', 
         ->and($lifecycle->isReadOnly($company, new DateTimeImmutable('2026-11-01T00:00:00Z')))->toBeTrue();
 
     $tenant = SecurityHelper::authenticateWithPermissions([]);
+
+    // A member of the expired company, so the write reaches the read-only
+    // guard: since UF-025 (2026-11-16) a non-member is refused earlier.
+    $tenant->allowedCompanies()->sync([$company->getKey()]);
+    $tenant->forceFill(['default_company_id' => $company->getKey()])->saveQuietly();
+    session([CompanyContext::SESSION_KEY => [$company->getKey()]]);
+    app()->forgetInstance(CompanyContext::class);
 
     expect($tenant->isSuperAdmin())->toBeFalse()
         ->and(fn () => Calendar::query()->create([

@@ -37,11 +37,14 @@ afterEach(fn () => SecurityHelper::restoreUserEvents());
  */
 function ownershipProject($company, User $owner, array $overrides = []): Project
 {
-    return Project::factory()->create(array_merge([
+    // Seeded as nobody: the owner is often a user from outside the company,
+    // and since UF-025 a signed-in user may not write into a company they are
+    // not a member of. Ownership is set explicitly, not from the session.
+    return CompanyHelper::asNobody(fn (): Project => Project::factory()->create(array_merge([
         'company_id' => $company->id,
         'creator_id' => $owner->getKey(),
         'user_id'    => $owner->getKey(),
-    ], $overrides));
+    ], $overrides)));
 }
 
 function ownershipActor($company, PermissionType $permission): User

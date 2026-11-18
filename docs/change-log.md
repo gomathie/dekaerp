@@ -6,6 +6,37 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-18, tests brought in line with the cross-company write guard (UF-025)
+
+- **Why:** 16 tests across Projects, Products, Logistics, Employees and
+  Platform Billing failed with `CrossCompanyException` since hotfix v1.11.3:
+  their fixtures wrote into a company the signed-in user is not a member of,
+  which the guard now refuses. Found while verifying the resource restructure
+  on `chore/resource-structure`; applied here as its own change (user,
+  2026-11-18) so `develop` goes green without waiting for that branch.
+- **How:** test files only, identical to commit `f3c0a9ca4` on the
+  restructure branch. New `CompanyHelper::asNobody()` writes fixture rows with
+  nobody signed in, as a seeder or job does (the guard's exempt path). It
+  clears the web guard, the Sanctum guard and the session login key:
+  SecurityHelper makes Sanctum the default and Sanctum resolves its user
+  through the web session, so clearing one guard signed the user back in.
+  EmployeeContactCompanyTest makes the actor a member of both companies,
+  active in one; AccountTypeTest makes the tenant a member of the expired
+  company. Pint also realigned six untouched test files (formatting only).
+- **Decision (user, 2026-11-18):** a Multi-Company Admin writing into a
+  company not assigned to them gets the cross-company refusal, which fires
+  before the read-only guard, not the read-only message: it reveals nothing
+  about another client's billing state. Pinned test
+  `SubscriptionReadOnlyEnforcementTest` "lets a multi-company admin write
+  only into the read-only companies assigned to them" now expects
+  `CrossCompanyException` and checks nothing was written. No application
+  change.
+- **Verification:** run on the restructure branch, whose test files are
+  identical (`aureuserp_testing_structure`): ProjectFeature 89 passed,
+  ProductFeature 276, LogisticsFeature 201, EmployeeFeature 10,
+  PlatformBillingFeature 126. Not re-run on `develop` itself.
+- **Rollback:** revert this commit.
+
 ## 2026-11-16, branded emails and a clearer invitation (U31–U34)
 
 - **Why:** user: emails showed only "DEKA" in plain black text, hard to
