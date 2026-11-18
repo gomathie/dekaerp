@@ -101,6 +101,55 @@ Every series one grouped query (as `dailyBuckets` already does); eager
 loading on top-N tables; confirm no widget polls faster than 300 s.
 Measure before and after with the query log in tests.
 
+### DB-7 Businesses that trade in USD and their local currency
+
+Many clients (Ghana, Zambia, Congo) invoice, buy and hold bank balances in
+USD and in their local currency at the same time. A dashboard must never add
+those amounts together as if they were one money.
+
+**What the application already stores** (checked 2026-11-18): each invoice,
+bill, sales order and purchase order keeps its own currency and the rate used
+at the time (`invoice_currency_rate`, `currency_rate`), plus amounts in the
+company's base currency (`amount_total_signed`, `amount_residual_signed`,
+`total_cc_amount`, journal `balance`). Exchange rates are kept per company
+under Currencies. So the data to do this right is there; some widgets just do
+not use it.
+
+**Found 2026-11-18 (fix first, it is a wrong number today):**
+Accounting `JournalChartWidget` sums `amount_residual` and `amount_total`,
+which are in each document's own currency. For a company with USD and local
+invoices, its "to pay", "late" and draft figures add dollars to local units.
+Fix: sum the `_signed` company-currency columns, as the other money widgets
+already do. A known-totals test with one USD and one local invoice pins it.
+(Outside dashboards, Sales `SendSMSNotificationListener` sums a customer's
+invoices the same way; recorded for its own fix.)
+
+**The rules for every money figure:**
+
+1. **Totals are in the company's base currency**, each document converted at
+   **its own stored rate**, never at today's rate. The figure then matches
+   the accounts and does not move when rates move.
+2. **The currency is always shown** on every tile and axis (`ZMW 85,000`,
+   not `85,000`).
+3. **Where the real currency matters, show it by currency too.** For money
+   someone must collect or pay (receivables, payables, overdue) and for cash
+   and bank, a "by currency" line under the base total:
+   `ZMW 312,400 total · USD 9,800 · ZMW 61,000`. A clerk chasing a debt
+   needs to know it is 9,800 dollars, not its kwacha value.
+4. **Cash and bank balances stay in each account's own currency**, with the
+   base-currency total beside them, labelled.
+5. **A missing rate is not a zero.** If a document has no usable rate, show
+   `—` with a warning naming the currency to set up, and leave it out of
+   the total rather than counting it at 1.
+6. **Optional view in USD** (D-DB-6): a "Show in USD" switch converting the
+   base totals at the latest rate, labelled "estimate at today's rate". Never
+   the default and never used for exports or accounts.
+
+**Tests:** a fixture company with base ZMW, one USD invoice at a known rate
+and one ZMW invoice; assert the base total, the by-currency breakdown, that a
+later rate change does not move the historical total, and that a missing rate
+shows `—` and is excluded.
+
 ## Verification for every package
 
 - Pest: known totals, a foreign-company row that must not count, and the
@@ -121,6 +170,14 @@ Measure before and after with the query log in tests.
   Sales, Purchases, then the rest.
 - **D-DB-4** Inventory dashboards: leave to the Inventory developer (#4), or
   include the shared-helper changes only? Suggested: shared helpers only.
+- **D-DB-5** Which figures get the "by currency" breakdown? Suggested:
+  receivables, payables, overdue, cash and bank. Revenue and costs stay as
+  one base-currency total.
+- **D-DB-6** Offer the optional "Show in USD" estimate view? Suggested: yes,
+  off by default, labelled as an estimate, not in exports.
+- **D-DB-7** Fix the `JournalChartWidget` currency sum now as a hotfix
+  (it shows a wrong figure for mixed-currency companies), or with the plan?
+  Suggested: hotfix, since a client sees a wrong number.
 
 ## Out of scope
 
