@@ -14,6 +14,7 @@ When work on one begins, mark its status "in progress" here and in the plan.
 | 6 | [CRM](06-crm-plan.md) | Phased port of upstream's core (leads, pipeline, teams, won/lost, quotation link) | Decisions accepted 2026-11-11. Waits for upstream CRM to be stable |
 | 7 | [Landing page](07-landing-page-brief.md) | Public landing page | Not started; content decisions made 2026-11-11. Hosting and screenshots after the other tasks |
 | 8 | [Point of Sale](08-pos-extraction-plan.md) | Point of Sale from upstream | Planning only; first-version scope decided 2026-11-11. Least needed (user, 2026-11-13) |
+| 9 | [Dashboard improvements](09-dashboard-improvement-plan.md) | Honest, consistent, tenant-scoped dashboard numbers; states, hierarchy, phone width | Proposed 2026-11-18; decisions D-DB-1 to D-DB-4 open. Placed last pending the user's priority |
 
 Moved to completed 2026-11-15: Accounting (A4 shipped in v1.11.0) and
 Reports (shipped in v1.10.0); the rest renumbered.
