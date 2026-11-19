@@ -2018,6 +2018,19 @@ log named):
 
 DONE RECENTLY (newest first; details in docs/change-log.md)
 
+• 2026-11-19 — Hotfixes v1.12.1 to v1.12.5, all from TRACE365 use
+  (investor-owned: their issues ship as hotfixes). Locked-period deletes
+  guarded again; invoice currency switch; payment methods and automatic
+  accounting setup for every company (`ACCOUNTING_AUTO_SETUP`); GHS invoices
+  payable; new users default to the creator's company and Company Admin
+  brings the business role; the Overview cash chart reads payments by
+  payment date (`OverviewCashFlowChart::dailyPayments()`, not invoice date);
+  avatar links use the contact's own company folder on tenant-s3; upstream
+  UF-026 (list sorting) and UF-027 (Replenishment 404). Plans #10 (Russian,
+  Swahili) and #11 (view reports before export, Zoho Books payment-flow
+  comparison) are on `chore/resource-structure`. Report names Aged
+  receivable/payable stay (user, 2026-11-19: standard terms).
+
 • 2026-11-10 — Logistics customer page (WP-9b): a read-only shipments tab on
   the customer infolist. See the protected decision above.
 

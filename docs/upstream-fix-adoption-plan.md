@@ -1145,6 +1145,30 @@ the parent product name is unchanged.
 > request rule was not added: every API write reaches the model guard, which
 > answers 422. Test: support `Tenancy/CrossCompanyWriteTest`.
 
+### UF-026 - Column sorting ignored on invoice, bill, payment and purchase lists
+
+**Decision:** Adopted, P2 (2026-11-19)  
+**Upstream reference:** issue #1671, commit `3b0ee0bf0`  
+**Local state:** **Fixed in hotfix v1.12.5 (2026-11-19)**
+
+> Seven resources ordered by id inside `getEloquentQuery()`, ahead of any
+> column sort, so clicking a header changed nothing. Moved to
+> `->defaultSort('id', 'desc')` on the table: accounts invoices, bills,
+> payments, credit notes, refunds; purchases orders and agreements (our
+> resources are monolithic, so applied by hand). Test: accounts
+> `InvoiceResourceTest` "lists newest invoices first and still follows a
+> column sort".
+
+### UF-027 - Unfinished Replenishment page reachable by direct URL
+
+**Decision:** Adopted, P3 (2026-11-19)  
+**Upstream reference:** commit `bb50e2bbc`  
+**Local state:** **Fixed in hotfix v1.12.5 (2026-11-19)**
+
+> Hidden from navigation but still opened, and errored, by URL.
+> `ManageReplenishment::mount()` answers 404 as upstream does. Finishing it
+> belongs to the Inventory plan (`docs/planned/05-inventory-plan.md`).
+
 ## Already Present Locally
 
 The following upstream runtime work does not need to be reimplemented:
@@ -1358,6 +1382,7 @@ They must not claim tests or production checks that were not executed.
 |---|---|---|---|---|
 | 2026-09-18 | `d7d471894` | `e0ce9f6a8467` | Initial whole-app test-fix audit. P0 CI/Employee gaps, P1 accounting/locale/E2E gaps, optional product initiatives, and explicit rejects recorded. | 2026-09-25 or earlier trigger |
 | 2026-10-20 | v1.6.0 release | `d66a7f0e1` | v1.6.0 full changelog review. Eight gaps not captured by the initial failing-test pass added as UF-017 through UF-024: XSS in chatter (P0 security), payment state bug (P1), Livewire nesting depth (P1), saved filter crash (P1), Employee parent_id FK (P1), RFQ/PO currency conversion (P1), active-currency delete error (P2), product variant name bug (P2). Upstream commit SHAs TBD during implementation. | 2026-10-27 or earlier trigger |
+| 2026-11-19 | upstream through 2026-10-29 | `68c8a286d` | Review of recent upstream fixes: #1671 list sorting (UF-026) and the Replenishment 404 (UF-027) adopted in hotfix v1.12.5. No P0/P1 found. | No cadence (dropped 2026-10-21) |
 
 ## Completion Criteria for This Plan
 
