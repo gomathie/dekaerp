@@ -63,6 +63,7 @@ use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\PurchaseAgreementRe
 use Webkul\Purchase\Models\Requisition;
 use Webkul\Purchase\Settings\OrderSettings;
 use Webkul\Purchase\Settings\ProductSettings;
+use Webkul\Support\Filament\CompanyMembers;
 use Webkul\Support\Filament\Forms\Components\Repeater;
 use Webkul\Support\Filament\Forms\Components\Repeater\TableColumn;
 use Webkul\Support\Filament\Infolists\Components\RepeatableEntry;
@@ -148,7 +149,7 @@ class PurchaseAgreementResource extends Resource
                                     ->disabled(fn ($record): bool => $record && $record?->state != RequisitionState::DRAFT),
                                 Select::make('user_id')
                                     ->label(__('purchases::filament/admin/clusters/orders/resources/purchase-agreement.form.sections.general.fields.buyer'))
-                                    ->relationship('user', 'name', fn ($query) => \Webkul\Support\Filament\CompanyMembers::scope($query))
+                                    ->relationship('user', 'name', fn ($query) => CompanyMembers::scope($query))
                                     ->searchable()
                                     ->preload()
                                     ->disabled(fn ($record): bool => $record && $record?->state != RequisitionState::DRAFT),
@@ -436,6 +437,9 @@ class PurchaseAgreementResource extends Resource
                     ->badge()
                     ->toggleable(),
             ]))
+            // Newest first as the table default, not as orderByDesc in getEloquentQuery():
+            // that ran before any column sort, so clicking a header did nothing (upstream #1671).
+            ->defaultSort('id', 'desc')
             ->groups([
                 Tables\Grouping\Group::make('partner.name')
                     ->label(__('purchases::filament/admin/clusters/orders/resources/purchase-agreement.table.groups.vendor')),
@@ -760,8 +764,7 @@ class PurchaseAgreementResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->orderByDesc('id');
+        return parent::getEloquentQuery();
     }
 
     public static function handleCompanyChange(Get $get, Set $set): void

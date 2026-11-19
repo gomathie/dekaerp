@@ -602,6 +602,9 @@ class InvoiceResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ]))
+            // Newest first as the table default, not as orderByDesc in getEloquentQuery():
+            // that ran before any column sort, so clicking a header did nothing (upstream #1671).
+            ->defaultSort('id', 'desc')
             ->groups([
                 Tables\Grouping\Group::make('name')
                     ->label(__('accounts::filament/resources/invoice.table.groups.name'))
@@ -1685,8 +1688,7 @@ class InvoiceResource extends Resource
         return parent::getEloquentQuery()
             ->when(Str::contains(static::class, 'InvoiceResource'), function (Builder $query) {
                 $query->where('move_type', MoveType::OUT_INVOICE);
-            })
-            ->orderByDesc('id');
+            });
     }
 
     protected static function disableTypeField($component): void

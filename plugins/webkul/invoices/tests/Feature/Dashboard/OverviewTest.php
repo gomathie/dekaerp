@@ -13,6 +13,7 @@ use Webkul\Invoice\Filament\Pages\Invoices;
 use Webkul\Invoice\Filament\Pages\Overview;
 use Webkul\Invoice\Filament\Widgets\InvoiceHeadlineWidget;
 use Webkul\Invoice\Filament\Widgets\OverviewBoard;
+use Webkul\Invoice\Filament\Widgets\OverviewCashFlowChart;
 use Webkul\Invoice\Filament\Widgets\OverviewHeadlineWidget;
 use Webkul\Invoice\Filament\Widgets\OverviewModuleCards;
 use Webkul\PluginManager\Models\Plugin;
@@ -319,4 +320,39 @@ it('renders the board with only the panels the user may see', function (): void 
     expect(array_keys($data['panels']))->toBe(['invoices'])
         ->and($data['panels']['invoices']['split'])->toHaveCount(3)
         ->and(array_keys($data['panels']['invoices']['list']['tabs']))->toBe(['overdue', 'soon', 'open']);
+});
+
+/**
+ * TRACE365, 2026-11-19: money received today against an older invoice did
+ * not show on today, because the chart grouped paid invoices by invoice
+ * date. It now groups payments by the day they were made.
+ */
+it('charts money in and out on the day each payment was made', function (): void {
+    $company = Company::factory()->create();
+    CompanyHelper::actingAsCompanyUser($company, ['page_invoice_invoices']);
+
+    $paid = fn (string $type, float $amount, string $date, string $state = 'paid') => DB::table('accounts_account_payments')->insert([
+        'company_id'                     => $company->getKey(),
+        'payment_type'                   => $type,
+        'state'                          => $state,
+        'date'                           => $date,
+        'amount'                         => $amount,
+        'amount_company_currency_signed' => $type === 'inbound' ? $amount : -$amount,
+        'created_at'                     => now(),
+        'updated_at'                     => now(),
+    ]);
+
+    $paid('inbound', 150, now()->toDateString());
+    $paid('inbound', 50, now()->toDateString());
+    $paid('inbound', 999, now()->toDateString(), 'draft');
+    $paid('outbound', 40, now()->toDateString());
+
+    $chart = new OverviewCashFlowChart;
+    $chart->pageFilters = ['start_date' => now()->subDays(2)->toDateString(), 'end_date' => now()->toDateString()];
+
+    $data = (fn (): array => $this->getData())->call($chart);
+
+    expect($data['labels'])->toHaveCount(3)
+        ->and($data['datasets'][0]['data'])->toBe([0.0, 0.0, 200.0])
+        ->and($data['datasets'][1]['data'])->toBe([0.0, 0.0, 40.0]);
 });

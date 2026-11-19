@@ -91,6 +91,21 @@ class Partner extends Authenticatable implements FilamentUser
             return;
         }
 
+        /*
+         * On tenant-s3 the disk prefixes keys with the *active* company, so a
+         * Super Admin who switched company got a link into the wrong company's
+         * folder and a 404 (2026-11-19). The picture lives under the
+         * contact's own company. SecureStorageController still decides who may
+         * read it; a shared contact keeps the disk's own URL.
+         */
+        if (config('filesystems.disks.public.driver') === 'tenant-s3' && $this->company_id) {
+            $root = trim((string) config('filesystems.disks.public.root'), '/');
+
+            return rtrim((string) config('filesystems.disks.public.url'), '/').'/'
+                .($root !== '' ? $root.'/' : '')
+                ."companies/{$this->company_id}/".ltrim($this->avatar, '/');
+        }
+
         return Storage::disk('public')->url($this->avatar);
     }
 

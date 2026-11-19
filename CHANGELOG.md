@@ -10,6 +10,22 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.12.5 — 2026-11-19
+
+### Fixes
+
+- Creating a user no longer stops silently: the new user starts in your
+  current company, and if something is still missing, a message names the
+  fields to fill in.
+- Choosing "Company Admin" for a user now adds the business role too, so
+  the new administrator sees the company's screens straight away.
+- The "Money in and out" chart on the Overview shows payments on the day
+  they were made, so money received today appears today, even for older
+  invoices.
+- Your profile picture shows again after switching company.
+- Invoice, bill, payment and purchase lists sort again when you click a
+  column heading. They still open with the newest first.
+
 # CHANGELOG — v1.12.4 — 2026-11-19
 
 ### Fixes

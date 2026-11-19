@@ -48,6 +48,35 @@ class Profile extends Page implements HasForms
         $this->fillForms();
     }
 
+    /**
+     * The picture belongs to the user's own contact, so it is stored under
+     * that contact's company. On tenant-s3, disk('public') prefixes keys with
+     * the *active* company instead: after switching company the preview
+     * returned 404 and a new upload landed in the other company's folder
+     * (2026-11-19). Partner::getAvatarUrlAttribute() reads the same folder.
+     */
+    protected function avatarDisk(): string
+    {
+        $companyId = $this->getUser()->partner?->company_id;
+
+        if (config('filesystems.disks.public.driver') !== 'tenant-s3' || ! $companyId) {
+            return 'public';
+        }
+
+        $root = trim((string) config('filesystems.disks.public.root'), '/');
+
+        config(['filesystems.disks.profile-avatar' => array_merge(config('filesystems.disks.public'), [
+            'driver' => 's3',
+            'root'   => ($root !== '' ? $root.'/' : '')."companies/{$companyId}",
+        ])]);
+
+        // A resolved disk is cached by name; drop it so a long-lived worker
+        // never hands one user's folder to the next.
+        Storage::forgetDisk('profile-avatar');
+
+        return 'profile-avatar';
+    }
+
     protected function getForms(): array
     {
         return [
@@ -79,7 +108,7 @@ class Profile extends Page implements HasForms
                             ->avatar()
                             ->directory('users/avatars')
                             ->visibility('public')
-                            ->disk('public')
+                            ->disk(fn (): string => $this->avatarDisk())
                             ->acceptedFileTypes(['image/jpeg', 'image/jpg', 'image/png', 'image/webp'])
                             ->maxSize(2048)
                             ->image()
@@ -204,7 +233,7 @@ class Profile extends Page implements HasForms
                     $user->avatar
                     && $data['avatar'] !== $user->avatar
                 ) {
-                    Storage::disk('public')->delete($user->avatar);
+                    Storage::disk($this->avatarDisk())->delete($user->avatar);
                 }
 
                 $user->partner->avatar = $data['avatar'];

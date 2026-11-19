@@ -434,6 +434,39 @@ it('creates a company user through the Filament relationship form', function () 
         ->and($createdUser->allowedCompanies()->pluck('companies.id')->all())->toBe([$company->getKey()]);
 });
 
+/**
+ * TRACE365, 2026-11-19: a Company Admin's "Create" did nothing because the
+ * required default company started empty. Both fields now start with the
+ * creator's current company.
+ */
+it('creates a user in the current company without picking a company', function () {
+    $company = multiCompanyAdminTestCompany();
+    $companyRole = multiCompanyAdminTestRole();
+    $administrator = multiCompanyAdminTestAdministrator($company);
+    $email = fake()->unique()->safeEmail();
+    multiCompanyAdminTestAuthenticate($administrator, [$company->getKey()]);
+
+    Livewire::test(CreateUser::class)
+        ->assertSchemaStateSet([
+            'allowed_companies'  => [$company->getKey()],
+            'default_company_id' => $company->getKey(),
+        ])
+        ->fillForm([
+            'name'                  => 'Company Default User',
+            'email'                 => $email,
+            'password'              => 'password123',
+            'password_confirmation' => 'password123',
+            'roles'                 => [$companyRole->getKey()],
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    $createdUser = User::query()->where('email', $email)->firstOrFail();
+
+    expect($createdUser->default_company_id)->toBe($company->getKey())
+        ->and($createdUser->allowedCompanies()->pluck('companies.id')->all())->toBe([$company->getKey()]);
+});
+
 it('lets a Super Admin promote a user and assign multiple companies through Filament', function () {
     $companyA = multiCompanyAdminTestCompany();
     $companyB = multiCompanyAdminTestCompany();

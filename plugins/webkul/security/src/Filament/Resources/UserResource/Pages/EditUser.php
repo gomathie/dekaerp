@@ -14,6 +14,7 @@ use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 use Webkul\Security\Enums\PermissionType;
 use Webkul\Security\Filament\Resources\UserResource;
+use Webkul\Security\Filament\Resources\UserResource\Pages\Concerns\NamesInvalidFields;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\MultiCompanyAdminService;
 use Webkul\Security\Services\SeatCapacityService;
@@ -23,6 +24,8 @@ use Webkul\Security\Settings\UserSettings;
 
 class EditUser extends EditRecord
 {
+    use NamesInvalidFields;
+
     protected static string $resource = UserResource::class;
 
     protected ?bool $hasDatabaseTransactions = true;

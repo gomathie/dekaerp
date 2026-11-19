@@ -447,6 +447,9 @@ class OrderResource extends Resource
                     ->badge()
                     ->toggleable(isToggledHiddenByDefault: true),
             ]))
+            // Newest first as the table default, not as orderByDesc in getEloquentQuery():
+            // that ran before any column sort, so clicking a header did nothing (upstream #1671).
+            ->defaultSort('id', 'desc')
             ->groups([
                 Tables\Grouping\Group::make('partner.name')
                     ->label(__('purchases::filament/admin/clusters/orders/resources/order.table.groups.vendor')),
@@ -1786,7 +1789,6 @@ class OrderResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->orderByDesc('id');
+        return parent::getEloquentQuery();
     }
 }

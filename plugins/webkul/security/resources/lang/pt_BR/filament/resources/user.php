@@ -13,6 +13,7 @@ return [
 
     'form' => [
         'validation' => [
+            'needs-attention'                 => 'Alguns campos precisam de atenção',
             'cannot-remove-last-admin'        => 'Não é possível remover a função de administrador do último usuário administrador.',
             'company-invalid'                 => 'Uma ou mais empresas selecionadas são inválidas.',
             'company-not-assigned'            => 'Você só pode atribuir usuários às empresas atribuídas à sua conta.',

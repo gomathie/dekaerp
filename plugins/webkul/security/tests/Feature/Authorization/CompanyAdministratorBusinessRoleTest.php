@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Mail;
+use Webkul\Security\Filament\Resources\UserResource\Pages\CreateUser;
 use Webkul\Security\Models\Invitation;
 use Webkul\Security\Models\Permission;
 use Webkul\Security\Models\Role;
@@ -85,4 +86,25 @@ it('gives only Company Admin when no business role is configured', function () {
     businessRoleTestUseRole(null);
 
     expect(CompanyAdministratorInviter::administratorRoleIds())->toBe([CompanyAdministratorInviter::companyAdminRoleId()]);
+});
+
+/**
+ * User, 2026-11-19: "Director" was created from the Users form with only
+ * "Company Admin" and saw an almost empty panel. Picking Company Admin on
+ * the form now adds the business role too.
+ */
+it('adds the business role on the user form when Company Admin is picked', function () {
+    $superAdmin = multiCompanyAdminTestSuperAdmin();
+    multiCompanyAdminTestAuthenticate($superAdmin, []);
+
+    $business = Role::query()->create(['name' => 'Tenant Operations', 'guard_name' => 'web']);
+    businessRoleTestUseRole($business);
+
+    [$companyAdminRoleId] = CompanyAdministratorInviter::administratorRoleIds();
+
+    Livewire\Livewire::test(CreateUser::class)
+        // set(), not fillForm(): picking a role in the browser fires the
+        // field's update hook, and fill() does not.
+        ->set('data.roles', [$companyAdminRoleId])
+        ->assertSchemaStateSet(['roles' => [$companyAdminRoleId, $business->getKey()]]);
 });
