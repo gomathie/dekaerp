@@ -3,7 +3,6 @@
 namespace Webkul\Account\Filament\Resources\InvoiceResource\Actions;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
@@ -91,10 +90,15 @@ class PayAction extends Action
                     $amountsToPay = $paymentRegister->getTotalAmountsToPay($paymentRegister->batches);
                     $paymentRegister->amount = $amountsToPay['amount_by_default'];
                     $paymentRegister->computeInstallmentsMode();
-                } catch (Exception $e) {
+                } catch (Throwable $e) {
+                    // Reported, and a plain sentence for the user: the raw
+                    // message ("Call to a member function isZero() on null")
+                    // reached a client and never reached Sentry (2026-11-19).
+                    report($e);
+
                     Notification::make()
                         ->title(__('accounts::filament/resources/invoice/actions/pay-action.notifications.payment-failed.title'))
-                        ->body($e->getMessage())
+                        ->body(__('accounts::filament/resources/invoice/actions/pay-action.notifications.payment-failed.plain-body'))
                         ->danger()
                         ->send();
                 }
@@ -275,15 +279,11 @@ class PayAction extends Action
                                             // CR-6: the invoice's company decides which currencies may pay it.
                                             modifyQueryUsing: fn (Builder $query, $record) => $query->active()->permittedFor($record?->company_id ?: current_company_id()),
                                         )
-                                        ->default(function ($record, Get $get) {
-                                            $journal = Journal::find($get('journal_id'));
-
-                                            if (! $journal) {
-                                                return $record->currency_id;
-                                            }
-
-                                            return $journal->currency_id ?? $record->currency_id;
-                                        })
+                                        // The invoice's own currency, never the journal's: a GHS
+                                        // company's bank journal created in USD made every GHS
+                                        // invoice pay in USD, which then failed to match the
+                                        // invoice ("isZero() on null", TRACE365, 2026-11-19).
+                                        ->default(fn ($record) => $record->currency_id)
                                         ->required()
                                         ->searchable()
                                         ->preload()

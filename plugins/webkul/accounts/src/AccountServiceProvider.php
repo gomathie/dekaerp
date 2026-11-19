@@ -127,6 +127,7 @@ class AccountServiceProvider extends PackageServiceProvider
                 '2026_11_12_100000_create_accounts_lock_dates_table',
                 '2026_11_13_000001_add_date_and_payment_to_accounts_bank_statement_lines',
                 '2026_11_19_000001_backfill_payment_method_lines_for_bank_and_cash_journals',
+                '2026_11_19_000002_set_up_accounting_for_companies_without_it',
             ])
             ->runsMigrations()
             ->hasSettings([

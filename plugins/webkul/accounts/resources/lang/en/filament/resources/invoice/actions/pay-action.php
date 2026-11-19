@@ -17,7 +17,8 @@ return [
 
     'notifications' => [
         'payment-failed' => [
-            'title' => 'Payment Failed',
+            'title'      => 'Payment Failed',
+            'plain-body' => 'This payment could not be prepared. Our team has been notified. Please try again in a moment, or contact support.',
         ],
     ],
 ];

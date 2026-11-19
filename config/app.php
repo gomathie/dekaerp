@@ -21,7 +21,15 @@ return [
     | (VersionMatchesChangelogTest). It was hard-coded at 1.5.0 in
     | HasFilamentDefaults while production ran 1.7.0 (2026-11-12).
     */
-    'version' => env('APP_VERSION', '1.12.3'),
+    'version' => env('APP_VERSION', '1.12.4'),
+
+    /*
+    | Set up accounting (chart, journals, taxes, payment methods) for a company
+    | as soon as it is created (user, 2026-11-19): a company without it could
+    | not invoice or take payments, and the setup button was buried in
+    | settings. Off in phpunit.xml so tests keep fresh, un-set-up companies.
+    */
+    'accounting_auto_setup' => (bool) env('ACCOUNTING_AUTO_SETUP', true),
 
     /*
     |--------------------------------------------------------------------------

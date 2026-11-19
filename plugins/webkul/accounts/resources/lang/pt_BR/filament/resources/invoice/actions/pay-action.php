@@ -17,7 +17,8 @@ return [
 
     'notifications' => [
         'payment-failed' => [
-            'title' => 'Falha no pagamento',
+            'title'      => 'Falha no pagamento',
+            'plain-body' => 'Não foi possível preparar este pagamento. Nossa equipe foi avisada. Tente novamente em instantes ou fale com o suporte.',
         ],
     ],
 ];

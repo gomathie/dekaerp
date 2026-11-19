@@ -6,6 +6,45 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-19, hotfix v1.12.4: GHS invoices could not be paid; automatic accounting setup
+
+- **Why (1):** TRACE365 (base GHS) could not pay INV/2026/00011 (GHS); the
+  Pay window opened with an empty amount, currency USD, and the raw text
+  "Call to a member function isZero() on null", which never reached Sentry.
+  Root cause: `PayAction`'s currency field defaulted to the journal's
+  currency, and TRACE365's journals are USD (set up while its base was USD,
+  base changed to GHS before any entry). A GHS invoice was paid in USD with
+  no rate and could not be matched. USD invoices worked by coincidence.
+- **How (1):** the currency field defaults to the invoice's currency. The
+  setup `catch` now takes `Throwable`, calls `report()`, and shows a plain
+  message (`payment-failed.plain-body`, 5 languages) instead of the raw one.
+  TRACE365's journals stay USD (user, 2026-11-19: "Leave as USD").
+- **Why (2):** companies without accounting setup could not invoice ("no
+  journal found") and the setup button sat on two settings pages (user,
+  2026-11-19: automatic). Four production companies had none.
+- **How (2):** `Account\Observers\CompanyObserver::created()` runs
+  `AccountingSetupService::setUp()` when `config('app.accounting_auto_setup')`
+  (env `ACCOUNTING_AUTO_SETUP`, default true; `phpunit.xml` forces false so
+  tests keep un-set-up companies). Migration
+  `2026_11_19_000002_set_up_accounting_for_companies_without_it` sets up every
+  existing company once (skips set-up ones; same switch). Inside onboarding it
+  shares the transaction, so a refused onboarding rolls it back.
+- **Trade-off / risk:** setUp copies the template company's chart into each
+  company on creation; a company without a template country keeps the
+  standard chart (A4 decision unchanged). A test that ran the real migration
+  over all companies leaked state into CountryChart and CompanyCurrencyGuard;
+  removed, the observer and switch are tested instead.
+- **Verification:** fresh `aureuserp_testing_claude_vault`: AccountFeature
+  filtered `PaymentMethodSetup|CountryChart|CompanyCurrencyGuard|
+  PayInCompanyCurrency|InvoiceResourceTest|BillResourceTest|
+  InvoiceCurrencySwitch`: 48 passed (176 assertions). New
+  `PayInCompanyCurrencyTest` (GHS-based company pays a GHS invoice; register
+  prepares 300.00); reproduced the failure first ("The selected currency is
+  invalid" / NOT_PAID).
+- **Release:** v1.12.4 (app 1.12.4, accounts 1.12.3).
+- **Rollback:** revert; set `ACCOUNTING_AUTO_SETUP=false` to stop automatic
+  setup without a deploy of code.
+
 ## 2026-11-19, hotfix v1.12.3: no company could mark an invoice paid
 
 - **Why:** TRACE365 could not register a payment on INV/2026/00012.

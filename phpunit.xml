@@ -119,6 +119,9 @@
              hasDsnSet() false, so no client, transport or integration is built
              at all - a before_send filter would still boot and still trace. -->
         <env name="SENTRY_LARAVEL_DSN" value="" force="true"/>
+        <!-- Tests create companies everywhere and many expect them not set up
+             for accounting yet; the auto-setup test turns this on itself. -->
+        <env name="ACCOUNTING_AUTO_SETUP" value="false" force="true"/>
         <!-- Tests compile views into their own folder (2026-11-13, Sentry
              DEKAERP-19..1J). The suite installs plugins, which runs
              optimize:clear and empties the compiled-views folder; with the

@@ -5,6 +5,7 @@ namespace Webkul\Account\Observers;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 use Webkul\Account\Models\MoveLine;
+use Webkul\Account\Services\AccountingSetupService;
 use Webkul\Account\Services\BaseCurrencyChange;
 use Webkul\PluginManager\Package;
 use Webkul\Support\Models\Company;
@@ -12,6 +13,23 @@ use Webkul\Support\Models\Scopes\CompanyScope;
 
 class CompanyObserver
 {
+    /**
+     * A company without accounting set up could not invoice ("no journal
+     * found") or take payments, and nothing pointed to the setup button
+     * (user, 2026-11-19). Set it up at creation. setUp() does nothing for a
+     * company already set up or when no template company exists, and inside
+     * onboarding it runs in the same transaction, so a refused onboarding
+     * rolls it back too.
+     */
+    public function created(Company $company): void
+    {
+        if (! config('app.accounting_auto_setup', true) || ! Package::isPluginInstalled('accounts')) {
+            return;
+        }
+
+        app(AccountingSetupService::class)->setUp($company);
+    }
+
     public function updating(Company $company): void
     {
         if (! Package::isPluginInstalled('accounts')) {
