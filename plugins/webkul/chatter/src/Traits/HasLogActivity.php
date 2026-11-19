@@ -34,7 +34,14 @@ trait HasLogActivity
             });
             static::restored(fn (Model $model) => $model->logModelActivity('restored'));
         } else {
-            static::deleting(fn (Model $model) => $model->logModelActivity('deleted'));
+            // Must return nothing. "deleting" is a halting event: Laravel stops
+            // at the first listener that returns a non-null value, so returning
+            // the log message skipped every guard registered after this one -
+            // a posted entry in a locked accounting period could be deleted
+            // (found 2026-11-19, accounts LockDateTest).
+            static::deleting(function (Model $model): void {
+                $model->logModelActivity('deleted');
+            });
         }
     }
 
