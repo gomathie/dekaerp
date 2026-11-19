@@ -6,6 +6,30 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-19, hotfix v1.12.1: locked-period entries could be deleted
+
+- **Why:** found by accounts `LockDateTest` ("refuses to reset, cancel or
+  delete a posted entry in a locked period") during the restructure suite
+  run. Delete was not refused. Live in production since the 2026-11-13
+  activity-log change (CR-11). User approved the hotfix, 2026-11-19.
+- **How:** `Chatter\Traits\HasLogActivity` registered
+  `static::deleting(fn ... => $model->logModelActivity('deleted'))`, which
+  returned the log message. `deleting` is a halting event: Laravel's
+  dispatcher stops at the first listener returning a non-null value, so
+  every guard registered after it never ran, including
+  `Account\Services\PeriodLock::assertMoveDeletable()` on `Move`. The
+  listener now returns nothing (why comment at the code). Searched all
+  plugins for other halting listeners (`deleting`, `saving`, `creating`,
+  `updating`, ...) written as arrow functions: the other four return void.
+- **Benefit:** posted entries in a closed period cannot be deleted from any
+  path; any other delete guard on an activity-logged model runs again.
+- **Trade-off / risk:** none known; deletes are still logged.
+- **Verification:** on `aureuserp_testing_claude_vault`: accounts
+  `LockDateTest` 11 passed (22 assertions; failed before the fix).
+- **Release:** v1.12.1 (app 1.12.1, chatter plugin 1.8.1), built on
+  production v1.12.0 with this change only.
+- **Rollback:** revert the listener change.
+
 ## 2026-11-18, tests brought in line with the cross-company write guard (UF-025)
 
 - **Why:** 16 tests across Projects, Products, Logistics, Employees and

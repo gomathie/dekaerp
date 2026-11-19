@@ -18,6 +18,14 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
   when the invitation expires, and include a plain link in case the button
   does not work.
 
+# CHANGELOG — v1.12.1 — 2026-11-19
+
+### Fixes
+
+- [Security] Accounting entries in a locked period can no longer be
+  deleted. Closing a month now protects its posted entries from deletion as
+  well as from changes.
+
 # CHANGELOG — v1.12.0 — 2026-11-16
 
 ### Improvements
