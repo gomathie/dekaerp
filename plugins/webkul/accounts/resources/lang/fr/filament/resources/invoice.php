@@ -31,6 +31,13 @@ return [
             ],
         ],
 
+        'notifications' => [
+            'missing-rate' => [
+                'title' => 'Aucun taux de change',
+                'body'  => 'Il n’existe aucun taux de change entre :from et :to : les prix n’ont pas été convertis. Ajoutez un taux dans Configuration → Devises, ou saisissez les prix à la main.',
+            ],
+        ],
+
         'tabs' => [
             'invoice-lines' => [
                 'title' => 'Lignes de facture',
@@ -39,6 +46,7 @@ return [
                     'products' => [
                         'title'       => 'Produits',
                         'add-product' => 'Ajouter un produit',
+                        'price-hint'  => 'Un prix unitaire modifié ici ne vaut que pour cette facture. Le produit garde son propre prix.',
 
                         'columns' => [
                             'product'             => 'Produit',

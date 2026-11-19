@@ -31,6 +31,13 @@ return [
             ],
         ],
 
+        'notifications' => [
+            'missing-rate' => [
+                'title' => 'Sem taxa de câmbio',
+                'body'  => 'Não há taxa de câmbio entre :from e :to, por isso os preços não foram convertidos. Adicione uma taxa em Configuração → Moedas ou informe os preços manualmente.',
+            ],
+        ],
+
         'tabs' => [
             'invoice-lines' => [
                 'title' => 'Linhas da fatura',
@@ -39,6 +46,7 @@ return [
                     'products' => [
                         'title'       => 'Produtos',
                         'add-product' => 'Adicionar produto',
+                        'price-hint'  => 'Um preço unitário alterado aqui vale apenas para esta fatura. O produto mantém o próprio preço.',
 
                         'columns' => [
                             'product'             => 'Produto',

@@ -6,6 +6,39 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-19, hotfix v1.12.2: invoice currency switch and missing rates
+
+- **Why:** client reports (TRACE365, 2026-11-19): switching an invoice's
+  currency "does not convert" and "is not interactive". Production had no
+  rate between GHS and USD; `Currency::resolveRate()` falls back to 1.0, so
+  prices were copied 1:1. The currency field had no handler, so lines kept
+  the old prices, and the summary (a child Livewire component with a fixed
+  key) kept its first currency's symbol. User approved the hotfix.
+- **How:** `Support\Models\Currency::canConvertTo()` (one rule: a company's
+  base currency counts as rate 1, any other currency needs a rate on or
+  before the date). `InvoiceResource`: `afterCurrencyUpdated()` converts every
+  line from the old to the new currency and recomputes it; with no rate it
+  warns (`notifyMissingRate`) and leaves prices; `afterProductUpdated()` uses
+  the same check; line maths moved into one `lineTotals()` used by both
+  paths; totals dispatch carries `currencyId`, which `InvoiceSummary`
+  follows; a helper text says line prices apply to this invoice only. Bills,
+  credit notes and refunds extend `InvoiceResource`. Strings in 5 languages.
+  `resolveRate()`'s 1.0 fallback is unchanged for posting paths.
+- **Benefit:** no silent 1:1 conversions on invoice entry; the whole invoice
+  follows a currency switch.
+- **Trade-off / risk:** switching back and forth converts each time (values
+  round to 2 decimals). Sales quotations still do not convert on product
+  pick or currency switch: their own fix next. Rates must be set per
+  company under Currencies.
+- **Verification:** on `aureuserp_testing_claude_vault`: AccountFeature
+  filtered to `InvoiceCurrencySwitch|CurrencyTest|InvoiceResourceTest`:
+  25 passed (77 assertions). New `InvoiceCurrencySwitchTest` covers the rate
+  check, switch, switch back, and the missing-rate warning.
+- **Release:** v1.12.2 (app 1.12.2, accounts 1.12.1, support 1.12.1).
+- **Rollback:** revert this commit.
+- **Open, not fixed:** TRACE365 could not save edits to product 1 "GPS
+  TRACKER" (unit "gal (US)"); not reproducible, product since deleted.
+
 ## 2026-11-19, hotfix v1.12.1: locked-period entries could be deleted
 
 - **Why:** found by accounts `LockDateTest` ("refuses to reset, cancel or

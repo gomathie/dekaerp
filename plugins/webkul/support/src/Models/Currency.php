@@ -130,6 +130,47 @@ class Currency extends Model
         return $toRate / $fromRate;
     }
 
+    /**
+     * Whether an amount can be converted from this currency into another
+     * with a real rate. resolveRate() falls back to 1.0 when no rate is set,
+     * so without this check a 1,000 GHS price silently became 1,000 USD on a
+     * USD invoice (client report, 2026-11-19). A company's own base currency
+     * counts as rate 1; any other currency needs a rate on or before the date.
+     */
+    public function canConvertTo(self $toCurrency, ?Company $company = null, $date = null): bool
+    {
+        if ($this->id === $toCurrency->id) {
+            return true;
+        }
+
+        $company = $company ?? current_company();
+        $date = $date ?? now()->toDateString();
+
+        foreach ([$this, $toCurrency] as $currency) {
+            if ($company && (int) $company->currency_id === (int) $currency->id) {
+                continue;
+            }
+
+            $hasRate = $currency->rates()
+                ->where(function ($query) use ($company) {
+                    $query->whereNull('company_id');
+
+                    if ($company) {
+                        $query->orWhere('company_id', $company->id);
+                    }
+                })
+                ->whereDate('name', '<=', $date)
+                ->where('rate', '>', 0)
+                ->exists();
+
+            if (! $hasRate) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     protected function resolveRate(self $currency, ?Company $company, string $date): float
     {
         $rate = $currency->rates()

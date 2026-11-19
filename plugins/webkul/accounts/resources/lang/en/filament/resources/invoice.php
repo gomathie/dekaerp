@@ -31,6 +31,13 @@ return [
             ],
         ],
 
+        'notifications' => [
+            'missing-rate' => [
+                'title' => 'No exchange rate',
+                'body'  => 'There is no exchange rate between :from and :to, so prices were not converted. Add a rate under Configuration → Currencies, or enter the prices by hand.',
+            ],
+        ],
+
         'tabs' => [
             'invoice-lines' => [
                 'title' => 'Invoice Lines',
@@ -39,6 +46,7 @@ return [
                     'products' => [
                         'title'       => 'Products',
                         'add-product' => 'Add Product',
+                        'price-hint'  => 'A unit price changed here applies to this invoice only. The product keeps its own price.',
 
                         'columns' => [
                             'product'             => 'Product',
