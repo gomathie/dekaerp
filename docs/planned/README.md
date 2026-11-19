@@ -15,6 +15,8 @@ When work on one begins, mark its status "in progress" here and in the plan.
 | 7 | [CRM](07-crm-plan.md) | Phased port of upstream's core (leads, pipeline, teams, won/lost, quotation link) | Decisions accepted 2026-11-11. Waits for upstream CRM to be stable |
 | 8 | [Landing page](08-landing-page-brief.md) | Public landing page | Not started; content decisions made 2026-11-11. Hosting and screenshots after the other tasks |
 | 9 | [Point of Sale](09-pos-extraction-plan.md) | Point of Sale from upstream | Planning only; first-version scope decided 2026-11-11. Least needed (user, 2026-11-13) |
+| 10 | [Russian and Swahili](10-languages-ru-sw-plan.md) | Two more interface languages | Planned 2026-11-19 (user); two decisions to confirm |
+| 11 | [Reports and payment flow usability](11-reports-usability-plan.md) | View reports before export, Zoho Books payment-flow comparison (report names kept, 2026-11-19) | Planned 2026-11-19 (user, from TRACE365 use); TRACE365 items ship as hotfixes |
 
 Moved to completed 2026-11-15: Accounting (A4 shipped in v1.11.0) and
 Reports (shipped in v1.10.0); the rest renumbered. Renumbered again
