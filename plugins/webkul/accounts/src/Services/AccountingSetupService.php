@@ -174,7 +174,36 @@ class AccountingSetupService
             );
         }
 
+        $this->copyPaymentMethodLines($map, $accountMap);
+
         return $map;
+    }
+
+    /**
+     * Bank and cash journals without payment method lines cannot register a
+     * payment, and copying only the journals left every company set up here
+     * unable to mark an invoice paid (TRACE365, 2026-11-19).
+     */
+    protected function copyPaymentMethodLines(array $journalMap, array $accountMap): void
+    {
+        if ($journalMap === []) {
+            return;
+        }
+
+        $now = now();
+
+        foreach (DB::table('accounts_payment_method_lines')->whereIn('journal_id', array_keys($journalMap))->get() as $line) {
+            DB::table('accounts_payment_method_lines')->insert([
+                'sort'               => $line->sort,
+                'payment_method_id'  => $line->payment_method_id,
+                'payment_account_id' => $this->remap($line->payment_account_id, $accountMap),
+                'journal_id'         => $journalMap[$line->journal_id],
+                'creator_id'         => null,
+                'name'               => $line->name,
+                'created_at'         => $now,
+                'updated_at'         => $now,
+            ]);
+        }
     }
 
     protected function copySettings(Company $company, int $templateId, array $accountMap, array $taxMap, array $journalMap): void

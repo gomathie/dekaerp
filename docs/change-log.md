@@ -6,6 +6,38 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-19, hotfix v1.12.3: no company could mark an invoice paid
+
+- **Why:** TRACE365 could not register a payment on INV/2026/00012.
+  `AccountingSetupService::copyJournals()` copied the template's journals
+  but not `accounts_payment_method_lines`, so every bank and cash journal of a
+  company set up after installation had none, and a payment needs one.
+  Production check: TRACE365 and CR3 Test Ghana had journals with 0 lines;
+  four companies have not set up accounting yet. User approved the hotfix.
+- **How:** `copyPaymentMethodLines()` copies the template journals' lines
+  with the new journal ids (payment accounts remapped). Migration
+  `2026_11_19_000001_backfill_payment_method_lines_for_bank_and_cash_journals`
+  gives every bank or cash journal with no lines "Manual Payment" in and out,
+  matched by method code and type, never by id; journals with lines are left
+  alone, so it is idempotent. `down()` removes nothing (lines may carry
+  payments).
+- **Production, by hand before the release (user, 2026-11-19):** the same
+  four rows inserted for TRACE365 (journals 11 and 12) through SQL, so the
+  client could take payments at once. Verified by impersonating Bennet Koree:
+  the Pay window on INV/2026/00012 offers Bank Transactions / Manual Payment;
+  closed with Cancel, no payment recorded. The migration skips these journals.
+- **Benefit:** every company can record payments without visiting
+  Configuration.
+- **Verification:** `aureuserp_testing_claude_vault`: AccountFeature filtered
+  `PaymentMethodSetup|CountryChart|PaymentTest|PayAction`: 7 passed
+  (46 assertions). New `PaymentMethodSetupTest`: a set-up company gets lines;
+  the backfill adds in and out exactly once.
+- **Release:** v1.12.3 (app 1.12.3, accounts 1.12.2).
+- **Next (user, 2026-11-19, v1.13.0 this week):** "Paid now" with Cash,
+  Mobile Money or Bank transfer on the invoice; those three ready-made for
+  every company, others addable; one-question Pay; new customer from the
+  invoice; then a client-flow audit as a TRACE365 user.
+
 ## 2026-11-19, hotfix v1.12.2: invoice currency switch and missing rates
 
 - **Why:** client reports (TRACE365, 2026-11-19): switching an invoice's

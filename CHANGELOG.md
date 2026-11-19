@@ -18,6 +18,15 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
   when the invitation expires, and include a plain link in case the button
   does not work.
 
+# CHANGELOG — v1.12.3 — 2026-11-19
+
+### Fixes
+
+- Invoices can be marked paid again in every company. Companies whose
+  accounting was set up after installation had no payment method on their
+  bank and cash journals, so the payment could not be recorded. They now
+  get "Manual Payment" in and out automatically.
+
 # CHANGELOG — v1.12.2 — 2026-11-19
 
 ### Fixes
