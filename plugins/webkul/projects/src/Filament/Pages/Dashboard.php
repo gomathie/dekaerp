@@ -24,6 +24,7 @@ use Webkul\Project\Models\Tag;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Filament\CompanyMembers;
 use Webkul\Support\Filament\Concerns\ChecksPagePermission;
+use Webkul\Support\Filament\DashboardAccess;
 use Webkul\Support\Filament\Forms\Components\DashboardDateRange;
 use Webkul\Support\Filament\Forms\Components\DashboardFilters;
 
@@ -161,6 +162,8 @@ class Dashboard extends BaseDashboard
     public static function canAccess(): bool
     {
         return PluginEntitlement::enabledForCurrent('projects')
-            && static::hasPagePermission();
+            && static::hasPagePermission()
+            // The user's dashboard switch (user, 2026-11-20).
+            && DashboardAccess::mayViewDashboards();
     }
 }

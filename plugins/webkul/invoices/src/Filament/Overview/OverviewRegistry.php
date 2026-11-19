@@ -3,6 +3,7 @@
 namespace Webkul\Invoice\Filament\Overview;
 
 use Closure;
+use Webkul\Support\Filament\DashboardAccess;
 
 /**
  * The sections of the combined Overview dashboard (user, 2026-11-11: Sales,
@@ -87,7 +88,18 @@ class OverviewRegistry
      */
     public static function visible(): array
     {
+        // The user's dashboard switches (user, 2026-11-20): none at all, or
+        // none of the money sections. Supersedes "no dashboard permission of
+        // its own" (2026-11-13) for these two switches only.
+        if (! DashboardAccess::mayViewDashboards()) {
+            return [];
+        }
+
         $sections = array_filter(static::$sections, fn (array $section): bool => (bool) ($section['visible'])());
+
+        if (! DashboardAccess::mayViewMoney()) {
+            $sections = array_diff_key($sections, array_flip(DashboardAccess::MONEY_SECTIONS));
+        }
 
         uasort($sections, fn (array $a, array $b): int => $a['sort'] <=> $b['sort']);
 

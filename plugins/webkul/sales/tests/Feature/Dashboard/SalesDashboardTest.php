@@ -86,7 +86,9 @@ it('reads only the current company’s confirmed orders', function (): void {
     $user = CompanyHelper::actingAsCompanyUser($company, []);
 
     $own = SaleHelper::order(['company_id' => $company->getKey(), 'user_id' => $user->getKey()]);
-    $foreign = SaleHelper::order(['company_id' => $otherCompany->getKey()]);
+    // Another client's order is set up with nobody acting: the cross-company
+    // write guard (UF-025) refuses this user creating it, as it should.
+    $foreign = CompanyHelper::asNobody(fn () => SaleHelper::order(['company_id' => $otherCompany->getKey()]));
 
     Order::withoutGlobalScopes()->whereKey([$own->getKey(), $foreign->getKey()])->update([
         'state'      => OrderState::SALE->value,
@@ -100,6 +102,43 @@ it('reads only the current company’s confirmed orders', function (): void {
 
     expect($ids)->toContain($own->getKey())
         ->not->toContain($foreign->getKey());
+});
+
+/**
+ * DB-8 (user, 2026-11-19): TRACE365 invoices without a sales order, so
+ * revenue read from orders showed nothing. Revenue is posted customer
+ * invoices less credit notes, in company currency, for this company only.
+ */
+it('counts invoices made without an order as sales revenue', function (): void {
+    $company = Company::factory()->create();
+    $otherCompany = Company::factory()->create();
+
+    CompanyHelper::actingAsCompanyUser($company, []);
+
+    $move = fn (int $companyId, string $type, string $state, float $signed) => DB::table('accounts_account_moves')->insert([
+        'company_id'          => $companyId,
+        'move_type'           => $type,
+        'state'               => $state,
+        'date'                => now()->toDateString(),
+        'invoice_date'        => now()->toDateString(),
+        'amount_total_signed' => $signed,
+        // The test user's own rows: Move keeps its ownership scope.
+        'creator_id'          => auth()->id(),
+        'created_at'          => now(),
+        'updated_at'          => now(),
+    ]);
+
+    $move($company->getKey(), 'out_invoice', 'posted', 300);
+    $move($company->getKey(), 'out_invoice', 'posted', 200);
+    $move($company->getKey(), 'out_refund', 'posted', -50);
+    $move($company->getKey(), 'out_invoice', 'draft', 999);
+    $move($company->getKey(), 'in_invoice', 'posted', -400);
+    $move($otherCompany->getKey(), 'out_invoice', 'posted', 700);
+
+    $widget = new SaleStatsOverview;
+    $widget->pageFilters = ['startDate' => now()->startOfMonth()->toDateString(), 'endDate' => now()->toDateString()];
+
+    expect((fn (): float => $this->invoicedRevenue())->call($widget))->toBe(450.0);
 });
 
 it('lists only the current company’s members as salespersons', function (): void {

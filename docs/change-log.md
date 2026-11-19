@@ -6,6 +6,40 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-20, v1.13.0 (unreleased): add customer from invoice, invoiced sales revenue, dashboard switches
+
+- **Why:** TRACE365 (user, 2026-11-19): add a customer without leaving the
+  invoice; Sales showed no revenue because they invoice without orders
+  (DB-8); per-user control over who sees dashboards and money (user
+  answers 2026-11-20: hide money dashboards, dashboards only, Company
+  Admin and up, never on one's own record).
+- **How:** `InvoiceResource` customer select has `createOptionForm` (name,
+  email, phone), visible only with `create` on `Partner`; the contact is
+  stamped by `BelongsToCompany`. `HasSaleDashboardFilters::invoicedSales()`
+  / `invoicedRevenue()` (posted out_invoice + out_refund,
+  `amount_total_signed`, invoice date, dashboard filters; team through
+  `sales_order_invoices`) feed the Sales revenue card and stat; average
+  order value stays order-based. Security migration
+  `2026_11_20_000001_add_dashboard_switches_to_users_table` adds
+  `users.can_see_dashboard` / `can_see_money_figures` (default true, also
+  in `User::$attributes`); one rule, `Support\Filament\DashboardAccess`,
+  read by `OverviewRegistry::visible()`, the Invoices/Sales/Purchases
+  (money) and Logistics/Projects/Recruitments dashboards, and
+  `GuardsDashboardWidget`. Toggles on the user form (5 languages),
+  disabled on one's own record. Protected decision "no dashboard
+  permission of its own" marked superseded in part in `AGENTS.md`.
+- **Trade-off / risk:** time off and the maintenance calendar are not
+  covered (people work in them). A separate "invoices" view inside Sales
+  is deferred. A user with dashboards off lands on their first menu item.
+- **Verification:** `aureuserp_testing_hotfix125`: accounts
+  `InvoiceResourceTest --filter=customer` 2 passed; sales `Dashboard` +
+  invoices `OverviewTest` 25 passed (80 assertions), after fixing two test
+  setups (moves needed `creator_id` for the ownership scope; the existing
+  foreign-order test now builds the other company's order with
+  `asNobody()`, since the UF-025 guard refuses it, which was the known
+  "1 Sale failure"). `php -l` on the 5 language files: clean.
+- **Rollback:** revert; the migration's `down()` drops both columns.
+
 ## 2026-11-19, hotfix v1.12.5: user form, cash chart, profile picture, list sorting
 
 - **Why / How (user form):** TRACE365's Company Admin pressed Create and

@@ -16,6 +16,7 @@ use Webkul\Account\Filament\Resources\InvoiceResource\Pages\CreateInvoice;
 use Webkul\Account\Filament\Resources\InvoiceResource\Pages\EditInvoice;
 use Webkul\Account\Filament\Resources\InvoiceResource\Pages\ListInvoices;
 use Webkul\Account\Models\Move;
+use Webkul\Partner\Models\Partner;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Package;
 
@@ -65,6 +66,30 @@ it('lists newest invoices first and still follows a column sort', function () {
         ->assertCanSeeTableRecords([$newer, $older], inOrder: true)
         ->sortTable('invoice_date', 'desc')
         ->assertCanSeeTableRecords([$older, $newer], inOrder: true);
+});
+
+/**
+ * TRACE365, 2026-11-19: a customer can be added from the invoice ("+"),
+ * stamped with the current company, and only by someone who may create
+ * contacts.
+ */
+it('adds a new customer from the invoice form', function () {
+    FilamentHelper::actingAs(['view_any_account_invoice', 'create_account_invoice', 'create_partner_partner']);
+
+    Livewire::test(CreateInvoice::class)
+        ->callFormComponentAction('partner_id', 'createOption', ['name' => 'Walk-in Customer', 'phone' => '0244000000'])
+        ->assertHasNoFormComponentActionErrors();
+
+    $customer = Partner::query()->where('name', 'Walk-in Customer')->firstOrFail();
+
+    expect($customer->company_id)->toBe(current_company_id());
+});
+
+it('hides the add-customer button without the contact create permission', function () {
+    FilamentHelper::actingAs(['view_any_account_invoice', 'create_account_invoice']);
+
+    Livewire::test(CreateInvoice::class)
+        ->assertFormComponentActionHidden('partner_id', 'createOption');
 });
 
 it('hides summary cells together with the columns hidden on narrow screens', function () {

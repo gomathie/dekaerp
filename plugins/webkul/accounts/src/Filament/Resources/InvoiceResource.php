@@ -50,6 +50,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Webkul\Account\Enums\CommunicationStandard;
 use Webkul\Account\Enums\CommunicationType;
@@ -81,6 +82,7 @@ use Webkul\Chatter\Filament\Actions\ActivityTableAction;
 use Webkul\Field\Filament\Forms\Components\ProgressStepper as FormProgressStepper;
 use Webkul\Field\Filament\Infolists\Components\ProgressStepper as InfolistProgressStepper;
 use Webkul\Field\Filament\Traits\HasCustomFields;
+use Webkul\Partner\Models\Partner as BasePartner;
 use Webkul\Product\Settings\ProductSettings;
 use Webkul\Support\Filament\Forms\Components\Repeater;
 use Webkul\Support\Filament\Forms\Components\Repeater\TableColumn;
@@ -162,6 +164,30 @@ class InvoiceResource extends Resource
                                             ->required()
                                             ->searchable()
                                             ->preload()
+                                            /*
+                                             * "+" adds a customer without leaving the invoice
+                                             * (TRACE365, 2026-11-19). Only the essentials are asked;
+                                             * the full contact form stays under Contacts. The
+                                             * contact is stamped with the current company by
+                                             * BelongsToCompany, and needs the contact create
+                                             * permission like the Contacts screen.
+                                             */
+                                            ->createOptionForm([
+                                                TextInput::make('name')
+                                                    ->label(__('partners::filament/resources/partner.form.sections.general.fields.name'))
+                                                    ->required()
+                                                    ->maxLength(255),
+                                                TextInput::make('email')
+                                                    ->label(__('partners::filament/resources/partner.form.sections.general.fields.email'))
+                                                    ->email()
+                                                    ->maxLength(255),
+                                                TextInput::make('phone')
+                                                    ->label(__('partners::filament/resources/partner.form.sections.general.fields.phone'))
+                                                    ->tel()
+                                                    ->maxLength(255),
+                                            ])
+                                            ->createOptionAction(fn (Action $action) => $action
+                                                ->visible(fn (): bool => (bool) Auth::user()?->can('create', BasePartner::class)))
                                             ->live()
                                             ->afterStateUpdated(function (Set $set, $state) {
                                                 $partner = $state ? Partner::find($state) : null;

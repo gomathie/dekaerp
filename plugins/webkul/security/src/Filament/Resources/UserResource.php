@@ -232,6 +232,26 @@ class UserResource extends Resource
                                             ->searchable()
                                             ->required(fn (Get $get) => $get('resource_permission') == PermissionType::GROUP)
                                             ->createOptionForm(fn (Schema $schema) => TeamResource::form($schema)),
+                                        /*
+                                         * Dashboard switches (user, 2026-11-20), read by
+                                         * Support\Filament\DashboardAccess. Set by whoever may
+                                         * edit this user (Company Admin and up); never on one's
+                                         * own record, so nobody turns their own back on.
+                                         */
+                                        Toggle::make('can_see_dashboard')
+                                            ->label(__('security::filament/resources/user.form.sections.permissions.fields.can-see-dashboard'))
+                                            ->helperText(__('security::filament/resources/user.form.sections.permissions.fields.can-see-dashboard-helper'))
+                                            ->default(true)
+                                            ->live()
+                                            ->disabled(fn (?User $record): bool => filled($record) && Auth::id() === $record->id)
+                                            ->dehydrated(fn (?User $record): bool => ! (filled($record) && Auth::id() === $record->id)),
+                                        Toggle::make('can_see_money_figures')
+                                            ->label(__('security::filament/resources/user.form.sections.permissions.fields.can-see-money-figures'))
+                                            ->helperText(__('security::filament/resources/user.form.sections.permissions.fields.can-see-money-figures-helper'))
+                                            ->default(true)
+                                            ->visible(fn (Get $get): bool => (bool) $get('can_see_dashboard'))
+                                            ->disabled(fn (?User $record): bool => filled($record) && Auth::id() === $record->id)
+                                            ->dehydrated(fn (?User $record): bool => ! (filled($record) && Auth::id() === $record->id)),
                                     ])
                                     ->columns(2),
                             ])

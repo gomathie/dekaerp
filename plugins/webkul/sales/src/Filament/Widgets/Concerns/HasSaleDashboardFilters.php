@@ -5,6 +5,9 @@ namespace Webkul\Sale\Filament\Widgets\Concerns;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
+use Webkul\Account\Enums\MoveState;
+use Webkul\Account\Enums\MoveType;
+use Webkul\Account\Models\Move;
 use Webkul\Sale\Enums\OrderState;
 use Webkul\Sale\Models\Order;
 use Webkul\Sale\Models\OrderLine;
@@ -75,6 +78,63 @@ trait HasSaleDashboardFilters
     protected function saleOrders(?Carbon $start = null, ?Carbon $end = null): Builder
     {
         return $this->applyConfirmedScope(Order::query(), $start, $end);
+    }
+
+    /**
+     * Invoiced sales: posted customer invoices less credit notes, whether or
+     * not a sales order came first (DB-8, user, 2026-11-19). TRACE365 invoices
+     * straight from Invoices, so revenue read from sales orders showed nothing
+     * while invoices were being paid. Dated by invoice date; the dashboard
+     * filters apply, a team through the orders the invoice came from.
+     */
+    protected function invoicedSales(?Carbon $start = null, ?Carbon $end = null): Builder
+    {
+        $filters = $this->saleDashboardFilters();
+
+        [$defaultStart, $defaultEnd] = $this->periodRange();
+
+        $query = Move::query();
+
+        $query->whereIn($query->qualifyColumn('move_type'), [MoveType::OUT_INVOICE, MoveType::OUT_REFUND])
+            ->where($query->qualifyColumn('state'), MoveState::POSTED)
+            ->whereDate($query->qualifyColumn('invoice_date'), '>=', $start ?? $defaultStart)
+            ->whereDate($query->qualifyColumn('invoice_date'), '<=', $end ?? $defaultEnd);
+
+        if (! empty($filters['countries'])) {
+            $query->whereHas('partner', fn (Builder $q) => $q->whereIn('country_id', $filters['countries']));
+        }
+
+        if (! empty($filters['products'])) {
+            $query->whereHas('lines', fn (Builder $q) => $q->whereIn('product_id', $filters['products']));
+        }
+
+        if (! empty($filters['categories'])) {
+            $query->whereHas('lines.product', fn (Builder $q) => $q->whereIn('category_id', $filters['categories']));
+        }
+
+        if (! empty($filters['salesPersons'])) {
+            $query->whereIn($query->qualifyColumn('invoice_user_id'), $filters['salesPersons']);
+        }
+
+        if (! empty($filters['teams'])) {
+            $query->whereIn($query->qualifyColumn('id'), fn ($q) => $q->select('sales_order_invoices.move_id')
+                ->from('sales_order_invoices')
+                ->join('sales_orders', 'sales_orders.id', '=', 'sales_order_invoices.order_id')
+                ->whereIn('sales_orders.team_id', $filters['teams']));
+        }
+
+        return $query;
+    }
+
+    /**
+     * Invoiced revenue in the company's currency (amount_total_signed is
+     * already converted and negative on credit notes).
+     */
+    protected function invoicedRevenue(?Carbon $start = null, ?Carbon $end = null): float
+    {
+        $query = $this->invoicedSales($start, $end);
+
+        return (float) $query->sum($query->qualifyColumn('amount_total_signed'));
     }
 
     protected function quotations(?Carbon $start = null, ?Carbon $end = null): Builder

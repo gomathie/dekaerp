@@ -10,7 +10,19 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+### Features
+
+- Add a new customer straight from the invoice: press "+" next to the
+  customer field and enter a name, and optionally an email and phone.
+- Administrators can choose, per user, whether they see the dashboards
+  ("See dashboard") and the money dashboards for sales, invoices,
+  purchases and accounting ("See money figures"). Both are on for
+  everyone until changed.
+
 ### Improvements
+
+- Sales revenue now counts every invoice, including invoices made without
+  a quotation or sales order.
 
 - Emails from DEKA now carry the DEKA logo and name at the top and amber
   buttons, so you can recognise them at a glance in your inbox.

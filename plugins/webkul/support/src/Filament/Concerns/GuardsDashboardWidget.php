@@ -5,6 +5,7 @@ namespace Webkul\Support\Filament\Concerns;
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Facades\Filament;
 use Webkul\PluginManager\Support\PluginEntitlement;
+use Webkul\Support\Filament\DashboardAccess;
 
 /**
  * Who may see a module dashboard widget (docs/completed/dashboards-plan.md §2).
@@ -31,6 +32,12 @@ trait GuardsDashboardWidget
     public static function canView(): bool
     {
         if (! PluginEntitlement::enabledForCurrent(static::dashboardPluginName())) {
+            return false;
+        }
+
+        // The user's "See dashboard" switch (user, 2026-11-20); the pages
+        // check it too, this keeps a widget closed on its own.
+        if (! DashboardAccess::mayViewDashboards()) {
             return false;
         }
 

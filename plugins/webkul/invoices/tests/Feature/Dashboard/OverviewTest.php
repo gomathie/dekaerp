@@ -356,3 +356,27 @@ it('charts money in and out on the day each payment was made', function (): void
         ->and($data['datasets'][0]['data'])->toBe([0.0, 0.0, 200.0])
         ->and($data['datasets'][1]['data'])->toBe([0.0, 0.0, 40.0]);
 });
+
+/**
+ * Dashboard switches per user (user, 2026-11-20): "See dashboard" off hides
+ * the Overview; "See money figures" off hides only the money sections.
+ */
+it('hides the overview or only its money sections by the user switches', function (): void {
+    $company = Company::factory()->create();
+    $user = CompanyHelper::actingAsCompanyUser($company, ['page_invoice_invoices']);
+
+    OverviewRegistry::register('test-section', fn (): string => 'Test', [], fn (): array => [], fn (): bool => true, 999);
+
+    expect(array_keys(OverviewRegistry::visible()))->toContain('invoices', 'test-section');
+
+    $user->forceFill(['can_see_money_figures' => false])->save();
+
+    expect(array_keys(OverviewRegistry::visible()))->toContain('test-section')
+        ->not->toContain('invoices');
+
+    $user->forceFill(['can_see_dashboard' => false, 'can_see_money_figures' => true])->save();
+
+    expect(OverviewRegistry::visible())->toBe([])
+        ->and(Overview::canAccess())->toBeFalse()
+        ->and(Invoices::canAccess())->toBeFalse();
+});

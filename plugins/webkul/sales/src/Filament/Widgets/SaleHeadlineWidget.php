@@ -226,9 +226,8 @@ class SaleHeadlineWidget extends StatsOverviewWidget
     /** Confirmed revenue in company currency; the page period when no dates are given. */
     protected function revenueBetween(?Carbon $start = null, ?Carbon $end = null): float
     {
-        return (float) ($this->saleOrders($start, $end)
-            ->selectRaw('SUM(CASE WHEN currency_rate > 0 THEN amount_total / currency_rate ELSE amount_total END) as cc_total')
-            ->value('cc_total') ?? 0.0);
+        // Invoiced, not ordered (DB-8): a sale invoiced without an order counts.
+        return $this->invoicedRevenue($start, $end);
     }
 
     /**
@@ -241,11 +240,11 @@ class SaleHeadlineWidget extends StatsOverviewWidget
      */
     protected function dailyRevenue(): ?array
     {
-        $query = $this->saleOrders();
-        $day = 'DATE('.$query->qualifyColumn('date_order').')';
+        $query = $this->invoicedSales();
+        $day = 'DATE('.$query->qualifyColumn('invoice_date').')';
 
         $series = $query->toBase()
-            ->selectRaw($day.' as day, SUM(CASE WHEN currency_rate > 0 THEN amount_total / currency_rate ELSE amount_total END) as total')
+            ->selectRaw($day.' as day, SUM('.$query->qualifyColumn('amount_total_signed').') as total')
             ->groupByRaw($day)
             ->orderByRaw($day)
             ->pluck('total')
