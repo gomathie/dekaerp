@@ -264,6 +264,10 @@ class InvoiceResource extends Resource
                                                     ->live()
                                                     ->reactive()
                                                     ->default(current_company()?->currency_id)
+                                                    // Switching currency used to change only the label: lines kept
+                                                    // the old currency's prices and the summary its old symbol
+                                                    // (client report, 2026-11-19).
+                                                    ->afterStateUpdated(fn (Set $set, Get $get, $state, $old, $livewire) => static::afterCurrencyUpdated($set, $get, $state, $old, $livewire))
                                                     ->disabled(fn ($record) => in_array($record?->state, [MoveState::POSTED, MoveState::CANCEL])),
                                             ])
                                             ->columns(2),
@@ -1113,6 +1117,9 @@ class InvoiceResource extends Resource
             ->live()
             ->label(__('accounts::filament/resources/invoice.form.tabs.invoice-lines.repeater.products.title'))
             ->addActionLabel(__('accounts::filament/resources/invoice.form.tabs.invoice-lines.repeater.products.add-product'))
+            // Clients asked whether editing a line price changes the product.
+            // It never did; this says so where the price is typed.
+            ->helperText(__('accounts::filament/resources/invoice.form.tabs.invoice-lines.repeater.products.price-hint'))
             ->collapsible()
             ->defaultItems(0)
             ->deleteAction(function (Action $action) {
@@ -1324,11 +1331,17 @@ class InvoiceResource extends Resource
 
             $company = Company::find($get('../../company_id')) ?? current_company();
 
-            $priceUnit = $company->currency->convert(
-                $priceUnit,
-                $currency,
-                $company
-            );
+            // No rate means no conversion and a warning, never a silent 1:1
+            // (a GHS price used to land unchanged on a USD invoice).
+            if ($company->currency->canConvertTo($currency, $company)) {
+                $priceUnit = $company->currency->convert(
+                    $priceUnit,
+                    $currency,
+                    $company
+                );
+            } else {
+                static::notifyMissingRate($company->currency, $currency);
+            }
         }
 
         $set('price_unit', round($priceUnit, 2));
@@ -1436,21 +1449,41 @@ class InvoiceResource extends Resource
             return;
         }
 
+        $totals = static::lineTotals([
+            'quantity'   => $get('quantity'),
+            'price_unit' => $get('price_unit'),
+            'discount'   => $get('discount'),
+            'taxes'      => $get('taxes'),
+        ], $product, $currency, $company, $get('../../move_type'));
+
+        $set('price_subtotal', $totals['price_subtotal']);
+        $set('price_tax', $totals['price_tax']);
+        $set('price_total', $totals['price_total']);
+    }
+
+    /**
+     * One line's subtotal, tax and total. The single place this is computed,
+     * used when a line field changes and when the invoice currency changes.
+     *
+     * @param  array{quantity?: mixed, price_unit?: mixed, discount?: mixed, taxes?: mixed}  $line
+     * @return array{price_subtotal: float, price_tax: float, price_total: float}
+     */
+    private static function lineTotals(array $line, Product $product, Currency $currency, Company $company, mixed $moveType): array
+    {
         $mockLine = new MoveLine([
-            'quantity'     => $get('quantity') ?? 1,
-            'price_unit'   => $get('price_unit') ?? 0,
-            'discount'     => $get('discount') ?? 0,
+            'quantity'     => $line['quantity'] ?? 1,
+            'price_unit'   => $line['price_unit'] ?? 0,
+            'discount'     => $line['discount'] ?? 0,
             'display_type' => DisplayType::PRODUCT,
         ]);
 
         $mockMove = new Invoice([
-            'move_type'   => $get('../../move_type'),
-            'currency_id' => $currencyId,
-            'company_id'  => $companyId,
+            'move_type'   => $moveType,
+            'currency_id' => $currency->id,
+            'company_id'  => $company->id,
         ]);
 
-        $taxIds = $get('taxes') ?? [];
-        $mockLine->setRelation('taxes', Tax::whereIn('id', $taxIds)->get());
+        $mockLine->setRelation('taxes', Tax::whereIn('id', $line['taxes'] ?? [])->get());
         $mockLine->setRelation('currency', $currency);
         $mockLine->setRelation('company', $company);
         $mockLine->setRelation('product', $product);
@@ -1459,17 +1492,70 @@ class InvoiceResource extends Resource
         $mockMove->setRelation('currency', $currency);
         $mockMove->setRelation('company', $company);
 
-        $baseLine = AccountFacade::productBaseLine($mockLine);
-
-        $baseLine = TaxFacade::withTaxDetails($baseLine, $company);
+        $baseLine = TaxFacade::withTaxDetails(AccountFacade::productBaseLine($mockLine), $company);
 
         $subtotal = $baseLine['tax_details']['raw_total_excluded_currency'];
         $total = $baseLine['tax_details']['raw_total_included_currency'];
-        $tax = $total - $subtotal;
 
-        $set('price_subtotal', round($subtotal, 4));
-        $set('price_tax', round($tax, 4));
-        $set('price_total', round($total, 4));
+        return [
+            'price_subtotal' => round($subtotal, 4),
+            'price_tax'      => round($total - $subtotal, 4),
+            'price_total'    => round($total, 4),
+        ];
+    }
+
+    /**
+     * The invoice currency changed: convert every line's price from the old
+     * currency to the new one, recompute each line, and refresh the summary.
+     * Without a rate the prices are left as they are and the user is told
+     * which rate is missing, rather than converting at 1:1.
+     */
+    private static function afterCurrencyUpdated(Set $set, Get $get, mixed $state, mixed $old, $livewire): void
+    {
+        $from = $old ? Currency::find($old) : null;
+        $to = $state ? Currency::find($state) : null;
+        $company = Company::find($get('company_id')) ?? current_company();
+
+        if (! $to || ! $company) {
+            return;
+        }
+
+        $products = $get('products') ?? [];
+
+        if ($from && $from->id !== $to->id && ! empty($products)) {
+            if ($from->canConvertTo($to, $company)) {
+                foreach ($products as $key => $line) {
+                    $product = filled($line['product_id'] ?? null) ? Product::find($line['product_id']) : null;
+
+                    if (! $product) {
+                        continue;
+                    }
+
+                    $line['price_unit'] = round($from->convert((float) ($line['price_unit'] ?? 0), $to, $company), 2);
+
+                    $products[$key] = array_merge($line, static::lineTotals($line, $product, $to, $company, $get('move_type')));
+                }
+
+                $set('products', $products);
+            } else {
+                static::notifyMissingRate($from, $to);
+            }
+        }
+
+        self::calculateMoveTotals($get, $livewire);
+    }
+
+    private static function notifyMissingRate(Currency $from, Currency $to): void
+    {
+        Notification::make()
+            ->warning()
+            ->title(__('accounts::filament/resources/invoice.form.notifications.missing-rate.title'))
+            ->body(__('accounts::filament/resources/invoice.form.notifications.missing-rate.body', [
+                'from' => $from->name,
+                'to'   => $to->name,
+            ]))
+            ->persistent()
+            ->send();
     }
 
     private static function calculateMoveTotals(Get $get, $livewire): array
@@ -1584,6 +1670,9 @@ class InvoiceResource extends Resource
             'totalTax'   => round($grandTotal - $subtotal, 2),
             'grandTotal' => round($grandTotal, 2),
             'rounding'   => round($rounding, 2),
+            // The summary is a child component mounted once; without the
+            // currency here it kept showing the first currency's symbol.
+            'currencyId' => $currency->id,
         ];
 
         $livewire->dispatch('itemUpdated', $defaultTotals);

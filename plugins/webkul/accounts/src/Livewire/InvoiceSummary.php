@@ -17,6 +17,7 @@ use Webkul\Account\Filament\Resources\PaymentResource;
 use Webkul\Account\Filament\Resources\RefundResource;
 use Webkul\Account\Models\MoveLine;
 use Webkul\Account\Models\PartialReconcile;
+use Webkul\Support\Models\Currency;
 
 class InvoiceSummary extends Component implements HasActions, HasSchemas
 {
@@ -55,6 +56,11 @@ class InvoiceSummary extends Component implements HasActions, HasSchemas
         $this->grandTotal = $totals['grandTotal'];
         $this->amountTax = $totals['totalTax'];
         $this->rounding = $totals['rounding'];
+
+        // Follow the invoice's currency when it changes (2026-11-19).
+        if (! empty($totals['currencyId']) && (int) $totals['currencyId'] !== (int) ($this->currency?->id ?? 0)) {
+            $this->currency = Currency::find($totals['currencyId']);
+        }
     }
 
     public function refreshFromRecord()

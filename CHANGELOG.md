@@ -10,6 +10,18 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.12.2 — 2026-11-19
+
+### Fixes
+
+- Switching an invoice to another currency now converts every line and
+  updates the totals and currency symbol straight away.
+- When no exchange rate exists between two currencies, the invoice now says
+  so and leaves the prices as they are, instead of copying them at 1:1. Add
+  the rate under Configuration → Currencies.
+- The invoice lines now say that a unit price changed on the invoice applies
+  to that invoice only; the product keeps its own price.
+
 # CHANGELOG — v1.12.1 — 2026-11-19
 
 ### Fixes
