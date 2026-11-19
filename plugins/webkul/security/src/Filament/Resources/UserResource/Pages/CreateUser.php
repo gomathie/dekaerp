@@ -6,6 +6,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Webkul\Security\Enums\PermissionType;
 use Webkul\Security\Filament\Resources\UserResource;
+use Webkul\Security\Filament\Resources\UserResource\Pages\Concerns\NamesInvalidFields;
 use Webkul\Security\Models\User;
 use Webkul\Security\Services\MultiCompanyAdminService;
 use Webkul\Security\Services\SeatCapacityService;
@@ -14,6 +15,8 @@ use Webkul\Security\Services\TenantRoleAssigner;
 
 class CreateUser extends CreateRecord
 {
+    use NamesInvalidFields;
+
     protected static string $resource = UserResource::class;
 
     protected ?bool $hasDatabaseTransactions = true;

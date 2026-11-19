@@ -333,6 +333,9 @@ class PaymentResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ]))
+            // Newest first as the table default, not as orderByDesc in getEloquentQuery():
+            // that ran before any column sort, so clicking a header did nothing (upstream #1671).
+            ->defaultSort('id', 'desc')
             ->groups([
                 Tables\Grouping\Group::make('name')
                     ->label(__('accounts::filament/resources/payment.table.groups.name'))
@@ -634,7 +637,6 @@ class PaymentResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->orderByDesc('id');
+        return parent::getEloquentQuery();
     }
 }

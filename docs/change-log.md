@@ -6,6 +6,48 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-19, hotfix v1.12.5: user form, cash chart, profile picture, list sorting
+
+- **Why / How (user form):** TRACE365's Company Admin pressed Create and
+  nothing happened. The required default company (and allowed companies)
+  started empty in a side column (user, 2026-11-19: "by default it should be
+  in the same company"). Both now default to `current_company_id()`; the
+  existing assignable-company rule still refuses a company the creator may
+  not assign. `NamesInvalidFields` (Create/Edit user) also names every
+  refused field in a notice (`form.validation.needs-attention`, 5 languages).
+  Picking "Company Admin" adds the business role from
+  `CompanyAdministratorInviter::administratorRoleIds()` (one list, shared with
+  the invitation), only when the creator may assign it ("Director", user 7,
+  had been created with Company Admin alone).
+- **Why / How (cash chart):** the Overview "Money in and out" bucketed paid
+  invoices by `invoice_date`, so TRACE365's payments made today against older
+  invoices never showed on today. `OverviewCashFlowChart::dailyPayments()`
+  now sums `accounts_account_payments` (paid and in process) by payment
+  `date`, `amount_company_currency_signed`. Trade-off: salesperson, product
+  and category filters describe invoices and no longer narrow this chart;
+  the customer/vendor filters do.
+- **Why / How (profile picture):** on tenant-s3 the avatar URL took the
+  *active* company's prefix, so the Super Admin's picture (stored under
+  company 1) returned 404 after switching. `Partner::getAvatarUrlAttribute()`
+  uses the contact's own company folder; Profile uploads, previews and deletes
+  through a per-request disk rooted there (forgotten after each resolve).
+  `SecureStorageController` still authorizes every read.
+- **Upstream:** #1671 (`3b0ee0bf0`) - seven lists ordered by id in
+  `getEloquentQuery()`, ahead of any column sort; moved to
+  `->defaultSort('id', 'desc')` (accounts invoices, bills, payments, credit
+  notes, refunds; purchases orders, agreements). `bb50e2bbc` - unfinished
+  Replenishment answers 404 by direct URL.
+- **Verification:** `aureuserp_testing_claude_vault`: accounts
+  `tests/Feature/Filament` 39 passed (138 assertions), including the new
+  sort test. `aureuserp_testing_hotfix125`: AvatarUrl, Overview,
+  CompanyAdministratorBusinessRole and MultiCompanyAdmin: 61 passed, 2
+  failed (test setup: Payment has no model factory; `fillForm()` skips the
+  roles update hook), both fixed and re-run: 2 passed.
+- **Release:** v1.12.5 (app 1.12.5; accounts 1.12.4, invoices 1.11.1,
+  partners 1.7.4, purchases 1.11.1, security 1.11.3, support 1.12.2,
+  inventories 1.9.2).
+- **Rollback:** revert the commit; no migration.
+
 ## 2026-11-19, hotfix v1.12.4: GHS invoices could not be paid; automatic accounting setup
 
 - **Why (1):** TRACE365 (base GHS) could not pay INV/2026/00011 (GHS); the

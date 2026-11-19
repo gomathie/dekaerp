@@ -51,6 +51,22 @@ it('lists invoices with their key columns for authorized users', function () {
         ->assertCanRenderTableColumn('state');
 });
 
+/**
+ * Upstream #1671: the list ordered by id inside getEloquentQuery(), ahead of
+ * any column sort, so clicking a column header changed nothing.
+ */
+it('lists newest invoices first and still follows a column sort', function () {
+    FilamentHelper::actingAs(['view_any_account_invoice']);
+
+    $older = AccountHelper::invoice(overrides: ['invoice_date' => '2026-01-10']);
+    $newer = AccountHelper::invoice(overrides: ['invoice_date' => '2026-01-01']);
+
+    Livewire::test(ListInvoices::class)
+        ->assertCanSeeTableRecords([$newer, $older], inOrder: true)
+        ->sortTable('invoice_date', 'desc')
+        ->assertCanSeeTableRecords([$older, $newer], inOrder: true);
+});
+
 it('hides summary cells together with the columns hidden on narrow screens', function () {
     FilamentHelper::actingAs(['view_any_account_invoice']);
 

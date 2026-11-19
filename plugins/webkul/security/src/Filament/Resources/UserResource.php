@@ -47,6 +47,7 @@ use Webkul\Security\Filament\Resources\UserResource\Pages\ListUsers;
 use Webkul\Security\Filament\Resources\UserResource\Pages\ViewUsers;
 use Webkul\Security\Models\Role;
 use Webkul\Security\Models\User;
+use Webkul\Security\Services\CompanyAdministratorInviter;
 use Webkul\Security\Services\MultiCompanyAdminService;
 use Webkul\Security\Services\TenantImpersonation;
 use Webkul\Security\Settings\UserSettings;
@@ -161,6 +162,29 @@ class UserResource extends Resource
                                             ->required()
                                             ->preload()
                                             ->dehydrated(false)
+                                            ->live()
+                                            /*
+                                             * "Company Admin" alone opens almost no screens; the business
+                                             * role carries them (user, 2026-11-19: "Director" was created
+                                             * with only Company Admin). Add it the moment Company Admin is
+                                             * picked, from the same list the invitation uses, and only when
+                                             * this person may assign it. It can still be removed by hand.
+                                             */
+                                            ->afterStateUpdated(function (Select $component, $state, $old): void {
+                                                $state = array_map('intval', (array) $state);
+                                                $administratorRoles = CompanyAdministratorInviter::administratorRoleIds();
+
+                                                if ($administratorRoles === []
+                                                    || ! in_array($administratorRoles[0], $state, true)
+                                                    || in_array($administratorRoles[0], array_map('intval', (array) $old), true)) {
+                                                    return;
+                                                }
+
+                                                $assignable = array_map('intval', array_keys(self::assignableRoleOptions()));
+                                                $extra = array_values(array_intersect(array_slice($administratorRoles, 1), $assignable));
+
+                                                $component->state(array_values(array_unique([...$state, ...$extra])));
+                                            })
                                             ->afterStateHydrated(function (Select $component, ?User $record): void {
                                                 $component->state($record ? self::currentRoleIds($record) : []);
                                             })
@@ -255,9 +279,14 @@ class UserResource extends Resource
                                                 fn (Builder $query): Builder => self::scopeAssignableCompanies($query),
                                             )
                                             ->multiple()
+                                            // A new user starts in the creator's current company (TRACE365,
+                                            // 2026-11-19): left empty, the required default company stopped
+                                            // the save and Company Admins could not tell why.
+                                            ->default(fn (): array => array_filter([current_company_id()]))
                                             ->preload()
                                             ->searchable(),
                                         Select::make('default_company_id')
+                                            ->default(fn (): ?int => current_company_id())
                                             ->label(__('security::filament/resources/user.form.sections.multi-company.default-company'))
                                             ->relationship(
                                                 'defaultCompany',

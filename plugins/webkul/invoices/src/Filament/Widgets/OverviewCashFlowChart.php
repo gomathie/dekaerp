@@ -4,6 +4,11 @@ namespace Webkul\Invoice\Filament\Widgets;
 
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
+use Webkul\Account\Enums\PaymentStatus;
+use Webkul\Account\Enums\PaymentType;
+use Webkul\Account\Models\Payment;
 
 /**
  * The one chart on the Overview's All tab (user, 2026-11-13): money in
@@ -48,11 +53,8 @@ class OverviewCashFlowChart extends RevenueOverTimeWidget
     {
         [$start, $end] = $this->periodRange();
 
-        $invoices = $this->customerInvoices();
-        $bills = $this->vendorBills();
-
-        $in = $this->dailyBuckets($invoices->where($invoices->qualifyColumn('payment_state'), 'paid'), true);
-        $out = array_map('abs', $this->dailyBuckets($bills->where($bills->qualifyColumn('payment_state'), 'paid'), true));
+        $in = $this->dailyPayments(PaymentType::RECEIVE, $start, $end);
+        $out = $this->dailyPayments(PaymentType::SEND, $start, $end);
 
         $labels = [];
 
@@ -75,13 +77,11 @@ class OverviewCashFlowChart extends RevenueOverTimeWidget
         // "vs previous period" (approved mockup): the money in of the period
         // of the same length just before, day by day, as a faint line.
         if ($this->filter === 'compare') {
-            // The invoice query takes its own date range: without it the
-            // page period would filter the earlier dates away.
-            $previous = $this->customerInvoices(...$this->previousPeriodRange());
+            [$previousStart, $previousEnd] = $this->previousPeriodRange();
 
             $datasets[] = [
                 'label'       => __('invoices::filament/pages/overview.cash-compare.previous'),
-                'data'        => $this->previousDailyPaid($previous->where($previous->qualifyColumn('payment_state'), 'paid'), count($labels)),
+                'data'        => array_slice($this->dailyPayments(PaymentType::RECEIVE, $previousStart, $previousEnd), 0, count($labels)),
                 'borderColor' => $this->brandColor('primary', 500, 0.45),
                 'fill'        => false,
                 'tension'     => 0.4,
@@ -108,30 +108,38 @@ class OverviewCashFlowChart extends RevenueOverTimeWidget
     }
 
     /**
-     * Daily paid totals of the previous period, aligned to this period's days
-     * (day 1 against day 1), so the two lines share one axis.
+     * Money received (inbound) or paid out (outbound) per day, by the
+     * payment's own date, in the company's currency, zero-filled.
+     *
+     * Read from payments, not paid invoices (TRACE365, 2026-11-19): an
+     * invoice is dated when issued, so money received today against an
+     * older invoice never showed on today. In process counts with paid:
+     * both are recorded receipts, and a bank payment stays in process until
+     * reconciled. The partner filters narrow payments; the salesperson,
+     * product and category filters describe invoices and do not.
      *
      * @return list<float>
      */
-    protected function previousDailyPaid(\Illuminate\Database\Eloquent\Builder $query, int $days): array
+    protected function dailyPayments(PaymentType $type, Carbon $start, Carbon $end): array
     {
-        [$start, $end] = $this->previousPeriodRange();
+        $query = Payment::query();
+        $filters = $this->dashboardFilters();
+        $partnerFilter = $type === PaymentType::RECEIVE ? 'customer_id' : 'vendor_id';
 
-        $dateColumn = $query->qualifyColumn($this->dashboardDateColumn());
-        $valueColumn = $query->qualifyColumn($this->dashboardValueColumn());
-        $grammar = $query->getQuery()->getGrammar();
-        $day = 'DATE('.$grammar->wrap($dateColumn).')';
-
-        $byDay = $query->toBase()
-            ->whereBetween($dateColumn, [$start, $end])
-            ->selectRaw($day.' as bucket_day, SUM('.$grammar->wrap($valueColumn).') as bucket_value')
-            ->groupByRaw($day)
+        $byDay = $query
+            ->where($query->qualifyColumn('payment_type'), $type)
+            ->whereIn($query->qualifyColumn('state'), [PaymentStatus::PAID, PaymentStatus::IN_PROCESS])
+            ->whereBetween($query->qualifyColumn('date'), [$start->toDateString(), $end->toDateString()])
+            ->when(! empty($filters[$partnerFilter]), fn (Builder $q) => $q->whereIn($q->qualifyColumn('partner_id'), (array) $filters[$partnerFilter]))
+            ->toBase()
+            ->selectRaw('date as bucket_day, SUM(ABS(amount_company_currency_signed)) as bucket_value')
+            ->groupBy('date')
             ->pluck('bucket_value', 'bucket_day')
-            ->mapWithKeys(fn ($value, $key): array => [\Illuminate\Support\Carbon::parse($key)->format('Y-m-d') => abs((float) $value)]);
+            ->mapWithKeys(fn ($value, $key): array => [Carbon::parse($key)->format('Y-m-d') => (float) $value]);
 
         $series = [];
 
-        for ($i = 0, $date = (clone $start)->startOfDay(); $i < $days; $i++, $date->addDay()) {
+        for ($date = (clone $start)->startOfDay(); $date->lte($end); $date->addDay()) {
             $series[] = round($byDay->get($date->format('Y-m-d'), 0.0), 2);
         }
 
