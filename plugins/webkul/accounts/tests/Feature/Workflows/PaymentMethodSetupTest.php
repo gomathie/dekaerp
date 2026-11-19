@@ -80,3 +80,20 @@ it('backfills manual payment in and out on bank and cash journals that have none
         expect($types)->toBe(['inbound', 'outbound']);
     }
 });
+
+it('sets up accounting for a company as soon as it is created', function () {
+    config(['app.accounting_auto_setup' => true]);
+
+    $company = Company::factory()->create();
+
+    expect(app(AccountingSetupService::class)->isSetUp($company))->toBeTrue()
+        ->and(paymentMethodLinesByJournalType($company->id)['bank'] ?? 0)->toBeGreaterThan(0);
+});
+
+it('leaves a created company alone when automatic setup is off', function () {
+    config(['app.accounting_auto_setup' => false]);
+
+    $company = Company::factory()->create();
+
+    expect(app(AccountingSetupService::class)->isSetUp($company))->toBeFalse();
+});

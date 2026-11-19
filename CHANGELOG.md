@@ -10,6 +10,20 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.12.4 — 2026-11-19
+
+### Fixes
+
+- Invoices in your company's own currency (for example GHS) can be paid
+  again. The payment window now uses the invoice's currency, not the bank
+  journal's.
+- If a payment cannot be prepared, you now see a clear message instead of a
+  technical error, and our team is notified automatically.
+- New companies are ready to invoice and take payments straight away:
+  accounting (chart of accounts, journals, taxes and payment methods) is set
+  up automatically. Existing companies that had not set it up are set up
+  too.
+
 # CHANGELOG — v1.12.3 — 2026-11-19
 
 ### Fixes
