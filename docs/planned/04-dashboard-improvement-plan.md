@@ -150,6 +150,29 @@ and one ZMW invoice; assert the base total, the by-currency breakdown, that a
 later rate change does not move the historical total, and that a missing rate
 shows `—` and is excluded.
 
+### DB-8 Sales that start as an invoice (user, 2026-11-19)
+
+TRACE365 invoices directly from Invoices, with no quotation or sales order,
+so Sales and the Sales revenue tile showed nothing while invoices were being
+paid. Decided:
+
+- **Both ways of working are first-class.** Quote first (Sales → Quotation →
+  Order → Invoice) or invoice straight away (Invoices → New invoice); neither
+  should look like "nothing happened".
+- **Revenue counts invoices.** The dashboard's revenue figure is invoiced
+  sales, whether or not an order came first (posted customer invoices less
+  credit notes, company currency).
+- **Sales shows invoiced work too.** A "Recent invoices" (or "Sales without an
+  order") view inside Sales, so a direct invoice is visible there.
+- **The guides say which door to use:** "If you agree a price first, start in
+  Sales → Quotations; if you just bill, start in Invoices → New invoice."
+
+Also found on TRACE365's Overview (2026-11-19), to fix in DB-2/DB-3: the
+"Money in and out" chart's "This period" ends yesterday, so a payment made
+today is missing from it; the Logistics tab is absent although Logistics is
+granted; "Cash at bank GHS 0" after a payment, because the payment sits in
+the outstanding account until reconciled, needs a plain explanation.
+
 ## Verification for every package
 
 - Pest: known totals, a foreign-company row that must not count, and the
