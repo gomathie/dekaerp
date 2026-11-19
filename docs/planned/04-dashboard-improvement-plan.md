@@ -1,7 +1,7 @@
 # Dashboard improvement plan
 
-> **Status:** Proposed 2026-11-18, not started. Decisions D-DB-1 to D-DB-4
-> below are open.
+> **Status:** Decided 2026-11-19 (all decisions D-DB-1 to D-DB-7 taken),
+> not started. Starts after the resource restructure merges.
 > **Method:** the `dashboard-design` workflow in the shared library
 > (`workflows/dashboard-design.md`), adapted 2026-11-18 from the MIT skill
 > `abdiraimov-otabek/dashboard-design-skill`. Nothing was installed.
@@ -31,7 +31,7 @@ matter most to clients reading them:
 | Accounting | `AccountingHeadlineWidget`, `JournalChartsWidget` |
 | Sales | `SalesDashboard`; headline plus four top-N tables |
 | Purchases | `Purchases` dashboard; headline plus four top-N tables |
-| Inventory | `InventoryHeadlineWidget`, `OperationTypeOverviewWidget` (dashboard work in #4 belongs to the Inventory developer) |
+| Inventory | `InventoryHeadlineWidget`, `OperationTypeOverviewWidget` (dashboard work in #5 belongs to the Inventory developer) |
 | Projects, Recruitment, Logistics | Their own dashboards, now also Overview sections; Logistics has four stats widgets |
 | Time Off, Maintenance | Calendar and leave widgets |
 | Shared (support) | `HasDashboardMetrics` (period ranges, `statTrend`, grouped `dailyBuckets`), `GuardsDashboardWidget` (module and permission), `DashboardCardRegistry`, `DashboardFilters`, `DashboardDateRange` |
@@ -159,7 +159,25 @@ shows `—` and is excluded.
   say so in the handoff.
 - Screenshots are reviewed but never stand in for the tests.
 
-## Decisions for the user
+## Decisions taken (user, 2026-11-19)
+
+- **D-DB-1** A trend shows "New" or the absolute change, neutral colour,
+  when the previous period was 0 or had fewer than 5 records.
+- **D-DB-2** Lower is better (rise shown red): overdue receivables, open
+  bills and payables, costs and expenses, late shipments.
+- **D-DB-3** Order for DB-4: Overview, Invoices, Sales, Purchases, then the
+  rest.
+- **D-DB-4** Inventory: shared-helper changes only; its layout stays with
+  the Inventory developer (#5).
+- **D-DB-5** By-currency breakdown under the base total for receivables and
+  overdue, payables, cash and bank, **and revenue** (wider than suggested).
+- **D-DB-6** Offer "Show in USD", off by default, labelled as an estimate at
+  today's rate, never in exports.
+- **D-DB-7** The `JournalChartWidget` mixed-currency sum is fixed **with the
+  plan**, not as a hotfix. It is DB-7's first change.
+- Queue position: 4, right after the resource restructure.
+
+## Decisions as originally proposed
 
 - **D-DB-1** Small-base rule: below what previous value does a tile show
   "New" or an absolute change instead of a percentage? Suggested: previous
@@ -182,4 +200,4 @@ shows `—` and is excluded.
 ## Out of scope
 
 New metrics or reports, a new chart library, changing what a metric counts,
-and the Inventory dashboard work owned by plan #4.
+and the Inventory dashboard work owned by plan #5.

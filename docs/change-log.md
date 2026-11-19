@@ -2178,7 +2178,7 @@ readiness tracked per country and per company. The 2026-10-26 plan copied
 statutory rates into company-owned pay components, which let a company lower
 a legal minimum and left statutory updates to be retyped company by company.
 
-**How.** `docs/planned/05-payroll.md` is now the single payroll document. The scope note
+**How.** `docs/planned/06-payroll.md` is now the single payroll document. The scope note
 (`REVIEW all THIS WITH SKILLs + i have.md`) is merged into it, verbatim, as
 Appendix A. The document was reviewed with the `engineering:system-design`,
 `engineering:testing-strategy` and `devil-advocate` skills, after inspecting
@@ -2215,7 +2215,7 @@ conceded:
 The fourth attack, an unnamed practitioner and no shadow-run date, is open
 until the user supplies them.
 
-**Decisions recorded the same day (user, 2026-11-02; `docs/planned/05-payroll.md` §6).**
+**Decisions recorded the same day (user, 2026-11-02; `docs/planned/06-payroll.md` §6).**
 
 - **DP-09:** both Congos, as two separate packages (`CD` and `CG`). Each
   package's currency (CDF or XAF) is activated when that package starts.
@@ -2295,7 +2295,7 @@ Worth recording because it is not obvious and cost the investigation: 168 of the
 provider filling `currency_rates` — rates are typed into the currency form. A
 non-base currency therefore also needs a rate before conversion works.
 
-### `docs/planned/05-payroll.md` — a plan, not a decision
+### `docs/planned/06-payroll.md` — a plan, not a decision
 
 The user asked whether payroll exists (it does not, here or upstream) and then
 for a build plan to pick up later. The document records the evidence —
@@ -3244,7 +3244,7 @@ Reconciled by marking superseded claims, not deleting them:
   only. Now documents the per-work-package database and the `-e DB_DATABASE`
   override (`phpunit.xml` sets it without `force="true"`, so the env var wins),
   and keeps the interleaving warning scoped to one database.
-- **`docs/planned/07-landing-page-brief.md`** — "Website and blog pages managed from the
+- **`docs/planned/08-landing-page-brief.md`** — "Website and blog pages managed from the
   same admin" was false: Blogs and the CMS pages were removed 2026-10-21 and
   `plugins/webkul/website` has no admin resources, only portal actions/pages.
   Replaced with the customer-portal line, correction dated inline.
