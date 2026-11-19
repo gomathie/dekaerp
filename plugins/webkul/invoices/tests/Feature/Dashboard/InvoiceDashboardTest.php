@@ -124,7 +124,9 @@ it('counts and sums only the current company’s invoices', function (): void {
 
     postedInvoice($company, 100, '2026-03-02');
     postedInvoice($company, 50, '2026-03-03', 'not_paid');
-    postedInvoice($otherCompany, 900, '2026-03-02');
+    // Another client's invoice is seeded as nobody: the signed-in user may not
+    // write into a company they are not a member of (UF-025).
+    CompanyHelper::asNobody(fn () => postedInvoice($otherCompany, 900, '2026-03-02'));
 
     $widget = invoiceWidget(InvoiceStatsWidget::class, ['start_date' => '2026-03-01', 'end_date' => '2026-03-31']);
 
