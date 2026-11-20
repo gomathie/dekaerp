@@ -1,0 +1,88 @@
+# Build context for docker/production/Dockerfile.
+#
+# The production image is built from the repository root so that it ships THIS
+# fork, not upstream. Everything below is either rebuilt inside the image,
+# irrelevant to it, or must never leave the developer's machine.
+
+# --- Secrets: never copy into an image layer ---
+.env
+.env.*
+!.env.example
+auth.json
+/credentials/
+
+# --- Rebuilt during the image build ---
+/vendor
+/node_modules
+/public/build
+/public/hot
+/bootstrap/cache/*.php
+
+# --- Local runtime state ---
+/storage/app/public/*
+/storage/app/private/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+/storage/debugbar
+/storage/pail
+/storage/installed
+/database/database.sqlite
+
+# --- Dev-only DB tooling: no app-level auth in front of it ---
+/public/adminer.php
+/storage/app/adminer
+
+# --- Version control and CI ---
+# .gitignore is deliberately NOT excluded. Tailwind v4 detects its own sources
+# from the working directory and uses .gitignore to know what to skip; without
+# it the build scans vendor/ and node_modules/, producing a larger stylesheet
+# than the local build and taking longer to do it.
+.git
+.gitattributes
+/.github
+/.scribe
+
+# --- Tests and dev tooling ---
+/tests
+phpunit.xml
+pint.json
+.editorconfig
+.codexignore
+/docker-compose.yml
+/docker/php
+
+# --- Editors and agents ---
+/.idea
+/.vscode
+/.fleet
+/.zed
+/.agents
+/.codex
+/.claude
+*.swp
+*.swo
+boost.json
+opencode.json
+skills-lock.json
+
+# --- Docs ---
+*.md
+!LICENSE
+# The in-app "What's New" page (Webkul\Support\Filament\Pages\WhatsNew) reads
+# this file at runtime, so it has to ship in the image unlike other markdown.
+!CHANGELOG.md
+/docs
+
+# --- Playwright ---
+/playwright-report
+/test-results
+
+# --- OS noise ---
+.DS_Store
+Thumbs.db
+
+# storage:link symlink - recreated inside the image, and Docker cannot
+# transfer it from a Windows build context ("invalid file request").
+/public/storage

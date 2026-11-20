@@ -1,0 +1,20 @@
+<?php
+
+return [
+    'title' => 'Contacts',
+
+    'header-actions' => [
+        'create' => [
+            'label' => 'Create Contact',
+        ],
+    ],
+
+    'tabs' => [
+        'individuals' => 'Individuals',
+        'companies'   => 'Companies',
+        'employees'   => 'Employees',
+        'customers'   => 'Customers',
+        'vendors'     => 'Vendors',
+        'archived'    => 'Archived',
+    ],
+];

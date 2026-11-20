@@ -1,0 +1,36 @@
+# --- Git ---
+.git
+.gitignore
+
+# --- IDE ---
+.idea
+.vscode
+*.swp
+*.swo
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- Node ---
+node_modules
+
+# --- Tests ---
+tests
+phpunit.xml
+
+# --- CI/CD ---
+.github
+.gitlab-ci.yml
+
+# --- Docker ---
+docker-compose*.yml
+
+# --- Documentation ---
+*.md
+!LICENSE.md
+docs
+
+# --- Dev-only DB tooling (never ship, no app-level auth in front of it) ---
+storage/app/adminer
+public/adminer.php

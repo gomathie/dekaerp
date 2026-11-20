@@ -1,0 +1,60 @@
+<?php
+
+namespace Webkul\TimeOff;
+
+use Filament\Panel;
+use Webkul\Chatter\Services\ChatterCleanupService;
+use Webkul\PluginManager\Console\Commands\InstallCommand;
+use Webkul\PluginManager\Console\Commands\UninstallCommand;
+use Webkul\PluginManager\Package;
+use Webkul\PluginManager\PackageServiceProvider;
+use Webkul\TimeOff\Models\Leave;
+use Webkul\TimeOff\Models\LeaveAllocation;
+
+class TimeOffServiceProvider extends PackageServiceProvider
+{
+    public static string $name = 'time-off';
+
+    public static string $viewNamespace = 'time-off';
+
+    public function configureCustomPackage(Package $package): void
+    {
+        $package->name(static::$name)
+            ->hasTranslations()
+            ->hasMigrations([
+                '2025_01_17_080711_create_time_off_leave_types_table',
+                '2025_01_17_080712_create_time_off_leaves_table',
+                '2025_01_20_080058_create_time_off_user_leave_types_table',
+                '2025_01_20_130725_create_time_off_leave_mandatory_days_table',
+                '2025_01_21_073921_create_time_off_leave_accrual_plans_table',
+                '2025_01_21_085833_create_time_off_leave_accrual_levels_table',
+                '2025_01_22_101656_create_time_off_leave_allocations_table',
+                '2025_08_13_120000_alter_private_name_column_in_time_off_leaves_table',
+                '2026_07_22_120000_add_company_id_to_time_off_leave_allocations_table',
+            ])
+            ->hasDependencies([
+                'employees',
+            ])
+            ->runsMigrations()
+            ->hasSeeder('Webkul\\TimeOff\\Database\\Seeders\\DatabaseSeeder')
+            ->hasInstallCommand(function (InstallCommand $command) {
+                $command
+                    ->installDependencies()
+                    ->runsMigrations()
+                    ->runsSeeders();
+            })
+            ->hasUninstallCommand(function (UninstallCommand $command) {
+                $command->endWith(function () {
+                    ChatterCleanupService::purgeForModels([Leave::class, LeaveAllocation::class]);
+                });
+            })
+            ->icon('time-offs');
+    }
+
+    public function packageRegistered(): void
+    {
+        Panel::configureUsing(function (Panel $panel): void {
+            $panel->plugin(TimeOffPlugin::make());
+        });
+    }
+}
