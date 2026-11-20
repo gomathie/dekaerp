@@ -2,59 +2,28 @@
 
 namespace Webkul\Security\Filament\Resources;
 
-use Closure;
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreAction;
-use Filament\Actions\RestoreBulkAction;
-use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\ImageEntry;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Group;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use Webkul\Security\Enums\PermissionType;
 use Webkul\Security\Filament\Resources\UserResource\Pages\CreateUser;
 use Webkul\Security\Filament\Resources\UserResource\Pages\EditUser;
 use Webkul\Security\Filament\Resources\UserResource\Pages\ListUsers;
 use Webkul\Security\Filament\Resources\UserResource\Pages\ViewUsers;
+use Webkul\Security\Filament\Resources\UserResource\Schemas\UserForm;
+use Webkul\Security\Filament\Resources\UserResource\Schemas\UserInfolist;
+use Webkul\Security\Filament\Resources\UserResource\Tables\UsersTable;
 use Webkul\Security\Models\Role;
 use Webkul\Security\Models\User;
-use Webkul\Security\Services\CompanyAdministratorInviter;
 use Webkul\Security\Services\MultiCompanyAdminService;
 use Webkul\Security\Services\TenantImpersonation;
 use Webkul\Security\Settings\UserSettings;
 use Webkul\Support\Enums\NavigationGroup;
-use Webkul\Support\Models\Company;
-use Webkul\Support\Models\Scopes\AllowedCompanyScope;
-use Webkul\Support\Services\Usernames;
 
 class UserResource extends Resource
 {
@@ -100,583 +69,24 @@ class UserResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                Group::make()
-                    ->schema([
-                        Group::make()
-                            ->schema([
-                                Section::make(__('security::filament/resources/user.form.sections.general-information.title'))
-                                    ->schema([
-                                        TextInput::make('name')
-                                            ->label(__('security::filament/resources/user.form.sections.general-information.fields.name'))
-                                            ->required()
-                                            ->maxLength(255)
-                                            ->live(onBlur: true),
-                                        TextInput::make('email')
-                                            ->label(__('security::filament/resources/user.form.sections.general-information.fields.email'))
-                                            ->email()
-                                            ->required()
-                                            ->unique(ignoreRecord: true)
-                                            ->maxLength(255),
-                                        // Optional sign-in name (user, 2026-11-19); rules in Usernames.
-                                        TextInput::make('username')
-                                            ->label(__('security::filament/resources/user.form.sections.general-information.fields.username'))
-                                            ->helperText(__('security::filament/resources/user.form.sections.general-information.fields.username-helper'))
-                                            ->maxLength(50)
-                                            ->rules(fn (?User $record): array => Usernames::rules($record?->getKey()))
-                                            ->dehydrateStateUsing(fn (?string $state): ?string => Usernames::normalize($state)),
-                                        TextInput::make('password')
-                                            ->label(__('security::filament/resources/user.form.sections.general-information.fields.password'))
-                                            ->password()
-                                            ->required()
-                                            ->revealable(filament()->arePasswordsRevealable())
-                                            ->hiddenOn('edit')
-                                            ->maxLength(255)
-                                            ->rule('min:8'),
-                                        TextInput::make('password_confirmation')
-                                            ->label(__('security::filament/resources/user.form.sections.general-information.fields.password-confirmation'))
-                                            ->password()
-                                            ->revealable(filament()->arePasswordsRevealable())
-                                            ->hiddenOn('edit')
-                                            ->rule('required', fn ($get) => (bool) $get('password'))
-                                            ->same('password'),
-                                        // Shown on edit too, where the password
-                                        // fields are not: it is the only way to
-                                        // make an existing user rotate a
-                                        // password that was shared with them.
-                                        Toggle::make('must_change_password')
-                                            ->label(__('security::filament/resources/user.form.sections.general-information.fields.must-change-password'))
-                                            ->helperText(__('security::filament/resources/user.form.sections.general-information.fields.must-change-password-helper'))
-                                            ->default(false)
-                                            ->columnSpanFull(),
-                                    ])
-                                    ->columns(2),
-
-                                Section::make(__('security::filament/resources/user.form.sections.permissions.title'))
-                                    ->schema([
-                                        Select::make('roles')
-                                            ->label(__('security::filament/resources/user.form.sections.permissions.fields.roles'))
-                                            /*
-                                             * Deliberately not `->relationship('roles')`.
-                                             * Tenant roles live on company memberships, so the
-                                             * global pivot is only half the answer, and letting
-                                             * Filament sync it would detach every tenant role the
-                                             * user already holds the moment the form is saved.
-                                             * TenantRoleAssigner writes both stores.
-                                             */
-                                            ->options(fn (): array => self::assignableRoleOptions())
-                                            ->multiple()
-                                            ->required()
-                                            ->preload()
-                                            ->dehydrated(false)
-                                            ->live()
-                                            /*
-                                             * "Company Admin" alone opens almost no screens; the business
-                                             * role carries them (user, 2026-11-19: "Director" was created
-                                             * with only Company Admin). Add it the moment Company Admin is
-                                             * picked, from the same list the invitation uses, and only when
-                                             * this person may assign it. It can still be removed by hand.
-                                             */
-                                            ->afterStateUpdated(function (Select $component, $state, $old): void {
-                                                $state = array_map('intval', (array) $state);
-                                                $administratorRoles = CompanyAdministratorInviter::administratorRoleIds();
-
-                                                if ($administratorRoles === []
-                                                    || ! in_array($administratorRoles[0], $state, true)
-                                                    || in_array($administratorRoles[0], array_map('intval', (array) $old), true)) {
-                                                    return;
-                                                }
-
-                                                $assignable = array_map('intval', array_keys(self::assignableRoleOptions()));
-                                                $extra = array_values(array_intersect(array_slice($administratorRoles, 1), $assignable));
-
-                                                $component->state(array_values(array_unique([...$state, ...$extra])));
-                                            })
-                                            ->afterStateHydrated(function (Select $component, ?User $record): void {
-                                                $component->state($record ? self::currentRoleIds($record) : []);
-                                            })
-                                            ->rule(function (?User $record) {
-                                                return function (string $attribute, $value, Closure $fail) use ($record): void {
-                                                    try {
-                                                        self::ensureAdminRoleConstraints($record, (array) $value);
-                                                    } catch (ValidationException $exception) {
-                                                        $messages = $exception->errors()['roles'] ?? [];
-
-                                                        foreach ($messages as $message) {
-                                                            $fail($message);
-                                                        }
-                                                    }
-                                                };
-                                            })
-                                            ->searchable(),
-                                        Select::make('resource_permission')
-                                            ->label(__('security::filament/resources/user.form.sections.permissions.fields.resource-permission'))
-                                            ->live()
-                                            ->options(PermissionType::class)
-                                            ->required()
-                                            ->disabled(fn (?User $record): bool => filled($record) && Auth::id() === $record->id)
-                                            ->dehydrated(fn (?User $record): bool => ! (filled($record) && Auth::id() === $record->id))
-                                            ->helperText(fn (?User $record): ?string => filled($record) && Auth::id() === $record->id
-                                                ? __('security::filament/resources/user.form.sections.permissions.fields.resource-permission-self-change-disabled')
-                                                : null)
-                                            ->preload()
-                                            ->default(PermissionType::GLOBAL->value)
-                                            ->afterStateUpdated(function (Get $get, Set $set) {
-                                                if ($get('resource_permission') != PermissionType::GROUP) {
-                                                    $set('teams', []);
-                                                }
-                                            })
-                                            ->searchable(),
-                                        Select::make('teams')
-                                            ->label(__('security::filament/resources/user.form.sections.permissions.fields.teams'))
-                                            ->relationship(
-                                                name: 'teams',
-                                                titleAttribute: 'name'
-                                            )
-                                            ->live()
-                                            ->multiple()
-                                            ->preload()
-                                            ->searchable()
-                                            ->required(fn (Get $get) => $get('resource_permission') == PermissionType::GROUP)
-                                            ->createOptionForm(fn (Schema $schema) => TeamResource::form($schema)),
-                                        /*
-                                         * Dashboard switches (user, 2026-11-20), read by
-                                         * Support\Filament\DashboardAccess. Set by whoever may
-                                         * edit this user (Company Admin and up); never on one's
-                                         * own record, so nobody turns their own back on.
-                                         */
-                                        Toggle::make('can_see_dashboard')
-                                            ->label(__('security::filament/resources/user.form.sections.permissions.fields.can-see-dashboard'))
-                                            ->helperText(__('security::filament/resources/user.form.sections.permissions.fields.can-see-dashboard-helper'))
-                                            ->default(true)
-                                            ->live()
-                                            ->disabled(fn (?User $record): bool => filled($record) && Auth::id() === $record->id)
-                                            ->dehydrated(fn (?User $record): bool => ! (filled($record) && Auth::id() === $record->id)),
-                                        Toggle::make('can_see_money_figures')
-                                            ->label(__('security::filament/resources/user.form.sections.permissions.fields.can-see-money-figures'))
-                                            ->helperText(__('security::filament/resources/user.form.sections.permissions.fields.can-see-money-figures-helper'))
-                                            ->default(true)
-                                            ->visible(fn (Get $get): bool => (bool) $get('can_see_dashboard'))
-                                            ->disabled(fn (?User $record): bool => filled($record) && Auth::id() === $record->id)
-                                            ->dehydrated(fn (?User $record): bool => ! (filled($record) && Auth::id() === $record->id)),
-                                    ])
-                                    ->columns(2),
-                            ])
-                            ->columnSpan(['lg' => 2]),
-                        Group::make()
-                            ->schema([
-                                Section::make(__('security::filament/resources/user.form.sections.avatar.title'))
-                                    ->relationship('partner', 'avatar')
-                                    ->schema([
-                                        FileUpload::make('avatar')
-                                            ->hiddenLabel()
-                                            ->automaticallyResizeImagesMode('cover')
-                                            ->image()
-                                            ->imageEditor()
-                                            ->directory('users/avatars')
-                                            ->visibility('public'),
-                                    ])
-                                    ->columns(1),
-                                Section::make(__('security::filament/resources/user.form.sections.lang-and-status.title'))
-                                    ->schema([
-                                        Select::make('language')
-                                            ->label(__('security::filament/resources/user.form.sections.lang-and-status.fields.language'))
-                                            ->options(
-                                                collect(config('app.supported_locales', []))
-                                                    ->mapWithKeys(fn ($meta, $code) => [
-                                                        $code => ($meta['native'] ?? $code).' ('.($meta['label'] ?? $code).')',
-                                                    ])
-                                                    ->all()
-                                            )
-                                            ->default(config('app.locale'))
-                                            ->native(false)
-                                            ->searchable(),
-                                        Toggle::make('is_active')
-                                            ->label(__('security::filament/resources/user.form.sections.lang-and-status.fields.status'))
-                                            ->default(true),
-                                    ])
-                                    ->columns(1),
-                                Section::make(__('security::filament/resources/user.form.sections.multi-company.title'))
-                                    ->schema([
-                                        Select::make('allowed_companies')
-                                            ->label(__('security::filament/resources/user.form.sections.multi-company.allowed-companies'))
-                                            ->relationship(
-                                                'allowedCompanies',
-                                                'name',
-                                                fn (Builder $query): Builder => self::scopeAssignableCompanies($query),
-                                            )
-                                            ->multiple()
-                                            // A new user starts in the creator's current company (TRACE365,
-                                            // 2026-11-19): left empty, the required default company stopped
-                                            // the save and Company Admins could not tell why.
-                                            ->default(fn (): array => array_filter([current_company_id()]))
-                                            ->preload()
-                                            ->searchable(),
-                                        Select::make('default_company_id')
-                                            ->default(fn (): ?int => current_company_id())
-                                            ->label(__('security::filament/resources/user.form.sections.multi-company.default-company'))
-                                            ->relationship(
-                                                'defaultCompany',
-                                                'name',
-                                                modifyQueryUsing: fn (Builder $query): Builder => self::scopeAssignableCompanies($query)->withTrashed(),
-                                            )
-                                            ->getOptionLabelFromRecordUsing(function ($record): string {
-                                                return $record->name.($record->trashed() ? ' (Deleted)' : '');
-                                            })
-                                            ->disableOptionWhen(fn ($label) => str_contains($label, ' (Deleted)'))
-                                            ->required()
-                                            ->rule(fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
-                                                $allowed = $get('allowed_companies') ?? [];
-
-                                                if (! empty($value) && ! in_array((string) $value, array_map('strval', (array) $allowed), true)) {
-                                                    $fail(__('security::filament/resources/user.form.sections.multi-company.default-company-not-allowed'));
-                                                }
-                                            })
-                                            ->searchable()
-                                            ->createOptionForm(fn (Schema $schema) => CompanyResource::form($schema))
-                                            ->createOptionAction(function (Action $action) {
-                                                $action
-                                                    ->visible(fn (): bool => Auth::user()?->isSuperAdmin() ?? false)
-                                                    ->fillForm(function (array $arguments): array {
-                                                        return [
-                                                            'user_id' => Auth::id(),
-                                                        ];
-                                                    })
-                                                    ->mutateDataUsing(function (array $data) {
-                                                        $data['user_id'] = Auth::id();
-
-                                                        return $data;
-                                                    });
-                                            })
-                                            ->afterStateHydrated(function (Select $component, $state) {
-                                                if (empty($state)) {
-                                                    $component->state(null);
-
-                                                    return;
-                                                }
-
-                                                $company = Company::find($state);
-
-                                                if (! $company) {
-                                                    $component->state(null);
-                                                }
-                                            })
-                                            ->preload(),
-                                    ]),
-                            ])
-                            ->columnSpan(['lg' => 1]),
-                    ])
-                    ->columns(3),
-            ])
-            ->columns(1);
+        return UserForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->reorderableColumns()
-            ->columns([
-                ImageColumn::make('partner.avatar')
-                    // defaultImageUrl is what shows when there is no uploaded
-                    // avatar, so pointing it at $record->avatar_url made it the
-                    // same nothing it was meant to replace: that accessor
-                    // returns null when the partner has no avatar, and Filament
-                    // then rendered an <img> with no usable src - the broken
-                    // image icon in the Users table. Fall back to the avatar
-                    // Filament already shows for the signed-in user, so the
-                    // table and the user menu agree.
-                    ->defaultImageUrl(fn ($record): string => Filament::getUserAvatarUrl($record))
-                    ->imageSize(50)
-                    ->label(__('security::filament/resources/user.table.columns.avatar')),
-                TextColumn::make('name')
-                    ->label(__('security::filament/resources/user.table.columns.name'))
-                    ->searchable()
-                    ->sortable()
-                    ->limit(50),
-                TextColumn::make('email')
-                    ->label(__('security::filament/resources/user.table.columns.email'))
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('teams.name')
-                    ->label(__('security::filament/resources/user.table.columns.teams'))
-                    ->badge()
-                    ->listWithLineBreaks(),
-                TextColumn::make('effective_role_names')
-                    ->label(__('security::filament/resources/user.table.columns.role'))
-                    ->listWithLineBreaks()
-                    ->state(fn (User $record): array => $record->effectiveRoleNames()),
-                TextColumn::make('resource_permission')
-                    ->label(__('security::filament/resources/user.table.columns.resource-permission'))
-                    ->formatStateUsing(fn (PermissionType $state) => $state->getLabel())
-                    ->sortable(),
-                TextColumn::make('defaultCompany.name')
-                    ->label(__('security::filament/resources/user.table.columns.default-company'))
-                    ->getStateUsing(fn ($record) => $record->defaultCompany()->withoutGlobalScope(AllowedCompanyScope::class)->value('name')),
-                TextColumn::make('allowedCompanies.name')
-                    ->label(__('security::filament/resources/user.table.columns.allowed-company'))
-                    ->getStateUsing(fn ($record) => $record->allowedCompanies()->withoutGlobalScope(AllowedCompanyScope::class)->pluck('name')->all())
-                    ->badge()
-                    ->listWithLineBreaks(),
-                TextColumn::make('created_at')
-                    ->label(__('security::filament/resources/user.table.columns.created-at'))
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->label(__('security::filament/resources/user.table.columns.updated-at'))
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                SelectFilter::make('resource_permission')
-                    ->label(__('security::filament/resources/user.table.filters.resource-permission'))
-                    ->searchable()
-                    ->options(PermissionType::class)
-                    ->preload(),
-                SelectFilter::make('default_company')
-                    ->relationship('defaultCompany', 'name', fn (Builder $query): Builder => self::scopeAssignableCompanies($query))
-                    ->label(__('security::filament/resources/user.table.filters.default-company'))
-                    ->searchable()
-                    ->preload(),
-                SelectFilter::make('allowed_companies')
-                    ->relationship('allowedCompanies', 'name', fn (Builder $query): Builder => self::scopeAssignableCompanies($query))
-                    ->label(__('security::filament/resources/user.table.filters.allowed-companies'))
-                    ->multiple()
-                    ->searchable()
-                    ->preload(),
-                SelectFilter::make('teams')
-                    ->relationship('teams', 'name')
-                    ->label(__('security::filament/resources/user.table.filters.teams'))
-                    ->options(fn (): array => Role::query()->pluck('name', 'id')->all())
-                    ->multiple()
-                    ->searchable()
-                    ->preload(),
-                SelectFilter::make('roles')
-                    ->label(__('security::filament/resources/user.table.filters.roles'))
-                    ->relationship('roles', 'name', fn (Builder $query): Builder => self::scopeAssignableRoles($query))
-                    ->options(fn (): array => self::scopeAssignableRoles(Role::query())->pluck('name', 'id')->all())
-                    ->multiple()
-                    ->searchable()
-                    ->preload(),
-            ])
-            ->filtersFormColumns(2)
-            ->recordActions([
-                ActionGroup::make([
-                    ViewAction::make()
-                        ->hidden(fn ($record) => $record->trashed()),
-                    EditAction::make()
-                        ->hidden(fn ($record) => $record->trashed())
-                        ->successNotification(
-                            Notification::make()
-                                ->success()
-                                ->title(__('security::filament/resources/user.table.actions.edit.notification.title'))
-                                ->body(__('security::filament/resources/user.table.actions.edit.notification.body')),
-                        ),
-                    DeleteAction::make()
-                        ->hidden(fn ($record) => $record->trashed())
-                        ->before(function (DeleteAction $action, $record): void {
-                            if (! self::canDeleteUser($record)) {
-                                Notification::make()
-                                    ->danger()
-                                    ->title(__('security::filament/resources/user.table.actions.delete.notification.error.title'))
-                                    ->body(__('security::filament/resources/user.table.actions.delete.notification.error.body'))
-                                    ->send();
-
-                                $action->cancel();
-                            }
-                        })
-                        ->successNotification(
-                            Notification::make()
-                                ->success()
-                                ->title(__('security::filament/resources/user.table.actions.delete.notification.title'))
-                                ->body(__('security::filament/resources/user.table.actions.delete.notification.body')),
-                        ),
-                    RestoreAction::make()
-                        ->successNotification(
-                            Notification::make()
-                                ->success()
-                                ->title(__('security::filament/resources/user.table.actions.restore.notification.title'))
-                                ->body(__('security::filament/resources/user.table.actions.restore.notification.body')),
-                        ),
-                    // Tenant impersonation grant (SAAS-15). Only a Super Admin
-                    // may give or take it, and only a Multi-Company Admin can
-                    // hold it; TenantImpersonation re-checks both.
-                    Action::make('grantImpersonation')
-                        ->label(__('security::impersonation.actions.grant.label'))
-                        ->icon('heroicon-o-eye')
-                        ->requiresConfirmation()
-                        ->modalDescription(__('security::impersonation.actions.grant.modal-description'))
-                        ->visible(fn (User $record): bool => self::managesImpersonationGrants()
-                            && ! $record->trashed()
-                            && $record->isMultiCompanyAdmin()
-                            && ! app(TenantImpersonation::class)->holdsGrant($record))
-                        ->action(function (User $record): void {
-                            app(TenantImpersonation::class)->grant(Auth::user(), $record);
-
-                            Notification::make()->success()->title(__('security::impersonation.notifications.granted'))->send();
-                        }),
-                    Action::make('revokeImpersonation')
-                        ->label(__('security::impersonation.actions.revoke.label'))
-                        ->icon('heroicon-o-eye-slash')
-                        ->color('danger')
-                        ->requiresConfirmation()
-                        ->modalDescription(__('security::impersonation.actions.revoke.modal-description'))
-                        ->visible(fn (User $record): bool => self::managesImpersonationGrants()
-                            && app(TenantImpersonation::class)->holdsGrant($record))
-                        ->action(function (User $record): void {
-                            app(TenantImpersonation::class)->revoke(Auth::user(), $record);
-
-                            Notification::make()->success()->title(__('security::impersonation.notifications.revoked'))->send();
-                        }),
-                ]),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->visible(fn (?User $record) => $record && self::canDeleteUser($record))
-                        ->successNotification(
-                            Notification::make()
-                                ->success()
-                                ->title(__('security::filament/resources/user.table.bulk-actions.delete.notification.title'))
-                                ->body(__('security::filament/resources/user.table.bulk-actions.delete.notification.body')),
-                        ),
-                    ForceDeleteBulkAction::make()
-                        ->visible(fn (): bool => ! (Auth::user()?->isMultiCompanyAdmin() ?? false))
-                        ->action(function (Collection $records) {
-                            try {
-                                $records->each(fn (Model $record) => $record->forceDelete());
-                            } catch (QueryException $e) {
-                                Notification::make()
-                                    ->danger()
-                                    ->title(__('security::filament/resources/user.table.bulk-actions.force-delete.notification.error.title'))
-                                    ->body(__('security::filament/resources/user.table.bulk-actions.force-delete.notification.error.body'))
-                                    ->send();
-                            }
-                        })
-                        ->successNotification(
-                            Notification::make()
-                                ->success()
-                                ->title(__('security::filament/resources/user.table.bulk-actions.force-delete.notification.title'))
-                                ->body(__('security::filament/resources/user.table.bulk-actions.force-delete.notification.body')),
-                        ),
-                    RestoreBulkAction::make()
-                        ->successNotification(
-                            Notification::make()
-                                ->success()
-                                ->title(__('security::filament/resources/user.table.bulk-actions.restore.notification.title'))
-                                ->body(__('security::filament/resources/user.table.bulk-actions.restore.notification.body')),
-                        ),
-                ]),
-            ])
-            ->defaultSort('created_at', 'desc')
-            ->modifyQueryUsing(function ($query) {
-                $query->with('roles', 'teams', 'defaultCompany', 'allowedCompanies');
-            })
-            ->checkIfRecordIsSelectableUsing(fn (User $record) => self::canDeleteUser($record))
-            ->emptyStateActions([
-                CreateAction::make()
-                    ->icon('heroicon-o-plus-circle')
-                    ->successNotification(
-                        Notification::make()
-                            ->success()
-                            ->title(__('security::filament/resources/user.table.empty-state-actions.create.notification.title'))
-                            ->body(__('security::filament/resources/user.table.empty-state-actions.create.notification.body')),
-                    ),
-            ]);
+        return UsersTable::configure($table);
     }
 
     public static function infolist(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                Grid::make(['default' => 3])
-                    ->schema([
-                        Group::make()
-                            ->schema([
-                                Section::make(__('security::filament/resources/user.infolist.sections.general-information.title'))
-                                    ->schema([
-                                        TextEntry::make('name')
-                                            ->icon('heroicon-o-user')
-                                            ->placeholder('—')
-                                            ->extraAttributes([
-                                                'style' => 'word-break: break-all;',
-                                            ])
-                                            ->label(__('security::filament/resources/user.infolist.sections.general-information.entries.name')),
-                                        TextEntry::make('email')
-                                            ->icon('heroicon-o-envelope')
-                                            ->placeholder('—')
-                                            ->label(__('security::filament/resources/user.infolist.sections.general-information.entries.email')),
-                                        TextEntry::make('language')
-                                            ->icon('heroicon-o-language')
-                                            ->placeholder('—')
-                                            ->label(__('security::filament/resources/user.infolist.sections.lang-and-status.entries.language')),
-                                    ])
-                                    ->columns(2),
-
-                                Section::make(__('security::filament/resources/user.infolist.sections.permissions.title'))
-                                    ->schema([
-                                        TextEntry::make('effective_role_names')
-                                            ->icon('heroicon-o-key')
-                                            ->placeholder('—')
-                                            ->label(__('security::filament/resources/user.infolist.sections.permissions.entries.roles'))
-                                            ->listWithLineBreaks()
-                                            ->state(fn (User $record): array => $record->effectiveRoleNames())
-                                            ->formatStateUsing(fn ($state) => ucfirst($state))
-                                            ->bulleted(),
-                                        TextEntry::make('teams.name')
-                                            ->badge()
-                                            ->icon('heroicon-o-user-group')
-                                            ->placeholder('—')
-                                            ->label(__('security::filament/resources/user.infolist.sections.permissions.entries.teams')),
-                                        TextEntry::make('resource_permission')
-                                            ->placeholder('-')
-                                            ->label(__('security::filament/resources/user.infolist.sections.permissions.entries.resource-permission')),
-                                    ])
-                                    ->columns(2),
-                            ])
-                            ->columnSpan(2),
-
-                        Group::make([
-                            Section::make(__('security::filament/resources/user.infolist.sections.avatar.title'))
-                                ->schema([
-                                    ImageEntry::make('partner.avatar')
-                                        ->hiddenLabel()
-                                        ->circular()
-                                        ->placeholder('—'),
-                                ]),
-
-                            Section::make(__('security::filament/resources/user.infolist.sections.multi-company.title'))
-                                ->schema([
-                                    TextEntry::make('allowedCompanies.name')
-                                        ->badge()
-                                        ->icon('heroicon-o-building-office')
-                                        ->placeholder('—')
-                                        ->label(__('security::filament/resources/user.infolist.sections.multi-company.allowed-companies')),
-                                    TextEntry::make('defaultCompany.name')
-                                        ->icon('heroicon-o-building-office-2')
-                                        ->placeholder('—')
-                                        ->label(__('security::filament/resources/user.infolist.sections.multi-company.default-company')),
-                                ]),
-
-                            Section::make(__('security::filament/resources/user.infolist.sections.lang-and-status.title'))
-                                ->schema([
-                                    IconEntry::make('is_active')
-                                        ->label(__('security::filament/resources/user.infolist.sections.lang-and-status.entries.status'))
-                                        ->boolean(),
-                                ]),
-                        ])->columnSpan(1),
-                    ]),
-            ])
-            ->columns(1);
+        return UserInfolist::configure($schema);
     }
 
     /**
      * Shows the impersonation grant actions. Only to an active Super Admin
      * who is not impersonating; TenantImpersonation::grant() re-checks.
      */
-    protected static function managesImpersonationGrants(): bool
+    public static function managesImpersonationGrants(): bool
     {
         $actor = Auth::user();
 
@@ -778,7 +188,7 @@ class UserResource extends Resource
         );
     }
 
-    protected static function scopeAssignableCompanies(Builder $query): Builder
+    public static function scopeAssignableCompanies(Builder $query): Builder
     {
         $actor = Auth::user();
 
@@ -794,7 +204,7 @@ class UserResource extends Resource
      *
      * @return array<int, string>
      */
-    protected static function assignableRoleOptions(): array
+    public static function assignableRoleOptions(): array
     {
         return static::scopeAssignableRoles(Role::query())
             ->orderBy('name')
@@ -813,7 +223,7 @@ class UserResource extends Resource
         return app(MultiCompanyAdminService::class)->effectiveRoleIds($record);
     }
 
-    protected static function scopeAssignableRoles(Builder $query): Builder
+    public static function scopeAssignableRoles(Builder $query): Builder
     {
         $actor = Auth::user();
 

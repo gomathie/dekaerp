@@ -2,16 +2,14 @@
 
 namespace Webkul\Logistics\Filament\Clusters\Configurations\Resources;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Webkul\Logistics\Filament\Clusters\Configurations;
 use Webkul\Logistics\Filament\Clusters\Configurations\Resources\Concerns\ConfiguresCompanyScope;
 use Webkul\Logistics\Filament\Clusters\Configurations\Resources\PackageTypeResource\Pages\ManagePackageTypes;
+use Webkul\Logistics\Filament\Clusters\Configurations\Resources\PackageTypeResource\Schemas\PackageTypeForm;
+use Webkul\Logistics\Filament\Clusters\Configurations\Resources\PackageTypeResource\Tables\PackageTypesTable;
 use Webkul\Logistics\Models\PackageType;
 
 class PackageTypeResource extends Resource
@@ -42,40 +40,12 @@ class PackageTypeResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                static::nameField(),
-                static::codeField(),
-                static::companyField(),
-                static::activeField(),
-            ])
-            ->columns(1);
+        return PackageTypeForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->columns([
-                static::nameColumn(),
-                static::codeColumn(),
-                static::companyColumn(),
-                static::activeColumn(),
-            ])
-            ->filters([
-                static::activeFilter(),
-                static::companyFilter(),
-            ])
-            ->reorderable('sort')
-            ->defaultSort('sort')
-            ->recordActions([
-                EditAction::make(),
-                DeleteAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
+        return PackageTypesTable::configure($table);
     }
 
     public static function getPages(): array

@@ -1,3 +1,2353 @@
 {
-    "__not_installed": "No Webkul\\Employee resources are registered in the admin panel for this run."
+    "Webkul\\Employee\\Filament\\Clusters\\Configurations\\Resources\\ActivityPlanResource": {
+        "model": "Webkul\\Employee\\Models\\ActivityPlan",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "name"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "department_id"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "company_id"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Toggle",
+                        "name": "is_active"
+                    }
+                ]
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "department.name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "department.manager.name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "company.name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                        "name": "is_active"
+                    }
+                ]
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "department.name",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "department.manager.name",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "company.name",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\IconColumn",
+                    "name": "is_active",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "creator.name",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "created_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "updated_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\TernaryFilter",
+                    "name": "is_active"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\QueryBuilder",
+                    "name": "queryBuilder"
+                }
+            ],
+            "groups": [
+                "name",
+                "creator.name",
+                "is_active",
+                "created_at",
+                "updated_at"
+            ],
+            "defaultSort": null,
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ViewAction",
+                    "name": "view"
+                },
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\RestoreAction",
+                    "name": "restore"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                },
+                {
+                    "type": "Filament\\Actions\\ForceDeleteAction",
+                    "name": "forceDelete"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\RestoreBulkAction",
+                            "name": "restore"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteBulkAction",
+                            "name": "forceDelete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\Employee\\Filament\\Clusters\\Configurations\\Resources\\DepartureReasonResource": {
+        "model": "Webkul\\Employee\\Models\\DepartureReason",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name"
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "name"
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "id",
+                    "sortable": true,
+                    "searchable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "creator.name",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "created_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "updated_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\QueryBuilder",
+                    "name": "queryBuilder"
+                }
+            ],
+            "groups": [],
+            "defaultSort": "sort",
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ViewAction",
+                    "name": "view"
+                },
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\Employee\\Filament\\Clusters\\Configurations\\Resources\\EmployeeCategoryResource": {
+        "model": "Webkul\\Employee\\Models\\EmployeeCategory",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\ColorPicker",
+                "name": "color"
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "name"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\ColorEntry",
+                "name": "color"
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "id",
+                    "sortable": true,
+                    "searchable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\ColorColumn",
+                    "name": "color",
+                    "sortable": true,
+                    "searchable": true,
+                    "toggleable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "creator.name",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "created_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "updated_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\QueryBuilder",
+                    "name": "queryBuilder"
+                }
+            ],
+            "groups": [
+                "name",
+                "color",
+                "creator.name",
+                "created_at",
+                "updated_at"
+            ],
+            "defaultSort": null,
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ViewAction",
+                    "name": "view"
+                },
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\Employee\\Filament\\Clusters\\Configurations\\Resources\\EmploymentTypeResource": {
+        "model": "Webkul\\Employee\\Models\\EmploymentType",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "code"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "country_id"
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "name"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "code"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "country.name"
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "id",
+                    "sortable": true,
+                    "searchable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "code",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "country.name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "creator.name",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "created_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "updated_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\QueryBuilder",
+                    "name": "queryBuilder"
+                }
+            ],
+            "groups": [
+                "name",
+                "code",
+                "country.name",
+                "creator.name",
+                "created_at",
+                "updated_at"
+            ],
+            "defaultSort": "sort",
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ViewAction",
+                    "name": "view"
+                },
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\Employee\\Filament\\Clusters\\Configurations\\Resources\\JobPositionResource": {
+        "model": "Webkul\\Employee\\Models\\EmployeeJobPosition",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "department_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "company_id"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\RichEditor",
+                                        "name": "description"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\RichEditor",
+                                        "name": "requirements"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "no_of_recruitment"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "no_of_employee"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "expected_employees"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "employment_type_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "is_active"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Grid",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "department.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "company.name"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "description"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "requirements"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "expected_employees"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "no_of_employee"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "no_of_recruitment"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "employmentType.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "is_active"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "id",
+                    "sortable": true,
+                    "searchable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "department.name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "company.name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "expected_employees",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "no_of_employee",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\IconColumn",
+                    "name": "is_active",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "creator.name",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "created_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "updated_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "department"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "employmentType"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "company"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\TernaryFilter",
+                    "name": "is_active"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\QueryBuilder",
+                    "name": "queryBuilder"
+                }
+            ],
+            "groups": [
+                "name",
+                "company.name",
+                "department.name",
+                "employmentType.name",
+                "creator.name",
+                "created_at",
+                "updated_at"
+            ],
+            "defaultSort": "sort",
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ViewAction",
+                    "name": "view"
+                },
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                },
+                {
+                    "type": "Filament\\Actions\\RestoreAction",
+                    "name": "restore"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteBulkAction",
+                            "name": "forceDelete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\RestoreBulkAction",
+                            "name": "restore"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\Employee\\Filament\\Clusters\\Configurations\\Resources\\SkillTypeResource": {
+        "model": "Webkul\\Employee\\Models\\SkillType",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "name"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "color"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Toggle",
+                        "name": "is_active"
+                    }
+                ]
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "color"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                        "name": "is_active"
+                    }
+                ]
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "id",
+                    "sortable": true,
+                    "searchable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "color",
+                    "sortable": true,
+                    "toggleable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "skills.name",
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "skillLevels.name",
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\IconColumn",
+                    "name": "is_active",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "creator.name",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "created_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "updated_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\TernaryFilter",
+                    "name": "is_active"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\QueryBuilder",
+                    "name": "queryBuilder"
+                }
+            ],
+            "groups": [
+                "name",
+                "color",
+                "creator.name",
+                "is_active",
+                "created_at",
+                "updated_at"
+            ],
+            "defaultSort": null,
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\ViewAction",
+                            "name": "view"
+                        },
+                        {
+                            "type": "Filament\\Actions\\EditAction",
+                            "name": "edit"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\RestoreAction",
+                            "name": "restore"
+                        }
+                    ]
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\RestoreBulkAction",
+                            "name": "restore"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteBulkAction",
+                            "name": "forceDelete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\Employee\\Filament\\Clusters\\Configurations\\Resources\\WorkLocationResource": {
+        "model": "Webkul\\Employee\\Models\\WorkLocation",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\ToggleButtons",
+                "name": "location_type"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "location_number"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "company_id"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Toggle",
+                "name": "is_active"
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "name"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "location_type"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "location_number"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "company.name"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\IconEntry",
+                "name": "is_active"
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "id",
+                    "sortable": true,
+                    "searchable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "location_type",
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\IconColumn",
+                    "name": "is_active"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "company.name",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "location_number",
+                    "searchable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "creator.name",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "created_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "updated_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "deleted_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\TernaryFilter",
+                    "name": "is_active"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\QueryBuilder",
+                    "name": "queryBuilder"
+                }
+            ],
+            "groups": [
+                "name",
+                "creator.name",
+                "location_type",
+                "company.name",
+                "is_active",
+                "created_at",
+                "updated_at"
+            ],
+            "defaultSort": null,
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ViewAction",
+                    "name": "view"
+                },
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                },
+                {
+                    "type": "Filament\\Actions\\RestoreAction",
+                    "name": "restore"
+                },
+                {
+                    "type": "Filament\\Actions\\ForceDeleteAction",
+                    "name": "forceDelete"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteBulkAction",
+                            "name": "forceDelete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\Employee\\Filament\\Clusters\\Reportings\\Resources\\EmployeeSkillResource": {
+        "model": "Webkul\\Employee\\Models\\EmployeeSkill",
+        "form": [],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "employee.name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "skill.name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "skillLevel.name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "skillType.name"
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "creator.name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "employee.user.name"
+                    }
+                ]
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "id",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "employee.name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "skill.name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "skillLevel.name"
+                },
+                {
+                    "type": "Webkul\\Support\\Filament\\Tables\\Columns\\ProgressBarEntry",
+                    "name": "skill_level_percentage"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "skillType.name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "creator.name",
+                    "sortable": true,
+                    "searchable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "employee.user.name",
+                    "sortable": true,
+                    "searchable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "created_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "employee"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "skill"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "skill_level"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "skill_type"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\QueryBuilder",
+                    "name": "queryBuilder"
+                }
+            ],
+            "groups": [
+                "employee.name",
+                "skillType.name"
+            ],
+            "defaultSort": "created_at",
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\ViewAction",
+                            "name": "view"
+                        }
+                    ]
+                }
+            ],
+            "toolbarActions": [],
+            "headerActions": []
+        }
+    },
+    "Webkul\\Employee\\Filament\\Resources\\DepartmentResource": {
+        "model": "Webkul\\Employee\\Models\\Department",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "parent_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "manager_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "company_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\ColorPicker",
+                                        "name": "color"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "manager.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "company.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\ColorEntry",
+                                        "name": "color"
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Fieldset",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "hierarchy"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\ImageColumn",
+                    "name": "manager.partner.avatar"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "manager.name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "company.name",
+                    "searchable": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\QueryBuilder",
+                    "name": "queryBuilder"
+                }
+            ],
+            "groups": [
+                "name",
+                "company.name",
+                "manager.name",
+                "created_at",
+                "updated_at"
+            ],
+            "defaultSort": null,
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ViewAction",
+                    "name": "view"
+                },
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                },
+                {
+                    "type": "Filament\\Actions\\ActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\RestoreAction",
+                            "name": "restore"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteAction",
+                            "name": "forceDelete"
+                        }
+                    ]
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\RestoreBulkAction",
+                            "name": "restore"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteBulkAction",
+                            "name": "forceDelete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\Employee\\Filament\\Resources\\EmployeeResource": {
+        "model": "Webkul\\Employee\\Models\\Employee",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Group",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "job_title"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Group",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\FileUpload",
+                                        "name": "avatar"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "work_email"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "department_id"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "mobile_phone"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "job_id"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "work_phone"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "parent_id"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "employees_employee_categories"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "coach_id"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Tabs",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Group",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Select",
+                                                        "name": "address_id"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Select",
+                                                        "name": "work_location_id"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Select",
+                                                        "name": "leave_manager_id"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Select",
+                                                        "name": "attendance_manager_id"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Select",
+                                                        "name": "calendar_id"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Select",
+                                                        "name": "time_zone"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Group",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                        "children": [
+                                                            {
+                                                                "type": "Filament\\Forms\\Components\\Select",
+                                                                "name": "company_id"
+                                                            },
+                                                            {
+                                                                "type": "Filament\\Forms\\Components\\ColorPicker",
+                                                                "name": "color"
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Group",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Group",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                        "children": [
+                                                            {
+                                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                                "name": "private_street1"
+                                                            },
+                                                            {
+                                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                                "name": "private_street2"
+                                                            },
+                                                            {
+                                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                                "name": "private_city"
+                                                            },
+                                                            {
+                                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                                "name": "private_zip"
+                                                            },
+                                                            {
+                                                                "type": "Filament\\Forms\\Components\\Select",
+                                                                "name": "private_country_id"
+                                                            },
+                                                            {
+                                                                "type": "Filament\\Forms\\Components\\Select",
+                                                                "name": "private_state_id"
+                                                            },
+                                                            {
+                                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                                "name": "private_phone"
+                                                            },
+                                                            {
+                                                                "type": "Filament\\Forms\\Components\\Select",
+                                                                "name": "bank_account_id"
+                                                            },
+                                                            {
+                                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                                "name": "private_email"
+                                                            },
+                                                            {
+                                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                                "name": "private_car_plate"
+                                                            },
+                                                            {
+                                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                                "name": "distance_home_work"
+                                                            },
+                                                            {
+                                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                                "name": "km_home_work"
+                                                            },
+                                                            {
+                                                                "type": "Filament\\Forms\\Components\\Select",
+                                                                "name": "distance_home_work_unit"
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Schemas\\Components\\Group",
+                                                        "children": [
+                                                            {
+                                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                                "children": [
+                                                                    {
+                                                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                                                        "name": "emergency_contact"
+                                                                    },
+                                                                    {
+                                                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                                                        "name": "emergency_phone"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                        "children": [
+                                                            {
+                                                                "type": "Filament\\Forms\\Components\\Select",
+                                                                "name": "marital"
+                                                            },
+                                                            {
+                                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                                "name": "spouse_complete_name"
+                                                            },
+                                                            {
+                                                                "type": "Filament\\Forms\\Components\\DatePicker",
+                                                                "name": "spouse_birthdate"
+                                                            },
+                                                            {
+                                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                                "name": "children"
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                        "children": [
+                                                            {
+                                                                "type": "Filament\\Forms\\Components\\Select",
+                                                                "name": "certificate"
+                                                            },
+                                                            {
+                                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                                "name": "study_field"
+                                                            },
+                                                            {
+                                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                                "name": "study_school"
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Select",
+                                                        "name": "country_id"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Select",
+                                                        "name": "state_id"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                                        "name": "identification_id"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                                        "name": "ssnid"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                                        "name": "sinid"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                                        "name": "passport_id"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Select",
+                                                        "name": "gender"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\DatePicker",
+                                                        "name": "birthday"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Select",
+                                                        "name": "country_of_birth"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                                        "name": "visa_no"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                                        "name": "permit_no"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\DatePicker",
+                                                        "name": "visa_expire"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\DatePicker",
+                                                        "name": "work_permit_expiration_date"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\FileUpload",
+                                                        "name": "work_permit"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Group",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                                        "name": "is_active"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                                        "name": "is_flexible"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                                        "name": "is_fully_flexible"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                                        "name": "work_permit_scheduled_activity"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Select",
+                                                        "name": "user_id"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Select",
+                                                        "name": "departure_reason_id"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\DatePicker",
+                                                        "name": "departure_date"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Textarea",
+                                                        "name": "departure_description"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                                        "name": "lang"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Textarea",
+                                                        "name": "additional_note"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Textarea",
+                                                        "name": "notes"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                                        "name": "barcode"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                                        "name": "pin"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Grid",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Group",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "job_title"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Group",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\ImageEntry",
+                                        "name": "partner.avatar"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Grid",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "work_email"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "department.complete_name"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "mobile_phone"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "job.name"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "work_phone"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "parent.name"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "categories.name"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "coach.name"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Tabs",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Grid",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "companyAddress.name"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "workLocation.name"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "leaveManager.name"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "attendanceManager.name"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "calendar.name"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "time_zone"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "company.name"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\ColorEntry",
+                                                        "name": "color"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Grid",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "private_street1"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "private_street2"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "private_city"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "private_zip"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "privateCountry.name"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "privateState.name"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "private_phone"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "private_email"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "private_car_plate"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "distance_home_work"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "emergency_contact"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "emergency_phone"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "visa_no"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "permit_no"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "visa_expire"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "work_permit_expiration_date"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\ImageEntry",
+                                                        "name": "work_permit"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "country.name"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "state.name"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "identification_id"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "ssnid"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "sinid"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "passport_id"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "gender"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "birthday"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "countryOfBirth.name"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "country.phone_code"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Group",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                                        "name": "is_active"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                                        "name": "is_flexible"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                                        "name": "is_fully_flexible"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                                        "name": "work_permit_scheduled_activity"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "user.name"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "departureReason.name"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "departure_date"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "departure_description"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "lang"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "additional_note"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "notes"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "barcode"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "pin"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\ImageColumn",
+                    "name": "partner.avatar"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "job_title",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "work_email",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "work_phone",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "categories.name"
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "skills"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "resumes"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "time_zone"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\QueryBuilder",
+                    "name": "queryBuilder"
+                }
+            ],
+            "groups": [
+                "name",
+                "company.name",
+                "parent.name",
+                "coach.name",
+                "department.complete_name",
+                "employmentType.name",
+                "categories.name",
+                "departureReason.name",
+                "privateState.name",
+                "privateCountry.name",
+                "country.name",
+                "state.name",
+                "created_at",
+                "updated_at"
+            ],
+            "defaultSort": "name",
+            "recordActions": [
+                {
+                    "type": "Webkul\\Chatter\\Filament\\Actions\\ActivityTableAction",
+                    "name": "chatter.schedule-activity"
+                },
+                {
+                    "type": "Filament\\Actions\\ViewAction",
+                    "name": "view"
+                },
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\RestoreAction",
+                    "name": "restore"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteBulkAction",
+                            "name": "forceDelete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    }
 }

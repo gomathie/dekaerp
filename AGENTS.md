@@ -2175,7 +2175,7 @@ REFERENCES
 • docs/logistics-plan.md — Logistics plan, decisions D1–D15, status board, work
   packages, handoff log.
 • docs/completed/unified-product-resource-plan.md — cross-plugin product-resource plan.
-• docs/planned/07-landing-page-brief.md — public landing-page scope and constraints.
+• docs/planned/08-landing-page-brief.md — public landing-page scope and constraints.
 • docs/running-tests.md — how to run tests.
 • docs/completed/harness2-integration.md — assessment of Google's Harness² framework: why
   it cannot integrate with this repo or agent, plus the repo-owned evaluation

@@ -360,6 +360,48 @@ for the task/question log this change log is paired with.
   ProductFeature 276, LogisticsFeature 201, EmployeeFeature 10,
   PlatformBillingFeature 126. Not re-run on `develop` itself.
 - **Rollback:** revert this commit.
+## 2026-11-17, resource restructure to upstream's layout (Package F, branch `chore/resource-structure`)
+
+- **Why:** user: start the restructure backlog. Upstream v1.6 moved every
+  resource's form/infolist/table into `Schemas/` and `Tables/` classes;
+  while ours stayed inline, no upstream form or table fix could be applied
+  as a patch (docs/upstream-structure-alignment-plan.md).
+- **How:** a one-off script moved each body **verbatim** into
+  `XResource/Schemas/XForm.php`, `XInfolist.php` and `XResource/Tables/XsTable.php`
+  (`configure()`), leaving the resource method as a one-line delegation;
+  `static::`/`self::` became `XResource::`. 319 methods across 127
+  resources. Helpers those bodies call were made `public` (the custom-field
+  methods actually used, in `Fields\Filament\Traits\HasCustomFields`, and
+  about 40 resource helpers such as `getDefaultStageId()`), plus the
+  subclasses that redeclare them (the three ActivityType resources'
+  `$pluginName`). Not moved: 6 tables that extend `parent::table()`
+  (Account `PartnerResource`, Purchase `PurchaseOrderResource` and
+  `ProductResource`, Sale `ProductResource`, Security `CompanyResource`,
+  TimeOff `ByEmployeeResource`); upstream keeps those inline too. Resources
+  already split were left alone.
+- **Benefit:** upstream form and table changes now land in the same file
+  shape; resource classes shrank by about 35,000 lines.
+- **Trade-off / risk:** visibility widening is a small divergence from
+  upstream, which passes custom fields into `configure()` as an argument
+  instead. A resource is not a Livewire component, so a public static helper
+  is not callable from the browser; no guard moved. Field order, scoping and
+  `visibleFrom()` are covered by the structure snapshot, not by eye.
+- **Verification:** `php -l` on all 446 changed files; Pint clean; a token
+  scan found 0 class names that no longer resolve (negative control: a
+  planted unknown name was reported). Structure snapshot: baseline recorded
+  from `ddf2a821d` (pre-conversion), compared on the converted tree, on
+  `aureuserp_testing_structure`. First comparison: 20 of 22 plugins
+  identical. Time-off differed for a real bug - `TimeOffForm` and
+  `MyTimeOffForm` called `(new self)->getFormSchema()`, which after the move
+  meant the new class, so both forms would have failed to open; fixed to
+  name the resource. Security differed only in the position of the
+  accounts-contributed base-currency section: contribution order follows
+  plugin boot order, which differs between a fresh-install run and one on an
+  installed database; the contributing files were not changed. Security was
+  re-baselined from the pre-conversion code on the installed database.
+  Final comparison: 26 passed (27 assertions), all 22 plugins identical.
+  Note for later runs: the security fixture depends on that boot order.
+- **Rollback:** revert the branch commit; the conversion is self-contained.
 
 ## 2026-11-16, branded emails and a clearer invitation (U31–U34)
 
@@ -2455,7 +2497,7 @@ readiness tracked per country and per company. The 2026-10-26 plan copied
 statutory rates into company-owned pay components, which let a company lower
 a legal minimum and left statutory updates to be retyped company by company.
 
-**How.** `docs/planned/05-payroll.md` is now the single payroll document. The scope note
+**How.** `docs/planned/06-payroll.md` is now the single payroll document. The scope note
 (`REVIEW all THIS WITH SKILLs + i have.md`) is merged into it, verbatim, as
 Appendix A. The document was reviewed with the `engineering:system-design`,
 `engineering:testing-strategy` and `devil-advocate` skills, after inspecting
@@ -2492,7 +2534,7 @@ conceded:
 The fourth attack, an unnamed practitioner and no shadow-run date, is open
 until the user supplies them.
 
-**Decisions recorded the same day (user, 2026-11-02; `docs/planned/05-payroll.md` §6).**
+**Decisions recorded the same day (user, 2026-11-02; `docs/planned/06-payroll.md` §6).**
 
 - **DP-09:** both Congos, as two separate packages (`CD` and `CG`). Each
   package's currency (CDF or XAF) is activated when that package starts.
@@ -2572,7 +2614,7 @@ Worth recording because it is not obvious and cost the investigation: 168 of the
 provider filling `currency_rates` — rates are typed into the currency form. A
 non-base currency therefore also needs a rate before conversion works.
 
-### `docs/planned/05-payroll.md` — a plan, not a decision
+### `docs/planned/06-payroll.md` — a plan, not a decision
 
 The user asked whether payroll exists (it does not, here or upstream) and then
 for a build plan to pick up later. The document records the evidence —
@@ -3521,7 +3563,7 @@ Reconciled by marking superseded claims, not deleting them:
   only. Now documents the per-work-package database and the `-e DB_DATABASE`
   override (`phpunit.xml` sets it without `force="true"`, so the env var wins),
   and keeps the interleaving warning scoped to one database.
-- **`docs/planned/07-landing-page-brief.md`** — "Website and blog pages managed from the
+- **`docs/planned/08-landing-page-brief.md`** — "Website and blog pages managed from the
   same admin" was false: Blogs and the CMS pages were removed 2026-10-21 and
   `plugins/webkul/website` has no admin resources, only portal actions/pages.
   Replaced with the customer-portal line, correction dated inline.

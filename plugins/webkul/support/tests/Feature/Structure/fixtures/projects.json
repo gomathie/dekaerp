@@ -1,3 +1,1125 @@
 {
-    "__not_installed": "No Webkul\\Project resources are registered in the admin panel for this run."
+    "Webkul\\Project\\Filament\\Clusters\\Configurations\\Resources\\ActivityPlanResource": {
+        "model": "Webkul\\Project\\Models\\ActivityPlan",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "name"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Toggle",
+                        "name": "is_active"
+                    }
+                ]
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                        "name": "is_active"
+                    }
+                ]
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\IconColumn",
+                    "name": "is_active",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "created_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "updated_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                }
+            ],
+            "filters": [],
+            "groups": [
+                "name",
+                "is_active",
+                "created_at",
+                "updated_at"
+            ],
+            "defaultSort": null,
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ViewAction",
+                    "name": "view"
+                },
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\RestoreAction",
+                    "name": "restore"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                },
+                {
+                    "type": "Filament\\Actions\\ForceDeleteAction",
+                    "name": "forceDelete"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\RestoreBulkAction",
+                            "name": "restore"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteBulkAction",
+                            "name": "forceDelete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\Project\\Filament\\Clusters\\Configurations\\Resources\\MilestoneResource": {
+        "model": "Webkul\\Project\\Models\\Milestone",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\DateTimePicker",
+                "name": "deadline"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Toggle",
+                "name": "is_completed"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "project_id"
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section"
+            }
+        ],
+        "infolist": [],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "deadline",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\ToggleColumn",
+                    "name": "is_completed",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "completed_at",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "project.name",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "creator.name",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "created_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "updated_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\TernaryFilter",
+                    "name": "is_completed"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "project_id"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "creator_id"
+                }
+            ],
+            "groups": [
+                "project.name",
+                "is_completed",
+                "created_at"
+            ],
+            "defaultSort": null,
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\Project\\Filament\\Clusters\\Configurations\\Resources\\ProjectStageResource": {
+        "model": "Webkul\\Project\\Models\\ProjectStage",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name"
+            }
+        ],
+        "infolist": [],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                }
+            ],
+            "filters": [],
+            "groups": [
+                "created_at"
+            ],
+            "defaultSort": "sort",
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\RestoreAction",
+                    "name": "restore"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                },
+                {
+                    "type": "Filament\\Actions\\ForceDeleteAction",
+                    "name": "forceDelete"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\RestoreBulkAction",
+                            "name": "restore"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteBulkAction",
+                            "name": "forceDelete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\Project\\Filament\\Clusters\\Configurations\\Resources\\TagResource": {
+        "model": "Webkul\\Project\\Models\\Tag",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\ColorPicker",
+                "name": "color"
+            }
+        ],
+        "infolist": [],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\ColorColumn",
+                    "name": "color"
+                }
+            ],
+            "filters": [],
+            "groups": [],
+            "defaultSort": null,
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\RestoreAction",
+                    "name": "restore"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                },
+                {
+                    "type": "Filament\\Actions\\ForceDeleteAction",
+                    "name": "forceDelete"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\RestoreBulkAction",
+                            "name": "restore"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteBulkAction",
+                            "name": "forceDelete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\Project\\Filament\\Clusters\\Configurations\\Resources\\TaskStageResource": {
+        "model": "Webkul\\Project\\Models\\TaskStage",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "project_id"
+            }
+        ],
+        "infolist": [],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "project.name",
+                    "sortable": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "project_id"
+                }
+            ],
+            "groups": [
+                "project.name",
+                "created_at"
+            ],
+            "defaultSort": "sort",
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\RestoreAction",
+                    "name": "restore"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                },
+                {
+                    "type": "Filament\\Actions\\ForceDeleteAction",
+                    "name": "forceDelete"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\RestoreBulkAction",
+                            "name": "restore"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteBulkAction",
+                            "name": "forceDelete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\Project\\Filament\\Resources\\ProjectResource": {
+        "model": "Webkul\\Project\\Models\\Project",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": [
+                    {
+                        "type": "Webkul\\Field\\Filament\\Forms\\Components\\ProgressStepper",
+                        "name": "stage_id"
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "name"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\RichEditor",
+                                "name": "description"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "user_id"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "partner_id"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\DatePicker",
+                                "name": "start_date"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\DatePicker",
+                                "name": "end_date"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "allocated_hours"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "tags"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "company_id"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\Radio",
+                                "name": "visibility"
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "allow_timesheets"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "allow_milestones"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": [
+                    {
+                        "type": "Webkul\\Field\\Filament\\Infolists\\Components\\ProgressStepper",
+                        "name": "stage_id"
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "name"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "description"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Grid",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "user.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "partner.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "planned_date"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "allocated_hours"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "remaining_hours"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "stage.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "tags.name"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Grid",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "tasks_count"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "milestones_completion"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "created_at"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "creator.name"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "updated_at"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "visibility"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\IconEntry",
+                                "name": "allow_timesheets"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\IconEntry",
+                                "name": "allow_milestones"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "partner.name",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "start_date",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "end_date",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "planned_date"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "remaining_hours"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "user.name",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "tags.name"
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\QueryBuilder",
+                    "name": "queryBuilder"
+                }
+            ],
+            "groups": [
+                "stage.name",
+                "user.name",
+                "partner.name",
+                "created_at"
+            ],
+            "defaultSort": "sort",
+            "recordActions": [
+                {
+                    "type": "Webkul\\Chatter\\Filament\\Actions\\ActivityTableAction",
+                    "name": "chatter.schedule-activity"
+                },
+                {
+                    "type": "Filament\\Actions\\Action",
+                    "name": "is_favorite_by_user"
+                },
+                {
+                    "type": "Filament\\Actions\\Action",
+                    "name": "tasks"
+                },
+                {
+                    "type": "Filament\\Actions\\Action",
+                    "name": "milestones"
+                },
+                {
+                    "type": "Filament\\Actions\\ActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\EditAction",
+                            "name": "edit"
+                        },
+                        {
+                            "type": "Filament\\Actions\\RestoreAction",
+                            "name": "restore"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteAction",
+                            "name": "forceDelete"
+                        }
+                    ]
+                }
+            ],
+            "toolbarActions": [],
+            "headerActions": []
+        }
+    },
+    "Webkul\\Project\\Filament\\Resources\\TaskResource": {
+        "model": "Webkul\\Project\\Models\\Task",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": [
+                    {
+                        "type": "Webkul\\Field\\Filament\\Forms\\Components\\ProgressStepper",
+                        "name": "stage_id"
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "title"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\ToggleButtons",
+                                "name": "state"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "tags"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\RichEditor",
+                                "name": "description"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section"
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "project_id"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "milestone_id"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "partner_id"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "users"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\DateTimePicker",
+                                "name": "deadline"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "allocated_hours"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": [
+                    {
+                        "type": "Webkul\\Field\\Filament\\Infolists\\Components\\ProgressStepper",
+                        "name": "stage_id"
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "title"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "state"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\IconEntry",
+                                "name": "priority"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "description"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "tags.name"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Grid",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "project.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "milestone.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "stage.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "partner.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "users.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "deadline"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Grid",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "allocated_hours"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "total_hours_spent"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "remaining_hours"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "progress"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section"
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "created_at"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "creator.name"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "updated_at"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "subtasks_count"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "timesheets_count"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "id",
+                    "sortable": true,
+                    "searchable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\IconColumn",
+                    "name": "priority",
+                    "visibleFrom": "md"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\IconColumn",
+                    "name": "state",
+                    "sortable": true,
+                    "toggleable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "title",
+                    "sortable": true,
+                    "searchable": true,
+                    "toggleable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "project.name",
+                    "visibleFrom": "sm",
+                    "sortable": true,
+                    "searchable": true,
+                    "toggleable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "milestone.name",
+                    "sortable": true,
+                    "searchable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "partner.name",
+                    "sortable": true,
+                    "searchable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "users.name",
+                    "visibleFrom": "md",
+                    "sortable": true,
+                    "searchable": true,
+                    "toggleable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "allocated_hours",
+                    "sortable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "total_hours_spent",
+                    "visibleFrom": "lg",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "remaining_hours",
+                    "sortable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Webkul\\Support\\Filament\\Tables\\Columns\\ProgressBarEntry",
+                    "name": "progress",
+                    "visibleFrom": "md",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "deadline",
+                    "visibleFrom": "sm",
+                    "sortable": true,
+                    "toggleable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "tags.name",
+                    "visibleFrom": "lg",
+                    "toggleable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "stage.name",
+                    "sortable": true,
+                    "toggleable": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\QueryBuilder",
+                    "name": "queryBuilder"
+                }
+            ],
+            "groups": [
+                "state",
+                "project.name",
+                "deadline",
+                "stage.name",
+                "milestone.name",
+                "partner.name",
+                "created_at"
+            ],
+            "defaultSort": "sort",
+            "recordActions": [
+                {
+                    "type": "Webkul\\Chatter\\Filament\\Actions\\ActivityTableAction",
+                    "name": "chatter.schedule-activity"
+                },
+                {
+                    "type": "Filament\\Actions\\ActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\ViewAction",
+                            "name": "view"
+                        },
+                        {
+                            "type": "Filament\\Actions\\EditAction",
+                            "name": "edit"
+                        },
+                        {
+                            "type": "Filament\\Actions\\RestoreAction",
+                            "name": "restore"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteAction",
+                            "name": "forceDelete"
+                        }
+                    ]
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\RestoreBulkAction",
+                            "name": "restore"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteBulkAction",
+                            "name": "forceDelete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    }
 }

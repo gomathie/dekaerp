@@ -1,0 +1,146 @@
+{
+    "Webkul\\PluginManager\\Filament\\Resources\\PluginResource": {
+        "model": "Webkul\\PluginManager\\Models\\Plugin",
+        "form": [],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Grid",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "name"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "latest_version"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Grid",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\IconEntry",
+                                "name": "is_installed"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "author"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "license"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "summary"
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\RepeatableEntry",
+                                "name": "dependencies",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "is_installed"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\RepeatableEntry",
+                                "name": "dependents",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "is_installed"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\IconColumn",
+                    "name": "package_icon"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\ImageColumn",
+                    "name": "package_image"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "latest_version"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "summary"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "is_installed"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "dependencies_count"
+                }
+            ],
+            "filters": [],
+            "groups": [],
+            "defaultSort": "sort",
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\ViewAction",
+                            "name": "view"
+                        },
+                        {
+                            "type": "Filament\\Actions\\Action",
+                            "name": "companies"
+                        },
+                        {
+                            "type": "Filament\\Actions\\Action",
+                            "name": "install"
+                        },
+                        {
+                            "type": "Filament\\Actions\\Action",
+                            "name": "uninstall"
+                        }
+                    ]
+                }
+            ],
+            "toolbarActions": [],
+            "headerActions": []
+        }
+    }
+}
