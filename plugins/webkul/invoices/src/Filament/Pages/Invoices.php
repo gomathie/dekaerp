@@ -19,6 +19,7 @@ use Webkul\Product\Models\Product;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 use Webkul\Support\Filament\Concerns\ListsCompanyMembers;
+use Webkul\Support\Filament\DashboardAccess;
 use Webkul\Support\Filament\Forms\Components\DashboardDateRange;
 
 class Invoices extends BaseDashboard
@@ -49,7 +50,9 @@ class Invoices extends BaseDashboard
     public static function canAccess(): bool
     {
         return PluginEntitlement::enabledForCurrent('invoices')
-            && static::hasPagePermission();
+            && static::hasPagePermission()
+            // The user's dashboard switch (user, 2026-11-20).
+            && DashboardAccess::mayViewMoney();
     }
 
     /**

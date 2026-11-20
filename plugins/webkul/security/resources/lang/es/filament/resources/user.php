@@ -13,8 +13,7 @@ return [
 
     'form' => [
         'validation' => [
-            'needs-attention'                 => 'Algunos campos necesitan atención',
-            'cannot-remove-last-admin'        => 'No se puede quitar el rol de administrador del último usuario administrador.',
+            'needs-attention'                 => 'Algunos campos necesitan atención',            'cannot-remove-last-admin'        => 'No se puede quitar el rol de administrador del último usuario administrador.',
             'company-invalid'                 => 'Una o más empresas seleccionadas no son válidas.',
             'company-not-assigned'            => 'Solo puede asignar usuarios a las empresas asignadas a su cuenta.',
             'company-required'                => 'Seleccione al menos una empresa.',
@@ -31,6 +30,8 @@ return [
                 'fields' => [
                     'name'                        => 'Nombre',
                     'email'                       => 'Correo electrónico',
+                    'username'                    => 'Nombre de usuario',
+                    'username-helper'             => 'Opcional. Permite iniciar sesión con un nombre corto en lugar del correo: letras, números, punto, guion o guion bajo, de 3 a 50 caracteres, sin @.',
                     'password'                    => 'Contraseña',
                     'password-confirmation'       => 'Confirmación de contraseña',
                     'must-change-password'        => 'Exigir una contraseña nueva en el próximo inicio de sesión',
@@ -45,6 +46,10 @@ return [
                     'permissions'                              => 'Permisos',
                     'resource-permission'                      => 'Permiso de recurso',
                     'resource-permission-self-change-disabled' => 'No puede cambiar su propio permiso de recurso. Pida a otro administrador que lo actualice.',
+                    'can-see-dashboard'                        => 'Ver el panel',
+                    'can-see-dashboard-helper'                 => 'Desactivado, oculta el Resumen y todos los paneles a este usuario.',
+                    'can-see-money-figures'                    => 'Ver cifras de dinero',
+                    'can-see-money-figures-helper'             => 'Desactivado, oculta los paneles de ventas, facturas, compras y contabilidad.',
                     'teams'                                    => 'Equipos',
                 ],
             ],

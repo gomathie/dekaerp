@@ -3,8 +3,17 @@
 return [
     'title' => 'Pagar',
 
+    'paid-now' => [
+        'label'   => 'Pagada ahora',
+        'helper'  => 'Al guardar se confirma la factura y se registra el pago completo.',
+        'invalid' => 'Esta forma de pago no se puede usar para esta factura.',
+    ],
+
     'form' => [
-        'fields' => [
+        'more-options' => 'Más opciones',
+        'fields'       => [
+            'paid-how'               => '¿Cómo se pagó?',
+            'new-way'                => 'Nueva forma de pago (p. ej. Wave, tarjeta)',
             'journal'                => 'Diario',
             'amount'                 => 'Importe',
             'currency'               => 'Moneda',

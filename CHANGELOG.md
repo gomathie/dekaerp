@@ -10,6 +10,48 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.13.0 — 2026-11-20
+
+### Features
+
+- Add a new customer straight from the invoice: press "+" next to the
+  customer field and enter a name, and optionally an email and phone.
+- Administrators can choose, per user, whether they see the dashboards
+  ("See dashboard") and the money dashboards for sales, invoices,
+  purchases and accounting ("See money figures"). Both are on for
+  everyone until changed.
+- Sign in with your email or a username. Administrators can give a user a
+  username, and you can set your own on your Profile page.
+- Recording a payment is quicker: the Pay window asks how it was paid, how
+  much and when; everything else waits under "More options".
+- Cash, Bank transfer and Mobile Money are ready to use as ways to pay, each
+  with its own account, and you can add your own (for example Wave or Card)
+  from the Pay window.
+- "Paid now" on a new invoice confirms it and records the full payment in one
+  step, for cash and walk-in sales.
+- Add a new product or service straight from an invoice line with "+".
+- Changing a quotation's currency now converts every line, as on invoices,
+  and warns you when there is no exchange rate.
+
+### Improvements
+
+- Sales revenue now counts every invoice, including invoices made without
+  a quotation or sales order.
+
+- Emails from DEKA now carry the DEKA logo and name at the top and amber
+  buttons, so you can recognise them at a glance in your inbox.
+- Invitation emails name the company and the person who invited you, say
+  when the invitation expires, and include a plain link in case the button
+  does not work.
+- On a phone, lists show each record as a card: the number or name on top,
+  the details under it, and the actions at the end, with no sideways
+  scrolling.
+
+### Fixes
+
+- The Guide no longer causes errors in the background when it opens.
+- The new purchase quotation no longer scrolls sideways on a phone.
+
 # CHANGELOG — v1.12.5 — 2026-11-19
 
 ### Fixes

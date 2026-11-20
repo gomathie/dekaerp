@@ -1,9 +1,24 @@
+{{-- No indentation: Markdown renders a line indented four spaces as a code block. --}}
+{{-- Escaped output only: company and inviter names are typed by users. --}}
 <x-mail::message>
-    @lang('security::views/emails/user-invitation.body', ['app' => config('app.name')])
+@if ($inviterName)
+{{ __('security::views/emails/user-invitation.body-with-inviter', ['inviter' => $inviterName, 'company' => $companyName]) }}
+@else
+{{ __('security::views/emails/user-invitation.body', ['company' => $companyName]) }}
+@endif
 
-    <x-mail::button :url="$acceptUrl">
-        @lang('security::views/emails/user-invitation.create-account')
-    </x-mail::button>
+{{ __('security::views/emails/user-invitation.instructions') }}
 
-    @lang('security::views/emails/user-invitation.discard-email')
+<x-mail::button :url="$acceptUrl">
+{{ __('security::views/emails/user-invitation.create-account') }}
+</x-mail::button>
+
+{{ __('security::views/emails/user-invitation.expires', ['date' => $expiresOn]) }}
+
+<x-slot:subcopy>
+{{ __('security::views/emails/user-invitation.link-fallback') }}
+<span class="break-all">[{{ $acceptUrl }}]({{ $acceptUrl }})</span>
+
+{{ __('security::views/emails/user-invitation.discard-email') }}
+</x-slot:subcopy>
 </x-mail::message>

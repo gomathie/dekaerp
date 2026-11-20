@@ -139,3 +139,14 @@ it('hides itself from navigation when no guide is shipped', function () {
 
     expect(Guide::shouldRegisterNavigation())->toBeFalse();
 });
+
+it('never hands raw svg markup to the category icon', function () {
+    // guide.json stores icons as <svg> markup; <x-filament::icon> read it as an
+    // image URL and every Guide visit requested /admin/<svg ... and got a 500
+    // (phone audit, 2026-11-20).
+    foreach (app(GuideLibrary::class)->index() as $category) {
+        expect($category['icon'] === null || preg_match('/^[a-z0-9-]+$/', $category['icon']) === 1)->toBeTrue();
+    }
+
+    Livewire::test(Guide::class)->assertOk()->assertDontSeeHtml('src="<svg');
+});

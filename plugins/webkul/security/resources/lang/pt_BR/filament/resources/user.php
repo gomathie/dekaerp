@@ -13,8 +13,7 @@ return [
 
     'form' => [
         'validation' => [
-            'needs-attention'                 => 'Alguns campos precisam de atenção',
-            'cannot-remove-last-admin'        => 'Não é possível remover a função de administrador do último usuário administrador.',
+            'needs-attention'                 => 'Alguns campos precisam de atenção',            'cannot-remove-last-admin'        => 'Não é possível remover a função de administrador do último usuário administrador.',
             'company-invalid'                 => 'Uma ou mais empresas selecionadas são inválidas.',
             'company-not-assigned'            => 'Você só pode atribuir usuários às empresas atribuídas à sua conta.',
             'company-required'                => 'Selecione pelo menos uma empresa.',
@@ -31,6 +30,8 @@ return [
                 'fields' => [
                     'name'                        => 'Nome',
                     'email'                       => 'E-mail',
+                    'username'                    => 'Nome de usuário',
+                    'username-helper'             => 'Opcional. Permite entrar com um nome curto em vez do e-mail: letras, números, ponto, hífen ou sublinhado, de 3 a 50 caracteres, sem @.',
                     'password'                    => 'Senha',
                     'password-confirmation'       => 'Confirmação de senha',
                     'must-change-password'        => 'Exigir uma nova senha no próximo acesso',
@@ -45,6 +46,10 @@ return [
                     'permissions'                              => 'Permissões',
                     'resource-permission'                      => 'Permissão de recurso',
                     'resource-permission-self-change-disabled' => 'Você não pode alterar sua própria permissão de recurso. Peça a outro administrador para atualizá-la.',
+                    'can-see-dashboard'                        => 'Ver painel',
+                    'can-see-dashboard-helper'                 => 'Desligado, oculta a Visão geral e todos os painéis para este usuário.',
+                    'can-see-money-figures'                    => 'Ver valores financeiros',
+                    'can-see-money-figures-helper'             => 'Desligado, oculta os painéis de vendas, faturas, compras e contabilidade.',
                     'teams'                                    => 'Equipes',
                 ],
             ],

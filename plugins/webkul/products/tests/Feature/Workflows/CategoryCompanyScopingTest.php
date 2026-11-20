@@ -40,11 +40,15 @@ it('gives a sub-category its parent\'s company, not the session\'s', function ()
     // question about who is looking.
     CompanyHelper::actingAsCompanyUser($companyB);
 
-    $child = Category::withoutGlobalScopes()->create([
+    // Written as nobody, with B still the session company: since UF-025
+    // (2026-11-16) a B user writing into A is refused outright (pinned by
+    // support CrossCompanyWriteTest). What this test proves - the parent, not
+    // the session, decides the child's company - holds for a job or import.
+    $child = CompanyHelper::asNobody(fn (): Category => Category::withoutGlobalScopes()->create([
         'name'       => 'Child of A',
         'parent_id'  => $parent->id,
         'company_id' => null,
-    ]);
+    ]));
 
     expect($child->company_id)->toBe($companyA->id)
         ->and($child->parent_path)->toBe('/'.$parent->id.'/')

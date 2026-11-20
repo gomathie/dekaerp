@@ -2,10 +2,10 @@
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Webkul\Project\Models\Project;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\PluginManager\Support\PluginEntitlement;
+use Webkul\Project\Models\Project;
 use Webkul\Support\Models\Company;
 
 require_once __DIR__.'/../../../support/tests/Helpers/CompanyHelper.php';

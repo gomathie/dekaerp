@@ -58,8 +58,10 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
      * @var array<string, mixed>
      */
     protected $attributes = [
-        'is_active'            => true,
-        'must_change_password' => false,
+        'is_active'             => true,
+        'must_change_password'  => false,
+        'can_see_dashboard'     => true,
+        'can_see_money_figures' => true,
     ];
 
     public function __construct(array $attributes = [])
@@ -73,14 +75,19 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
             'resource_permission',
             'is_default',
             'must_change_password',
+            'can_see_dashboard',
+            'can_see_money_figures',
+            'username',
         ]);
 
         $this->mergeCasts([
-            'default_company_id'   => 'integer',
-            'resource_permission'  => PermissionType::class,
-            'is_default'           => 'boolean',
-            'is_active'            => 'boolean',
-            'must_change_password' => 'boolean',
+            'can_see_dashboard'     => 'boolean',
+            'can_see_money_figures' => 'boolean',
+            'default_company_id'    => 'integer',
+            'resource_permission'   => PermissionType::class,
+            'is_default'            => 'boolean',
+            'is_active'             => 'boolean',
+            'must_change_password'  => 'boolean',
         ]);
 
         parent::__construct($attributes);

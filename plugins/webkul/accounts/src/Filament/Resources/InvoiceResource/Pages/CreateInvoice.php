@@ -9,6 +9,7 @@ use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Facades\Account as AccountFacade;
 use Webkul\Account\Filament\Resources\InvoiceResource;
 use Webkul\Account\Models\Journal;
+use Webkul\Account\Services\QuickPayment;
 use Webkul\Support\Filament\Concerns\HandlesCrossCompanyException;
 use Webkul\Support\Filament\Concerns\HasRepeaterColumnManager;
 
@@ -64,5 +65,12 @@ class CreateInvoice extends CreateRecord
     protected function afterCreate(): void
     {
         AccountFacade::computeAccountMove($this->getRecord());
+
+        // "Paid now" (user, 2026-11-20): confirm and record the full payment.
+        // Same transaction as the create, so a refused payment leaves no
+        // half-done invoice behind.
+        if (! empty($this->data['paid_now']) && ! empty($this->data['paid_journal_id'])) {
+            app(QuickPayment::class)->confirmAndPay($this->getRecord()->refresh(), (int) $this->data['paid_journal_id']);
+        }
     }
 }

@@ -82,7 +82,11 @@ it('files service products under the requested company category while acting in 
 
     CompanyHelper::actingAsCompanyUser($companyA);
 
-    app(CompanyProvisioner::class)->provision($companyB);
+    // Provisioned as nobody, with A still the session company: a company A
+    // user may not write into B since UF-025 (2026-11-16); provisioning runs
+    // from staff or from Company::created. The point - B's own category, not
+    // the session's - still holds.
+    CompanyHelper::asNobody(fn () => app(CompanyProvisioner::class)->provision($companyB));
 
     $products = Product::withoutGlobalScopes()
         ->where('company_id', $companyB->id)

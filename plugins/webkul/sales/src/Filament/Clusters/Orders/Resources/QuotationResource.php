@@ -349,7 +349,11 @@ class QuotationResource extends Resource
                                             ->preload()
                                             ->live()
                                             ->reactive()
-                                            ->default(current_company()?->currency_id),
+                                            ->default(current_company()?->currency_id)
+                                            // Same as invoices (v1.12.2): switching currency converts
+                                            // every line at the company's rate, or warns when no rate
+                                            // exists instead of silently keeping the old figures.
+                                            ->afterStateUpdated(fn (Set $set, Get $get, $state, $old, $livewire) => static::afterCurrencyUpdated($set, $get, $state, $old, $livewire)),
                                         ...static::getCustomFormFields(),
                                     ]),
                             ]),
@@ -2080,6 +2084,58 @@ class QuotationResource extends Resource
         $set($prefix.'margin', round($margin, 4));
 
         $set($prefix.'margin_percent', round($marginPercentage, 4));
+    }
+
+    /**
+     * Convert each line's price and cost to the new currency with
+     * Currency::convert() (company rate; base currency counts as 1), then
+     * recompute the line through calculateLineTotals() so the maths stays in
+     * one place. Without a rate, nothing changes and the user is told.
+     */
+    private static function afterCurrencyUpdated(Set $set, Get $get, mixed $state, mixed $old, $livewire): void
+    {
+        $from = $old ? Currency::find($old) : null;
+        $to = $state ? Currency::find($state) : null;
+        $company = Company::find($get('company_id')) ?? current_company();
+
+        if (! $from || ! $to || ! $company || $from->id === $to->id) {
+            return;
+        }
+
+        $products = $get('products') ?? [];
+
+        if ($products === []) {
+            return;
+        }
+
+        if (! $from->canConvertTo($to, $company)) {
+            Notification::make()
+                ->warning()
+                ->title(__('accounts::filament/resources/invoice.form.notifications.missing-rate.title'))
+                ->body(__('accounts::filament/resources/invoice.form.notifications.missing-rate.body', [
+                    'from' => $from->name,
+                    'to'   => $to->name,
+                ]))
+                ->persistent()
+                ->send();
+
+            return;
+        }
+
+        foreach ($products as $key => $line) {
+            if (blank($line['product_id'] ?? null)) {
+                continue;
+            }
+
+            $prefix = "products.{$key}.";
+
+            $set($prefix.'price_unit', round($from->convert((float) ($line['price_unit'] ?? 0), $to, $company), 2));
+            $set($prefix.'purchase_price', round($from->convert((float) ($line['purchase_price'] ?? 0), $to, $company), 2));
+
+            static::calculateLineTotals($set, $get, $prefix);
+        }
+
+        static::calculateQuotationTotals($get, $livewire);
     }
 
     private static function calculateQuotationTotals(Get $get, $livewire): array

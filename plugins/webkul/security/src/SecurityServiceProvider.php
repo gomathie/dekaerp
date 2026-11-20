@@ -76,6 +76,10 @@ class SecurityServiceProvider extends PackageServiceProvider
                 '2026_11_11_000001_make_existing_business_admins_company_admins',
                 // "Admin2" becomes "Business Administrator" (user, 2026-11-14).
                 '2026_11_14_000001_rename_admin2_business_role',
+                // "See dashboard" and "See money figures" per user (user, 2026-11-20).
+                '2026_11_20_000001_add_dashboard_switches_to_users_table',
+                // Sign in with email or username (user, 2026-11-19).
+                '2026_11_20_000002_add_username_to_users_table',
             ])
             ->hasSettings([
                 '2024_11_05_042358_create_user_settings',

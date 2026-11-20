@@ -1929,8 +1929,17 @@ log named):
     one update and broke filtering (Sentry DEKAERP-16).
   - Each module contributes its own figures (`panel()` on its headline
     widget; module cards through `Support\...\DashboardCardRegistry`), with
-    visibility from that module's existing `canViewAny()`. No dashboard
-    permission of its own; no module names another.
+    visibility from that module's existing `canViewAny()`. No module names
+    another. *Superseded in part 2026-11-20 (user, v1.13.0):* "No dashboard
+    permission of its own" no longer holds absolutely. Two per-user
+    switches, `users.can_see_dashboard` and `users.can_see_money_figures`
+    (both default true), are read only through
+    `Support\Filament\DashboardAccess`: off hides every dashboard page and
+    the Overview, or the money sections (accounting, invoices, purchases,
+    sales) and the Invoices/Sales/Purchases dashboards. Set on the user form
+    by Company Admin and up, never on one's own record. Dashboards only:
+    lists and records keep their role permissions. Test: invoices
+    `OverviewTest` "hides the overview or only its money sections".
   - Refresh every 5 minutes at most (user). Never Filament's 5-second
     default (Sentry DEKAERP-11). Test: `OverviewTest` polling test.
 
@@ -2017,6 +2026,19 @@ log named):
   - Tests: `logistics/tests/Feature/Customers/CustomerPageTest.php`.
 
 DONE RECENTLY (newest first; details in docs/change-log.md)
+
+• 2026-11-19 — Hotfixes v1.12.1 to v1.12.5, all from TRACE365 use
+  (investor-owned: their issues ship as hotfixes). Locked-period deletes
+  guarded again; invoice currency switch; payment methods and automatic
+  accounting setup for every company (`ACCOUNTING_AUTO_SETUP`); GHS invoices
+  payable; new users default to the creator's company and Company Admin
+  brings the business role; the Overview cash chart reads payments by
+  payment date (`OverviewCashFlowChart::dailyPayments()`, not invoice date);
+  avatar links use the contact's own company folder on tenant-s3; upstream
+  UF-026 (list sorting) and UF-027 (Replenishment 404). Plans #10 (Russian,
+  Swahili) and #11 (view reports before export, Zoho Books payment-flow
+  comparison) are on `chore/resource-structure`. Report names Aged
+  receivable/payable stay (user, 2026-11-19: standard terms).
 
 • 2026-11-10 — Logistics customer page (WP-9b): a read-only shipments tab on
   the customer infolist. See the protected decision above.

@@ -27,6 +27,7 @@ use Webkul\Purchase\Support\PurchasesAccess;
 use Webkul\Security\Models\User;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Filament\Concerns\ChecksPagePermission;
+use Webkul\Support\Filament\DashboardAccess;
 use Webkul\Support\Filament\Forms\Components\DashboardDateRange;
 use Webkul\Support\Models\Country;
 
@@ -56,7 +57,9 @@ class Purchases extends BaseDashboard
     public static function canAccess(): bool
     {
         return PurchasesAccess::enabledForCurrent()
-            && static::hasPagePermission();
+            && static::hasPagePermission()
+            // The user's dashboard switch (user, 2026-11-20).
+            && DashboardAccess::mayViewMoney();
     }
 
     /**

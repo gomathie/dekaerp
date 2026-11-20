@@ -3,8 +3,17 @@
 return [
     'title' => 'Pay',
 
+    'paid-now' => [
+        'label'   => 'Paid now',
+        'helper'  => 'Saving confirms the invoice and records the full payment.',
+        'invalid' => 'This way to pay cannot be used for this invoice.',
+    ],
+
     'form' => [
-        'fields' => [
+        'more-options' => 'More options',
+        'fields'       => [
+            'paid-how'               => 'How was it paid?',
+            'new-way'                => 'New way to pay (e.g. Wave, Card)',
             'journal'                => 'Journal',
             'amount'                 => 'Amount',
             'currency'               => 'Currency',

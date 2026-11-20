@@ -16,8 +16,10 @@ use Webkul\Account\Filament\Resources\InvoiceResource\Pages\CreateInvoice;
 use Webkul\Account\Filament\Resources\InvoiceResource\Pages\EditInvoice;
 use Webkul\Account\Filament\Resources\InvoiceResource\Pages\ListInvoices;
 use Webkul\Account\Models\Move;
+use Webkul\Partner\Models\Partner;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Package;
+use Webkul\Product\Models\Product;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/FilamentHelper.php';
@@ -65,6 +67,56 @@ it('lists newest invoices first and still follows a column sort', function () {
         ->assertCanSeeTableRecords([$newer, $older], inOrder: true)
         ->sortTable('invoice_date', 'desc')
         ->assertCanSeeTableRecords([$older, $newer], inOrder: true);
+});
+
+/**
+ * TRACE365, 2026-11-19: a customer can be added from the invoice ("+"),
+ * stamped with the current company, and only by someone who may create
+ * contacts.
+ */
+it('adds a new customer from the invoice form', function () {
+    FilamentHelper::actingAs(['view_any_account_invoice', 'create_account_invoice', 'create_partner_partner']);
+
+    Livewire::test(CreateInvoice::class)
+        ->callFormComponentAction('partner_id', 'createOption', ['name' => 'Walk-in Customer', 'phone' => '0244000000'])
+        ->assertHasNoFormComponentActionErrors();
+
+    $customer = Partner::query()->where('name', 'Walk-in Customer')->firstOrFail();
+
+    expect($customer->company_id)->toBe(current_company_id());
+});
+
+/**
+ * User, 2026-11-20 (after Zoho Books): a product or service can be added
+ * from the invoice line ("+"), with the product form's unit default.
+ */
+it('adds a new service from an invoice line', function () {
+    FilamentHelper::actingAs(['view_any_account_invoice', 'create_account_invoice', 'create_product_product']);
+
+    $component = Livewire::test(CreateInvoice::class)
+        ->set('data.products', ['line-1' => ['product_id' => null, 'quantity' => 1, 'price_unit' => 0, 'discount' => 0, 'taxes' => []]]);
+    $key = 'line-1';
+
+    $component
+        ->callFormComponentAction("products.{$key}.product_id", 'createOption', [
+            'name'  => 'Installation labour',
+            'type'  => 'service',
+            'price' => 150,
+        ])
+        ->assertHasNoFormComponentActionErrors();
+
+    $product = Product::query()->where('name', 'Installation labour')->firstOrFail();
+
+    expect((float) $product->price)->toBe(150.0)
+        ->and($product->company_id)->toBe(current_company_id())
+        ->and($product->uom_id)->not->toBeNull();
+});
+
+it('hides the add-customer button without the contact create permission', function () {
+    FilamentHelper::actingAs(['view_any_account_invoice', 'create_account_invoice']);
+
+    Livewire::test(CreateInvoice::class)
+        ->assertFormComponentActionHidden('partner_id', 'createOption');
 });
 
 it('hides summary cells together with the columns hidden on narrow screens', function () {

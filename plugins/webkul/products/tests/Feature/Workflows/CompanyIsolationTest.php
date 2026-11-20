@@ -89,7 +89,11 @@ it('gives a variant its template\'s company, not the session\'s', function () {
     // still be filed under the template's company A.
     CompanyHelper::actingAsCompanyUser($companyB);
 
-    $variant = Product::factory()->create(['parent_id' => $template->id]);
+    // Written as nobody, with B still the session company: since UF-025
+    // (2026-11-16) a B user writing into A is refused outright (pinned by
+    // support CrossCompanyWriteTest). The template, not the session, still
+    // decides the variant's company for a job or import.
+    $variant = CompanyHelper::asNobody(fn (): Product => Product::factory()->create(['parent_id' => $template->id]));
 
     expect($variant->company_id)->toBe($companyA->id);
 });

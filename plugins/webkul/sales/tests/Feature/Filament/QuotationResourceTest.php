@@ -16,6 +16,8 @@ use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource\Pages\Creat
 use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource\Pages\EditQuotation;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource\Pages\ListQuotations;
 use Webkul\Sale\Models\Order;
+use Webkul\Support\Models\Currency;
+use Webkul\Support\Models\CurrencyRate;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/FilamentHelper.php';
@@ -225,4 +227,41 @@ it('refuses to open a quotation owned by another company', function () {
 
     expect(fn () => Livewire::test(EditQuotation::class, ['record' => $quotation->id]))
         ->toThrow(ModelNotFoundException::class);
+});
+
+/**
+ * User, 2026-11-19: currency conversion on quotations, as on invoices
+ * (v1.12.2). Switching the currency converts every line at the company's
+ * rate; without a rate the lines stay and the user is warned.
+ */
+it('converts every quotation line when the currency is switched', function () {
+    $user = FilamentHelper::actingAs(['view_any_sale_quotation', 'update_sale_quotation']);
+
+    $company = SaleHelper::company();
+    $foreign = Currency::query()->whereKeyNot($company->currency_id)->firstOrFail();
+    $foreign->forceFill(['active' => true])->save();
+    $foreign->rates()->delete();
+    CurrencyRate::factory()->create([
+        'currency_id' => $foreign->id,
+        'company_id'  => $company->id,
+        'rate'        => 2.0,
+        'name'        => now()->subYears(5)->toDateString(),
+    ]);
+
+    $quotation = quotationRecord($user->id);
+    SaleHelper::line($quotation, SaleHelper::product(), qty: 1, priceUnit: 100);
+    SaleHelper::compute($quotation);
+
+    $component = Livewire::test(EditQuotation::class, ['record' => $quotation->id]);
+
+    expect((float) collect($component->get('data.products'))->first()['price_unit'])->toBe(100.0);
+
+    $component->set('data.currency_id', $foreign->id);
+
+    $line = collect($component->get('data.products'))->first();
+
+    // quotationRecord() brings its own line (quantity 2): the subtotal is the
+    // converted price times that quantity.
+    expect((float) $line['price_unit'])->toBe(200.0)
+        ->and((float) $line['price_subtotal'])->toBe(200.0 * (float) $line['product_qty']);
 });

@@ -13,8 +13,7 @@ return [
 
     'form' => [
         'validation' => [
-            'needs-attention'                 => 'Some fields need attention',
-            'cannot-remove-last-admin'        => 'Cannot remove the admin role from the last admin user.',
+            'needs-attention'                 => 'Some fields need attention',            'cannot-remove-last-admin'        => 'Cannot remove the admin role from the last admin user.',
             'company-invalid'                 => 'One or more selected companies are invalid.',
             'company-not-assigned'            => 'You may assign users only to companies assigned to your account.',
             'company-required'                => 'Select at least one company.',
@@ -31,6 +30,8 @@ return [
                 'fields' => [
                     'name'                         => 'Name',
                     'email'                        => 'Email',
+                    'username'                     => 'Username',
+                    'username-helper'              => 'Optional. Lets this person sign in with a short name instead of the email: letters, numbers, dot, dash or underscore, 3 to 50 characters, no @.',
                     'password'                     => 'Password',
                     'password-confirmation'        => 'Password Confirmation',
                     'must-change-password'         => 'Require a new password at next sign-in',
@@ -45,6 +46,10 @@ return [
                     'permissions'                              => 'Permissions',
                     'resource-permission'                      => 'Resource Permission',
                     'resource-permission-self-change-disabled' => 'You cannot change your own resource permission. Ask another administrator to update it.',
+                    'can-see-dashboard'                        => 'See dashboard',
+                    'can-see-dashboard-helper'                 => 'Off hides the Overview and every dashboard for this user.',
+                    'can-see-money-figures'                    => 'See money figures',
+                    'can-see-money-figures-helper'             => 'Off hides the sales, invoice, purchase and accounting dashboards.',
                     'teams'                                    => 'Teams',
                 ],
             ],

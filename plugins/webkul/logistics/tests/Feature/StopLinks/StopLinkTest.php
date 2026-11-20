@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -10,6 +11,7 @@ use Webkul\Logistics\Enums\ShipmentState;
 use Webkul\Logistics\Enums\StopState;
 use Webkul\Logistics\Enums\StopType;
 use Webkul\Logistics\Exceptions\LogisticsNotEnabledException;
+use Webkul\Logistics\Exceptions\StopLinkUnavailable;
 use Webkul\Logistics\Models\CompanySetting;
 use Webkul\Logistics\Models\Driver;
 use Webkul\Logistics\Models\Shipment;
@@ -78,7 +80,10 @@ function tokenFrom(string $url): string
 
 function issuedLink($company, array $permissions = ['send_pod_link', 'mark_delivered', 'capture_pod']): array
 {
-    $stop = deliverableStop($company);
+    // Seeded as nobody: a test issuing links for two companies would otherwise
+    // build the second company's stop as the first company's user, which
+    // UF-025 (2026-11-16) refuses.
+    $stop = CompanyHelper::asNobody(fn () => deliverableStop($company));
 
     CompanyHelper::actingAsCompanyUser($company, array_map(
         fn (string $ability): string => $ability.'_logistics_shipment',
@@ -126,7 +131,7 @@ it('refuses to issue a link for another company’s stop', function () {
 
     // The company scope hides it, so it cannot even be read to be issued for.
     expect(fn () => app(StopLinkService::class)->issue($stop))
-        ->toThrow(Illuminate\Database\Eloquent\ModelNotFoundException::class);
+        ->toThrow(ModelNotFoundException::class);
 });
 
 it('revokes an earlier unused link when a new one is issued', function () {
@@ -156,7 +161,7 @@ it('refuses to issue a link until the shipment is out for delivery', function ()
     CompanyHelper::actingAsCompanyUser($company, ['send_pod_link_logistics_shipment']);
 
     expect(fn () => app(StopLinkService::class)->issue($stop))
-        ->toThrow(Webkul\Logistics\Exceptions\StopLinkUnavailable::class)
+        ->toThrow(StopLinkUnavailable::class)
         ->and(StopLink::withoutGlobalScope(CompanyScope::class)->count())->toBe(0);
 });
 
@@ -674,7 +679,7 @@ it('refuses to cancel links on a shipment the user cannot see', function () {
     CompanyHelper::actingAsCompanyUser($a, ['send_pod_link_logistics_shipment']);
 
     expect(fn () => app(StopLinkService::class)->revokeForShipment($shipment))
-        ->toThrow(Illuminate\Database\Eloquent\ModelNotFoundException::class);
+        ->toThrow(ModelNotFoundException::class);
 
     asGuest();
 

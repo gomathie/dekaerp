@@ -94,7 +94,9 @@ it('counts orders per day and state in one grouped query within the company', fu
     $orders = [
         PurchaseHelper::order(['company_id' => $company->getKey(), 'user_id' => $user->getKey()]),
         PurchaseHelper::order(['company_id' => $company->getKey(), 'user_id' => $user->getKey()]),
-        PurchaseHelper::order(['company_id' => $otherCompany->getKey()]),
+        // Another client's order is set up with nobody acting: the cross-company
+        // write guard (UF-025) refuses this user creating it, as it should.
+        CompanyHelper::asNobody(fn () => PurchaseHelper::order(['company_id' => $otherCompany->getKey()])),
     ];
 
     Order::withoutGlobalScopes()->whereKey($orders[0]->getKey())->update(['ordered_at' => '2026-03-01 10:00', 'state' => 'draft']);

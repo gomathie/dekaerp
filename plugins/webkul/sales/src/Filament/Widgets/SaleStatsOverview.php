@@ -2,17 +2,17 @@
 
 namespace Webkul\Sale\Filament\Widgets;
 
-use Webkul\Sale\Filament\Widgets\Concerns\GuardsSaleDashboardWidget;
 use Flowframe\Trend\Trend;
 use Flowframe\Trend\TrendValue;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
+use Webkul\Sale\Filament\Widgets\Concerns\GuardsSaleDashboardWidget;
 use Webkul\Sale\Filament\Widgets\Concerns\HasSaleDashboardFilters;
 use Webkul\Support\Filament\Widgets\DashboardStatsWidget;
 
 class SaleStatsOverview extends DashboardStatsWidget
 {
-    use HasSaleDashboardFilters, GuardsSaleDashboardWidget;
+    use GuardsSaleDashboardWidget, HasSaleDashboardFilters;
 
     protected static ?int $sort = 1;
 
@@ -37,21 +37,28 @@ class SaleStatsOverview extends DashboardStatsWidget
 
         $ccExpr = 'SUM(CASE WHEN currency_rate > 0 THEN amount_total / currency_rate ELSE amount_total END) as cc_total';
 
-        $revenue = (float) ($this->saleOrders()->selectRaw($ccExpr)->value('cc_total') ?? 0.0);
-        $previousRevenue = (float) ($this->saleOrders($previousStart, $previousEnd)->selectRaw($ccExpr)->value('cc_total') ?? 0.0);
+        // Revenue is invoiced sales, with or without an order (DB-8). The
+        // average stays per sales order, so it keeps reading order values.
+        $revenue = $this->invoicedRevenue();
+        $previousRevenue = $this->invoicedRevenue($previousStart, $previousEnd);
 
-        $average = $orders > 0 ? $revenue / $orders : 0;
-        $previousAverage = $previousOrders > 0 ? $previousRevenue / $previousOrders : 0;
+        $orderRevenue = (float) ($this->saleOrders()->selectRaw($ccExpr)->value('cc_total') ?? 0.0);
+        $previousOrderRevenue = (float) ($this->saleOrders($previousStart, $previousEnd)->selectRaw($ccExpr)->value('cc_total') ?? 0.0);
+
+        $average = $orders > 0 ? $orderRevenue / $orders : 0;
+        $previousAverage = $previousOrders > 0 ? $previousOrderRevenue / $previousOrders : 0;
 
         $revenueColumn = 'CASE WHEN currency_rate > 0 THEN amount_total / currency_rate ELSE amount_total END';
 
         $orderCountSeries = $this->trendData($this->saleOrders(), 'COUNT', '*', $start, $end);
 
-        $revenueSeries = $this->trendData($this->saleOrders(), 'SUM', $revenueColumn, $start, $end);
+        $orderRevenueSeries = $this->trendData($this->saleOrders(), 'SUM', $revenueColumn, $start, $end);
+
+        $revenueSeries = $this->trendData($this->invoicedSales(), 'SUM', 'amount_total_signed', $start, $end, 'invoice_date');
 
         $averageSeries = array_map(
             fn (float $revenue, float $count): float => $count > 0 ? round($revenue / $count, 2) : 0.0,
-            $revenueSeries,
+            $orderRevenueSeries,
             $orderCountSeries,
         );
 
@@ -100,10 +107,10 @@ class SaleStatsOverview extends DashboardStatsWidget
     /**
      * @return array<int, float>
      */
-    protected function trendData(Builder $query, string $aggregate, string $column, Carbon $start, Carbon $end): array
+    protected function trendData(Builder $query, string $aggregate, string $column, Carbon $start, Carbon $end, string $dateColumn = 'date_order'): array
     {
         return Trend::query($query)
-            ->dateColumn('date_order')
+            ->dateColumn($dateColumn)
             ->between(start: $start, end: $end)
             ->perDay()
             ->aggregate($column, $aggregate)

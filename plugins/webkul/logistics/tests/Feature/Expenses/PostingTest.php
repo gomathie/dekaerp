@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Models\Account;
@@ -283,7 +284,6 @@ it('refuses a reimbursement whose employee contact has gone', function () {
     // to avoid re-triggering the hook that would just make another contact.
     Partner::withoutGlobalScopes()->whereKey($employee->partner_id)->forceDelete();
 
-
     postableExpense($company, [
         'shipment_id' => $shipment->id,
         'paid_by'     => ExpensePaidBy::EMPLOYEE,
@@ -328,7 +328,7 @@ it('never bills another company’s expenses', function () {
 
     // The company scope hides the shipment, so it cannot even be read.
     expect(fn () => app(ExpensePoster::class)->postForShipment($shipment))
-        ->toThrow(Illuminate\Database\Eloquent\ModelNotFoundException::class)
+        ->toThrow(ModelNotFoundException::class)
         ->and(Move::withoutGlobalScopes()->where('move_type', MoveType::IN_INVOICE)->count())->toBe(0);
 });
 

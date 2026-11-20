@@ -13,6 +13,7 @@ use Filament\Actions\ExportAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -50,6 +51,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Webkul\Account\Enums\CommunicationStandard;
 use Webkul\Account\Enums\CommunicationType;
@@ -81,6 +83,11 @@ use Webkul\Chatter\Filament\Actions\ActivityTableAction;
 use Webkul\Field\Filament\Forms\Components\ProgressStepper as FormProgressStepper;
 use Webkul\Field\Filament\Infolists\Components\ProgressStepper as InfolistProgressStepper;
 use Webkul\Field\Filament\Traits\HasCustomFields;
+use Webkul\Partner\Models\Partner as BasePartner;
+use Webkul\Product\Enums\ProductType;
+use Webkul\Product\Filament\Resources\ProductResource as BaseProductResource;
+use Webkul\Product\Models\Category as ProductCategory;
+use Webkul\Product\Models\Product as BaseProduct;
 use Webkul\Product\Settings\ProductSettings;
 use Webkul\Support\Filament\Forms\Components\Repeater;
 use Webkul\Support\Filament\Forms\Components\Repeater\TableColumn;
@@ -162,6 +169,30 @@ class InvoiceResource extends Resource
                                             ->required()
                                             ->searchable()
                                             ->preload()
+                                            /*
+                                             * "+" adds a customer without leaving the invoice
+                                             * (TRACE365, 2026-11-19). Only the essentials are asked;
+                                             * the full contact form stays under Contacts. The
+                                             * contact is stamped with the current company by
+                                             * BelongsToCompany, and needs the contact create
+                                             * permission like the Contacts screen.
+                                             */
+                                            ->createOptionForm([
+                                                TextInput::make('name')
+                                                    ->label(__('partners::filament/resources/partner.form.sections.general.fields.name'))
+                                                    ->required()
+                                                    ->maxLength(255),
+                                                TextInput::make('email')
+                                                    ->label(__('partners::filament/resources/partner.form.sections.general.fields.email'))
+                                                    ->email()
+                                                    ->maxLength(255),
+                                                TextInput::make('phone')
+                                                    ->label(__('partners::filament/resources/partner.form.sections.general.fields.phone'))
+                                                    ->tel()
+                                                    ->maxLength(255),
+                                            ])
+                                            ->createOptionAction(fn (Action $action) => $action
+                                                ->visible(fn (): bool => (bool) Auth::user()?->can('create', BasePartner::class)))
                                             ->live()
                                             ->afterStateUpdated(function (Set $set, $state) {
                                                 $partner = $state ? Partner::find($state) : null;
@@ -182,6 +213,34 @@ class InvoiceResource extends Resource
                                             ->default(now())
                                             ->native(false)
                                             ->disabled(fn ($record) => in_array($record?->state, [MoveState::POSTED, MoveState::CANCEL])),
+                                        /*
+                                         * "Paid now" (user, 2026-11-20): saving a new invoice
+                                         * confirms it and records the full payment in one step
+                                         * (QuickPayment). Not stored on the invoice; read by
+                                         * CreateInvoice::afterCreate(). Create only.
+                                         */
+                                        Toggle::make('paid_now')
+                                            ->label(__('accounts::filament/resources/invoice/actions/pay-action.paid-now.label'))
+                                            ->helperText(__('accounts::filament/resources/invoice/actions/pay-action.paid-now.helper'))
+                                            ->live()
+                                            ->dehydrated(false)
+                                            // Customer invoices only: credit notes reuse this form.
+                                            ->visible(fn (string $operation): bool => $operation === 'create' && ! str_contains(static::class, 'CreditNote')),
+                                        Select::make('paid_journal_id')
+                                            ->label(__('accounts::filament/resources/invoice/actions/pay-action.form.fields.paid-how'))
+                                            ->options(fn (Get $get): array => Journal::query()
+                                                ->where('company_id', $get('company_id') ?: current_company_id())
+                                                ->whereIn('type', [JournalType::BANK, JournalType::CASH])
+                                                ->orderBy('sort')
+                                                ->pluck('name', 'id')
+                                                ->all())
+                                            ->default(fn (Get $get) => Journal::query()
+                                                ->where('company_id', $get('company_id') ?: current_company_id())
+                                                ->where('type', JournalType::CASH)
+                                                ->value('id'))
+                                            ->required(fn (Get $get): bool => (bool) $get('paid_now'))
+                                            ->visible(fn (Get $get, string $operation): bool => $operation === 'create' && (bool) $get('paid_now') && ! str_contains(static::class, 'CreditNote'))
+                                            ->dehydrated(false),
                                         Group::make()
                                             ->schema([
                                                 DatePicker::make('invoice_date_due')
@@ -1213,6 +1272,45 @@ class InvoiceResource extends Resource
                     ->dehydrated()
                     ->disabled(fn ($record) => in_array($record?->parent_state, [MoveState::POSTED, MoveState::CANCEL]))
                     ->afterStateUpdated(fn (Set $set, Get $get) => static::afterProductUpdated($set, $get))
+                    /*
+                     * "+" adds a product or service from the invoice line
+                     * (user, 2026-11-20, after Zoho Books): name, kind and
+                     * price only; unit and category take the product form's
+                     * own defaults. Needs the product create permission.
+                     */
+                    ->createOptionForm([
+                        TextInput::make('name')
+                            ->label(__('accounts::filament/resources/invoice.form.tabs.invoice-lines.repeater.products.fields.product'))
+                            ->required()
+                            ->maxLength(255),
+                        Radio::make('type')
+                            ->hiddenLabel()
+                            ->options(ProductType::class)
+                            ->default(ProductType::SERVICE->value)
+                            ->inline()
+                            ->required(),
+                        TextInput::make('price')
+                            ->label(__('accounts::filament/resources/invoice.form.tabs.invoice-lines.repeater.products.fields.unit-price'))
+                            ->numeric()
+                            ->minValue(0)
+                            ->default(0)
+                            ->required(),
+                    ])
+                    ->createOptionUsing(function (array $data): int {
+                        $uomId = BaseProductResource::getDefaultUomIdByProductType($data['type']);
+
+                        return Product::create([
+                            'name'        => $data['name'],
+                            'type'        => $data['type'],
+                            'price'       => $data['price'],
+                            'uom_id'      => $uomId,
+                            'uom_po_id'   => $uomId,
+                            'category_id' => ProductCategory::query()->orderBy('id')->value('id'),
+                            'company_id'  => current_company_id(),
+                        ])->getKey();
+                    })
+                    ->createOptionAction(fn (Action $action) => $action
+                        ->visible(fn (): bool => (bool) Auth::user()?->can('create', BaseProduct::class)))
                     ->required(),
                 TextInput::make('quantity')
                     ->label(__('accounts::filament/resources/invoice.form.tabs.invoice-lines.repeater.products.fields.quantity'))

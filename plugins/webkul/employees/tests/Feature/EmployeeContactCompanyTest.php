@@ -22,7 +22,10 @@ it('creates and updates an employee of another company with exactly one contact'
     $actingCompany = Company::factory()->create();
     $employeeCompany = Company::factory()->create();
 
-    CompanyHelper::actingAsCompanyUser($actingCompany, []);
+    // A member of both companies, working in one: the scoped contact read that
+    // used to recurse still misses, and the write is allowed. A non-member is
+    // refused outright since UF-025 (2026-11-16).
+    CompanyHelper::actingAsCompanyUser([$actingCompany, $employeeCompany], [], [$actingCompany->id]);
 
     $employee = Employee::factory()->create([
         'company_id' => $employeeCompany->id,

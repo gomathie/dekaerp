@@ -13,6 +13,7 @@ use Webkul\Logistics\Filament\Widgets\ShipmentStatsWidget;
 use Webkul\Logistics\Filament\Widgets\UnbilledRevenueWidget;
 use Webkul\Logistics\Support\LogisticsAccess;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Filament\DashboardAccess;
 
 /**
  * The Logistics dashboard.
@@ -60,7 +61,9 @@ class Dashboard extends BaseDashboard
     public static function canAccess(): bool
     {
         return (auth()->user()?->can('page_logistics_dashboard') ?? false)
-            && LogisticsAccess::enabledForCurrent();
+            && LogisticsAccess::enabledForCurrent()
+            // The user's dashboard switch (user, 2026-11-20).
+            && DashboardAccess::mayViewDashboards();
     }
 
     public static function getNavigationLabel(): string

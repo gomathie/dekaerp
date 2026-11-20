@@ -1,7 +1,7 @@
 {
     "name": "webkul/invoices",
     "description": "Invoice generation and management",
-    "version": "1.11.1",
+    "version": "1.12.0",
     "authors": [
         {
             "name": "365 Systems"

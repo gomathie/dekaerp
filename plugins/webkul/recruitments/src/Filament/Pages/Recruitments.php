@@ -22,6 +22,7 @@ use Webkul\Recruitment\Filament\Widgets\JobPositionStatsWidget;
 use Webkul\Recruitment\Models\Stage;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Filament\Concerns\ChecksPagePermission;
+use Webkul\Support\Filament\DashboardAccess;
 use Webkul\Support\Filament\Forms\Components\DashboardDateRange;
 use Webkul\Support\Filament\Forms\Components\DashboardFilters;
 use Webkul\Support\Models\Company;
@@ -166,6 +167,8 @@ class Recruitments extends BaseDashboard
     public static function canAccess(): bool
     {
         return PluginEntitlement::enabledForCurrent('recruitments')
-            && static::hasPagePermission();
+            && static::hasPagePermission()
+            // The user's dashboard switch (user, 2026-11-20).
+            && DashboardAccess::mayViewDashboards();
     }
 }

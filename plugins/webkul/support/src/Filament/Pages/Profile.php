@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 use Webkul\Support\Filament\Clusters\Settings;
+use Webkul\Support\Services\Usernames;
 
 class Profile extends Page implements HasForms
 {
@@ -149,6 +150,14 @@ class Profile extends Page implements HasForms
                                         $set('email', strtolower(trim($state)));
                                     }),
 
+                                // Each user may set their own sign-in name (user, 2026-11-20).
+                                TextInput::make('username')
+                                    ->label(__('support::support.username'))
+                                    ->helperText(__('support::support.username-helper'))
+                                    ->maxLength(50)
+                                    ->autocomplete('username')
+                                    ->rules(fn (): array => Usernames::rules($this->getUser()->getKey())),
+
                                 Select::make('language')
                                     ->label(__('support::filament/pages/profile.fields.language'))
                                     ->options(collect(config('app.supported_locales', []))
@@ -241,8 +250,9 @@ class Profile extends Page implements HasForms
             }
 
             $fill = [
-                'name'  => trim($data['name']),
-                'email' => strtolower(trim($data['email'])),
+                'name'     => trim($data['name']),
+                'email'    => strtolower(trim($data['email'])),
+                'username' => Usernames::normalize($data['username'] ?? null),
             ];
 
             if (array_key_exists('language', $data) && $data['language']) {
@@ -366,7 +376,7 @@ class Profile extends Page implements HasForms
     {
         $user = $this->getUser();
 
-        $userData = $user->only(['name', 'email', 'avatar', 'language']);
+        $userData = $user->only(['name', 'email', 'username', 'avatar', 'language']);
 
         $userData['avatar'] = $user->partner->avatar;
 

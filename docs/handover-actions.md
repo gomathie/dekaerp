@@ -5,7 +5,14 @@ Supabase's dashboard, Laravel Cloud, or production data. Ordered by urgency.
 
 ---
 
-### STILL OPEN 2026-11-16: production cannot send any e-mail
+### DONE 2026-11-16 (later): e-mail works
+
+*Fixed:* `hello@dekacentral.com` verified in SMTP2GO as a single sender; an
+invitation then arrived in the user's Gmail. DEKAERP-1N and -1P resolved.
+The whole `dekacentral.com` domain is now verified in SMTP2GO and the SMTP
+password has been rotated (user, 2026-11-16). Nothing left on this item.
+
+### (history) production could not send any e-mail
 
 *Update:* an invitation sent at 14:33 UTC on 2026-11-16 failed again with the
 same 550 (Sentry DEKAERP-1P), after `dekacentral.com` was added in SMTP2GO.
