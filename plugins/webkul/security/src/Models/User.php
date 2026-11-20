@@ -77,6 +77,7 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasAp
             'must_change_password',
             'can_see_dashboard',
             'can_see_money_figures',
+            'username',
         ]);
 
         $this->mergeCasts([

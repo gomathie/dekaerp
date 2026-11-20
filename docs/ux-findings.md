@@ -84,3 +84,56 @@ and a second user signing in with set passwords (no e-mail).
 | U32 | The e-mail never names the company or who invited you | Name the company and the inviting person; a stranger's invite with no names looks like phishing | S | Done 2026-11-16 |
 | U33 | "If you did not expect to receive an invitation to this team" in a monospace font, and "team" is the wrong word | Same font as the body; "this company" | S | Done 2026-11-16 |
 | U34 | No expiry date or plain link | Add "This link expires on {date}" and a copyable link under the button | S | Done 2026-11-16 |
+
+## Recording a payment, compared with Zoho Books (2026-11-20, plan #11 R-3)
+
+Zoho Books: open the invoice → Record Payment → Amount received (full
+amount), Payment date, Deposit to / Payment mode (configurable, "+ Configure
+Payment Mode"), optional reference → Save. Several invoices can be paid at
+once from the Payments Received list. Sources: Zoho Books help, "Record
+payment for invoice" and "Multi payment".
+
+| # | Seen | Proposal | Effort | Status |
+|---|---|---|---|---|
+| U35 | Our Pay window showed seven fields at once (journal, payment method, bank account, amount, currency, date, memo) though all are prefilled | One question first: "How was it paid?", amount, date; the rest under a collapsed "More options" | S | Built (v1.13.0) |
+| U36 | Ways to pay were named "Cash Transactions" / "Bank Transactions"; no Mobile Money | "Cash", "Bank transfer", "Mobile Money" (own account), and "+" to add one (Wave, Card) | M | Built (v1.13.0) |
+| U37 | A walk-in sale needed create, confirm, then Pay: three steps | "Paid now" on a new invoice confirms and pays in one save | M | Built (v1.13.0) |
+| U38 | No way to pay several invoices of one customer at once (Zoho has it) | Bulk "Record payment" from the invoice list | M | Proposed |
+
+Seen live in Zoho Books on 2026-11-20 (a client's account, read only,
+nothing saved). Invoice → "Record Payment" (menu: Record Payment, Write Off)
+→ one page: Customer (fixed), Payment # (auto), **Amount received** (full
+balance), Bank charges, TDS deducted? (No), **Payment date** (today),
+Payment received on, **Payment mode** (Bank Remittance, Bank Transfer, Cash,
+Check, Credit Card, + Configure), **Deposit to** (any cash/bank/liability
+account; the client keeps "Mobile Money" as an account there), Reference#,
+Notes, Attachments → "Save as Paid" / "Save as Draft". New invoice offers
+only "Save as Draft" / "Save and Send": no pay-on-create.
+
+| # | Seen | Proposal | Effort | Status |
+|---|---|---|---|---|
+| U39 | Zoho asks two things, mode and deposit account; ours asks one ("How was it paid?" = the account) | Keep ours: one question is simpler, and a Mobile Money account is what this client already uses in Zoho | - | Decided |
+| U40 | Zoho has a Reference# field visible; ours keeps the memo under More options | Show "Reference" (memo) next to the date when the way to pay is a bank or Mobile Money (transaction id) | S | Proposed |
+| U41 | Zoho records bank charges with the payment | "Bank charges" under More options, posted to a fees account | M | Proposed |
+| U42 | Zoho has no pay-on-create; ours ("Paid now") saves a step for walk-in sales | Keep; mention it in the guide | - | Decided |
+
+## Creating an invoice, compared with Zoho Books (2026-11-20, same session)
+
+Zoho: typing an unknown customer shows "No results found" and a **New
+Customer** button; its form opens with the typed name already in Display
+name, plus type, contact, email, phone, tax rate, currency, terms. Item
+column: unknown text shows "Add New Item", a known item fills its rate and
+"Recent transactions"; text that matches nothing can simply stay as a
+**free-text line** with no product. Tax: one dropdown per line (single taxes
+and tax groups, e.g. "TAX(VAT&LEVIES) 20%") and one switch per invoice,
+**Tax inclusive / Tax exclusive**, with each tax shown in the totals.
+Dashboard: receivables (current / overdue), payables, cash flow for the
+year, income and expense, top expenses.
+
+| # | Seen | Proposal | Effort | Status |
+|---|---|---|---|---|
+| U43 | Ours requires a saved product on every invoice line; no "+" there | "+" on the line's product to add one (name, price, tax), like the customer "+" | S | Proposed (v1.13.0 candidate) |
+| U44 | Zoho accepts a free-text line (no product) | Allow a line with only a description and price, posted to the journal's income account with `display_type` PRODUCT set explicitly (see AGENTS.md MoveLine note) | M | Proposed, needs a decision |
+| U45 | Zoho prefills the new customer's name from what was typed | Our customer "+" should prefill the typed search text | S | Proposed |
+| U46 | Zoho switches the whole invoice between tax inclusive and exclusive | Ours decides per tax (price included or not); a per-invoice switch would be clearer for Ghana VAT/levies | M | Proposed |
+| U47 | Zoho's dashboard leads with "Total receivables: current / overdue" | Matches our Needs attention; add the current/overdue split to the Invoices card | S | Proposed (dashboard plan #4) |

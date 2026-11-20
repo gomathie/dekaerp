@@ -13,8 +13,7 @@ return [
 
     'form' => [
         'validation' => [
-            'needs-attention'                 => 'Certains champs sont à compléter',
-            'cannot-remove-last-admin'        => 'Impossible de retirer le rôle administrateur du dernier utilisateur administrateur.',
+            'needs-attention'                 => 'Certains champs sont à compléter',            'cannot-remove-last-admin'        => 'Impossible de retirer le rôle administrateur du dernier utilisateur administrateur.',
             'company-invalid'                 => 'Une ou plusieurs sociétés sélectionnées ne sont pas valides.',
             'company-not-assigned'            => 'Vous ne pouvez affecter des utilisateurs qu’aux sociétés attribuées à votre compte.',
             'company-required'                => 'Sélectionnez au moins une société.',
@@ -31,6 +30,8 @@ return [
                 'fields' => [
                     'name'                        => 'Nom',
                     'email'                       => 'E-mail',
+                    'username'                    => 'Nom d\'utilisateur',
+                    'username-helper'             => 'Facultatif. Permet de se connecter avec un nom court au lieu de l\'e-mail : lettres, chiffres, point, tiret ou tiret bas, de 3 à 50 caractères, sans @.',
                     'password'                    => 'Mot de passe',
                     'password-confirmation'       => 'Confirmation du mot de passe',
                     'must-change-password'        => 'Exiger un nouveau mot de passe à la prochaine connexion',

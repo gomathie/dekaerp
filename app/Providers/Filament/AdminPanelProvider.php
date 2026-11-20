@@ -24,6 +24,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Webkul\Security\Filament\Pages\Auth\Login;
 use Webkul\Security\Http\Middleware\EnforceImpersonationSession;
 use Webkul\Security\Http\Middleware\RequirePasswordChange;
 use Webkul\Support\Enums\NavigationGroup;
@@ -41,7 +42,8 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
+            // Email or username (user, 2026-11-19).
+            ->login(Login::class)
             ->favicon(asset('images/favicon.ico'))
             ->brandLogo(asset('images/logo.svg'))
             ->brandLogoHeight('2rem')

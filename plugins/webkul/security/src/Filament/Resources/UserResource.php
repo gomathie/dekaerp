@@ -54,6 +54,7 @@ use Webkul\Security\Settings\UserSettings;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Scopes\AllowedCompanyScope;
+use Webkul\Support\Services\Usernames;
 
 class UserResource extends Resource
 {
@@ -118,6 +119,13 @@ class UserResource extends Resource
                                             ->required()
                                             ->unique(ignoreRecord: true)
                                             ->maxLength(255),
+                                        // Optional sign-in name (user, 2026-11-19); rules in Usernames.
+                                        TextInput::make('username')
+                                            ->label(__('security::filament/resources/user.form.sections.general-information.fields.username'))
+                                            ->helperText(__('security::filament/resources/user.form.sections.general-information.fields.username-helper'))
+                                            ->maxLength(50)
+                                            ->rules(fn (?User $record): array => Usernames::rules($record?->getKey()))
+                                            ->dehydrateStateUsing(fn (?string $state): ?string => Usernames::normalize($state)),
                                         TextInput::make('password')
                                             ->label(__('security::filament/resources/user.form.sections.general-information.fields.password'))
                                             ->password()

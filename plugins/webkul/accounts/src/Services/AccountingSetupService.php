@@ -69,6 +69,9 @@ class AccountingSetupService
             // A4: a country template adjusts the copy; a country without one
             // keeps the standard chart unchanged (user, 2026-11-14).
             app(ChartLocalizer::class)->apply($company, $taxMap);
+
+            // Cash, Bank transfer and Mobile Money, ready to pay with (2026-11-20).
+            app(PaymentWaysProvisioner::class)->provision($company);
         });
 
         return true;

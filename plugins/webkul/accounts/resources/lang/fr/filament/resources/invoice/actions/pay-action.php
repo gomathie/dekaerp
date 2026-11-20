@@ -3,8 +3,17 @@
 return [
     'title' => 'Payer',
 
+    'paid-now' => [
+        'label'   => 'Payée maintenant',
+        'helper'  => 'L\'enregistrement confirme la facture et enregistre le paiement complet.',
+        'invalid' => 'Ce moyen de paiement ne peut pas être utilisé pour cette facture.',
+    ],
+
     'form' => [
-        'fields' => [
+        'more-options' => 'Plus d\'options',
+        'fields'       => [
+            'paid-how'               => 'Comment a-t-il été payé ?',
+            'new-way'                => 'Nouveau moyen de paiement (ex. Wave, carte)',
             'journal'                => 'Journal',
             'amount'                 => 'Montant',
             'currency'               => 'Devise',

@@ -18,6 +18,18 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
   ("See dashboard") and the money dashboards for sales, invoices,
   purchases and accounting ("See money figures"). Both are on for
   everyone until changed.
+- Sign in with your email or a username. Administrators can give a user a
+  username, and you can set your own on your Profile page.
+- Recording a payment is quicker: the Pay window asks how it was paid, how
+  much and when; everything else waits under "More options".
+- Cash, Bank transfer and Mobile Money are ready to use as ways to pay, each
+  with its own account, and you can add your own (for example Wave or Card)
+  from the Pay window.
+- "Paid now" on a new invoice confirms it and records the full payment in one
+  step, for cash and walk-in sales.
+- Add a new product or service straight from an invoice line with "+".
+- Changing a quotation's currency now converts every line, as on invoices,
+  and warns you when there is no exchange rate.
 
 ### Improvements
 

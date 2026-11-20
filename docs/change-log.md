@@ -6,6 +6,47 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-20, v1.13.0 (unreleased, part 2): username sign-in, simpler payments, product "+", quotation currency
+
+- **Why:** user decisions 2026-11-19/20 after a live Zoho Books walkthrough
+  (findings U35-U47 in `docs/ux-findings.md`): sign in by username; one
+  question to pay; Cash / Bank transfer / Mobile Money with own accounts
+  and add-your-own; "Paid now" (confirm and pay); "+" for products on
+  invoice lines; quotation currency conversion like invoices.
+- **How:** security migration `2026_11_20_000002` adds `users.username`
+  with a unique index on `LOWER(username)` (PostgreSQL). Every rule is in
+  `Support\Services\Usernames` (in support because the Profile page sets it
+  too; users are read through the auth model). `Security\Filament\Pages\Auth\Login`
+  extends Filament's login, changing only the field and
+  `getCredentialsFromFormData()`, so rate limiting, the failure message and
+  MFA are Filament's; an unknown username resolves to itself and fails like
+  a wrong password. `PayAction`: journal relabelled "How was it paid?" with
+  amount and date; method, partner bank, currency and memo in a collapsed
+  section (same defaults). `Account\Services\PaymentWaysProvisioner`
+  renames untouched "Cash/Bank Transactions" and adds a MOMO journal copied
+  from BANK with its **own** account (`addWay()` also serves the Pay
+  window's "+", gated on `create` Journal); run from `AccountingSetupService`
+  and accounts migration `2026_11_20_000001` for companies already set up.
+  `Account\Services\QuickPayment::confirmAndPay()` posts and pays with the
+  Pay window's defaults, refusing a journal not available to that invoice
+  (pinned message); called from `CreateInvoice::afterCreate()` inside the
+  page transaction. Invoice line product select has `createOptionForm`
+  (name, type, price; unit from `ProductResource::getDefaultUomIdByProductType`,
+  first category in scope), gated on `create` Product. `QuotationResource`
+  currency `afterCurrencyUpdated()` converts price and cost with
+  `Currency::convert()` and reuses `calculateLineTotals()`.
+- **Not done, deliberately:** prefilling the typed customer name in "+"
+  (the search text never reaches the server); free-text invoice lines
+  (plan #11 R-5: needs a line description field and explicit
+  `display_type` posting).
+- **Trade-off / risk:** the migration writes to production journals: it
+  renames only the exact default names and inserts one journal, one account
+  and copied method lines per company; nothing existing is altered. The
+  journal-copy approach mirrors `AccountingSetupService`.
+- **Verification:** see the release entry.
+- **Rollback:** revert; the username migration's `down()` drops the
+  column; Mobile Money journals are left (they may carry payments).
+
 ## 2026-11-20, v1.13.0 (unreleased): add customer from invoice, invoiced sales revenue, dashboard switches
 
 - **Why:** TRACE365 (user, 2026-11-19): add a customer without leaving the
