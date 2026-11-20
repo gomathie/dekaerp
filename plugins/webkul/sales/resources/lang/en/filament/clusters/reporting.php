@@ -30,13 +30,13 @@ return [
 
     'by-product' => [
         'title'      => 'Sales by product',
-        'subheading' => 'Lines of confirmed orders in company currency. Group by product or category to see quantities and totals.',
+        'subheading' => 'Lines of confirmed orders and of invoices made without an order, in company currency. Group by product or category to see quantities and totals.',
         'export'     => 'Export',
         'sum'        => 'Total',
         'columns'    => [
             'product'  => 'Product',
             'category' => 'Category',
-            'order'    => 'Order',
+            'order'    => 'Order or invoice',
             'date'     => 'Date',
             'customer' => 'Customer',
             'quantity' => 'Quantity',

@@ -6,6 +6,52 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-20, hotfix v1.13.1: sales revenue chart, refused pages go home
+
+- **Why:** Sentry DEKAERP-1X (4 events, Overview): the Sales revenue trend
+  (DB-8) ran through `flowframe/laravel-trend`, which groups by the alias
+  `"date"`. `accounts_account_moves` has a real `date` column, and PostgreSQL
+  resolves a GROUP BY name to an input column before an output alias, so the
+  query failed on every load and the sales figures never showed. Separately,
+  the user asked that a module page a company or user may not open lead to
+  the dashboard rather than a 403/405 page.
+- **How:** `SaleStatsOverview::invoicedRevenueSeries()` groups by
+  `CAST(invoice_date AS date)` itself and fills missing days with 0. In
+  `bootstrap/app.php`, a signed-in (`web` guard) GET under `admin/` that ends
+  in `AuthorizationException`, 403 or 405 redirects to `/admin` with a warning
+  notice (`support::exceptions.page-not-available`, five languages). Not for
+  `/admin` itself (no loop), API, JSON, POST or guests.
+- **Direct invoices on the Sales dashboard (user: "build it as a hotfix",
+  TRACE365 invoices without orders):** `HasSaleDashboardFilters` gains
+  `directInvoices()` (posted customer invoices/credit notes with no
+  `sales_order_invoices` row), `directInvoiceLines()` and
+  `productSaleRows()` (order lines UNION ALL direct invoice product lines,
+  company currency, tax included, credit notes negative via
+  `amount_total_signed / amount_total`). Top products, revenue by category
+  and top customers group that union; the monthly and salesperson charts
+  add the direct invoices to the order figures. Order-linked invoices stay
+  out, so nothing is counted twice. The top customers' count column,
+  labelled "Orders", now counts direct invoices too.
+- **Sales by product report (user: "do the sales by product report too"):**
+  the "not made from an order" rule now lives once, in
+  `Webkul\Sale\Support\DirectInvoices`, used by the dashboard trait and the
+  report. `SalesByProduct::rowsQuery()` lists confirmed order lines UNION ALL
+  direct invoice product lines (untaxed, company currency, credit notes
+  negative; invoice rows take a negative id so keys never collide). Each
+  part reads through its own company and ownership scopes; the outer query
+  is named `sales_order_lines` so OrderLine's product relation and Filament's
+  qualified columns still resolve. Columns, groups, totals, the period
+  filter and the exporter read the flat columns. "Order" is now "Order or
+  invoice" and the subheading mentions invoices (five languages).
+- **Benefit:** sales figures load; refused pages explain themselves.
+- **Trade-off / risk:** the refusal is unchanged, only its presentation. A
+  JSON or form request still gets 403, so the API contract is unchanged.
+- **Verification:** sales `SalesDashboardTest` and support
+  `RefusedPageRedirectTest` (results in the handoff). Production check after
+  v1.13.0: test invoice INV/2026/00001 in the test admin's company, paid with
+  Mobile Money through the Pay window (PMOMO/2026/18), state Paid.
+- **Rollback:** revert the two code files; the translation key is harmless.
+
 ## 2026-11-20, v1.13.0 (part 3): phone audit fixes and list cards
 
 - **Why:** user asked for a phone check of production, then "fix the phone

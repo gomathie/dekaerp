@@ -153,3 +153,5 @@ session scratchpad `pw/mobile-audit.js`.
 | U52 | Several icon-only buttons are under 28 px (column toggle, filter count, grouping) | Raise to 40 px touch target on phones, as pagination already is | S | Proposed |
 | U53 | Company switcher label truncates to "My Compa..." in the top bar | Show initials or the short name; full name in the dropdown | S | Proposed |
 | U54 | A recent-items link pointed at `/admin/sale/orders/quotations/1`, which answers 404 for this user (record in another company) | Drop recents the user can no longer open, instead of linking to a 404 | S | Proposed |
+| U55 | Opening a module page the company is not entitled to (or a link that only answers POST) showed a bare 403 / 405 error page (user, 2026-11-20) | Signed-in GET under `/admin` lands on the dashboard with a notice; API, JSON and form posts keep their 403 | S | Fixed (hotfix v1.13.1) |
+| U56 | Paid invoices made without a sales order showed nowhere in Sales: not per product, category, customer or month (user, 2026-11-20) | Sales dashboard and Sales by product count them once (plan #11 R-6, dashboard DB-8) | M | Fixed (hotfix v1.13.1) |

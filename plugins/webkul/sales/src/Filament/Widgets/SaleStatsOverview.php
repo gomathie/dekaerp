@@ -54,7 +54,7 @@ class SaleStatsOverview extends DashboardStatsWidget
 
         $orderRevenueSeries = $this->trendData($this->saleOrders(), 'SUM', $revenueColumn, $start, $end);
 
-        $revenueSeries = $this->trendData($this->invoicedSales(), 'SUM', 'amount_total_signed', $start, $end, 'invoice_date');
+        $revenueSeries = $this->invoicedRevenueSeries($start, $end);
 
         $averageSeries = array_map(
             fn (float $revenue, float $count): float => $count > 0 ? round($revenue / $count, 2) : 0.0,
@@ -102,6 +102,35 @@ class SaleStatsOverview extends DashboardStatsWidget
                 money($average, $currency),
             ),
         ];
+    }
+
+    /**
+     * Daily invoiced revenue, grouped by the invoice date itself.
+     *
+     * Not through Trend: it groups by the alias "date", and invoices have a
+     * real `date` column, which PostgreSQL prefers over the alias - the query
+     * failed on every load and blanked the Sales dashboard (Sentry DEKAERP-1X).
+     *
+     * @return array<int, float>
+     */
+    protected function invoicedRevenueSeries(Carbon $start, Carbon $end): array
+    {
+        $query = $this->invoicedSales($start, $end);
+        $day = 'CAST('.$query->getQuery()->getGrammar()->wrap($query->qualifyColumn('invoice_date')).' AS date)';
+
+        $totals = $query->toBase()
+            ->selectRaw("{$day} as day, SUM(".$query->qualifyColumn('amount_total_signed').') as total')
+            ->groupByRaw($day)
+            ->pluck('total', 'day')
+            ->mapWithKeys(fn ($total, $day): array => [Carbon::parse($day)->toDateString() => (float) $total]);
+
+        $series = [];
+
+        for ($date = $start->copy()->startOfDay(); $date->lte($end); $date->addDay()) {
+            $series[] = round($totals[$date->toDateString()] ?? 0.0, 2);
+        }
+
+        return $series;
     }
 
     /**

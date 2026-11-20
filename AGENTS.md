@@ -2006,6 +2006,25 @@ log named):
   - Posted entries keep their own currency and rate. Nothing converts them.
   - Tests: `accounts/tests/Feature/Workflows/CompanyCurrencyGuardTest.php`.
 
+• Sales from invoices without an order, 2026-11-20 (hotfix v1.13.1; user,
+  TRACE365; `docs/change-log.md`):
+  - Every sales figure (dashboard widgets, Sales by product) adds posted
+    customer invoices and credit notes that no order produced. One rule,
+    `Webkul\Sale\Support\DirectInvoices`. An invoice made from an order stays
+    out: its order is counted already, and counting both doubles the sale.
+  - Do not chart invoices through `flowframe/laravel-trend`: it groups by the
+    alias "date", and `accounts_account_moves` has a real `date` column that
+    PostgreSQL prefers (Sentry DEKAERP-1X). Group by the expression.
+  - Tests: sales `SalesDashboardTest`, `SalesByProductTest`.
+
+• Refused admin pages go to the dashboard, 2026-11-20 (hotfix v1.13.1, user):
+  - A signed-in GET under `/admin` ending in 403, 405 or an
+    `AuthorizationException` redirects to `/admin` with a notice
+    (`bootstrap/app.php`). Access is still refused. Never for `/admin`
+    itself (loop), API, JSON, POST or guests. Do not turn this into an
+    allow.
+  - Test: support `Http/RefusedPageRedirectTest`.
+
 • Customer page shipments, 2026-11-10 (`docs/logistics-plan.md`, WP-9b, D11):
   - The customer infolist tab is `PartnerSchemaRegistry` slot `tabs.append`.
     Do not add a relation-manager slot, and do not edit `PartnerResource` or

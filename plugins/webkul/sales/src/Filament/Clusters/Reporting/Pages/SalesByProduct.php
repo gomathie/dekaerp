@@ -16,12 +16,12 @@ use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
-use Illuminate\Support\Facades\DB;
 use Webkul\PluginManager\Support\PluginEntitlement;
 use Webkul\Sale\Enums\OrderState;
 use Webkul\Sale\Filament\Clusters\Reporting;
 use Webkul\Sale\Filament\Exports\SalesByProductExporter;
 use Webkul\Sale\Models\OrderLine;
+use Webkul\Sale\Support\DirectInvoices;
 use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 
 /**
@@ -78,34 +78,30 @@ class SalesByProduct extends Page implements HasTable
         $lang = 'sales::filament/clusters/reporting.by-product';
 
         return $table
-            ->query(OrderLine::query()
-                ->whereNotNull('product_id')
-                ->whereHas('order', fn (Builder $order): Builder => $order->where('state', OrderState::SALE->value))
-                ->with(['product.category', 'order.partner']))
+            ->query(static::rowsQuery())
             ->columns([
-                TextColumn::make('product.name')->label(__($lang.'.columns.product'))->searchable(),
-                TextColumn::make('order.name')->label(__($lang.'.columns.order')),
-                TextColumn::make('order.date_order')->label(__($lang.'.columns.date'))->date(),
-                TextColumn::make('order.partner.name')->label(__($lang.'.columns.customer'))->toggleable(),
-                TextColumn::make('product_uom_qty')
+                TextColumn::make('product_name')->label(__($lang.'.columns.product'))->searchable(),
+                TextColumn::make('document')->label(__($lang.'.columns.order')),
+                TextColumn::make('date')->label(__($lang.'.columns.date'))->date(),
+                TextColumn::make('customer')->label(__($lang.'.columns.customer'))->toggleable(),
+                TextColumn::make('quantity')
                     ->label(__($lang.'.columns.quantity'))
                     ->numeric(2)
                     ->sortable()
                     ->summarize(Summarizer::make()->label(__($lang.'.sum'))->numeric(2)
-                        ->using(fn (QueryBuilder $query): float => (float) $query->sum('product_uom_qty'))),
-                TextColumn::make('price_subtotal')
+                        ->using(fn (QueryBuilder $query): float => (float) $query->sum('quantity'))),
+                TextColumn::make('untaxed')
                     ->label(__($lang.'.columns.untaxed'))
-                    ->state(fn (OrderLine $record): float => static::inCompanyCurrency($record))
                     ->numeric(2)
                     ->sortable()
                     ->summarize(Summarizer::make()->label(__($lang.'.sum'))->numeric(2)
-                        ->using(fn (QueryBuilder $query): float => (float) $query->sum(DB::raw(static::companyCurrencySql())))),
+                        ->using(fn (QueryBuilder $query): float => (float) $query->sum('untaxed'))),
             ])
             ->groups([
-                Group::make('product.name')->label(__($lang.'.groups.product')),
-                Group::make('product.category.name')->label(__($lang.'.groups.category')),
+                Group::make('product_name')->label(__($lang.'.groups.product')),
+                Group::make('category_name')->label(__($lang.'.groups.category')),
             ])
-            ->defaultGroup('product.name')
+            ->defaultGroup('product_name')
             ->filters([
                 Filter::make('period')
                     ->schema([
@@ -113,8 +109,8 @@ class SalesByProduct extends Page implements HasTable
                         DatePicker::make('until')->label(__($lang.'.filters.until')),
                     ])
                     ->query(fn (Builder $query, array $data): Builder => $query
-                        ->when($data['from'] ?? null, fn (Builder $q, $date): Builder => $q->whereHas('order', fn (Builder $o): Builder => $o->whereDate('date_order', '>=', $date)))
-                        ->when($data['until'] ?? null, fn (Builder $q, $date): Builder => $q->whereHas('order', fn (Builder $o): Builder => $o->whereDate('date_order', '<=', $date)))),
+                        ->when($data['from'] ?? null, fn (Builder $q, $date): Builder => $q->whereDate('sales_order_lines.date', '>=', $date))
+                        ->when($data['until'] ?? null, fn (Builder $q, $date): Builder => $q->whereDate('sales_order_lines.date', '<=', $date))),
                 SelectFilter::make('product_id')
                     ->label(__($lang.'.columns.product'))
                     ->relationship('product', 'name')
@@ -131,17 +127,48 @@ class SalesByProduct extends Page implements HasTable
             ->paginated([25, 50, 100]);
     }
 
-    /** The line's untaxed amount divided by its order's rate, as Sales analysis does. */
-    public static function inCompanyCurrency(OrderLine $line): float
+    /**
+     * One row per product line: confirmed orders' lines, plus the lines of
+     * invoices made without an order (DirectInvoices: TRACE365 invoices
+     * without orders, user 2026-11-20). Untaxed amounts in company currency;
+     * a credit note counts negative. Invoice rows take a negative id so the
+     * two sources never share a row key.
+     *
+     * Each part reads through its own company and ownership scopes. The outer
+     * query is named `sales_order_lines` so OrderLine's product relation and
+     * Filament's qualified columns resolve, and drops the model's scopes,
+     * which the parts have already applied.
+     */
+    public static function rowsQuery(): Builder
     {
-        $rate = (float) $line->order?->currency_rate;
+        $orderLines = OrderLine::query()
+            ->whereNotNull('sales_order_lines.product_id')
+            ->whereHas('order', fn (Builder $order): Builder => $order->where('state', OrderState::SALE->value))
+            ->join('sales_orders as line_orders', 'line_orders.id', '=', 'sales_order_lines.order_id')
+            ->leftJoin('products_products', 'products_products.id', '=', 'sales_order_lines.product_id')
+            ->leftJoin('products_categories', 'products_categories.id', '=', 'products_products.category_id')
+            ->leftJoin('partners_partners', 'partners_partners.id', '=', 'line_orders.partner_id')
+            ->toBase()
+            ->selectRaw('sales_order_lines.id as id, sales_order_lines.product_id as product_id, '
+                .'products_products.name as product_name, products_categories.name as category_name, '
+                .'line_orders.name as document, line_orders.date_order as date, partners_partners.name as customer, '
+                .'sales_order_lines.product_uom_qty as quantity, '
+                .'sales_order_lines.price_subtotal / COALESCE(NULLIF(line_orders.currency_rate, 0), 1) as untaxed');
 
-        return $rate > 0 ? round((float) $line->price_subtotal / $rate, 2) : (float) $line->price_subtotal;
-    }
+        $invoiceLines = DirectInvoices::lines(DirectInvoices::invoices())
+            ->leftJoin('products_products', 'products_products.id', '=', 'accounts_account_move_lines.product_id')
+            ->leftJoin('products_categories', 'products_categories.id', '=', 'products_products.category_id')
+            ->leftJoin('partners_partners', 'partners_partners.id', '=', 'direct_moves.partner_id')
+            ->toBase()
+            ->selectRaw('-accounts_account_move_lines.id as id, accounts_account_move_lines.product_id as product_id, '
+                .'products_products.name as product_name, products_categories.name as category_name, '
+                .'direct_moves.name as document, CAST(direct_moves.invoice_date AS timestamp) as date, partners_partners.name as customer, '
+                .DirectInvoices::LINE_QUANTITY_SQL.' as quantity, '
+                .DirectInvoices::lineAmountSql('price_subtotal').' as untaxed');
 
-    /** The same in SQL for the totals. Fixed column names, never input. */
-    protected static function companyCurrencySql(): string
-    {
-        return 'price_subtotal / COALESCE(NULLIF((SELECT currency_rate FROM sales_orders WHERE sales_orders.id = sales_order_lines.order_id), 0), 1)';
+        return OrderLine::query()
+            ->withoutGlobalScopes()
+            ->fromSub($orderLines->unionAll($invoiceLines), 'sales_order_lines')
+            ->select('sales_order_lines.*');
     }
 }

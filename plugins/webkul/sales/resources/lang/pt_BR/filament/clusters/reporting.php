@@ -30,13 +30,13 @@ return [
 
     'by-product' => [
         'title'      => 'Vendas por produto',
-        'subheading' => 'Linhas de pedidos confirmados na moeda da empresa. Agrupe por produto ou categoria para ver quantidades e totais.',
+        'subheading' => 'Linhas de pedidos confirmados e de faturas sem pedido, na moeda da empresa. Agrupe por produto ou categoria para ver quantidades e totais.',
         'export'     => 'Exportar',
         'sum'        => 'Total',
         'columns'    => [
             'product'  => 'Produto',
             'category' => 'Categoria',
-            'order'    => 'Pedido',
+            'order'    => 'Pedido ou fatura',
             'date'     => 'Data',
             'customer' => 'Cliente',
             'quantity' => 'Quantidade',

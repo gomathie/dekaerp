@@ -1,6 +1,7 @@
 <?php
 
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Sale\Filament\Clusters\Reporting\Pages\SalesByProduct;
@@ -9,6 +10,7 @@ use Webkul\Support\Models\Company;
 require_once __DIR__.'/../../../../support/tests/Helpers/CompanyHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/FilamentHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
+require_once __DIR__.'/../../Helpers/SaleHelper.php';
 
 /**
  * Sales by product (reports plan R2, 2026-11-13): the permission it checks
@@ -41,4 +43,69 @@ it('opens only with the permission, and renders', function (): void {
 
     FilamentHelper::bootAdminPanel();
     Livewire::test(SalesByProduct::class)->assertOk();
+});
+
+/**
+ * User, 2026-11-20 (hotfix): lines of invoices made without an order are
+ * listed with the order lines; an invoice made from an order is not, since
+ * its order line is already there.
+ */
+it('lists lines of invoices made without an order, and not order invoices twice', function (): void {
+    // SaleHelper::product() fills Inventory's is_storable column.
+    TestBootstrapHelper::ensurePluginInstalled('inventories');
+
+    $company = Company::factory()->create();
+    $user = CompanyHelper::actingAsCompanyUser($company, ['page_sale_sales_by_product']);
+
+    $product = SaleHelper::product(['company_id' => $company->getKey()]);
+    $partner = SaleHelper::partner();
+    $currencyId = SaleHelper::currency()->getKey();
+
+    $invoice = function (string $name, float $amount, float $qty) use ($company, $product, $partner, $currencyId, $user): int {
+        $moveId = DB::table('accounts_account_moves')->insertGetId([
+            'company_id'          => $company->getKey(),
+            'partner_id'          => $partner->getKey(),
+            'name'                => $name,
+            'move_type'           => 'out_invoice',
+            'state'               => 'posted',
+            'date'                => now()->toDateString(),
+            'invoice_date'        => now()->toDateString(),
+            'amount_total'        => $amount,
+            'amount_total_signed' => $amount,
+            'creator_id'          => $user->getKey(),
+            'created_at'          => now(),
+            'updated_at'          => now(),
+        ]);
+
+        DB::table('accounts_account_move_lines')->insert([
+            'move_id'        => $moveId,
+            'company_id'     => $company->getKey(),
+            'currency_id'    => $currencyId,
+            'product_id'     => $product->getKey(),
+            'display_type'   => 'product',
+            'quantity'       => $qty,
+            'price_subtotal' => $amount,
+            'price_total'    => $amount,
+            'created_at'     => now(),
+            'updated_at'     => now(),
+        ]);
+
+        return $moveId;
+    };
+
+    $invoice('INV/DIRECT/1', 80, 4);
+
+    $fromOrder = $invoice('INV/FROM-ORDER/1', 500, 5);
+    $order = SaleHelper::order(['company_id' => $company->getKey(), 'user_id' => $user->getKey()]);
+    DB::table('sales_order_invoices')->insert(['order_id' => $order->getKey(), 'move_id' => $fromOrder]);
+
+    $rows = SalesByProduct::rowsQuery()->get();
+
+    expect($rows->pluck('document')->all())->toContain('INV/DIRECT/1')
+        ->not->toContain('INV/FROM-ORDER/1')
+        ->and((float) $rows->firstWhere('document', 'INV/DIRECT/1')->untaxed)->toBe(80.0)
+        ->and((float) $rows->firstWhere('document', 'INV/DIRECT/1')->quantity)->toBe(4.0);
+
+    FilamentHelper::bootAdminPanel();
+    Livewire::test(SalesByProduct::class)->assertOk()->assertSee('INV/DIRECT/1');
 });

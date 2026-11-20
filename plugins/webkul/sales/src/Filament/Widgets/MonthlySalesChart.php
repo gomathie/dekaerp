@@ -31,6 +31,16 @@ class MonthlySalesChart extends DashboardChartWidget
             ->groupByRaw($bucket)
             ->pluck('revenue', 'period');
 
+        // Invoices made without an order count in their invoice month
+        // (directInvoices(); company currency, credit notes negative).
+        $invoices = $this->directInvoices();
+        $invoiceBucket = db_dialect()->monthBucket($invoices->qualifyColumn('invoice_date'));
+
+        $invoiceRevenues = $invoices
+            ->selectRaw("{$invoiceBucket} as period, SUM(".$invoices->qualifyColumn('amount_total_signed').') as revenue')
+            ->groupByRaw($invoiceBucket)
+            ->pluck('revenue', 'period');
+
         [$start, $end] = $this->periodRange();
 
         $labels = [];
@@ -39,7 +49,7 @@ class MonthlySalesChart extends DashboardChartWidget
 
         while ($cursor <= $end) {
             $labels[] = $cursor->translatedFormat('M Y');
-            $data[] = round((float) ($revenues[$cursor->format('Y-m')] ?? 0), 2);
+            $data[] = round((float) ($revenues[$cursor->format('Y-m')] ?? 0) + (float) ($invoiceRevenues[$cursor->format('Y-m')] ?? 0), 2);
             $cursor->addMonth();
         }
 
