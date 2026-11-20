@@ -10,6 +10,8 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.13.0 — 2026-11-20
+
 ### Features
 
 - Add a new customer straight from the invoice: press "+" next to the
