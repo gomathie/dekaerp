@@ -22,13 +22,14 @@ class SalesAnalysisExporter extends Exporter
         return [
             ExportColumn::make('name')->label(__($lang.'.reference')),
             ExportColumn::make('date_order')->label(__($lang.'.date')),
-            ExportColumn::make('partner.name')->label(__($lang.'.customer')),
-            ExportColumn::make('user.name')->label(__($lang.'.salesperson')),
-            // Company currency, as on the page.
+            ExportColumn::make('customer')->label(__($lang.'.customer')),
+            ExportColumn::make('salesperson')->label(__($lang.'.salesperson')),
+            // The page's rows (SalesAnalysis::rowsQuery()): orders and
+            // invoices made without one, already in company currency.
             ExportColumn::make('amount_untaxed')->label(__($lang.'.untaxed'))
-                ->state(fn (Order $record): float => SalesAnalysis::inCompanyCurrency($record, (float) $record->amount_untaxed)),
+                ->state(fn (Order $record): float => round((float) $record->amount_untaxed, 2)),
             ExportColumn::make('amount_total')->label(__($lang.'.total'))
-                ->state(fn (Order $record): float => SalesAnalysis::inCompanyCurrency($record, (float) $record->amount_total)),
+                ->state(fn (Order $record): float => round((float) $record->amount_total, 2)),
         ];
     }
 

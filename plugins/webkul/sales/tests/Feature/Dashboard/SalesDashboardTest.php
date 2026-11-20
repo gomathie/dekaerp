@@ -12,6 +12,8 @@ use Webkul\Sale\Filament\Widgets\SalesPersonPerformanceChart;
 use Webkul\Sale\Filament\Widgets\SaleStatsOverview;
 use Webkul\Sale\Filament\Widgets\TopCustomersTable;
 use Webkul\Sale\Filament\Widgets\TopProductsTable;
+use Webkul\Sale\Filament\Widgets\TopSalesOrdersTable;
+use Webkul\Sale\Filament\Clusters\Reporting\Pages\SalesAnalysis;
 use Webkul\Sale\Models\Order;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
@@ -237,6 +239,23 @@ it('counts products of invoices made without an order, once', function (): void 
     $people->pageFilters = $filters;
 
     expect((fn (): array => $this->getData())->call($people)['datasets'][0]['data'])->toBe([120.0]);
+
+    // The direct invoice is a sale: counted, and listed among the top sales.
+    $stats = new SaleStatsOverview;
+    $stats->pageFilters = $filters;
+
+    expect((fn (): int => $this->salesCount())->call($stats))->toBe(1);
+
+    $top = new TopSalesOrdersTable;
+    $top->pageFilters = $filters;
+
+    expect((fn () => $this->getTableQuery()->get())->call($top)->pluck('amount_total')->map(fn ($amount): float => (float) $amount)->all())
+        ->toBe([120.0]);
+
+    // Sales analysis lists it as a sale, and not the invoice made from an order.
+    $rows = SalesAnalysis::rowsQuery()->get();
+
+    expect($rows->where('id', '<', 0)->pluck('amount_total')->map(fn ($amount): float => (float) $amount)->all())->toBe([120.0]);
 });
 
 it('lists only the current company’s members as salespersons', function (): void {

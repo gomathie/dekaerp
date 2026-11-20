@@ -12,6 +12,10 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ### Improvements
 
+- Sales made by invoicing directly, without a sales order, now count as
+  sales everywhere in Sales: the number of sales, the average sale, top
+  sales, the Overview card and the Sales analysis report (as well as revenue,
+  products, categories, customers and salespeople).
 - Invoices show the salesperson next to the customer. It starts as you, or
   as the customer's own salesperson, and lists only your company's people.
   Invoices made without a sales order now count for their salesperson on the

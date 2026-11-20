@@ -29,7 +29,7 @@ return [
         'purchases'       => 'Compras',
         'invoices'        => 'Facturas',
         'revenue'         => 'Ingresos',
-        'orders'          => '{0} Sin pedidos|{1} 1 pedido|[2,*] :count pedidos',
+        'orders'          => '{0} Sin ventas|{1} 1 venta|[2,*] :count ventas',
         'open-quotations' => 'Presupuestos abiertos',
         'spend'           => 'Gasto en compras',
         'open-rfqs'       => 'Solicitudes abiertas',
@@ -71,7 +71,7 @@ return [
 
     'board' => [
         'updated'     => 'Actualizado a las :time',
-        'orders'      => 'Pedidos',
+        'orders'      => 'Ventas',
         'conversion'  => 'Presupuesto → pedido',
         'by-supplier' => 'Gasto por proveedor',
         'other'       => 'Otros',
