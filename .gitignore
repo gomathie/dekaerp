@@ -1,0 +1,40 @@
+/.phpunit.cache
+/node_modules
+/npm-debug.log
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/vendor
+# Ignore every .env variant. Listing them individually meant any new one -
+# .env.staging, .env.laravel-cloud - was tracked by default, which is the wrong
+# way round for files that hold credentials.
+.env*
+!.env.example
+.phpactor.json
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+auth.json
+npm-debug.log
+yarn-error.log
+/.fleet
+/.idea
+/.vscode
+/.agents
+/.zed
+/.codex
+boost.json
+opencode.json
+/playwright-report
+/test-results
+/nativephp
+
+# Credential files (keystores, private keys, etc.)
+/credentials/
+
+# Extracted upstream release archives. Upstream is available as the "aureus"
+# remote with full history and tags, so an extracted copy is never needed in
+# git - and it is large enough to bloat the repository if committed.
+/aureuserp-*/

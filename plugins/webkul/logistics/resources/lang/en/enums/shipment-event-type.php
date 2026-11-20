@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'created' => 'Created',
+    'confirmed' => 'Confirmed',
+    'driver_assigned' => 'Driver Assigned',
+    'vehicle_assigned' => 'Vehicle Assigned',
+    'trip_assigned' => 'Trip Assigned',
+    'dispatched' => 'Dispatched',
+    'pickup_started' => 'Pickup Started',
+    'picked_up' => 'Picked Up',
+    'departed_origin' => 'Departed from Origin',
+    'in_transit' => 'In Transit',
+    'arrived_destination' => 'Arrived at Destination',
+    'out_for_delivery' => 'Out For Delivery',
+    'delivered' => 'Delivered',
+    'delivery_failed' => 'Delivery Failed',
+    'delivery_retried' => 'Delivery Retried',
+    'returned' => 'Returned',
+    'put_on_hold' => 'Put On Hold',
+    'released' => 'Released',
+    'cancelled' => 'Cancelled',
+    'pod_captured' => 'Proof of Delivery Captured',
+    'invoice_created' => 'Invoice Created',
+    'position_update' => 'Position Update',
+];
