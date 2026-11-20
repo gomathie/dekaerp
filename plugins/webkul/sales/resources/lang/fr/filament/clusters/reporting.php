@@ -30,13 +30,13 @@ return [
 
     'by-product' => [
         'title'      => 'Ventes par produit',
-        'subheading' => 'Lignes des commandes confirmées, en devise de la société. Regroupez par produit ou catégorie pour voir les quantités et les totaux.',
+        'subheading' => 'Lignes des commandes confirmées et des factures sans commande, en devise de la société. Regroupez par produit ou catégorie pour voir les quantités et les totaux.',
         'export'     => 'Exporter',
         'sum'        => 'Total',
         'columns'    => [
             'product'  => 'Produit',
             'category' => 'Catégorie',
-            'order'    => 'Commande',
+            'order'    => 'Commande ou facture',
             'date'     => 'Date',
             'customer' => 'Client',
             'quantity' => 'Quantité',

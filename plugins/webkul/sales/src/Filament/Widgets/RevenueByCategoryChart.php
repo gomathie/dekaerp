@@ -4,6 +4,7 @@ namespace Webkul\Sale\Filament\Widgets;
 
 use Webkul\Sale\Filament\Widgets\Concerns\GuardsSaleDashboardWidget;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\DB;
 use Webkul\Sale\Filament\Widgets\Concerns\HasSaleDashboardFilters;
 use Webkul\Support\Filament\Widgets\DashboardChartWidget;
 
@@ -34,12 +35,13 @@ class RevenueByCategoryChart extends DashboardChartWidget
             return $this->resolvedData;
         }
 
-        $revenue = 'SUM(CASE WHEN sales_orders.currency_rate > 0 THEN sales_order_lines.price_total / sales_orders.currency_rate ELSE sales_order_lines.price_total END)';
+        $revenue = 'SUM(sales_lines.revenue)';
 
-        $rows = $this->confirmedLines()
-            ->leftJoin('products_products', 'products_products.id', '=', 'sales_order_lines.product_id')
+        // Orders and direct invoices together; see productSaleRows().
+        $rows = DB::query()
+            ->fromSub($this->productSaleRows(), 'sales_lines')
+            ->leftJoin('products_products', 'products_products.id', '=', 'sales_lines.product_id')
             ->leftJoin('products_categories', 'products_categories.id', '=', 'products_products.category_id')
-            ->leftJoin('sales_orders', 'sales_orders.id', '=', 'sales_order_lines.order_id')
             ->groupBy('products_categories.id', 'products_categories.name')
             ->addSelect('products_categories.name as name')
             ->selectRaw("{$revenue} as revenue")

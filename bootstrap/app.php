@@ -13,6 +13,7 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
 use Sentry\Laravel\Integration;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Webkul\Account\Exceptions\MissingJournalException;
 
@@ -111,6 +112,44 @@ return Application::configure(basePath: dirname(__DIR__))
                     'message' => 'This action is unauthorized.',
                 ], 403);
             }
+        });
+
+        // A signed-in user who opens an admin page they or their company may
+        // not use (a module the company is not entitled to, a missing
+        // permission, a link that only answers POST) lands on the dashboard
+        // with a notice instead of a bare 403/405 page (user, 2026-11-20).
+        // Access is still refused: this only changes where the refusal is
+        // shown. Never for the dashboard itself, or a refused dashboard would
+        // redirect to itself forever, and never for API or Livewire calls.
+        $sendHome = function ($request) {
+            if (! $request->isMethod('GET') || $request->expectsJson() || ! $request->is('admin', 'admin/*') || $request->is('admin/api/*')) {
+                return null;
+            }
+
+            if (! auth('web')->check()) {
+                return null;
+            }
+
+            $home = url('admin');
+
+            if (rtrim($request->url(), '/') === rtrim($home, '/')) {
+                return null;
+            }
+
+            Notification::make()
+                ->title(__('support::exceptions.page-not-available'))
+                ->warning()
+                ->send();
+
+            return redirect()->to($home);
+        };
+
+        $exceptions->render(function (AuthorizationException $e, $request) use ($sendHome) {
+            return $sendHome($request);
+        });
+
+        $exceptions->render(function (HttpExceptionInterface $e, $request) use ($sendHome) {
+            return in_array($e->getStatusCode(), [403, 405], true) ? $sendHome($request) : null;
         });
 
         $exceptions->render(function (ModelNotFoundException $e, $request) {

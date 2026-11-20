@@ -6,7 +6,12 @@ use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Sale\Enums\OrderState;
 use Webkul\Sale\Filament\Pages\SalesDashboard;
+use Webkul\Sale\Filament\Widgets\MonthlySalesChart;
+use Webkul\Sale\Filament\Widgets\RevenueByCategoryChart;
+use Webkul\Sale\Filament\Widgets\SalesPersonPerformanceChart;
 use Webkul\Sale\Filament\Widgets\SaleStatsOverview;
+use Webkul\Sale\Filament\Widgets\TopCustomersTable;
+use Webkul\Sale\Filament\Widgets\TopProductsTable;
 use Webkul\Sale\Models\Order;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
@@ -139,6 +144,99 @@ it('counts invoices made without an order as sales revenue', function (): void {
     $widget->pageFilters = ['startDate' => now()->startOfMonth()->toDateString(), 'endDate' => now()->toDateString()];
 
     expect((fn (): float => $this->invoicedRevenue())->call($widget))->toBe(450.0);
+
+    // Sentry DEKAERP-1X: the daily revenue chart failed on PostgreSQL.
+    $series = (fn (): array => $this->invoicedRevenueSeries(now()->startOfDay(), now()->endOfDay()))->call($widget);
+
+    expect($series)->toBe([450.0]);
+
+    expect(fn () => (fn (): array => $this->getStats())->call($widget))->not->toThrow(Throwable::class);
+});
+
+/**
+ * User, 2026-11-20 (hotfix): products, categories, customers, salespersons
+ * and the monthly chart read confirmed orders only, so a sale invoiced
+ * without an order showed nowhere. They now add such invoices, and leave
+ * out an invoice made from an order, whose order is counted already.
+ */
+it('counts products of invoices made without an order, once', function (): void {
+    // SaleHelper::product() fills Inventory's is_storable column.
+    TestBootstrapHelper::ensurePluginInstalled('inventories');
+
+    $company = Company::factory()->create();
+    $user = CompanyHelper::actingAsCompanyUser($company, []);
+
+    $product = SaleHelper::product(['company_id' => $company->getKey()]);
+    $partner = SaleHelper::partner();
+    $currencyId = SaleHelper::currency()->getKey();
+
+    $invoice = function (float $amount, float $qty) use ($company, $product, $partner, $currencyId, $user): int {
+        $moveId = DB::table('accounts_account_moves')->insertGetId([
+            'company_id'          => $company->getKey(),
+            'partner_id'          => $partner->getKey(),
+            'invoice_user_id'     => $user->getKey(),
+            'move_type'           => 'out_invoice',
+            'state'               => 'posted',
+            'date'                => now()->toDateString(),
+            'invoice_date'        => now()->toDateString(),
+            'amount_total'        => $amount,
+            'amount_total_signed' => $amount,
+            'creator_id'          => $user->getKey(),
+            'created_at'          => now(),
+            'updated_at'          => now(),
+        ]);
+
+        DB::table('accounts_account_move_lines')->insert([
+            'move_id'      => $moveId,
+            'company_id'   => $company->getKey(),
+            'currency_id'  => $currencyId,
+            'product_id'   => $product->getKey(),
+            'display_type' => 'product',
+            'quantity'     => $qty,
+            'price_total'  => $amount,
+            'created_at'   => now(),
+            'updated_at'   => now(),
+        ]);
+
+        return $moveId;
+    };
+
+    $invoice(120, 2);
+
+    // An invoice made from an order: its order is what counts, not this.
+    $fromOrder = $invoice(500, 5);
+    $order = SaleHelper::order(['company_id' => $company->getKey(), 'user_id' => $user->getKey()]);
+    DB::table('sales_order_invoices')->insert(['order_id' => $order->getKey(), 'move_id' => $fromOrder]);
+
+    $filters = ['startDate' => now()->startOfMonth()->toDateString(), 'endDate' => now()->endOfMonth()->toDateString()];
+
+    $products = new TopProductsTable;
+    $products->pageFilters = $filters;
+    $row = (fn () => $this->getTableQuery()->get())->call($products)->firstWhere('id', $product->getKey());
+
+    expect((float) $row?->revenue)->toBe(120.0)
+        ->and((float) $row?->quantity)->toBe(2.0);
+
+    $customers = new TopCustomersTable;
+    $customers->pageFilters = $filters;
+    $customer = (fn () => $this->getTableQuery()->get())->call($customers)->firstWhere('id', $partner->getKey());
+
+    expect((float) $customer?->revenue)->toBe(120.0);
+
+    $monthly = new MonthlySalesChart;
+    $monthly->pageFilters = $filters;
+
+    expect(array_sum((fn (): array => $this->getData())->call($monthly)['datasets'][0]['data']))->toBe(120.0);
+
+    $categories = new RevenueByCategoryChart;
+    $categories->pageFilters = $filters;
+
+    expect(array_sum((fn (): array => $this->resolveChartData())->call($categories)['data']))->toBe(120.0);
+
+    $people = new SalesPersonPerformanceChart;
+    $people->pageFilters = $filters;
+
+    expect((fn (): array => $this->getData())->call($people)['datasets'][0]['data'])->toBe([120.0]);
 });
 
 it('lists only the current company’s members as salespersons', function (): void {

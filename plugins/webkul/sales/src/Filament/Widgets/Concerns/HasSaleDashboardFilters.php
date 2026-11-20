@@ -4,10 +4,12 @@ namespace Webkul\Sale\Filament\Widgets\Concerns;
 
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Carbon;
 use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Models\Move;
+use Webkul\Sale\Support\DirectInvoices;
 use Webkul\Sale\Enums\OrderState;
 use Webkul\Sale\Models\Order;
 use Webkul\Sale\Models\OrderLine;
@@ -149,6 +151,58 @@ trait HasSaleDashboardFilters
     {
         return OrderLine::query()
             ->whereHas('order', fn (Builder $query) => $this->applyConfirmedScope($query, $start, $end));
+    }
+
+    /**
+     * The invoiced sales of this period that no sales order produced
+     * (DirectInvoices: why, and why order invoices stay out).
+     */
+    protected function directInvoices(?Carbon $start = null, ?Carbon $end = null): Builder
+    {
+        $query = $this->invoicedSales($start, $end);
+
+        return $query->whereIn($query->qualifyColumn('id'), DirectInvoices::invoices()->select('accounts_account_moves.id'));
+    }
+
+    /**
+     * Product lines of directInvoices(), joined to their invoice as
+     * `direct_moves`, with the product and category filters.
+     */
+    protected function directInvoiceLines(?Carbon $start = null, ?Carbon $end = null): Builder
+    {
+        $filters = $this->saleDashboardFilters();
+
+        $query = DirectInvoices::lines($this->directInvoices($start, $end));
+
+        if (! empty($filters['products'])) {
+            $query->whereIn('accounts_account_move_lines.product_id', $filters['products']);
+        }
+
+        if (! empty($filters['categories'])) {
+            $query->whereHas('product', fn (Builder $q) => $q->whereIn('category_id', $filters['categories']));
+        }
+
+        return $query;
+    }
+
+    /**
+     * One row per sold product line, from confirmed orders and from direct
+     * invoices: product_id, quantity and revenue (tax included, company
+     * currency), ready to group.
+     */
+    protected function productSaleRows(): QueryBuilder
+    {
+        $orderLines = $this->confirmedLines()
+            ->leftJoin('sales_orders', 'sales_orders.id', '=', 'sales_order_lines.order_id')
+            ->toBase()
+            ->selectRaw('sales_order_lines.product_id as product_id, sales_order_lines.product_uom_qty as quantity, '
+                .'CASE WHEN sales_orders.currency_rate > 0 THEN sales_order_lines.price_total / sales_orders.currency_rate ELSE sales_order_lines.price_total END as revenue');
+
+        $invoiceLines = $this->directInvoiceLines()
+            ->toBase()
+            ->selectRaw('accounts_account_move_lines.product_id as product_id, '.DirectInvoices::LINE_QUANTITY_SQL.' as quantity, '.DirectInvoices::lineAmountSql('price_total').' as revenue');
+
+        return $orderLines->unionAll($invoiceLines);
     }
 
     /**

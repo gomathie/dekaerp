@@ -10,6 +10,20 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.13.1 — 2026-11-20
+
+### Fixes
+
+- The sales figures on the Overview and the Sales dashboard load again. The
+  daily revenue chart stopped them from opening.
+- Opening a page that you or your company cannot use now takes you to the
+  dashboard with a short message, instead of an error page.
+- Invoices made without a sales order now count on the Sales dashboard: top
+  products, revenue by category, top customers, salespeople and the monthly
+  chart. An invoice made from an order is not counted twice.
+- The "Sales by product" report now also lists products sold on invoices made
+  without a sales order, so paid invoices show up per product.
+
 # CHANGELOG — v1.13.0 — 2026-11-20
 
 ### Features

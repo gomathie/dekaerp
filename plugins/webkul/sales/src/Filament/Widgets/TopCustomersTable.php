@@ -10,6 +10,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\CustomerResource;
 use Webkul\Sale\Filament\Widgets\Concerns\HasSaleDashboardFilters;
+use Webkul\Sale\Models\Order;
 
 class TopCustomersTable extends TableWidget
 {
@@ -47,14 +48,29 @@ class TopCustomersTable extends TableWidget
 
     protected function getTableQuery(): Builder
     {
-        return $this->saleOrders()
-            ->leftJoin('partners_partners', 'partners_partners.id', '=', 'sales_orders.partner_id')
+        $orders = $this->saleOrders()
+            ->toBase()
+            ->selectRaw('sales_orders.partner_id as partner_id, CASE WHEN sales_orders.currency_rate > 0 THEN sales_orders.amount_total / sales_orders.currency_rate ELSE sales_orders.amount_total END as revenue');
+
+        // Invoices made without an order count for their customer too
+        // (directInvoices()); each one counts as one sale.
+        $invoices = $this->directInvoices();
+
+        $invoices = $invoices->toBase()
+            ->selectRaw($invoices->qualifyColumn('partner_id').' as partner_id, '.$invoices->qualifyColumn('amount_total_signed').' as revenue');
+
+        // Both parts are already company-scoped; the outer query drops the
+        // scopes that would point at a table the subquery does not have.
+        return Order::query()
+            ->withoutGlobalScopes()
+            ->fromSub($orders->unionAll($invoices), 'sales_rows')
+            ->leftJoin('partners_partners', 'partners_partners.id', '=', 'sales_rows.partner_id')
             ->groupBy('partners_partners.id', 'partners_partners.name')
             ->selectRaw('COALESCE(partners_partners.id, 0) as id')
             ->addSelect('partners_partners.name as name')
             ->selectRaw('COUNT(*) as orders_count')
-            ->selectRaw('SUM(CASE WHEN sales_orders.currency_rate > 0 THEN sales_orders.amount_total / sales_orders.currency_rate ELSE sales_orders.amount_total END) as revenue')
-            ->havingRaw('SUM(CASE WHEN sales_orders.currency_rate > 0 THEN sales_orders.amount_total / sales_orders.currency_rate ELSE sales_orders.amount_total END) > 0')
+            ->selectRaw('SUM(sales_rows.revenue) as revenue')
+            ->havingRaw('SUM(sales_rows.revenue) > 0')
             ->orderByDesc('revenue')
             ->limit(5);
     }

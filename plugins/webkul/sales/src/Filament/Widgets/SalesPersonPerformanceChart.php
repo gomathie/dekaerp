@@ -28,12 +28,29 @@ class SalesPersonPerformanceChart extends DashboardChartWidget
             ->whereNotNull('sales_orders.user_id')
             ->join('users', 'users.id', '=', 'sales_orders.user_id')
             ->groupBy('users.id', 'users.name')
-            ->addSelect('users.name as name')
+            ->addSelect('users.id as user_id', 'users.name as name')
             ->selectRaw("{$revenue} as revenue")
-            ->havingRaw("{$revenue} > 0")
-            ->orderByDesc('revenue')
-            ->limit(6)
             ->get();
+
+        // Invoices made without an order count for their salesperson too
+        // (directInvoices()). Merged per user, then the top six.
+        $invoices = $this->directInvoices();
+
+        $invoiceRows = $invoices
+            ->whereNotNull($invoices->qualifyColumn('invoice_user_id'))
+            ->join('users', 'users.id', '=', $invoices->qualifyColumn('invoice_user_id'))
+            ->groupBy('users.id', 'users.name')
+            ->select('users.id as user_id', 'users.name as name')
+            ->selectRaw('SUM('.$invoices->qualifyColumn('amount_total_signed').') as revenue')
+            ->get();
+
+        $rows = $rows->concat($invoiceRows)
+            ->groupBy('user_id')
+            ->map(fn ($group): object => (object) ['name' => $group->first()->name, 'revenue' => $group->sum(fn ($row): float => (float) $row->revenue)])
+            ->filter(fn (object $row): bool => $row->revenue > 0)
+            ->sortByDesc('revenue')
+            ->take(6)
+            ->values();
 
         $values = $rows->map(fn ($row): float => round((float) $row->revenue, 2))->all();
 
