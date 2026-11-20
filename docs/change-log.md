@@ -6,6 +6,39 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-20, v1.13.0 (part 3): phone audit fixes and list cards
+
+- **Why:** user asked for a phone check of production, then "fix the phone
+  list cards too, then release". A read-only audit at 390x844 as the test
+  admin (31 menu pages) found U48-U54 (`docs/ux-findings.md`).
+- **How:**
+  - U48: `GuideLibrary::index()` passes only icon names. guide.json icons
+    are raw `<svg>`, which `<x-filament::icon>` used as an image URL, so
+    every Guide visit fired three 500s at `/admin/<svg ...`.
+  - U49: `.state-container` and `.state` get `position:relative`
+    (topbar mobile CSS). The status steps' hidden radios are absolutely
+    positioned and escaped the scrolling bar, widening the purchase RFQ page
+    to 481px.
+  - U50: under 640px, list pages (`.fi-resource-list-records-page`) show
+    rows as cards: header and totals rows hidden, first value bold, actions
+    at the end. Cell display is not set, so `visibleFrom()` columns stay
+    hidden. Supersedes "Do not rebuild lists as cards" in the mobile plan.
+  - Tests: Invoices and Purchases dashboard tests set up the other
+    company's record with `CompanyHelper::asNobody()` (UF-025 guard).
+    Re-recorded `security.json`: adds `username`, `can_see_dashboard`,
+    `can_see_money_figures` only.
+- **Benefit:** no background 500s on the Guide; no sideways page scroll on
+  phones; lists readable on a phone without scrolling sideways.
+- **Trade-off / risk:** card layout applies to every list page under 640px;
+  totals rows are not shown on phones. Desktop and tablets are unchanged.
+- **Verification:** U49 and U50 CSS injected into production pages
+  (scrollWidth 481 -> 390; roles and shipments render as cards). Guide
+  tests 21 passed (new test included). ModuleCardsTest 6 passed alone on a
+  fresh DB (its suite failure was shared-DB state). Suites: Security 197,
+  Sales 161, Support 254 passed; others in the release handoff. SMS alerts
+  confirmed working in production by the user.
+- **Rollback:** revert the topbar CSS block and the `GuideLibrary` line.
+
 ## 2026-11-20, v1.13.0 (unreleased, part 2): username sign-in, simpler payments, product "+", quotation currency
 
 - **Why:** user decisions 2026-11-19/20 after a live Zoho Books walkthrough

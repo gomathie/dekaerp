@@ -146,7 +146,10 @@ class GuideLibrary
         return array_map(fn (array $category): array => [
             'id'    => (string) ($category['id'] ?? Str::slug($category['name'] ?? '')),
             'name'  => (string) ($category['name'] ?? ''),
-            'icon'  => $category['icon'] ?? null,
+            // Only an icon name (heroicon-o-...). guide.json carries raw <svg>
+            // markup, which <x-filament::icon> takes for an image URL: every
+            // Guide visit fired 500s at /admin/<svg ... (phone audit 2026-11-20).
+            'icon'  => is_string($category['icon'] ?? null) && preg_match('/^[a-z0-9-]+$/', $category['icon']) ? $category['icon'] : null,
             'count' => count($category['items'] ?? []),
         ], $this->visible($only));
     }

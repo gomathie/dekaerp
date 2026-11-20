@@ -124,7 +124,9 @@ it('counts and sums only the current company’s invoices', function (): void {
 
     postedInvoice($company, 100, '2026-03-02');
     postedInvoice($company, 50, '2026-03-03', 'not_paid');
-    postedInvoice($otherCompany, 900, '2026-03-02');
+    // Another client's invoice is set up with nobody acting: the cross-company
+    // write guard (UF-025) refuses this user creating it, as it should.
+    CompanyHelper::asNobody(fn () => postedInvoice($otherCompany, 900, '2026-03-02'));
 
     $widget = invoiceWidget(InvoiceStatsWidget::class, ['start_date' => '2026-03-01', 'end_date' => '2026-03-31']);
 

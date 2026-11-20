@@ -1050,6 +1050,76 @@
                     .state-container .state {
                         flex-shrink: 0;
                     }
+
+                    /* Each step hides its radio with position:absolute. With no
+                       positioned ancestor inside the scroller, the hidden radios
+                       escaped it and pushed the five-step purchase page to 481px
+                       on a 390px phone (audit 2026-11-20). */
+                    .state-container,
+                    .state-container .state {
+                        position: relative;
+                    }
+
+                    /* U50 (user, 2026-11-20: "fix the phone list cards"): on a
+                       phone, list rows become cards - first value bold on its
+                       own line, the rest wrapping under it, actions at the end.
+                       Supersedes "Do not rebuild lists as cards" in
+                       docs/planned/mobile-view-plan.md. Display is not set on
+                       cells, so columns hidden by visibleFrom() stay hidden.
+                       Totals rows are hidden: they have no place in a card. */
+                    @media (max-width: 639px) {
+                        .fi-resource-list-records-page .fi-ta-table,
+                        .fi-resource-list-records-page .fi-ta-table > tbody {
+                            display: block;
+                            inline-size: 100%;
+                        }
+
+                        .fi-resource-list-records-page .fi-ta-table > thead,
+                        .fi-resource-list-records-page .fi-ta-table .fi-ta-summary-header-row,
+                        .fi-resource-list-records-page .fi-ta-table .fi-ta-summary-row {
+                            display: none;
+                        }
+
+                        .fi-resource-list-records-page .fi-ta-table > tbody > tr.fi-ta-row {
+                            display: flex;
+                            flex-wrap: wrap;
+                            align-items: center;
+                            column-gap: 0.75rem;
+                            row-gap: 0.125rem;
+                            padding-block: 0.625rem;
+                            padding-inline: 0.5rem;
+                        }
+
+                        .fi-resource-list-records-page .fi-ta-table > tbody > tr.fi-ta-row > td {
+                            padding: 0 !important;
+                            inline-size: auto !important;
+                            max-inline-size: 100%;
+                            min-inline-size: 0;
+                        }
+
+                        .fi-resource-list-records-page .fi-ta-table > tbody > tr.fi-ta-row > td > *,
+                        .fi-resource-list-records-page .fi-ta-table > tbody > tr.fi-ta-row > td .fi-ta-col,
+                        .fi-resource-list-records-page .fi-ta-table > tbody > tr.fi-ta-row > td .fi-ta-text {
+                            padding-block: 0.125rem !important;
+                            padding-inline: 0 !important;
+                        }
+
+                        .fi-resource-list-records-page .fi-ta-table > tbody > tr.fi-ta-row > td.fi-ta-cell:not(.fi-ta-selection-cell):first-child,
+                        .fi-resource-list-records-page .fi-ta-table > tbody > tr.fi-ta-row > td.fi-ta-selection-cell + td {
+                            flex-basis: calc(100% - 3rem);
+                            flex-grow: 1;
+                            font-weight: 600;
+                        }
+
+                        .fi-resource-list-records-page .fi-ta-table > tbody > tr.fi-ta-row > td:has(.fi-ta-actions) {
+                            margin-inline-start: auto;
+                        }
+
+                        .fi-resource-list-records-page .fi-ta-table .fi-ta-text,
+                        .fi-resource-list-records-page .fi-ta-table .fi-ta-text-item {
+                            white-space: normal;
+                        }
+                    }
                 }
                 @endverbatim
             </style>

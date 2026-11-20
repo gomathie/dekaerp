@@ -137,3 +137,19 @@ year, income and expense, top expenses.
 | U45 | Zoho prefills the new customer's name from what was typed | Our customer "+" should prefill the typed search text | S | Proposed |
 | U46 | Zoho switches the whole invoice between tax inclusive and exclusive | Ours decides per tax (price included or not); a per-invoice switch would be clearer for Ghana VAT/levies | M | Proposed |
 | U47 | Zoho's dashboard leads with "Total receivables: current / overdue" | Matches our Needs attention; add the current/overdue split to the Invoices card | S | Proposed (dashboard plan #4) |
+
+## Phone audit of production (390 x 844, test admin, 2026-11-20)
+
+Read-only pass over every menu page (31 pages, plus new invoice / quotation /
+RFQ). All answered 200 with no script errors except as listed. Script:
+session scratchpad `pw/mobile-audit.js`.
+
+| # | Finding | Proposal | Size | State |
+|---|---------|----------|------|-------|
+| U48 | Guide page fired three 500s per visit: category icons in guide.json are raw `<svg>` markup, which `<x-filament::icon>` took as an image URL (`/admin/<svg ...`) | `GuideLibrary::index()` passes only icon names; test `GuideTest` "never hands raw svg markup" | S | Fixed (v1.13.0) |
+| U49 | New purchase RFQ scrolled sideways (481 px on 390): each status step hides its radio with `position:absolute`, which escaped the scrolling bar | `.state-container` and `.state` get `position:relative` (topbar mobile CSS, P6); verified 390 px by injecting the rule on production | S | Fixed (v1.13.0) |
+| U50 | Lists (invoices, shipments, roles) are wide tables on a phone: Total, Payment and Status sit off-screen behind a sideways scroll, with no hint | Stack rows as cards on phones (number, customer, amount, status badge), as the 13 widest tables already do (2026-09-14) | M | Fixed (v1.13.0): CSS cards under 640px on every list page |
+| U51 | The module tab row ("Customers / Vendors / Configurations / Settings") is cut off at the right with no scroll cue | Fade edge or a "more" chevron on overflow | S | Already built (R2, 2026-11-10); recheck after release |
+| U52 | Several icon-only buttons are under 28 px (column toggle, filter count, grouping) | Raise to 40 px touch target on phones, as pagination already is | S | Proposed |
+| U53 | Company switcher label truncates to "My Compa..." in the top bar | Show initials or the short name; full name in the dropdown | S | Proposed |
+| U54 | A recent-items link pointed at `/admin/sale/orders/quotations/1`, which answers 404 for this user (record in another company) | Drop recents the user can no longer open, instead of linking to a 404 | S | Proposed |

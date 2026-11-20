@@ -769,6 +769,10 @@
                                     },
                                     {
                                         "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "username"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
                                         "name": "password"
                                     },
                                     {
@@ -795,6 +799,14 @@
                                     {
                                         "type": "Filament\\Forms\\Components\\Select",
                                         "name": "teams"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "can_see_dashboard"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "can_see_money_figures"
                                     }
                                 ]
                             }

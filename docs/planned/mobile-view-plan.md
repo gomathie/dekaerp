@@ -127,7 +127,7 @@ Filament one on a phone only after a check that both are actually visible.
 
 ### Do not do
 
-- Rebuild lists as cards.
+- ~~Rebuild lists as cards.~~ *Superseded 2026-11-20 (user: "fix the phone list cards"): list rows are cards under 640px, CSS only, in the topbar mobile style block (U50).*
 - Put `visibleFrom` on the rest of the 221 tables. Thirteen lists were
   done on 2026-09-14, and desktop from 1024px up must stay complete.
 - Remove search, shrink the bell, or shrink the user button to buy space.

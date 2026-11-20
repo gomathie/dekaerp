@@ -41,6 +41,14 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 - Invitation emails name the company and the person who invited you, say
   when the invitation expires, and include a plain link in case the button
   does not work.
+- On a phone, lists show each record as a card: the number or name on top,
+  the details under it, and the actions at the end, with no sideways
+  scrolling.
+
+### Fixes
+
+- The Guide no longer causes errors in the background when it opens.
+- The new purchase quotation no longer scrolls sideways on a phone.
 
 # CHANGELOG — v1.12.5 — 2026-11-19
 
