@@ -165,6 +165,51 @@ trait HasSaleDashboardFilters
     }
 
     /**
+     * How many sales the period had: confirmed orders plus invoices made
+     * without one (credit notes are not sales). User, 2026-11-20: "all
+     * products sold and paid by invoices created directly should reflect in
+     * sales" - every count of sales reads this, not the order count alone.
+     */
+    protected function salesCount(?Carbon $start = null, ?Carbon $end = null): int
+    {
+        $invoices = $this->directInvoices($start, $end);
+
+        return $this->saleOrders($start, $end)->count()
+            + $invoices->where($invoices->qualifyColumn('move_type'), MoveType::OUT_INVOICE)->count();
+    }
+
+    /**
+     * Sales per day over the period (orders by order date, direct invoices by
+     * invoice date), keyed Y-m-d.
+     *
+     * @return array<string, int>
+     */
+    protected function dailySalesCounts(?Carbon $start = null, ?Carbon $end = null): array
+    {
+        $orders = $this->saleOrders($start, $end);
+        $orderDay = 'CAST('.$orders->qualifyColumn('date_order').' AS date)';
+
+        $invoices = $this->directInvoices($start, $end);
+        $invoiceDay = 'CAST('.$invoices->qualifyColumn('invoice_date').' AS date)';
+
+        $counts = [];
+
+        foreach ([
+            [$orders, $orderDay],
+            [$invoices->where($invoices->qualifyColumn('move_type'), MoveType::OUT_INVOICE), $invoiceDay],
+        ] as [$query, $day]) {
+            foreach ($query->toBase()->selectRaw("{$day} as day, COUNT(*) as total")->groupByRaw($day)->pluck('total', 'day') as $date => $total) {
+                $key = Carbon::parse($date)->toDateString();
+                $counts[$key] = ($counts[$key] ?? 0) + (int) $total;
+            }
+        }
+
+        ksort($counts);
+
+        return $counts;
+    }
+
+    /**
      * Product lines of directInvoices(), joined to their invoice as
      * `direct_moves`, with the product and category filters.
      */

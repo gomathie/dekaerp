@@ -46,6 +46,8 @@ class PaymentsTable
                     ->sortable(),
                 TextColumn::make('paymentMethod.name')
                     ->label(__('accounts::filament/resources/payment.table.columns.payment-method'))
+                    // "Mobile Money" rather than "Manual Payment" (Payment::methodLabel()).
+                    ->state(fn ($record): string => $record->methodLabel())
                     ->visibleFrom('lg')
                     ->placeholder('-')
                     ->sortable(),

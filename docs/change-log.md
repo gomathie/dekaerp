@@ -6,6 +6,44 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-20, salesperson on invoices (unreleased)
+
+- **Why:** user: "add salesperson to invoices". After v1.13.1 the Sales
+  salesperson chart showed nothing on production: invoices made from the
+  invoice form carried no `invoice_user_id`. The field existed, hidden under
+  "Other information", empty by default, and its picker listed every user on
+  the installation, other clients' staff included. Picking a customer with no
+  salesperson also blanked it.
+- **How:** `InvoiceForm` shows Salesperson next to the customer, defaults it
+  to the signed-in user, scopes the picker with `CompanyMembers::scope()`,
+  and only overwrites it when the chosen customer has its own salesperson.
+  The API (`InvoiceRequest`, also used by credit notes and extended by
+  bills) refuses an `invoice_user_id` that is not a member of the request's
+  company; `exists:users` alone accepted any id.
+- **Benefit:** direct invoices count for their salesperson in the Sales and
+  Invoices charts; no cross-tenant names in the picker.
+- **Trade-off / risk:** an API client that sent a non-member user id now gets
+  422. Existing invoices are unchanged.
+- **Verification:** accounts `InvoiceResourceTest` "fills the salesperson
+  with the creator and lists only company members" (result in the handoff).
+- **Rollback:** revert the two code files.
+- **Same session, TRACE365 report "invoices do not reflect sales":** checked
+  on production as their user (support impersonation, reason recorded): after
+  v1.13.1 their Sales page shows revenue GHS 1.3K, top products and top
+  customers from 10 posted direct invoices. Three gaps fixed:
+  - Salesperson charts (Sales and Invoices) count an invoice with no
+    salesperson for its `creator_id` (`COALESCE(invoice_user_id,
+    creator_id)`); all their existing invoices have no salesperson.
+  - `Payment::methodLabel()`: the generic `manual` method shows the
+    journal's name (Mobile Money, Cash, Bank) on the invoice's payment list
+    (`Move` reconciled payments), new journal item labels and the payments
+    list. Existing journal item names are stored text and keep "Manual
+    Payment". Test `PaymentMethodLabelTest`.
+  - `DashboardChartWidget::doughnutChartOptions()` hides the x/y scales the
+    shared defaults added to every doughnut.
+  - Not a bug: Monthly Sales looked empty in full-page screenshots taken
+    mid-animation; the chart data and the drawn line are correct.
+
 ## 2026-11-20, hotfix v1.13.1: sales revenue chart, refused pages go home
 
 - **Why:** Sentry DEKAERP-1X (4 events, Overview): the Sales revenue trend
@@ -360,6 +398,7 @@ for the task/question log this change log is paired with.
   ProductFeature 276, LogisticsFeature 201, EmployeeFeature 10,
   PlatformBillingFeature 126. Not re-run on `develop` itself.
 - **Rollback:** revert this commit.
+
 ## 2026-11-17, resource restructure to upstream's layout (Package F, branch `chore/resource-structure`)
 
 - **Why:** user: start the restructure backlog. Upstream v1.6 moved every

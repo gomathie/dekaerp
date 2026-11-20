@@ -1019,7 +1019,7 @@ class Move extends Model implements Sortable
                 'date'                    => $counterpartLine->date,
                 'partial_id'              => $reconciledPartial['partial_id'],
                 'account_payment_id'      => $counterpartLine->payment_id,
-                'payment_method_name'     => $counterpartLine->payment?->paymentMethodLine->name,
+                'payment_method_name'     => $counterpartLine->payment?->methodLabel(),
                 'move_id'                 => $counterpartLine->move_id,
                 'move_type'               => $counterpartLine->move->move_type,
                 'ref'                     => $reconciliationRef,

@@ -5,6 +5,8 @@ namespace Webkul\Account\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Webkul\Account\Models\Product;
+use Webkul\Security\Models\User;
+use Webkul\Support\Filament\CompanyMembers;
 use Webkul\Support\Rules\PermittedCurrency;
 
 class InvoiceRequest extends FormRequest
@@ -35,7 +37,13 @@ class InvoiceRequest extends FormRequest
             'invoice_date_due'                 => ['nullable', 'date', 'prohibited_if:invoice_payment_term_id,*'],
             'invoice_payment_term_id'          => ['nullable', 'integer', 'exists:accounts_payment_terms,id', 'prohibited_if:invoice_date_due,*'],
             'fiscal_position_id'               => ['nullable', 'integer', 'exists:accounts_fiscal_positions,id'],
-            'invoice_user_id'                  => ['nullable', 'integer', 'exists:users,id'],
+            // A member of the company the request works in, never another
+            // client's user: `exists:users` alone accepted any id (2026-11-20).
+            'invoice_user_id'                  => ['nullable', 'integer', function (string $attribute, mixed $value, \Closure $fail): void {
+                if (! CompanyMembers::scope(User::query())->whereKey($value)->exists()) {
+                    $fail(__('validation.exists', ['attribute' => $attribute]));
+                }
+            }],
             'partner_bank_id'                  => ['nullable', 'integer', 'exists:partners_bank_accounts,id'],
             'invoice_incoterm_id'              => ['nullable', 'integer', 'exists:accounts_incoterms,id'],
             'invoice_cash_rounding_id'         => ['nullable', 'integer', 'exists:accounts_cash_roundings,id'],

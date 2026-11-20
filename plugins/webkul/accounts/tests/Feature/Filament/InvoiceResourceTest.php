@@ -20,8 +20,10 @@ use Webkul\Partner\Models\Partner;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Package;
 use Webkul\Product\Models\Product;
+use Webkul\Security\Models\User;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
+require_once __DIR__.'/../../../../support/tests/Helpers/CompanyHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/FilamentHelper.php';
 require_once __DIR__.'/../../Helpers/AccountHelper.php';
 
@@ -110,6 +112,32 @@ it('adds a new service from an invoice line', function () {
     expect((float) $product->price)->toBe(150.0)
         ->and($product->company_id)->toBe(current_company_id())
         ->and($product->uom_id)->not->toBeNull();
+});
+
+/**
+ * User, 2026-11-20: the salesperson sits next to the customer, starts as
+ * whoever creates the invoice, and lists only this company's people (it
+ * used to list every user on the installation).
+ */
+it('fills the salesperson with the creator and lists only company members', function () {
+    $company = CompanyHelper::company(['name' => 'Salesperson Co', 'is_active' => true]);
+    $otherCompany = CompanyHelper::company(['name' => 'Salesperson Other Co', 'is_active' => true]);
+
+    $user = FilamentHelper::actingAsCompanyUser($company, ['view_any_account_invoice', 'create_account_invoice']);
+
+    $colleague = CompanyHelper::asNobody(fn () => User::factory()->create(['name' => 'Same Company Colleague']));
+    $colleague->allowedCompanies()->attach($company->getKey());
+
+    $stranger = CompanyHelper::asNobody(fn () => User::factory()->create(['name' => 'Other Client Staff']));
+    $stranger->allowedCompanies()->attach($otherCompany->getKey());
+
+    $component = Livewire::test(CreateInvoice::class)
+        ->assertFormSet(['invoice_user_id' => $user->getKey()]);
+
+    $options = $component->instance()->form->getComponent('invoice_user_id')->getOptions();
+
+    expect($options)->toHaveKey($colleague->getKey())
+        ->not->toHaveKey($stranger->getKey());
 });
 
 it('hides the add-customer button without the contact create permission', function () {

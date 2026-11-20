@@ -108,7 +108,7 @@ class SaleHeadlineWidget extends StatsOverviewWidget
         [$previousStart, $previousEnd] = $this->previousPeriodRange();
         [$change, $trendIcon, $trendColor] = $this->statTrend($revenue, $this->revenueBetween($previousStart, $previousEnd));
 
-        $orders = $this->saleOrders()->count();
+        $orders = $this->salesCount();
 
         return [
             Stat::make(__('invoices::filament/pages/overview.headline.revenue'), compact_money($revenue, $currency))
@@ -147,8 +147,8 @@ class SaleHeadlineWidget extends StatsOverviewWidget
         [$previousStart, $previousEnd] = $this->previousPeriodRange();
 
         $revenue = $this->revenueBetween();
-        $orders = $this->saleOrders()->count();
-        $previousOrders = $this->saleOrders($previousStart, $previousEnd)->count();
+        $orders = $this->salesCount();
+        $previousOrders = $this->salesCount($previousStart, $previousEnd);
 
         $conversion = $this->conversionRate();
         $previousConversion = $this->conversionRate($previousStart, $previousEnd);
@@ -205,22 +205,14 @@ class SaleHeadlineWidget extends StatsOverviewWidget
     }
 
     /**
-     * Confirmed orders per day, for the bar strip.
+     * Sales per day (confirmed orders and invoices made without one), for
+     * the bar strip.
      *
      * @return list<int>
      */
     protected function dailyOrders(): array
     {
-        $query = $this->saleOrders();
-        $day = 'DATE('.$query->qualifyColumn('date_order').')';
-
-        return $query->toBase()
-            ->selectRaw($day.' as day, COUNT(*) as total')
-            ->groupByRaw($day)
-            ->orderByRaw($day)
-            ->pluck('total')
-            ->map(fn ($total): int => (int) $total)
-            ->all();
+        return array_values($this->dailySalesCounts());
     }
 
     /** Confirmed revenue in company currency; the page period when no dates are given. */

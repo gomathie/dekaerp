@@ -36,6 +36,7 @@ use Webkul\Account\Models\Partner;
 use Webkul\Account\Settings\CustomerInvoiceSettings;
 use Webkul\Field\Filament\Forms\Components\ProgressStepper as FormProgressStepper;
 use Webkul\Partner\Models\Partner as BasePartner;
+use Webkul\Support\Filament\CompanyMembers;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Currency;
 
@@ -130,13 +131,32 @@ class InvoiceForm
                                             ->afterStateUpdated(function (Set $set, $state) {
                                                 $partner = $state ? Partner::find($state) : null;
 
-                                                $set('invoice_user_id', $partner?->user_id);
+                                                // The customer's own salesperson wins; a customer without
+                                                // one keeps whoever is already chosen (2026-11-20).
+                                                if ($partner?->user_id) {
+                                                    $set('invoice_user_id', $partner->user_id);
+                                                }
 
                                                 $set('preferred_payment_method_line_id', $partner?->property_inbound_payment_method_line_id);
 
                                                 $set('invoice_payment_term_id', $partner?->property_payment_term_id);
                                             })
                                             ->disabled(fn ($record) => in_array($record?->state, [MoveState::POSTED, MoveState::CANCEL])),
+                                        /*
+                                         * Salesperson (user, 2026-11-20): shown next to the
+                                         * customer and filled with whoever creates the invoice,
+                                         * so the Sales and Invoices salesperson charts count
+                                         * invoices made without an order. It used to sit empty
+                                         * under "Other information" and list every user on the
+                                         * installation; CompanyMembers limits it to this
+                                         * company's people.
+                                         */
+                                        Select::make('invoice_user_id')
+                                            ->label(__('accounts::filament/resources/invoice.form.tabs.other-information.fieldset.invoice.fields.sales-person'))
+                                            ->relationship('invoiceUser', 'name', fn (Builder $query): Builder => CompanyMembers::scope($query))
+                                            ->default(fn (): ?int => Auth::id())
+                                            ->searchable()
+                                            ->preload(),
                                     ]),
 
                                 Group::make()
@@ -302,11 +322,6 @@ class InvoiceForm
                                         TextInput::make('reference')
                                             ->label(__('accounts::filament/resources/invoice.form.tabs.other-information.fieldset.invoice.fields.customer-reference'))
                                             ->maxLength(255),
-                                        Select::make('invoice_user_id')
-                                            ->relationship('invoiceUser', 'name')
-                                            ->searchable()
-                                            ->preload()
-                                            ->label(__('accounts::filament/resources/invoice.form.tabs.other-information.fieldset.invoice.fields.sales-person')),
                                         Select::make('partner_bank_id')
                                             ->label(__('accounts::filament/resources/invoice.form.tabs.other-information.fieldset.invoice.fields.recipient-bank'))
                                             ->relationship(

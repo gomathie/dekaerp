@@ -675,11 +675,29 @@ class Payment extends Model
         return $lines;
     }
 
+    /**
+     * How the money came in, in words a user recognises.
+     *
+     * The generic "manual" method only means "entered by hand", so every
+     * cash, bank and Mobile Money payment read "Manual Payment" on invoices,
+     * journal items and the payments list (TRACE365, 2026-11-20). For that
+     * method the journal says what users mean (Cash, Bank, Mobile Money);
+     * any other method keeps its own name.
+     */
+    public function methodLabel(): string
+    {
+        $line = $this->paymentMethodLine;
+
+        if ($line && $line->paymentMethod?->code === 'manual' && $this->journal?->name) {
+            return $this->journal->name;
+        }
+
+        return $line?->name ?? $this->paymentMethod?->name ?? 'No Payment Method';
+    }
+
     public function getMoveLineDefaultDisplayNameList()
     {
-        $label = $this->paymentMethodLine
-            ? $this->paymentMethodLine->name
-            : 'No Payment Method';
+        $label = $this->methodLabel();
 
         if ($this->memo) {
             return [
