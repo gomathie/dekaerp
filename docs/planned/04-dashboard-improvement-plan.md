@@ -167,6 +167,22 @@ paid. Decided:
 - **The guides say which door to use:** "If you agree a price first, start in
   Sales → Quotations; if you just bill, start in Invoices → New invoice."
 
+*Progress 2026-11-20:*
+- v1.13.0 shipped the invoiced Revenue tile.
+- That tile's daily chart failed on PostgreSQL (Sentry DEKAERP-1X). It
+  blanked the Sales dashboard and the Overview's sales section.
+- Hotfix v1.13.1 (user: "build it as a hotfix") does two things:
+  - fixes that chart;
+  - adds invoices made without an order to top products, revenue by
+    category, top customers, salespeople, the monthly chart and the Sales by
+    product report.
+
+  An invoice made from an order is still counted once, through its order.
+  The rule lives in one place: `Webkul\Sale\Support\DirectInvoices`.
+- Still open: the "Recent invoices" view inside Sales, and the guide wording.
+- Still open: the top-customers count column, labelled "Orders", now also
+  counts direct invoices. Rename it ("Sales") with DB-1.
+
 Also found on TRACE365's Overview (2026-11-19), to fix in DB-2/DB-3: the
 "Money in and out" chart's "This period" ends yesterday, so a payment made
 today is missing from it; the Logistics tab is absent although Logistics is
