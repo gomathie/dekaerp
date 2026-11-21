@@ -4,10 +4,13 @@ use App\Http\Controllers\BrandingController;
 use App\Http\Controllers\SecureStorageController;
 use Illuminate\Support\Facades\Route;
 
-if (! request()->getRequestUri() == '/login') {
-    Route::redirect('/login', '/admin/login')
-        ->name('login');
-}
+// Laravel's 'auth' middleware sends guests to route('login'). The old guard
+// `if (! request()->getRequestUri() == '/login')` was always false (operator
+// precedence), so this route never existed and every guest request to an
+// 'auth' route, such as an expired session loading an avatar from
+// /secure-storage, failed with a 500 (Sentry DEKAERP-1Y, 2026-11-21).
+Route::redirect('/login', '/admin/login')
+    ->name('login');
 
 // Brand assets for the unauthenticated login and password-reset pages. The
 // pattern allows a bare filename only - no slashes, so no caller-supplied key
