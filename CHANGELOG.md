@@ -10,6 +10,12 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.14.1 — 2026-11-21
+
+### Fixes
+
+- The "Revenue by category" ring and other ring charts no longer show a stray 0 to 1 scale beside them.
+
 # CHANGELOG — v1.14.0 — 2026-11-21
 
 ### Improvements
