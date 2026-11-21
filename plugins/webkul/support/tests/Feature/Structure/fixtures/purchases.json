@@ -1802,7 +1802,7 @@
                 "created_at",
                 "updated_at"
             ],
-            "defaultSort": null,
+            "defaultSort": "id",
             "recordActions": [
                 {
                     "type": "Webkul\\Chatter\\Filament\\Actions\\ActivityTableAction",
@@ -2950,7 +2950,7 @@
                 "created_at",
                 "updated_at"
             ],
-            "defaultSort": null,
+            "defaultSort": "id",
             "recordActions": [
                 {
                     "type": "Webkul\\Chatter\\Filament\\Actions\\ActivityTableAction",
@@ -4077,7 +4077,7 @@
                 "created_at",
                 "updated_at"
             ],
-            "defaultSort": null,
+            "defaultSort": "id",
             "recordActions": [
                 {
                     "type": "Webkul\\Chatter\\Filament\\Actions\\ActivityTableAction",

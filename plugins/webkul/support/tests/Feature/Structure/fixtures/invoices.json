@@ -1631,6 +1631,10 @@
                                     {
                                         "type": "Filament\\Forms\\Components\\Select",
                                         "name": "partner_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "invoice_user_id"
                                     }
                                 ]
                             },
@@ -1640,6 +1644,14 @@
                                     {
                                         "type": "Filament\\Forms\\Components\\DatePicker",
                                         "name": "invoice_date"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "paid_now"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "paid_journal_id"
                                     },
                                     {
                                         "type": "Filament\\Schemas\\Components\\Group",
@@ -1739,10 +1751,6 @@
                                     {
                                         "type": "Filament\\Forms\\Components\\TextInput",
                                         "name": "reference"
-                                    },
-                                    {
-                                        "type": "Filament\\Forms\\Components\\Select",
-                                        "name": "invoice_user_id"
                                     },
                                     {
                                         "type": "Filament\\Forms\\Components\\Select",
@@ -2199,7 +2207,7 @@
                 "created_at",
                 "updated_at"
             ],
-            "defaultSort": null,
+            "defaultSort": "id",
             "recordActions": [
                 {
                     "type": "Webkul\\Chatter\\Filament\\Actions\\ActivityTableAction",
@@ -7729,6 +7737,10 @@
                                     {
                                         "type": "Filament\\Forms\\Components\\Select",
                                         "name": "partner_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "invoice_user_id"
                                     }
                                 ]
                             },
@@ -7738,6 +7750,14 @@
                                     {
                                         "type": "Filament\\Forms\\Components\\DatePicker",
                                         "name": "invoice_date"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "paid_now"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "paid_journal_id"
                                     },
                                     {
                                         "type": "Filament\\Schemas\\Components\\Group",
@@ -7837,10 +7857,6 @@
                                     {
                                         "type": "Filament\\Forms\\Components\\TextInput",
                                         "name": "reference"
-                                    },
-                                    {
-                                        "type": "Filament\\Forms\\Components\\Select",
-                                        "name": "invoice_user_id"
                                     },
                                     {
                                         "type": "Filament\\Forms\\Components\\Select",
@@ -8297,7 +8313,7 @@
                 "created_at",
                 "updated_at"
             ],
-            "defaultSort": null,
+            "defaultSort": "id",
             "recordActions": [
                 {
                     "type": "Webkul\\Chatter\\Filament\\Actions\\ActivityTableAction",
@@ -8543,7 +8559,7 @@
                 "created_at",
                 "updated_at"
             ],
-            "defaultSort": null,
+            "defaultSort": "id",
             "recordActions": [
                 {
                     "type": "Webkul\\Chatter\\Filament\\Actions\\ActivityTableAction",
@@ -13606,7 +13622,7 @@
                 "created_at",
                 "updated_at"
             ],
-            "defaultSort": null,
+            "defaultSort": "id",
             "recordActions": [
                 {
                     "type": "Webkul\\Chatter\\Filament\\Actions\\ActivityTableAction",
@@ -13852,7 +13868,7 @@
                 "created_at",
                 "updated_at"
             ],
-            "defaultSort": null,
+            "defaultSort": "id",
             "recordActions": [
                 {
                     "type": "Webkul\\Chatter\\Filament\\Actions\\ActivityTableAction",
@@ -18915,7 +18931,7 @@
                 "created_at",
                 "updated_at"
             ],
-            "defaultSort": null,
+            "defaultSort": "id",
             "recordActions": [
                 {
                     "type": "Webkul\\Chatter\\Filament\\Actions\\ActivityTableAction",
