@@ -10,6 +10,12 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.14.2 — 2026-11-21
+
+### Fixes
+
+- After your session expires, pictures and files now send you to the sign-in page instead of an error.
+
 # CHANGELOG — v1.14.1 — 2026-11-21
 
 ### Fixes

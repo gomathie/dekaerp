@@ -6,6 +6,28 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-21, hotfix v1.14.2: guests reach the login page; test repairs
+
+- **Why:** Sentry DEKAERP-1Y. A signed-out browser loading an avatar from
+  `/secure-storage/...` got a 500 "Route [login] not defined". The `login`
+  redirect in `routes/web.php` sat behind
+  `if (! request()->getRequestUri() == '/login')`, which operator precedence
+  makes always false, so the route never existed and Laravel's `auth`
+  middleware had nowhere to send guests.
+- **How:** the `/login` -> `/admin/login` redirect named `login` is registered
+  unconditionally. Test: support `Http/GuestLoginRedirectTest.php`.
+- **Benefit:** every `auth` route answers a guest with a redirect to sign in;
+  the file itself is still refused.
+- **Also (tests only, develop):** re-recorded the resource structure fixtures
+  (salesperson and paid-now fields, purchase default sort, base-currency
+  section order); the stale fixtures made SupportFeature die at the 300 s
+  limit while diffing. `EditProductSaveTest` now uses the Accounts product page
+  (the base resource registers no pages) and same-company category data.
+- **Verification:** GuestLoginRedirectTest + RefusedPageRedirectTest 9 passed;
+  EditProductSaveTest 2 passed; PartnerFeature 96, AccountingFeature 99,
+  ProductFeature 276 (+2 fixed) passed (`aureuserp_testing_v113_*`).
+- **Rollback:** revert `routes/web.php`.
+
 ## 2026-11-21, v1.14.0 released, hotfix v1.14.1: doughnut scale
 
 - **v1.14.0** shipped to production on 2026-11-21 (develop 50c825a1b,
