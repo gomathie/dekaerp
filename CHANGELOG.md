@@ -10,6 +10,8 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.14.0 — 2026-11-21
+
 ### Improvements
 
 - Sales made by invoicing directly, without a sales order, now count as
@@ -23,6 +25,9 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
   created them.
 - Payments show how they were paid (Cash, Bank, Mobile Money) instead of
   "Manual Payment", on the invoice, the journal items and the payments list.
+- Behind the scenes, the forms and lists of most modules were reorganised to
+  match the latest upstream layout. Screens look and work the same; future
+  improvements can now be adopted faster.
 
 ### Fixes
 
