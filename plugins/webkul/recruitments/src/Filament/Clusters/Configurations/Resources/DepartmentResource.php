@@ -13,6 +13,7 @@ use Webkul\Recruitment\Filament\Clusters\Configurations\Resources\DepartmentReso
 use Webkul\Recruitment\Filament\Clusters\Configurations\Resources\DepartmentResource\Pages\ListDepartments;
 use Webkul\Recruitment\Filament\Clusters\Configurations\Resources\DepartmentResource\Pages\ManageEmployee;
 use Webkul\Recruitment\Filament\Clusters\Configurations\Resources\DepartmentResource\Pages\ViewDepartment;
+use Webkul\Recruitment\Filament\Clusters\Configurations\Resources\DepartmentResource\Tables\DepartmentsTable;
 use Webkul\Recruitment\Models\Department;
 
 class DepartmentResource extends BaseDepartmentResource
@@ -37,11 +38,7 @@ class DepartmentResource extends BaseDepartmentResource
 
     public static function table(Table $table): Table
     {
-        return BaseDepartmentResource::table($table)
-            ->contentGrid([
-                'md' => 2,
-                'xl' => 3,
-            ]);
+        return DepartmentsTable::configure($table);
     }
 
     public static function getRecordSubNavigation(Page $page): array

@@ -21,7 +21,7 @@ class ActivityTypeResource extends BaseActivityTypeResource
 
     protected static ?string $cluster = Configurations::class;
 
-    protected static ?string $pluginName = 'time-off';
+    public static ?string $pluginName = 'time-off';
 
     protected static ?int $navigationSort = 5;
 

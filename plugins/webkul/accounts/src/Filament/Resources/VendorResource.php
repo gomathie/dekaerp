@@ -11,6 +11,7 @@ use Webkul\Account\Filament\Resources\VendorResource\Pages\ManageAddresses;
 use Webkul\Account\Filament\Resources\VendorResource\Pages\ManageBankAccounts;
 use Webkul\Account\Filament\Resources\VendorResource\Pages\ManageContacts;
 use Webkul\Account\Filament\Resources\VendorResource\Pages\ViewVendor;
+use Webkul\Account\Filament\Resources\VendorResource\Tables\VendorsTable;
 use Webkul\Account\Models\Vendor;
 
 class VendorResource extends PartnerResource
@@ -19,11 +20,7 @@ class VendorResource extends PartnerResource
 
     public static function table(Table $table): Table
     {
-        $table = PartnerResource::table($table);
-
-        $table->modifyQueryUsing(fn ($query) => $query->where('supplier_rank', '>', 0));
-
-        return $table;
+        return VendorsTable::configure($table);
     }
 
     public static function getRecordSubNavigation(Page $page): array

@@ -5,11 +5,6 @@ namespace Webkul\Manufacturing\Filament\Clusters\Operations\Resources;
 use BackedEnum;
 use Carbon\Carbon;
 use Filament\Actions\Action;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
@@ -19,26 +14,15 @@ use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\FusedGroup;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Group;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Size;
-use Filament\Support\Enums\TextSize;
 use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Grouping\Group as TableGroup;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\ComponentAttributeBag;
-use Webkul\Field\Filament\Forms\Components\ProgressStepper as FormProgressStepper;
-use Webkul\Field\Filament\Infolists\Components\ProgressStepper as InfolistProgressStepper;
 use Webkul\Field\Filament\Traits\HasCustomFields;
 use Webkul\Inventory\Enums\MoveState;
 use Webkul\Inventory\Models\Location;
@@ -54,6 +38,9 @@ use Webkul\Manufacturing\Filament\Clusters\Operations\Resources\ManufacturingOrd
 use Webkul\Manufacturing\Filament\Clusters\Operations\Resources\ManufacturingOrderResource\Pages\ManageTransfers;
 use Webkul\Manufacturing\Filament\Clusters\Operations\Resources\ManufacturingOrderResource\Pages\OverviewManufacturingOrder;
 use Webkul\Manufacturing\Filament\Clusters\Operations\Resources\ManufacturingOrderResource\Pages\ViewManufacturingOrder;
+use Webkul\Manufacturing\Filament\Clusters\Operations\Resources\ManufacturingOrderResource\Schemas\ManufacturingOrderForm;
+use Webkul\Manufacturing\Filament\Clusters\Operations\Resources\ManufacturingOrderResource\Schemas\ManufacturingOrderInfolist;
+use Webkul\Manufacturing\Filament\Clusters\Operations\Resources\ManufacturingOrderResource\Tables\ManufacturingOrdersTable;
 use Webkul\Manufacturing\Models\BillOfMaterial;
 use Webkul\Manufacturing\Models\BillOfMaterialLine;
 use Webkul\Manufacturing\Models\Move;
@@ -65,8 +52,6 @@ use Webkul\Manufacturing\Settings\OperationSettings;
 use Webkul\Product\Enums\ProductType;
 use Webkul\Support\Filament\Forms\Components\Repeater;
 use Webkul\Support\Filament\Forms\Components\Repeater\TableColumn as RepeaterTableColumn;
-use Webkul\Support\Filament\Infolists\Components\RepeatableEntry;
-use Webkul\Support\Filament\Infolists\Components\Repeater\TableColumn as InfolistTableColumn;
 use Webkul\Support\Models\Scopes\CompanyScope;
 use Webkul\Support\Models\UOM;
 
@@ -106,665 +91,17 @@ class ManufacturingOrderResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                FormProgressStepper::make('state')
-                    ->hiddenLabel()
-                    ->inline()
-                    ->options(ManufacturingOrderState::options())
-                    ->options(function (?Order $record, Get $get): array {
-                        $options = ManufacturingOrderState::options();
-                        $currentState = $get('state');
-
-                        if ($currentState && ! $currentState instanceof ManufacturingOrderState) {
-                            $currentState = ManufacturingOrderState::from($currentState);
-                        }
-
-                        $currentState ??= $record?->state;
-
-                        if (! $record) {
-                            unset(
-                                $options[ManufacturingOrderState::PROGRESS->value],
-                                $options[ManufacturingOrderState::TO_CLOSE->value],
-                                $options[ManufacturingOrderState::CANCEL->value],
-                            );
-                        } else {
-                            foreach ([ManufacturingOrderState::PROGRESS, ManufacturingOrderState::TO_CLOSE, ManufacturingOrderState::CANCEL] as $state) {
-                                if ($currentState !== $state) {
-                                    unset($options[$state->value]);
-                                }
-                            }
-
-                            if ($currentState) {
-                                $options[$currentState->value] = $currentState->getLabel();
-                            }
-                        }
-
-                        return $options;
-                    })
-                    ->default(ManufacturingOrderState::DRAFT)
-                    ->disabled()
-                    ->dehydrated(),
-
-                Section::make(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.sections.general.title'))
-                    ->columns(2)
-                    ->schema(fn ($record) => [
-                        Group::make()
-                            ->columns(1)
-                            ->schema([
-                                Select::make('product_id')
-                                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.sections.general.fields.product'))
-                                    ->relationship(
-                                        'product',
-                                        'name',
-                                        fn (Builder $query, Get $get) => $query
-                                            ->withTrashed()
-                                            ->where('type', ProductType::GOODS)
-                                            ->whereNull('is_configurable')
-                                            ->where(owned_by_company($get('company_id')))
-                                    )
-                                    ->getOptionLabelFromRecordUsing(fn (Product $record): string => $record->name)
-                                    ->searchable()
-                                    ->preload()
-                                    ->native(false)
-                                    ->wrapOptionLabels(false)
-                                    ->live()
-                                    ->disabled(fn (?Order $record) => $record && $record->state !== ManufacturingOrderState::DRAFT)
-                                    ->getOptionLabelFromRecordUsing(function ($record): string {
-                                        return $record->name.($record->trashed() ? ' (Deleted)' : '');
-                                    })
-                                    ->wrapOptionLabels(false)
-                                    ->disableOptionWhen(function ($label, $value, $state, $component) {
-                                        $isDeleted = str_contains($label, ' (Deleted)');
-
-                                        $isDuplicate = false;
-
-                                        if ($component?->getParentRepeater()) {
-                                            $repeater = $component->getParentRepeater();
-
-                                            $isDuplicate = collect($repeater->getState())
-                                                ->pluck(
-                                                    (string) str($component->getStatePath())
-                                                        ->after("{$repeater->getStatePath()}.")
-                                                        ->after('.'),
-                                                )
-                                                ->flatten()
-                                                ->diff(Arr::wrap($state))
-                                                ->filter(fn (mixed $siblingItemState): bool => filled($siblingItemState))
-                                                ->contains($value);
-                                        }
-
-                                        return $isDeleted || $isDuplicate;
-                                    })
-                                    ->afterStateUpdated(function (Set $set, Get $get, ?string $state): void {
-                                        $product = Product::query()->withTrashed()->find($state);
-
-                                        if (! $product) {
-                                            $set('uom_id', null);
-                                            $set('bill_of_material_id', null);
-                                            $set('rawMaterialMoves', []);
-                                            $set('workOrders', []);
-
-                                            return;
-                                        }
-
-                                        $set('uom_id', $product->uom_id ?: static::getDefaultUomId());
-
-                                        $set('company_id', $product->company_id ?? current_company_id());
-
-                                        $billOfMaterialId = static::getDefaultBillOfMaterialId($product);
-
-                                        if (! $billOfMaterialId) {
-                                            $set('bill_of_material_id', null);
-                                            $set('rawMaterialMoves', []);
-                                            $set('workOrders', []);
-
-                                            return;
-                                        }
-
-                                        if ($get('bill_of_material_id') !== $billOfMaterialId) {
-                                            $set('bill_of_material_id', $billOfMaterialId);
-                                        }
-
-                                        static::applyBillOfMaterialDefaults(
-                                            $set,
-                                            BillOfMaterial::query()->withTrashed()->find($billOfMaterialId),
-                                            $product,
-                                            (float) ($get('quantity') ?: 1),
-                                            $get('uom_id'),
-                                        );
-                                    })
-                                    ->required(),
-                                static::getQuantityUomField(),
-                                Select::make('bill_of_material_id')
-                                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.sections.general.fields.bill-of-material'))
-                                    ->relationship(
-                                        'billOfMaterial',
-                                        'code',
-                                        modifyQueryUsing: function (Get $get, Builder $query): void {
-                                            $product = Product::query()->withTrashed()->find($get('product_id'));
-
-                                            if (! $product) {
-                                                $query->whereRaw('1 = 0');
-
-                                                return;
-                                            }
-
-                                            $productIds = array_filter([$product->id, $product->parent_id]);
-
-                                            $query->withTrashed()
-                                                ->whereIn('product_id', $productIds)
-                                                ->where(owned_by_company($get('company_id')));
-                                        }
-                                    )
-                                    ->getOptionLabelFromRecordUsing(fn (BillOfMaterial $record): string => static::getBillOfMaterialLabel($record))
-                                    ->searchable()
-                                    ->preload()
-                                    ->native(false)
-                                    ->wrapOptionLabels(false)
-                                    ->live()
-                                    ->disabled(fn (?Order $record) => $record && $record->state !== ManufacturingOrderState::DRAFT)
-                                    ->afterStateUpdated(function (Set $set, Get $get, ?string $state): void {
-                                        $product = Product::query()->withTrashed()->find($get('product_id'));
-
-                                        static::applyBillOfMaterialDefaults(
-                                            $set,
-                                            BillOfMaterial::query()->withTrashed()->find($state),
-                                            $product,
-                                            (float) ($get('quantity') ?: 1),
-                                            $get('uom_id'),
-                                        );
-                                    }),
-                            ]),
-                        Group::make()
-                            ->columns(1)
-                            ->schema([
-                                DateTimePicker::make('started_at')
-                                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.sections.general.fields.scheduled-date'))
-                                    ->native(false)
-                                    ->default(now())
-                                    ->seconds(false)
-                                    ->required()
-                                    ->disabled(fn (?Order $record) => $record && in_array($record->state, [ManufacturingOrderState::DONE, ManufacturingOrderState::CANCEL])),
-                                DateTimePicker::make('finished_at')
-                                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.sections.general.fields.scheduled-end'))
-                                    ->default(now())
-                                    ->seconds(false)
-                                    ->disabled()
-                                    ->visible(fn (?Order $record) => $record && $record->state !== ManufacturingOrderState::DRAFT),
-                                Select::make('assigned_user_id')
-                                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.sections.general.fields.responsible'))
-                                    ->relationship('assignedUser', 'name')
-                                    ->searchable()
-                                    ->preload()
-                                    ->native(false)
-                                    ->default(Auth::id())
-                                    ->disabled(fn (?Order $record) => $record && in_array($record->state, [ManufacturingOrderState::DONE, ManufacturingOrderState::CANCEL])),
-                            ]),
-                    ]),
-
-                Tabs::make('manufacturing-order-tabs')
-                    ->tabs([
-                        Tab::make(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.components.title'))
-                            ->schema([
-                                static::getComponentsRepeater(),
-                            ]),
-                        Tab::make(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.work-orders.title'))
-                            ->visible(static::getOperationSettings()->enable_work_orders)
-                            ->schema([
-                                static::getWorkOrdersRepeater(),
-                            ]),
-                        Tab::make(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.by-products.title'))
-                            ->hidden(! static::getOperationSettings()->enable_byproducts)
-                            ->schema([
-                                TextEntry::make('by_products_process_note')
-                                    ->hiddenLabel()
-                                    ->state(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.by-products.process-note')),
-                            ]),
-                        Tab::make(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.miscellaneous.title'))
-                            ->schema([
-                                Grid::make(2)
-                                    ->schema([
-                                        Select::make('operation_type_id')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.miscellaneous.fields.operation-type'))
-                                            ->relationship(
-                                                'operationType',
-                                                'name',
-                                                fn (Builder $query, Get $get) => $query
-                                                    ->withTrashed()
-                                                    ->where('type', 'manufacture')
-                                                    ->where(owned_by_company($get('company_id')))
-                                            )
-                                            ->getOptionLabelFromRecordUsing(fn (OperationType $record): string => static::getOperationTypeLabel($record))
-                                            ->searchable()
-                                            ->preload()
-                                            ->native(false)
-                                            ->wrapOptionLabels(false)
-                                            ->live()
-                                            ->required()
-                                            ->disabled(fn (?Order $record) => $record && $record->state !== ManufacturingOrderState::DRAFT)
-                                            ->afterStateUpdated(function (Set $set, Get $get, ?string $state): void {
-                                                $operationType = OperationType::query()->withTrashed()->find($state);
-
-                                                $sourceLocationId = $operationType?->source_location_id;
-                                                $set('source_location_id', $sourceLocationId);
-                                                $set('destination_location_id', $operationType?->destination_location_id);
-
-                                                $sourceLocation = $sourceLocationId ? Location::query()->withTrashed()->find($sourceLocationId) : null;
-                                                $displayFrom = $sourceLocation?->full_name ?? '—';
-
-                                                foreach (array_keys($get('rawMaterialMoves') ?? []) as $key) {
-                                                    $set("rawMaterialMoves.{$key}.operation_type_id", $operationType?->id);
-                                                    $set("rawMaterialMoves.{$key}.source_location_id", $sourceLocationId);
-                                                    $set("rawMaterialMoves.{$key}.display_from", $displayFrom);
-                                                }
-                                            }),
-                                        Select::make('source_location_id')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.miscellaneous.fields.source'))
-                                            ->relationship('sourceLocation', 'full_name', fn (Builder $query, Get $get) => $query
-                                                ->withTrashed()
-                                                ->where(owned_by_company($get('company_id'))))
-                                            ->searchable()
-                                            ->preload()
-                                            ->required()
-                                            ->native(false)
-                                            ->disabled(fn (?Order $record) => $record && $record->state !== ManufacturingOrderState::DRAFT)
-                                            ->visible(static::getWarehouseSettings()->enable_locations)
-                                            ->wrapOptionLabels(false)
-                                            ->live()
-                                            ->afterStateUpdated(function (Set $set, Get $get, ?string $state): void {
-                                                $sourceLocation = $state ? Location::query()->withTrashed()->find($state) : null;
-                                                $displayFrom = $sourceLocation?->full_name ?? '—';
-
-                                                foreach (array_keys($get('rawMaterialMoves') ?? []) as $key) {
-                                                    $set("rawMaterialMoves.{$key}.source_location_id", $state);
-                                                    $set("rawMaterialMoves.{$key}.display_from", $displayFrom);
-                                                }
-                                            }),
-                                        Select::make('destination_location_id')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.miscellaneous.fields.finished-products-location'))
-                                            ->relationship('destinationLocation', 'full_name', fn (Builder $query, Get $get) => $query
-                                                ->withTrashed()
-                                                ->where(owned_by_company($get('company_id'))))
-                                            ->searchable()
-                                            ->preload()
-                                            ->required()
-                                            ->native(false)
-                                            ->wrapOptionLabels(false)
-                                            ->live()
-                                            ->disabled(fn (?Order $record) => $record && $record->state !== ManufacturingOrderState::DRAFT)
-                                            ->visible(static::getWarehouseSettings()->enable_locations)
-                                            ->afterStateUpdated(function (Set $set, ?string $state): void {
-                                                $set('destination_location_id', $state);
-                                            }),
-                                        Select::make('company_id')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.miscellaneous.fields.company'))
-                                            ->relationship('company', 'name')
-                                            ->searchable()
-                                            ->preload()
-                                            ->native(false)
-                                            ->disabled(fn (?Order $record) => $record && $record->state !== ManufacturingOrderState::DRAFT)
-                                            ->default(current_company_id())
-                                            ->live()
-                                            ->afterStateUpdated(fn (Set $set, Get $get, $state) => clear_foreign_company_values($set, $get, [
-                                                'product_id'              => Product::class,
-                                                'bill_of_material_id'     => BillOfMaterial::class,
-                                                'operation_type_id'       => OperationType::class,
-                                                'source_location_id'      => Location::class,
-                                                'destination_location_id' => Location::class,
-                                            ], $state)),
-                                        ...static::getCustomFormFields(),
-                                    ]),
-                            ]),
-                    ]),
-
-                Hidden::make('destination_location_id'),
-            ])
-            ->columns(1);
+        return ManufacturingOrderForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->reorderableColumns()
-            ->defaultSort('id', 'desc')
-            ->columns(static::mergeCustomTableColumns([
-                TextColumn::make('name')
-                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.reference'))
-                    ->searchable(),
-                TextColumn::make('started_at')
-                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.start'))
-                    ->visibleFrom('md')
-                    ->dateTime()
-                    ->placeholder('—'),
-                TextColumn::make('finished_at')
-                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.end'))
-                    ->dateTime()
-                    ->placeholder('—')
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('deadline_at')
-                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.deadline'))
-                    ->dateTime()
-                    ->placeholder('—')
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('product.name')
-                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.product'))
-                    ->searchable(),
-                TextColumn::make('producingLot.name')
-                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.lot-serial-number'))
-                    ->placeholder('—')
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('bill_of_material_id')
-                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.bill-of-material'))
-                    ->formatStateUsing(fn (mixed $state, Order $record): string => static::getBillOfMaterialLabel($record->billOfMaterial))
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('origin')
-                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.source'))
-                    ->visibleFrom('lg')
-                    ->placeholder('—')
-                    ->searchable(),
-                TextColumn::make('assignedUser.name')
-                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.responsible'))
-                    ->placeholder('—')
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('reservation_state')
-                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.mo-readiness'))
-                    ->visibleFrom('md')
-                    ->badge()
-                    ->placeholder('—'),
-                TextColumn::make('components_availability')
-                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.component-status'))
-                    ->badge()
-                    ->state(fn (Order $record): ?string => $record->components_availability)
-                    ->color(fn (Order $record): string => match ($record->components_availability_state) {
-                        'available'   => 'success',
-                        'unavailable' => 'danger',
-                        'late'        => 'warning',
-                        'expected'    => 'info',
-                        default       => 'gray',
-                    })
-                    ->placeholder('—')
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('quantity')
-                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.quantity'))
-                    ->visibleFrom('sm')
-                    ->numeric(decimalPlaces: 4),
-                TextColumn::make('uom.name')
-                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.uom'))
-                    ->visibleFrom('sm')
-                    ->placeholder('—'),
-                TextColumn::make('consumption_efficiency')
-                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.consumption-efficiency'))
-                    ->state(fn (Order $record): string => $record->consumption_efficiency !== null ? $record->consumption_efficiency.'%' : '—')
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('work_orders_expected_duration')
-                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.expected-duration'))
-                    ->state(fn (Order $record): string => format_float_time((float) ($record->workOrders->sum('expected_duration') ?: 0), 'minutes'))
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('work_orders_real_duration')
-                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.real-duration'))
-                    ->state(fn (Order $record): string => format_float_time((float) ($record->workOrders->sum('duration') ?: 0), 'minutes'))
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('company.name')
-                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.company'))
-                    ->visibleFrom('lg')
-                    ->placeholder('—'),
-                TextColumn::make('state')
-                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.columns.state'))
-                    ->badge(),
-            ]))
-            ->groups([
-                TableGroup::make('state')
-                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.groups.state')),
-                TableGroup::make('product.name')
-                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.groups.product')),
-                TableGroup::make('billOfMaterial.reference')
-                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.groups.bill-of-material')),
-                TableGroup::make('assignedUser.name')
-                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.groups.responsible')),
-                TableGroup::make('deadline_at')
-                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.table.groups.deadline'))
-                    ->date(),
-            ])
-            ->recordTitleAttribute('name')
-            ->actions([
-                ViewAction::make(),
-                EditAction::make(),
-                DeleteAction::make(),
-            ])
-            ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
+        return ManufacturingOrdersTable::configure($table);
     }
 
     public static function infolist(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                InfolistProgressStepper::make('state')
-                    ->hiddenLabel()
-                    ->inline()
-                    ->options(function (Order $record): array {
-                        $options = ManufacturingOrderState::options();
-
-                        unset(
-                            $options[ManufacturingOrderState::PROGRESS->value],
-                            $options[ManufacturingOrderState::TO_CLOSE->value],
-                            $options[ManufacturingOrderState::CANCEL->value],
-                        );
-
-                        if ($record->state === ManufacturingOrderState::CANCEL) {
-                            $options[ManufacturingOrderState::CANCEL->value] = ManufacturingOrderState::CANCEL->getLabel();
-                        }
-
-                        return $options;
-                    }),
-
-                Section::make(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.infolist.sections.general.title'))
-                    ->columns(2)
-                    ->schema([
-                        Group::make()
-                            ->columns(1)
-                            ->schema([
-                                TextEntry::make('product.name')
-                                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.infolist.sections.general.entries.product'))
-                                    ->size(TextSize::Large)
-                                    ->placeholder('—'),
-                                TextEntry::make('quantity')
-                                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.infolist.sections.general.entries.quantity'))
-                                    ->state(function (Order $record): string {
-                                        $expectedQuantity = number_format((float) $record->quantity, 4, '.', '');
-
-                                        if ($record->state === ManufacturingOrderState::DRAFT) {
-                                            return $expectedQuantity.' '.($record->uom?->name ?? '—');
-                                        }
-
-                                        $producingQuantity = number_format((float) ($record->quantity_producing ?: 0), 4, '.', '');
-
-                                        return $producingQuantity.' / '.$expectedQuantity.' '.($record->uom?->name ?? '—');
-                                    }),
-                                TextEntry::make('bill_of_material_id')
-                                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.infolist.sections.general.entries.bill-of-material'))
-                                    ->state(fn (Order $record): string => static::getBillOfMaterialLabel($record->billOfMaterial)),
-                                TextEntry::make('consumption_efficiency')
-                                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.infolist.sections.general.entries.consumption-efficiency'))
-                                    ->state(fn (Order $record): string => $record->consumption_efficiency !== null ? $record->consumption_efficiency.'%' : '—'),
-                            ]),
-                        Group::make()
-                            ->columns(1)
-                            ->schema([
-                                TextEntry::make('started_at')
-                                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.infolist.sections.general.entries.scheduled-date'))
-                                    ->dateTime(),
-                                TextEntry::make('finished_at')
-                                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.sections.general.fields.scheduled-end'))
-                                    ->dateTime()
-                                    ->placeholder('—')
-                                    ->visible(fn (Order $record): bool => $record->state !== ManufacturingOrderState::DRAFT),
-                                TextEntry::make('assignedUser.name')
-                                    ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.infolist.sections.general.entries.responsible'))
-                                    ->placeholder('—'),
-                            ]),
-                    ]),
-                Tabs::make('manufacturing-order-details')
-                    ->tabs([
-                        Tab::make(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.infolist.tabs.components.title'))
-                            ->schema([
-                                RepeatableEntry::make('rawMaterialMoves')
-                                    ->hiddenLabel()
-                                    ->contained(false)
-                                    ->table([
-                                        InfolistTableColumn::make('product.name')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.components.columns.component')),
-                                        InfolistTableColumn::make('sourceLocation.full_name')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.components.columns.from'))
-                                            ->visible(static::getWarehouseSettings()->enable_locations),
-                                        InfolistTableColumn::make('product_uom_qty')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.components.columns.to-consume')),
-                                        InfolistTableColumn::make('quantity')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.components.columns.quantity'))
-                                            ->toggleable(isToggledHiddenByDefault: true),
-                                        InfolistTableColumn::make('uom.name')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.components.columns.uom')),
-                                    ])
-                                    ->schema([
-                                        TextEntry::make('product.name')
-                                            ->hiddenLabel()
-                                            ->formatStateUsing(fn (mixed $state, Move $record): string => $record->product?->trashed() ? $state.' (Deleted)' : $state)
-                                            ->placeholder('—'),
-                                        TextEntry::make('sourceLocation.full_name')
-                                            ->hiddenLabel()
-                                            ->placeholder('—'),
-                                        TextEntry::make('product_uom_qty')
-                                            ->hiddenLabel()
-                                            ->numeric(decimalPlaces: 4),
-                                        TextEntry::make('quantity')
-                                            ->hiddenLabel()
-                                            ->numeric(decimalPlaces: 4)
-                                            ->placeholder('—'),
-                                        TextEntry::make('uom.name')
-                                            ->hiddenLabel()
-                                            ->placeholder('—'),
-                                    ]),
-                            ]),
-                        Tab::make(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.infolist.tabs.work-orders.title'))
-                            ->schema([
-                                RepeatableEntry::make('workOrders')
-                                    ->hiddenLabel()
-                                    ->contained(false)
-                                    ->table([
-                                        InfolistTableColumn::make('operation.name')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.work-orders.columns.operation')),
-                                        InfolistTableColumn::make('workCenter.name')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.work-orders.columns.work-center')),
-                                        InfolistTableColumn::make('product.name')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.work-orders.columns.product')),
-                                        InfolistTableColumn::make('quantity_remaining')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.work-orders.columns.quantity-remaining')),
-                                        InfolistTableColumn::make('started_at')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.work-orders.columns.start'))
-                                            ->toggleable(isToggledHiddenByDefault: true),
-                                        InfolistTableColumn::make('finished_at')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.work-orders.columns.end'))
-                                            ->toggleable(isToggledHiddenByDefault: true),
-                                        InfolistTableColumn::make('expected_duration')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.work-orders.columns.expected-duration')),
-                                        InfolistTableColumn::make('duration')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.work-orders.columns.real-duration')),
-                                        InfolistTableColumn::make('state')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.work-orders.columns.status')),
-                                    ])
-                                    ->schema([
-                                        TextEntry::make('operation.name')
-                                            ->hiddenLabel()
-                                            ->placeholder('—'),
-                                        TextEntry::make('workCenter.name')
-                                            ->hiddenLabel()
-                                            ->placeholder('—'),
-                                        TextEntry::make('product.name')
-                                            ->hiddenLabel()
-                                            ->placeholder('—'),
-                                        TextEntry::make('quantity_remaining')
-                                            ->hiddenLabel()
-                                            ->numeric(decimalPlaces: 4)
-                                            ->placeholder('—'),
-                                        TextEntry::make('started_at')
-                                            ->hiddenLabel()
-                                            ->dateTime()
-                                            ->placeholder('—'),
-                                        TextEntry::make('finished_at')
-                                            ->hiddenLabel()
-                                            ->dateTime()
-                                            ->placeholder('—'),
-                                        TextEntry::make('expected_duration')
-                                            ->hiddenLabel()
-                                            ->formatStateUsing(fn (mixed $state): string => format_float_time((float) ($state ?: 0), 'minutes')),
-                                        TextEntry::make('duration')
-                                            ->hiddenLabel()
-                                            ->formatStateUsing(fn (mixed $state): string => format_float_time((float) ($state ?: 0), 'minutes')),
-                                        TextEntry::make('state')
-                                            ->hiddenLabel()
-                                            ->badge(),
-                                    ]),
-                            ]),
-                        Tab::make(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.infolist.tabs.by-products.title'))
-                            ->hidden(! static::getOperationSettings()->enable_byproducts)
-                            ->schema([
-                                RepeatableEntry::make('moveByproducts')
-                                    ->hiddenLabel()
-                                    ->contained(false)
-                                    ->table([
-                                        InfolistTableColumn::make('product.name')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.by-products.columns.product')),
-                                        InfolistTableColumn::make('destinationLocation.full_name')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.by-products.columns.to')),
-                                        InfolistTableColumn::make('product_uom_qty')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.by-products.columns.to-produce')),
-                                        InfolistTableColumn::make('uom.name')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.form.tabs.by-products.columns.uom')),
-                                    ])
-                                    ->schema([
-                                        TextEntry::make('product.name')
-                                            ->hiddenLabel()
-                                            ->placeholder('—'),
-                                        TextEntry::make('destinationLocation.full_name')
-                                            ->hiddenLabel()
-                                            ->placeholder('—'),
-                                        TextEntry::make('product_uom_qty')
-                                            ->hiddenLabel()
-                                            ->numeric(decimalPlaces: 4),
-                                        TextEntry::make('uom.name')
-                                            ->hiddenLabel()
-                                            ->placeholder('—'),
-                                    ]),
-                            ]),
-                        Tab::make(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.infolist.tabs.miscellaneous.title'))
-                            ->schema([
-                                Grid::make(2)
-                                    ->schema([
-                                        TextEntry::make('operationType.name')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.infolist.tabs.miscellaneous.entries.operation-type'))
-                                            ->formatStateUsing(fn (mixed $state, Order $record): string => static::getOperationTypeLabel($record->operationType)),
-                                        TextEntry::make('sourceLocation.full_name')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.infolist.tabs.miscellaneous.entries.source'))
-                                            ->placeholder('—')
-                                            ->visible(static::getWarehouseSettings()->enable_locations),
-                                        TextEntry::make('finalLocation.full_name')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.infolist.tabs.miscellaneous.entries.finished-products-location'))
-                                            ->placeholder('—')
-                                            ->visible(static::getWarehouseSettings()->enable_locations),
-                                        TextEntry::make('company.name')
-                                            ->label(__('manufacturing::filament/clusters/operations/resources/manufacturing-order.infolist.tabs.miscellaneous.entries.company'))
-                                            ->placeholder('—'),
-                                        ...static::getCustomInfolistEntries(),
-                                    ]),
-                            ]),
-                    ]),
-            ])
-            ->columns(1);
+        return ManufacturingOrderInfolist::configure($schema);
     }
 
     public static function getRecordSubNavigation(Page $page): array
@@ -789,7 +126,7 @@ class ManufacturingOrderResource extends Resource
         ];
     }
 
-    protected static function getDefaultBillOfMaterialId(Product $product): ?int
+    public static function getDefaultBillOfMaterialId(Product $product): ?int
     {
         $productIds = array_filter([$product->id, $product->parent_id]);
 
@@ -801,7 +138,7 @@ class ManufacturingOrderResource extends Resource
             ->value('id');
     }
 
-    protected static function applyBillOfMaterialDefaults(
+    public static function applyBillOfMaterialDefaults(
         Set $set,
         ?BillOfMaterial $billOfMaterial,
         ?Product $product = null,
@@ -848,7 +185,7 @@ class ManufacturingOrderResource extends Resource
         ));
     }
 
-    protected static function getBillOfMaterialLabel(?BillOfMaterial $billOfMaterial): string
+    public static function getBillOfMaterialLabel(?BillOfMaterial $billOfMaterial): string
     {
         if (! $billOfMaterial) {
             return '—';
@@ -864,7 +201,7 @@ class ManufacturingOrderResource extends Resource
         return $reference.': '.$productName;
     }
 
-    protected static function getOperationTypeLabel(?OperationType $operationType): string
+    public static function getOperationTypeLabel(?OperationType $operationType): string
     {
         if (! $operationType) {
             return '—';
@@ -877,7 +214,7 @@ class ManufacturingOrderResource extends Resource
         return $operationType->warehouse->name.': '.$operationType->name;
     }
 
-    protected static function getQuantityUomField(): FusedGroup
+    public static function getQuantityUomField(): FusedGroup
     {
         return FusedGroup::make([
             TextInput::make('quantity_producing')
@@ -1015,7 +352,7 @@ class ManufacturingOrderResource extends Resource
             ->columns(4);
     }
 
-    protected static function getComponentsRepeater(): Repeater
+    public static function getComponentsRepeater(): Repeater
     {
         return Repeater::make('rawMaterialMoves')
             ->relationship('rawMaterialMoves')
@@ -1186,7 +523,7 @@ class ManufacturingOrderResource extends Resource
             ]);
     }
 
-    protected static function getWorkOrdersRepeater(): Repeater
+    public static function getWorkOrdersRepeater(): Repeater
     {
         return Repeater::make('workOrders')
             ->relationship('workOrders')
@@ -1518,7 +855,7 @@ class ManufacturingOrderResource extends Resource
             ->all();
     }
 
-    protected static function getDefaultUomId(): ?int
+    public static function getDefaultUomId(): ?int
     {
         return UOM::query()
             ->where('name', 'Units')

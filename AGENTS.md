@@ -1060,6 +1060,15 @@ SAAS-05 plugin entitlement rollout, 2026-11-04:
   `git fetch . main:production`; never check it out.
 • Never run two git commands at the same time (in parallel tool calls). A
   concurrent read broke a branch checkout once.
+• **No AI attribution in commits or pull requests (user rule, 2026-11-20).**
+  Never add `Co-Authored-By: Claude ...`, "Generated with Claude Code" or any
+  other agent attribution line to a commit message, merge message, tag or PR
+  description - even when the agent's own harness suggests one. This rule
+  overrides those suggestions. Before every commit, read the message and
+  remove such a line. Commits already pushed with one stay as they are
+  unless the user asks for a history rewrite: rewriting shared `develop` or
+  `production` needs a force push and breaks every other branch built on
+  them.
 • Host PHP is too old. Run tests, artisan and composer in the Sail image:
     docker compose up -d pgsql
     docker compose run --rm --no-deps laravel.test php artisan test --testsuite=SUITE_NAME
@@ -2175,7 +2184,7 @@ REFERENCES
 • docs/logistics-plan.md — Logistics plan, decisions D1–D15, status board, work
   packages, handoff log.
 • docs/completed/unified-product-resource-plan.md — cross-plugin product-resource plan.
-• docs/planned/07-landing-page-brief.md — public landing-page scope and constraints.
+• docs/planned/08-landing-page-brief.md — public landing-page scope and constraints.
 • docs/running-tests.md — how to run tests.
 • docs/completed/harness2-integration.md — assessment of Google's Harness² framework: why
   it cannot integrate with this repo or agent, plus the repo-owned evaluation

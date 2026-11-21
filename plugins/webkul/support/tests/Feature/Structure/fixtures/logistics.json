@@ -1,3 +1,1514 @@
 {
-    "__not_installed": "No Webkul\\Logistics resources are registered in the admin panel for this run."
+    "Webkul\\Logistics\\Filament\\Clusters\\Configurations\\Resources\\ExpenseCategoryResource": {
+        "model": "Webkul\\Logistics\\Models\\ExpenseCategory",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "code"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Toggle",
+                "name": "requires_receipt"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Toggle",
+                "name": "is_subcontracting"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "company_id"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Toggle",
+                "name": "is_active"
+            }
+        ],
+        "infolist": [],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "code",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\IconColumn",
+                    "name": "requires_receipt",
+                    "visibleFrom": "sm"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\IconColumn",
+                    "name": "is_subcontracting",
+                    "visibleFrom": "md"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "company.name",
+                    "visibleFrom": "md",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\IconColumn",
+                    "name": "is_active",
+                    "sortable": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\TernaryFilter",
+                    "name": "is_active"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "company_id"
+                }
+            ],
+            "groups": [],
+            "defaultSort": "sort",
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\Logistics\\Filament\\Clusters\\Configurations\\Resources\\PackageTypeResource": {
+        "model": "Webkul\\Logistics\\Models\\PackageType",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "code"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "company_id"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Toggle",
+                "name": "is_active"
+            }
+        ],
+        "infolist": [],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "code",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "company.name",
+                    "visibleFrom": "md",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\IconColumn",
+                    "name": "is_active",
+                    "sortable": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\TernaryFilter",
+                    "name": "is_active"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "company_id"
+                }
+            ],
+            "groups": [],
+            "defaultSort": "sort",
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\Logistics\\Filament\\Clusters\\Configurations\\Resources\\ServiceTypeResource": {
+        "model": "Webkul\\Logistics\\Models\\ServiceType",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "code"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "transport_mode"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "product_reference"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "company_id"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Toggle",
+                "name": "is_active"
+            }
+        ],
+        "infolist": [],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "code",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "transport_mode",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "product_reference",
+                    "visibleFrom": "lg"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "company.name",
+                    "visibleFrom": "md",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\IconColumn",
+                    "name": "is_active",
+                    "sortable": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\TernaryFilter",
+                    "name": "is_active"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "company_id"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\TrashedFilter",
+                    "name": "trashed"
+                }
+            ],
+            "groups": [],
+            "defaultSort": "sort",
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                },
+                {
+                    "type": "Filament\\Actions\\RestoreAction",
+                    "name": "restore"
+                },
+                {
+                    "type": "Filament\\Actions\\ForceDeleteAction",
+                    "name": "forceDelete"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\Logistics\\Filament\\Clusters\\Configurations\\Resources\\VehicleTypeResource": {
+        "model": "Webkul\\Logistics\\Models\\VehicleType",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "code"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "capacity_kg"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "capacity_m3"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "company_id"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Toggle",
+                "name": "is_active"
+            }
+        ],
+        "infolist": [],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "code",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "capacity_kg",
+                    "visibleFrom": "sm",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "capacity_m3",
+                    "visibleFrom": "md",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "company.name",
+                    "visibleFrom": "md",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\IconColumn",
+                    "name": "is_active",
+                    "sortable": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\TernaryFilter",
+                    "name": "is_active"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "company_id"
+                }
+            ],
+            "groups": [],
+            "defaultSort": "sort",
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\Logistics\\Filament\\Clusters\\Finance\\Resources\\ExpenseResource": {
+        "model": "Webkul\\Logistics\\Models\\Expense",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "company_id"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\DatePicker",
+                        "name": "date"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "amount"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "currency_id"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "category_id"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "paid_by"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "employee_id"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "payee_id"
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "shipment_id"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "trip_id"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "vehicle_id"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "vendor_reference"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Textarea",
+                        "name": "description"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\FileUpload",
+                        "name": "receipt_path"
+                    }
+                ]
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "state"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "date"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "amount"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "category.name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "shipment.name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "trip.name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "vehicle.registration_no"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "receipt_path"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "description"
+                    }
+                ]
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "date",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "category.name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "description",
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "amount",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "state",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "shipment.name",
+                    "visibleFrom": "md"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "company.name",
+                    "visibleFrom": "lg"
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "state"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "category"
+                }
+            ],
+            "groups": [],
+            "defaultSort": "date",
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ViewAction",
+                    "name": "view"
+                },
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                }
+            ],
+            "toolbarActions": [],
+            "headerActions": []
+        }
+    },
+    "Webkul\\Logistics\\Filament\\Clusters\\Fleet\\Resources\\DriverResource": {
+        "model": "Webkul\\Logistics\\Models\\Driver",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "company_id"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "employee_id"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "partner_id"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "phone"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "license_number"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "license_class"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\DatePicker",
+                "name": "license_expires_at"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Toggle",
+                "name": "is_active"
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "phone"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "employee.name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "partner.name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "company.name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                        "name": "is_active"
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "license_number"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "license_class"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "license_expires_at"
+                    }
+                ]
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "phone",
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "employee.name",
+                    "visibleFrom": "md",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "partner.name",
+                    "visibleFrom": "md",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "license_number",
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "license_expires_at",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "company.name",
+                    "visibleFrom": "lg"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\IconColumn",
+                    "name": "is_active"
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\Filter",
+                    "name": "license_attention"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\TrashedFilter",
+                    "name": "trashed"
+                }
+            ],
+            "groups": [],
+            "defaultSort": "id",
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ViewAction",
+                    "name": "view"
+                },
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                },
+                {
+                    "type": "Filament\\Actions\\RestoreAction",
+                    "name": "restore"
+                },
+                {
+                    "type": "Filament\\Actions\\ForceDeleteAction",
+                    "name": "forceDelete"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\Logistics\\Filament\\Clusters\\Fleet\\Resources\\VehicleResource": {
+        "model": "Webkul\\Logistics\\Models\\Vehicle",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "registration_no"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "company_id"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "vehicle_type_id"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "ownership"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "carrier_id"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "default_driver_id"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Select",
+                "name": "equipment_id"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "telematics_device_ref"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "telematics_agent_id"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "capacity_kg"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "capacity_m3"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\Toggle",
+                "name": "is_active"
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "registration_no"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "ownership"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "vehicleType.name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "carrier.name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "defaultDriver.name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "company.name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                        "name": "is_active"
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "capacity_kg"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "capacity_m3"
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "equipment_id"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "telematics_device_ref"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "telematics_agent_id"
+                    }
+                ]
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "registration_no",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "ownership",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "vehicleType.name",
+                    "visibleFrom": "md",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "carrier.name",
+                    "visibleFrom": "lg",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "capacity_kg",
+                    "visibleFrom": "lg",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "telematics_device_ref",
+                    "visibleFrom": "xl",
+                    "searchable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "telematics_agent_id",
+                    "visibleFrom": "xl",
+                    "searchable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "company.name",
+                    "visibleFrom": "lg"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\IconColumn",
+                    "name": "is_active"
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "ownership"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "vehicle_type"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\TrashedFilter",
+                    "name": "trashed"
+                }
+            ],
+            "groups": [],
+            "defaultSort": "id",
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ViewAction",
+                    "name": "view"
+                },
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                },
+                {
+                    "type": "Filament\\Actions\\RestoreAction",
+                    "name": "restore"
+                },
+                {
+                    "type": "Filament\\Actions\\ForceDeleteAction",
+                    "name": "forceDelete"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\Logistics\\Filament\\Clusters\\Operations\\Resources\\ShipmentResource": {
+        "model": "Webkul\\Logistics\\Models\\Shipment",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Tabs",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "name"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "company_id"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "customer_id"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "customer_reference"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "sale_order_id"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "service_type_id"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "transport_mode"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "priority"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "currency_id"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "origin_label"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "destination_label"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "pickup_address_id"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "delivery_address_id"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\DateTimePicker",
+                                "name": "planned_pickup_at"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\DateTimePicker",
+                                "name": "expected_delivery_at"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Repeater",
+                                "name": "stops",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "type"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "address_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "contact_name"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "contact_phone"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\DateTimePicker",
+                                        "name": "planned_arrival_at"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Textarea",
+                                        "name": "instructions"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "declared_value"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Toggle",
+                                "name": "is_fragile"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Toggle",
+                                "name": "is_hazardous"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Repeater",
+                                "name": "lines",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "line_type"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "product_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "description"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "package_type_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "quantity"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "weight_kg"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "volume_m3"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Textarea",
+                                "name": "instructions"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "dispatcher_id"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "carrier_id"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "carrier_reference"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "waybill_no"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\Toggle",
+                                "name": "is_confidential"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Textarea",
+                                "name": "confidential_description"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "consignor_partner_id"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "infolist": [],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "customer.name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "state",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "planned_pickup_at",
+                    "visibleFrom": "sm",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "expected_delivery_at",
+                    "visibleFrom": "md",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "serviceType.name",
+                    "visibleFrom": "lg"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "total_packages",
+                    "visibleFrom": "lg"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "dispatcher.name",
+                    "visibleFrom": "lg"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "company.name",
+                    "visibleFrom": "lg"
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "state"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "customer"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "service_type"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\Filter",
+                    "name": "planned_pickup_at"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\TrashedFilter",
+                    "name": "trashed"
+                }
+            ],
+            "groups": [],
+            "defaultSort": "id",
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ViewAction",
+                    "name": "view"
+                },
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                },
+                {
+                    "type": "Filament\\Actions\\RestoreAction",
+                    "name": "restore"
+                },
+                {
+                    "type": "Filament\\Actions\\ForceDeleteAction",
+                    "name": "forceDelete"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\Logistics\\Filament\\Clusters\\Operations\\Resources\\TripResource": {
+        "model": "Webkul\\Logistics\\Models\\Trip",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "company_id"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "name"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "vehicle_id"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "driver_id"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "dispatcher_id"
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Forms\\Components\\DateTimePicker",
+                        "name": "planned_start_at"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\DateTimePicker",
+                        "name": "planned_end_at"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "odometer_start"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\TextInput",
+                        "name": "odometer_end"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Textarea",
+                        "name": "notes"
+                    }
+                ]
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "state"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "company.name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "vehicle.registration_no"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "driver.name"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "dispatcher.name"
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "planned_start_at"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "actual_start_at"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "planned_end_at"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "actual_end_at"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "odometer_start"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "odometer_end"
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "shipments_count"
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "capacity_warnings"
+                    }
+                ]
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "state",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "vehicle.registration_no",
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "driver.name",
+                    "visibleFrom": "sm",
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "shipments_count",
+                    "visibleFrom": "md"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "planned_start_at",
+                    "visibleFrom": "lg",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "company.name",
+                    "visibleFrom": "lg"
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "state"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "vehicle"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "driver"
+                }
+            ],
+            "groups": [],
+            "defaultSort": "planned_start_at",
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ViewAction",
+                    "name": "view"
+                },
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                }
+            ],
+            "toolbarActions": [],
+            "headerActions": []
+        }
+    }
 }

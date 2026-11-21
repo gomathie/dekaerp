@@ -6,7 +6,7 @@ return [
 
     'analysis' => [
         'title'      => 'Analyse des ventes',
-        'subheading' => 'Commandes confirmées, en devise de la société. Regroupez par client, vendeur ou mois pour voir les totaux.',
+        'subheading' => 'Commandes confirmées et factures sans commande, en devise de la société. Regroupez par client, vendeur ou mois pour voir les totaux.',
         'export'     => 'Exporter',
         'sum'        => 'Total',
         'columns'    => [

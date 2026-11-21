@@ -10,7 +10,7 @@ return [
     'stats'               => [
         'heading'            => 'Métricas Clave',
         'total-quotations'   => 'Total de Cotizaciones',
-        'total-sales-orders' => 'Total de Pedidos de Venta',
+        'total-sales-orders' => 'Total de Ventas',
         'total-revenue'      => 'Ingresos Totales',
         'average-revenue'    => 'Ingresos Promedio',
         'increase'           => 'aumento',
@@ -51,7 +51,7 @@ return [
     ],
 
     'top-sales-orders'    => [
-        'heading' => 'Mejores Pedidos de Venta',
+        'heading' => 'Mejores Ventas',
         'columns' => [
             'reference'      => 'Número de Pedido',
             'customer'       => 'Cliente',

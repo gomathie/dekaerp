@@ -10,7 +10,7 @@ return [
     'stats'               => [
         'heading'            => 'Indicateurs Clés',
         'total-quotations'   => 'Total des Devis',
-        'total-sales-orders' => 'Total des Commandes',
+        'total-sales-orders' => 'Total des Ventes',
         'total-revenue'      => 'Revenu Total',
         'average-revenue'    => 'Revenu Moyen',
         'increase'           => 'augmentation',
@@ -51,7 +51,7 @@ return [
     ],
 
     'top-sales-orders'    => [
-        'heading' => 'Meilleures Commandes',
+        'heading' => 'Meilleures Ventes',
         'columns' => [
             'reference'      => 'Numéro de commande',
             'customer'       => 'Client',

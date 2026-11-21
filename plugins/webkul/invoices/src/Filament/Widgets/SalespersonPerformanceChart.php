@@ -5,6 +5,7 @@ namespace Webkul\Invoice\Filament\Widgets;
 use Webkul\Invoice\Filament\Widgets\Concerns\GuardsInvoiceDashboardWidget;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\DB;
 use Webkul\Invoice\Filament\Widgets\Concerns\HasInvoiceDashboardFilters;
 use Webkul\Support\Filament\Concerns\HasChartTheme;
 
@@ -29,9 +30,11 @@ class SalespersonPerformanceChart extends ChartWidget
 
     protected function getData(): array
     {
+        // An invoice with no salesperson counts for whoever created it: before
+        // 2026-11-20 the invoice form left the salesperson empty, so most
+        // invoices would otherwise count for nobody.
         $rows = $this->customerInvoices()
-            ->whereNotNull('accounts_account_moves.invoice_user_id')
-            ->join('users', 'users.id', '=', 'accounts_account_moves.invoice_user_id')
+            ->join('users', 'users.id', '=', DB::raw('COALESCE(accounts_account_moves.invoice_user_id, accounts_account_moves.creator_id)'))
             ->groupBy('users.id', 'users.name')
             ->addSelect('users.name as name')
             ->selectRaw('SUM(accounts_account_moves.amount_total_signed) as total_billed')

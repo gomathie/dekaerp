@@ -32,33 +32,30 @@ class SaleStatsOverview extends DashboardStatsWidget
         $quotations = $this->quotations()->count();
         $previousQuotations = $this->quotations($previousStart, $previousEnd)->count();
 
-        $orders = $this->saleOrders()->count();
-        $previousOrders = $this->saleOrders($previousStart, $previousEnd)->count();
+        // Sales are confirmed orders plus invoices made without one (user,
+        // 2026-11-20: direct invoices must reflect in sales). Revenue is
+        // invoiced sales (DB-8), and the average is that revenue per sale.
+        $orders = $this->salesCount();
+        $previousOrders = $this->salesCount($previousStart, $previousEnd);
 
-        $ccExpr = 'SUM(CASE WHEN currency_rate > 0 THEN amount_total / currency_rate ELSE amount_total END) as cc_total';
-
-        // Revenue is invoiced sales, with or without an order (DB-8). The
-        // average stays per sales order, so it keeps reading order values.
         $revenue = $this->invoicedRevenue();
         $previousRevenue = $this->invoicedRevenue($previousStart, $previousEnd);
 
-        $orderRevenue = (float) ($this->saleOrders()->selectRaw($ccExpr)->value('cc_total') ?? 0.0);
-        $previousOrderRevenue = (float) ($this->saleOrders($previousStart, $previousEnd)->selectRaw($ccExpr)->value('cc_total') ?? 0.0);
+        $average = $orders > 0 ? $revenue / $orders : 0;
+        $previousAverage = $previousOrders > 0 ? $previousRevenue / $previousOrders : 0;
 
-        $average = $orders > 0 ? $orderRevenue / $orders : 0;
-        $previousAverage = $previousOrders > 0 ? $previousOrderRevenue / $previousOrders : 0;
+        $dailySales = $this->dailySalesCounts($start, $end);
+        $orderCountSeries = [];
 
-        $revenueColumn = 'CASE WHEN currency_rate > 0 THEN amount_total / currency_rate ELSE amount_total END';
-
-        $orderCountSeries = $this->trendData($this->saleOrders(), 'COUNT', '*', $start, $end);
-
-        $orderRevenueSeries = $this->trendData($this->saleOrders(), 'SUM', $revenueColumn, $start, $end);
+        for ($date = $start->copy()->startOfDay(); $date->lte($end); $date->addDay()) {
+            $orderCountSeries[] = (float) ($dailySales[$date->toDateString()] ?? 0);
+        }
 
         $revenueSeries = $this->invoicedRevenueSeries($start, $end);
 
         $averageSeries = array_map(
             fn (float $revenue, float $count): float => $count > 0 ? round($revenue / $count, 2) : 0.0,
-            $orderRevenueSeries,
+            $revenueSeries,
             $orderCountSeries,
         );
 

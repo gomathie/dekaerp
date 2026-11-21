@@ -4,6 +4,7 @@ namespace Webkul\Sale\Filament\Widgets;
 
 use Webkul\Sale\Filament\Widgets\Concerns\GuardsSaleDashboardWidget;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\DB;
 use Webkul\Sale\Filament\Widgets\Concerns\HasSaleDashboardFilters;
 use Webkul\Support\Filament\Widgets\DashboardChartWidget;
 
@@ -36,9 +37,13 @@ class SalesPersonPerformanceChart extends DashboardChartWidget
         // (directInvoices()). Merged per user, then the top six.
         $invoices = $this->directInvoices();
 
+        // An invoice with no salesperson counts for whoever created it: before
+        // 2026-11-20 the invoice form left the salesperson empty, so every
+        // earlier direct invoice would otherwise count for nobody.
+        $person = 'COALESCE('.$invoices->qualifyColumn('invoice_user_id').', '.$invoices->qualifyColumn('creator_id').')';
+
         $invoiceRows = $invoices
-            ->whereNotNull($invoices->qualifyColumn('invoice_user_id'))
-            ->join('users', 'users.id', '=', $invoices->qualifyColumn('invoice_user_id'))
+            ->join('users', 'users.id', '=', DB::raw($person))
             ->groupBy('users.id', 'users.name')
             ->select('users.id as user_id', 'users.name as name')
             ->selectRaw('SUM('.$invoices->qualifyColumn('amount_total_signed').') as revenue')

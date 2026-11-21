@@ -2,18 +2,14 @@
 
 namespace Webkul\Logistics\Filament\Clusters\Configurations\Resources;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Webkul\Logistics\Filament\Clusters\Configurations;
 use Webkul\Logistics\Filament\Clusters\Configurations\Resources\Concerns\ConfiguresCompanyScope;
 use Webkul\Logistics\Filament\Clusters\Configurations\Resources\VehicleTypeResource\Pages\ManageVehicleTypes;
+use Webkul\Logistics\Filament\Clusters\Configurations\Resources\VehicleTypeResource\Schemas\VehicleTypeForm;
+use Webkul\Logistics\Filament\Clusters\Configurations\Resources\VehicleTypeResource\Tables\VehicleTypesTable;
 use Webkul\Logistics\Models\VehicleType;
 
 class VehicleTypeResource extends Resource
@@ -30,7 +26,7 @@ class VehicleTypeResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static string $lang = 'logistics::filament/clusters/configurations/resources/vehicle-type';
+    public static string $lang = 'logistics::filament/clusters/configurations/resources/vehicle-type';
 
     public static function getModelLabel(): string
     {
@@ -44,62 +40,12 @@ class VehicleTypeResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                static::nameField(),
-                static::codeField(),
-                TextInput::make('capacity_kg')
-                    ->label(__(static::$lang.'.form.fields.capacity-kg'))
-                    ->numeric()
-                    ->minValue(0)
-                    ->suffix('kg'),
-                TextInput::make('capacity_m3')
-                    ->label(__(static::$lang.'.form.fields.capacity-m3'))
-                    ->numeric()
-                    ->minValue(0)
-                    ->suffix('m³'),
-                static::companyField(),
-                static::activeField(),
-            ])
-            ->columns(1);
+        return VehicleTypeForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->columns([
-                static::nameColumn(),
-                static::codeColumn(),
-                TextColumn::make('capacity_kg')
-                    ->label(__(static::$lang.'.table.columns.capacity-kg'))
-                    ->numeric()
-                    ->placeholder('—')
-                    ->visibleFrom('sm')
-                    ->sortable(),
-                TextColumn::make('capacity_m3')
-                    ->label(__(static::$lang.'.table.columns.capacity-m3'))
-                    ->numeric()
-                    ->placeholder('—')
-                    ->visibleFrom('md')
-                    ->sortable(),
-                static::companyColumn(),
-                static::activeColumn(),
-            ])
-            ->filters([
-                static::activeFilter(),
-                static::companyFilter(),
-            ])
-            ->reorderable('sort')
-            ->defaultSort('sort')
-            ->recordActions([
-                EditAction::make(),
-                DeleteAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
+        return VehicleTypesTable::configure($table);
     }
 
     public static function getPages(): array

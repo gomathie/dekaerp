@@ -10,6 +10,29 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.14.0 — 2026-11-21
+
+### Improvements
+
+- Sales made by invoicing directly, without a sales order, now count as
+  sales everywhere in Sales: the number of sales, the average sale, top
+  sales, the Overview card and the Sales analysis report (as well as revenue,
+  products, categories, customers and salespeople).
+- Invoices show the salesperson next to the customer. It starts as you, or
+  as the customer's own salesperson, and lists only your company's people.
+  Invoices made without a sales order now count for their salesperson on the
+  dashboards. Earlier invoices with no salesperson count for the person who
+  created them.
+- Payments show how they were paid (Cash, Bank, Mobile Money) instead of
+  "Manual Payment", on the invoice, the journal items and the payments list.
+- Behind the scenes, the forms and lists of most modules were reorganised to
+  match the latest upstream layout. Screens look and work the same; future
+  improvements can now be adopted faster.
+
+### Fixes
+
+- The "Revenue by category" ring no longer shows a stray scale beside it.
+
 # CHANGELOG — v1.13.1 — 2026-11-20
 
 ### Fixes

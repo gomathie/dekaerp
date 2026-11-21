@@ -10,7 +10,7 @@ return [
     'stats'               => [
         'heading'            => 'Métricas Principais',
         'total-quotations'   => 'Total de Cotações',
-        'total-sales-orders' => 'Total de Pedidos de Venda',
+        'total-sales-orders' => 'Total de Vendas',
         'total-revenue'      => 'Receita Total',
         'average-revenue'    => 'Receita Média',
         'increase'           => 'aumento',
@@ -51,7 +51,7 @@ return [
     ],
 
     'top-sales-orders'    => [
-        'heading' => 'Principais Pedidos de Venda',
+        'heading' => 'Principais Vendas',
         'columns' => [
             'reference'      => 'Número do Pedido',
             'customer'       => 'Cliente',

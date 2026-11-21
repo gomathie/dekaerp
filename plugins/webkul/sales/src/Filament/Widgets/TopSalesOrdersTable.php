@@ -11,7 +11,9 @@ use Filament\Widgets\TableWidget;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\OrderResource;
+use Webkul\Account\Enums\MoveType;
 use Webkul\Sale\Filament\Widgets\Concerns\HasSaleDashboardFilters;
+use Webkul\Sale\Models\Order;
 
 class TopSalesOrdersTable extends TableWidget
 {
@@ -26,7 +28,8 @@ class TopSalesOrdersTable extends TableWidget
         return $table
             ->defaultKeySort(false)
             ->recordClasses('dashboard-table-row')
-            ->recordUrl(fn ($record): ?string => OrderResource::canAccess()
+            // Invoice rows carry a negative id and are not orders: no order link.
+            ->recordUrl(fn ($record): ?string => $record->id > 0 && OrderResource::canAccess()
                 ? OrderResource::getUrl('view', ['record' => $record->id])
                 : null);
     }
@@ -43,8 +46,29 @@ class TopSalesOrdersTable extends TableWidget
 
     protected function getTableQuery(): Builder
     {
-        return $this->saleOrders()
-            ->with(['partner', 'currency'])
+        // The biggest sales: confirmed orders and invoices made without one
+        // (user, 2026-11-20), both in company currency. Each part is already
+        // company-scoped; the outer query drops the model's scopes, and is
+        // named sales_orders so the partner relation still resolves.
+        $orders = $this->saleOrders()
+            ->toBase()
+            ->selectRaw('sales_orders.id as id, sales_orders.name as name, sales_orders.partner_id as partner_id, '
+                .'sales_orders.delivery_status as delivery_status, sales_orders.invoice_status as invoice_status, '
+                .'CASE WHEN sales_orders.currency_rate > 0 THEN sales_orders.amount_total / sales_orders.currency_rate ELSE sales_orders.amount_total END as amount_total');
+
+        $invoices = $this->directInvoices();
+
+        $invoices = $invoices
+            ->where($invoices->qualifyColumn('move_type'), MoveType::OUT_INVOICE)
+            ->toBase()
+            ->selectRaw("-accounts_account_moves.id as id, accounts_account_moves.name as name, accounts_account_moves.partner_id as partner_id, "
+                ."NULL as delivery_status, 'invoiced' as invoice_status, accounts_account_moves.amount_total_signed as amount_total");
+
+        return Order::query()
+            ->withoutGlobalScopes()
+            ->fromSub($orders->unionAll($invoices), 'sales_orders')
+            ->select('sales_orders.*')
+            ->with(['partner'])
             ->where('amount_total', '>', 0)
             ->orderByDesc('amount_total')
             ->limit(5);
@@ -73,7 +97,7 @@ class TopSalesOrdersTable extends TableWidget
                 }),
             Tables\Columns\TextColumn::make('amount_total')
                 ->label(__('sales::filament/widgets/sales-dashboard.top-sales-orders.columns.amount'))
-                ->money(fn ($record) => $record->currency?->name)
+                ->money(fn () => current_company()?->currency?->name)
                 ->weight(FontWeight::Bold)
                 ->alignEnd(),
         ];

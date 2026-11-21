@@ -6,7 +6,7 @@ return [
 
     'analysis' => [
         'title'      => 'Sales analysis',
-        'subheading' => 'Confirmed orders in company currency. Group by customer, salesperson or month to see totals.',
+        'subheading' => 'Confirmed orders and invoices made without an order, in company currency. Group by customer, salesperson or month to see totals.',
         'export'     => 'Export',
         'sum'        => 'Total',
         'columns'    => [

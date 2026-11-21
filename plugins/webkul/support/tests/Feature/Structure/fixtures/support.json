@@ -203,7 +203,133 @@
                     }
                 ]
             }
-        ]
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "summary",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "delay_count"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "delay_from",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "category",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\IconColumn",
+                    "name": "is_active",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "created_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "updated_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "category"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\TernaryFilter",
+                    "name": "is_active"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\Filter",
+                    "name": "has_delay"
+                }
+            ],
+            "groups": [
+                "name",
+                "category",
+                "is_active",
+                "delay_count",
+                "delay_unit",
+                "delay_from",
+                "chaining_type",
+                "decoration_type",
+                "defaultUser.name",
+                "created_at",
+                "updated_at"
+            ],
+            "defaultSort": null,
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\ViewAction",
+                            "name": "view"
+                        },
+                        {
+                            "type": "Filament\\Actions\\EditAction",
+                            "name": "edit"
+                        },
+                        {
+                            "type": "Filament\\Actions\\RestoreAction",
+                            "name": "restore"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteAction",
+                            "name": "forceDelete"
+                        }
+                    ]
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\RestoreBulkAction",
+                            "name": "restore"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteBulkAction",
+                            "name": "forceDelete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
     },
     "Webkul\\Support\\Filament\\Resources\\BankResource": {
         "model": "Webkul\\Support\\Models\\Bank",
@@ -259,7 +385,8 @@
                 ]
             }
         ],
-        "infolist": []
+        "infolist": [],
+        "table": null
     },
     "Webkul\\Support\\Filament\\Resources\\CalendarResource": {
         "model": "Webkul\\Support\\Models\\Calendar",
@@ -390,12 +517,159 @@
                     }
                 ]
             }
-        ]
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "id",
+                    "sortable": true,
+                    "searchable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "timezone",
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "company.name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\IconColumn",
+                    "name": "flexible_hours",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\IconColumn",
+                    "name": "is_active",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "hours_per_day",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "creator.name",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "created_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "updated_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "company"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\TernaryFilter",
+                    "name": "is_active"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\TernaryFilter",
+                    "name": "two_weeks_calendar"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\TernaryFilter",
+                    "name": "flexible_hours"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\QueryBuilder",
+                    "name": "queryBuilder"
+                }
+            ],
+            "groups": [
+                "name",
+                "timezone",
+                "flexible_hours",
+                "is_active",
+                "hours_per_day",
+                "created_at",
+                "updated_at"
+            ],
+            "defaultSort": null,
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\ViewAction",
+                            "name": "view"
+                        },
+                        {
+                            "type": "Filament\\Actions\\EditAction",
+                            "name": "edit"
+                        },
+                        {
+                            "type": "Filament\\Actions\\RestoreAction",
+                            "name": "restore"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteAction",
+                            "name": "forceDelete"
+                        }
+                    ]
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\RestoreBulkAction",
+                            "name": "restore"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteBulkAction",
+                            "name": "forceDelete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
     },
     "Webkul\\Support\\Filament\\Resources\\CountryResource": {
         "model": "Webkul\\Support\\Models\\Country",
         "form": [],
-        "infolist": []
+        "infolist": [],
+        "table": null
     },
     "Webkul\\Support\\Filament\\Resources\\CurrencyResource": {
         "model": "Webkul\\Support\\Models\\Currency",
@@ -564,7 +838,106 @@
                     }
                 ]
             }
-        ]
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "symbol",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "full_name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "iso_numeric",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "decimal_places",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "rounding",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\ToggleColumn",
+                    "name": "active",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "created_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "updated_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\TernaryFilter",
+                    "name": "active"
+                }
+            ],
+            "groups": [
+                "name",
+                "active",
+                "decimal_places"
+            ],
+            "defaultSort": null,
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\ViewAction",
+                            "name": "view"
+                        },
+                        {
+                            "type": "Filament\\Actions\\EditAction",
+                            "name": "edit"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
     },
     "Webkul\\Support\\Filament\\Resources\\SequenceResource": {
         "model": "Webkul\\Support\\Models\\Sequence",
@@ -620,12 +993,82 @@
                 ]
             }
         ],
-        "infolist": []
+        "infolist": [],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "code",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "scope"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "company.name",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "next_preview"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "next_number",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "reset_frequency",
+                    "sortable": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "company_id"
+                }
+            ],
+            "groups": [],
+            "defaultSort": "code",
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
     },
     "Webkul\\Support\\Filament\\Resources\\StateResource": {
         "model": "Webkul\\Support\\Models\\State",
         "form": [],
-        "infolist": []
+        "infolist": [],
+        "table": null
     },
     "Webkul\\Support\\Filament\\Resources\\UOMCategoryResource": {
         "model": "Webkul\\Support\\Models\\UOMCategory",
@@ -667,6 +1110,62 @@
                 ]
             }
         ],
-        "infolist": []
+        "infolist": [],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "uoms.name",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "created_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "updated_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                }
+            ],
+            "filters": [],
+            "groups": [
+                "created_at"
+            ],
+            "defaultSort": null,
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
     }
 }

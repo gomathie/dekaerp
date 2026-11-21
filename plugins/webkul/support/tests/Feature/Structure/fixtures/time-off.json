@@ -1,0 +1,2047 @@
+{
+    "Webkul\\TimeOff\\Filament\\Clusters\\Configurations\\Resources\\AccrualPlanResource": {
+        "model": "Webkul\\TimeOff\\Models\\LeaveAccrualPlan",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "name"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Toggle",
+                                "name": "is_based_on_worked_time"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Radio",
+                                "name": "accrued_gain_time"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Radio",
+                                "name": "carryover_date"
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "carryover_day"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "carryover_month"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Toggle",
+                                "name": "is_active"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Grid",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "is_based_on_worked_time"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "accrued_gain_time"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "carryover_date"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "carryover_day"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "carryover_month"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "leaveAccrualLevels"
+                }
+            ],
+            "filters": [],
+            "groups": [],
+            "defaultSort": null,
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ViewAction",
+                    "name": "view"
+                },
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\TimeOff\\Filament\\Clusters\\Configurations\\Resources\\ActivityTypeResource": {
+        "model": "Webkul\\TimeOff\\Models\\ActivityType",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "category"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "default_user_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Textarea",
+                                        "name": "summary"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\RichEditor",
+                                        "name": "default_note"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "delay_count"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "delay_unit"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "delay_from"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Guava\\IconPicker\\Forms\\Components\\IconPicker",
+                                        "name": "icon"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "decoration_type"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "chaining_type"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "activity_type_suggestions"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "triggered_next_type_id"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "is_active"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "keep_done"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Grid",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "category"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "defaultUser.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "plugin"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "summary"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "default_note"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "delay_count"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "delay_unit"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "delay_from"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "icon"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "decoration_type"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "chaining_type"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "suggestedActivityTypes.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "triggeredNextType.name"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "is_active"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "keep_done"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "summary",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "delay_count"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "delay_from",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "category",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\IconColumn",
+                    "name": "is_active",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "created_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "updated_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "category"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\TernaryFilter",
+                    "name": "is_active"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\Filter",
+                    "name": "has_delay"
+                }
+            ],
+            "groups": [
+                "name",
+                "category",
+                "is_active",
+                "delay_count",
+                "delay_unit",
+                "delay_from",
+                "chaining_type",
+                "decoration_type",
+                "defaultUser.name",
+                "created_at",
+                "updated_at"
+            ],
+            "defaultSort": null,
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\ViewAction",
+                            "name": "view"
+                        },
+                        {
+                            "type": "Filament\\Actions\\EditAction",
+                            "name": "edit"
+                        },
+                        {
+                            "type": "Filament\\Actions\\RestoreAction",
+                            "name": "restore"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteAction",
+                            "name": "forceDelete"
+                        }
+                    ]
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\RestoreBulkAction",
+                            "name": "restore"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteBulkAction",
+                            "name": "forceDelete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\TimeOff\\Filament\\Clusters\\Configurations\\Resources\\LeaveTypeResource": {
+        "model": "Webkul\\TimeOff\\Models\\LeaveType",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Group",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Group",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Radio",
+                                                        "name": "leave_validation_type"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Radio",
+                                                        "name": "requires_allocation"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Radio",
+                                                        "name": "employee_requests"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\Radio",
+                                                        "name": "allocation_validation_type"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\ColorPicker",
+                                        "name": "color"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "time_off_user_leave_types"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "request_unit"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "include_public_holidays_in_duration"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "support_document"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "show_on_dashboard"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "time_type"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "allows_negative"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\TextInput",
+                                        "name": "max_allowed_negative"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Grid",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Group",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "leave_validation_type"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "requires_allocation"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "employee_requests"
+                                                    },
+                                                    {
+                                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                        "name": "allocation_validation_type"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\ColorEntry",
+                                        "name": "color"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "notifiedTimeOffOfficers"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "request_unit"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "include_public_holidays_in_duration"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "support_document"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "show_on_dashboard"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "time_type"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "allows_negative"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "max_allowed_negative"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "leave_validation_type",
+                    "sortable": true,
+                    "searchable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "notifiedTimeOffOfficers.name",
+                    "sortable": true,
+                    "searchable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "requires_allocation",
+                    "sortable": true,
+                    "searchable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "allocation_validation_type",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "employee_requests",
+                    "sortable": true,
+                    "searchable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\ColorColumn",
+                    "name": "color",
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "company.name",
+                    "searchable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\QueryBuilder",
+                    "name": "queryBuilder"
+                }
+            ],
+            "groups": [],
+            "defaultSort": null,
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ViewAction",
+                    "name": "view"
+                },
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                },
+                {
+                    "type": "Filament\\Actions\\RestoreAction",
+                    "name": "restore"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteBulkAction",
+                            "name": "forceDelete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\RestoreBulkAction",
+                            "name": "restore"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\TimeOff\\Filament\\Clusters\\Configurations\\Resources\\MandatoryDayResource": {
+        "model": "Webkul\\TimeOff\\Models\\LeaveMandatoryDay",
+        "form": [
+            {
+                "type": "Filament\\Forms\\Components\\ColorPicker",
+                "name": "color"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\TextInput",
+                "name": "name"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\DatePicker",
+                "name": "start_date"
+            },
+            {
+                "type": "Filament\\Forms\\Components\\DatePicker",
+                "name": "end_date"
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Infolists\\Components\\ColorEntry",
+                "name": "color"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "name"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "start_date"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "end_date"
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "company.name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "creator.name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "start_date",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "end_date",
+                    "sortable": true,
+                    "searchable": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "company_id"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "creator_id"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\QueryBuilder",
+                    "name": "queryBuilder"
+                }
+            ],
+            "groups": [
+                "name",
+                "creator.name",
+                "company.name",
+                "start_date",
+                "end_date"
+            ],
+            "defaultSort": null,
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ViewAction",
+                    "name": "view"
+                },
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\TimeOff\\Filament\\Clusters\\Configurations\\Resources\\PublicHolidayResource": {
+        "model": "Webkul\\TimeOff\\Models\\CalendarLeave",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\Hidden",
+                                "name": "time_type"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "name"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\DatePicker",
+                                "name": "date_from"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\DatePicker",
+                                "name": "date_to"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "calendar"
+                    }
+                ]
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Infolists\\Components\\ColorEntry",
+                "name": "color"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "name"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "date_from"
+            },
+            {
+                "type": "Filament\\Infolists\\Components\\TextEntry",
+                "name": "date_to"
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "date_from",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "date_to",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "calendar.name",
+                    "sortable": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "company_id"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "creator_id"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\QueryBuilder",
+                    "name": "queryBuilder"
+                }
+            ],
+            "groups": [
+                "date_from",
+                "date_to",
+                "company.name"
+            ],
+            "defaultSort": null,
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ViewAction",
+                    "name": "view"
+                },
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\TimeOff\\Filament\\Clusters\\Management\\Resources\\AllocationResource": {
+        "model": "Webkul\\TimeOff\\Models\\LeaveAllocation",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Grid",
+                "children": [
+                    {
+                        "type": "Webkul\\Field\\Filament\\Forms\\Components\\ProgressStepper",
+                        "name": "state"
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "name"
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Grid",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "holiday_status_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "employee_id"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Radio",
+                                "name": "allocation_type"
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\DatePicker",
+                                        "name": "date_from"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\DatePicker",
+                                        "name": "date_to"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "number_of_days"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\RichEditor",
+                                "name": "notes"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Grid",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Webkul\\Field\\Filament\\Infolists\\Components\\ProgressStepper",
+                                "name": "state"
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "holidayStatus.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "allocation_type"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "date_from"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "date_to"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "notes"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "number_of_days"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "state"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "employee.name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "holidayStatus.name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "number_of_days",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "allocation_type",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "state",
+                    "sortable": true,
+                    "searchable": true
+                }
+            ],
+            "filters": [],
+            "groups": [
+                "employee.name",
+                "holidayStatus.name",
+                "allocation_type",
+                "state",
+                "date_from"
+            ],
+            "defaultSort": null,
+            "recordActions": [
+                {
+                    "type": "Webkul\\Chatter\\Filament\\Actions\\ActivityTableAction",
+                    "name": "chatter.schedule-activity"
+                },
+                {
+                    "type": "Filament\\Actions\\ActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\ViewAction",
+                            "name": "view"
+                        },
+                        {
+                            "type": "Filament\\Actions\\EditAction",
+                            "name": "edit"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\Action",
+                            "name": "approve"
+                        },
+                        {
+                            "type": "Filament\\Actions\\Action",
+                            "name": "refuse"
+                        }
+                    ]
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\TimeOff\\Filament\\Clusters\\Management\\Resources\\TimeOffResource": {
+        "model": "Webkul\\TimeOff\\Models\\Leave",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "employee_id"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "department_id"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "holiday_status_id"
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Grid",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\DatePicker",
+                                "name": "request_date_from"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\DatePicker",
+                                "name": "request_date_to"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Grid",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\Toggle",
+                                "name": "request_unit_half"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "request_date_from_period"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "duration_info"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Textarea",
+                        "name": "private_name"
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section"
+                    }
+                ]
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "holidayStatus.name"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "request_unit_half"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "request_date_from"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "request_date_to"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "request_date_from_period"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "private_name"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "duration_display"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\ImageEntry",
+                                "name": "attachment"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "employee.name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "holidayStatus.name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "private_name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "date_from",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "date_to",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "duration_display",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "state",
+                    "sortable": true,
+                    "searchable": true
+                }
+            ],
+            "filters": [],
+            "groups": [
+                "employee.name",
+                "holidayStatus.name",
+                "state",
+                "date_from",
+                "date_to"
+            ],
+            "defaultSort": null,
+            "recordActions": [
+                {
+                    "type": "Webkul\\Chatter\\Filament\\Actions\\ActivityTableAction",
+                    "name": "chatter.schedule-activity"
+                },
+                {
+                    "type": "Filament\\Actions\\ActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\Action",
+                            "name": "approve"
+                        },
+                        {
+                            "type": "Filament\\Actions\\Action",
+                            "name": "refuse"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ViewAction",
+                            "name": "view"
+                        },
+                        {
+                            "type": "Filament\\Actions\\EditAction",
+                            "name": "edit"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\TimeOff\\Filament\\Clusters\\MyTime\\Resources\\MyAllocationResource": {
+        "model": "Webkul\\TimeOff\\Models\\LeaveAllocation",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Grid",
+                "children": [
+                    {
+                        "type": "Webkul\\Field\\Filament\\Forms\\Components\\ProgressStepper",
+                        "name": "state"
+                    }
+                ]
+            },
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "name"
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Grid",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "holiday_status_id"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Radio",
+                                "name": "allocation_type"
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\DatePicker",
+                                        "name": "date_from"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\DatePicker",
+                                        "name": "date_to"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\TextInput",
+                                "name": "number_of_days"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\RichEditor",
+                                "name": "notes"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Grid",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Webkul\\Field\\Filament\\Infolists\\Components\\ProgressStepper",
+                                "name": "state"
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "holidayStatus.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "allocation_type"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "date_from"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "date_to"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "notes"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "number_of_days"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "state"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "holidayStatus.name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "number_of_days",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "allocation_type",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "state",
+                    "sortable": true,
+                    "searchable": true
+                }
+            ],
+            "filters": [],
+            "groups": [
+                "employee.name",
+                "holidayStatus.name",
+                "allocation_type",
+                "state",
+                "date_from"
+            ],
+            "defaultSort": null,
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\ViewAction",
+                            "name": "view"
+                        },
+                        {
+                            "type": "Filament\\Actions\\EditAction",
+                            "name": "edit"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\Action",
+                            "name": "approve"
+                        },
+                        {
+                            "type": "Filament\\Actions\\Action",
+                            "name": "refuse"
+                        }
+                    ]
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\TimeOff\\Filament\\Clusters\\MyTime\\Resources\\MyTimeOffResource": {
+        "model": "Webkul\\TimeOff\\Models\\Leave",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "employee_id"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "department_id"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "holiday_status_id"
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Grid",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\DatePicker",
+                                "name": "request_date_from"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\DatePicker",
+                                "name": "request_date_to"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Grid",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\Toggle",
+                                "name": "request_unit_half"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "request_date_from_period"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "duration_info"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Textarea",
+                        "name": "private_name"
+                    }
+                ]
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "holidayStatus.name"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "request_unit_half"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "request_date_from"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "request_date_to"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "request_date_from_period"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "private_name"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "duration_display"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\ImageEntry",
+                                "name": "attachment"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "employee.name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "holidayStatus.name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "private_name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "date_from",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "date_to",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "duration_display",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "state",
+                    "sortable": true,
+                    "searchable": true
+                }
+            ],
+            "filters": [],
+            "groups": [
+                "employee.name",
+                "holidayStatus.name",
+                "state",
+                "date_from",
+                "date_to"
+            ],
+            "defaultSort": null,
+            "recordActions": [
+                {
+                    "type": "Webkul\\Chatter\\Filament\\Actions\\ActivityTableAction",
+                    "name": "chatter.schedule-activity"
+                },
+                {
+                    "type": "Filament\\Actions\\ActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\Action",
+                            "name": "approve"
+                        },
+                        {
+                            "type": "Filament\\Actions\\Action",
+                            "name": "refuse"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ViewAction",
+                            "name": "view"
+                        },
+                        {
+                            "type": "Filament\\Actions\\EditAction",
+                            "name": "edit"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    },
+    "Webkul\\TimeOff\\Filament\\Clusters\\Reporting\\Resources\\ByEmployeeResource": {
+        "model": "Webkul\\TimeOff\\Models\\Leave",
+        "form": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "employee_id"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "department_id"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Select",
+                        "name": "holiday_status_id"
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Grid",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\DatePicker",
+                                "name": "request_date_from"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\DatePicker",
+                                "name": "request_date_to"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Grid",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\Toggle",
+                                "name": "request_unit_half"
+                            },
+                            {
+                                "type": "Filament\\Forms\\Components\\Select",
+                                "name": "request_date_from_period"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                        "name": "duration_info"
+                    },
+                    {
+                        "type": "Filament\\Forms\\Components\\Textarea",
+                        "name": "private_name"
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Section"
+                    }
+                ]
+            }
+        ],
+        "infolist": [
+            {
+                "type": "Filament\\Schemas\\Components\\Section",
+                "children": [
+                    {
+                        "type": "Filament\\Schemas\\Components\\Group",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "holidayStatus.name"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "request_unit_half"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "request_date_from"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "request_date_to"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "request_date_from_period"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "private_name"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "duration_display"
+                            },
+                            {
+                                "type": "Filament\\Infolists\\Components\\ImageEntry",
+                                "name": "attachment"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "employee.name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "holidayStatus.name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "private_name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "date_from",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "date_to",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "duration_display",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "state",
+                    "sortable": true,
+                    "searchable": true
+                }
+            ],
+            "filters": [],
+            "groups": [
+                "employee.name",
+                "holidayStatus.name",
+                "state",
+                "date_from",
+                "date_to"
+            ],
+            "defaultSort": null,
+            "recordActions": [
+                {
+                    "type": "Webkul\\Chatter\\Filament\\Actions\\ActivityTableAction",
+                    "name": "chatter.schedule-activity"
+                },
+                {
+                    "type": "Filament\\Actions\\ActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\Action",
+                            "name": "approve"
+                        },
+                        {
+                            "type": "Filament\\Actions\\Action",
+                            "name": "refuse"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ViewAction",
+                            "name": "view"
+                        },
+                        {
+                            "type": "Filament\\Actions\\EditAction",
+                            "name": "edit"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
+    }
+}

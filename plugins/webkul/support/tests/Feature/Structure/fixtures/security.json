@@ -84,6 +84,20 @@
                                 "type": "Filament\\Schemas\\Components\\Section",
                                 "children": [
                                     {
+                                        "type": "Filament\\Schemas\\Components\\Actions",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Actions\\Action",
+                                                "name": "changeBaseCurrency"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
                                         "type": "Filament\\Forms\\Components\\Select",
                                         "name": "onboarding_price_id"
                                     }
@@ -331,7 +345,151 @@
                     }
                 ]
             }
-        ]
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\ImageColumn",
+                    "name": "partner.avatar"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "branches.name",
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "email",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "city",
+                    "sortable": true,
+                    "searchable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "country.name",
+                    "sortable": true,
+                    "searchable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "currency.full_name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\IconColumn",
+                    "name": "is_active",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "creator.name",
+                    "sortable": true,
+                    "searchable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "created_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "updated_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "is_active"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "country_id"
+                }
+            ],
+            "groups": [
+                "name",
+                "city",
+                "country.name",
+                "state.name",
+                "email",
+                "phone",
+                "currency_id",
+                "creator.name",
+                "created_at",
+                "updated_at"
+            ],
+            "defaultSort": null,
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\ViewAction",
+                            "name": "view"
+                        },
+                        {
+                            "type": "Filament\\Actions\\EditAction",
+                            "name": "edit"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\RestoreAction",
+                            "name": "restore"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteAction",
+                            "name": "forceDelete"
+                        }
+                    ]
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteBulkAction",
+                            "name": "forceDelete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\RestoreBulkAction",
+                            "name": "restore"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
     },
     "Webkul\\Security\\Filament\\Resources\\RoleResource": {
         "model": "Webkul\\Security\\Models\\Role",
@@ -383,7 +541,1177 @@
                                                 "children": [
                                                     {
                                                         "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Account\\Filament\\Resources\\AccountResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Account\\Filament\\Resources\\AccountTagResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Account\\Filament\\Resources\\BankAccountResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Account\\Filament\\Resources\\BillResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Account\\Filament\\Resources\\CashRoundingResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Account\\Filament\\Resources\\CreditNoteResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Account\\Filament\\Resources\\CustomerResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Account\\Filament\\Resources\\FiscalPositionResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Account\\Filament\\Resources\\IncotermResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Account\\Filament\\Resources\\InvoiceResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Account\\Filament\\Resources\\JournalResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Account\\Filament\\Resources\\PartnerResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Account\\Filament\\Resources\\PaymentResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Account\\Filament\\Resources\\PaymentTermResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Account\\Filament\\Resources\\ProductCategoryResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Account\\Filament\\Resources\\ProductResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Account\\Filament\\Resources\\RefundResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Account\\Filament\\Resources\\TaxGroupResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Account\\Filament\\Resources\\TaxResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Account\\Filament\\Resources\\VendorResource"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Accounting\\Filament\\Clusters\\Accounting\\Resources\\JournalEntryResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Accounting\\Filament\\Clusters\\Accounting\\Resources\\JournalItemResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Accounting\\Filament\\Clusters\\Configuration\\Resources\\AccountResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Accounting\\Filament\\Clusters\\Configuration\\Resources\\CashRoundingResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Accounting\\Filament\\Clusters\\Configuration\\Resources\\CurrencyResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Accounting\\Filament\\Clusters\\Configuration\\Resources\\FiscalPositionResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Accounting\\Filament\\Clusters\\Configuration\\Resources\\IncotermResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Accounting\\Filament\\Clusters\\Configuration\\Resources\\JournalResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Accounting\\Filament\\Clusters\\Configuration\\Resources\\PaymentTermResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Accounting\\Filament\\Clusters\\Configuration\\Resources\\ProductAttributeResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Accounting\\Filament\\Clusters\\Configuration\\Resources\\ProductCategoryResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Accounting\\Filament\\Clusters\\Configuration\\Resources\\TaxGroupResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Accounting\\Filament\\Clusters\\Configuration\\Resources\\TaxResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Accounting\\Filament\\Clusters\\Customers\\Resources\\CreditNoteResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Accounting\\Filament\\Clusters\\Customers\\Resources\\CustomerResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Accounting\\Filament\\Clusters\\Customers\\Resources\\InvoiceResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Accounting\\Filament\\Clusters\\Customers\\Resources\\PaymentResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Accounting\\Filament\\Clusters\\Customers\\Resources\\ProductResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Accounting\\Filament\\Clusters\\Vendors\\Resources\\BillResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Accounting\\Filament\\Clusters\\Vendors\\Resources\\RefundResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Accounting\\Filament\\Clusters\\Vendors\\Resources\\VendorResource"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Contact\\Filament\\Clusters\\Configurations\\Resources\\BankAccountResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Contact\\Filament\\Clusters\\Configurations\\Resources\\BankResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Contact\\Filament\\Clusters\\Configurations\\Resources\\IndustryResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Contact\\Filament\\Clusters\\Configurations\\Resources\\TagResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Contact\\Filament\\Clusters\\Configurations\\Resources\\TitleResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Contact\\Filament\\Resources\\AddressResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Contact\\Filament\\Resources\\PartnerResource"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Employee\\Filament\\Clusters\\Configurations\\Resources\\ActivityPlanResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Employee\\Filament\\Clusters\\Configurations\\Resources\\DepartureReasonResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Employee\\Filament\\Clusters\\Configurations\\Resources\\EmployeeCategoryResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Employee\\Filament\\Clusters\\Configurations\\Resources\\EmploymentTypeResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Employee\\Filament\\Clusters\\Configurations\\Resources\\JobPositionResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Employee\\Filament\\Clusters\\Configurations\\Resources\\SkillTypeResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Employee\\Filament\\Clusters\\Configurations\\Resources\\WorkLocationResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Employee\\Filament\\Clusters\\Reportings\\Resources\\EmployeeSkillResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Employee\\Filament\\Resources\\DepartmentResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Employee\\Filament\\Resources\\EmployeeResource"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
                                                         "name": "Webkul\\Field\\Filament\\Resources\\FieldResource"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Inventory\\Filament\\Clusters\\Configurations\\Resources\\LocationResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Inventory\\Filament\\Clusters\\Configurations\\Resources\\OperationTypeResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Inventory\\Filament\\Clusters\\Configurations\\Resources\\PackageTypeResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Inventory\\Filament\\Clusters\\Configurations\\Resources\\PackagingResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Inventory\\Filament\\Clusters\\Configurations\\Resources\\ProductAttributeResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Inventory\\Filament\\Clusters\\Configurations\\Resources\\ProductCategoryResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Inventory\\Filament\\Clusters\\Configurations\\Resources\\PutawayRuleResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Inventory\\Filament\\Clusters\\Configurations\\Resources\\RouteResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Inventory\\Filament\\Clusters\\Configurations\\Resources\\RuleResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Inventory\\Filament\\Clusters\\Configurations\\Resources\\StorageCategoryResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Inventory\\Filament\\Clusters\\Configurations\\Resources\\UOMCategoryResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Inventory\\Filament\\Clusters\\Configurations\\Resources\\WarehouseResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Inventory\\Filament\\Clusters\\Operations\\Resources\\DeliveryResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Inventory\\Filament\\Clusters\\Operations\\Resources\\DropshipResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Inventory\\Filament\\Clusters\\Operations\\Resources\\InternalResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Inventory\\Filament\\Clusters\\Operations\\Resources\\QuantityResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Inventory\\Filament\\Clusters\\Operations\\Resources\\ReceiptResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Inventory\\Filament\\Clusters\\Operations\\Resources\\ReplenishmentResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Inventory\\Filament\\Clusters\\Operations\\Resources\\ScrapResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Inventory\\Filament\\Clusters\\Products\\Resources\\LotResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Inventory\\Filament\\Clusters\\Products\\Resources\\PackageResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Inventory\\Filament\\Clusters\\Products\\Resources\\ProductResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Inventory\\Filament\\Clusters\\Reporting\\Resources\\MoveResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Inventory\\Filament\\Clusters\\Reporting\\Resources\\QuantityResource"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Invoice\\Filament\\Clusters\\Configuration\\Resources\\BankAccountResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Invoice\\Filament\\Clusters\\Configuration\\Resources\\CurrencyResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Invoice\\Filament\\Clusters\\Configuration\\Resources\\IncotermResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Invoice\\Filament\\Clusters\\Configuration\\Resources\\PaymentTermResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Invoice\\Filament\\Clusters\\Configuration\\Resources\\ProductAttributeResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Invoice\\Filament\\Clusters\\Configuration\\Resources\\ProductCategoryResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Invoice\\Filament\\Clusters\\Configuration\\Resources\\TaxGroupResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Invoice\\Filament\\Clusters\\Configuration\\Resources\\TaxResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Invoice\\Filament\\Clusters\\Customers\\Resources\\CreditNoteResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Invoice\\Filament\\Clusters\\Customers\\Resources\\CustomerResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Invoice\\Filament\\Clusters\\Customers\\Resources\\InvoiceResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Invoice\\Filament\\Clusters\\Customers\\Resources\\PaymentResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Invoice\\Filament\\Clusters\\Customers\\Resources\\ProductResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Invoice\\Filament\\Clusters\\Vendors\\Resources\\BillResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Invoice\\Filament\\Clusters\\Vendors\\Resources\\RefundResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Invoice\\Filament\\Clusters\\Vendors\\Resources\\VendorResource"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Logistics\\Filament\\Clusters\\Configurations\\Resources\\ExpenseCategoryResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Logistics\\Filament\\Clusters\\Configurations\\Resources\\PackageTypeResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Logistics\\Filament\\Clusters\\Configurations\\Resources\\ServiceTypeResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Logistics\\Filament\\Clusters\\Configurations\\Resources\\VehicleTypeResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Logistics\\Filament\\Clusters\\Finance\\Resources\\ExpenseResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Logistics\\Filament\\Clusters\\Fleet\\Resources\\DriverResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Logistics\\Filament\\Clusters\\Fleet\\Resources\\VehicleResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Logistics\\Filament\\Clusters\\Operations\\Resources\\ShipmentResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Logistics\\Filament\\Clusters\\Operations\\Resources\\TripResource"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Maintenance\\Filament\\Clusters\\Configurations\\Resources\\EquipmentCategoryResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Maintenance\\Filament\\Clusters\\Configurations\\Resources\\StageResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Maintenance\\Filament\\Clusters\\Configurations\\Resources\\TeamResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Maintenance\\Filament\\Clusters\\Maintenance\\Resources\\MaintenanceRequestResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Maintenance\\Filament\\Resources\\EquipmentResource"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Manufacturing\\Filament\\Clusters\\Configurations\\Resources\\OperationResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Manufacturing\\Filament\\Clusters\\Configurations\\Resources\\WorkCenterResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Manufacturing\\Filament\\Clusters\\Operations\\Resources\\ManufacturingOrderResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Manufacturing\\Filament\\Clusters\\Operations\\Resources\\TransferResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Manufacturing\\Filament\\Clusters\\Operations\\Resources\\WorkOrderResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Manufacturing\\Filament\\Clusters\\Products\\Resources\\BillsOfMaterialResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Manufacturing\\Filament\\Clusters\\Products\\Resources\\LotResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Manufacturing\\Filament\\Clusters\\Products\\Resources\\ProductResource"
                                                     }
                                                 ]
                                             }
@@ -549,6 +1877,605 @@
                                                 "children": [
                                                     {
                                                         "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Product\\Filament\\Resources\\AttributeResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Product\\Filament\\Resources\\CategoryResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Product\\Filament\\Resources\\PackagingResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Product\\Filament\\Resources\\PriceListResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Product\\Filament\\Resources\\ProductResource"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Project\\Filament\\Clusters\\Configurations\\Resources\\ActivityPlanResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Project\\Filament\\Clusters\\Configurations\\Resources\\MilestoneResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Project\\Filament\\Clusters\\Configurations\\Resources\\ProjectStageResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Project\\Filament\\Clusters\\Configurations\\Resources\\TagResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Project\\Filament\\Clusters\\Configurations\\Resources\\TaskStageResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Project\\Filament\\Resources\\ProjectResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Project\\Filament\\Resources\\TaskResource"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Purchase\\Filament\\Admin\\Clusters\\Configurations\\Resources\\CurrencyResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Purchase\\Filament\\Admin\\Clusters\\Configurations\\Resources\\PackagingResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Purchase\\Filament\\Admin\\Clusters\\Configurations\\Resources\\ProductAttributeResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Purchase\\Filament\\Admin\\Clusters\\Configurations\\Resources\\ProductCategoryResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Purchase\\Filament\\Admin\\Clusters\\Configurations\\Resources\\UOMCategoryResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Purchase\\Filament\\Admin\\Clusters\\Configurations\\Resources\\VendorPriceResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Purchase\\Filament\\Admin\\Clusters\\Orders\\Resources\\PurchaseAgreementResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Purchase\\Filament\\Admin\\Clusters\\Orders\\Resources\\PurchaseOrderBillResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Purchase\\Filament\\Admin\\Clusters\\Orders\\Resources\\PurchaseOrderReceiptResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Purchase\\Filament\\Admin\\Clusters\\Orders\\Resources\\PurchaseOrderResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Purchase\\Filament\\Admin\\Clusters\\Orders\\Resources\\QuotationBillResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Purchase\\Filament\\Admin\\Clusters\\Orders\\Resources\\QuotationReceiptResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Purchase\\Filament\\Admin\\Clusters\\Orders\\Resources\\QuotationResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Purchase\\Filament\\Admin\\Clusters\\Orders\\Resources\\VendorResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Purchase\\Filament\\Admin\\Clusters\\Products\\Resources\\ProductResource"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Recruitment\\Filament\\Clusters\\Applications\\Resources\\ApplicantResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Recruitment\\Filament\\Clusters\\Applications\\Resources\\CandidateResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Recruitment\\Filament\\Clusters\\Applications\\Resources\\JobByPositionResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Recruitment\\Filament\\Clusters\\Configurations\\Resources\\ActivityPlanResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Recruitment\\Filament\\Clusters\\Configurations\\Resources\\ActivityTypeResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Recruitment\\Filament\\Clusters\\Configurations\\Resources\\ApplicantCategoryResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Recruitment\\Filament\\Clusters\\Configurations\\Resources\\DegreeResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Recruitment\\Filament\\Clusters\\Configurations\\Resources\\DepartmentResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Recruitment\\Filament\\Clusters\\Configurations\\Resources\\EmploymentTypeResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Recruitment\\Filament\\Clusters\\Configurations\\Resources\\JobPositionResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Recruitment\\Filament\\Clusters\\Configurations\\Resources\\RefuseReasonResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Recruitment\\Filament\\Clusters\\Configurations\\Resources\\SkillTypeResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Recruitment\\Filament\\Clusters\\Configurations\\Resources\\StageResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Recruitment\\Filament\\Clusters\\Configurations\\Resources\\UTMMediumResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Recruitment\\Filament\\Clusters\\Configurations\\Resources\\UTMSourceResource"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Sale\\Filament\\Clusters\\Configuration\\Resources\\ActivityPlanResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Sale\\Filament\\Clusters\\Configuration\\Resources\\ActivityTypeResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Sale\\Filament\\Clusters\\Configuration\\Resources\\CurrencyResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Sale\\Filament\\Clusters\\Configuration\\Resources\\PackagingResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Sale\\Filament\\Clusters\\Configuration\\Resources\\ProductAttributeResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Sale\\Filament\\Clusters\\Configuration\\Resources\\ProductCategoryResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Sale\\Filament\\Clusters\\Configuration\\Resources\\TagResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Sale\\Filament\\Clusters\\Configuration\\Resources\\TeamResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Sale\\Filament\\Clusters\\Configuration\\Resources\\UOMCategoryResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Sale\\Filament\\Clusters\\Orders\\Resources\\CustomerResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Sale\\Filament\\Clusters\\Orders\\Resources\\OrderDeliveryResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Sale\\Filament\\Clusters\\Orders\\Resources\\OrderInvoiceResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Sale\\Filament\\Clusters\\Orders\\Resources\\OrderResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Sale\\Filament\\Clusters\\Orders\\Resources\\QuotationDeliveryResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Sale\\Filament\\Clusters\\Orders\\Resources\\QuotationInvoiceResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Sale\\Filament\\Clusters\\Orders\\Resources\\QuotationResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Sale\\Filament\\Clusters\\Products\\Resources\\ProductResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Sale\\Filament\\Clusters\\ToInvoice\\Resources\\OrderToInvoiceResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Sale\\Filament\\Clusters\\ToInvoice\\Resources\\OrderToUpsellResource"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
                                                         "name": "Webkul\\Security\\Filament\\Resources\\CompanyResource"
                                                     }
                                                 ]
@@ -665,6 +2592,125 @@
                                         ]
                                     }
                                 ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\TimeOff\\Filament\\Clusters\\Configurations\\Resources\\AccrualPlanResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\TimeOff\\Filament\\Clusters\\Configurations\\Resources\\ActivityTypeResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\TimeOff\\Filament\\Clusters\\Configurations\\Resources\\LeaveTypeResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\TimeOff\\Filament\\Clusters\\Configurations\\Resources\\MandatoryDayResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\TimeOff\\Filament\\Clusters\\Configurations\\Resources\\PublicHolidayResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\TimeOff\\Filament\\Clusters\\Management\\Resources\\AllocationResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\TimeOff\\Filament\\Clusters\\Management\\Resources\\TimeOffResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\TimeOff\\Filament\\Clusters\\MyTime\\Resources\\MyAllocationResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\TimeOff\\Filament\\Clusters\\MyTime\\Resources\\MyTimeOffResource"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\TimeOff\\Filament\\Clusters\\Reporting\\Resources\\ByEmployeeResource"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                                "children": [
+                                                    {
+                                                        "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                        "name": "Webkul\\Timesheet\\Filament\\Resources\\TimesheetResource"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
                             }
                         ]
                     },
@@ -679,7 +2725,147 @@
                                         "children": [
                                             {
                                                 "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                "name": "Accounting_pages_tab"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                "name": "Inventory_pages_tab"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                "name": "Invoice_pages_tab"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                "name": "Logistics_pages_tab"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                "name": "Maintenance_pages_tab"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                "name": "Manufacturing_pages_tab"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\CheckboxList",
                                                 "name": "PlatformBilling_pages_tab"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                "name": "Project_pages_tab"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                "name": "Purchase_pages_tab"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                "name": "Recruitment_pages_tab"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                "name": "Sale_pages_tab"
                                             }
                                         ]
                                     }
@@ -712,11 +2898,153 @@
                                         ]
                                     }
                                 ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                "name": "TimeOff_pages_tab"
+                                            }
+                                        ]
+                                    }
+                                ]
                             }
                         ]
                     },
                     {
-                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab"
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                "name": "Inventory_widgets_tab"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                "name": "Invoice_widgets_tab"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                "name": "Logistics_widgets_tab"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                "name": "Maintenance_widgets_tab"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                "name": "Project_widgets_tab"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                "name": "Purchase_widgets_tab"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                "name": "Recruitment_widgets_tab"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                "name": "Sale_widgets_tab"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Grid",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\CheckboxList",
+                                                "name": "TimeOff_widgets_tab"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
                     },
                     {
                         "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
@@ -730,7 +3058,48 @@
                 ]
             }
         ],
-        "infolist": []
+        "infolist": [],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "guard_name"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "permissions_count"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "updated_at"
+                }
+            ],
+            "filters": [],
+            "groups": [],
+            "defaultSort": "created_at",
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\DeleteBulkAction",
+                    "name": "delete"
+                }
+            ],
+            "headerActions": []
+        }
     },
     "Webkul\\Security\\Filament\\Resources\\TeamResource": {
         "model": "Webkul\\Security\\Models\\Team",
@@ -745,7 +3114,42 @@
                 "type": "Filament\\Infolists\\Components\\TextEntry",
                 "name": "name"
             }
-        ]
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "creator.name",
+                    "sortable": true,
+                    "searchable": true
+                }
+            ],
+            "filters": [],
+            "groups": [],
+            "defaultSort": null,
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ViewAction",
+                    "name": "view"
+                },
+                {
+                    "type": "Filament\\Actions\\EditAction",
+                    "name": "edit"
+                },
+                {
+                    "type": "Filament\\Actions\\DeleteAction",
+                    "name": "delete"
+                }
+            ],
+            "toolbarActions": [],
+            "headerActions": []
+        }
     },
     "Webkul\\Security\\Filament\\Resources\\UserResource": {
         "model": "Webkul\\Security\\Models\\User",
@@ -936,6 +3340,136 @@
                     }
                 ]
             }
-        ]
+        ],
+        "table": {
+            "columns": [
+                {
+                    "type": "Filament\\Tables\\Columns\\ImageColumn",
+                    "name": "partner.avatar"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "name",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "email",
+                    "sortable": true,
+                    "searchable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "teams.name"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "effective_role_names"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "resource_permission",
+                    "sortable": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "defaultCompany.name"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "allowedCompanies.name"
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "created_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                },
+                {
+                    "type": "Filament\\Tables\\Columns\\TextColumn",
+                    "name": "updated_at",
+                    "sortable": true,
+                    "toggleable": true,
+                    "hiddenByDefault": true
+                }
+            ],
+            "filters": [
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "resource_permission"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "default_company"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "allowed_companies"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "teams"
+                },
+                {
+                    "type": "Filament\\Tables\\Filters\\SelectFilter",
+                    "name": "roles"
+                }
+            ],
+            "groups": [],
+            "defaultSort": "created_at",
+            "recordActions": [
+                {
+                    "type": "Filament\\Actions\\ActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\ViewAction",
+                            "name": "view"
+                        },
+                        {
+                            "type": "Filament\\Actions\\EditAction",
+                            "name": "edit"
+                        },
+                        {
+                            "type": "Filament\\Actions\\DeleteAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\RestoreAction",
+                            "name": "restore"
+                        },
+                        {
+                            "type": "Filament\\Actions\\Action",
+                            "name": "grantImpersonation"
+                        },
+                        {
+                            "type": "Filament\\Actions\\Action",
+                            "name": "revokeImpersonation"
+                        }
+                    ]
+                }
+            ],
+            "toolbarActions": [
+                {
+                    "type": "Filament\\Actions\\BulkActionGroup",
+                    "children": [
+                        {
+                            "type": "Filament\\Actions\\DeleteBulkAction",
+                            "name": "delete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\ForceDeleteBulkAction",
+                            "name": "forceDelete"
+                        },
+                        {
+                            "type": "Filament\\Actions\\RestoreBulkAction",
+                            "name": "restore"
+                        }
+                    ]
+                }
+            ],
+            "headerActions": []
+        }
     }
 }

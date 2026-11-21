@@ -83,6 +83,9 @@ abstract class DashboardChartWidget extends ChartWidget
         $options = [
             'maintainAspectRatio' => false,
             'cutout'              => '62%',
+            // A doughnut has no axes, but the shared chart defaults add x and y,
+            // which drew a stray 0-1 scale beside every donut (2026-11-20).
+            'scales'              => ['x' => ['display' => false], 'y' => ['display' => false]],
             'layout'              => ['padding' => 26],
             'interaction'         => $this->chartInteraction('nearest', true),
             'plugins'             => [

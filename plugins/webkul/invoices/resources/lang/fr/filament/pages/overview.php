@@ -29,7 +29,7 @@ return [
         'purchases'       => 'Achats',
         'invoices'        => 'Factures',
         'revenue'         => 'Chiffre d’affaires',
-        'orders'          => '{0} Aucune commande|{1} 1 commande|[2,*] :count commandes',
+        'orders'          => '{0} Aucune vente|{1} 1 vente|[2,*] :count ventes',
         'open-quotations' => 'Devis ouverts',
         'spend'           => 'Dépenses d’achat',
         'open-rfqs'       => 'Demandes de prix ouvertes',
@@ -71,7 +71,7 @@ return [
 
     'board' => [
         'updated'     => 'Mis à jour à :time',
-        'orders'      => 'Commandes',
+        'orders'      => 'Ventes',
         'conversion'  => 'Devis → commande',
         'by-supplier' => 'Dépenses par fournisseur',
         'other'       => 'Autres',

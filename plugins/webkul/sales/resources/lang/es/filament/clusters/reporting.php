@@ -6,7 +6,7 @@ return [
 
     'analysis' => [
         'title'      => 'Análisis de ventas',
-        'subheading' => 'Pedidos confirmados en la moneda de la empresa. Agrupe por cliente, vendedor o mes para ver los totales.',
+        'subheading' => 'Pedidos confirmados y facturas sin pedido, en la moneda de la empresa. Agrupe por cliente, vendedor o mes para ver los totales.',
         'export'     => 'Exportar',
         'sum'        => 'Total',
         'columns'    => [

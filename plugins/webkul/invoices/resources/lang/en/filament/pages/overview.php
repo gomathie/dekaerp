@@ -29,7 +29,7 @@ return [
         'purchases'       => 'Purchases',
         'invoices'        => 'Invoices',
         'revenue'         => 'Revenue',
-        'orders'          => '{0} No orders|{1} 1 order|[2,*] :count orders',
+        'orders'          => '{0} No sales|{1} 1 sale|[2,*] :count sales',
         'open-quotations' => 'Open quotations',
         'spend'           => 'Purchase spend',
         'open-rfqs'       => 'Open RFQs',
@@ -71,7 +71,7 @@ return [
 
     'board' => [
         'updated'     => 'Updated :time',
-        'orders'      => 'Orders',
+        'orders'      => 'Sales',
         'conversion'  => 'Quote → order',
         'by-supplier' => 'Spend by supplier',
         'other'       => 'Other',

@@ -10,7 +10,7 @@ return [
     'stats'               => [
         'heading'            => 'Key Metrics',
         'total-quotations'   => 'Total Quotations',
-        'total-sales-orders' => 'Total Sales Orders',
+        'total-sales-orders' => 'Total Sales',
         'total-revenue'      => 'Total Revenue',
         'average-revenue'    => 'Average Revenue',
         'increase'           => 'increase',
@@ -51,7 +51,7 @@ return [
     ],
 
     'top-sales-orders'    => [
-        'heading' => 'Top Sales Orders',
+        'heading' => 'Top Sales',
         'columns' => [
             'reference'      => 'Order Number',
             'customer'       => 'Customer',

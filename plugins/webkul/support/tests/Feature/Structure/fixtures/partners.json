@@ -51,7 +51,8 @@
                 "name": "state_id"
             }
         ],
-        "infolist": []
+        "infolist": [],
+        "table": null
     },
     "Webkul\\Partner\\Filament\\Resources\\BankAccountResource": {
         "model": "Webkul\\Partner\\Models\\BankAccount",
@@ -73,7 +74,8 @@
                 "name": "partner_id"
             }
         ],
-        "infolist": []
+        "infolist": [],
+        "table": null
     },
     "Webkul\\Partner\\Filament\\Resources\\BankResource": {
         "model": "Webkul\\Partner\\Models\\Bank",
@@ -129,7 +131,8 @@
                 ]
             }
         ],
-        "infolist": []
+        "infolist": [],
+        "table": null
     },
     "Webkul\\Partner\\Filament\\Resources\\IndustryResource": {
         "model": "Webkul\\Partner\\Models\\Industry",
@@ -143,7 +146,8 @@
                 "name": "description"
             }
         ],
-        "infolist": []
+        "infolist": [],
+        "table": null
     },
     "Webkul\\Partner\\Filament\\Resources\\PartnerResource": {
         "model": "Webkul\\Partner\\Models\\Partner",
@@ -262,6 +266,123 @@
                                     {
                                         "type": "Filament\\Forms\\Components\\Select",
                                         "name": "user_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_payment_term_id"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_inbound_payment_method_line_id"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_payment_term_id"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_inbound_payment_method_line_id"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_payment_term_id"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_inbound_payment_method_line_id"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_payment_term_id"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_inbound_payment_method_line_id"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_payment_term_id"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_inbound_payment_method_line_id"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_payment_term_id"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_inbound_payment_method_line_id"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_payment_term_id"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_inbound_payment_method_line_id"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_payment_term_id"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_inbound_payment_method_line_id"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_payment_term_id"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_inbound_payment_method_line_id"
+                                            }
+                                        ]
                                     }
                                 ]
                             },
@@ -281,6 +402,924 @@
                                         "name": "industry_id"
                                     }
                                 ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_supplier_payment_term_id"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_outbound_payment_method_line_id"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_account_position_id"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_supplier_payment_term_id"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_outbound_payment_method_line_id"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_account_position_id"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_supplier_payment_term_id"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_outbound_payment_method_line_id"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_account_position_id"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_supplier_payment_term_id"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_outbound_payment_method_line_id"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_account_position_id"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_supplier_payment_term_id"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_outbound_payment_method_line_id"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_account_position_id"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_supplier_payment_term_id"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_outbound_payment_method_line_id"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_account_position_id"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_supplier_payment_term_id"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_outbound_payment_method_line_id"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_account_position_id"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_supplier_payment_term_id"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_outbound_payment_method_line_id"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_account_position_id"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_supplier_payment_term_id"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_outbound_payment_method_line_id"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "property_account_position_id"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "invoice_sending_method"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "invoice_edi_format_store"
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "peppol_eas"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                "name": "peppol_endpoint"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "property_account_receivable_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "property_account_payable_id"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "autopost_bills"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "ignore_abnormal_invoice_amount"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "ignore_abnormal_invoice_date"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "invoice_sending_method"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "invoice_edi_format_store"
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "peppol_eas"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                "name": "peppol_endpoint"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "property_account_receivable_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "property_account_payable_id"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "autopost_bills"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "ignore_abnormal_invoice_amount"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "ignore_abnormal_invoice_date"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "invoice_sending_method"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "invoice_edi_format_store"
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "peppol_eas"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                "name": "peppol_endpoint"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "property_account_receivable_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "property_account_payable_id"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "autopost_bills"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "ignore_abnormal_invoice_amount"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "ignore_abnormal_invoice_date"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "invoice_sending_method"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "invoice_edi_format_store"
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "peppol_eas"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                "name": "peppol_endpoint"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "property_account_receivable_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "property_account_payable_id"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "autopost_bills"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "ignore_abnormal_invoice_amount"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "ignore_abnormal_invoice_date"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "invoice_sending_method"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "invoice_edi_format_store"
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "peppol_eas"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                "name": "peppol_endpoint"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "property_account_receivable_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "property_account_payable_id"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "autopost_bills"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "ignore_abnormal_invoice_amount"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "ignore_abnormal_invoice_date"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "invoice_sending_method"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "invoice_edi_format_store"
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "peppol_eas"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                "name": "peppol_endpoint"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "property_account_receivable_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "property_account_payable_id"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "autopost_bills"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "ignore_abnormal_invoice_amount"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "ignore_abnormal_invoice_date"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "invoice_sending_method"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "invoice_edi_format_store"
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "peppol_eas"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                "name": "peppol_endpoint"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "property_account_receivable_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "property_account_payable_id"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "autopost_bills"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "ignore_abnormal_invoice_amount"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "ignore_abnormal_invoice_date"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "invoice_sending_method"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "invoice_edi_format_store"
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "peppol_eas"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                "name": "peppol_endpoint"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "property_account_receivable_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "property_account_payable_id"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "autopost_bills"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "ignore_abnormal_invoice_amount"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "ignore_abnormal_invoice_date"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "invoice_sending_method"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "invoice_edi_format_store"
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Forms\\Components\\Select",
+                                                "name": "peppol_eas"
+                                            },
+                                            {
+                                                "type": "Filament\\Forms\\Components\\TextInput",
+                                                "name": "peppol_endpoint"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "property_account_receivable_id"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "property_account_payable_id"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Select",
+                                        "name": "autopost_bills"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "ignore_abnormal_invoice_amount"
+                                    },
+                                    {
+                                        "type": "Filament\\Forms\\Components\\Toggle",
+                                        "name": "ignore_abnormal_invoice_date"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\RichEditor",
+                                "name": "comment"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\RichEditor",
+                                "name": "comment"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\RichEditor",
+                                "name": "comment"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\RichEditor",
+                                "name": "comment"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\RichEditor",
+                                "name": "comment"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\RichEditor",
+                                "name": "comment"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\RichEditor",
+                                "name": "comment"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\RichEditor",
+                                "name": "comment"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Forms\\Components\\RichEditor",
+                                "name": "comment"
                             }
                         ]
                     }
@@ -405,6 +1444,123 @@
                                     {
                                         "type": "Filament\\Infolists\\Components\\TextEntry",
                                         "name": "user.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyPaymentTerm.name"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyInboundPaymentMethodLine.name"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyPaymentTerm.name"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyInboundPaymentMethodLine.name"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyPaymentTerm.name"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyInboundPaymentMethodLine.name"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyPaymentTerm.name"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyInboundPaymentMethodLine.name"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyPaymentTerm.name"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyInboundPaymentMethodLine.name"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyPaymentTerm.name"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyInboundPaymentMethodLine.name"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyPaymentTerm.name"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyInboundPaymentMethodLine.name"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyPaymentTerm.name"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyInboundPaymentMethodLine.name"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyPaymentTerm.name"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyInboundPaymentMethodLine.name"
+                                            }
+                                        ]
                                     }
                                 ]
                             },
@@ -424,6 +1580,294 @@
                                         "name": "industry.name"
                                     }
                                 ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertySupplierPaymentTerm.name"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyOutboundPaymentMethodLine.name"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyAccountPosition.name"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertySupplierPaymentTerm.name"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyOutboundPaymentMethodLine.name"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyAccountPosition.name"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertySupplierPaymentTerm.name"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyOutboundPaymentMethodLine.name"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyAccountPosition.name"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertySupplierPaymentTerm.name"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyOutboundPaymentMethodLine.name"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyAccountPosition.name"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertySupplierPaymentTerm.name"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyOutboundPaymentMethodLine.name"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyAccountPosition.name"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertySupplierPaymentTerm.name"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyOutboundPaymentMethodLine.name"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyAccountPosition.name"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertySupplierPaymentTerm.name"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyOutboundPaymentMethodLine.name"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyAccountPosition.name"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertySupplierPaymentTerm.name"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyOutboundPaymentMethodLine.name"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyAccountPosition.name"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertySupplierPaymentTerm.name"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyOutboundPaymentMethodLine.name"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "propertyAccountPosition.name"
+                                            }
+                                        ]
+                                    }
+                                ]
                             }
                         ]
                     },
@@ -439,10 +1883,641 @@
                                 "name": "logistics_open_charges"
                             }
                         ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "invoice_sending_method"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "invoice_edi_format_store"
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "peppol_eas"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "peppol_endpoint"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "propertyAccountReceivable.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "propertyAccountPayable.name"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "autopost_bills"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "ignore_abnormal_invoice_amount"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "ignore_abnormal_invoice_date"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "invoice_sending_method"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "invoice_edi_format_store"
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "peppol_eas"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "peppol_endpoint"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "propertyAccountReceivable.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "propertyAccountPayable.name"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "autopost_bills"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "ignore_abnormal_invoice_amount"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "ignore_abnormal_invoice_date"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "invoice_sending_method"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "invoice_edi_format_store"
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "peppol_eas"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "peppol_endpoint"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "propertyAccountReceivable.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "propertyAccountPayable.name"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "autopost_bills"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "ignore_abnormal_invoice_amount"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "ignore_abnormal_invoice_date"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "invoice_sending_method"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "invoice_edi_format_store"
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "peppol_eas"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "peppol_endpoint"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "propertyAccountReceivable.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "propertyAccountPayable.name"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "autopost_bills"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "ignore_abnormal_invoice_amount"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "ignore_abnormal_invoice_date"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "invoice_sending_method"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "invoice_edi_format_store"
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "peppol_eas"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "peppol_endpoint"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "propertyAccountReceivable.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "propertyAccountPayable.name"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "autopost_bills"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "ignore_abnormal_invoice_amount"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "ignore_abnormal_invoice_date"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "invoice_sending_method"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "invoice_edi_format_store"
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "peppol_eas"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "peppol_endpoint"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "propertyAccountReceivable.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "propertyAccountPayable.name"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "autopost_bills"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "ignore_abnormal_invoice_amount"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "ignore_abnormal_invoice_date"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "invoice_sending_method"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "invoice_edi_format_store"
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "peppol_eas"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "peppol_endpoint"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "propertyAccountReceivable.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "propertyAccountPayable.name"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "autopost_bills"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "ignore_abnormal_invoice_amount"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "ignore_abnormal_invoice_date"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "invoice_sending_method"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "invoice_edi_format_store"
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "peppol_eas"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "peppol_endpoint"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "propertyAccountReceivable.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "propertyAccountPayable.name"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "autopost_bills"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "ignore_abnormal_invoice_amount"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "ignore_abnormal_invoice_date"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "invoice_sending_method"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "invoice_edi_format_store"
+                                    },
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "peppol_eas"
+                                            },
+                                            {
+                                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                                "name": "peppol_endpoint"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "propertyAccountReceivable.name"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "propertyAccountPayable.name"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Fieldset",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\TextEntry",
+                                        "name": "autopost_bills"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "ignore_abnormal_invoice_amount"
+                                    },
+                                    {
+                                        "type": "Filament\\Infolists\\Components\\IconEntry",
+                                        "name": "ignore_abnormal_invoice_date"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "comment"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "comment"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "comment"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "comment"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "comment"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "comment"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "comment"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "comment"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Filament\\Schemas\\Components\\Tabs\\Tab",
+                        "children": [
+                            {
+                                "type": "Filament\\Infolists\\Components\\TextEntry",
+                                "name": "comment"
+                            }
+                        ]
                     }
                 ]
             }
-        ]
+        ],
+        "table": null
     },
     "Webkul\\Partner\\Filament\\Resources\\TagResource": {
         "model": "Webkul\\Partner\\Models\\Tag",
@@ -456,7 +2531,8 @@
                 "name": "color"
             }
         ],
-        "infolist": []
+        "infolist": [],
+        "table": null
     },
     "Webkul\\Partner\\Filament\\Resources\\TitleResource": {
         "model": "Webkul\\Partner\\Models\\Title",
@@ -470,6 +2546,7 @@
                 "name": "short_name"
             }
         ],
-        "infolist": []
+        "infolist": [],
+        "table": null
     }
 }

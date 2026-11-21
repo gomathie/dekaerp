@@ -10,7 +10,7 @@ return [
     'stats'               => [
         'heading'            => 'المؤشرات الرئيسية',
         'total-quotations'   => 'إجمالي عروض الأسعار',
-        'total-sales-orders' => 'إجمالي أوامر البيع',
+        'total-sales-orders' => 'إجمالي المبيعات',
         'total-revenue'      => 'إجمالي الإيرادات',
         'average-revenue'    => 'متوسط الإيرادات',
         'increase'           => 'زيادة',
@@ -51,7 +51,7 @@ return [
     ],
 
     'top-sales-orders'    => [
-        'heading' => 'أعلى أوامر البيع',
+        'heading' => 'أعلى المبيعات',
         'columns' => [
             'reference'      => 'رقم الطلب',
             'customer'       => 'العميل',

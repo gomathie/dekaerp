@@ -2,6 +2,9 @@
 
 use Filament\Facades\Filament;
 use Filament\Schemas\Schema;
+use Filament\Tables\Columns\Column;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
 
 require_once __DIR__.'/FilamentHelper.php';
 
@@ -12,10 +15,9 @@ require_once __DIR__.'/FilamentHelper.php';
  * Forms and infolists are built standalone: Schema::make() accepts a null
  * livewire, so the declared tree is reachable without mounting a page.
  *
- * Tables are NOT covered yet. Table::make() requires a HasTable component, so
- * capturing columns means mounting each resource's List page - the next piece
- * of Phase 0, and the one that matters for a dropped column or a lost
- * visibleFrom().
+ * Tables are built on an unmounted index page (describeTable()), so columns,
+ * filters, groups and actions are captured too - a dropped column or a lost
+ * visibleFrom() is the failure that matters most for this work.
  */
 class ResourceStructureHelper
 {
@@ -49,7 +51,82 @@ class ResourceStructureHelper
             'model'    => self::guard(fn (): ?string => $resource::getModel()),
             'form'     => self::guard(fn (): array => self::describeSchema($resource::form(Schema::make()))),
             'infolist' => self::guard(fn (): array => self::describeSchema($resource::infolist(Schema::make()))),
+            'table'    => self::guard(fn (): ?array => self::describeTable($resource)),
         ];
+    }
+
+    /**
+     * The declared table, built on an unmounted instance of the resource's
+     * index page: Table::make() only needs a HasTable to hang off, and
+     * mounting would tie the snapshot to records and to the acting user.
+     *
+     * Columns keep declaration order, and record visibleFrom() and toggle
+     * state, because those are what the mobile work added by hand (14
+     * resources) and what a careless move drops without failing a test.
+     *
+     * @return array<string, mixed>|null
+     */
+    public static function describeTable(string $resource): ?array
+    {
+        $page = $resource::getPages()['index'] ?? null;
+
+        if ($page === null) {
+            return null;
+        }
+
+        $pageClass = $page->getPage();
+        $livewire = new $pageClass;
+
+        if (! $livewire instanceof HasTable) {
+            return null;
+        }
+
+        $table = $resource::table(Table::make($livewire));
+
+        return [
+            'columns' => array_values(array_map(fn (Column $column): array => array_filter([
+                'type'        => $column::class,
+                'name'        => $column->getName(),
+                'visibleFrom' => self::guard(fn (): ?string => $column->getVisibleFrom()),
+                'sortable'    => self::guard(fn (): bool => $column->isSortable()) ?: null,
+                'searchable'  => self::guard(fn (): bool => $column->isSearchable()) ?: null,
+                'toggleable'  => self::guard(fn (): bool => $column->isToggleable()) ?: null,
+                'hiddenByDefault' => self::guard(fn (): bool => $column->isToggledHiddenByDefault()) ?: null,
+            ], fn (mixed $value): bool => $value !== null), $table->getColumns())),
+            'filters'        => array_values(array_map(fn (object $filter): array => ['type' => $filter::class, 'name' => $filter->getName()], $table->getFilters(withHidden: true))),
+            'groups'         => array_keys($table->getGroups()),
+            'defaultSort'    => self::guard(fn (): ?string => $table->getDefaultSortColumn()),
+            'recordActions'  => self::describeActions($table->getRecordActions()),
+            'toolbarActions' => self::describeActions($table->getToolbarActions()),
+            'headerActions'  => self::describeActions($table->getHeaderActions()),
+        ];
+    }
+
+    /**
+     * Actions and action groups, in order, by class and name.
+     *
+     * @param  array<int|string, object>  $actions
+     * @return array<int, array<string, mixed>>
+     */
+    private static function describeActions(array $actions): array
+    {
+        $described = [];
+
+        foreach ($actions as $action) {
+            $entry = ['type' => $action::class];
+
+            if (method_exists($action, 'getName')) {
+                $entry['name'] = self::guard(fn (): ?string => $action->getName());
+            }
+
+            if (method_exists($action, 'getActions')) {
+                $entry['children'] = self::describeActions(self::guard(fn (): array => $action->getActions()) ?: []);
+            }
+
+            $described[] = $entry;
+        }
+
+        return $described;
     }
 
     /**
