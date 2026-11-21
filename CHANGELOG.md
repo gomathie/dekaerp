@@ -10,6 +10,10 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+### Improvements
+
+- Recent items in quick navigation are kept per company, so after switching company they no longer link to pages you cannot open.
+
 # CHANGELOG — v1.14.2 — 2026-11-21
 
 ### Fixes

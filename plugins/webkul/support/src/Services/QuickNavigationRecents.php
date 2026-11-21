@@ -34,6 +34,9 @@ class QuickNavigationRecents
 
     protected static function key(): string
     {
-        return 'quick-navigation.recent.'.(Filament::auth()->id() ?? 'guest');
+        // Per company as well as per user: a record opened in one company
+        // answers 404 after switching to another, so a shared list linked to
+        // pages the user could no longer open (U54, 2026-11-21).
+        return 'quick-navigation.recent.'.(Filament::auth()->id() ?? 'guest').'.'.(current_company_id() ?? 'none');
     }
 }

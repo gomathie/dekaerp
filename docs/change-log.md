@@ -6,6 +6,17 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-21, quick-navigation recents per company (U54, unreleased)
+
+- **Why:** U54. Recents were stored per user only, so after a company switch
+  they linked to records of the previous company, which answer 404.
+- **How:** `Support\Services\QuickNavigationRecents::key()` adds the current
+  company id. Test: support `Navigation/QuickNavigationRecentsTest.php`.
+- **Trade-off:** existing recents (old session key) are not carried over; each
+  user starts with an empty list once after deploy.
+- **Verification:** QuickNavigationRecentsTest 1 passed.
+- **Rollback:** revert the key change.
+
 ## 2026-11-21, hotfix v1.14.2: guests reach the login page; test repairs
 
 - **Why:** Sentry DEKAERP-1Y. A signed-out browser loading an avatar from
