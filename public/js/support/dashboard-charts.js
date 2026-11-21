@@ -323,8 +323,17 @@ const dashboardChartEmptyState = {
 
         const empty = this.isEmpty(chart)
 
+        // Hide axes while empty and restore only the ones hidden here. Setting
+        // display = !empty re-enabled axes a chart hides on purpose, which drew
+        // a stray 0-1 scale beside every doughnut with data (2026-11-21).
         Object.values(chart.options.scales || {}).forEach((scale) => {
-            scale.display = ! empty
+            if (empty && scale.display !== false) {
+                scale.display = false
+                scale._hiddenWhileEmpty = true
+            } else if (! empty && scale._hiddenWhileEmpty) {
+                scale.display = true
+                scale._hiddenWhileEmpty = false
+            }
         })
     },
     afterDraw(chart) {

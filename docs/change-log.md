@@ -6,6 +6,30 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-21, v1.14.0 released, hotfix v1.14.1: doughnut scale
+
+- **v1.14.0** shipped to production on 2026-11-21 (develop 50c825a1b,
+  production 76721d927). Verified before release: Security 197, Sale 163,
+  Invoice 28, Account 594 passed, plus 41 targeted tests. After deploy, read-only
+  on production: What's New shows 1.14.0, 70 menu pages and every dashboard
+  (Overview with each section tab, Accounting, Inventory, Time Off) load with no
+  4xx/5xx or console errors, Sentry clean.
+- **Why v1.14.1:** the production dashboard check found the stray 0-1 scale
+  beside "Revenue by Category" still drawn. The v1.14.0 fix set
+  `scales.x/y.display = false` in `DashboardChartWidget::doughnutChartOptions()`,
+  but `dashboard-charts.js`'s empty-state plugin ran `scale.display = !empty`
+  before every update, turning those axes back on whenever the chart had data.
+- **How:** the plugin now hides axes only while the chart is empty and restores
+  only the axes it hid itself (`_hiddenWhileEmpty`). Files:
+  `plugins/webkul/support/resources/js/dashboard-charts.js` and its published
+  copy `public/js/support/dashboard-charts.js`.
+- **Benefit:** every doughnut keeps its axes hidden; line and bar charts behave
+  as before (axes hidden when empty, shown with data).
+- **Verification:** the patched script was injected into the live production
+  Overview (Sales tab) through Playwright request interception, read-only: the
+  ring renders without a scale. No JS test harness exists for this file.
+- **Rollback:** revert the two JS files.
+
 ## 2026-11-20, salesperson on invoices (unreleased)
 
 - **Why:** user: "add salesperson to invoices". After v1.13.1 the Sales
