@@ -288,7 +288,12 @@ class BillForm
                                             ->relationship(
                                                 name: 'paymentMethodLine',
                                                 titleAttribute: 'name',
-                                                modifyQueryUsing: fn ($query) => $query->whereHas('paymentMethod', fn ($q) => $q->where('payment_type', PaymentType::SEND)),
+                                                // This company's lines only, with what the label
+                                                // reads loaded once (DEKAERP-23); see forCompany().
+                                                modifyQueryUsing: fn ($query, Get $get) => $query
+                                                    ->forCompany($get('company_id'))
+                                                    ->whereHas('paymentMethod', fn ($q) => $q->where('payment_type', PaymentType::SEND))
+                                                    ->with(['journal', 'paymentMethod']),
                                             )
                                             ->getOptionLabelFromRecordUsing(fn ($record) => $record->display_name)
                                             ->preload()

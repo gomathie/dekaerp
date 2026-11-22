@@ -30,6 +30,7 @@ return [
         'invoices'        => 'Invoices',
         'revenue'         => 'Revenue',
         'orders'          => '{0} No sales|{1} 1 sale|[2,*] :count sales',
+        'purchase-orders' => '{0} No orders|{1} 1 order|[2,*] :count orders',
         'open-quotations' => 'Open quotations',
         'spend'           => 'Purchase spend',
         'open-rfqs'       => 'Open RFQs',

@@ -1970,6 +1970,12 @@ log named):
     so onboarding works before the creator is a member). Keep that listener
     first.
   - Test: support `Tenancy/CrossCompanyWriteTest.php`.
+  - Payment method lines have no company or company scope; their company is
+    their journal's (2026-11-22, v1.16.5). Every picker or request rule for a
+    line goes through `PaymentMethodLine::forCompany()`, never a bare
+    `relationship('paymentMethodLine')` or `exists:` rule: those offered and
+    accepted every client's lines. Test: accounts
+    `PaymentMethodLineCompanyTest`.
 
 • Business role covers the role templates, 2026-11-14 (user; `docs/change-log.md`):
   - `erp:sync-permissions` gives the company administrators' business role

@@ -2,6 +2,7 @@
 
 namespace Webkul\Account\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -49,6 +50,22 @@ class PaymentMethodLine extends Model implements Sortable
     public function journal()
     {
         return $this->belongsTo(Journal::class);
+    }
+
+    /**
+     * Lines whose journal belongs to $companyId (default: the current one).
+     *
+     * Payment method lines have no company of their own and no company
+     * scope, so the invoice and bill "Preferred payment method" pickers, and
+     * the API, offered and accepted every company's lines (found 2026-11-22
+     * from Sentry DEKAERP-23: one journal lookup per foreign line). A line
+     * without a journal is refused: it cannot be shown to belong to anyone.
+     */
+    public function scopeForCompany(Builder $query, mixed $companyId = null): Builder
+    {
+        $companyId = $companyId ?: current_company_id();
+
+        return $query->whereHas('journal', fn (Builder $journal) => $journal->where($journal->qualifyColumn('company_id'), $companyId));
     }
 
     public function defaultAccount()

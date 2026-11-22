@@ -30,6 +30,7 @@ return [
         'invoices'        => 'Factures',
         'revenue'         => 'Chiffre d’affaires',
         'orders'          => '{0} Aucune vente|{1} 1 vente|[2,*] :count ventes',
+        'purchase-orders' => '{0} Aucune commande|{1} 1 commande|[2,*] :count commandes',
         'open-quotations' => 'Devis ouverts',
         'spend'           => 'Dépenses d’achat',
         'open-rfqs'       => 'Demandes de prix ouvertes',

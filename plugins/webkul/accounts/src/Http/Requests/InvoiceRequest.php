@@ -4,6 +4,7 @@ namespace Webkul\Account\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Webkul\Account\Models\PaymentMethodLine;
 use Webkul\Account\Models\Product;
 use Webkul\Security\Models\User;
 use Webkul\Support\Filament\CompanyMembers;
@@ -47,7 +48,13 @@ class InvoiceRequest extends FormRequest
             'partner_bank_id'                  => ['nullable', 'integer', 'exists:partners_bank_accounts,id'],
             'invoice_incoterm_id'              => ['nullable', 'integer', 'exists:accounts_incoterms,id'],
             'invoice_cash_rounding_id'         => ['nullable', 'integer', 'exists:accounts_cash_roundings,id'],
-            'preferred_payment_method_line_id' => ['nullable', 'integer', 'exists:accounts_payment_method_lines,id'],
+            // The document's company's lines only: `exists` alone accepted
+            // another client's payment method (2026-11-22, see forCompany()).
+            'preferred_payment_method_line_id' => ['nullable', 'integer', function (string $attribute, mixed $value, \Closure $fail): void {
+                if (! PaymentMethodLine::query()->forCompany($this->input('company_id'))->whereKey($value)->exists()) {
+                    $fail(__('validation.exists', ['attribute' => $attribute]));
+                }
+            }],
             'reference'                        => ['nullable', 'string', 'max:255'],
             'payment_reference'                => ['nullable', 'string', 'max:255'],
             'narration'                        => ['nullable', 'string'],
