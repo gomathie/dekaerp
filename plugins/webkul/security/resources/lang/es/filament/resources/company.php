@@ -60,7 +60,7 @@ return [
                     'disabled'        => 'Las invitaciones están desactivadas en los ajustes de usuarios, así que no se invitó a :email. Establezca una contraseña en su lugar o active las invitaciones.',
                     'missing-role'    => 'El rol «Company Admin» no existe en esta instalación, así que no se pudo invitar a nadie.',
                     'seats-exhausted' => 'A esta empresa no le quedan plazas de usuario libres, así que no se invitó a :email. Aumente primero el límite de plazas.',
-                    'invite-failed'   => 'No se pudo emitir la invitación. Puede que la dirección ya pertenezca a un usuario, o que la empresa no sea una que usted pueda asignar. Para restablecer la contraseña de un administrador existente, introduzca también una contraseña.',
+                    'invite-failed'   => 'No se pudo emitir la invitación. Puede que la dirección ya pertenezca a un usuario, o que la empresa no sea una que usted pueda asignar. Para restablecer la contraseña de un administrador existente, elija «Establecer una contraseña ahora».',
                     'mail-failed'     => 'La invitación se emitió, pero no se pudo enviar el correo. Entregue este enlace de acceso a :email por un canal de confianza; caduca en 7 días y la persona elige su propia contraseña: :link',
                 ],
             ],

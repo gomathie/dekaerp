@@ -1,6 +1,6 @@
 # Russian and Swahili
 
-Status: planned (user, 2026-11-19). Not started.
+Status: planned (user, 2026-11-19). Decisions taken 2026-11-22. Not started.
 
 ## Goal
 
@@ -24,10 +24,13 @@ that change.
 5. Check money, date and number formats for both locales on the dashboards
    and on printed documents.
 
-## Decisions to confirm with the user
+## Decisions (user, 2026-11-22)
 
-- Swahili: one variant for Kenya and Tanzania, or separate ones.
-- Whether a native speaker reviews each language before release.
+- **D-LANG-1:** one Swahili, `sw` (standard Swahili for Kenya and Tanzania),
+  not separate `sw_KE` / `sw_TZ`.
+- **D-LANG-2:** release, review later. Ship machine-assisted translations,
+  say so in the CHANGELOG entry, and let a native speaker correct them when
+  one is available. English stays one click away.
 
 ## Verification
 

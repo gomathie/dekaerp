@@ -60,7 +60,7 @@ return [
                     'disabled'        => 'Invitations are switched off in the user settings, so :email was not invited. Set a password instead, or switch invitations on.',
                     'missing-role'    => 'The Company Admin role does not exist in this installation, so nobody could be invited.',
                     'seats-exhausted' => 'This company has no free user seats left, so :email was not invited. Raise the seat limit first.',
-                    'invite-failed'   => 'The invitation could not be issued. The address may already belong to a user, or the company may not be one you are allowed to assign. To reset an existing administrator’s password, enter a password as well.',
+                    'invite-failed'   => 'The invitation could not be issued. The address may already belong to a user, or the company may not be one you are allowed to assign. To reset an existing administrator’s password, choose “Set a password now” instead.',
                     'mail-failed'     => 'The invitation was issued, but the email could not be sent. Give this sign-in link to :email over a channel you trust — it expires in 7 days, and they set their own password: :link',
                 ],
             ],

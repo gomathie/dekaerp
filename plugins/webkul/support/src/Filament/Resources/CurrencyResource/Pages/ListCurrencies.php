@@ -12,6 +12,17 @@ class ListCurrencies extends ListRecords
 {
     protected static string $resource = CurrencyResource::class;
 
+    /**
+     * Where the daily rates come from (user, 2026-11-22). Also the
+     * attribution the free source's terms ask for.
+     */
+    public function getSubheading(): ?string
+    {
+        return config('exchange-rates.enabled')
+            ? __('support::filament/resources/currency/pages/list-currency.rates-source')
+            : null;
+    }
+
     protected function getHeaderActions(): array
     {
         return [

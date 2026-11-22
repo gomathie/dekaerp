@@ -8,6 +8,8 @@ use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Console\Scheduling\Event as SchedulingEvent;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +20,7 @@ use Webkul\PluginManager\PackageServiceProvider;
 use Webkul\Security\Livewire\AcceptInvitation;
 use Webkul\Security\Models\Role;
 use Webkul\Security\Policies\RolePolicy;
+use Webkul\Support\Console\Commands\SyncExchangeRates;
 use Webkul\Support\Database\Dialects\DatabaseDialect;
 use Webkul\Support\Database\Dialects\MySqlDialect;
 use Webkul\Support\Database\Dialects\PostgresDialect;
@@ -96,7 +99,39 @@ class SupportServiceProvider extends PackageServiceProvider
                 '2026_06_12_000001_create_brand_settings',
             ])
             ->runsSettings()
+            ->hasCommands([SyncExchangeRates::class])
             ->hasSeeder('Webkul\\Support\\Database\\Seeders\\DatabaseSeeder');
+    }
+
+    /**
+     * Daily exchange rates (user, 2026-11-22), before the 02:15 billing run.
+     * Watched by a Sentry cron monitor like the billing jobs: a stopped
+     * scheduler would otherwise leave every rate silently stale.
+     */
+    protected function scheduleExchangeRates(): void
+    {
+        $register = function (Schedule $schedule): void {
+            foreach ($schedule->events() as $event) {
+                if (str_contains((string) $event->command, 'currencies:sync-rates')) {
+                    return;
+                }
+            }
+
+            $event = $schedule->command('currencies:sync-rates')
+                ->dailyAt('01:30')
+                ->withoutOverlapping()
+                ->name('currencies-sync-rates');
+
+            if (SchedulingEvent::hasMacro('sentryMonitor')) {
+                $event->sentryMonitor('currencies-sync-rates', checkInMargin: 30, maxRuntime: 10);
+            }
+        };
+
+        $this->app->afterResolving(Schedule::class, $register);
+
+        if ($this->app->resolved(Schedule::class)) {
+            $register($this->app->make(Schedule::class));
+        }
     }
 
     public function packageBooted(): void
@@ -114,6 +149,8 @@ class SupportServiceProvider extends PackageServiceProvider
         });
 
         Livewire::component('accept-invitation', AcceptInvitation::class);
+
+        $this->scheduleExchangeRates();
 
         Route::post('company-context/set', [CompanyContextController::class, 'set'])
             ->middleware(['web', 'auth'])

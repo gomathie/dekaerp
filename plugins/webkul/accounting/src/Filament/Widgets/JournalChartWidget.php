@@ -22,6 +22,13 @@ class JournalChartWidget extends Component
         $this->journal = $journal;
     }
 
+    /**
+     * Every amount here is in the company's own currency: the `_signed`
+     * columns, each document converted at its own stored rate (dashboard plan
+     * DB-7, D-DB-7, 2026-11-22). The plain `amount_total` / `amount_residual`
+     * are in each document's currency, so a company invoicing in USD and GHS
+     * had dollars added to cedis in "To Pay", "Late" and the chart.
+     */
     public function getDashboardData(): array
     {
         $type = $this->journal->type;
@@ -41,7 +48,7 @@ class JournalChartWidget extends Component
                     'label'            => 'To Validate',
                     'url'              => $this->getUrl('index', ['activeTableView' => 'draft']),
                     'value'            => (clone $baseQuery)->where('state', MoveState::DRAFT)->count(),
-                    'amount'           => $amount = (clone $baseQuery)->where('state', MoveState::DRAFT)->sum('amount_total'),
+                    'amount'           => $amount = abs((float) (clone $baseQuery)->where('state', MoveState::DRAFT)->sum('amount_total_signed')),
                     'formatted_amount' => money($amount),
                 ],
                 'unpaid' => [
@@ -52,11 +59,11 @@ class JournalChartWidget extends Component
                         ->where('amount_residual', '>', 0)
                         ->whereNotIn('payment_state', [PaymentState::PAID, PaymentState::IN_PAYMENT])
                         ->count(),
-                    'amount' => $amount = (clone $baseQuery)
+                    'amount' => $amount = abs((float) (clone $baseQuery)
                         ->where('state', MoveState::POSTED)
                         ->where('amount_residual', '>', 0)
                         ->whereNotIn('payment_state', [PaymentState::PAID, PaymentState::IN_PAYMENT])
-                        ->sum('amount_residual'),
+                        ->sum('amount_residual_signed')),
                     'formatted_amount' => money($amount),
                 ],
                 'late' => [
@@ -67,11 +74,11 @@ class JournalChartWidget extends Component
                         ->where('payment_state', PaymentState::NOT_PAID)
                         ->where('invoice_date_due', '<', today())
                         ->count(),
-                    'amount' => $amount = (clone $baseQuery)
+                    'amount' => $amount = abs((float) (clone $baseQuery)
                         ->where('state', MoveState::POSTED)
                         ->where('payment_state', PaymentState::NOT_PAID)
                         ->where('invoice_date_due', '<', today())
-                        ->sum('amount_residual'),
+                        ->sum('amount_residual_signed')),
                     'formatted_amount' => money($amount),
                 ],
                 'to_pay' => [
@@ -81,10 +88,10 @@ class JournalChartWidget extends Component
                         ->where('state', MoveState::POSTED)
                         ->whereIn('payment_state', [PaymentState::NOT_PAID, PaymentState::PARTIAL])
                         ->count(),
-                    'amount' => $amount = (clone $baseQuery)
+                    'amount' => $amount = abs((float) (clone $baseQuery)
                         ->where('state', MoveState::POSTED)
                         ->whereIn('payment_state', [PaymentState::NOT_PAID, PaymentState::PARTIAL])
-                        ->sum('amount_residual'),
+                        ->sum('amount_residual_signed')),
                     'formatted_amount' => money($amount),
                 ],
             ];
@@ -94,7 +101,7 @@ class JournalChartWidget extends Component
                     'label'            => 'To Validate',
                     'url'              => $this->getUrl('index', ['activeTableView' => 'draft']),
                     'value'            => (clone $baseQuery)->where('state', MoveState::DRAFT)->count(),
-                    'amount'           => $amount = (clone $baseQuery)->where('state', MoveState::DRAFT)->sum('amount_total'),
+                    'amount'           => $amount = abs((float) (clone $baseQuery)->where('state', MoveState::DRAFT)->sum('amount_total_signed')),
                     'formatted_amount' => money($amount),
                 ],
                 'late' => [
@@ -105,11 +112,11 @@ class JournalChartWidget extends Component
                         ->where('payment_state', PaymentState::NOT_PAID)
                         ->where('invoice_date_due', '<', today())
                         ->count(),
-                    'amount' => $amount = (clone $baseQuery)
+                    'amount' => $amount = abs((float) (clone $baseQuery)
                         ->where('state', MoveState::POSTED)
                         ->where('payment_state', PaymentState::NOT_PAID)
                         ->where('invoice_date_due', '<', today())
-                        ->sum('amount_residual'),
+                        ->sum('amount_residual_signed')),
                     'formatted_amount' => money($amount),
                 ],
                 'to_pay' => [
@@ -119,10 +126,10 @@ class JournalChartWidget extends Component
                         ->where('state', MoveState::POSTED)
                         ->whereIn('payment_state', [PaymentState::NOT_PAID, PaymentState::PARTIAL])
                         ->count(),
-                    'amount' => $amount = (clone $baseQuery)
+                    'amount' => $amount = abs((float) (clone $baseQuery)
                         ->where('state', MoveState::POSTED)
                         ->whereIn('payment_state', [PaymentState::NOT_PAID, PaymentState::PARTIAL])
-                        ->sum('amount_residual'),
+                        ->sum('amount_residual_signed')),
                     'formatted_amount' => money($amount),
                 ],
             ];
@@ -139,9 +146,9 @@ class JournalChartWidget extends Component
                     'label'  => 'Payments',
                     'url'    => $this->getUrl('index'),
                     'value'  => null,
-                    'amount' => $amount = (clone $baseQuery)
+                    'amount' => $amount = abs((float) (clone $baseQuery)
                         ->where('state', MoveState::POSTED)
-                        ->sum('amount_total'),
+                        ->sum('amount_total_signed')),
                     'formatted_amount' => money($amount),
                 ],
             ];
@@ -209,7 +216,7 @@ class JournalChartWidget extends Component
             $labels[] = Carbon::parse($week)->format('d M');
 
             foreach ($weekMoves as $move) {
-                $runningBalance += (float) $move->amount_total;
+                $runningBalance += (float) $move->amount_total_signed;
             }
 
             $balances[] = $runningBalance;
@@ -263,10 +270,10 @@ class JournalChartWidget extends Component
             ->where('state', MoveState::POSTED)
             ->whereIn('payment_state', [PaymentState::NOT_PAID, PaymentState::PARTIAL])
             ->where('amount_residual', '>', 0)
-            ->get();
+            ->get(['id', 'invoice_date_due', 'amount_residual_signed']);
 
         foreach ($moves as $move) {
-            $residual = (float) $move->amount_residual;
+            $residual = abs((float) $move->amount_residual_signed);
             $due = Carbon::parse($move->invoice_date_due);
             $isLate = $due->lt(today());
 

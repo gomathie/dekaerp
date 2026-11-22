@@ -39,12 +39,22 @@ class QuotationsTable
                     ->searchable()
                     ->toggleable()
                     ->sortable(),
+                // The business date, shown first (user, 2026-11-22): an order made
+                // from an invoice carries the invoice's date, while created_at is
+                // the day it was entered - a backfilled July sale read "22 Nov".
+                TextColumn::make('date_order')
+                    ->label(__('sales::filament/clusters/orders/resources/quotation.table.columns.order-date'))
+                    ->visibleFrom('md')
+                    ->placeholder('-')
+                    ->date()
+                    ->toggleable()
+                    ->sortable(),
                 TextColumn::make('created_at')
                     ->label(__('sales::filament/clusters/orders/resources/quotation.table.columns.creation-date'))
                     ->visibleFrom('md')
                     ->placeholder('-')
                     ->date()
-                    ->toggleable()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
                 TextColumn::make('partner.name')
                     ->label(__('sales::filament/clusters/orders/resources/quotation.table.columns.customer'))

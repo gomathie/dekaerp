@@ -60,7 +60,7 @@ return [
                     'disabled'        => 'Os convites estão desativados nas configurações de usuários, então :email não foi convidado. Defina uma senha em vez disso, ou ative os convites.',
                     'missing-role'    => 'O papel “Company Admin” não existe nesta instalação, então ninguém pôde ser convidado.',
                     'seats-exhausted' => 'Esta empresa não tem assentos de usuário livres, então :email não foi convidado. Aumente primeiro o limite de assentos.',
-                    'invite-failed'   => 'O convite não pôde ser emitido. O endereço pode já pertencer a um usuário, ou a empresa pode não ser uma que você possa atribuir. Para redefinir a senha de um administrador existente, informe também uma senha.',
+                    'invite-failed'   => 'O convite não pôde ser emitido. O endereço pode já pertencer a um usuário, ou a empresa pode não ser uma que você possa atribuir. Para redefinir a senha de um administrador existente, escolha “Definir uma senha agora”.',
                     'mail-failed'     => 'O convite foi emitido, mas o e-mail não pôde ser enviado. Entregue este link de acesso a :email por um canal confiável — ele expira em 7 dias e a pessoa escolhe a própria senha: :link',
                 ],
             ],

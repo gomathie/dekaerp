@@ -9,6 +9,39 @@ return [
         'inactive'    => 'desativado',
         'manage'      => 'Gerenciar este usuário',
 
+        'status' => [
+            'active'   => 'Ativo',
+            'inactive' => 'Desativado',
+        ],
+
+        'set-password' => [
+            'label'       => 'Definir senha',
+            'heading'     => 'Nova senha para :email',
+            'description' => 'Ela não é enviada por e-mail: entregue-a você mesmo.',
+        ],
+
+        'add' => [
+            'label'                => 'Adicionar administrador',
+            'heading'              => 'Adicionar um administrador',
+            'submit'               => 'Adicionar',
+            'method'               => 'Como a pessoa deve obter acesso?',
+            'invite'               => 'Enviar um convite',
+            'invite-description'   => 'A pessoa recebe um e-mail e escolhe a própria senha.',
+            'password'             => 'Definir uma senha agora',
+            'password-description' => 'Para quando o e-mail não chega ou o cliente liga. Também redefine a senha de alguém que já está nesta empresa.',
+        ],
+
+        'invitation' => [
+            'waiting'          => 'Convite enviado, ainda não aceito',
+            'pending'          => 'Pendente',
+            'expires'          => 'Pendente até :date',
+            'resend'           => 'Reenviar',
+            'copy-link'        => 'Copiar link',
+            'copy-heading'     => 'Link de acesso para :email',
+            'copy-description' => 'Qualquer pessoa com este link pode configurar esta conta de administrador. Envie-o apenas para ela, por um canal de confiança.',
+            'link'             => 'Link',
+        ],
+
         'fields' => [
             'email'                => 'E-mail do administrador',
             'email-helper'         => 'Sem senha, um convite é enviado para este endereço e a pessoa escolhe a própria senha. Deixe em branco para convidar o e-mail da empresa.',

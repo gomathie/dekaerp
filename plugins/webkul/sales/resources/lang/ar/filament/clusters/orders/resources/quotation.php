@@ -205,6 +205,7 @@ return [
             'status'             => 'الحالة',
             'delivery-status'    => 'حالة التسليم',
             'invoice-status'     => 'حالة الفاتورة',
+            'order-date'         => 'تاريخ الطلب',
             'creation-date'      => 'تاريخ الإنشاء',
             'commitment-date'    => 'تاريخ الالتزام',
             'expected-date'      => 'التاريخ المتوقع',

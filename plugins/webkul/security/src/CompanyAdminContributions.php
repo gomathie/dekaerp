@@ -5,16 +5,13 @@ namespace Webkul\Security;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Password;
-use Webkul\Security\Filament\Resources\UserResource;
-use Webkul\Security\Models\Invitation;
+use Webkul\Security\Filament\Resources\CompanyResource\Schemas\AdministratorPanel;
 use Webkul\Security\Models\User;
-use Webkul\Security\Services\CompanyAdministratorAccount;
 use Webkul\Support\Filament\Resources\CompanyResource\Support\CompanySchemaRegistry;
 use Webkul\Support\Models\Company;
 
@@ -63,26 +60,28 @@ class CompanyAdminContributions
             ->description(__('security::filament/contributions/company.administrator.description'))
             ->icon('heroicon-o-shield-check')
             ->visible(fn (): bool => static::administersInstallation())
+            ->key('companyAdministratorSection', isInheritable: false)
+            // Edit and view (user, 2026-11-22, A + B + C): a row per
+            // administrator with its own actions, "Add administrator" here,
+            // and pending invitations with Resend and Copy link. Supersedes
+            // the 2026-11-03 email and password fields on edit, whose action
+            // depended on which of them was filled.
+            ->afterHeader([AdministratorPanel::addAction()])
             ->schema([
-                Text::make(fn (?Company $record): HtmlString => static::administratorSummary($record))
+                Group::make(fn (?Company $record): array => AdministratorPanel::rows($record))
                     ->visibleOn(['edit', 'view']),
 
-                // On edit too since 2026-11-03 (user): an existing company had no
-                // way to get an administrator, because this field only existed
-                // on create. None of these is a company column: the create and
-                // edit pages read them from the form state.
+                // Create only. None of these is a company column: the create
+                // page reads them from the form state.
                 TextInput::make('administrator_email')
                     ->label(__('security::filament/contributions/company.administrator.fields.email'))
-                    ->helperText(fn (string $operation): string => __($operation === 'create'
-                        ? 'security::filament/contributions/company.administrator.fields.email-helper'
-                        : 'security::filament/contributions/company.administrator.fields.email-helper-edit'))
+                    ->helperText(__('security::filament/contributions/company.administrator.fields.email-helper'))
                     ->email()
                     ->maxLength(255)
-                    ->visibleOn(['create', 'edit'])
+                    ->visibleOn('create')
                     ->dehydrated(false)
-                    // Only create falls back to the company's address. On edit a
-                    // blank field means "no change", or every save would invite.
-                    ->placeholder(fn (Get $get, string $operation): ?string => $operation === 'create' ? (string) $get('email') : null)
+                    // Create falls back to the company's address.
+                    ->placeholder(fn (Get $get): string => (string) $get('email'))
                     ->requiredWith('administrator_password'),
 
                 // Clients phone DEKA to have their administrator's password set
@@ -96,7 +95,7 @@ class CompanyAdminContributions
                     ->revealable()
                     ->rule(Password::default())
                     ->maxLength(255)
-                    ->visibleOn(['create', 'edit'])
+                    ->visibleOn('create')
                     ->dehydrated(false)
                     ->live(onBlur: true),
 
@@ -116,7 +115,7 @@ class CompanyAdminContributions
                 Toggle::make('administrator_must_change_password')
                     ->label(__('security::filament/contributions/company.administrator.fields.must-change-password'))
                     ->default(true)
-                    ->visible(fn (Get $get, string $operation): bool => in_array($operation, ['create', 'edit'], true)
+                    ->visible(fn (Get $get, string $operation): bool => $operation === 'create'
                         && filled($get('administrator_password')))
                     ->dehydrated(false),
             ])
@@ -182,81 +181,6 @@ class CompanyAdminContributions
                     ->visible(fn (Get $get): bool => $get('account_type') === 'test'),
             ])
             ->columns(1);
-    }
-
-    /**
-     * Who administers this company today.
-     *
-     * Read past the global scopes: Users are company-scoped and ownership
-     * scoped, so a scoped read would quietly show nothing for exactly the
-     * support case this section exists to serve.
-     */
-    protected static function administratorSummary(?Company $record): HtmlString
-    {
-        if (! $record instanceof Company || ! $record->exists) {
-            return new HtmlString(e(__('security::filament/contributions/company.administrator.none')));
-        }
-
-        // One definition of "administers this company", shared with the
-        // password reset, which must refuse anyone this list does not show.
-        $admins = app(CompanyAdministratorAccount::class)->administrators($record);
-
-        $lines = [];
-
-        foreach ($admins as $admin) {
-            $lines[] = sprintf(
-                '<li><strong>%s</strong> &mdash; %s%s<br><a href="%s" class="fi-link" target="_blank">%s</a></li>',
-                e($admin->name),
-                e($admin->email),
-                $admin->is_active
-                    ? ''
-                    : ' <em>('.e(__('security::filament/contributions/company.administrator.inactive')).')</em>',
-                e(static::userEditUrl($admin)),
-                e(__('security::filament/contributions/company.administrator.manage')),
-            );
-        }
-
-        // An invitation nobody has accepted yet is the normal state for a
-        // company created moments ago, and the support question it answers -
-        // "why can nobody sign in?" - is the whole point of showing it.
-        //
-        // Since SAAS-06 the row survives acceptance (so the history is
-        // answerable and a seat count has something to count), which means
-        // "a row exists" is no longer the same as "still pending": the scope is
-        // what says it.
-        $pending = Invitation::query()
-            ->where('default_company_id', $record->getKey())
-            ->pending()
-            ->orderBy('id')
-            ->pluck('email');
-
-        foreach ($pending as $email) {
-            $lines[] = sprintf(
-                '<li>%s &mdash; <em>%s</em></li>',
-                e($email),
-                e(__('security::filament/contributions/company.administrator.pending')),
-            );
-        }
-
-        if ($lines === []) {
-            return new HtmlString(e(__('security::filament/contributions/company.administrator.none')));
-        }
-
-        return new HtmlString('<ul class="fi-list">'.implode('', $lines).'</ul>');
-    }
-
-    /**
-     * A direct link to the user, for everything about them except the password.
-     *
-     * *Superseded in part 2026-11-03 (user):* this used to be the only way to
-     * change an administrator's password, on the grounds that credential
-     * handling should have one implementation. The company form now sets it
-     * too, through CompanyAdministratorAccount, which uses the same password
-     * rule and must-change flag as the Users page.
-     */
-    protected static function userEditUrl(User $user): string
-    {
-        return UserResource::getUrl('edit', ['record' => $user->getKey()]);
     }
 
     /**

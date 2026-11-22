@@ -60,7 +60,7 @@ return [
                     'disabled'        => 'Les invitations sont désactivées dans les paramètres des utilisateurs : :email n’a donc pas été invité. Définissez plutôt un mot de passe, ou activez les invitations.',
                     'missing-role'    => 'Le rôle « Company Admin » n’existe pas dans cette installation : personne n’a pu être invité.',
                     'seats-exhausted' => 'Cette société n’a plus de siège utilisateur disponible : :email n’a donc pas été invité. Augmentez d’abord la limite de sièges.',
-                    'invite-failed'   => 'L’invitation n’a pas pu être émise. L’adresse appartient peut-être déjà à un utilisateur, ou la société ne fait pas partie de celles que vous pouvez attribuer. Pour réinitialiser le mot de passe d’un administrateur existant, saisissez aussi un mot de passe.',
+                    'invite-failed'   => 'L’invitation n’a pas pu être émise. L’adresse appartient peut-être déjà à un utilisateur, ou la société ne fait pas partie de celles que vous pouvez attribuer. Pour réinitialiser le mot de passe d’un administrateur existant, choisissez plutôt « Définir un mot de passe maintenant ».',
                     'mail-failed'     => 'L’invitation a été émise, mais l’e-mail n’a pas pu être envoyé. Transmettez ce lien de connexion à :email par un canal de confiance — il expire dans 7 jours et la personne choisit son propre mot de passe : :link',
                 ],
             ],

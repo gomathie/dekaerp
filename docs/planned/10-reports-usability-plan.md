@@ -1,7 +1,10 @@
 # Reports and payment flow usability
 
-Status: planned (user, 2026-11-19). Not started. Raised while TRACE365 used
-the system; TRACE365 items ship as hotfixes or simplifications.
+Status: planned (user, 2026-11-19). *Superseded 2026-11-22: "Not started".*
+Partly done: R-1 decided (names kept), R-6 shipped in v1.13.1, R-3 partly
+built ("Paid now" and payment methods named by how they were paid, v1.13.0;
+"New direct sale" on develop). Open: R-2, R-4, R-5. Raised while TRACE365
+used the system; TRACE365 items ship as hotfixes or simplifications.
 
 ## R-1 Plain report names
 

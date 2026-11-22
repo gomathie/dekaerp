@@ -37,6 +37,8 @@ class BillStatsWidget extends BaseWidget
                 fn (?Carbon $start, ?Carbon $end): Builder => $this->scope($start, $end),
                 money: true,
                 abs: true,
+                // Costs: a rise is shown red (D-DB-2).
+                lowerIsBetter: true,
             ),
             $this->buildStat(
                 __('invoices::filament/widgets/invoice-dashboard.bill-stats.count'),
@@ -55,6 +57,7 @@ class BillStatsWidget extends BaseWidget
                 'heroicon-o-exclamation-circle',
                 'danger',
                 fn (?Carbon $start, ?Carbon $end): Builder => $this->stateScope('not_paid', $start, $end),
+                lowerIsBetter: true,
             ),
         ];
     }

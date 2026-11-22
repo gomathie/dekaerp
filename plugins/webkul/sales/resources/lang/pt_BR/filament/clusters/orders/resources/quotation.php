@@ -205,6 +205,7 @@ return [
             'status'             => 'Status',
             'delivery-status'    => 'Status da entrega',
             'invoice-status'     => 'Status da fatura',
+            'order-date'         => 'Data do pedido',
             'creation-date'      => 'Data de criação',
             'commitment-date'    => 'Data de compromisso',
             'expected-date'      => 'Data esperada',

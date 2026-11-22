@@ -10,6 +10,25 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.16.0 — 2026-11-22
+
+### Features
+
+- "New direct sale" on Invoices and on Sales → Orders: a counter sale in one save. The invoice opens with Walk-in Customer, "Paid now", the sales order and "Customer has taken the goods" already set; change anything before saving.
+- "Print receipt" on a confirmed invoice prints a till-style receipt with the items, total and amount paid.
+- Exchange rates now update by themselves every day, for every active currency and every company. A rate you enter for a day is kept.
+
+### Improvements
+
+- The company page's Administrator section lists each administrator with Set password and Manage buttons, has an "Add administrator" button that sends an invitation or sets a password, and shows invitations still waiting with Resend and Copy link.
+- Sales Orders and Quotations open on all records instead of only your own, and the list shows the order date.
+- Dashboard trends are honest: a figure with nothing before it says "New" instead of "+100%", a small number shows the real change ("+3"), and for costs and unpaid bills a rise is shown in red.
+
+### Fixes
+
+- Creating an invoice with "Paid now" but no lines shows a message instead of an error page.
+- The Accounting journal cards (To Validate, Late, To Pay and the chart) add amounts in your company's currency. A company invoicing in dollars and its local currency saw the two added together.
+
 # CHANGELOG — v1.15.0 — 2026-11-22
 
 ### Features

@@ -2,6 +2,7 @@
 
 namespace Webkul\Account\Filament\Resources\InvoiceResource\Pages;
 
+use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
@@ -80,8 +81,28 @@ class ListInvoices extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            // "New direct sale" (user, 2026-11-22): the same invoice form,
+            // opened with the walk-in customer, "Paid now" and (with Sales)
+            // the order and delivery boxes already set.
+            Action::make('newDirectSale')
+                ->label(__('accounts::filament/resources/invoice/pages/create-invoice.direct-sale.button'))
+                ->icon('heroicon-o-banknotes')
+                ->color('gray')
+                ->visible(fn (): bool => static::offersDirectSale() && static::getResource()::canCreate())
+                ->url(fn (): string => static::getResource()::getUrl('create', ['direct_sale' => 1])),
             CreateAction::make()
                 ->icon('heroicon-o-plus-circle'),
         ];
+    }
+
+    /**
+     * Customer invoices only: credit notes and refunds reuse this list, and a
+     * direct sale is never one of those.
+     */
+    protected static function offersDirectSale(): bool
+    {
+        $create = static::getResource()::getPages()['create'] ?? null;
+
+        return $create !== null && is_a($create->getPage(), CreateInvoice::class, true);
     }
 }

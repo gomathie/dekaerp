@@ -1435,7 +1435,7 @@ DOCUMENTATION AND UPSTREAM REVIEW (ALL AGENTS)
   earlier "eight still open" wording predated the 2026-10-22 work. Consult the
   register when working in an affected plugin, and update a finding's Local state
   when you touch one.
-• `docs/planned/03-restructure-backlog.md` is the resource-restructure analysis: which
+• `docs/completed/restructure-backlog.md` is the resource-restructure analysis: which
   resources adopt upstream's split layout mechanically and which carry local
   changes that must be moved by hand.
 • When you do review upstream, tell the user what is new, whether DEKA ERP needs
@@ -1651,6 +1651,13 @@ log named):
   - The password is **never emailed**. The person who sets it hands it over.
   - On edit, a blank email does nothing. Only create falls back to the
     company's address, or every save would invite the company mailbox.
+    *Superseded in part 2026-11-22 (user, options A + B + C):* the edit page
+    no longer has those fields and saving never invites or resets. Edit and
+    view list each administrator (Set password, Manage), offer "Add
+    administrator" (invite, or set a password now) and pending invitations
+    (Resend, Copy link), all in `AdministratorPanel`, all through the same
+    two services. Copy link is read on demand through `pendingLink()`; never
+    render a sign-in link into the page.
   - Tests: `security/tests/Feature/Authorization/CompanyAdministratorPasswordTest.php`.
   - Security's `CompanyResource` alone owns `/admin/companies` (2026-11-11).
     Support's base sets `$isDiscovered = false`. With both discovered, Support's
@@ -2186,7 +2193,7 @@ REFERENCES
   landing page, restructure backlog, rebrand. *Updated 2026-11-15:*
   accounting and reports are finished and in `docs/completed/` (both kept
   lean on the user's instruction: fill real gaps, no overkill).
-• docs/planned/03-restructure-backlog.md — deferred upstream restructures.
+• docs/completed/restructure-backlog.md — deferred upstream restructures.
 • Package F, resource structure alignment — the plan lives on the
   `chore/resource-structure` branch, not on main:
   `git show chore/resource-structure:docs/upstream-structure-alignment-plan.md`.
