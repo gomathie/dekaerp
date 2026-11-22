@@ -15,5 +15,6 @@ return [
 
     'trend' => [
         'new' => 'Nouveau',
+        'vs'  => 'vs :range',
     ],
 ];

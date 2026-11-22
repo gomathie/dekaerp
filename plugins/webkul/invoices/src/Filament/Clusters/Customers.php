@@ -33,6 +33,16 @@ class Customers extends Cluster
         return static::shownUnderSales() ? NavigationGroup::Sale : NavigationGroup::Invoice;
     }
 
+    /**
+     * After Orders and To Invoice under Sales (v1.16.2, 2026-11-22). Without a
+     * position it came first, and the sidebar "Sales" link, which opens the
+     * group's first tab, landed on Invoices instead of Orders.
+     */
+    public static function getNavigationSort(): ?int
+    {
+        return static::shownUnderSales() ? 0 : null;
+    }
+
     public static function canAccess(): bool
     {
         return PluginEntitlement::enabledForCurrent('invoices');

@@ -6,6 +6,21 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-22, v1.16.2: Sales/Purchase menu opens Orders again; dashboard trend captions
+
+- **Why:** the v1.16.1 production check found the moved Invoices and Bills
+  clusters first in their groups (no navigation position; they register
+  before Sales/Purchases), so the sidebar Sales and Purchase links, which open
+  the group's first tab, landed on Invoices and Bills.
+- **How:** invoices `Customers::getNavigationSort()` is 0 under Sales (after
+  Orders and To Invoice, which have none) and `Vendors` is 3 under Purchase
+  (after Orders and Products). Dashboard plan DB-1: every trend caption names
+  its comparison period (`HasDashboardMetrics::baselineLabel()`, also passed
+  by Purchases' own tiles); top customers' count column reads "Sales".
+- **Verification:** see the handoff (sales `PluginEntitlementTest`, support
+  `DashboardMetricsTest`, Sales and Purchases dashboard tests).
+- **Rollback:** revert; no migration.
+
 ## 2026-11-22, v1.16.1: Bills tab fix, customer Invoices tab, invoices in the Sales menu, faster permission checks
 
 - **Why:** UF-028 (upstream dd55acdc3): the contact Bills tab listed every

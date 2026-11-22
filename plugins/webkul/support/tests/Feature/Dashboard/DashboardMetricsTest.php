@@ -123,3 +123,13 @@ it('builds the daily series from one grouped query within the active company', f
     expect($series)->toBe([2.0, 0.0, 1.0, 0.0])
         ->and($queries)->toHaveCount(1);
 });
+
+/**
+ * DB-1 (2026-11-22): each trend names the period it compares with. March's
+ * 31 days compare with the 31 days before.
+ */
+it('names the period a trend is compared with', function () {
+    $host = dashboardMetricsHost(['start_date' => '2026-03-01', 'end_date' => '2026-03-31']);
+
+    expect($host->call('baselineLabel'))->toBe('29 Jan – 28 Feb');
+});

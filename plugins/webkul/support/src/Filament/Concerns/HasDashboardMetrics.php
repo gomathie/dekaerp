@@ -58,7 +58,7 @@ trait HasDashboardMetrics
 
         $title = $money ? money($current, $this->dashboardCurrency()) : null;
 
-        return $this->themedStat($label, $icon, $color, $value, $current, $previous, $series, $title, $lowerIsBetter, $previousRecords, $money);
+        return $this->themedStat($label, $icon, $color, $value, $current, $previous, $series, $title, $lowerIsBetter, $previousRecords, $money, $this->baselineLabel());
     }
 
     protected function aggregate(Builder $query, bool $money): float
@@ -149,6 +149,14 @@ trait HasDashboardMetrics
         $previousEnd = (clone $start)->subDay()->endOfDay();
 
         return [(clone $previousEnd)->subDays($length - 1)->startOfDay(), $previousEnd];
+    }
+
+    /** The period a trend compares with, for example "1 Oct – 31 Oct" (DB-1). */
+    protected function baselineLabel(): string
+    {
+        [$start, $end] = $this->previousPeriodRange();
+
+        return $start->translatedFormat('j M').' – '.$end->translatedFormat('j M');
     }
 
     protected function dashboardCurrency(): ?string

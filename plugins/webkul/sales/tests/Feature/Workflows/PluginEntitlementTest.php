@@ -60,7 +60,11 @@ it('shows invoices under sales only while the company has sales', function (): v
     CompanyHelper::setActive([$company->getKey()]);
 
     expect(Customers::getNavigationGroup())->toBe(NavigationGroup::Sale)
-        ->and(Customers::getNavigationLabel())->toBe(__('invoices::filament/clusters/customers.navigation.in-sales'));
+        ->and(Customers::getNavigationLabel())->toBe(__('invoices::filament/clusters/customers.navigation.in-sales'))
+        // v1.16.2: placed after Orders and To Invoice (which have no
+        // position), so the sidebar "Sales" link still opens Orders.
+        ->and(Customers::getNavigationSort())->toBe(0)
+        ->and(Orders::getNavigationSort())->toBeNull();
 
     setSalesEntitlement($company, false);
 
