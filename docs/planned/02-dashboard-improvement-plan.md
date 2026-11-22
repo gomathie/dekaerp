@@ -69,7 +69,7 @@ invoices are posted `out_invoice` only, bills posted `in_invoice` only.
 | `BillStatsWidget` | Same for bills | posted in_invoice, abs | Same two gaps (refunds, partial). Lower-is-better now applied (DB-1). |
 | `InvoiceHeadlineWidget` | Paid, overdue, due | signed paid total; residual signed for overdue and due | OK on currency. |
 | `InvoiceStatusChart` | Totals by payment state | `amount_total_signed` grouped by state | OK. |
-| `RevenueOverTimeWidget` | Revenue per day | `dailyBuckets` of **paid** invoices | Named revenue but counts only paid invoices, so it disagrees with the invoiced total beside it (DB-2). |
+| `RevenueOverTimeWidget` | Revenue per day | `dailyBuckets` of **paid** invoices | *Corrected 2026-11-22:* labelled "Paid customer invoices per day", so it is a cash view, not a disagreement; kept as is. |
 | `CustomerRevenueChart`, `SalespersonPerformanceChart` | Who bills most | `amount_total_signed` | OK. |
 | `TopInvoicesWidget`, `TopBillsWidget` | Largest documents | ordered by signed total, shows `amount_total` in the document currency | Display in the document currency is right (DB-7 rule 2); no gap. |
 | `OverviewCashFlowChart` | Money in and out | payments, `amount_company_currency_signed`, by payment date | "This period" ends yesterday (noted under DB-8); polls 300 s, as required. |
@@ -127,6 +127,15 @@ table's rows, for the same filter. Fix any mismatch at its query, sharing
 one query where two widgets compute the same figure. Invoices, then Sales,
 Purchases, Accounting, Logistics.
 
+
+*Progress 2026-11-22 (develop):* Invoices and Bills money totals are net of
+credit notes and vendor refunds (`customerInvoicesNet()` /
+`vendorBillsNet()`; counts stay invoices only), and "Unpaid" includes partly
+paid (`unpaidOnly()`). Top quotations rank by company-currency value (DB-7).
+Test: invoices `InvoiceDashboardTest` "deducts credit notes from the
+invoiced total and counts partly paid as unpaid", sales `SalesDashboardTest`
+"ranks top quotations by their value in the company currency". Still open:
+the shared two-company fixture and tile = chart = table tests per module.
 ### DB-3 States
 
 - Empty charts and tables get one action (U13: "Create a quotation", "Record
@@ -134,6 +143,14 @@ Purchases, Accounting, Logistics.
 - Module off or no permission: the widget is absent, never an empty frame.
 - No zero flash while loading.
 
+
+*Progress 2026-11-22 (develop):* empty top lists (quotations, sales orders,
+invoices, bills, RFQs) say "Nothing in this period yet" and offer the one
+next step, shown only to someone whose resource `canCreate()` allows it
+(`Support\Filament\Concerns\HasDashboardEmptyState`; test sales
+`SalesDashboardTest` "offers the next step on an empty list only to users
+who may take it"). Charts already had their empty message. Still open: no
+zero flash while loading, and widget-absent checks per module.
 ### DB-4 Hierarchy, dashboard by dashboard
 
 Overview first, then Invoices, Sales, Purchases: filters and period visible
@@ -182,6 +199,15 @@ chart; pinned by accounting `JournalChartCurrencyTest` (a USD invoice of 100
 at 15.5 plus a local 50 gives 1,600, not 150). The SMS listener sum is still
 open. Exchange rates now arrive daily (`currencies:sync-rates`), which rule 5
 below relies on.
+
+*Progress 2026-11-22 (develop):* rule 3 for money to collect and pay:
+the Overview "To collect" / "To pay" tiles add the split by currency when
+more than one is open ("2 overdue · $9.8K · GH₵61K",
+`InvoiceHeadlineWidget::withCurrencySplit()`), and an open-invoice row in a
+foreign currency shows its own amount and code. Test: invoices
+`InvoiceDashboardTest` "splits money to collect by currency and shows a
+foreign debt in its own currency". Still open: cash and bank per account
+currency (rule 4), revenue split, missing-rate "—" (rule 5), "Show in USD".
 
 **The rules for every money figure:**
 
@@ -238,7 +264,7 @@ paid. Decided:
 
   An invoice made from an order is still counted once, through its order.
   The rule lives in one place: `Webkul\Sale\Support\DirectInvoices`.
-- Still open: the "Recent invoices" view inside Sales, and the guide wording.
+- *Done 2026-11-22 (v1.16.1):* invoices sit inside Sales as an "Invoices" tab, which is the "Recent invoices" view this asked for. Still open: the guide wording.
 - Still open: the top-customers count column, labelled "Orders", now also
   counts direct invoices. Rename it ("Sales") with DB-1.
 

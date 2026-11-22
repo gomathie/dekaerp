@@ -3,21 +3,23 @@
 namespace Webkul\Sale\Filament\Widgets;
 
 use BackedEnum;
-use Webkul\Sale\Filament\Widgets\Concerns\GuardsSaleDashboardWidget;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
-use Webkul\Sale\Filament\Clusters\Orders\Resources\OrderResource;
 use Webkul\Account\Enums\MoveType;
+use Webkul\Sale\Filament\Clusters\Orders\Resources\OrderResource;
+use Webkul\Sale\Filament\Widgets\Concerns\GuardsSaleDashboardWidget;
 use Webkul\Sale\Filament\Widgets\Concerns\HasSaleDashboardFilters;
 use Webkul\Sale\Models\Order;
+use Webkul\Support\Filament\Concerns\HasDashboardEmptyState;
 
 class TopSalesOrdersTable extends TableWidget
 {
-    use HasSaleDashboardFilters, GuardsSaleDashboardWidget;
+    use GuardsSaleDashboardWidget, HasSaleDashboardFilters;
+    use HasDashboardEmptyState;
 
     protected static ?int $sort = 5;
 
@@ -25,7 +27,8 @@ class TopSalesOrdersTable extends TableWidget
 
     public function table(Table $table): Table
     {
-        return $table
+        // DB-3 (2026-11-22): an empty list offers the one next step.
+        return $this->withDashboardEmptyState($table, 'order', OrderResource::canCreate() ? OrderResource::getUrl('create') : null)
             ->defaultKeySort(false)
             ->recordClasses('dashboard-table-row')
             // Invoice rows carry a negative id and are not orders: no order link.
@@ -61,7 +64,7 @@ class TopSalesOrdersTable extends TableWidget
         $invoices = $invoices
             ->where($invoices->qualifyColumn('move_type'), MoveType::OUT_INVOICE)
             ->toBase()
-            ->selectRaw("-accounts_account_moves.id as id, accounts_account_moves.name as name, accounts_account_moves.partner_id as partner_id, "
+            ->selectRaw('-accounts_account_moves.id as id, accounts_account_moves.name as name, accounts_account_moves.partner_id as partner_id, '
                 ."NULL as delivery_status, 'invoiced' as invoice_status, accounts_account_moves.amount_total_signed as amount_total");
 
         return Order::query()

@@ -68,6 +68,7 @@ class SaleStatsOverview extends DashboardStatsWidget
                 $quotations,
                 $previousQuotations,
                 $this->trendData($this->quotations(), 'COUNT', '*', $start, $end),
+                baseline: $this->baselineLabel(),
             ),
             $this->themedStat(
                 __('sales::filament/widgets/sales-dashboard.stats.total-sales-orders'),
@@ -77,6 +78,7 @@ class SaleStatsOverview extends DashboardStatsWidget
                 $orders,
                 $previousOrders,
                 $orderCountSeries,
+                baseline: $this->baselineLabel(),
             ),
             $this->themedStat(
                 __('sales::filament/widgets/sales-dashboard.stats.total-revenue'),
@@ -87,6 +89,9 @@ class SaleStatsOverview extends DashboardStatsWidget
                 $previousRevenue,
                 $revenueSeries,
                 money($revenue, $currency),
+                previousRecords: (float) $previousOrders,
+                money: true,
+                baseline: $this->baselineLabel(),
             ),
             $this->themedStat(
                 __('sales::filament/widgets/sales-dashboard.stats.average-revenue'),
@@ -97,6 +102,9 @@ class SaleStatsOverview extends DashboardStatsWidget
                 $previousAverage,
                 $averageSeries,
                 money($average, $currency),
+                previousRecords: (float) $previousOrders,
+                money: true,
+                baseline: $this->baselineLabel(),
             ),
         ];
     }

@@ -151,14 +151,6 @@ trait HasDashboardMetrics
         return [(clone $previousEnd)->subDays($length - 1)->startOfDay(), $previousEnd];
     }
 
-    /** The period a trend compares with, for example "1 Oct – 31 Oct" (DB-1). */
-    protected function baselineLabel(): string
-    {
-        [$start, $end] = $this->previousPeriodRange();
-
-        return $start->translatedFormat('j M').' – '.$end->translatedFormat('j M');
-    }
-
     protected function dashboardCurrency(): ?string
     {
         return current_company()?->currency?->name;

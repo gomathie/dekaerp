@@ -34,7 +34,7 @@ class InvoiceStatsWidget extends BaseWidget
                 __('invoices::filament/widgets/invoice-dashboard.invoice-stats.total'),
                 'heroicon-o-currency-dollar',
                 'primary',
-                fn (?Carbon $start, ?Carbon $end): Builder => $this->scope($start, $end),
+                fn (?Carbon $start, ?Carbon $end): Builder => $this->customerInvoicesNet($start, $end),
                 money: true,
             ),
             $this->buildStat(
@@ -53,7 +53,7 @@ class InvoiceStatsWidget extends BaseWidget
                 __('invoices::filament/widgets/invoice-dashboard.invoice-stats.unpaid'),
                 'heroicon-o-exclamation-circle',
                 'warning',
-                fn (?Carbon $start, ?Carbon $end): Builder => $this->stateScope('not_paid', $start, $end),
+                fn (?Carbon $start, ?Carbon $end): Builder => $this->unpaidOnly($this->scope($start, $end)),
             ),
         ];
     }

@@ -34,7 +34,7 @@ class BillStatsWidget extends BaseWidget
                 __('invoices::filament/widgets/invoice-dashboard.bill-stats.total'),
                 'heroicon-o-currency-dollar',
                 'info',
-                fn (?Carbon $start, ?Carbon $end): Builder => $this->scope($start, $end),
+                fn (?Carbon $start, ?Carbon $end): Builder => $this->vendorBillsNet($start, $end),
                 money: true,
                 abs: true,
                 // Costs: a rise is shown red (D-DB-2).
@@ -56,7 +56,7 @@ class BillStatsWidget extends BaseWidget
                 __('invoices::filament/widgets/invoice-dashboard.bill-stats.unpaid'),
                 'heroicon-o-exclamation-circle',
                 'danger',
-                fn (?Carbon $start, ?Carbon $end): Builder => $this->stateScope('not_paid', $start, $end),
+                fn (?Carbon $start, ?Carbon $end): Builder => $this->unpaidOnly($this->scope($start, $end)),
                 lowerIsBetter: true,
             ),
         ];

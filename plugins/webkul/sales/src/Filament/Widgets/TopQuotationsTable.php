@@ -3,7 +3,6 @@
 namespace Webkul\Sale\Filament\Widgets;
 
 use BackedEnum;
-use Webkul\Sale\Filament\Widgets\Concerns\GuardsSaleDashboardWidget;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -11,11 +10,14 @@ use Filament\Widgets\TableWidget;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource;
+use Webkul\Sale\Filament\Widgets\Concerns\GuardsSaleDashboardWidget;
 use Webkul\Sale\Filament\Widgets\Concerns\HasSaleDashboardFilters;
+use Webkul\Support\Filament\Concerns\HasDashboardEmptyState;
 
 class TopQuotationsTable extends TableWidget
 {
-    use HasSaleDashboardFilters, GuardsSaleDashboardWidget;
+    use GuardsSaleDashboardWidget, HasSaleDashboardFilters;
+    use HasDashboardEmptyState;
 
     protected static ?int $sort = 8;
 
@@ -23,7 +25,8 @@ class TopQuotationsTable extends TableWidget
 
     public function table(Table $table): Table
     {
-        return $table
+        // DB-3 (2026-11-22): an empty list offers the one next step.
+        return $this->withDashboardEmptyState($table, 'quotation', QuotationResource::canCreate() ? QuotationResource::getUrl('create') : null)
             ->defaultKeySort(false)
             ->recordClasses('dashboard-table-row')
             ->recordUrl(fn ($record): ?string => QuotationResource::canAccess()
@@ -46,7 +49,11 @@ class TopQuotationsTable extends TableWidget
         return $this->quotations()
             ->with(['partner', 'currency'])
             ->where('amount_total', '>', 0)
-            ->orderByDesc('amount_total')
+            // Ranked by company-currency value (dashboard plan DB-7,
+            // 2026-11-22), the conversion the other Sales widgets use. Ranked
+            // by own currency, a USD quotation sat below a smaller-looking
+            // cedi one. Each row still shows its own currency.
+            ->orderByRaw('CASE WHEN sales_orders.currency_rate > 0 THEN sales_orders.amount_total / sales_orders.currency_rate ELSE sales_orders.amount_total END DESC')
             ->limit(5);
     }
 

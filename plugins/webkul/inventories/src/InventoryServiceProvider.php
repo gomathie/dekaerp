@@ -223,11 +223,22 @@ class InventoryServiceProvider extends PackageServiceProvider
         Product::observe(ProductObserver::class);
     }
 
+    /**
+     * Registered once: schema registries are static and packageBooted() runs
+     * more than once (install flow, test bootstrapper). Unguarded, the
+     * product form carried the Inventory section about 100 times in a long
+     * test run, and structure snapshots recorded it (found 2026-11-22, with
+     * the same gap in AccountServiceProvider). Users never saw it.
+     */
+    protected static bool $productSchemaContributed = false;
+
     protected function contributeProductSchema(): void
     {
-        if (! Package::isPluginInstalled(static::$name)) {
+        if (static::$productSchemaContributed || ! Package::isPluginInstalled(static::$name)) {
             return;
         }
+
+        static::$productSchemaContributed = true;
 
         ProductSchemaRegistry::form('left.inventory', fn () => InventoryProductSchema::formSection());
 
