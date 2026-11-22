@@ -9,9 +9,9 @@ trait BuildsDashboardStats
     /**
      * @param  list<float>  $series
      */
-    protected function themedStat(string $label, string $icon, string $color, string $value, float $current, float $previous, array $series = [], ?string $title = null): Stat
+    protected function themedStat(string $label, string $icon, string $color, string $value, float $current, float $previous, array $series = [], ?string $title = null, bool $lowerIsBetter = false, ?float $previousRecords = null, bool $money = false): Stat
     {
-        [$description, $descriptionIcon, $trendColor] = $this->statTrend($current, $previous);
+        [$description, $descriptionIcon, $trendColor] = $this->statTrend($current, $previous, $lowerIsBetter, $previousRecords, $money);
 
         $attributes = [
             'class' => 'dashboard-stat dashboard-stat--'.$color,

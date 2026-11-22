@@ -72,7 +72,8 @@ class PurchaseStatsWidget extends DashboardStatsWidget
 
         $series = $this->trendSeries($states, $money ? 'sum' : 'count', $money ? 'total_cc_amount' : null);
 
-        return $this->themedStat($label, $icon, $color, $value, $current, $previous, $series);
+        // Purchase value is a cost: a rise is shown red (D-DB-2).
+        return $this->themedStat($label, $icon, $color, $value, $current, $previous, $series, lowerIsBetter: $money, money: $money);
     }
 
     /**

@@ -40,14 +40,36 @@ it('reports no change when both periods are empty', function () {
         ->toBe(['0%', 'heroicon-m-minus', 'gray']);
 });
 
-it('reports a full increase when the previous period was empty', function () {
+/**
+ * Inverted 2026-11-22 (dashboard plan DB-1, D-DB-1): this used to pin "+100%"
+ * in green, which made a first sale look like a doubling. An empty previous
+ * period is now "New", neutral.
+ */
+it('reports a new figure, neutrally, when the previous period was empty', function () {
     expect(dashboardMetricsHost()->call('statTrend', 5.0, 0.0))
-        ->toBe(['100%', 'heroicon-m-arrow-trending-up', 'success']);
+        ->toBe([__('support::support.trend.new'), 'heroicon-m-sparkles', 'gray']);
 });
 
 it('reports a drop as a negative trend with its percentage', function () {
     expect(dashboardMetricsHost()->call('statTrend', 75.0, 100.0))
         ->toBe(['25%', 'heroicon-m-arrow-trending-down', 'danger']);
+});
+
+it('shows the real change, neutrally, on a base of fewer than five records', function () {
+    expect(dashboardMetricsHost()->call('statTrend', 5.0, 2.0))
+        ->toBe(['+3', 'heroicon-m-arrow-trending-up', 'gray'])
+        // A money figure with a small record count says so explicitly.
+        ->and(dashboardMetricsHost()->call('statTrend', 900.0, 300.0, false, 2.0, true)[2])->toBe('gray')
+        // Without a record count, money keeps the percentage rule.
+        ->and(dashboardMetricsHost()->call('statTrend', 900.0, 300.0, false, null, true))
+        ->toBe(['200%', 'heroicon-m-arrow-trending-up', 'success']);
+});
+
+it('colours a rise red and a fall green when lower is better', function () {
+    expect(dashboardMetricsHost()->call('statTrend', 120.0, 100.0, true))
+        ->toBe(['20%', 'heroicon-m-arrow-trending-up', 'danger'])
+        ->and(dashboardMetricsHost()->call('statTrend', 80.0, 100.0, true))
+        ->toBe(['20%', 'heroicon-m-arrow-trending-down', 'success']);
 });
 
 /**

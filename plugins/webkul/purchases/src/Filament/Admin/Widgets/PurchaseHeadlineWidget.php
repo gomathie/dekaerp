@@ -115,7 +115,8 @@ class PurchaseHeadlineWidget extends StatsOverviewWidget
             ->whereIn('state', [OrderState::PURCHASE->value, OrderState::DONE->value])
             ->sum('total_cc_amount');
 
-        [$change, $trendIcon, $trendColor] = $this->statTrend($spend, $previousSpend);
+        // Spend is a cost: a rise is shown red (D-DB-2).
+        [$change, $trendIcon, $trendColor] = $this->statTrend($spend, $previousSpend, lowerIsBetter: true, money: true);
 
         $openRequests = $this->purchaseOrders()
             ->whereIn('state', [OrderState::DRAFT->value, OrderState::SENT->value, OrderState::TO_APPROVE->value])
@@ -171,7 +172,7 @@ class PurchaseHeadlineWidget extends StatsOverviewWidget
         [$previousStart, $previousEnd] = $this->previousPeriodRange();
         $previousSpend = (float) $this->purchaseOrders($previousStart, $previousEnd)->whereIn('state', $states)->sum('total_cc_amount');
 
-        [$text, $icon] = $this->statTrend($spend, $previousSpend);
+        [$text, $icon] = $this->statTrend($spend, $previousSpend, lowerIsBetter: true, money: true);
 
         $openRequests = $this->purchaseOrders()
             ->whereIn('state', [OrderState::DRAFT->value, OrderState::SENT->value, OrderState::TO_APPROVE->value])

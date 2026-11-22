@@ -30,7 +30,7 @@ trait HasDashboardMetrics
         return 'amount_total';
     }
 
-    protected function buildStat(string $label, string $icon, string $color, Closure $queryFactory, bool $money = false, bool $abs = false): Stat
+    protected function buildStat(string $label, string $icon, string $color, Closure $queryFactory, bool $money = false, bool $abs = false, bool $lowerIsBetter = false): Stat
     {
         [$start, $end] = $this->periodRange();
 
@@ -39,6 +39,10 @@ trait HasDashboardMetrics
         $current = $this->aggregate($queryFactory($start, $end), $money);
 
         $previous = $this->aggregate($queryFactory($previousStart, $previousEnd), $money);
+
+        // The small-base rule (D-DB-1) counts records, which a money total
+        // does not tell: one extra count for money tiles only.
+        $previousRecords = $money ? (float) $queryFactory($previousStart, $previousEnd)->count() : $previous;
 
         $series = $this->dailyBuckets($queryFactory($start, $end), $money);
 
@@ -54,7 +58,7 @@ trait HasDashboardMetrics
 
         $title = $money ? money($current, $this->dashboardCurrency()) : null;
 
-        return $this->themedStat($label, $icon, $color, $value, $current, $previous, $series, $title);
+        return $this->themedStat($label, $icon, $color, $value, $current, $previous, $series, $title, $lowerIsBetter, $previousRecords, $money);
     }
 
     protected function aggregate(Builder $query, bool $money): float
