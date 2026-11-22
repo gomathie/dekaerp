@@ -9,10 +9,11 @@ use Illuminate\Support\Carbon;
 use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Models\Move;
-use Webkul\Sale\Support\DirectInvoices;
 use Webkul\Sale\Enums\OrderState;
 use Webkul\Sale\Models\Order;
 use Webkul\Sale\Models\OrderLine;
+use Webkul\Sale\Support\DirectInvoices;
+use Webkul\Support\Filament\DashboardPeriod;
 
 trait HasSaleDashboardFilters
 {
@@ -275,8 +276,6 @@ trait HasSaleDashboardFilters
     {
         [$start, $end] = $this->periodRange();
 
-        $length = $start->diffInDays($end) + 1;
-
-        return [(clone $start)->subDays($length), (clone $end)->subDays($length)];
+        return DashboardPeriod::previous($start, $end);
     }
 }

@@ -3,7 +3,10 @@
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Webkul\Partner\Models\Partner;
+use Webkul\Purchase\Filament\Admin\Widgets\Concerns\HasPurchaseDashboardFilters;
+use Webkul\Sale\Filament\Widgets\Concerns\HasSaleDashboardFilters;
 use Webkul\Support\Filament\Concerns\HasDashboardMetrics;
+use Webkul\Support\Filament\DashboardPeriod;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/CompanyHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
@@ -129,7 +132,53 @@ it('builds the daily series from one grouped query within the active company', f
  * 31 days compare with the 31 days before.
  */
 it('names the period a trend is compared with', function () {
+    $this->travelTo(Carbon::parse('2026-04-15'));
+
     $host = dashboardMetricsHost(['start_date' => '2026-03-01', 'end_date' => '2026-03-31']);
 
     expect($host->call('baselineLabel'))->toBe('29 Jan – 28 Feb');
+});
+
+/**
+ * Production, 2026-11-22: the Sales dashboard's default period is the whole
+ * year, and its own copy of this rule rounded 365.99 days up, so the trend
+ * read "vs 31 Dec – 30 Dec". Sales and Purchases now call DashboardPeriod.
+ */
+it('compares a whole year with the whole of the year before, naming the year', function () {
+    $this->travelTo(Carbon::parse('2026-11-22 10:00'));
+
+    [$previousStart, $previousEnd] = DashboardPeriod::previous(now()->startOfYear(), now()->endOfYear());
+
+    expect($previousStart->toDateTimeString())->toBe('2025-01-01 00:00:00')
+        ->and($previousEnd->toDateString())->toBe('2025-12-31')
+        ->and(DashboardPeriod::label($previousStart, $previousEnd))->toBe('1 Jan 2025 – 31 Dec 2025');
+});
+
+it('gives the sales and purchases dashboards the same previous period as the shared rule', function () {
+    $this->travelTo(Carbon::parse('2026-11-22 10:00'));
+
+    $sales = new class
+    {
+        use HasSaleDashboardFilters;
+
+        public function previous(): array
+        {
+            return $this->previousPeriodRange();
+        }
+    };
+
+    $purchases = new class
+    {
+        use HasPurchaseDashboardFilters;
+
+        public function previous(): array
+        {
+            return $this->previousPeriodRange();
+        }
+    };
+
+    $purchases->pageFilters = ['start_date' => '2026-03-01', 'end_date' => '2026-03-31'];
+
+    expect(array_map(fn (Carbon $date): string => $date->toDateString(), $sales->previous()))->toBe(['2025-01-01', '2025-12-31'])
+        ->and(array_map(fn (Carbon $date): string => $date->toDateString(), $purchases->previous()))->toBe(['2026-01-29', '2026-02-28']);
 });

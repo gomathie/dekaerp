@@ -7,6 +7,7 @@ use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
+use Webkul\Support\Filament\DashboardPeriod;
 
 /**
  * Ported from upstream (aureus/master c31a0db21) for the module dashboards;
@@ -141,14 +142,7 @@ trait HasDashboardMetrics
     {
         [$start, $end] = $this->periodRange();
 
-        // The period runs start-of-day to end-of-day, so diffInDays() is just
-        // under a whole number (30.99… for 31 days): floor it, then add the
-        // first day back. Rounding would add a day to every period.
-        $length = (int) floor($start->diffInDays($end)) + 1;
-
-        $previousEnd = (clone $start)->subDay()->endOfDay();
-
-        return [(clone $previousEnd)->subDays($length - 1)->startOfDay(), $previousEnd];
+        return DashboardPeriod::previous($start, $end);
     }
 
     protected function dashboardCurrency(): ?string
