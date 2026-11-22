@@ -1169,6 +1169,26 @@ the parent product name is unchanged.
 > `ManageReplenishment::mount()` answers 404 as upstream does. Finishing it
 > belongs to the Inventory plan (`docs/planned/05-inventory-plan.md`).
 
+### UF-028 - Contacts Bills tab lists every journal document of the contact
+
+**Decision:** Adopt, P2 (2026-11-22), as hotfix v1.16.1  
+**Upstream reference:** commit `dd55acdc3` (and `e53bbd756`, `4af5f31bc`)  
+**Local state:** **Open, fix next**
+
+> Upstream fixed its partner Invoices/Bills tabs: invoice permission and a
+> move-type scope. We have no partner Invoices tab, but our Bills tab
+> (`purchases` `VendorResource\Pages\ManageBills`, reused on Contacts) reads
+> `vendorBills`, registered in `PurchaseServiceProvider` as every `Move` of
+> the partner with no `move_type` filter. Customer invoices and entries of
+> that contact appear under "Bills", to anyone allowed to see bills. Fix:
+> scope the relation to `in_invoice` / `in_refund`, with a test.
+>
+> **Also adopted (user, 2026-11-22):** a partner **Invoices** tab, as upstream
+> added, built like our Bills tab: customer invoices and credit notes of the
+> contact and its child contacts, gated by the invoice permission and the
+> Invoices module, on Contacts and Accounting -> Customers. The customer screen
+> had Bills and Purchases but no invoices.
+
 ## Already Present Locally
 
 The following upstream runtime work does not need to be reimplemented:
@@ -1383,6 +1403,7 @@ They must not claim tests or production checks that were not executed.
 | 2026-09-18 | `d7d471894` | `e0ce9f6a8467` | Initial whole-app test-fix audit. P0 CI/Employee gaps, P1 accounting/locale/E2E gaps, optional product initiatives, and explicit rejects recorded. | 2026-09-25 or earlier trigger |
 | 2026-10-20 | v1.6.0 release | `d66a7f0e1` | v1.6.0 full changelog review. Eight gaps not captured by the initial failing-test pass added as UF-017 through UF-024: XSS in chatter (P0 security), payment state bug (P1), Livewire nesting depth (P1), saved filter crash (P1), Employee parent_id FK (P1), RFQ/PO currency conversion (P1), active-currency delete error (P2), product variant name bug (P2). Upstream commit SHAs TBD during implementation. | 2026-10-27 or earlier trigger |
 | 2026-11-19 | upstream through 2026-10-29 | `68c8a286d` | Review of recent upstream fixes: #1671 list sorting (UF-026) and the Replenishment 404 (UF-027) adopted in hotfix v1.12.5. No P0/P1 found. | No cadence (dropped 2026-10-21) |
+| 2026-11-22 | upstream through 2026-11-19 (`0ccc4bb93`) | develop `49e9c5465` | About 50 commits since 2026-10-29, mostly card layouts, CRM, branding preview and tests. One applies: UF-028 (partner Bills tab not scoped to bills). Not needed: partner Invoices tab (we have none), card/branding UI, CRM (another developer). No P0/P1. | No cadence |
 
 ## Completion Criteria for This Plan
 
