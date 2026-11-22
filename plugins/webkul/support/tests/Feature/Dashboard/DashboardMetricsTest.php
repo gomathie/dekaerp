@@ -182,3 +182,21 @@ it('gives the sales and purchases dashboards the same previous period as the sha
     expect(array_map(fn (Carbon $date): string => $date->toDateString(), $sales->previous()))->toBe(['2025-01-01', '2025-12-31'])
         ->and(array_map(fn (Carbon $date): string => $date->toDateString(), $purchases->previous()))->toBe(['2026-01-29', '2026-02-28']);
 });
+
+/**
+ * 2026-11-23: plain "en" made the browser write the banner's date and clock
+ * in US form ("November 23", "01:29 AM") over the server's "23 November",
+ * "22:29", so the text changed format on every load.
+ */
+it('hands the browser a day-first, 24-hour English and keeps other languages', function () {
+    $locales = [];
+
+    foreach (['en', 'fr', 'pt_BR'] as $locale) {
+        app()->setLocale($locale);
+        $locales[$locale] = DashboardPeriod::browserLocale();
+    }
+
+    app()->setLocale('en');
+
+    expect($locales)->toBe(['en' => 'en-GB', 'fr' => 'fr', 'pt_BR' => 'pt-BR']);
+});

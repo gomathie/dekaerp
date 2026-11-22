@@ -2,9 +2,9 @@
 
 namespace Webkul\Invoice\Filament\Widgets;
 
-use Webkul\Invoice\Filament\Widgets\Concerns\GuardsInvoiceDashboardWidget;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Contracts\Support\Htmlable;
+use Webkul\Invoice\Filament\Widgets\Concerns\GuardsInvoiceDashboardWidget;
 use Webkul\Invoice\Filament\Widgets\Concerns\HasInvoiceDashboardFilters;
 use Webkul\Support\Filament\Concerns\HasChartTheme;
 
@@ -14,7 +14,7 @@ class CustomerRevenueChart extends ChartWidget
     // its queries 12 times a minute (Sentry DEKAERP-11). Filters reload it.
     protected ?string $pollingInterval = null;
 
-    use HasChartTheme, HasInvoiceDashboardFilters, GuardsInvoiceDashboardWidget;
+    use GuardsInvoiceDashboardWidget, HasChartTheme, HasInvoiceDashboardFilters;
 
     protected const TOP_SLICES = 3;
 
@@ -43,7 +43,10 @@ class CustomerRevenueChart extends ChartWidget
             return $this->resolvedData;
         }
 
-        $rows = $this->customerInvoices()
+        // Net of credit notes, like the "Total invoiced" tile (DB-2,
+        // 2026-11-23): summing invoices alone made the ring's total larger
+        // than the tile beside it whenever a credit note was issued.
+        $rows = $this->customerInvoicesNet()
             ->leftJoin('partners_partners', 'partners_partners.id', '=', 'accounts_account_moves.partner_id')
             ->groupBy('partners_partners.id', 'partners_partners.name')
             ->addSelect('partners_partners.name as name')

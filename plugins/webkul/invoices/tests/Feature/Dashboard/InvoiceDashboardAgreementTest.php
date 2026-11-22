@@ -1,0 +1,91 @@
+<?php
+
+use Webkul\Invoice\Filament\Widgets\CustomerRevenueChart;
+use Webkul\Invoice\Filament\Widgets\InvoiceStatsWidget;
+use Webkul\Invoice\Filament\Widgets\InvoiceStatusChart;
+use Webkul\Invoice\Filament\Widgets\RevenueOverTimeWidget;
+use Webkul\Invoice\Filament\Widgets\SalespersonPerformanceChart;
+use Webkul\Invoice\Filament\Widgets\TopInvoicesWidget;
+use Webkul\PluginManager\Support\PluginAccess;
+use Webkul\Support\Models\Company;
+
+require_once __DIR__.'/../../../../support/tests/Helpers/CompanyHelper.php';
+require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
+require_once __DIR__.'/../../../../support/tests/Helpers/DashboardFixtureHelper.php';
+
+beforeEach(function (): void {
+    TestBootstrapHelper::ensurePluginInstalled('invoices');
+    PluginAccess::flush();
+});
+
+/**
+ * @param  class-string  $class
+ */
+function agreementWidget(string $class): object
+{
+    $widget = new $class;
+
+    $widget->pageFilters = ['start_date' => DashboardFixtureHelper::START, 'end_date' => DashboardFixtureHelper::END];
+
+    return $widget;
+}
+
+/**
+ * Dashboard plan DB-2 (2026-11-23): on one dashboard, for one filter, the
+ * tile, the charts and the table must tell the same story. Before this, the
+ * Customer Revenue ring and the Salesperson bars summed invoices alone while
+ * the "Total invoiced" tile beside them deducted credit notes, so the ring's
+ * total was larger than the tile's whenever a credit note existed.
+ *
+ * The figures are the fixture's known totals (DashboardFixtureHelper); the
+ * other company's invoice, a draft and a February invoice must never count.
+ */
+it('tells the same story in the invoice tiles, charts and table', function (): void {
+    $own = Company::factory()->create();
+    $other = CompanyHelper::asNobody(fn () => Company::factory()->create());
+
+    $fixture = DashboardFixtureHelper::invoices($own, $other);
+
+    // Everyone sees their company's records by default (resource_permission
+    // "global", 2026-09-28). A user made in memory carries null until it is
+    // reloaded, which Bouncer reads as "own records only", hiding every
+    // fixture row this user did not create.
+    $user = CompanyHelper::actingAsCompanyUser($own, []);
+    $user->forceFill(['resource_permission' => 'global'])->saveQuietly();
+
+    $stats = agreementWidget(InvoiceStatsWidget::class);
+    $tiles = (fn (): array => [
+        'total'  => $this->aggregate($this->customerInvoicesNet(), true),
+        'count'  => $this->aggregate($this->scope(), false),
+        'paid'   => $this->aggregate($this->stateScope('paid'), false),
+        'unpaid' => $this->aggregate($this->unpaidOnly($this->scope()), false),
+    ])->call($stats);
+
+    $byState = (fn (): array => $this->getData())->call(agreementWidget(InvoiceStatusChart::class));
+    $byCustomer = (fn (): array => $this->getData())->call(agreementWidget(CustomerRevenueChart::class));
+    $bySalesperson = (fn (): array => $this->getData())->call(agreementWidget(SalespersonPerformanceChart::class));
+    $paidPerDay = (fn (): array => $this->getData())->call(agreementWidget(RevenueOverTimeWidget::class));
+    $topRows = (fn () => $this->getTableQuery()->get())->call(agreementWidget(TopInvoicesWidget::class));
+
+    $states = array_combine($byState['labels'], $byState['datasets'][0]['data']);
+
+    expect($tiles)->toBe(['total' => 1800.0, 'count' => 3.0, 'paid' => 1.0, 'unpaid' => 2.0])
+        // The ring and the bars add up to the tile, net of the credit note.
+        ->and(array_sum($byCustomer['datasets'][0]['data']))->toBe($tiles['total'])
+        ->and(array_combine($byCustomer['labels'], $byCustomer['datasets'][0]['data']))->toBe(['Customer X' => 1200.0, 'Customer Y' => 600.0])
+        ->and(array_sum($bySalesperson['datasets'][0]['data']))->toBe($tiles['total'])
+        // "Invoiced amount by payment status" is gross, as its description
+        // says: it is the tile plus the credit note, never anything else.
+        ->and(array_sum($states))->toBe($tiles['total'] + 200.0)
+        ->and(count($states))->toBe(3)
+        // The paid-per-day line is the "Paid" bar spread over the days.
+        ->and(array_sum($paidPerDay['datasets'][0]['data']))->toBe(1000.0)
+        ->and(max($states))->toBe(1000.0)
+        // The table lists the period's three invoices, largest first, and
+        // neither the credit note nor any trap.
+        ->and($topRows->pluck('id')->all())->toBe([
+            $fixture['invoices']['A']->getKey(),
+            $fixture['invoices']['B']->getKey(),
+            $fixture['invoices']['C']->getKey(),
+        ]);
+});

@@ -40,4 +40,20 @@ class DashboardPeriod
 
         return $start->translatedFormat($format).' – '.$end->translatedFormat($format);
     }
+
+    /**
+     * The locale a dashboard hands the browser's Intl date formatter.
+     *
+     * Plain "en" is US English there ("Monday, November 23", "01:29 AM"),
+     * while the server writes "23 November" and "22:29", so the banner's
+     * date and clock visibly changed format on every load (production check,
+     * 2026-11-23). Our clients write day before month with a 24-hour clock,
+     * as en-GB does; the other languages are already region-neutral.
+     */
+    public static function browserLocale(): string
+    {
+        $locale = str_replace('_', '-', app()->getLocale());
+
+        return $locale === 'en' ? 'en-GB' : $locale;
+    }
 }

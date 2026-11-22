@@ -6,6 +6,47 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-23, dashboards DB-2/DB-3: one story per dashboard, captions that fit, local clock (unreleased)
+
+- **Why:** DB-2 asks that tile, chart and table agree for one filter. The
+  new shared fixture showed the Customer Revenue ring and the Salesperson
+  bars summing invoices alone while the "Total invoiced" tile beside them
+  deducts credit notes (DB-2 of 2026-11-22), so the ring was larger than the
+  tile whenever a credit note existed. A production check of the loading
+  state (DB-3, TRACE365, read-only) found no zero flash, but found the
+  banner's date and clock switching from the server's format to the
+  browser's US-English one on load, and the board's "Updated" stamp in
+  server time beside the browser's clock. A full-page capture of the
+  Invoices tab showed every quarter-width tile cutting its caption off
+  ("New vs 1 Jan 20…") since v1.16.2 named the compared period.
+- **How:** `CustomerRevenueChart` and `SalespersonPerformanceChart` read
+  `customerInvoicesNet()`. "Invoices by status" stays gross, as its
+  description says. `support/tests/Helpers/DashboardFixtureHelper.php` is the
+  shared two-company fixture with known totals and traps (draft, other
+  period, other company); invoices `InvoiceDashboardAgreementTest` asserts
+  tiles, three charts, the paid-per-day line and the top table against it.
+  `DashboardPeriod::browserLocale()` gives the browser en-GB for English;
+  the banner clock uses a 24-hour cycle; the board's "Updated" stamp is
+  formatted in the browser, keyed on its timestamp so a refresh re-formats
+  it. `dashboard.css`: the trend caption moves to its own line under the
+  label and may wrap; `support.css` rebuilt from the project root with the
+  support plugin's tailwind (rule diff against the previous build: the two
+  rules, plus `.ring`, `.sr-only` and one theme variable that later source
+  changes had already asked for).
+- **Benefit:** a dashboard's figures add up to each other; a credit note
+  lowers a customer's and a salesperson's figure; captions are readable;
+  no visible format change on load; Zambia and Congo see their own time.
+- **Trade-off / risk:** customer and salesperson figures drop by the credit
+  notes issued in the period, which is the intended revenue rule but will
+  look different to anyone comparing with yesterday. Tiles are slightly
+  taller (one caption line).
+- **Verification:** database `aureuserp_testing_v113_k3`: invoices
+  `tests/Feature/Dashboard` (agreement, dashboard, overview, module cards)
+  plus support `DashboardMetricsTest`: 41 passed (139 assertions). Pint
+  clean. support.css rule diff checked against the previous build (above).
+  Production loading check read-only (TRACE365).
+- **Rollback:** revert; no migration. Rebuild `support.css` after a revert.
+
 ## 2026-11-22, v1.16.5 (hotfix): payment methods stay inside their company; DEKAERP-23
 
 - **Why:** Sentry DEKAERP-23 (N+1 on the new-invoice page: about 21

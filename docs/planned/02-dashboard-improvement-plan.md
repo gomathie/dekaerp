@@ -142,6 +142,19 @@ Test: invoices `InvoiceDashboardTest` "deducts credit notes from the
 invoiced total and counts partly paid as unpaid", sales `SalesDashboardTest`
 "ranks top quotations by their value in the company currency". Still open:
 the shared two-company fixture and tile = chart = table tests per module.
+
+*Progress 2026-11-23 (develop):* the shared fixture exists:
+`support/tests/Helpers/DashboardFixtureHelper.php` (`invoices()`: two
+companies, three March invoices, a credit note, and three traps that must
+never count: a draft, a February invoice and the other company's invoice).
+Invoices agreement test: invoices `InvoiceDashboardAgreementTest`. It found
+one mismatch, fixed at the query: the Customer Revenue ring and the
+Salesperson bars summed invoices alone while the "Total invoiced" tile
+deducted credit notes; both now read `customerInvoicesNet()`. "Invoices by
+status" stays gross, as its description says (invoiced amount by payment
+status), and the test pins it as tile + credit notes. Still open: Sales,
+Purchases, Accounting and Logistics agreement tests on the same fixture.
+
 ### DB-3 States
 
 - Empty charts and tables get one action (U13: "Create a quotation", "Record
@@ -157,12 +170,34 @@ next step, shown only to someone whose resource `canCreate()` allows it
 `SalesDashboardTest` "offers the next step on an empty list only to users
 who may take it"). Charts already had their empty message. Still open: no
 zero flash while loading, and widget-absent checks per module.
+
+*Checked 2026-11-23 (production, TRACE365, read-only, page text sampled
+every 120 ms for 12 s):* no zero flash. The Overview, Sales and Purchases
+tiles render server-side with their real values on first paint; lazy
+sections appear whole. Nothing to change. The same capture found the
+banner's date and clock switching format on load ("22 November · 22:29"
+from the server, then "November 23 · 01:29 AM" from the browser) and the
+board's "Updated" time in server time beside the browser's clock. Fixed:
+`DashboardPeriod::browserLocale()` gives the browser en-GB for English and
+the clock a 24-hour cycle; the "Updated" stamp is formatted in the browser.
+Still open: widget-absent checks per module.
 ### DB-4 Hierarchy, dashboard by dashboard
 
 Overview first, then Invoices, Sales, Purchases: filters and period visible
 at the top, then tiles, the main chart, breakdowns, details. Remove tiles
 that repeat a neighbour. Each dashboard is a mockup for the user before code
 (as the Overview was).
+
+*Mockups 2026-11-23, awaiting the user* (private design canvas "DEKA
+dashboards DB-4", https://claude.ai/artifact/Vb2sAQt6XW1N7agK78eAdG, example
+figures only): Invoices & bills, Sales, and Purchases in its empty-period
+state. One order everywhere: a visible period bar that spells out the
+comparison, four key figures with captions, one main chart (by day up to 31
+days, by week up to four months, by month beyond), three breakdowns, two
+tabbed lists. The separate count tiles go; their numbers move into captions.
+Decisions asked: the default period (U68; recommended year to date against
+the same days last year), dropping the count tiles, tabbed lists. No code
+before the answer.
 
 ### DB-5 Phone width and accessibility
 
@@ -292,7 +327,9 @@ paid. Decided:
 
 Also found on TRACE365's Overview (2026-11-19), to fix in DB-2/DB-3: the
 "Money in and out" chart's "This period" ends yesterday, so a payment made
-today is missing from it; the Logistics tab is absent although Logistics is
+today is missing from it (*done 2026-11-19, v1.12.5:* the chart reads
+payments by payment date; invoices `OverviewTest` "charts money in and out
+on the day each payment was made" pins today's payments); the Logistics tab is absent although Logistics is
 granted; "Cash at bank GHS 0" after a payment, because the payment sits in
 the outstanding account until reconciled, needs a plain explanation.
 

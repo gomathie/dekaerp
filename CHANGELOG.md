@@ -10,6 +10,12 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+### Improvements
+
+- Invoices dashboard: the customer revenue ring and the salesperson bars now deduct credit notes, so they add up to the "Total invoiced" figure beside them.
+- Overview: the date and clock in the welcome banner no longer change format a moment after the page opens, and "Updated" shows your own local time.
+- Dashboard figures show their full comparison ("New vs 1 Jan 2025 – 31 Dec 2025") on a line of their own instead of cutting it off.
+
 # CHANGELOG — v1.16.5 — 2026-11-23
 
 ### Fixes

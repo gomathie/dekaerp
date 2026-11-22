@@ -47,7 +47,7 @@
         ? __('support::dashboard-banner.tagline-solo')
         : trans_choice('support::dashboard-banner.needs-you', count($items), ['count' => count($items)]);
 
-    $locale = str_replace('_', '-', app()->getLocale());
+    $locale = \Webkul\Support\Filament\DashboardPeriod::browserLocale();
     $aside = $registry::renderedSections();
 @endphp
 
@@ -193,7 +193,7 @@
 
         <div class="deka-welcome__side">
             <div class="deka-welcome__clock" aria-label="{{ __('support::dashboard-banner.local-time') }}">
-                <span class="deka-welcome__time" x-text="format({ hour: '2-digit', minute: '2-digit' })">{{ now()->format('H:i') }}</span>
+                <span class="deka-welcome__time" x-text="format({ hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })">{{ now()->format('H:i') }}</span>
                 @if (trim((string) $aside) !== '')
                     <div class="deka-welcome__aside">{!! $aside !!}</div>
                 @endif
