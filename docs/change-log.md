@@ -6,6 +6,29 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-22, v1.16.3: dashboards DB-2/3/7, Sales trend captions, schema contributions registered once
+
+- **Shipped:** totals net of credit notes and vendor refunds; unpaid
+  includes partly paid; top quotations ranked in company currency; empty
+  top lists offer the next step; money to collect/pay split by currency;
+  Sales stat tiles get the "vs" caption (`baselineLabel()` now lives in
+  `BuildsDashboardStats`, one format for all).
+- **Root-cause fix (test-only symptom):** `AccountServiceProvider` (partner
+  and product) and `InventoryServiceProvider` (product) registered their
+  schema contributions on every `packageBooted()`; the registries are static,
+  so long test runs carried the sections 82-102 times and the structure
+  snapshots were recorded that way. Both now use a static flag (AGENTS.md
+  rule for static registries). `website/PortalContributions` is still
+  unguarded but Website is removed from the product.
+- **Consequence:** every structure snapshot recorded with the duplicates now
+  differs (8 in the last full Support run). A clean full re-record of all
+  fixtures is the next step on develop; fixtures do not ship to production.
+- **Test database note:** `UOMTest` failed (`inventories_moves` missing) on
+  `aureuserp_testing_v113_k1` after an interrupted run left Inventory marked
+  installed without its tables (AGENTS.md: an interrupted run poisons the
+  database). k1 was dropped and recreated.
+- **Rollback:** revert; no migration.
+
 ## 2026-11-22, dashboards DB-2 and DB-3 on develop (unreleased)
 
 - **Why:** dashboard plan #2 (user: "start dashboard", decide and ship).
