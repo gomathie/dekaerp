@@ -205,6 +205,7 @@ return [
             'status'             => 'Status',
             'delivery-status'    => 'Delivery Status',
             'invoice-status'     => 'Invoice Status',
+            'order-date'         => 'Order Date',
             'creation-date'      => 'Creation Date',
             'commitment-date'    => 'Commitment Date',
             'expected-date'      => 'Expected Date',

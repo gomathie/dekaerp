@@ -74,6 +74,21 @@ it('lists sale orders with their key columns for authorized users', function () 
         ->assertCanRenderTableColumn('amount_total');
 });
 
+/**
+ * User, 2026-11-22: the list opened on "My Orders", so anyone who was not the
+ * salesperson - an admin checking TRACE365's backfilled orders - saw "No
+ * Orders". It opens on every order, and shows the order date first.
+ */
+it('opens on every order, not only the viewer\'s own, with the order date', function () {
+    FilamentHelper::actingAs(['view_any_sale_order']);
+
+    $order = saleOrderRecord(null);
+
+    Livewire::test(ListOrders::class)
+        ->assertCanSeeTableRecords([$order])
+        ->assertCanRenderTableColumn('date_order');
+});
+
 it('finds a sale order by searching its number', function () {
     $user = FilamentHelper::actingAs(['view_any_sale_order']);
 

@@ -4,6 +4,9 @@ namespace Webkul\Account\Filament\Resources\InvoiceResource\Pages;
 
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Database\QueryException;
+use Illuminate\Validation\ValidationException;
+use Throwable;
 use Webkul\Account\Enums\JournalType;
 use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Facades\Account as AccountFacade;
@@ -70,7 +73,24 @@ class CreateInvoice extends CreateRecord
         // Same transaction as the create, so a refused payment leaves no
         // half-done invoice behind.
         if (! empty($this->data['paid_now']) && ! empty($this->data['paid_journal_id'])) {
-            app(QuickPayment::class)->confirmAndPay($this->getRecord()->refresh(), (int) $this->data['paid_journal_id']);
+            try {
+                app(QuickPayment::class)->confirmAndPay($this->getRecord()->refresh(), (int) $this->data['paid_journal_id']);
+            } catch (ValidationException|QueryException $exception) {
+                throw $exception;
+            } catch (Throwable $exception) {
+                // Posting refuses with a plain Exception ("Please add at least
+                // one line to the invoice."). Uncaught, that was an error page
+                // and a Sentry issue (DEKAERP-22). Shown the way the Confirm
+                // button shows it, and the whole create is rolled back.
+                Notification::make()
+                    ->warning()
+                    ->title(__('accounts::filament/resources/invoice/actions/confirm-action.notification.error.title'))
+                    ->body($exception->getMessage())
+                    ->persistent()
+                    ->send();
+
+                $this->halt(shouldRollbackDatabaseTransaction: true);
+            }
         }
     }
 }

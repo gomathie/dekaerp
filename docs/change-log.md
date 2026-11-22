@@ -6,6 +6,42 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-22, Administrator section A + B + C, Orders list, DEKAERP-22 (unreleased)
+
+- **Why:** user, 2026-11-22: the company form's Administrator section was a
+  plain list plus two loose fields whose effect (invite, create, reset)
+  depended on which were filled; the user chose options A + B + C, kept in
+  the same place. Orders looked empty after the backfill: the list opened on
+  "My Orders". Sentry DEKAERP-22: "Paid now" on an invoice with no lines
+  raised an error page.
+- **How:**
+  - `security/.../CompanyResource/Schemas/AdministratorPanel.php` (new):
+    a row per administrator (Active/Deactivated chip, Set password, Manage),
+    "Add administrator" in the section header (invite, or set a password now),
+    and a row per pending invitation (expiry chip, Resend, Copy link). Every
+    write calls `CompanyAdministratorAccount` / `CompanyAdministratorInviter`;
+    Copy link reads `pendingLink()` on demand, never rendered in the page.
+  - `CompanyAdminContributions`: create keeps its fields; edit/view get the
+    panel. The old HTML summary is gone.
+  - `EditCompany` lost its afterSave invite/reset path and the
+    `SetsAdministratorPassword` trait (now unused) was deleted; its wording
+    moved to `AdministratorPanel::notifyPasswordOutcome()`.
+  - Sales `ListOrders` / `ListQuotations`: "My …" no longer the default tab.
+    `QuotationsTable` shows `date_order` ("Order Date") and hides
+    `created_at` by default.
+  - Accounts `CreateInvoice::afterCreate()`: a posting refusal during "Paid
+    now" is a warning notification and the create is rolled back, as the
+    Confirm button does. Validation and database errors still propagate.
+- **Benefit:** support adds, resets and re-invites administrators from one
+  place with explicit choices; Orders shows every order; no error page.
+- **Trade-off / risk:** the edit page no longer acts on save, so an agent
+  reading the 2026-11-03 decision must use the panel's actions instead.
+  Order numbers are id-based and shared across companies (TRACE365's
+  backfill took SO/00003-00012, My Company's SO/00013): existing behaviour,
+  not changed.
+- **Verification:** see the handoff below the tests' results.
+- **Rollback:** revert the commit; no migration.
+
 ## 2026-11-22, v1.15.0: sales order from an invoice, delivery choice, three fixes
 
 - **Why:** user, 2026-11-22: invoices made directly (TRACE365's cash sales)

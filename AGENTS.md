@@ -1651,6 +1651,13 @@ log named):
   - The password is **never emailed**. The person who sets it hands it over.
   - On edit, a blank email does nothing. Only create falls back to the
     company's address, or every save would invite the company mailbox.
+    *Superseded in part 2026-11-22 (user, options A + B + C):* the edit page
+    no longer has those fields and saving never invites or resets. Edit and
+    view list each administrator (Set password, Manage), offer "Add
+    administrator" (invite, or set a password now) and pending invitations
+    (Resend, Copy link), all in `AdministratorPanel`, all through the same
+    two services. Copy link is read on demand through `pendingLink()`; never
+    render a sign-in link into the page.
   - Tests: `security/tests/Feature/Authorization/CompanyAdministratorPasswordTest.php`.
   - Security's `CompanyResource` alone owns `/admin/companies` (2026-11-11).
     Support's base sets `$isDiscovered = false`. With both discovered, Support's

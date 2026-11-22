@@ -9,6 +9,39 @@ return [
         'inactive'    => 'desactivado',
         'manage'      => 'Gestionar este usuario',
 
+        'status' => [
+            'active'   => 'Activo',
+            'inactive' => 'Desactivado',
+        ],
+
+        'set-password' => [
+            'label'       => 'Establecer contraseña',
+            'heading'     => 'Nueva contraseña para :email',
+            'description' => 'No se envía por correo: entréguesela usted mismo.',
+        ],
+
+        'add' => [
+            'label'                => 'Añadir administrador',
+            'heading'              => 'Añadir un administrador',
+            'submit'               => 'Añadir',
+            'method'               => '¿Cómo debe obtener acceso?',
+            'invite'               => 'Enviar una invitación',
+            'invite-description'   => 'Recibe un correo y elige su propia contraseña.',
+            'password'             => 'Establecer una contraseña ahora',
+            'password-description' => 'Para cuando el correo no llega o el cliente llama. También restablece la contraseña de alguien que ya está en esta empresa.',
+        ],
+
+        'invitation' => [
+            'waiting'          => 'Invitación enviada, aún sin aceptar',
+            'pending'          => 'Pendiente',
+            'expires'          => 'Pendiente hasta el :date',
+            'resend'           => 'Reenviar',
+            'copy-link'        => 'Copiar enlace',
+            'copy-heading'     => 'Enlace de acceso para :email',
+            'copy-description' => 'Cualquiera con este enlace puede configurar esta cuenta de administrador. Envíelo solo a esa persona, por un canal de confianza.',
+            'link'             => 'Enlace',
+        ],
+
         'fields' => [
             'email'                => 'Correo del administrador',
             'email-helper'         => 'Sin contraseña, se envía una invitación a esta dirección y la persona elige su propia contraseña. Déjelo en blanco para invitar al correo de la empresa.',

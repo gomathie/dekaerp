@@ -140,6 +140,25 @@ it('fills the salesperson with the creator and lists only company members', func
         ->not->toHaveKey($stranger->getKey());
 });
 
+/**
+ * Sentry DEKAERP-22, 2026-11-22: "Paid now" on an invoice with no lines
+ * reached posting, whose plain Exception became an error page. It is now a
+ * warning, and nothing is saved.
+ */
+it('warns instead of failing when paid now is ticked on an invoice with no lines', function () {
+    AccountHelper::actingAsAdmin();
+    $bank = AccountHelper::bankJournal();
+    $customer = Partner::factory()->create(['company_id' => current_company_id()]);
+    $before = Move::query()->withoutGlobalScopes()->count();
+
+    Livewire::test(CreateInvoice::class)
+        ->fillForm(['partner_id' => $customer->getKey(), 'paid_now' => true, 'paid_journal_id' => $bank->getKey()])
+        ->call('create')
+        ->assertNotified(__('accounts::filament/resources/invoice/actions/confirm-action.notification.error.title'));
+
+    expect(Move::query()->withoutGlobalScopes()->count())->toBe($before);
+});
+
 it('hides the add-customer button without the contact create permission', function () {
     FilamentHelper::actingAs(['view_any_account_invoice', 'create_account_invoice']);
 

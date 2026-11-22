@@ -9,6 +9,39 @@ return [
         'inactive'    => 'deactivated',
         'manage'      => 'Manage this user',
 
+        'status' => [
+            'active'   => 'Active',
+            'inactive' => 'Deactivated',
+        ],
+
+        'set-password' => [
+            'label'       => 'Set password',
+            'heading'     => 'Set a new password for :email',
+            'description' => 'It is not emailed: give it to them yourself.',
+        ],
+
+        'add' => [
+            'label'                => 'Add administrator',
+            'heading'              => 'Add an administrator',
+            'submit'               => 'Add',
+            'method'               => 'How should they get access?',
+            'invite'               => 'Send an invitation',
+            'invite-description'   => 'They get an email and choose their own password.',
+            'password'             => 'Set a password now',
+            'password-description' => 'For when the email does not arrive or the client phones in. Also resets the password of someone already in this company.',
+        ],
+
+        'invitation' => [
+            'waiting'          => 'Invitation sent, not accepted yet',
+            'pending'          => 'Pending',
+            'expires'          => 'Pending until :date',
+            'resend'           => 'Resend',
+            'copy-link'        => 'Copy link',
+            'copy-heading'     => 'Sign-in link for :email',
+            'copy-description' => 'Anyone with this link can set up this administrator account. Send it only to them, over a channel you trust.',
+            'link'             => 'Link',
+        ],
+
         'fields' => [
             'email'                => 'Administrator email',
             'email-helper'         => 'Without a password, an invitation is sent to this address and they choose their own password. Leave it blank to invite the company email.',

@@ -10,6 +10,15 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+### Improvements
+
+- The company page's Administrator section lists each administrator with Set password and Manage buttons, has an "Add administrator" button that sends an invitation or sets a password, and shows invitations still waiting with Resend and Copy link.
+- Sales Orders and Quotations open on all records instead of only your own, and the list shows the order date.
+
+### Fixes
+
+- Creating an invoice with "Paid now" but no lines shows a message instead of an error page.
+
 # CHANGELOG — v1.15.0 — 2026-11-22
 
 ### Features

@@ -22,7 +22,9 @@ class ListOrders extends BaseListOrders
             'my_orders' => PresetView::make(__('sales::filament/clusters/orders/resources/order/pages/list-orders.tabs.my-orders'))
                 ->icon('heroicon-s-shopping-bag')
                 ->favorite()
-                ->setAsDefault()
+                // Not the default (user, 2026-11-22): it showed "No Orders" to
+                // everyone who is not the salesperson, admins included, so the
+                // list looked empty. Opening on all orders is what people expect.
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('user_id', Auth::id())),
             'to_invoice' => PresetView::make(__('sales::filament/clusters/orders/resources/order/pages/list-orders.tabs.to-invoice'))
                 ->icon('heroicon-s-receipt-percent')
