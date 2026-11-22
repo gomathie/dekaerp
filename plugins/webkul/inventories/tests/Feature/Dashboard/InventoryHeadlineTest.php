@@ -63,6 +63,8 @@ it('gives four cards with icons: receipts, deliveries, low stock and stock value
 it('counts low stock against the reorder minimum and values internal stock at cost', function (): void {
     $company = Company::factory()->create();
     $other = Company::factory()->create();
+    // Built before signing in: since UF-025 a member of $company may not write into $other.
+    $otherProduct = Product::factory()->create(['company_id' => $other->id]);
     CompanyHelper::actingAsCompanyUser($company, ['page_inventory_overview']);
 
     $internal = Location::factory()->internal()->create(['company_id' => $company->id]);
@@ -82,7 +84,6 @@ it('counts low stock against the reorder minimum and values internal stock at co
     OrderPoint::factory()->create(['company_id' => $company->id, 'product_id' => $fine->id, 'product_min_qty' => 5, 'warehouse_id' => $warehouseId, 'location_id' => $internal->id]);
 
     // Another company's low rule must not count here.
-    $otherProduct = Product::factory()->create(['company_id' => $other->id]);
     OrderPoint::withoutEvents(fn () => OrderPoint::factory()->create(['company_id' => $other->id, 'product_id' => $otherProduct->id, 'product_min_qty' => 5, 'warehouse_id' => $warehouseId, 'location_id' => $internal->id]));
 
     $widget = new InventoryHeadlineWidget;

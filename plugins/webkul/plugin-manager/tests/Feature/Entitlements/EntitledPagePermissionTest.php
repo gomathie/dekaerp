@@ -1,7 +1,10 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Webkul\Accounting\Filament\Pages\Overview as AccountingOverview;
+use Webkul\Barcode\Filament\Pages\LaunchBarcode;
 use Webkul\Inventory\Filament\Pages\Overview as InventoryOverview;
+use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Project\Filament\Pages\Dashboard as ProjectDashboard;
 use Webkul\Purchase\Filament\Admin\Clusters\Settings\Pages\ManageOrders as PurchaseManageOrders;
@@ -29,6 +32,7 @@ require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php
  */
 dataset('entitled shield pages', [
     'accounting overview'        => [AccountingOverview::class, 'accounting'],
+    'barcode launcher'           => [LaunchBarcode::class, 'barcode'],
     'inventory overview'         => [InventoryOverview::class, 'inventories'],
     'project dashboard'          => [ProjectDashboard::class, 'projects'],
     'purchase order settings'    => [PurchaseManageOrders::class, 'purchases'],
@@ -62,3 +66,26 @@ it('refuses an entitled company user without the page permission', function (str
 
     expect($page::canAccess())->toBeTrue();
 })->with('entitled shield pages');
+
+/**
+ * TRACE365, 2026-11-22: the Barcode launcher showed in the sidebar of a
+ * company without the Barcode module. With the module revoked it is refused
+ * even holding its permission.
+ */
+it('hides the barcode launcher from a company without the module', function (): void {
+    TestBootstrapHelper::ensurePluginInstalled('barcode');
+    FilamentHelper::bootAdminPanel();
+
+    $company = Company::factory()->create();
+    $permission = (fn (): ?string => static::getPagePermission())->bindTo(null, LaunchBarcode::class)();
+
+    DB::table('company_plugin')
+        ->where('company_id', $company->getKey())
+        ->where('plugin_id', Plugin::query()->where('name', 'barcode')->value('id'))
+        ->delete();
+    PluginAccess::flush();
+
+    CompanyHelper::actingAsCompanyUser($company, [$permission]);
+
+    expect(LaunchBarcode::canAccess())->toBeFalse();
+});

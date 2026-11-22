@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Livewire\Livewire;
 use Webkul\Inventory\Filament\Clusters\Operations\Resources\QuantityResource\Pages\ManageQuantities;
+use Webkul\Inventory\Models\ProductQuantity;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Package;
 
@@ -114,4 +115,33 @@ it('hides a quant owned by another company from the list', function () {
     Livewire::test(ManageQuantities::class)
         ->assertOk()
         ->assertCanNotSeeTableRecords([$quant]);
+});
+
+/**
+ * TRACE365, 2026-11-22: applying one count deleted every other pending count,
+ * because purgeEmpty() removed zero-quantity rows still holding a count.
+ */
+it('keeps other pending counts when one count is applied', function () {
+    FilamentHelper::actingAs(['view_any_inventory_quantity', 'create_inventory_quantity', 'update_inventory_quantity']);
+
+    $other = InventoryHelper::product();
+
+    $pending = fn ($product, float $counted) => ProductQuantity::query()->create([
+        'product_id'             => $product->id,
+        'location_id'            => $this->stock->id,
+        'quantity'               => 0,
+        'counted_quantity'       => $counted,
+        'inventory_quantity_set' => true,
+        'company_id'             => $this->stock->company_id,
+    ]);
+
+    $first = $pending($this->product, 7);
+    $second = $pending($other, 3);
+
+    Livewire::test(ManageQuantities::class)->callTableAction('apply', $first);
+
+    expect((float) $first->fresh()->quantity)->toBe(7.0)
+        ->and($second->fresh())->not->toBeNull()
+        ->and((bool) $second->fresh()->inventory_quantity_set)->toBeTrue()
+        ->and((float) $second->fresh()->counted_quantity)->toBe(3.0);
 });

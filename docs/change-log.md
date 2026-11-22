@@ -6,6 +6,56 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-22, v1.15.0: sales order from an invoice, delivery choice, three fixes
+
+- **Why:** user, 2026-11-22: invoices made directly (TRACE365's cash sales)
+  should give full order history and dashboard visibility with one checkbox;
+  delivery options A + D + E chosen by the user. Production found three bugs
+  while TRACE365's stock and purchases were recorded.
+- **How (feature):**
+  - Accounts: `InvoiceResource\Support\InvoiceSchemaRegistry` with slots
+    `general.after` in `InvoiceForm` and `InvoiceInfolist` (Accounts never
+    references Sales).
+  - Sales: `Filament\InvoiceContributions` adds "Create sales order" and
+    "Customer has taken the goods" (default from the new setting
+    `sales_quotation_and_orders.goods_leave_on_invoice`, true), the linked order,
+    delivery status and "Mark as delivered" on the invoice view. Contributions
+    return nothing unless Sales is installed (an installation without Sales
+    otherwise queried a missing table).
+  - `Services\OrderFromInvoice`: request stored in Sales-owned
+    `sales_invoice_order_links` (move_id unique, order_id, deliver_now). On
+    `MoveConfirmed` it creates the order from the invoice's product lines (zero
+    quantities skipped: `OrderCalculator` divides by them), links invoice lines
+    both ways and the invoice through `sales_order_invoices` (so
+    `DirectInvoices` drops it: counted once), confirms it (procurement makes the
+    delivery) and, when goods were taken, validates each fully reserved step;
+    short stock stays open. `MoveCancelled`/`MoveDrafted` cancel the order and
+    open deliveries; re-confirm makes a fresh order. The module check reads the
+    company's grant (`PluginEntitlement`), not the actor: `SalesAccess` lets a
+    Super Admin through.
+  - `sales:backfill-orders-from-invoices` (dry run unless `--apply`): orders for
+    past direct invoices, deliveries cancelled so stock is unchanged; skips
+    linked invoices.
+- **How (fixes):**
+  - `ProductQuantity::purgeEmpty()` kept zero-quantity rows holding a pending
+    count; it deleted every pending count, in every company, after any apply.
+  - Barcode `LaunchBarcode::canAccess()` = module grant + page permission; the
+    sidebar showed it to companies without Barcode.
+  - Payment `ResetToDraftAction` sets the move with `setRelation()` (assigning
+    `$record->move =` made save() write a "move" column after the entry was
+    reset, Sentry DEKAERP-21) and finishes a half-done reset.
+- **Found, not fixed:** purchase bills ignore `product->purchase_method`, a
+  column that does not exist, so every purchase bills on received quantity.
+- **Verification:** OrderFromInvoiceTest 11 passed; QuantityResourceTest 9;
+  EntitledPagePermissionTest 15; PayInCompanyCurrencyTest 4. Full suites
+  (databases `aureuserp_testing_v113_k1`..`k4`): AccountFeature 596 passed,
+  SaleFeature 174, InvoiceFeature 28, InventoryFeature 891 passed + 1 failed.
+  The failure predates this release: `InventoryHeadlineTest` created another
+  company's product while signed in to the first, which UF-025 (v1.11.3)
+  correctly refuses. The test now builds that product before signing in.
+- **Rollback:** revert the release commit; the migration drops
+  `sales_invoice_order_links` and the settings migration deletes the setting.
+
 ## 2026-11-21, quick-navigation recents per company (U54, unreleased)
 
 - **Why:** U54. Recents were stored per user only, so after a company switch

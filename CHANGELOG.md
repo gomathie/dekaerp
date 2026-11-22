@@ -10,9 +10,24 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.15.0 — 2026-11-22
+
+### Features
+
+- Invoices can create their sales order: tick "Create sales order" on a customer invoice and, when the invoice is confirmed, a confirmed sales order is made from it, so the sale appears in Orders, Sales reports and the dashboards exactly once.
+- "Customer has taken the goods" on the same invoice records the delivery as done straight away (stock goes down); untick it to leave the delivery for the warehouse. Each company chooses the default under Sales settings, "Customers take the goods when invoiced".
+- The invoice page shows its sales order and the delivery status, with a "Mark as delivered" button for goods delivered later.
+- Cancelling or resetting such an invoice cancels its sales order and any delivery not done yet.
+
 ### Improvements
 
 - Recent items in quick navigation are kept per company, so after switching company they no longer link to pages you cannot open.
+
+### Fixes
+
+- Applying one stock count no longer clears the other counts waiting to be applied.
+- Barcode no longer appears in the menu of companies that do not have it.
+- "Reset to Draft" on a paid payment now resets the payment as well as its journal entry.
 
 # CHANGELOG — v1.14.2 — 2026-11-21
 
