@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Webkul\Purchase\Models\OrderLine;
 use Webkul\Purchase\Models\PurchaseOrder;
+use Webkul\Support\Filament\DashboardPeriod;
 
 trait HasPurchaseDashboardFilters
 {
@@ -91,11 +92,7 @@ trait HasPurchaseDashboardFilters
     {
         [$start, $end] = $this->periodRange();
 
-        $length = $start->diffInDays($end) + 1;
-
-        $previousEnd = (clone $start)->subDay()->endOfDay();
-
-        return [(clone $previousEnd)->subDays($length - 1)->startOfDay(), $previousEnd];
+        return DashboardPeriod::previous($start, $end);
     }
 
     protected function dashboardCurrency(): ?string

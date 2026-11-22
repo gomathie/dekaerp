@@ -6,6 +6,31 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-22, v1.16.4 (hotfix): dashboard comparison period
+
+- **Why:** the v1.16.3 production check read "Total Quotations 0% vs 31 Dec
+  – 30 Dec" on the Sales section. Sales and Purchases each had a copy of the
+  previous-period rule taking `diffInDays() + 1` as the length. A period runs
+  start-of-day to end-of-day, so a year is 365.99… days, which Carbon rounds
+  up: Sales compared with 31 Dec 2024 – 30 Dec 2025 instead of 2025, and
+  Purchases with one day too many. `HasDashboardMetrics` already floored it.
+- **How:** one rule, `Support\Filament\DashboardPeriod::previous()`, called
+  by `HasDashboardMetrics`, `HasSaleDashboardFilters` and
+  `HasPurchaseDashboardFilters`. `DashboardPeriod::label()` (used by
+  `baselineLabel()`) adds the year when the compared period is not in the
+  current year, so a year-on-year comparison reads "1 Jan 2025 – 31 Dec 2025".
+- **Benefit:** every dashboard trend compares with the same number of days,
+  ending the day before, and says which year.
+- **Trade-off / risk:** Sales trend percentages move slightly (one day less
+  in the old window). Display only; nothing stored.
+- **Verification:** support `DashboardMetricsTest` (two new tests, and the
+  label test now pins the clock so it does not fail on 1 January): 10
+  passed, 19 assertions. Sales and Purchases `tests/Feature/Dashboard`: 23
+  passed, 64 assertions. Database `aureuserp_testing_v113_k3`. Pint clean.
+  Production read-only count for DB-7 rule 5: one foreign-currency sales
+  order without a real rate, none for invoices or purchase orders.
+- **Rollback:** revert; no migration.
+
 ## 2026-11-22, v1.16.3: dashboards DB-2/3/7, Sales trend captions, schema contributions registered once
 
 - **Shipped:** totals net of credit notes and vendor refunds; unpaid
