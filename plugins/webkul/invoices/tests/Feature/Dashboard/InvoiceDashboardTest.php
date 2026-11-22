@@ -6,6 +6,7 @@ use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Models\Move;
 use Webkul\Invoice\Filament\Pages\Invoices;
+use Webkul\Invoice\Filament\Widgets\InvoiceHeadlineWidget;
 use Webkul\Invoice\Filament\Widgets\InvoiceStatsWidget;
 use Webkul\Invoice\Filament\Widgets\RevenueOverTimeWidget;
 use Webkul\Invoice\Models\Invoice;
@@ -13,6 +14,7 @@ use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
+use Webkul\Support\Models\Currency;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/CompanyHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/FilamentHelper.php';
@@ -162,6 +164,42 @@ it('deducts credit notes from the invoiced total and counts partly paid as unpai
 
     expect((float) $net->sum('amount_total_signed'))->toBe(170.0)
         ->and($unpaid->count())->toBe(2);
+});
+
+/**
+ * DB-7 / D-DB-5 (2026-11-22): money to collect in more than one currency is
+ * split by currency under the total, and a debt row shows its own currency.
+ */
+it('splits money to collect by currency and shows a foreign debt in its own currency', function (): void {
+    $company = Company::factory()->create();
+    CompanyHelper::actingAsCompanyUser($company, []);
+
+    $local = Currency::query()->updateOrCreate(['name' => 'GHS'], ['active' => true]);
+    $usd = Currency::query()->updateOrCreate(['name' => 'USD'], ['active' => true]);
+    $company->forceFill(['currency_id' => $local->getKey()])->save();
+
+    foreach ([[$usd, 100, 1550], [$local, 500, 500]] as [$currency, $own, $base]) {
+        $invoice = postedInvoice($company, $base, now()->toDateString(), 'not_paid');
+        Move::withoutGlobalScopes()->whereKey($invoice->getKey())->update([
+            'currency_id'            => $currency->getKey(),
+            'amount_residual'        => $own,
+            'amount_residual_signed' => $base,
+            'invoice_date_due'       => now()->addDays(3)->toDateString(),
+        ]);
+    }
+
+    $widget = invoiceWidget(InvoiceHeadlineWidget::class, []);
+
+    $stats = (fn () => $this->getStats())->call($widget);
+    $description = (string) $stats[0]->getDescription();
+
+    $rows = $widget->panel([])['list']['rows']['open'];
+
+    // ICU writes symbols ("$100", "GH₵500"), so check the split itself: the
+    // overdue text plus one part per currency.
+    expect(substr_count($description, ' · '))->toBe(2)
+        ->and($description)->toContain('$')
+        ->and(collect($rows)->pluck('amount')->filter(fn (string $amount): bool => str_contains($amount, '100'))->first())->toContain('$');
 });
 
 it('draws revenue per day from one grouped sum of paid invoices', function (): void {

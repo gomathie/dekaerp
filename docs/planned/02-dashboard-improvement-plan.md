@@ -200,6 +200,15 @@ at 15.5 plus a local 50 gives 1,600, not 150). The SMS listener sum is still
 open. Exchange rates now arrive daily (`currencies:sync-rates`), which rule 5
 below relies on.
 
+*Progress 2026-11-22 (develop):* rule 3 for money to collect and pay:
+the Overview "To collect" / "To pay" tiles add the split by currency when
+more than one is open ("2 overdue · $9.8K · GH₵61K",
+`InvoiceHeadlineWidget::withCurrencySplit()`), and an open-invoice row in a
+foreign currency shows its own amount and code. Test: invoices
+`InvoiceDashboardTest` "splits money to collect by currency and shows a
+foreign debt in its own currency". Still open: cash and bank per account
+currency (rule 4), revenue split, missing-rate "—" (rule 5), "Show in USD".
+
 **The rules for every money figure:**
 
 1. **Totals are in the company's base currency**, each document converted at

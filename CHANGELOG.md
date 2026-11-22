@@ -15,6 +15,7 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 - Dashboard: the invoiced and billed totals now deduct credit notes and vendor refunds, and "Unpaid" includes partly paid invoices.
 - Sales dashboard: top quotations are ranked by their value in your company's currency, so a dollar quotation no longer sits below a smaller one in local currency.
 - Empty dashboard lists say "Nothing in this period yet" and offer the next step, such as "Create a quotation" or "Record a bill", when you are allowed to take it.
+- Overview: "To collect" and "To pay" show how much is owed in each currency when there is more than one, and an open invoice in another currency shows the amount in that currency.
 
 # CHANGELOG — v1.16.2 — 2026-11-22
 
