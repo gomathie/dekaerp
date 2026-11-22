@@ -39,6 +39,22 @@ trait BuildsDashboardStats
     }
 
     /**
+     * The period a trend compares with, for example "1 Oct – 31 Oct" (DB-1).
+     * One format for every dashboard; each widget supplies its own
+     * previousPeriodRange() (HasDashboardMetrics or a module's filters).
+     */
+    protected function baselineLabel(): ?string
+    {
+        if (! method_exists($this, 'previousPeriodRange')) {
+            return null;
+        }
+
+        [$start, $end] = $this->previousPeriodRange();
+
+        return $start->translatedFormat('j M').' – '.$end->translatedFormat('j M');
+    }
+
+    /**
      * The change against the previous period, honestly (dashboard plan DB-1,
      * decisions D-DB-1 and D-DB-2, 2026-11-22).
      *

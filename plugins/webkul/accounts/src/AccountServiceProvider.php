@@ -206,11 +206,25 @@ class AccountServiceProvider extends PackageServiceProvider
         CompanyCurrencyContributions::register();
     }
 
+    /**
+     * Schema registries are static and packageBooted() runs more than once
+     * (install flow, test bootstrapper), so each contribution must register
+     * once (AGENTS.md). Unguarded, the contact and product forms carried the
+     * Accounting fields 82 times in a long test run, and the structure
+     * snapshots recorded that (found 2026-11-22). Production boots once per
+     * request, so users never saw it.
+     */
+    protected static bool $partnerSchemaContributed = false;
+
+    protected static bool $productSchemaContributed = false;
+
     protected function contributePartnerSchema(): void
     {
-        if (! Package::isPluginInstalled(static::$name)) {
+        if (static::$partnerSchemaContributed || ! Package::isPluginInstalled(static::$name)) {
             return;
         }
+
+        static::$partnerSchemaContributed = true;
 
         PartnerSchemaRegistry::form('sales.fields', fn () => AccountPartnerSchema::salesFields());
         PartnerSchemaRegistry::form('salesPurchase.append', fn () => AccountPartnerSchema::salesPurchaseAppend());
@@ -278,9 +292,11 @@ class AccountServiceProvider extends PackageServiceProvider
 
     protected function contributeProductSchema(): void
     {
-        if (! Package::isPluginInstalled(static::$name)) {
+        if (static::$productSchemaContributed || ! Package::isPluginInstalled(static::$name)) {
             return;
         }
+
+        static::$productSchemaContributed = true;
 
         ProductSchemaRegistry::form('right.pricing.fields', fn () => AccountProductSchema::taxFields());
         ProductSchemaRegistry::form('left.append', fn () => AccountProductSchema::policySection());
