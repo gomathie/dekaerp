@@ -45,7 +45,7 @@ return [
         'heading' => 'Top Customers',
         'columns' => [
             'name'    => 'Customer',
-            'orders'  => 'Orders',
+            'orders'  => 'Sales',
             'revenue' => 'Revenue',
         ],
     ],

@@ -28,6 +28,15 @@ class Vendors extends Cluster
         return static::shownUnderPurchases() ? NavigationGroup::Purchase : NavigationGroup::Invoice;
     }
 
+    /**
+     * After Orders and Products under Purchase (v1.16.2, 2026-11-22), so the
+     * sidebar "Purchase" link still opens Orders, not Bills.
+     */
+    public static function getNavigationSort(): ?int
+    {
+        return static::shownUnderPurchases() ? 3 : null;
+    }
+
     public static function canAccess(): bool
     {
         return PluginEntitlement::enabledForCurrent('invoices');

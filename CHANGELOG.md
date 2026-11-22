@@ -10,6 +10,17 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.16.2 — 2026-11-22
+
+### Improvements
+
+- Dashboard trends say what they compare with, for example "+12% vs 1 Oct – 31 Oct".
+- In Sales, the top customers table counts "Sales" (orders and invoices made without an order), not only orders.
+
+### Fixes
+
+- Clicking Sales or Purchase in the menu opens Orders again. Since v1.16.1 it opened the new Invoices or Bills tab first.
+
 # CHANGELOG — v1.16.1 — 2026-11-22
 
 ### Improvements

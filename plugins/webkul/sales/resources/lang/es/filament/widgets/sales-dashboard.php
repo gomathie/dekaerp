@@ -45,7 +45,7 @@ return [
         'heading' => 'Mejores Clientes',
         'columns' => [
             'name'    => 'Cliente',
-            'orders'  => 'Pedidos',
+            'orders'  => 'Ventas',
             'revenue' => 'Ingresos',
         ],
     ],

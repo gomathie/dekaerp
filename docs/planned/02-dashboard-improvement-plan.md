@@ -112,6 +112,14 @@ purchase headline spend. The pinned test was inverted in the same change.
 Still open in DB-1: "—" for unavailable data, the baseline caption
 ("vs 1-31 Oct"), and the Sales top-customers column rename.
 
+*Progress 2026-11-22 (develop, after v1.16.1):* baseline caption built:
+every tile from `buildStat()` and the Purchases tiles read
+"+12% vs 1 Oct – 31 Oct" (`HasDashboardMetrics::baselineLabel()`; test
+`DashboardMetricsTest` "names the period a trend is compared with"). The
+top-customers count column is now "Sales". **DB-1 is done** except "—" for
+unavailable data, which needs DB-7's missing-rate rule to mean anything; it
+moves there.
+
 ### DB-2 Numbers agree
 
 Per module, a test that the tile total equals the chart's series sum and the

@@ -9,9 +9,15 @@ trait BuildsDashboardStats
     /**
      * @param  list<float>  $series
      */
-    protected function themedStat(string $label, string $icon, string $color, string $value, float $current, float $previous, array $series = [], ?string $title = null, bool $lowerIsBetter = false, ?float $previousRecords = null, bool $money = false): Stat
+    protected function themedStat(string $label, string $icon, string $color, string $value, float $current, float $previous, array $series = [], ?string $title = null, bool $lowerIsBetter = false, ?float $previousRecords = null, bool $money = false, ?string $baseline = null): Stat
     {
         [$description, $descriptionIcon, $trendColor] = $this->statTrend($current, $previous, $lowerIsBetter, $previousRecords, $money);
+
+        // Say what the change is measured against (DB-1, 2026-11-22): "+12%"
+        // alone did not say compared with when.
+        if ($baseline !== null) {
+            $description .= ' '.__('support::support.trend.vs', ['range' => $baseline]);
+        }
 
         $attributes = [
             'class' => 'dashboard-stat dashboard-stat--'.$color,
