@@ -358,6 +358,10 @@ class ProductQuantity extends Model
             ->where(fn ($query) => $query->whereRaw('ROUND(quantity, ?) = 0', [6])->orWhereNull('quantity'))
             ->whereRaw('ROUND(reserved_quantity, ?) = 0', [6])
             ->whereNull('user_id')
+            // A count entered but not applied yet still has quantity 0. Purging
+            // it lost the stocktaker's work: applying one count deleted every
+            // other pending count, in every company (TRACE365, 2026-11-22).
+            ->where(fn ($query) => $query->where('inventory_quantity_set', false)->orWhereNull('inventory_quantity_set'))
             ->delete();
     }
 

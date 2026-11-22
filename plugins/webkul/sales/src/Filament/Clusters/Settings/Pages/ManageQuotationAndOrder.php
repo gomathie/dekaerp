@@ -2,8 +2,6 @@
 
 namespace Webkul\Sale\Filament\Clusters\Settings\Pages;
 
-
-use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms\Components\TextInput;
@@ -14,6 +12,7 @@ use UnitEnum;
 use Webkul\Sale\Settings\QuotationAndOrderSettings;
 use Webkul\Sale\Support\SalesAccess;
 use Webkul\Support\Filament\Clusters\Settings;
+use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 
 class ManageQuotationAndOrder extends SettingsPage
 {
@@ -24,7 +23,6 @@ class ManageQuotationAndOrder extends SettingsPage
     }
 
     use ChecksPagePermission;
-
     use HasPageShield;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-shopping-cart';
@@ -76,6 +74,9 @@ class ManageQuotationAndOrder extends SettingsPage
                 Toggle::make('enable_lock_confirm_sales')
                     ->label(__('sales::filament/clusters/settings/pages/manage-quotation-and-order.form.fields.lock-confirm-sales'))
                     ->helperText(__('sales::filament/clusters/settings/pages/manage-quotation-and-order.form.fields.lock-confirm-sales-help')),
+                Toggle::make('goods_leave_on_invoice')
+                    ->label(__('sales::filament/clusters/settings/pages/manage-quotation-and-order.form.fields.goods-leave-on-invoice'))
+                    ->helperText(__('sales::filament/clusters/settings/pages/manage-quotation-and-order.form.fields.goods-leave-on-invoice-help')),
             ]);
     }
 }

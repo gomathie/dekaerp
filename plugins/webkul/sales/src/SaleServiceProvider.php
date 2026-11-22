@@ -18,12 +18,15 @@ use Webkul\PluginManager\Console\Commands\InstallCommand;
 use Webkul\PluginManager\Console\Commands\UninstallCommand;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
+use Webkul\Sale\Console\Commands\BackfillOrdersFromInvoices;
 use Webkul\Sale\Facades\SaleOrder as SaleOrderFacade;
+use Webkul\Sale\Filament\InvoiceContributions;
 use Webkul\Sale\Filament\Pages\SalesDashboard;
 use Webkul\Sale\Filament\Widgets\SaleHeadlineWidget;
 use Webkul\Sale\Listeners\ComputeSaleOrderFromMoveListener;
 use Webkul\Sale\Listeners\ComputeSaleOrderListener;
 use Webkul\Sale\Listeners\SendSMSNotificationListener;
+use Webkul\Sale\Listeners\SyncOrderFromInvoiceListener;
 use Webkul\Sale\Livewire\QuotationSummary;
 use Webkul\Sale\Models\Order;
 use Webkul\Sale\Models\Team;
@@ -68,6 +71,7 @@ class SaleServiceProvider extends PackageServiceProvider
                 '2026_04_08_043511_add_sale_order_id_column_in_inventories_procurement_groups_table_from_sales',
                 '2026_08_21_000000_drop_sale_source_from_sales_orders_table',
                 '2026_08_03_130000_seed_sales_sequences',
+                '2026_11_22_000001_create_sales_invoice_order_links_table',
             ])
             ->runsMigrations()
             ->hasSettings([
@@ -75,8 +79,12 @@ class SaleServiceProvider extends PackageServiceProvider
                 '2025_02_05_094025_create_sales_price_settings',
                 '2025_02_05_095000_create_sales_invoice_settings',
                 '2025_02_05_095005_create_sales_quotation_and_order_settings',
+                '2026_11_22_000002_add_goods_leave_on_invoice_to_sales_quotation_and_order_settings',
             ])
             ->runsSettings()
+            ->hasCommands([
+                BackfillOrdersFromInvoices::class,
+            ])
             ->hasDependencies([
                 'invoices',
                 'payments',
@@ -124,6 +132,15 @@ class SaleServiceProvider extends PackageServiceProvider
             [MoveConfirmed::class, MoveCancelled::class, MoveDrafted::class, MoveReversed::class],
             ComputeSaleOrderFromMoveListener::class,
         );
+
+        // "Create sales order" on a customer invoice: made on confirm,
+        // cancelled with the invoice (OrderFromInvoice).
+        Event::listen(
+            [MoveConfirmed::class, MoveCancelled::class, MoveDrafted::class],
+            SyncOrderFromInvoiceListener::class,
+        );
+
+        InvoiceContributions::register();
     }
 
     public function packageRegistered(): void

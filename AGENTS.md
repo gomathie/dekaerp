@@ -2053,6 +2053,29 @@ log named):
     registry is static.
   - Tests: `logistics/tests/Feature/Customers/CustomerPageTest.php`.
 
+• Sales order from an invoice, 2026-11-22 (v1.15.0, user; `docs/change-log.md`):
+  - Made on invoice **confirm**, never on save: a draft can still change.
+    Cancel or reset cancels the order and open deliveries; re-confirm makes a
+    new one. One service: `Sale\Services\OrderFromInvoice`.
+  - Counted once: the invoice is attached through `sales_order_invoices`, which
+    takes it out of `DirectInvoices`. Do not count both.
+  - Its module check reads the company grant (`PluginEntitlement`), not
+    `SalesAccess`, which lets a Super Admin create orders for a company
+    without Sales.
+  - The request lives in Sales' own `sales_invoice_order_links`, never a column
+    on Accounts' moves. `InvoiceContributions` returns nothing unless Sales is
+    installed.
+  - "Customer has taken the goods" validates only fully reserved steps; short
+    stock stays open. Never push stock negative. The backfill command cancels
+    deliveries so past sales leave stock unchanged.
+  - Tests: sales `Workflows/OrderFromInvoiceTest.php`.
+
+• Pending stock counts survive purgeEmpty, 2026-11-22 (v1.15.0):
+  `ProductQuantity::purgeEmpty()` must skip rows with
+  `inventory_quantity_set`. It ran after every apply and deleted every pending
+  count in every company. Test: inventories `QuantityResourceTest` "keeps other
+  pending counts".
+
 DONE RECENTLY (newest first; details in docs/change-log.md)
 
 • 2026-11-19 — Hotfixes v1.12.1 to v1.12.5, all from TRACE365 use

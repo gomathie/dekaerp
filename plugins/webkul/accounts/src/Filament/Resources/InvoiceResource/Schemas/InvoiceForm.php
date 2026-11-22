@@ -29,6 +29,7 @@ use Webkul\Account\Enums\PaymentState;
 use Webkul\Account\Enums\PaymentType;
 use Webkul\Account\Filament\Resources\BankAccountResource;
 use Webkul\Account\Filament\Resources\InvoiceResource;
+use Webkul\Account\Filament\Resources\InvoiceResource\Support\InvoiceSchemaRegistry;
 use Webkul\Account\Filament\Resources\JournalResource;
 use Webkul\Account\Models\FiscalPosition;
 use Webkul\Account\Models\Journal;
@@ -194,6 +195,9 @@ class InvoiceForm
                                             ->required(fn (Get $get): bool => (bool) $get('paid_now'))
                                             ->visible(fn (Get $get, string $operation, $livewire): bool => $operation === 'create' && (bool) $get('paid_now') && ! static::isCreditNote($livewire))
                                             ->dehydrated(false),
+                                        // Fields other plugins add (Sales: create a linked
+                                        // sales order). Accounts must not reference them.
+                                        ...InvoiceSchemaRegistry::renderForm('general.after'),
                                         Group::make()
                                             ->schema([
                                                 DatePicker::make('invoice_date_due')

@@ -16,6 +16,7 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\TextSize;
 use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Filament\Resources\InvoiceResource;
+use Webkul\Account\Filament\Resources\InvoiceResource\Support\InvoiceSchemaRegistry;
 use Webkul\Field\Filament\Infolists\Components\ProgressStepper as InfolistProgressStepper;
 use Webkul\Product\Settings\ProductSettings;
 use Webkul\Support\Filament\Infolists\Components\RepeatableEntry;
@@ -78,6 +79,7 @@ class InvoiceInfolist
                                             ->label(__('accounts::filament/resources/invoice.infolist.section.general.entries.customer'))
                                             ->visible(fn ($record) => $record->partner_id === null)
                                             ->icon('heroicon-o-user'),
+                                        ...InvoiceSchemaRegistry::renderInfolist('general.after'),
                                     ]),
 
                                 Group::make()
