@@ -2,13 +2,19 @@
 Authoring notes (not shown on the What's New page, which strips HTML comments):
 - Write for the people who use DEKA, not for developers. Technical detail
   belongs in docs/change-log.md.
-- New entries go under "## Unreleased" (hidden from users). Move them under the
+- New entries go under "## Unreleased
+
+# CHANGELOG — v1.16.0 — 2026-11-22
+
+" (hidden from users). Move them under the
   version heading in the same push that ships them to production, and date it.
 - Headings: "# CHANGELOG — vX.Y.Z — YYYY-MM-DD", sections "### Features",
   "### Improvements", "### Fixes". Start a security fix with "[Security]".
 -->
 
 ## Unreleased
+
+# CHANGELOG — v1.16.0 — 2026-11-22
 
 ### Features
 
@@ -22,13 +28,10 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 - Sales Orders and Quotations open on all records instead of only your own, and the list shows the order date.
 - Dashboard trends are honest: a figure with nothing before it says "New" instead of "+100%", a small number shows the real change ("+3"), and for costs and unpaid bills a rise is shown in red.
 
-### Fixes (dashboards)
-
-- The Accounting journal cards (To Validate, Late, To Pay and the chart) add amounts in your company's currency. A company invoicing in dollars and its local currency saw the two added together.
-
 ### Fixes
 
 - Creating an invoice with "Paid now" but no lines shows a message instead of an error page.
+- The Accounting journal cards (To Validate, Late, To Pay and the chart) add amounts in your company's currency. A company invoicing in dollars and its local currency saw the two added together.
 
 # CHANGELOG — v1.15.0 — 2026-11-22
 

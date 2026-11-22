@@ -57,6 +57,39 @@ UX-findings entry. Stop after any package.
   every later package can assert tile, chart and table against expected
   numbers. Start with Invoices (12 widgets, most read).
 
+#### DB-0 audit, 2026-11-22 (read from the code; no data changed)
+
+Invoices, every widget. Shared base: `HasInvoiceDashboardFilters` dates by
+`invoice_date` and sums `amount_total_signed` (company currency, own rate);
+invoices are posted `out_invoice` only, bills posted `in_invoice` only.
+
+| Widget | Question it answers | Source | Gap found |
+| --- | --- | --- | --- |
+| `InvoiceStatsWidget` | How much did we invoice, how many, paid, unpaid? | posted out_invoice, `amount_total_signed`, by payment_state | Credit notes are not deducted, while DB-8 defines revenue as invoices less credit notes. "Unpaid" counts `not_paid` only, so partly paid invoices fall out of it. |
+| `BillStatsWidget` | Same for bills | posted in_invoice, abs | Same two gaps (refunds, partial). Lower-is-better now applied (DB-1). |
+| `InvoiceHeadlineWidget` | Paid, overdue, due | signed paid total; residual signed for overdue and due | OK on currency. |
+| `InvoiceStatusChart` | Totals by payment state | `amount_total_signed` grouped by state | OK. |
+| `RevenueOverTimeWidget` | Revenue per day | `dailyBuckets` of **paid** invoices | Named revenue but counts only paid invoices, so it disagrees with the invoiced total beside it (DB-2). |
+| `CustomerRevenueChart`, `SalespersonPerformanceChart` | Who bills most | `amount_total_signed` | OK. |
+| `TopInvoicesWidget`, `TopBillsWidget` | Largest documents | ordered by signed total, shows `amount_total` in the document currency | Display in the document currency is right (DB-7 rule 2); no gap. |
+| `OverviewCashFlowChart` | Money in and out | payments, `amount_company_currency_signed`, by payment date | "This period" ends yesterday (noted under DB-8); polls 300 s, as required. |
+| `OverviewHeadlineWidget`, `OverviewBoard`, `OverviewModuleCards` | Section summaries | each module's `panel()` / cards | Covered by each module's row. |
+
+Sales, Purchases and Accounting, currency check only:
+
+- Sales orders convert with `amount_total / currency_rate`, and invoices use
+  `amount_total_signed`, so both are in company currency. `TopQuotationsTable`
+  sorts by `amount_total` in each quotation's own currency, so a USD quotation
+  can rank below a larger-looking cedi one (DB-7).
+- Top products is untaxed (R-6) while the revenue tile is tax-included. Both
+  are right, but they will never agree, so the labels must say which (DB-2).
+- Purchases use `total_cc_amount` throughout. OK.
+- Accounting: `JournalChartWidget` is fixed (DB-7). `AccountingHeadlineWidget`
+  is covered by `AccountingOverviewTest`.
+
+Known-totals harness: started with accounting `JournalChartCurrencyTest`.
+The shared two-company fixture comes with DB-2.
+
 ### DB-1 Honest trends, in one place
 
 All in `HasDashboardMetrics`, so every module inherits it:
