@@ -10,6 +10,12 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.16.4 — 2026-11-22
+
+### Fixes
+
+- Dashboard trends compare with the right period again. The Sales dashboard read "vs 31 Dec – 30 Dec" instead of last year, and a comparison with an earlier year now names it, for example "vs 1 Jan 2025 – 31 Dec 2025".
+
 # CHANGELOG — v1.16.3 — 2026-11-22
 
 ### Improvements

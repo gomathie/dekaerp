@@ -3,6 +3,7 @@
 namespace Webkul\Support\Filament\Concerns;
 
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Webkul\Support\Filament\DashboardPeriod;
 
 trait BuildsDashboardStats
 {
@@ -51,7 +52,7 @@ trait BuildsDashboardStats
 
         [$start, $end] = $this->previousPeriodRange();
 
-        return $start->translatedFormat('j M').' – '.$end->translatedFormat('j M');
+        return DashboardPeriod::label($start, $end);
     }
 
     /**

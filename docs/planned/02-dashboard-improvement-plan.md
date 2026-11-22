@@ -120,6 +120,12 @@ top-customers count column is now "Sales". **DB-1 is done** except "—" for
 unavailable data, which needs DB-7's missing-rate rule to mean anything; it
 moves there.
 
+*Fixed 2026-11-22 (v1.16.4):* the previous period is one rule,
+`Support\Filament\DashboardPeriod::previous()`. Sales and Purchases had
+their own copies that rounded a year of 365.99 days up, so Sales read
+"vs 31 Dec – 30 Dec". The caption names the year when the compared period
+is not in the current one. Test: support `DashboardMetricsTest`.
+
 ### DB-2 Numbers agree
 
 Per module, a test that the tile total equals the chart's series sum and the
@@ -208,6 +214,16 @@ foreign currency shows its own amount and code. Test: invoices
 `InvoiceDashboardTest` "splits money to collect by currency and shows a
 foreign debt in its own currency". Still open: cash and bank per account
 currency (rule 4), revenue split, missing-rate "—" (rule 5), "Show in USD".
+
+*Checked 2026-11-22 (production, read-only count):* rule 4 has no widget
+to apply to yet. No dashboard shows a cash or bank balance; the Overview
+"Money in and out" chart sums payments in company currency
+(`amount_company_currency_signed`). Rule 5: every Sales and Purchases
+widget treats a missing or zero `currency_rate` as 1
+(`CASE WHEN currency_rate > 0 ...`). Production has one foreign-currency
+sales order without a real rate, and no such invoice or purchase order.
+Rates now arrive daily, so rule 5 waits until that count grows or a client
+reports it.
 
 **The rules for every money figure:**
 
