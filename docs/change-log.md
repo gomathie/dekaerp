@@ -6,6 +6,26 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-22, dashboards DB-2 and DB-3 on develop (unreleased)
+
+- **Why:** dashboard plan #2 (user: "start dashboard", decide and ship).
+- **How:** Invoices/Bills totals net of credit notes and vendor refunds,
+  "Unpaid" includes partly paid (`HasInvoiceDashboardFilters`); top
+  quotations ranked by company-currency value; empty top lists show "Nothing
+  in this period yet" plus the next step when `canCreate()` allows it
+  (`Support\Filament\Concerns\HasDashboardEmptyState`).
+- **Found, not changed (decision for the user):** `ChecksPagePermission::
+  hasPagePermission()` returns **true** when Shield cannot name a page's
+  permission (`getPagePermission()` null), while `GuardsDashboardWidget`
+  refuses the same case. invoices `ModuleCardsTest` "hides the inventory card
+  from a user who may not open the inventory overview" failed once in a
+  combined run for that reason (Inventory not yet registered in the panel)
+  and passed alone (6/6). Failing closed is safer but could lock a page in
+  production whose name Shield misses, so it is not changed silently.
+- **Verification:** sales dashboards 14 passed, purchases 9, invoices 27 + the
+  isolated `ModuleCardsTest` 6/6 (database `aureuserp_testing_v113_k2..k4`).
+- **Rollback:** revert; no migration.
+
 ## 2026-11-22, v1.16.2: Sales/Purchase menu opens Orders again; dashboard trend captions
 
 - **Why:** the v1.16.1 production check found the moved Invoices and Bills

@@ -10,13 +10,16 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Webkul\Purchase\Enums\OrderState;
 use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\PurchaseOrderResource;
+use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\QuotationResource as RfqResource;
 use Webkul\Purchase\Filament\Admin\Widgets\Concerns\GuardsPurchaseDashboardWidget;
 use Webkul\Purchase\Filament\Admin\Widgets\Concerns\HasPurchaseDashboardFilters;
 use Webkul\Purchase\Models\PurchaseOrder;
+use Webkul\Support\Filament\Concerns\HasDashboardEmptyState;
 
 class TopRfqsWidget extends BaseWidget
 {
     use GuardsPurchaseDashboardWidget, HasPurchaseDashboardFilters;
+    use HasDashboardEmptyState;
 
     protected static ?int $sort = 5;
 
@@ -24,7 +27,8 @@ class TopRfqsWidget extends BaseWidget
 
     public function table(Table $table): Table
     {
-        return $table
+        // DB-3 (2026-11-22): an empty list offers the one next step.
+        return $this->withDashboardEmptyState($table, 'rfq', RfqResource::canCreate() ? RfqResource::getUrl('create') : null)
             ->defaultKeySort(false)
             ->recordClasses('dashboard-table-row')
             ->recordUrl(fn ($record): ?string => PurchaseOrderResource::canAccess()

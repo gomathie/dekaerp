@@ -143,6 +143,14 @@ the shared two-company fixture and tile = chart = table tests per module.
 - Module off or no permission: the widget is absent, never an empty frame.
 - No zero flash while loading.
 
+
+*Progress 2026-11-22 (develop):* empty top lists (quotations, sales orders,
+invoices, bills, RFQs) say "Nothing in this period yet" and offer the one
+next step, shown only to someone whose resource `canCreate()` allows it
+(`Support\Filament\Concerns\HasDashboardEmptyState`; test sales
+`SalesDashboardTest` "offers the next step on an empty list only to users
+who may take it"). Charts already had their empty message. Still open: no
+zero flash while loading, and widget-absent checks per module.
 ### DB-4 Hierarchy, dashboard by dashboard
 
 Overview first, then Invoices, Sales, Purchases: filters and period visible
@@ -247,7 +255,7 @@ paid. Decided:
 
   An invoice made from an order is still counted once, through its order.
   The rule lives in one place: `Webkul\Sale\Support\DirectInvoices`.
-- Still open: the "Recent invoices" view inside Sales, and the guide wording.
+- *Done 2026-11-22 (v1.16.1):* invoices sit inside Sales as an "Invoices" tab, which is the "Recent invoices" view this asked for. Still open: the guide wording.
 - Still open: the top-customers count column, labelled "Orders", now also
   counts direct invoices. Rename it ("Sales") with DB-1.
 

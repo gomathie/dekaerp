@@ -1,10 +1,12 @@
 <?php
 
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use Filament\Tables\Table;
 use Illuminate\Support\Facades\DB;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Sale\Enums\OrderState;
+use Webkul\Sale\Filament\Clusters\Reporting\Pages\SalesAnalysis;
 use Webkul\Sale\Filament\Pages\SalesDashboard;
 use Webkul\Sale\Filament\Widgets\MonthlySalesChart;
 use Webkul\Sale\Filament\Widgets\RevenueByCategoryChart;
@@ -14,7 +16,6 @@ use Webkul\Sale\Filament\Widgets\TopCustomersTable;
 use Webkul\Sale\Filament\Widgets\TopProductsTable;
 use Webkul\Sale\Filament\Widgets\TopQuotationsTable;
 use Webkul\Sale\Filament\Widgets\TopSalesOrdersTable;
-use Webkul\Sale\Filament\Clusters\Reporting\Pages\SalesAnalysis;
 use Webkul\Sale\Models\Order;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
@@ -110,6 +111,26 @@ it('reads only the current company’s confirmed orders', function (): void {
 
     expect($ids)->toContain($own->getKey())
         ->not->toContain($foreign->getKey());
+});
+
+/**
+ * DB-3 (2026-11-22): an empty top-quotations list offers "Create a
+ * quotation", only to someone who may create one.
+ */
+it('offers the next step on an empty list only to users who may take it', function (): void {
+    $company = Company::factory()->create();
+
+    CompanyHelper::actingAsCompanyUser($company, ['create_sale_quotation', 'view_any_sale_quotation']);
+    $widget = new TopQuotationsTable;
+    $allowed = $widget->table(Table::make($widget));
+
+    CompanyHelper::actingAsCompanyUser($company, []);
+    $widget = new TopQuotationsTable;
+    $refused = $widget->table(Table::make($widget));
+
+    expect($allowed->getEmptyStateHeading())->toBe(__('support::filament/dashboard.empty-table'))
+        ->and($allowed->getEmptyStateActions())->toHaveCount(1)
+        ->and($refused->getEmptyStateActions())->toHaveCount(0);
 });
 
 /**

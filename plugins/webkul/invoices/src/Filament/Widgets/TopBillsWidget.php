@@ -3,7 +3,6 @@
 namespace Webkul\Invoice\Filament\Widgets;
 
 use BackedEnum;
-use Webkul\Invoice\Filament\Widgets\Concerns\GuardsInvoiceDashboardWidget;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -11,11 +10,14 @@ use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Webkul\Invoice\Filament\Clusters\Vendors\Resources\BillResource;
+use Webkul\Invoice\Filament\Widgets\Concerns\GuardsInvoiceDashboardWidget;
 use Webkul\Invoice\Filament\Widgets\Concerns\HasInvoiceDashboardFilters;
+use Webkul\Support\Filament\Concerns\HasDashboardEmptyState;
 
 class TopBillsWidget extends BaseWidget
 {
-    use HasInvoiceDashboardFilters, GuardsInvoiceDashboardWidget;
+    use GuardsInvoiceDashboardWidget, HasInvoiceDashboardFilters;
+    use HasDashboardEmptyState;
 
     protected static ?int $sort = 8;
 
@@ -23,7 +25,8 @@ class TopBillsWidget extends BaseWidget
 
     public function table(Table $table): Table
     {
-        return $table
+        // DB-3 (2026-11-22): an empty list offers the one next step.
+        return $this->withDashboardEmptyState($table, 'bill', BillResource::canCreate() ? BillResource::getUrl('create') : null)
             ->defaultKeySort(false)
             ->recordClasses('dashboard-table-row')
             ->recordUrl(fn ($record): ?string => $record && BillResource::canAccess()
