@@ -46,7 +46,11 @@ class TopQuotationsTable extends TableWidget
         return $this->quotations()
             ->with(['partner', 'currency'])
             ->where('amount_total', '>', 0)
-            ->orderByDesc('amount_total')
+            // Ranked by company-currency value (dashboard plan DB-7,
+            // 2026-11-22), the conversion the other Sales widgets use. Ranked
+            // by own currency, a USD quotation sat below a smaller-looking
+            // cedi one. Each row still shows its own currency.
+            ->orderByRaw('CASE WHEN sales_orders.currency_rate > 0 THEN sales_orders.amount_total / sales_orders.currency_rate ELSE sales_orders.amount_total END DESC')
             ->limit(5);
     }
 

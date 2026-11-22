@@ -12,6 +12,7 @@ use Webkul\Sale\Filament\Widgets\SalesPersonPerformanceChart;
 use Webkul\Sale\Filament\Widgets\SaleStatsOverview;
 use Webkul\Sale\Filament\Widgets\TopCustomersTable;
 use Webkul\Sale\Filament\Widgets\TopProductsTable;
+use Webkul\Sale\Filament\Widgets\TopQuotationsTable;
 use Webkul\Sale\Filament\Widgets\TopSalesOrdersTable;
 use Webkul\Sale\Filament\Clusters\Reporting\Pages\SalesAnalysis;
 use Webkul\Sale\Models\Order;
@@ -109,6 +110,29 @@ it('reads only the current company’s confirmed orders', function (): void {
 
     expect($ids)->toContain($own->getKey())
         ->not->toContain($foreign->getKey());
+});
+
+/**
+ * DB-7 (2026-11-22): top quotations rank by company-currency value. A USD
+ * quotation of 100 at 15.5 (1,550 local) outranks a local one of 500, which
+ * the old own-currency sort placed first.
+ */
+it('ranks top quotations by their value in the company currency', function (): void {
+    $company = Company::factory()->create();
+    $user = CompanyHelper::actingAsCompanyUser($company, []);
+
+    $usd = SaleHelper::order(['company_id' => $company->getKey(), 'user_id' => $user->getKey()]);
+    $local = SaleHelper::order(['company_id' => $company->getKey(), 'user_id' => $user->getKey()]);
+
+    Order::withoutGlobalScopes()->whereKey($usd->getKey())->update(['state' => OrderState::DRAFT->value, 'date_order' => now(), 'amount_total' => 100, 'currency_rate' => round(1 / 15.5, 6)]);
+    Order::withoutGlobalScopes()->whereKey($local->getKey())->update(['state' => OrderState::DRAFT->value, 'date_order' => now(), 'amount_total' => 500, 'currency_rate' => 1]);
+
+    $widget = new TopQuotationsTable;
+    $widget->pageFilters = [];
+
+    $ids = (fn () => $this->getTableQuery()->pluck('id')->all())->call($widget);
+
+    expect(array_slice($ids, 0, 2))->toBe([$usd->getKey(), $local->getKey()]);
 });
 
 /**

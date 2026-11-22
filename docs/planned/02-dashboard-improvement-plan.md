@@ -69,7 +69,7 @@ invoices are posted `out_invoice` only, bills posted `in_invoice` only.
 | `BillStatsWidget` | Same for bills | posted in_invoice, abs | Same two gaps (refunds, partial). Lower-is-better now applied (DB-1). |
 | `InvoiceHeadlineWidget` | Paid, overdue, due | signed paid total; residual signed for overdue and due | OK on currency. |
 | `InvoiceStatusChart` | Totals by payment state | `amount_total_signed` grouped by state | OK. |
-| `RevenueOverTimeWidget` | Revenue per day | `dailyBuckets` of **paid** invoices | Named revenue but counts only paid invoices, so it disagrees with the invoiced total beside it (DB-2). |
+| `RevenueOverTimeWidget` | Revenue per day | `dailyBuckets` of **paid** invoices | *Corrected 2026-11-22:* labelled "Paid customer invoices per day", so it is a cash view, not a disagreement; kept as is. |
 | `CustomerRevenueChart`, `SalespersonPerformanceChart` | Who bills most | `amount_total_signed` | OK. |
 | `TopInvoicesWidget`, `TopBillsWidget` | Largest documents | ordered by signed total, shows `amount_total` in the document currency | Display in the document currency is right (DB-7 rule 2); no gap. |
 | `OverviewCashFlowChart` | Money in and out | payments, `amount_company_currency_signed`, by payment date | "This period" ends yesterday (noted under DB-8); polls 300 s, as required. |
@@ -127,6 +127,15 @@ table's rows, for the same filter. Fix any mismatch at its query, sharing
 one query where two widgets compute the same figure. Invoices, then Sales,
 Purchases, Accounting, Logistics.
 
+
+*Progress 2026-11-22 (develop):* Invoices and Bills money totals are net of
+credit notes and vendor refunds (`customerInvoicesNet()` /
+`vendorBillsNet()`; counts stay invoices only), and "Unpaid" includes partly
+paid (`unpaidOnly()`). Top quotations rank by company-currency value (DB-7).
+Test: invoices `InvoiceDashboardTest` "deducts credit notes from the
+invoiced total and counts partly paid as unpaid", sales `SalesDashboardTest`
+"ranks top quotations by their value in the company currency". Still open:
+the shared two-company fixture and tile = chart = table tests per module.
 ### DB-3 States
 
 - Empty charts and tables get one action (U13: "Create a quotation", "Record

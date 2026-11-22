@@ -136,6 +136,34 @@ it('counts and sums only the current company’s invoices', function (): void {
         ->and(Invoice::query()->whereKey($query->pluck('id'))->count())->toBe(2);
 });
 
+/**
+ * Dashboard plan DB-2 (2026-11-22): the invoiced total is invoices less
+ * credit notes (DB-8's revenue rule), and "Unpaid" includes partly paid
+ * invoices, which used to fall in neither paid nor unpaid.
+ */
+it('deducts credit notes from the invoiced total and counts partly paid as unpaid', function (): void {
+    $company = Company::factory()->create();
+    CompanyHelper::actingAsCompanyUser($company, []);
+
+    postedInvoice($company, 100, '2026-03-02');
+    postedInvoice($company, 60, '2026-03-03', 'partial');
+    postedInvoice($company, 40, '2026-03-04', 'not_paid');
+
+    $creditNote = postedInvoice($company, 30, '2026-03-05');
+    Move::withoutGlobalScopes()->whereKey($creditNote->getKey())->update([
+        'move_type'           => MoveType::OUT_REFUND,
+        'amount_total_signed' => -30,
+    ]);
+
+    $widget = invoiceWidget(InvoiceStatsWidget::class, ['start_date' => '2026-03-01', 'end_date' => '2026-03-31']);
+
+    $net = (fn () => $this->customerInvoicesNet())->call($widget);
+    $unpaid = (fn () => $this->unpaidOnly($this->customerInvoices()))->call($widget);
+
+    expect((float) $net->sum('amount_total_signed'))->toBe(170.0)
+        ->and($unpaid->count())->toBe(2);
+});
+
 it('draws revenue per day from one grouped sum of paid invoices', function (): void {
     $company = Company::factory()->create();
 

@@ -10,6 +10,11 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+### Improvements
+
+- Dashboard: the invoiced and billed totals now deduct credit notes and vendor refunds, and "Unpaid" includes partly paid invoices.
+- Sales dashboard: top quotations are ranked by their value in your company's currency, so a dollar quotation no longer sits below a smaller one in local currency.
+
 # CHANGELOG — v1.16.2 — 2026-11-22
 
 ### Improvements
