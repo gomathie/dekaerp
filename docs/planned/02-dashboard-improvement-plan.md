@@ -176,6 +176,12 @@ Every series one grouped query (as `dailyBuckets` already does); eager
 loading on top-N tables; confirm no widget polls faster than 300 s.
 Measure before and after with the query log in tests.
 
+*Done 2026-11-22 (v1.16.5):* Sentry DEKAERP-23, deferred here, was the
+new-invoice page, not a dashboard: one journal lookup per "Preferred payment
+method" option, because the picker listed every company's payment method
+lines. Fixed at the cause (`PaymentMethodLine::forCompany()`, options loaded
+with their journal); see `docs/change-log.md`.
+
 ### DB-7 Businesses that trade in USD and their local currency
 
 Many clients (Ghana, Zambia, Congo) invoice, buy and hold bank balances in

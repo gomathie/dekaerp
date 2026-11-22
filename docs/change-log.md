@@ -6,6 +6,48 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-22, v1.16.5 (hotfix): payment methods stay inside their company; DEKAERP-23
+
+- **Why:** Sentry DEKAERP-23 (N+1 on the new-invoice page: about 21
+  `accounts_journals where id = ?` per load). A query-listener probe traced
+  every lookup to `PaymentMethodLine::getDisplayNameAttribute()` reading
+  `$this->journal`, called for each option of the invoice's "Preferred
+  payment method" select. The real fault behind the count: payment method
+  lines have no company and no company scope, and the invoice and bill
+  pickers did not filter them, so every client saw (and could pick) every
+  other client's payment methods, and the invoice API took any id
+  (`exists:accounts_payment_method_lines,id`). Production had 42 lines across
+  companies; no invoice used a foreign one (read-only count).
+- **How:** one rule, `PaymentMethodLine::scopeForCompany()` (lines whose
+  journal belongs to the company; a line without a journal is refused).
+  Used by `InvoiceForm` and `BillForm` (with `->with(['journal',
+  'paymentMethod'])` for the label) and by `InvoiceRequest`, which now
+  checks the line against the request's company. The pay action and payment
+  form already filtered by a company-scoped journal and are unchanged.
+- **Benefit:** no cross-tenant names in the picker, no foreign payment
+  method on a document, one query for the options instead of one per line.
+- **Trade-off / risk:** a line whose journal was deleted or never set no
+  longer appears; production has none.
+- **Verification:** database `aureuserp_testing_v113_k3`. Accounts
+  `PaymentMethodLineCompanyTest` 1 passed (7 assertions); accounts
+  `InvoiceResourceTest`, `BillResourceTest` and `tests/Feature/API` 397
+  passed (1152 assertions); purchases `PurchaseDashboardTest` 5 passed (17
+  assertions). Pint clean; `php -l` clean on the five overview locale files.
+- **Rollback:** revert; no migration.
+
+## 2026-11-22, Purchases spend tile wording (unreleased)
+
+- **Why:** the v1.16.4 production check read "Purchase spend $0 · No
+  sales". `PurchaseHeadlineWidget` shared the Sales headline's
+  `headline.orders` plural, which DB-8 reworded to "sales" when invoices
+  without an order started counting as sales.
+- **How:** its own key `headline.purchase-orders` ("No orders / 1 order /
+  :count orders") in en, ar, es, fr, pt_BR; why-comment at the call.
+- **Verification:** `php -l` on the five locale files; purchases
+  `PurchaseDashboardTest` extended to pin "1 order": 5 passed, 17
+  assertions (`aureuserp_testing_v113_k3`).
+- **Rollback:** revert; no migration.
+
 ## 2026-11-22, v1.16.4 (hotfix): dashboard comparison period
 
 - **Why:** the v1.16.3 production check read "Total Quotations 0% vs 31 Dec

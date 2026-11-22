@@ -126,7 +126,9 @@ class PurchaseHeadlineWidget extends StatsOverviewWidget
             Stat::make(__('invoices::filament/pages/overview.headline.spend'), compact_money($spend, $currency))
                 ->url(PurchaseOrderResource::canViewAny() ? PurchaseOrderResource::getUrl('index') : null)
                 ->icon('heroicon-o-shopping-cart')
-                ->description(trans_choice('invoices::filament/pages/overview.headline.orders', $orders, ['count' => $orders])
+                // Its own key: "orders" says "sales" since sales started
+                // counting invoices (DB-8), which read "No sales" here.
+                ->description(trans_choice('invoices::filament/pages/overview.headline.purchase-orders', $orders, ['count' => $orders])
                     .' · '.__('invoices::filament/pages/overview.trend', ['change' => $change]))
                 ->descriptionIcon($trendIcon)
                 ->descriptionColor($trendColor)

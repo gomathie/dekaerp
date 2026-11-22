@@ -146,5 +146,8 @@ it('computes the overview purchase spend from confirmed orders in company curren
     expect($stats)->toHaveCount(2)
         ->and((string) $stats[0]->getValue())->toContain('250')
         ->and((string) $stats[0]->getValue())->not->toContain('999')
-        ->and((string) $stats[1]->getValue())->toBe('1');
+        ->and((string) $stats[1]->getValue())->toBe('1')
+        // Production 2026-11-22: the spend tile read "No sales"; it counts orders.
+        ->and((string) $stats[0]->getDescription())->toStartWith('1 order')
+        ->and((string) $stats[0]->getDescription())->not->toContain('sale');
 });

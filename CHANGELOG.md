@@ -10,6 +10,13 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.16.5 — 2026-11-23
+
+### Fixes
+
+- [Security] The "Preferred payment method" on invoices and bills lists only your company's payment methods. It listed every company's, and the new invoice page loaded more slowly because of it.
+- Overview, Purchases: the spend tile counts purchase orders ("3 orders") instead of saying "No sales".
+
 # CHANGELOG — v1.16.4 — 2026-11-22
 
 ### Fixes
