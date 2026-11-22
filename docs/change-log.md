@@ -46,6 +46,15 @@ for the task/question log this change log is paired with.
     reset, Sentry DEKAERP-21) and finishes a half-done reset.
 - **Found, not fixed:** purchase bills ignore `product->purchase_method`, a
   column that does not exist, so every purchase bills on received quantity.
+- **Found, not fixed (2026-11-22, production cleanup):** deleting a draft
+  payment leaves its draft journal entry (TRACE365 PCASH/2026/00001, move 34,
+  deleted by hand afterwards under Accounting → Journal entries). Drafts do
+  not reach reports, so nothing was misstated; the payment delete should take
+  its draft entry with it.
+- **Production follow-up done after deploy:** TRACE365's wrong Cash payment
+  PCASH/2026/19 was reset, deleted, and replaced by PBANK/2026/21 (Bank
+  transfer, 2026-07-01, 1,000 USD), so both July bills are paid; stock was
+  recounted to 55/10/10/4. DEKAERP-21 resolved.
 - **Verification:** OrderFromInvoiceTest 11 passed; QuantityResourceTest 9;
   EntitledPagePermissionTest 15; PayInCompanyCurrencyTest 4. Full suites
   (databases `aureuserp_testing_v113_k1`..`k4`): AccountFeature 596 passed,
