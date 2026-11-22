@@ -2,11 +2,7 @@
 Authoring notes (not shown on the What's New page, which strips HTML comments):
 - Write for the people who use DEKA, not for developers. Technical detail
   belongs in docs/change-log.md.
-- New entries go under "## Unreleased
-
-# CHANGELOG — v1.16.0 — 2026-11-22
-
-" (hidden from users). Move them under the
+- New entries go under "## Unreleased" (hidden from users). Move them under the
   version heading in the same push that ships them to production, and date it.
 - Headings: "# CHANGELOG — vX.Y.Z — YYYY-MM-DD", sections "### Features",
   "### Improvements", "### Fixes". Start a security fix with "[Security]".
