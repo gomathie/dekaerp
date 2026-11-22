@@ -6,6 +6,44 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-22, v1.16.1: Bills tab fix, customer Invoices tab, invoices in the Sales menu, faster permission checks
+
+- **Why:** UF-028 (upstream dd55acdc3): the contact Bills tab listed every
+  journal document of the contact. User, 2026-11-22: add a customer Invoices
+  tab; move invoices under Sales (and bills under Purchase). Sentry
+  DEKAERP-1Q to 1W: the same membership and tenant-role queries ran once per
+  row on list pages.
+- **How:**
+  - purchases `PurchaseServiceProvider`: `vendorBills` scoped to
+    `in_invoice`/`in_refund`.
+  - invoices `InvoiceServiceProvider`: `customerInvoices` relation
+    (`out_invoice`/`out_refund`); page `CustomerResource\Pages\ManageInvoices`
+    (Invoices switch + `InvoiceResource::canViewAny()`; credit notes open in
+    `CreditNoteResource`), registered on the Invoices, Sales, Accounting and
+    Contacts customer screens before Purchases/Bills.
+  - invoices clusters `Customers` / `Vendors`: navigation group Sale /
+    Purchase (labels "Invoices" / "Bills") when the company has that module,
+    else Invoice. Configuration and Settings stay in the Invoices group.
+  - security `TenantRoleResolver`: per-request memory of memberships and
+    tenant-role answers; `SecurityServiceProvider` clears it on any write to
+    membership/role/permission tables.
+- **Found by the full Security suite:** `TenantRoleScopingTest` "lists a
+  membership Company Admin in the company administrator section" still
+  reflected on `administratorSummary()`, removed in v1.16.0 with the
+  Administrator section rebuild. v1.16.0 shipped after only that file's
+  targeted tests, so the break was missed; it is test-only (the behaviour
+  is now `AdministratorPanel::rows()`). The test now asserts the
+  administrator's row.
+- **Decided against:** a settings cache (tenant leak risk with the
+  package's class-level cache, little gain). Recorded in AGENTS.md.
+- **Trade-off / risk:** the Invoices sidebar entry now holds only
+  Configuration and Settings for companies with Sales and Purchases. Child
+  contacts are not folded into a parent's Invoices tab, as with Bills.
+- **Verification:** see the handoff (purchases
+  `ContactScreenPurchaseTabsTest`, sales `PluginEntitlementTest`, security
+  `PermissionCheckQueryBudgetTest`).
+- **Rollback:** revert; no migration.
+
 ## 2026-11-22, dashboard plan started: journal currency fix and honest trends (unreleased)
 
 - **Why:** user, 2026-11-22: "start dashboard". Plan

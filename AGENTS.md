@@ -2041,6 +2041,36 @@ log named):
     allow.
   - Test: support `Http/RefusedPageRedirectTest`.
 
+• Permission answers remembered per request, 2026-11-22 (v1.16.1, Sentry
+  DEKAERP-1Q to 1W):
+  - `TenantRoleResolver` (scoped) remembers each user's memberships and each
+    tenant-role answer for the request. `SecurityServiceProvider` clears
+    that memory on **any** INSERT/UPDATE/DELETE touching
+    `user_allowed_companies`, `company_membership_roles`, roles, permissions
+    or their pivots (`QueryExecuted` listener). Do not replace this with
+    hand-placed `forget()` calls: the next new writer would bring back a
+    stale permission. Do not make the memory outlive the request.
+  - Test: security `PermissionCheckQueryBudgetTest` "reuses a permission
+    answer within a request and drops it when a role changes".
+
+• No global settings cache, 2026-11-22 (decision while fixing Supabase
+  egress): `SETTINGS_CACHE_ENABLED` stays off. spatie/laravel-settings
+  caches per settings class, while `accounts_accounts` and `accounts_taxes`
+  are per company through `CompanyAwareSettingsRepository`; a class-level
+  cache would serve one company's accounting settings to another. Reads were
+  about 12 per request, one per group, so there was little to gain.
+
+• Invoices in the Sales and Purchase menus, 2026-11-22 (v1.16.1, user):
+  - The Invoices plugin's Customers cluster shows under Sales ("Invoices")
+    and its Vendors cluster under Purchase ("Bills") when the current company
+    has that module; otherwise both stay in the Invoices group, so a company
+    that only invoices keeps its menu. Decided per request in
+    `getNavigationGroup()` through `PluginEntitlement`, never in
+    `register()` (routes are cached once for all companies). URLs,
+    permissions and module switches are unchanged.
+  - Test: sales `PluginEntitlementTest` "shows invoices under sales only
+    while the company has sales".
+
 • Customer page shipments, 2026-11-10 (`docs/logistics-plan.md`, WP-9b, D11):
   - The customer infolist tab is `PartnerSchemaRegistry` slot `tabs.append`.
     Do not add a relation-manager slot, and do not edit `PartnerResource` or

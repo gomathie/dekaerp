@@ -1173,7 +1173,13 @@ the parent product name is unchanged.
 
 **Decision:** Adopt, P2 (2026-11-22), as hotfix v1.16.1  
 **Upstream reference:** commit `dd55acdc3` (and `e53bbd756`, `4af5f31bc`)  
-**Local state:** **Open, fix next**
+**Local state:** **Fixed in v1.16.1 (2026-11-22)** - `vendorBills` scoped to
+`in_invoice`/`in_refund` (`PurchaseServiceProvider`); new `customerInvoices`
+relation and Invoices tab (`InvoiceServiceProvider`, invoices
+`CustomerResource\Pages\ManageInvoices` plus subclasses on Sales,
+Accounting and Contacts). Test: purchases `ContactScreenPurchaseTabsTest`.
+Child contacts are not folded into the parent's tab (the Bills tab does not
+fold them either); revisit only if asked.
 
 > Upstream fixed its partner Invoices/Bills tabs: invoice permission and a
 > move-type scope. We have no partner Invoices tab, but our Bills tab

@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Spatie\Permission\PermissionRegistrar;
-use Webkul\Security\CompanyAdminContributions;
+use Webkul\Security\Filament\Resources\CompanyResource\Schemas\AdministratorPanel;
 use Webkul\Security\Enums\PermissionType;
 use Webkul\Security\Models\Permission;
 use Webkul\Security\Models\Role;
@@ -290,10 +290,13 @@ it('lists a membership Company Admin in the company administrator section', func
 
     URL::resolveMissingNamedRoutesUsing(fn (): string => '#');
 
-    $summary = (string) (new ReflectionMethod(CompanyAdminContributions::class, 'administratorSummary'))
-        ->invoke(null, $company);
+    // Since v1.16.0 (2026-11-22) the section is a row per administrator
+    // (AdministratorPanel::rows()), not an HTML summary. Same check: the
+    // membership-only Company Admin must be listed.
+    $rows = AdministratorPanel::rows($company);
 
-    expect($summary)->toContain('Listed Membership Administrator');
+    expect(collect($rows)->map(fn ($row): ?string => $row->getKey(isAbsolute: false))->all())
+        ->toContain('administrator-'.$administrator->getKey());
 });
 
 it('rejects a second membership row for the same user and company', function () {

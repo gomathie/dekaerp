@@ -10,6 +10,18 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.16.1 — 2026-11-22
+
+### Improvements
+
+- Customer invoices are now under Sales, as an "Invoices" tab next to Orders, and vendor bills are under Purchase as a "Bills" tab. Companies without Sales or Purchases keep the Invoices menu as before.
+- Every customer and contact page has an Invoices tab listing that customer's invoices and credit notes.
+- Lists load faster: permission checks are no longer repeated for every row.
+
+### Fixes
+
+- The Bills tab on a contact listed every document of that contact, customer invoices included. It now shows only bills and vendor refunds.
+
 # CHANGELOG — v1.16.0 — 2026-11-22
 
 ### Features

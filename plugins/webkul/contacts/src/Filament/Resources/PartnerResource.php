@@ -12,6 +12,7 @@ use Webkul\Contact\Filament\Resources\PartnerResource\Pages\ManageAddresses;
 use Webkul\Contact\Filament\Resources\PartnerResource\Pages\ManageBankAccounts;
 use Webkul\Contact\Filament\Resources\PartnerResource\Pages\ManageBills;
 use Webkul\Contact\Filament\Resources\PartnerResource\Pages\ManageContacts;
+use Webkul\Contact\Filament\Resources\PartnerResource\Pages\ManageInvoices;
 use Webkul\Contact\Filament\Resources\PartnerResource\Pages\ManagePurchases;
 use Webkul\Contact\Filament\Resources\PartnerResource\Pages\ViewPartner;
 use Webkul\Contact\Models\Partner;
@@ -57,6 +58,12 @@ class PartnerResource extends BasePartnerResource
         // Purchases and bills on every contact screen (unified contacts, user
         // 2026-11-11). The pages check the company switch and the user's
         // Purchases permissions themselves.
+        // What the customer was invoiced (user, 2026-11-22). The page checks
+        // the Invoices switch and the invoice permission itself.
+        if (Package::isPluginInstalled('invoices')) {
+            $items[] = ManageInvoices::class;
+        }
+
         if (Package::isPluginInstalled('purchases')) {
             $items[] = ManagePurchases::class;
             $items[] = ManageBills::class;
@@ -93,6 +100,10 @@ class PartnerResource extends BasePartnerResource
 
         if (Package::isPluginInstalled('accounts')) {
             $pages['bank-accounts'] = ManageBankAccounts::route('/{record}/bank-accounts');
+        }
+
+        if (Package::isPluginInstalled('invoices')) {
+            $pages['invoices'] = ManageInvoices::route('/{record}/invoices');
         }
 
         if (Package::isPluginInstalled('purchases')) {

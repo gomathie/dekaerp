@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Livewire\Livewire;
+use Webkul\Invoice\Filament\Clusters\Customers;
 use Webkul\PluginManager\Exceptions\PluginNotEntitledException;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
@@ -12,6 +13,7 @@ use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource\Pages\ListQ
 use Webkul\Sale\Models\Order;
 use Webkul\Sale\Services\Invoicer;
 use Webkul\Sale\Services\OrderWorkflow;
+use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Models\Company;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/CompanyHelper.php';
@@ -45,6 +47,26 @@ function setSalesEntitlement(Company $company, bool $enabled): void
 
     PluginAccess::flush();
 }
+
+/**
+ * User, 2026-11-22: customer invoices sit under Sales as an "Invoices" tab
+ * when the company has Sales, and fall back to their own sidebar entry when
+ * it does not, so a company that only invoices keeps its menu.
+ */
+it('shows invoices under sales only while the company has sales', function (): void {
+    $company = Company::factory()->create();
+    setSalesEntitlement($company, true);
+    FilamentHelper::actingAsCompanyUser([$company], []);
+    CompanyHelper::setActive([$company->getKey()]);
+
+    expect(Customers::getNavigationGroup())->toBe(NavigationGroup::Sale)
+        ->and(Customers::getNavigationLabel())->toBe(__('invoices::filament/clusters/customers.navigation.in-sales'));
+
+    setSalesEntitlement($company, false);
+
+    expect(Customers::getNavigationGroup())->toBe(NavigationGroup::Invoice)
+        ->and(Customers::getNavigationLabel())->toBe(__('invoices::filament/clusters/customers.navigation.title'));
+});
 
 it('enforces the sales entitlement across UI API policies and services', function (): void {
     $companyA = Company::factory()->create();

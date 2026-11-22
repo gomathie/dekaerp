@@ -2,6 +2,7 @@
 
 return [
     'navigation' => [
-        'title' => 'الموردون',
+        'title'        => 'الموردون',
+        'in-purchases' => 'فواتير الموردين',
     ],
 ];

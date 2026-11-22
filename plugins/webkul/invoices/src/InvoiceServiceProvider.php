@@ -4,11 +4,14 @@ namespace Webkul\Invoice;
 
 use Filament\Panel;
 use Livewire\Livewire;
+use Webkul\Account\Enums\MoveType;
+use Webkul\Account\Models\Move;
 use Webkul\Invoice\Filament\Overview\InvoiceAttention;
 use Webkul\Invoice\Filament\Overview\OverviewRegistry;
 use Webkul\Invoice\Filament\Pages\Invoices;
 use Webkul\Invoice\Filament\Widgets\InvoiceHeadlineWidget;
 use Webkul\Invoice\Livewire\InvoiceSummary;
+use Webkul\Partner\Models\Partner;
 use Webkul\PluginManager\Console\Commands\InstallCommand;
 use Webkul\PluginManager\Console\Commands\UninstallCommand;
 use Webkul\PluginManager\Package;
@@ -39,6 +42,16 @@ class InvoiceServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         Livewire::component('invoice-invoice-summary', InvoiceSummary::class);
+
+        // The Invoices tab on every customer and contact screen (user,
+        // 2026-11-22). Customer invoices and credit notes only: unscoped, a
+        // "partner_id" relation lists bills and entries too (UF-028). Named
+        // apart from "invoices", which other contact models may define.
+        Partner::resolveRelationUsing(
+            'customerInvoices',
+            fn ($partner) => $partner->hasMany(Move::class, 'partner_id')
+                ->whereIn('move_type', [MoveType::OUT_INVOICE, MoveType::OUT_REFUND]),
+        );
 
         // The Invoices section of the combined Overview dashboard. Keyed, so
         // a second packageBooted() replaces it rather than adding a copy.

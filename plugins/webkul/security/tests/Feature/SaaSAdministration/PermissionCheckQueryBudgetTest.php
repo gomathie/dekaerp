@@ -152,3 +152,56 @@ it('does not grow the cost of a check when the same question is asked twice', fu
     expect($secondCost)->toBeLessThanOrEqual($firstCost)
         ->and($firstCost)->toBeLessThanOrEqual(4);
 });
+
+/**
+ * Sentry DEKAERP-1Q to 1W (2026-11-22): the membership list and tenant-role
+ * answers are remembered for the request, so a list page no longer asks the
+ * same question once per row. A change to roles or memberships in the same
+ * request must still be seen at once: SecurityServiceProvider clears the
+ * memory on any write to those tables.
+ */
+it('reuses a permission answer within a request and drops it when a role changes', function () {
+    $company = CompanyHelper::company(['name' => 'Query Budget Memo', 'is_active' => true]);
+
+    $granted = Permission::query()->firstOrCreate(['name' => 'view_any_query_budget_memo', 'guard_name' => 'web']);
+
+    $role = Role::query()->create([
+        'name'       => 'Query Budget Memo Role '.fake()->unique()->numerify('####'),
+        'guard_name' => 'web',
+        'is_default' => false,
+    ]);
+    $role->syncPermissions([$granted]);
+
+    $user = User::withoutEvents(fn (): User => User::factory()->create([
+        'default_company_id'  => $company->getKey(),
+        'resource_permission' => PermissionType::GLOBAL,
+        'is_active'           => true,
+        'is_default'          => false,
+    ]));
+
+    $user->allowedCompanies()->sync([$company->getKey()]);
+    app(TenantRoleAssigner::class)->sync($user, [$role->getKey()], [$company->getKey()]);
+    $user->unsetRelation('roles')->unsetRelation('permissions');
+
+    Auth::shouldUse('web');
+    Auth::guard('web')->login($user);
+    CompanyHelper::setActive([$company->getKey()]);
+    app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+    [, $first] = permissionCheckCost($user, $granted->name);
+    [$repeatCost, $repeat, $repeatSql] = permissionCheckCost($user, $granted->name);
+
+    expect($first)->toBeTrue()
+        ->and($repeat)->toBeTrue()
+        ->and($repeatSql)->not->toContain('user_allowed_companies')
+        ->and($repeatSql)->not->toContain('company_membership_roles');
+
+    // Removing the tenant role in the same request is seen immediately.
+    app(TenantRoleAssigner::class)->sync($user, [], [$company->getKey()]);
+    $user->unsetRelation('roles')->unsetRelation('permissions');
+    app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+    [, $afterRevoke] = permissionCheckCost($user, $granted->name);
+
+    expect($afterRevoke)->toBeFalse();
+});
