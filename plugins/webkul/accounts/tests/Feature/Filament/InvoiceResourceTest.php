@@ -159,6 +159,29 @@ it('warns instead of failing when paid now is ticked on an invoice with no lines
     expect(Move::query()->withoutGlobalScopes()->count())->toBe($before);
 });
 
+/**
+ * "New direct sale" and its receipt (user, 2026-11-22): the button sits on
+ * the invoice list, and the receipt shows the sale's lines, total and what
+ * was paid, with customer text escaped.
+ */
+it('offers a direct sale on the invoice list and prints a receipt for it', function () {
+    AccountHelper::actingAsAdmin();
+
+    Livewire::test(ListInvoices::class)->assertActionVisible('newDirectSale');
+
+    $invoice = AccountHelper::invoice(MoveType::OUT_INVOICE);
+    $invoice->partner->forceFill(['name' => 'Ama <script>x</script>'])->save();
+    AccountHelper::productLine($invoice, AccountHelper::account('income'), qty: 2, priceUnit: 75);
+    AccountHelper::compute($invoice);
+
+    $html = view('accounts::invoice/actions/receipt.index', ['record' => $invoice->fresh(), 'isRtl' => false])->render();
+
+    expect($html)->toContain(__('accounts::filament/resources/invoice/pages/create-invoice.receipt.title'))
+        ->toContain('Ama &lt;script&gt;')
+        ->not->toContain('<script>x</script>')
+        ->toContain('150');
+});
+
 it('hides the add-customer button without the contact create permission', function () {
     FilamentHelper::actingAs(['view_any_account_invoice', 'create_account_invoice']);
 

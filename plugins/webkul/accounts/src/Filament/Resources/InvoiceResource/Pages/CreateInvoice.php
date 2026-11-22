@@ -13,6 +13,7 @@ use Webkul\Account\Facades\Account as AccountFacade;
 use Webkul\Account\Filament\Resources\InvoiceResource;
 use Webkul\Account\Models\Journal;
 use Webkul\Account\Services\QuickPayment;
+use Webkul\Account\Services\WalkInCustomer;
 use Webkul\Support\Filament\Concerns\HandlesCrossCompanyException;
 use Webkul\Support\Filament\Concerns\HasRepeaterColumnManager;
 
@@ -54,6 +55,17 @@ class CreateInvoice extends CreateRecord
         $this->data['move_type'] ??= MoveType::OUT_INVOICE->value;
 
         $this->data['journal_id'] = $journal?->id;
+
+        // "New direct sale" (user, 2026-11-22): the invoice form with the
+        // walk-in customer and "Paid now" already set. Sales presets its own
+        // boxes from the same flag (InvoiceContributions). One sale path:
+        // the removed Direct Sale screen (2026-08-21) was a second one.
+        if (request()->boolean('direct_sale')
+            && ($this->data['move_type'] ?? null) === MoveType::OUT_INVOICE->value
+            && current_company_id()) {
+            $this->data['partner_id'] = app(WalkInCustomer::class)->forCompany((int) current_company_id())->getKey();
+            $this->data['paid_now'] = true;
+        }
 
         $this->form->fill($this->data);
     }

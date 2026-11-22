@@ -2,8 +2,11 @@
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
+use Livewire\Livewire;
 use Webkul\Account\Facades\Account as AccountFacade;
+use Webkul\Account\Filament\Resources\InvoiceResource\Pages\CreateInvoice;
 use Webkul\Account\Models\Move;
+use Webkul\Account\Services\WalkInCustomer;
 use Webkul\Inventory\Enums\DeliveryStep;
 use Webkul\Inventory\Enums\OperationState;
 use Webkul\Inventory\Enums\ReceptionStep;
@@ -248,6 +251,34 @@ it('leaves the delivery for the warehouse when the goods were not taken, then ma
     expect(app(OrderFromInvoice::class)->markDelivered($invoice->refresh()))->toBeTrue()
         ->and(app(OrderFromInvoice::class)->pendingDeliveries($order))->toBe(0)
         ->and((float) $order->lines()->first()->qty_delivered)->toBe(3.0);
+});
+
+/**
+ * "New direct sale" (user, 2026-11-22): the invoice form opens with the
+ * walk-in customer, "Paid now", the order and the delivery all set, so a
+ * counter sale is one save. A plain new invoice keeps the order box clear.
+ */
+it('opens a direct sale with every box set and a plain invoice without', function () {
+    Livewire::withQueryParams(['direct_sale' => 1])
+        ->test(CreateInvoice::class)
+        ->assertFormSet([
+            'paid_now'            => true,
+            'create_sale_order'   => true,
+            'goods_delivered_now' => true,
+            'partner_id'          => app(WalkInCustomer::class)->forCompany((int) current_company_id())->getKey(),
+        ]);
+
+    Livewire::test(CreateInvoice::class)
+        ->assertFormSet(['create_sale_order' => false]);
+});
+
+it('keeps one walk-in customer per company, found by its reference', function () {
+    $first = app(WalkInCustomer::class)->forCompany((int) current_company_id());
+    $again = app(WalkInCustomer::class)->forCompany((int) current_company_id());
+
+    expect($again->getKey())->toBe($first->getKey())
+        ->and($first->reference)->toBe(WalkInCustomer::REFERENCE)
+        ->and((int) $first->company_id)->toBe((int) current_company_id());
 });
 
 it('takes the company setting as the default answer', function () {

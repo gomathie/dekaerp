@@ -74,7 +74,11 @@ class InvoiceContributions
             // Not a column on the invoice; saved below into Sales' own table.
             ->dehydrated(false)
             ->visible(fn (?Move $record, $livewire): bool => static::mayRequest($record, $livewire))
-            ->formatStateUsing(fn (?Move $record): bool => $record !== null && app(OrderFromInvoice::class)->link($record) !== null)
+            // "New direct sale" opens the form with this ticked (user,
+            // 2026-11-22); CreateInvoice presets the customer and "Paid now".
+            ->formatStateUsing(fn (?Move $record): bool => $record === null
+                ? static::isDirectSale()
+                : app(OrderFromInvoice::class)->link($record) !== null)
             // Once the invoice is confirmed the choice is made; undoing it is
             // done by cancelling the invoice, which cancels the order.
             ->disabled(fn (?Move $record): bool => $record !== null && $record->state !== MoveState::DRAFT)
@@ -104,7 +108,12 @@ class InvoiceContributions
             ->formatStateUsing(function (?Move $record): bool {
                 $link = $record ? app(OrderFromInvoice::class)->link($record) : null;
 
-                return $link ? $link->deliver_now : static::companyDefault();
+                if ($link) {
+                    return $link->deliver_now;
+                }
+
+                // A direct sale is goods handed over at the counter.
+                return static::isDirectSale() || static::companyDefault();
             })
             ->visible(fn (Get $get, ?Move $record, $livewire): bool => (bool) $get('create_sale_order') && static::mayRequest($record, $livewire))
             ->disabled(fn (?Move $record): bool => $record !== null && $record->state !== MoveState::DRAFT);
@@ -173,6 +182,12 @@ class InvoiceContributions
     protected static function companyDefault(): bool
     {
         return (bool) (app(QuotationAndOrderSettings::class)->goods_leave_on_invoice ?? true);
+    }
+
+    /** The invoice form was opened from "New direct sale" (only read when it is filled). */
+    protected static function isDirectSale(): bool
+    {
+        return request()->boolean('direct_sale');
     }
 
     protected static function hasDeliveries(Move $record): bool

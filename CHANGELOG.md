@@ -10,6 +10,11 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+### Features
+
+- "New direct sale" on Invoices and on Sales → Orders: a counter sale in one save. The invoice opens with Walk-in Customer, "Paid now", the sales order and "Customer has taken the goods" already set; change anything before saving.
+- "Print receipt" on a confirmed invoice prints a till-style receipt with the items, total and amount paid.
+
 ### Improvements
 
 - The company page's Administrator section lists each administrator with Set password and Manage buttons, has an "Add administrator" button that sends an invitation or sets a password, and shows invitations still waiting with Resend and Copy link.

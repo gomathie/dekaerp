@@ -39,6 +39,14 @@ class ViewInvoice extends ViewRecord
             BaseActions\PrintAndSendAction::make(),
             BaseActions\PreviewAction::make()
                 ->setTemplate('accounts::invoice/actions/preview.index'),
+            // Till receipt for a sale paid at once (user, 2026-11-22, "New
+            // direct sale"). The Preview action's own visibility (posted only)
+            // and print path, with a narrow template.
+            BaseActions\PreviewAction::make('printReceipt')
+                ->setTemplate('accounts::invoice/actions/receipt.index')
+                ->label(__('accounts::filament/resources/invoice/pages/create-invoice.receipt.label'))
+                ->modalHeading(__('accounts::filament/resources/invoice/pages/create-invoice.receipt.heading'))
+                ->icon('heroicon-o-receipt-percent'),
             BaseActions\PayAction::make(),
             BaseActions\ConfirmAction::make(),
             BaseActions\CancelAction::make(),

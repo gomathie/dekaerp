@@ -105,7 +105,7 @@ class AdministratorPanel
                     ->url(UserResource::getUrl('edit', ['record' => $id]))
                     ->openUrlInNewTab(),
             ])->key("administrator-{$id}-actions")->grow(false),
-        ])->from('md')->verticallyAlignCenter()->key("administrator-{$id}");
+        ])->from('md')->verticallyAlignCenter()->key("administrator-{$id}", isInheritable: false);
     }
 
     protected static function invitationRow(Company $company, Invitation $invitation): Flex
@@ -176,7 +176,7 @@ class AdministratorPanel
                     ])
                     ->modalSubmitAction(false),
             ])->key("invitation-{$id}-actions")->grow(false),
-        ])->from('md')->verticallyAlignCenter()->key("invitation-{$id}");
+        ])->from('md')->verticallyAlignCenter()->key("invitation-{$id}", isInheritable: false);
     }
 
     protected static function setPasswordAction(Company $company, User $administrator): Action

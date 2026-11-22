@@ -6,7 +6,7 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
-## 2026-11-22, Administrator section A + B + C, Orders list, DEKAERP-22 (unreleased)
+## 2026-11-22, Administrator section A + B + C, direct sale, Orders list, DEKAERP-22 (unreleased)
 
 - **Why:** user, 2026-11-22: the company form's Administrator section was a
   plain list plus two loose fields whose effect (invite, create, reset)
@@ -39,8 +39,20 @@ for the task/question log this change log is paired with.
   Order numbers are id-based and shared across companies (TRACE365's
   backfill took SO/00003-00012, My Company's SO/00013): existing behaviour,
   not changed.
+- **Direct sale (user, 2026-11-22, option "shortcut on today's flow"):** the
+  Direct Sale screen removed on 2026-08-21 (618f2190f) is **not** restored;
+  it was a second sale path. Instead "New direct sale" (accounts
+  `ListInvoices`, sales `ListOrders`) opens the invoice form with
+  `?direct_sale=1`: `CreateInvoice::mount()` sets the walk-in customer and
+  "Paid now"; sales `InvoiceContributions` ticks "Create sales order" and
+  "Customer has taken the goods". `Account\Services\WalkInCustomer` keeps one
+  walk-in contact per company, found by `reference = WALK-IN` (the name is
+  translated). "Print receipt" on the invoice view reuses `PreviewAction`
+  with `accounts::invoice/actions/receipt.index`. Credit notes and refunds
+  never show the button (`ListInvoices::offersDirectSale()`).
 - **Verification:** see the handoff below the tests' results.
-- **Rollback:** revert the commit; no migration.
+- **Rollback:** revert the commit; no migration. Walk-in contacts created in
+  the meantime stay as ordinary contacts.
 
 ## 2026-11-22, v1.15.0: sales order from an invoice, delivery choice, three fixes
 

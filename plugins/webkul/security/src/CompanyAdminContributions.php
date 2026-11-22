@@ -60,7 +60,7 @@ class CompanyAdminContributions
             ->description(__('security::filament/contributions/company.administrator.description'))
             ->icon('heroicon-o-shield-check')
             ->visible(fn (): bool => static::administersInstallation())
-            ->key('companyAdministratorSection')
+            ->key('companyAdministratorSection', isInheritable: false)
             // Edit and view (user, 2026-11-22, A + B + C): a row per
             // administrator with its own actions, "Add administrator" here,
             // and pending invitations with Resend and Copy link. Supersedes
