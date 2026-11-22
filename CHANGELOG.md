@@ -20,6 +20,11 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 - The company page's Administrator section lists each administrator with Set password and Manage buttons, has an "Add administrator" button that sends an invitation or sets a password, and shows invitations still waiting with Resend and Copy link.
 - Sales Orders and Quotations open on all records instead of only your own, and the list shows the order date.
+- Dashboard trends are honest: a figure with nothing before it says "New" instead of "+100%", a small number shows the real change ("+3"), and for costs and unpaid bills a rise is shown in red.
+
+### Fixes (dashboards)
+
+- The Accounting journal cards (To Validate, Late, To Pay and the chart) add amounts in your company's currency. A company invoicing in dollars and its local currency saw the two added together.
 
 ### Fixes
 

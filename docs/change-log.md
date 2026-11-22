@@ -6,6 +6,24 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-22, dashboard plan started: journal currency fix and honest trends (unreleased)
+
+- **Why:** user, 2026-11-22: "start dashboard". Plan
+  `docs/planned/02-dashboard-improvement-plan.md`, decisions D-DB-1, D-DB-2,
+  D-DB-7.
+- **How:** accounting `JournalChartWidget` sums the company-currency
+  `_signed` columns (abs, as the other money widgets do); support
+  `BuildsDashboardStats::statTrend()` gains the small-base rule ("New",
+  "+3", neutral) and a lower-is-better flag, `buildStat()` / `themedStat()`
+  pass record counts and the flag; applied to bills and purchases.
+- **Changed pinned behaviour:** support `DashboardMetricsTest` "reports a
+  full increase when the previous period was empty" is inverted to "reports
+  a new figure, neutrally" (D-DB-1).
+- **Trade-off:** one extra count query per money tile (previous period).
+- **Verification:** see the handoff (accounting `JournalChartCurrencyTest`,
+  support `DashboardMetricsTest`).
+- **Rollback:** revert; no data changes.
+
 ## 2026-11-22, daily exchange rates (unreleased)
 
 - **Why:** user, 2026-11-22: "we can get a free popular API, let's use it".

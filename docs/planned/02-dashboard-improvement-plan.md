@@ -70,6 +70,15 @@ All in `HasDashboardMetrics`, so every module inherits it:
 
 Changes the pinned `DashboardMetricsTest` expectation: needs D-DB-1.
 
+*Progress 2026-11-22 (develop):* built in `BuildsDashboardStats::statTrend()`
+(one rule for every module). Empty previous period: "New", neutral. Fewer
+than 5 previous records: the real change ("+3"), neutral; money tiles built
+by `buildStat()` count the previous records for this. Lower is better
+(D-DB-2) applied to the bill total, unpaid bills, purchase value and the
+purchase headline spend. The pinned test was inverted in the same change.
+Still open in DB-1: "—" for unavailable data, the baseline caption
+("vs 1-31 Oct"), and the Sales top-customers column rename.
+
 ### DB-2 Numbers agree
 
 Per module, a test that the tile total equals the chart's series sum and the
@@ -125,6 +134,13 @@ Fix: sum the `_signed` company-currency columns, as the other money widgets
 already do. A known-totals test with one USD and one local invoice pins it.
 (Outside dashboards, Sales `SendSMSNotificationListener` sums a customer's
 invoices the same way; recorded for its own fix.)
+
+*Done 2026-11-22 (develop, D-DB-7):* `JournalChartWidget` now sums
+`amount_total_signed` / `amount_residual_signed` for every card and its
+chart; pinned by accounting `JournalChartCurrencyTest` (a USD invoice of 100
+at 15.5 plus a local 50 gives 1,600, not 150). The SMS listener sum is still
+open. Exchange rates now arrive daily (`currencies:sync-rates`), which rule 5
+below relies on.
 
 **The rules for every money figure:**
 
