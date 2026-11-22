@@ -267,9 +267,13 @@ it('opens a direct sale with every box set and a plain invoice without', functio
             'goods_delivered_now' => true,
             'partner_id'          => app(WalkInCustomer::class)->forCompany((int) current_company_id())->getKey(),
         ]);
+});
 
+// Its own test: withQueryParams() leaves the flag on the request for the
+// rest of a test, which no real request ever would.
+it('opens a plain new invoice with the order box clear', function () {
     Livewire::test(CreateInvoice::class)
-        ->assertFormSet(['create_sale_order' => false]);
+        ->assertFormSet(['create_sale_order' => false, 'paid_now' => false]);
 });
 
 it('keeps one walk-in customer per company, found by its reference', function () {

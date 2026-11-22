@@ -1,7 +1,9 @@
 # Dashboard improvement plan
 
-> **Status:** Decided 2026-11-19 (all decisions D-DB-1 to D-DB-7 taken),
-> not started. Starts after the resource restructure merges.
+> **Status:** Decided 2026-11-19 (all decisions D-DB-1 to D-DB-7 taken).
+> **In progress since 2026-11-22** (user: "start dashboard"); the
+> restructure it waited for merged 2026-11-20. Order of work: DB-7's
+> journal-chart fix (D-DB-7), then DB-1, then DB-0 onward.
 > **Method:** the `dashboard-design` workflow in the shared library
 > (`workflows/dashboard-design.md`), adapted 2026-11-18 from the MIT skill
 > `abdiraimov-otabek/dashboard-design-skill`. Nothing was installed.

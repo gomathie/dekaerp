@@ -14,6 +14,7 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 - "New direct sale" on Invoices and on Sales → Orders: a counter sale in one save. The invoice opens with Walk-in Customer, "Paid now", the sales order and "Customer has taken the goods" already set; change anything before saving.
 - "Print receipt" on a confirmed invoice prints a till-style receipt with the items, total and amount paid.
+- Exchange rates now update by themselves every day, for every active currency and every company. A rate you enter for a day is kept.
 
 ### Improvements
 

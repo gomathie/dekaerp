@@ -6,6 +6,29 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-22, daily exchange rates (unreleased)
+
+- **Why:** user, 2026-11-22: "we can get a free popular API, let's use it".
+  Rates were typed by hand; CR-6 (DRC/Zambia invoicing in EUR, ZAR, CDF)
+  waited on them, and a missing rate converts at 1.0.
+- **How:** `config/exchange-rates.php` (provider + options, vendor-agnostic;
+  default `open_er_api` = open.er-api.com, free, no key, quotes GHS/ZMW/CDF);
+  `Support\Services\ExchangeRateSync` (fetch once, then one row per company
+  and active currency, rate = units per one unit of the company's currency,
+  as `Currency::getConversionRate()` reads); command
+  `currencies:sync-rates`, scheduled daily 01:30 with a Sentry cron monitor;
+  source credit as the Currencies page subheading.
+- **Rules:** a row with a `creator_id` (typed by a person) is never touched,
+  and a day with one is skipped; only creator-less rows are updated. A
+  provider error writes nothing and fails the command (reported). A company
+  whose own currency the provider does not quote is skipped.
+- **Trade-off / risk:** depends on a free third-party endpoint; if it stops,
+  the last rates stay in force and Sentry's cron monitor / the failure report
+  says so. `EXCHANGE_RATES_SYNC=false` switches it off. The request carries
+  no customer data.
+- **Verification:** see the handoff (support `ExchangeRateSyncTest`).
+- **Rollback:** revert; stored rates stay as ordinary rates.
+
 ## 2026-11-22, Administrator section A + B + C, direct sale, Orders list, DEKAERP-22 (unreleased)
 
 - **Why:** user, 2026-11-22: the company form's Administrator section was a
@@ -3759,7 +3782,7 @@ Reconciled by marking superseded claims, not deleting them:
   of `AccountFeature`, plus project and product" (superseded 2026-09-29, when
   all thirteen suites ran green together — AccountFeature 526, ProjectFeature
   86, ProductFeature 250, zero failures).
-- **`docs/planned/03-restructure-backlog.md`** — already reconciled on 2026-10-21; the four
+- **`docs/completed/restructure-backlog.md`** — already reconciled on 2026-10-21; the four
   dead entries are now also marked `REMOVED 2026-10-21, moot` inline, because a
   header note is easy to skim past when the list is the thing being worked from.
 - **`docs/running-tests.md`** — documented one shared database and serial runs
@@ -6403,7 +6426,7 @@ lost) and **51 do** - including `InvoiceResource` (19 fork-only lines),
    operations on top, on a live ERP, makes the eventual test run harder to
    attribute.
 
-The analysis is the deliverable: `docs/planned/03-restructure-backlog.md` lists both
+The analysis is the deliverable: `docs/completed/restructure-backlog.md` lists both
 sets, the rule for adopting, the method, and its known limit. Do it after the
 runtime is fixed, plugin by plugin.
 
