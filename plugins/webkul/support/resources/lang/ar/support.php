@@ -12,4 +12,8 @@ return [
         'records'  => 'These records belong to a different company: :records. Change them or switch the company back.',
         'company'  => 'لا يمكنك حفظ سجل في الشركة رقم :company لأنك لست عضوًا فيها.',
     ],
+
+    'trend' => [
+        'new' => 'جديد',
+    ],
 ];
