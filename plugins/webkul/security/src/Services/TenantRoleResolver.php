@@ -36,6 +36,29 @@ class TenantRoleResolver
     protected ?bool $tableExists = null;
 
     /**
+     * Answers remembered for the rest of the request (Sentry DEKAERP-1Q to
+     * 1W, 2026-11-22). A list of 25 invoices asked "which companies is this
+     * user in?" and "does a tenant role grant X?" dozens of times each, one
+     * query per check. SecurityServiceProvider calls forget() on every write
+     * to a membership, role or permission table, so a change made earlier in
+     * the same request (onboarding attaches the creator, then checks them) is
+     * never answered from memory.
+     *
+     * @var array<int, array<int, int>>
+     */
+    protected array $membershipIds = [];
+
+    /** @var array<string, bool> */
+    protected array $abilityAnswers = [];
+
+    /** Drop every remembered answer. */
+    public function forget(): void
+    {
+        $this->membershipIds = [];
+        $this->abilityAnswers = [];
+    }
+
+    /**
      * Whether the membership store has been migrated yet.
      *
      * Guards boot-time calls on an installation that has not run the SAAS-01
@@ -83,7 +106,10 @@ class TenantRoleResolver
             return false;
         }
 
-        return $this->abilityQuery($user, $ability)
+        sort($companyIds);
+        $key = $user->getKey().'|'.$ability.'|'.implode(',', $companyIds);
+
+        return $this->abilityAnswers[$key] ??= $this->abilityQuery($user, $ability)
             ->whereIn('company_membership_roles.company_id', $companyIds)
             ->exists();
     }
@@ -199,7 +225,7 @@ class TenantRoleResolver
      */
     public function resolvableCompanyIds(User $user): array
     {
-        $membershipIds = DB::table('user_allowed_companies')
+        $membershipIds = $this->membershipIds[(int) $user->getKey()] ??= DB::table('user_allowed_companies')
             ->where('user_id', $user->getKey())
             ->pluck('company_id')
             ->map(fn ($id): int => (int) $id)

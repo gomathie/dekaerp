@@ -2,6 +2,7 @@
 
 return [
     'navigation' => [
-        'title' => 'Fournisseurs',
+        'title'        => 'Fournisseurs',
+        'in-purchases' => 'Factures fournisseurs',
     ],
 ];

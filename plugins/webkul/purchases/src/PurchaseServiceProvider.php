@@ -6,6 +6,7 @@ use Filament\Panel;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
+use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Events\MoveCancelled;
 use Webkul\Account\Events\MoveConfirmed;
 use Webkul\Account\Events\MoveDrafted;
@@ -104,9 +105,14 @@ class PurchaseServiceProvider extends PackageServiceProvider
             'purchaseOrders',
             fn ($partner) => $partner->hasMany(Order::class, 'partner_id'),
         );
+        // Bills and vendor refunds only (UF-028, upstream dd55acdc3,
+        // 2026-11-22). Unscoped, the Bills tab listed every journal document
+        // of the contact, customer invoices included, to anyone allowed to
+        // see bills.
         Partner::resolveRelationUsing(
             'vendorBills',
-            fn ($partner) => $partner->hasMany(Move::class, 'partner_id'),
+            fn ($partner) => $partner->hasMany(Move::class, 'partner_id')
+                ->whereIn('move_type', [MoveType::IN_INVOICE, MoveType::IN_REFUND]),
         );
 
         // The Purchases section of the combined Overview dashboard (Invoices

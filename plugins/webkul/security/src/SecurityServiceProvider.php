@@ -8,6 +8,7 @@ use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
@@ -218,6 +219,21 @@ class SecurityServiceProvider extends PackageServiceProvider
         // Scoped: the resolver memoises whether the membership store exists, and
         // that answer must live for one request, not for the process.
         $this->app->scoped(TenantRoleResolver::class);
+
+        // The resolver also remembers memberships and tenant-role answers for
+        // the request (Sentry DEKAERP-1Q to 1W). Any write to the tables those
+        // answers come from clears them, whichever code path made it: Filament
+        // forms, services, Shield's role editor. Listing writers by hand would
+        // miss the next new one, and a stale answer is a permission bug.
+        Event::listen(QueryExecuted::class, function (QueryExecuted $query): void {
+            if (! $this->app->resolved(TenantRoleResolver::class)
+                || ! preg_match('/^\s*(insert|update|delete)\b/i', $query->sql)
+                || ! preg_match('/\b"?(user_allowed_companies|company_membership_roles|role_has_permissions|model_has_roles|model_has_permissions|roles|permissions)"?\b/i', $query->sql)) {
+                return;
+            }
+
+            $this->app->make(TenantRoleResolver::class)->forget();
+        });
 
         $loader = AliasLoader::getInstance();
 

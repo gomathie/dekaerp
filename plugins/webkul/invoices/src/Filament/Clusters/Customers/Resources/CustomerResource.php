@@ -12,6 +12,7 @@ use Webkul\Invoice\Filament\Clusters\Customers\Resources\CustomerResource\Pages\
 use Webkul\Invoice\Filament\Clusters\Customers\Resources\CustomerResource\Pages\ManageBankAccounts;
 use Webkul\Invoice\Filament\Clusters\Customers\Resources\CustomerResource\Pages\ManageBills;
 use Webkul\Invoice\Filament\Clusters\Customers\Resources\CustomerResource\Pages\ManageContacts;
+use Webkul\Invoice\Filament\Clusters\Customers\Resources\CustomerResource\Pages\ManageInvoices;
 use Webkul\Invoice\Filament\Clusters\Customers\Resources\CustomerResource\Pages\ManagePurchases;
 use Webkul\Invoice\Filament\Clusters\Customers\Resources\CustomerResource\Pages\ViewCustomer;
 use Webkul\Invoice\Models\Customer;
@@ -37,6 +38,9 @@ class CustomerResource extends BaseCustomerResource
             ManageContacts::class,
             ManageAddresses::class,
             ManageBankAccounts::class,
+            // What the customer was invoiced (user, 2026-11-22). The page
+            // checks the Invoices switch and the invoice permission itself.
+            ManageInvoices::class,
         ];
 
         // Purchases and bills on every contact screen (unified contacts, user
@@ -60,6 +64,7 @@ class CustomerResource extends BaseCustomerResource
             'contacts'     => ManageContacts::route('/{record}/contacts'),
             'addresses'    => ManageAddresses::route('/{record}/addresses'),
             'bank-account' => ManageBankAccounts::route('/{record}/bank-accounts'),
+            'invoices'     => ManageInvoices::route('/{record}/invoices'),
         ];
 
         if (Package::isPluginInstalled('purchases')) {

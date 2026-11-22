@@ -2,6 +2,7 @@
 
 return [
     'navigation' => [
-        'title' => 'Clients',
+        'title'    => 'Clients',
+        'in-sales' => 'Factures',
     ],
 ];
