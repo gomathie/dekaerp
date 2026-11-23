@@ -10,6 +10,13 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.16.8 — 2026-11-23
+
+### Fixes
+
+- Employees › Attendance reporting (Lateness, Overtime, Absence) opens again for managers and administrators. It showed a server error to anyone allowed to see everyone's attendance.
+- On a phone, the cross that clears a picker and the small "Open" and "Configure" links are easier to tap.
+
 # CHANGELOG — v1.16.7 — 2026-11-23
 
 ### Improvements

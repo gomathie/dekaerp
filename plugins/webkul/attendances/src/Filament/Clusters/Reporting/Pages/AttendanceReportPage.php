@@ -8,6 +8,7 @@ use Webkul\Attendance\Filament\Clusters\Reporting;
 use Webkul\Attendance\Services\AttendanceReports;
 use Webkul\Attendance\Services\AttendanceService;
 use Webkul\Attendance\Support\AttendanceAccess;
+use Webkul\Employee\Models\Employee;
 
 /**
  * What every attendance report shares (AT-6).
@@ -113,12 +114,31 @@ abstract class AttendanceReportPage extends Page
     }
 
     /**
-     * @return array<int, int>|null
+     * The employees this viewer may report on, always as a list.
+     *
+     * The service answers null for "everyone the company scope allows" (the
+     * view-any permission). The reports take a list and read attendance past
+     * the global scopes, so null crashed every report for exactly the people
+     * allowed to see all of them (Sentry DEKAERP-24, 2026-11-23). "Everyone"
+     * is resolved here through Employee's own company scope, never by
+     * dropping it, so another company's staff can never appear.
+     *
+     * @return array<int, int>
      */
-    protected function visibleEmployeeIds(): ?array
+    protected function visibleEmployeeIds(): array
     {
         $user = auth()->user();
 
-        return $user === null ? [] : app(AttendanceService::class)->visibleEmployeeIds($user);
+        if ($user === null) {
+            return [];
+        }
+
+        $visible = app(AttendanceService::class)->visibleEmployeeIds($user);
+
+        if ($visible !== null) {
+            return $visible;
+        }
+
+        return Employee::query()->pluck('id')->map(fn ($id): int => (int) $id)->all();
     }
 }
