@@ -784,7 +784,7 @@ tests.
 > - `docs/running-tests.md` — said one shared `aureuserp_testing` and serial runs
 >   only. Now documents the per-work-package database and the `-e DB_DATABASE`
 >   override, and keeps the interleaving warning scoped to one database.
-> - `docs/planned/08-landing-page-brief.md` — "Website and blog pages managed from the same
+> - `docs/planned/07-landing-page-brief.md` — "Website and blog pages managed from the same
 >   admin" was false: the Blogs plugin and the CMS pages were removed on
 >   2026-10-21 and `plugins/webkul/website` has no admin resources. Replaced with
 >   the customer-portal line, with the correction dated inline.
@@ -1167,7 +1167,7 @@ the parent product name is unchanged.
 
 > Hidden from navigation but still opened, and errored, by URL.
 > `ManageReplenishment::mount()` answers 404 as upstream does. Finishing it
-> belongs to the Inventory plan (`docs/planned/05-inventory-plan.md`).
+> belongs to the Inventory plan (`docs/planned/04-inventory-plan.md`).
 
 ### UF-028 - Contacts Bills tab lists every journal document of the contact
 

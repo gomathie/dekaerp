@@ -1,0 +1,97 @@
+<?php
+
+return [
+    'title' => 'Jarida Vipengee',
+
+    'navigation' => [
+        'title' => 'Jarida Vipengee',
+    ],
+
+    'table' => [
+        'total'   => 'Jumla',
+        'columns' => [
+            'number'          => 'Nambari',
+            'date'            => 'Tarehe',
+            'account'         => 'Akaunti',
+            'partner'         => 'Mshirika',
+            'label'           => 'Lebo',
+            'reference'       => 'Kumbukumbu',
+            'journal'         => 'Jarida',
+            'debit'           => 'Debiti',
+            'credit'          => 'Krediti',
+            'balance'         => 'Salio',
+            'currency'        => 'Sarafu',
+            'company'         => 'Kampuni',
+            'status'          => 'Hali',
+            'amount-currency' => 'Kiasi Sarafu',
+            'amount-residual' => 'Kiasi Residual',
+            'reconciled'      => 'Reconciled',
+            'due-date'        => 'Tarehe ya malipo',
+        ],
+
+        'groups' => [
+            'journal-entry' => 'Uingizaji wa jarida',
+            'account'       => 'Akaunti',
+            'partner'       => 'Mshirika',
+            'journal'       => 'Jarida',
+            'date'          => 'Tarehe',
+            'invoice-date'  => 'Tarehe ya ankara',
+            'matching'      => 'Matching',
+            'status'        => 'Hali',
+            'company'       => 'Kampuni',
+        ],
+
+        'filters' => [
+            'number'          => 'Nambari',
+            'label'           => 'Lebo',
+            'reference'       => 'Kumbukumbu',
+            'matching-number' => 'Matching Nambari',
+            'account'         => 'Akaunti',
+            'partner'         => 'Mshirika',
+            'journal'         => 'Jarida',
+            'currency'        => 'Sarafu',
+            'company'         => 'Kampuni',
+            'date'            => 'Tarehe',
+            'invoice-date'    => 'Tarehe ya ankara',
+            'due-date'        => 'Tarehe ya malipo',
+            'discount-date'   => 'Punguzo Tarehe',
+            'debit'           => 'Debiti',
+            'credit'          => 'Krediti',
+            'balance'         => 'Salio',
+            'amount-currency' => 'Kiasi Sarafu',
+            'amount-residual' => 'Kiasi Residual',
+            'quantity'        => 'Kiasi',
+            'price-unit'      => 'Bei Uniti',
+            'discount'        => 'Punguzo',
+            'reconciled'      => 'Reconciled',
+            'imported'        => 'Imported',
+            'down-payment'    => 'Chini Malipo',
+            'created-at'      => 'Imeundwa',
+            'updated-at'      => 'Imesasishwa',
+        ],
+
+        'saved-filters' => [
+            'label'         => 'Saved Vichujio',
+            'unposted'      => 'Unposted',
+            'posted'        => 'Imewekwa',
+            'to-check'      => 'Hadi Hundi',
+            'unreconciled'  => 'Unreconciled',
+            'with-residual' => 'Na Residual',
+            'sales'         => 'Mauzo',
+            'purchases'     => 'Ununuzi',
+            'bank'          => 'Benki',
+            'cash'          => 'Taslimu',
+            'credit'        => 'Krediti',
+            'miscellaneous' => 'Miscellaneous',
+            'payable'       => 'Ya kulipa',
+            'receivable'    => 'Ya kupokea',
+            'pl-accounts'   => 'P&L Akaunti',
+        ],
+
+        'toolbar-actions' => [
+            'export' => [
+                'label' => 'Hamisha',
+            ],
+        ],
+    ],
+];

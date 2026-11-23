@@ -157,7 +157,9 @@ it('loads the waybill translations in every supported locale', function () {
     // Loading the group in each locale is what proves the file parses at all.
     $titles = [];
 
-    foreach (['en', 'ar', 'es', 'fr', 'pt_BR'] as $locale) {
+    $supported = array_keys(config('app.supported_locales'));
+
+    foreach ($supported as $locale) {
         App::setLocale($locale);
 
         $labels = trans('logistics::documents/waybill.labels');
@@ -172,6 +174,6 @@ it('loads the waybill translations in every supported locale', function () {
 
     App::setLocale('en');
 
-    expect($titles)->toHaveKeys(['en', 'ar', 'es', 'fr', 'pt_BR'])
-        ->and(array_unique($titles))->toHaveCount(5);
+    expect($titles)->toHaveKeys($supported)
+        ->and(array_unique($titles))->toHaveCount(count($supported));
 });

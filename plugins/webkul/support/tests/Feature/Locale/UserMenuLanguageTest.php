@@ -42,3 +42,13 @@ it('shows the current language once and offers every other language below it', f
     // uncompiled Blade directive here broke it in production (2026-11-11).
     expect($html)->not->toContain('@js(');
 });
+
+it('shows the Russian flag and Tanzania for Swahili', function (): void {
+    expect(config('app.supported_locales.ru.flag'))->toBe('ru')
+        ->and(config('app.supported_locales.sw.flag'))->toBe('tz')
+        ->and(config('app.supported_locales.ru.rtl'))->toBeFalse()
+        ->and(config('app.supported_locales.sw.rtl'))->toBeFalse()
+        ->and(locale_flag_code('ru'))->toBe('ru')
+        ->and(locale_flag_code('sw'))->toBe('tz')
+        ->and(locale_flag_code('en'))->toBe('en');
+});

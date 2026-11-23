@@ -143,6 +143,21 @@ return [
             'flag'   => 'br',
             'rtl'    => false,
         ],
+        'ru' => [
+            'label'  => 'Russian',
+            'native' => 'Русский',
+            'flag'   => 'ru',
+            'rtl'    => false,
+        ],
+        // One Swahili, sw (D-LANG-1). The flag is Tanzania's: Swahili is
+        // that country's national language, and the switcher renders
+        // public/flags/{flag}.svg when that file exists.
+        'sw' => [
+            'label'  => 'Swahili',
+            'native' => 'Kiswahili',
+            'flag'   => 'tz',
+            'rtl'    => false,
+        ],
     ],
 
     /*

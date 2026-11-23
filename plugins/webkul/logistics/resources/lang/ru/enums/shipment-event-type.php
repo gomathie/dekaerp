@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'created'             => 'Создано',
+    'confirmed'           => 'Подтверждён',
+    'driver_assigned'     => 'Водитель Назначен',
+    'vehicle_assigned'    => 'Транспорт Назначен',
+    'trip_assigned'       => 'Рейс Назначен',
+    'dispatched'          => 'Dispatched',
+    'pickup_started'      => 'Pickup Started',
+    'picked_up'           => 'Picked Вверх',
+    'departed_origin'     => 'Departed от Происхождение',
+    'in_transit'          => 'В Transit',
+    'arrived_destination' => 'Arrived в Назначение',
+    'out_for_delivery'    => 'Вне Для Доставка',
+    'delivered'           => 'Delivered',
+    'delivery_failed'     => 'Доставка Не удалось',
+    'delivery_retried'    => 'Доставка Retried',
+    'returned'            => 'Returned',
+    'put_on_hold'         => 'Put Вкл. Hold',
+    'released'            => 'Released',
+    'cancelled'           => 'Отменён',
+    'pod_captured'        => 'Proof Доставка Captured',
+    'invoice_created'     => 'Счёт Создано',
+    'position_update'     => 'Должность Обновить',
+];

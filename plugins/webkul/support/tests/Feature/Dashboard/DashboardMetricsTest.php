@@ -274,12 +274,18 @@ it('groups a chart by day, week or month for the length of the period', function
 it('hands the browser a day-first, 24-hour English and keeps other languages', function () {
     $locales = [];
 
-    foreach (['en', 'fr', 'pt_BR'] as $locale) {
+    foreach (['en', 'fr', 'pt_BR', 'ru', 'sw'] as $locale) {
         app()->setLocale($locale);
         $locales[$locale] = DashboardPeriod::browserLocale();
     }
 
     app()->setLocale('en');
 
-    expect($locales)->toBe(['en' => 'en-GB', 'fr' => 'fr', 'pt_BR' => 'pt-BR']);
+    expect($locales)->toBe([
+        'en'    => 'en-GB',
+        'fr'    => 'fr',
+        'pt_BR' => 'pt-BR',
+        'ru'    => 'ru',
+        'sw'    => 'sw',
+    ]);
 });

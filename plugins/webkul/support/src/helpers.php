@@ -53,7 +53,11 @@ if (! function_exists('money')) {
 
         $currency = $currency instanceof Closure ? $currency() : ($currency ?? config('app.currency'));
 
-        $locale = $locale instanceof Closure ? $locale() : ($locale ?? config('app.locale'));
+        // The session locale lives on the application, not in config: SetLocale
+        // calls App::setLocale() and leaves app.locale at the .env default.
+        // Reading the config here kept every dashboard and PDF in English
+        // after the user switched language.
+        $locale = $locale instanceof Closure ? $locale() : ($locale ?? app()->getLocale());
 
         if ($divideBy > 0) {
             $amount /= $divideBy;
@@ -431,6 +435,77 @@ if (! function_exists('allowed_company_ids')) {
     }
 }
 
+if (! function_exists('app_number_locale')) {
+    /**
+     * Locale ICU should use for money and counts.
+     *
+     * Arabic keeps Latin digits, matching the existing money() fallback.
+     * Russian and Swahili (and the other languages) are passed through with
+     * Latin digits as well: ru and sw are already region-neutral, the same
+     * way DashboardPeriod::browserLocale() leaves them, so a Russian session
+     * formats as ru and a Swahili session as sw.
+     */
+    function app_number_locale(?string $locale = null): string
+    {
+        $locale ??= app()->getLocale();
+
+        if (str_starts_with($locale, 'ar')) {
+            $locale = 'en';
+        }
+
+        if (! str_contains($locale, '-u-nu-')) {
+            $locale .= '-u-nu-latn';
+        }
+
+        return $locale;
+    }
+}
+
+if (! function_exists('local_number')) {
+    /**
+     * A count or plain number in the active locale, with a non-ICU fallback.
+     *
+     * ext-intl is not required. Without it, number_format() still renders.
+     */
+    function local_number(float|int $number): string
+    {
+        if (! class_exists(MessageFormatter::class)) {
+            return number_format($number);
+        }
+
+        $formatted = MessageFormatter::formatMessage(
+            app_number_locale(),
+            '{0, number}',
+            [$number],
+        );
+
+        return $formatted !== false ? $formatted : number_format($number);
+    }
+}
+
+if (! function_exists('locale_flag_code')) {
+    /**
+     * Flag file for a locale switcher entry.
+     *
+     * The switcher used to look up flags/{locale}.svg, and the files that
+     * exist are en, ar, es and pt_BR. Swahili is the locale sw (D-LANG-1)
+     * and its flag is Tanzania, tz. Prefer the configured flag when that
+     * svg is present, otherwise the locale code.
+     */
+    function locale_flag_code(string $locale): string
+    {
+        $configured = (string) data_get(config('app.supported_locales'), $locale.'.flag', '');
+
+        foreach ([$configured, $locale] as $candidate) {
+            if ($candidate !== '' && is_file(public_path('flags/'.$candidate.'.svg'))) {
+                return $candidate;
+            }
+        }
+
+        return $configured !== '' ? $configured : $locale;
+    }
+}
+
 if (! function_exists('compact_money')) {
     /**
      * Abbreviate a money amount to a compact, locale-aware form (for example $786K).
@@ -448,13 +523,7 @@ if (! function_exists('compact_money')) {
             return money($amount, $currency);
         }
 
-        $locale = config('app.locale');
-
-        if (str_starts_with((string) $locale, 'ar')) {
-            $locale = 'en';
-        } elseif (! str_contains((string) $locale, '-u-nu-')) {
-            $locale .= '-u-nu-latn';
-        }
+        $locale = app_number_locale();
 
         $formatted = MessageFormatter::formatMessage(
             $locale,

@@ -56,7 +56,7 @@ trait HasDashboardMetrics
             $series = array_map('abs', $series);
         }
 
-        $value = $money ? compact_money($current, $this->dashboardCurrency()) : number_format($current);
+        $value = $money ? compact_money($current, $this->dashboardCurrency()) : local_number($current);
 
         $title = $money ? money($current, $this->dashboardCurrency()) : null;
 

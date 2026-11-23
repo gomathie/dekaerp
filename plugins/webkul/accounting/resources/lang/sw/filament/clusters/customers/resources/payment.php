@@ -1,0 +1,15 @@
+<?php
+
+return [
+    'title'       => 'Malipo',
+    'model-label' => 'Malipo',
+
+    'navigation' => [
+        'title' => 'Malipo',
+        'group' => 'Ankara',
+    ],
+
+    'record-sub-navigation' => [
+        'journal-entry' => 'Uingizaji wa jarida',
+    ],
+];

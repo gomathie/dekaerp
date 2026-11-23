@@ -12,6 +12,7 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ### Improvements
 
+- Russian and Swahili are now languages you can choose, next to English, Arabic, Spanish, French and Portuguese (Brazil). These translations are machine-assisted. If a phrase sounds wrong, a native speaker's correction is welcome, and English stays one click away.
 - Dashboards open on the year to date and compare it with the same days last year. A bar above each dashboard shows the period and switches it in one click: This month, Last 30 days, Year to date or Last year.
 - The Sales, Purchases and Invoices tabs are laid out the same way: four key figures first, then the main chart, three breakdowns, and the lists two to a row. The separate rows of count tiles are gone; their numbers are in the key figures.
 - Long periods are charted by week or by month instead of by day, so a year reads as twelve bars instead of hairline spikes.
