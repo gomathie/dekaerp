@@ -29,6 +29,7 @@ use Webkul\Account\Enums\PaymentState;
 use Webkul\Account\Filament\Exports\BillExporter;
 use Webkul\Account\Filament\Resources\BillResource;
 use Webkul\Chatter\Filament\Actions\ActivityTableAction;
+use Webkul\Support\Support\CompanyCurrencyEquivalent;
 
 class BillsTable
 {
@@ -124,6 +125,9 @@ class BillsTable
                     ->sortable()
                     ->summarize(Sum::make()->label(__('accounts::filament/resources/bill.table.total')))
                     ->money(fn ($record) => $record->currency?->name)
+                    // A foreign-currency bill shows its company-currency value
+                    // under it (TRACE365, 2026-11-23).
+                    ->description(fn ($record): ?string => CompanyCurrencyEquivalent::short((float) $record->amount_total_signed, $record->currency_id, $record->company))
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('amount_residual_signed')
                     ->label(__('accounts::filament/resources/bill.table.columns.amount-due'))
@@ -354,7 +358,7 @@ class BillsTable
                 fn (Model $record): bool => BillResource::can('delete', $record) && $record->state !== MoveState::POSTED,
             )
             ->modifyQueryUsing(function (Builder $query) {
-                $query->with('currency');
+                $query->with('currency', 'company.currency');
             });
     }
 }

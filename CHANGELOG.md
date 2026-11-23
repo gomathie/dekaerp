@@ -10,6 +10,20 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.16.7 — 2026-11-23
+
+### Improvements
+
+- Contacts have a "Default Currency" (Sales & Purchase tab). Invoices, bills and purchase orders for that contact open in it, so a customer or supplier you deal with in dollars no longer needs the currency changed by hand each time. Without one, bills and purchase orders open in the currency of your Vendor Bills journal, and invoices in that of your Customer Invoices journal, else your company currency.
+- Invoices, bills and purchase orders in another currency show their value in your own currency beside the total, for example "≈ GH₵ 44,257.50 · 1 USD = 11.80 GHS", and in the lists under each amount. The rate is the document's own.
+- Phone top bar: scrolling down hides the top row so the list gets more room, and scrolling up brings it back; the page tabs stay. The Menu button is an icon, the company name has more room, and the tabs fade only at the edge that has more.
+
+### Fixes
+
+- Phone list cards name each value ("Price", "On Hand", "Forecasted"…) and leave out empty ones. Product cards showed two unlabelled prices, a bare 0 and two quantities that looked the same.
+- The company page stacks its cards on a phone. The name broke mid-word and the logo ran out of its card.
+- While viewing as another user, the orange banner no longer covers the page tabs on a phone.
+
 # CHANGELOG — v1.16.6 — 2026-11-23
 
 ### Fixes

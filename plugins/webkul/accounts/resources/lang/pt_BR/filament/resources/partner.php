@@ -15,9 +15,11 @@ return [
                         'title' => 'Vendas',
 
                         'fields' => [
-                            'sales-person'   => 'Vendedor',
-                            'payment-terms'  => 'Condições de pagamento',
-                            'payment-method' => 'Método de pagamento',
+                            'sales-person'            => 'Vendedor',
+                            'payment-terms'           => 'Condições de pagamento',
+                            'payment-method'          => 'Método de pagamento',
+                            'default-currency'        => 'Moeda padrão',
+                            'default-currency-helper' => 'Faturas, contas de fornecedor e pedidos de compra deste contato abrem nesta moeda. Deixe vazio para usar sua moeda habitual.',
                         ],
                     ],
 

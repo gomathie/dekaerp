@@ -6,6 +6,7 @@ use Webkul\Account\Casts\CompanyProperty;
 use Webkul\Account\Database\Factories\PartnerFactory;
 use Webkul\Partner\Database\Factories\PartnerFactory as BasePartnerFactory;
 use Webkul\Partner\Models\Partner as BasePartner;
+use Webkul\Support\Models\Currency;
 
 class Partner extends BasePartner
 {
@@ -37,6 +38,7 @@ class Partner extends BasePartner
             'property_supplier_payment_term_id',
             'property_outbound_payment_method_line_id',
             'property_inbound_payment_method_line_id',
+            'default_currency_id',
         ]);
 
         parent::__construct($attributes);
@@ -60,6 +62,15 @@ class Partner extends BasePartner
     public function propertyAccountPosition()
     {
         return $this->belongsTo(FiscalPosition::class, 'property_account_position_id');
+    }
+
+    /**
+     * The currency this contact's invoices, bills and purchase orders open
+     * in (DocumentCurrency). Null: the journal's or the company's currency.
+     */
+    public function defaultCurrency()
+    {
+        return $this->belongsTo(Currency::class, 'default_currency_id');
     }
 
     public function propertyPaymentTerm()

@@ -2084,6 +2084,22 @@ log named):
     Vendors 2, Configuration 10. Test: "keeps customer invoices first in the
     invoices menu, with or without sales".
 
+• Document currency and its company value, 2026-11-23 (v1.16.7, TRACE365,
+  user; `docs/change-log.md`):
+  - Which currency an invoice, bill or purchase order opens in is one rule,
+    `Account\Support\DocumentCurrency`: contact's `default_currency_id`, then
+    the company's journal currency for that document type, then the company
+    currency; inactive or non-permitted currencies are skipped. Changing the
+    contact switches only when the contact has one (`ofContact()`). Do not
+    add a second default in a form.
+  - The "≈ GH₵ X" value beside a foreign total uses the document's stored
+    rate (`Support\Support\CompanyCurrencyEquivalent`), never today's and
+    never 1:1. No rate: no line.
+  - Phone list cards label every value from the column's own label
+    (`data-label`, `HasFilamentDefaults`; CSS in `topbar.blade.php`). Keep
+    the attribute escaped: Filament prints attribute values raw.
+  - Tests: accounts `DocumentCurrencyTest`.
+
 • Customer page shipments, 2026-11-10 (`docs/logistics-plan.md`, WP-9b, D11):
   - The customer infolist tab is `PartnerSchemaRegistry` slot `tabs.append`.
     Do not add a relation-manager slot, and do not edit `PartnerResource` or

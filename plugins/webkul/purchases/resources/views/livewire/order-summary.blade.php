@@ -74,6 +74,10 @@
                 <span>{{ __('purchases::filament/admin/clusters/orders/resources/order.table.columns.total-amount') }}</span>
                 <span>{{ money($grandTotal, $currency?->name) }}</span>
             </div>
+
+            @if ($companyEquivalent)
+                <div class="text-end text-xs text-gray-500 dark:text-gray-400">{{ $companyEquivalent }}</div>
+            @endif
         </div>
     </div>
 </div>

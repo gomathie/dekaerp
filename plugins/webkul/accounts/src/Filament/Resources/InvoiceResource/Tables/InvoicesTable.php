@@ -29,6 +29,7 @@ use Webkul\Account\Enums\PaymentState;
 use Webkul\Account\Filament\Exports\InvoiceExporter;
 use Webkul\Account\Filament\Resources\InvoiceResource;
 use Webkul\Chatter\Filament\Actions\ActivityTableAction;
+use Webkul\Support\Support\CompanyCurrencyEquivalent;
 
 class InvoicesTable
 {
@@ -130,6 +131,9 @@ class InvoicesTable
                     ->sortable()
                     ->summarize(Sum::make()->label(__('accounts::filament/resources/invoice.table.total')))
                     ->money(fn ($record) => $record->currency?->name)
+                    // A foreign-currency invoice shows its company-currency value
+                    // under it (TRACE365, 2026-11-23).
+                    ->description(fn ($record): ?string => CompanyCurrencyEquivalent::short((float) $record->amount_total_signed, $record->currency_id, $record->company))
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('amount_residual_signed')
                     ->label(__('accounts::filament/resources/invoice.table.columns.amount-due'))
@@ -360,7 +364,7 @@ class InvoicesTable
                 fn (Model $record): bool => InvoiceResource::can('delete', $record) && $record->state !== MoveState::POSTED,
             )
             ->modifyQueryUsing(function (Builder $query) {
-                $query->with('currency');
+                $query->with('currency', 'company.currency');
             });
     }
 }
