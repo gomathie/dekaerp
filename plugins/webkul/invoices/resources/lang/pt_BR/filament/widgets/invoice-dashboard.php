@@ -27,7 +27,7 @@ return [
 
     'revenue-over-time' => [
         'heading'     => 'Receita ao Longo do Tempo',
-        'description' => 'Faturas de cliente pagas por dia',
+        'description' => 'Faturas de cliente pagas, por dia, semana ou mês',
         'revenue'     => 'Receita',
     ],
 

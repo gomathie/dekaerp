@@ -45,7 +45,8 @@ trait HasDashboardMetrics
         // does not tell: one extra count for money tiles only.
         $previousRecords = $money ? (float) $queryFactory($previousStart, $previousEnd)->count() : $previous;
 
-        $series = $this->dailyBuckets($queryFactory($start, $end), $money);
+        // The sparkline groups like the charts (by day, week or month).
+        $series = DashboardPeriod::rollUp($this->dailyBuckets($queryFactory($start, $end), $money), $start, $end)['values'];
 
         if ($abs) {
             $current = abs($current);
@@ -124,13 +125,16 @@ trait HasDashboardMetrics
     {
         $filters = $this->dashboardFilters();
 
+        // No period chosen: the year to date, like every dashboard (U68).
+        [$defaultStart, $defaultEnd] = DashboardPeriod::defaultRange();
+
         $start = ! empty($filters['start_date'])
             ? Carbon::parse($filters['start_date'])->startOfDay()
-            : now()->subMonth()->startOfDay();
+            : $defaultStart;
 
         $end = ! empty($filters['end_date'])
             ? Carbon::parse($filters['end_date'])->endOfDay()
-            : now()->endOfDay();
+            : $defaultEnd;
 
         return [$start, $end];
     }

@@ -27,7 +27,7 @@ return [
 
     'revenue-over-time' => [
         'heading'     => 'Revenue Over Time',
-        'description' => 'Paid customer invoices per day',
+        'description' => 'Paid customer invoices, by day, week or month',
         'revenue'     => 'Revenue',
     ],
 

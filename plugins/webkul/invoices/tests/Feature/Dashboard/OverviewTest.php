@@ -380,3 +380,38 @@ it('hides the overview or only its money sections by the user switches', functio
         ->and(Overview::canAccess())->toBeFalse()
         ->and(Invoices::canAccess())->toBeFalse();
 });
+
+/**
+ * DB-4 (approved mockup, 2026-11-23): the period is a visible bar of
+ * one-click presets that says what it is compared with. A key the bar does
+ * not offer changes nothing, because the method is callable from the browser.
+ */
+it('sets the period from the bar and says what it is compared with', function (): void {
+    $this->travelTo(\Illuminate\Support\Carbon::parse('2026-11-23 10:00'));
+
+    $page = new Overview;
+    $page->filters = [];
+
+    $bar = fn (): array => (fn (): array => $this->periodBarData())->call($page);
+
+    expect($bar()['active'])->toBe('year-to-date')
+        ->and($bar()['period'])->toBe('1 Jan – 23 Nov')
+        ->and($bar()['previous'])->toBe('1 Jan 2025 – 23 Nov 2025');
+
+    $page->selectPeriod('last-year');
+
+    expect($page->filters['start_date'])->toBe('2025-01-01')
+        ->and($page->filters['end_date'])->toBe('2025-12-31')
+        ->and($page->filters['date_range'])->toBe('01/01/2025 - 31/12/2025')
+        ->and($bar()['active'])->toBe('last-year')
+        ->and($bar()['previous'])->toBe('1 Jan 2024 – 31 Dec 2024');
+
+    $page->selectPeriod('everything');
+
+    expect($page->filters['start_date'])->toBe('2025-01-01');
+
+    $page->filters = ['start_date' => '2026-03-03', 'end_date' => '2026-03-09'];
+
+    expect($bar()['active'])->toBeNull()
+        ->and($bar()['previous'])->toBe('24 Feb – 2 Mar');
+});

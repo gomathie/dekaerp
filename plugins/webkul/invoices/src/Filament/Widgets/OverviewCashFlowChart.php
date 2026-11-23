@@ -9,6 +9,7 @@ use Illuminate\Support\Carbon;
 use Webkul\Account\Enums\PaymentStatus;
 use Webkul\Account\Enums\PaymentType;
 use Webkul\Account\Models\Payment;
+use Webkul\Support\Filament\DashboardPeriod;
 
 /**
  * The one chart on the Overview's All tab (user, 2026-11-13): money in
@@ -53,14 +54,9 @@ class OverviewCashFlowChart extends RevenueOverTimeWidget
     {
         [$start, $end] = $this->periodRange();
 
-        $in = $this->dailyPayments(PaymentType::RECEIVE, $start, $end);
-        $out = $this->dailyPayments(PaymentType::SEND, $start, $end);
-
-        $labels = [];
-
-        for ($date = (clone $start)->startOfDay(); $date->lte($end); $date->addDay()) {
-            $labels[] = $date->format('M d');
-        }
+        // Grouped by day, week or month for the period's length (DB-4).
+        ['labels' => $labels, 'values' => $in] = DashboardPeriod::rollUp($this->dailyPayments(PaymentType::RECEIVE, $start, $end), $start, $end);
+        $out = DashboardPeriod::rollUp($this->dailyPayments(PaymentType::SEND, $start, $end), $start, $end)['values'];
 
         $outDataset = array_merge($this->gradientLineDataset($out, __('invoices::filament/pages/overview.cash.out')), [
             'borderColor'          => $this->brandColor('gray', 400),
@@ -81,7 +77,7 @@ class OverviewCashFlowChart extends RevenueOverTimeWidget
 
             $datasets[] = [
                 'label'       => __('invoices::filament/pages/overview.cash-compare.previous'),
-                'data'        => array_slice($this->dailyPayments(PaymentType::RECEIVE, $previousStart, $previousEnd), 0, count($labels)),
+                'data'        => array_slice(DashboardPeriod::rollUp($this->dailyPayments(PaymentType::RECEIVE, $previousStart, $previousEnd), $previousStart, $previousEnd)['values'], 0, count($labels)),
                 'borderColor' => $this->brandColor('primary', 500, 0.45),
                 'fill'        => false,
                 'tension'     => 0.4,

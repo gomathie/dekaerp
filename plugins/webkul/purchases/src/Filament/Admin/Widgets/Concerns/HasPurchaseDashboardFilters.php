@@ -74,13 +74,16 @@ trait HasPurchaseDashboardFilters
     {
         $filters = $this->dashboardFilters();
 
+        // No period chosen: the year to date, like every dashboard (U68).
+        [$defaultStart, $defaultEnd] = DashboardPeriod::defaultRange();
+
         $start = ! empty($filters['start_date'])
             ? Carbon::parse($filters['start_date'])->startOfDay()
-            : now()->subMonth()->startOfDay();
+            : $defaultStart;
 
         $end = ! empty($filters['end_date'])
             ? Carbon::parse($filters['end_date'])->endOfDay()
-            : now()->endOfDay();
+            : $defaultEnd;
 
         return [$start, $end];
     }

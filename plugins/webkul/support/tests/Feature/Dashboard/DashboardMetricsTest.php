@@ -154,6 +154,12 @@ it('compares a whole year with the whole of the year before, naming the year', f
         ->and(DashboardPeriod::label($previousStart, $previousEnd))->toBe('1 Jan 2025 – 31 Dec 2025');
 });
 
+/**
+ * Inverted 2026-11-23 (user decision, DB-4 / U68): the Sales dashboard no
+ * longer opens on the whole calendar year but on the year to date, so with
+ * no filter its previous period is the same days of last year
+ * (1 Jan – 22 Nov 2025), not all of 2025.
+ */
 it('gives the sales and purchases dashboards the same previous period as the shared rule', function () {
     $this->travelTo(Carbon::parse('2026-11-22 10:00'));
 
@@ -179,8 +185,85 @@ it('gives the sales and purchases dashboards the same previous period as the sha
 
     $purchases->pageFilters = ['start_date' => '2026-03-01', 'end_date' => '2026-03-31'];
 
-    expect(array_map(fn (Carbon $date): string => $date->toDateString(), $sales->previous()))->toBe(['2025-01-01', '2025-12-31'])
+    expect(array_map(fn (Carbon $date): string => $date->toDateString(), $sales->previous()))->toBe(['2025-01-01', '2025-11-22'])
         ->and(array_map(fn (Carbon $date): string => $date->toDateString(), $purchases->previous()))->toBe(['2026-01-29', '2026-02-28']);
+});
+
+/**
+ * DB-4 (user decision, 2026-11-23, U68): every dashboard opens on the year
+ * to date and compares it with the same days of last year. Sales opened on
+ * the whole calendar year and the others on the last 30 days.
+ */
+it('opens every dashboard on the year to date, compared with the same days last year', function () {
+    $this->travelTo(Carbon::parse('2026-11-23 10:00'));
+
+    $dates = fn (array $range): array => array_map(fn (Carbon $date): string => $date->toDateString(), $range);
+
+    $shared = new class
+    {
+        use HasDashboardMetrics;
+
+        public function range(): array
+        {
+            return [$this->periodRange(), $this->previousPeriodRange()];
+        }
+    };
+
+    $sales = new class
+    {
+        use HasSaleDashboardFilters;
+
+        public function range(): array
+        {
+            return [$this->periodRange(), $this->previousPeriodRange()];
+        }
+    };
+
+    $purchases = new class
+    {
+        use HasPurchaseDashboardFilters;
+
+        public function range(): array
+        {
+            return [$this->periodRange(), $this->previousPeriodRange()];
+        }
+    };
+
+    foreach ([$shared, $sales, $purchases] as $dashboard) {
+        [$period, $previous] = $dashboard->range();
+
+        expect($dates($period))->toBe(['2026-01-01', '2026-11-23'])
+            ->and($dates($previous))->toBe(['2025-01-01', '2025-11-23']);
+    }
+
+    // 29 February compares with 28 February, never 1 March.
+    expect($dates(DashboardPeriod::previous(Carbon::parse('2028-01-01'), Carbon::parse('2028-02-29')->endOfDay())))
+        ->toBe(['2027-01-01', '2027-02-28']);
+});
+
+/**
+ * DB-4 (2026-11-23, U75): a year drawn per day was hairline spikes. Up to
+ * 31 days a chart is by day, up to about four months by week, beyond that
+ * by month; the totals are unchanged by the grouping.
+ */
+it('groups a chart by day, week or month for the length of the period', function () {
+    $days = fn (string $start, string $end): array => array_fill(0, (int) floor(Carbon::parse($start)->diffInDays(Carbon::parse($end))) + 1, 1.0);
+
+    $short = DashboardPeriod::rollUp($days('2026-03-01', '2026-03-03'), Carbon::parse('2026-03-01'), Carbon::parse('2026-03-03')->endOfDay());
+    // 2 Mar 2026 is a Monday, so 1 Mar is a week of its own.
+    $weeks = DashboardPeriod::rollUp($days('2026-03-01', '2026-04-30'), Carbon::parse('2026-03-01'), Carbon::parse('2026-04-30')->endOfDay());
+    $months = DashboardPeriod::rollUp($days('2026-01-01', '2026-11-23'), Carbon::parse('2026-01-01'), Carbon::parse('2026-11-23')->endOfDay());
+
+    expect($short)->toBe(['labels' => ['1 Mar', '2 Mar', '3 Mar'], 'values' => [1.0, 1.0, 1.0]])
+        ->and($weeks['labels'][0])->toBe('1 Mar')
+        ->and($weeks['values'][0])->toBe(1.0)
+        ->and($weeks['labels'][1])->toBe('2 Mar')
+        ->and($weeks['values'][1])->toBe(7.0)
+        ->and(array_sum($weeks['values']))->toBe(61.0)
+        ->and($months['labels'])->toHaveCount(11)
+        ->and($months['labels'][0])->toBe('Jan')
+        ->and($months['values'][1])->toBe(28.0)
+        ->and($months['values'][10])->toBe(23.0);
 });
 
 /**

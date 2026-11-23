@@ -27,7 +27,7 @@ return [
 
     'revenue-over-time' => [
         'heading'     => 'Revenu dans le Temps',
-        'description' => 'Factures clients payées par jour',
+        'description' => 'Factures clients payées, par jour, semaine ou mois',
         'revenue'     => 'Revenu',
     ],
 

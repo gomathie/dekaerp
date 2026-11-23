@@ -6,6 +6,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Carbon;
 use Webkul\Purchase\Filament\Admin\Widgets\Concerns\GuardsPurchaseDashboardWidget;
 use Webkul\Purchase\Filament\Admin\Widgets\Concerns\HasPurchaseDashboardFilters;
+use Webkul\Support\Filament\DashboardPeriod;
 use Webkul\Support\Filament\Widgets\DashboardChartWidget;
 
 class PurchaseTrendWidget extends DashboardChartWidget
@@ -53,15 +54,23 @@ class PurchaseTrendWidget extends DashboardChartWidget
             $counts[Carbon::parse($row->bucket_day)->format('Y-m-d')][(string) $row->bucket_state] = (int) $row->bucket_count;
         }
 
-        $labels = [];
-        $series = array_fill_keys(array_keys(self::SERIES_COLORS), []);
+        $daily = array_fill_keys(array_keys(self::SERIES_COLORS), []);
 
         for ($date = (clone $start)->startOfDay(); $date->lte($end); $date->addDay()) {
-            $labels[] = $date->format('M d');
-
             foreach (array_keys(self::SERIES_COLORS) as $seriesState) {
-                $series[$seriesState][] = $counts[$date->format('Y-m-d')][$seriesState] ?? 0;
+                $daily[$seriesState][] = (float) ($counts[$date->format('Y-m-d')][$seriesState] ?? 0);
             }
+        }
+
+        // Grouped by day, week or month for the period's length (DB-4).
+        $labels = [];
+        $series = [];
+
+        foreach ($daily as $seriesState => $values) {
+            ['labels' => $labels, 'values' => $grouped] = DashboardPeriod::rollUp($values, $start, $end);
+
+            // Order counts stay whole numbers.
+            $series[$seriesState] = array_map('intval', $grouped);
         }
 
         return [

@@ -58,12 +58,23 @@ return [
 
     'cash' => [
         'heading'     => 'Money in and out',
-        'description' => 'Paid invoices and paid bills per day',
+        'description' => 'Paid invoices and paid bills, by day, week or month',
         'in'          => 'Money in',
         'out'         => 'Money out',
     ],
 
     'trend' => ':change vs previous period',
+
+    'period' => [
+        'label'        => 'Period',
+        'this-month'   => 'This month',
+        'last-30-days' => 'Last 30 days',
+        'year-to-date' => 'Year to date',
+        'last-year'    => 'Last year',
+        'custom'       => 'Custom',
+        'compared'     => ':period, compared with :previous',
+        'custom-hint'  => 'Pick any other dates under Filters.',
+    ],
 
     'modules' => [
         'heading' => 'Across the company',

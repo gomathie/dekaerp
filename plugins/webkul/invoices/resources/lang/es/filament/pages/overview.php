@@ -58,12 +58,23 @@ return [
 
     'cash' => [
         'heading'     => 'Entradas y salidas de dinero',
-        'description' => 'Facturas cobradas y facturas de proveedor pagadas por día',
+        'description' => 'Facturas cobradas y facturas de proveedor pagadas, por día, semana o mes',
         'in'          => 'Entradas',
         'out'         => 'Salidas',
     ],
 
     'trend' => ':change frente al periodo anterior',
+
+    'period' => [
+        'label'        => 'Periodo',
+        'this-month'   => 'Este mes',
+        'last-30-days' => 'Últimos 30 días',
+        'year-to-date' => 'En lo que va del año',
+        'last-year'    => 'Año pasado',
+        'custom'       => 'Personalizado',
+        'compared'     => ':period, comparado con :previous',
+        'custom-hint'  => 'Elija otras fechas en Filtros.',
+    ],
 
     'modules' => [
         'heading' => 'En toda la empresa',
