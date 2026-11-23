@@ -10,6 +10,21 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.16.9 — 2026-11-23
+
+### Improvements
+
+- Invoices, bills, credit notes, refunds and quotations print in a new, cleaner layout: your logo and tax ID at the top, the customer beside the date, terms and due date, numbered lines with their description and amount, each tax on its own line (for example NHIL/GETFund and VAT), the amount paid and the balance due, your bank details and notes, and page numbers.
+- Quotations can be downloaded as a PDF from their preview ("Print").
+- Payments received: the list shows which invoice each payment settled and its reference, filters by year and month, and totals what is shown, so you can see what was received in a month or a year. The export includes the invoice numbers and references.
+- Invoices list: the date shows under the invoice number, a "Paid" column shows what has been received, the amount still due is in red, and the Draft, To pay and Overdue tabs show how many invoices they hold.
+
+### Fixes
+
+- The invoices list showed the amount due of an invoice in another currency in your company currency, with the invoice's currency sign. The payments list did the opposite for the payment amount.
+- Two invoices printed or e-mailed on the same day could share one PDF file, so a customer could receive another customer's invoice.
+- The invoices list's "Overdue" tab includes invoices that are partly paid and past their due date.
+
 # CHANGELOG — v1.16.8 — 2026-11-23
 
 ### Fixes
