@@ -30,11 +30,13 @@ class Vendors extends Cluster
 
     /**
      * After Orders and Products under Purchase (v1.16.2, 2026-11-22), so the
-     * sidebar "Purchase" link still opens Orders, not Bills.
+     * sidebar "Purchase" link still opens Orders, not Bills. In the Invoices
+     * group, after the customer invoices (v1.16.6): with no position it came
+     * first, and the sidebar "Invoices" link would open bills.
      */
     public static function getNavigationSort(): ?int
     {
-        return static::shownUnderPurchases() ? 3 : null;
+        return static::shownUnderPurchases() ? 3 : 2;
     }
 
     public static function canAccess(): bool

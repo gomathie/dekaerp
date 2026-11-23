@@ -6,6 +6,34 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-23, v1.16.6 (hotfix): the sidebar "Invoices" link opens the invoices again
+
+- **Why:** user, 2026-11-23, after checking production: the sidebar
+  "Invoices" entry opened Invoices → Configuration → Bank Accounts. v1.16.1
+  had moved the customer invoices (the Customers cluster) under Sales as a
+  top-bar tab whenever the company had Sales, which left only Configuration
+  in the Invoices group; the sidebar link opens a group's first entry. User
+  decision: invoices back in the Invoices module (bills stay under Purchase).
+- **How:** `Invoice\Filament\Clusters\Customers` is always in
+  `NavigationGroup::Invoice`, label "Customers", sort 1; `shownUnderSales()`
+  removed (no other caller). `Vendors` sort 2 when it is in the Invoices
+  group (it had none, which Filament treats as -1, before the invoices);
+  `Configuration` sort 0 → 10. URLs, permissions and module switches are
+  unchanged.
+- **Benefit:** "Invoices" opens the invoice list, with Credit Notes,
+  Payments, Products and Customers beside it; Sales' top bar no longer has an
+  Invoices tab.
+- **Trade-off / risk:** users who learned the v1.16.1 place find invoices
+  under Invoices again. The Sales "Invoices" tab on a customer page
+  (`ManageInvoices`) is unchanged.
+- **Verification:** sales `PluginEntitlementTest` (test inverted and
+  renamed "keeps customer invoices first in the invoices menu, with or
+  without sales"): the file passed, 3 tests, 22 assertions (database
+  `aureuserp_testing_v113_k4`). Pint on the touched files (it also fixed a
+  pre-existing spacing issue in `Configuration.php`). Browser check on
+  production after deploy.
+- **Rollback:** revert the three cluster files and the test.
+
 ## 2026-11-23, dashboards DB-4: the approved layout, year to date by default (unreleased)
 
 - **Why:** user decisions of 2026-11-23 on the DB-4 mockups (canvas "DEKA

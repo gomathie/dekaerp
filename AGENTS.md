@@ -2076,6 +2076,13 @@ log named):
     permissions and module switches are unchanged.
   - Test: sales `PluginEntitlementTest` "shows invoices under sales only
     while the company has sales".
+  - *Superseded for invoices 2026-11-23 (user, hotfix v1.16.6):* customer
+    invoices (the Customers cluster) stay in the Invoices group, first, with
+    or without Sales. Moved under Sales, they left only Configuration in the
+    group, so the sidebar "Invoices" link opened Bank Accounts. Bills stay
+    under Purchase as above. Order in the Invoices group: Customers 1,
+    Vendors 2, Configuration 10. Test: "keeps customer invoices first in the
+    invoices menu, with or without sales".
 
 • Customer page shipments, 2026-11-10 (`docs/logistics-plan.md`, WP-9b, D11):
   - The customer infolist tab is `PartnerSchemaRegistry` slot `tabs.append`.

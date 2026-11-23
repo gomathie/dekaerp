@@ -342,7 +342,7 @@ paid. Decided:
 
   An invoice made from an order is still counted once, through its order.
   The rule lives in one place: `Webkul\Sale\Support\DirectInvoices`.
-- *Done 2026-11-22 (v1.16.1):* invoices sit inside Sales as an "Invoices" tab, which is the "Recent invoices" view this asked for. Still open: the guide wording.
+- *Done 2026-11-22 (v1.16.1):* invoices sit inside Sales as an "Invoices" tab, which is the "Recent invoices" view this asked for. *Superseded 2026-11-23 (user, hotfix v1.16.6):* the invoices are back under the Invoices sidebar entry, first, because that entry had come to open Bank Accounts. Still open: the guide wording.
 - Still open: the top-customers count column, labelled "Orders", now also
   counts direct invoices. Rename it ("Sales") with DB-1.
 

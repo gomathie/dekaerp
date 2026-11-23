@@ -22,6 +22,12 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 - Overview: the date and clock in the welcome banner no longer change format a moment after the page opens, and "Updated" shows your own local time.
 - Dashboard figures show their full comparison ("New vs 1 Jan 2025 – 31 Dec 2025") on a line of their own instead of cutting it off.
 
+# CHANGELOG — v1.16.6 — 2026-11-23
+
+### Fixes
+
+- "Invoices" in the sidebar opens your invoices again, with Credit Notes, Payments, Products and Customers beside them. Since v1.16.1 it opened Bank Accounts, and customer invoices were a tab inside Sales. Bills stay under Purchase.
+
 # CHANGELOG — v1.16.5 — 2026-11-23
 
 ### Fixes

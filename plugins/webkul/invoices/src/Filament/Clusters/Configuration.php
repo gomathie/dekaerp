@@ -2,16 +2,17 @@
 
 namespace Webkul\Invoice\Filament\Clusters;
 
-
-use Webkul\PluginManager\Support\PluginEntitlement;
 use Filament\Clusters\Cluster;
+use Webkul\PluginManager\Support\PluginEntitlement;
 use Webkul\Support\Enums\NavigationGroup;
 
 class Configuration extends Cluster
 {
     protected static ?string $slug = 'invoices/configurations';
 
-    protected static ?int $navigationSort = 0;
+    // Last in the Invoices group (v1.16.6): at 0 it came before the invoices,
+    // and the sidebar "Invoices" link opened Bank Accounts.
+    protected static ?int $navigationSort = 10;
 
     public static function getNavigationLabel(): string
     {
@@ -22,6 +23,7 @@ class Configuration extends Cluster
     {
         return NavigationGroup::Invoice;
     }
+
     public static function canAccess(): bool
     {
         return PluginEntitlement::enabledForCurrent('invoices');
