@@ -6,6 +6,32 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-24, multi-currency plan #11 and MC-1 (TRACE365 sees USD and GHS only)
+
+- **Why:** user, 2026-11-24: "when currencies are selected for a company,
+  they should see only that ... trace365 must see only usd and ghs". Read-only
+  check: TRACE365 (company 2, base USD) had no permitted-currency list, which
+  CR-6 treats as "every active currency" (CDF, GHS, USD, ZAR, ZMW). The
+  purchase agreement picker also ignored the list.
+- **How:** production data, through the app: TRACE365's company form,
+  "Currencies › Additional currencies" = Ghanaian cedi, saved as the test
+  administrator ("Company updated"); the base currency is always kept, so
+  they now see USD and GHS (`company_currencies` checked afterwards). Code:
+  the purchase agreement picker applies `permittedFor()`; support
+  `Tenancy/CurrencyPickerScopeTest` scans every `*currency_id` picker and
+  fails on a transaction form without the company list (six configuration
+  pickers allow-listed: base currency, the list itself, account, vendor
+  price, installation default). Plan `docs/planned/11-multi-currency-plan.md`
+  for "Ask money equivalent" (MC-2) and the Multi-currency report (MC-3).
+- **Benefit:** TRACE365 picks between USD and GHS only, from today.
+- **Trade-off / risk:** if TRACE365 ever needs a third currency, a Super
+  Admin adds it on the company form.
+- **Verification:** `CurrencyPickerScopeTest` 1 passed (2 assertions,
+  `aureuserp_testing_v113_k4`); production `company_currencies` for company 2
+  = GHS.
+- **Rollback:** remove GHS from the list (back to every active currency);
+  revert the commit for the picker.
+
 ## 2026-11-24, v1.16.12 (hotfix): Adminer removed from the repository (user decision)
 
 - **Why:** the graph build (graphify) showed `storage/app/adminer/adminer-source.php`

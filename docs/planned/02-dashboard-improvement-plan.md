@@ -300,6 +300,18 @@ plugin, so a new widget that forgets the interval fails there. Still open in
 DB-6: query counts on the top-N tables (eager loading is in place on the
 ones reviewed in DB-2).
 
+*Checked 2026-11-24, top-N tables:* by inspection, every list eager-loads what
+each row reads (`with(['partner', 'currency'])`, `invoiceUser` on invoices and
+bills), and the grouped ones (top customers, products, vendors) are one
+aggregate query each. An automated "render, double the data, render again"
+test was tried and dropped: inside a test transaction the fixture's chatter
+work (follower lookups, record loads, queued notifications) replays on every
+Livewire call, so the count grew with the data for reasons outside the
+widgets (110 → 205 queries on Purchases, mostly `chatter_followers` and
+single-record loads). A test that fails for the harness's reason is worse
+than none. Revisit only with a measurement outside Livewire testing, or if
+Sentry shows a slow dashboard request. DB-6 closed.
+
 ### DB-7 Businesses that trade in USD and their local currency
 
 Many clients (Ghana, Zambia, Congo) invoice, buy and hold bank balances in
@@ -451,6 +463,9 @@ totals above the bars; ring with a centre total and count · amount · %
 legend; an "Order activity" row (today's state, each tile opening its
 list); "View all" and status pills on every list. No code before the
 answer, as for DB-4.
+*Decided 2026-11-24 (user): build all four* (figure cards, chart switch, ring
+and legend, order activity with "View all"), Sales first, then Invoices and
+Purchases.
 
 ## Verification for every package
 
