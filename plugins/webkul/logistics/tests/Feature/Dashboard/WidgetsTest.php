@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use Webkul\Logistics\Enums\ShipmentState;
 use Webkul\Logistics\Enums\TripState;
+use Webkul\Logistics\Filament\OverviewCard;
 use Webkul\Logistics\Filament\Pages\Dashboard as LogisticsDashboard;
 use Webkul\Logistics\Filament\Widgets\FleetStatsWidget;
 use Webkul\Logistics\Filament\Widgets\ShipmentStatsWidget;
@@ -112,6 +113,32 @@ it('never counts another company’s shipments', function () {
     CompanyHelper::actingAsCompanyUser($a, ['view_any_logistics_shipment']);
 
     expect(widgetFigures(new ShipmentStatsWidget)['In transit'])->toBe('1');
+});
+
+/**
+ * Dashboard plan DB-2 (2026-11-23): the Overview's Logistics card and the
+ * Logistics dashboard agree. A picked-up shipment was "On the road" on the
+ * Overview and in no tile of the dashboard.
+ */
+it('agrees with the overview card on shipments on the road and failed', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+    $other = LogisticsHelper::enable(LogisticsHelper::company());
+
+    shipmentInState($company, ShipmentState::PICKED_UP);
+    shipmentInState($company, ShipmentState::IN_TRANSIT);
+    shipmentInState($company, ShipmentState::OUT_FOR_DELIVERY);
+    shipmentInState($company, ShipmentState::FAILED_DELIVERY);
+    shipmentInState($company, ShipmentState::AWAITING_PICKUP);
+    shipmentInState($other, ShipmentState::IN_TRANSIT);
+
+    CompanyHelper::actingAsCompanyUser($company, ['view_any_logistics_shipment']);
+
+    $figures = widgetFigures(new ShipmentStatsWidget);
+    $card = collect(OverviewCard::data()['items'])->pluck('value', 'label');
+
+    expect($figures['In transit'])->toBe('2')
+        ->and($card['On the road'])->toBe((string) ((int) $figures['In transit'] + (int) $figures['Out for delivery']))
+        ->and($card['Failed deliveries'])->toBe($figures['Failed delivery']);
 });
 
 it('treats an archived vehicle or an expired licence as unavailable', function () {

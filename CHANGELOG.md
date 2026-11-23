@@ -22,6 +22,9 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 - Sales dashboard: the breakdowns by salesperson, category, customer and product say what they count (confirmed orders and invoices made without an order), and a customer's number of sales no longer counts a credit note.
 - Overview: the date and clock in the welcome banner no longer change format a moment after the page opens, and "Updated" shows your own local time.
 - Dashboard figures show their full comparison ("New vs 1 Jan 2025 – 31 Dec 2025") on a line of their own instead of cutting it off.
+- Purchases dashboard: the supplier ring, top suppliers, top products and top orders count confirmed orders only, like the "Spend" figure. They also counted requests for quotation and cancelled orders.
+- Accounting dashboard: on each journal card, the due-date chart deducts credit notes and vendor refunds, so it adds up to "To Pay". "Late", and the Overdue list it opens, include partly paid invoices past their due date.
+- Logistics dashboard: "In transit" includes shipments that have been picked up, so it and "Out for delivery" add up to the Overview's "On the road".
 
 # CHANGELOG — v1.16.8 — 2026-11-23
 

@@ -6,6 +6,40 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-23, dashboards DB-2: Purchases, Accounting and Logistics agree (unreleased)
+
+- **Why:** dashboard plan DB-2 asks for a tile = chart = table test per
+  module. Each of the last three modules showed a mismatch: the Purchases
+  breakdowns and lists summed requests for quotation and cancelled orders
+  while "Spend" did not; the Accounting journal cards' due-date chart added
+  credit notes (`abs()` per document) while "To Pay" deducted them, and
+  "Late" left out partly paid invoices the chart's Overdue bar included;
+  Logistics showed a picked-up shipment in the Overview's "On the road" and
+  in no dashboard tile.
+- **How:** Purchases: `confirmedPurchaseOrders()`, `confirmedPurchaseLines()`
+  and `spendStates()` in `HasPurchaseDashboardFilters`, read by
+  VendorSpendChart, TopVendorsWidget, TopPurchasedProductsWidget,
+  TopOrdersWidget and PurchaseHeadlineWidget. Accounting:
+  `JournalChartWidget::openMoves()` (posted, not paid or partial, residual
+  > 0) feeds "Late", "To Pay" and the chart; `owed()` takes the signed sum
+  with the journal's sign, never `abs()` per document. The invoice/bill
+  list's "Overdue" view (`accounts` `ListInvoices`, shared by bills)
+  includes partly paid. Logistics: `ShipmentStatsWidget` "In transit" =
+  picked up + in transit. Fixture: `DashboardFixtureHelper::purchases()`.
+- **Benefit:** on every module dashboard, the figures, charts and lists add
+  up to each other; a list opened from a card shows what the card counted.
+- **Trade-off / risk:** visible changes in the numbers: Purchases rankings
+  drop quotes and cancelled orders; a journal card's chart can show a
+  negative segment where a credit note is due; "Late" and "Overdue" grow by
+  partly paid documents; "In transit" grows by picked-up shipments.
+- **Verification:** purchases `tests/Feature/Dashboard` 12 passed (39
+  assertions, `aureuserp_testing_v113_k2`); accounting
+  `JournalCardAgreementTest`, `JournalChartCurrencyTest`,
+  `AccountingOverviewTest` 6 passed (28 assertions, `_k4`); logistics
+  `tests/Feature/Dashboard` 12 passed (29 assertions, `_k5`). Pint passed.
+  Not checked in a browser.
+- **Rollback:** revert the commit.
+
 ## 2026-11-23, v1.16.8 (hotfix): attendance reports for view-any users (DEKAERP-24); phone tap targets
 
 - **Why:** the phone audit the user asked for (109 pages at 390px on

@@ -32,7 +32,8 @@ class VendorSpendChart extends DashboardChartWidget
 
     protected function resolveData(): array
     {
-        $query = $this->purchaseOrders();
+        // Spend only: a quote or a cancelled order is not money spent (DB-2).
+        $query = $this->confirmedPurchaseOrders();
 
         $rows = $query
             ->leftJoin('partners_partners', 'partners_partners.id', '=', 'purchases_orders.partner_id')

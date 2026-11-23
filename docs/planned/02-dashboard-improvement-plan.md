@@ -168,6 +168,33 @@ carry the caption "Confirmed orders and invoices made without an order".
 17 passed (64 assertions), `aureuserp_testing_v113_k3`. Still open:
 Purchases, Accounting and Logistics agreement tests.
 
+*Progress 2026-11-23 (develop), Purchases, Accounting, Logistics; DB-2
+done:*
+- Purchases: `DashboardFixtureHelper::purchases()` and purchases
+  `PurchaseDashboardAgreementTest`. The vendor ring, top vendors, top
+  products and top orders summed every order of the period (requests for
+  quotation and cancelled ones too) while "Spend" counted confirmed ones.
+  All now read `confirmedPurchaseOrders()` / `confirmedPurchaseLines()` in
+  `HasPurchaseDashboardFilters` (states `spendStates()`: purchase, done), as
+  the headline does. 12 passed (39 assertions), `aureuserp_testing_v113_k2`.
+- Accounting (the journal cards): the due-date chart added `abs()` of each
+  document, so a credit note was added while "To Pay" deducted it; "Late"
+  counted only unpaid documents while the chart's Overdue bar included
+  partly paid ones. One query now (`JournalChartWidget::openMoves()`: posted,
+  not paid or partial, residual > 0) and one signed sum (`owed()`, sign -1 on
+  purchase journals). The invoice and bill list's "Overdue" view, which
+  "Late" opens, includes partly paid too. Test: accounting
+  `JournalCardAgreementTest`. With the currency and overview tests, 6 passed
+  (28 assertions), `aureuserp_testing_v113_k4`.
+- Logistics (tiles only, no charts): a picked-up shipment was in the
+  Overview's "On the road" and in no dashboard tile. "In transit" now counts
+  picked up + in transit, so On the road = In transit + Out for delivery.
+  Test: logistics `Dashboard/WidgetsTest` "agrees with the overview card on
+  shipments on the road and failed". 12 passed (29 assertions),
+  `aureuserp_testing_v113_k5`.
+
+DB-2 is complete: every module's dashboard has an agreement test.
+
 ### DB-3 States
 
 - Empty charts and tables get one action (U13: "Create a quotation", "Record

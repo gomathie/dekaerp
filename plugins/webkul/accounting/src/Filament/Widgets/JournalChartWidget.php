@@ -2,6 +2,7 @@
 
 namespace Webkul\Accounting\Filament\Widgets;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Livewire\Component;
 use Webkul\Account\Enums\JournalType;
@@ -67,31 +68,17 @@ class JournalChartWidget extends Component
                     'formatted_amount' => money($amount),
                 ],
                 'late' => [
-                    'label' => 'Late',
-                    'url'   => $this->getUrl('index', ['activeTableView' => 'overdue']),
-                    'value' => (clone $baseQuery)
-                        ->where('state', MoveState::POSTED)
-                        ->where('payment_state', PaymentState::NOT_PAID)
-                        ->where('invoice_date_due', '<', today())
-                        ->count(),
-                    'amount' => $amount = abs((float) (clone $baseQuery)
-                        ->where('state', MoveState::POSTED)
-                        ->where('payment_state', PaymentState::NOT_PAID)
-                        ->where('invoice_date_due', '<', today())
-                        ->sum('amount_residual_signed')),
+                    'label'            => 'Late',
+                    'url'              => $this->getUrl('index', ['activeTableView' => 'overdue']),
+                    'value'            => $this->openMoves()->where('invoice_date_due', '<', today())->count(),
+                    'amount'           => $amount = $this->owed($this->openMoves()->where('invoice_date_due', '<', today())),
                     'formatted_amount' => money($amount),
                 ],
                 'to_pay' => [
-                    'label' => 'To Pay',
-                    'url'   => $this->getUrl('index', ['activeTableView' => 'to_pay']),
-                    'value' => (clone $baseQuery)
-                        ->where('state', MoveState::POSTED)
-                        ->whereIn('payment_state', [PaymentState::NOT_PAID, PaymentState::PARTIAL])
-                        ->count(),
-                    'amount' => $amount = abs((float) (clone $baseQuery)
-                        ->where('state', MoveState::POSTED)
-                        ->whereIn('payment_state', [PaymentState::NOT_PAID, PaymentState::PARTIAL])
-                        ->sum('amount_residual_signed')),
+                    'label'            => 'To Pay',
+                    'url'              => $this->getUrl('index', ['activeTableView' => 'to_pay']),
+                    'value'            => $this->openMoves()->count(),
+                    'amount'           => $amount = $this->owed($this->openMoves()),
                     'formatted_amount' => money($amount),
                 ],
             ];
@@ -105,31 +92,17 @@ class JournalChartWidget extends Component
                     'formatted_amount' => money($amount),
                 ],
                 'late' => [
-                    'label' => 'Late',
-                    'url'   => $this->getUrl('index', ['activeTableView' => 'overdue']),
-                    'value' => (clone $baseQuery)
-                        ->where('state', MoveState::POSTED)
-                        ->where('payment_state', PaymentState::NOT_PAID)
-                        ->where('invoice_date_due', '<', today())
-                        ->count(),
-                    'amount' => $amount = abs((float) (clone $baseQuery)
-                        ->where('state', MoveState::POSTED)
-                        ->where('payment_state', PaymentState::NOT_PAID)
-                        ->where('invoice_date_due', '<', today())
-                        ->sum('amount_residual_signed')),
+                    'label'            => 'Late',
+                    'url'              => $this->getUrl('index', ['activeTableView' => 'overdue']),
+                    'value'            => $this->openMoves()->where('invoice_date_due', '<', today())->count(),
+                    'amount'           => $amount = $this->owed($this->openMoves()->where('invoice_date_due', '<', today())),
                     'formatted_amount' => money($amount),
                 ],
                 'to_pay' => [
-                    'label' => 'To Pay',
-                    'url'   => $this->getUrl('index', ['activeTableView' => 'to_pay']),
-                    'value' => (clone $baseQuery)
-                        ->where('state', MoveState::POSTED)
-                        ->whereIn('payment_state', [PaymentState::NOT_PAID, PaymentState::PARTIAL])
-                        ->count(),
-                    'amount' => $amount = abs((float) (clone $baseQuery)
-                        ->where('state', MoveState::POSTED)
-                        ->whereIn('payment_state', [PaymentState::NOT_PAID, PaymentState::PARTIAL])
-                        ->sum('amount_residual_signed')),
+                    'label'            => 'To Pay',
+                    'url'              => $this->getUrl('index', ['activeTableView' => 'to_pay']),
+                    'value'            => $this->openMoves()->count(),
+                    'amount'           => $amount = $this->owed($this->openMoves()),
                     'formatted_amount' => money($amount),
                 ],
             ];
@@ -158,6 +131,37 @@ class JournalChartWidget extends Component
         $data['graph'] = $this->getChartData();
 
         return $data;
+    }
+
+    /**
+     * Posted documents still owed: not paid or partly paid (dashboard plan
+     * DB-2, 2026-11-23). One query for "Late", "To Pay" and the due-date
+     * chart, so they agree. "Late" used to count only unpaid ones, so a
+     * partly paid invoice past its due date was in the chart's Overdue bar
+     * but not in the card's Late figure.
+     */
+    private function openMoves(): Builder
+    {
+        return Move::query()
+            ->where('journal_id', $this->journal->id)
+            ->where('state', MoveState::POSTED)
+            ->whereIn('payment_state', [PaymentState::NOT_PAID, PaymentState::PARTIAL])
+            ->where('amount_residual', '>', 0);
+    }
+
+    /**
+     * What is owed, in company currency, net of credit notes and refunds.
+     * The signed residual is positive for a customer invoice and negative for
+     * a credit note; a vendor bill is the other way round, hence the sign.
+     */
+    private function owed(Builder $query): float
+    {
+        return round($this->owedSign() * (float) $query->sum('amount_residual_signed'), 2);
+    }
+
+    private function owedSign(): int
+    {
+        return $this->journal->type === JournalType::PURCHASE ? -1 : 1;
     }
 
     private function getUrl(string $name, array $parameters = []): ?string
@@ -265,15 +269,12 @@ class JournalChartWidget extends Component
         $late = array_fill(0, 6, 0);
         $onTime = array_fill(0, 6, 0);
 
-        $moves = Move::query()
-            ->where('journal_id', $this->journal->id)
-            ->where('state', MoveState::POSTED)
-            ->whereIn('payment_state', [PaymentState::NOT_PAID, PaymentState::PARTIAL])
-            ->where('amount_residual', '>', 0)
-            ->get(['id', 'invoice_date_due', 'amount_residual_signed']);
+        $moves = $this->openMoves()->get(['id', 'invoice_date_due', 'amount_residual_signed']);
 
         foreach ($moves as $move) {
-            $residual = abs((float) $move->amount_residual_signed);
+            // Signed, not abs(): a credit note reduces what is owed in its
+            // bar, as it does in "To Pay" (DB-2). abs() added it instead.
+            $residual = $this->owedSign() * (float) $move->amount_residual_signed;
             $due = Carbon::parse($move->invoice_date_due);
             $isLate = $due->lt(today());
 

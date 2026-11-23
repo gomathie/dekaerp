@@ -5,6 +5,7 @@ namespace Webkul\Purchase\Filament\Admin\Widgets\Concerns;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
+use Webkul\Purchase\Enums\OrderState;
 use Webkul\Purchase\Models\OrderLine;
 use Webkul\Purchase\Models\PurchaseOrder;
 use Webkul\Support\Filament\DashboardPeriod;
@@ -65,6 +66,38 @@ trait HasPurchaseDashboardFilters
     {
         return OrderLine::query()
             ->whereHas('order', fn (Builder $query) => $this->applyFilters($query, $start, $end));
+    }
+
+    /**
+     * Orders that are spend: confirmed or done (DB-2, 2026-11-23). The vendor
+     * share, top vendors, top products and top orders summed every order of
+     * the period, so a draft quote or a cancelled order counted as spend and
+     * the vendor ring added up to more than the "Spend" figure above it.
+     * Quotes keep their own list (TopRfqsWidget).
+     */
+    protected function confirmedPurchaseOrders(?Carbon $start = null, ?Carbon $end = null): Builder
+    {
+        $query = $this->purchaseOrders($start, $end);
+
+        return $query->whereIn($query->qualifyColumn('state'), static::spendStates());
+    }
+
+    /**
+     * Lines of confirmedPurchaseOrders().
+     */
+    protected function confirmedPurchaseLines(?Carbon $start = null, ?Carbon $end = null): Builder
+    {
+        return OrderLine::query()
+            ->whereHas('order', fn (Builder $query) => $this->applyFilters($query, $start, $end)
+                ->whereIn($query->qualifyColumn('state'), static::spendStates()));
+    }
+
+    /**
+     * @return list<string>
+     */
+    protected static function spendStates(): array
+    {
+        return [OrderState::PURCHASE->value, OrderState::DONE->value];
     }
 
     /**

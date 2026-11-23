@@ -50,7 +50,8 @@ class TopPurchasedProductsWidget extends BaseWidget
 
     protected function getTableQuery(): Builder
     {
-        return $this->purchaseLines()
+        // Bought only: lines of quotes or cancelled orders were not purchased (DB-2).
+        return $this->confirmedPurchaseLines()
             ->leftJoin('products_products', 'products_products.id', '=', 'purchases_order_lines.product_id')
             ->leftJoin('purchases_orders', 'purchases_orders.id', '=', 'purchases_order_lines.order_id')
             ->groupBy('products_products.id', 'products_products.name')

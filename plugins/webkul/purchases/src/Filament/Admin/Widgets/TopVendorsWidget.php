@@ -41,7 +41,8 @@ class TopVendorsWidget extends BaseWidget
 
     protected function getTableQuery(): Builder
     {
-        return $this->purchaseOrders()
+        // Spend only: a quote or a cancelled order is not money spent (DB-2).
+        return $this->confirmedPurchaseOrders()
             ->leftJoin('partners_partners', 'partners_partners.id', '=', 'purchases_orders.partner_id')
             ->groupBy('partners_partners.id', 'partners_partners.name')
             ->selectRaw('COALESCE(partners_partners.id, 0) as id')

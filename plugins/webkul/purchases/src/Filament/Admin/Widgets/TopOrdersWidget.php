@@ -46,7 +46,8 @@ class TopOrdersWidget extends BaseWidget
 
     protected function getTableQuery(): Builder
     {
-        return $this->purchaseOrders()
+        // Orders, not quotes (they have Top RFQs) or cancelled ones (DB-2).
+        return $this->confirmedPurchaseOrders()
             ->with(['partner', 'currency'])
             ->where('total_amount', '>', 0)
             ->orderByDesc('total_amount')

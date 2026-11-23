@@ -70,9 +70,12 @@ class ListInvoices extends ListRecords
                 }),
             'overdue' => PresetView::make(__('accounts::filament/resources/invoice/pages/list-invoice.tabs.overdue'))
                 ->icon('heroicon-s-banknotes')
+                // Partly paid counts too (dashboard plan DB-2, 2026-11-23):
+                // the journal card's "Late" opens this view and counts them,
+                // so the list showed fewer invoices than the card said.
                 ->modifyQueryUsing(function (Builder $query) {
                     $query->where('state', MoveState::POSTED)
-                        ->where('payment_state', PaymentState::NOT_PAID)
+                        ->whereIn('payment_state', [PaymentState::NOT_PAID, PaymentState::PARTIAL])
                         ->where('invoice_date_due', '<', today());
                 }),
         ];

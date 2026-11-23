@@ -8,6 +8,9 @@ use Webkul\Account\Models\Move;
 use Webkul\Partner\Models\Partner;
 use Webkul\Product\Models\Category;
 use Webkul\Product\Models\Product;
+use Webkul\Purchase\Enums\OrderState as PurchaseOrderState;
+use Webkul\Purchase\Models\OrderLine as PurchaseOrderLine;
+use Webkul\Purchase\Models\PurchaseOrder;
 use Webkul\Sale\Enums\OrderState;
 use Webkul\Sale\Models\Order;
 use Webkul\Sale\Models\OrderLine;
@@ -151,6 +154,70 @@ class DashboardFixtureHelper
 
             return compact('orders', 'invoices');
         });
+    }
+
+    /**
+     * Purchase orders in March 2026 for $own (needs the purchases plugin):
+     *
+     *   PO-1   confirmed  1,000  Vendor V  Goods 10     2 Mar
+     *   PO-2   done         500  Vendor W  Services 5   3 Mar
+     *   RFQ-1  draft        700  Vendor V  Goods 7      4 Mar  (a quote)
+     *
+     * and traps that must never count as spend: a cancelled order of 999 in
+     * March, a confirmed order of 5,000 in February, and $other's confirmed
+     * order of 9,000 in March.
+     *
+     * Known totals for March. Spend (confirmed and done): 1,500 in 2 orders;
+     * by vendor V 1,000, W 500; top products Goods 1,000 (10), Services 500
+     * (5); top orders 1,000 then 500. Draft RFQs: 1; top RFQs: 700.
+     *
+     * @return array<string, PurchaseOrder>
+     */
+    public static function purchases(Company $own, Company $other): array
+    {
+        return CompanyHelper::asNobody(function () use ($own, $other): array {
+            $vendorV = Partner::factory()->create(['company_id' => $own->getKey(), 'name' => 'Vendor V']);
+            $vendorW = Partner::factory()->create(['company_id' => $own->getKey(), 'name' => 'Vendor W']);
+            $outsider = Partner::factory()->create(['company_id' => $other->getKey(), 'name' => 'Other client vendor']);
+
+            $goods = Product::factory()->create(['company_id' => $own->getKey(), 'name' => 'Goods']);
+            $services = Product::factory()->create(['company_id' => $own->getKey(), 'name' => 'Services']);
+            $outsiderProduct = Product::factory()->create(['company_id' => $other->getKey()]);
+
+            return [
+                'PO-1'      => static::purchaseOrder($own, $vendorV, PurchaseOrderState::PURCHASE, '2026-03-02', $goods, 10, 1000),
+                'PO-2'      => static::purchaseOrder($own, $vendorW, PurchaseOrderState::DONE, '2026-03-03', $services, 5, 500),
+                'RFQ-1'     => static::purchaseOrder($own, $vendorV, PurchaseOrderState::DRAFT, '2026-03-04', $goods, 7, 700),
+                'cancelled' => static::purchaseOrder($own, $vendorW, PurchaseOrderState::CANCELED, '2026-03-05', $services, 9, 999),
+                'february'  => static::purchaseOrder($own, $vendorV, PurchaseOrderState::PURCHASE, '2026-02-15', $goods, 50, 5000),
+                'other'     => static::purchaseOrder($other, $outsider, PurchaseOrderState::PURCHASE, '2026-03-02', $outsiderProduct, 90, 9000),
+            ];
+        });
+    }
+
+    protected static function purchaseOrder(Company $company, Partner $vendor, PurchaseOrderState $state, string $date, Product $product, float $quantity, float $amount): PurchaseOrder
+    {
+        $order = PurchaseOrder::factory()->create(['company_id' => $company->getKey(), 'partner_id' => $vendor->getKey()]);
+
+        $line = PurchaseOrderLine::factory()->create(['order_id' => $order->getKey(), 'product_id' => $product->getKey(), 'company_id' => $company->getKey()]);
+
+        // Written after the line, so nothing recomputes the order's totals.
+        PurchaseOrderLine::withoutGlobalScopes()->whereKey($line->getKey())->update([
+            'product_id'  => $product->getKey(),
+            'product_qty' => $quantity,
+            'price_total' => $amount,
+        ]);
+
+        PurchaseOrder::withoutGlobalScopes()->whereKey($order->getKey())->update([
+            'partner_id'      => $vendor->getKey(),
+            'state'           => $state,
+            'ordered_at'      => $date.' 10:00:00',
+            'currency_rate'   => 1,
+            'total_amount'    => $amount,
+            'total_cc_amount' => $amount,
+        ]);
+
+        return PurchaseOrder::withoutGlobalScopes()->findOrFail($order->getKey());
     }
 
     protected static function order(Company $company, Partner $partner, User $salesperson, OrderState $state, string $date, Product $product, float $quantity, float $amount): Order

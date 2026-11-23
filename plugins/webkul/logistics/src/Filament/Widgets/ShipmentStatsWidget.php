@@ -61,7 +61,11 @@ class ShipmentStatsWidget extends BaseWidget
                 ->icon('heroicon-o-clock')
                 ->color('info'),
 
-            Stat::make(__(static::$lang.'.stats.in-transit'), $counts[ShipmentState::IN_TRANSIT->value] ?? 0)
+            // Picked up counts as in transit (dashboard plan DB-2,
+            // 2026-11-23): no tile showed a picked-up shipment, while the
+            // Overview's "On the road" counted it. Now On the road = In
+            // transit + Out for delivery.
+            Stat::make(__(static::$lang.'.stats.in-transit'), ($counts[ShipmentState::PICKED_UP->value] ?? 0) + ($counts[ShipmentState::IN_TRANSIT->value] ?? 0))
                 ->icon('heroicon-o-truck')
                 ->color('primary'),
 
