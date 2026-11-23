@@ -8,6 +8,7 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
 use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Facades\Account as AccountFacade;
 use Webkul\Account\Models\Move;
@@ -99,9 +100,12 @@ class PrintAndSendAction extends Action
 
     private function prepareInvoice(Move $record): ?string
     {
+        // Named after the invoice plus a random part (TRACE365, 2026-11-23). It was
+        // invoice-<day>.pdf, so two invoices e-mailed the same day shared one
+        // file and the second customer could receive the first one's invoice.
         return $this->savePDF(
             view('accounts::invoice/actions/preview.index', compact('record'))->render(),
-            'invoice-'.$record->created_at->format('d-m-Y')
+            PreviewAction::fileName($record).'-'.Str::lower(Str::random(8))
         );
     }
 }

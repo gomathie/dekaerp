@@ -8,14 +8,19 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ExportAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Tables;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
 use Webkul\Account\Filament\Exports\PaymentExporter;
 use Webkul\Account\Filament\Resources\PaymentResource;
 use Webkul\Account\Models\Payment;
@@ -55,17 +60,37 @@ class PaymentsTable
                     ->label(__('accounts::filament/resources/payment.table.columns.partner'))
                     ->placeholder('-')
                     ->sortable(),
+                // Which invoice or bill a payment settled (TRACE365, 2026-11-23): they
+                // read the list to work out their taxes and could not see it.
+                TextColumn::make('invoices.name')
+                    ->label(__('accounts::filament/resources/payment.table.columns.invoices'))
+                    ->listWithLineBreaks()
+                    ->limitList(3)
+                    ->searchable()
+                    ->placeholder('-'),
+                TextColumn::make('memo')
+                    ->label(__('accounts::filament/resources/payment.form.sections.fields.memo'))
+                    ->visibleFrom('md')
+                    ->searchable()
+                    ->placeholder('-')
+                    ->toggleable(),
+                // Company currency, so the filtered total adds like with like.
                 TextColumn::make('amount_company_currency_signed')
                     ->label(__('accounts::filament/resources/payment.table.columns.amount-currency'))
+                    ->placeholder('-')
+                    ->sortable()
+                    ->money(fn (Payment $record) => $record->company?->currency_code, true)
+                    ->summarize(Sum::make()
+                        ->label(__('accounts::filament/resources/payment.table.summaries.total'))
+                        ->money(fn (): ?string => current_company()?->currency?->name)),
+                // The payment's own currency: a USD payment showed its dollar amount
+                // with the company's cedi sign.
+                TextColumn::make('amount')
+                    ->label(__('accounts::filament/resources/payment.table.columns.amount'))
                     ->visibleFrom('lg')
                     ->placeholder('-')
                     ->sortable()
-                    ->money(fn (Payment $record) => $record->company?->currency_code, true),
-                TextColumn::make('amount')
-                    ->label(__('accounts::filament/resources/payment.table.columns.amount'))
-                    ->placeholder('-')
-                    ->sortable()
-                    ->money(fn (Payment $record) => $record->company?->currency_code, true),
+                    ->money(fn (Payment $record) => $record->currency?->name ?? $record->company?->currency_code, true),
                 TextColumn::make('state')
                     ->label(__('accounts::filament/resources/payment.table.columns.state'))
                     ->placeholder('-')
@@ -113,6 +138,40 @@ class PaymentsTable
             ])
             ->filtersFormColumns(2)
             ->filters(PaymentResource::mergeCustomTableFilters([
+                // Month and year in two clicks (TRACE365, 2026-11-23): payments received
+                // per month are what they compute their taxes from. On the payment date,
+                // as a date range so the index on `date` is used.
+                Filter::make('period')
+                    ->columnSpanFull()
+                    ->columns(2)
+                    ->schema([
+                        Select::make('year')
+                            ->label(__('accounts::filament/resources/payment.table.filters.year'))
+                            ->options(fn (): array => PaymentsTable::yearOptions())
+                            ->placeholder(__('accounts::filament/resources/payment.table.filters.any-year')),
+                        Select::make('month')
+                            ->label(__('accounts::filament/resources/payment.table.filters.month'))
+                            ->options(fn (): array => PaymentsTable::monthOptions())
+                            ->placeholder(__('accounts::filament/resources/payment.table.filters.whole-year')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        [$start, $end] = PaymentsTable::periodRange($data['year'] ?? null, $data['month'] ?? null);
+
+                        return $start === null
+                            ? $query
+                            : $query->whereBetween($query->qualifyColumn('date'), [$start->toDateString(), $end->toDateString()]);
+                    })
+                    ->indicateUsing(function (array $data): ?string {
+                        [$start] = PaymentsTable::periodRange($data['year'] ?? null, $data['month'] ?? null);
+
+                        if ($start === null) {
+                            return null;
+                        }
+
+                        return blank($data['month'] ?? null)
+                            ? $start->format('Y')
+                            : $start->translatedFormat('F Y');
+                    }),
                 QueryBuilder::make()
                     ->constraintPickerColumns(2)
                     ->constraints([
@@ -233,5 +292,56 @@ class PaymentsTable
                     ->icon('heroicon-o-arrow-up-tray')
                     ->exporter(PaymentExporter::class),
             ]);
+    }
+
+    /**
+     * The first and last day of the chosen year, or of one month in it. A month
+     * with no year means the current year; neither means no period.
+     *
+     * @return array{0: ?Carbon, 1: ?Carbon}
+     */
+    public static function periodRange(mixed $year, mixed $month): array
+    {
+        if (blank($year) && blank($month)) {
+            return [null, null];
+        }
+
+        $year = blank($year) ? now()->year : (int) $year;
+
+        if (blank($month)) {
+            $start = Carbon::create($year, 1, 1);
+
+            return [$start, $start->copy()->endOfYear()];
+        }
+
+        $start = Carbon::create($year, max(1, min(12, (int) $month)), 1);
+
+        return [$start, $start->copy()->endOfMonth()];
+    }
+
+    /**
+     * This year and the nine before it, newest first.
+     *
+     * @return array<int, string>
+     */
+    public static function yearOptions(): array
+    {
+        $years = range(now()->year, now()->year - 9);
+
+        return array_combine($years, array_map('strval', $years));
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function monthOptions(): array
+    {
+        $months = [];
+
+        foreach (range(1, 12) as $month) {
+            $months[$month] = Carbon::create(2000, $month, 1)->translatedFormat('F');
+        }
+
+        return $months;
     }
 }

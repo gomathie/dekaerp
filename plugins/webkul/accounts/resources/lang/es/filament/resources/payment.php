@@ -45,6 +45,11 @@ return [
             'company'         => 'Empresa',
             'currency'        => 'Moneda',
             'created-by'      => 'Creado por',
+            'invoices'        => 'Factura',
+        ],
+
+        'summaries' => [
+            'total' => 'Total',
         ],
 
         'groups' => [
@@ -69,6 +74,10 @@ return [
             'payment-method-line'              => 'Línea de método de pago',
             'created-at'                       => 'Creado el',
             'updated-at'                       => 'Actualizado el',
+            'year'                             => 'Año',
+            'month'                            => 'Mes',
+            'any-year'                         => 'Cualquier año',
+            'whole-year'                       => 'Todo el año',
         ],
 
         'actions' => [

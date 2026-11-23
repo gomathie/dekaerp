@@ -45,6 +45,11 @@ return [
             'company'         => 'الشركة',
             'currency'        => 'العملة',
             'created-by'      => 'أنشئ بواسطة',
+            'invoices'        => 'الفاتورة',
+        ],
+
+        'summaries' => [
+            'total' => 'الإجمالي',
         ],
 
         'groups' => [
@@ -69,6 +74,10 @@ return [
             'payment-method-line'              => 'بند طريقة الدفع',
             'created-at'                       => 'تاريخ الإنشاء',
             'updated-at'                       => 'تاريخ التحديث',
+            'year'                             => 'السنة',
+            'month'                            => 'الشهر',
+            'any-year'                         => 'أي سنة',
+            'whole-year'                       => 'السنة كاملة',
         ],
 
         'actions' => [

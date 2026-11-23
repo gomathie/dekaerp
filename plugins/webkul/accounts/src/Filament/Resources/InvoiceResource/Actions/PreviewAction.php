@@ -3,10 +3,10 @@
 namespace Webkul\Account\Filament\Resources\InvoiceResource\Actions;
 
 use Filament\Actions\Action;
-use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
 use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Models\Move;
+use Webkul\Account\Support\MoveDocument;
 use Webkul\Support\Traits\PDFHandler;
 
 class PreviewAction extends Action
@@ -56,22 +56,24 @@ class PreviewAction extends Action
                         ->label(__('accounts::filament/resources/invoice/actions/preview.modal.action.print.title'))
                         ->icon('heroicon-o-printer')
                         ->color('primary')
-                        ->action(function (Move $record) {
-                            $pdfPath = $this->prepareInvoice($record);
-
-                            if ($pdfPath) {
-                                return Storage::disk('public')->download($pdfPath);
-                            }
-                        }),
+                        // Streamed straight to the browser, named after the document
+                        // (TRACE365, 2026-11-23). It used to be saved to the public disk
+                        // as invoice-<day>.pdf, so two documents printed the same day
+                        // overwrote each other and the file stayed there afterwards.
+                        ->action(fn (Move $record) => $this->downloadPDF(
+                            view($this->getTemplate(), ['record' => $record])->render(),
+                            static::fileName($record),
+                        )),
                 ];
             });
     }
 
-    private function prepareInvoice(Move $record): ?string
+    /**
+     * "invoice-INV-2026-00012": the kind and number, slashes made dashes so
+     * the slug keeps them apart.
+     */
+    public static function fileName(Move $record): string
     {
-        return $this->savePDF(
-            view($this->getTemplate(), ['record' => $record])->render(),
-            'invoice-'.$record->created_at->format('d-m-Y')
-        );
+        return MoveDocument::kind($record).'-'.str_replace(['/', '\\'], '-', (string) ($record->name ?: $record->getKey()));
     }
 }

@@ -6,6 +6,60 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-23, v1.16.9 (hotfix): printed documents, payments received, invoices list (TRACE365)
+
+- **Why:** TRACE365 compared our printed invoice and quote with their Zoho
+  ones and could not send ours; they compute taxes from payments received per
+  month and could not see them; they shared reference invoice lists (plan #10
+  R-7, R-8, R-9). Production check (read-only): nothing missing, 10 paid
+  invoices and 10 payments each linked to its invoice.
+- **How:**
+  - One layout, `support::pdfs.document`, fed by `Account\Support\MoveDocument`
+    (invoice, bill, credit note, refund) and `Sale\Support\OrderDocument`
+    (quotation, order). The five old templates are one-line wrappers.
+    `Support\Support\PrintedDocument` builds the company header, the party
+    block, the accent colour (hex only: printed into a style rule) and the
+    logo, read as a data URI from the document company's own folder on the
+    plain `s3` disk (tenant-s3 prefixes by the session company). Taxes: one
+    row per tax from posted tax lines (invoices) or `Tax::computeAll()` per
+    line as `OrderCalculator` does (orders). Notes are sanitized at output;
+    every CSS rule is scoped under `.deka-doc` (the old templates' global
+    rules restyled the page around the preview modal).
+  - Print streams the PDF (`downloadPDF`, named `invoice-INV-2026-00012`);
+    Print & Send names the attachment after the invoice plus a random part.
+    Both used `invoice-<day>.pdf` on the public disk, so documents printed
+    or e-mailed the same day shared one file.
+  - Quotation preview gains Print.
+  - Payments list: invoice number(s) (`invoices.name`), reference (memo),
+    Year/Month filter (`PaymentsTable::periodRange()`, a date range on
+    `date`), a total under the company-currency amount, "Amount" in the
+    payment's own currency; export adds invoices and memo (eager-loaded).
+  - Invoices list: date under the number; "Paid" (green) and "Amount due"
+    (red) in the invoice's own currency (the due column printed the
+    company-currency residual with the invoice's sign); counts on Draft, To
+    pay and Overdue (`ListInvoices::presetCount()` runs the tab's own
+    condition on the resource query); To pay and Overdue made visible tabs.
+    Carries the DB-2 change to the Overdue view (partly paid included),
+    which is in the same file.
+- **Benefit:** a document TRACE365 can send; payments per month in two
+  clicks; no cross-customer attachment.
+- **Trade-off / risk:** every company's printed documents change look at
+  once. The old "Discount" total (which summed percentages) is gone;
+  discounts show per line. The tab counts add three count queries per list
+  render. Zoho's "unused amount" on payments is not built.
+- **Verification:** accounts `Documents/PrintedDocumentTest` 6 passed (18
+  assertions) and `Filament/PaymentsReceivedListTest` 2 passed
+  (`aureuserp_testing_v113_k1`); `Filament/InvoiceListTest` 3 passed (11
+  assertions) and `Filament/InvoiceResourceTest` 18 passed (`_k2`; one test
+  first failed because a parallel run in the same worktree removed a compiled
+  view, and passed alone); sales `Documents/QuotationDocumentTest` 1 passed
+  (8 assertions, `_k3`), which caught `OrderDocument` calling
+  `computeAll()` on the Tax model instead of the Tax facade before release.
+  `php -l` on every changed translation file; Pint passed. Each document test
+  renders through dompdf and checks the output is a PDF. Not yet seen in a
+  browser.
+- **Rollback:** revert the commit; the old templates come back with it.
+
 ## 2026-11-23, dashboards DB-2: Purchases, Accounting and Logistics agree (unreleased)
 
 - **Why:** dashboard plan DB-2 asks for a tile = chart = table test per

@@ -2,6 +2,7 @@
 
 namespace Webkul\Account\Filament\Resources\InvoiceResource\Pages;
 
+use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
@@ -24,7 +25,8 @@ class ListInvoices extends ListRecords
             'draft' => PresetView::make(__('accounts::filament/resources/invoice/pages/list-invoice.tabs.draft'))
                 ->favorite()
                 ->icon('heroicon-s-stop')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('state', MoveState::DRAFT)),
+                ->modifyQueryUsing($draft = fn (Builder $query) => $query->where('state', MoveState::DRAFT))
+                ->badge(fn (): ?int => $this->presetCount($draft)),
             'posted' => PresetView::make(__('accounts::filament/resources/invoice/pages/list-invoice.tabs.posted'))
                 ->favorite()
                 ->icon('heroicon-s-play')
@@ -44,14 +46,14 @@ class ListInvoices extends ListRecords
                         ->where('checked', false);
                 }),
             'to_pay' => PresetView::make(__('accounts::filament/resources/invoice/pages/list-invoice.tabs.to-pay'))
+                ->favorite()
                 ->icon('heroicon-s-banknotes')
-                ->modifyQueryUsing(function (Builder $query) {
-                    $query->where('state', MoveState::POSTED)
-                        ->whereIn('payment_state', [
-                            PaymentState::NOT_PAID,
-                            PaymentState::PARTIAL,
-                        ]);
-                }),
+                ->modifyQueryUsing($toPay = fn (Builder $query) => $query->where('state', MoveState::POSTED)
+                    ->whereIn('payment_state', [
+                        PaymentState::NOT_PAID,
+                        PaymentState::PARTIAL,
+                    ]))
+                ->badge(fn (): ?int => $this->presetCount($toPay)),
             'unpaid' => PresetView::make(__('accounts::filament/resources/invoice/pages/list-invoice.tabs.unpaid'))
                 ->icon('heroicon-s-banknotes')
                 ->modifyQueryUsing(function (Builder $query) {
@@ -73,12 +75,28 @@ class ListInvoices extends ListRecords
                 // Partly paid counts too (dashboard plan DB-2, 2026-11-23):
                 // the journal card's "Late" opens this view and counts them,
                 // so the list showed fewer invoices than the card said.
-                ->modifyQueryUsing(function (Builder $query) {
-                    $query->where('state', MoveState::POSTED)
-                        ->whereIn('payment_state', [PaymentState::NOT_PAID, PaymentState::PARTIAL])
-                        ->where('invoice_date_due', '<', today());
-                }),
+                ->modifyQueryUsing($overdue = fn (Builder $query) => $query->where('state', MoveState::POSTED)
+                    ->whereIn('payment_state', [PaymentState::NOT_PAID, PaymentState::PARTIAL])
+                    ->where('invoice_date_due', '<', today()))
+                ->favorite()
+                ->badge(fn (): ?int => $this->presetCount($overdue))
+                ->badgeColor('danger'),
         ];
+    }
+
+    /**
+     * How many documents a tab holds, shown on the tab (TRACE365 reference
+     * lists, 2026-11-23, plan #10 R-9). The same condition the tab applies,
+     * on the resource's own scoped query, so the count matches the list.
+     * Empty tabs show no badge.
+     */
+    protected function presetCount(Closure $condition): ?int
+    {
+        $query = static::getResource()::getEloquentQuery();
+
+        $condition($query);
+
+        return $query->count() ?: null;
     }
 
     protected function getHeaderActions(): array
