@@ -10,6 +10,12 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.16.12 — 2026-11-24
+
+### Fixes
+
+- [Security] Removed a database administration tool that was included in the application files. It was not reachable from outside, but it does not belong in a deployed system.
+
 # CHANGELOG — v1.16.11 — 2026-11-23
 
 ### Fixes
