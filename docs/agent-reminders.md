@@ -19,7 +19,8 @@ finished.
 
 **Implementation and verification:** See the handoff in
 `docs/completed/languages-ru-sw-plan.md` and `docs/change-log.md`. Database
-`aureuserp_testing_wp_lang`.
+`aureuserp_testing_wp_lang` is free. The plugin suites were left for a
+local run.
 
 ## 2026-11-11
 

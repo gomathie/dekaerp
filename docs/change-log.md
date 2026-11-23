@@ -17,8 +17,8 @@ for the task/question log this change log is paired with.
   the locale code (the existing flags are named `en`, `ar`, `es`, `pt_BR`).
   A `ru` and an `sw` folder beside every plugin `resources/lang/en`, plus
   `lang/en` and the vendor locales that do not already ship the language
-  (Filament infolists and widgets have no `sw`; Shield's `ru` was already
-  present). `money()`, `compact_money()` and dashboard counts use the active
+  (Swahili overrides for Filament infolists, widgets, the query builder
+  and the settings plugin; Shield's `ru` was already present). `money()`, `compact_money()` and dashboard counts use the active
   locale. `browserLocale()` already leaves `ru` and `sw` unchanged (`en`
   still becomes `en-GB`). Invoice PDFs stay on DejaVu Sans, which includes
   Cyrillic. The in-app guides were not translated.
@@ -27,14 +27,14 @@ for the task/question log this change log is paired with.
 - **Trade-off / risk:** the wording is machine-assisted. Longer sentences
   and any string the glossary did not know stay awkward or in English until
   a native speaker corrects them. A company's own SMTP is unchanged.
-- **Verification actually run:** database `aureuserp_testing_wp_lang` (created,
-  not yet used by a suite). Host PHP 8.3.2 parsed 2,184 `ru`/`sw` files with
-  `token_get_all` and reported 0 parse errors. `php -l` on the four
-  hand-edited PHP files reported no syntax errors. `translations:check` and
-  the plugin suites wait on a Sail `vendor` install: the first attempt timed
-  out unzipping a package after 300 seconds on the bind mount, and a retry
-  with no process timeout was still running. No browser check: this worktree
-  is not the served app.
+- **Verification actually run:** database `aureuserp_testing_wp_lang` was
+  created and is free. Host PHP 8.3.2 parsed 2,184 `ru`/`sw` files with
+  `token_get_all` and reported 0 parse errors. `php -l` on `config/app.php`,
+  `helpers.php`, `HasRtlSupport.php` and `HasDashboardMetrics.php` reported
+  no syntax errors. A local comparison using the same line-structure rule as
+  `translations:check` found 0 missing files and 0 mismatched files for `ru`
+  and `sw`. The plugin suites were not run: the user will run them. No
+  browser check: this worktree is not the served app.
 - **Rollback:** revert the branch. No schema change. No plugin version bump.
 
 ## 2026-11-23, v1.16.6 (hotfix): the sidebar "Invoices" link opens the invoices again

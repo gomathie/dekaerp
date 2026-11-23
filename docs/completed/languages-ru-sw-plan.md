@@ -84,10 +84,9 @@ hit and stayed in English; they are the ones to correct first.
 **Verification actually run.** Host PHP 8.3.2 parsed every `ru` and `sw`
 file with `token_get_all(..., TOKEN_PARSE)`: 2,184 files, 0 failures. `php -l`
 on `config/app.php`, `helpers.php`, `HasRtlSupport.php` and
-`HasDashboardMetrics.php` reported no syntax errors. A Sail `php -l` per file
-was started and stopped: unzipping Composer packages on the same bind mount
-was already hitting the 300 second process timeout. The structure check and
-the suites run in the Sail image against `aureuserp_testing_wp_lang` once
-`vendor` is installed; the change log has those counts. Browser check was
-not run: the worktree is not the app being served, and the running local
-login belongs to the other tree.
+`HasDashboardMetrics.php` reported no syntax errors. The same line-structure
+rule as `translations:check` (line count, then indent and key) matched
+English for every `ru` and `sw` file: 0 missing, 0 mismatched. The plugin
+suites were not run here; they are left for a local run on
+`aureuserp_testing_wp_lang`. Browser check was not run: this worktree is not
+the app being served.
