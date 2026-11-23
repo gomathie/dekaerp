@@ -2,8 +2,11 @@
 
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
+use Livewire\Livewire;
 use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Filament\Resources\InvoiceResource\Actions\PreviewAction;
+use Webkul\Account\Filament\Resources\InvoiceResource\Pages\ViewInvoice;
 use Webkul\Account\Models\Move;
 use Webkul\Account\Models\Tax;
 use Webkul\Account\Support\MoveDocument;
@@ -30,6 +33,8 @@ beforeEach(function () {
     );
 
     Package::$plugins = Plugin::all()->keyBy('name');
+
+    URL::resolveMissingNamedRoutesUsing(fn () => '#');
 
     FilamentHelper::actingAs(['view_any_account_invoice']);
 });
@@ -102,6 +107,30 @@ it('strips script from the notes, which the preview renders in the page', functi
 
     expect($html)->toContain('Thank you for your business')
         ->and($html)->not->toContain('<script>alert(1)</script>');
+});
+
+it('leaves out the notes heading when the note is empty rich text', function () {
+    $invoice = printedInvoice(['narration' => '<p></p>']);
+
+    $html = view('accounts::invoice/actions/preview.index', ['record' => $invoice])->render();
+
+    expect($html)->not->toContain('>'.__('support::documents.notes').'<');
+});
+
+/**
+ * v1.16.9 shipped Print returning dompdf's ->download() Response. Livewire
+ * JSON-encodes a plain Response from an action, so the PDF bytes failed with
+ * "Malformed UTF-8 characters" (Sentry DEKAERP-H, 2026-11-23). It must be a
+ * streamed download, as the Logistics waybill test also pins.
+ */
+it('delivers Print from the invoice preview as a PDF download', function () {
+    FilamentHelper::actingAs(['view_any_account_invoice', 'view_account_invoice']);
+
+    $invoice = printedInvoice();
+
+    Livewire::test(ViewInvoice::class, ['record' => $invoice->getKey()])
+        ->callAction(['customers.invoice.preview', 'print'])
+        ->assertFileDownloaded(contentType: 'application/pdf');
 });
 
 it('names the printed file after the document, not the day it was printed', function () {

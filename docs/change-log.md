@@ -6,6 +6,34 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-23, v1.16.10 (hotfix): Print downloads again (DEKAERP-H regression); empty notes
+
+- **Why:** the production check after v1.16.9 pressed Print in the invoice
+  preview: no download, and Sentry DEKAERP-H ("Malformed UTF-8 characters",
+  Livewire ViewInvoice) regressed. v1.16.9 changed Print to return
+  `PDFHandler::downloadPDF()`, i.e. dompdf's `->download()`, an
+  `Illuminate\Http\Response`. Livewire only turns a `StreamedResponse` or
+  `BinaryFileResponse` from an action into a download; a plain Response is
+  JSON-encoded into the update and the PDF bytes fail. The same lesson is
+  pinned for the Logistics waybill (`ShipmentResourceTest` "streams the
+  waybill"); it was not searched for. v1.16.9's tests rendered the PDF but
+  never pressed the button. The same check showed a "Notes" heading over an
+  empty note: the editor stores `<p></p>`.
+- **How:** `PDFHandler::downloadPDF()` returns
+  `response()->streamDownload()` with `application/pdf` (its only callers
+  are the two Print actions). The layout decides "has notes" on the text
+  without tags.
+- **Benefit:** Print works on invoices, bills, credit notes, refunds and
+  quotations.
+- **Trade-off / risk:** none beyond the response type; the PDF is built
+  before streaming, as before.
+- **Verification:** accounts `Documents/PrintedDocumentTest` 8 passed (23 assertions, `aureuserp_testing_v113_k1`),
+  including the new "delivers Print from the invoice preview as a PDF
+  download" (presses the nested Print action through Livewire and asserts a
+  PDF download) and "leaves out the notes heading when the note is empty
+  rich text".
+- **Rollback:** revert the commit (Print breaks again).
+
 ## 2026-11-23, v1.16.9 (hotfix): printed documents, payments received, invoices list (TRACE365)
 
 - **Why:** TRACE365 compared our printed invoice and quote with their Zoho

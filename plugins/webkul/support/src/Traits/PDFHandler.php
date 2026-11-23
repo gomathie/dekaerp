@@ -3,9 +3,9 @@
 namespace Webkul\Support\Traits;
 
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\Support\SupportServiceProvider;
 
 trait PDFHandler
@@ -54,13 +54,21 @@ trait PDFHandler
      *
      * @param  string  $html  HTML content to convert to PDF.
      * @param  string|null  $fileName  Optional filename (without extension).
-     * @return BinaryFileResponse Returns a response for downloading the PDF.
+     * A streamed download, not dompdf's own Response: a Filament action hands
+     * its return value to Livewire, which JSON-encodes a plain Response body,
+     * and raw PDF bytes fail as "Malformed UTF-8 characters" (Sentry
+     * DEKAERP-H, again on 2026-11-23 when v1.16.9's Print used ->download()).
+     * Livewire turns a StreamedResponse into a browser download.
      */
-    protected function downloadPDF(string $html, ?string $fileName = null): Response
+    protected function downloadPDF(string $html, ?string $fileName = null): StreamedResponse
     {
         $fileName = $fileName ? Str::slug($fileName).'.pdf' : 'document-'.date('Y-m-d').'.pdf';
 
-        return $this->generatePDF($html)->download($fileName);
+        $output = $this->generatePDF($html)->output();
+
+        return response()->streamDownload(function () use ($output): void {
+            echo $output;
+        }, $fileName, ['Content-Type' => 'application/pdf']);
     }
 
     /**
