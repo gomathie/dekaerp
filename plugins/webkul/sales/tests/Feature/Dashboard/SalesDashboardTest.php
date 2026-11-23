@@ -273,7 +273,11 @@ it('counts products of invoices made without an order, once', function (): void 
     $monthly = new MonthlySalesChart;
     $monthly->pageFilters = $filters;
 
-    expect(array_sum((fn (): array => $this->getData())->call($monthly)['datasets'][0]['data']))->toBe(120.0);
+    // Changed 2026-11-23 (DB-2): the monthly chart is invoiced revenue, the
+    // Revenue figure spread over months, so the invoice made from the order
+    // counts there too (120 + 500). Products, customers and salespeople
+    // below still count the sale once through its order.
+    expect(array_sum((fn (): array => $this->getData())->call($monthly)['datasets'][0]['data']))->toBe(620.0);
 
     $categories = new RevenueByCategoryChart;
     $categories->pageFilters = $filters;
@@ -347,4 +351,51 @@ it('says what became of the period\'s quotations, for whoever may see top quotat
     CompanyHelper::actingAsCompanyUser($company, [$permission]);
 
     expect(\Webkul\Sale\Filament\Widgets\QuotationOutcomeChart::canView())->toBeTrue();
+});
+
+/**
+ * DB-2 (2026-11-23): the monthly chart is the Revenue figure spread over
+ * months, net of credit notes. It used to add confirmed orders, so an order
+ * not yet invoiced showed in the chart but not in the figure above it.
+ * The chart also carries the compared period's same months (DB-4).
+ */
+it('draws the monthly chart from the same invoiced revenue as the revenue figure', function (): void {
+    $this->travelTo(\Illuminate\Support\Carbon::parse('2026-11-23 10:00'));
+
+    $company = Company::factory()->create();
+    $user = CompanyHelper::actingAsCompanyUser($company, []);
+
+    $move = fn (string $type, float $signed, string $date) => DB::table('accounts_account_moves')->insert([
+        'company_id'          => $company->getKey(),
+        'move_type'           => $type,
+        'state'               => 'posted',
+        'date'                => $date,
+        'invoice_date'        => $date,
+        'amount_total_signed' => $signed,
+        'creator_id'          => auth()->id(),
+        'created_at'          => now(),
+        'updated_at'          => now(),
+    ]);
+
+    $move('out_invoice', 300, '2026-03-10');
+    $move('out_invoice', 200, '2026-11-02');
+    $move('out_refund', -50, '2026-11-05');
+    $move('out_invoice', 80, '2025-03-15');
+
+    // Confirmed but never invoiced: not revenue, in neither place.
+    $order = SaleHelper::order(['company_id' => $company->getKey(), 'user_id' => $user->getKey()]);
+    Order::withoutGlobalScopes()->whereKey($order->getKey())->update(['state' => OrderState::SALE->value, 'date_order' => '2026-06-01', 'amount_total' => 999, 'currency_rate' => 1]);
+
+    $chart = new MonthlySalesChart;
+    $chart->pageFilters = [];
+    $data = (fn (): array => $this->getData())->call($chart);
+
+    $stats = new SaleStatsOverview;
+    $stats->pageFilters = [];
+
+    expect($data['labels'])->toHaveCount(11)
+        ->and(array_sum($data['datasets'][0]['data']))->toBe((fn (): float => $this->invoicedRevenue())->call($stats))
+        ->and(array_sum($data['datasets'][0]['data']))->toBe(450.0)
+        ->and($data['datasets'][0]['data'][2])->toBe(300.0)
+        ->and($data['datasets'][1]['data'][2])->toBe(80.0);
 });

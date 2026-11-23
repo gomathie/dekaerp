@@ -18,8 +18,9 @@ return [
     ],
 
     'monthly-sales'       => [
-        'heading' => 'المبيعات الشهرية',
-        'revenue' => 'الإيرادات',
+        'heading'  => 'المبيعات الشهرية',
+        'revenue'  => 'الإيرادات',
+        'previous' => 'فترة المقارنة',
     ],
 
     'revenue-by-category' => [

@@ -18,8 +18,9 @@ return [
     ],
 
     'monthly-sales'       => [
-        'heading' => 'Ventas Mensuales',
-        'revenue' => 'Ingresos',
+        'heading'  => 'Ventas Mensuales',
+        'revenue'  => 'Ingresos',
+        'previous' => 'Periodo comparado',
     ],
 
     'revenue-by-category' => [
