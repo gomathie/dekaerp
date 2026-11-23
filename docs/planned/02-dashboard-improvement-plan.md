@@ -442,6 +442,16 @@ Order: the ring legend and centre total, then the trend pill, then the chart
 switch and "View all", then Sales order-activity tiles. Each restyle keeps the
 DB-2 agreement tests green; none changes a figure.
 
+*Mockup 2026-11-24, awaiting the user* (same private canvas as DB-4,
+board "Sales with the DB-9 restyle (proposed)",
+https://claude.ai/artifact/Vb2sAQt6XW1N7agK78eAdG#artboard-SalesDB9, example
+figures only). Five decisions on the board's note: figure cards with icon,
+trend pill and sparkline; the chart's Day/Week/Month/Year switch with both
+totals above the bars; ring with a centre total and count · amount · %
+legend; an "Order activity" row (today's state, each tile opening its
+list); "View all" and status pills on every list. No code before the
+answer, as for DB-4.
+
 ## Verification for every package
 
 - Pest: known totals, a foreign-company row that must not count, and the
