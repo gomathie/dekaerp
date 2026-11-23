@@ -6,6 +6,30 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-24, v1.16.12 (hotfix): Adminer removed from the repository (user decision)
+
+- **Why:** the graph build (graphify) showed `storage/app/adminer/adminer-source.php`
+  committed to this public repository, served through `public/adminer.php`.
+  The gatekeeper allowed only `REMOTE_ADDR` 127.0.0.1, ::1, Docker Desktop's
+  gateways or `ADMINER_ALLOWED_IPS`. Production answered 404 (checked
+  2026-11-23, read-only GET), but a database console on a deployed system
+  rests on one IP comparison behind a proxy. `.dockerignore` already kept it
+  out of Docker images; Laravel Cloud deploys from git, so it shipped.
+  Upstream removed its public Adminer in #1443; this fork had re-added a
+  guarded copy. User decision 2026-11-24: remove it.
+- **How:** deleted `public/adminer.php` and `storage/app/adminer/`;
+  `storage/app/.gitignore` no longer un-ignores `adminer/`. The
+  `.dockerignore` entries stay, so a local copy is never baked into an image.
+  Developers who want Adminer run it beside Sail, e.g.
+  `docker run --rm -p 8081:8080 --network dekaerp_sail adminer`.
+- **Benefit:** no database console in the deployed code.
+- **Trade-off / risk:** none for users; a developer used to `/adminer.php`
+  locally runs the container instead.
+- **Verification:** `git grep -i adminer` finds only the two `.dockerignore`
+  entries and the upstream CHANGELOG line. After deploy: `/adminer.php`
+  must still answer 404.
+- **Rollback:** revert the commit (not recommended).
+
 ## 2026-11-23, dashboards DB-6 polling and DB-7 payment SMS (unreleased)
 
 - **Why:** DB-6 asks that no widget poll faster than every 300 s (Sentry

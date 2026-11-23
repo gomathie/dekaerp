@@ -28,6 +28,12 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 - Dashboards refresh themselves at most every 5 minutes. The Projects, Recruitments, Logistics and Time Off figures refreshed every few seconds, which slowed the application for everyone with a dashboard open.
 - The payment text message to a customer states one currency: it added an order's dollar and cedi invoices together, and counted a credit note as more invoiced.
 
+# CHANGELOG — v1.16.12 — 2026-11-24
+
+### Fixes
+
+- [Security] Removed a database administration tool that was included in the application files. It was not reachable from outside, but it does not belong in a deployed system.
+
 # CHANGELOG — v1.16.11 — 2026-11-23
 
 ### Fixes
