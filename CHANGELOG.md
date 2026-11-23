@@ -10,6 +10,12 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.16.6 — 2026-11-23
+
+### Fixes
+
+- "Invoices" in the sidebar opens your invoices again, with Credit Notes, Payments, Products and Customers beside them. Since v1.16.1 it opened Bank Accounts, and customer invoices were a tab inside Sales. Bills stay under Purchase.
+
 # CHANGELOG — v1.16.5 — 2026-11-23
 
 ### Fixes
