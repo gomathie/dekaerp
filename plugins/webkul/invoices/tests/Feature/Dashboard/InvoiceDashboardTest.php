@@ -17,6 +17,7 @@ use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Currency;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/CompanyHelper.php';
+require_once __DIR__.'/../../../../support/tests/Helpers/DashboardWidgetGuardHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/FilamentHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
 
@@ -245,4 +246,22 @@ it('lists only the current company’s members as salespersons', function (): vo
 
     expect($options)->toHaveKey($member->getKey())
         ->not->toHaveKey($outsider->getKey());
+});
+
+/**
+ * Dashboard plan DB-3 (2026-11-23): every widget this dashboard lists is
+ * absent without its permission or once the module is off, and present with
+ * both. A widget added without its guard fails here.
+ */
+it('shows every invoice dashboard widget only with its permission and the module', function (): void {
+    FilamentHelper::bootAdminPanel();
+
+    $company = Company::factory()->create();
+
+    // The cash-flow chart checks the revenue-over-time widget's permission
+    // (OverviewCashFlowChart::getWidgetPermission()), which is not listed.
+    $revenuePermission = array_key_first(FilamentShield::getWidgets()[RevenueOverTimeWidget::class]['permissions']);
+
+    expect(DashboardWidgetGuardHelper::visibility(Invoices::sectionWidgets(), 'invoices', $company, [$revenuePermission]))
+        ->toBe(DashboardWidgetGuardHelper::guarded(Invoices::sectionWidgets()));
 });

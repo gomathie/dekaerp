@@ -23,6 +23,7 @@ use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/CompanyHelper.php';
+require_once __DIR__.'/../../../../support/tests/Helpers/DashboardWidgetGuardHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/FilamentHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
 require_once __DIR__.'/../../Helpers/SaleHelper.php';
@@ -400,4 +401,18 @@ it('draws the monthly chart from the same invoiced revenue as the revenue figure
         ->and(array_sum($data['datasets'][0]['data']))->toBe(450.0)
         ->and($data['datasets'][0]['data'][2])->toBe(300.0)
         ->and($data['datasets'][1]['data'][2])->toBe(80.0);
+});
+
+/**
+ * Dashboard plan DB-3 (2026-11-23): every widget this dashboard lists is
+ * absent without its permission or once the module is off, and present with
+ * both. A widget added without its guard fails here.
+ */
+it('shows every sales dashboard widget only with its permission and the module', function (): void {
+    FilamentHelper::bootAdminPanel();
+
+    $company = Company::factory()->create();
+
+    expect(DashboardWidgetGuardHelper::visibility(SalesDashboard::sectionWidgets(), 'sales', $company))
+        ->toBe(DashboardWidgetGuardHelper::guarded(SalesDashboard::sectionWidgets()));
 });

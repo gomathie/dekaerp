@@ -15,6 +15,7 @@ use Webkul\Logistics\Models\Trip;
 use Webkul\Logistics\Models\Vehicle;
 
 require_once __DIR__.'/../../Helpers/LogisticsHelper.php';
+require_once __DIR__.'/../../../../support/tests/Helpers/DashboardWidgetGuardHelper.php';
 
 beforeEach(function () {
     LogisticsHelper::install();
@@ -264,4 +265,22 @@ it('lists the three Logistics widgets on its own dashboard', function () {
 
     expect(app(LogisticsDashboard::class)->getWidgets())
         ->toBe([ShipmentStatsWidget::class, FleetStatsWidget::class, UnbilledRevenueWidget::class]);
+});
+
+/**
+ * Dashboard plan DB-3 (2026-11-23): every widget the Logistics dashboard
+ * lists is absent without its permission or once Logistics is off for the
+ * company, and present with both. These widgets check the shipment, trip and
+ * financials permissions rather than a widget permission of their own.
+ */
+it('shows every logistics dashboard widget only with its permission and the module', function () {
+    $company = LogisticsHelper::enable(LogisticsHelper::company());
+
+    $widgets = LogisticsDashboard::sectionWidgets();
+
+    expect(DashboardWidgetGuardHelper::visibility($widgets, 'logistics', $company, [
+        'view_any_logistics_shipment',
+        'view_any_logistics_trip',
+        'view_financials_logistics_shipment',
+    ]))->toBe(DashboardWidgetGuardHelper::guarded($widgets));
 });

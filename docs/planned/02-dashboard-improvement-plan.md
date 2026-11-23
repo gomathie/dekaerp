@@ -221,6 +221,17 @@ board's "Updated" time in server time beside the browser's clock. Fixed:
 `DashboardPeriod::browserLocale()` gives the browser en-GB for English and
 the clock a 24-hour cycle; the "Updated" stamp is formatted in the browser.
 Still open: widget-absent checks per module.
+
+*Done 2026-11-23 (develop): widget-absent checks.* One helper,
+`support/tests/Helpers/DashboardWidgetGuardHelper.php`, asks every widget a
+dashboard lists (`sectionWidgets()`) three times: no permission (absent),
+every widget permission (present), module revoked for the company (absent).
+Run for Invoices, Sales, Purchases, Projects and Logistics (Recruitments had
+its own already); a widget added without its guard fails there. Found no
+missing guard. The Invoices cash-flow chart borrows the revenue-over-time
+widget's permission by design (`OverviewCashFlowChart::getWidgetPermission()`),
+so its test grants that one too. 1 passed each, databases
+`aureuserp_testing_v113_k1` to `_k5`. DB-3 is complete.
 ### DB-4 Hierarchy, dashboard by dashboard
 
 Overview first, then Invoices, Sales, Purchases: filters and period visible
@@ -393,6 +404,28 @@ payments by payment date; invoices `OverviewTest` "charts money in and out
 on the day each payment was made" pins today's payments); the Logistics tab is absent although Logistics is
 granted; "Cash at bank GHS 0" after a payment, because the payment sits in
 the outstanding account until reconciled, needs a plain explanation.
+
+### DB-9 Reference designs from TRACE365 (2026-11-23, user)
+
+TRACE365 shared five reference screens (sales dashboards, an invoice list and
+an invoice summary). Compared with what DEKA shows today:
+
+| Pattern in the references | DEKA today | Action |
+| --- | --- | --- |
+| Figure cards: icon chip, value, trend pill "+2.3% vs last month", sparkline | Built (DB-4 headline stats, trend caption, daily line) | Keep. Restyle the trend as a coloured pill beside the value, as in the references |
+| Main chart with a Daily / Weekly / Monthly / Yearly switch | Bucket chosen automatically from the period (DB-1) | Add the switch on the main chart only, defaulting to the automatic bucket |
+| Money in vs money out as paired bars, both totals above the chart | Cash flow chart on Invoices (OverviewCashFlowChart) | Show the two totals and their trends above the bars |
+| Ring with the total in the middle and a legend listing count, amount and % | Rings exist (customer revenue, vendor spend) with plain legends | Total in the centre; legend rows "name · count · amount · %" |
+| Status tiles (Packed / Shipped / Delivered / Invoiced) | Logistics tiles; Sales has none | Sales "order activity" tiles: to deliver, delivered, to invoice, invoiced, each linking to its filtered list |
+| "Needs attention" panel (deadlines, issues) | Built on the Overview (attention items) | Keep; add overdue invoices due this week and failed deliveries |
+| Recent orders table with status pills and "View all" | Top lists with links, no "View all" button | Add a "View all" header button on every dashboard list |
+| Top products with a share bar | Built (share bars, DB-4) | Keep |
+| Activity heatmap by weekday and hour | None | Later, with POS (#9): only useful with counter sales |
+| Customer retention line, units returned | None | Out of scope until returns and loyalty exist |
+
+Order: the ring legend and centre total, then the trend pill, then the chart
+switch and "View all", then Sales order-activity tiles. Each restyle keeps the
+DB-2 agreement tests green; none changes a figure.
 
 ## Verification for every package
 

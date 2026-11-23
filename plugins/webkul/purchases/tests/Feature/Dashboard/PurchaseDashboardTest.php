@@ -13,6 +13,7 @@ use Webkul\Purchase\Models\Order;
 use Webkul\Support\Models\Company;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/CompanyHelper.php';
+require_once __DIR__.'/../../../../support/tests/Helpers/DashboardWidgetGuardHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/FilamentHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
 require_once __DIR__.'/../../Helpers/PurchaseHelper.php';
@@ -201,4 +202,18 @@ it('names the latest purchase order when the period has none', function (): void
 
     expect((new PurchaseHeadlineWidget)->latestBeforePeriod($thisMonth)?->toDateString())->toBe('2025-07-01')
         ->and((new PurchaseHeadlineWidget)->latestBeforePeriod(['start_date' => '2025-01-01', 'end_date' => '2025-12-31']))->toBeNull();
+});
+
+/**
+ * Dashboard plan DB-3 (2026-11-23): every widget this dashboard lists is
+ * absent without its permission or once the module is off, and present with
+ * both. A widget added without its guard fails here.
+ */
+it('shows every purchase dashboard widget only with its permission and the module', function (): void {
+    FilamentHelper::bootAdminPanel();
+
+    $company = Company::factory()->create();
+
+    expect(DashboardWidgetGuardHelper::visibility(Purchases::sectionWidgets(), 'purchases', $company))
+        ->toBe(DashboardWidgetGuardHelper::guarded(Purchases::sectionWidgets()));
 });
