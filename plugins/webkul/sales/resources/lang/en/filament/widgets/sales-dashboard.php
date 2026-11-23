@@ -7,6 +7,7 @@ return [
     'status'              => 'Status',
     'delivery-status'     => 'Delivery Status',
     'billing'             => 'Billing',
+    'sales-value'         => 'Confirmed orders and invoices made without an order',
     'stats'               => [
         'heading'            => 'Key Metrics',
         'total-quotations'   => 'Total Quotations',

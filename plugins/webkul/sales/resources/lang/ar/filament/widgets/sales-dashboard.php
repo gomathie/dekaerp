@@ -7,6 +7,7 @@ return [
     'status'              => 'الحالة',
     'delivery-status'     => 'حالة التسليم',
     'billing'             => 'الفوترة',
+    'sales-value'         => 'الطلبات المؤكدة والفواتير الصادرة بدون طلب',
     'stats'               => [
         'heading'            => 'المؤشرات الرئيسية',
         'total-quotations'   => 'إجمالي عروض الأسعار',

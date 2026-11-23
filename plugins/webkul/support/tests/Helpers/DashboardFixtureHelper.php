@@ -1,9 +1,16 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
+use Webkul\Account\Enums\DisplayType;
 use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Models\Move;
 use Webkul\Partner\Models\Partner;
+use Webkul\Product\Models\Category;
+use Webkul\Product\Models\Product;
+use Webkul\Sale\Enums\OrderState;
+use Webkul\Sale\Models\Order;
+use Webkul\Sale\Models\OrderLine;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 
@@ -68,6 +75,123 @@ class DashboardFixtureHelper
 
             return compact('customerX', 'customerY', 'salespersonA', 'salespersonB', 'invoices');
         });
+    }
+
+    /**
+     * Sales in March 2026 for $own (needs the sales plugin):
+     *
+     *   SO-1   confirmed 1,000  Customer X  salesperson A  2 Mar  Goods 10
+     *          invoiced by INV-1, 1,000 on 10 Mar
+     *   SO-2   confirmed   500  Customer Y  salesperson B  3 Mar  Services 5
+     *          not invoiced yet
+     *   DIR-1  invoice without an order, 300, X, A, 4 Mar, Goods 3
+     *   DIR-R  credit note without an order, 100, Y, B, 5 Mar, Services 1
+     *   QUO-1  quotation sent, 700, Y, B, 6 Mar
+     *
+     * and traps that must never count: a cancelled order of 999 in March, a
+     * confirmed order of 5,000 in February, a draft direct invoice of 888,
+     * and $other's confirmed order and direct invoice of 9,000 each.
+     *
+     * Known totals for March. Revenue (invoiced): 1,200 = INV-1 + DIR-1 -
+     * DIR-R. Sales: 3 (SO-1, SO-2, DIR-1; a credit note is not a sale).
+     * Sales value (orders and invoices without one): 1,700; by customer X
+     * 1,300 in 2 sales, Y 400 in 1; by salesperson A 1,300, B 400; by
+     * category Goods 1,300, Services 400; top products Goods 1,300 (13),
+     * Services 400 (4). Sales value less revenue is 500: SO-2, not invoiced.
+     * Open quotations: 1.
+     *
+     * @return array{orders: array<string, Order>, invoices: array<string, Move>}
+     */
+    public static function sales(Company $own, Company $other): array
+    {
+        return CompanyHelper::asNobody(function () use ($own, $other): array {
+            $customerX = Partner::factory()->create(['company_id' => $own->getKey(), 'name' => 'Customer X']);
+            $customerY = Partner::factory()->create(['company_id' => $own->getKey(), 'name' => 'Customer Y']);
+            $outsider = Partner::factory()->create(['company_id' => $other->getKey(), 'name' => 'Other client customer']);
+
+            $salespersonA = User::factory()->create(['name' => 'Salesperson A']);
+            $salespersonB = User::factory()->create(['name' => 'Salesperson B']);
+
+            $goods = Product::factory()->create([
+                'company_id'  => $own->getKey(),
+                'name'        => 'Goods',
+                'category_id' => Category::factory()->create(['company_id' => $own->getKey(), 'name' => 'Goods category'])->getKey(),
+            ]);
+            $services = Product::factory()->create([
+                'company_id'  => $own->getKey(),
+                'name'        => 'Services',
+                'category_id' => Category::factory()->create(['company_id' => $own->getKey(), 'name' => 'Services category'])->getKey(),
+            ]);
+            $outsiderProduct = Product::factory()->create(['company_id' => $other->getKey()]);
+
+            $orders = [
+                'SO-1'      => static::order($own, $customerX, $salespersonA, OrderState::SALE, '2026-03-02', $goods, 10, 1000),
+                'SO-2'      => static::order($own, $customerY, $salespersonB, OrderState::SALE, '2026-03-03', $services, 5, 500),
+                'QUO-1'     => static::order($own, $customerY, $salespersonB, OrderState::SENT, '2026-03-06', $goods, 7, 700),
+                'cancelled' => static::order($own, $customerX, $salespersonA, OrderState::CANCEL, '2026-03-07', $goods, 9, 999),
+                'february'  => static::order($own, $customerY, $salespersonB, OrderState::SALE, '2026-02-15', $goods, 50, 5000),
+                'other'     => static::order($other, $outsider, $salespersonA, OrderState::SALE, '2026-03-02', $outsiderProduct, 90, 9000),
+            ];
+
+            $invoices = [
+                'INV-1'       => static::move($own, $customerX, $salespersonA, 1000, '2026-03-10', 'not_paid'),
+                'DIR-1'       => static::move($own, $customerX, $salespersonA, 300, '2026-03-04', 'not_paid'),
+                'DIR-R'       => static::move($own, $customerY, $salespersonB, 100, '2026-03-05', 'paid', MoveType::OUT_REFUND),
+                'draft'       => static::move($own, $customerY, $salespersonB, 888, '2026-03-08', 'not_paid', state: MoveState::DRAFT),
+                'other'       => static::move($other, $outsider, $salespersonA, 9000, '2026-03-02', 'paid'),
+            ];
+
+            // INV-1 was made from SO-1: the order is what Sales counts.
+            DB::table('sales_order_invoices')->insert(['order_id' => $orders['SO-1']->getKey(), 'move_id' => $invoices['INV-1']->getKey()]);
+
+            static::invoiceLine($invoices['DIR-1'], $goods, 3, 300);
+            static::invoiceLine($invoices['DIR-R'], $services, 1, 100);
+            static::invoiceLine($invoices['draft'], $goods, 8, 888);
+            static::invoiceLine($invoices['other'], $outsiderProduct, 90, 9000);
+
+            return compact('orders', 'invoices');
+        });
+    }
+
+    protected static function order(Company $company, Partner $partner, User $salesperson, OrderState $state, string $date, Product $product, float $quantity, float $amount): Order
+    {
+        $order = Order::factory()->create(['company_id' => $company->getKey(), 'partner_id' => $partner->getKey()]);
+
+        $line = OrderLine::factory()->create(['order_id' => $order->getKey(), 'product_id' => $product->getKey(), 'company_id' => $company->getKey()]);
+
+        // Written after the line, so nothing recomputes the order's total.
+        OrderLine::withoutGlobalScopes()->whereKey($line->getKey())->update([
+            'state'           => $state,
+            'product_id'      => $product->getKey(),
+            'product_uom_qty' => $quantity,
+            'price_total'     => $amount,
+        ]);
+
+        Order::withoutGlobalScopes()->whereKey($order->getKey())->update([
+            'partner_id'    => $partner->getKey(),
+            'user_id'       => $salesperson->getKey(),
+            'state'         => $state,
+            'date_order'    => $date,
+            'currency_rate' => 1,
+            'amount_total'  => $amount,
+        ]);
+
+        return Order::withoutGlobalScopes()->findOrFail($order->getKey());
+    }
+
+    protected static function invoiceLine(Move $move, Product $product, float $quantity, float $amount): void
+    {
+        DB::table('accounts_account_move_lines')->insert([
+            'move_id'      => $move->getKey(),
+            'company_id'   => $move->company_id,
+            'currency_id'  => $move->currency_id,
+            'product_id'   => $product->getKey(),
+            'display_type' => DisplayType::PRODUCT->value,
+            'quantity'     => $quantity,
+            'price_total'  => $amount,
+            'created_at'   => now(),
+            'updated_at'   => now(),
+        ]);
     }
 
     protected static function move(

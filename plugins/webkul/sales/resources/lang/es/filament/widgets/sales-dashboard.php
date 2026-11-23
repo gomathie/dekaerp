@@ -7,6 +7,7 @@ return [
     'status'              => 'Estado',
     'delivery-status'     => 'Estado de entrega',
     'billing'             => 'Facturación',
+    'sales-value'         => 'Pedidos confirmados y facturas emitidas sin pedido',
     'stats'               => [
         'heading'            => 'Métricas Clave',
         'total-quotations'   => 'Total de Cotizaciones',

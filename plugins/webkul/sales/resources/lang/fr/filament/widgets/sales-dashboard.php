@@ -7,6 +7,7 @@ return [
     'status'              => 'Statut',
     'delivery-status'     => 'Statut de livraison',
     'billing'             => 'Facturation',
+    'sales-value'         => 'Commandes confirmées et factures établies sans commande',
     'stats'               => [
         'heading'            => 'Indicateurs Clés',
         'total-quotations'   => 'Total des Devis',

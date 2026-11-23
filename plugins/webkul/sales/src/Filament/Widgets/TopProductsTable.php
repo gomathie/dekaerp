@@ -2,13 +2,13 @@
 
 namespace Webkul\Sale\Filament\Widgets;
 
-use Webkul\Sale\Filament\Widgets\Concerns\GuardsSaleDashboardWidget;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Webkul\Sale\Filament\Clusters\Products\Resources\ProductResource;
+use Webkul\Sale\Filament\Widgets\Concerns\GuardsSaleDashboardWidget;
 use Webkul\Sale\Filament\Widgets\Concerns\HasSaleDashboardFilters;
 use Webkul\Sale\Models\OrderLine;
 
@@ -17,7 +17,7 @@ class TopProductsTable extends TableWidget
     // DB-4 layout on the Overview's six-column grid (2026-11-23).
     protected int|string|array $columnSpan = ['default' => 'full', 'xl' => 3];
 
-    use HasSaleDashboardFilters, GuardsSaleDashboardWidget;
+    use GuardsSaleDashboardWidget, HasSaleDashboardFilters;
 
     protected const BAR_COLOR = 'var(--primary-500)';
 
@@ -42,6 +42,15 @@ class TopProductsTable extends TableWidget
     protected function getTableHeading(): string|Htmlable|null
     {
         return __('sales::filament/widgets/sales-dashboard.top-products.heading');
+    }
+
+    /**
+     * Says what this counts (DB-2, 2026-11-23): sales value, not the
+     * invoiced Revenue figure, so the two differ by orders not invoiced yet.
+     */
+    protected function getTableDescription(): string|Htmlable|null
+    {
+        return __('sales::filament/widgets/sales-dashboard.sales-value');
     }
 
     protected function isTablePaginationEnabled(): bool

@@ -2,13 +2,14 @@
 
 namespace Webkul\Sale\Filament\Widgets;
 
-use Webkul\Sale\Filament\Widgets\Concerns\GuardsSaleDashboardWidget;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
+use Webkul\Account\Enums\MoveType;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\CustomerResource;
+use Webkul\Sale\Filament\Widgets\Concerns\GuardsSaleDashboardWidget;
 use Webkul\Sale\Filament\Widgets\Concerns\HasSaleDashboardFilters;
 use Webkul\Sale\Models\Order;
 
@@ -17,7 +18,7 @@ class TopCustomersTable extends TableWidget
     // DB-4 layout on the Overview's six-column grid (2026-11-23).
     protected int|string|array $columnSpan = ['default' => 'full', 'xl' => 3];
 
-    use HasSaleDashboardFilters, GuardsSaleDashboardWidget;
+    use GuardsSaleDashboardWidget, HasSaleDashboardFilters;
 
     protected const BAR_COLOR = 'var(--primary-500)';
 
@@ -44,6 +45,15 @@ class TopCustomersTable extends TableWidget
         return __('sales::filament/widgets/sales-dashboard.top-customers.heading');
     }
 
+    /**
+     * Says what this counts (DB-2, 2026-11-23): sales value, not the
+     * invoiced Revenue figure, so the two differ by orders not invoiced yet.
+     */
+    protected function getTableDescription(): string|Htmlable|null
+    {
+        return __('sales::filament/widgets/sales-dashboard.sales-value');
+    }
+
     protected function isTablePaginationEnabled(): bool
     {
         return false;
@@ -53,14 +63,18 @@ class TopCustomersTable extends TableWidget
     {
         $orders = $this->saleOrders()
             ->toBase()
-            ->selectRaw('sales_orders.partner_id as partner_id, CASE WHEN sales_orders.currency_rate > 0 THEN sales_orders.amount_total / sales_orders.currency_rate ELSE sales_orders.amount_total END as revenue');
+            ->selectRaw('sales_orders.partner_id as partner_id, 1 as is_sale, CASE WHEN sales_orders.currency_rate > 0 THEN sales_orders.amount_total / sales_orders.currency_rate ELSE sales_orders.amount_total END as revenue');
 
         // Invoices made without an order count for their customer too
-        // (directInvoices()); each one counts as one sale.
+        // (directInvoices()). Each invoice is one sale; a credit note lowers
+        // the value but is not a sale. Counting it made the "Sales" column
+        // add up to more than the Sales figure (DB-2, 2026-11-23).
         $invoices = $this->directInvoices();
 
         $invoices = $invoices->toBase()
-            ->selectRaw($invoices->qualifyColumn('partner_id').' as partner_id, '.$invoices->qualifyColumn('amount_total_signed').' as revenue');
+            ->selectRaw($invoices->qualifyColumn('partner_id').' as partner_id, '
+                ."CASE WHEN {$invoices->qualifyColumn('move_type')} = '".MoveType::OUT_INVOICE->value."' THEN 1 ELSE 0 END as is_sale, "
+                .$invoices->qualifyColumn('amount_total_signed').' as revenue');
 
         // Both parts are already company-scoped; the outer query drops the
         // scopes that would point at a table the subquery does not have.
@@ -71,7 +85,7 @@ class TopCustomersTable extends TableWidget
             ->groupBy('partners_partners.id', 'partners_partners.name')
             ->selectRaw('COALESCE(partners_partners.id, 0) as id')
             ->addSelect('partners_partners.name as name')
-            ->selectRaw('COUNT(*) as orders_count')
+            ->selectRaw('SUM(sales_rows.is_sale) as orders_count')
             ->selectRaw('SUM(sales_rows.revenue) as revenue')
             ->havingRaw('SUM(sales_rows.revenue) > 0')
             ->orderByDesc('revenue')

@@ -19,6 +19,7 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 - When a period has nothing in it, the dashboard says when the latest record is, instead of only showing zeros.
 - Sales dashboard: the "Monthly Sales" chart adds up to the Revenue figure above it. It counted confirmed orders that were not invoiced yet. It also draws the compared period's months beside this period's.
 - Invoices dashboard: the customer revenue ring and the salesperson bars now deduct credit notes, so they add up to the "Total invoiced" figure beside them.
+- Sales dashboard: the breakdowns by salesperson, category, customer and product say what they count (confirmed orders and invoices made without an order), and a customer's number of sales no longer counts a credit note.
 - Overview: the date and clock in the welcome banner no longer change format a moment after the page opens, and "Updated" shows your own local time.
 - Dashboard figures show their full comparison ("New vs 1 Jan 2025 – 31 Dec 2025") on a line of their own instead of cutting it off.
 

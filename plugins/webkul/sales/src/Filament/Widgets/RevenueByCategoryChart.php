@@ -2,9 +2,9 @@
 
 namespace Webkul\Sale\Filament\Widgets;
 
-use Webkul\Sale\Filament\Widgets\Concerns\GuardsSaleDashboardWidget;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\DB;
+use Webkul\Sale\Filament\Widgets\Concerns\GuardsSaleDashboardWidget;
 use Webkul\Sale\Filament\Widgets\Concerns\HasSaleDashboardFilters;
 use Webkul\Support\Filament\Widgets\DashboardChartWidget;
 
@@ -13,7 +13,7 @@ class RevenueByCategoryChart extends DashboardChartWidget
     // DB-4 layout on the Overview's six-column grid (2026-11-23).
     protected int|string|array $columnSpan = ['default' => 'full', 'md' => 1, 'xl' => 2];
 
-    use HasSaleDashboardFilters, GuardsSaleDashboardWidget;
+    use GuardsSaleDashboardWidget, HasSaleDashboardFilters;
 
     protected const TOP_SLICES = 3;
 
@@ -27,6 +27,15 @@ class RevenueByCategoryChart extends DashboardChartWidget
     public function getHeading(): string|Htmlable|null
     {
         return __('sales::filament/widgets/sales-dashboard.revenue-by-category.heading');
+    }
+
+    /**
+     * Says what this counts (DB-2, 2026-11-23): sales value, not the
+     * invoiced Revenue figure, so the two differ by orders not invoiced yet.
+     */
+    public function getDescription(): string|Htmlable|null
+    {
+        return __('sales::filament/widgets/sales-dashboard.sales-value');
     }
 
     /**
