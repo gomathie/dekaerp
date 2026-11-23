@@ -10,6 +10,13 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.16.11 — 2026-11-23
+
+### Fixes
+
+- Printed documents show "Page 1" in the footer instead of "Page 1 / 0".
+- When a company's branding colour is very light, printed documents use a dark table header so the column names stay readable.
+
 # CHANGELOG — v1.16.10 — 2026-11-23
 
 ### Fixes

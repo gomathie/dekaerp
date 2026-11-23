@@ -40,13 +40,25 @@ class PrintedDocument
     /**
      * The company's branding colour for the table header, when it is a plain
      * hex colour: it is printed into a style rule, so anything else is
-     * refused rather than escaped.
+     * refused rather than escaped. A light colour falls back to the default
+     * too: the header text is white, and a pale grey branding colour left it
+     * unreadable (production, 2026-11-23).
      */
     public static function accent(?Company $company): string
     {
+        $default = '#1f2937';
         $color = trim((string) ($company?->color ?? ''));
 
-        return preg_match('/^#[0-9a-fA-F]{6}$/', $color) === 1 ? $color : '#1f2937';
+        if (preg_match('/^#[0-9a-fA-F]{6}$/', $color) !== 1) {
+            return $default;
+        }
+
+        [$red, $green, $blue] = array_map(fn (string $hex): float => hexdec($hex) / 255, str_split(substr($color, 1), 2));
+
+        // Perceived lightness; above this, white text no longer reads.
+        $lightness = 0.299 * $red + 0.587 * $green + 0.114 * $blue;
+
+        return $lightness > 0.6 ? $default : $color;
     }
 
     /**
