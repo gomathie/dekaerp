@@ -47,6 +47,12 @@ for the task/question log this change log is paired with.
     reach only the Admin role through `erp:sync-permissions`.
   - Empty period: each headline widget's `latestBeforePeriod()`; the key
     figures row says when the latest record is.
+  - Sales Monthly Sales (DB-2, found while laying out the tab, U76): the chart
+    added confirmed orders, dated by order, to direct invoices, while the
+    Revenue figure above it counts invoiced sales. An order not yet invoiced
+    showed in the chart only. `MonthlySalesChart::monthlyRevenue()` now sums
+    `invoicedSales()` per invoice month, the same rule as the figure, with
+    the compared period as a second, dashed series.
 - **Deviation from the mockup:** lists sit two to a row as separate cards,
   not tabbed pairs. Merging two list widgets into one would replace two
   Shield permissions with a new one that no tenant role holds.
@@ -57,8 +63,29 @@ for the task/question log this change log is paired with.
   time chart from its tab (Money in and out covers it by payment date). A
   role with a page permission but not the stats widget's sees two or three
   figures instead of four; that is the permission working.
-- **Verification:** see below.
-- **Rollback:** revert the two commits; no migration.
+- **Verification:** Sail image, from detached snapshot worktrees (each run
+  reads a fixed commit):
+  - Layout commit (includes the period commit), DB
+    `aureuserp_testing_v113_k5`: DashboardMetricsTest, invoices Dashboard
+    folder, PurchaseDashboardTest, SalesDashboardTest, TaskByStateChartTest:
+    **65 passed (232 assertions)**.
+  - Period commit alone, DB `_k4`, same files with the whole sales Dashboard
+    folder: 63 passed, 1 failed. Monthly chart commit, DB `_k4`,
+    PurchaseDashboardTest + SalesDashboardTest: 17 passed, 1 failed. Both
+    failures are the "generates the permission name" test that opens the
+    file of the plugin installed later in the run
+    (`page_purchase_purchases`, then `page_sale_sales_dashboard`). Each
+    passes in the layout run, where it runs in another order, and no change
+    here touches page registration. The same two files on the previous
+    commit, `15b36f157` (DB `_k5`), fail the same way: 13 passed, 1 failed
+    (`page_sale_sales_dashboard`). The order dependence was already there
+    and is in the test bootstrap, not in this change. A plugin installed by
+    a later file's first test does not yet have its pages in Shield's list.
+    Recorded as an open item in plan 02 (DB-3 remainder).
+  - The monthly chart tests (the 620 total and "draws the monthly chart
+    from the same invoiced revenue") passed in the `_k4` run.
+  - Pint on the changed files; `php -l` on all ten touched locale files.
+- **Rollback:** revert the three commits; no migration.
 
 ## 2026-11-23, dashboards DB-2/DB-3: one story per dashboard, captions that fit, local clock (unreleased)
 

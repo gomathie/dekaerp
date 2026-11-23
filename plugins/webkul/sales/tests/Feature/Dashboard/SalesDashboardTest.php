@@ -2,6 +2,7 @@
 
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use Filament\Tables\Table;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
@@ -9,6 +10,7 @@ use Webkul\Sale\Enums\OrderState;
 use Webkul\Sale\Filament\Clusters\Reporting\Pages\SalesAnalysis;
 use Webkul\Sale\Filament\Pages\SalesDashboard;
 use Webkul\Sale\Filament\Widgets\MonthlySalesChart;
+use Webkul\Sale\Filament\Widgets\QuotationOutcomeChart;
 use Webkul\Sale\Filament\Widgets\RevenueByCategoryChart;
 use Webkul\Sale\Filament\Widgets\SalesPersonPerformanceChart;
 use Webkul\Sale\Filament\Widgets\SaleStatsOverview;
@@ -341,16 +343,16 @@ it('says what became of the period\'s quotations, for whoever may see top quotat
     $old = SaleHelper::order(['company_id' => $company->getKey(), 'user_id' => $user->getKey()]);
     Order::withoutGlobalScopes()->whereKey($old->getKey())->update(['state' => OrderState::SALE->value, 'date_order' => now()->subYears(2)]);
 
-    $widget = new \Webkul\Sale\Filament\Widgets\QuotationOutcomeChart;
+    $widget = new QuotationOutcomeChart;
     $widget->pageFilters = [];
 
     expect($widget->outcomes())->toBe(['won' => 2, 'open' => 2, 'cancelled' => 1])
-        ->and(\Webkul\Sale\Filament\Widgets\QuotationOutcomeChart::canView())->toBeFalse();
+        ->and(QuotationOutcomeChart::canView())->toBeFalse();
 
     $permission = array_key_first(FilamentShield::getWidgets()[TopQuotationsTable::class]['permissions'] ?? []);
     CompanyHelper::actingAsCompanyUser($company, [$permission]);
 
-    expect(\Webkul\Sale\Filament\Widgets\QuotationOutcomeChart::canView())->toBeTrue();
+    expect(QuotationOutcomeChart::canView())->toBeTrue();
 });
 
 /**
@@ -360,7 +362,7 @@ it('says what became of the period\'s quotations, for whoever may see top quotat
  * The chart also carries the compared period's same months (DB-4).
  */
 it('draws the monthly chart from the same invoiced revenue as the revenue figure', function (): void {
-    $this->travelTo(\Illuminate\Support\Carbon::parse('2026-11-23 10:00'));
+    $this->travelTo(Carbon::parse('2026-11-23 10:00'));
 
     $company = Company::factory()->create();
     $user = CompanyHelper::actingAsCompanyUser($company, []);

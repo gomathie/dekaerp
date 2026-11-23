@@ -210,6 +210,16 @@ merging list widgets would replace their Shield permissions with a new one
 no tenant role holds. Details in `docs/change-log.md`. Still open in DB-4:
 a browser check of the three tabs at 1440 and 390 px after release.
 
+*Test bootstrap order dependence (found 2026-11-23, predates DB-4):* the
+"generates the permission name" test that opens a dashboard file fails
+when its plugin is first installed by that file, after another file ran
+first (`page_sale_sales_dashboard` after PurchaseDashboardTest, on
+`15b36f157` and on the DB-4 commits alike). The page is not yet in
+`FilamentShield::getPages()` for that test. It passes in any order where
+the plugin was installed earlier. Fix it in `TestBootstrapHelper` /
+`FilamentHelper::bootAdminPanel()`; never by weakening the assertion,
+which guards against pages nobody can open in production.
+
 ### DB-5 Phone width and accessibility
 
 U19 (Overview tabs cut at 390 px), colour never the only signal (icon or

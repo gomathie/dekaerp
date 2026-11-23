@@ -6,6 +6,7 @@ use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Purchase\Filament\Admin\Pages\Purchases;
 use Webkul\Purchase\Filament\Admin\Widgets\PurchaseHeadlineWidget;
+use Webkul\Purchase\Filament\Admin\Widgets\PurchaseStatsWidget;
 use Webkul\Purchase\Filament\Admin\Widgets\PurchaseTrendWidget;
 use Webkul\Purchase\Filament\Admin\Widgets\TopRfqsWidget;
 use Webkul\Purchase\Models\Order;
@@ -179,7 +180,7 @@ it('shows four purchase figures, confirmed orders only to whoever its own widget
     expect($labels())->toBe(['Purchase spend', 'Open RFQs', 'To receive'])
         ->and($toReceive())->toBe('2');
 
-    $permission = array_key_first(FilamentShield::getWidgets()[\Webkul\Purchase\Filament\Admin\Widgets\PurchaseStatsWidget::class]['permissions'] ?? []);
+    $permission = array_key_first(FilamentShield::getWidgets()[PurchaseStatsWidget::class]['permissions'] ?? []);
     CompanyHelper::actingAsCompanyUser($company, ['page_purchase_purchases', $permission]);
 
     expect($labels())->toBe(['Purchase spend', 'Confirmed Orders', 'Open RFQs', 'To receive']);

@@ -3,6 +3,7 @@
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\TableWidget;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Enums\MoveType;
@@ -11,11 +12,14 @@ use Webkul\Invoice\Filament\Overview\InvoiceAttention;
 use Webkul\Invoice\Filament\Overview\OverviewRegistry;
 use Webkul\Invoice\Filament\Pages\Invoices;
 use Webkul\Invoice\Filament\Pages\Overview;
+use Webkul\Invoice\Filament\Widgets\BillStatsWidget;
 use Webkul\Invoice\Filament\Widgets\InvoiceHeadlineWidget;
+use Webkul\Invoice\Filament\Widgets\InvoiceStatsWidget;
 use Webkul\Invoice\Filament\Widgets\OverviewBoard;
 use Webkul\Invoice\Filament\Widgets\OverviewCashFlowChart;
 use Webkul\Invoice\Filament\Widgets\OverviewHeadlineWidget;
 use Webkul\Invoice\Filament\Widgets\OverviewModuleCards;
+use Webkul\Invoice\Filament\Widgets\RevenueOverTimeWidget;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Support\Filament\Contributions\DashboardBannerRegistry;
@@ -387,7 +391,7 @@ it('hides the overview or only its money sections by the user switches', functio
  * not offer changes nothing, because the method is callable from the browser.
  */
 it('sets the period from the bar and says what it is compared with', function (): void {
-    $this->travelTo(\Illuminate\Support\Carbon::parse('2026-11-23 10:00'));
+    $this->travelTo(Carbon::parse('2026-11-23 10:00'));
 
     $page = new Overview;
     $page->filters = [];
@@ -435,9 +439,9 @@ it('lays the invoices tab out like the approved mockup, on six columns only ther
     expect($page->getColumns())->toBe(['md' => 2, 'xl' => 6])
         ->and(Invoices::sectionWidgets()[0])->toBe(OverviewCashFlowChart::class)
         ->and(Invoices::sectionWidgets())->not->toContain(
-            \Webkul\Invoice\Filament\Widgets\InvoiceStatsWidget::class,
-            \Webkul\Invoice\Filament\Widgets\BillStatsWidget::class,
-            \Webkul\Invoice\Filament\Widgets\RevenueOverTimeWidget::class,
+            InvoiceStatsWidget::class,
+            BillStatsWidget::class,
+            RevenueOverTimeWidget::class,
         );
 
     $page->filters = ['sections' => ['test-section']];
@@ -465,7 +469,7 @@ it('shows invoiced and billed among the key figures only to whoever their widget
     $widgets = FilamentShield::getWidgets();
     $permissions = array_map(
         fn (string $class): string => array_key_first($widgets[$class]['permissions']),
-        [\Webkul\Invoice\Filament\Widgets\InvoiceStatsWidget::class, \Webkul\Invoice\Filament\Widgets\BillStatsWidget::class],
+        [InvoiceStatsWidget::class, BillStatsWidget::class],
     );
 
     CompanyHelper::actingAsCompanyUser($company, ['page_invoice_invoices', ...$permissions]);
