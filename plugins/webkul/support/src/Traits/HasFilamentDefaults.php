@@ -7,6 +7,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentView;
+use Filament\Tables\Columns\Column;
 use Filament\Tables\Table;
 use Filament\View\PanelsRenderHook;
 use Webkul\Support\Filament\Pages\WhatsNew;
@@ -24,6 +25,16 @@ trait HasFilamentDefaults
         Table::configureUsing(fn (Table $table) => $table->defaultCurrency(fn (): string => default_currency_code()));
 
         Schema::configureUsing(fn (Schema $schema) => $schema->defaultCurrency(fn (): string => default_currency_code()));
+
+        // Every cell carries its column's label, so the phone list cards (U50,
+        // topbar.blade.php) can name each value. Without it TRACE365 saw two
+        // unlabelled prices, a bare 0 and two "Units" quantities on a product
+        // card (2026-11-23). Merged, so a column's own attributes stay;
+        // escaped, because Filament prints attribute values as they are.
+        Column::configureUsing(fn (Column $column) => $column->extraCellAttributes(
+            fn (Column $column): array => ['data-label' => e(strip_tags((string) $column->getLabel()))],
+            merge: true,
+        ));
     }
 
     protected function registerHooks(): void

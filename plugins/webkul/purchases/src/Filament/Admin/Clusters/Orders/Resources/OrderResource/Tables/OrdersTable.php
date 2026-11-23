@@ -29,6 +29,7 @@ use Webkul\Chatter\Filament\Actions\ActivityTableAction;
 use Webkul\Purchase\Enums\OrderState;
 use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\OrderResource;
 use Webkul\Purchase\Models\Order;
+use Webkul\Support\Support\CompanyCurrencyEquivalent;
 
 class OrdersTable
 {
@@ -99,6 +100,9 @@ class OrdersTable
                     ->label(__('purchases::filament/admin/clusters/orders/resources/order.table.columns.total-amount'))
                     ->sortable()
                     ->money(fn (Order $record) => $record->currency?->name)
+                    // A foreign-currency order shows its company-currency value
+                    // under it (TRACE365, 2026-11-23: purchases stay in USD).
+                    ->description(fn (Order $record): ?string => CompanyCurrencyEquivalent::short((float) $record->total_cc_amount, $record->currency_id, $record->company))
                     ->toggleable(),
                 TextColumn::make('state')
                     ->label(__('purchases::filament/admin/clusters/orders/resources/order.table.columns.status'))
@@ -272,7 +276,7 @@ class OrdersTable
                 fn (Model $record): bool => OrderResource::can('delete', $record) && $record->state !== OrderState::DONE,
             )
             ->modifyQueryUsing(function (Builder $query) {
-                return $query->with('currency');
+                return $query->with('currency', 'company.currency');
             });
     }
 }

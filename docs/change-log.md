@@ -6,6 +6,76 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-23, v1.16.7 (hotfix): currency per contact, company-currency value, TRACE365 phone fixes, phone top bar
+
+- **Why:** TRACE365 (investor-owned, hotfix rule). (a) "Our currency is GHS
+  but new invoices open in USD": production check (read-only) found
+  TRACE365's company currency **is USD**; all 25 documents, 52 journal items
+  and all 7 journals are USD. User decisions 2026-11-23: books to GHS
+  (Super Admin base-currency change), purchases stay USD with a small GHS
+  value beside them, a per-contact default currency (Zoho's model), and
+  re-rate the old documents. *Held:* the switch and the re-rate wait for
+  TRACE365 to confirm whether the 10 posted invoices ($22.50 to $337.50,
+  entered 19 Nov) are real USD or cedi sales typed while the form opened in
+  USD (re-rating a cedi invoice at 11.80 would multiply it). (b) Four
+  TRACE365 phone reports (company page overflow, Invoices opening Bank
+  Accounts - fixed in v1.16.6 -, unlabelled product cards, impersonation
+  banner over the tabs). (c) User: optimise the phone top bar, items 1 to
+  3, ship with this hotfix.
+- **How:**
+  - `Account\Support\DocumentCurrency` (one rule): contact's
+    `default_currency_id` → the company's journal currency for the document
+    type → company currency; inactive or not-permitted (CR-6) currencies
+    skipped; contact read scope-free but only this company's or shared.
+    `ofContact()` switches only when the contact has one, so a currency the
+    user chose is not reset. Used by the invoice, bill and purchase order
+    forms (default and contact change; invoice lines convert as for a
+    manual switch). Accounts migration `2026_11_23_000001` (nullable column,
+    listed in `hasMigrations`), field on the contact's Sales & Purchase tab,
+    relation and fillable contributed to the base Partner.
+  - `Support\Support\CompanyCurrencyEquivalent`: "≈ GH₵ X · 1 USD = 11.80
+    GHS" under foreign totals (invoice/bill summary, purchase order summary),
+    at the document's stored rate, never a 1:1 guess; short "≈ GH₵ X" under
+    the total in the invoice, bill and purchase order lists (eager-loads
+    `company.currency`).
+  - Company infolist grid `['default' => 1, 'lg' => 3]` (was `default 3`)
+    and a scaled, uncropped logo.
+  - Phone list cards (U50): every column carries `data-label` (escaped) via
+    `Column::configureUsing` in `HasFilamentDefaults`; the card CSS in
+    `topbar.blade.php` prints it above each value, skips lead value, images
+    and clickable icons, hides empty values, and leads with the name.
+  - Impersonation banner publishes its measured height
+    (`--impersonation-banner-height`); the top bar and module sidebar stick
+    below it. Rendered only with the banner.
+  - Phone top bar: row 1 slides away on scroll down and returns on scroll
+    up (not near the top, with the drawer or a dropdown open, or while
+    typing); Menu is an icon; the company name gets the freed room; tab
+    edges fade only where more tabs are; tabs 44px.
+- **Benefit:** TRACE365 can keep cedi books with dollar suppliers and
+  customers without retyping the currency, and sees the cedi value of every
+  dollar document; phone lists say what each number is; the company page
+  and the impersonated session work on a phone; lists get 64px more room.
+- **Trade-off / risk:** the journal currency now also decides the default
+  in the forms (it already did in `Move::computeCurrencyId()`); a company
+  whose Customer Invoices journal carries a stale currency would see it.
+  Labels make phone cards taller. The scroll-hide transform is not applied
+  while the drawer is open (the drawer is fixed inside the bar).
+- **Verification:** accounts `DocumentCurrencyTest` 2 passed (16
+  assertions; first run caught an inactive seeded EUR in the test itself);
+  accounts `tests/Feature/Filament` 48 passed (192); purchases
+  `tests/Feature/Filament` 5 + 17 passed (17 + 49; the first combined run
+  died on the 300 s install limit while three suites shared the machine,
+  re-run per file); security `TenantImpersonationTest` 17 passed (74; its
+  "renders once" check caught the script repeating the banner's data
+  attribute, now found by id); support `Http` and `Tenancy` passed in the
+  same run (59 of 60 before that fix). Databases `aureuserp_testing_v113_k1`,
+  `k2`, `k4`, `k5`. Pint and `php -l` on every changed PHP file. Browser
+  simulation on production at 320/375/390 px: product cards labelled, no
+  horizontal overflow; banner overlap 114-134 px before, 0 after; top-bar
+  row hides on scroll down (tabs at 0) and returns on scroll up.
+- **Rollback:** revert the commit; the migration's `down()` drops the
+  column.
+
 ## 2026-11-23, v1.16.6 (hotfix): the sidebar "Invoices" link opens the invoices again
 
 - **Why:** user, 2026-11-23, after checking production: the sidebar

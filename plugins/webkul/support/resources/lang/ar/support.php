@@ -17,4 +17,6 @@ return [
         'new' => 'جديد',
         'vs'  => 'مقارنة بـ :range',
     ],
+
+    'company-equivalent' => '≈ :amount · 1 :from = :rate :to',
 ];

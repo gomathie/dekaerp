@@ -96,6 +96,10 @@
                 <span>{{ money($grandTotal, $currency?->name) }}</span>
             </div>
 
+            @if ($companyEquivalent)
+                <div class="text-end text-xs text-gray-500 dark:text-gray-400">{{ $companyEquivalent }}</div>
+            @endif
+
             <!-- Reconciled Payments Section -->
             @if ($reconciledPayments && ! empty($reconciledPayments['lines']))
                 <div class="divider"></div>

@@ -15,9 +15,11 @@ return [
                         'title' => 'المبيعات',
 
                         'fields' => [
-                            'sales-person'   => 'مندوب المبيعات',
-                            'payment-terms'  => 'شروط الدفع',
-                            'payment-method' => 'طريقة الدفع',
+                            'sales-person'            => 'مندوب المبيعات',
+                            'payment-terms'           => 'شروط الدفع',
+                            'payment-method'          => 'طريقة الدفع',
+                            'default-currency'        => 'العملة الافتراضية',
+                            'default-currency-helper' => 'تُفتح الفواتير وفواتير الموردين وأوامر الشراء لهذه الجهة بهذه العملة. اتركها فارغة لاستخدام عملتك المعتادة.',
                         ],
                     ],
 

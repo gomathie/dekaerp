@@ -15,9 +15,11 @@ return [
                         'title' => 'Ventes',
 
                         'fields' => [
-                            'sales-person'   => 'Vendeur',
-                            'payment-terms'  => 'Conditions de paiement',
-                            'payment-method' => 'Mode de paiement',
+                            'sales-person'            => 'Vendeur',
+                            'payment-terms'           => 'Conditions de paiement',
+                            'payment-method'          => 'Mode de paiement',
+                            'default-currency'        => 'Devise par défaut',
+                            'default-currency-helper' => 'Les factures, factures fournisseur et bons de commande de ce contact s’ouvrent dans cette devise. Laissez vide pour utiliser votre devise habituelle.',
                         ],
                     ],
 

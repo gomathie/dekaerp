@@ -21,6 +21,7 @@ use Webkul\Account\Enums\TypeTaxUse;
 use Webkul\Account\Facades\Tax as TaxFacade;
 use Webkul\Account\Models\Partner;
 use Webkul\Account\Models\Tax;
+use Webkul\Account\Support\DocumentCurrency;
 use Webkul\Field\Filament\Traits\HasCustomFields;
 use Webkul\Inventory\Enums as InventoryEnums;
 use Webkul\Inventory\Models\OperationType;
@@ -825,6 +826,13 @@ class OrderResource extends Resource
 
                 return;
             }
+        }
+
+        // The supplier's own currency wins, before prices are looked up in
+        // it; without one, the currency already chosen stays (TRACE365,
+        // 2026-11-23). An agreement above keeps its own currency.
+        if ($currencyId = DocumentCurrency::ofContact((int) $state, (int) ($get('company_id') ?: current_company_id()))) {
+            $set('currency_id', $currencyId);
         }
 
         static::updateProductPricesForVendor($state, $set, $get);
