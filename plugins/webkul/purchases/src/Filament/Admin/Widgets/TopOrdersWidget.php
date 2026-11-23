@@ -15,6 +15,9 @@ use Webkul\Purchase\Models\PurchaseOrder;
 
 class TopOrdersWidget extends BaseWidget
 {
+    // DB-4 layout on the Overview's six-column grid (2026-11-23).
+    protected int|string|array $columnSpan = ['default' => 'full', 'xl' => 3];
+
     use GuardsPurchaseDashboardWidget, HasPurchaseDashboardFilters;
 
     protected static ?int $sort = 4;

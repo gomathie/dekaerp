@@ -13,6 +13,9 @@ use Webkul\Purchase\Filament\Admin\Widgets\Concerns\HasPurchaseDashboardFilters;
 
 class TopPurchasedProductsWidget extends BaseWidget
 {
+    // DB-4 layout on the Overview's six-column grid (2026-11-23).
+    protected int|string|array $columnSpan = ['default' => 'full', 'xl' => 3];
+
     use GuardsPurchaseDashboardWidget, HasPurchaseDashboardFilters;
 
     protected const BAR_COLOR = 'var(--primary-500)';

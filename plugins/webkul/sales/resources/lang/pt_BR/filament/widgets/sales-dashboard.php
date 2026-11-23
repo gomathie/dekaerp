@@ -32,6 +32,15 @@ return [
         'revenue' => 'Receita',
     ],
 
+    'quotation-outcome'   => [
+        'heading'     => 'Cotações',
+        'description' => 'O que aconteceu com as cotações feitas no período',
+        'won'         => 'Viraram pedidos',
+        'open'        => 'Ainda abertas',
+        'cancelled'   => 'Canceladas',
+        'count'       => 'Cotações',
+    ],
+
     'top-products'        => [
         'heading' => 'Principais Produtos',
         'columns' => [

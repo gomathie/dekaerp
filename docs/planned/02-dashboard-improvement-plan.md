@@ -199,6 +199,17 @@ Decisions asked: the default period (U68; recommended year to date against
 the same days last year), dropping the count tiles, tabbed lists. No code
 before the answer.
 
+*Decided and built 2026-11-23 (user: "year to date is fine, go ahead with
+the mockups"; develop, unreleased):* year to date by default compared with
+the same days last year; a visible period bar; charts by day, week or
+month; four key figures per tab with the count tiles removed; six-column
+layout for Invoices, Sales and Purchases; Sales "Quotations" breakdown;
+Purchases "To receive"; an empty period names its latest record. One
+deviation: lists are two separate cards per row, not tabbed pairs, because
+merging list widgets would replace their Shield permissions with a new one
+no tenant role holds. Details in `docs/change-log.md`. Still open in DB-4:
+a browser check of the three tabs at 1440 and 390 px after release.
+
 ### DB-5 Phone width and accessibility
 
 U19 (Overview tabs cut at 390 px), colour never the only signal (icon or

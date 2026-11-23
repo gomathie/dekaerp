@@ -21,7 +21,7 @@ class InvoiceStatusChart extends ChartWidget
 
     protected static bool $isLazy = false;
 
-    protected int|string|array $columnSpan = 1;
+    protected int|string|array $columnSpan = ['default' => 'full', 'md' => 1, 'xl' => 2];
 
     protected ?string $maxHeight = '240px';
 

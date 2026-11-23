@@ -32,6 +32,15 @@ return [
         'revenue' => 'Revenue',
     ],
 
+    'quotation-outcome'   => [
+        'heading'     => 'Quotations',
+        'description' => 'What became of the quotations made in the period',
+        'won'         => 'Became orders',
+        'open'        => 'Still open',
+        'cancelled'   => 'Cancelled',
+        'count'       => 'Quotations',
+    ],
+
     'top-products'        => [
         'heading' => 'Top Products',
         'columns' => [

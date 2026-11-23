@@ -122,6 +122,8 @@ class SaleServiceProvider extends PackageServiceProvider
             headline: SaleHeadlineWidget::class,
             attention: fn (): array => SaleHeadlineWidget::attention(),
             actions: fn (): array => SaleHeadlineWidget::actions(),
+            // DB-4 layout (approved mockup, 2026-11-23).
+            columns: 6,
         );
 
         Event::listen(OperationDone::class, ComputeSaleOrderListener::class);

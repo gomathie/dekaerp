@@ -15,7 +15,6 @@ use Webkul\Partner\Models\Partner;
 use Webkul\Product\Models\Category;
 use Webkul\Product\Models\Product;
 use Webkul\Purchase\Enums\OrderState;
-use Webkul\Purchase\Filament\Admin\Widgets\PurchaseStatsWidget;
 use Webkul\Purchase\Filament\Admin\Widgets\PurchaseTrendWidget;
 use Webkul\Purchase\Filament\Admin\Widgets\TopOrdersWidget;
 use Webkul\Purchase\Filament\Admin\Widgets\TopPurchasedProductsWidget;
@@ -201,8 +200,11 @@ class Purchases extends BaseDashboard
      */
     public static function sectionWidgets(): array
     {
+        // DB-4 (approved mockup, 2026-11-23): the headline widget carries
+        // the key figures (Confirmed orders through PurchaseStatsWidget,
+        // which keeps its permission), then the trend beside vendor spend,
+        // then the lists two to a row.
         return [
-            PurchaseStatsWidget::class,
             PurchaseTrendWidget::class,
             VendorSpendChart::class,
             TopOrdersWidget::class,

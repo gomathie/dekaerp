@@ -13,7 +13,7 @@ class MonthlySalesChart extends DashboardChartWidget
 
     protected static ?int $sort = 2;
 
-    protected int|string|array $columnSpan = 1;
+    protected int|string|array $columnSpan = 'full';
 
     public function getHeading(): string|Htmlable|null
     {

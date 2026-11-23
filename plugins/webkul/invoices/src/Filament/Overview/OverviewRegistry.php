@@ -30,9 +30,14 @@ class OverviewRegistry
      * @param  (Closure(): list<array{label: string, count: int, url: ?string, tone: string}>)|null  $attention  what needs someone today (Needs attention and the greeting's summary line)
      * @param  (Closure(): list<array{label: string, url: string, icon: string}>)|null  $actions  quick "new" actions for the greeting
      */
-    public static function register(string $key, Closure $label, array $widgets, Closure $filters, Closure $visible, int $sort = 0, ?string $headline = null, ?Closure $attention = null, ?Closure $actions = null): void
+    public static function register(string $key, Closure $label, array $widgets, Closure $filters, Closure $visible, int $sort = 0, ?string $headline = null, ?Closure $attention = null, ?Closure $actions = null, int $columns = 3): void
     {
         static::$sections[$key] = [
+            // Grid columns on a wide screen when this section's tab is open
+            // (DB-4, 2026-11-23). Six lets a section lay breakdowns three to
+            // a row and lists two to a row; the default keeps every other
+            // section's widgets exactly as wide as before.
+            'columns'   => $columns,
             'label'     => $label,
             'widgets'   => $widgets,
             'filters'   => $filters,

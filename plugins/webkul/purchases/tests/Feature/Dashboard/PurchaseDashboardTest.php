@@ -143,11 +143,61 @@ it('computes the overview purchase spend from confirmed orders in company curren
 
     $stats = (new PurchaseHeadlineWidget)->headlineStats([]);
 
-    expect($stats)->toHaveCount(2)
+    // Three since DB-4 (2026-11-23): To receive joined Spend and Open RFQs.
+    // Confirmed orders is the fourth only with PurchaseStatsWidget's own
+    // permission, which this user does not have.
+    expect($stats)->toHaveCount(3)
         ->and((string) $stats[0]->getValue())->toContain('250')
         ->and((string) $stats[0]->getValue())->not->toContain('999')
         ->and((string) $stats[1]->getValue())->toBe('1')
         // Production 2026-11-22: the spend tile read "No sales"; it counts orders.
         ->and((string) $stats[0]->getDescription())->toStartWith('1 order')
         ->and((string) $stats[0]->getDescription())->not->toContain('sale');
+});
+
+/**
+ * DB-4 (approved mockup, 2026-11-23): the Purchases key figures are Spend,
+ * Confirmed orders, Open RFQs and To receive. Confirmed orders shows only to
+ * someone PurchaseStatsWidget admits, so moving it into the headline gives
+ * it to no new role. To receive is today's state: confirmed orders whose
+ * goods are not all in, whatever their date.
+ */
+it('shows four purchase figures, confirmed orders only to whoever its own widget admits', function (): void {
+    FilamentHelper::bootAdminPanel();
+
+    $company = Company::factory()->create();
+    $user = CompanyHelper::actingAsCompanyUser($company, ['page_purchase_purchases']);
+
+    foreach (['pending', 'partial', 'full'] as $receipt) {
+        $order = PurchaseHelper::order(['company_id' => $company->getKey(), 'user_id' => $user->getKey()]);
+        Order::withoutGlobalScopes()->whereKey($order->getKey())->update(['ordered_at' => now()->subYears(2), 'state' => 'purchase', 'receipt_status' => $receipt]);
+    }
+
+    $labels = fn (): array => array_map(fn ($stat): string => (string) $stat->getLabel(), (new PurchaseHeadlineWidget)->headlineStats([]));
+    $toReceive = fn (): string => (string) collect((new PurchaseHeadlineWidget)->headlineStats([]))->last()->getValue();
+
+    expect($labels())->toBe(['Purchase spend', 'Open RFQs', 'To receive'])
+        ->and($toReceive())->toBe('2');
+
+    $permission = array_key_first(FilamentShield::getWidgets()[\Webkul\Purchase\Filament\Admin\Widgets\PurchaseStatsWidget::class]['permissions'] ?? []);
+    CompanyHelper::actingAsCompanyUser($company, ['page_purchase_purchases', $permission]);
+
+    expect($labels())->toBe(['Purchase spend', 'Confirmed Orders', 'Open RFQs', 'To receive']);
+});
+
+/**
+ * U69 (2026-11-23): TRACE365's two July orders left the Purchases tab at
+ * zero with no word of why. An empty period now names the latest order.
+ */
+it('names the latest purchase order when the period has none', function (): void {
+    $company = Company::factory()->create();
+    $user = CompanyHelper::actingAsCompanyUser($company, ['page_purchase_purchases']);
+
+    $order = PurchaseHelper::order(['company_id' => $company->getKey(), 'user_id' => $user->getKey()]);
+    Order::withoutGlobalScopes()->whereKey($order->getKey())->update(['ordered_at' => '2025-07-01 09:00', 'state' => 'purchase']);
+
+    $thisMonth = ['start_date' => now()->startOfMonth()->toDateString(), 'end_date' => now()->toDateString()];
+
+    expect((new PurchaseHeadlineWidget)->latestBeforePeriod($thisMonth)?->toDateString())->toBe('2025-07-01')
+        ->and((new PurchaseHeadlineWidget)->latestBeforePeriod(['start_date' => '2025-01-01', 'end_date' => '2025-12-31']))->toBeNull();
 });

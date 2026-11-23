@@ -16,6 +16,9 @@ use Webkul\Support\Filament\Concerns\HasDashboardEmptyState;
 
 class TopBillsWidget extends BaseWidget
 {
+    // DB-4 layout on the Overview's six-column grid (2026-11-23).
+    protected int|string|array $columnSpan = ['default' => 'full', 'xl' => 3];
+
     use GuardsInvoiceDashboardWidget, HasInvoiceDashboardFilters;
     use HasDashboardEmptyState;
 

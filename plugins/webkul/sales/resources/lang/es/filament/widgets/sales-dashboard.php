@@ -32,6 +32,15 @@ return [
         'revenue' => 'Ingresos',
     ],
 
+    'quotation-outcome'   => [
+        'heading'     => 'Presupuestos',
+        'description' => 'Qué pasó con los presupuestos hechos en el periodo',
+        'won'         => 'Pasaron a pedido',
+        'open'        => 'Siguen abiertos',
+        'cancelled'   => 'Cancelados',
+        'count'       => 'Presupuestos',
+    ],
+
     'top-products'        => [
         'heading' => 'Mejores Productos',
         'columns' => [

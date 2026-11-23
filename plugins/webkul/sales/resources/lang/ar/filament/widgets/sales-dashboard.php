@@ -32,6 +32,15 @@ return [
         'revenue' => 'الإيرادات',
     ],
 
+    'quotation-outcome'   => [
+        'heading'     => 'عروض الأسعار',
+        'description' => 'ما آلت إليه عروض الأسعار التي أُعدّت في الفترة',
+        'won'         => 'أصبحت طلبات',
+        'open'        => 'ما زالت مفتوحة',
+        'cancelled'   => 'ملغاة',
+        'count'       => 'عروض الأسعار',
+    ],
+
     'top-products'        => [
         'heading' => 'أعلى المنتجات',
         'columns' => [

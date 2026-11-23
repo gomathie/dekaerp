@@ -25,7 +25,7 @@ class OverviewCashFlowChart extends RevenueOverTimeWidget
 
     public ?string $filter = 'current';
 
-    protected int|string|array $columnSpan = ['default' => 'full', 'md' => 2, 'xl' => 2];
+    protected int|string|array $columnSpan = 'full';
 
     /**
      * Seen by whoever may see "Revenue over time": the same module switch and

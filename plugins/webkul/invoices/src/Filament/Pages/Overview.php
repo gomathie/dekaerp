@@ -335,6 +335,15 @@ class Overview extends BaseDashboard
      */
     public function getColumns(): int|array
     {
+        // A section laid out on six columns (DB-4: breakdowns three to a row,
+        // lists two to a row) gets them only while its own tab is open.
+        $sections = OverviewRegistry::visible();
+        $chosen = ((array) ($this->filters['sections'] ?? []))[0] ?? null;
+
+        if ($chosen !== null && ($sections[$chosen]['columns'] ?? 3) === 6) {
+            return ['md' => 2, 'xl' => 6];
+        }
+
         return ['md' => 2, 'xl' => 3];
     }
 

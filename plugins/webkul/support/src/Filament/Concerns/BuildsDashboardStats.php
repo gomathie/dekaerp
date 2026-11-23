@@ -8,6 +8,37 @@ use Webkul\Support\Filament\DashboardPeriod;
 trait BuildsDashboardStats
 {
     /**
+     * Figures from another stats widget, for a headline row (DB-4,
+     * 2026-11-23: each tab's four key figures in one row, and the separate
+     * count tiles removed). The figures stay computed by the widget that
+     * owns them, so nothing is calculated twice, and they show only to
+     * someone that widget's own canView() allows: moving a figure must not
+     * hand it to a role that could not see it before.
+     *
+     * @param  class-string  $widgetClass  a StatsOverviewWidget using the same page filters
+     * @param  list<int>  $indexes  positions in that widget's getStats()
+     * @return list<Stat>
+     */
+    protected function borrowedStats(string $widgetClass, array $indexes): array
+    {
+        if (! $widgetClass::canView()) {
+            return [];
+        }
+
+        $widget = app($widgetClass);
+        $widget->pageFilters = $this->pageFilters ?? [];
+
+        $stats = (fn (): array => $this->getStats())->call($widget);
+
+        return array_values(array_filter(array_map(
+            fn (int $index): ?Stat => isset($stats[$index])
+                ? $stats[$index]->extraAttributes(array_merge($stats[$index]->getExtraAttributes(), ['class' => 'overview-headline-stat']))
+                : null,
+            $indexes,
+        )));
+    }
+
+    /**
      * @param  list<float>  $series
      */
     protected function themedStat(string $label, string $icon, string $color, string $value, float $current, float $previous, array $series = [], ?string $title = null, bool $lowerIsBetter = false, ?float $previousRecords = null, bool $money = false, ?string $baseline = null): Stat

@@ -32,6 +32,15 @@ return [
         'revenue' => 'Revenu',
     ],
 
+    'quotation-outcome'   => [
+        'heading'     => 'Devis',
+        'description' => 'Ce que sont devenus les devis faits sur la période',
+        'won'         => 'Devenus commandes',
+        'open'        => 'Encore ouverts',
+        'cancelled'   => 'Annulés',
+        'count'       => 'Devis',
+    ],
+
     'top-products'        => [
         'heading' => 'Meilleurs Produits',
         'columns' => [

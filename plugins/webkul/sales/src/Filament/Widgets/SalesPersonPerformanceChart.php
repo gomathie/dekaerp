@@ -14,7 +14,7 @@ class SalesPersonPerformanceChart extends DashboardChartWidget
 
     protected static ?int $sort = 4;
 
-    protected int|string|array $columnSpan = 'full';
+    protected int|string|array $columnSpan = ['default' => 'full', 'md' => 1, 'xl' => 2];
 
     public function getHeading(): string|Htmlable|null
     {

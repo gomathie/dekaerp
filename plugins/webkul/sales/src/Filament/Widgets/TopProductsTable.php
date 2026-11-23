@@ -14,6 +14,9 @@ use Webkul\Sale\Models\OrderLine;
 
 class TopProductsTable extends TableWidget
 {
+    // DB-4 layout on the Overview's six-column grid (2026-11-23).
+    protected int|string|array $columnSpan = ['default' => 'full', 'xl' => 3];
+
     use HasSaleDashboardFilters, GuardsSaleDashboardWidget;
 
     protected const BAR_COLOR = 'var(--primary-500)';

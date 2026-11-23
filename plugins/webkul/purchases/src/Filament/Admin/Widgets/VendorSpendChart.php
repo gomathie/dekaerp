@@ -9,6 +9,9 @@ use Webkul\Support\Filament\Widgets\DashboardChartWidget;
 
 class VendorSpendChart extends DashboardChartWidget
 {
+    // DB-4 layout on the Overview's six-column grid (2026-11-23).
+    protected int|string|array $columnSpan = ['default' => 'full', 'xl' => 2];
+
     use GuardsPurchaseDashboardWidget, HasPurchaseDashboardFilters;
 
     protected const TOP_SLICES = 3;

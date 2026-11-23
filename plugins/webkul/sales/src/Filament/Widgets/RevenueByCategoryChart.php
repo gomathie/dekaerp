@@ -10,6 +10,9 @@ use Webkul\Support\Filament\Widgets\DashboardChartWidget;
 
 class RevenueByCategoryChart extends DashboardChartWidget
 {
+    // DB-4 layout on the Overview's six-column grid (2026-11-23).
+    protected int|string|array $columnSpan = ['default' => 'full', 'md' => 1, 'xl' => 2];
+
     use HasSaleDashboardFilters, GuardsSaleDashboardWidget;
 
     protected const TOP_SLICES = 3;

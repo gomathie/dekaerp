@@ -18,6 +18,9 @@ use Webkul\Support\Filament\Concerns\HasDashboardEmptyState;
 
 class TopSalesOrdersTable extends TableWidget
 {
+    // DB-4 layout on the Overview's six-column grid (2026-11-23).
+    protected int|string|array $columnSpan = ['default' => 'full', 'xl' => 3];
+
     use GuardsSaleDashboardWidget, HasSaleDashboardFilters;
     use HasDashboardEmptyState;
 

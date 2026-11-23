@@ -15,9 +15,9 @@ use Webkul\Invoice\Filament\Pages\Overview;
 use Webkul\PluginManager\Support\PluginEntitlement;
 use Webkul\Product\Models\Category;
 use Webkul\Sale\Filament\Widgets\MonthlySalesChart;
+use Webkul\Sale\Filament\Widgets\QuotationOutcomeChart;
 use Webkul\Sale\Filament\Widgets\RevenueByCategoryChart;
 use Webkul\Sale\Filament\Widgets\SalesPersonPerformanceChart;
-use Webkul\Sale\Filament\Widgets\SaleStatsOverview;
 use Webkul\Sale\Filament\Widgets\TopCustomersTable;
 use Webkul\Sale\Filament\Widgets\TopProductsTable;
 use Webkul\Sale\Filament\Widgets\TopQuotationsTable;
@@ -182,11 +182,15 @@ class SalesDashboard extends BaseDashboard
      */
     public static function sectionWidgets(): array
     {
+        // DB-4 (approved mockup, 2026-11-23): the headline widget carries
+        // the key figures (it reads Sales and Average sale through
+        // SaleStatsOverview, which keeps its permission), then the monthly
+        // chart, three breakdowns and the lists two to a row.
         return [
-            SaleStatsOverview::class,
             MonthlySalesChart::class,
             RevenueByCategoryChart::class,
             SalesPersonPerformanceChart::class,
+            QuotationOutcomeChart::class,
             TopProductsTable::class,
             TopCustomersTable::class,
             TopSalesOrdersTable::class,

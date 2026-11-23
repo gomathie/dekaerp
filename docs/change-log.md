@@ -6,6 +6,60 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-23, dashboards DB-4: the approved layout, year to date by default (unreleased)
+
+- **Why:** user decisions of 2026-11-23 on the DB-4 mockups (canvas "DEKA
+  dashboards DB-4"): year to date as the default period, compared with the
+  same days last year (U68); "go ahead with the mockups" (key figures first,
+  count tiles removed, main chart, breakdowns, lists). Dashboards opened on
+  different periods per tab (Sales on the calendar year, others on 30
+  days), the period was hidden in collapsed Filters, a year was drawn per
+  day (U75), and an empty period said nothing (U69, TRACE365's July
+  purchase orders).
+- **How:**
+  - `Support\Filament\DashboardPeriod`: `defaultRange()` (1 Jan to today),
+    `previous()` compares a period starting 1 January with the same dates a
+    year earlier (29 Feb to 28 Feb), `presets()`/`presetOf()`, and
+    `rollUp()`, which groups a daily series by day (31 days or fewer), week
+    (up to 124) or month. Sales, Purchases, `HasDashboardMetrics`, the
+    date picker and the Projects task chart read `defaultRange()`.
+  - Overview: a period bar (`overview-period` view, `selectPeriod()`, which
+    ignores unknown keys because it is callable from the browser) with the
+    comparison spelled out.
+  - Charts grouped by `rollUp()`: Revenue over time, Money in and out (also
+    on All), the purchase trend (counts kept whole), tile sparklines.
+  - Key figures: each tab's headline widget shows four. Figures that lived
+    in the detailed stats widgets are read through those widgets
+    (`BuildsDashboardStats::borrowedStats()`), only when that widget's own
+    `canView()` allows, so no role gains a figure. Invoices: Invoiced,
+    To collect, Billed, To pay. Sales: Revenue, Sales, Average sale, Open
+    quotations. Purchases: Spend, Confirmed orders, Open RFQs, To receive
+    (new: confirmed orders with receipt pending or partial, today's state).
+    The stats widgets left the tabs; the classes and their permissions stay.
+  - Layout: `OverviewRegistry::register(..., columns: 6)` for Invoices,
+    Sales and Purchases; `Overview::getColumns()` gives six columns only
+    while such a tab is open, so other modules' widgets keep their width.
+    Main charts full width (purchase trend two thirds, beside vendor
+    spend), breakdowns a third, lists half. Invoices' main chart is Money in
+    and out (payments by date) instead of Revenue over time.
+  - Sales: new `QuotationOutcomeChart` (became orders, still open,
+    cancelled). It borrows Top quotations' Shield permission: its own would
+    reach only the Admin role through `erp:sync-permissions`.
+  - Empty period: each headline widget's `latestBeforePeriod()`; the key
+    figures row says when the latest record is.
+- **Deviation from the mockup:** lists sit two to a row as separate cards,
+  not tabbed pairs. Merging two list widgets into one would replace two
+  Shield permissions with a new one that no tenant role holds.
+- **Benefit:** one period everywhere and always visible; fair comparisons;
+  readable long-period charts; the four figures that matter first.
+- **Trade-off / risk:** Sales opens on year to date instead of the whole
+  year (future months were empty anyway). Invoices loses the Revenue over
+  time chart from its tab (Money in and out covers it by payment date). A
+  role with a page permission but not the stats widget's sees two or three
+  figures instead of four; that is the permission working.
+- **Verification:** see below.
+- **Rollback:** revert the two commits; no migration.
+
 ## 2026-11-23, dashboards DB-2/DB-3: one story per dashboard, captions that fit, local clock (unreleased)
 
 - **Why:** DB-2 asks that tile, chart and table agree for one filter. The

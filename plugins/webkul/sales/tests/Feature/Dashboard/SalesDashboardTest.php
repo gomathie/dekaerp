@@ -317,3 +317,34 @@ it('lists only the current company’s members as salespersons', function (): vo
     expect($options)->toHaveKey($member->getKey())
         ->not->toHaveKey($outsider->getKey());
 });
+
+/**
+ * DB-4 (approved mockup, 2026-11-23): the Sales tab's third breakdown says
+ * what became of the period's quotations. It has no permission of its own:
+ * it opens for whoever may see "Top quotations", and for nobody else.
+ */
+it('says what became of the period\'s quotations, for whoever may see top quotations', function (): void {
+    FilamentHelper::bootAdminPanel();
+
+    $company = Company::factory()->create();
+    $user = CompanyHelper::actingAsCompanyUser($company, []);
+
+    foreach ([OrderState::SALE, OrderState::SALE, OrderState::DRAFT, OrderState::SENT, OrderState::CANCEL] as $state) {
+        $order = SaleHelper::order(['company_id' => $company->getKey(), 'user_id' => $user->getKey()]);
+        Order::withoutGlobalScopes()->whereKey($order->getKey())->update(['state' => $state->value, 'date_order' => now()]);
+    }
+
+    $old = SaleHelper::order(['company_id' => $company->getKey(), 'user_id' => $user->getKey()]);
+    Order::withoutGlobalScopes()->whereKey($old->getKey())->update(['state' => OrderState::SALE->value, 'date_order' => now()->subYears(2)]);
+
+    $widget = new \Webkul\Sale\Filament\Widgets\QuotationOutcomeChart;
+    $widget->pageFilters = [];
+
+    expect($widget->outcomes())->toBe(['won' => 2, 'open' => 2, 'cancelled' => 1])
+        ->and(\Webkul\Sale\Filament\Widgets\QuotationOutcomeChart::canView())->toBeFalse();
+
+    $permission = array_key_first(FilamentShield::getWidgets()[TopQuotationsTable::class]['permissions'] ?? []);
+    CompanyHelper::actingAsCompanyUser($company, [$permission]);
+
+    expect(\Webkul\Sale\Filament\Widgets\QuotationOutcomeChart::canView())->toBeTrue();
+});

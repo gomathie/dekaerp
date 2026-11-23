@@ -415,3 +415,87 @@ it('sets the period from the bar and says what it is compared with', function ()
     expect($bar()['active'])->toBeNull()
         ->and($bar()['previous'])->toBe('24 Feb – 2 Mar');
 });
+
+/**
+ * DB-4 (approved mockup, 2026-11-23): the Invoices tab is key figures, money
+ * in and out across the page, three breakdowns and two lists, on a
+ * six-column grid. The separate count tiles are gone. A section that has
+ * not opted in keeps three columns, so other modules' widgets keep their
+ * width.
+ */
+it('lays the invoices tab out like the approved mockup, on six columns only there', function (): void {
+    CompanyHelper::actingAsCompanyUser(Company::factory()->create(), ['page_invoice_invoices']);
+
+    OverviewRegistry::register('test-section', fn (): string => 'Test', ['TestOnlyWidget'], fn (): array => [], fn (): bool => true, sort: 99);
+
+    $page = new Overview;
+
+    $page->filters = ['sections' => ['invoices']];
+
+    expect($page->getColumns())->toBe(['md' => 2, 'xl' => 6])
+        ->and(Invoices::sectionWidgets()[0])->toBe(OverviewCashFlowChart::class)
+        ->and(Invoices::sectionWidgets())->not->toContain(
+            \Webkul\Invoice\Filament\Widgets\InvoiceStatsWidget::class,
+            \Webkul\Invoice\Filament\Widgets\BillStatsWidget::class,
+            \Webkul\Invoice\Filament\Widgets\RevenueOverTimeWidget::class,
+        );
+
+    $page->filters = ['sections' => ['test-section']];
+    expect($page->getColumns())->toBe(['md' => 2, 'xl' => 3]);
+
+    $page->filters = [];
+    expect($page->getColumns())->toBe(['md' => 2, 'xl' => 3]);
+});
+
+/**
+ * DB-4 (2026-11-23): Invoiced and Billed moved into the key figures, but
+ * only for someone their own widgets admit. Moving a figure must not hand
+ * it to a role that could not see it before.
+ */
+it('shows invoiced and billed among the key figures only to whoever their widgets admit', function (): void {
+    FilamentHelper::bootAdminPanel();
+
+    $company = Company::factory()->create();
+    CompanyHelper::actingAsCompanyUser($company, ['page_invoice_invoices']);
+
+    $labels = fn (): array => array_map(fn ($stat): string => (string) $stat->getLabel(), app(InvoiceHeadlineWidget::class)->headlineStats([]));
+
+    expect($labels())->toBe(['To collect', 'To pay']);
+
+    $widgets = FilamentShield::getWidgets();
+    $permissions = array_map(
+        fn (string $class): string => array_key_first($widgets[$class]['permissions']),
+        [\Webkul\Invoice\Filament\Widgets\InvoiceStatsWidget::class, \Webkul\Invoice\Filament\Widgets\BillStatsWidget::class],
+    );
+
+    CompanyHelper::actingAsCompanyUser($company, ['page_invoice_invoices', ...$permissions]);
+
+    expect($labels())->toBe(['Total Invoiced', 'To collect', 'Total Billed', 'To pay']);
+});
+
+/**
+ * U69 (2026-11-23): an empty tab said nothing, and older figures looked
+ * lost. The key figures row names the latest invoice when the period has
+ * none, and says nothing when it has some.
+ */
+it('names the latest invoice above an empty period', function (): void {
+    $company = Company::factory()->create();
+    $user = CompanyHelper::actingAsCompanyUser($company, ['page_invoice_invoices']);
+    $user->forceFill(['resource_permission' => 'global'])->saveQuietly();
+
+    $move = Move::factory()->create(['company_id' => $company->getKey()]);
+    Move::withoutGlobalScopes()->whereKey($move->getKey())->update([
+        'company_id'   => $company->getKey(),
+        'move_type'    => MoveType::OUT_INVOICE,
+        'state'        => MoveState::POSTED,
+        'invoice_date' => '2025-06-10',
+    ]);
+
+    $headline = new OverviewHeadlineWidget;
+
+    $headline->pageFilters = ['sections' => ['invoices'], 'start_date' => now()->startOfMonth()->toDateString(), 'end_date' => now()->toDateString()];
+    expect($headline->getDescription())->toContain('10 Jun 2025');
+
+    $headline->pageFilters = ['sections' => ['invoices'], 'start_date' => '2025-01-01', 'end_date' => '2025-12-31'];
+    expect($headline->getDescription())->toBeNull();
+});

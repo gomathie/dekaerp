@@ -5,6 +5,8 @@ namespace Webkul\Purchase\Filament\Admin\Widgets;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
+use Webkul\Purchase\Enums\OrderReceiptStatus;
 use Webkul\Purchase\Enums\OrderState;
 use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\PurchaseOrderResource;
 use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\QuotationResource;
@@ -93,6 +95,30 @@ class PurchaseHeadlineWidget extends StatsOverviewWidget
         ]] : [];
     }
 
+    /**
+     * The date of the latest purchase order before the period, when the
+     * period itself has none (U69, 2026-11-23): TRACE365's two July orders
+     * left a 30-day Purchases tab at zero with no word of why.
+     *
+     * @param  array<string, mixed>  $filters
+     */
+    public function latestBeforePeriod(array $filters): ?Carbon
+    {
+        $this->pageFilters = $filters;
+
+        if ($this->purchaseOrders()->exists()) {
+            return null;
+        }
+
+        [$start] = $this->periodRange();
+
+        $query = PurchaseOrder::query();
+
+        $latest = $query->where($query->qualifyColumn('ordered_at'), '<', $start)->max($query->qualifyColumn('ordered_at'));
+
+        return $latest ? Carbon::parse($latest) : null;
+    }
+
     protected function getStats(): array
     {
         $currency = $this->dashboardCurrency();
@@ -122,6 +148,17 @@ class PurchaseHeadlineWidget extends StatsOverviewWidget
             ->whereIn('state', [OrderState::DRAFT->value, OrderState::SENT->value, OrderState::TO_APPROVE->value])
             ->count();
 
+        // DB-4 (approved mockup, 2026-11-23): Spend, Confirmed orders, Open
+        // RFQs, To receive. Confirmed orders comes from PurchaseStatsWidget,
+        // which owns it, and only for someone that widget admits.
+        $confirmedOrders = $this->borrowedStats(PurchaseStatsWidget::class, [2]);
+
+        // Today's state, whatever the period: goods ordered and not all in.
+        $toReceive = PurchaseOrder::query()
+            ->whereIn('state', [OrderState::PURCHASE->value, OrderState::DONE->value])
+            ->whereIn('receipt_status', [OrderReceiptStatus::PENDING->value, OrderReceiptStatus::PARTIAL->value])
+            ->count();
+
         return [
             Stat::make(__('invoices::filament/pages/overview.headline.spend'), compact_money($spend, $currency))
                 ->url(PurchaseOrderResource::canViewAny() ? PurchaseOrderResource::getUrl('index') : null)
@@ -136,10 +173,19 @@ class PurchaseHeadlineWidget extends StatsOverviewWidget
                 ->color('primary')
                 ->extraAttributes(['class' => 'overview-headline-stat']),
 
+            ...$confirmedOrders,
+
             Stat::make(__('invoices::filament/pages/overview.headline.open-rfqs'), number_format($openRequests))
                 ->url(QuotationResource::canViewAny() ? QuotationResource::getUrl('index') : null)
                 ->icon('heroicon-o-clipboard-document-list')
                 ->color('info')
+                ->extraAttributes(['class' => 'overview-headline-stat']),
+
+            Stat::make(__('invoices::filament/pages/overview.headline.to-receive'), number_format($toReceive))
+                ->url(PurchaseOrderResource::canViewAny() ? PurchaseOrderResource::getUrl('index') : null)
+                ->icon('heroicon-o-truck')
+                ->description(__('invoices::filament/pages/overview.headline.to-receive-hint'))
+                ->color($toReceive > 0 ? 'warning' : 'success')
                 ->extraAttributes(['class' => 'overview-headline-stat']),
         ];
     }

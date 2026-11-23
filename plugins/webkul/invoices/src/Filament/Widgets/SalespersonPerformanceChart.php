@@ -11,6 +11,9 @@ use Webkul\Support\Filament\Concerns\HasChartTheme;
 
 class SalespersonPerformanceChart extends ChartWidget
 {
+    // DB-4 layout on the Overview's six-column grid (2026-11-23).
+    protected int|string|array $columnSpan = ['default' => 'full', 'md' => 1, 'xl' => 2];
+
     // No 5-second refresh (Filament default): every open dashboard re-ran all
     // its queries 12 times a minute (Sentry DEKAERP-11). Filters reload it.
     protected ?string $pollingInterval = null;
