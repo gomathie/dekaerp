@@ -1,0 +1,445 @@
+<title>DEKA ERP Architecture</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+  /* Layout: three pages behind tabs (Overview, System architecture, Security & operations); each opens with a draw.io-style vector diagram, then short notes. */
+  :root {
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --ink: #172026;
+    --muted: #56626b;
+    --line: #c9d1d8;
+    --line-soft: #dde2e7;
+    --accent: #c46a0a;
+    --accent-soft: #fdf1df;
+    --core: #e9eef3;
+    --danger: #b42318;
+    --ok: #1f7a4d;
+    --on-ink: #f6f7f9;
+    --font-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+    --font-body: "Inter", "Segoe UI", system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #11161b; --surface: #182028; --ink: #e8edf1; --muted: #9aa7b1; --line: #3a4753; --line-soft: #2a3540;
+      --accent: #f2a33a; --accent-soft: #2e2416; --core: #1f2a34; --danger: #f87168; --ok: #5cc48d; --on-ink: #11161b; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #11161b; --surface: #182028; --ink: #e8edf1; --muted: #9aa7b1; --line: #3a4753; --line-soft: #2a3540;
+    --accent: #f2a33a; --accent-soft: #2e2416; --core: #1f2a34; --danger: #f87168; --ok: #5cc48d; --on-ink: #11161b; color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.6;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 36px 64px;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; display: grid; gap: 28px; }
+  h1, h2, h3 { font-family: var(--font-display); line-height: 1.2; text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(30px, 5vw, 42px); font-weight: 700; letter-spacing: -0.01em; }
+  h2 { font-size: 24px; font-weight: 600; }
+  h3 { font-size: 15px; font-weight: 600; }
+  p { margin: 0; max-width: 70ch; }
+  .muted { color: var(--muted); }
+  .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+
+  header { display: grid; gap: 10px; }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; border-bottom: 1px solid var(--line-soft); padding-bottom: 0; }
+  .tabs a { padding: 10px 14px; border-radius: 8px 8px 0 0; color: var(--muted); text-decoration: none; font-weight: 600; font-size: 14px; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+  .tabs a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--accent); }
+  .tabs a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .page { display: grid; gap: 28px; }
+  .intro { display: grid; gap: 6px; }
+  .facts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .fact { font-size: 13px; padding: 4px 10px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line-soft); }
+
+  .figure-card { background: var(--surface); border: 1px solid var(--line-soft); border-radius: 14px; padding: 16px; }
+  .scroll { overflow-x: auto; }
+  .scroll svg { display: block; width: 100%; height: auto; }
+  .scroll.wide svg { min-width: 860px; }
+  .scroll.mid svg { min-width: 640px; }
+  .caption { font-size: 13px; color: var(--muted); margin-top: 10px; }
+
+  /* draw.io-style diagram classes */
+  .d-box { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
+  .d-soft { fill: var(--core); stroke: var(--line); stroke-width: 1.5; }
+  .d-zone { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2; stroke-dasharray: 8 6; }
+  .d-ink { fill: var(--ink); }
+  .d-accent-fill { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
+  .d-icon { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .d-icon-fill { fill: var(--accent); }
+  .d-edge { fill: none; stroke: var(--muted); stroke-width: 1.8; }
+  .d-edge-dash { fill: none; stroke: var(--muted); stroke-width: 1.8; stroke-dasharray: 6 5; }
+  .d-edge-bad { fill: none; stroke: var(--danger); stroke-width: 2; stroke-dasharray: 6 5; }
+  .d-head { fill: var(--muted); }
+  .d-bad { fill: var(--danger); }
+  .d-t { fill: var(--ink); font: 600 15px var(--font-body); }
+  .d-ti { fill: var(--on-ink); font: 600 14px var(--font-body); }
+  .d-s { fill: var(--muted); font: 400 12.5px var(--font-body); }
+  .d-l { fill: var(--muted); font: 600 11.5px var(--font-body); letter-spacing: 0.08em; }
+  .d-e { fill: var(--muted); font: 500 11.5px var(--font-body); }
+  .d-bad-t { fill: var(--danger); font: 600 12.5px var(--font-body); }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+  .card { padding: 14px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line-soft); display: grid; gap: 6px; align-content: start; }
+  .card p { font-size: 14px; color: var(--muted); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { font-size: 13px; padding: 2px 8px; border-radius: 6px; background: var(--core); }
+  .core-bar { padding: 14px 16px; border-radius: 12px; background: var(--ink); color: var(--bg); display: grid; gap: 8px; }
+  .core-bar .chip { background: color-mix(in srgb, var(--bg) 14%, transparent); color: var(--bg); }
+  .figure { font-family: var(--font-display); font-size: 26px; font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .steps { display: grid; gap: 10px; counter-reset: step; }
+  .step { display: grid; grid-template-columns: 34px 1fr; gap: 12px; padding: 12px 14px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line-soft); }
+  .step::before { counter-increment: step; content: counter(step); width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-display); font-weight: 600; font-size: 14px; background: var(--accent-soft); color: var(--accent); }
+  .step p { font-size: 14px; color: var(--muted); }
+  .legend { font-size: 13px; color: var(--muted); }
+  footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line-soft); padding-top: 16px; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .page:not([hidden]) { animation: show 260ms ease-out; }
+    @keyframes show { from { opacity: 0.4; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="d-head"/></marker>
+    <marker id="arrow-bad" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="d-bad"/></marker>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Technical overview · November 2026</span>
+    <h1>DEKA ERP Architecture</h1>
+    <p class="muted">One hosted system that runs sales, invoicing, purchasing, stock, accounting, logistics and people for many client companies. Each company sees only its own data and switches on only the modules it uses.</p>
+    <nav class="tabs" aria-label="Pages">
+      <a href="#overview" id="tab-overview">1 · Overview</a>
+      <a href="#architecture" id="tab-architecture">2 · System architecture</a>
+      <a href="#security" id="tab-security">3 · Security &amp; operations</a>
+    </nav>
+  </header>
+
+  <!-- PAGE 1 -->
+  <main class="page" id="overview" aria-labelledby="tab-overview">
+    <div class="intro">
+      <h2>How a request travels</h2>
+      <p class="muted">Whether someone taps Save on a phone or another system calls the API, the same path runs every time.</p>
+    </div>
+    <div class="figure-card">
+      <div class="scroll mid">
+        <svg viewBox="0 0 1000 190" role="img" aria-label="Request path: a user action goes over HTTPS through sign-in, the company check and the permission check to the business module, which saves to the company's own rows in the database.">
+          <!-- step boxes -->
+          <g>
+            <rect x="10" y="40" width="138" height="78" rx="10" class="d-box"/>
+            <rect x="22" y="52" width="26" height="20" rx="3" class="d-icon"/><line x1="22" y1="58" x2="48" y2="58" class="d-icon"/>
+            <text x="56" y="68" class="d-t">User</text>
+            <text x="22" y="100" class="d-s">browser, phone, API</text>
+          </g>
+          <line x1="148" y1="79" x2="178" y2="79" class="d-edge" marker-end="url(#arrow)"/>
+          <g>
+            <rect x="180" y="40" width="138" height="78" rx="10" class="d-box"/>
+            <rect x="193" y="54" width="18" height="14" rx="2" class="d-icon"/><path d="M196 54 v-5 a6 6 0 0 1 12 0 v5" class="d-icon"/>
+            <text x="220" y="68" class="d-t">HTTPS</text>
+            <text x="193" y="100" class="d-s">encrypted entry</text>
+          </g>
+          <line x1="318" y1="79" x2="348" y2="79" class="d-edge" marker-end="url(#arrow)"/>
+          <g>
+            <rect x="350" y="40" width="138" height="78" rx="10" class="d-ink"/>
+            <text x="364" y="72" class="d-ti">Sign-in</text>
+            <text x="364" y="96" class="d-ti" style="font-weight:400;font-size:12.5px">who is asking</text>
+          </g>
+          <line x1="488" y1="79" x2="518" y2="79" class="d-edge" marker-end="url(#arrow)"/>
+          <g>
+            <rect x="520" y="40" width="138" height="78" rx="10" class="d-ink"/>
+            <text x="534" y="72" class="d-ti">Company</text>
+            <text x="534" y="96" class="d-ti" style="font-weight:400;font-size:12.5px">whose data</text>
+          </g>
+          <line x1="658" y1="79" x2="688" y2="79" class="d-edge" marker-end="url(#arrow)"/>
+          <g>
+            <rect x="690" y="40" width="138" height="78" rx="10" class="d-ink"/>
+            <text x="704" y="72" class="d-ti">Permission</text>
+            <text x="704" y="96" class="d-ti" style="font-weight:400;font-size:12.5px">module and role</text>
+          </g>
+          <line x1="828" y1="79" x2="858" y2="79" class="d-edge" marker-end="url(#arrow)"/>
+          <!-- database cylinder -->
+          <g>
+            <path d="M862 52 v56 a65 12 0 0 0 130 0 v-56" class="d-accent-fill"/>
+            <ellipse cx="927" cy="52" rx="65" ry="12" class="d-accent-fill"/>
+            <text x="927" y="86" text-anchor="middle" class="d-t">Saved</text>
+            <text x="927" y="104" text-anchor="middle" class="d-s">in its own rows</text>
+          </g>
+          <text x="350" y="150" class="d-l">CHECKS ON EVERY REQUEST</text>
+          <line x1="350" y1="138" x2="828" y2="138" class="d-edge-dash"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="intro">
+      <h2>A shared core with modules per company</h2>
+      <p class="muted">The core handles what every company needs. Business modules plug into it and are switched on or off for each client, so a company that only invoices sees a simple menu and one that manufactures and ships sees more.</p>
+    </div>
+    <div class="core-bar">
+      <h3>Core platform, always on</h3>
+      <div class="chips"><span class="chip">Companies and branches</span><span class="chip">Users, roles, permissions</span><span class="chip">Contacts</span><span class="chip">Products</span><span class="chip">Activity history</span><span class="chip">Custom fields</span><span class="chip">Module switches</span></div>
+    </div>
+    <div class="grid">
+      <div class="card"><h3>Sell</h3><div class="chips"><span class="chip">Sales</span><span class="chip">Invoices</span><span class="chip">Payments</span><span class="chip">Customer portal</span></div></div>
+      <div class="card"><h3>Buy and stock</h3><div class="chips"><span class="chip">Purchases</span><span class="chip">Inventory</span><span class="chip">Barcode</span><span class="chip">Manufacturing</span><span class="chip">Maintenance</span></div></div>
+      <div class="card"><h3>Move</h3><div class="chips"><span class="chip">Logistics</span><span class="chip">Shipments and charges</span></div></div>
+      <div class="card"><h3>Account</h3><div class="chips"><span class="chip">Accounting</span><span class="chip">Country charts</span><span class="chip">Multi-currency</span><span class="chip">Analytics</span></div></div>
+      <div class="card"><h3>People</h3><div class="chips"><span class="chip">Employees</span><span class="chip">Time off</span><span class="chip">Attendance</span><span class="chip">Timesheets</span><span class="chip">Recruitment</span><span class="chip">Projects</span></div></div>
+      <div class="card"><h3>Run the platform</h3><div class="chips"><span class="chip">Subscriptions and billing</span><span class="chip">Seats</span><span class="chip">Client onboarding</span></div></div>
+    </div>
+  </main>
+
+  <!-- PAGE 2 -->
+  <main class="page" id="architecture" aria-labelledby="tab-architecture" hidden>
+    <div class="intro">
+      <h2>System architecture</h2>
+      <p class="muted">The components that run DEKA ERP in production and how they connect. On a phone, scroll the drawing sideways.</p>
+    </div>
+    <div class="figure-card">
+      <div class="scroll wide">
+        <svg viewBox="0 0 1120 700" role="img" aria-label="System architecture. Clients (browser, phone, customer portal, other software) connect over HTTPS to the DEKA ERP application on Laravel Cloud. Inside: the staff workspace, customer portal and REST API; four checks on every request (sign-in, company, module, permission); 30 plug-in modules and shared core services; background jobs. Below: a PostgreSQL database managed by Supabase and per-company file storage. To the right: error monitoring, email delivery, an exchange-rate feed, and GitHub deploying to Laravel Cloud.">
+          <!-- CLIENTS -->
+          <text x="120" y="66" text-anchor="middle" class="d-l">CLIENTS</text>
+          <g>
+            <rect x="20" y="90" width="200" height="84" rx="10" class="d-box"/>
+            <rect x="34" y="112" width="30" height="24" rx="3" class="d-icon"/><line x1="34" y1="119" x2="64" y2="119" class="d-icon"/>
+            <text x="76" y="126" class="d-t">Web browser</text><text x="76" y="146" class="d-s">Staff workspace</text>
+          </g>
+          <g>
+            <rect x="20" y="196" width="200" height="84" rx="10" class="d-box"/>
+            <rect x="40" y="214" width="18" height="30" rx="4" class="d-icon"/><line x1="46" y1="239" x2="52" y2="239" class="d-icon"/>
+            <text x="76" y="232" class="d-t">Phone</text><text x="76" y="252" class="d-s">Installable web app</text>
+          </g>
+          <g>
+            <rect x="20" y="302" width="200" height="84" rx="10" class="d-box"/>
+            <circle cx="49" cy="327" r="7" class="d-icon"/><path d="M36 352 a13 11 0 0 1 26 0" class="d-icon"/>
+            <text x="76" y="338" class="d-t">Customer portal</text><text x="76" y="358" class="d-s">Clients' own customers</text>
+          </g>
+          <g>
+            <rect x="20" y="408" width="200" height="84" rx="10" class="d-box"/>
+            <path d="M42 436 l-8 9 l8 9 M58 436 l8 9 l-8 9 M53 432 l-6 26" class="d-icon"/>
+            <text x="76" y="444" class="d-t">Other software</text><text x="76" y="464" class="d-s">REST API with a key</text>
+          </g>
+          <!-- client edges -->
+          <text x="245" y="104" text-anchor="middle" class="d-e">HTTPS</text>
+          <line x1="220" y1="132" x2="268" y2="132" class="d-edge" marker-end="url(#arrow)"/>
+          <line x1="220" y1="238" x2="268" y2="238" class="d-edge" marker-end="url(#arrow)"/>
+          <line x1="220" y1="344" x2="268" y2="344" class="d-edge" marker-end="url(#arrow)"/>
+          <line x1="220" y1="450" x2="268" y2="450" class="d-edge" marker-end="url(#arrow)"/>
+
+          <!-- PLATFORM ZONE -->
+          <rect x="270" y="40" width="590" height="470" rx="16" class="d-zone"/>
+          <path d="M296 70 a10 10 0 0 1 4 -19 a14 14 0 0 1 26 3 a9 9 0 0 1 2 16 z" class="d-icon"/>
+          <text x="338" y="68" class="d-t">DEKA ERP application</text>
+          <text x="840" y="68" text-anchor="end" class="d-s">Laravel Cloud · production</text>
+
+          <text x="290" y="102" class="d-l">WAYS IN</text>
+          <g>
+            <rect x="290" y="110" width="176" height="66" rx="8" class="d-box"/>
+            <text x="304" y="137" class="d-t">Staff workspace</text><text x="304" y="158" class="d-s">Filament 5 · Livewire 4</text>
+            <rect x="477" y="110" width="176" height="66" rx="8" class="d-box"/>
+            <text x="491" y="137" class="d-t">Customer portal</text><text x="491" y="158" class="d-s">Separate customer sign-in</text>
+            <rect x="664" y="110" width="176" height="66" rx="8" class="d-box"/>
+            <text x="678" y="137" class="d-t">REST API v1</text><text x="678" y="158" class="d-s">Sanctum read/write keys</text>
+          </g>
+
+          <text x="290" y="202" class="d-l">CHECKS ON EVERY REQUEST</text>
+          <g>
+            <rect x="290" y="210" width="126" height="46" rx="8" class="d-ink"/><text x="353" y="238" text-anchor="middle" class="d-ti">Sign-in</text>
+            <rect x="428" y="210" width="126" height="46" rx="8" class="d-ink"/><text x="491" y="238" text-anchor="middle" class="d-ti">Company</text>
+            <rect x="566" y="210" width="126" height="46" rx="8" class="d-ink"/><text x="629" y="238" text-anchor="middle" class="d-ti">Module</text>
+            <rect x="704" y="210" width="136" height="46" rx="8" class="d-ink"/><text x="772" y="238" text-anchor="middle" class="d-ti">Permission</text>
+            <line x1="416" y1="233" x2="426" y2="233" class="d-edge" marker-end="url(#arrow)"/>
+            <line x1="554" y1="233" x2="564" y2="233" class="d-edge" marker-end="url(#arrow)"/>
+            <line x1="692" y1="233" x2="702" y2="233" class="d-edge" marker-end="url(#arrow)"/>
+          </g>
+
+          <text x="290" y="284" class="d-l">BUSINESS LOGIC</text>
+          <g>
+            <rect x="290" y="292" width="270" height="94" rx="8" class="d-box"/>
+            <rect x="310" y="318" width="26" height="18" rx="3" class="d-icon"/><rect x="304" y="326" width="26" height="18" rx="3" class="d-icon" style="fill:var(--surface)"/><rect x="298" y="334" width="26" height="18" rx="3" class="d-icon" style="fill:var(--surface)"/>
+            <text x="350" y="326" class="d-t">30 plug-in modules</text>
+            <text x="350" y="347" class="d-s">Sales, invoicing, purchasing,</text>
+            <text x="350" y="364" class="d-s">stock, accounting, logistics, HR</text>
+            <rect x="570" y="292" width="270" height="94" rx="8" class="d-soft"/>
+            <circle cx="594" cy="334" r="10" class="d-icon"/><circle cx="594" cy="334" r="3.5" class="d-icon-fill"/>
+            <path d="M594 318 v5 M594 345 v5 M578 334 h5 M605 334 h5" class="d-icon"/>
+            <text x="620" y="326" class="d-t">Shared core services</text>
+            <text x="620" y="347" class="d-s">Company isolation, numbering,</text>
+            <text x="620" y="364" class="d-s">currency, periods, history</text>
+          </g>
+
+          <text x="290" y="412" class="d-l">BACKGROUND</text>
+          <g>
+            <rect x="290" y="420" width="176" height="70" rx="8" class="d-box"/>
+            <circle cx="310" cy="448" r="9" class="d-icon"/><path d="M310 443 v5 l4 3" class="d-icon"/>
+            <text x="328" y="452" class="d-t">Daily rates</text><text x="304" y="476" class="d-s">Exchange rates, 01:30</text>
+            <rect x="477" y="420" width="176" height="70" rx="8" class="d-box"/>
+            <circle cx="497" cy="448" r="9" class="d-icon"/><path d="M497 443 v5 l4 3" class="d-icon"/>
+            <text x="515" y="452" class="d-t">Billing run</text><text x="491" y="476" class="d-s">Subscriptions, daily</text>
+            <rect x="664" y="420" width="176" height="70" rx="8" class="d-box"/>
+            <rect x="676" y="440" width="22" height="16" rx="2" class="d-icon"/><path d="M676 441 l11 8 l11 -8" class="d-icon"/>
+            <text x="706" y="452" class="d-t">Email</text><text x="678" y="476" class="d-s">Invitations, documents</text>
+          </g>
+
+          <!-- DATA -->
+          <text x="290" y="548" class="d-l">DATA</text>
+          <line x1="420" y1="510" x2="420" y2="560" class="d-edge" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+          <text x="430" y="540" class="d-e">SQL</text>
+          <g>
+            <path d="M330 576 v74 a90 15 0 0 0 180 0 v-74" class="d-accent-fill"/>
+            <ellipse cx="420" cy="576" rx="90" ry="15" class="d-accent-fill"/>
+            <text x="420" y="616" text-anchor="middle" class="d-t">PostgreSQL</text>
+            <text x="420" y="636" text-anchor="middle" class="d-s">managed by Supabase</text>
+          </g>
+          <line x1="690" y1="510" x2="690" y2="566" class="d-edge" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+          <text x="700" y="540" class="d-e">files</text>
+          <g>
+            <path d="M600 576 h52 l10 -10 h108 v100 h-170 z" class="d-soft"/>
+            <text x="685" y="616" text-anchor="middle" class="d-t">File storage</text>
+            <text x="685" y="636" text-anchor="middle" class="d-s">S3, a folder per company</text>
+          </g>
+
+          <!-- OUTSIDE SERVICES -->
+          <text x="1000" y="66" text-anchor="middle" class="d-l">OUTSIDE SERVICES</text>
+          <g>
+            <rect x="900" y="90" width="200" height="84" rx="10" class="d-box"/>
+            <path d="M912 132 h8 l5 -12 l7 24 l5 -12 h9" class="d-icon"/>
+            <text x="956" y="126" class="d-t">Monitoring</text><text x="956" y="146" class="d-s">Sentry errors, logs</text>
+          </g>
+          <g>
+            <rect x="900" y="196" width="200" height="84" rx="10" class="d-box"/>
+            <rect x="914" y="228" width="30" height="20" rx="3" class="d-icon"/><path d="M914 229 l15 11 l15 -11" class="d-icon"/>
+            <text x="956" y="232" class="d-t">Email delivery</text><text x="956" y="252" class="d-s">SMTP relay</text>
+          </g>
+          <g>
+            <rect x="900" y="302" width="200" height="84" rx="10" class="d-box"/>
+            <path d="M914 336 h28 l-6 -6 M942 350 h-28 l6 6" class="d-icon"/>
+            <text x="956" y="338" class="d-t">Exchange rates</text><text x="956" y="358" class="d-s">Public daily feed</text>
+          </g>
+          <g>
+            <rect x="900" y="408" width="200" height="84" rx="10" class="d-box"/>
+            <circle cx="920" cy="432" r="4" class="d-icon"/><circle cx="920" cy="468" r="4" class="d-icon"/><circle cx="940" cy="446" r="4" class="d-icon"/>
+            <path d="M920 436 v28 M920 456 q0 -10 16 -10" class="d-icon"/>
+            <text x="956" y="444" class="d-t">GitHub</text><text x="956" y="464" class="d-s">Source of each release</text>
+          </g>
+          <!-- service edges -->
+          <line x1="862" y1="132" x2="898" y2="132" class="d-edge" marker-end="url(#arrow)"/>
+          <text x="880" y="124" text-anchor="middle" class="d-e">errors</text>
+          <line x1="862" y1="238" x2="898" y2="238" class="d-edge" marker-end="url(#arrow)"/>
+          <text x="880" y="230" text-anchor="middle" class="d-e">mail</text>
+          <line x1="898" y1="344" x2="862" y2="344" class="d-edge" marker-end="url(#arrow)"/>
+          <text x="880" y="336" text-anchor="middle" class="d-e">rates</text>
+          <line x1="898" y1="450" x2="862" y2="450" class="d-edge-dash" marker-end="url(#arrow)"/>
+          <text x="880" y="442" text-anchor="middle" class="d-e">deploy</text>
+        </svg>
+      </div>
+      <p class="caption">Solid arrows carry live traffic; the dashed arrow is a release: each one updates the database and permissions, then switches over.</p>
+    </div>
+
+    <div class="grid">
+      <div class="card"><h3>Hosting</h3><p>Laravel Cloud runs the application and its scheduler; releases come from GitHub.</p></div>
+      <div class="card"><h3>Application</h3><p>Laravel 13 on PHP 8.4. The staff workspace is Filament 5 with Livewire 4; the API uses Sanctum keys.</p></div>
+      <div class="card"><h3>Modules</h3><p>30 plug-in modules on one core, each with its own screens, rules, permissions and tests.</p></div>
+      <div class="card"><h3>Data</h3><p>PostgreSQL managed by Supabase; files in S3-compatible storage, one folder per company.</p></div>
+    </div>
+    <p class="legend">Stack: PHP 8.4 · Laravel 13 · Filament 5 · Livewire 4 · Tailwind 4 · PostgreSQL · Pest tests.</p>
+  </main>
+
+  <!-- PAGE 3 -->
+  <main class="page" id="security" aria-labelledby="tab-security" hidden>
+    <div class="intro">
+      <h2>Keeping client companies apart</h2>
+      <p class="muted">Clients are unrelated businesses, so isolation is built into the data layer rather than into individual screens. The same rules hold in the browser, on the phone and through the API.</p>
+    </div>
+    <div class="figure-card">
+      <div class="scroll mid">
+        <svg viewBox="0 0 900 300" role="img" aria-label="Isolation: a user of Company A reaches only Company A's rows and a user of Company B only Company B's. An attempt by Company A's user to reach Company B's rows is refused at the company check.">
+          <!-- users -->
+          <g>
+            <circle cx="70" cy="74" r="13" class="d-icon"/><path d="M46 112 a24 18 0 0 1 48 0" class="d-icon"/>
+            <text x="70" y="136" text-anchor="middle" class="d-t">Company A user</text>
+          </g>
+          <g>
+            <circle cx="70" cy="214" r="13" class="d-icon"/><path d="M46 252 a24 18 0 0 1 48 0" class="d-icon"/>
+            <text x="70" y="276" text-anchor="middle" class="d-t">Company B user</text>
+          </g>
+          <!-- company check wall -->
+          <rect x="330" y="30" width="96" height="250" rx="12" class="d-ink"/>
+          <path d="M378 58 l18 7 v13 c0 12 -8 20 -18 24 c-10 -4 -18 -12 -18 -24 v-13 z" fill="none" stroke="var(--on-ink)" stroke-width="2"/>
+          <text x="378" y="132" text-anchor="middle" class="d-ti">Company</text>
+          <text x="378" y="150" text-anchor="middle" class="d-ti">check</text>
+          <text x="378" y="176" text-anchor="middle" class="d-ti" style="font-weight:400;font-size:12px">reads filtered,</text>
+          <text x="378" y="192" text-anchor="middle" class="d-ti" style="font-weight:400;font-size:12px">writes checked</text>
+          <!-- database with lanes -->
+          <path d="M560 40 v220 a150 18 0 0 0 300 0 v-220" class="d-box"/>
+          <ellipse cx="710" cy="40" rx="150" ry="18" class="d-box"/>
+          <rect x="580" y="74" width="260" height="58" rx="8" class="d-accent-fill"/>
+          <text x="600" y="100" class="d-t">Company A rows</text><text x="600" y="120" class="d-s">invoices, stock, contacts…</text>
+          <rect x="580" y="186" width="260" height="58" rx="8" class="d-soft"/>
+          <text x="600" y="212" class="d-t">Company B rows</text><text x="600" y="232" class="d-s">invoices, stock, contacts…</text>
+          <!-- allowed paths -->
+          <path d="M110 84 H328" class="d-edge" marker-end="url(#arrow)"/>
+          <path d="M426 96 H578" class="d-edge" marker-end="url(#arrow)"/>
+          <path d="M110 224 H328" class="d-edge" marker-end="url(#arrow)"/>
+          <path d="M426 214 H578" class="d-edge" marker-end="url(#arrow)"/>
+          <!-- refused path -->
+          <path d="M120 96 C 200 104, 260 150, 326 162" class="d-edge-bad" marker-end="url(#arrow-bad)"/>
+          <circle cx="262" cy="144" r="11" fill="var(--surface)" stroke="var(--danger)" stroke-width="2"/>
+          <path d="M257 139 l10 10 M267 139 l-10 10" stroke="var(--danger)" stroke-width="2"/>
+          <text x="226" y="178" class="d-bad-t">A → B refused</text>
+        </svg>
+      </div>
+      <p class="caption">Automated tests attempt exactly the refused path, reading and writing another company's data, and must be turned away.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step"><div><h3>Every record belongs to a company</h3><p>Stamped on creation; lines inside a document take their parent's company.</p></div></div>
+      <div class="step"><div><h3>Every read is filtered</h3><p>The database query itself is limited to the current company: screens, reports, exports and API alike.</p></div></div>
+      <div class="step"><div><h3>Every write is checked</h3><p>Saving into a company the user does not belong to is refused, from any screen or API call.</p></div></div>
+      <div class="step"><div><h3>Every action needs a permission</h3><p>Roles decide who may view, create, change or delete per module; modules a company has not taken are closed.</p></div></div>
+      <div class="step"><div><h3>Every change is recorded</h3><p>An activity log shows who changed or deleted what. Support access to a client account needs a reason, ends after 60 minutes and is logged.</p></div></div>
+    </div>
+
+    <div class="intro">
+      <h2>How changes reach clients safely</h2>
+    </div>
+    <div class="grid">
+      <div class="card"><span class="figure">2,500+</span><h3>Automated tests</h3><p>Run before release, isolation tests included.</p></div>
+      <div class="card"><span class="figure">Monthly</span><h3>Release rhythm</h3><p>Features monthly; urgent fixes the same day as small patch releases.</p></div>
+      <div class="card"><span class="figure">1 step</span><h3>Deployment</h3><p>Laravel Cloud builds each release, updates the database and permissions, then switches over.</p></div>
+      <div class="card"><span class="figure">Live</span><h3>Monitoring</h3><p>Errors reach the team as they happen and are fixed at the cause.</p></div>
+      <div class="card"><span class="figure">5</span><h3>Languages</h3><p>English, French, Spanish, Portuguese and Arabic; Russian and Swahili next.</p></div>
+      <div class="card"><span class="figure">Phone</span><h3>Works on a phone</h3><p>Lists become labelled cards, the top bar folds away, and it installs like an app.</p></div>
+    </div>
+  </main>
+
+  <footer>State of the system on 23 November 2026.</footer>
+</div>
+
+<script>
+  (function () {
+    var pages = ['overview', 'architecture', 'security'];
+
+    function show() {
+      var name = (location.hash || '').replace('#', '');
+      if (pages.indexOf(name) === -1) { name = 'overview'; }
+      pages.forEach(function (p) {
+        document.getElementById(p).hidden = p !== name;
+        var tab = document.getElementById('tab-' + p);
+        if (p === name) { tab.setAttribute('aria-current', 'page'); } else { tab.removeAttribute('aria-current'); }
+      });
+    }
+
+    window.addEventListener('hashchange', function () { show(); window.scrollTo(0, 0); });
+    show();
+  })();
+</script>
