@@ -149,4 +149,8 @@ it('only prints a branding colour that is a plain hex colour', function () {
     // Printed into a style rule: anything else falls back to the default.
     $company->forceFill(['color' => 'red;} body { display:none']);
     expect(PrintedDocument::accent($company))->toBe('#1f2937');
+
+    // The header text is white: a pale branding colour would hide it.
+    $company->forceFill(['color' => '#d4d4d4']);
+    expect(PrintedDocument::accent($company))->toBe('#1f2937');
 });

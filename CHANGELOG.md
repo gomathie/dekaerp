@@ -26,6 +26,13 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 - Accounting dashboard: on each journal card, the due-date chart deducts credit notes and vendor refunds, so it adds up to "To Pay". "Late", and the Overdue list it opens, include partly paid invoices past their due date.
 - Logistics dashboard: "In transit" includes shipments that have been picked up, so it and "Out for delivery" add up to the Overview's "On the road".
 
+# CHANGELOG — v1.16.11 — 2026-11-23
+
+### Fixes
+
+- Printed documents show "Page 1" in the footer instead of "Page 1 / 0".
+- When a company's branding colour is very light, printed documents use a dark table header so the column names stay readable.
+
 # CHANGELOG — v1.16.10 — 2026-11-23
 
 ### Fixes

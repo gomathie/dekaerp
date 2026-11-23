@@ -73,7 +73,9 @@
         .deka-doc .notes p { margin: 0 0 4px 0; }
 
         .deka-doc .doc-footer { position: fixed; bottom: -34px; {{ $start }}: 0; {{ $end }}: 0; border-top: 1px solid #e5e7eb; padding-top: 6px; font-size: 8.5px; color: #9ca3af; }
-        .deka-doc .page-number:after { content: counter(page) " / " counter(pages); }
+        /* Page number only: dompdf has no total-pages counter, so "counter(pages)"
+           printed "Page 1 / 0" (production, 2026-11-23). */
+        .deka-doc .page-number:after { content: counter(page); }
     </style>
 </head>
 

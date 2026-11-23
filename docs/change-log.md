@@ -6,6 +6,22 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-23, v1.16.11 (hotfix): printed page number and pale header
+
+- **Why:** the PDF downloaded from production after v1.16.10 showed "Page 1
+  / 0" (dompdf has no total-pages CSS counter) and a light grey table header
+  with white text, from a company branding colour that pale.
+- **How:** the footer prints `counter(page)` only; `PrintedDocument::accent()`
+  falls back to the dark default when the colour's perceived lightness is
+  above 0.6.
+- **Benefit:** a readable header and a correct footer on every document.
+- **Trade-off / risk:** companies with a light branding colour get the dark
+  default header instead.
+- **Verification:** accounts `Documents/PrintedDocumentTest` 8 passed (24
+  assertions, `aureuserp_testing_v113_k1`), the accent test now also pins a
+  pale colour falling back. Production PDF before the fix read directly.
+- **Rollback:** revert the commit.
+
 ## 2026-11-23, v1.16.10 (hotfix): Print downloads again (DEKAERP-H regression); empty notes
 
 - **Why:** the production check after v1.16.9 pressed Print in the invoice
