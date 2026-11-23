@@ -25,6 +25,8 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 - Purchases dashboard: the supplier ring, top suppliers, top products and top orders count confirmed orders only, like the "Spend" figure. They also counted requests for quotation and cancelled orders.
 - Accounting dashboard: on each journal card, the due-date chart deducts credit notes and vendor refunds, so it adds up to "To Pay". "Late", and the Overdue list it opens, include partly paid invoices past their due date.
 - Logistics dashboard: "In transit" includes shipments that have been picked up, so it and "Out for delivery" add up to the Overview's "On the road".
+- Dashboards refresh themselves at most every 5 minutes. The Projects, Recruitments, Logistics and Time Off figures refreshed every few seconds, which slowed the application for everyone with a dashboard open.
+- The payment text message to a customer states one currency: it added an order's dollar and cedi invoices together, and counted a credit note as more invoiced.
 
 # CHANGELOG — v1.16.11 — 2026-11-23
 

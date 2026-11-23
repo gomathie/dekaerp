@@ -17,8 +17,6 @@ class TopAssigneesWidget extends BaseWidget
 {
     use GuardsProjectDashboardWidget, InteractsWithPageFilters;
 
-    protected static ?string $pollingInterval = '15s';
-
     protected static bool $isLazy = false;
 
     protected static function getPagePermission(): ?string

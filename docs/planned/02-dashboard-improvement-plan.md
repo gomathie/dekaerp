@@ -289,6 +289,17 @@ method" option, because the picker listed every company's payment method
 lines. Fixed at the cause (`PaymentMethodLine::forCompany()`, options loaded
 with their journal); see `docs/change-log.md`.
 
+*Done 2026-11-23 (develop), polling:* the rule "no widget polls faster than
+300 s" was not met. Projects and Recruitments stats polled every 15 s,
+Logistics every 60 s, and Time Off's two widgets and the shipment margin
+widget kept Filament's 5-second default (`CanPoll`). All now 300 s; the
+Projects table widgets' unused static `$pollingInterval = '15s'` is removed
+(table widgets do not poll through it). Pinned by support
+`Dashboard/WidgetPollingTest`, which scans every widget class in every
+plugin, so a new widget that forgets the interval fails there. Still open in
+DB-6: query counts on the top-N tables (eager loading is in place on the
+ones reviewed in DB-2).
+
 ### DB-7 Businesses that trade in USD and their local currency
 
 Many clients (Ghana, Zambia, Congo) invoice, buy and hold bank balances in
@@ -316,7 +327,11 @@ invoices the same way; recorded for its own fix.)
 `amount_total_signed` / `amount_residual_signed` for every card and its
 chart; pinned by accounting `JournalChartCurrencyTest` (a USD invoice of 100
 at 15.5 plus a local 50 gives 1,600, not 150). The SMS listener sum is still
-open. Exchange rates now arrive daily (`currencies:sync-rates`), which rule 5
+open. *Done 2026-11-23 (develop):* `SendSMSNotificationListener::totals()`
+keeps the documents' own currency when they share one (deducting a credit
+note, which it used to add) and otherwise adds the company-currency
+`_signed` amounts under the company currency. Test: sales
+`Workflows/SmsPaymentTotalsTest`. Exchange rates now arrive daily (`currencies:sync-rates`), which rule 5
 below relies on.
 
 *Progress 2026-11-22 (develop):* rule 3 for money to collect and pay:

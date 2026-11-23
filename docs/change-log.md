@@ -6,6 +6,30 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-23, dashboards DB-6 polling and DB-7 payment SMS (unreleased)
+
+- **Why:** DB-6 asks that no widget poll faster than every 300 s (Sentry
+  DEKAERP-11 on the Overview). A scan found Projects and Recruitments stats
+  at 15 s, Logistics at 60 s, and Time Off's two widgets and the shipment
+  margin widget on Filament's 5-second default (`CanPoll`). DB-7's leftover:
+  the payment SMS summed each invoice's own-currency amount under the
+  order's currency and counted a credit note as more invoiced.
+- **How:** every one of those widgets polls at 300 s; the Projects table
+  widgets' unused static `$pollingInterval = '15s'` is removed (table
+  widgets do not poll through it). `SendSMSNotificationListener::totals()`:
+  one currency, the documents' amounts with credit notes deducted; several,
+  the company-currency `_signed` amounts under the company currency.
+- **Benefit:** fewer repeated dashboard queries for everyone with a
+  dashboard open; a payment SMS that states one money and the right balance.
+- **Trade-off / risk:** Logistics tiles update every five minutes instead
+  of every minute (a page reload or filter change still refreshes them).
+- **Verification:** support `Dashboard/WidgetPollingTest` (scans every
+  widget class in every plugin; also asserts it checked more than 20
+  widgets, so it cannot pass vacuously) 1 passed
+  (`aureuserp_testing_v113_k4`); sales `Workflows/SmsPaymentTotalsTest` 2
+  passed (6 assertions, `_k3`).
+- **Rollback:** revert the commit.
+
 ## 2026-11-23, v1.16.11 (hotfix): printed page number and pale header
 
 - **Why:** the PDF downloaded from production after v1.16.10 showed "Page 1
