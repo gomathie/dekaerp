@@ -10,6 +10,13 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.16.10 — 2026-11-23
+
+### Fixes
+
+- "Print" on an invoice or quotation preview downloads the PDF again. In v1.16.9 it showed an error instead.
+- A document with an empty note no longer prints a "Notes" heading with nothing under it.
+
 # CHANGELOG — v1.16.9 — 2026-11-23
 
 ### Improvements

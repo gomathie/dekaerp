@@ -15,6 +15,9 @@
     $labels = fn (string $key, array $replace = []) => __('support::documents.'.$key, $replace);
     $company = $document['company'];
     $party = $document['party'];
+    // The rich-text editor saves an empty note as "<p></p>": that printed a
+    // "Notes" heading with nothing under it.
+    $hasNotes = trim(strip_tags((string) ($document['notes'] ?? ''))) !== '';
 @endphp
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}" dir="{{ $isRtl ? 'rtl' : 'ltr' }}">
@@ -201,7 +204,7 @@
         @endforeach
     </table>
 
-    @if (filled($document['notes'] ?? null) || ! empty($document['payment']) || filled($document['terms'] ?? null) || ! empty($document['sections']))
+    @if ($hasNotes || ! empty($document['payment']) || filled($document['terms'] ?? null) || ! empty($document['sections']))
         <div class="notes">
             @foreach ($document['sections'] ?? [] as $section)
                 <div class="block">
@@ -223,7 +226,7 @@
                 </div>
             @endif
 
-            @if (filled($document['notes'] ?? null))
+            @if ($hasNotes)
                 <div class="block">
                     <div class="section-label">{{ $labels('notes') }}</div>
                     {{-- Rich text from the document's own Notes field. Sanitized here,
