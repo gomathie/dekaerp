@@ -103,3 +103,33 @@ it('lists every attendance in the company to a view-any user', function (): void
 
     expect($ids)->toContain($first->id)->toContain($second->id);
 });
+
+/**
+ * Sentry DEKAERP-24 (2026-11-23): every report crashed with a TypeError for a
+ * view-any user, because "everyone" came back as null and the reports take a
+ * list. "Everyone" is now the employees of the viewer's company scope, so the
+ * reports open, and another company's staff are still never in them.
+ */
+it('opens every report for a view-any user without reaching another company', function (): void {
+    $company = AttendanceHelper::enable(AttendanceHelper::company());
+    $other = CompanyHelper::asNobody(fn () => AttendanceHelper::enable(AttendanceHelper::company()));
+
+    CompanyHelper::actingAsCompanyUser($company, [
+        'view_any_attendance_attendance',
+        'page_attendance_lateness',
+        'page_attendance_overtime',
+        'page_attendance_absence',
+    ]);
+
+    $colleague = AttendanceHelper::employee($company, ['user_id' => null]);
+    $outsider = CompanyHelper::asNobody(fn () => AttendanceHelper::employee($other, ['user_id' => null]));
+
+    $ids = (fn (): array => $this->visibleEmployeeIds())->call(new Lateness);
+
+    expect($ids)->toContain($colleague->id)
+        ->not->toContain($outsider->id);
+
+    foreach ([Lateness::class, Overtime::class, Absence::class] as $report) {
+        expect((fn (): array => $this->rows())->call(new $report))->toBeArray();
+    }
+});

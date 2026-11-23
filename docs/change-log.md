@@ -6,6 +6,35 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-23, v1.16.8 (hotfix): attendance reports for view-any users (DEKAERP-24); phone tap targets
+
+- **Why:** the phone audit the user asked for (109 pages at 390px on
+  production, read-only) hit a 500 on Employees › Attendance reporting:
+  Sentry DEKAERP-24, `AttendanceReports::lateRows(): Argument #3
+  ($employeeIds) must be of type array, null given`. `AttendanceService::
+  visibleEmployeeIds()` answers null for "everyone the company scope allows"
+  (view-any permission); the report pages passed that null into methods
+  that take a list, so Lateness, Overtime and Absence crashed for exactly
+  the people allowed to see all of them. The audit also found tap targets
+  under 32px on phones.
+- **How:** `AttendanceReportPage::visibleEmployeeIds()` now always returns a
+  list; null becomes `Employee::query()->pluck('id')`, through Employee's own
+  company scope, so another company's staff never appear. Phone CSS in
+  `topbar.blade.php`: a larger hit area for the picker clear cross
+  (`fi-select-input-value-remove-btn`, `-badge-remove`), 32px minimum for
+  `.ovb-panel__link`, `.fi-sc-text .fi-link` and links in section headings.
+- **Benefit:** attendance reports open for managers and administrators;
+  fewer missed taps on phones.
+- **Trade-off / risk:** a company with many employees passes a long id list
+  to the reports (one indexed `whereIn`).
+- **Verification:** attendances `tests/Feature/Reports` 12 passed (29
+  assertions), including the new "opens every report for a view-any user
+  without reaching another company" (database `aureuserp_testing_v113_k5`).
+  Pint. Tap targets measured on production with the same CSS injected:
+  19-22px → 32px, no horizontal overflow. Audit details: docs/ux-findings.md
+  U84-U86.
+- **Rollback:** revert the commit.
+
 ## 2026-11-23, v1.16.7 (hotfix): currency per contact, company-currency value, TRACE365 phone fixes, phone top bar
 
 - **Why:** TRACE365 (investor-owned, hotfix rule). (a) "Our currency is GHS

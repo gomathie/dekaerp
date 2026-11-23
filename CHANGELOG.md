@@ -23,6 +23,13 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 - Overview: the date and clock in the welcome banner no longer change format a moment after the page opens, and "Updated" shows your own local time.
 - Dashboard figures show their full comparison ("New vs 1 Jan 2025 – 31 Dec 2025") on a line of their own instead of cutting it off.
 
+# CHANGELOG — v1.16.8 — 2026-11-23
+
+### Fixes
+
+- Employees › Attendance reporting (Lateness, Overtime, Absence) opens again for managers and administrators. It showed a server error to anyone allowed to see everyone's attendance.
+- On a phone, the cross that clears a picker and the small "Open" and "Configure" links are easier to tap.
+
 # CHANGELOG — v1.16.7 — 2026-11-23
 
 ### Improvements

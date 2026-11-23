@@ -916,6 +916,33 @@
                         min-block-size: 44px;
                     }
 
+                    /* Tap targets found by the phone audit (user, 2026-11-23,
+                       109 pages at 390px). A picker's clear cross was 16x16px,
+                       and the Overview "Open" links, settings "Configure ..."
+                       links and journal names were 19-22px tall. The cross gets
+                       a larger invisible hit area, mostly vertical so it does
+                       not take taps meant for the dropdown arrow beside it; the
+                       links get height, not a new look. */
+                    .fi-select-input-value-remove-btn,
+                    .fi-select-input-badge-remove {
+                        position: relative;
+                    }
+
+                    .fi-select-input-value-remove-btn::after,
+                    .fi-select-input-badge-remove::after {
+                        content: '';
+                        position: absolute;
+                        inset: -8px -4px;
+                    }
+
+                    .ovb-panel__link,
+                    .fi-sc-text .fi-link,
+                    .fi-section-header-heading a {
+                        display: inline-flex;
+                        align-items: center;
+                        min-block-size: 32px;
+                    }
+
                     .module-sidebar {
                         inline-size: min(85vw, 300px);
                     }
