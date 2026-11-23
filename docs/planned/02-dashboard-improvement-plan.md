@@ -155,6 +155,19 @@ status" stays gross, as its description says (invoiced amount by payment
 status), and the test pins it as tile + credit notes. Still open: Sales,
 Purchases, Accounting and Logistics agreement tests on the same fixture.
 
+*Progress 2026-11-23 (develop), Sales:* `DashboardFixtureHelper::sales()`
+(orders, an invoice made from an order, invoices and a credit note without
+one, a quotation, and traps) and sales `SalesDashboardAgreementTest`. Sales
+reads two figures by user decision: Revenue = invoiced (DB-8; Revenue tile,
+daily line, monthly chart) and sales value = confirmed orders + invoices
+without an order (2026-11-20 hotfix; salesperson, category, customer,
+product breakdowns, top sales). The test pins that they differ by exactly
+the orders not invoiced yet. It found one mismatch, fixed at the query: a
+customer's "Sales" count included a credit note. The four breakdowns now
+carry the caption "Confirmed orders and invoices made without an order".
+17 passed (64 assertions), `aureuserp_testing_v113_k3`. Still open:
+Purchases, Accounting and Logistics agreement tests.
+
 ### DB-3 States
 
 - Empty charts and tables get one action (U13: "Create a quotation", "Record
