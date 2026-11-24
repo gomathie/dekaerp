@@ -10,11 +10,12 @@ return [
     'decrease'          => ':percent% de diminution',
     'no-change'         => 'Aucun changement',
     'invoice-stats'     => [
-        'heading' => 'Factures',
-        'total'   => 'Total Facturé',
-        'count'   => 'Nombre de Factures',
-        'paid'    => 'Factures Payées',
-        'unpaid'  => 'Factures Impayées',
+        'heading'    => 'Factures',
+        'total'      => 'Total Facturé',
+        'count'      => 'Nombre de Factures',
+        'paid'       => 'Factures Payées',
+        'unpaid'     => 'Factures Impayées',
+        'this-month' => 'Ce mois-ci',
     ],
 
     'bill-stats'        => [

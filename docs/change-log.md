@@ -6,6 +6,433 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-24, this month's figures above the invoice list (plan #10 R-9, develop, unreleased)
+
+- **Why:** TRACE365's reference invoice lists open with summary cards; R-9
+  asked for them "read from the same queries as the Invoices dashboard, so
+  the list and the dashboard agree".
+- **How:** the invoices plugin's `ListInvoices::getHeaderWidgets()` places
+  `InvoiceStatsWidget` with this month's `start_date`/`end_date` as its page
+  filters and a locked `periodHeading` ("This month"). No second query: the
+  widget is the dashboard's. Filament only shows header widgets whose
+  `canView()` passes, so the dashboard guard (widget permission, Invoices
+  module, `DashboardAccess` money switch) applies unchanged. The accounts
+  base page is untouched: it cannot reference the invoices plugin.
+- **Benefit:** the list opens with the month's state of invoicing, and it
+  agrees with the dashboard by construction.
+- **Trade-off / risk:** four cards push the list down a little; they follow
+  the month, not the list's own filters or tabs (the heading says so).
+- **Verification:** `aureuserp_testing_v113_k2` (t4): invoices Dashboard
+  (with the new agreement test on 31 March 2026: the list's cards equal the
+  March dashboard tiles, 1,800 net, 3 invoices, 1 paid, 2 unpaid): 36 passed
+  (145 assertions). Pint and `php -l`: passed.
+- **Rollback:** revert the commit; no schema change.
+
+## 2026-11-24, MC-2 rate bar and "View all" on every dashboard list (develop, unreleased)
+
+- **Why:** U92: once the currency dialog closed, the confirmed rate was
+  invisible, and choosing a customer with another default currency dropped
+  it silently (`handleRecordCreation` applies it only to the currency it was
+  confirmed for). DB-9 left "View all" off the customer and product lists;
+  Purchases' order, vendor and product lists lacked it too.
+- **How:** `SaleCurrencyQuestion::keptRateText()` is the helper line under
+  the invoice's currency (shared `InvoiceForm`): before saving it reads the
+  dialog's locked answer, afterwards the invoice's manual rate and who
+  confirmed it, and it says when the answer no longer applies.
+  `SaleCurrencyQuestion::label()` is the one wording of a rate (also the
+  chatter note). `CreateInvoice::getHeaderActions()` returns the same
+  `askSaleCurrency` action as "Currency and rate", visible under the same
+  rule as the question. "View all" (`HasDashboardEmptyState::viewAllActions()`)
+  added to TopCustomersTable, TopProductsTable, TopOrdersWidget,
+  TopVendorsWidget, TopPurchasedProductsWidget, each only when that
+  resource's `canViewAny()` allows; vendor rows link to the vendor.
+- **Benefit:** the person sees which rate the sale will be booked at and can
+  change it; every dashboard list leads to its full list.
+- **Trade-off / risk:** the helper line runs one company and one currency
+  read per form render; it is blank for every invoice that follows the feed.
+- **Verification:** `aureuserp_testing_v113_k2` (t4): SaleCurrencyQuestion,
+  InvoiceResource, DocumentCurrency, Invoice: first run 8 failed (a `null +
+  array` in `keptRateText()` when no pending answer is passed, which broke
+  every invoice form render); fixed, re-run 60 passed (246 assertions).
+  `aureuserp_testing_v113_k1` (t3): sales + purchases Dashboard: first run
+  2 failed (the new tests read `getHeaderActions()` keys, which are list
+  indexes, not names; the widgets were right); test fixed to read
+  `getName()`, re-run 34 passed (129 assertions). Pint and `php -l` on the
+  changed files: passed.
+- **Rollback:** revert the commit; no schema change.
+
+## 2026-11-24, dashboards DB-9, the sale currency question, the Multi-currency report and Unused amount (develop, unreleased)
+
+- **Why:** DB-9 board approved by the user (all four parts, Sales first).
+  Plan #11 MC-2 and MC-3 (TRACE365, user 2026-11-24; D-MC-1..4 taken as
+  recommended under the 12-hour delegation). "Unused amount" on Payments
+  received (TRACE365, Zoho comparison). Found on the way: the ring charts'
+  centre total went stale after a filter change, because Filament's
+  ChartWidget sends only new data on update, never new options.
+- **How:**
+  - DB-9 (a) trend pill: `BuildsDashboardStats::trendDescription()` renders
+    caption, ▲/▼ pill and tail, every part escaped with `e()`; Sales and
+    Purchases headlines use it (`dashboard.css`, support.css rebuilt).
+  - DB-9 (b) chart switch: `DashboardPeriod::rollUp()` takes an optional
+    unit (day/week/month/year, anything else = automatic);
+    "Sales over time", the purchase trend and the cash chart get the
+    Automatic/By day/week/month/year filter. The cash chart is now paired
+    bars with money in/out totals and their trend pills in the description,
+    replacing DB-4's "vs previous period" toggle (superseded, approved board).
+  - DB-9 (c) ring legend: `HasChartTheme::ringDetails()` puts the centre text
+    and "amount · N%" legend values on the dataset, which updates do carry;
+    `dashboard-charts.js` reads them there (the stale centre text fix) and
+    appends the values to the legend.
+  - DB-9 (d) order activity: `Sale\...\OrderActivityWidget` (to deliver,
+    delivered, to invoice, invoiced in the period, each linking to a new
+    Orders preset view), behind `SaleStatsOverview`'s permission;
+    `HasDashboardEmptyState::viewAllActions()` adds "View all" to the five
+    top-list tables, only when the viewer may open that list.
+  - MC-1: the permitted-currencies field shows "Available on documents now".
+  - MC-2a: company setting `accounts_company_settings.ask_sale_currency`
+    (Company currencies section). A new customer invoice opens a currency
+    question; a foreign currency shows the feed rate the way people read it
+    (`SaleCurrencyQuestion::display()`), and a corrected rate is kept as
+    `currency_rate_source = manual` with `currency_rate_confirmed_by`, plus a
+    chatter note. `Move::computeInvoiceCurrencyRate()` keeps a manual rate
+    through every recompute and drops it when the currency changes alone.
+    Neither field is fillable; the dialog's answer is `#[Locked]`, and the
+    rate direction is derived on the server.
+  - MC-3: Accounting › Reporting › Multi-currency
+    (`MultiCurrencyReport`, page permission `page_accounting_multi_currency`,
+    Excel export): per currency invoiced, received, open, booked value,
+    value at today's rate and the difference, plus realised exchange gains
+    and losses, current company only.
+  - Unused amount: `Payment::unusedAmount()` = open part of the payment's
+    customer/vendor line, eager loaded (`withUnusedAmount()`), on the list
+    and the export. A subquery select was rejected: Filament's summarizers
+    type-hint the select columns as strings and would break the totals row.
+- **Benefit:** dashboards read like the approved board; TRACE365 can confirm
+  the day's rate when a sale is in cedis and see what each currency is worth
+  now; an overpayment shows what is left to apply.
+- **Trade-off / risk:** the manual-rate guard sits in the `Move` saving hook
+  that every invoice save passes; it fires only on `source = manual`. The
+  sale question is off for every company until switched on. Quotations and
+  sales orders (MC-2b) and the rate bar on the form are not built.
+- **Verification:** `aureuserp_testing_v113_k2` (t4): SaleCurrencyQuestion,
+  PaymentsReceivedList, InvoiceResource, Invoice, DocumentCurrency,
+  MultiCurrencyReport, ReportsPage, CurrencyPickerScope,
+  CompanyCurrenciesForm: 111 passed (422 assertions).
+  `aureuserp_testing_v113_k1` (t3): support/sales/purchases/invoices
+  Dashboard + sales OrderResourceTest: 102 passed, 1 failed (382
+  assertions). The failure was the new order-activity test creating another
+  company's order as a non-member, refused by the UF-025 write guard as it
+  should be; the test now sets it up with nobody acting, and
+  SalesDashboardTest re-ran 13 passed (45 assertions, same database,
+  recreated). Pint and `php -l` on all 91 changed PHP files: passed.
+- **Rollback:** revert the commit; the migration's `down()` drops
+  `accounts_company_settings` and the two `accounts_account_moves` columns.
+
+## 2026-11-24, multi-currency plan #11 and MC-1 (TRACE365 sees USD and GHS only)
+
+- **Why:** user, 2026-11-24: "when currencies are selected for a company,
+  they should see only that ... trace365 must see only usd and ghs". Read-only
+  check: TRACE365 (company 2, base USD) had no permitted-currency list, which
+  CR-6 treats as "every active currency" (CDF, GHS, USD, ZAR, ZMW). The
+  purchase agreement picker also ignored the list.
+- **How:** production data, through the app: TRACE365's company form,
+  "Currencies › Additional currencies" = Ghanaian cedi, saved as the test
+  administrator ("Company updated"); the base currency is always kept, so
+  they now see USD and GHS (`company_currencies` checked afterwards). Code:
+  the purchase agreement picker applies `permittedFor()`; support
+  `Tenancy/CurrencyPickerScopeTest` scans every `*currency_id` picker and
+  fails on a transaction form without the company list (six configuration
+  pickers allow-listed: base currency, the list itself, account, vendor
+  price, installation default). Plan `docs/planned/11-multi-currency-plan.md`
+  for "Ask money equivalent" (MC-2) and the Multi-currency report (MC-3).
+- **Benefit:** TRACE365 picks between USD and GHS only, from today.
+- **Trade-off / risk:** if TRACE365 ever needs a third currency, a Super
+  Admin adds it on the company form.
+- **Verification:** `CurrencyPickerScopeTest` 1 passed (2 assertions,
+  `aureuserp_testing_v113_k4`); production `company_currencies` for company 2
+  = GHS.
+- **Rollback:** remove GHS from the list (back to every active currency);
+  revert the commit for the picker.
+
+## 2026-11-24, v1.16.12 (hotfix): Adminer removed from the repository (user decision)
+
+- **Why:** the graph build (graphify) showed `storage/app/adminer/adminer-source.php`
+  committed to this public repository, served through `public/adminer.php`.
+  The gatekeeper allowed only `REMOTE_ADDR` 127.0.0.1, ::1, Docker Desktop's
+  gateways or `ADMINER_ALLOWED_IPS`. Production answered 404 (checked
+  2026-11-23, read-only GET), but a database console on a deployed system
+  rests on one IP comparison behind a proxy. `.dockerignore` already kept it
+  out of Docker images; Laravel Cloud deploys from git, so it shipped.
+  Upstream removed its public Adminer in #1443; this fork had re-added a
+  guarded copy. User decision 2026-11-24: remove it.
+- **How:** deleted `public/adminer.php` and `storage/app/adminer/`;
+  `storage/app/.gitignore` no longer un-ignores `adminer/`. The
+  `.dockerignore` entries stay, so a local copy is never baked into an image.
+  Developers who want Adminer run it beside Sail, e.g.
+  `docker run --rm -p 8081:8080 --network dekaerp_sail adminer`.
+- **Benefit:** no database console in the deployed code.
+- **Trade-off / risk:** none for users; a developer used to `/adminer.php`
+  locally runs the container instead.
+- **Verification:** `git grep -i adminer` finds only the two `.dockerignore`
+  entries and the upstream CHANGELOG line. After deploy: `/adminer.php`
+  must still answer 404.
+- **Rollback:** revert the commit (not recommended).
+
+## 2026-11-23, dashboards DB-6 polling and DB-7 payment SMS (unreleased)
+
+- **Why:** DB-6 asks that no widget poll faster than every 300 s (Sentry
+  DEKAERP-11 on the Overview). A scan found Projects and Recruitments stats
+  at 15 s, Logistics at 60 s, and Time Off's two widgets and the shipment
+  margin widget on Filament's 5-second default (`CanPoll`). DB-7's leftover:
+  the payment SMS summed each invoice's own-currency amount under the
+  order's currency and counted a credit note as more invoiced.
+- **How:** every one of those widgets polls at 300 s; the Projects table
+  widgets' unused static `$pollingInterval = '15s'` is removed (table
+  widgets do not poll through it). `SendSMSNotificationListener::totals()`:
+  one currency, the documents' amounts with credit notes deducted; several,
+  the company-currency `_signed` amounts under the company currency.
+- **Benefit:** fewer repeated dashboard queries for everyone with a
+  dashboard open; a payment SMS that states one money and the right balance.
+- **Trade-off / risk:** Logistics tiles update every five minutes instead
+  of every minute (a page reload or filter change still refreshes them).
+- **Verification:** support `Dashboard/WidgetPollingTest` (scans every
+  widget class in every plugin; also asserts it checked more than 20
+  widgets, so it cannot pass vacuously) 1 passed
+  (`aureuserp_testing_v113_k4`); sales `Workflows/SmsPaymentTotalsTest` 2
+  passed (6 assertions, `_k3`).
+- **Rollback:** revert the commit.
+
+## 2026-11-23, v1.16.11 (hotfix): printed page number and pale header
+
+- **Why:** the PDF downloaded from production after v1.16.10 showed "Page 1
+  / 0" (dompdf has no total-pages CSS counter) and a light grey table header
+  with white text, from a company branding colour that pale.
+- **How:** the footer prints `counter(page)` only; `PrintedDocument::accent()`
+  falls back to the dark default when the colour's perceived lightness is
+  above 0.6.
+- **Benefit:** a readable header and a correct footer on every document.
+- **Trade-off / risk:** companies with a light branding colour get the dark
+  default header instead.
+- **Verification:** accounts `Documents/PrintedDocumentTest` 8 passed (24
+  assertions, `aureuserp_testing_v113_k1`), the accent test now also pins a
+  pale colour falling back. Production PDF before the fix read directly.
+- **Rollback:** revert the commit.
+
+## 2026-11-23, v1.16.10 (hotfix): Print downloads again (DEKAERP-H regression); empty notes
+
+- **Why:** the production check after v1.16.9 pressed Print in the invoice
+  preview: no download, and Sentry DEKAERP-H ("Malformed UTF-8 characters",
+  Livewire ViewInvoice) regressed. v1.16.9 changed Print to return
+  `PDFHandler::downloadPDF()`, i.e. dompdf's `->download()`, an
+  `Illuminate\Http\Response`. Livewire only turns a `StreamedResponse` or
+  `BinaryFileResponse` from an action into a download; a plain Response is
+  JSON-encoded into the update and the PDF bytes fail. The same lesson is
+  pinned for the Logistics waybill (`ShipmentResourceTest` "streams the
+  waybill"); it was not searched for. v1.16.9's tests rendered the PDF but
+  never pressed the button. The same check showed a "Notes" heading over an
+  empty note: the editor stores `<p></p>`.
+- **How:** `PDFHandler::downloadPDF()` returns
+  `response()->streamDownload()` with `application/pdf` (its only callers
+  are the two Print actions). The layout decides "has notes" on the text
+  without tags.
+- **Benefit:** Print works on invoices, bills, credit notes, refunds and
+  quotations.
+- **Trade-off / risk:** none beyond the response type; the PDF is built
+  before streaming, as before.
+- **Verification:** accounts `Documents/PrintedDocumentTest` 8 passed (23 assertions, `aureuserp_testing_v113_k1`),
+  including the new "delivers Print from the invoice preview as a PDF
+  download" (presses the nested Print action through Livewire and asserts a
+  PDF download) and "leaves out the notes heading when the note is empty
+  rich text".
+- **Rollback:** revert the commit (Print breaks again).
+
+## 2026-11-23, v1.16.9 (hotfix): printed documents, payments received, invoices list (TRACE365)
+
+- **Why:** TRACE365 compared our printed invoice and quote with their Zoho
+  ones and could not send ours; they compute taxes from payments received per
+  month and could not see them; they shared reference invoice lists (plan #10
+  R-7, R-8, R-9). Production check (read-only): nothing missing, 10 paid
+  invoices and 10 payments each linked to its invoice.
+- **How:**
+  - One layout, `support::pdfs.document`, fed by `Account\Support\MoveDocument`
+    (invoice, bill, credit note, refund) and `Sale\Support\OrderDocument`
+    (quotation, order). The five old templates are one-line wrappers.
+    `Support\Support\PrintedDocument` builds the company header, the party
+    block, the accent colour (hex only: printed into a style rule) and the
+    logo, read as a data URI from the document company's own folder on the
+    plain `s3` disk (tenant-s3 prefixes by the session company). Taxes: one
+    row per tax from posted tax lines (invoices) or `Tax::computeAll()` per
+    line as `OrderCalculator` does (orders). Notes are sanitized at output;
+    every CSS rule is scoped under `.deka-doc` (the old templates' global
+    rules restyled the page around the preview modal).
+  - Print streams the PDF (`downloadPDF`, named `invoice-INV-2026-00012`);
+    Print & Send names the attachment after the invoice plus a random part.
+    Both used `invoice-<day>.pdf` on the public disk, so documents printed
+    or e-mailed the same day shared one file.
+  - Quotation preview gains Print.
+  - Payments list: invoice number(s) (`invoices.name`), reference (memo),
+    Year/Month filter (`PaymentsTable::periodRange()`, a date range on
+    `date`), a total under the company-currency amount, "Amount" in the
+    payment's own currency; export adds invoices and memo (eager-loaded).
+  - Invoices list: date under the number; "Paid" (green) and "Amount due"
+    (red) in the invoice's own currency (the due column printed the
+    company-currency residual with the invoice's sign); counts on Draft, To
+    pay and Overdue (`ListInvoices::presetCount()` runs the tab's own
+    condition on the resource query); To pay and Overdue made visible tabs.
+    Carries the DB-2 change to the Overdue view (partly paid included),
+    which is in the same file.
+- **Benefit:** a document TRACE365 can send; payments per month in two
+  clicks; no cross-customer attachment.
+- **Trade-off / risk:** every company's printed documents change look at
+  once. The old "Discount" total (which summed percentages) is gone;
+  discounts show per line. The tab counts add three count queries per list
+  render. Zoho's "unused amount" on payments is not built.
+- **Verification:** accounts `Documents/PrintedDocumentTest` 6 passed (18
+  assertions) and `Filament/PaymentsReceivedListTest` 2 passed
+  (`aureuserp_testing_v113_k1`); `Filament/InvoiceListTest` 3 passed (11
+  assertions) and `Filament/InvoiceResourceTest` 18 passed (`_k2`; one test
+  first failed because a parallel run in the same worktree removed a compiled
+  view, and passed alone); sales `Documents/QuotationDocumentTest` 1 passed
+  (8 assertions, `_k3`), which caught `OrderDocument` calling
+  `computeAll()` on the Tax model instead of the Tax facade before release.
+  `php -l` on every changed translation file; Pint passed. Each document test
+  renders through dompdf and checks the output is a PDF. Not yet seen in a
+  browser.
+- **Rollback:** revert the commit; the old templates come back with it.
+
+## 2026-11-23, dashboards DB-2: Purchases, Accounting and Logistics agree (unreleased)
+
+- **Why:** dashboard plan DB-2 asks for a tile = chart = table test per
+  module. Each of the last three modules showed a mismatch: the Purchases
+  breakdowns and lists summed requests for quotation and cancelled orders
+  while "Spend" did not; the Accounting journal cards' due-date chart added
+  credit notes (`abs()` per document) while "To Pay" deducted them, and
+  "Late" left out partly paid invoices the chart's Overdue bar included;
+  Logistics showed a picked-up shipment in the Overview's "On the road" and
+  in no dashboard tile.
+- **How:** Purchases: `confirmedPurchaseOrders()`, `confirmedPurchaseLines()`
+  and `spendStates()` in `HasPurchaseDashboardFilters`, read by
+  VendorSpendChart, TopVendorsWidget, TopPurchasedProductsWidget,
+  TopOrdersWidget and PurchaseHeadlineWidget. Accounting:
+  `JournalChartWidget::openMoves()` (posted, not paid or partial, residual
+  > 0) feeds "Late", "To Pay" and the chart; `owed()` takes the signed sum
+  with the journal's sign, never `abs()` per document. The invoice/bill
+  list's "Overdue" view (`accounts` `ListInvoices`, shared by bills)
+  includes partly paid. Logistics: `ShipmentStatsWidget` "In transit" =
+  picked up + in transit. Fixture: `DashboardFixtureHelper::purchases()`.
+- **Benefit:** on every module dashboard, the figures, charts and lists add
+  up to each other; a list opened from a card shows what the card counted.
+- **Trade-off / risk:** visible changes in the numbers: Purchases rankings
+  drop quotes and cancelled orders; a journal card's chart can show a
+  negative segment where a credit note is due; "Late" and "Overdue" grow by
+  partly paid documents; "In transit" grows by picked-up shipments.
+- **Verification:** purchases `tests/Feature/Dashboard` 12 passed (39
+  assertions, `aureuserp_testing_v113_k2`); accounting
+  `JournalCardAgreementTest`, `JournalChartCurrencyTest`,
+  `AccountingOverviewTest` 6 passed (28 assertions, `_k4`); logistics
+  `tests/Feature/Dashboard` 12 passed (29 assertions, `_k5`). Pint passed.
+  Not checked in a browser.
+- **Rollback:** revert the commit.
+
+## 2026-11-23, v1.16.8 (hotfix): attendance reports for view-any users (DEKAERP-24); phone tap targets
+
+- **Why:** the phone audit the user asked for (109 pages at 390px on
+  production, read-only) hit a 500 on Employees › Attendance reporting:
+  Sentry DEKAERP-24, `AttendanceReports::lateRows(): Argument #3
+  ($employeeIds) must be of type array, null given`. `AttendanceService::
+  visibleEmployeeIds()` answers null for "everyone the company scope allows"
+  (view-any permission); the report pages passed that null into methods
+  that take a list, so Lateness, Overtime and Absence crashed for exactly
+  the people allowed to see all of them. The audit also found tap targets
+  under 32px on phones.
+- **How:** `AttendanceReportPage::visibleEmployeeIds()` now always returns a
+  list; null becomes `Employee::query()->pluck('id')`, through Employee's own
+  company scope, so another company's staff never appear. Phone CSS in
+  `topbar.blade.php`: a larger hit area for the picker clear cross
+  (`fi-select-input-value-remove-btn`, `-badge-remove`), 32px minimum for
+  `.ovb-panel__link`, `.fi-sc-text .fi-link` and links in section headings.
+- **Benefit:** attendance reports open for managers and administrators;
+  fewer missed taps on phones.
+- **Trade-off / risk:** a company with many employees passes a long id list
+  to the reports (one indexed `whereIn`).
+- **Verification:** attendances `tests/Feature/Reports` 12 passed (29
+  assertions), including the new "opens every report for a view-any user
+  without reaching another company" (database `aureuserp_testing_v113_k5`).
+  Pint. Tap targets measured on production with the same CSS injected:
+  19-22px → 32px, no horizontal overflow. Audit details: docs/ux-findings.md
+  U84-U86.
+- **Rollback:** revert the commit.
+
+## 2026-11-23, v1.16.7 (hotfix): currency per contact, company-currency value, TRACE365 phone fixes, phone top bar
+
+- **Why:** TRACE365 (investor-owned, hotfix rule). (a) "Our currency is GHS
+  but new invoices open in USD": production check (read-only) found
+  TRACE365's company currency **is USD**; all 25 documents, 52 journal items
+  and all 7 journals are USD. User decisions 2026-11-23: books to GHS
+  (Super Admin base-currency change), purchases stay USD with a small GHS
+  value beside them, a per-contact default currency (Zoho's model), and
+  re-rate the old documents. *Held:* the switch and the re-rate wait for
+  TRACE365 to confirm whether the 10 posted invoices ($22.50 to $337.50,
+  entered 19 Nov) are real USD or cedi sales typed while the form opened in
+  USD (re-rating a cedi invoice at 11.80 would multiply it). (b) Four
+  TRACE365 phone reports (company page overflow, Invoices opening Bank
+  Accounts - fixed in v1.16.6 -, unlabelled product cards, impersonation
+  banner over the tabs). (c) User: optimise the phone top bar, items 1 to
+  3, ship with this hotfix.
+- **How:**
+  - `Account\Support\DocumentCurrency` (one rule): contact's
+    `default_currency_id` → the company's journal currency for the document
+    type → company currency; inactive or not-permitted (CR-6) currencies
+    skipped; contact read scope-free but only this company's or shared.
+    `ofContact()` switches only when the contact has one, so a currency the
+    user chose is not reset. Used by the invoice, bill and purchase order
+    forms (default and contact change; invoice lines convert as for a
+    manual switch). Accounts migration `2026_11_23_000001` (nullable column,
+    listed in `hasMigrations`), field on the contact's Sales & Purchase tab,
+    relation and fillable contributed to the base Partner.
+  - `Support\Support\CompanyCurrencyEquivalent`: "≈ GH₵ X · 1 USD = 11.80
+    GHS" under foreign totals (invoice/bill summary, purchase order summary),
+    at the document's stored rate, never a 1:1 guess; short "≈ GH₵ X" under
+    the total in the invoice, bill and purchase order lists (eager-loads
+    `company.currency`).
+  - Company infolist grid `['default' => 1, 'lg' => 3]` (was `default 3`)
+    and a scaled, uncropped logo.
+  - Phone list cards (U50): every column carries `data-label` (escaped) via
+    `Column::configureUsing` in `HasFilamentDefaults`; the card CSS in
+    `topbar.blade.php` prints it above each value, skips lead value, images
+    and clickable icons, hides empty values, and leads with the name.
+  - Impersonation banner publishes its measured height
+    (`--impersonation-banner-height`); the top bar and module sidebar stick
+    below it. Rendered only with the banner.
+  - Phone top bar: row 1 slides away on scroll down and returns on scroll
+    up (not near the top, with the drawer or a dropdown open, or while
+    typing); Menu is an icon; the company name gets the freed room; tab
+    edges fade only where more tabs are; tabs 44px.
+- **Benefit:** TRACE365 can keep cedi books with dollar suppliers and
+  customers without retyping the currency, and sees the cedi value of every
+  dollar document; phone lists say what each number is; the company page
+  and the impersonated session work on a phone; lists get 64px more room.
+- **Trade-off / risk:** the journal currency now also decides the default
+  in the forms (it already did in `Move::computeCurrencyId()`); a company
+  whose Customer Invoices journal carries a stale currency would see it.
+  Labels make phone cards taller. The scroll-hide transform is not applied
+  while the drawer is open (the drawer is fixed inside the bar).
+- **Verification:** accounts `DocumentCurrencyTest` 2 passed (16
+  assertions; first run caught an inactive seeded EUR in the test itself);
+  accounts `tests/Feature/Filament` 48 passed (192); purchases
+  `tests/Feature/Filament` 5 + 17 passed (17 + 49; the first combined run
+  died on the 300 s install limit while three suites shared the machine,
+  re-run per file); security `TenantImpersonationTest` 17 passed (74; its
+  "renders once" check caught the script repeating the banner's data
+  attribute, now found by id); support `Http` and `Tenancy` passed in the
+  same run (59 of 60 before that fix). Databases `aureuserp_testing_v113_k1`,
+  `k2`, `k4`, `k5`. Pint and `php -l` on every changed PHP file. Browser
+  simulation on production at 320/375/390 px: product cards labelled, no
+  horizontal overflow; banner overlap 114-134 px before, 0 after; top-bar
+  row hides on scroll down (tabs at 0) and returns on scroll up.
+- **Rollback:** revert the commit; the migration's `down()` drops the
+  column.
+
 ## 2026-11-23 (unreleased): Russian and Swahili
 
 - **Why:** plan #3, user decisions D-LANG-1 (one Swahili, `sw`) and D-LANG-2

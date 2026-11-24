@@ -155,6 +155,46 @@ status" stays gross, as its description says (invoiced amount by payment
 status), and the test pins it as tile + credit notes. Still open: Sales,
 Purchases, Accounting and Logistics agreement tests on the same fixture.
 
+*Progress 2026-11-23 (develop), Sales:* `DashboardFixtureHelper::sales()`
+(orders, an invoice made from an order, invoices and a credit note without
+one, a quotation, and traps) and sales `SalesDashboardAgreementTest`. Sales
+reads two figures by user decision: Revenue = invoiced (DB-8; Revenue tile,
+daily line, monthly chart) and sales value = confirmed orders + invoices
+without an order (2026-11-20 hotfix; salesperson, category, customer,
+product breakdowns, top sales). The test pins that they differ by exactly
+the orders not invoiced yet. It found one mismatch, fixed at the query: a
+customer's "Sales" count included a credit note. The four breakdowns now
+carry the caption "Confirmed orders and invoices made without an order".
+17 passed (64 assertions), `aureuserp_testing_v113_k3`. Still open:
+Purchases, Accounting and Logistics agreement tests.
+
+*Progress 2026-11-23 (develop), Purchases, Accounting, Logistics; DB-2
+done:*
+- Purchases: `DashboardFixtureHelper::purchases()` and purchases
+  `PurchaseDashboardAgreementTest`. The vendor ring, top vendors, top
+  products and top orders summed every order of the period (requests for
+  quotation and cancelled ones too) while "Spend" counted confirmed ones.
+  All now read `confirmedPurchaseOrders()` / `confirmedPurchaseLines()` in
+  `HasPurchaseDashboardFilters` (states `spendStates()`: purchase, done), as
+  the headline does. 12 passed (39 assertions), `aureuserp_testing_v113_k2`.
+- Accounting (the journal cards): the due-date chart added `abs()` of each
+  document, so a credit note was added while "To Pay" deducted it; "Late"
+  counted only unpaid documents while the chart's Overdue bar included
+  partly paid ones. One query now (`JournalChartWidget::openMoves()`: posted,
+  not paid or partial, residual > 0) and one signed sum (`owed()`, sign -1 on
+  purchase journals). The invoice and bill list's "Overdue" view, which
+  "Late" opens, includes partly paid too. Test: accounting
+  `JournalCardAgreementTest`. With the currency and overview tests, 6 passed
+  (28 assertions), `aureuserp_testing_v113_k4`.
+- Logistics (tiles only, no charts): a picked-up shipment was in the
+  Overview's "On the road" and in no dashboard tile. "In transit" now counts
+  picked up + in transit, so On the road = In transit + Out for delivery.
+  Test: logistics `Dashboard/WidgetsTest` "agrees with the overview card on
+  shipments on the road and failed". 12 passed (29 assertions),
+  `aureuserp_testing_v113_k5`.
+
+DB-2 is complete: every module's dashboard has an agreement test.
+
 ### DB-3 States
 
 - Empty charts and tables get one action (U13: "Create a quotation", "Record
@@ -181,6 +221,17 @@ board's "Updated" time in server time beside the browser's clock. Fixed:
 `DashboardPeriod::browserLocale()` gives the browser en-GB for English and
 the clock a 24-hour cycle; the "Updated" stamp is formatted in the browser.
 Still open: widget-absent checks per module.
+
+*Done 2026-11-23 (develop): widget-absent checks.* One helper,
+`support/tests/Helpers/DashboardWidgetGuardHelper.php`, asks every widget a
+dashboard lists (`sectionWidgets()`) three times: no permission (absent),
+every widget permission (present), module revoked for the company (absent).
+Run for Invoices, Sales, Purchases, Projects and Logistics (Recruitments had
+its own already); a widget added without its guard fails there. Found no
+missing guard. The Invoices cash-flow chart borrows the revenue-over-time
+widget's permission by design (`OverviewCashFlowChart::getWidgetPermission()`),
+so its test grants that one too. 1 passed each, databases
+`aureuserp_testing_v113_k1` to `_k5`. DB-3 is complete.
 ### DB-4 Hierarchy, dashboard by dashboard
 
 Overview first, then Invoices, Sales, Purchases: filters and period visible
@@ -238,6 +289,29 @@ method" option, because the picker listed every company's payment method
 lines. Fixed at the cause (`PaymentMethodLine::forCompany()`, options loaded
 with their journal); see `docs/change-log.md`.
 
+*Done 2026-11-23 (develop), polling:* the rule "no widget polls faster than
+300 s" was not met. Projects and Recruitments stats polled every 15 s,
+Logistics every 60 s, and Time Off's two widgets and the shipment margin
+widget kept Filament's 5-second default (`CanPoll`). All now 300 s; the
+Projects table widgets' unused static `$pollingInterval = '15s'` is removed
+(table widgets do not poll through it). Pinned by support
+`Dashboard/WidgetPollingTest`, which scans every widget class in every
+plugin, so a new widget that forgets the interval fails there. Still open in
+DB-6: query counts on the top-N tables (eager loading is in place on the
+ones reviewed in DB-2).
+
+*Checked 2026-11-24, top-N tables:* by inspection, every list eager-loads what
+each row reads (`with(['partner', 'currency'])`, `invoiceUser` on invoices and
+bills), and the grouped ones (top customers, products, vendors) are one
+aggregate query each. An automated "render, double the data, render again"
+test was tried and dropped: inside a test transaction the fixture's chatter
+work (follower lookups, record loads, queued notifications) replays on every
+Livewire call, so the count grew with the data for reasons outside the
+widgets (110 → 205 queries on Purchases, mostly `chatter_followers` and
+single-record loads). A test that fails for the harness's reason is worse
+than none. Revisit only with a measurement outside Livewire testing, or if
+Sentry shows a slow dashboard request. DB-6 closed.
+
 ### DB-7 Businesses that trade in USD and their local currency
 
 Many clients (Ghana, Zambia, Congo) invoice, buy and hold bank balances in
@@ -265,7 +339,11 @@ invoices the same way; recorded for its own fix.)
 `amount_total_signed` / `amount_residual_signed` for every card and its
 chart; pinned by accounting `JournalChartCurrencyTest` (a USD invoice of 100
 at 15.5 plus a local 50 gives 1,600, not 150). The SMS listener sum is still
-open. Exchange rates now arrive daily (`currencies:sync-rates`), which rule 5
+open. *Done 2026-11-23 (develop):* `SendSMSNotificationListener::totals()`
+keeps the documents' own currency when they share one (deducting a credit
+note, which it used to add) and otherwise adds the company-currency
+`_signed` amounts under the company currency. Test: sales
+`Workflows/SmsPaymentTotalsTest`. Exchange rates now arrive daily (`currencies:sync-rates`), which rule 5
 below relies on.
 
 *Progress 2026-11-22 (develop):* rule 3 for money to collect and pay:
@@ -353,6 +431,77 @@ payments by payment date; invoices `OverviewTest` "charts money in and out
 on the day each payment was made" pins today's payments); the Logistics tab is absent although Logistics is
 granted; "Cash at bank GHS 0" after a payment, because the payment sits in
 the outstanding account until reconciled, needs a plain explanation.
+
+### DB-9 Reference designs from TRACE365 (2026-11-23, user)
+
+TRACE365 shared five reference screens (sales dashboards, an invoice list and
+an invoice summary). Compared with what DEKA shows today:
+
+| Pattern in the references | DEKA today | Action |
+| --- | --- | --- |
+| Figure cards: icon chip, value, trend pill "+2.3% vs last month", sparkline | Built (DB-4 headline stats, trend caption, daily line) | Keep. Restyle the trend as a coloured pill beside the value, as in the references |
+| Main chart with a Daily / Weekly / Monthly / Yearly switch | Bucket chosen automatically from the period (DB-1) | Add the switch on the main chart only, defaulting to the automatic bucket |
+| Money in vs money out as paired bars, both totals above the chart | Cash flow chart on Invoices (OverviewCashFlowChart) | Show the two totals and their trends above the bars |
+| Ring with the total in the middle and a legend listing count, amount and % | Rings exist (customer revenue, vendor spend) with plain legends | Total in the centre; legend rows "name · count · amount · %" |
+| Status tiles (Packed / Shipped / Delivered / Invoiced) | Logistics tiles; Sales has none | Sales "order activity" tiles: to deliver, delivered, to invoice, invoiced, each linking to its filtered list |
+| "Needs attention" panel (deadlines, issues) | Built on the Overview (attention items) | Keep; add overdue invoices due this week and failed deliveries |
+| Recent orders table with status pills and "View all" | Top lists with links, no "View all" button | Add a "View all" header button on every dashboard list |
+| Top products with a share bar | Built (share bars, DB-4) | Keep |
+| Activity heatmap by weekday and hour | None | Later, with POS (#9): only useful with counter sales |
+| Customer retention line, units returned | None | Out of scope until returns and loyalty exist |
+
+Order: the ring legend and centre total, then the trend pill, then the chart
+switch and "View all", then Sales order-activity tiles. Each restyle keeps the
+DB-2 agreement tests green; none changes a figure.
+
+*Mockup 2026-11-24, awaiting the user* (same private canvas as DB-4,
+board "Sales with the DB-9 restyle (proposed)",
+https://claude.ai/artifact/Vb2sAQt6XW1N7agK78eAdG#artboard-SalesDB9, example
+figures only). Five decisions on the board's note: figure cards with icon,
+trend pill and sparkline; the chart's Day/Week/Month/Year switch with both
+totals above the bars; ring with a centre total and count · amount · %
+legend; an "Order activity" row (today's state, each tile opening its
+list); "View all" and status pills on every list. No code before the
+answer, as for DB-4.
+*Decided 2026-11-24 (user): build all four* (figure cards, chart switch, ring
+and legend, order activity with "View all"), Sales first, then Invoices and
+Purchases.
+
+*Built 2026-11-24 (develop, unreleased):*
+- Figure cards: `BuildsDashboardStats::trendDescription()` renders the change
+  as a pill whose text carries ▲/▼ (never colour alone), every part escaped;
+  CSS in support `dashboard.css`. Sales and Purchases headline cards use it
+  and get the icon chip.
+- Chart switch: `DashboardPeriod::rollUp()` takes a unit (day, week, month,
+  year; anything else falls back to automatic), options in
+  `DashboardPeriod::groupingOptions()`, on Filament's chart select. Main
+  charts: Sales `MonthlySalesChart` (now a zero-filled daily series rolled
+  up, heading "Sales over time"), Purchases `PurchaseTrendWidget`, Invoices
+  `OverviewCashFlowChart`. *Superseded:* the cash chart's DB-4 "vs previous
+  period" line toggle; the comparison is now both totals with trend pills in
+  its description (Blade, so it follows the filters), and the chart is
+  paired bars. `RevenueOverTimeWidget` is on no page and was left alone.
+- Rings: `HasChartTheme::ringDetails()` puts the centre total and the
+  "amount · %" legend rows in the dataset; `dashboard-charts.js`
+  (`dashboardChartRingLegend`, centre text) reads them from the data. Root
+  cause fixed on the way: Filament's `updateChartData` sends only data, so a
+  centre total in the options stayed at the first period after a filter
+  change. Count per slice left out: the rings are net amounts (credit notes
+  deducted), so a count needs a second rule.
+- Order activity: `Sale\...\Widgets\OrderActivityWidget`, the period's
+  confirmed orders split into to deliver, delivered, to invoice, invoiced,
+  borrowing `SaleStatsOverview`'s permission; tiles open new `ListOrders`
+  presets (`to_deliver`, `delivered`, `invoiced`) or `to_invoice`.
+  Period-scoped like every other figure, not "today's state", so it agrees
+  with the filters.
+- "View all": `HasDashboardEmptyState::viewAllActions()` on the five record
+  lists (orders, quotations, invoices, bills, RFQs), only when the
+  resource's `canViewAny()` allows. *Completed the same day:* the customer
+  and product lists (Sales), and purchase orders, vendors and purchased
+  products (Purchases) too; vendor rows now open the vendor. Status pills
+  needed no change: every status column on these lists is already a badge
+  coloured by its enum (`HasColor`), or by an explicit match for Sales'
+  invoice status.
 
 ## Verification for every package
 

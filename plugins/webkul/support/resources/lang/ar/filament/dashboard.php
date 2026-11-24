@@ -6,6 +6,7 @@ return [
     'show-details'  => 'إظهار / إخفاء التفاصيل',
     'no-chart-data' => 'لا توجد بيانات لهذه الفترة',
     'empty-table'   => 'لا شيء في هذه الفترة بعد',
+    'view-all'      => 'عرض الكل',
     'empty-actions' => [
         'quotation' => 'إنشاء عرض سعر',
         'order'     => 'طلب جديد',

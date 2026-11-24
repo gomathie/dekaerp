@@ -121,4 +121,23 @@ abstract class DashboardChartWidget extends ChartWidget
 
         return $options;
     }
+
+    /**
+     * A money ring whose dataset carries ringDetails() (DB-9): the centre
+     * total comes from the data, and the legend sits below the ring because
+     * its "amount · %" rows squeezed the ring when beside it.
+     *
+     * @return array<string, mixed>
+     */
+    protected function ringChartOptions(): array
+    {
+        $options = $this->doughnutChartOptions();
+
+        $options['plugins']['legend']['position'] = 'bottom';
+        $options['plugins']['legend']['labels']['padding'] = 10;
+        $options['plugins']['centerText'] = ['labelColor' => $this->brandColor('gray', 500)];
+        $options['layout']['padding'] = 12;
+
+        return $options;
+    }
 }

@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Carbon;
+use Webkul\Invoice\Filament\Clusters\Customers\Resources\InvoiceResource\Pages\ListInvoices;
 use Webkul\Invoice\Filament\Widgets\CustomerRevenueChart;
 use Webkul\Invoice\Filament\Widgets\InvoiceStatsWidget;
 use Webkul\Invoice\Filament\Widgets\InvoiceStatusChart;
@@ -88,4 +90,44 @@ it('tells the same story in the invoice tiles, charts and table', function (): v
             $fixture['invoices']['B']->getKey(),
             $fixture['invoices']['C']->getKey(),
         ]);
+});
+
+/**
+ * Plan #9 R-9 (2026-11-24): the cards above the invoice list are the
+ * dashboard's own widget for this month, so on the last day of March they
+ * show exactly the March tiles: net of the credit note, without the draft,
+ * February or the other client.
+ */
+it('shows this month above the invoice list, the same figures as the dashboard', function (): void {
+    $this->travelTo(Carbon::parse('2026-03-31 12:00'));
+
+    $own = Company::factory()->create();
+    $other = CompanyHelper::asNobody(fn () => Company::factory()->create());
+
+    DashboardFixtureHelper::invoices($own, $other);
+
+    $user = CompanyHelper::actingAsCompanyUser($own, []);
+    $user->forceFill(['resource_permission' => 'global'])->saveQuietly();
+
+    $widgets = (new ListInvoices)->getHeaderWidgets();
+
+    expect($widgets)->toHaveCount(1)
+        ->and($widgets[0]->widget)->toBe(InvoiceStatsWidget::class);
+
+    $cards = new InvoiceStatsWidget;
+
+    foreach ($widgets[0]->getProperties() as $property => $value) {
+        $cards->{$property} = $value;
+    }
+
+    $tiles = (fn (): array => [
+        'total'  => $this->aggregate($this->customerInvoicesNet(), true),
+        'count'  => $this->aggregate($this->scope(), false),
+        'paid'   => $this->aggregate($this->stateScope('paid'), false),
+        'unpaid' => $this->aggregate($this->unpaidOnly($this->scope()), false),
+    ])->call($cards);
+
+    expect($tiles)->toBe(['total' => 1800.0, 'count' => 3.0, 'paid' => 1.0, 'unpaid' => 2.0])
+        ->and($cards->getHeading())->toBe(__('invoices::filament/widgets/invoice-dashboard.invoice-stats.this-month'))
+        ->and((new InvoiceStatsWidget)->getHeading())->toBe(__('invoices::filament/widgets/invoice-dashboard.invoice-stats.heading'));
 });

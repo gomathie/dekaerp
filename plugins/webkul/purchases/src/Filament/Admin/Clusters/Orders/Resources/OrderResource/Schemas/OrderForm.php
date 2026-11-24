@@ -16,8 +16,10 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Webkul\Account\Enums\JournalType;
 use Webkul\Account\Filament\Resources\IncotermResource;
 use Webkul\Account\Models\PaymentTerm;
+use Webkul\Account\Support\DocumentCurrency;
 use Webkul\Field\Filament\Forms\Components\ProgressStepper as FormProgressStepper;
 use Webkul\Inventory\Enums as InventoryEnums;
 use Webkul\Inventory\Models\OperationType;
@@ -131,7 +133,9 @@ class OrderForm
                                     ->required()
                                     ->searchable()
                                     ->preload()
-                                    ->default(current_company()?->currency_id)
+                                    // The Vendor Bills journal's currency, else the company's
+                                    // (DocumentCurrency, TRACE365 2026-11-23: purchases in USD).
+                                    ->default(fn (): ?int => DocumentCurrency::for(null, JournalType::PURCHASE))
                                     ->live()
                                     ->afterStateUpdated(fn (Set $set, Get $get) => OrderResource::updateProductPricesForVendor($get('partner_id'), $set, $get))
                                     ->disabled(fn ($record): bool => $record && ! in_array($record?->state, [OrderState::DRAFT, OrderState::SENT])),
@@ -201,6 +205,7 @@ class OrderForm
                                     $totals = OrderResource::calculateOrderTotals($get, $livewire);
 
                                     return [
+                                        'record'     => $livewire->record ?? null,
                                         'currency'   => Currency::find($get('currency_id')),
                                         'subtotal'   => $totals['subtotal'],
                                         'totalTax'   => $totals['totalTax'],

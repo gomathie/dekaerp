@@ -45,6 +45,12 @@ return [
             'company'         => 'Company',
             'currency'        => 'Currency',
             'created-by'      => 'Created By',
+            'invoices'        => 'Invoice',
+            'unused'          => 'Unused amount',
+        ],
+
+        'summaries' => [
+            'total' => 'Total',
         ],
 
         'groups' => [
@@ -69,6 +75,10 @@ return [
             'payment-method-line'              => 'Payment Method Line',
             'created-at'                       => 'Created At',
             'updated-at'                       => 'Updated At',
+            'year'                             => 'Year',
+            'month'                            => 'Month',
+            'any-year'                         => 'Any year',
+            'whole-year'                       => 'Whole year',
         ],
 
         'actions' => [

@@ -19,7 +19,10 @@ class CompanyInfolist
         return $schema
             ->columns(1)
             ->components([
-                Grid::make(['default' => 3])
+                // One column on phones, three from lg (TRACE365, 2026-11-23):
+                // 'default' => 3 kept the cards side by side at 390 px, so
+                // headings spilled out and "TRACE365" broke mid-word.
+                Grid::make(['default' => 1, 'lg' => 3])
                     ->schema([
                         Group::make()
                             ->schema([
@@ -92,14 +95,18 @@ class CompanyInfolist
                                     ])
                                     ->columns(2),
                             ])
-                            ->columnSpan(2),
+                            ->columnSpan(['default' => 'full', 'lg' => 2]),
 
                         Group::make([
                             Section::make(__('support::filament/resources/company.infolist.sections.branding.title'))
                                 ->schema([
+                                    // Scaled, never cropped or wider than the card:
+                                    // a circular crop cut wide logos and a large
+                                    // one overflowed the card on phones.
                                     ImageEntry::make('partner.avatar')
                                         ->label(__('support::filament/resources/company.infolist.sections.branding.entries.company-logo'))
-                                        ->circular()
+                                        ->imageHeight(64)
+                                        ->extraImgAttributes(['style' => 'max-width: 100%; width: auto; object-fit: contain;'])
                                         ->placeholder('—'),
                                     ColorEntry::make('color')
                                         ->placeholder('—')
@@ -124,7 +131,7 @@ class CompanyInfolist
                                         ->copyMessage('Email address copied')
                                         ->copyMessageDuration(1500),
                                 ]),
-                        ])->columnSpan(1),
+                        ])->columnSpan(['default' => 'full', 'lg' => 1]),
                     ]),
             ]);
     }

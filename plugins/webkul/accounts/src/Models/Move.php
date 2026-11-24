@@ -44,6 +44,14 @@ class Move extends Model implements Sortable
 
     public const ACTIVITY_PLAN_PLUGIN = 'accounts';
 
+    /**
+     * currency_rate_source for a rate the person confirmed (plan #10 MC-2).
+     * Deliberately not fillable, with currency_rate_confirmed_by: only the
+     * invoice page's currency question sets them (forceFill), so an API
+     * payload or a form cannot pin an arbitrary rate.
+     */
+    public const RATE_MANUAL = 'manual';
+
     protected $table = 'accounts_account_moves';
 
     public function getModelTitle(): string
@@ -609,6 +617,21 @@ class Move extends Model implements Sortable
     {
         if (! $this->isInvoice(true)) {
             return 1;
+        }
+
+        // A rate the person creating the invoice confirmed (plan #10 MC-2,
+        // 2026-11-24) is kept. Re-reading the rate table here on every save
+        // overwrote it. It is dropped when the currency changes without a
+        // new rate, so one currency's rate never prices another.
+        if ($this->currency_rate_source === self::RATE_MANUAL) {
+            $currencyChangedAlone = $this->exists && $this->isDirty('currency_id') && ! $this->isDirty('invoice_currency_rate');
+
+            if (! $currencyChangedAlone && (float) $this->invoice_currency_rate > 0) {
+                return;
+            }
+
+            $this->currency_rate_source = null;
+            $this->currency_rate_confirmed_by = null;
         }
 
         if ($this->currency_id) {

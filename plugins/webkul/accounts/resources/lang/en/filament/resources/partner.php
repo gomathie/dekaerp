@@ -15,9 +15,11 @@ return [
                         'title' => 'Sales',
 
                         'fields' => [
-                            'sales-person'   => 'Sales Person',
-                            'payment-terms'  => 'Payment Terms',
-                            'payment-method' => 'Payment Method',
+                            'sales-person'            => 'Sales Person',
+                            'payment-terms'           => 'Payment Terms',
+                            'payment-method'          => 'Payment Method',
+                            'default-currency'        => 'Default Currency',
+                            'default-currency-helper' => 'Invoices, bills and purchase orders for this contact open in this currency. Leave empty to use your usual currency.',
                         ],
                     ],
 

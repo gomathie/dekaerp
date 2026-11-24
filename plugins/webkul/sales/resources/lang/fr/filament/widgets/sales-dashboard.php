@@ -7,6 +7,7 @@ return [
     'status'              => 'Statut',
     'delivery-status'     => 'Statut de livraison',
     'billing'             => 'Facturation',
+    'sales-value'         => 'Commandes confirmées et factures établies sans commande',
     'stats'               => [
         'heading'            => 'Indicateurs Clés',
         'total-quotations'   => 'Total des Devis',
@@ -17,8 +18,18 @@ return [
         'decrease'           => 'diminution',
     ],
 
+    'order-activity'      => [
+        'heading'     => 'Suivi des commandes',
+        'description' => 'Commandes confirmées sur la période, selon leur état actuel',
+        'to-deliver'  => 'À livrer',
+        'delivered'   => 'Livrées',
+        'to-invoice'  => 'À facturer',
+        'invoiced'    => 'Facturées',
+        'share'       => ':percent% de :total commandes',
+    ],
+
     'monthly-sales'       => [
-        'heading'  => 'Ventes Mensuelles',
+        'heading'  => 'Ventes dans le temps',
         'revenue'  => 'Revenu',
         'previous' => 'Période comparée',
     ],

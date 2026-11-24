@@ -129,6 +129,7 @@ return [
             'tax-excluded'     => 'بدون ضريبة',
             'tax'              => 'الضريبة',
             'total'            => 'الإجمالي',
+            'amount-paid'      => 'المدفوع',
             'amount-due'       => 'المبلغ المستحق',
             'invoice-currency' => 'عملة الفاتورة',
         ],

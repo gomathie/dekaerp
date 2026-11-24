@@ -58,6 +58,7 @@ return [
         'description' => 'Devises que cette société peut utiliser sur les factures, factures fournisseurs, devis et bons de commande, en plus de sa devise par défaut. Laissez vide pour autoriser toutes les devises actives.',
         'fields'      => [
             'permitted' => 'Devises supplémentaires',
+            'available' => 'Disponibles sur les documents actuellement : :list',
         ],
     ],
 

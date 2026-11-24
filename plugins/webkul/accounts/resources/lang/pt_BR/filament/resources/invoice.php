@@ -129,6 +129,7 @@ return [
             'tax-excluded'     => 'Imposto excluído',
             'tax'              => 'Imposto',
             'total'            => 'Total',
+            'amount-paid'      => 'Pago',
             'amount-due'       => 'Valor devido',
             'invoice-currency' => 'Moeda da fatura',
         ],

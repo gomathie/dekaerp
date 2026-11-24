@@ -10,11 +10,12 @@ return [
     'decrease'          => ':percent% decrease',
     'no-change'         => 'No change',
     'invoice-stats'     => [
-        'heading' => 'Invoices',
-        'total'   => 'Total Invoiced',
-        'count'   => 'Invoice Count',
-        'paid'    => 'Paid Invoices',
-        'unpaid'  => 'Unpaid Invoices',
+        'heading'    => 'Invoices',
+        'total'      => 'Total Invoiced',
+        'count'      => 'Invoice Count',
+        'paid'       => 'Paid Invoices',
+        'unpaid'     => 'Unpaid Invoices',
+        'this-month' => 'This month',
     ],
 
     'bill-stats'        => [

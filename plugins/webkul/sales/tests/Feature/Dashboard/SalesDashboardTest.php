@@ -7,9 +7,12 @@ use Illuminate\Support\Facades\DB;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Sale\Enums\OrderState;
+use Webkul\Sale\Filament\Clusters\Orders\Resources\CustomerResource;
+use Webkul\Sale\Filament\Clusters\Products\Resources\ProductResource as SaleProductResource;
 use Webkul\Sale\Filament\Clusters\Reporting\Pages\SalesAnalysis;
 use Webkul\Sale\Filament\Pages\SalesDashboard;
 use Webkul\Sale\Filament\Widgets\MonthlySalesChart;
+use Webkul\Sale\Filament\Widgets\OrderActivityWidget;
 use Webkul\Sale\Filament\Widgets\QuotationOutcomeChart;
 use Webkul\Sale\Filament\Widgets\RevenueByCategoryChart;
 use Webkul\Sale\Filament\Widgets\SalesPersonPerformanceChart;
@@ -23,6 +26,7 @@ use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/CompanyHelper.php';
+require_once __DIR__.'/../../../../support/tests/Helpers/DashboardWidgetGuardHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/FilamentHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
 require_once __DIR__.'/../../Helpers/SaleHelper.php';
@@ -133,6 +137,36 @@ it('offers the next step on an empty list only to users who may take it', functi
     expect($allowed->getEmptyStateHeading())->toBe(__('support::filament/dashboard.empty-table'))
         ->and($allowed->getEmptyStateActions())->toHaveCount(1)
         ->and($refused->getEmptyStateActions())->toHaveCount(0);
+});
+
+/**
+ * DB-9 (2026-11-24): the customer and product lists open their whole list,
+ * and only for someone who may open it. The panel's resource answers, not a
+ * permission name here, so the test follows whichever policy the resource
+ * resolves.
+ */
+it('offers "View all" on the customer and product lists only to who may open them', function (): void {
+    FilamentHelper::bootAdminPanel();
+    $company = Company::factory()->create();
+
+    $headerActions = function (string $widgetClass): array {
+        $widget = new $widgetClass;
+        $widget->pageFilters = [];
+
+        return array_map(fn ($action): ?string => $action->getName(), array_values($widget->table(Table::make($widget))->getHeaderActions()));
+    };
+
+    CompanyHelper::actingAsCompanyUser($company, ['view_any_sale_customer', 'view_any_partner_partner', 'view_any_sale_product', 'view_any_product_product']);
+
+    expect(CustomerResource::canViewAny())->toBeTrue()
+        ->and(SaleProductResource::canViewAny())->toBeTrue()
+        ->and($headerActions(TopCustomersTable::class))->toContain('dashboardViewAll')
+        ->and($headerActions(TopProductsTable::class))->toContain('dashboardViewAll');
+
+    CompanyHelper::actingAsCompanyUser($company, []);
+
+    expect($headerActions(TopCustomersTable::class))->not->toContain('dashboardViewAll')
+        ->and($headerActions(TopProductsTable::class))->not->toContain('dashboardViewAll');
 });
 
 /**
@@ -400,4 +434,74 @@ it('draws the monthly chart from the same invoiced revenue as the revenue figure
         ->and(array_sum($data['datasets'][0]['data']))->toBe(450.0)
         ->and($data['datasets'][0]['data'][2])->toBe(300.0)
         ->and($data['datasets'][1]['data'][2])->toBe(80.0);
+
+    // DB-9 (2026-11-24): the switch regroups the same total.
+    $chart->filter = 'year';
+    $yearly = (fn (): array => $this->getData())->call($chart);
+
+    expect($yearly['labels'])->toBe([now()->format('Y')])
+        ->and($yearly['datasets'][0]['data'])->toBe([450.0])
+        ->and($yearly['datasets'][1]['data'])->toBe([80.0]);
+});
+
+/**
+ * Dashboard plan DB-3 (2026-11-23): every widget this dashboard lists is
+ * absent without its permission or once the module is off, and present with
+ * both. A widget added without its guard fails here.
+ */
+it('shows every sales dashboard widget only with its permission and the module', function (): void {
+    FilamentHelper::bootAdminPanel();
+
+    $company = Company::factory()->create();
+
+    // Order activity borrows the Key Metrics permission (DB-9).
+    $borrowed = array_keys(FilamentShield::getWidgets()[SaleStatsOverview::class]['permissions'] ?? []);
+
+    expect(DashboardWidgetGuardHelper::visibility(SalesDashboard::sectionWidgets(), 'sales', $company, $borrowed))
+        ->toBe(DashboardWidgetGuardHelper::guarded(SalesDashboard::sectionWidgets()));
+});
+
+/**
+ * DB-9 (2026-11-24): the order activity tiles split the period's confirmed
+ * orders by delivery and invoicing. Quotations and another company's orders
+ * are not counted, and each tile opens the order list on its own view.
+ */
+it('splits the period orders into to deliver, delivered, to invoice and invoiced', function (): void {
+    $company = Company::factory()->create();
+    $other = Company::factory()->create();
+    $user = CompanyHelper::actingAsCompanyUser($company, ['view_any_sale_order']);
+    $user->forceFill(['resource_permission' => 'global'])->saveQuietly();
+
+    $order = function (Company $owner, string $state, string $delivery, string $invoice) use ($user, $company): void {
+        // Another client's order is set up with nobody acting: the
+        // cross-company write guard (UF-025) refuses this user creating it.
+        $created = $owner->is($company)
+            ? SaleHelper::order(['company_id' => $owner->getKey(), 'user_id' => $user->getKey()])
+            : CompanyHelper::asNobody(fn () => SaleHelper::order(['company_id' => $owner->getKey()]));
+
+        Order::withoutGlobalScopes()->whereKey($created->getKey())->update([
+            'state'           => $state,
+            'date_order'      => now()->toDateString(),
+            'delivery_status' => $delivery,
+            'invoice_status'  => $invoice,
+        ]);
+    };
+
+    $order($company, OrderState::SALE->value, 'pending', 'to_invoice');
+    $order($company, OrderState::SALE->value, 'partial', 'to_invoice');
+    $order($company, OrderState::SALE->value, 'full', 'invoiced');
+    $order($company, OrderState::SALE->value, 'full', 'invoiced');
+    $order($company, OrderState::DRAFT->value, 'pending', 'to_invoice');
+    $order($other, OrderState::SALE->value, 'pending', 'to_invoice');
+
+    $widget = new OrderActivityWidget;
+    $widget->pageFilters = [];
+    $stats = (fn (): array => $this->getStats())->call($widget);
+
+    expect(array_map(fn ($stat): string => (string) $stat->getValue(), $stats))->toBe(['2', '2', '2', '2'])
+        ->and((string) $stats[0]->getDescription())->toBe(__('sales::filament/widgets/sales-dashboard.order-activity.share', ['percent' => 50, 'total' => '4']));
+
+    foreach (['to_deliver', 'delivered', 'to_invoice', 'invoiced'] as $index => $view) {
+        expect((string) $stats[$index]->getUrl())->toContain('activeTableView='.$view);
+    }
 });

@@ -329,9 +329,23 @@
         @endphp
 
         @if ($modulePages->count() > 1)
+            {{-- The active tab is centred on load, and each edge fades only
+                 while more tabs sit behind it (user, 2026-11-23). --}}
             <nav class="module-mobile-tabs" aria-label="{{ $activeModuleGroup->getLabel() }}"
-                x-data="{}"
-                x-init="$el.querySelector('[aria-current=page]')?.scrollIntoView({ block: 'nearest', inline: 'center' })">
+                x-data="{
+                    moreStart: false,
+                    moreEnd: false,
+                    measure() {
+                        const max = $el.scrollWidth - $el.clientWidth;
+                        const at = Math.abs($el.scrollLeft);
+                        this.moreStart = at > 4;
+                        this.moreEnd = at < max - 4;
+                    },
+                }"
+                x-init="$el.querySelector('[aria-current=page]')?.scrollIntoView({ block: 'nearest', inline: 'center' }); $nextTick(() => measure())"
+                x-on:scroll.passive="measure()"
+                x-on:resize.window.debounce.150ms="measure()"
+                x-bind:class="{ 'has-more-start': moreStart, 'has-more-end': moreEnd }">
                 @foreach ($modulePages as $entry)
                     <a href="{{ $entry->getUrl() }}"
                         @class(['module-mobile-tab', 'is-active' => $entry->isActive()])
@@ -804,11 +818,54 @@
                         scrollbar-width: none;
                         background-color: var(--color-white, #fff);
                         border-block-end: 1px solid var(--gray-200, #e5e7eb);
-                        mask-image: linear-gradient(to right, #000 90%, transparent);
                     }
 
-                    [dir='rtl'] .module-mobile-tabs {
-                        mask-image: linear-gradient(to left, #000 90%, transparent);
+                    /* Fade only the edge that has more tabs behind it (user,
+                       2026-11-23, item 3). A fixed right-hand fade left a tab cut
+                       at the left with no hint ("rview" for Overview) once the
+                       active tab was centred. Classes come from the strip's
+                       Alpine state. */
+                    .module-mobile-tabs.has-more-end {
+                        mask-image: linear-gradient(to right, #000 calc(100% - 2rem), transparent);
+                    }
+
+                    .module-mobile-tabs.has-more-start {
+                        mask-image: linear-gradient(to right, transparent, #000 2rem);
+                    }
+
+                    .module-mobile-tabs.has-more-start.has-more-end {
+                        mask-image: linear-gradient(to right, transparent, #000 2rem, #000 calc(100% - 2rem), transparent);
+                    }
+
+                    [dir='rtl'] .module-mobile-tabs.has-more-end {
+                        mask-image: linear-gradient(to left, #000 calc(100% - 2rem), transparent);
+                    }
+
+                    [dir='rtl'] .module-mobile-tabs.has-more-start {
+                        mask-image: linear-gradient(to left, transparent, #000 2rem);
+                    }
+
+                    [dir='rtl'] .module-mobile-tabs.has-more-start.has-more-end {
+                        mask-image: linear-gradient(to left, transparent, #000 2rem, #000 calc(100% - 2rem), transparent);
+                    }
+
+                    /* Item 1: on scroll down the first row slides away and the
+                       tabs stay pinned; scrolling up brings it back (script at
+                       the end of this file). Never while the menu drawer is
+                       open: the drawer is fixed inside this container, and a
+                       transform would move it with the bar. */
+                    .fi-topbar-ctn {
+                        transition: transform 0.2s ease;
+                    }
+
+                    .fi-topbar-ctn.is-row-hidden:not(:has(.module-sidebar.is-mobile-open)) {
+                        transform: translateY(calc(-1 * var(--topbar-row-height, 64px)));
+                    }
+
+                    @media (prefers-reduced-motion: reduce) {
+                        .fi-topbar-ctn {
+                            transition: none;
+                        }
                     }
 
                     .module-mobile-tabs::-webkit-scrollbar {
@@ -824,7 +881,8 @@
                         flex-shrink: 0;
                         display: inline-flex;
                         align-items: center;
-                        min-block-size: 40px;
+                        /* 44px: the minimum comfortable tap target (was 40px). */
+                        min-block-size: 44px;
                         padding-inline: 0.75rem;
                         border-radius: 999px;
                         color: var(--gray-600, #4b5563);
@@ -858,6 +916,33 @@
                         min-block-size: 44px;
                     }
 
+                    /* Tap targets found by the phone audit (user, 2026-11-23,
+                       109 pages at 390px). A picker's clear cross was 16x16px,
+                       and the Overview "Open" links, settings "Configure ..."
+                       links and journal names were 19-22px tall. The cross gets
+                       a larger invisible hit area, mostly vertical so it does
+                       not take taps meant for the dropdown arrow beside it; the
+                       links get height, not a new look. */
+                    .fi-select-input-value-remove-btn,
+                    .fi-select-input-badge-remove {
+                        position: relative;
+                    }
+
+                    .fi-select-input-value-remove-btn::after,
+                    .fi-select-input-badge-remove::after {
+                        content: '';
+                        position: absolute;
+                        inset: -8px -4px;
+                    }
+
+                    .ovb-panel__link,
+                    .fi-sc-text .fi-link,
+                    .fi-section-header-heading a {
+                        display: inline-flex;
+                        align-items: center;
+                        min-block-size: 32px;
+                    }
+
                     .module-sidebar {
                         inline-size: min(85vw, 300px);
                     }
@@ -877,9 +962,17 @@
                         gap: 0.25rem;
                     }
 
+                    /* Mobile top bar, user 2026-11-23 (items 2 and 3): the Menu
+                       button is an icon (its aria-label still names it), and the
+                       room it frees goes to the company name, which read
+                       "My Compa..." at 390px. */
+                    .module-mobile-menu-btn > span {
+                        display: none;
+                    }
+
                     .company-switcher-name {
                         display: inline-block;
-                        max-inline-size: 5.5rem;
+                        max-inline-size: clamp(5.5rem, calc(100vw - 15rem), 10rem);
                         overflow: hidden;
                         text-overflow: ellipsis;
                         white-space: nowrap;
@@ -1119,6 +1212,56 @@
                         .fi-resource-list-records-page .fi-ta-table .fi-ta-text-item {
                             white-space: normal;
                         }
+
+                        /* Each value names itself (TRACE365, 2026-11-23): a product
+                           card showed two unlabelled prices, a bare 0 (variants) and
+                           two "Units" quantities (on hand, forecasted). The label is
+                           the column's own, from data-label (HasFilamentDefaults).
+                           Not on the lead value, images, or clickable icons such as
+                           the favourite star; empty "—" values are left out. */
+                        .fi-resource-list-records-page .fi-ta-table > tbody > tr.fi-ta-row > td[data-label]::before {
+                            content: attr(data-label);
+                            display: block;
+                            font-size: 0.6875rem;
+                            line-height: 1rem;
+                            font-weight: 400;
+                            color: var(--gray-500);
+                        }
+
+                        .fi-resource-list-records-page .fi-ta-table > tbody > tr.fi-ta-row > td[data-label=""]::before,
+                        .fi-resource-list-records-page .fi-ta-table > tbody > tr.fi-ta-row > td:has(.fi-ta-image)::before,
+                        .fi-resource-list-records-page .fi-ta-table > tbody > tr.fi-ta-row > td:has(button.fi-ta-col)::before,
+                        .fi-resource-list-records-page .fi-ta-table > tbody > tr.fi-ta-row > td.fi-ta-cell:not(.fi-ta-selection-cell):first-child::before,
+                        .fi-resource-list-records-page .fi-ta-table > tbody > tr.fi-ta-row > td.fi-ta-selection-cell + td::before,
+                        .fi-resource-list-records-page .fi-ta-table > tbody > tr.fi-ta-row > td.fi-ta-cell-name::before {
+                            content: none;
+                        }
+
+                        .fi-resource-list-records-page .fi-ta-table > tbody > tr.fi-ta-row > td:has(.fi-ta-placeholder),
+                        .fi-resource-list-records-page .fi-ta-table > tbody > tr.fi-ta-row > td:has(.fi-ta-text):not(:has(.fi-ta-text-item)) {
+                            display: none;
+                        }
+
+                        /* A row with a name leads with it, after the checkbox:
+                           the product list's first cell is the favourite star,
+                           which became the bold line on its own. */
+                        .fi-resource-list-records-page .fi-ta-table > tbody > tr.fi-ta-row:has(> td.fi-ta-cell-name) > td.fi-ta-selection-cell {
+                            order: -2;
+                        }
+
+                        .fi-resource-list-records-page .fi-ta-table > tbody > tr.fi-ta-row:has(> td.fi-ta-cell-name) > td.fi-ta-cell-name {
+                            order: -1;
+                            flex-basis: calc(100% - 3rem);
+                            flex-grow: 1;
+                            font-weight: 600;
+                        }
+
+                        .fi-resource-list-records-page .fi-ta-table > tbody > tr.fi-ta-row:has(> td.fi-ta-cell-name) > td.fi-ta-selection-cell + td:not(.fi-ta-cell-name),
+                        .fi-resource-list-records-page .fi-ta-table > tbody > tr.fi-ta-row:has(> td.fi-ta-cell-name) > td.fi-ta-cell:not(.fi-ta-selection-cell):not(.fi-ta-cell-name):first-child {
+                            flex-basis: auto;
+                            flex-grow: 0;
+                            font-weight: inherit;
+                        }
                     }
                 }
                 @endverbatim
@@ -1177,6 +1320,75 @@
 
                     document.addEventListener('alpine:init', registerModuleSidebarStore);
                     registerModuleSidebarStore();
+                })();
+
+                /* Mobile top bar, item 1 (user, 2026-11-23): scrolling down
+                   slides the first row away so the list gets its room, the
+                   page tabs stay pinned, and scrolling up brings the row back.
+                   Phones only; never near the top of the page, while the menu
+                   drawer or a dropdown is open, or while typing in search. */
+                (function () {
+                    if (window.dekaTopbarAutoHide) {
+                        return;
+                    }
+
+                    window.dekaTopbarAutoHide = true;
+
+                    var phone = window.matchMedia('(max-width: 767px)');
+                    var lastY = window.scrollY;
+                    var pending = false;
+
+                    function busy(container) {
+                        if (document.querySelector('.module-sidebar.is-mobile-open')) {
+                            return true;
+                        }
+
+                        if (container.contains(document.activeElement) && document.activeElement.matches('input, textarea, select')) {
+                            return true;
+                        }
+
+                        return Array.prototype.some.call(
+                            document.querySelectorAll('.fi-dropdown-panel'),
+                            function (panel) { return panel.offsetParent !== null; }
+                        );
+                    }
+
+                    function update() {
+                        pending = false;
+
+                        var container = document.querySelector('.fi-topbar-ctn');
+                        var row = container && container.querySelector('.fi-topbar');
+
+                        if (! container || ! row) {
+                            return;
+                        }
+
+                        var y = window.scrollY;
+                        var delta = y - lastY;
+
+                        if (! phone.matches || y < row.offsetHeight * 2 || busy(container)) {
+                            container.classList.remove('is-row-hidden');
+                            lastY = y;
+
+                            return;
+                        }
+
+                        // Ignore small jitters; act on a clear direction.
+                        if (Math.abs(delta) < 8) {
+                            return;
+                        }
+
+                        container.style.setProperty('--topbar-row-height', row.offsetHeight + 'px');
+                        container.classList.toggle('is-row-hidden', delta > 0);
+                        lastY = y;
+                    }
+
+                    window.addEventListener('scroll', function () {
+                        if (! pending) {
+                            pending = true;
+                            window.requestAnimationFrame(update);
+                        }
+                    }, { passive: true });
                 })();
             </script>
         @endassets

@@ -5,10 +5,12 @@ namespace Webkul\Account;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Section;
 use Illuminate\Support\Facades\Auth;
+use Webkul\Account\Models\CompanySetting;
 use Webkul\Account\Services\BaseCurrencyChange;
 use Webkul\Support\Filament\Resources\CompanyResource\Support\CompanySchemaRegistry;
 use Webkul\Support\Models\Company;
@@ -39,6 +41,42 @@ class CompanyCurrencyContributions
         static::$registered = true;
 
         CompanySchemaRegistry::form('main.after', fn (): array => [static::baseCurrencySection()]);
+        CompanySchemaRegistry::form('main.after', fn (): array => [static::saleCurrencySection()]);
+    }
+
+    /**
+     * "Ask which currency each sale is in" (plan #10 MC-2, TRACE365, user
+     * 2026-11-24). A company's own working preference, so whoever may edit
+     * the company may set it. Not a company column: dehydrated(false) keeps
+     * it out of the company's attributes, and the row is written to
+     * accounts_company_settings (never the default-company fallback store).
+     */
+    protected static function saleCurrencySection(): Section
+    {
+        return Section::make(__('accounts::filament/contributions/company.sale-currency.title'))
+            ->description(__('accounts::filament/contributions/company.sale-currency.description'))
+            ->icon('heroicon-o-question-mark-circle')
+            ->visible(fn (string $operation): bool => $operation === 'edit')
+            ->schema([
+                Toggle::make('ask_sale_currency')
+                    ->label(__('accounts::filament/contributions/company.sale-currency.field'))
+                    ->helperText(__('accounts::filament/contributions/company.sale-currency.helper'))
+                    ->dehydrated(false)
+                    ->afterStateHydrated(fn (Toggle $component, ?Company $record) => $component->state(
+                        $record ? CompanySetting::forCompany($record->getKey())->ask_sale_currency : false,
+                    ))
+                    ->saveRelationshipsUsing(function (?Company $record, $state): void {
+                        if (! $record instanceof Company) {
+                            return;
+                        }
+
+                        CompanySetting::withoutGlobalScopes()->updateOrCreate(
+                            ['company_id' => $record->getKey()],
+                            ['ask_sale_currency' => (bool) $state],
+                        );
+                    }),
+            ])
+            ->collapsible();
     }
 
     protected static function baseCurrencySection(): Section

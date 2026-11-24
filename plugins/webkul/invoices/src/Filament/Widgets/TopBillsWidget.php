@@ -32,6 +32,8 @@ class TopBillsWidget extends BaseWidget
         return $this->withDashboardEmptyState($table, 'bill', BillResource::canCreate() ? BillResource::getUrl('create') : null)
             ->defaultKeySort(false)
             ->recordClasses('dashboard-table-row')
+            // "View all" opens the whole list (DB-9).
+            ->headerActions($this->viewAllActions(BillResource::canViewAny() ? BillResource::getUrl('index') : null))
             ->recordUrl(fn ($record): ?string => $record && BillResource::canAccess()
                 ? BillResource::getUrl('view', ['record' => $record])
                 : null);

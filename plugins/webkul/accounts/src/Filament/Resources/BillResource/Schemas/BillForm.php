@@ -33,6 +33,7 @@ use Webkul\Account\Models\FiscalPosition;
 use Webkul\Account\Models\Journal;
 use Webkul\Account\Models\Partner;
 use Webkul\Account\Settings\CustomerInvoiceSettings;
+use Webkul\Account\Support\DocumentCurrency;
 use Webkul\Field\Filament\Forms\Components\ProgressStepper as FormProgressStepper;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Currency;
@@ -88,7 +89,7 @@ class BillForm
                                             ->searchable()
                                             ->preload()
                                             ->live()
-                                            ->afterStateUpdated(function (Set $set, $state) {
+                                            ->afterStateUpdated(function (Set $set, Get $get, $state) {
                                                 $partner = $state ? Partner::find($state) : null;
 
                                                 $set('partner_bank_id', $partner?->bankAccounts->first()?->id);
@@ -96,6 +97,12 @@ class BillForm
                                                 $set('preferred_payment_method_line_id', $partner?->property_outbound_payment_method_line_id);
 
                                                 $set('invoice_payment_term_id', $partner?->property_supplier_payment_term_id);
+
+                                                // The supplier's own currency wins; without one, the
+                                                // currency already chosen stays (TRACE365, 2026-11-23).
+                                                if ($currencyId = DocumentCurrency::ofContact($partner?->getKey(), (int) ($get('company_id') ?: current_company_id()))) {
+                                                    $set('currency_id', $currencyId);
+                                                }
                                             })
                                             ->disabled(fn ($record) => in_array($record?->state, [MoveState::POSTED, MoveState::CANCEL])),
                                         TextInput::make('reference')
@@ -212,7 +219,9 @@ class BillForm
                                                     ->preload()
                                                     ->live()
                                                     ->reactive()
-                                                    ->default(current_company()?->currency_id)
+                                                    // The Vendor Bills journal's currency, else the company's
+                                                    // (DocumentCurrency, TRACE365 2026-11-23: purchases in USD).
+                                                    ->default(fn (): ?int => DocumentCurrency::for(null, JournalType::PURCHASE))
                                                     ->disabled(fn ($record) => in_array($record?->state, [MoveState::POSTED, MoveState::CANCEL])),
                                             ])
                                             ->columns(2),

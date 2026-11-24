@@ -18,6 +18,7 @@ use Webkul\Account\Filament\Resources\RefundResource;
 use Webkul\Account\Models\MoveLine;
 use Webkul\Account\Models\PartialReconcile;
 use Webkul\Support\Models\Currency;
+use Webkul\Support\Support\CompanyCurrencyEquivalent;
 
 class InvoiceSummary extends Component implements HasActions, HasSchemas
 {
@@ -118,6 +119,18 @@ class InvoiceSummary extends Component implements HasActions, HasSchemas
 
         $this->reconciledPayments = $this->record?->getReconciledPayments();
 
-        return view('accounts::livewire/invoice-summary');
+        // The company-currency value under a foreign-currency total (TRACE365,
+        // 2026-11-23). A saved document in the same currency keeps its own rate.
+        $sameCurrency = $this->record && (int) $this->record->currency_id === (int) ($this->currency?->id ?? 0);
+
+        return view('accounts::livewire/invoice-summary', [
+            'companyEquivalent' => CompanyCurrencyEquivalent::line(
+                (float) $this->grandTotal,
+                $this->currency,
+                $this->record?->company ?? current_company(),
+                $this->record?->invoice_date,
+                $sameCurrency ? (float) $this->record->invoice_currency_rate : null,
+            ),
+        ]);
     }
 }

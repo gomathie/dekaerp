@@ -29,12 +29,16 @@ use Webkul\Account\Enums\PaymentState;
 use Webkul\Account\Enums\PaymentType;
 use Webkul\Account\Filament\Resources\BankAccountResource;
 use Webkul\Account\Filament\Resources\InvoiceResource;
+use Webkul\Account\Filament\Resources\InvoiceResource\Pages\CreateInvoice;
 use Webkul\Account\Filament\Resources\InvoiceResource\Support\InvoiceSchemaRegistry;
 use Webkul\Account\Filament\Resources\JournalResource;
 use Webkul\Account\Models\FiscalPosition;
 use Webkul\Account\Models\Journal;
+use Webkul\Account\Models\Move;
 use Webkul\Account\Models\Partner;
+use Webkul\Account\Services\SaleCurrencyQuestion;
 use Webkul\Account\Settings\CustomerInvoiceSettings;
+use Webkul\Account\Support\DocumentCurrency;
 use Webkul\Field\Filament\Forms\Components\ProgressStepper as FormProgressStepper;
 use Webkul\Partner\Models\Partner as BasePartner;
 use Webkul\Support\Filament\CompanyMembers;
@@ -129,7 +133,7 @@ class InvoiceForm
                                             ->createOptionAction(fn (Action $action) => $action
                                                 ->visible(fn (): bool => (bool) Auth::user()?->can('create', BasePartner::class)))
                                             ->live()
-                                            ->afterStateUpdated(function (Set $set, $state) {
+                                            ->afterStateUpdated(function (Set $set, Get $get, $state, $livewire) {
                                                 $partner = $state ? Partner::find($state) : null;
 
                                                 // The customer's own salesperson wins; a customer without
@@ -141,6 +145,18 @@ class InvoiceForm
                                                 $set('preferred_payment_method_line_id', $partner?->property_inbound_payment_method_line_id);
 
                                                 $set('invoice_payment_term_id', $partner?->property_payment_term_id);
+
+                                                // The customer's own currency wins, with lines converted
+                                                // as for a manual switch; without one, the currency
+                                                // already chosen stays (TRACE365, 2026-11-23).
+                                                $currencyId = DocumentCurrency::ofContact($partner?->getKey(), (int) ($get('company_id') ?: current_company_id()));
+                                                $current = $get('currency_id');
+
+                                                if ($currencyId && (int) $current !== $currencyId) {
+                                                    $set('currency_id', $currencyId);
+
+                                                    InvoiceResource::afterCurrencyUpdated($set, $get, $currencyId, $current, $livewire);
+                                                }
                                             })
                                             ->disabled(fn ($record) => in_array($record?->state, [MoveState::POSTED, MoveState::CANCEL])),
                                         /*
@@ -279,11 +295,22 @@ class InvoiceForm
                                                     ->preload()
                                                     ->live()
                                                     ->reactive()
-                                                    ->default(current_company()?->currency_id)
+                                                    // The Customer Invoices journal's currency, else the
+                                                    // company's (DocumentCurrency, TRACE365 2026-11-23).
+                                                    ->default(fn (): ?int => DocumentCurrency::for(null, JournalType::SALE))
                                                     // Switching currency used to change only the label: lines kept
                                                     // the old currency's prices and the summary its old symbol
                                                     // (client report, 2026-11-19).
                                                     ->afterStateUpdated(fn (Set $set, Get $get, $state, $old, $livewire) => InvoiceResource::afterCurrencyUpdated($set, $get, $state, $old, $livewire))
+                                                    // The rate the person confirmed (plan #10 MC-2): without
+                                                    // this line the dialog's answer was invisible once closed,
+                                                    // and a later currency change dropped it silently.
+                                                    ->helperText(fn (Get $get, $livewire, $record): ?string => app(SaleCurrencyQuestion::class)->keptRateText(
+                                                        (int) $get('currency_id') ?: null,
+                                                        Company::withoutGlobalScopes()->with('currency')->find($get('company_id') ?: $record?->company_id ?: current_company_id()),
+                                                        $record instanceof Move ? $record : null,
+                                                        $livewire instanceof CreateInvoice ? [$livewire->saleCurrencyId, $livewire->saleCurrencyRate] : null,
+                                                    ))
                                                     ->disabled(fn ($record) => in_array($record?->state, [MoveState::POSTED, MoveState::CANCEL])),
                                             ])
                                             ->columns(2),

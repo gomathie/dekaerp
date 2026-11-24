@@ -7,6 +7,7 @@ return [
     'status'              => 'Status',
     'delivery-status'     => 'Delivery Status',
     'billing'             => 'Billing',
+    'sales-value'         => 'Confirmed orders and invoices made without an order',
     'stats'               => [
         'heading'            => 'Key Metrics',
         'total-quotations'   => 'Total Quotations',
@@ -17,8 +18,18 @@ return [
         'decrease'           => 'decrease',
     ],
 
+    'order-activity'      => [
+        'heading'     => 'Order activity',
+        'description' => 'Orders confirmed in the period, by where they are now',
+        'to-deliver'  => 'To deliver',
+        'delivered'   => 'Delivered',
+        'to-invoice'  => 'To invoice',
+        'invoiced'    => 'Invoiced',
+        'share'       => ':percent% of :total orders',
+    ],
+
     'monthly-sales'       => [
-        'heading'  => 'Monthly Sales',
+        'heading'  => 'Sales over time',
         'revenue'  => 'Revenue',
         'previous' => 'Compared period',
     ],

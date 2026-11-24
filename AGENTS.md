@@ -2084,6 +2084,36 @@ log named):
     Vendors 2, Configuration 10. Test: "keeps customer invoices first in the
     invoices menu, with or without sales".
 
+• Document currency and its company value, 2026-11-23 (v1.16.7, TRACE365,
+  user; `docs/change-log.md`):
+  - Which currency an invoice, bill or purchase order opens in is one rule,
+    `Account\Support\DocumentCurrency`: contact's `default_currency_id`, then
+    the company's journal currency for that document type, then the company
+    currency; inactive or non-permitted currencies are skipped. Changing the
+    contact switches only when the contact has one (`ofContact()`). Do not
+    add a second default in a form.
+  - The "≈ GH₵ X" value beside a foreign total uses the document's stored
+    rate (`Support\Support\CompanyCurrencyEquivalent`), never today's and
+    never 1:1. No rate: no line.
+  - Phone list cards label every value from the column's own label
+    (`data-label`, `HasFilamentDefaults`; CSS in `topbar.blade.php`). Keep
+    the attribute escaped: Filament prints attribute values raw.
+  - Tests: accounts `DocumentCurrencyTest`.
+
+• Confirmed exchange rate on an invoice, 2026-11-24 (plan #10 MC-2,
+  TRACE365; `docs/planned/10-multi-currency-plan.md` §5a):
+  - `Move::computeInvoiceCurrencyRate()` keeps `invoice_currency_rate` when
+    `currency_rate_source` is `manual`, and drops the manual rate when the
+    currency changes without a new rate. Do not remove the guard: every save
+    re-read the rate table and overwrote the rate the person confirmed.
+  - `currency_rate_source` and `currency_rate_confirmed_by` are **not
+    fillable**. Only the invoice page's currency question sets them
+    (`forceFill`), so an API payload cannot pin an arbitrary rate.
+  - The switch lives in `accounts_company_settings`, never in
+    `CompanyAwareSettingsRepository` (its default-company fallback would turn
+    it on for every company). Every rule is in `SaleCurrencyQuestion`.
+  - Tests: accounts `Workflows/SaleCurrencyQuestionTest.php`.
+
 • Customer page shipments, 2026-11-10 (`docs/logistics-plan.md`, WP-9b, D11):
   - The customer infolist tab is `PartnerSchemaRegistry` slot `tabs.append`.
     Do not add a relation-manager slot, and do not edit `PartnerResource` or

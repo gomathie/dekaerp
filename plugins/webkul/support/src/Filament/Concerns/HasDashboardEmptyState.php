@@ -3,6 +3,7 @@
 namespace Webkul\Support\Filament\Concerns;
 
 use Filament\Actions\Action;
+use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Table;
 
 /**
@@ -27,5 +28,25 @@ trait HasDashboardEmptyState
                     ->icon('heroicon-o-plus')
                     ->url($createUrl),
             ]);
+    }
+
+    /**
+     * "View all" in the list's header (DB-9, 2026-11-24, from TRACE365's
+     * reference screens): the dashboard shows the top few, the button opens
+     * the whole list. The caller passes the URL only when the resource's own
+     * canViewAny() allows it, so nobody is offered a page they cannot open.
+     *
+     * @return list<Action>
+     */
+    protected function viewAllActions(?string $url): array
+    {
+        return $url === null ? [] : [
+            Action::make('dashboardViewAll')
+                ->label(__('support::filament/dashboard.view-all'))
+                ->icon('heroicon-m-arrow-right')
+                ->iconPosition(IconPosition::After)
+                ->link()
+                ->url($url),
+        ];
     }
 }

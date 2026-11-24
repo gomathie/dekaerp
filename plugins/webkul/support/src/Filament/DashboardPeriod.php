@@ -16,6 +16,27 @@ use Illuminate\Support\Carbon;
  */
 class DashboardPeriod
 {
+    /** The groupings a chart's switch may ask for (DB-9). */
+    public const UNITS = ['day', 'week', 'month', 'year'];
+
+    /**
+     * The chart switch's options, for a ChartWidget's getFilters() (DB-9,
+     * 2026-11-24, from TRACE365's reference screens). "Automatic" is the
+     * period-length rule in granularity(), and stays the default.
+     *
+     * @return array<string, string>
+     */
+    public static function groupingOptions(): array
+    {
+        return [
+            'auto'  => __('support::support.grouping.auto'),
+            'day'   => __('support::support.grouping.day'),
+            'week'  => __('support::support.grouping.week'),
+            'month' => __('support::support.grouping.month'),
+            'year'  => __('support::support.grouping.year'),
+        ];
+    }
+
     /**
      * The period every dashboard opens on: the year to date (user decision,
      * 2026-11-23, DB-4 / U68). Sales opened on the whole calendar year,
@@ -90,12 +111,16 @@ class DashboardPeriod
      * here. A week starts on Monday and is labelled by its first day inside
      * the period.
      *
+     * $unit is the chart's grouping switch (DB-9, 2026-11-24): day, week,
+     * month or year. Anything else, including null and "auto", keeps the
+     * automatic choice, so a tampered value only ever falls back.
+     *
      * @param  list<float>  $daily
      * @return array{labels: list<string>, values: list<float>}
      */
-    public static function rollUp(array $daily, Carbon $start, Carbon $end): array
+    public static function rollUp(array $daily, Carbon $start, Carbon $end, ?string $unit = null): array
     {
-        $unit = static::granularity($start, $end);
+        $unit = in_array($unit, static::UNITS, true) ? $unit : static::granularity($start, $end);
         $monthFormat = $start->year === $end->year ? 'M' : 'M Y';
 
         $labels = [];
@@ -107,12 +132,17 @@ class DashboardPeriod
             $key = match ($unit) {
                 'day'   => $date->toDateString(),
                 'week'  => (clone $date)->startOfWeek()->toDateString(),
+                'year'  => $date->format('Y'),
                 default => $date->format('Y-m'),
             };
 
             if ($key !== $currentKey) {
                 $currentKey = $key;
-                $labels[] = $date->translatedFormat($unit === 'month' ? $monthFormat : 'j M');
+                $labels[] = $date->translatedFormat(match ($unit) {
+                    'month' => $monthFormat,
+                    'year'  => 'Y',
+                    default => 'j M',
+                });
                 $values[] = 0.0;
             }
 

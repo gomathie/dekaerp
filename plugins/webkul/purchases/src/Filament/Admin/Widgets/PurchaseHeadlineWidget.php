@@ -123,8 +123,7 @@ class PurchaseHeadlineWidget extends StatsOverviewWidget
     {
         $currency = $this->dashboardCurrency();
 
-        $confirmed = $this->purchaseOrders()
-            ->whereIn('state', [OrderState::PURCHASE->value, OrderState::DONE->value]);
+        $confirmed = $this->confirmedPurchaseOrders();
 
         // total_cc_amount is already in company currency, and is what
         // PurchaseStatsWidget sums. purchases_orders has no amount_total
@@ -137,8 +136,7 @@ class PurchaseHeadlineWidget extends StatsOverviewWidget
         // 2026-11-13). The same states as $confirmed, on the earlier dates.
         [$previousStart, $previousEnd] = $this->previousPeriodRange();
 
-        $previousSpend = (float) $this->purchaseOrders($previousStart, $previousEnd)
-            ->whereIn('state', [OrderState::PURCHASE->value, OrderState::DONE->value])
+        $previousSpend = (float) $this->confirmedPurchaseOrders($previousStart, $previousEnd)
             ->sum('total_cc_amount');
 
         // Spend is a cost: a rise is shown red (D-DB-2).
@@ -165,10 +163,14 @@ class PurchaseHeadlineWidget extends StatsOverviewWidget
                 ->icon('heroicon-o-shopping-cart')
                 // Its own key: "orders" says "sales" since sales started
                 // counting invoices (DB-8), which read "No sales" here.
-                ->description(trans_choice('invoices::filament/pages/overview.headline.purchase-orders', $orders, ['count' => $orders])
-                    .' · '.__('invoices::filament/pages/overview.trend', ['change' => $change]))
-                ->descriptionIcon($trendIcon)
-                ->descriptionColor($trendColor)
+                // The trend as a pill with its arrow (DB-9, 2026-11-24).
+                ->description($this->trendDescription(
+                    trans_choice('invoices::filament/pages/overview.headline.purchase-orders', $orders, ['count' => $orders]),
+                    $change,
+                    $trendIcon,
+                    $trendColor,
+                    trim(__('invoices::filament/pages/overview.trend', ['change' => ''])),
+                ))
                 ->chart($this->dailySpend(clone $confirmed))
                 ->color('primary')
                 ->extraAttributes(['class' => 'overview-headline-stat']),
@@ -211,14 +213,13 @@ class PurchaseHeadlineWidget extends StatsOverviewWidget
     {
         $this->pageFilters = $filters;
 
-        $states = [OrderState::PURCHASE->value, OrderState::DONE->value];
         $currency = $this->dashboardCurrency();
 
-        $confirmed = $this->purchaseOrders()->whereIn('state', $states);
+        $confirmed = $this->confirmedPurchaseOrders();
         $spend = (float) (clone $confirmed)->sum('total_cc_amount');
 
         [$previousStart, $previousEnd] = $this->previousPeriodRange();
-        $previousSpend = (float) $this->purchaseOrders($previousStart, $previousEnd)->whereIn('state', $states)->sum('total_cc_amount');
+        $previousSpend = (float) $this->confirmedPurchaseOrders($previousStart, $previousEnd)->sum('total_cc_amount');
 
         [$text, $icon] = $this->statTrend($spend, $previousSpend, lowerIsBetter: true, money: true);
 

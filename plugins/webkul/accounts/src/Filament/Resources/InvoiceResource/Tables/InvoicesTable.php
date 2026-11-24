@@ -29,6 +29,7 @@ use Webkul\Account\Enums\PaymentState;
 use Webkul\Account\Filament\Exports\InvoiceExporter;
 use Webkul\Account\Filament\Resources\InvoiceResource;
 use Webkul\Chatter\Filament\Actions\ActivityTableAction;
+use Webkul\Support\Support\CompanyCurrencyEquivalent;
 
 class InvoicesTable
 {
@@ -37,9 +38,13 @@ class InvoicesTable
         return $table
             ->reorderableColumns()
             ->columns(InvoiceResource::mergeCustomTableColumns([
+                // Number with its date under it, as on the reference lists TRACE365
+                // shared (2026-11-23, plan #9 R-9).
                 TextColumn::make('name')
                     ->placeholder('-')
                     ->label(__('accounts::filament/resources/invoice.table.columns.number'))
+                    ->weight('semibold')
+                    ->description(fn ($record): ?string => $record->invoice_date?->translatedFormat('d M Y'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('state')
@@ -60,12 +65,14 @@ class InvoicesTable
                     ->placeholder('-')
                     ->searchable()
                     ->sortable(),
+                // Shown under the number now; still available as its own column.
                 TextColumn::make('invoice_date')
                     ->date()
                     ->placeholder('-')
                     ->label(__('accounts::filament/resources/invoice.table.columns.invoice-date'))
                     ->visibleFrom('md')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('invoice_date_due')
                     ->state(function ($record) {
                         if ($record->payment_state == PaymentState::PAID) {
@@ -130,7 +137,23 @@ class InvoicesTable
                     ->sortable()
                     ->summarize(Sum::make()->label(__('accounts::filament/resources/invoice.table.total')))
                     ->money(fn ($record) => $record->currency?->name)
+                    // A foreign-currency invoice shows its company-currency value
+                    // under it (TRACE365, 2026-11-23).
+                    ->description(fn ($record): ?string => CompanyCurrencyEquivalent::short((float) $record->amount_total_signed, $record->currency_id, $record->company))
                     ->toggleable(isToggledHiddenByDefault: false),
+                // Paid in green and due in red, each in the invoice's own currency
+                // (TRACE365, 2026-11-23, plan #9 R-9).
+                TextColumn::make('amount_paid')
+                    ->label(__('accounts::filament/resources/invoice.table.columns.amount-paid'))
+                    ->visibleFrom('lg')
+                    ->state(fn ($record): float => max(0, (float) $record->amount_total - (float) $record->amount_residual))
+                    ->formatStateUsing(fn ($state, $record): string => (float) $state > 0 ? money((float) $state, $record->currency?->name) : '-')
+                    ->color(fn ($state): ?string => (float) $state > 0 ? 'success' : null)
+                    ->toggleable(isToggledHiddenByDefault: false),
+                // The stored column is in company currency; the figure shown is the
+                // document-currency residual. It printed the company-currency amount
+                // with the invoice's currency sign, so a USD invoice in a cedi
+                // company showed cedis as dollars.
                 TextColumn::make('amount_residual_signed')
                     ->label(__('accounts::filament/resources/invoice.table.columns.amount-due'))
                     ->visibleFrom('md')
@@ -138,7 +161,9 @@ class InvoicesTable
                     ->placeholder('-')
                     ->sortable()
                     ->summarize(Sum::make()->label(__('accounts::filament/resources/invoice.table.summarizers.total')))
+                    ->state(fn ($record): float => (float) $record->amount_residual)
                     ->money(fn ($record) => $record->currency?->name)
+                    ->color(fn ($state): ?string => (float) $state > 0 ? 'danger' : null)
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('payment_state')
                     ->label(__('Payment State'))
@@ -360,7 +385,7 @@ class InvoicesTable
                 fn (Model $record): bool => InvoiceResource::can('delete', $record) && $record->state !== MoveState::POSTED,
             )
             ->modifyQueryUsing(function (Builder $query) {
-                $query->with('currency');
+                $query->with('currency', 'company.currency');
             });
     }
 }

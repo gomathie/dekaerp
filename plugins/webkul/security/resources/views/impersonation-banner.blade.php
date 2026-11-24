@@ -1,6 +1,7 @@
 {{-- Shown on every admin page while an impersonation is active (TenantImpersonation). Inline styles, like the company switcher, so it needs no CSS rebuild. --}}
 <div
     role="status"
+    id="impersonation-banner"
     data-impersonation-banner
     style="position:sticky;top:env(safe-area-inset-top, 0px);z-index:40;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:0.5rem 1rem;padding:0.5rem 1rem;background:rgb(180 83 9);color:#fff;font-size:0.875rem;line-height:1.25rem;"
 >
@@ -29,3 +30,44 @@
         </button>
     </form>
 </div>
+
+{{--
+    The top bar and the module sidebar stick below the banner (TRACE365,
+    2026-11-23). Both were sticky or fixed at the very top too, so on a phone
+    the banner, a higher layer, covered the Sales tabs once the page scrolled.
+    The banner's real height is measured, because its text wraps to two or
+    three lines on a phone and with long names. Rendered only with the banner,
+    so ending the impersonation also removes the reserved space.
+--}}
+<style>
+    .fi-topbar-ctn {
+        top: calc(env(safe-area-inset-top, 0px) + var(--impersonation-banner-height, 0px));
+    }
+
+    .module-sidebar {
+        top: calc(var(--module-topbar-height) + var(--impersonation-banner-height, 0px));
+        height: calc(100vh - var(--module-topbar-height) - var(--impersonation-banner-height, 0px));
+    }
+</style>
+
+<script>
+    (function () {
+        // By id: TenantImpersonationTest counts the banner's data attribute
+        // to prove it renders once, so this script must not repeat it.
+        var banner = document.getElementById('impersonation-banner');
+
+        if (! banner) {
+            return;
+        }
+
+        var measure = function () {
+            document.documentElement.style.setProperty('--impersonation-banner-height', banner.offsetHeight + 'px');
+        };
+
+        measure();
+
+        if (window.ResizeObserver) {
+            new ResizeObserver(measure).observe(banner);
+        }
+    })();
+</script>

@@ -46,6 +46,21 @@ class AccountPartnerSchema
                         ->preload()
                         ->searchable()
                         ->label(__('accounts::filament/resources/partner.form.tabs.sales-purchases.fieldsets.sales.fields.payment-method')),
+                    /*
+                     * The currency this contact's invoices, bills and purchase
+                     * orders open in (TRACE365, 2026-11-23; DocumentCurrency).
+                     * Empty: the journal's or the company's currency.
+                     */
+                    Select::make('default_currency_id')
+                        ->relationship(
+                            'defaultCurrency',
+                            'name',
+                            modifyQueryUsing: fn (Builder $query, ?Model $record) => $query->active()->permittedFor((int) ($record?->company_id ?: current_company_id())),
+                        )
+                        ->preload()
+                        ->searchable()
+                        ->label(__('accounts::filament/resources/partner.form.tabs.sales-purchases.fieldsets.sales.fields.default-currency'))
+                        ->helperText(__('accounts::filament/resources/partner.form.tabs.sales-purchases.fieldsets.sales.fields.default-currency-helper')),
                 ])
                 ->columns(2),
         ];
@@ -192,6 +207,10 @@ class AccountPartnerSchema
                         ->placeholder('-')
                         ->label(__('accounts::filament/resources/partner.infolist.tabs.sales-purchases.fieldsets.sales.entries.payment-method'))
                         ->icon('heroicon-o-credit-card'),
+                    TextEntry::make('defaultCurrency.name')
+                        ->placeholder('-')
+                        ->label(__('accounts::filament/resources/partner.form.tabs.sales-purchases.fieldsets.sales.fields.default-currency'))
+                        ->icon('heroicon-o-currency-dollar'),
                 ])
                 ->columns(2),
         ];

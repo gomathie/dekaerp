@@ -58,6 +58,7 @@ return [
         'description' => 'Moedas que esta empresa pode usar em faturas, contas a pagar, cotações e pedidos de compra, além da moeda padrão. Deixe vazio para permitir todas as moedas ativas.',
         'fields'      => [
             'permitted' => 'Moedas adicionais',
+            'available' => 'Disponíveis nos documentos agora: :list',
         ],
     ],
 

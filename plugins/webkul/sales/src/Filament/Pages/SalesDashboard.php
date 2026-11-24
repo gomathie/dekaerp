@@ -15,6 +15,7 @@ use Webkul\Invoice\Filament\Pages\Overview;
 use Webkul\PluginManager\Support\PluginEntitlement;
 use Webkul\Product\Models\Category;
 use Webkul\Sale\Filament\Widgets\MonthlySalesChart;
+use Webkul\Sale\Filament\Widgets\OrderActivityWidget;
 use Webkul\Sale\Filament\Widgets\QuotationOutcomeChart;
 use Webkul\Sale\Filament\Widgets\RevenueByCategoryChart;
 use Webkul\Sale\Filament\Widgets\SalesPersonPerformanceChart;
@@ -191,6 +192,8 @@ class SalesDashboard extends BaseDashboard
             RevenueByCategoryChart::class,
             SalesPersonPerformanceChart::class,
             QuotationOutcomeChart::class,
+            // DB-9 (2026-11-24): where the period's orders are now.
+            OrderActivityWidget::class,
             TopProductsTable::class,
             TopCustomersTable::class,
             TopSalesOrdersTable::class,

@@ -61,7 +61,6 @@ return [
 
     'cash' => [
         'heading'     => 'Money in and out',
-        'description' => 'Paid invoices and paid bills, by day, week or month',
         'in'          => 'Money in',
         'out'         => 'Money out',
     ],
@@ -104,11 +103,5 @@ return [
         'due-today'   => 'Due today',
         'due-on'      => 'Due :date',
         'days-late'   => '{1} 1 day late|[2,*] :count days late',
-    ],
-
-    'cash-compare' => [
-        'previous'    => 'Previous period',
-        'this-period' => 'This period',
-        'vs-previous' => 'Vs previous period',
     ],
 ];

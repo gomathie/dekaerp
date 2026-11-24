@@ -7,6 +7,7 @@ return [
     'status'              => 'الحالة',
     'delivery-status'     => 'حالة التسليم',
     'billing'             => 'الفوترة',
+    'sales-value'         => 'الطلبات المؤكدة والفواتير الصادرة بدون طلب',
     'stats'               => [
         'heading'            => 'المؤشرات الرئيسية',
         'total-quotations'   => 'إجمالي عروض الأسعار',
@@ -17,8 +18,18 @@ return [
         'decrease'           => 'انخفاض',
     ],
 
+    'order-activity'      => [
+        'heading'     => 'نشاط الطلبات',
+        'description' => 'الطلبات المؤكدة في الفترة حسب حالتها الحالية',
+        'to-deliver'  => 'للتسليم',
+        'delivered'   => 'تم التسليم',
+        'to-invoice'  => 'للفوترة',
+        'invoiced'    => 'تمت الفوترة',
+        'share'       => ':percent% من :total طلبات',
+    ],
+
     'monthly-sales'       => [
-        'heading'  => 'المبيعات الشهرية',
+        'heading'  => 'المبيعات عبر الزمن',
         'revenue'  => 'الإيرادات',
         'previous' => 'فترة المقارنة',
     ],

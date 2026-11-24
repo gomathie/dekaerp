@@ -39,6 +39,7 @@ use Webkul\Product\Filament\Resources\ProductResource\Support\ProductSchemaRegis
 use Webkul\Product\Models\Category;
 use Webkul\Product\Models\Product;
 use Webkul\Support\Models\Company;
+use Webkul\Support\Models\Currency;
 use Webkul\Support\Services\SequenceService;
 
 class AccountServiceProvider extends PackageServiceProvider
@@ -130,6 +131,10 @@ class AccountServiceProvider extends PackageServiceProvider
                 '2026_11_19_000002_set_up_accounting_for_companies_without_it',
                 // Cash, Bank transfer and Mobile Money for every company (user, 2026-11-20).
                 '2026_11_20_000001_provision_payment_ways_for_companies',
+                // A contact's default currency (TRACE365, user 2026-11-23).
+                '2026_11_23_000001_add_default_currency_to_partners_partners',
+                // "Ask which currency each sale is in" (plan #10 MC-2, 2026-11-24).
+                '2026_11_24_000001_add_sale_currency_question',
             ])
             ->runsMigrations()
             ->hasSettings([
@@ -262,6 +267,7 @@ class AccountServiceProvider extends PackageServiceProvider
             'property_supplier_payment_term_id',
             'property_outbound_payment_method_line_id',
             'property_inbound_payment_method_line_id',
+            'default_currency_id',
         ]);
 
         Partner::contributeCasts([
@@ -288,6 +294,8 @@ class AccountServiceProvider extends PackageServiceProvider
         Partner::resolveRelationUsing('propertySupplierPaymentTerm', fn (Partner $partner) => $partner->belongsTo(PaymentTerm::class, 'property_supplier_payment_term_id'));
         Partner::resolveRelationUsing('propertyOutboundPaymentMethodLine', fn (Partner $partner) => $partner->belongsTo(PaymentMethodLine::class, 'property_outbound_payment_method_line_id'));
         Partner::resolveRelationUsing('propertyInboundPaymentMethodLine', fn (Partner $partner) => $partner->belongsTo(PaymentMethodLine::class, 'property_inbound_payment_method_line_id'));
+        // The contact's default currency (DocumentCurrency, TRACE365 2026-11-23).
+        Partner::resolveRelationUsing('defaultCurrency', fn (Partner $partner) => $partner->belongsTo(Currency::class, 'default_currency_id'));
     }
 
     protected function contributeProductSchema(): void
