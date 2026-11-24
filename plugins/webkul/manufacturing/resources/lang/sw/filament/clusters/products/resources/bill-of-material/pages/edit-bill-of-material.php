@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Bili ya material imesasishwa',
-        'body'  => 'bili ya material ina imesasishwa successfully.',
+        'title' => 'Orodha ya malighafi imesasishwa',
+        'body'  => 'Orodha ya malighafi imesasishwa kikamilifu.',
     ],
 ];

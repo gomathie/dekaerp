@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Work center imesasishwa',
-        'body'  => 'work center ina imesasishwa successfully.',
+        'title' => 'Kituo cha kazi kimesasishwa',
+        'body'  => 'Kituo cha kazi kimesasishwa kikamilifu.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Work center imehifadhiwa',
-                'body'  => 'work center ina imehifadhiwa successfully.',
+                'title' => 'Kituo cha kazi kimewekwa kwenye kumbukumbu',
+                'body'  => 'Kituo cha kazi kimewekwa kwenye kumbukumbu kikamilifu.',
             ],
         ],
     ],

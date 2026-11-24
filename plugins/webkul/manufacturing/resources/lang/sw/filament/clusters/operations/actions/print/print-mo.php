@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'label' => 'Chapisha MO',
+    'label' => 'Chapisha oda ya uzalishaji',
 ];

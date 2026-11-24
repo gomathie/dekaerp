@@ -8,8 +8,8 @@ return [
 
                 'fields' => [
                     'name'             => 'Jina',
-                    'name-placeholder' => 'eg. Lamps',
-                    'parent'           => 'Parent',
+                    'name-placeholder' => 'mf. Taa',
+                    'parent'           => 'Kategoria kuu',
                 ],
             ],
         ],
@@ -18,25 +18,25 @@ return [
     'table' => [
         'columns' => [
             'name'        => 'Jina',
-            'full-name'   => 'Kamili Jina',
-            'parent-path' => 'Parent Path',
-            'parent'      => 'Parent',
-            'creator'     => 'Creator',
-            'created-at'  => 'Imeundwa',
-            'created-at'  => 'Imeundwa',
-            'updated-at'  => 'Imesasishwa',
+            'full-name'   => 'Jina kamili',
+            'parent-path' => 'Njia ya kategoria kuu',
+            'parent'      => 'Kategoria kuu',
+            'creator'     => 'Muundaji',
+            'created-at'  => 'Iliundwa',
+            'created-at'  => 'Iliundwa',
+            'updated-at'  => 'Ilisasishwa',
         ],
 
         'groups' => [
-            'parent'     => 'Parent',
-            'creator'    => 'Creator',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'parent'     => 'Kategoria kuu',
+            'creator'    => 'Muundaji',
+            'created-at' => 'Iliundwa',
+            'updated-at' => 'Ilisasishwa',
         ],
 
         'filters' => [
-            'parent'  => 'Parent',
-            'creator' => 'Creator',
+            'parent'  => 'Kategoria kuu',
+            'creator' => 'Muundaji',
         ],
 
         'actions' => [
@@ -44,12 +44,12 @@ return [
                 'notification' => [
                     'success' => [
                         'title' => 'Kategoria imefutwa',
-                        'body'  => 'Kategoria ina imefutwa successfully.',
+                        'body'  => 'Kategoria imefutwa kikamilifu.',
                     ],
 
                     'error' => [
-                        'title' => 'Kategoria could si kuwa imefutwa',
-                        'body'  => 'kategoria haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Kategoria haikuweza kufutwa',
+                        'body'  => 'Kategoria haiwezi kufutwa kwa sababu inatumika kwa sasa.',
                     ],
                 ],
             ],
@@ -59,13 +59,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Kategoria imefutwa',
-                        'body'  => 'kategoria ina imefutwa successfully.',
+                        'title' => 'Kategoria zimefutwa',
+                        'body'  => 'Kategoria zimefutwa kikamilifu.',
                     ],
 
                     'error' => [
-                        'title' => 'Kategoria could si kuwa imefutwa',
-                        'body'  => 'kategoria haiwezekani kuwa imefutwa kwa sababu wao ni currently katika tumia.',
+                        'title' => 'Kategoria hazikuweza kufutwa',
+                        'body'  => 'Kategoria haziwezi kufutwa kwa sababu zinatumika kwa sasa.',
                     ],
                 ],
             ],
@@ -75,23 +75,23 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Jumla Taarifa',
+                'title' => 'Taarifa za jumla',
 
                 'entries' => [
                     'name'        => 'Jina',
-                    'parent'      => 'Parent Kategoria',
-                    'full_name'   => 'Kamili Kategoria Jina',
-                    'parent_path' => 'Kategoria Path',
+                    'parent'      => 'Kategoria kuu',
+                    'full_name'   => 'Jina kamili la kategoria',
+                    'parent_path' => 'Njia ya kategoria',
                 ],
             ],
 
             'record-information' => [
-                'title' => 'Rekodi Taarifa',
+                'title' => 'Taarifa za rekodi',
 
                 'entries' => [
-                    'creator'    => 'Imeundwa Na',
-                    'created_at' => 'Imeundwa',
-                    'updated_at' => 'Mwisho Imesasishwa',
+                    'creator'    => 'Imeundwa na',
+                    'created_at' => 'Iliundwa',
+                    'updated_at' => 'Ilisasishwa mwisho',
                 ],
             ],
         ],

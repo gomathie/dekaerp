@@ -4,8 +4,8 @@ return [
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Operation imehifadhiwa',
-                'body'  => 'operation ina imehifadhiwa successfully.',
+                'title' => 'Operesheni imewekwa kwenye kumbukumbu',
+                'body'  => 'Operesheni imewekwa kwenye kumbukumbu kikamilifu.',
             ],
         ],
     ],

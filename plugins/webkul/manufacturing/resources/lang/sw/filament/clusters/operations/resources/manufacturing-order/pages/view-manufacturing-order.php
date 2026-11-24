@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'title' => 'Angalia Uzalishaji Agizo',
+    'title' => 'Tazama oda ya uzalishaji',
 
     'header-actions' => [
         'print' => [

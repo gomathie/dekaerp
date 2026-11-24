@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'title' => 'Work Center',
+    'title' => 'Рабочий центр',
 ];

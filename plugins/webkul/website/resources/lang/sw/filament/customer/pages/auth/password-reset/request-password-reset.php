@@ -5,23 +5,23 @@ return [
     'heading'       => 'Umesahau nenosiri',
     'notifications' => [
         'throttled' => [
-            'title' => 'Mno nyingi attempts. Jaribu tena katika :seconds seconds.',
-            'body'  => 'Tafadhali wait :seconds seconds (:minutes dakika) kabla ya trying tena.',
+            'title' => 'Majaribio mengi mno. Jaribu tena baada ya sekunde :seconds.',
+            'body'  => 'Tafadhali subiri sekunde :seconds (dakika :minutes) kabla ya kujaribu tena.',
         ],
     ],
     'form' => [
         'email' => [
-            'label' => 'Barua pepe anwani',
+            'label' => 'Anwani ya barua pepe',
         ],
         'actions' => [
             'request' => [
-                'label' => 'Send weka upya link',
+                'label' => 'Tuma kiungo cha kuweka upya',
             ],
         ],
     ],
     'actions' => [
         'login' => [
-            'label' => 'Rudi hadi ingia',
+            'label' => 'Rudi kwenye kuingia',
         ],
     ],
 ];

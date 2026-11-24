@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'all-available' => 'Когда все components доступно',
-    'asap'          => 'Когда components для первый operation доступно',
+    'all-available' => 'Когда доступны все компоненты',
+    'asap'          => 'Когда доступны компоненты для первой операции',
 ];

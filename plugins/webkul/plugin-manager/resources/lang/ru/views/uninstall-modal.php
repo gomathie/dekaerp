@@ -3,27 +3,27 @@
 return [
 
     'uninstall' => [
-        'title'   => 'Uninstall Confirmation',
-        'message' => 'вы sure вы want до uninstall :name модуль?',
-        'warning' => '⚠️ Этот действие нельзя быть undone и permanently удалить data.',
+        'title'   => 'Подтверждение удаления',
+        'message' => 'Вы уверены, что хотите удалить плагин :name?',
+        'warning' => '⚠️ Это действие нельзя отменить: данные будут удалены безвозвратно.',
     ],
 
     'dependents' => [
-        'title'         => 'Dependent Модули',
-        'description'   => 'Эти модули depend вкл. этот one. Любой installed dependents нужно быть uninstalled первый.',
-        'installed'     => 'Installed',
-        'not_installed' => 'Не Installed',
+        'title'         => 'Зависимые плагины',
+        'description'   => 'Эти плагины зависят от данного. Все установленные зависимые плагины нужно удалить сначала.',
+        'installed'     => 'Установлен',
+        'not_installed' => 'Не установлен',
     ],
 
     'dependency_warning' => [
-        'title'   => 'Действие Обязательно',
-        'message' => '⚠️ Пожалуйста uninstall следующий dependent модули первый до uninstalling :name.',
+        'title'   => 'Требуется действие',
+        'message' => '⚠️ Перед удалением :name сначала удалите следующие зависимые плагины.',
     ],
 
     'data_impact' => [
-        'title'       => 'Data Impact',
-        'description' => 'следующий database tables contain data тот быть permanently удалено.',
-        'records'     => ':count записи',
+        'title'       => 'Влияние на данные',
+        'description' => 'Следующие таблицы базы данных содержат данные, которые будут удалены безвозвратно.',
+        'records'     => 'Записей: :count',
     ],
 
 ];

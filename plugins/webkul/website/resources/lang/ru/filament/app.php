@@ -4,15 +4,15 @@ return [
     'navigation' => [
         'settings' => [
             'label' => 'Настройки',
-            'group' => 'Сайт',
+            'group' => 'Веб-сайт',
         ],
 
         'account' => [
-            'label' => 'Мой Счёт',
+            'label' => 'Мой аккаунт',
         ],
 
         'top' => [
-            'login'    => 'Вход',
+            'login'    => 'Войти',
             'register' => 'Регистрация',
         ],
 
@@ -35,36 +35,36 @@ return [
     ],
 
     'homepage' => [
-        'title'            => 'Homepage',
+        'title'            => 'Главная страница',
         'navigation_label' => 'Главная',
     ],
 
     'footer' => [
-        'description'   => 'Designed до optimize и streamline business операции, DEKA Central suitable для enterprises все sizes.',
-        'description_2' => 'platform emphasizes отчёты для insights, безопасность, localization flexibility, и integration с CRMs, BI tools, и APIs.',
-        'useful_links'  => 'Useful Links',
-        'contact_us'    => 'Контакт Us',
-        'follow_us'     => 'Follow Us',
-        'copyright'     => 'Copyright',
-        'powered_by'    => 'Powered от',
+        'description'   => 'DEKA Central создан для оптимизации и упрощения бизнес-процессов и подходит компаниям любого размера.',
+        'description_2' => 'Платформа уделяет особое внимание аналитической отчётности, безопасности, гибкой локализации и интеграции с CRM, BI-инструментами и API.',
+        'useful_links'  => 'Полезные ссылки',
+        'contact_us'    => 'Связаться с нами',
+        'follow_us'     => 'Мы в соцсетях',
+        'copyright'     => 'Авторские права',
+        'powered_by'    => 'Работает на',
     ],
 
     'pages' => [
         'about_us' => [
-            'title'      => 'Около Us',
-            'meta_title' => 'Около Us',
+            'title'      => 'О нас',
+            'meta_title' => 'О нас',
         ],
     ],
 
     'page_titles' => [
         'home'               => 'Главная',
-        'about-us'           => 'Около Us',
-        'privacy-policy'     => 'Privacy Policy',
-        'terms-conditions'   => 'Terms & Conditions',
-        'news-announcements' => 'News & Announcements',
-        'blog'               => 'Blog',
-        'blogs'              => 'Blogs',
-        'contact'            => 'Контакт',
-        'contact-us'         => 'Контакт Us',
+        'about-us'           => 'О нас',
+        'privacy-policy'     => 'Политика конфиденциальности',
+        'terms-conditions'   => 'Условия использования',
+        'news-announcements' => 'Новости и объявления',
+        'blog'               => 'Блог',
+        'blogs'              => 'Блоги',
+        'contact'            => 'Контакты',
+        'contact-us'         => 'Связаться с нами',
     ],
 ];

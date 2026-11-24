@@ -6,28 +6,28 @@ return [
     ],
 
     'tabs' => [
-        'apps'          => 'Apps',
-        'extra'         => 'Extra',
-        'installed'     => 'Installed',
-        'not-installed' => 'Si Installed',
+        'apps'          => 'Programu',
+        'extra'         => 'Ziada',
+        'installed'     => 'Zilizosakinishwa',
+        'not-installed' => 'Hazijasakinishwa',
     ],
 
     'header-actions' => [
         'sync' => [
-            'label'                     => 'Sync Inapatikana Programu-jalizi',
-            'modal-heading'             => 'Sync Programu-jalizi',
-            'modal-description'         => 'Hii ita scan na jisajili yoyote mpya programu-jalizi imepatikana.',
-            'modal-submit-action-label' => 'Sync Programu-jalizi',
+            'label'                     => 'Sawazisha programu-jalizi',
+            'modal-heading'             => 'Sawazisha programu-jalizi',
+            'modal-description'         => 'Hii itatafuta na kusajili programu-jalizi mpya zozote zitakazopatikana.',
+            'modal-submit-action-label' => 'Sawazisha',
 
             'notification' => [
                 'success' => [
-                    'title' => 'Programu-jalizi Synced Successfully',
-                    'body'  => 'Imepatikana na synced :count mpya programu-jalizi(s).',
+                    'title' => 'Programu-jalizi zimesawazishwa',
+                    'body'  => 'Programu-jalizi mpya :count zimepatikana na kusawazishwa.',
                 ],
 
                 'error' => [
-                    'title' => 'Programu-jalizi Sync Imeshindwa',
-                    'body'  => 'hitilafu (:error) occurred wakati syncing programu-jalizi. Tafadhali jaribu tena.',
+                    'title' => 'Usawazishaji umeshindwa',
+                    'body'  => 'Hitilafu (:error) imetokea wakati wa kusawazisha programu-jalizi. Tafadhali jaribu tena.',
                 ],
             ],
         ],

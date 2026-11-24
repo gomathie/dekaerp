@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'label' => 'Plan',
+    'label' => 'Panga',
 
     'notification' => [
         'success' => [
-            'title' => 'Uzalishaji agizo imepangwa',
-            'body'  => 'uzalishaji agizo ina imepangwa successfully.',
+            'title' => 'Oda ya uzalishaji imepangwa',
+            'body'  => 'Oda ya uzalishaji imepangwa kikamilifu.',
         ],
     ],
 ];

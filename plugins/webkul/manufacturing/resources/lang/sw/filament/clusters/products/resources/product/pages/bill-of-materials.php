@@ -2,17 +2,17 @@
 
 return [
     'navigation' => [
-        'title' => 'Bili ya Materials',
+        'title' => 'Orodha za malighafi',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Unda Bili ya Material',
+            'label' => 'Unda orodha ya malighafi',
 
             'notifications' => [
                 'success' => [
-                    'title'   => 'Bili ya Material imeundwa',
-                    'message' => 'Bili ya Material ina imeundwa successfully.',
+                    'title'   => 'Orodha ya malighafi imeundwa',
+                    'message' => 'Orodha ya malighafi imeundwa kikamilifu.',
                 ],
             ],
         ],

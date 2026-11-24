@@ -1,27 +1,27 @@
 <?php
 
 return [
-    'title'         => 'Забыли пароль',
-    'heading'       => 'Забыли пароль',
+    'title'         => 'Восстановление пароля',
+    'heading'       => 'Восстановление пароля',
     'notifications' => [
         'throttled' => [
-            'title' => 'Слишком много attempts. Попробуйте снова в :seconds seconds.',
-            'body'  => 'Пожалуйста wait :seconds seconds (:minutes минуты) до trying снова.',
+            'title' => 'Слишком много попыток. Повторите через :seconds с.',
+            'body'  => 'Подождите :seconds с (:minutes мин) перед следующей попыткой.',
         ],
     ],
     'form' => [
         'email' => [
-            'label' => 'Эл. почта адрес',
+            'label' => 'Адрес эл. почты',
         ],
         'actions' => [
             'request' => [
-                'label' => 'Send сбросить link',
+                'label' => 'Отправить ссылку для сброса',
             ],
         ],
     ],
     'actions' => [
         'login' => [
-            'label' => 'Назад до вход',
+            'label' => 'Вернуться ко входу',
         ],
     ],
 ];

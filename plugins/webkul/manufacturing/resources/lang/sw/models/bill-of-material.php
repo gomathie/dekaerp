@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'title' => 'Bili ya Material',
+    'title' => 'Orodha ya malighafi',
 ];

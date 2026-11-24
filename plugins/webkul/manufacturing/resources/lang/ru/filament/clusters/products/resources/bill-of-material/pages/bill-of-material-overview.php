@@ -11,40 +11,40 @@ return [
 
     'filters' => [
         'quantity' => 'Количество',
-        'variant'  => 'Variant',
+        'variant'  => 'Вариант',
     ],
 
     'summary' => [
-        'free-to-use' => 'Free до Использовать',
-        'on-hand'     => 'Вкл. Вручную',
-        'total-cost'  => 'Итого Стоимость',
+        'free-to-use' => 'Свободно',
+        'on-hand'     => 'В наличии',
+        'total-cost'  => 'Общая стоимость',
     ],
 
     'table' => [
         'columns' => [
             'product'      => 'Товар',
             'quantity'     => 'Количество',
-            'lead-time'    => 'Lead Time',
+            'lead-time'    => 'Срок',
             'route'        => 'Маршрут',
-            'bom-cost'     => 'BoM Стоимость',
-            'product-cost' => 'Товар Стоимость',
+            'bom-cost'     => 'Стоимость по спецификации',
+            'product-cost' => 'Стоимость товара',
         ],
         'sections' => [
             'operations' => 'Операции',
         ],
         'rows' => [
-            'days'    => 'дни',
+            'days'    => 'дн.',
             'minutes' => 'Минуты',
         ],
         'footer' => [
-            'unit-cost' => 'Единица Стоимость',
+            'unit-cost' => 'Себестоимость единицы',
         ],
     ],
 
     'by-products' => [
-        'title'   => 'От-товары',
+        'title'   => 'Побочная продукция',
         'columns' => [
-            'product'  => 'От-товар',
+            'product'  => 'Побочный продукт',
             'quantity' => 'Количество',
             'uom'      => 'Единица измерения',
         ],

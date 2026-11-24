@@ -2,25 +2,25 @@
 
 return [
     'notification' => [
-        'title' => 'Товар обновлено',
-        'body'  => 'товар есть обновлено successfully.',
+        'title' => 'Товар обновлён',
+        'body'  => 'Товар успешно обновлён.',
     ],
 
     'header-actions' => [
         'print' => [
-            'label' => 'Печать Labels',
+            'label' => 'Печать этикеток',
 
             'form' => [
                 'fields' => [
-                    'quantity' => 'Номер Labels',
+                    'quantity' => 'Количество этикеток',
                     'format'   => 'Формат',
 
                     'format-options' => [
                         'dymo'       => 'Dymo',
-                        '2x7_price'  => '2x7 с цена',
-                        '4x7_price'  => '4x7 с цена',
+                        '2x7_price'  => '2x7 с ценой',
+                        '4x7_price'  => '4x7 с ценой',
                         '4x12'       => '4x12',
-                        '4x12_price' => '4x12 с цена',
+                        '4x12_price' => '4x12 с ценой',
                     ],
                 ],
             ],
@@ -28,8 +28,8 @@ return [
 
         'delete' => [
             'notification' => [
-                'title' => 'Товар удалено',
-                'body'  => 'товар есть удалено successfully.',
+                'title' => 'Товар удалён',
+                'body'  => 'Товар успешно удалён.',
             ],
         ],
     ],

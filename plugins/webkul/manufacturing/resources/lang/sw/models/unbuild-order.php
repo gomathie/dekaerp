@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'title' => 'Unbuild Agizo',
+    'title' => 'Oda ya kutenganisha',
 ];

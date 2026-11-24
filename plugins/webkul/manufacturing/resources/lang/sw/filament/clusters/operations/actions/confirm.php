@@ -5,8 +5,8 @@ return [
 
     'notification' => [
         'success' => [
-            'title' => 'Uzalishaji agizo imethibitishwa',
-            'body'  => 'uzalishaji agizo ina imethibitishwa successfully.',
+            'title' => 'Oda ya uzalishaji imethibitishwa',
+            'body'  => 'Oda ya uzalishaji imethibitishwa kikamilifu.',
         ],
     ],
 ];

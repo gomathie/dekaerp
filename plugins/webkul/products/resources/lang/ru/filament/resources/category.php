@@ -8,8 +8,8 @@ return [
 
                 'fields' => [
                     'name'             => 'Название',
-                    'name-placeholder' => 'eg. Lamps',
-                    'parent'           => 'Parent',
+                    'name-placeholder' => 'напр. Лампы',
+                    'parent'           => 'Родительская категория',
                 ],
             ],
         ],
@@ -18,38 +18,38 @@ return [
     'table' => [
         'columns' => [
             'name'        => 'Название',
-            'full-name'   => 'Полный Название',
-            'parent-path' => 'Parent Path',
-            'parent'      => 'Parent',
-            'creator'     => 'Creator',
-            'created-at'  => 'Создано',
-            'created-at'  => 'Создано',
-            'updated-at'  => 'Обновлено',
+            'full-name'   => 'Полное название',
+            'parent-path' => 'Путь',
+            'parent'      => 'Родительская категория',
+            'creator'     => 'Автор',
+            'created-at'  => 'Создана',
+            'created-at'  => 'Создана',
+            'updated-at'  => 'Обновлена',
         ],
 
         'groups' => [
-            'parent'     => 'Parent',
-            'creator'    => 'Creator',
-            'created-at' => 'Создано',
-            'updated-at' => 'Обновлено',
+            'parent'     => 'Родительская категория',
+            'creator'    => 'Автор',
+            'created-at' => 'Создана',
+            'updated-at' => 'Обновлена',
         ],
 
         'filters' => [
-            'parent'  => 'Parent',
-            'creator' => 'Creator',
+            'parent'  => 'Родительская категория',
+            'creator' => 'Автор',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Категория удалено',
-                        'body'  => 'Категория есть удалено successfully.',
+                        'title' => 'Категория удалена',
+                        'body'  => 'Категория успешно удалена.',
                     ],
 
                     'error' => [
-                        'title' => 'Категория could не быть удалено',
-                        'body'  => 'категория нельзя быть удалено потому что это currently в использовать.',
+                        'title' => 'Не удалось удалить категорию',
+                        'body'  => 'Категорию нельзя удалить, так как она используется.',
                     ],
                 ],
             ],
@@ -59,13 +59,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Категории удалено',
-                        'body'  => 'категории есть удалено successfully.',
+                        'title' => 'Категории удалены',
+                        'body'  => 'Категории успешно удалены.',
                     ],
 
                     'error' => [
-                        'title' => 'Категории could не быть удалено',
-                        'body'  => 'категории нельзя быть удалено потому что они currently в использовать.',
+                        'title' => 'Не удалось удалить категории',
+                        'body'  => 'Категории нельзя удалить, так как они используются.',
                     ],
                 ],
             ],
@@ -75,23 +75,23 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Общее Сведения',
+                'title' => 'Общая информация',
 
                 'entries' => [
                     'name'        => 'Название',
-                    'parent'      => 'Parent Категория',
-                    'full_name'   => 'Полный Категория Название',
-                    'parent_path' => 'Категория Path',
+                    'parent'      => 'Родительская категория',
+                    'full_name'   => 'Полное название категории',
+                    'parent_path' => 'Путь категории',
                 ],
             ],
 
             'record-information' => [
-                'title' => 'Запись Сведения',
+                'title' => 'Сведения о записи',
 
                 'entries' => [
-                    'creator'    => 'Создано От',
-                    'created_at' => 'Создано',
-                    'updated_at' => 'Последний Обновлено',
+                    'creator'    => 'Автор',
+                    'created_at' => 'Создана',
+                    'updated_at' => 'Последнее обновление',
                 ],
             ],
         ],

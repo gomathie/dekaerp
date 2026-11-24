@@ -3,27 +3,27 @@
 return [
 
     'uninstall' => [
-        'title'   => 'Uninstall Confirmation',
-        'message' => 'Ni wewe sure wewe want hadi uninstall :name programu-jalizi?',
-        'warning' => '⚠️ Hii kitendo haiwezekani kuwa undone na ita permanently futa data.',
+        'title'   => 'Thibitisha kuondoa',
+        'message' => 'Una uhakika unataka kuondoa programu-jalizi :name?',
+        'warning' => '⚠️ Kitendo hiki hakiwezi kutenduliwa na kitafuta data kabisa.',
     ],
 
     'dependents' => [
-        'title'         => 'Dependent Programu-jalizi',
-        'description'   => 'Hizi programu-jalizi depend washa hii one. Yoyote installed dependents lazima kuwa uninstalled kwanza.',
-        'installed'     => 'Installed',
-        'not_installed' => 'Si Installed',
+        'title'         => 'Programu-jalizi tegemezi',
+        'description'   => 'Programu-jalizi hizi zinategemea hii. Tegemezi zozote zilizosakinishwa lazima ziondolewe kwanza.',
+        'installed'     => 'Imesakinishwa',
+        'not_installed' => 'Haijasakinishwa',
     ],
 
     'dependency_warning' => [
-        'title'   => 'Kitendo Inahitajika',
-        'message' => '⚠️ Tafadhali uninstall ifuatayo dependent programu-jalizi kwanza kabla ya uninstalling :name.',
+        'title'   => 'Kitendo kinahitajika',
+        'message' => '⚠️ Tafadhali ondoa kwanza programu-jalizi tegemezi zifuatazo kabla ya kuondoa :name.',
     ],
 
     'data_impact' => [
-        'title'       => 'Data Impact',
-        'description' => 'ifuatayo database tables contain data hiyo ita kuwa permanently imefutwa.',
-        'records'     => ':count rekodi',
+        'title'       => 'Athari kwa data',
+        'description' => 'Majedwali yafuatayo ya hifadhidata yana data itakayofutwa kabisa.',
+        'records'     => 'Rekodi :count',
     ],
 
 ];

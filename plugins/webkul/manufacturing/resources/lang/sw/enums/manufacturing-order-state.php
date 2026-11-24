@@ -3,8 +3,8 @@
 return [
     'draft'     => 'Rasimu',
     'confirmed' => 'Imethibitishwa',
-    'progress'  => 'Katika Maendeleo',
-    'to-close'  => 'Hadi Funga',
+    'progress'  => 'Inaendelea',
+    'to-close'  => 'Ya kufungwa',
     'done'      => 'Imekamilika',
     'cancel'    => 'Imeghairiwa',
 ];

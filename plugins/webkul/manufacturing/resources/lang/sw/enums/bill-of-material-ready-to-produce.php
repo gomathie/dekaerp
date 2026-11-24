@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'all-available' => 'Wakati zote components ni inapatikana',
-    'asap'          => 'Wakati components kwa kwanza operation ni inapatikana',
+    'all-available' => 'Vipengele vyote vinapopatikana',
+    'asap'          => 'Vipengele vya operesheni ya kwanza vinapopatikana',
 ];

@@ -3,6 +3,6 @@
 return [
     'modules' => [
         'title'       => 'Programu-jalizi',
-        'description' => 'Ambayo installed programu-jalizi hii kampuni ni entitled hadi. ile ile grants ni managed kutoka Makampuni kitendo washa Programu-jalizi ukurasa; enforcement ni imetumika kwa programu-jalizi kama hii ni rolled nje.',
+        'description' => 'Programu-jalizi zipi zilizosakinishwa kampuni hii inaruhusiwa kutumia. Ruhusa hizi pia zinasimamiwa kupitia kitendo cha Kampuni kwenye ukurasa wa Programu-jalizi; udhibiti unatumika kwa kila programu-jalizi kadiri inavyowekwa.',
     ],
 ];

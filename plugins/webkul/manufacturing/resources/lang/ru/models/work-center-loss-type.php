@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'title' => 'Work Center Убыток Тип',
+    'title' => 'Тип потерь рабочего центра',
 ];

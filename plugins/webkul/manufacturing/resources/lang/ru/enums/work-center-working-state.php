@@ -2,6 +2,6 @@
 
 return [
     'normal'  => 'Обычный',
-    'blocked' => 'Blocked',
-    'done'    => 'В Ход',
+    'blocked' => 'Заблокирован',
+    'done'    => 'В работе',
 ];

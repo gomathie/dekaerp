@@ -1,31 +1,31 @@
 <?php
 
 return [
-    'title'        => 'Uzalishaji Maagizo',
+    'title'        => 'Oda za uzalishaji',
 
     'header-actions' => [
         'create' => [
-            'label' => 'Unda Uzalishaji Agizo',
+            'label' => 'Unda oda ya uzalishaji',
         ],
     ],
 
     'tabs' => [
-        'todo'        => 'Hadi',
-        'done'        => 'Imekamilika',
-        'cancelled'   => 'Imeghairiwa',
-        'planned'     => 'Imepangwa',
+        'todo'        => 'Za kufanya',
+        'done'        => 'Zilizokamilika',
+        'cancelled'   => 'Zilizoghairiwa',
+        'planned'     => 'Zilizopangwa',
         'draft'       => 'Rasimu',
-        'confirmed'   => 'Imethibitishwa',
-        'in-progress' => 'Katika Maendeleo',
-        'to-close'    => 'Hadi Funga',
-        'mo-pending'  => 'MO Inasubiri',
-        'mo-ready'    => 'MO Ready',
-        'my-mos'      => 'Yangu MOs',
-        'late'        => 'Late',
+        'confirmed'   => 'Zilizothibitishwa',
+        'in-progress' => 'Zinazoendelea',
+        'to-close'    => 'Za kufungwa',
+        'mo-pending'  => 'Oda zinazosubiri',
+        'mo-ready'    => 'Oda zilizo tayari',
+        'my-mos'      => 'Oda zangu',
+        'late'        => 'Zilizochelewa',
     ],
 
     'notification' => [
-        'title' => 'Uzalishaji agizo imeundwa',
-        'body'  => 'uzalishaji agizo ina imeundwa successfully.',
+        'title' => 'Oda ya uzalishaji imeundwa',
+        'body'  => 'Oda ya uzalishaji imeundwa kikamilifu.',
     ],
 ];

@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'label' => 'Unplan',
+    'label' => 'Ondoa kwenye mpango',
 
     'notification' => [
         'success' => [
-            'title' => 'Uzalishaji agizo un-imepangwa',
-            'body'  => 'uzalishaji agizo ina un-imepangwa successfully.',
+            'title' => 'Oda ya uzalishaji imeondolewa kwenye mpango',
+            'body'  => 'Oda ya uzalishaji imeondolewa kwenye mpango kikamilifu.',
         ],
     ],
 ];

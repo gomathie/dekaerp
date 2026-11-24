@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Work center обновлено',
-        'body'  => 'work center есть обновлено successfully.',
+        'title' => 'Рабочий центр обновлён',
+        'body'  => 'Рабочий центр успешно обновлён.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Work center в архиве',
-                'body'  => 'work center есть в архиве successfully.',
+                'title' => 'Рабочий центр архивирован',
+                'body'  => 'Рабочий центр успешно архивирован.',
             ],
         ],
     ],

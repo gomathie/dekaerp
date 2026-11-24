@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'list-price'     => 'Orodha Bei',
-    'standard-price' => 'Standard Bei',
-    'price-rules'    => 'Nyingine Bei Rules',
+    'list-price'     => 'Bei ya orodha',
+    'standard-price' => 'Bei ya kawaida',
+    'price-rules'    => 'Kanuni nyingine za bei',
 ];

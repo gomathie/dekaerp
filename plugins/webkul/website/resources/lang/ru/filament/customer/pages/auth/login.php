@@ -4,23 +4,23 @@ return [
     'title'    => 'Вход',
     'heading'  => 'Вход',
     'messages' => [
-        'failed' => 'Эти credentials не совпадение наш записи.',
+        'failed' => 'Неверные учётные данные.',
     ],
     'notifications' => [
         'throttled' => [
-            'title' => 'Слишком много attempts. Попробуйте снова в :seconds seconds.',
-            'body'  => 'Пожалуйста wait :seconds seconds (:minutes минуты) до trying снова.',
+            'title' => 'Слишком много попыток. Повторите через :seconds с.',
+            'body'  => 'Подождите :seconds с (:minutes мин) перед следующей попыткой.',
         ],
     ],
     'form' => [
         'email' => [
-            'label' => 'Эл. почта адрес',
+            'label' => 'Адрес эл. почты',
         ],
         'password' => [
             'label' => 'Пароль',
         ],
         'remember' => [
-            'label' => 'Remember мне',
+            'label' => 'Запомнить меня',
         ],
         'actions' => [
             'authenticate' => [
@@ -30,8 +30,8 @@ return [
     ],
     'actions' => [
         'register' => [
-            'before' => 'Don\'t есть счёт?',
-            'label'  => 'Создать счёт',
+            'before' => 'Нет аккаунта?',
+            'label'  => 'Создать аккаунт',
         ],
         'request_password_reset' => [
             'label' => 'Забыли пароль?',

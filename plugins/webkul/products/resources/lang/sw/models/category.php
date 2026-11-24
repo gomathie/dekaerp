@@ -5,9 +5,9 @@ return [
 
     'log-attributes' => [
         'name'                 => 'Jina',
-        'full_name'            => 'Kamili Jina',
-        'parent_path'          => 'Parent Path',
-        'parent'               => 'Parent Kategoria',
-        'creator'              => 'Creator',
+        'full_name'            => 'Jina kamili',
+        'parent_path'          => 'Njia ya kategoria kuu',
+        'parent'               => 'Kategoria kuu',
+        'creator'              => 'Muundaji',
     ],
 ];

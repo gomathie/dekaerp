@@ -6,12 +6,12 @@ return [
             'notification' => [
                 'success' => [
                     'title' => 'Kategoria imefutwa',
-                    'body'  => 'kategoria ina imefutwa successfully.',
+                    'body'  => 'Kategoria imefutwa kikamilifu.',
                 ],
 
                 'error' => [
-                    'title' => 'Kategoria could si kuwa imefutwa',
-                    'body'  => 'kategoria haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                    'title' => 'Kategoria haikuweza kufutwa',
+                    'body'  => 'Kategoria haiwezi kufutwa kwa sababu inatumika kwa sasa.',
                 ],
             ],
         ],

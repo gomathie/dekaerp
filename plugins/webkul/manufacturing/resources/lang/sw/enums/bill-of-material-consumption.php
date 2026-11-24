@@ -2,6 +2,6 @@
 
 return [
     'flexible' => 'Inaruhusiwa',
-    'warning'  => 'Inaruhusiwa na onyo',
-    'strict'   => 'Blocked',
+    'warning'  => 'Inaruhusiwa kwa onyo',
+    'strict'   => 'Imezuiwa',
 ];

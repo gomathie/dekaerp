@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title'        => 'Unda Uzalishaji Agizo',
+    'title'        => 'Unda oda ya uzalishaji',
 
     'notification' => [
-        'title' => 'Uzalishaji agizo imeundwa',
-        'body'  => 'uzalishaji agizo ina imeundwa successfully.',
+        'title' => 'Oda ya uzalishaji imeundwa',
+        'body'  => 'Oda ya uzalishaji imeundwa kikamilifu.',
     ],
 ];

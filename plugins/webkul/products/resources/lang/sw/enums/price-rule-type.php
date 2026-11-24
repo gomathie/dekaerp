@@ -2,6 +2,6 @@
 
 return [
     'percentage'   => 'Asilimia',
-    'formula'      => 'Formula',
-    'fixed'        => 'Isiyobadilika',
+    'formula'      => 'Fomula',
+    'fixed'        => 'Maalum',
 ];

@@ -2,14 +2,14 @@
 
 return [
     'notification' => [
-        'title' => 'Operation imesasishwa',
-        'body'  => 'operation ina imesasishwa successfully.',
+        'title' => 'Operesheni imesasishwa',
+        'body'  => 'Operesheni imesasishwa kikamilifu.',
     ],
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Operation imehifadhiwa',
-                'body'  => 'operation ina imehifadhiwa successfully.',
+                'title' => 'Operesheni imewekwa kwenye kumbukumbu',
+                'body'  => 'Operesheni imewekwa kwenye kumbukumbu kikamilifu.',
             ],
         ],
     ],

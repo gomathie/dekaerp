@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'pending'  => 'Waiting для another производственный заказ',
-    'waiting'  => 'Waiting для components',
-    'ready'    => 'Ready',
-    'progress' => 'В Ход',
-    'done'     => 'Finished',
+    'pending'  => 'Ожидание другого наряда',
+    'waiting'  => 'Ожидание компонентов',
+    'ready'    => 'Готов',
+    'progress' => 'В работе',
+    'done'     => 'Завершён',
     'cancel'   => 'Отменён',
 ];

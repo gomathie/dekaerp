@@ -3,38 +3,38 @@
 return [
     'manufacturing-manager' => [
         'unplan-order' => [
-            'work-orders-already-done'    => "Некоторые производственный заказs уже завершён, поэтому вы нельзя un-plan этот производство заказ.nnIt'd быть shame до waste все тот ход, справа?",
-            'work-orders-already-started' => "Некоторые производственный заказs есть уже started, поэтому вы нельзя un-plan этот производство заказ.nnIt'd быть shame до waste все тот ход, справа?",
+            'work-orders-already-done'    => 'Некоторые рабочие наряды уже выполнены, поэтому снять этот производственный заказ с плана нельзя. Жаль было бы потерять весь этот прогресс, правда?',
+            'work-orders-already-started' => 'Некоторые рабочие наряды уже начаты, поэтому снять этот производственный заказ с плана нельзя. Жаль было бы потерять весь этот прогресс, правда?',
         ],
     ],
 
     'work-center-productivity-log' => [
-        'time-tracking'                    => 'Time Tracking: :name',
-        'no-performance-productivity-loss' => "Вы need до define в наименее one un archive productivity убыток в категория 'Performance'. Создать от конфигурация настройки.",
+        'time-tracking'                    => 'Учёт времени: :name',
+        'no-performance-productivity-loss' => 'Нужно задать хотя бы одну неархивированную потерю производительности в категории «Производительность». Создайте её в настройках конфигурации.',
     ],
 
     'work-center' => [
-        'already-unblocked' => 'Это есть уже unblocked.',
+        'already-unblocked' => 'Блокировка уже снята.',
     ],
 
     'work-order' => [
-        'unblock-work-center'        => 'Пожалуйста unblock work center до начать производственный заказ.',
-        'already-done-or-cancelled'  => 'Вы нельзя начать производственный заказ тот уже завершён или отменён',
-        'no-calendar-on-work-center' => 'нет defined календарь вкл. work center :name.',
-        'no-productivity-loss'       => "Вы need до define в наименее one productivity убыток в категория 'Productivity'. Создать Конфигурация настройки.",
-        'no-performance-loss'        => "Вы need до define в наименее one productivity убыток в категория 'Performance'. Создать Конфигурация настройки.",
-        'impossible-to-plan'         => 'Impossible до plan производственный заказ. Пожалуйста чек work center availabilities.',
+        'unblock-work-center'        => 'Снимите блокировку с рабочего центра, чтобы начать рабочий наряд.',
+        'already-done-or-cancelled'  => 'Нельзя начать рабочий наряд, который уже выполнен или отменён',
+        'no-calendar-on-work-center' => 'Для рабочего центра :name не задан календарь.',
+        'no-productivity-loss'       => 'Нужно задать хотя бы одну потерю производительности в категории «Продуктивность». Создайте её в настройках конфигурации.',
+        'no-performance-loss'        => 'Нужно задать хотя бы одну потерю производительности в категории «Производительность». Создайте её в настройках конфигурации.',
+        'impossible-to-plan'         => 'Невозможно запланировать рабочий наряд. Проверьте доступность рабочего центра.',
     ],
 
     'order' => [
-        'product-in-byproducts'                    => 'Вы нельзя есть :product как finished товар и в Byproducts',
-        'missing-lot-serial-number'                => 'Вы need до supply Партия/Серийный номер Номер для товары и "consume" их: :missing_products',
-        'serial-number-already-produced'           => 'Этот серийный номер номер для товар :product есть уже produced',
-        'byproduct-serial-number-already-produced' => 'серийный номер номер :number используется для byproduct :product есть уже produced',
-        'component-serial-number-consumed'         => 'серийный номер номер :number используется для component :component есть уже consumed',
+        'product-in-byproducts'                    => 'Товар :product не может быть одновременно готовой продукцией и побочным продуктом',
+        'missing-lot-serial-number'                => 'Укажите партию/серийный номер для товаров и «израсходуйте» их: :missing_products',
+        'serial-number-already-produced'           => 'Этот серийный номер для товара :product уже произведён',
+        'byproduct-serial-number-already-produced' => 'Серийный номер :number для побочного продукта :product уже произведён',
+        'component-serial-number-consumed'         => 'Серийный номер :number для компонента :component уже израсходован',
         'components-availability'                  => [
             'available'     => 'Доступно',
-            'not-available' => 'Не Доступно',
+            'not-available' => 'Недоступно',
             'expected'      => 'Ожидается :date',
         ],
     ],

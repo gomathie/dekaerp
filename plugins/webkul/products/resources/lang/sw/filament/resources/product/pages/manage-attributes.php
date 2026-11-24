@@ -1,44 +1,44 @@
 <?php
 
 return [
-    'title' => 'Attributes',
+    'title' => 'Sifa',
 
     'form' => [
-        'attribute' => 'Attribute',
-        'values'    => 'Values',
+        'attribute' => 'Sifa',
+        'values'    => 'Thamani',
     ],
 
     'table' => [
-        'description' => 'Onyo: adding au deleting attributes ita futa na recreate existing variants na lead hadi hasara ya yao possible customizations.',
+        'description' => 'Onyo: kuongeza au kufuta sifa kutafuta na kuunda upya aina za bidhaa zilizopo, na marekebisho yao yanaweza kupotea.',
 
         'header-actions' => [
             'create' => [
-                'label' => 'Ongeza Attribute',
+                'label' => 'Ongeza sifa',
 
                 'notification' => [
-                    'title' => 'Attribute imeundwa',
-                    'body'  => 'attribute ina imeundwa successfully.',
+                    'title' => 'Sifa imeundwa',
+                    'body'  => 'Sifa imeundwa kikamilifu.',
                 ],
             ],
         ],
 
         'columns' => [
-            'attribute' => 'Attribute',
-            'values'    => 'Values',
+            'attribute' => 'Sifa',
+            'values'    => 'Thamani',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Attribute imesasishwa',
-                    'body'  => 'attribute ina imesasishwa successfully.',
+                    'title' => 'Sifa imesasishwa',
+                    'body'  => 'Sifa imesasishwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Attribute imefutwa',
-                    'body'  => 'attribute ina imefutwa successfully.',
+                    'title' => 'Sifa imefutwa',
+                    'body'  => 'Sifa imefutwa kikamilifu.',
                 ],
             ],
         ],

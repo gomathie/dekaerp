@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'title' => 'Work Center Hasara Aina',
+    'title' => 'Aina ya hasara ya kituo cha kazi',
 ];

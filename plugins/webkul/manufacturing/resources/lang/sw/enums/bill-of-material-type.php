@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'normal'  => 'Manufacture hii bidhaa',
-    'phantom' => 'Kit',
+    'normal'  => 'Zalisha bidhaa hii',
+    'phantom' => 'Kifurushi',
 ];

@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'title' => 'Manage Planning',
+    'title' => 'Simamia upangaji',
 
     'form' => [
         'manufacturing-lead-time' => [
-            'label'       => 'Uzalishaji Lead Time',
-            'helper-text' => 'Plan uzalishaji maagizo katika advance hadi prevent delays.',
+            'label'       => 'Muda wa uzalishaji',
+            'helper-text' => 'Panga oda za uzalishaji mapema ili kuepuka ucheleweshaji.',
         ],
     ],
 ];

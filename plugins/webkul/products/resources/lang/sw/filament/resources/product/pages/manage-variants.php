@@ -1,14 +1,14 @@
 <?php
 
 return [
-    'title' => 'Variants',
+    'title' => 'Aina za bidhaa',
 
     'form' => [
         'date'                   => 'Tarehe',
         'employee'               => 'Mfanyakazi',
         'description'            => 'Maelezo',
-        'time-spent'             => 'Time Spent',
-        'time-spent-helper-text' => 'Time spent katika saa (Eg. 1.5 saa means 1 saa 30 dakika)',
+        'time-spent'             => 'Muda uliotumika',
+        'time-spent-helper-text' => 'Muda uliotumika kwa saa (mf. saa 1.5 ni saa 1 na dakika 30)',
     ],
 
     'table' => [
@@ -16,37 +16,37 @@ return [
             'date'                   => 'Tarehe',
             'employee'               => 'Mfanyakazi',
             'description'            => 'Maelezo',
-            'time-spent'             => 'Time Spent',
-            'time-spent-on-subtasks' => 'Time Spent washa Subtasks',
-            'total-time-spent'       => 'Jumla Time Spent',
-            'remaining-time'         => 'Iliyobaki Time',
-            'variant-values'         => 'Variant Values',
+            'time-spent'             => 'Muda uliotumika',
+            'time-spent-on-subtasks' => 'Muda uliotumika kwenye kazi ndogo',
+            'total-time-spent'       => 'Jumla ya muda uliotumika',
+            'remaining-time'         => 'Muda uliobaki',
+            'variant-values'         => 'Thamani za aina',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Variant imefutwa',
-                    'body'  => 'variant ina imefutwa successfully.',
+                    'title' => 'Aina ya bidhaa imefutwa',
+                    'body'  => 'Aina ya bidhaa imefutwa kikamilifu.',
                 ],
             ],
 
             'view' => [
                 'extra-footer-actions' => [
                     'print' => [
-                        'label' => 'Chapisha Labels',
+                        'label' => 'Chapisha lebo',
 
                         'form' => [
                             'fields' => [
-                                'quantity' => 'Nambari ya Labels',
-                                'format'   => 'Umbizo',
+                                'quantity' => 'Idadi ya lebo',
+                                'format'   => 'Muundo',
 
                                 'format-options' => [
                                     'dymo'       => 'Dymo',
-                                    '2x7_price'  => '2x7 na bei',
-                                    '4x7_price'  => '4x7 na bei',
+                                    '2x7_price'  => '2x7 pamoja na bei',
+                                    '4x7_price'  => '4x7 pamoja na bei',
                                     '4x12'       => '4x12',
-                                    '4x12_price' => '4x12 na bei',
+                                    '4x12_price' => '4x12 pamoja na bei',
                                 ],
                             ],
                         ],

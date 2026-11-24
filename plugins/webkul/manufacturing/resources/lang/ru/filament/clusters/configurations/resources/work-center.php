@@ -2,7 +2,7 @@
 
 return [
     'navigation' => [
-        'title' => 'Work Centers',
+        'title' => 'Рабочие центры',
         'group' => 'Конфигурация',
     ],
 
@@ -12,33 +12,33 @@ return [
                 'title'  => 'Общее',
                 'fields' => [
                     'name'                     => 'Название',
-                    'name-placeholder'         => 'eg. Assembly Строка 1',
+                    'name-placeholder'         => 'напр. Сборочная линия 1',
                     'code'                     => 'Код',
-                    'code-placeholder'         => 'eg. AL1',
-                    'working-state'            => 'Working Состояние',
+                    'code-placeholder'         => 'напр. AL1',
+                    'working-state'            => 'Рабочее состояние',
                     'color'                    => 'Цвет',
-                    'tags'                     => 'Метка',
-                    'alternative-work-centers' => 'Alternative Work Centers',
+                    'tags'                     => 'Тег',
+                    'alternative-work-centers' => 'Альтернативные рабочие центры',
                     'company'                  => 'Компания',
-                    'calendar'                 => 'Working Часы',
+                    'calendar'                 => 'Рабочие часы',
                 ],
             ],
 
             'information' => [
-                'title'     => 'Общее Сведения',
+                'title'     => 'Общая информация',
                 'fieldsets' => [
-                    'production-information' => 'Рабочая среда Сведения',
-                    'costing-information'    => 'Costing Сведения',
+                    'production-information' => 'Производственные данные',
+                    'costing-information'    => 'Данные о затратах',
                 ],
                 'fields' => [
-                    'default-capacity' => 'По умолчанию Capacity',
-                    'time-efficiency'  => 'Time Efficiency',
-                    'oee-target'       => 'OEE Назначение',
-                    'costs-per-hour'   => 'Стоимость за Час',
-                    'cost-suffix'      => 'за час',
-                    'setup-time'       => 'Setup Time',
-                    'cleanup-time'     => 'Cleanup Time',
-                    'time-suffix'      => 'минуты',
+                    'default-capacity' => 'Мощность по умолчанию',
+                    'time-efficiency'  => 'Эффективность по времени',
+                    'oee-target'       => 'Целевой OEE',
+                    'costs-per-hour'   => 'Стоимость часа',
+                    'cost-suffix'      => 'в час',
+                    'setup-time'       => 'Время наладки',
+                    'cleanup-time'     => 'Время уборки',
+                    'time-suffix'      => 'минут',
                 ],
             ],
 
@@ -46,24 +46,24 @@ return [
                 'title'  => 'Описание',
                 'fields' => [
                     'note'             => 'Описание',
-                    'note-placeholder' => 'Описание work center...',
+                    'note-placeholder' => 'Описание рабочего центра…',
                 ],
             ],
 
             'specific-capacity' => [
-                'title'  => 'Specific Capacity',
+                'title'  => 'Особая мощность',
                 'fields' => [
-                    'records' => 'Specific Capacity',
+                    'records' => 'Особая мощность',
                 ],
                 'columns' => [
                     'product'      => 'Товар',
-                    'product-uom'  => 'UOM',
-                    'capacity'     => 'Capacity',
-                    'setup-time'   => 'Setup Time',
-                    'cleanup-time' => 'Cleanup Time',
+                    'product-uom'  => 'Ед. изм.',
+                    'capacity'     => 'Мощность',
+                    'setup-time'   => 'Время наладки',
+                    'cleanup-time' => 'Время уборки',
                 ],
                 'actions' => [
-                    'add' => 'Добавить строка',
+                    'add' => 'Добавить строку',
                 ],
             ],
         ],
@@ -74,14 +74,14 @@ return [
             'name'             => 'Название',
             'code'             => 'Код',
             'company'          => 'Компания',
-            'calendar'         => 'Working Часы',
-            'working-state'    => 'Working Состояние',
-            'default-capacity' => 'Capacity',
-            'time-efficiency'  => 'Efficiency',
-            'costs-per-hour'   => 'Стоимость за Час',
-            'deleted-at'       => 'Удалено',
-            'created-at'       => 'Создано',
-            'updated-at'       => 'Обновлено',
+            'calendar'         => 'Рабочие часы',
+            'working-state'    => 'Рабочее состояние',
+            'default-capacity' => 'Мощность',
+            'time-efficiency'  => 'Эффективность',
+            'costs-per-hour'   => 'Стоимость часа',
+            'deleted-at'       => 'Удалён',
+            'created-at'       => 'Создан',
+            'updated-at'       => 'Обновлён',
         ],
 
         'groups' => [
@@ -90,34 +90,34 @@ return [
 
         'filters' => [
             'company'       => 'Компания',
-            'working-state' => 'Working Состояние',
+            'working-state' => 'Рабочее состояние',
         ],
 
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Work center restored',
-                    'body'  => 'work center есть restored successfully.',
+                    'title' => 'Рабочий центр восстановлен',
+                    'body'  => 'Рабочий центр успешно восстановлен.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Work center в архиве',
-                    'body'  => 'work center есть в архиве successfully.',
+                    'title' => 'Рабочий центр архивирован',
+                    'body'  => 'Рабочий центр успешно архивирован.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Work center удалено',
-                        'body'  => 'work center есть permanently удалено.',
+                        'title' => 'Рабочий центр удалён',
+                        'body'  => 'Рабочий центр удалён безвозвратно.',
                     ],
 
                     'error' => [
-                        'title' => 'Work center could не быть удалено',
-                        'body'  => 'work center нельзя быть удалено потому что это currently в использовать.',
+                        'title' => 'Не удалось удалить рабочий центр',
+                        'body'  => 'Рабочий центр нельзя удалить, так как он используется.',
                     ],
                 ],
             ],
@@ -126,28 +126,28 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Work centers restored',
-                    'body'  => 'выбрано work centers есть restored successfully.',
+                    'title' => 'Рабочие центры восстановлены',
+                    'body'  => 'Выбранные рабочие центры успешно восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Work centers в архиве',
-                    'body'  => 'выбрано work centers есть в архиве successfully.',
+                    'title' => 'Рабочие центры архивированы',
+                    'body'  => 'Выбранные рабочие центры успешно архивированы.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Work centers удалено',
-                        'body'  => 'выбрано work centers есть permanently удалено.',
+                        'title' => 'Рабочие центры удалены',
+                        'body'  => 'Выбранные рабочие центры удалены безвозвратно.',
                     ],
 
                     'error' => [
-                        'title' => 'Work centers could не быть удалено',
-                        'body'  => 'One или больше выбрано work centers currently в использовать.',
+                        'title' => 'Не удалось удалить рабочие центры',
+                        'body'  => 'Один или несколько выбранных рабочих центров используются.',
                     ],
                 ],
             ],
@@ -157,35 +157,35 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Общее Сведения',
+                'title' => 'Общая информация',
 
                 'entries' => [
-                    'name'                     => 'Work Center Название',
+                    'name'                     => 'Название рабочего центра',
                     'code'                     => 'Код',
-                    'working-state'            => 'Working Состояние',
-                    'tags'                     => 'Метка',
-                    'alternative-work-centers' => 'Alternative Work Centers',
+                    'working-state'            => 'Рабочее состояние',
+                    'tags'                     => 'Тег',
+                    'alternative-work-centers' => 'Альтернативные рабочие центры',
                     'company'                  => 'Компания',
-                    'calendar'                 => 'Working Часы',
+                    'calendar'                 => 'Рабочие часы',
                 ],
             ],
 
             'information' => [
-                'title'     => 'Общее Сведения',
+                'title'     => 'Общая информация',
                 'fieldsets' => [
-                    'production-information' => 'Рабочая среда Сведения',
-                    'costing-information'    => 'Costing Сведения',
+                    'production-information' => 'Производственные данные',
+                    'costing-information'    => 'Данные о затратах',
                 ],
 
                 'entries' => [
-                    'default-capacity' => 'По умолчанию Capacity',
-                    'time-efficiency'  => 'Time Efficiency',
-                    'oee-target'       => 'OEE Назначение',
-                    'costs-per-hour'   => 'Стоимость за Час',
-                    'cost-suffix'      => 'за work center',
-                    'setup-time'       => 'Setup Time',
-                    'cleanup-time'     => 'Cleanup Time',
-                    'time-suffix'      => 'минуты',
+                    'default-capacity' => 'Мощность по умолчанию',
+                    'time-efficiency'  => 'Эффективность по времени',
+                    'oee-target'       => 'Целевой OEE',
+                    'costs-per-hour'   => 'Стоимость часа',
+                    'cost-suffix'      => 'на рабочий центр',
+                    'setup-time'       => 'Время наладки',
+                    'cleanup-time'     => 'Время уборки',
+                    'time-suffix'      => 'минут',
                 ],
             ],
 
@@ -197,23 +197,23 @@ return [
             ],
 
             'specific-capacity' => [
-                'title'   => 'Specific Capacities',
+                'title'   => 'Особые мощности',
                 'columns' => [
                     'product'      => 'Товар',
-                    'product-uom'  => 'UOM',
-                    'capacity'     => 'Capacity',
-                    'setup-time'   => 'Setup Time',
-                    'cleanup-time' => 'Cleanup Time',
+                    'product-uom'  => 'Ед. изм.',
+                    'capacity'     => 'Мощность',
+                    'setup-time'   => 'Время наладки',
+                    'cleanup-time' => 'Время уборки',
                 ],
             ],
 
             'record-information' => [
-                'title' => 'Запись Сведения',
+                'title' => 'Сведения о записи',
 
                 'entries' => [
-                    'created-by'   => 'Создано От',
-                    'created-at'   => 'Создано',
-                    'last-updated' => 'Последний Обновлено',
+                    'created-by'   => 'Автор',
+                    'created-at'   => 'Создан',
+                    'last-updated' => 'Последнее обновление',
                 ],
             ],
         ],

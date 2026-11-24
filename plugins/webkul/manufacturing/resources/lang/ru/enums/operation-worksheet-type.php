@@ -2,6 +2,6 @@
 
 return [
     'pdf'          => 'PDF',
-    'google-slide' => 'Google Slide',
-    'text'         => 'Text',
+    'google-slide' => 'Google Slides',
+    'text'         => 'Текст',
 ];

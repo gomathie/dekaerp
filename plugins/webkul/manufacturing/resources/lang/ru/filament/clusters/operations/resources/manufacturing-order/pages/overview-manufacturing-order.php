@@ -3,12 +3,12 @@
 return [
     'title'   => 'Обзор',
     'summary' => [
-        'free-to-use' => 'Free до Использовать',
+        'free-to-use' => 'Свободно',
     ],
     'status' => [
-        'ready'     => 'Ready',
+        'ready'     => 'Готово',
         'available' => 'Доступно',
-        'waiting'   => 'Waiting',
+        'waiting'   => 'Ожидание',
     ],
     'receipt' => [
         'expected' => 'Ожидается :date',
@@ -18,13 +18,13 @@ return [
             'product'               => 'Товар',
             'status'                => 'Статус',
             'quantity'              => 'Количество',
-            'free-to-use-on-hand'   => 'Free до использовать / Вкл. Вручную',
+            'free-to-use-on-hand'   => 'Свободно / в наличии',
             'reserved'              => 'Зарезервировано',
-            'receipt'               => 'Приход',
-            'unit-cost'             => 'Единица Стоимость',
-            'mo-cost'               => 'MO Стоимость',
-            'bom-cost'              => 'BoM Стоимость',
-            'real-cost'             => 'Real Стоимость',
+            'receipt'               => 'Поступление',
+            'unit-cost'             => 'Себестоимость единицы',
+            'mo-cost'               => 'Стоимость ПЗ',
+            'bom-cost'              => 'Стоимость по спецификации',
+            'real-cost'             => 'Фактическая стоимость',
         ],
         'sections' => [
             'operations' => 'Операции',
@@ -33,7 +33,7 @@ return [
             'minutes' => 'Минуты',
         ],
         'footer' => [
-            'unit-cost' => 'Единица Стоимость',
+            'unit-cost' => 'Себестоимость единицы',
         ],
     ],
 ];

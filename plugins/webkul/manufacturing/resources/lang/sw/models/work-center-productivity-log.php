@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'title' => 'Work Center Productivity Log',
+    'title' => 'Kumbukumbu ya tija ya kituo cha kazi',
 ];

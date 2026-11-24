@@ -4,8 +4,8 @@ return [
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Attribute imefutwa',
-                'body'  => 'attribute ina imefutwa successfully.',
+                'title' => 'Sifa imefutwa',
+                'body'  => 'Sifa imefutwa kikamilifu.',
             ],
         ],
     ],

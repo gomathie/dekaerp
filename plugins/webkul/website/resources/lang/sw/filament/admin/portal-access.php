@@ -2,130 +2,130 @@
 
 return [
     'group' => [
-        'label' => 'Lango Access',
+        'label' => 'Ufikiaji wa tovuti ya wateja',
     ],
 
     'grant' => [
-        'label' => 'Grant Lango Access',
+        'label' => 'Toa ufikiaji wa tovuti ya wateja',
 
         'modal' => [
-            'heading'     => 'Grant Lango Access',
-            'description' => 'mwaliko barua pepe ita kuwa imetumwa hadi :email na link hadi weka nenosiri kwa mteja lango.',
+            'heading'     => 'Toa ufikiaji wa tovuti ya wateja',
+            'description' => 'Barua pepe ya mwaliko itatumwa kwa :email ikiwa na kiungo cha kuweka nenosiri la tovuti ya wateja.',
         ],
 
         'notification' => [
             'email-missing' => [
-                'title' => 'Barua pepe anwani inahitajika',
-                'body'  => 'Ongeza barua pepe anwani hadi hii mwasiliani kabla ya granting lango access.',
+                'title' => 'Anwani ya barua pepe inahitajika',
+                'body'  => 'Ongeza anwani ya barua pepe kwa mhusika huyu kabla ya kutoa ufikiaji wa tovuti ya wateja.',
             ],
 
             'email-taken' => [
-                'title' => 'Barua pepe anwani tayari katika tumia',
-                'body'  => 'Another mwasiliani na lango access ni tayari kwa kutumia hii barua pepe anwani.',
+                'title' => 'Anwani ya barua pepe tayari inatumika',
+                'body'  => 'Mhusika mwingine mwenye ufikiaji wa tovuti ya wateja tayari anatumia anwani hii ya barua pepe.',
             ],
 
             'granted' => [
-                'title' => 'Lango access granted',
-                'body'  => 'mwaliko hadi weka nenosiri ina imetumwa hadi :email.',
+                'title' => 'Ufikiaji wa tovuti ya wateja umetolewa',
+                'body'  => 'Mwaliko wa kuweka nenosiri umetumwa kwa :email.',
             ],
 
             'email-failed' => [
-                'title' => 'Lango access granted, lakini mwaliko barua pepe could si kuwa imetumwa',
+                'title' => 'Ufikiaji umetolewa, lakini barua pepe ya mwaliko haikuweza kutumwa',
             ],
         ],
     ],
 
     'change-password' => [
-        'label' => 'Badilisha Nenosiri',
+        'label' => 'Badilisha nenosiri',
 
         'modal' => [
-            'heading'     => 'Badilisha Lango Nenosiri',
-            'description' => 'Weka mpya mteja lango nenosiri kwa :email.',
+            'heading'     => 'Badilisha nenosiri la tovuti ya wateja',
+            'description' => 'Weka nenosiri jipya la tovuti ya wateja kwa :email.',
         ],
 
         'form' => [
             'password' => [
-                'label' => 'Mpya Nenosiri',
+                'label' => 'Nenosiri jipya',
             ],
 
             'password-confirmation' => [
-                'label' => 'Thibitisha Mpya Nenosiri',
+                'label' => 'Thibitisha nenosiri jipya',
             ],
         ],
 
         'notification' => [
             'changed' => [
-                'title' => 'Lango nenosiri imebadilishwa',
-                'body'  => 'mwasiliani unaweza sasa ingia hadi mteja lango na mpya nenosiri.',
+                'title' => 'Nenosiri la tovuti ya wateja limebadilishwa',
+                'body'  => 'Mhusika sasa anaweza kuingia kwenye tovuti ya wateja kwa nenosiri jipya.',
             ],
         ],
     ],
 
     'password-reset' => [
-        'label' => 'Send Nenosiri Weka upya',
+        'label' => 'Tuma kiungo cha kuweka upya nenosiri',
 
         'modal' => [
-            'heading'     => 'Send Nenosiri Weka upya',
-            'description' => 'nenosiri weka upya link ita kuwa imetumwa hadi :email.',
+            'heading'     => 'Tuma kiungo cha kuweka upya nenosiri',
+            'description' => 'Kiungo cha kuweka upya nenosiri kitatumwa kwa :email.',
         ],
 
         'notification' => [
             'sent' => [
-                'title' => 'Nenosiri weka upya link imetumwa',
-                'body'  => 'nenosiri weka upya link ina imetumwa hadi :email.',
+                'title' => 'Kiungo cha kuweka upya nenosiri kimetumwa',
+                'body'  => 'Kiungo cha kuweka upya nenosiri kimetumwa kwa :email.',
             ],
 
             'failed' => [
-                'title' => 'Nenosiri weka upya link could si kuwa imetumwa',
+                'title' => 'Kiungo cha kuweka upya nenosiri hakikuweza kutumwa',
             ],
         ],
     ],
 
     'revoke' => [
-        'label' => 'Revoke Lango Access',
+        'label' => 'Batilisha ufikiaji wa tovuti ya wateja',
 
         'modal' => [
-            'heading'     => 'Revoke Lango Access',
-            'description' => 'mwasiliani ita hakuna longer kuwa able hadi ingia hadi mteja lango. Yoyote inasubiri nenosiri weka upya links ita kuwa invalidated.',
+            'heading'     => 'Batilisha ufikiaji wa tovuti ya wateja',
+            'description' => 'Mhusika hataweza tena kuingia kwenye tovuti ya wateja. Viungo vyovyote vya kuweka upya nenosiri ambavyo havijatumika vitabatilishwa.',
         ],
 
         'notification' => [
             'revoked' => [
-                'title' => 'Lango access revoked',
-                'body'  => 'mwasiliani unaweza hakuna longer ingia hadi mteja lango.',
+                'title' => 'Ufikiaji wa tovuti ya wateja umebatilishwa',
+                'body'  => 'Mhusika hawezi tena kuingia kwenye tovuti ya wateja.',
             ],
         ],
     ],
 
     'table' => [
         'columns' => [
-            'portal-access' => 'Lango Access',
+            'portal-access' => 'Ufikiaji wa tovuti ya wateja',
         ],
 
         'filters' => [
-            'portal-access' => 'Lango Access',
+            'portal-access' => 'Ufikiaji wa tovuti ya wateja',
         ],
     ],
 
     'infolist' => [
         'section' => [
-            'title' => 'Mteja Lango',
+            'title' => 'Tovuti ya wateja',
         ],
 
         'entries' => [
             'status' => [
-                'label'   => 'Lango Access',
-                'granted' => 'Granted',
-                'none'    => 'Si Granted',
+                'label'   => 'Ufikiaji wa tovuti ya wateja',
+                'granted' => 'Umetolewa',
+                'none'    => 'Haujatolewa',
             ],
 
             'email-verified-at' => [
-                'label'       => 'Barua pepe Verified Saa',
+                'label'       => 'Barua pepe ilithibitishwa',
                 'placeholder' => 'Kamwe',
             ],
 
             'last-login-at' => [
-                'label'       => 'Mwisho Lango Ingia',
+                'label'       => 'Kuingia kwa mwisho',
                 'placeholder' => 'Kamwe',
             ],
         ],

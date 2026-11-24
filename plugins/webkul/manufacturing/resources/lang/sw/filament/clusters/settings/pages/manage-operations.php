@@ -1,23 +1,23 @@
 <?php
 
 return [
-    'title' => 'Manage Shughuli',
+    'title' => 'Simamia operesheni',
 
     'form' => [
         'enable-work-orders' => [
-            'label'       => 'Agizo la kazis',
-            'helper-text' => 'Execute shughuli saa designated work centers.',
-            'link-text'   => 'Configure work centers',
+            'label'       => 'Oda za kazi',
+            'helper-text' => 'Tekeleza operesheni kwenye vituo vya kazi vilivyoteuliwa.',
+            'link-text'   => 'Sanidi vituo vya kazi',
         ],
 
         'enable-work-order-dependencies' => [
-            'label'       => 'Agizo la kazi Dependencies',
-            'helper-text' => 'Weka mfuatano katika ambayo agizo la kazis unapaswa kuwa processed. Washa hii feature kutoka Miscellaneous kichupo ya kila BoM.',
+            'label'       => 'Utegemezi wa oda za kazi',
+            'helper-text' => 'Weka mfuatano ambao oda za kazi zinapaswa kushughulikiwa. Washa kipengele hiki kwenye kichupo cha Mengineyo cha kila orodha ya malighafi.',
         ],
 
         'enable-byproducts' => [
-            'label'       => 'Byproducts',
-            'helper-text' => 'Generate na-bidhaa wakati wa uzalishaji ( + B → C + D).',
+            'label'       => 'Bidhaa za ziada',
+            'helper-text' => 'Zalisha bidhaa za ziada wakati wa uzalishaji (A + B → C + D).',
         ],
     ],
 ];

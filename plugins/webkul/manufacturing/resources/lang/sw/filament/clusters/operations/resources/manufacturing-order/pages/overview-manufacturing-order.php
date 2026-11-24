@@ -3,12 +3,12 @@
 return [
     'title'   => 'Muhtasari',
     'summary' => [
-        'free-to-use' => 'Free hadi Tumia',
+        'free-to-use' => 'Huru kutumia',
     ],
     'status' => [
-        'ready'     => 'Ready',
+        'ready'     => 'Tayari',
         'available' => 'Inapatikana',
-        'waiting'   => 'Waiting',
+        'waiting'   => 'Inasubiri',
     ],
     'receipt' => [
         'expected' => 'Inatarajiwa :date',
@@ -17,23 +17,23 @@ return [
         'columns' => [
             'product'               => 'Bidhaa',
             'status'                => 'Hali',
-            'quantity'              => 'Kiasi',
-            'free-to-use-on-hand'   => 'Free hadi tumia / Washa Mkono',
-            'reserved'              => 'Imehifadhiwa',
-            'receipt'               => 'Stakabadhi',
-            'unit-cost'             => 'Uniti Gharama',
-            'mo-cost'               => 'MO Gharama',
-            'bom-cost'              => 'BoM Gharama',
-            'real-cost'             => 'Real Gharama',
+            'quantity'              => 'Idadi',
+            'free-to-use-on-hand'   => 'Huru kutumia / Zilizopo',
+            'reserved'              => 'Zimehifadhiwa',
+            'receipt'               => 'Upokeaji',
+            'unit-cost'             => 'Gharama ya kipimo kimoja',
+            'mo-cost'               => 'Gharama ya oda',
+            'bom-cost'              => 'Gharama ya orodha ya malighafi',
+            'real-cost'             => 'Gharama halisi',
         ],
         'sections' => [
-            'operations' => 'Shughuli',
+            'operations' => 'Operesheni',
         ],
         'rows' => [
             'minutes' => 'Dakika',
         ],
         'footer' => [
-            'unit-cost' => 'Uniti Gharama',
+            'unit-cost' => 'Gharama ya kipimo kimoja',
         ],
     ],
 ];

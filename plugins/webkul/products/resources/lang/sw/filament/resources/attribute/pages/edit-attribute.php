@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Attribute imesasishwa',
-        'body'  => 'attribute ina imesasishwa successfully.',
+        'title' => 'Sifa imesasishwa',
+        'body'  => 'Sifa imesasishwa kikamilifu.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Attribute imefutwa',
-                'body'  => 'attribute ina imefutwa successfully.',
+                'title' => 'Sifa imefutwa',
+                'body'  => 'Sifa imefutwa kikamilifu.',
             ],
         ],
     ],

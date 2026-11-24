@@ -3,11 +3,11 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Kifungashio',
+            'label' => 'Kifungashio kipya',
 
             'notification' => [
-                'title' => 'Kifungashio imeundwa',
-                'body'  => 'kifungashio ina imeundwa successfully.',
+                'title' => 'Kifungashio kimeundwa',
+                'body'  => 'Kifungashio kimeundwa kikamilifu.',
             ],
         ],
     ],

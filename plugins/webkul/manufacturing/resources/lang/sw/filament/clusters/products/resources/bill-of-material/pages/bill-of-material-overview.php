@@ -10,42 +10,42 @@ return [
     'heading' => 'Muhtasari',
 
     'filters' => [
-        'quantity' => 'Kiasi',
-        'variant'  => 'Variant',
+        'quantity' => 'Idadi',
+        'variant'  => 'Aina',
     ],
 
     'summary' => [
-        'free-to-use' => 'Free hadi Tumia',
-        'on-hand'     => 'Washa Mkono',
-        'total-cost'  => 'Jumla Gharama',
+        'free-to-use' => 'Huru kutumia',
+        'on-hand'     => 'Zilizopo',
+        'total-cost'  => 'Jumla ya gharama',
     ],
 
     'table' => [
         'columns' => [
             'product'      => 'Bidhaa',
-            'quantity'     => 'Kiasi',
-            'lead-time'    => 'Lead Time',
+            'quantity'     => 'Idadi',
+            'lead-time'    => 'Muda wa kusubiri',
             'route'        => 'Njia',
-            'bom-cost'     => 'BoM Gharama',
-            'product-cost' => 'Bidhaa Gharama',
+            'bom-cost'     => 'Gharama ya orodha ya malighafi',
+            'product-cost' => 'Gharama ya bidhaa',
         ],
         'sections' => [
-            'operations' => 'Shughuli',
+            'operations' => 'Operesheni',
         ],
         'rows' => [
             'days'    => 'siku',
             'minutes' => 'Dakika',
         ],
         'footer' => [
-            'unit-cost' => 'Uniti Gharama',
+            'unit-cost' => 'Gharama ya kipimo kimoja',
         ],
     ],
 
     'by-products' => [
-        'title'   => 'Na-bidhaa',
+        'title'   => 'Bidhaa za ziada',
         'columns' => [
-            'product'  => 'Na-bidhaa',
-            'quantity' => 'Kiasi',
+            'product'  => 'Bidhaa ya ziada',
+            'quantity' => 'Idadi',
             'uom'      => 'Kipimo',
         ],
     ],

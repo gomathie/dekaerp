@@ -13,12 +13,12 @@ return [
             ],
 
             'options' => [
-                'title'  => 'Options',
+                'title'  => 'Варианты',
 
                 'fields' => [
                     'name'        => 'Название',
                     'color'       => 'Цвет',
-                    'extra-price' => 'Extra Цена',
+                    'extra-price' => 'Доплата',
                 ],
             ],
         ],
@@ -28,15 +28,15 @@ return [
         'columns' => [
             'name'        => 'Название',
             'type'        => 'Тип',
-            'deleted-at'  => 'Удалено',
-            'created-at'  => 'Создано',
-            'updated-at'  => 'Обновлено',
+            'deleted-at'  => 'Удалён',
+            'created-at'  => 'Создан',
+            'updated-at'  => 'Обновлён',
         ],
 
         'groups' => [
             'type'       => 'Тип',
-            'created-at' => 'Создано',
-            'updated-at' => 'Обновлено',
+            'created-at' => 'Создан',
+            'updated-at' => 'Обновлён',
         ],
 
         'filters' => [
@@ -46,28 +46,28 @@ return [
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Attribute restored',
-                    'body'  => 'attribute есть restored successfully.',
+                    'title' => 'Атрибут восстановлен',
+                    'body'  => 'Атрибут успешно восстановлен.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Attribute удалено',
-                    'body'  => 'attribute есть удалено successfully.',
+                    'title' => 'Атрибут удалён',
+                    'body'  => 'Атрибут успешно удалён.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Attribute force удалено',
-                        'body'  => 'attribute есть force удалено successfully.',
+                        'title' => 'Атрибут удалён навсегда',
+                        'body'  => 'Атрибут успешно удалён навсегда.',
                     ],
 
                     'error' => [
-                        'title' => 'Attribute could не быть удалено',
-                        'body'  => 'attribute нельзя быть удалено потому что это currently в использовать.',
+                        'title' => 'Не удалось удалить атрибут',
+                        'body'  => 'Атрибут нельзя удалить, так как он используется.',
                     ],
                 ],
             ],
@@ -76,28 +76,28 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Attributes restored',
-                    'body'  => 'attributes есть restored successfully.',
+                    'title' => 'Атрибуты восстановлены',
+                    'body'  => 'Атрибуты успешно восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Attributes удалено',
-                    'body'  => 'attributes есть удалено successfully.',
+                    'title' => 'Атрибуты удалены',
+                    'body'  => 'Атрибуты успешно удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Attributes force удалено',
-                        'body'  => 'attributes есть force удалено successfully.',
+                        'title' => 'Атрибуты удалены навсегда',
+                        'body'  => 'Атрибуты успешно удалены навсегда.',
                     ],
 
                     'error' => [
-                        'title' => 'Attributes could не быть удалено',
-                        'body'  => 'attributes нельзя быть удалено потому что они currently в использовать.',
+                        'title' => 'Не удалось удалить атрибуты',
+                        'body'  => 'Атрибуты нельзя удалить, так как они используются.',
                     ],
                 ],
             ],
@@ -107,7 +107,7 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Общее Сведения',
+                'title' => 'Общая информация',
 
                 'entries' => [
                     'name' => 'Название',
@@ -116,12 +116,12 @@ return [
             ],
 
             'record-information' => [
-                'title' => 'Запись Сведения',
+                'title' => 'Сведения о записи',
 
                 'entries' => [
-                    'creator'    => 'Создано От',
-                    'created_at' => 'Создано',
-                    'updated_at' => 'Последний Обновлено',
+                    'creator'    => 'Автор',
+                    'created_at' => 'Создан',
+                    'updated_at' => 'Последнее обновление',
                 ],
             ],
         ],

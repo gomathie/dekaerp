@@ -3,10 +3,10 @@
 return [
     'header-actions' => [
         'create' => [
-            'label'        => 'Новое Счёт поставщика Material',
+            'label'        => 'Новая спецификация',
             'notification' => [
-                'title' => 'Счёт поставщика material создано',
-                'body'  => 'счёт поставщика material есть создано successfully.',
+                'title' => 'Спецификация создана',
+                'body'  => 'Спецификация успешно создана.',
             ],
         ],
     ],

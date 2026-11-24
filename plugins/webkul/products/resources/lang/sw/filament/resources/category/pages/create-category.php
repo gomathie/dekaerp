@@ -3,13 +3,13 @@
 return [
     'notification' => [
         'title' => 'Kategoria imeundwa',
-        'body'  => 'kategoria ina imeundwa successfully.',
+        'body'  => 'Kategoria imeundwa kikamilifu.',
     ],
 
     'create' => [
         'notification' => [
             'error' => [
-                'title' => 'Kategoria imesasishwa imeshindwa',
+                'title' => 'Kusasisha kategoria kumeshindwa',
             ],
         ],
     ],

@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'title' => 'Производство Заказ',
+    'title' => 'Производственный заказ',
 
     'log-attributes' => [
         'product-qty'       => 'Количество',
-        'state'             => 'Состояние',
-        'reservation-state' => 'Reservation Состояние',
-        'assigned-user'     => 'Responsible',
+        'state'             => 'Статус',
+        'reservation-state' => 'Статус резервирования',
+        'assigned-user'     => 'Ответственный',
     ],
 ];

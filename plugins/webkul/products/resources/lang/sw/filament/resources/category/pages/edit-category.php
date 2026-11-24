@@ -3,7 +3,7 @@
 return [
     'notification' => [
         'title' => 'Kategoria imesasishwa',
-        'body'  => 'kategoria ina imesasishwa successfully.',
+        'body'  => 'Kategoria imesasishwa kikamilifu.',
     ],
 
     'header-actions' => [
@@ -11,12 +11,12 @@ return [
             'notification' => [
                 'success' => [
                     'title' => 'Kategoria imefutwa',
-                    'body'  => 'kategoria ina imefutwa successfully.',
+                    'body'  => 'Kategoria imefutwa kikamilifu.',
                 ],
 
                 'error' => [
-                    'title' => 'Kategoria could si kuwa imefutwa',
-                    'body'  => 'kategoria haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                    'title' => 'Kategoria haikuweza kufutwa',
+                    'body'  => 'Kategoria haiwezi kufutwa kwa sababu inatumika kwa sasa.',
                 ],
             ],
         ],
@@ -25,7 +25,7 @@ return [
     'save' => [
         'notification' => [
             'error' => [
-                'title' => 'Kategoria imesasishwa imeshindwa',
+                'title' => 'Kusasisha kategoria kumeshindwa',
             ],
         ],
     ],

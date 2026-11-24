@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'title' => 'Hariri Uzalishaji Agizo',
+    'title' => 'Hariri oda ya uzalishaji',
 
     'header-actions' => [
         'print' => [

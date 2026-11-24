@@ -2,8 +2,8 @@
 
 return [
     'navigation' => [
-        'title' => 'Work Centers',
-        'group' => 'Usanidi',
+        'title' => 'Vituo vya kazi',
+        'group' => 'Mipangilio',
     ],
 
     'form' => [
@@ -12,32 +12,32 @@ return [
                 'title'  => 'Jumla',
                 'fields' => [
                     'name'                     => 'Jina',
-                    'name-placeholder'         => 'eg. Assembly Mstari 1',
+                    'name-placeholder'         => 'mf. Mstari wa kuunganisha 1',
                     'code'                     => 'Msimbo',
-                    'code-placeholder'         => 'eg. AL1',
-                    'working-state'            => 'Working Hali',
+                    'code-placeholder'         => 'mf. AL1',
+                    'working-state'            => 'Hali ya kazi',
                     'color'                    => 'Rangi',
                     'tags'                     => 'Lebo',
-                    'alternative-work-centers' => 'Alternative Work Centers',
+                    'alternative-work-centers' => 'Vituo mbadala vya kazi',
                     'company'                  => 'Kampuni',
-                    'calendar'                 => 'Working Saa',
+                    'calendar'                 => 'Saa za kazi',
                 ],
             ],
 
             'information' => [
-                'title'     => 'Jumla Taarifa',
+                'title'     => 'Taarifa za jumla',
                 'fieldsets' => [
-                    'production-information' => 'Uzalishaji Taarifa',
-                    'costing-information'    => 'Costing Taarifa',
+                    'production-information' => 'Taarifa za uzalishaji',
+                    'costing-information'    => 'Taarifa za gharama',
                 ],
                 'fields' => [
-                    'default-capacity' => 'Chaguo-msingi Capacity',
-                    'time-efficiency'  => 'Time Efficiency',
-                    'oee-target'       => 'OEE Lengwa',
-                    'costs-per-hour'   => 'Gharama kwa Saa',
+                    'default-capacity' => 'Uwezo chaguo-msingi',
+                    'time-efficiency'  => 'Ufanisi wa muda',
+                    'oee-target'       => 'Lengo la OEE',
+                    'costs-per-hour'   => 'Gharama kwa saa',
                     'cost-suffix'      => 'kwa saa',
-                    'setup-time'       => 'Setup Time',
-                    'cleanup-time'     => 'Cleanup Time',
+                    'setup-time'       => 'Muda wa maandalizi',
+                    'cleanup-time'     => 'Muda wa kusafisha',
                     'time-suffix'      => 'dakika',
                 ],
             ],
@@ -46,21 +46,21 @@ return [
                 'title'  => 'Maelezo',
                 'fields' => [
                     'note'             => 'Maelezo',
-                    'note-placeholder' => 'Maelezo ya work center...',
+                    'note-placeholder' => 'Maelezo ya kituo cha kazi...',
                 ],
             ],
 
             'specific-capacity' => [
-                'title'  => 'Specific Capacity',
+                'title'  => 'Uwezo maalum',
                 'fields' => [
-                    'records' => 'Specific Capacity',
+                    'records' => 'Uwezo maalum',
                 ],
                 'columns' => [
                     'product'      => 'Bidhaa',
-                    'product-uom'  => 'UOM',
-                    'capacity'     => 'Capacity',
-                    'setup-time'   => 'Setup Time',
-                    'cleanup-time' => 'Cleanup Time',
+                    'product-uom'  => 'Kipimo',
+                    'capacity'     => 'Uwezo',
+                    'setup-time'   => 'Muda wa maandalizi',
+                    'cleanup-time' => 'Muda wa kusafisha',
                 ],
                 'actions' => [
                     'add' => 'Ongeza mstari',
@@ -74,14 +74,14 @@ return [
             'name'             => 'Jina',
             'code'             => 'Msimbo',
             'company'          => 'Kampuni',
-            'calendar'         => 'Working Saa',
-            'working-state'    => 'Working Hali',
-            'default-capacity' => 'Capacity',
-            'time-efficiency'  => 'Efficiency',
-            'costs-per-hour'   => 'Gharama kwa Saa',
-            'deleted-at'       => 'Imefutwa',
-            'created-at'       => 'Imeundwa',
-            'updated-at'       => 'Imesasishwa',
+            'calendar'         => 'Saa za kazi',
+            'working-state'    => 'Hali ya kazi',
+            'default-capacity' => 'Uwezo',
+            'time-efficiency'  => 'Ufanisi',
+            'costs-per-hour'   => 'Gharama kwa saa',
+            'deleted-at'       => 'Kilifutwa',
+            'created-at'       => 'Kiliundwa',
+            'updated-at'       => 'Kilisasishwa',
         ],
 
         'groups' => [
@@ -90,34 +90,34 @@ return [
 
         'filters' => [
             'company'       => 'Kampuni',
-            'working-state' => 'Working Hali',
+            'working-state' => 'Hali ya kazi',
         ],
 
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Work center restored',
-                    'body'  => 'work center ina restored successfully.',
+                    'title' => 'Kituo cha kazi kimerejeshwa',
+                    'body'  => 'Kituo cha kazi kimerejeshwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Work center imehifadhiwa',
-                    'body'  => 'work center ina imehifadhiwa successfully.',
+                    'title' => 'Kituo cha kazi kimewekwa kwenye kumbukumbu',
+                    'body'  => 'Kituo cha kazi kimewekwa kwenye kumbukumbu kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Work center imefutwa',
-                        'body'  => 'work center ina permanently imefutwa.',
+                        'title' => 'Kituo cha kazi kimefutwa',
+                        'body'  => 'Kituo cha kazi kimefutwa kabisa.',
                     ],
 
                     'error' => [
-                        'title' => 'Work center could si kuwa imefutwa',
-                        'body'  => 'work center haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Kituo cha kazi hakikuweza kufutwa',
+                        'body'  => 'Kituo cha kazi hakiwezi kufutwa kwa sababu kinatumika kwa sasa.',
                     ],
                 ],
             ],
@@ -126,28 +126,28 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Work centers restored',
-                    'body'  => 'imechaguliwa work centers ina restored successfully.',
+                    'title' => 'Vituo vya kazi vimerejeshwa',
+                    'body'  => 'Vituo vya kazi vilivyochaguliwa vimerejeshwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Work centers imehifadhiwa',
-                    'body'  => 'imechaguliwa work centers ina imehifadhiwa successfully.',
+                    'title' => 'Vituo vya kazi vimewekwa kwenye kumbukumbu',
+                    'body'  => 'Vituo vya kazi vilivyochaguliwa vimewekwa kwenye kumbukumbu kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Work centers imefutwa',
-                        'body'  => 'imechaguliwa work centers ina permanently imefutwa.',
+                        'title' => 'Vituo vya kazi vimefutwa',
+                        'body'  => 'Vituo vya kazi vilivyochaguliwa vimefutwa kabisa.',
                     ],
 
                     'error' => [
-                        'title' => 'Work centers could si kuwa imefutwa',
-                        'body'  => 'One au zaidi imechaguliwa work centers ni currently katika tumia.',
+                        'title' => 'Vituo vya kazi havikuweza kufutwa',
+                        'body'  => 'Kituo kimoja au zaidi kati ya vilivyochaguliwa kinatumika kwa sasa.',
                     ],
                 ],
             ],
@@ -157,34 +157,34 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Jumla Taarifa',
+                'title' => 'Taarifa za jumla',
 
                 'entries' => [
-                    'name'                     => 'Work Center Jina',
+                    'name'                     => 'Jina la kituo cha kazi',
                     'code'                     => 'Msimbo',
-                    'working-state'            => 'Working Hali',
+                    'working-state'            => 'Hali ya kazi',
                     'tags'                     => 'Lebo',
-                    'alternative-work-centers' => 'Alternative Work Centers',
+                    'alternative-work-centers' => 'Vituo mbadala vya kazi',
                     'company'                  => 'Kampuni',
-                    'calendar'                 => 'Working Saa',
+                    'calendar'                 => 'Saa za kazi',
                 ],
             ],
 
             'information' => [
-                'title'     => 'Jumla Taarifa',
+                'title'     => 'Taarifa za jumla',
                 'fieldsets' => [
-                    'production-information' => 'Uzalishaji Taarifa',
-                    'costing-information'    => 'Costing Taarifa',
+                    'production-information' => 'Taarifa za uzalishaji',
+                    'costing-information'    => 'Taarifa za gharama',
                 ],
 
                 'entries' => [
-                    'default-capacity' => 'Chaguo-msingi Capacity',
-                    'time-efficiency'  => 'Time Efficiency',
-                    'oee-target'       => 'OEE Lengwa',
-                    'costs-per-hour'   => 'Gharama kwa Saa',
-                    'cost-suffix'      => 'kwa work center',
-                    'setup-time'       => 'Setup Time',
-                    'cleanup-time'     => 'Cleanup Time',
+                    'default-capacity' => 'Uwezo chaguo-msingi',
+                    'time-efficiency'  => 'Ufanisi wa muda',
+                    'oee-target'       => 'Lengo la OEE',
+                    'costs-per-hour'   => 'Gharama kwa saa',
+                    'cost-suffix'      => 'kwa kituo cha kazi',
+                    'setup-time'       => 'Muda wa maandalizi',
+                    'cleanup-time'     => 'Muda wa kusafisha',
                     'time-suffix'      => 'dakika',
                 ],
             ],
@@ -197,23 +197,23 @@ return [
             ],
 
             'specific-capacity' => [
-                'title'   => 'Specific Capacities',
+                'title'   => 'Uwezo maalum',
                 'columns' => [
                     'product'      => 'Bidhaa',
-                    'product-uom'  => 'UOM',
-                    'capacity'     => 'Capacity',
-                    'setup-time'   => 'Setup Time',
-                    'cleanup-time' => 'Cleanup Time',
+                    'product-uom'  => 'Kipimo',
+                    'capacity'     => 'Uwezo',
+                    'setup-time'   => 'Muda wa maandalizi',
+                    'cleanup-time' => 'Muda wa kusafisha',
                 ],
             ],
 
             'record-information' => [
-                'title' => 'Rekodi Taarifa',
+                'title' => 'Taarifa za rekodi',
 
                 'entries' => [
-                    'created-by'   => 'Imeundwa Na',
-                    'created-at'   => 'Imeundwa',
-                    'last-updated' => 'Mwisho Imesasishwa',
+                    'created-by'   => 'Imeundwa na',
+                    'created-at'   => 'Kiliundwa',
+                    'last-updated' => 'Kilisasishwa mwisho',
                 ],
             ],
         ],

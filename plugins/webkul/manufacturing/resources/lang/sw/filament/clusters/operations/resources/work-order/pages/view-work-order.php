@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'title' => 'Angalia Agizo la kazi',
+    'title' => 'Tazama oda ya kazi',
 ];

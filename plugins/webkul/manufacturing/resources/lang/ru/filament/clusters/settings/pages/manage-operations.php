@@ -1,23 +1,23 @@
 <?php
 
 return [
-    'title' => 'Manage Операции',
+    'title' => 'Управление операциями',
 
     'form' => [
         'enable-work-orders' => [
-            'label'       => 'Производственный заказs',
-            'helper-text' => 'Execute операции в designated work centers.',
-            'link-text'   => 'Configure work centers',
+            'label'       => 'Рабочие наряды',
+            'helper-text' => 'Выполнять операции в назначенных рабочих центрах.',
+            'link-text'   => 'Настроить рабочие центры',
         ],
 
         'enable-work-order-dependencies' => [
-            'label'       => 'Производственный заказ Dependencies',
-            'helper-text' => 'Задать нумерация в который производственный заказs следует быть processed. Включить этот feature от Miscellaneous вкладка каждый BoM.',
+            'label'       => 'Зависимости рабочих нарядов',
+            'helper-text' => 'Задайте порядок обработки рабочих нарядов. Включите эту функцию на вкладке «Прочее» каждой спецификации.',
         ],
 
         'enable-byproducts' => [
-            'label'       => 'Byproducts',
-            'helper-text' => 'Generate от-товары в течение рабочая среда ( + B → C + D).',
+            'label'       => 'Побочная продукция',
+            'helper-text' => 'Получать побочную продукцию при производстве (A + B → C + D).',
         ],
     ],
 ];

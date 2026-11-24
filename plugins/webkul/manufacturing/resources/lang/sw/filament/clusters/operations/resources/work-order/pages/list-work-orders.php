@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'title' => 'Agizo la kazis',
+    'title' => 'Oda za kazi',
 
     'tabs' => [
-        'todo'      => 'Hadi',
-        'done'      => 'Imekamilika',
+        'todo'      => 'Za kufanya',
+        'done'      => 'Zilizokamilika',
         'draft'     => 'Rasimu',
-        'cancelled' => 'Imeghairiwa',
+        'cancelled' => 'Zilizoghairiwa',
     ],
 ];

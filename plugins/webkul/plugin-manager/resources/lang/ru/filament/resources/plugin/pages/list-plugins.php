@@ -2,32 +2,32 @@
 
 return [
     'navigation' => [
-        'title' => 'Модули',
+        'title' => 'Плагины',
     ],
 
     'tabs' => [
-        'apps'          => 'Apps',
-        'extra'         => 'Extra',
-        'installed'     => 'Installed',
-        'not-installed' => 'Не Installed',
+        'apps'          => 'Приложения',
+        'extra'         => 'Дополнительно',
+        'installed'     => 'Установленные',
+        'not-installed' => 'Не установленные',
     ],
 
     'header-actions' => [
         'sync' => [
-            'label'                     => 'Sync Доступно Модули',
-            'modal-heading'             => 'Sync Модули',
-            'modal-description'         => 'Этот scan и регистрация любой новое модули найдено.',
-            'modal-submit-action-label' => 'Sync Модули',
+            'label'                     => 'Синхронизировать плагины',
+            'modal-heading'             => 'Синхронизировать плагины',
+            'modal-description'         => 'Будут найдены и зарегистрированы все новые плагины.',
+            'modal-submit-action-label' => 'Синхронизировать',
 
             'notification' => [
                 'success' => [
-                    'title' => 'Модули Synced Successfully',
-                    'body'  => 'Найдено и synced :count новое модуль(s).',
+                    'title' => 'Плагины синхронизированы',
+                    'body'  => 'Найдено и синхронизировано новых плагинов: :count.',
                 ],
 
                 'error' => [
-                    'title' => 'Модуль Sync Не удалось',
-                    'body'  => 'ошибка (:error) occurred пока syncing модули. Пожалуйста попробуйте снова.',
+                    'title' => 'Ошибка синхронизации плагинов',
+                    'body'  => 'При синхронизации плагинов произошла ошибка (:error). Повторите попытку.',
                 ],
             ],
         ],

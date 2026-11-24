@@ -3,10 +3,10 @@
 return [
     'header-actions' => [
         'create' => [
-            'label'        => 'Новое Work Center',
+            'label'        => 'Новый рабочий центр',
             'notification' => [
-                'title' => 'Work center создано',
-                'body'  => 'work center есть создано successfully.',
+                'title' => 'Рабочий центр создан',
+                'body'  => 'Рабочий центр успешно создан.',
             ],
         ],
     ],

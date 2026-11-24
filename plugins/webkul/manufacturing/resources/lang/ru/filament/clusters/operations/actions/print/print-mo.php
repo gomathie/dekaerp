@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'label' => 'Печать MO',
+    'label' => 'Печать ПЗ',
 ];

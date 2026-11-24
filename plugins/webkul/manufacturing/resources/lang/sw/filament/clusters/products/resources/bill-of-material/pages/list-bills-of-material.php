@@ -3,16 +3,16 @@
 return [
     'header-actions' => [
         'create' => [
-            'label'        => 'Mpya Bili ya Material',
+            'label'        => 'Orodha mpya ya malighafi',
             'notification' => [
-                'title' => 'Bili ya material imeundwa',
-                'body'  => 'bili ya material ina imeundwa successfully.',
+                'title' => 'Orodha ya malighafi imeundwa',
+                'body'  => 'Orodha ya malighafi imeundwa kikamilifu.',
             ],
         ],
     ],
 
     'tabs' => [
         'all'      => 'Zote',
-        'archived' => 'Imehifadhiwa',
+        'archived' => 'Kumbukumbu',
     ],
 ];

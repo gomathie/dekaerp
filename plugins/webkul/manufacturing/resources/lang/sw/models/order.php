@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'title' => 'Uzalishaji Agizo',
+    'title' => 'Oda ya uzalishaji',
 
     'log-attributes' => [
-        'product-qty'       => 'Kiasi',
+        'product-qty'       => 'Idadi',
         'state'             => 'Hali',
-        'reservation-state' => 'Reservation Hali',
-        'assigned-user'     => 'Responsible',
+        'reservation-state' => 'Hali ya uhifadhi',
+        'assigned-user'     => 'Msimamizi',
     ],
 ];

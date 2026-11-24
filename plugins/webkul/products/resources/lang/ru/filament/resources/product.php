@@ -2,7 +2,7 @@
 
 return [
     'global-search' => [
-        'reference' => 'Ссылка',
+        'reference' => 'Артикул',
         'barcode'   => 'Штрихкод',
     ],
 
@@ -13,18 +13,18 @@ return [
 
                 'fields' => [
                     'name'             => 'Название',
-                    'name-placeholder' => 'eg. T-shirt',
+                    'name-placeholder' => 'напр. Футболка',
                     'description'      => 'Описание',
-                    'tags'             => 'Метки',
+                    'tags'             => 'Теги',
                 ],
             ],
 
             'images' => [
-                'title' => 'Images',
+                'title' => 'Изображения',
             ],
 
             'inventory' => [
-                'title' => 'Склад',
+                'title' => 'Запасы',
 
                 'fields' => [],
 
@@ -45,102 +45,102 @@ return [
 
                 'fields' => [
                     'type'                => 'Тип',
-                    'reference'           => 'Ссылка',
+                    'reference'           => 'Артикул',
                     'barcode'             => 'Штрихкод',
                     'category'            => 'Категория',
                     'company'             => 'Компания',
-                    'company-placeholder' => 'Все Компании',
+                    'company-placeholder' => 'Все компании',
                 ],
             ],
 
             'pricing' => [
-                'title' => 'Pricing',
+                'title' => 'Цены',
 
                 'fields' => [
                     'price'           => 'Цена',
-                    'cost'            => 'Стоимость',
-                    'uom-placeholder' => 'UOM',
+                    'cost'            => 'Себестоимость',
+                    'uom-placeholder' => 'Ед. изм.',
                 ],
             ],
 
             'additional' => [
-                'title' => 'Additional',
+                'title' => 'Дополнительно',
             ],
         ],
     ],
 
     'table' => [
         'columns' => [
-            'favorite'            => 'Favorite',
+            'favorite'            => 'Избранное',
             'name'                => 'Название',
-            'variants'            => 'Variants',
-            'images'              => 'Images',
+            'variants'            => 'Варианты',
+            'images'              => 'Изображения',
             'type'                => 'Тип',
-            'reference'           => 'Ссылка',
-            'responsible'         => 'Responsible',
+            'reference'           => 'Артикул',
+            'responsible'         => 'Ответственный',
             'barcode'             => 'Штрихкод',
             'category'            => 'Категория',
             'company'             => 'Компания',
-            'company-placeholder' => 'Все Компании',
+            'company-placeholder' => 'Все компании',
             'price'               => 'Цена',
-            'cost'                => 'Стоимость',
-            'on-hand'             => 'Вкл. Вручную',
-            'tags'                => 'Метки',
-            'deleted-at'          => 'Удалено',
-            'created-at'          => 'Создано',
-            'updated-at'          => 'Обновлено',
+            'cost'                => 'Себестоимость',
+            'on-hand'             => 'В наличии',
+            'tags'                => 'Теги',
+            'deleted-at'          => 'Удалён',
+            'created-at'          => 'Создан',
+            'updated-at'          => 'Обновлён',
         ],
 
         'groups' => [
             'type'       => 'Тип',
             'category'   => 'Категория',
-            'created-at' => 'Создано',
+            'created-at' => 'Создан',
         ],
 
         'filters' => [
             'name'        => 'Название',
             'type'        => 'Тип',
-            'reference'   => 'Ссылка',
+            'reference'   => 'Артикул',
             'barcode'     => 'Штрихкод',
             'category'    => 'Категория',
             'company'     => 'Компания',
             'price'       => 'Цена',
-            'cost'        => 'Стоимость',
-            'is-favorite' => 'Favorite',
+            'cost'        => 'Себестоимость',
+            'is-favorite' => 'В избранном',
             'weight'      => 'Вес',
             'volume'      => 'Объём',
-            'tags'        => 'Метки',
-            'responsible' => 'Responsible',
-            'created-at'  => 'Создано',
-            'updated-at'  => 'Обновлено',
-            'creator'     => 'Creator',
+            'tags'        => 'Теги',
+            'responsible' => 'Ответственный',
+            'created-at'  => 'Создан',
+            'updated-at'  => 'Обновлён',
+            'creator'     => 'Автор',
         ],
 
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Товар restored',
-                    'body'  => 'товар есть restored successfully.',
+                    'title' => 'Товар восстановлен',
+                    'body'  => 'Товар успешно восстановлен.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Товар удалено',
-                    'body'  => 'товар есть удалено successfully.',
+                    'title' => 'Товар удалён',
+                    'body'  => 'Товар успешно удалён.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Товар force удалено',
-                        'body'  => 'товар есть force удалено successfully.',
+                        'title' => 'Товар удалён навсегда',
+                        'body'  => 'Товар успешно удалён навсегда.',
                     ],
 
                     'error' => [
-                        'title' => 'Товар could не быть удалено',
-                        'body'  => 'товар нельзя быть удалено потому что это currently в использовать.',
+                        'title' => 'Не удалось удалить товар',
+                        'body'  => 'Товар нельзя удалить, так как он используется.',
                     ],
                 ],
             ],
@@ -148,19 +148,19 @@ return [
 
         'bulk-actions' => [
             'print' => [
-                'label' => 'Печать Labels',
+                'label' => 'Печать этикеток',
 
                 'form' => [
                     'fields' => [
-                        'quantity' => 'Номер Labels',
+                        'quantity' => 'Количество этикеток',
                         'format'   => 'Формат',
 
                         'format-options' => [
                             'dymo'       => 'Dymo',
-                            '2x7_price'  => '2x7 с цена',
-                            '4x7_price'  => '4x7 с цена',
+                            '2x7_price'  => '2x7 с ценой',
+                            '4x7_price'  => '4x7 с ценой',
                             '4x12'       => '4x12',
-                            '4x12_price' => '4x12 с цена',
+                            '4x12_price' => '4x12 с ценой',
                         ],
                     ],
                 ],
@@ -168,28 +168,28 @@ return [
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Товары restored',
-                    'body'  => 'товары есть restored successfully.',
+                    'title' => 'Товары восстановлены',
+                    'body'  => 'Товары успешно восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Товары удалено',
-                    'body'  => 'товары есть удалено successfully.',
+                    'title' => 'Товары удалены',
+                    'body'  => 'Товары успешно удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Товары force удалено',
-                        'body'  => 'товары есть force удалено successfully.',
+                        'title' => 'Товары удалены навсегда',
+                        'body'  => 'Товары успешно удалены навсегда.',
                     ],
 
                     'error' => [
-                        'title' => 'Товары could не быть удалено',
-                        'body'  => 'товары нельзя быть удалено потому что они currently в использовать.',
+                        'title' => 'Не удалось удалить товары',
+                        'body'  => 'Товары нельзя удалить, так как они используются.',
                     ],
                 ],
             ],
@@ -203,14 +203,14 @@ return [
 
                 'entries' => [
                     'name'             => 'Название',
-                    'name-placeholder' => 'eg. T-shirt',
+                    'name-placeholder' => 'напр. Футболка',
                     'description'      => 'Описание',
-                    'tags'             => 'Метки',
+                    'tags'             => 'Теги',
                 ],
             ],
 
             'images' => [
-                'title' => 'Images',
+                'title' => 'Изображения',
 
                 'entries' => [],
             ],
@@ -220,7 +220,7 @@ return [
 
                 'entries' => [
                     'type'      => 'Тип',
-                    'reference' => 'Ссылка',
+                    'reference' => 'Артикул',
                     'barcode'   => 'Штрихкод',
                     'category'  => 'Категория',
                     'company'   => 'Компания',
@@ -228,16 +228,16 @@ return [
             ],
 
             'pricing' => [
-                'title' => 'Pricing',
+                'title' => 'Цены',
 
                 'entries' => [
                     'price' => 'Цена',
-                    'cost'  => 'Стоимость',
+                    'cost'  => 'Себестоимость',
                 ],
             ],
 
             'inventory' => [
-                'title' => 'Склад',
+                'title' => 'Запасы',
 
                 'fieldsets' => [
                     'logistics' => [
@@ -252,12 +252,12 @@ return [
             ],
 
             'record-information' => [
-                'title' => 'Запись Сведения',
+                'title' => 'Сведения о записи',
 
                 'entries' => [
-                    'created-at' => 'Создано',
-                    'created-by' => 'Создано От',
-                    'updated-at' => 'Обновлено',
+                    'created-at' => 'Создан',
+                    'created-by' => 'Автор',
+                    'updated-at' => 'Обновлён',
                 ],
             ],
         ],

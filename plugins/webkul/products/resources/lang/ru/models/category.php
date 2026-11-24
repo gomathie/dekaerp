@@ -5,9 +5,9 @@ return [
 
     'log-attributes' => [
         'name'                 => 'Название',
-        'full_name'            => 'Полный Название',
-        'parent_path'          => 'Parent Path',
-        'parent'               => 'Parent Категория',
-        'creator'              => 'Creator',
+        'full_name'            => 'Полное название',
+        'parent_path'          => 'Путь',
+        'parent'               => 'Родительская категория',
+        'creator'              => 'Автор',
     ],
 ];

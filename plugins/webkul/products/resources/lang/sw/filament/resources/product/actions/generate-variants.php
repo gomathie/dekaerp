@@ -1,21 +1,21 @@
 <?php
 
 return [
-    'label'        => 'Generate Variants',
+    'label'        => 'Tengeneza aina za bidhaa',
     'notification' => [
         'empty' => [
-            'title' => 'Hakuna attributes imepatikana',
-            'body'  => 'Tafadhali ongeza attributes hadi generate variants.',
+            'title' => 'Hakuna sifa zilizopatikana',
+            'body'  => 'Tafadhali ongeza sifa ili kutengeneza aina za bidhaa.',
         ],
 
         'success' => [
-            'title' => 'Variants generated successfully',
-            'body'  => 'Zote bidhaa variants ina generated.',
+            'title' => 'Aina za bidhaa zimetengenezwa',
+            'body'  => 'Aina zote za bidhaa zimetengenezwa.',
         ],
 
         'error' => [
-            'title' => 'Hitilafu generating variants',
-            'body'  => 'hitilafu occurred wakati generating bidhaa variants.',
+            'title' => 'Hitilafu katika kutengeneza aina za bidhaa',
+            'body'  => 'Hitilafu imetokea wakati wa kutengeneza aina za bidhaa.',
         ],
     ],
 ];

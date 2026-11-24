@@ -1,21 +1,21 @@
 <?php
 
 return [
-    'label'        => 'Generate Variants',
+    'label'        => 'Создать варианты',
     'notification' => [
         'empty' => [
-            'title' => 'Нет attributes найдено',
-            'body'  => 'Пожалуйста добавить attributes до generate variants.',
+            'title' => 'Атрибуты не найдены',
+            'body'  => 'Добавьте атрибуты, чтобы создать варианты.',
         ],
 
         'success' => [
-            'title' => 'Variants generated successfully',
-            'body'  => 'Все товар variants есть generated.',
+            'title' => 'Варианты успешно созданы',
+            'body'  => 'Все варианты товара созданы.',
         ],
 
         'error' => [
-            'title' => 'Ошибка generating variants',
-            'body'  => 'ошибка occurred пока generating товар variants.',
+            'title' => 'Ошибка при создании вариантов',
+            'body'  => 'При создании вариантов товара произошла ошибка.',
         ],
     ],
 ];

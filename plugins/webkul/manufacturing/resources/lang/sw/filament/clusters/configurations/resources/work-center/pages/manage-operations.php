@@ -1,15 +1,15 @@
 <?php
 
 return [
-    'title' => 'Shughuli',
+    'title' => 'Operesheni',
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Operation',
+            'label' => 'Operesheni mpya',
 
             'notification' => [
-                'title' => 'Operation imeundwa',
-                'body'  => 'operation ina imeundwa successfully.',
+                'title' => 'Operesheni imeundwa',
+                'body'  => 'Operesheni imeundwa kikamilifu.',
             ],
         ],
     ],

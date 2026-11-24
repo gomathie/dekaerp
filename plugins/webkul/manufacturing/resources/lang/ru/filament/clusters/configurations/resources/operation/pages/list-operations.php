@@ -3,10 +3,10 @@
 return [
     'header-actions' => [
         'create' => [
-            'label'        => 'Новое Operation',
+            'label'        => 'Новая операция',
             'notification' => [
-                'title' => 'Operation создано',
-                'body'  => 'operation есть создано successfully.',
+                'title' => 'Операция создана',
+                'body'  => 'Операция успешно создана.',
             ],
         ],
     ],

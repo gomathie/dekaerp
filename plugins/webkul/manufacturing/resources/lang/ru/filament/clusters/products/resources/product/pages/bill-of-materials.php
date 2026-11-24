@@ -2,17 +2,17 @@
 
 return [
     'navigation' => [
-        'title' => 'Счета поставщиков Materials',
+        'title' => 'Спецификации',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Создать Счёт поставщика Material',
+            'label' => 'Создать спецификацию',
 
             'notifications' => [
                 'success' => [
-                    'title'   => 'Счёт поставщика Material создано',
-                    'message' => 'Счёт поставщика Material есть создано successfully.',
+                    'title'   => 'Спецификация создана',
+                    'message' => 'Спецификация успешно создана.',
                 ],
             ],
         ],

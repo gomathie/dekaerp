@@ -3,10 +3,10 @@
 return [
     'form' => [
         'name'    => 'Jina',
-        'barcode' => 'Msimbo pau',
+        'barcode' => 'Msimbopau',
         'product' => 'Bidhaa',
         'routes'  => 'Njia',
-        'qty'     => 'Qty',
+        'qty'     => 'Idadi',
         'company' => 'Kampuni',
     ],
 
@@ -15,17 +15,17 @@ return [
             'name'       => 'Jina',
             'product'    => 'Bidhaa',
             'routes'     => 'Njia',
-            'qty'        => 'Qty',
+            'qty'        => 'Idadi',
             'company'    => 'Kampuni',
-            'barcode'    => 'Msimbo pau',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'barcode'    => 'Msimbopau',
+            'created-at' => 'Iliundwa',
+            'updated-at' => 'Ilisasishwa',
         ],
 
         'groups' => [
             'product'    => 'Bidhaa',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'created-at' => 'Iliundwa',
+            'updated-at' => 'Ilisasishwa',
         ],
 
         'filters' => [
@@ -35,21 +35,21 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Kifungashio sasisha',
-                    'body'  => 'kifungashio ina sasisha successfully.',
+                    'title' => 'Kifungashio kimesasishwa',
+                    'body'  => 'Kifungashio kimesasishwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Kifungashio imefutwa',
-                        'body'  => 'kifungashio ina imefutwa successfully.',
+                        'title' => 'Kifungashio kimefutwa',
+                        'body'  => 'Kifungashio kimefutwa kikamilifu.',
                     ],
 
                     'error' => [
-                        'title' => 'Kifungashio could si kuwa imefutwa',
-                        'body'  => 'kifungashio haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Kifungashio hakikuweza kufutwa',
+                        'body'  => 'Kifungashio hakiwezi kufutwa kwa sababu kinatumika kwa sasa.',
                     ],
                 ],
             ],
@@ -63,13 +63,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Packagings imefutwa',
-                        'body'  => 'packagings ina imefutwa successfully.',
+                        'title' => 'Vifungashio vimefutwa',
+                        'body'  => 'Vifungashio vimefutwa kikamilifu.',
                     ],
 
                     'error' => [
-                        'title' => 'Packagings could si kuwa imefutwa',
-                        'body'  => 'packagings haiwezekani kuwa imefutwa kwa sababu wao ni currently katika tumia.',
+                        'title' => 'Vifungashio havikuweza kufutwa',
+                        'body'  => 'Vifungashio haviwezi kufutwa kwa sababu vinatumika kwa sasa.',
                     ],
                 ],
             ],
@@ -77,11 +77,11 @@ return [
 
         'empty-state-actions' => [
             'create' => [
-                'label' => 'Mpya Kifungashio',
+                'label' => 'Kifungashio kipya',
 
                 'notification' => [
-                    'title' => 'Kifungashio imeundwa',
-                    'body'  => 'kifungashio ina imeundwa successfully.',
+                    'title' => 'Kifungashio kimeundwa',
+                    'body'  => 'Kifungashio kimeundwa kikamilifu.',
                 ],
             ],
         ],
@@ -90,24 +90,24 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Jumla Taarifa',
+                'title' => 'Taarifa za jumla',
 
                 'entries' => [
-                    'name'    => 'Kifurushi Jina',
-                    'barcode' => 'Msimbo pau',
+                    'name'    => 'Jina la kifungashio',
+                    'barcode' => 'Msimbopau',
                     'product' => 'Bidhaa',
-                    'qty'     => 'Kiasi',
+                    'qty'     => 'Idadi',
                 ],
             ],
 
             'organization' => [
-                'title' => 'Organization Maelezo',
+                'title' => 'Taarifa za shirika',
 
                 'entries' => [
                     'company'    => 'Kampuni',
-                    'creator'    => 'Imeundwa Na',
-                    'created_at' => 'Imeundwa',
-                    'updated_at' => 'Mwisho Imesasishwa',
+                    'creator'    => 'Imeundwa na',
+                    'created_at' => 'Iliundwa',
+                    'updated_at' => 'Ilisasishwa mwisho',
                 ],
             ],
         ],

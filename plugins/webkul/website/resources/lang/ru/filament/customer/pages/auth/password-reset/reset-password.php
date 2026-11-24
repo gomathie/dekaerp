@@ -1,24 +1,24 @@
 <?php
 
 return [
-    'title'         => 'Сбросить пароль',
-    'heading'       => 'Сбросить пароль',
+    'title'         => 'Сброс пароля',
+    'heading'       => 'Сброс пароля',
     'notifications' => [
         'throttled' => [
-            'title' => 'Слишком много attempts. Попробуйте снова в :seconds seconds.',
-            'body'  => 'Пожалуйста wait :seconds seconds (:minutes минуты) до trying снова.',
+            'title' => 'Слишком много попыток. Повторите через :seconds с.',
+            'body'  => 'Подождите :seconds с (:minutes мин) перед следующей попыткой.',
         ],
     ],
     'form' => [
         'email' => [
-            'label' => 'Эл. почта адрес',
+            'label' => 'Адрес эл. почты',
         ],
         'password' => [
-            'label'                => 'Новое пароль',
+            'label'                => 'Новый пароль',
             'validation_attribute' => 'пароль',
         ],
         'password_confirmation' => [
-            'label' => 'Подтвердить новое пароль',
+            'label' => 'Подтвердите новый пароль',
         ],
         'actions' => [
             'reset' => [

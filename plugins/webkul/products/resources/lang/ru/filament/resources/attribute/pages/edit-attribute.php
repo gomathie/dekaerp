@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Attribute обновлено',
-        'body'  => 'attribute есть обновлено successfully.',
+        'title' => 'Атрибут обновлён',
+        'body'  => 'Атрибут успешно обновлён.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Attribute удалено',
-                'body'  => 'attribute есть удалено successfully.',
+                'title' => 'Атрибут удалён',
+                'body'  => 'Атрибут успешно удалён.',
             ],
         ],
     ],

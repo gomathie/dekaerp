@@ -3,16 +3,16 @@
 return [
     'header-actions' => [
         'create' => [
-            'label'        => 'Mpya Work Center',
+            'label'        => 'Kituo kipya cha kazi',
             'notification' => [
-                'title' => 'Work center imeundwa',
-                'body'  => 'work center ina imeundwa successfully.',
+                'title' => 'Kituo cha kazi kimeundwa',
+                'body'  => 'Kituo cha kazi kimeundwa kikamilifu.',
             ],
         ],
     ],
 
     'tabs' => [
-        'all'      => 'Zote',
-        'archived' => 'Imehifadhiwa',
+        'all'      => 'Vyote',
+        'archived' => 'Kumbukumbu',
     ],
 ];

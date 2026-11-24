@@ -6,7 +6,7 @@ return [
         'barcode' => 'Штрихкод',
         'product' => 'Товар',
         'routes'  => 'Маршруты',
-        'qty'     => 'Qty',
+        'qty'     => 'Кол-во',
         'company' => 'Компания',
     ],
 
@@ -15,17 +15,17 @@ return [
             'name'       => 'Название',
             'product'    => 'Товар',
             'routes'     => 'Маршруты',
-            'qty'        => 'Qty',
+            'qty'        => 'Кол-во',
             'company'    => 'Компания',
             'barcode'    => 'Штрихкод',
-            'created-at' => 'Создано',
-            'updated-at' => 'Обновлено',
+            'created-at' => 'Создана',
+            'updated-at' => 'Обновлена',
         ],
 
         'groups' => [
             'product'    => 'Товар',
-            'created-at' => 'Создано',
-            'updated-at' => 'Обновлено',
+            'created-at' => 'Создана',
+            'updated-at' => 'Обновлена',
         ],
 
         'filters' => [
@@ -35,21 +35,21 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Упаковка обновить',
-                    'body'  => 'упаковка есть обновить successfully.',
+                    'title' => 'Упаковка обновлена',
+                    'body'  => 'Упаковка успешно обновлена.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Упаковка удалено',
-                        'body'  => 'упаковка есть удалено successfully.',
+                        'title' => 'Упаковка удалена',
+                        'body'  => 'Упаковка успешно удалена.',
                     ],
 
                     'error' => [
-                        'title' => 'Упаковка could не быть удалено',
-                        'body'  => 'упаковка нельзя быть удалено потому что это currently в использовать.',
+                        'title' => 'Не удалось удалить упаковку',
+                        'body'  => 'Упаковку нельзя удалить, так как она используется.',
                     ],
                 ],
             ],
@@ -63,13 +63,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Packagings удалено',
-                        'body'  => 'packagings есть удалено successfully.',
+                        'title' => 'Упаковки удалены',
+                        'body'  => 'Упаковки успешно удалены.',
                     ],
 
                     'error' => [
-                        'title' => 'Packagings could не быть удалено',
-                        'body'  => 'packagings нельзя быть удалено потому что они currently в использовать.',
+                        'title' => 'Не удалось удалить упаковки',
+                        'body'  => 'Упаковки нельзя удалить, так как они используются.',
                     ],
                 ],
             ],
@@ -77,11 +77,11 @@ return [
 
         'empty-state-actions' => [
             'create' => [
-                'label' => 'Новое Упаковка',
+                'label' => 'Новая упаковка',
 
                 'notification' => [
-                    'title' => 'Упаковка создано',
-                    'body'  => 'упаковка есть создано successfully.',
+                    'title' => 'Упаковка создана',
+                    'body'  => 'Упаковка успешно создана.',
                 ],
             ],
         ],
@@ -90,10 +90,10 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Общее Сведения',
+                'title' => 'Общая информация',
 
                 'entries' => [
-                    'name'    => 'Упаковка Название',
+                    'name'    => 'Название упаковки',
                     'barcode' => 'Штрихкод',
                     'product' => 'Товар',
                     'qty'     => 'Количество',
@@ -101,13 +101,13 @@ return [
             ],
 
             'organization' => [
-                'title' => 'Organization Подробности',
+                'title' => 'Сведения об организации',
 
                 'entries' => [
                     'company'    => 'Компания',
-                    'creator'    => 'Создано От',
-                    'created_at' => 'Создано',
-                    'updated_at' => 'Последний Обновлено',
+                    'creator'    => 'Автор',
+                    'created_at' => 'Создана',
+                    'updated_at' => 'Последнее обновление',
                 ],
             ],
         ],

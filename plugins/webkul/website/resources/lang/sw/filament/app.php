@@ -8,7 +8,7 @@ return [
         ],
 
         'account' => [
-            'label' => 'Yangu Akaunti',
+            'label' => 'Akaunti yangu',
         ],
 
         'top' => [
@@ -35,36 +35,36 @@ return [
     ],
 
     'homepage' => [
-        'title'            => 'Homepage',
+        'title'            => 'Ukurasa wa nyumbani',
         'navigation_label' => 'Nyumbani',
     ],
 
     'footer' => [
-        'description'   => 'Designed hadi optimize na streamline business shughuli, DEKA Central ni suitable kwa enterprises ya zote sizes.',
-        'description_2' => 'platform emphasizes ripoti kwa insights, usalama, localization flexibility, na integration na CRMs, BI tools, na APIs.',
-        'useful_links'  => 'Useful Links',
-        'contact_us'    => 'Mwasiliani Us',
-        'follow_us'     => 'Follow Us',
-        'copyright'     => 'Copyright',
-        'powered_by'    => 'Powered na',
+        'description'   => 'DEKA Central imeundwa kuboresha na kurahisisha shughuli za biashara, na inafaa kwa makampuni ya kila ukubwa.',
+        'description_2' => 'Jukwaa linatilia mkazo ripoti za maarifa, usalama, unyumbufu wa lugha na maeneo, na kuunganishwa na CRM, zana za BI na API.',
+        'useful_links'  => 'Viungo muhimu',
+        'contact_us'    => 'Wasiliana nasi',
+        'follow_us'     => 'Tufuate',
+        'copyright'     => 'Hakimiliki',
+        'powered_by'    => 'Inaendeshwa na',
     ],
 
     'pages' => [
         'about_us' => [
-            'title'      => 'Kuhusu Us',
-            'meta_title' => 'Kuhusu Us',
+            'title'      => 'Kuhusu sisi',
+            'meta_title' => 'Kuhusu sisi',
         ],
     ],
 
     'page_titles' => [
         'home'               => 'Nyumbani',
-        'about-us'           => 'Kuhusu Us',
-        'privacy-policy'     => 'Privacy Policy',
-        'terms-conditions'   => 'Terms & Conditions',
-        'news-announcements' => 'News & Announcements',
-        'blog'               => 'Blog',
-        'blogs'              => 'Blogs',
-        'contact'            => 'Mwasiliani',
-        'contact-us'         => 'Mwasiliani Us',
+        'about-us'           => 'Kuhusu sisi',
+        'privacy-policy'     => 'Sera ya faragha',
+        'terms-conditions'   => 'Sheria na masharti',
+        'news-announcements' => 'Habari na matangazo',
+        'blog'               => 'Blogu',
+        'blogs'              => 'Blogu',
+        'contact'            => 'Mawasiliano',
+        'contact-us'         => 'Wasiliana nasi',
     ],
 ];

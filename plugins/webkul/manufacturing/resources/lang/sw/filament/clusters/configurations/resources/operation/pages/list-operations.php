@@ -3,15 +3,15 @@
 return [
     'header-actions' => [
         'create' => [
-            'label'        => 'Mpya Operation',
+            'label'        => 'Operesheni mpya',
             'notification' => [
-                'title' => 'Operation imeundwa',
-                'body'  => 'operation ina imeundwa successfully.',
+                'title' => 'Operesheni imeundwa',
+                'body'  => 'Operesheni imeundwa kikamilifu.',
             ],
         ],
     ],
     'tabs' => [
         'all'      => 'Zote',
-        'archived' => 'Imehifadhiwa',
+        'archived' => 'Kumbukumbu',
     ],
 ];

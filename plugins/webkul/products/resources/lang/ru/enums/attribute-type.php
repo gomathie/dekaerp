@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'radio'  => 'Radio',
-    'select' => 'Выбрать',
+    'radio'  => 'Переключатель',
+    'select' => 'Список',
     'color'  => 'Цвет',
 ];

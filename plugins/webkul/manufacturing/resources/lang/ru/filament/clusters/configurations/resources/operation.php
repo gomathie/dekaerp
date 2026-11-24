@@ -11,35 +11,35 @@ return [
             'general' => [
                 'title'  => 'Общее',
                 'fields' => [
-                    'name'              => 'Operation',
-                    'name-placeholder'  => 'eg. Cutting',
-                    'bill-of-material'  => 'Счёт поставщика Material',
-                    'work-center'       => 'Work Center',
-                    'apply-on-variants' => 'Применить вкл. Variants',
+                    'name'              => 'Операция',
+                    'name-placeholder'  => 'напр. Резка',
+                    'bill-of-material'  => 'Спецификация',
+                    'work-center'       => 'Рабочий центр',
+                    'apply-on-variants' => 'Применять к вариантам',
                     'company'           => 'Компания',
-                    'blocked-by'        => 'Blocked От',
+                    'blocked-by'        => 'Заблокирована операциями',
                 ],
             ],
             'settings' => [
                 'title'  => 'Настройки',
                 'fields' => [
-                    'time-mode'                  => 'Duration Computation',
-                    'time-mode-batch'            => 'Based Вкл.',
-                    'time-mode-batch-prefix'     => 'последний',
-                    'time-mode-batch-suffix'     => 'производственный заказs',
-                    'manual-cycle-time'          => 'По умолчанию Duration',
-                    'manual-cycle-time-suffix'   => 'минуты',
+                    'time-mode'                  => 'Расчёт длительности',
+                    'time-mode-batch'            => 'На основе',
+                    'time-mode-batch-prefix'     => 'последних',
+                    'time-mode-batch-suffix'     => 'рабочих нарядов',
+                    'manual-cycle-time'          => 'Длительность по умолчанию',
+                    'manual-cycle-time-suffix'   => 'минут',
                 ],
             ],
             'worksheet' => [
-                'title'  => 'Work Sheet',
+                'title'  => 'Рабочая инструкция',
                 'fields' => [
-                    'worksheet'                => 'Worksheet',
+                    'worksheet'                => 'Инструкция',
                     'pdf'                      => 'PDF',
-                    'google-slide'             => 'Google Slide',
-                    'google-slide-placeholder' => 'Google Slide Link',
+                    'google-slide'             => 'Google Slides',
+                    'google-slide-placeholder' => 'Ссылка на Google Slides',
                     'description'              => 'Описание',
-                    'description-placeholder'  => 'Описание operation...',
+                    'description-placeholder'  => 'Описание операции…',
                 ],
             ],
         ],
@@ -47,43 +47,43 @@ return [
 
     'table' => [
         'columns' => [
-            'name'              => 'Operation',
-            'bill-of-material'  => 'Счёт поставщика Material',
-            'work-center'       => 'Work Center',
-            'time-mode'         => 'Duration Computation',
-            'manual-cycle-time' => 'По умолчанию Duration',
-            'worksheet-type'    => 'Worksheet',
-            'deleted-at'        => 'Удалено',
-            'created-at'        => 'Создано',
-            'updated-at'        => 'Обновлено',
+            'name'              => 'Операция',
+            'bill-of-material'  => 'Спецификация',
+            'work-center'       => 'Рабочий центр',
+            'time-mode'         => 'Расчёт длительности',
+            'manual-cycle-time' => 'Длительность по умолчанию',
+            'worksheet-type'    => 'Инструкция',
+            'deleted-at'        => 'Удалена',
+            'created-at'        => 'Создана',
+            'updated-at'        => 'Обновлена',
         ],
         'filters' => [
-            'work-center'    => 'Work Center',
-            'time-mode'      => 'Duration Computation',
-            'worksheet-type' => 'Worksheet',
+            'work-center'    => 'Рабочий центр',
+            'time-mode'      => 'Расчёт длительности',
+            'worksheet-type' => 'Инструкция',
         ],
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Operation restored',
-                    'body'  => 'operation есть restored successfully.',
+                    'title' => 'Операция восстановлена',
+                    'body'  => 'Операция успешно восстановлена.',
                 ],
             ],
             'delete' => [
                 'notification' => [
-                    'title' => 'Operation в архиве',
-                    'body'  => 'operation есть в архиве successfully.',
+                    'title' => 'Операция архивирована',
+                    'body'  => 'Операция успешно архивирована.',
                 ],
             ],
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Operation удалено',
-                        'body'  => 'operation есть permanently удалено.',
+                        'title' => 'Операция удалена',
+                        'body'  => 'Операция удалена безвозвратно.',
                     ],
                     'error' => [
-                        'title' => 'Operation could не быть удалено',
-                        'body'  => 'operation нельзя быть удалено потому что это currently в использовать.',
+                        'title' => 'Не удалось удалить операцию',
+                        'body'  => 'Операцию нельзя удалить, так как она используется.',
                     ],
                 ],
             ],
@@ -91,25 +91,25 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Операции restored',
-                    'body'  => 'выбрано операции есть restored successfully.',
+                    'title' => 'Операции восстановлены',
+                    'body'  => 'Выбранные операции успешно восстановлены.',
                 ],
             ],
             'delete' => [
                 'notification' => [
-                    'title' => 'Операции в архиве',
-                    'body'  => 'выбрано операции есть в архиве successfully.',
+                    'title' => 'Операции архивированы',
+                    'body'  => 'Выбранные операции успешно архивированы.',
                 ],
             ],
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Операции удалено',
-                        'body'  => 'выбрано операции есть permanently удалено.',
+                        'title' => 'Операции удалены',
+                        'body'  => 'Выбранные операции удалены безвозвратно.',
                     ],
                     'error' => [
-                        'title' => 'Операции could не быть удалено',
-                        'body'  => 'One или больше выбрано операции currently в использовать.',
+                        'title' => 'Не удалось удалить операции',
+                        'body'  => 'Одна или несколько выбранных операций используются.',
                     ],
                 ],
             ],
@@ -119,39 +119,39 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title'   => 'Общее Сведения',
+                'title'   => 'Общая информация',
                 'entries' => [
-                    'name'              => 'Operation',
-                    'bill-of-material'  => 'Счёт поставщика Material',
-                    'work-center'       => 'Work Center',
-                    'apply-on-variants' => 'Применить вкл. Variants',
+                    'name'              => 'Операция',
+                    'bill-of-material'  => 'Спецификация',
+                    'work-center'       => 'Рабочий центр',
+                    'apply-on-variants' => 'Применять к вариантам',
                     'company'           => 'Компания',
                 ],
             ],
             'settings' => [
                 'title'   => 'Настройки',
                 'entries' => [
-                    'time-mode'                => 'Duration Computation',
-                    'time-mode-batch'          => 'Based Вкл.',
-                    'manual-cycle-time'        => 'По умолчанию Duration',
-                    'manual-cycle-time-suffix' => 'минуты',
+                    'time-mode'                => 'Расчёт длительности',
+                    'time-mode-batch'          => 'На основе',
+                    'manual-cycle-time'        => 'Длительность по умолчанию',
+                    'manual-cycle-time-suffix' => 'минут',
                 ],
             ],
             'worksheet' => [
-                'title'   => 'Work Sheet',
+                'title'   => 'Рабочая инструкция',
                 'entries' => [
-                    'worksheet'    => 'Worksheet',
+                    'worksheet'    => 'Инструкция',
                     'pdf'          => 'PDF',
-                    'google-slide' => 'Google Slide',
+                    'google-slide' => 'Google Slides',
                     'description'  => 'Описание',
                 ],
             ],
             'record-information' => [
-                'title'   => 'Запись Сведения',
+                'title'   => 'Сведения о записи',
                 'entries' => [
-                    'created-by'   => 'Создано От',
-                    'created-at'   => 'Создано',
-                    'last-updated' => 'Последний Обновлено',
+                    'created-by'   => 'Автор',
+                    'created-at'   => 'Создана',
+                    'last-updated' => 'Последнее обновление',
                 ],
             ],
         ],

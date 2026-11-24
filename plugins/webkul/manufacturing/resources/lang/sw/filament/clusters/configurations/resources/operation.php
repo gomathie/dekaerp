@@ -2,8 +2,8 @@
 
 return [
     'navigation' => [
-        'title' => 'Shughuli',
-        'group' => 'Usanidi',
+        'title' => 'Operesheni',
+        'group' => 'Mipangilio',
     ],
 
     'form' => [
@@ -11,35 +11,35 @@ return [
             'general' => [
                 'title'  => 'Jumla',
                 'fields' => [
-                    'name'              => 'Operation',
-                    'name-placeholder'  => 'eg. Cutting',
-                    'bill-of-material'  => 'Bili ya Material',
-                    'work-center'       => 'Work Center',
-                    'apply-on-variants' => 'Tumia washa Variants',
+                    'name'              => 'Operesheni',
+                    'name-placeholder'  => 'mf. Kukata',
+                    'bill-of-material'  => 'Orodha ya malighafi',
+                    'work-center'       => 'Kituo cha kazi',
+                    'apply-on-variants' => 'Tumia kwenye aina za bidhaa',
                     'company'           => 'Kampuni',
-                    'blocked-by'        => 'Blocked Na',
+                    'blocked-by'        => 'Imezuiwa na',
                 ],
             ],
             'settings' => [
                 'title'  => 'Mipangilio',
                 'fields' => [
-                    'time-mode'                  => 'Duration Computation',
-                    'time-mode-batch'            => 'Based Washa',
-                    'time-mode-batch-prefix'     => 'mwisho',
-                    'time-mode-batch-suffix'     => 'agizo la kazis',
-                    'manual-cycle-time'          => 'Chaguo-msingi Duration',
+                    'time-mode'                  => 'Ukokotoaji wa muda',
+                    'time-mode-batch'            => 'Kulingana na',
+                    'time-mode-batch-prefix'     => 'Oda za kazi',
+                    'time-mode-batch-suffix'     => 'za mwisho',
+                    'manual-cycle-time'          => 'Muda chaguo-msingi',
                     'manual-cycle-time-suffix'   => 'dakika',
                 ],
             ],
             'worksheet' => [
-                'title'  => 'Work Sheet',
+                'title'  => 'Karatasi ya kazi',
                 'fields' => [
-                    'worksheet'                => 'Worksheet',
+                    'worksheet'                => 'Karatasi ya kazi',
                     'pdf'                      => 'PDF',
-                    'google-slide'             => 'Google Slide',
-                    'google-slide-placeholder' => 'Google Slide Link',
+                    'google-slide'             => 'Google Slides',
+                    'google-slide-placeholder' => 'Kiungo cha Google Slides',
                     'description'              => 'Maelezo',
-                    'description-placeholder'  => 'Maelezo ya operation...',
+                    'description-placeholder'  => 'Maelezo ya operesheni...',
                 ],
             ],
         ],
@@ -47,43 +47,43 @@ return [
 
     'table' => [
         'columns' => [
-            'name'              => 'Operation',
-            'bill-of-material'  => 'Bili ya Material',
-            'work-center'       => 'Work Center',
-            'time-mode'         => 'Duration Computation',
-            'manual-cycle-time' => 'Chaguo-msingi Duration',
-            'worksheet-type'    => 'Worksheet',
-            'deleted-at'        => 'Imefutwa',
-            'created-at'        => 'Imeundwa',
-            'updated-at'        => 'Imesasishwa',
+            'name'              => 'Operesheni',
+            'bill-of-material'  => 'Orodha ya malighafi',
+            'work-center'       => 'Kituo cha kazi',
+            'time-mode'         => 'Ukokotoaji wa muda',
+            'manual-cycle-time' => 'Muda chaguo-msingi',
+            'worksheet-type'    => 'Karatasi ya kazi',
+            'deleted-at'        => 'Ilifutwa',
+            'created-at'        => 'Iliundwa',
+            'updated-at'        => 'Ilisasishwa',
         ],
         'filters' => [
-            'work-center'    => 'Work Center',
-            'time-mode'      => 'Duration Computation',
-            'worksheet-type' => 'Worksheet',
+            'work-center'    => 'Kituo cha kazi',
+            'time-mode'      => 'Ukokotoaji wa muda',
+            'worksheet-type' => 'Karatasi ya kazi',
         ],
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Operation restored',
-                    'body'  => 'operation ina restored successfully.',
+                    'title' => 'Operesheni imerejeshwa',
+                    'body'  => 'Operesheni imerejeshwa kikamilifu.',
                 ],
             ],
             'delete' => [
                 'notification' => [
-                    'title' => 'Operation imehifadhiwa',
-                    'body'  => 'operation ina imehifadhiwa successfully.',
+                    'title' => 'Operesheni imewekwa kwenye kumbukumbu',
+                    'body'  => 'Operesheni imewekwa kwenye kumbukumbu kikamilifu.',
                 ],
             ],
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Operation imefutwa',
-                        'body'  => 'operation ina permanently imefutwa.',
+                        'title' => 'Operesheni imefutwa',
+                        'body'  => 'Operesheni imefutwa kabisa.',
                     ],
                     'error' => [
-                        'title' => 'Operation could si kuwa imefutwa',
-                        'body'  => 'operation haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Operesheni haikuweza kufutwa',
+                        'body'  => 'Operesheni haiwezi kufutwa kwa sababu inatumika kwa sasa.',
                     ],
                 ],
             ],
@@ -91,25 +91,25 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Shughuli restored',
-                    'body'  => 'imechaguliwa shughuli ina restored successfully.',
+                    'title' => 'Operesheni zimerejeshwa',
+                    'body'  => 'Operesheni zilizochaguliwa zimerejeshwa kikamilifu.',
                 ],
             ],
             'delete' => [
                 'notification' => [
-                    'title' => 'Shughuli imehifadhiwa',
-                    'body'  => 'imechaguliwa shughuli ina imehifadhiwa successfully.',
+                    'title' => 'Operesheni zimewekwa kwenye kumbukumbu',
+                    'body'  => 'Operesheni zilizochaguliwa zimewekwa kwenye kumbukumbu kikamilifu.',
                 ],
             ],
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Shughuli imefutwa',
-                        'body'  => 'imechaguliwa shughuli ina permanently imefutwa.',
+                        'title' => 'Operesheni zimefutwa',
+                        'body'  => 'Operesheni zilizochaguliwa zimefutwa kabisa.',
                     ],
                     'error' => [
-                        'title' => 'Shughuli could si kuwa imefutwa',
-                        'body'  => 'One au zaidi imechaguliwa shughuli ni currently katika tumia.',
+                        'title' => 'Operesheni hazikuweza kufutwa',
+                        'body'  => 'Operesheni moja au zaidi zilizochaguliwa zinatumika kwa sasa.',
                     ],
                 ],
             ],
@@ -119,39 +119,39 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title'   => 'Jumla Taarifa',
+                'title'   => 'Taarifa za jumla',
                 'entries' => [
-                    'name'              => 'Operation',
-                    'bill-of-material'  => 'Bili ya Material',
-                    'work-center'       => 'Work Center',
-                    'apply-on-variants' => 'Tumia washa Variants',
+                    'name'              => 'Operesheni',
+                    'bill-of-material'  => 'Orodha ya malighafi',
+                    'work-center'       => 'Kituo cha kazi',
+                    'apply-on-variants' => 'Tumia kwenye aina za bidhaa',
                     'company'           => 'Kampuni',
                 ],
             ],
             'settings' => [
                 'title'   => 'Mipangilio',
                 'entries' => [
-                    'time-mode'                => 'Duration Computation',
-                    'time-mode-batch'          => 'Based Washa',
-                    'manual-cycle-time'        => 'Chaguo-msingi Duration',
+                    'time-mode'                => 'Ukokotoaji wa muda',
+                    'time-mode-batch'          => 'Kulingana na',
+                    'manual-cycle-time'        => 'Muda chaguo-msingi',
                     'manual-cycle-time-suffix' => 'dakika',
                 ],
             ],
             'worksheet' => [
-                'title'   => 'Work Sheet',
+                'title'   => 'Karatasi ya kazi',
                 'entries' => [
-                    'worksheet'    => 'Worksheet',
+                    'worksheet'    => 'Karatasi ya kazi',
                     'pdf'          => 'PDF',
-                    'google-slide' => 'Google Slide',
+                    'google-slide' => 'Google Slides',
                     'description'  => 'Maelezo',
                 ],
             ],
             'record-information' => [
-                'title'   => 'Rekodi Taarifa',
+                'title'   => 'Taarifa za rekodi',
                 'entries' => [
-                    'created-by'   => 'Imeundwa Na',
-                    'created-at'   => 'Imeundwa',
-                    'last-updated' => 'Mwisho Imesasishwa',
+                    'created-by'   => 'Imeundwa na',
+                    'created-at'   => 'Iliundwa',
+                    'last-updated' => 'Ilisasishwa mwisho',
                 ],
             ],
         ],

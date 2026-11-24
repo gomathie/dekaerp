@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'title' => 'Work Center Productivity Hasara',
+    'title' => 'Hasara ya tija ya kituo cha kazi',
 ];

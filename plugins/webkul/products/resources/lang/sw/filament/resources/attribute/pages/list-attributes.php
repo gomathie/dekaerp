@@ -3,16 +3,16 @@
 return [
     'tabs' => [
         'all'      => 'Zote',
-        'archived' => 'Imehifadhiwa',
+        'archived' => 'Kumbukumbu',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Attribute',
+            'label' => 'Sifa mpya',
 
             'notification' => [
-                'title' => 'Attribute imeundwa',
-                'body'  => 'attribute ina imeundwa successfully.',
+                'title' => 'Sifa imeundwa',
+                'body'  => 'Sifa imeundwa kikamilifu.',
             ],
         ],
     ],

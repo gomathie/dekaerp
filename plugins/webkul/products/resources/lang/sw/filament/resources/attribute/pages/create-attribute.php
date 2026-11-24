@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Attribute imeundwa',
-        'body'  => 'attribute ina imeundwa successfully.',
+        'title' => 'Sifa imeundwa',
+        'body'  => 'Sifa imeundwa kikamilifu.',
     ],
 ];

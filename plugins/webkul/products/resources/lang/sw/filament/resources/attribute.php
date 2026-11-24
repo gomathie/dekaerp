@@ -13,12 +13,12 @@ return [
             ],
 
             'options' => [
-                'title'  => 'Options',
+                'title'  => 'Chaguo',
 
                 'fields' => [
                     'name'        => 'Jina',
                     'color'       => 'Rangi',
-                    'extra-price' => 'Extra Bei',
+                    'extra-price' => 'Bei ya ziada',
                 ],
             ],
         ],
@@ -28,15 +28,15 @@ return [
         'columns' => [
             'name'        => 'Jina',
             'type'        => 'Aina',
-            'deleted-at'  => 'Imefutwa',
-            'created-at'  => 'Imeundwa',
-            'updated-at'  => 'Imesasishwa',
+            'deleted-at'  => 'Ilifutwa',
+            'created-at'  => 'Iliundwa',
+            'updated-at'  => 'Ilisasishwa',
         ],
 
         'groups' => [
             'type'       => 'Aina',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'created-at' => 'Iliundwa',
+            'updated-at' => 'Ilisasishwa',
         ],
 
         'filters' => [
@@ -46,28 +46,28 @@ return [
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Attribute restored',
-                    'body'  => 'attribute ina restored successfully.',
+                    'title' => 'Sifa imerejeshwa',
+                    'body'  => 'Sifa imerejeshwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Attribute imefutwa',
-                    'body'  => 'attribute ina imefutwa successfully.',
+                    'title' => 'Sifa imefutwa',
+                    'body'  => 'Sifa imefutwa kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Attribute force imefutwa',
-                        'body'  => 'attribute ina force imefutwa successfully.',
+                        'title' => 'Sifa imefutwa kabisa',
+                        'body'  => 'Sifa imefutwa kabisa kikamilifu.',
                     ],
 
                     'error' => [
-                        'title' => 'Attribute could si kuwa imefutwa',
-                        'body'  => 'attribute haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Sifa haikuweza kufutwa',
+                        'body'  => 'Sifa haiwezi kufutwa kwa sababu inatumika kwa sasa.',
                     ],
                 ],
             ],
@@ -76,28 +76,28 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Attributes restored',
-                    'body'  => 'attributes ina restored successfully.',
+                    'title' => 'Sifa zimerejeshwa',
+                    'body'  => 'Sifa zimerejeshwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Attributes imefutwa',
-                    'body'  => 'attributes ina imefutwa successfully.',
+                    'title' => 'Sifa zimefutwa',
+                    'body'  => 'Sifa zimefutwa kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Attributes force imefutwa',
-                        'body'  => 'attributes ina force imefutwa successfully.',
+                        'title' => 'Sifa zimefutwa kabisa',
+                        'body'  => 'Sifa zimefutwa kabisa kikamilifu.',
                     ],
 
                     'error' => [
-                        'title' => 'Attributes could si kuwa imefutwa',
-                        'body'  => 'attributes haiwezekani kuwa imefutwa kwa sababu wao ni currently katika tumia.',
+                        'title' => 'Sifa hazikuweza kufutwa',
+                        'body'  => 'Sifa haziwezi kufutwa kwa sababu zinatumika kwa sasa.',
                     ],
                 ],
             ],
@@ -107,7 +107,7 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Jumla Taarifa',
+                'title' => 'Taarifa za jumla',
 
                 'entries' => [
                     'name' => 'Jina',
@@ -116,12 +116,12 @@ return [
             ],
 
             'record-information' => [
-                'title' => 'Rekodi Taarifa',
+                'title' => 'Taarifa za rekodi',
 
                 'entries' => [
-                    'creator'    => 'Imeundwa Na',
-                    'created_at' => 'Imeundwa',
-                    'updated_at' => 'Mwisho Imesasishwa',
+                    'creator'    => 'Imeundwa na',
+                    'created_at' => 'Iliundwa',
+                    'updated_at' => 'Ilisasishwa mwisho',
                 ],
             ],
         ],

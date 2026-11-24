@@ -2,19 +2,19 @@
 
 return [
     'tabs' => [
-        'goods'     => 'Goods',
-        'services'  => 'Services',
-        'favorites' => 'Favorites',
+        'goods'     => 'Товары',
+        'services'  => 'Услуги',
+        'favorites' => 'Избранное',
         'archived'  => 'В архиве',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Товар',
+            'label' => 'Новый товар',
 
             'notification' => [
-                'title' => 'Товар создано',
-                'body'  => 'товар есть создано successfully.',
+                'title' => 'Товар создан',
+                'body'  => 'Товар успешно создан.',
             ],
         ],
     ],

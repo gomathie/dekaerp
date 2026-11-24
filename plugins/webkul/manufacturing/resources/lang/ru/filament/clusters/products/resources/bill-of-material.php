@@ -2,7 +2,7 @@
 
 return [
     'navigation' => [
-        'title' => 'Счета поставщиков Materials',
+        'title' => 'Спецификации',
     ],
 
     'form' => [
@@ -10,42 +10,42 @@ return [
             'general' => [
                 'title'  => 'Общее',
                 'fields' => [
-                    'reference'             => 'Ссылка',
-                    'reference-placeholder' => 'eg. BOM-001',
+                    'reference'             => 'Номер',
+                    'reference-placeholder' => 'напр. BOM-001',
                     'product'               => 'Товар',
-                    'product-variant'       => 'Товар Variant',
+                    'product-variant'       => 'Вариант товара',
                     'quantity'              => 'Количество',
-                    'uom'                   => 'UOM',
-                    'operation-type'        => 'Operation Тип',
+                    'uom'                   => 'Ед. изм.',
+                    'operation-type'        => 'Тип операции',
                     'company'               => 'Компания',
-                    'type'                  => 'BoM Тип',
+                    'type'                  => 'Тип спецификации',
                 ],
             ],
             'miscellaneous' => [
-                'title'  => 'Miscellaneous',
+                'title'  => 'Прочее',
                 'fields' => [
-                    'kit-information'                         => 'Kit Сведения',
-                    'kit-information-content'                 => 'kit BoM используется до группа components для перемещения или продажи, instead produced через производство заказ.',
-                    'manufacturing-lead-time'                 => 'Производство Lead Time',
-                    'days-to-prepare-manufacturing-order'     => 'Дни до prepare Производство Заказ',
-                    'days-suffix'                             => 'дни',
+                    'kit-information'                         => 'О комплекте',
+                    'kit-information-content'                 => 'Спецификация-комплект группирует компоненты для перемещений или продаж, а не производится через производственный заказ.',
+                    'manufacturing-lead-time'                 => 'Срок производства',
+                    'days-to-prepare-manufacturing-order'     => 'Дней на подготовку производственного заказа',
+                    'days-suffix'                             => 'дн.',
                 ],
             ],
         ],
         'tabs' => [
             'components' => [
-                'title'      => 'Components',
-                'add-action' => 'Добавить строка',
+                'title'      => 'Компоненты',
+                'add-action' => 'Добавить строку',
                 'columns'    => [
-                    'component'              => 'Component',
-                    'apply-on-variants'      => 'Применить вкл. Variants',
-                    'consumed-in-operation'  => 'Consumed в Operation',
-                    'highlight-consumption'  => 'Highlight Consumption',
+                    'component'              => 'Компонент',
+                    'apply-on-variants'      => 'Применять к вариантам',
+                    'consumed-in-operation'  => 'Расходуется в операции',
+                    'highlight-consumption'  => 'Выделять расход',
                     'quantity'               => 'Количество',
-                    'uom'                    => 'Товар Единица измерения',
+                    'uom'                    => 'Единица измерения товара',
                 ],
                 'validation' => [
-                    'component-different-from-product' => 'component нужно быть different от товар manufactured.',
+                    'component-different-from-product' => 'Компонент должен отличаться от производимого товара.',
                 ],
                 'create-form' => [
                     'fields' => [
@@ -53,48 +53,48 @@ return [
                         'type'            => 'Тип',
                         'category'        => 'Категория',
                         'company'         => 'Компания',
-                        'uom'             => 'UOM',
-                        'uom-placeholder' => 'UOM',
+                        'uom'             => 'Ед. изм.',
+                        'uom-placeholder' => 'Ед. изм.',
                     ],
                 ],
             ],
             'operations' => [
                 'title'      => 'Операции',
-                'add-action' => 'Добавить строка',
+                'add-action' => 'Добавить строку',
                 'actions'    => [
-                    'edit'                 => 'Изменить Operation',
-                    'copy-existing'        => 'Копировать Existing Операции',
+                    'edit'                 => 'Изменить операцию',
+                    'copy-existing'        => 'Копировать существующие операции',
                     'copy-existing-fields' => [
-                        'operation' => 'Operation',
+                        'operation' => 'Операция',
                     ],
                 ],
                 'columns'    => [
-                    'operation'        => 'Operation',
-                    'work-center'      => 'Work Center',
-                    'time-mode'        => 'Duration Computation',
-                    'time-mode-batch'  => 'Computed вкл. последний',
+                    'operation'        => 'Операция',
+                    'work-center'      => 'Рабочий центр',
+                    'time-mode'        => 'Расчёт длительности',
+                    'time-mode-batch'  => 'По последним',
                     'company'          => 'Компания',
-                    'apply-on-variants'=> 'Применить вкл. Variants',
-                    'duration'         => 'Duration (минуты)',
+                    'apply-on-variants'=> 'Применять к вариантам',
+                    'duration'         => 'Длительность (минуты)',
                 ],
             ],
             'by-products' => [
-                'title'      => 'От-товары',
-                'add-action' => 'Добавить строка',
+                'title'      => 'Побочная продукция',
+                'add-action' => 'Добавить строку',
                 'columns'    => [
-                    'product'   => 'От-товар',
+                    'product'   => 'Побочный продукт',
                     'quantity'  => 'Количество',
                     'uom'       => 'Единица измерения',
-                    'operation' => 'Produced в Operation',
+                    'operation' => 'Производится в операции',
                 ],
             ],
             'miscellaneous' => [
-                'title'  => 'Miscellaneous',
+                'title'  => 'Прочее',
                 'fields' => [
-                    'ready-to-produce'       => 'Производство Readiness',
-                    'routing'                => 'Routing',
-                    'consumption'            => 'Flexible Consumption',
-                    'operation-dependencies' => 'Operation Dependencies',
+                    'ready-to-produce'       => 'Готовность к производству',
+                    'routing'                => 'Маршрутизация',
+                    'consumption'            => 'Гибкий расход',
+                    'operation-dependencies' => 'Зависимости операций',
                 ],
             ],
         ],
@@ -102,42 +102,42 @@ return [
 
     'table' => [
         'columns' => [
-            'reference'  => 'Ссылка',
+            'reference'  => 'Номер',
             'product'    => 'Товар',
             'quantity'   => 'Количество',
-            'uom'        => 'UOM',
-            'type'       => 'BOM Тип',
+            'uom'        => 'Ед. изм.',
+            'type'       => 'Тип спецификации',
             'company'    => 'Компания',
-            'deleted-at' => 'Удалено',
-            'updated-at' => 'Обновлено',
+            'deleted-at' => 'Удалена',
+            'updated-at' => 'Обновлена',
         ],
         'filters' => [
             'product' => 'Товар',
-            'type'    => 'BOM Тип',
+            'type'    => 'Тип спецификации',
             'company' => 'Компания',
         ],
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Счёт поставщика material restored',
-                    'body'  => 'счёт поставщика material есть restored successfully.',
+                    'title' => 'Спецификация восстановлена',
+                    'body'  => 'Спецификация успешно восстановлена.',
                 ],
             ],
             'delete' => [
                 'notification' => [
-                    'title' => 'Счёт поставщика material в архиве',
-                    'body'  => 'счёт поставщика material есть в архиве successfully.',
+                    'title' => 'Спецификация архивирована',
+                    'body'  => 'Спецификация успешно архивирована.',
                 ],
             ],
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Счёт поставщика material удалено',
-                        'body'  => 'счёт поставщика material есть permanently удалено.',
+                        'title' => 'Спецификация удалена',
+                        'body'  => 'Спецификация удалена безвозвратно.',
                     ],
                     'error' => [
-                        'title' => 'Счёт поставщика material could не быть удалено',
-                        'body'  => 'счёт поставщика material нельзя быть удалено потому что это currently в использовать.',
+                        'title' => 'Не удалось удалить спецификацию',
+                        'body'  => 'Спецификацию нельзя удалить, так как она используется.',
                     ],
                 ],
             ],
@@ -145,25 +145,25 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Счета поставщиков material restored',
-                    'body'  => 'выбрано счета поставщиков material есть restored successfully.',
+                    'title' => 'Спецификации восстановлены',
+                    'body'  => 'Выбранные спецификации успешно восстановлены.',
                 ],
             ],
             'delete' => [
                 'notification' => [
-                    'title' => 'Счета поставщиков material в архиве',
-                    'body'  => 'выбрано счета поставщиков material есть в архиве successfully.',
+                    'title' => 'Спецификации архивированы',
+                    'body'  => 'Выбранные спецификации успешно архивированы.',
                 ],
             ],
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Счета поставщиков material удалено',
-                        'body'  => 'выбрано счета поставщиков material есть permanently удалено.',
+                        'title' => 'Спецификации удалены',
+                        'body'  => 'Выбранные спецификации удалены безвозвратно.',
                     ],
                     'error' => [
-                        'title' => 'Счета поставщиков material could не быть удалено',
-                        'body'  => 'One или больше выбрано счета поставщиков material currently в использовать.',
+                        'title' => 'Не удалось удалить спецификации',
+                        'body'  => 'Одна или несколько выбранных спецификаций используются.',
                     ],
                 ],
             ],
@@ -173,67 +173,67 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title'   => 'Общее Сведения',
+                'title'   => 'Общая информация',
                 'entries' => [
-                    'reference'      => 'Ссылка',
+                    'reference'      => 'Номер',
                     'product'        => 'Товар',
-                    'product-variant'=> 'Товар Variant',
+                    'product-variant'=> 'Вариант товара',
                     'quantity'       => 'Количество',
-                    'uom'            => 'UOM',
-                    'operation-type' => 'Operation Тип',
+                    'uom'            => 'Ед. изм.',
+                    'operation-type' => 'Тип операции',
                     'company'        => 'Компания',
-                    'type'           => 'BoM Тип',
+                    'type'           => 'Тип спецификации',
                 ],
             ],
             'record-information' => [
-                'title'   => 'Запись Сведения',
+                'title'   => 'Сведения о записи',
                 'entries' => [
-                    'created-by'   => 'Создано От',
-                    'created-at'   => 'Создано',
-                    'last-updated' => 'Последний Обновлено',
+                    'created-by'   => 'Автор',
+                    'created-at'   => 'Создана',
+                    'last-updated' => 'Последнее обновление',
                 ],
             ],
         ],
         'tabs' => [
             'components' => [
-                'title'   => 'Components',
+                'title'   => 'Компоненты',
                 'entries' => [
-                    'component' => 'Component',
-                    'operation' => 'Operation',
+                    'component' => 'Компонент',
+                    'operation' => 'Операция',
                     'quantity'  => 'Количество',
-                    'uom'       => 'Товар Единица измерения',
+                    'uom'       => 'Единица измерения товара',
                 ],
             ],
             'operations' => [
                 'title'   => 'Операции',
                 'entries' => [
-                    'operation'   => 'Operation',
-                    'work-center' => 'Work Center',
-                    'time-mode'   => 'Duration Computation',
-                    'duration'    => 'Duration (минуты)',
+                    'operation'   => 'Операция',
+                    'work-center' => 'Рабочий центр',
+                    'time-mode'   => 'Расчёт длительности',
+                    'duration'    => 'Длительность (минуты)',
                 ],
             ],
             'by-products' => [
-                'title'   => 'От-товары',
+                'title'   => 'Побочная продукция',
                 'entries' => [
-                    'product'   => 'От-товар',
+                    'product'   => 'Побочный продукт',
                     'quantity'  => 'Количество',
                     'uom'       => 'Единица измерения',
-                    'operation' => 'Produced в Operation',
+                    'operation' => 'Производится в операции',
                 ],
             ],
             'miscellaneous' => [
-                'title'   => 'Miscellaneous',
+                'title'   => 'Прочее',
                 'entries' => [
-                    'kit-information'                         => 'Kit Сведения',
-                    'kit-information-content'                 => 'kit BoM используется до группа components для перемещения или продажи, instead produced через производство заказ.',
-                    'ready-to-produce'                        => 'Производство Readiness',
-                    'routing'                                 => 'Routing',
-                    'consumption'                             => 'Flexible Consumption',
-                    'operation-dependencies'                  => 'Operation Dependencies',
-                    'manufacturing-lead-time'                 => 'Производство Lead Time',
-                    'days-to-prepare-manufacturing-order'     => 'Дни до prepare Производство Заказ',
-                    'days-suffix'                             => 'дни',
+                    'kit-information'                         => 'О комплекте',
+                    'kit-information-content'                 => 'Спецификация-комплект группирует компоненты для перемещений или продаж, а не производится через производственный заказ.',
+                    'ready-to-produce'                        => 'Готовность к производству',
+                    'routing'                                 => 'Маршрутизация',
+                    'consumption'                             => 'Гибкий расход',
+                    'operation-dependencies'                  => 'Зависимости операций',
+                    'manufacturing-lead-time'                 => 'Срок производства',
+                    'days-to-prepare-manufacturing-order'     => 'Дней на подготовку производственного заказа',
+                    'days-suffix'                             => 'дн.',
                 ],
             ],
         ],

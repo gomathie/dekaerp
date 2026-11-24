@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'title' => 'Manage Planning',
+    'title' => 'Управление планированием',
 
     'form' => [
         'manufacturing-lead-time' => [
-            'label'       => 'Производство Lead Time',
-            'helper-text' => 'Plan производство заказы в advance до prevent delays.',
+            'label'       => 'Срок производства',
+            'helper-text' => 'Планируйте производственные заказы заранее, чтобы избежать задержек.',
         ],
     ],
 ];

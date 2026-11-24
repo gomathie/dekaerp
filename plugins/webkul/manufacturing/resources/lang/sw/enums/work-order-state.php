@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'pending'  => 'Waiting kwa another agizo la kazi',
-    'waiting'  => 'Waiting kwa components',
-    'ready'    => 'Ready',
-    'progress' => 'Katika Maendeleo',
-    'done'     => 'Finished',
+    'pending'  => 'Inasubiri oda nyingine ya kazi',
+    'waiting'  => 'Inasubiri vipengele',
+    'ready'    => 'Tayari',
+    'progress' => 'Inaendelea',
+    'done'     => 'Imekamilika',
     'cancel'   => 'Imeghairiwa',
 ];

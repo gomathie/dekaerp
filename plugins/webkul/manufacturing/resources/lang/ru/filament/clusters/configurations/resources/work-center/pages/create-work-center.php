@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Work center создано',
-        'body'  => 'work center есть создано successfully.',
+        'title' => 'Рабочий центр создан',
+        'body'  => 'Рабочий центр успешно создан.',
     ],
 ];

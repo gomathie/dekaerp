@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'title' => 'Agizo la kazi',
+    'title' => 'Oda ya kazi',
 ];

@@ -2,14 +2,14 @@
 
 return [
     'notification' => [
-        'title' => 'Operation обновлено',
-        'body'  => 'operation есть обновлено successfully.',
+        'title' => 'Операция обновлена',
+        'body'  => 'Операция успешно обновлена.',
     ],
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Operation в архиве',
-                'body'  => 'operation есть в архиве successfully.',
+                'title' => 'Операция архивирована',
+                'body'  => 'Операция успешно архивирована.',
             ],
         ],
     ],
