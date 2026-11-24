@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Matengenezo request imeundwa',
-        'body'  => 'matengenezo request ina imeundwa successfully.',
+        'title' => 'Ombi la matengenezo limeundwa',
+        'body'  => 'Ombi la matengenezo limeundwa kwa mafanikio.',
     ],
 ];

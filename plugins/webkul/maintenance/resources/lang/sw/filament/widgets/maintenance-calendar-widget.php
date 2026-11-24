@@ -2,7 +2,7 @@
 
 return [
     'heading' => [
-        'title' => 'Matengenezo Kalenda',
+        'title' => 'Kalenda ya matengenezo',
     ],
 
     'config' => [
@@ -17,23 +17,23 @@ return [
 
     'header-actions' => [
         'create' => [
-            'label'         => 'Mpya Request',
-            'modal-heading' => 'Mpya Matengenezo Request',
+            'label'         => 'Ombi jipya',
+            'modal-heading' => 'Ombi jipya la matengenezo',
             'notification'  => [
                 'success' => [
-                    'title' => 'Matengenezo request imeundwa',
-                    'body'  => 'matengenezo request ina imeundwa successfully.',
+                    'title' => 'Ombi la matengenezo limeundwa',
+                    'body'  => 'Ombi la matengenezo limeundwa kwa mafanikio.',
                 ],
                 'error' => [
-                    'title' => 'Matengenezo request could si kuwa imeundwa',
-                    'body'  => 'Unda matengenezo hatua na timu kwanza.',
+                    'title' => 'Ombi la matengenezo halikuweza kuundwa',
+                    'body'  => 'Unda hatua na timu ya matengenezo kwanza.',
                 ],
             ],
         ],
     ],
 
     'view-action' => [
-        'label' => 'Angalia',
+        'label' => 'Tazama',
     ],
 
     'modal-actions' => [
@@ -44,20 +44,20 @@ return [
 
     'form' => [
         'fields' => [
-            'subject'      => 'Subject',
-            'scheduled-at' => 'Scheduled Saa',
+            'subject'      => 'Mada',
+            'scheduled-at' => 'Imepangwa',
         ],
     ],
 
     'infolist' => [
-        'title'   => 'Matengenezo Request',
+        'title'   => 'Ombi la matengenezo',
         'entries' => [
-            'subject'          => 'Subject',
+            'subject'          => 'Mada',
             'date'             => 'Tarehe',
-            'time'             => 'Time',
-            'technician'       => 'Technician',
+            'time'             => 'Saa',
+            'technician'       => 'Fundi',
             'priority'         => 'Kipaumbele',
-            'maintenance-type' => 'Matengenezo Aina',
+            'maintenance-type' => 'Aina ya matengenezo',
             'stage'            => 'Hatua',
         ],
     ],

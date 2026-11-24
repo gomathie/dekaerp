@@ -3,17 +3,17 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Команда',
+            'label' => 'Новая команда',
 
             'notification' => [
-                'title' => 'Команда создано',
-                'body'  => 'команда есть создано successfully.',
+                'title' => 'Команда создана',
+                'body'  => 'Команда успешно создана.',
             ],
         ],
     ],
 
     'tabs' => [
         'all'      => 'Все',
-        'archived' => 'В архиве',
+        'archived' => 'Архив',
     ],
 ];

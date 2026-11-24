@@ -2,30 +2,30 @@
 
 return [
     'banner' => [
-        'message' => 'Вы signed в как :target (:company). Impersonated от :impersonator.',
-        'ends-at' => 'Ends в :time',
-        'end'     => 'Конец impersonation',
+        'message' => 'Вы вошли как :target (:company). Вход от имени выполнил :impersonator.',
+        'ends-at' => 'Завершится в :time',
+        'end'     => 'Завершить вход от имени',
     ],
 
     'notifications' => [
-        'started' => 'Вы сейчас signed в как :name.',
-        'refused' => 'Impersonation был не started',
+        'started' => 'Теперь вы вошли как :name.',
+        'refused' => 'Вход от имени не выполнен',
 
         'ended-automatically' => [
-            'expired' => 'impersonation reached его time limit и есть ended.',
-            'invalid' => 'impersonation нет longer разрешено и есть ended.',
+            'expired' => 'Время входа от имени истекло, сеанс завершён.',
+            'invalid' => 'Вход от имени больше не разрешён, сеанс завершён.',
         ],
 
-        'granted' => 'Impersonation access granted.',
-        'revoked' => 'Impersonation access revoked.',
+        'granted' => 'Доступ ко входу от имени предоставлен.',
+        'revoked' => 'Доступ ко входу от имени отозван.',
     ],
 
     'actions' => [
         'impersonate' => [
-            'label'             => 'Impersonate',
+            'label'             => 'Войти от имени',
             'modal-heading'     => 'Войти как :name',
-            'modal-description' => 'Вы act как этот пользователь, с их права только, для в большинство :minutes минуты. Everything вы recorded с ваш название.',
-            'submit'            => 'Начать impersonation',
+            'modal-description' => 'Вы будете действовать как этот пользователь, только с его правами, не дольше :minutes мин. Все ваши действия записываются под вашим именем.',
+            'submit'            => 'Начать вход от имени',
 
             'form' => [
                 'reason'   => 'Причина',
@@ -34,13 +34,13 @@ return [
         ],
 
         'grant' => [
-            'label'             => 'Разрешить impersonation',
-            'modal-description' => 'Этот Multi-Компания Администратор быть able до impersonate tenant пользователи в их назначен компании.',
+            'label'             => 'Разрешить вход от имени',
+            'modal-description' => 'Этот Multi-Company Admin сможет входить от имени пользователей в назначенных ему компаниях.',
         ],
 
         'revoke' => [
-            'label'             => 'Убрать impersonation access',
-            'modal-description' => 'impersonation они running сейчас ends вкл. их далее страница load.',
+            'label'             => 'Отозвать доступ ко входу от имени',
+            'modal-description' => 'Текущий сеанс входа от имени завершится при следующей загрузке страницы.',
         ],
     ],
 ];

@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Matengenezo request imesasishwa',
-        'body'  => 'matengenezo request ina imesasishwa successfully.',
+        'title' => 'Ombi la matengenezo limesasishwa',
+        'body'  => 'Ombi la matengenezo limesasishwa kwa mafanikio.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Matengenezo request imehifadhiwa',
-                'body'  => 'matengenezo request ina imehifadhiwa successfully.',
+                'title' => 'Ombi la matengenezo limewekwa kumbukumbu',
+                'body'  => 'Ombi la matengenezo limewekwa kumbukumbu kwa mafanikio.',
             ],
         ],
     ],

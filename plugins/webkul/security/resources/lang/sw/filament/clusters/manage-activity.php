@@ -1,23 +1,23 @@
 <?php
 
 return [
-    'breadcrumb' => 'Manage Shughuli',
-    'title'      => 'Manage Shughuli',
+    'breadcrumb' => 'Dhibiti shughuli',
+    'title'      => 'Dhibiti shughuli',
     'group'      => 'Jumla',
 
     'navigation' => [
-        'label' => 'Manage Shughuli',
+        'label' => 'Dhibiti shughuli',
     ],
 
     'form' => [
         'activity-description' => [
             'label'   => 'Shughuli',
-            'content' => 'Configure yako shughuli types.',
+            'content' => 'Sanidi aina za shughuli zako.',
         ],
 
         'actions' => [
             'manage-activity-types' => [
-                'label' => 'Shughuli Types',
+                'label' => 'Aina za shughuli',
             ],
         ],
     ],

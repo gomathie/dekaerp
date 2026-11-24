@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'group'      => 'Kundi',
-    'individual' => 'Individual',
-    'global'     => 'Global',
+    'group'      => 'Kikundi',
+    'individual' => 'Binafsi',
+    'global'     => 'Kwa wote',
 ];

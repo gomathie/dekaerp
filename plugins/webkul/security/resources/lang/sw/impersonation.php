@@ -2,45 +2,45 @@
 
 return [
     'banner' => [
-        'message' => 'Wewe ni signed katika kama :target (:company). Impersonated na :impersonator.',
-        'ends-at' => 'Ends saa :time',
-        'end'     => 'Mwisho impersonation',
+        'message' => 'Umeingia kama :target (:company). Uigaji unafanywa na :impersonator.',
+        'ends-at' => 'Inaisha saa :time',
+        'end'     => 'Maliza uigaji',
     ],
 
     'notifications' => [
-        'started' => 'Wewe ni sasa signed katika kama :name.',
-        'refused' => 'Impersonation ilikuwa si started',
+        'started' => 'Sasa umeingia kama :name.',
+        'refused' => 'Uigaji haukuanzishwa',
 
         'ended-automatically' => [
-            'expired' => 'impersonation reached yake time limit na ina ended.',
-            'invalid' => 'impersonation ni hakuna longer inaruhusiwa na ina ended.',
+            'expired' => 'Uigaji umefikia kikomo cha muda na umeisha.',
+            'invalid' => 'Uigaji hauruhusiwi tena na umeisha.',
         ],
 
-        'granted' => 'Impersonation access granted.',
-        'revoked' => 'Impersonation access revoked.',
+        'granted' => 'Ruhusa ya uigaji imetolewa.',
+        'revoked' => 'Ruhusa ya uigaji imebatilishwa.',
     ],
 
     'actions' => [
         'impersonate' => [
-            'label'             => 'Impersonate',
+            'label'             => 'Iga mtumiaji',
             'modal-heading'     => 'Ingia kama :name',
-            'modal-description' => 'Wewe ita act kama hii mtumiaji, na yao ruhusa tu, kwa saa wengi :minutes dakika. Everything wewe ni recorded na yako jina.',
-            'submit'            => 'Anza impersonation',
+            'modal-description' => 'Utatenda kama mtumiaji huyu, kwa ruhusa zake pekee, kwa muda usiozidi dakika :minutes. Kila unachofanya kinarekodiwa kwa jina lako.',
+            'submit'            => 'Anza uigaji',
 
             'form' => [
                 'reason'   => 'Sababu',
-                'password' => 'Yako nenosiri',
+                'password' => 'Nenosiri lako',
             ],
         ],
 
         'grant' => [
-            'label'             => 'Ruhusu impersonation',
-            'modal-description' => 'Hii Multi-Kampuni Msimamizi ita kuwa able hadi impersonate tenant watumiaji katika yao amekabidhiwa makampuni.',
+            'label'             => 'Ruhusu uigaji',
+            'modal-description' => 'Multi-Company Admin huyu ataweza kuiga watumiaji wa wateja katika kampuni alizogawiwa.',
         ],
 
         'revoke' => [
-            'label'             => 'Ondoa impersonation access',
-            'modal-description' => 'impersonation wao ni running sasa ends washa yao ifuatayo ukurasa load.',
+            'label'             => 'Ondoa ruhusa ya uigaji',
+            'modal-description' => 'Uigaji anaoendesha sasa utaisha atakapopakia ukurasa unaofuata.',
         ],
     ],
 ];

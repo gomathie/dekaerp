@@ -2,50 +2,50 @@
 
 return [
     'tabs' => [
-        'all'      => 'Zote Watumiaji',
-        'archived' => 'Imehifadhiwa Watumiaji',
+        'all'      => 'Watumiaji wote',
+        'archived' => 'Watumiaji waliowekwa kumbukumbu',
     ],
 
     'header-actions' => [
-        'invitation' => 'Inasubiri mwaliko',
+        'invitation' => 'Mwaliko unaosubiri',
         'resend'     => [
-            'title'         => 'Resend mwaliko',
-            'invited'       => 'Mwaliko resent',
-            'invite-failed' => 'Mwaliko could si kuwa resent',
+            'title'         => 'Tuma mwaliko tena',
+            'invited'       => 'Mwaliko umetumwa tena',
+            'invite-failed' => 'Mwaliko haukuweza kutumwa tena',
             'mail-failed'   => 'Barua pepe imeshindwa',
-            'recovery'      => 'mwaliko ni bado inatumika. Share hii link zaidi ya trusted channel: :link',
+            'recovery'      => 'Mwaliko bado ni halali. Shiriki kiungo hiki kupitia njia unayoiamini: :link',
         ],
         'revoke' => [
-            'title' => 'Revoke mwaliko',
-            'done'  => 'Mwaliko revoked',
+            'title' => 'Batilisha mwaliko',
+            'done'  => 'Mwaliko umebatilishwa',
         ],
         'invite' => [
-            'title' => 'Alika Mtumiaji',
+            'title' => 'Alika mtumiaji',
             'modal' => [
-                'submit-action-label' => 'Alika Mtumiaji',
+                'submit-action-label' => 'Alika mtumiaji',
             ],
             'form' => [
                 'email' => 'Barua pepe',
             ],
             'notification' => [
                 'success' => [
-                    'title' => 'Mtumiaji invited',
-                    'body'  => 'Mtumiaji ina invited successfully',
+                    'title' => 'Mtumiaji amealikwa',
+                    'body'  => 'Mtumiaji amealikwa kwa mafanikio',
                 ],
                 'error' => [
-                    'title' => 'Mtumiaji Mwaliko Imeshindwa',
-                    'body'  => 'mfumo encountered unexpected hitilafu wakati trying hadi send mtumiaji mwaliko.',
+                    'title' => 'Mwaliko wa mtumiaji umeshindwa',
+                    'body'  => 'Mfumo umekumbana na hitilafu isiyotarajiwa wakati wa kutuma mwaliko wa mtumiaji.',
                 ],
 
                 'default-company-error' => [
-                    'title' => 'Chaguo-msingi Kampuni Si Weka',
-                    'body'  => 'Tafadhali weka chaguo-msingi kampuni kutoka mipangilio, kabla ya inviting mtumiaji.',
+                    'title' => 'Kampuni chaguomsingi haijawekwa',
+                    'body'  => 'Tafadhali weka kampuni chaguomsingi kwenye mipangilio kabla ya kumwalika mtumiaji.',
                 ],
             ],
         ],
 
         'create' => [
-            'label' => 'Mpya Mtumiaji',
+            'label' => 'Mtumiaji mpya',
         ],
     ],
 ];

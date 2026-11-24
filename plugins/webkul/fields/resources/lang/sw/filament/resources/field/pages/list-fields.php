@@ -3,12 +3,12 @@
 return [
     'tabs' => [
         'all'      => 'Zote',
-        'archived' => 'Imehifadhiwa',
+        'archived' => 'Zilizowekwa kumbukumbu',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Unda Sehemu',
+            'label' => 'Unda sehemu',
         ],
     ],
 ];

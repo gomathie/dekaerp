@@ -3,11 +3,11 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Kategoria',
+            'label' => 'Kategoria mpya',
 
             'notification' => [
                 'title' => 'Kategoria imeundwa',
-                'body'  => 'kategoria ina imeundwa successfully.',
+                'body'  => 'Kategoria imeundwa kwa mafanikio.',
             ],
         ],
     ],

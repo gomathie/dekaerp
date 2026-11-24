@@ -13,29 +13,29 @@ return [
 
     'form' => [
         'validation' => [
-            'needs-attention'                 => 'Некоторые поля need attention',            'cannot-remove-last-admin'        => 'Cannot remove the admin role from the last admin user.',
-            'company-invalid'                 => 'One или больше выбрано компании недействительно.',
-            'company-not-assigned'            => 'Вы май назначить пользователи только до компании назначен до ваш счёт.',
-            'company-required'                => 'Выбрать в наименее one компания.',
-            'first-user-must-be-admin'        => 'первый пользователь в система нужно быть назначен администратор роль.',
-            'role-invalid'                    => 'Выбрать в наименее one действительно роль.',
-            'role-not-assignable'             => 'Вы май назначить только non-protected роли whose права вы possess.',
-            'self-administration-forbidden'   => 'Вы нельзя изменить ваш собственную роли или компания assignments.',
-            'target-administration-forbidden' => 'Только Super Администратор май modify protected администратор.',
+            'needs-attention'                 => 'Проверьте отмеченные поля',            'cannot-remove-last-admin'        => 'Нельзя снять роль администратора с последнего администратора.',
+            'company-invalid'                 => 'Одна или несколько выбранных компаний недействительны.',
+            'company-not-assigned'            => 'Вы можете назначать пользователей только в компании, назначенные вашей учётной записи.',
+            'company-required'                => 'Выберите хотя бы одну компанию.',
+            'first-user-must-be-admin'        => 'Первому пользователю системы нужно назначить роль администратора.',
+            'role-invalid'                    => 'Выберите хотя бы одну допустимую роль.',
+            'role-not-assignable'             => 'Вы можете назначать только незащищённые роли, все права которых есть у вас.',
+            'self-administration-forbidden'   => 'Нельзя менять собственные роли или привязку к компаниям.',
+            'target-administration-forbidden' => 'Изменять защищённого администратора может только Super Admin.',
         ],
 
         'sections' => [
             'general-information' => [
-                'title'  => 'Общее Сведения',
+                'title'  => 'Общие сведения',
                 'fields' => [
-                    'name'                         => 'Название',
+                    'name'                         => 'Имя',
                     'email'                        => 'Эл. почта',
-                    'username'                     => 'Username',
-                    'username-helper'              => 'Необязательно. Lets этот person войти с short название instead эл. почта: letters, numbers, dot, dash или underscore, 3 до 50 characters, нет @.',
+                    'username'                     => 'Имя пользователя',
+                    'username-helper'              => 'Необязательно. Позволяет входить по короткому имени вместо эл. почты: буквы, цифры, точка, дефис или подчёркивание, от 3 до 50 символов, без @.',
                     'password'                     => 'Пароль',
-                    'password-confirmation'        => 'Пароль Confirmation',
-                    'must-change-password'         => 'Require новое пароль в далее sign-в',
-                    'must-change-password-helper'  => 'Использовать этот когда вы задать пароль yourself и passed это вкл.. Они быть held вкл. их профиль страница до они replace это, и requirement clears как скоро как они.',
+                    'password-confirmation'        => 'Подтверждение пароля',
+                    'must-change-password'         => 'Требовать новый пароль при следующем входе',
+                    'must-change-password-helper'  => 'Используйте, если вы сами задали и передали пароль. Пользователь не сможет уйти со страницы профиля, пока не сменит пароль; после этого требование снимается.',
                 ],
             ],
 
@@ -44,83 +44,83 @@ return [
                 'fields' => [
                     'roles'                                    => 'Роли',
                     'permissions'                              => 'Права',
-                    'resource-permission'                      => 'Resource Право',
-                    'resource-permission-self-change-disabled' => 'Вы нельзя изменить ваш собственную resource право. Ask another администратор до обновить это.',
-                    'can-see-dashboard'                        => 'See панель',
-                    'can-see-dashboard-helper'                 => 'Выкл. hides Обзор и каждый панель для этот пользователь.',
-                    'can-see-money-figures'                    => 'See money figures',
-                    'can-see-money-figures-helper'             => 'Выкл. hides продажи, счёт, закупка и учёт dashboards.',
-                    'teams'                                    => 'Teams',
+                    'resource-permission'                      => 'Доступ к записям',
+                    'resource-permission-self-change-disabled' => 'Нельзя изменить собственный доступ к записям. Попросите об этом другого администратора.',
+                    'can-see-dashboard'                        => 'Видеть панели',
+                    'can-see-dashboard-helper'                 => 'Если выключено, обзор и все панели скрыты от пользователя.',
+                    'can-see-money-figures'                    => 'Видеть финансовые показатели',
+                    'can-see-money-figures-helper'             => 'Если выключено, панели продаж, счетов, закупок и бухгалтерии скрыты.',
+                    'teams'                                    => 'Команды',
                 ],
             ],
 
             'avatar' => [
-                'title' => 'Avatar',
+                'title' => 'Аватар',
             ],
 
             'lang-and-status' => [
-                'title'  => 'Язык & Статус',
+                'title'  => 'Язык и статус',
                 'fields' => [
-                    'language' => 'Preferred Язык',
+                    'language' => 'Предпочитаемый язык',
                     'status'   => 'Статус',
                 ],
             ],
 
             'multi-company' => [
-                'title'                       => 'Multi Компания',
-                'allowed-companies'           => 'Разрешено Компании',
-                'default-company'             => 'По умолчанию Компания',
-                'default-company-not-allowed' => 'по умолчанию компания нужно быть one разрешено компании.',
+                'title'                       => 'Несколько компаний',
+                'allowed-companies'           => 'Разрешённые компании',
+                'default-company'             => 'Компания по умолчанию',
+                'default-company-not-allowed' => 'Компания по умолчанию должна быть одной из разрешённых.',
             ],
         ],
     ],
 
     'table' => [
         'columns' => [
-            'avatar'              => 'Avatar',
-            'name'                => 'Название',
+            'avatar'              => 'Аватар',
+            'name'                => 'Имя',
             'email'               => 'Эл. почта',
-            'teams'               => 'Teams',
+            'teams'               => 'Команды',
             'role'                => 'Роль',
-            'resource-permission' => 'Resource Право',
-            'default-company'     => 'По умолчанию Компания',
-            'allowed-company'     => 'Разрешено Компания',
-            'created-by'          => 'Создано От',
-            'created-at'          => 'Создано',
-            'updated-at'          => 'Обновлено',
+            'resource-permission' => 'Доступ к записям',
+            'default-company'     => 'Компания по умолчанию',
+            'allowed-company'     => 'Разрешённая компания',
+            'created-by'          => 'Создал',
+            'created-at'          => 'Создан',
+            'updated-at'          => 'Обновлён',
         ],
 
         'filters' => [
-            'resource-permission' => 'Resource Право',
-            'teams'               => 'Teams',
+            'resource-permission' => 'Доступ к записям',
+            'teams'               => 'Команды',
             'roles'               => 'Роли',
-            'default-company'     => 'По умолчанию Компания',
-            'allowed-companies'   => 'Разрешено Компании',
+            'default-company'     => 'Компания по умолчанию',
+            'allowed-companies'   => 'Разрешённые компании',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Пользователь edited',
-                    'body'  => 'пользователь есть edited successfully.',
+                    'title' => 'Пользователь изменён',
+                    'body'  => 'Пользователь успешно изменён.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Пользователь удалено',
-                    'body'  => 'пользователь есть удалено successfully.',
+                    'title' => 'Пользователь удалён',
+                    'body'  => 'Пользователь успешно удалён.',
                     'error' => [
-                        'title' => 'Пользователь Нельзя Быть Удалено',
-                        'body'  => 'Этот по умолчанию пользователь или вы нельзя удалить yourself.',
+                        'title' => 'Пользователя нельзя удалить',
+                        'body'  => 'Это пользователь по умолчанию, либо вы пытаетесь удалить себя.',
                     ],
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Пользователь restored',
-                    'body'  => 'пользователь есть restored successfully.',
+                    'title' => 'Пользователь восстановлен',
+                    'body'  => 'Пользователь успешно восстановлен.',
                 ],
             ],
         ],
@@ -128,25 +128,25 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Пользователи restored',
-                    'body'  => 'пользователи есть restored successfully.',
+                    'title' => 'Пользователи восстановлены',
+                    'body'  => 'Пользователи успешно восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Пользователи удалено',
-                    'body'  => 'пользователи есть удалено successfully.',
+                    'title' => 'Пользователи удалены',
+                    'body'  => 'Пользователи успешно удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Пользователи force удалено',
-                    'body'  => 'пользователи есть force удалено successfully.',
+                    'title' => 'Пользователи удалены безвозвратно',
+                    'body'  => 'Пользователи успешно удалены безвозвратно.',
                     'error' => [
-                        'title' => 'Пользователь could не быть удалено',
-                        'body'  => 'пользователь нельзя быть удалено потому что это currently в использовать.',
+                        'title' => 'Не удалось удалить пользователя',
+                        'body'  => 'Пользователя нельзя удалить, так как он используется.',
                     ],
                 ],
             ],
@@ -155,8 +155,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Пользователи создано',
-                    'body'  => 'пользователи есть создано successfully.',
+                    'title' => 'Пользователи созданы',
+                    'body'  => 'Пользователи успешно созданы.',
                 ],
             ],
         ],
@@ -165,12 +165,12 @@ return [
     'infolist' => [
         'sections' => [
             'general-information' => [
-                'title'   => 'Общее Сведения',
+                'title'   => 'Общие сведения',
                 'entries' => [
-                    'name'                  => 'Название',
+                    'name'                  => 'Имя',
                     'email'                 => 'Эл. почта',
                     'password'              => 'Пароль',
-                    'password-confirmation' => 'Пароль Confirmation',
+                    'password-confirmation' => 'Подтверждение пароля',
                 ],
             ],
 
@@ -179,28 +179,28 @@ return [
                 'entries' => [
                     'roles'               => 'Роли',
                     'permissions'         => 'Права',
-                    'resource-permission' => 'Resource Право',
-                    'teams'               => 'Teams',
+                    'resource-permission' => 'Доступ к записям',
+                    'teams'               => 'Команды',
                 ],
             ],
 
             'avatar' => [
-                'title' => 'Avatar',
+                'title' => 'Аватар',
             ],
 
             'lang-and-status' => [
-                'title'   => 'Язык & Статус',
+                'title'   => 'Язык и статус',
                 'entries' => [
-                    'language' => 'Preferred Язык',
+                    'language' => 'Предпочитаемый язык',
                     'status'   => 'Статус',
                 ],
             ],
 
             'multi-company' => [
-                'title'                       => 'Multi Компания',
-                'allowed-companies'           => 'Разрешено Компании',
-                'default-company'             => 'По умолчанию Компания',
-                'default-company-not-allowed' => 'по умолчанию компания нужно быть one разрешено компании.',
+                'title'                       => 'Несколько компаний',
+                'allowed-companies'           => 'Разрешённые компании',
+                'default-company'             => 'Компания по умолчанию',
+                'default-company-not-allowed' => 'Компания по умолчанию должна быть одной из разрешённых.',
             ],
         ],
     ],

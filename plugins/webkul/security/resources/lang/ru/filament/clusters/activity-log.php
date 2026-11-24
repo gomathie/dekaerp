@@ -1,35 +1,35 @@
 <?php
 
 return [
-    'title'           => 'Активность log',
-    'navigation'      => 'Активность log',
+    'title'           => 'Журнал действий',
+    'navigation'      => 'Журнал действий',
     'group'           => 'Общее',
     'system'          => 'Система',
     'export'          => 'Экспорт',
-    'export-complete' => 'Ваш активность log экспорт ready: :count строки.',
+    'export-complete' => 'Экспорт журнала действий готов, строк: :count.',
 
     'columns' => [
         'when'    => 'Когда',
         'who'     => 'Кто',
         'record'  => 'Запись',
         'action'  => 'Действие',
-        'changes' => 'Changes',
+        'changes' => 'Изменения',
     ],
 
     'filters' => [
-        'record-type' => 'Запись тип',
-        'from'        => 'От',
-        'until'       => 'До',
+        'record-type' => 'Тип записи',
+        'from'        => 'С',
+        'until'       => 'По',
     ],
 
     'events' => [
         'created'      => 'Создано',
         'updated'      => 'Изменено',
         'deleted'      => 'Удалено',
-        'soft_deleted' => 'В архиве',
+        'soft_deleted' => 'Архивировано',
         'hard_deleted' => 'Удалено',
-        'restored'     => 'Restored',
-        'reset'        => 'Сбросить до черновик',
-        'cancelled'    => 'Отменён',
+        'restored'     => 'Восстановлено',
+        'reset'        => 'Возвращено в черновик',
+        'cancelled'    => 'Отменено',
     ],
 ];

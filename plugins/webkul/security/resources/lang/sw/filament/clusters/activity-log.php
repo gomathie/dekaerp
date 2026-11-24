@@ -1,35 +1,35 @@
 <?php
 
 return [
-    'title'           => 'Shughuli log',
-    'navigation'      => 'Shughuli log',
+    'title'           => 'Kumbukumbu ya shughuli',
+    'navigation'      => 'Kumbukumbu ya shughuli',
     'group'           => 'Jumla',
     'system'          => 'Mfumo',
     'export'          => 'Hamisha',
-    'export-complete' => 'Yako shughuli log hamisha ni ready: :count mistari.',
+    'export-complete' => 'Faili ya kumbukumbu ya shughuli iko tayari: safu :count.',
 
     'columns' => [
-        'when'    => 'Wakati',
+        'when'    => 'Lini',
         'who'     => 'Nani',
         'record'  => 'Rekodi',
         'action'  => 'Kitendo',
-        'changes' => 'Changes',
+        'changes' => 'Mabadiliko',
     ],
 
     'filters' => [
-        'record-type' => 'Rekodi aina',
-        'from'        => 'Kutoka',
-        'until'       => 'Mpaka',
+        'record-type' => 'Aina ya rekodi',
+        'from'        => 'Kuanzia',
+        'until'       => 'Hadi',
     ],
 
     'events' => [
         'created'      => 'Imeundwa',
         'updated'      => 'Imebadilishwa',
         'deleted'      => 'Imefutwa',
-        'soft_deleted' => 'Imehifadhiwa',
+        'soft_deleted' => 'Imewekwa kumbukumbu',
         'hard_deleted' => 'Imefutwa',
-        'restored'     => 'Restored',
-        'reset'        => 'Weka upya hadi rasimu',
+        'restored'     => 'Imerejeshwa',
+        'reset'        => 'Imerudishwa kuwa rasimu',
         'cancelled'    => 'Imeghairiwa',
     ],
 ];

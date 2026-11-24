@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'active'   => 'Активен',
-    'inactive' => 'Неактивен',
+    'active'   => 'Активна',
+    'inactive' => 'Неактивна',
 ];

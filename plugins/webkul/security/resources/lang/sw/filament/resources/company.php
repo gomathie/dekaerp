@@ -1,31 +1,31 @@
 <?php
 
 return [
-    'capacity-error' => 'Hii kampuni ina reached yake :limit mtumiaji seats (:used katika tumia, pamoja na inasubiri invitations). Raise seat limit hadi ongeza zaidi watumiaji.',
-    'title'          => 'Makampuni',
+    'capacity-error' => 'Kampuni hii imefikia nafasi zake :limit za watumiaji (:used zinatumika, pamoja na mialiko inayosubiri). Ongeza kikomo cha nafasi ili kuongeza watumiaji zaidi.',
+    'title'          => 'Kampuni',
 
     'navigation' => [
-        'title' => 'Makampuni',
+        'title' => 'Kampuni',
     ],
 
     'provisioning' => [
-        'column' => 'Setup hali',
-        'filter' => 'Setup hali',
+        'column' => 'Hali ya usanidi',
+        'filter' => 'Hali ya usanidi',
 
         'statuses' => [
-            'active'           => 'Inatumika',
-            'invited'          => 'Invited, si bado inatumika',
-            'expired'          => 'Mwaliko expired',
+            'active'           => 'Hai',
+            'invited'          => 'Amealikwa, bado hajaanza',
+            'expired'          => 'Mwaliko umeisha muda',
             'no-administrator' => 'Hakuna msimamizi',
             'closed'           => 'Imefungwa',
         ],
 
         'resend' => [
-            'label'         => 'Resend mwaliko',
-            'heading'       => 'Resend msimamizi mwaliko?',
-            'description'   => 'mwaliko hadi :email ni imetumwa tena na stays halali kwa 7 zaidi siku.',
-            'invited'       => 'Mwaliko imetumwa tena',
-            'invite-failed' => 'mwaliko could si kuwa imetumwa tena. Hii mei ina accepted au revoked katika meantime.',
+            'label'         => 'Tuma mwaliko tena',
+            'heading'       => 'Tuma tena mwaliko wa msimamizi?',
+            'description'   => 'Mwaliko kwa :email utatumwa tena na utadumu kwa siku 7 zaidi.',
+            'invited'       => 'Mwaliko umetumwa tena',
+            'invite-failed' => 'Mwaliko haukuweza kutumwa tena. Huenda umekubaliwa au kubatilishwa katika muda huu.',
         ],
     ],
 
@@ -37,18 +37,18 @@ return [
         'create' => [
             'administrator' => [
                 'invited' => [
-                    'title' => 'Msimamizi invited',
-                    'body'  => 'mwaliko ilikuwa imetumwa hadi :email. Wao chagua yao yake nenosiri na unaweza kisha ongeza yao kampuni’s watumiaji.',
+                    'title' => 'Msimamizi amealikwa',
+                    'body'  => 'Mwaliko umetumwa kwa :email. Atachagua nenosiri lake mwenyewe kisha ataweza kuongeza watumiaji wa kampuni yake.',
                 ],
 
                 'skipped' => [
-                    'title'         => 'Hakuna msimamizi ilikuwa invited',
-                    'missing-email' => 'kampuni ilikuwa imeundwa, lakini hii ina hakuna barua pepe anwani, hivyo nobody could kuwa invited hadi administer hii. Ongeza one na send mwaliko kutoka Watumiaji ukurasa.',
-                    'missing-role'  => 'kampuni ilikuwa imeundwa, lakini Kampuni Msimamizi jukumu si exist katika hii installation, hivyo nobody could kuwa invited.',
+                    'title'         => 'Hakuna msimamizi aliyealikwa',
+                    'missing-email' => 'Kampuni imeundwa, lakini haina anwani ya barua pepe, kwa hivyo hakuna aliyeweza kualikwa kuisimamia. Ongeza anwani na utume mwaliko kutoka ukurasa wa Watumiaji.',
+                    'missing-role'  => 'Kampuni imeundwa, lakini jukumu la Company Admin halipo kwenye usakinishaji huu, kwa hivyo hakuna aliyeweza kualikwa.',
 
-                    'seats-exhausted' => 'kampuni ilikuwa imeundwa, lakini hii ina hakuna free mtumiaji seats iliyobaki, hivyo nobody could kuwa invited hadi administer hii. Raise seat limit na send mwaliko kutoka Watumiaji ukurasa.',
-                    'invite-failed'   => 'kampuni ilikuwa imeundwa, lakini mwaliko could si kuwa issued. anwani mei tayari belong hadi mtumiaji, au kampuni mei si bado kuwa one wewe ni inaruhusiwa hadi kabidhi. Alika kutoka Watumiaji ukurasa instead.',
-                    'mail-failed'     => 'kampuni ilikuwa imeundwa na mwaliko ilikuwa issued, lakini barua pepe could si kuwa imetumwa. Give hii sign-katika link hadi :email zaidi ya channel wewe trust — hii expires katika 7 siku, na wao weka yao yake nenosiri: :link',
+                    'seats-exhausted' => 'Kampuni imeundwa, lakini haina nafasi za watumiaji zilizobaki, kwa hivyo hakuna aliyeweza kualikwa kuisimamia. Ongeza kikomo cha nafasi na utume mwaliko kutoka ukurasa wa Watumiaji.',
+                    'invite-failed'   => 'Kampuni imeundwa, lakini mwaliko haukuweza kutolewa. Huenda anwani tayari ni ya mtumiaji, au huenda bado huruhusiwi kugawa watumiaji kwa kampuni hii. Alika kutoka ukurasa wa Watumiaji badala yake.',
+                    'mail-failed'     => 'Kampuni imeundwa na mwaliko umetolewa, lakini barua pepe haikuweza kutumwa. Mpe :email kiungo hiki cha kuingia kupitia njia unayoiamini — kinaisha baada ya siku 7, naye ataweka nenosiri lake mwenyewe: :link',
                 ],
             ],
         ],
@@ -56,34 +56,34 @@ return [
         'edit' => [
             'administrator' => [
                 'skipped' => [
-                    'title'           => 'Hakuna msimamizi ilikuwa invited',
-                    'disabled'        => 'Invitations ni switched zima katika mtumiaji mipangilio, hivyo :email ilikuwa si invited. Weka nenosiri instead, au switch invitations washa.',
-                    'missing-role'    => 'Kampuni Msimamizi jukumu si exist katika hii installation, hivyo nobody could kuwa invited.',
-                    'seats-exhausted' => 'Hii kampuni ina hakuna free mtumiaji seats iliyobaki, hivyo :email ilikuwa si invited. Raise seat limit kwanza.',
-                    'invite-failed'   => 'mwaliko could si kuwa issued. anwani mei tayari belong hadi mtumiaji, au kampuni mei si kuwa one wewe ni inaruhusiwa hadi kabidhi. Hadi weka upya existing msimamizi’s nenosiri, chagua “Weka nenosiri sasa” instead.',
-                    'mail-failed'     => 'mwaliko ilikuwa issued, lakini barua pepe could si kuwa imetumwa. Give hii sign-katika link hadi :email zaidi ya channel wewe trust — hii expires katika 7 siku, na wao weka yao yake nenosiri: :link',
+                    'title'           => 'Hakuna msimamizi aliyealikwa',
+                    'disabled'        => 'Mialiko imezimwa kwenye mipangilio ya watumiaji, kwa hivyo :email hakualikwa. Weka nenosiri badala yake, au washa mialiko.',
+                    'missing-role'    => 'Jukumu la Company Admin halipo kwenye usakinishaji huu, kwa hivyo hakuna aliyeweza kualikwa.',
+                    'seats-exhausted' => 'Kampuni hii haina nafasi za watumiaji zilizobaki, kwa hivyo :email hakualikwa. Ongeza kikomo cha nafasi kwanza.',
+                    'invite-failed'   => 'Mwaliko haukuweza kutolewa. Huenda anwani tayari ni ya mtumiaji, au huenda huruhusiwi kugawa watumiaji kwa kampuni hii. Ili kuweka upya nenosiri la msimamizi aliyepo, chagua “Weka nenosiri sasa” badala yake.',
+                    'mail-failed'     => 'Mwaliko umetolewa, lakini barua pepe haikuweza kutumwa. Mpe :email kiungo hiki cha kuingia kupitia njia unayoiamini — kinaisha baada ya siku 7, naye ataweka nenosiri lake mwenyewe: :link',
                 ],
             ],
         ],
 
         'administrator-account' => [
             'created' => [
-                'title' => 'Msimamizi akaunti imeundwa',
-                'body'  => ':email unaweza ingia sasa na nenosiri wewe weka. Hii ilikuwa si emailed: give hii hadi wao yourself.',
+                'title' => 'Akaunti ya msimamizi imeundwa',
+                'body'  => ':email anaweza kuingia sasa kwa nenosiri uliloweka. Halikutumwa kwa barua pepe: mpe wewe mwenyewe.',
             ],
 
             'password-reset' => [
-                'title' => 'Msimamizi nenosiri imebadilishwa',
-                'body'  => 'nenosiri kwa :email ilikuwa imebadilishwa. Hii ilikuwa si emailed: give hii hadi wao yourself.',
+                'title' => 'Nenosiri la msimamizi limebadilishwa',
+                'body'  => 'Nenosiri la :email limebadilishwa. Halikutumwa kwa barua pepe: mpe wewe mwenyewe.',
             ],
 
             'refused' => [
-                'title'             => 'msimamizi ilikuwa si imebadilishwa',
-                'missing-email'     => 'Ingiza msimamizi’s barua pepe anwani together na nenosiri.',
-                'missing-role'      => 'Kampuni Msimamizi jukumu si exist katika hii installation, hivyo hakuna akaunti ilikuwa imeundwa.',
-                'not-member'        => ':email belongs hadi mtumiaji nani ni si mwanachama ya hii kampuni, hivyo yao nenosiri ilikuwa si imebadilishwa hapa. Manage hiyo mtumiaji kutoka Watumiaji ukurasa.',
-                'not-allowed'       => 'Wewe ni si inaruhusiwa hadi manage hii kampuni’s msimamizi.',
-                'seats-exhausted'   => 'Hii kampuni ina hakuna free mtumiaji seats iliyobaki, hivyo hakuna akaunti ilikuwa imeundwa kwa :email. Raise seat limit kwanza.',
+                'title'             => 'Msimamizi hakubadilishwa',
+                'missing-email'     => 'Weka anwani ya barua pepe ya msimamizi pamoja na nenosiri.',
+                'missing-role'      => 'Jukumu la Company Admin halipo kwenye usakinishaji huu, kwa hivyo hakuna akaunti iliyoundwa.',
+                'not-member'        => ':email ni ya mtumiaji ambaye si mwanachama wa kampuni hii, kwa hivyo nenosiri lake halikubadilishwa hapa. Dhibiti mtumiaji huyo kutoka ukurasa wa Watumiaji.',
+                'not-allowed'       => 'Huruhusiwi kudhibiti msimamizi wa kampuni hii.',
+                'seats-exhausted'   => 'Kampuni hii haina nafasi za watumiaji zilizobaki, kwa hivyo hakuna akaunti iliyoundwa kwa :email. Ongeza kikomo cha nafasi kwanza.',
             ],
         ],
     ],

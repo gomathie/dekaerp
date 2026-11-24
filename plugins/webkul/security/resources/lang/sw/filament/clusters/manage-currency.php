@@ -1,18 +1,18 @@
 <?php
 
 return [
-    'breadcrumb' => 'Manage Sarafu',
-    'title'      => 'Manage Sarafu',
+    'breadcrumb' => 'Dhibiti sarafu',
+    'title'      => 'Dhibiti sarafu',
     'group'      => 'Jumla',
 
     'navigation' => [
-        'label' => 'Manage Sarafu',
+        'label' => 'Dhibiti sarafu',
     ],
 
     'form' => [
         'default-currency' => [
-            'label'       => 'Chaguo-msingi Sarafu',
-            'helper-text' => 'chaguo-msingi sarafu inatumika katika application.',
+            'label'       => 'Sarafu chaguomsingi',
+            'helper-text' => 'Sarafu chaguomsingi inayotumika kwenye programu.',
         ],
     ],
 ];

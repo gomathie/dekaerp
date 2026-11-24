@@ -8,13 +8,13 @@ return [
     'form' => [
         'sections' => [
             'general' => [
-                'title' => 'Общее Сведения',
+                'title' => 'Общие сведения',
 
                 'fields' => [
                     'name'       => 'Название',
-                    'technician' => 'Responsible',
+                    'technician' => 'Ответственный',
                     'company'    => 'Компания',
-                    'note'       => 'Заметка',
+                    'note'       => 'Примечание',
                 ],
             ],
         ],
@@ -23,27 +23,27 @@ return [
     'table' => [
         'columns' => [
             'name'       => 'Название',
-            'technician' => 'Responsible',
+            'technician' => 'Ответственный',
             'company'    => 'Компания',
             'created-at' => 'Создано',
         ],
 
         'groups' => [
-            'technician' => 'Responsible',
+            'technician' => 'Ответственный',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Категория обновлено',
-                    'body'  => 'категория есть обновлено successfully.',
+                    'title' => 'Категория обновлена',
+                    'body'  => 'Категория успешно обновлена.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Категория удалено',
-                    'body'  => 'категория есть удалено successfully.',
+                    'title' => 'Категория удалена',
+                    'body'  => 'Категория успешно удалена.',
                 ],
             ],
         ],
@@ -51,8 +51,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Категории удалено',
-                    'body'  => 'категории есть удалено successfully.',
+                    'title' => 'Категории удалены',
+                    'body'  => 'Категории успешно удалены.',
                 ],
             ],
         ],
@@ -60,8 +60,8 @@ return [
         'empty-state' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Категория создано',
-                    'body'  => 'категория есть создано successfully.',
+                    'title' => 'Категория создана',
+                    'body'  => 'Категория успешно создана.',
                 ],
             ],
         ],
@@ -70,13 +70,13 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Общее Сведения',
+                'title' => 'Общие сведения',
 
                 'entries' => [
                     'name'       => 'Название',
-                    'technician' => 'Responsible',
+                    'technician' => 'Ответственный',
                     'company'    => 'Компания',
-                    'note'       => 'Заметка',
+                    'note'       => 'Примечание',
                 ],
             ],
         ],

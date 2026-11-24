@@ -2,13 +2,13 @@
 
 return [
     'navigation' => [
-        'title' => 'Equipment',
+        'title' => 'Оборудование',
     ],
 
     'form' => [
         'sections' => [
             'general' => [
-                'title'  => 'Общее Сведения',
+                'title'  => 'Общие сведения',
                 'fields' => [
                     'name' => 'Название',
                     'note' => 'Описание',
@@ -18,36 +18,36 @@ return [
             'settings' => [
                 'title'  => 'Настройки',
                 'fields' => [
-                    'category'   => 'Equipment Категория',
-                    'team'       => 'Обслуживание Команда',
+                    'category'   => 'Категория оборудования',
+                    'team'       => 'Команда обслуживания',
                     'company'    => 'Компания',
-                    'technician' => 'Technician',
+                    'technician' => 'Техник',
                     'owner'      => 'Владелец',
-                    'location'   => 'Используется в место',
+                    'location'   => 'Место использования',
                 ],
             ],
 
             'product-information' => [
-                'title'  => 'Товар Сведения',
+                'title'  => 'Сведения о товаре',
                 'fields' => [
                     'partner'                     => 'Поставщик',
-                    'partner-ref'                 => 'Поставщик Ссылка',
-                    'model'                       => 'Model',
-                    'serial-no'                   => 'Серийный номер Номер',
-                    'effective-date'              => 'Effective Дата',
-                    'effective-date-hint-tooltip' => 'Используется как starting point для calculating Mean Time Между Сбой.',
+                    'partner-ref'                 => 'Артикул поставщика',
+                    'model'                       => 'Модель',
+                    'serial-no'                   => 'Серийный номер',
+                    'effective-date'              => 'Дата ввода в эксплуатацию',
+                    'effective-date-hint-tooltip' => 'Точка отсчёта для расчёта среднего времени между отказами.',
                     'cost'                        => 'Стоимость',
-                    'warranty-date'               => 'Warranty Expiration Дата',
+                    'warranty-date'               => 'Окончание гарантии',
                 ],
             ],
 
             'maintenance' => [
                 'title'  => 'Обслуживание',
                 'fields' => [
-                    'expected-mtbf' => 'Ожидается Mean Time Между Сбой',
+                    'expected-mtbf' => 'Ожидаемое среднее время между отказами',
                 ],
                 'suffixes' => [
-                    'days' => 'дни',
+                    'days' => 'дн.',
                 ],
             ],
         ],
@@ -55,60 +55,60 @@ return [
 
     'table' => [
         'columns' => [
-            'name'       => 'Equipment Название',
+            'name'       => 'Название оборудования',
             'owner'      => 'Владелец',
-            'serial-no'  => 'Серийный номер Номер',
-            'category'   => 'Equipment Категория',
-            'technician' => 'Technician',
+            'serial-no'  => 'Серийный номер',
+            'category'   => 'Категория оборудования',
+            'technician' => 'Техник',
             'company'    => 'Компания',
             'created-at' => 'Создано',
         ],
 
         'filters' => [
-            'category'   => 'Equipment Категория',
-            'team'       => 'Обслуживание Команда',
-            'technician' => 'Technician',
+            'category'   => 'Категория оборудования',
+            'team'       => 'Команда обслуживания',
+            'technician' => 'Техник',
         ],
 
         'groups' => [
-            'category'   => 'Equipment Категория',
+            'category'   => 'Категория оборудования',
             'owner'      => 'Владелец',
-            'technician' => 'Technician',
+            'technician' => 'Техник',
             'vendor'     => 'Поставщик',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Equipment обновлено',
-                    'body'  => 'equipment есть обновлено successfully.',
+                    'title' => 'Оборудование обновлено',
+                    'body'  => 'Оборудование успешно обновлено.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Equipment restored',
-                    'body'  => 'equipment есть restored successfully.',
+                    'title' => 'Оборудование восстановлено',
+                    'body'  => 'Оборудование успешно восстановлено.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Equipment в архиве',
-                    'body'  => 'equipment есть в архиве successfully.',
+                    'title' => 'Оборудование архивировано',
+                    'body'  => 'Оборудование успешно архивировано.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Equipment удалено',
-                        'body'  => 'equipment есть permanently удалено.',
+                        'title' => 'Оборудование удалено',
+                        'body'  => 'Оборудование удалено безвозвратно.',
                     ],
 
                     'error' => [
-                        'title' => 'Equipment could не быть удалено',
-                        'body'  => 'Этот equipment referenced от another запись.',
+                        'title' => 'Не удалось удалить оборудование',
+                        'body'  => 'На это оборудование ссылается другая запись.',
                     ],
                 ],
             ],
@@ -117,15 +117,15 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Equipment restored',
-                    'body'  => 'выбрано equipment есть restored successfully.',
+                    'title' => 'Оборудование восстановлено',
+                    'body'  => 'Выбранное оборудование успешно восстановлено.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Equipment в архиве',
-                    'body'  => 'выбрано equipment есть в архиве successfully.',
+                    'title' => 'Оборудование архивировано',
+                    'body'  => 'Выбранное оборудование успешно архивировано.',
                 ],
             ],
         ],
@@ -133,8 +133,8 @@ return [
         'empty-state' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Equipment создано',
-                    'body'  => 'equipment есть создано successfully.',
+                    'title' => 'Оборудование создано',
+                    'body'  => 'Оборудование успешно создано.',
                 ],
             ],
         ],
@@ -143,7 +143,7 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title'   => 'Общее Сведения',
+                'title'   => 'Общие сведения',
                 'entries' => [
                     'name' => 'Название',
                     'note' => 'Описание',
@@ -153,39 +153,39 @@ return [
             'settings' => [
                 'title'   => 'Настройки',
                 'entries' => [
-                    'category'   => 'Equipment Категория',
-                    'team'       => 'Обслуживание Команда',
+                    'category'   => 'Категория оборудования',
+                    'team'       => 'Команда обслуживания',
                     'company'    => 'Компания',
-                    'technician' => 'Technician',
+                    'technician' => 'Техник',
                     'owner'      => 'Владелец',
-                    'location'   => 'Используется в место',
+                    'location'   => 'Место использования',
                 ],
             ],
 
             'product-information' => [
-                'title'   => 'Товар Сведения',
+                'title'   => 'Сведения о товаре',
                 'entries' => [
                     'partner'        => 'Поставщик',
-                    'partner-ref'    => 'Поставщик Ссылка',
-                    'model'          => 'Model',
-                    'serial-no'      => 'Серийный номер Номер',
-                    'effective-date' => 'Effective Дата',
+                    'partner-ref'    => 'Артикул поставщика',
+                    'model'          => 'Модель',
+                    'serial-no'      => 'Серийный номер',
+                    'effective-date' => 'Дата ввода в эксплуатацию',
                     'cost'           => 'Стоимость',
-                    'warranty-date'  => 'Warranty Expiration Дата',
+                    'warranty-date'  => 'Окончание гарантии',
                 ],
             ],
 
             'maintenance' => [
                 'title'   => 'Обслуживание',
                 'entries' => [
-                    'expected-mtbf'          => 'Ожидается Mean Time Между Сбой',
-                    'maintenance-count'      => 'Обслуживание Количество',
-                    'maintenance-open-count' => 'Открыт Обслуживание Количество',
-                    'assigned-at'            => 'Назначен Дата',
-                    'scraped-at'             => 'Scrap Дата',
+                    'expected-mtbf'          => 'Ожидаемое среднее время между отказами',
+                    'maintenance-count'      => 'Число обслуживаний',
+                    'maintenance-open-count' => 'Открытые обслуживания',
+                    'assigned-at'            => 'Дата назначения',
+                    'scraped-at'             => 'Дата списания',
                 ],
                 'suffixes' => [
-                    'days' => 'дни',
+                    'days' => 'дн.',
                 ],
             ],
         ],

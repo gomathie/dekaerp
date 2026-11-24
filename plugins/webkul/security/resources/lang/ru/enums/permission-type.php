@@ -2,6 +2,6 @@
 
 return [
     'group'      => 'Группа',
-    'individual' => 'Individual',
-    'global'     => 'Global',
+    'individual' => 'Личный',
+    'global'     => 'Глобальный',
 ];

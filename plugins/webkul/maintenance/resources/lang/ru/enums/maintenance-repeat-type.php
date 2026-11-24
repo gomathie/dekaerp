@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'forever' => 'Forever',
-    'until'   => 'До',
+    'forever' => 'Бессрочно',
+    'until'   => 'До даты',
 ];

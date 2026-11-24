@@ -3,6 +3,6 @@
 return [
     'notification' => [
         'title' => 'Sehemu imeundwa',
-        'body'  => 'sehemu ina imeundwa successfully.',
+        'body'  => 'Sehemu imeundwa kwa mafanikio.',
     ],
 ];

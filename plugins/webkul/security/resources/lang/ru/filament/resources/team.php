@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Teams',
+    'title' => 'Команды',
 
     'navigation' => [
-        'title' => 'Teams',
+        'title' => 'Команды',
     ],
 
     'form' => [
@@ -16,21 +16,21 @@ return [
     'table' => [
         'columns' => [
             'name'       => 'Название',
-            'created-by' => 'Создано От',
+            'created-by' => 'Создал',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Команда обновлено',
-                    'body'  => 'команда есть обновлено successfully.',
+                    'title' => 'Команда обновлена',
+                    'body'  => 'Команда успешно обновлена.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Команда удалено',
-                    'body'  => 'команда есть удалено successfully.',
+                    'title' => 'Команда удалена',
+                    'body'  => 'Команда успешно удалена.',
                 ],
             ],
         ],
@@ -38,8 +38,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Teams создано',
-                    'body'  => 'teams есть создано successfully.',
+                    'title' => 'Команды созданы',
+                    'body'  => 'Команды успешно созданы.',
                 ],
             ],
         ],
@@ -49,15 +49,15 @@ return [
         'sections' => [
             'entries' => [
                 'name'          => 'Название',
-                'job-title'     => 'Должность Заголовок',
-                'work-email'    => 'Work Эл. почта',
-                'work-mobile'   => 'Work Mobile',
-                'work-phone'    => 'Work Телефон',
+                'job-title'     => 'Должность',
+                'work-email'    => 'Рабочая эл. почта',
+                'work-mobile'   => 'Рабочий мобильный',
+                'work-phone'    => 'Рабочий телефон',
                 'manager'       => 'Руководитель',
                 'department'    => 'Отдел',
-                'job-position'  => 'Должность Должность',
-                'team-tags'     => 'Команда Метки',
-                'coach'         => 'Coach',
+                'job-position'  => 'Позиция',
+                'team-tags'     => 'Теги команды',
+                'coach'         => 'Наставник',
             ],
         ],
     ],

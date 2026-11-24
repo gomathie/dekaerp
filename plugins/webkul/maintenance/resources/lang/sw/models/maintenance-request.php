@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'title' => 'Matengenezo Request',
+    'title' => 'Ombi la matengenezo',
 
     'log-attributes' => [
-        'requested-at' => 'Request Tarehe',
-        'responsible'  => 'Responsible',
+        'requested-at' => 'Tarehe ya ombi',
+        'responsible'  => 'Mwajibikaji',
         'stage'        => 'Hatua',
     ],
 ];

@@ -2,73 +2,73 @@
 
 return [
     'navigation' => [
-        'label' => 'API Tokens',
+        'label' => 'API-токены',
     ],
 
     'group'      => 'Общее',
-    'breadcrumb' => 'API Tokens',
-    'title'      => 'API Tokens',
-    'subheading' => 'Tokens client integrations использовать до authenticate против API. token carries роли и разрешено компании пользователь это belongs до.',
+    'breadcrumb' => 'API-токены',
+    'title'      => 'API-токены',
+    'subheading' => 'Токены, с которыми интеграции клиентов проходят аутентификацию в API. Токен получает роли и разрешённые компании своего пользователя.',
 
     'abilities' => [
-        'read'  => 'Чтение только',
+        'read'  => 'Только чтение',
         'write' => 'Запись',
-        'all'   => 'Полный access',
+        'all'   => 'Полный доступ',
     ],
 
     'table' => [
         'columns' => [
-            'name'      => 'Подпись',
-            'user'      => 'Acts как',
-            'abilities' => 'Scopes',
-            'last-used' => 'Последний используется',
-            'expires'   => 'Expires',
-            'created'   => 'Issued',
+            'name'      => 'Метка',
+            'user'      => 'От имени',
+            'abilities' => 'Области доступа',
+            'last-used' => 'Последнее использование',
+            'expires'   => 'Истекает',
+            'created'   => 'Выдан',
         ],
 
-        'never-used' => 'Никогда используется',
+        'never-used' => 'Не использовался',
     ],
 
     'actions' => [
         'issue' => [
-            'label'  => 'Issue token',
-            'submit' => 'Issue token',
+            'label'  => 'Выдать токен',
+            'submit' => 'Выдать токен',
 
             'fields' => [
-                'user'             => 'Acts как пользователь',
-                'user-helper'      => 'token можно exactly что этот пользователь можно. Использовать dedicated пользователь за client, никогда администратор.',
-                'name'             => 'Подпись',
-                'name-helper'      => 'Как вы recognise этот token later, e.g. acme-склад-sync.',
-                'abilities'        => 'Scopes',
-                'abilities-helper' => 'Чтение только нельзя POST, PATCH или Удалить. Полный access ignores scope checks entirely.',
+                'user'             => 'От имени пользователя',
+                'user-helper'      => 'Токен может делать ровно то же, что и этот пользователь. Заведите отдельного пользователя для каждого клиента и никогда не используйте администратора.',
+                'name'             => 'Метка',
+                'name-helper'      => 'По этой метке вы узнаете токен позже, например acme-warehouse-sync.',
+                'abilities'        => 'Области доступа',
+                'abilities-helper' => '«Только чтение» не позволяет выполнять POST, PATCH и DELETE. «Полный доступ» полностью пропускает проверку областей.',
             ],
         ],
 
         'revoke' => [
-            'label'       => 'Revoke',
-            'heading'     => 'Revoke этот token?',
-            'description' => 'integration с помощью это остановка working immediately. Этот нельзя быть undone.',
-            'bulk'        => 'Revoke выбрано',
+            'label'       => 'Отозвать',
+            'heading'     => 'Отозвать этот токен?',
+            'description' => 'Интеграция, которая его использует, сразу перестанет работать. Это действие нельзя отменить.',
+            'bulk'        => 'Отозвать выбранные',
         ],
     ],
 
     'notifications' => [
         'issued' => [
-            'title' => 'Token issued',
-            'body'  => 'Копировать это сейчас - это нельзя быть shown снова.',
+            'title' => 'Токен выдан',
+            'body'  => 'Скопируйте его сейчас - повторно он показан не будет.',
         ],
 
-        'revoked'      => 'Token revoked',
-        'missing-user' => 'Тот пользователь нет longer существует.',
+        'revoked'      => 'Токен отозван',
+        'missing-user' => 'Этого пользователя больше нет.',
     ],
 
     'plaintext' => [
-        'title'       => 'Копировать этот token сейчас',
-        'description' => 'Это stored только как hash, поэтому этот one time это можно быть displayed. Send это до client более channel вы trust.',
+        'title'       => 'Скопируйте токен сейчас',
+        'description' => 'Токен хранится только в виде хеша, поэтому показывается один раз. Передайте его клиенту по надёжному каналу.',
     ],
 
     'empty' => [
-        'heading'     => 'Нет API tokens ещё',
-        'description' => 'Issue one до позволить client integration authenticate против API.',
+        'heading'     => 'API-токенов пока нет',
+        'description' => 'Выдайте токен, чтобы интеграция клиента могла пройти аутентификацию в API.',
     ],
 ];

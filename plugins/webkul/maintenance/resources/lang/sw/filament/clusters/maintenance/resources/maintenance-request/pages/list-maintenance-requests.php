@@ -3,21 +3,21 @@
 return [
     'header-actions' => [
         'create' => [
-            'label'        => 'Mpya Matengenezo Request',
+            'label'        => 'Ombi jipya la matengenezo',
             'notification' => [
-                'title' => 'Matengenezo request imeundwa',
-                'body'  => 'matengenezo request ina imeundwa successfully.',
+                'title' => 'Ombi la matengenezo limeundwa',
+                'body'  => 'Ombi la matengenezo limeundwa kwa mafanikio.',
             ],
         ],
     ],
 
     'tabs' => [
-        'my-maintenances' => 'Yangu Maintenances',
-        'todo'            => 'Hadi',
-        'done'            => 'Imekamilika',
-        'high-priority'   => 'Juu-kipaumbele',
-        'unscheduled'     => 'Unscheduled',
-        'active'          => 'Inatumika',
-        'cancelled'       => 'Imeghairiwa',
+        'my-maintenances' => 'Matengenezo yangu',
+        'todo'            => 'Ya kufanya',
+        'done'            => 'Yaliyokamilika',
+        'high-priority'   => 'Kipaumbele cha juu',
+        'unscheduled'     => 'Hayajapangwa',
+        'active'          => 'Hai',
+        'cancelled'       => 'Yaliyoghairiwa',
     ],
 ];

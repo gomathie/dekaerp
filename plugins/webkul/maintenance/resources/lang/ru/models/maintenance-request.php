@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'title' => 'Обслуживание Request',
+    'title' => 'Заявка на обслуживание',
 
     'log-attributes' => [
-        'requested-at' => 'Request Дата',
-        'responsible'  => 'Responsible',
+        'requested-at' => 'Дата заявки',
+        'responsible'  => 'Ответственный',
         'stage'        => 'Этап',
     ],
 ];

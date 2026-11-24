@@ -2,7 +2,7 @@
 
 return [
     'day'   => 'Дни',
-    'week'  => 'Weeks',
-    'month' => 'Months',
+    'week'  => 'Недели',
+    'month' => 'Месяцы',
     'year'  => 'Годы',
 ];

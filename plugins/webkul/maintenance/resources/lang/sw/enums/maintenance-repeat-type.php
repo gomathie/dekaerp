@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'forever' => 'Forever',
-    'until'   => 'Mpaka',
+    'forever' => 'Milele',
+    'until'   => 'Hadi tarehe',
 ];

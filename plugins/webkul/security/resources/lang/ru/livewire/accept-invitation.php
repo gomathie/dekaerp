@@ -3,21 +3,21 @@
 return [
     'header' => [
         'sub-heading' => [
-            'accept-invitation' => 'Accept Приглашение',
+            'accept-invitation' => 'Принять приглашение',
         ],
     ],
 
     'title' => 'Регистрация',
 
-    'heading' => 'Sign вверх',
+    'heading' => 'Зарегистрироваться',
 
-    'invitation-no-longer-authorized' => 'Этот приглашение нет longer authorized. Ask администратор до send новое приглашение.',
+    'invitation-no-longer-authorized' => 'Это приглашение больше не действует. Попросите администратора отправить новое.',
 
     'actions' => [
 
         'login' => [
             'before' => 'или',
-            'label'  => 'войти до ваш счёт',
+            'label'  => 'войдите в свою учётную запись',
         ],
 
     ],
@@ -25,11 +25,11 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'Эл. почта адрес',
+            'label' => 'Адрес эл. почты',
         ],
 
         'name' => [
-            'label' => 'Название',
+            'label' => 'Имя',
         ],
 
         'password' => [
@@ -38,13 +38,13 @@ return [
         ],
 
         'password_confirmation' => [
-            'label' => 'Подтвердить пароль',
+            'label' => 'Подтвердите пароль',
         ],
 
         'actions' => [
 
             'register' => [
-                'label' => 'Sign вверх',
+                'label' => 'Зарегистрироваться',
             ],
 
         ],
@@ -54,8 +54,8 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Слишком много registration attempts',
-            'body'  => 'Пожалуйста попробуйте снова в :seconds seconds.',
+            'title' => 'Слишком много попыток регистрации',
+            'body'  => 'Повторите попытку через :seconds с.',
         ],
 
     ],

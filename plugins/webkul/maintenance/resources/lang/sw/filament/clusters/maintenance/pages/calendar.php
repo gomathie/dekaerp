@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'title'      => 'Matengenezo Kalenda',
+    'title'      => 'Kalenda ya matengenezo',
     'navigation' => [
-        'title' => 'Matengenezo Kalenda',
+        'title' => 'Kalenda ya matengenezo',
     ],
 ];

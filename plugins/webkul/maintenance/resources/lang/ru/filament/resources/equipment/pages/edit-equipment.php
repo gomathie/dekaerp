@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Equipment обновлено',
-        'body'  => 'equipment есть обновлено successfully.',
+        'title' => 'Оборудование обновлено',
+        'body'  => 'Оборудование успешно обновлено.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Equipment в архиве',
-                'body'  => 'equipment есть в архиве successfully.',
+                'title' => 'Оборудование архивировано',
+                'body'  => 'Оборудование успешно архивировано.',
             ],
         ],
     ],

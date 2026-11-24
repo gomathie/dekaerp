@@ -10,8 +10,8 @@ return [
 
     'notification' => [
         'system-role-delete' => [
-            'title' => 'Mfumo Jukumu Haiwezekani Kuwa Imefutwa',
-            'body'  => 'Hii ni mfumo jukumu na haiwezekani kuwa imefutwa.',
+            'title' => 'Jukumu la mfumo haliwezi kufutwa',
+            'body'  => 'Hili ni jukumu la mfumo na haliwezi kufutwa.',
         ],
     ],
 ];

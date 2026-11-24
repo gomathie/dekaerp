@@ -2,32 +2,32 @@
 
 return [
     'notification' => [
-        'title' => 'Mtumiaji imesasishwa',
-        'body'  => 'mtumiaji ina imesasishwa successfully.',
+        'title' => 'Mtumiaji amesasishwa',
+        'body'  => 'Mtumiaji amesasishwa kwa mafanikio.',
     ],
 
     'header-actions' => [
         'change-password' => [
-            'label' => 'Badilisha Nenosiri',
+            'label' => 'Badilisha nenosiri',
 
             'notification' => [
-                'title' => 'Nenosiri imebadilishwa',
-                'body'  => 'nenosiri ina imebadilishwa successfully.',
+                'title' => 'Nenosiri limebadilishwa',
+                'body'  => 'Nenosiri limebadilishwa kwa mafanikio.',
             ],
 
             'form' => [
-                'new-password'         => 'Mpya Nenosiri',
-                'confirm-new-password' => 'Thibitisha Mpya Nenosiri',
+                'new-password'         => 'Nenosiri jipya',
+                'confirm-new-password' => 'Thibitisha nenosiri jipya',
             ],
         ],
 
         'delete' => [
             'notification' => [
-                'title' => 'Mtumiaji imefutwa',
-                'body'  => 'mtumiaji ina imefutwa successfully.',
+                'title' => 'Mtumiaji amefutwa',
+                'body'  => 'Mtumiaji amefutwa kwa mafanikio.',
                 'error' => [
-                    'title' => 'Mtumiaji Haiwezekani Kuwa Imefutwa',
-                    'body'  => 'Hii ni chaguo-msingi mtumiaji au wewe haiwezekani futa yourself.',
+                    'title' => 'Mtumiaji hawezi kufutwa',
+                    'body'  => 'Huyu ni mtumiaji chaguomsingi, au huwezi kujifuta mwenyewe.',
                 ],
             ],
         ],

@@ -3,17 +3,17 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Timu',
+            'label' => 'Timu mpya',
 
             'notification' => [
                 'title' => 'Timu imeundwa',
-                'body'  => 'timu ina imeundwa successfully.',
+                'body'  => 'Timu imeundwa kwa mafanikio.',
             ],
         ],
     ],
 
     'tabs' => [
         'all'      => 'Zote',
-        'archived' => 'Imehifadhiwa',
+        'archived' => 'Zilizowekwa kumbukumbu',
     ],
 ];

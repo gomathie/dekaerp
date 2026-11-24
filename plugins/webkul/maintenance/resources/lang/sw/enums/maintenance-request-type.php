@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'corrective' => 'Corrective',
-    'preventive' => 'Preventive',
+    'corrective' => 'Marekebisho',
+    'preventive' => 'Kinga',
 ];

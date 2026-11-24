@@ -3,19 +3,19 @@
 return [
     'header-actions' => [
         'create' => [
-            'label'        => 'Новое Equipment',
+            'label'        => 'Новое оборудование',
             'notification' => [
-                'title' => 'Equipment создано',
-                'body'  => 'equipment есть создано successfully.',
+                'title' => 'Оборудование создано',
+                'body'  => 'Оборудование успешно создано.',
             ],
         ],
     ],
 
     'tabs' => [
-        'my-equipment'      => 'Мой Equipment',
-        'assigned'          => 'Назначен',
-        'unassigned'        => 'Не назначен',
-        'under-maintenance' => 'Менее Обслуживание',
-        'archived'          => 'В архиве',
+        'my-equipment'      => 'Моё оборудование',
+        'assigned'          => 'Назначенное',
+        'unassigned'        => 'Неназначенное',
+        'under-maintenance' => 'На обслуживании',
+        'archived'          => 'Архив',
     ],
 ];

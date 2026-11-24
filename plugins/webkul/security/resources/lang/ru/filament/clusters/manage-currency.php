@@ -1,18 +1,18 @@
 <?php
 
 return [
-    'breadcrumb' => 'Manage Валюта',
-    'title'      => 'Manage Валюта',
+    'breadcrumb' => 'Управление валютой',
+    'title'      => 'Управление валютой',
     'group'      => 'Общее',
 
     'navigation' => [
-        'label' => 'Manage Валюта',
+        'label' => 'Управление валютой',
     ],
 
     'form' => [
         'default-currency' => [
-            'label'       => 'По умолчанию Валюта',
-            'helper-text' => 'по умолчанию валюта используется в application.',
+            'label'       => 'Валюта по умолчанию',
+            'helper-text' => 'Валюта, которая используется в приложении по умолчанию.',
         ],
     ],
 ];

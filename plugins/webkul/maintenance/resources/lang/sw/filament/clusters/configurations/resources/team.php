@@ -2,54 +2,54 @@
 
 return [
     'navigation' => [
-        'title' => 'Teams',
+        'title' => 'Timu',
     ],
 
     'form' => [
         'name'    => 'Jina',
         'company' => 'Kampuni',
-        'users'   => 'Timu Wanachama',
+        'users'   => 'Wanatimu',
     ],
 
     'table' => [
         'columns' => [
             'name'       => 'Jina',
             'company'    => 'Kampuni',
-            'users'      => 'Timu Wanachama',
-            'created-at' => 'Imeundwa',
+            'users'      => 'Wanatimu',
+            'created-at' => 'Iliundwa',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
                     'title' => 'Timu imesasishwa',
-                    'body'  => 'timu ina imesasishwa successfully.',
+                    'body'  => 'Timu imesasishwa kwa mafanikio.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Timu restored',
-                    'body'  => 'timu ina restored successfully.',
+                    'title' => 'Timu imerejeshwa',
+                    'body'  => 'Timu imerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'title' => 'Timu imefutwa',
-                    'body'  => 'timu ina imefutwa successfully.',
+                    'body'  => 'Timu imefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Timu force imefutwa',
-                        'body'  => 'timu ina force imefutwa successfully.',
+                        'title' => 'Timu imefutwa kabisa',
+                        'body'  => 'Timu imefutwa kabisa kwa mafanikio.',
                     ],
                     'error' => [
-                        'title' => 'Timu could si kuwa force imefutwa',
-                        'body'  => 'timu ni inatumika na haiwezekani kuwa force imefutwa.',
+                        'title' => 'Timu haikuweza kufutwa kabisa',
+                        'body'  => 'Timu inatumika na haiwezi kufutwa kabisa.',
                     ],
                 ],
             ],
@@ -58,15 +58,15 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Teams restored',
-                    'body'  => 'teams ina restored successfully.',
+                    'title' => 'Timu zimerejeshwa',
+                    'body'  => 'Timu zimerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Teams imefutwa',
-                    'body'  => 'teams ina imefutwa successfully.',
+                    'title' => 'Timu zimefutwa',
+                    'body'  => 'Timu zimefutwa kwa mafanikio.',
                 ],
             ],
         ],

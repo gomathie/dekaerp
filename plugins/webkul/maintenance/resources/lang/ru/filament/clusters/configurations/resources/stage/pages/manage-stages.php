@@ -3,11 +3,11 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Этап',
+            'label' => 'Новый этап',
 
             'notification' => [
-                'title' => 'Этап создано',
-                'body'  => 'этап есть создано successfully.',
+                'title' => 'Этап создан',
+                'body'  => 'Этап успешно создан.',
             ],
         ],
     ],

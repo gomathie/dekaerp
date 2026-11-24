@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'title' => 'Matengenezo Timu',
+    'title' => 'Timu ya matengenezo',
 ];

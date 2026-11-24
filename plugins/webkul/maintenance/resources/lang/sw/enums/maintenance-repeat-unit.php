@@ -2,7 +2,7 @@
 
 return [
     'day'   => 'Siku',
-    'week'  => 'Weeks',
-    'month' => 'Months',
+    'week'  => 'Wiki',
+    'month' => 'Miezi',
     'year'  => 'Miaka',
 ];

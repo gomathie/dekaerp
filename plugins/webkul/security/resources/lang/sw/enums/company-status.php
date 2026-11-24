@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'active'   => 'Inatumika',
+    'active'   => 'Hai',
     'inactive' => 'Haitumiki',
 ];

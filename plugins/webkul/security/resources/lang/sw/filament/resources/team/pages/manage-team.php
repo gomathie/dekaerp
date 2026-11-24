@@ -5,7 +5,7 @@ return [
         'create' => [
             'notification' => [
                 'title' => 'Timu imeundwa',
-                'body'  => 'timu ina imeundwa successfully.',
+                'body'  => 'Timu imeundwa kwa mafanikio.',
             ],
         ],
     ],

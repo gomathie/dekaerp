@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Teams',
+    'title' => 'Timu',
 
     'navigation' => [
-        'title' => 'Teams',
+        'title' => 'Timu',
     ],
 
     'form' => [
@@ -16,21 +16,21 @@ return [
     'table' => [
         'columns' => [
             'name'       => 'Jina',
-            'created-by' => 'Imeundwa Na',
+            'created-by' => 'Imeundwa na',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
                     'title' => 'Timu imesasishwa',
-                    'body'  => 'timu ina imesasishwa successfully.',
+                    'body'  => 'Timu imesasishwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'title' => 'Timu imefutwa',
-                    'body'  => 'timu ina imefutwa successfully.',
+                    'body'  => 'Timu imefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -38,8 +38,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Teams imeundwa',
-                    'body'  => 'teams ina imeundwa successfully.',
+                    'title' => 'Timu zimeundwa',
+                    'body'  => 'Timu zimeundwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -49,15 +49,15 @@ return [
         'sections' => [
             'entries' => [
                 'name'          => 'Jina',
-                'job-title'     => 'Kazi Kichwa',
-                'work-email'    => 'Work Barua pepe',
-                'work-mobile'   => 'Work Mobile',
-                'work-phone'    => 'Work Simu',
+                'job-title'     => 'Cheo',
+                'work-email'    => 'Barua pepe ya kazini',
+                'work-mobile'   => 'Simu ya mkononi ya kazini',
+                'work-phone'    => 'Simu ya kazini',
                 'manager'       => 'Meneja',
                 'department'    => 'Idara',
-                'job-position'  => 'Kazi Cheo',
-                'team-tags'     => 'Timu Lebo',
-                'coach'         => 'Coach',
+                'job-position'  => 'Nafasi ya kazi',
+                'team-tags'     => 'Lebo za timu',
+                'coach'         => 'Mlezi',
             ],
         ],
     ],

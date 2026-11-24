@@ -3,11 +3,11 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Hatua',
+            'label' => 'Hatua mpya',
 
             'notification' => [
                 'title' => 'Hatua imeundwa',
-                'body'  => 'hatua ina imeundwa successfully.',
+                'body'  => 'Hatua imeundwa kwa mafanikio.',
             ],
         ],
     ],

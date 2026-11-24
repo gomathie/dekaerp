@@ -3,19 +3,19 @@
 return [
     'header-actions' => [
         'create' => [
-            'label'        => 'Mpya Equipment',
+            'label'        => 'Kifaa kipya',
             'notification' => [
-                'title' => 'Equipment imeundwa',
-                'body'  => 'equipment ina imeundwa successfully.',
+                'title' => 'Kifaa kimeundwa',
+                'body'  => 'Kifaa kimeundwa kwa mafanikio.',
             ],
         ],
     ],
 
     'tabs' => [
-        'my-equipment'      => 'Yangu Equipment',
-        'assigned'          => 'Amekabidhiwa',
-        'unassigned'        => 'Hajakabidhiwa',
-        'under-maintenance' => 'Chini ya Matengenezo',
-        'archived'          => 'Imehifadhiwa',
+        'my-equipment'      => 'Vifaa vyangu',
+        'assigned'          => 'Vilivyogawiwa',
+        'unassigned'        => 'Visivyogawiwa',
+        'under-maintenance' => 'Vinavyofanyiwa matengenezo',
+        'archived'          => 'Vilivyowekwa kumbukumbu',
     ],
 ];

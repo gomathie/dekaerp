@@ -1,47 +1,47 @@
 <?php
 
 return [
-    'title' => 'Watumiaji na logins',
+    'title' => 'Watumiaji na uingiaji',
 
     'table' => [
         'columns' => [
             'name'                 => 'Jina',
-            'login'                => 'Ingia (barua pepe)',
-            'company-admin'        => 'Kampuni Msimamizi',
-            'active'               => 'Inatumika',
-            'must-change-password' => 'Lazima badilisha nenosiri',
+            'login'                => 'Kuingia (barua pepe)',
+            'company-admin'        => 'Msimamizi wa kampuni',
+            'active'               => 'Hai',
+            'must-change-password' => 'Lazima abadilishe nenosiri',
         ],
 
         'empty-state' => [
-            'heading'     => 'Hakuna watumiaji bado',
-            'description' => 'Alika au unda msimamizi katika Msimamizi sehemu juu ya.',
+            'heading'     => 'Bado hakuna watumiaji',
+            'description' => 'Alika au unda msimamizi katika sehemu ya Msimamizi hapo juu.',
         ],
 
         'actions' => [
             'copy-invitation-link' => [
-                'label'      => 'Nakili mwaliko link',
-                'invitation' => 'Inasubiri mwaliko',
-                'link'       => 'Mwaliko link',
+                'label'      => 'Nakili kiungo cha mwaliko',
+                'invitation' => 'Mwaliko unaosubiri',
+                'link'       => 'Kiungo cha mwaliko',
             ],
             'show-password' => [
                 'label'             => 'Onyesha nenosiri',
-                'modal-heading'     => 'Onyesha nenosiri kwa :email',
-                'modal-description' => 'Ingiza yako yake nenosiri hadi endelea. Hii angalia ni recorded katika audit log.',
+                'modal-heading'     => 'Onyesha nenosiri la :email',
+                'modal-description' => 'Weka nenosiri lako mwenyewe ili kuendelea. Utazamaji huu unarekodiwa kwenye kumbukumbu ya ukaguzi.',
                 'submit'            => 'Onyesha nenosiri',
-                'shown'             => 'Nenosiri kwa :email',
+                'shown'             => 'Nenosiri la :email',
 
                 'form' => [
-                    'password' => 'Yako nenosiri',
+                    'password' => 'Nenosiri lako',
                 ],
             ],
             'set-password' => [
                 'label'             => 'Weka nenosiri',
-                'modal-heading'     => 'Weka nenosiri kwa :email',
-                'modal-description' => 'Existing passwords haiwezekani kuwa shown, kwa sababu wao ni stored encrypted one way. Weka mpya one na give hii hadi mtumiaji yourself: hii ni si emailed.',
+                'modal-heading'     => 'Weka nenosiri la :email',
+                'modal-description' => 'Manenosiri yaliyopo hayawezi kuonyeshwa, kwa sababu yamehifadhiwa kwa usimbaji wa njia moja. Weka jipya na umpe mtumiaji wewe mwenyewe: halitumwi kwa barua pepe.',
 
                 'form' => [
-                    'password'             => 'Mpya nenosiri',
-                    'must-change-password' => 'Lazima badilisha hii nenosiri saa ifuatayo sign-katika',
+                    'password'             => 'Nenosiri jipya',
+                    'must-change-password' => 'Lazima abadilishe nenosiri hili akiingia tena',
                 ],
             ],
         ],

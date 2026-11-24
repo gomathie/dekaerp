@@ -3,6 +3,6 @@
 return [
     'notification' => [
         'title' => 'Поле создано',
-        'body'  => 'поле есть создано successfully.',
+        'body'  => 'Поле успешно создано.',
     ],
 ];

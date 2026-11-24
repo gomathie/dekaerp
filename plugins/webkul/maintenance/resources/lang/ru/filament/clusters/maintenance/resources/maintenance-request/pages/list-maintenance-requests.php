@@ -3,21 +3,21 @@
 return [
     'header-actions' => [
         'create' => [
-            'label'        => 'Новое Обслуживание Request',
+            'label'        => 'Новая заявка на обслуживание',
             'notification' => [
-                'title' => 'Обслуживание request создано',
-                'body'  => 'обслуживание request есть создано successfully.',
+                'title' => 'Заявка на обслуживание создана',
+                'body'  => 'Заявка на обслуживание успешно создана.',
             ],
         ],
     ],
 
     'tabs' => [
-        'my-maintenances' => 'Мой Maintenances',
-        'todo'            => 'До',
-        'done'            => 'Завершён',
-        'high-priority'   => 'Высокий-приоритет',
-        'unscheduled'     => 'Unscheduled',
-        'active'          => 'Активен',
-        'cancelled'       => 'Отменён',
+        'my-maintenances' => 'Мои заявки',
+        'todo'            => 'К выполнению',
+        'done'            => 'Выполненные',
+        'high-priority'   => 'Высокий приоритет',
+        'unscheduled'     => 'Не запланированные',
+        'active'          => 'Активные',
+        'cancelled'       => 'Отменённые',
     ],
 ];

@@ -2,73 +2,73 @@
 
 return [
     'navigation' => [
-        'label' => 'API Tokens',
+        'label' => 'Tokeni za API',
     ],
 
     'group'      => 'Jumla',
-    'breadcrumb' => 'API Tokens',
-    'title'      => 'API Tokens',
-    'subheading' => 'Tokens client integrations tumia hadi authenticate dhidi ya API. token carries majukumu na inaruhusiwa makampuni ya mtumiaji hii belongs hadi.',
+    'breadcrumb' => 'Tokeni za API',
+    'title'      => 'Tokeni za API',
+    'subheading' => 'Tokeni ambazo miunganisho ya wateja hutumia kujithibitisha kwenye API. Tokeni hubeba majukumu na kampuni zinazoruhusiwa za mtumiaji anayeimiliki.',
 
     'abilities' => [
         'read'  => 'Kusoma tu',
         'write' => 'Kuandika',
-        'all'   => 'Kamili access',
+        'all'   => 'Ufikiaji kamili',
     ],
 
     'table' => [
         'columns' => [
             'name'      => 'Lebo',
-            'user'      => 'Acts kama',
-            'abilities' => 'Scopes',
-            'last-used' => 'Mwisho inatumika',
-            'expires'   => 'Expires',
-            'created'   => 'Issued',
+            'user'      => 'Inatenda kama',
+            'abilities' => 'Wigo',
+            'last-used' => 'Ilitumika mwisho',
+            'expires'   => 'Inaisha',
+            'created'   => 'Ilitolewa',
         ],
 
-        'never-used' => 'Kamwe inatumika',
+        'never-used' => 'Haijawahi kutumika',
     ],
 
     'actions' => [
         'issue' => [
-            'label'  => 'Issue token',
-            'submit' => 'Issue token',
+            'label'  => 'Toa tokeni',
+            'submit' => 'Toa tokeni',
 
             'fields' => [
-                'user'             => 'Acts kama mtumiaji',
-                'user-helper'      => 'token unaweza exactly nini hii mtumiaji unaweza. Tumia dedicated mtumiaji kwa client, kamwe msimamizi.',
+                'user'             => 'Inatenda kama mtumiaji',
+                'user-helper'      => 'Tokeni inaweza kufanya kile tu mtumiaji huyu anachoweza kufanya. Tumia mtumiaji maalum kwa kila mteja, kamwe si msimamizi.',
                 'name'             => 'Lebo',
-                'name-helper'      => 'Jinsi wewe ita recognise hii token later, e.g. acme-ghala-sync.',
-                'abilities'        => 'Scopes',
-                'abilities-helper' => 'Kusoma tu haiwezekani POST, PATCH au Futa. Kamili access ignores scope checks entirely.',
+                'name-helper'      => 'Jinsi utakavyoitambua tokeni hii baadaye, k.m. acme-warehouse-sync.',
+                'abilities'        => 'Wigo',
+                'abilities-helper' => 'Kusoma tu hakuruhusu POST, PATCH wala DELETE. Ufikiaji kamili hupuuza kabisa ukaguzi wa wigo.',
             ],
         ],
 
         'revoke' => [
-            'label'       => 'Revoke',
-            'heading'     => 'Revoke hii token?',
-            'description' => 'integration kwa kutumia hii ita kituo working immediately. Hii haiwezekani kuwa undone.',
-            'bulk'        => 'Revoke imechaguliwa',
+            'label'       => 'Batilisha',
+            'heading'     => 'Batilisha tokeni hii?',
+            'description' => 'Muunganisho unaoitumia utaacha kufanya kazi mara moja. Hili haliwezi kutenduliwa.',
+            'bulk'        => 'Batilisha zilizochaguliwa',
         ],
     ],
 
     'notifications' => [
         'issued' => [
-            'title' => 'Token issued',
-            'body'  => 'Nakili hii sasa - hii haiwezekani kuwa shown tena.',
+            'title' => 'Tokeni imetolewa',
+            'body'  => 'Inakili sasa - haitaonyeshwa tena.',
         ],
 
-        'revoked'      => 'Token revoked',
-        'missing-user' => 'Hiyo mtumiaji hakuna longer ipo.',
+        'revoked'      => 'Tokeni imebatilishwa',
+        'missing-user' => 'Mtumiaji huyo hayupo tena.',
     ],
 
     'plaintext' => [
-        'title'       => 'Nakili hii token sasa',
-        'description' => 'Hii ni stored tu kama hash, hivyo hii ni one time hii unaweza kuwa displayed. Send hii hadi client zaidi ya channel wewe trust.',
+        'title'       => 'Nakili tokeni hii sasa',
+        'description' => 'Huhifadhiwa kama hash pekee, kwa hivyo hii ndiyo mara pekee inayoweza kuonyeshwa. Mtumie mteja kupitia njia unayoiamini.',
     ],
 
     'empty' => [
-        'heading'     => 'Hakuna API tokens bado',
-        'description' => 'Issue one hadi ruhusu client integration authenticate dhidi ya API.',
+        'heading'     => 'Bado hakuna tokeni za API',
+        'description' => 'Toa moja ili muunganisho wa mteja ujithibitishe kwenye API.',
     ],
 ];

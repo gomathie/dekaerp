@@ -3,47 +3,47 @@
 return [
     'navigation' => [
         'group' => 'Обслуживание',
-        'title' => 'Обслуживание Requests',
+        'title' => 'Заявки на обслуживание',
     ],
 
     'form' => [
         'sections' => [
             'request' => [
-                'title'  => 'Request',
+                'title'  => 'Заявка',
                 'fields' => [
-                    'name'                      => 'Request',
-                    'name-placeholder'          => 'e.g. Screen не working',
-                    'equipment'                 => 'Equipment',
+                    'name'                      => 'Заявка',
+                    'name-placeholder'          => 'например, не работает экран',
+                    'equipment'                 => 'Оборудование',
                     'category'                  => 'Категория',
-                    'requested-at'              => 'Request Дата',
-                    'requested-at-hint-tooltip' => 'дата обслуживание request был reported.',
-                    'maintenance-type'          => 'Обслуживание Тип',
-                    'recurrent'                 => 'Recurrent',
-                    'repeat-every'              => 'Repeat Каждый',
+                    'requested-at'              => 'Дата заявки',
+                    'requested-at-hint-tooltip' => 'Дата подачи заявки на обслуживание.',
+                    'maintenance-type'          => 'Тип обслуживания',
+                    'recurrent'                 => 'Повторяющееся',
+                    'repeat-every'              => 'Повторять каждые',
                     'maintenance-type-options'  => [
-                        'corrective' => 'Corrective',
-                        'preventive' => 'Preventive',
+                        'corrective' => 'Корректирующее',
+                        'preventive' => 'Профилактическое',
                     ],
                 ],
                 'tabs' => [
                     'notes' => [
-                        'title'  => 'Заметки',
+                        'title'  => 'Примечания',
                         'fields' => [
-                            'description'             => 'Внутренний Заметки',
-                            'description-placeholder' => 'Внутренний заметки',
+                            'description'             => 'Внутренние примечания',
+                            'description-placeholder' => 'Внутренние примечания',
                         ],
                     ],
                     'instructions' => [
-                        'title'  => 'Instructions',
+                        'title'  => 'Инструкции',
                         'fields' => [
-                            'instruction-type'         => 'Instruction Тип',
+                            'instruction-type'         => 'Тип инструкции',
                             'instruction-type-options' => [
                                 'pdf'          => 'PDF',
-                                'google-slide' => 'Google Slide',
-                                'text'         => 'Text',
+                                'google-slide' => 'Google Slides',
+                                'text'         => 'Текст',
                             ],
                             'instruction-pdf'              => 'PDF',
-                            'instruction-google-slide'     => 'Google Slide',
+                            'instruction-google-slide'     => 'Google Slides',
                             'instruction-text'             => 'Описание',
                             'instruction-text-placeholder' => 'Описание',
                         ],
@@ -55,12 +55,12 @@ return [
                 'title'  => 'Настройки',
                 'fields' => [
                     'team'                      => 'Команда',
-                    'responsible'               => 'Responsible',
-                    'scheduled-at'              => 'Scheduled Дата',
-                    'scheduled-at-hint-tooltip' => 'дата и time этот обслуживание work запланировано до начать.',
-                    'duration'                  => 'Duration',
-                    'duration-hint-tooltip'     => 'Ожидается обслуживание duration.',
-                    'duration-suffix'           => 'часы',
+                    'responsible'               => 'Ответственный',
+                    'scheduled-at'              => 'Плановая дата',
+                    'scheduled-at-hint-tooltip' => 'Дата и время планового начала работ по обслуживанию.',
+                    'duration'                  => 'Длительность',
+                    'duration-hint-tooltip'     => 'Ожидаемая длительность обслуживания.',
+                    'duration-suffix'           => 'ч',
                     'priority'                  => 'Приоритет',
                     'company'                   => 'Компания',
                 ],
@@ -70,9 +70,9 @@ return [
 
     'table' => [
         'columns' => [
-            'name'       => 'Subjects',
-            'creator'    => 'Создано от Пользователь',
-            'technician' => 'Technician',
+            'name'       => 'Темы',
+            'creator'    => 'Создал пользователь',
+            'technician' => 'Техник',
             'category'   => 'Категория',
             'stage'      => 'Этап',
             'company'    => 'Компания',
@@ -80,33 +80,33 @@ return [
 
         'groups' => [
             'stage'       => 'Этап',
-            'assigned-to' => 'Назначен до',
+            'assigned-to' => 'Исполнитель',
             'category'    => 'Категория',
-            'created-by'  => 'Создано От',
+            'created-by'  => 'Создал',
         ],
 
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Обслуживание request restored',
-                    'body'  => 'обслуживание request есть restored successfully.',
+                    'title' => 'Заявка на обслуживание восстановлена',
+                    'body'  => 'Заявка на обслуживание успешно восстановлена.',
                 ],
             ],
             'delete' => [
                 'notification' => [
-                    'title' => 'Обслуживание request в архиве',
-                    'body'  => 'обслуживание request есть в архиве successfully.',
+                    'title' => 'Заявка на обслуживание архивирована',
+                    'body'  => 'Заявка на обслуживание успешно архивирована.',
                 ],
             ],
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Обслуживание request удалено',
-                        'body'  => 'обслуживание request есть permanently удалено.',
+                        'title' => 'Заявка на обслуживание удалена',
+                        'body'  => 'Заявка на обслуживание удалена безвозвратно.',
                     ],
                     'error' => [
-                        'title' => 'Обслуживание request could не быть удалено',
-                        'body'  => 'Этот обслуживание request referenced от another запись.',
+                        'title' => 'Не удалось удалить заявку на обслуживание',
+                        'body'  => 'На эту заявку на обслуживание ссылается другая запись.',
                     ],
                 ],
             ],
@@ -115,14 +115,14 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Обслуживание requests restored',
-                    'body'  => 'выбрано обслуживание requests есть restored successfully.',
+                    'title' => 'Заявки на обслуживание восстановлены',
+                    'body'  => 'Выбранные заявки на обслуживание успешно восстановлены.',
                 ],
             ],
             'delete' => [
                 'notification' => [
-                    'title' => 'Обслуживание requests в архиве',
-                    'body'  => 'выбрано обслуживание requests есть в архиве successfully.',
+                    'title' => 'Заявки на обслуживание архивированы',
+                    'body'  => 'Выбранные заявки на обслуживание успешно архивированы.',
                 ],
             ],
         ],
@@ -131,17 +131,17 @@ return [
     'infolist' => [
         'sections' => [
             'request' => [
-                'title'   => 'Request',
+                'title'   => 'Заявка',
                 'entries' => [
-                    'name'                     => 'Request',
-                    'equipment'                => 'Equipment',
+                    'name'                     => 'Заявка',
+                    'equipment'                => 'Оборудование',
                     'category'                 => 'Категория',
-                    'requested-at'             => 'Request Дата',
-                    'maintenance-type'         => 'Обслуживание Тип',
-                    'instruction-type'         => 'Instruction Тип',
+                    'requested-at'             => 'Дата заявки',
+                    'maintenance-type'         => 'Тип обслуживания',
+                    'instruction-type'         => 'Тип инструкции',
                     'instruction-pdf'          => 'PDF',
-                    'instruction-google-slide' => 'Google Slide',
-                    'description'              => 'Внутренний Заметки',
+                    'instruction-google-slide' => 'Google Slides',
+                    'description'              => 'Внутренние примечания',
                     'instruction-text'         => 'Описание',
                 ],
             ],
@@ -150,10 +150,10 @@ return [
                 'title'   => 'Настройки',
                 'entries' => [
                     'team'            => 'Команда',
-                    'responsible'     => 'Responsible',
-                    'scheduled-at'    => 'Scheduled Дата',
-                    'duration'        => 'Duration',
-                    'duration-suffix' => 'часы',
+                    'responsible'     => 'Ответственный',
+                    'scheduled-at'    => 'Плановая дата',
+                    'duration'        => 'Длительность',
+                    'duration-suffix' => 'ч',
                     'priority'        => 'Приоритет',
                     'company'         => 'Компания',
                 ],

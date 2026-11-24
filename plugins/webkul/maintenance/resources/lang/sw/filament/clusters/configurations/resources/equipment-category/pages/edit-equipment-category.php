@@ -3,14 +3,14 @@
 return [
     'notification' => [
         'title' => 'Kategoria imesasishwa',
-        'body'  => 'kategoria ina imesasishwa successfully.',
+        'body'  => 'Kategoria imesasishwa kwa mafanikio.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
                 'title' => 'Kategoria imefutwa',
-                'body'  => 'kategoria ina imefutwa successfully.',
+                'body'  => 'Kategoria imefutwa kwa mafanikio.',
             ],
         ],
     ],

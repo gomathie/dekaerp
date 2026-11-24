@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Equipment imeundwa',
-        'body'  => 'equipment ina imeundwa successfully.',
+        'title' => 'Kifaa kimeundwa',
+        'body'  => 'Kifaa kimeundwa kwa mafanikio.',
     ],
 ];

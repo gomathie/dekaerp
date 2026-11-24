@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'title' => 'Angalia Kategoria',
+    'title' => 'Tazama kategoria',
 ];

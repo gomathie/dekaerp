@@ -8,34 +8,34 @@ return [
     'form' => [
         'fields' => [
             'name' => 'Название',
-            'done' => 'Завершён',
+            'done' => 'Выполнено',
         ],
     ],
 
     'table' => [
         'columns' => [
             'name'       => 'Название',
-            'done'       => 'Завершён',
+            'done'       => 'Выполнено',
             'created-at' => 'Создано',
         ],
 
         'groups' => [
-            'done'       => 'Завершён',
+            'done'       => 'Выполнено',
             'created-at' => 'Создано',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Этап обновлено',
-                    'body'  => 'этап есть обновлено successfully.',
+                    'title' => 'Этап обновлён',
+                    'body'  => 'Этап успешно обновлён.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Этап удалено',
-                    'body'  => 'этап есть удалено successfully.',
+                    'title' => 'Этап удалён',
+                    'body'  => 'Этап успешно удалён.',
                 ],
             ],
         ],
@@ -43,8 +43,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Этапы удалено',
-                    'body'  => 'этапы есть удалено successfully.',
+                    'title' => 'Этапы удалены',
+                    'body'  => 'Этапы успешно удалены.',
                 ],
             ],
         ],
@@ -53,11 +53,11 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Общее Сведения',
+                'title' => 'Общие сведения',
 
                 'entries' => [
                     'name' => 'Название',
-                    'done' => 'Завершён',
+                    'done' => 'Выполнено',
                 ],
             ],
         ],

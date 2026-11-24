@@ -2,7 +2,7 @@
 
 return [
     'heading' => [
-        'title' => 'Обслуживание Календарь',
+        'title' => 'Календарь обслуживания',
     ],
 
     'config' => [
@@ -17,16 +17,16 @@ return [
 
     'header-actions' => [
         'create' => [
-            'label'         => 'Новое Request',
-            'modal-heading' => 'Новое Обслуживание Request',
+            'label'         => 'Новая заявка',
+            'modal-heading' => 'Новая заявка на обслуживание',
             'notification'  => [
                 'success' => [
-                    'title' => 'Обслуживание request создано',
-                    'body'  => 'обслуживание request есть создано successfully.',
+                    'title' => 'Заявка на обслуживание создана',
+                    'body'  => 'Заявка на обслуживание успешно создана.',
                 ],
                 'error' => [
-                    'title' => 'Обслуживание request could не быть создано',
-                    'body'  => 'Создать обслуживание этап и команда первый.',
+                    'title' => 'Не удалось создать заявку на обслуживание',
+                    'body'  => 'Сначала создайте этап и команду обслуживания.',
                 ],
             ],
         ],
@@ -44,20 +44,20 @@ return [
 
     'form' => [
         'fields' => [
-            'subject'      => 'Subject',
-            'scheduled-at' => 'Scheduled В',
+            'subject'      => 'Тема',
+            'scheduled-at' => 'Запланировано на',
         ],
     ],
 
     'infolist' => [
-        'title'   => 'Обслуживание Request',
+        'title'   => 'Заявка на обслуживание',
         'entries' => [
-            'subject'          => 'Subject',
+            'subject'          => 'Тема',
             'date'             => 'Дата',
-            'time'             => 'Time',
-            'technician'       => 'Technician',
+            'time'             => 'Время',
+            'technician'       => 'Техник',
             'priority'         => 'Приоритет',
-            'maintenance-type' => 'Обслуживание Тип',
+            'maintenance-type' => 'Тип обслуживания',
             'stage'            => 'Этап',
         ],
     ],

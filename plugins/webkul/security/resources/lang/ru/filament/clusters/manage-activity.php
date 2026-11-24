@@ -1,23 +1,23 @@
 <?php
 
 return [
-    'breadcrumb' => 'Manage Деятельность',
-    'title'      => 'Manage Деятельность',
+    'breadcrumb' => 'Управление активностями',
+    'title'      => 'Управление активностями',
     'group'      => 'Общее',
 
     'navigation' => [
-        'label' => 'Manage Деятельность',
+        'label' => 'Управление активностями',
     ],
 
     'form' => [
         'activity-description' => [
-            'label'   => 'Деятельность',
-            'content' => 'Configure ваш активность types.',
+            'label'   => 'Активности',
+            'content' => 'Настройте типы активностей.',
         ],
 
         'actions' => [
             'manage-activity-types' => [
-                'label' => 'Активность Types',
+                'label' => 'Типы активностей',
             ],
         ],
     ],

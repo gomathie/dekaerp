@@ -3,21 +3,21 @@
 return [
     'header' => [
         'sub-heading' => [
-            'accept-invitation' => 'Accept Mwaliko',
+            'accept-invitation' => 'Kubali mwaliko',
         ],
     ],
 
     'title' => 'Jisajili',
 
-    'heading' => 'Sign juu',
+    'heading' => 'Jisajili',
 
-    'invitation-no-longer-authorized' => 'Hii mwaliko ni hakuna longer authorized. Ask msimamizi hadi send mpya mwaliko.',
+    'invitation-no-longer-authorized' => 'Mwaliko huu hauna idhini tena. Muombe msimamizi akutumie mwaliko mpya.',
 
     'actions' => [
 
         'login' => [
             'before' => 'au',
-            'label'  => 'ingia hadi yako akaunti',
+            'label'  => 'ingia kwenye akaunti yako',
         ],
 
     ],
@@ -25,7 +25,7 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'Barua pepe anwani',
+            'label' => 'Anwani ya barua pepe',
         ],
 
         'name' => [
@@ -44,7 +44,7 @@ return [
         'actions' => [
 
             'register' => [
-                'label' => 'Sign juu',
+                'label' => 'Jisajili',
             ],
 
         ],
@@ -54,8 +54,8 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Mno nyingi registration attempts',
-            'body'  => 'Tafadhali jaribu tena katika :seconds seconds.',
+            'title' => 'Majaribio mengi mno ya kujisajili',
+            'body'  => 'Tafadhali jaribu tena baada ya sekunde :seconds.',
         ],
 
     ],

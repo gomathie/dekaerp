@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'body'                => 'Wewe ina invited hadi join :company.',
-    'body-with-inviter'   => ':inviter ina invited wewe hadi join :company.',
-    'instructions'        => 'Bofya button chini ya hadi unda yako akaunti.',
+    'body'                => 'Umealikwa kujiunga na :company.',
+    'body-with-inviter'   => ':inviter amekualika kujiunga na :company.',
+    'instructions'        => 'Bofya kitufe kilicho hapa chini ili kuunda akaunti yako.',
     'create-account'      => 'Unda akaunti',
-    'expires'             => 'Hii mwaliko expires washa :date.',
-    'link-fallback'       => 'Ikiwa button si work, nakili hii link ndani yako browser:',
-    'discard-email'       => 'Ikiwa wewe zilikuwa si expecting hii mwaliko, wewe unaweza ignore hii barua pepe.',
+    'expires'             => 'Mwaliko huu unaisha tarehe :date.',
+    'link-fallback'       => 'Ikiwa kitufe hakifanyi kazi, nakili kiungo hiki kwenye kivinjari chako:',
+    'discard-email'       => 'Ikiwa hukutarajia mwaliko huu, unaweza kupuuza barua pepe hii.',
 ];

@@ -8,13 +8,13 @@ return [
     'form' => [
         'sections' => [
             'general' => [
-                'title' => 'Jumla Taarifa',
+                'title' => 'Taarifa za jumla',
 
                 'fields' => [
                     'name'       => 'Jina',
-                    'technician' => 'Responsible',
+                    'technician' => 'Mwajibikaji',
                     'company'    => 'Kampuni',
-                    'note'       => 'Maelezo',
+                    'note'       => 'Kidokezo',
                 ],
             ],
         ],
@@ -23,27 +23,27 @@ return [
     'table' => [
         'columns' => [
             'name'       => 'Jina',
-            'technician' => 'Responsible',
+            'technician' => 'Mwajibikaji',
             'company'    => 'Kampuni',
-            'created-at' => 'Imeundwa',
+            'created-at' => 'Iliundwa',
         ],
 
         'groups' => [
-            'technician' => 'Responsible',
+            'technician' => 'Mwajibikaji',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
                     'title' => 'Kategoria imesasishwa',
-                    'body'  => 'kategoria ina imesasishwa successfully.',
+                    'body'  => 'Kategoria imesasishwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'title' => 'Kategoria imefutwa',
-                    'body'  => 'kategoria ina imefutwa successfully.',
+                    'body'  => 'Kategoria imefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -51,8 +51,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Kategoria imefutwa',
-                    'body'  => 'kategoria ina imefutwa successfully.',
+                    'title' => 'Kategoria zimefutwa',
+                    'body'  => 'Kategoria zimefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -61,7 +61,7 @@ return [
             'create' => [
                 'notification' => [
                     'title' => 'Kategoria imeundwa',
-                    'body'  => 'kategoria ina imeundwa successfully.',
+                    'body'  => 'Kategoria imeundwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -70,13 +70,13 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Jumla Taarifa',
+                'title' => 'Taarifa za jumla',
 
                 'entries' => [
                     'name'       => 'Jina',
-                    'technician' => 'Responsible',
+                    'technician' => 'Mwajibikaji',
                     'company'    => 'Kampuni',
-                    'note'       => 'Maelezo',
+                    'note'       => 'Kidokezo',
                 ],
             ],
         ],

@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Роль Создано',
-        'body'  => 'роль был создано successfully.',
+        'title' => 'Роль создана',
+        'body'  => 'Роль успешно создана.',
     ],
 ];

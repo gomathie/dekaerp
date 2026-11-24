@@ -13,29 +13,29 @@ return [
 
     'form' => [
         'validation' => [
-            'needs-attention'                 => 'Baadhi sehemu need attention',            'cannot-remove-last-admin'        => 'Cannot remove the admin role from the last admin user.',
-            'company-invalid'                 => 'One au zaidi imechaguliwa makampuni ni si halali.',
-            'company-not-assigned'            => 'Wewe mei kabidhi watumiaji tu hadi makampuni amekabidhiwa hadi yako akaunti.',
-            'company-required'                => 'Chagua saa kidogo one kampuni.',
-            'first-user-must-be-admin'        => 'kwanza mtumiaji katika mfumo lazima kuwa amekabidhiwa msimamizi jukumu.',
-            'role-invalid'                    => 'Chagua saa kidogo one halali jukumu.',
-            'role-not-assignable'             => 'Wewe mei kabidhi tu non-protected majukumu whose ruhusa wewe possess.',
-            'self-administration-forbidden'   => 'Wewe haiwezekani badilisha yako yake majukumu au kampuni assignments.',
-            'target-administration-forbidden' => 'Tu Super Msimamizi mei modify protected msimamizi.',
+            'needs-attention'                 => 'Baadhi ya sehemu zinahitaji kuangaliwa',            'cannot-remove-last-admin'        => 'Haiwezekani kuondoa jukumu la msimamizi kwa msimamizi wa mwisho.',
+            'company-invalid'                 => 'Kampuni moja au zaidi zilizochaguliwa si halali.',
+            'company-not-assigned'            => 'Unaweza kugawa watumiaji kwa kampuni zilizogawiwa akaunti yako pekee.',
+            'company-required'                => 'Chagua angalau kampuni moja.',
+            'first-user-must-be-admin'        => 'Mtumiaji wa kwanza kwenye mfumo lazima apewe jukumu la msimamizi.',
+            'role-invalid'                    => 'Chagua angalau jukumu moja halali.',
+            'role-not-assignable'             => 'Unaweza kugawa majukumu yasiyolindwa pekee ambayo ruhusa zake unazo.',
+            'self-administration-forbidden'   => 'Huwezi kubadilisha majukumu yako mwenyewe wala kampuni ulizogawiwa.',
+            'target-administration-forbidden' => 'Ni Super Admin pekee anayeweza kubadilisha msimamizi aliyelindwa.',
         ],
 
         'sections' => [
             'general-information' => [
-                'title'  => 'Jumla Taarifa',
+                'title'  => 'Taarifa za jumla',
                 'fields' => [
                     'name'                         => 'Jina',
                     'email'                        => 'Barua pepe',
-                    'username'                     => 'Username',
-                    'username-helper'              => 'Si lazima. Lets hii person ingia na short jina instead ya barua pepe: letters, numbers, dot, dash au underscore, 3 hadi 50 characters, hakuna @.',
+                    'username'                     => 'Jina la mtumiaji',
+                    'username-helper'              => 'Si lazima. Humruhusu mtu huyu kuingia kwa jina fupi badala ya barua pepe: herufi, nambari, nukta, kistari au kistari cha chini, herufi 3 hadi 50, bila @.',
                     'password'                     => 'Nenosiri',
-                    'password-confirmation'        => 'Nenosiri Confirmation',
-                    'must-change-password'         => 'Require mpya nenosiri saa ifuatayo sign-katika',
-                    'must-change-password-helper'  => 'Tumia hii wakati wewe weka nenosiri yourself na passed hii washa. Wao ita kuwa held washa yao wasifu ukurasa mpaka wao replace hii, na requirement clears kama hivi karibuni kama wao.',
+                    'password-confirmation'        => 'Thibitisha nenosiri',
+                    'must-change-password'         => 'Hitaji nenosiri jipya akiingia tena',
+                    'must-change-password-helper'  => 'Tumia hili unapoweka nenosiri mwenyewe na kulikabidhi. Atabaki kwenye ukurasa wa wasifu wake hadi alibadilishe, na sharti hili huondoka mara tu atakapofanya hivyo.',
                 ],
             ],
 
@@ -44,83 +44,83 @@ return [
                 'fields' => [
                     'roles'                                    => 'Majukumu',
                     'permissions'                              => 'Ruhusa',
-                    'resource-permission'                      => 'Resource Ruhusa',
-                    'resource-permission-self-change-disabled' => 'Wewe haiwezekani badilisha yako yake resource ruhusa. Ask another msimamizi hadi sasisha hii.',
-                    'can-see-dashboard'                        => 'See dashibodi',
-                    'can-see-dashboard-helper'                 => 'Zima hides Muhtasari na kila dashibodi kwa hii mtumiaji.',
-                    'can-see-money-figures'                    => 'See money figures',
-                    'can-see-money-figures-helper'             => 'Zima hides mauzo, ankara, ununuzi na uhasibu dashboards.',
-                    'teams'                                    => 'Teams',
+                    'resource-permission'                      => 'Ruhusa ya rekodi',
+                    'resource-permission-self-change-disabled' => 'Huwezi kubadilisha ruhusa yako mwenyewe ya rekodi. Muombe msimamizi mwingine aisasishe.',
+                    'can-see-dashboard'                        => 'Ona dashibodi',
+                    'can-see-dashboard-helper'                 => 'Ikizimwa, Muhtasari na kila dashibodi hufichwa kwa mtumiaji huyu.',
+                    'can-see-money-figures'                    => 'Ona takwimu za fedha',
+                    'can-see-money-figures-helper'             => 'Ikizimwa, dashibodi za mauzo, ankara, ununuzi na uhasibu hufichwa.',
+                    'teams'                                    => 'Timu',
                 ],
             ],
 
             'avatar' => [
-                'title' => 'Avatar',
+                'title' => 'Picha ya wasifu',
             ],
 
             'lang-and-status' => [
-                'title'  => 'Lugha & Hali',
+                'title'  => 'Lugha na hali',
                 'fields' => [
-                    'language' => 'Preferred Lugha',
+                    'language' => 'Lugha inayopendelewa',
                     'status'   => 'Hali',
                 ],
             ],
 
             'multi-company' => [
-                'title'                       => 'Multi Kampuni',
-                'allowed-companies'           => 'Inaruhusiwa Makampuni',
-                'default-company'             => 'Chaguo-msingi Kampuni',
-                'default-company-not-allowed' => 'chaguo-msingi kampuni lazima kuwa one ya inaruhusiwa makampuni.',
+                'title'                       => 'Kampuni nyingi',
+                'allowed-companies'           => 'Kampuni zinazoruhusiwa',
+                'default-company'             => 'Kampuni chaguomsingi',
+                'default-company-not-allowed' => 'Kampuni chaguomsingi lazima iwe mojawapo ya kampuni zinazoruhusiwa.',
             ],
         ],
     ],
 
     'table' => [
         'columns' => [
-            'avatar'              => 'Avatar',
+            'avatar'              => 'Picha ya wasifu',
             'name'                => 'Jina',
             'email'               => 'Barua pepe',
-            'teams'               => 'Teams',
+            'teams'               => 'Timu',
             'role'                => 'Jukumu',
-            'resource-permission' => 'Resource Ruhusa',
-            'default-company'     => 'Chaguo-msingi Kampuni',
-            'allowed-company'     => 'Inaruhusiwa Kampuni',
-            'created-by'          => 'Imeundwa Na',
-            'created-at'          => 'Imeundwa',
-            'updated-at'          => 'Imesasishwa',
+            'resource-permission' => 'Ruhusa ya rekodi',
+            'default-company'     => 'Kampuni chaguomsingi',
+            'allowed-company'     => 'Kampuni inayoruhusiwa',
+            'created-by'          => 'Imeundwa na',
+            'created-at'          => 'Iliundwa',
+            'updated-at'          => 'Ilisasishwa',
         ],
 
         'filters' => [
-            'resource-permission' => 'Resource Ruhusa',
-            'teams'               => 'Teams',
+            'resource-permission' => 'Ruhusa ya rekodi',
+            'teams'               => 'Timu',
             'roles'               => 'Majukumu',
-            'default-company'     => 'Chaguo-msingi Kampuni',
-            'allowed-companies'   => 'Inaruhusiwa Makampuni',
+            'default-company'     => 'Kampuni chaguomsingi',
+            'allowed-companies'   => 'Kampuni zinazoruhusiwa',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Mtumiaji edited',
-                    'body'  => 'mtumiaji ina edited successfully.',
+                    'title' => 'Mtumiaji amehaririwa',
+                    'body'  => 'Mtumiaji amehaririwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Mtumiaji imefutwa',
-                    'body'  => 'mtumiaji ina imefutwa successfully.',
+                    'title' => 'Mtumiaji amefutwa',
+                    'body'  => 'Mtumiaji amefutwa kwa mafanikio.',
                     'error' => [
-                        'title' => 'Mtumiaji Haiwezekani Kuwa Imefutwa',
-                        'body'  => 'Hii ni chaguo-msingi mtumiaji au wewe haiwezekani futa yourself.',
+                        'title' => 'Mtumiaji hawezi kufutwa',
+                        'body'  => 'Huyu ni mtumiaji chaguomsingi, au huwezi kujifuta mwenyewe.',
                     ],
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Mtumiaji restored',
-                    'body'  => 'mtumiaji ina restored successfully.',
+                    'title' => 'Mtumiaji amerejeshwa',
+                    'body'  => 'Mtumiaji amerejeshwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -128,25 +128,25 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Watumiaji restored',
-                    'body'  => 'watumiaji ina restored successfully.',
+                    'title' => 'Watumiaji wamerejeshwa',
+                    'body'  => 'Watumiaji wamerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Watumiaji imefutwa',
-                    'body'  => 'watumiaji ina imefutwa successfully.',
+                    'title' => 'Watumiaji wamefutwa',
+                    'body'  => 'Watumiaji wamefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Watumiaji force imefutwa',
-                    'body'  => 'watumiaji ina force imefutwa successfully.',
+                    'title' => 'Watumiaji wamefutwa kabisa',
+                    'body'  => 'Watumiaji wamefutwa kabisa kwa mafanikio.',
                     'error' => [
-                        'title' => 'Mtumiaji could si kuwa imefutwa',
-                        'body'  => 'mtumiaji haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Mtumiaji hakuweza kufutwa',
+                        'body'  => 'Mtumiaji hawezi kufutwa kwa sababu anatumika kwa sasa.',
                     ],
                 ],
             ],
@@ -155,8 +155,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Watumiaji imeundwa',
-                    'body'  => 'watumiaji ina imeundwa successfully.',
+                    'title' => 'Watumiaji wameundwa',
+                    'body'  => 'Watumiaji wameundwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -165,12 +165,12 @@ return [
     'infolist' => [
         'sections' => [
             'general-information' => [
-                'title'   => 'Jumla Taarifa',
+                'title'   => 'Taarifa za jumla',
                 'entries' => [
                     'name'                  => 'Jina',
                     'email'                 => 'Barua pepe',
                     'password'              => 'Nenosiri',
-                    'password-confirmation' => 'Nenosiri Confirmation',
+                    'password-confirmation' => 'Thibitisha nenosiri',
                 ],
             ],
 
@@ -179,28 +179,28 @@ return [
                 'entries' => [
                     'roles'               => 'Majukumu',
                     'permissions'         => 'Ruhusa',
-                    'resource-permission' => 'Resource Ruhusa',
-                    'teams'               => 'Teams',
+                    'resource-permission' => 'Ruhusa ya rekodi',
+                    'teams'               => 'Timu',
                 ],
             ],
 
             'avatar' => [
-                'title' => 'Avatar',
+                'title' => 'Picha ya wasifu',
             ],
 
             'lang-and-status' => [
-                'title'   => 'Lugha & Hali',
+                'title'   => 'Lugha na hali',
                 'entries' => [
-                    'language' => 'Preferred Lugha',
+                    'language' => 'Lugha inayopendelewa',
                     'status'   => 'Hali',
                 ],
             ],
 
             'multi-company' => [
-                'title'                       => 'Multi Kampuni',
-                'allowed-companies'           => 'Inaruhusiwa Makampuni',
-                'default-company'             => 'Chaguo-msingi Kampuni',
-                'default-company-not-allowed' => 'chaguo-msingi kampuni lazima kuwa one ya inaruhusiwa makampuni.',
+                'title'                       => 'Kampuni nyingi',
+                'allowed-companies'           => 'Kampuni zinazoruhusiwa',
+                'default-company'             => 'Kampuni chaguomsingi',
+                'default-company-not-allowed' => 'Kampuni chaguomsingi lazima iwe mojawapo ya kampuni zinazoruhusiwa.',
             ],
         ],
     ],

@@ -16,26 +16,26 @@ return [
         'columns' => [
             'name'       => 'Jina',
             'done'       => 'Imekamilika',
-            'created-at' => 'Imeundwa',
+            'created-at' => 'Iliundwa',
         ],
 
         'groups' => [
             'done'       => 'Imekamilika',
-            'created-at' => 'Imeundwa',
+            'created-at' => 'Iliundwa',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
                     'title' => 'Hatua imesasishwa',
-                    'body'  => 'hatua ina imesasishwa successfully.',
+                    'body'  => 'Hatua imesasishwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'title' => 'Hatua imefutwa',
-                    'body'  => 'hatua ina imefutwa successfully.',
+                    'body'  => 'Hatua imefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -43,8 +43,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Hatua imefutwa',
-                    'body'  => 'hatua ina imefutwa successfully.',
+                    'title' => 'Hatua zimefutwa',
+                    'body'  => 'Hatua zimefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -53,7 +53,7 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Jumla Taarifa',
+                'title' => 'Taarifa za jumla',
 
                 'entries' => [
                     'name' => 'Jina',

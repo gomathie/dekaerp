@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Equipment создано',
-        'body'  => 'equipment есть создано successfully.',
+        'title' => 'Оборудование создано',
+        'body'  => 'Оборудование успешно создано.',
     ],
 ];

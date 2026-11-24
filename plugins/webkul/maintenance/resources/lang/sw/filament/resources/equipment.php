@@ -2,13 +2,13 @@
 
 return [
     'navigation' => [
-        'title' => 'Equipment',
+        'title' => 'Vifaa',
     ],
 
     'form' => [
         'sections' => [
             'general' => [
-                'title'  => 'Jumla Taarifa',
+                'title'  => 'Taarifa za jumla',
                 'fields' => [
                     'name' => 'Jina',
                     'note' => 'Maelezo',
@@ -18,33 +18,33 @@ return [
             'settings' => [
                 'title'  => 'Mipangilio',
                 'fields' => [
-                    'category'   => 'Equipment Kategoria',
-                    'team'       => 'Matengenezo Timu',
+                    'category'   => 'Kategoria ya kifaa',
+                    'team'       => 'Timu ya matengenezo',
                     'company'    => 'Kampuni',
-                    'technician' => 'Technician',
+                    'technician' => 'Fundi',
                     'owner'      => 'Mmiliki',
-                    'location'   => 'Inatumika katika mahali',
+                    'location'   => 'Mahali kinapotumika',
                 ],
             ],
 
             'product-information' => [
-                'title'  => 'Bidhaa Taarifa',
+                'title'  => 'Taarifa za bidhaa',
                 'fields' => [
                     'partner'                     => 'Msambazaji',
-                    'partner-ref'                 => 'Msambazaji Kumbukumbu',
-                    'model'                       => 'Model',
-                    'serial-no'                   => 'Nambari ya mfululizo Nambari',
-                    'effective-date'              => 'Effective Tarehe',
-                    'effective-date-hint-tooltip' => 'Inatumika kama starting point kwa calculating Mean Time Kati ya Kushindwa.',
+                    'partner-ref'                 => 'Rejea ya msambazaji',
+                    'model'                       => 'Modeli',
+                    'serial-no'                   => 'Nambari ya mfululizo',
+                    'effective-date'              => 'Tarehe ya kuanza kutumika',
+                    'effective-date-hint-tooltip' => 'Hutumika kama mwanzo wa kukokotoa wastani wa muda kati ya hitilafu.',
                     'cost'                        => 'Gharama',
-                    'warranty-date'               => 'Warranty Expiration Tarehe',
+                    'warranty-date'               => 'Mwisho wa dhamana',
                 ],
             ],
 
             'maintenance' => [
                 'title'  => 'Matengenezo',
                 'fields' => [
-                    'expected-mtbf' => 'Inatarajiwa Mean Time Kati ya Kushindwa',
+                    'expected-mtbf' => 'Wastani unaotarajiwa wa muda kati ya hitilafu',
                 ],
                 'suffixes' => [
                     'days' => 'siku',
@@ -55,60 +55,60 @@ return [
 
     'table' => [
         'columns' => [
-            'name'       => 'Equipment Jina',
+            'name'       => 'Jina la kifaa',
             'owner'      => 'Mmiliki',
-            'serial-no'  => 'Nambari ya mfululizo Nambari',
-            'category'   => 'Equipment Kategoria',
-            'technician' => 'Technician',
+            'serial-no'  => 'Nambari ya mfululizo',
+            'category'   => 'Kategoria ya kifaa',
+            'technician' => 'Fundi',
             'company'    => 'Kampuni',
-            'created-at' => 'Imeundwa',
+            'created-at' => 'Iliundwa',
         ],
 
         'filters' => [
-            'category'   => 'Equipment Kategoria',
-            'team'       => 'Matengenezo Timu',
-            'technician' => 'Technician',
+            'category'   => 'Kategoria ya kifaa',
+            'team'       => 'Timu ya matengenezo',
+            'technician' => 'Fundi',
         ],
 
         'groups' => [
-            'category'   => 'Equipment Kategoria',
+            'category'   => 'Kategoria ya kifaa',
             'owner'      => 'Mmiliki',
-            'technician' => 'Technician',
+            'technician' => 'Fundi',
             'vendor'     => 'Msambazaji',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Equipment imesasishwa',
-                    'body'  => 'equipment ina imesasishwa successfully.',
+                    'title' => 'Kifaa kimesasishwa',
+                    'body'  => 'Kifaa kimesasishwa kwa mafanikio.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Equipment restored',
-                    'body'  => 'equipment ina restored successfully.',
+                    'title' => 'Kifaa kimerejeshwa',
+                    'body'  => 'Kifaa kimerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Equipment imehifadhiwa',
-                    'body'  => 'equipment ina imehifadhiwa successfully.',
+                    'title' => 'Kifaa kimewekwa kumbukumbu',
+                    'body'  => 'Kifaa kimewekwa kumbukumbu kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Equipment imefutwa',
-                        'body'  => 'equipment ina permanently imefutwa.',
+                        'title' => 'Kifaa kimefutwa',
+                        'body'  => 'Kifaa kimefutwa kabisa.',
                     ],
 
                     'error' => [
-                        'title' => 'Equipment could si kuwa imefutwa',
-                        'body'  => 'Hii equipment ni referenced na another rekodi.',
+                        'title' => 'Kifaa hakikuweza kufutwa',
+                        'body'  => 'Kifaa hiki kinatumiwa na rekodi nyingine.',
                     ],
                 ],
             ],
@@ -117,15 +117,15 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Equipment restored',
-                    'body'  => 'imechaguliwa equipment ina restored successfully.',
+                    'title' => 'Vifaa vimerejeshwa',
+                    'body'  => 'Vifaa vilivyochaguliwa vimerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Equipment imehifadhiwa',
-                    'body'  => 'imechaguliwa equipment ina imehifadhiwa successfully.',
+                    'title' => 'Vifaa vimewekwa kumbukumbu',
+                    'body'  => 'Vifaa vilivyochaguliwa vimewekwa kumbukumbu kwa mafanikio.',
                 ],
             ],
         ],
@@ -133,8 +133,8 @@ return [
         'empty-state' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Equipment imeundwa',
-                    'body'  => 'equipment ina imeundwa successfully.',
+                    'title' => 'Kifaa kimeundwa',
+                    'body'  => 'Kifaa kimeundwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -143,7 +143,7 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title'   => 'Jumla Taarifa',
+                'title'   => 'Taarifa za jumla',
                 'entries' => [
                     'name' => 'Jina',
                     'note' => 'Maelezo',
@@ -153,36 +153,36 @@ return [
             'settings' => [
                 'title'   => 'Mipangilio',
                 'entries' => [
-                    'category'   => 'Equipment Kategoria',
-                    'team'       => 'Matengenezo Timu',
+                    'category'   => 'Kategoria ya kifaa',
+                    'team'       => 'Timu ya matengenezo',
                     'company'    => 'Kampuni',
-                    'technician' => 'Technician',
+                    'technician' => 'Fundi',
                     'owner'      => 'Mmiliki',
-                    'location'   => 'Inatumika katika mahali',
+                    'location'   => 'Mahali kinapotumika',
                 ],
             ],
 
             'product-information' => [
-                'title'   => 'Bidhaa Taarifa',
+                'title'   => 'Taarifa za bidhaa',
                 'entries' => [
                     'partner'        => 'Msambazaji',
-                    'partner-ref'    => 'Msambazaji Kumbukumbu',
-                    'model'          => 'Model',
-                    'serial-no'      => 'Nambari ya mfululizo Nambari',
-                    'effective-date' => 'Effective Tarehe',
+                    'partner-ref'    => 'Rejea ya msambazaji',
+                    'model'          => 'Modeli',
+                    'serial-no'      => 'Nambari ya mfululizo',
+                    'effective-date' => 'Tarehe ya kuanza kutumika',
                     'cost'           => 'Gharama',
-                    'warranty-date'  => 'Warranty Expiration Tarehe',
+                    'warranty-date'  => 'Mwisho wa dhamana',
                 ],
             ],
 
             'maintenance' => [
                 'title'   => 'Matengenezo',
                 'entries' => [
-                    'expected-mtbf'          => 'Inatarajiwa Mean Time Kati ya Kushindwa',
-                    'maintenance-count'      => 'Matengenezo Idadi',
-                    'maintenance-open-count' => 'Wazi Matengenezo Idadi',
-                    'assigned-at'            => 'Amekabidhiwa Tarehe',
-                    'scraped-at'             => 'Scrap Tarehe',
+                    'expected-mtbf'          => 'Wastani unaotarajiwa wa muda kati ya hitilafu',
+                    'maintenance-count'      => 'Idadi ya matengenezo',
+                    'maintenance-open-count' => 'Matengenezo yaliyo wazi',
+                    'assigned-at'            => 'Tarehe ya kugawiwa',
+                    'scraped-at'             => 'Tarehe ya kuondolewa',
                 ],
                 'suffixes' => [
                     'days' => 'siku',

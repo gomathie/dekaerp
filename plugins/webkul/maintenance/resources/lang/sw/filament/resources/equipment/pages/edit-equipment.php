@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Equipment imesasishwa',
-        'body'  => 'equipment ina imesasishwa successfully.',
+        'title' => 'Kifaa kimesasishwa',
+        'body'  => 'Kifaa kimesasishwa kwa mafanikio.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Equipment imehifadhiwa',
-                'body'  => 'equipment ina imehifadhiwa successfully.',
+                'title' => 'Kifaa kimewekwa kumbukumbu',
+                'body'  => 'Kifaa kimewekwa kumbukumbu kwa mafanikio.',
             ],
         ],
     ],

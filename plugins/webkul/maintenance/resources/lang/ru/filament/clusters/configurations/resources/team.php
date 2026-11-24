@@ -2,54 +2,54 @@
 
 return [
     'navigation' => [
-        'title' => 'Teams',
+        'title' => 'Команды',
     ],
 
     'form' => [
         'name'    => 'Название',
         'company' => 'Компания',
-        'users'   => 'Команда Участники',
+        'users'   => 'Участники команды',
     ],
 
     'table' => [
         'columns' => [
             'name'       => 'Название',
             'company'    => 'Компания',
-            'users'      => 'Команда Участники',
+            'users'      => 'Участники команды',
             'created-at' => 'Создано',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Команда обновлено',
-                    'body'  => 'команда есть обновлено successfully.',
+                    'title' => 'Команда обновлена',
+                    'body'  => 'Команда успешно обновлена.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Команда restored',
-                    'body'  => 'команда есть restored successfully.',
+                    'title' => 'Команда восстановлена',
+                    'body'  => 'Команда успешно восстановлена.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Команда удалено',
-                    'body'  => 'команда есть удалено successfully.',
+                    'title' => 'Команда удалена',
+                    'body'  => 'Команда успешно удалена.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Команда force удалено',
-                        'body'  => 'команда есть force удалено successfully.',
+                        'title' => 'Команда удалена безвозвратно',
+                        'body'  => 'Команда успешно удалена безвозвратно.',
                     ],
                     'error' => [
-                        'title' => 'Команда could не быть force удалено',
-                        'body'  => 'команда используется и нельзя быть force удалено.',
+                        'title' => 'Не удалось удалить команду безвозвратно',
+                        'body'  => 'Команда используется, поэтому её нельзя удалить безвозвратно.',
                     ],
                 ],
             ],
@@ -58,15 +58,15 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Teams restored',
-                    'body'  => 'teams есть restored successfully.',
+                    'title' => 'Команды восстановлены',
+                    'body'  => 'Команды успешно восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Teams удалено',
-                    'body'  => 'teams есть удалено successfully.',
+                    'title' => 'Команды удалены',
+                    'body'  => 'Команды успешно удалены.',
                 ],
             ],
         ],
