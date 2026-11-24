@@ -47,7 +47,7 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Tipo de vínculo',
+                    'title' => 'Tipo de emprego atualizado',
                     'body'  => 'O tipo de vínculo foi editado com sucesso.',
                 ],
             ],
@@ -72,8 +72,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Tipos de vínculo',
-                    'body'  => 'Os tipos de vínculo foram criados com sucesso.',
+                    'title' => 'Tipo de emprego criado',
+                    'body'  => 'O tipo de emprego foi criado com sucesso.',
                 ],
             ],
         ],

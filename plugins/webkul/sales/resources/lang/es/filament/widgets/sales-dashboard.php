@@ -7,6 +7,7 @@ return [
     'status'              => 'Estado',
     'delivery-status'     => 'Estado de entrega',
     'billing'             => 'Facturación',
+    'sales-value'         => 'Pedidos confirmados y facturas emitidas sin pedido',
     'stats'               => [
         'heading'            => 'Métricas Clave',
         'total-quotations'   => 'Total de Cotizaciones',
@@ -15,11 +16,23 @@ return [
         'average-revenue'    => 'Ingresos Promedio',
         'increase'           => 'aumento',
         'decrease'           => 'disminución',
+        'this-month'         => 'Este mes',
+    ],
+
+    'order-activity'      => [
+        'heading'     => 'Actividad de pedidos',
+        'description' => 'Pedidos confirmados en el periodo, según su estado actual',
+        'to-deliver'  => 'Por entregar',
+        'delivered'   => 'Entregados',
+        'to-invoice'  => 'Por facturar',
+        'invoiced'    => 'Facturados',
+        'share'       => ':percent% de :total pedidos',
     ],
 
     'monthly-sales'       => [
-        'heading' => 'Ventas Mensuales',
-        'revenue' => 'Ingresos',
+        'heading'  => 'Ventas en el tiempo',
+        'revenue'  => 'Ingresos',
+        'previous' => 'Periodo comparado',
     ],
 
     'revenue-by-category' => [
@@ -30,6 +43,15 @@ return [
     'sales-persons'       => [
         'heading' => 'Rendimiento por Vendedor',
         'revenue' => 'Ingresos',
+    ],
+
+    'quotation-outcome'   => [
+        'heading'     => 'Presupuestos',
+        'description' => 'Qué pasó con los presupuestos hechos en el periodo',
+        'won'         => 'Pasaron a pedido',
+        'open'        => 'Siguen abiertos',
+        'cancelled'   => 'Cancelados',
+        'count'       => 'Presupuestos',
     ],
 
     'top-products'        => [

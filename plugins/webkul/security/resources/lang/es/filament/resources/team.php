@@ -46,23 +46,6 @@ return [
     ],
 
     'infolist' => [
-        'sections' => [
-            'entries' => [
-                'name'          => 'Nombre',
-                'job-title'     => 'Puesto de trabajo',
-                'work-email'    => 'Correo electrónico laboral',
-                'work-mobile'   => 'Móvil laboral',
-                'work-phone'    => 'Teléfono laboral',
-                'manager'       => 'Gerente',
-                'department'    => 'Departamento',
-                'job-position'  => 'Cargo',
-                'team-tags'     => 'Etiquetas de equipo',
-                'coach'         => 'Mentor',
-            ],
-        ],
-    ],
-
-    'infolist' => [
         'entries' => [
             'name' => 'Nombre',
         ],

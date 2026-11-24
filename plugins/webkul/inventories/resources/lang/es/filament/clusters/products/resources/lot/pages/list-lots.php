@@ -11,8 +11,8 @@ return [
             'label' => 'Nuevo lote / número de serie',
 
             'notification' => [
-                'title' => 'Paquete creado',
-                'body'  => 'El paquete ha sido creado correctamente.',
+                'title' => 'Lote creado',
+                'body'  => 'El lote se ha creado correctamente.',
             ],
         ],
     ],

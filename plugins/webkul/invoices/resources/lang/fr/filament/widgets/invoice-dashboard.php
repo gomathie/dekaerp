@@ -10,24 +10,32 @@ return [
     'decrease'          => ':percent% de diminution',
     'no-change'         => 'Aucun changement',
     'invoice-stats'     => [
-        'heading' => 'Factures',
-        'total'   => 'Total Facturé',
-        'count'   => 'Nombre de Factures',
-        'paid'    => 'Factures Payées',
-        'unpaid'  => 'Factures Impayées',
+        'heading'    => 'Factures',
+        'total'      => 'Total Facturé',
+        'count'      => 'Nombre de Factures',
+        'paid'       => 'Factures Payées',
+        'unpaid'     => 'Factures Impayées',
+        'this-month' => 'Ce mois-ci',
+    ],
+
+    'payment-stats'     => [
+        'heading'  => 'Paiements reçus',
+        'received' => 'Reçu',
+        'count'    => 'Paiements',
     ],
 
     'bill-stats'        => [
-        'heading' => 'Factures Fournisseur',
-        'total'   => 'Total Facturé',
-        'count'   => 'Nombre de Factures',
-        'paid'    => 'Factures Payées',
-        'unpaid'  => 'Factures Impayées',
+        'heading'    => 'Factures Fournisseur',
+        'total'      => 'Total Facturé',
+        'count'      => 'Nombre de Factures',
+        'paid'       => 'Factures Payées',
+        'unpaid'     => 'Factures Impayées',
+        'this-month' => 'Ce mois-ci',
     ],
 
     'revenue-over-time' => [
         'heading'     => 'Revenu dans le Temps',
-        'description' => 'Factures clients payées par jour',
+        'description' => 'Factures clients payées, par jour, semaine ou mois',
         'revenue'     => 'Revenu',
     ],
 

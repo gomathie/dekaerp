@@ -5,6 +5,7 @@ namespace Webkul\Invoice\Filament\Widgets;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
 use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Enums\MoveType;
 use Webkul\Invoice\Filament\Clusters\Customers\Resources\InvoiceResource;
@@ -65,6 +66,34 @@ class InvoiceHeadlineWidget extends StatsOverviewWidget
         return $this->getStats();
     }
 
+    /**
+     * The date of the latest invoice or bill before the period, when the
+     * period itself has none (U69, 2026-11-23): an empty tab said nothing,
+     * and TRACE365's figures looked lost when they were only older.
+     *
+     * @param  array<string, mixed>  $filters
+     */
+    public function latestBeforePeriod(array $filters): ?Carbon
+    {
+        $this->pageFilters = $filters;
+
+        if ($this->customerInvoices()->exists() || $this->vendorBills()->exists()) {
+            return null;
+        }
+
+        [$start] = $this->periodRange();
+
+        $query = Invoice::query();
+
+        $latest = $query
+            ->whereIn($query->qualifyColumn('move_type'), [MoveType::OUT_INVOICE, MoveType::IN_INVOICE])
+            ->where($query->qualifyColumn('state'), MoveState::POSTED)
+            ->whereDate($query->qualifyColumn('invoice_date'), '<', $start)
+            ->max($query->qualifyColumn('invoice_date'));
+
+        return $latest ? Carbon::parse($latest) : null;
+    }
+
     protected function getStats(): array
     {
         $currency = current_company()?->currency?->name;
@@ -72,7 +101,14 @@ class InvoiceHeadlineWidget extends StatsOverviewWidget
         $receivable = $this->open($this->customerInvoices());
         $payable = $this->open($this->vendorBills());
 
-        return [
+        // DB-4 (approved mockup, 2026-11-23): Invoiced, To collect, Billed,
+        // To pay. Invoiced and Billed are read from their own widgets, net of
+        // credit notes, and only for someone those widgets admit.
+        [$invoiced] = $this->borrowedStats(InvoiceStatsWidget::class, [0]) + [null];
+        [$billed] = $this->borrowedStats(BillStatsWidget::class, [0]) + [null];
+
+        return array_values(array_filter([
+            $invoiced,
             Stat::make(__('invoices::filament/pages/overview.headline.to-collect'), compact_money($this->owed($receivable), $currency))
                 ->url(InvoiceResource::canViewAny() ? InvoiceResource::getUrl('index') : null)
                 ->icon('heroicon-o-arrow-down-tray')
@@ -80,13 +116,15 @@ class InvoiceHeadlineWidget extends StatsOverviewWidget
                 ->color($overdue > 0 ? 'warning' : 'success')
                 ->extraAttributes(['class' => 'overview-headline-stat']),
 
+            $billed,
+
             Stat::make(__('invoices::filament/pages/overview.headline.to-pay'), compact_money($this->owed($payable), $currency))
                 ->url(BillResource::canViewAny() ? BillResource::getUrl('index') : null)
                 ->icon('heroicon-o-arrow-up-tray')
                 ->description($this->withCurrencySplit(trans_choice('invoices::filament/pages/overview.headline.overdue', $overdueBills = $this->overdue($payable), ['count' => $overdueBills]), $payable))
                 ->color($overdueBills > 0 ? 'danger' : 'success')
                 ->extraAttributes(['class' => 'overview-headline-stat']),
-        ];
+        ]));
     }
 
     /**

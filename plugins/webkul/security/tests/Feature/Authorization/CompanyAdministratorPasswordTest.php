@@ -290,49 +290,155 @@ it('rejects a password that breaks the password rules before writing anything', 
     expect(User::query()->where('email', 'short@tenant-pw.test')->exists())->toBeFalse();
 });
 
-it('gives an existing company an administrator from the edit page and clears the fields', function () {
+/**
+ * The Administrator section's own actions on the edit page (user,
+ * 2026-11-22, A + B + C). Inverted from the 2026-11-03 tests "gives an
+ * existing company an administrator from the edit page and clears the
+ * fields" and "invites from the edit page when only an email is given",
+ * which filled loose fields and saved: those fields no longer exist on edit.
+ */
+function companyAdministratorSectionAction(string $name, ?string $row = null): TestAction
+{
+    return TestAction::make($name)->schemaComponent($row ?? 'companyAdministratorSection', 'form');
+}
+
+function companyAdministratorPage(Company $company)
+{
+    return Livewire::test(EditCompany::class, ['record' => $company->getRouteKey()]);
+}
+
+it('gives an existing company an administrator with a password from the add window and emails nothing', function () {
     FilamentHelper::bootAdminPanel();
 
     $superAdmin = multiCompanyAdminTestSuperAdmin();
     $company = companyAdministratorPasswordPageCompany();
     multiCompanyAdminTestAuthenticate($superAdmin, [(int) $company->getKey()]);
 
-    Livewire::test(EditCompany::class, ['record' => $company->getRouteKey()])
-        ->fillForm([
-            'administrator_email'    => 'edit-page@tenant-pw.test',
-            'administrator_password' => 'Correct-horse-42',
+    companyAdministratorPage($company)
+        ->callAction(companyAdministratorSectionAction('addCompanyAdministrator'), [
+            'method'   => 'password',
+            'email'    => 'edit-page@tenant-pw.test',
+            'name'     => 'Efua Owusu',
+            'password' => 'Correct-horse-42',
         ])
-        ->call('save')
         ->assertHasNoFormErrors()
-        // Not company columns, so nothing refills them: left in place, the
-        // next save would set the password again.
-        ->assertSet('data.administrator_email', null)
-        ->assertSet('data.administrator_password', null);
+        ->assertNotified(__('security::filament/resources/company.pages.administrator-account.created.title'));
 
     $user = User::query()->where('email', 'edit-page@tenant-pw.test')->firstOrFail();
 
     expect($user->isCompanyAdmin((int) $company->getKey()))->toBeTrue()
+        ->and($user->name)->toBe('Efua Owusu')
         ->and(Hash::check('Correct-horse-42', $user->password))->toBeTrue();
 
     Mail::assertNothingSent();
 });
 
-it('invites from the edit page when only an email is given', function () {
+it('invites an administrator from the add window', function () {
     FilamentHelper::bootAdminPanel();
 
     $superAdmin = multiCompanyAdminTestSuperAdmin();
     $company = companyAdministratorPasswordPageCompany();
     multiCompanyAdminTestAuthenticate($superAdmin, [(int) $company->getKey()]);
 
-    Livewire::test(EditCompany::class, ['record' => $company->getRouteKey()])
-        ->fillForm(['administrator_email' => 'edit-invite@tenant-pw.test'])
-        ->call('save')
-        ->assertHasNoFormErrors();
+    companyAdministratorPage($company)
+        ->callAction(companyAdministratorSectionAction('addCompanyAdministrator'), [
+            'method' => 'invite',
+            'email'  => 'edit-invite@tenant-pw.test',
+        ])
+        ->assertNotified(__('security::filament/resources/company.pages.create.administrator.invited.title'));
 
     expect(Invitation::query()->where('email', 'edit-invite@tenant-pw.test')->exists())->toBeTrue()
         ->and(User::query()->where('email', 'edit-invite@tenant-pw.test')->exists())->toBeFalse();
 
     Mail::assertSent(UserInvitationMail::class);
+});
+
+it('refuses from the add window to set the password of a user from another company', function () {
+    FilamentHelper::bootAdminPanel();
+
+    $superAdmin = multiCompanyAdminTestSuperAdmin();
+    $company = companyAdministratorPasswordPageCompany();
+    $other = multiCompanyAdminTestCompany();
+    multiCompanyAdminTestAuthenticate($superAdmin, [(int) $company->getKey(), (int) $other->getKey()]);
+
+    companyAdministratorPasswordSet($other, $superAdmin, 'outsider@tenant-pw.test', 'Original-pass-42');
+
+    companyAdministratorPage($company)
+        ->callAction(companyAdministratorSectionAction('addCompanyAdministrator'), [
+            'method'   => 'password',
+            'email'    => 'outsider@tenant-pw.test',
+            'password' => 'Takeover-pass-42',
+        ])
+        ->assertNotified(__('security::filament/resources/company.pages.administrator-account.refused.title'));
+
+    $outsider = User::query()->where('email', 'outsider@tenant-pw.test')->firstOrFail();
+
+    expect(Hash::check('Original-pass-42', $outsider->password))->toBeTrue()
+        ->and($outsider->isCompanyAdmin((int) $company->getKey()))->toBeFalse();
+});
+
+it('lists each administrator and pending invitation with its own actions', function () {
+    FilamentHelper::bootAdminPanel();
+
+    $superAdmin = multiCompanyAdminTestSuperAdmin();
+    $company = companyAdministratorPasswordPageCompany();
+    multiCompanyAdminTestAuthenticate($superAdmin, [(int) $company->getKey()]);
+
+    companyAdministratorPasswordSet($company, $superAdmin, 'row-admin@tenant-pw.test', 'Correct-horse-42');
+    app(CompanyAdministratorInviter::class)->invite($company, $superAdmin, 'row-invite@tenant-pw.test');
+
+    $administrator = User::query()->where('email', 'row-admin@tenant-pw.test')->firstOrFail();
+    $invitation = Invitation::query()->where('email', 'row-invite@tenant-pw.test')->firstOrFail();
+
+    companyAdministratorPage($company)
+        ->assertSee('row-admin@tenant-pw.test')
+        ->assertSee(__('security::filament/contributions/company.administrator.status.active'))
+        ->assertSee('row-invite@tenant-pw.test')
+        ->assertActionVisible(companyAdministratorSectionAction('setAdministratorPassword'.$administrator->getKey(), "administrator-{$administrator->getKey()}-actions"))
+        ->assertActionVisible(companyAdministratorSectionAction('resendInvitation'.$invitation->getKey(), "invitation-{$invitation->getKey()}-actions"));
+});
+
+it('sets an administrator password from their row', function () {
+    FilamentHelper::bootAdminPanel();
+
+    $superAdmin = multiCompanyAdminTestSuperAdmin();
+    $company = companyAdministratorPasswordPageCompany();
+    multiCompanyAdminTestAuthenticate($superAdmin, [(int) $company->getKey()]);
+
+    companyAdministratorPasswordSet($company, $superAdmin, 'row-reset@tenant-pw.test', 'Correct-horse-42');
+    $administrator = User::query()->where('email', 'row-reset@tenant-pw.test')->firstOrFail();
+
+    companyAdministratorPage($company)
+        ->callAction(
+            companyAdministratorSectionAction('setAdministratorPassword'.$administrator->getKey(), "administrator-{$administrator->getKey()}-actions"),
+            ['password' => 'Brand-new-pass-77', 'must_change_password' => false],
+        )
+        ->assertNotified(__('security::filament/resources/company.pages.administrator-account.password-reset.title'));
+
+    expect(Hash::check('Brand-new-pass-77', $administrator->fresh()->password))->toBeTrue();
+
+    Mail::assertNothingSent();
+});
+
+it('resends a pending invitation and copies its link from its row', function () {
+    FilamentHelper::bootAdminPanel();
+
+    $superAdmin = multiCompanyAdminTestSuperAdmin();
+    $company = companyAdministratorPasswordPageCompany();
+    multiCompanyAdminTestAuthenticate($superAdmin, [(int) $company->getKey()]);
+
+    app(CompanyAdministratorInviter::class)->invite($company, $superAdmin, 'row-resend@tenant-pw.test');
+    $invitation = Invitation::query()->where('email', 'row-resend@tenant-pw.test')->firstOrFail();
+    $invitation->forceFill(['expires_at' => now()->addDay()])->save();
+    $row = "invitation-{$invitation->getKey()}-actions";
+
+    companyAdministratorPage($company)
+        ->callAction(companyAdministratorSectionAction('resendInvitation'.$invitation->getKey(), $row))
+        ->assertNotified(__('security::filament/resources/company.provisioning.resend.invited'))
+        ->mountAction(companyAdministratorSectionAction('copyInvitationLink'.$invitation->getKey(), $row))
+        ->assertActionDataSet(['link' => $invitation->fresh()->acceptUrl()]);
+
+    expect($invitation->fresh()->expires_at->greaterThan(now()->addDays(6)))->toBeTrue();
 });
 
 it('does nothing about an administrator when the edit page is saved with the section blank', function () {

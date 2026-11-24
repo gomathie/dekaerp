@@ -12,4 +12,11 @@ return [
             'reason'   => 'Reason',
         ],
     ],
+
+    'sale-currency' => [
+        'title'       => 'Currency question on new invoices',
+        'description' => 'For companies that sell in more than one currency.',
+        'field'       => 'Ask which currency each sale is in',
+        'helper'      => 'A new invoice, quotation or sales order first asks for the currency and, for a foreign one, confirms the day\'s exchange rate. Only asked when the company has more than one currency.',
+    ],
 ];

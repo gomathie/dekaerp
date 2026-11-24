@@ -176,10 +176,13 @@ class Invoices extends BaseDashboard
      */
     public static function sectionWidgets(): array
     {
+        // DB-4 (approved mockup, 2026-11-23): key figures first (the
+        // headline widget now carries Invoiced and Billed, so the separate
+        // count tiles are gone), money in and out as the main chart, three
+        // breakdowns, two lists. The removed widgets still exist and keep
+        // their permissions: the headline reads their figures through them.
         return [
-            Widgets\InvoiceStatsWidget::class,
-            Widgets\BillStatsWidget::class,
-            Widgets\RevenueOverTimeWidget::class,
+            Widgets\OverviewCashFlowChart::class,
             Widgets\InvoiceStatusChart::class,
             Widgets\CustomerRevenueChart::class,
             Widgets\SalespersonPerformanceChart::class,

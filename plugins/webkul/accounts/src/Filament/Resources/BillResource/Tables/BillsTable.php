@@ -52,6 +52,8 @@ class BillsTable
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('invoice_partner_display_name')
                     ->label(__('accounts::filament/resources/bill.table.columns.customer'))
+                    // The company a contact works for, under their name (plan #9 R-9).
+                    ->description(fn ($record): ?string => $record->partner?->parent?->name)
                     ->placeholder('-')
                     ->searchable()
                     ->sortable(),
@@ -358,7 +360,7 @@ class BillsTable
                 fn (Model $record): bool => BillResource::can('delete', $record) && $record->state !== MoveState::POSTED,
             )
             ->modifyQueryUsing(function (Builder $query) {
-                $query->with('currency', 'company.currency');
+                $query->with('currency', 'company.currency', 'partner.parent');
             });
     }
 }

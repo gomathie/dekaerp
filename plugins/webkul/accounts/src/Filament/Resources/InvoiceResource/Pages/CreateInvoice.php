@@ -4,21 +4,25 @@ namespace Webkul\Account\Filament\Resources\InvoiceResource\Pages;
 
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Validation\ValidationException;
 use Throwable;
 use Webkul\Account\Enums\JournalType;
 use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Facades\Account as AccountFacade;
+use Webkul\Account\Filament\Concerns\AsksSaleCurrency;
 use Webkul\Account\Filament\Resources\InvoiceResource;
 use Webkul\Account\Models\Journal;
 use Webkul\Account\Services\QuickPayment;
+use Webkul\Account\Services\SaleCurrencyQuestion;
 use Webkul\Account\Services\WalkInCustomer;
 use Webkul\Support\Filament\Concerns\HandlesCrossCompanyException;
 use Webkul\Support\Filament\Concerns\HasRepeaterColumnManager;
 
 class CreateInvoice extends CreateRecord
 {
+    use AsksSaleCurrency;
     use HandlesCrossCompanyException;
 
     protected ?bool $hasDatabaseTransactions = true;
@@ -68,6 +72,25 @@ class CreateInvoice extends CreateRecord
         }
 
         $this->form->fill($this->data);
+
+        $this->openSaleCurrencyQuestion();
+    }
+
+    protected function saleCurrencyRateColumn(): string
+    {
+        return 'invoice_currency_rate';
+    }
+
+    /** The question is for sales: a customer invoice only, never a credit note. */
+    protected function asksSaleCurrency(): bool
+    {
+        return ($this->data['move_type'] ?? null) === MoveType::OUT_INVOICE->value
+            && app(SaleCurrencyQuestion::class)->isAsked(current_company_id());
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [$this->saleCurrencyHeaderAction()];
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array
@@ -77,9 +100,26 @@ class CreateInvoice extends CreateRecord
         return $data;
     }
 
+    protected function handleRecordCreation(array $data): Model
+    {
+        if ($this->getParentRecord()) {
+            return parent::handleRecordCreation($data);
+        }
+
+        $record = new ($this->getModel())($data);
+
+        $this->applyConfirmedSaleRate($record);
+
+        $record->save();
+
+        return $record;
+    }
+
     protected function afterCreate(): void
     {
         AccountFacade::computeAccountMove($this->getRecord());
+
+        $this->noteConfirmedSaleRate($this->getRecord(), 'accounts::filament/resources/invoice/pages/create-invoice.sale-currency.chatter');
 
         // "Paid now" (user, 2026-11-20): confirm and record the full payment.
         // Same transaction as the create, so a refused payment leaves no

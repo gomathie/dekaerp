@@ -10,24 +10,32 @@ return [
     'decrease'          => ':percent% de redução',
     'no-change'         => 'Sem alteração',
     'invoice-stats'     => [
-        'heading' => 'Faturas',
-        'total'   => 'Total Faturado',
-        'count'   => 'Quantidade de Faturas',
-        'paid'    => 'Faturas Pagas',
-        'unpaid'  => 'Faturas em Aberto',
+        'heading'    => 'Faturas',
+        'total'      => 'Total Faturado',
+        'count'      => 'Quantidade de Faturas',
+        'paid'       => 'Faturas Pagas',
+        'unpaid'     => 'Faturas em Aberto',
+        'this-month' => 'Este mês',
+    ],
+
+    'payment-stats'     => [
+        'heading'  => 'Pagamentos recebidos',
+        'received' => 'Recebido',
+        'count'    => 'Pagamentos',
     ],
 
     'bill-stats'        => [
-        'heading' => 'Faturas de Fornecedor',
-        'total'   => 'Total Faturado',
-        'count'   => 'Quantidade de Faturas',
-        'paid'    => 'Faturas Pagas',
-        'unpaid'  => 'Faturas em Aberto',
+        'heading'    => 'Faturas de Fornecedor',
+        'total'      => 'Total Faturado',
+        'count'      => 'Quantidade de Faturas',
+        'paid'       => 'Faturas Pagas',
+        'unpaid'     => 'Faturas em Aberto',
+        'this-month' => 'Este mês',
     ],
 
     'revenue-over-time' => [
         'heading'     => 'Receita ao Longo do Tempo',
-        'description' => 'Faturas de cliente pagas por dia',
+        'description' => 'Faturas de cliente pagas, por dia, semana ou mês',
         'revenue'     => 'Receita',
     ],
 

@@ -1,7 +1,7 @@
 @php
     /*
      * One layout for every printed business document (TRACE365, 2026-11-23,
-     * plan #10 R-8). The callers build $document; this view only lays it out.
+     * plan #9 R-8). The callers build $document; this view only lays it out.
      *
      * Every rule is scoped under .deka-doc: the preview modal renders this
      * same HTML inside the application page, and the old templates' global

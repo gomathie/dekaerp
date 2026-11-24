@@ -43,6 +43,34 @@ class OverviewHeadlineWidget extends StatsOverviewWidget
         return __('invoices::filament/pages/overview.headline.heading');
     }
 
+    /**
+     * When the open tab's period is empty but older records exist, say so
+     * and when the latest is (U69, 2026-11-23). The period bar above is the
+     * way to widen it. Each section answers for itself through its headline
+     * widget's latestBeforePeriod(), so Invoices still names no other module.
+     */
+    public function getDescription(): ?string
+    {
+        $filters = $this->pageFilters ?? [];
+        $chosen = (array) ($filters['sections'] ?? []);
+
+        if (count($chosen) !== 1) {
+            return null;
+        }
+
+        $class = OverviewRegistry::visible()[$chosen[0]]['headline'] ?? null;
+
+        if ($class === null || ! method_exists($class, 'latestBeforePeriod')) {
+            return null;
+        }
+
+        $latest = app($class)->latestBeforePeriod($filters);
+
+        return $latest === null
+            ? null
+            : __('invoices::filament/pages/overview.headline.empty-period', ['date' => $latest->translatedFormat('j M Y')]);
+    }
+
     protected function getColumns(): int|array
     {
         // Four across on desktop (user, 2026-11-11: three left the cards too

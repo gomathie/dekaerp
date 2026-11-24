@@ -68,4 +68,4 @@ it('translates every section heading in each supported language', function (stri
 
         expect(trans()->hasForLocale($key, $locale))->toBeTrue("Missing {$key} for {$locale}.");
     }
-})->with(['en', 'fr', 'es', 'pt_BR', 'ar']);
+})->with(['en', 'fr', 'es', 'pt_BR', 'ar', 'ru', 'sw']);

@@ -58,6 +58,7 @@ return [
         'description' => 'Monedas que esta empresa puede usar en facturas, facturas de proveedor, presupuestos y pedidos de compra, además de su moneda predeterminada. Déjelo vacío para permitir todas las monedas activas.',
         'fields'      => [
             'permitted' => 'Monedas adicionales',
+            'available' => 'Disponibles ahora en los documentos: :list',
         ],
     ],
 

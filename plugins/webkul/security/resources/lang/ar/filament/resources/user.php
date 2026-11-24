@@ -13,7 +13,8 @@ return [
 
     'form' => [
         'validation' => [
-            'needs-attention'                 => 'بعض الحقول تحتاج إلى مراجعة',            'cannot-remove-last-admin'        => 'لا يمكن إزالة دور المسؤول من آخر مستخدم مسؤول.',
+            'needs-attention'                 => 'بعض الحقول تحتاج إلى مراجعة',
+            'cannot-remove-last-admin'        => 'لا يمكن إزالة دور المسؤول من آخر مستخدم مسؤول.',
             'company-invalid'                 => 'شركة واحدة أو أكثر من الشركات المحددة غير صالحة.',
             'company-not-assigned'            => 'يمكنك تعيين المستخدمين فقط للشركات المعيّنة لحسابك.',
             'company-required'                => 'اختر شركة واحدة على الأقل.',

@@ -6,6 +6,7 @@ use Flowframe\Trend\Trend;
 use Flowframe\Trend\TrendValue;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
+use Livewire\Attributes\Locked;
 use Webkul\Sale\Filament\Widgets\Concerns\GuardsSaleDashboardWidget;
 use Webkul\Sale\Filament\Widgets\Concerns\HasSaleDashboardFilters;
 use Webkul\Support\Filament\Widgets\DashboardStatsWidget;
@@ -16,9 +17,17 @@ class SaleStatsOverview extends DashboardStatsWidget
 
     protected static ?int $sort = 1;
 
+    /**
+     * Set when these cards sit above the sales orders list (plan #9 R-9),
+     * which has no period bar: the heading then names the period instead of
+     * "Key Metrics". Locked: only the page that places it sets it.
+     */
+    #[Locked]
+    public ?string $periodHeading = null;
+
     public function getHeading(): ?string
     {
-        return __('sales::filament/widgets/sales-dashboard.stats.heading');
+        return $this->periodHeading ?? __('sales::filament/widgets/sales-dashboard.stats.heading');
     }
 
     protected function getStats(): array

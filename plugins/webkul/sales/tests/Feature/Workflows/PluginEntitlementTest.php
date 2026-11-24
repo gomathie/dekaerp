@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Livewire\Livewire;
+use Webkul\Invoice\Filament\Clusters\Configuration;
+use Webkul\Invoice\Filament\Clusters\Customers;
+use Webkul\Invoice\Filament\Clusters\Vendors;
 use Webkul\PluginManager\Exceptions\PluginNotEntitledException;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
@@ -12,6 +15,7 @@ use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource\Pages\ListQ
 use Webkul\Sale\Models\Order;
 use Webkul\Sale\Services\Invoicer;
 use Webkul\Sale\Services\OrderWorkflow;
+use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Models\Company;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/CompanyHelper.php';
@@ -45,6 +49,39 @@ function setSalesEntitlement(Company $company, bool $enabled): void
 
     PluginAccess::flush();
 }
+
+/**
+ * User, 2026-11-23 (hotfix v1.16.6): customer invoices stay in the Invoices
+ * group, first, with or without Sales, so the sidebar "Invoices" link opens
+ * the invoices.
+ *
+ * Inverted from "shows invoices under sales only while the company has
+ * sales" (v1.16.1): with invoices moved under Sales, only Configuration was
+ * left in the group, and the "Invoices" link opened Bank Accounts.
+ */
+it('keeps customer invoices first in the invoices menu, with or without sales', function (): void {
+    $company = Company::factory()->create();
+    setSalesEntitlement($company, true);
+    FilamentHelper::actingAsCompanyUser([$company], []);
+    CompanyHelper::setActive([$company->getKey()]);
+
+    $invoicesMenu = fn (): array => [
+        Customers::getNavigationGroup(),
+        Customers::getNavigationLabel(),
+        // The sidebar link opens the group's first entry (lowest sort).
+        Customers::getNavigationSort() < Configuration::getNavigationSort()
+            && Customers::getNavigationSort() < Vendors::getNavigationSort(),
+    ];
+
+    $expected = [NavigationGroup::Invoice, __('invoices::filament/clusters/customers.navigation.title'), true];
+
+    expect($invoicesMenu())->toBe($expected)
+        ->and(Orders::getNavigationSort())->toBeNull();
+
+    setSalesEntitlement($company, false);
+
+    expect($invoicesMenu())->toBe($expected);
+});
 
 it('enforces the sales entitlement across UI API policies and services', function (): void {
     $companyA = Company::factory()->create();

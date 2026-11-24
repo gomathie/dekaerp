@@ -86,7 +86,7 @@ class ListInvoices extends ListRecords
 
     /**
      * How many documents a tab holds, shown on the tab (TRACE365 reference
-     * lists, 2026-11-23, plan #10 R-9). The same condition the tab applies,
+     * lists, 2026-11-23, plan #9 R-9). The same condition the tab applies,
      * on the resource's own scoped query, so the count matches the list.
      * Empty tabs show no badge.
      */

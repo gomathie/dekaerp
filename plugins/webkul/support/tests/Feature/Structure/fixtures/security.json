@@ -84,20 +84,6 @@
                                 "type": "Filament\\Schemas\\Components\\Section",
                                 "children": [
                                     {
-                                        "type": "Filament\\Schemas\\Components\\Actions",
-                                        "children": [
-                                            {
-                                                "type": "Filament\\Actions\\Action",
-                                                "name": "changeBaseCurrency"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "Filament\\Schemas\\Components\\Section",
-                                "children": [
-                                    {
                                         "type": "Filament\\Forms\\Components\\Select",
                                         "name": "onboarding_price_id"
                                     }
@@ -132,7 +118,11 @@
                                 "type": "Filament\\Schemas\\Components\\Section",
                                 "children": [
                                     {
-                                        "type": "Filament\\Schemas\\Components\\Text"
+                                        "type": "Filament\\Schemas\\Components\\Group",
+                                        "children": {
+                                            "__error": "Error",
+                                            "__message": "Typed property Filament\\Schemas\\Components\\Component::$container must not be accessed before initialization"
+                                        }
                                     },
                                     {
                                         "type": "Filament\\Forms\\Components\\TextInput",
@@ -180,6 +170,20 @@
                                     {
                                         "type": "Filament\\Forms\\Components\\CheckboxList",
                                         "name": "company_modules"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Filament\\Schemas\\Components\\Section",
+                                "children": [
+                                    {
+                                        "type": "Filament\\Schemas\\Components\\Actions",
+                                        "children": [
+                                            {
+                                                "type": "Filament\\Actions\\Action",
+                                                "name": "changeBaseCurrency"
+                                            }
+                                        ]
                                     }
                                 ]
                             }

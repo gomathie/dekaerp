@@ -6,6 +6,7 @@ use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Models\Move;
 use Webkul\Invoice\Filament\Pages\Invoices;
+use Webkul\Invoice\Filament\Widgets\InvoiceHeadlineWidget;
 use Webkul\Invoice\Filament\Widgets\InvoiceStatsWidget;
 use Webkul\Invoice\Filament\Widgets\RevenueOverTimeWidget;
 use Webkul\Invoice\Models\Invoice;
@@ -13,8 +14,10 @@ use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
+use Webkul\Support\Models\Currency;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/CompanyHelper.php';
+require_once __DIR__.'/../../../../support/tests/Helpers/DashboardWidgetGuardHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/FilamentHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
 
@@ -136,6 +139,70 @@ it('counts and sums only the current company’s invoices', function (): void {
         ->and(Invoice::query()->whereKey($query->pluck('id'))->count())->toBe(2);
 });
 
+/**
+ * Dashboard plan DB-2 (2026-11-22): the invoiced total is invoices less
+ * credit notes (DB-8's revenue rule), and "Unpaid" includes partly paid
+ * invoices, which used to fall in neither paid nor unpaid.
+ */
+it('deducts credit notes from the invoiced total and counts partly paid as unpaid', function (): void {
+    $company = Company::factory()->create();
+    CompanyHelper::actingAsCompanyUser($company, []);
+
+    postedInvoice($company, 100, '2026-03-02');
+    postedInvoice($company, 60, '2026-03-03', 'partial');
+    postedInvoice($company, 40, '2026-03-04', 'not_paid');
+
+    $creditNote = postedInvoice($company, 30, '2026-03-05');
+    Move::withoutGlobalScopes()->whereKey($creditNote->getKey())->update([
+        'move_type'           => MoveType::OUT_REFUND,
+        'amount_total_signed' => -30,
+    ]);
+
+    $widget = invoiceWidget(InvoiceStatsWidget::class, ['start_date' => '2026-03-01', 'end_date' => '2026-03-31']);
+
+    $net = (fn () => $this->customerInvoicesNet())->call($widget);
+    $unpaid = (fn () => $this->unpaidOnly($this->customerInvoices()))->call($widget);
+
+    expect((float) $net->sum('amount_total_signed'))->toBe(170.0)
+        ->and($unpaid->count())->toBe(2);
+});
+
+/**
+ * DB-7 / D-DB-5 (2026-11-22): money to collect in more than one currency is
+ * split by currency under the total, and a debt row shows its own currency.
+ */
+it('splits money to collect by currency and shows a foreign debt in its own currency', function (): void {
+    $company = Company::factory()->create();
+    CompanyHelper::actingAsCompanyUser($company, []);
+
+    $local = Currency::query()->updateOrCreate(['name' => 'GHS'], ['active' => true]);
+    $usd = Currency::query()->updateOrCreate(['name' => 'USD'], ['active' => true]);
+    $company->forceFill(['currency_id' => $local->getKey()])->save();
+
+    foreach ([[$usd, 100, 1550], [$local, 500, 500]] as [$currency, $own, $base]) {
+        $invoice = postedInvoice($company, $base, now()->toDateString(), 'not_paid');
+        Move::withoutGlobalScopes()->whereKey($invoice->getKey())->update([
+            'currency_id'            => $currency->getKey(),
+            'amount_residual'        => $own,
+            'amount_residual_signed' => $base,
+            'invoice_date_due'       => now()->addDays(3)->toDateString(),
+        ]);
+    }
+
+    $widget = invoiceWidget(InvoiceHeadlineWidget::class, []);
+
+    $stats = (fn () => $this->getStats())->call($widget);
+    $description = (string) $stats[0]->getDescription();
+
+    $rows = $widget->panel([])['list']['rows']['open'];
+
+    // ICU writes symbols ("$100", "GH₵500"), so check the split itself: the
+    // overdue text plus one part per currency.
+    expect(substr_count($description, ' · '))->toBe(2)
+        ->and($description)->toContain('$')
+        ->and(collect($rows)->pluck('amount')->filter(fn (string $amount): bool => str_contains($amount, '100'))->first())->toContain('$');
+});
+
 it('draws revenue per day from one grouped sum of paid invoices', function (): void {
     $company = Company::factory()->create();
 
@@ -179,4 +246,22 @@ it('lists only the current company’s members as salespersons', function (): vo
 
     expect($options)->toHaveKey($member->getKey())
         ->not->toHaveKey($outsider->getKey());
+});
+
+/**
+ * Dashboard plan DB-3 (2026-11-23): every widget this dashboard lists is
+ * absent without its permission or once the module is off, and present with
+ * both. A widget added without its guard fails here.
+ */
+it('shows every invoice dashboard widget only with its permission and the module', function (): void {
+    FilamentHelper::bootAdminPanel();
+
+    $company = Company::factory()->create();
+
+    // The cash-flow chart checks the revenue-over-time widget's permission
+    // (OverviewCashFlowChart::getWidgetPermission()), which is not listed.
+    $revenuePermission = array_key_first(FilamentShield::getWidgets()[RevenueOverTimeWidget::class]['permissions']);
+
+    expect(DashboardWidgetGuardHelper::visibility(Invoices::sectionWidgets(), 'invoices', $company, [$revenuePermission]))
+        ->toBe(DashboardWidgetGuardHelper::guarded(Invoices::sectionWidgets()));
 });

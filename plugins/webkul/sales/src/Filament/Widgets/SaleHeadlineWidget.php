@@ -5,6 +5,9 @@ namespace Webkul\Sale\Filament\Widgets;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Carbon;
+use Webkul\Account\Enums\MoveState;
+use Webkul\Account\Enums\MoveType;
+use Webkul\Account\Models\Move;
 use Webkul\Sale\Enums\OrderState;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\OrderResource;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource;
@@ -97,6 +100,38 @@ class SaleHeadlineWidget extends StatsOverviewWidget
         return $this->getStats();
     }
 
+    /**
+     * The date of the latest sale or quotation before the period, when the
+     * period itself has none (U69, 2026-11-23). Orders and invoices made
+     * without an order both count, like the Revenue figure.
+     *
+     * @param  array<string, mixed>  $filters
+     */
+    public function latestBeforePeriod(array $filters): ?Carbon
+    {
+        $this->pageFilters = $filters;
+
+        if ($this->salesCount() > 0 || $this->quotations()->exists()) {
+            return null;
+        }
+
+        [$start] = $this->periodRange();
+
+        $orders = Order::query();
+        $latestOrder = $orders->whereDate($orders->qualifyColumn('date_order'), '<', $start)->max($orders->qualifyColumn('date_order'));
+
+        $invoices = Move::query();
+        $latestInvoice = $invoices
+            ->where($invoices->qualifyColumn('move_type'), MoveType::OUT_INVOICE)
+            ->where($invoices->qualifyColumn('state'), MoveState::POSTED)
+            ->whereDate($invoices->qualifyColumn('invoice_date'), '<', $start)
+            ->max($invoices->qualifyColumn('invoice_date'));
+
+        $dates = array_filter([$latestOrder, $latestInvoice]);
+
+        return $dates === [] ? null : collect($dates)->map(fn ($date): Carbon => Carbon::parse($date))->max();
+    }
+
     protected function getStats(): array
     {
         $currency = current_company()?->currency?->name;
@@ -110,17 +145,28 @@ class SaleHeadlineWidget extends StatsOverviewWidget
 
         $orders = $this->salesCount();
 
+        // DB-4 (approved mockup, 2026-11-23): Revenue, Sales, Average sale,
+        // Open quotations. The middle two come from SaleStatsOverview, which
+        // owns them, and only for someone that widget admits.
+        $middle = $this->borrowedStats(SaleStatsOverview::class, [1, 3]);
+
         return [
             Stat::make(__('invoices::filament/pages/overview.headline.revenue'), compact_money($revenue, $currency))
                 ->url(OrderResource::canViewAny() ? OrderResource::getUrl('index') : null)
                 ->icon('heroicon-o-banknotes')
-                ->description(trans_choice('invoices::filament/pages/overview.headline.orders', $orders, ['count' => $orders])
-                    .' · '.__('invoices::filament/pages/overview.trend', ['change' => $change]))
-                ->descriptionIcon($trendIcon)
-                ->descriptionColor($trendColor)
+                // The trend as a pill with its arrow (DB-9, 2026-11-24).
+                ->description($this->trendDescription(
+                    trans_choice('invoices::filament/pages/overview.headline.orders', $orders, ['count' => $orders]),
+                    $change,
+                    $trendIcon,
+                    $trendColor,
+                    trim(__('invoices::filament/pages/overview.trend', ['change' => ''])),
+                ))
                 ->chart($this->dailyRevenue())
                 ->color('success')
                 ->extraAttributes(['class' => 'overview-headline-stat']),
+
+            ...$middle,
 
             Stat::make(__('invoices::filament/pages/overview.headline.open-quotations'), number_format($this->quotations()->count()))
                 ->url(QuotationResource::canViewAny() ? QuotationResource::getUrl('index') : null)

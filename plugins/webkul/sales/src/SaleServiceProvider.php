@@ -72,6 +72,7 @@ class SaleServiceProvider extends PackageServiceProvider
                 '2026_08_21_000000_drop_sale_source_from_sales_orders_table',
                 '2026_08_03_130000_seed_sales_sequences',
                 '2026_11_22_000001_create_sales_invoice_order_links_table',
+                '2026_11_24_000001_add_currency_rate_source_to_sales_orders_table',
             ])
             ->runsMigrations()
             ->hasSettings([
@@ -122,6 +123,8 @@ class SaleServiceProvider extends PackageServiceProvider
             headline: SaleHeadlineWidget::class,
             attention: fn (): array => SaleHeadlineWidget::attention(),
             actions: fn (): array => SaleHeadlineWidget::actions(),
+            // DB-4 layout (approved mockup, 2026-11-23).
+            columns: 6,
         );
 
         Event::listen(OperationDone::class, ComputeSaleOrderListener::class);

@@ -7,6 +7,7 @@ return [
     'status'              => 'Situação',
     'delivery-status'     => 'Situação da entrega',
     'billing'             => 'Faturamento',
+    'sales-value'         => 'Pedidos confirmados e faturas emitidas sem pedido',
     'stats'               => [
         'heading'            => 'Métricas Principais',
         'total-quotations'   => 'Total de Cotações',
@@ -15,11 +16,23 @@ return [
         'average-revenue'    => 'Receita Média',
         'increase'           => 'aumento',
         'decrease'           => 'redução',
+        'this-month'         => 'Este mês',
+    ],
+
+    'order-activity'      => [
+        'heading'     => 'Atividade dos pedidos',
+        'description' => 'Pedidos confirmados no período, conforme o estado atual',
+        'to-deliver'  => 'A entregar',
+        'delivered'   => 'Entregues',
+        'to-invoice'  => 'A faturar',
+        'invoiced'    => 'Faturados',
+        'share'       => ':percent% de :total pedidos',
     ],
 
     'monthly-sales'       => [
-        'heading' => 'Vendas Mensais',
-        'revenue' => 'Receita',
+        'heading'  => 'Vendas ao longo do tempo',
+        'revenue'  => 'Receita',
+        'previous' => 'Período comparado',
     ],
 
     'revenue-by-category' => [
@@ -30,6 +43,15 @@ return [
     'sales-persons'       => [
         'heading' => 'Desempenho por Vendedor',
         'revenue' => 'Receita',
+    ],
+
+    'quotation-outcome'   => [
+        'heading'     => 'Cotações',
+        'description' => 'O que aconteceu com as cotações feitas no período',
+        'won'         => 'Viraram pedidos',
+        'open'        => 'Ainda abertas',
+        'cancelled'   => 'Canceladas',
+        'count'       => 'Cotações',
     ],
 
     'top-products'        => [

@@ -49,7 +49,7 @@ return [
             'edit' => [
                 'notification' => [
                     'title' => 'Mandatory day updated',
-                    'body'  => 'The mandatory day has been restored successfully.',
+                    'body'  => 'The mandatory day has been updated successfully.',
                 ],
             ],
 
@@ -65,7 +65,7 @@ return [
             'delete' => [
                 'notification' => [
                     'title' => 'Mandatory days deleted',
-                    'body'  => 'The mandatory days has been deleted successfully.',
+                    'body'  => 'The mandatory days have been deleted successfully.',
                 ],
             ],
         ],

@@ -2,19 +2,25 @@
 
 namespace Webkul\Sale\Filament\Widgets;
 
-use Webkul\Sale\Filament\Widgets\Concerns\GuardsSaleDashboardWidget;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\DB;
+use Webkul\Sale\Filament\Widgets\Concerns\GuardsSaleDashboardWidget;
 use Webkul\Sale\Filament\Widgets\Concerns\HasSaleDashboardFilters;
 use Webkul\Support\Filament\Widgets\DashboardChartWidget;
 
 class RevenueByCategoryChart extends DashboardChartWidget
 {
-    use HasSaleDashboardFilters, GuardsSaleDashboardWidget;
+    // DB-4 layout on the Overview's six-column grid (2026-11-23).
+    protected int|string|array $columnSpan = ['default' => 'full', 'md' => 1, 'xl' => 2];
+
+    use GuardsSaleDashboardWidget, HasSaleDashboardFilters;
 
     protected const TOP_SLICES = 3;
 
     protected static ?int $sort = 3;
+
+    // Room for the legend rows below the ring (DB-9).
+    protected ?string $maxHeight = '300px';
 
     /**
      * @var array{labels: list<string>, data: list<float>}|null
@@ -24,6 +30,15 @@ class RevenueByCategoryChart extends DashboardChartWidget
     public function getHeading(): string|Htmlable|null
     {
         return __('sales::filament/widgets/sales-dashboard.revenue-by-category.heading');
+    }
+
+    /**
+     * Says what this counts (DB-2, 2026-11-23): sales value, not the
+     * invoiced Revenue figure, so the two differ by orders not invoiced yet.
+     */
+    public function getDescription(): string|Htmlable|null
+    {
+        return __('sales::filament/widgets/sales-dashboard.sales-value');
     }
 
     /**
@@ -79,6 +94,8 @@ class RevenueByCategoryChart extends DashboardChartWidget
                     'backgroundColor' => array_slice($this->chartRamp(), 0, max(count($data), 1)),
                     'borderWidth'     => 0,
                     'hoverOffset'     => 0,
+                    // Centre total and "amount · %" legend rows (DB-9).
+                    ...$this->ringDetails($data, current_company()?->currency?->name, __('sales::filament/widgets/sales-dashboard.revenue-by-category.revenue')),
                 ],
             ],
             'labels' => $labels,
@@ -87,12 +104,7 @@ class RevenueByCategoryChart extends DashboardChartWidget
 
     protected function getOptions(): array
     {
-        $total = array_sum($this->resolveChartData()['data']);
-
-        return $this->doughnutChartOptions(
-            compact_money($total, current_company()?->currency?->name),
-            __('sales::filament/widgets/sales-dashboard.revenue-by-category.revenue'),
-        );
+        return $this->ringChartOptions();
     }
 
     protected function getType(): string

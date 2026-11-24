@@ -10,7 +10,7 @@ use Webkul\Support\Support\PrintedDocument;
 
 /**
  * What a printed quotation or sales order shows, for the shared
- * `support::pdfs.document` layout (TRACE365, 2026-11-23, plan #10 R-8).
+ * `support::pdfs.document` layout (TRACE365, 2026-11-23, plan #9 R-8).
  *
  * Taxes are listed one per tax (NHIL/GETFund, VAT) by running each line
  * through the same Tax::computeAll() call as OrderCalculator, so the rows add

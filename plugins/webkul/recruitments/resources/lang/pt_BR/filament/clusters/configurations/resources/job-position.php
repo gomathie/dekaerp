@@ -145,8 +145,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Cargos',
-                    'body'  => 'Os cargos foram criados com sucesso.',
+                    'title' => 'Cargo criado',
+                    'body'  => 'O cargo foi criado com sucesso.',
                 ],
             ],
         ],

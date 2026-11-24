@@ -11,8 +11,8 @@ return [
             'label' => 'Nouveau lot / numéro de série',
 
             'notification' => [
-                'title' => 'Colis créé',
-                'body'  => 'Le colis a été créé avec succès.',
+                'title' => 'Lot créé',
+                'body'  => 'Le lot a été créé avec succès.',
             ],
         ],
     ],

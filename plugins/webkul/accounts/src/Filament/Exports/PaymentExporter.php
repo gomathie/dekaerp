@@ -36,6 +36,9 @@ class PaymentExporter extends Exporter
                 ->label(__('accounts::filament/exports/payment.columns.amount-currency')),
             ExportColumn::make('amount')
                 ->label(__('accounts::filament/exports/payment.columns.amount')),
+            ExportColumn::make('unused_amount')
+                ->label(__('accounts::filament/resources/payment.table.columns.unused'))
+                ->state(fn (Payment $record): ?float => $record->unusedAmount()),
             ExportColumn::make('state')
                 ->label(__('accounts::filament/exports/payment.columns.state'))
                 ->formatStateUsing(fn ($state) => is_object($state) ? ($state->getLabel() ?? $state->value ?? '') : (string) $state),
@@ -48,7 +51,7 @@ class PaymentExporter extends Exporter
     /** One query for every row's invoices, not one per payment. */
     public static function modifyQuery(Builder $query): Builder
     {
-        return $query->with('invoices:id,name');
+        return $query->with('invoices:id,name')->withUnusedAmount();
     }
 
     public static function getCompletedNotificationBody(Export $export): string

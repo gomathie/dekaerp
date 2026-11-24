@@ -2,19 +2,22 @@
 
 namespace Webkul\Invoice\Filament\Widgets;
 
-use Webkul\Invoice\Filament\Widgets\Concerns\GuardsInvoiceDashboardWidget;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Contracts\Support\Htmlable;
+use Webkul\Invoice\Filament\Widgets\Concerns\GuardsInvoiceDashboardWidget;
 use Webkul\Invoice\Filament\Widgets\Concerns\HasInvoiceDashboardFilters;
 use Webkul\Support\Filament\Concerns\HasChartTheme;
 
 class CustomerRevenueChart extends ChartWidget
 {
+    // DB-4 layout on the Overview's six-column grid (2026-11-23).
+    protected int|string|array $columnSpan = ['default' => 'full', 'md' => 1, 'xl' => 2];
+
     // No 5-second refresh (Filament default): every open dashboard re-ran all
     // its queries 12 times a minute (Sentry DEKAERP-11). Filters reload it.
     protected ?string $pollingInterval = null;
 
-    use HasChartTheme, HasInvoiceDashboardFilters, GuardsInvoiceDashboardWidget;
+    use GuardsInvoiceDashboardWidget, HasChartTheme, HasInvoiceDashboardFilters;
 
     protected const TOP_SLICES = 3;
 
@@ -22,7 +25,8 @@ class CustomerRevenueChart extends ChartWidget
 
     protected static bool $isLazy = true;
 
-    protected ?string $maxHeight = '240px';
+    // Room for the legend rows below the ring (DB-9).
+    protected ?string $maxHeight = '300px';
 
     /**
      * @var array{labels: list<string>, data: list<float>}|null
@@ -43,7 +47,10 @@ class CustomerRevenueChart extends ChartWidget
             return $this->resolvedData;
         }
 
-        $rows = $this->customerInvoices()
+        // Net of credit notes, like the "Total invoiced" tile (DB-2,
+        // 2026-11-23): summing invoices alone made the ring's total larger
+        // than the tile beside it whenever a credit note was issued.
+        $rows = $this->customerInvoicesNet()
             ->leftJoin('partners_partners', 'partners_partners.id', '=', 'accounts_account_moves.partner_id')
             ->groupBy('partners_partners.id', 'partners_partners.name')
             ->addSelect('partners_partners.name as name')
@@ -82,6 +89,8 @@ class CustomerRevenueChart extends ChartWidget
                     'backgroundColor' => array_slice($this->chartRamp(), 0, max(count($data), 1)),
                     'borderWidth'     => 0,
                     'hoverOffset'     => 0,
+                    // Centre total and "amount · %" legend rows (DB-9).
+                    ...$this->ringDetails($data, $this->dashboardCurrency(), __('invoices::filament/widgets/invoice-dashboard.customer-revenue.center-label')),
                 ],
             ],
             'labels' => $labels,
@@ -90,33 +99,31 @@ class CustomerRevenueChart extends ChartWidget
 
     protected function getOptions(): array
     {
-        $total = array_sum($this->resolveChartData()['data']);
-
         return [
             'maintainAspectRatio' => false,
             'cutout'              => '62%',
-            'layout'              => ['padding' => 26],
+            'layout'              => ['padding' => 12],
             'interaction'         => $this->chartInteraction('nearest', true),
             'plugins'             => [
                 'entrance'   => ['type' => 'sweep', 'duration' => 900],
 
                 'hoverGrow'  => ['grow' => 20, 'speed' => 0.16],
 
+                // Below the ring: its "amount · %" rows squeezed it (DB-9).
                 'legend'     => [
-                    'position' => 'right',
+                    'position' => 'bottom',
                     'labels'   => [
                         'color'         => $this->brandColor('gray', 500),
                         'boxWidth'      => 12,
                         'boxHeight'     => 12,
                         'usePointStyle' => true,
                         'pointStyle'    => 'rectRounded',
-                        'padding'       => 14,
+                        'padding'       => 10,
                     ],
                 ],
                 'tooltip'    => array_merge($this->chartTooltip(), ['percentage' => true]),
+                // Text and label come with the data (ringDetails()).
                 'centerText' => [
-                    'text'       => compact_money($total, $this->dashboardCurrency()),
-                    'label'      => __('invoices::filament/widgets/invoice-dashboard.customer-revenue.center-label'),
                     'labelColor' => $this->brandColor('gray', 500),
                 ],
             ],

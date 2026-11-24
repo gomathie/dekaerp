@@ -15,6 +15,7 @@ return [
         'increase'             => 'زيادة :percent%',
         'decrease'             => 'انخفاض :percent%',
         'no-change'            => 'لا تغيير',
+        'this-month'           => 'هذا الشهر',
     ],
 
     'trend'        => [

@@ -3,9 +3,13 @@
     $currentLocale = app()->getLocale();
     $isRtl = data_get($locales, $currentLocale . '.rtl', false);
 
-    $flagFor = fn (string $code) => file_exists(public_path("flags/{$code}.svg"))
-        ? '<img src="'.e(asset("flags/{$code}.svg")).'" alt="" class="w-5 h-5 rounded-sm object-cover" />'
-        : '';
+    $flagFor = function (string $code) {
+        $flag = locale_flag_code($code);
+
+        return file_exists(public_path("flags/{$flag}.svg"))
+            ? '<img src="'.e(asset("flags/{$flag}.svg")).'" alt="" class="w-5 h-5 rounded-sm object-cover" />'
+            : '';
+    };
 @endphp
 
 <div class="flex items-center gap-1 px-2" x-data="{ open: false }">

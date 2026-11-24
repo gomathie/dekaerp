@@ -18,5 +18,13 @@ return [
         'vs'  => 'vs :range',
     ],
 
+    'grouping' => [
+        'auto'  => 'Automático',
+        'day'   => 'Por dia',
+        'week'  => 'Por semana',
+        'month' => 'Por mês',
+        'year'  => 'Por ano',
+    ],
+
     'company-equivalent' => '≈ :amount · 1 :from = :rate :to',
 ];

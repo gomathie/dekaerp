@@ -6,6 +6,7 @@ return [
     'show-details'  => 'Show / hide details',
     'no-chart-data' => 'No data for this period',
     'empty-table'   => 'Nothing in this period yet',
+    'view-all'      => 'View all',
     'empty-actions' => [
         'quotation' => 'Create a quotation',
         'order'     => 'New order',

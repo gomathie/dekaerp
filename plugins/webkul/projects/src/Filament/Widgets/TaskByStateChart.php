@@ -10,6 +10,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Carbon;
 use Webkul\Project\Enums\TaskState;
 use Webkul\Project\Models\Task;
+use Webkul\Support\Filament\DashboardPeriod;
 use Webkul\Support\Filament\Widgets\DashboardChartWidget;
 
 class TaskByStateChart extends DashboardChartWidget
@@ -115,11 +116,9 @@ class TaskByStateChart extends DashboardChartWidget
             }
         }
 
+        // No period chosen: the year to date, like every dashboard (U68).
         if (empty($startDate) && empty($endDate)) {
-            $query->whereBetween('created_at', [
-                now()->subMonth()->startOfDay(),
-                now()->endOfDay(),
-            ]);
+            $query->whereBetween('created_at', DashboardPeriod::defaultRange());
         }
     }
 

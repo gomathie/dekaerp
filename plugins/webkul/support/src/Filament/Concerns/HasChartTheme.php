@@ -6,6 +6,30 @@ use Filament\Support\Facades\FilamentColor;
 
 trait HasChartTheme
 {
+    /**
+     * A money ring's centre total and legend rows, for its first dataset
+     * (DB-9, 2026-11-24, from TRACE365's reference screens): each legend row
+     * reads "Name · GH₵12.4k · 45%". They travel in the data, not the
+     * options, because Filament sends only new data when the page filters
+     * change: a total set in the options stayed at the first period's
+     * figure (dashboard-charts.js reads both from the dataset first).
+     *
+     * @param  list<float>  $amounts
+     * @return array{centerText: array{text: string, label: string}, legendValues: list<string>}
+     */
+    protected function ringDetails(array $amounts, ?string $currency, string $centerLabel): array
+    {
+        $total = (float) array_sum($amounts);
+
+        return [
+            'centerText'   => ['text' => compact_money($total, $currency), 'label' => $centerLabel],
+            'legendValues' => array_map(
+                fn (float $amount): string => compact_money($amount, $currency).' · '.($total > 0 ? (int) round($amount / $total * 100) : 0).'%',
+                array_map('floatval', $amounts),
+            ),
+        ];
+    }
+
     protected function brandColor(string $name, int $shade = 500, ?float $alpha = null): string
     {
         $value = FilamentColor::getColor($name)[$shade]

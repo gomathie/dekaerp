@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Congé créé',
-        'body'  => 'Le congé a été créé avec succès.',
+        'title' => 'Allocation créée',
+        'body'  => 'L\'allocation a été créée avec succès.',
     ],
 ];

@@ -16,6 +16,9 @@ use Webkul\Support\Filament\Concerns\HasDashboardEmptyState;
 
 class TopQuotationsTable extends TableWidget
 {
+    // DB-4 layout on the Overview's six-column grid (2026-11-23).
+    protected int|string|array $columnSpan = ['default' => 'full', 'xl' => 3];
+
     use GuardsSaleDashboardWidget, HasSaleDashboardFilters;
     use HasDashboardEmptyState;
 
@@ -29,6 +32,8 @@ class TopQuotationsTable extends TableWidget
         return $this->withDashboardEmptyState($table, 'quotation', QuotationResource::canCreate() ? QuotationResource::getUrl('create') : null)
             ->defaultKeySort(false)
             ->recordClasses('dashboard-table-row')
+            // "View all" opens the whole list (DB-9).
+            ->headerActions($this->viewAllActions(QuotationResource::canViewAny() ? QuotationResource::getUrl('index') : null))
             ->recordUrl(fn ($record): ?string => QuotationResource::canAccess()
                 ? QuotationResource::getUrl('view', ['record' => $record->id])
                 : null);

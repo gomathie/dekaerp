@@ -13,7 +13,8 @@ return [
 
     'form' => [
         'validation' => [
-            'needs-attention'                 => 'Some fields need attention',            'cannot-remove-last-admin'        => 'Cannot remove the admin role from the last admin user.',
+            'needs-attention'                 => 'Some fields need attention',
+            'cannot-remove-last-admin'        => 'Cannot remove the admin role from the last admin user.',
             'company-invalid'                 => 'One or more selected companies are invalid.',
             'company-not-assigned'            => 'You may assign users only to companies assigned to your account.',
             'company-required'                => 'Select at least one company.',

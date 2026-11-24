@@ -12,7 +12,7 @@ use Webkul\Support\Support\PrintedDocument;
 
 /**
  * What a printed invoice, bill, credit note or refund shows, for the shared
- * `support::pdfs.document` layout (TRACE365, 2026-11-23, plan #10 R-8).
+ * `support::pdfs.document` layout (TRACE365, 2026-11-23, plan #9 R-8).
  *
  * Fixes the old templates, which printed only the product name (no line
  * amount), one "Tax" line for NHIL, GETFund and VAT together, a "Discount"

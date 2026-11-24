@@ -41,3 +41,6 @@ opencode.json
 
 # Browser automation logs and snapshots (Playwright MCP). Local only, never committed.
 /.playwright-mcp/
+
+# graphify knowledge graph (local; built with /graphify)
+/graphify-out/

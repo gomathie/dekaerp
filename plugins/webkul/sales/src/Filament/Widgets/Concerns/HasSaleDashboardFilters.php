@@ -258,13 +258,17 @@ trait HasSaleDashboardFilters
     {
         $filters = $this->saleDashboardFilters();
 
+        // No period chosen: the year to date, like every dashboard (U68).
+        // It was the whole calendar year, future months included.
+        [$defaultStart, $defaultEnd] = DashboardPeriod::defaultRange();
+
         $start = ! empty($filters['startDate'])
             ? Carbon::parse($filters['startDate'])->startOfDay()
-            : now()->startOfYear();
+            : $defaultStart;
 
         $end = ! empty($filters['endDate'])
             ? Carbon::parse($filters['endDate'])->endOfDay()
-            : now()->endOfYear();
+            : $defaultEnd;
 
         return [$start, $end];
     }

@@ -16,6 +16,9 @@ use Webkul\Support\Filament\Concerns\HasDashboardEmptyState;
 
 class TopBillsWidget extends BaseWidget
 {
+    // DB-4 layout on the Overview's six-column grid (2026-11-23).
+    protected int|string|array $columnSpan = ['default' => 'full', 'xl' => 3];
+
     use GuardsInvoiceDashboardWidget, HasInvoiceDashboardFilters;
     use HasDashboardEmptyState;
 
@@ -29,6 +32,8 @@ class TopBillsWidget extends BaseWidget
         return $this->withDashboardEmptyState($table, 'bill', BillResource::canCreate() ? BillResource::getUrl('create') : null)
             ->defaultKeySort(false)
             ->recordClasses('dashboard-table-row')
+            // "View all" opens the whole list (DB-9).
+            ->headerActions($this->viewAllActions(BillResource::canViewAny() ? BillResource::getUrl('index') : null))
             ->recordUrl(fn ($record): ?string => $record && BillResource::canAccess()
                 ? BillResource::getUrl('view', ['record' => $record])
                 : null);

@@ -10,24 +10,32 @@ return [
     'decrease'          => ':percent% decrease',
     'no-change'         => 'No change',
     'invoice-stats'     => [
-        'heading' => 'Invoices',
-        'total'   => 'Total Invoiced',
-        'count'   => 'Invoice Count',
-        'paid'    => 'Paid Invoices',
-        'unpaid'  => 'Unpaid Invoices',
+        'heading'    => 'Invoices',
+        'total'      => 'Total Invoiced',
+        'count'      => 'Invoice Count',
+        'paid'       => 'Paid Invoices',
+        'unpaid'     => 'Unpaid Invoices',
+        'this-month' => 'This month',
+    ],
+
+    'payment-stats'     => [
+        'heading'  => 'Payments received',
+        'received' => 'Received',
+        'count'    => 'Payments',
     ],
 
     'bill-stats'        => [
-        'heading' => 'Vendor Bills',
-        'total'   => 'Total Billed',
-        'count'   => 'Bill Count',
-        'paid'    => 'Paid Bills',
-        'unpaid'  => 'Unpaid Bills',
+        'heading'    => 'Vendor Bills',
+        'total'      => 'Total Billed',
+        'count'      => 'Bill Count',
+        'paid'       => 'Paid Bills',
+        'unpaid'     => 'Unpaid Bills',
+        'this-month' => 'This month',
     ],
 
     'revenue-over-time' => [
         'heading'     => 'Revenue Over Time',
-        'description' => 'Paid customer invoices per day',
+        'description' => 'Paid customer invoices, by day, week or month',
         'revenue'     => 'Revenue',
     ],
 

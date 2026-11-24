@@ -47,7 +47,6 @@ return [
 
     'process-message' => [
         'original-note' => '<br><div><span class="font-bold">الملاحظة الأصلية</span>: :body</div>',
-        'original-note' => '<br><div><span class="font-bold">الملاحظة الأصلية</span>: :body</div>',
         'feedback'      => '<div><span class="font-bold">الملاحظات</span>: <p>:feedback</p></div>',
     ],
 

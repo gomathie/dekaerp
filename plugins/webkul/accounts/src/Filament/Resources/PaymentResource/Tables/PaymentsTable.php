@@ -91,6 +91,14 @@ class PaymentsTable
                     ->placeholder('-')
                     ->sortable()
                     ->money(fn (Payment $record) => $record->currency?->name ?? $record->company?->currency_code, true),
+                // Not yet matched to an invoice or bill (TRACE365, 2026-11-24),
+                // from Payment::scopeWithUnusedAmount(), in the payment's currency.
+                TextColumn::make('unused_amount')
+                    ->label(__('accounts::filament/resources/payment.table.columns.unused'))
+                    ->state(fn (Payment $record): ?float => $record->unusedAmount())
+                    ->visibleFrom('md')
+                    ->placeholder('-')
+                    ->money(fn (Payment $record) => $record->currency?->name ?? $record->company?->currency_code, true),
                 TextColumn::make('state')
                     ->label(__('accounts::filament/resources/payment.table.columns.state'))
                     ->placeholder('-')
@@ -105,6 +113,7 @@ class PaymentsTable
             // Newest first as the table default, not as orderByDesc in getEloquentQuery():
             // that ran before any column sort, so clicking a header did nothing (upstream #1671).
             ->defaultSort('id', 'desc')
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->withUnusedAmount())
             ->groups([
                 Tables\Grouping\Group::make('name')
                     ->label(__('accounts::filament/resources/payment.table.groups.name'))

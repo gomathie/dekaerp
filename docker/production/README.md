@@ -1,5 +1,15 @@
 # AureusERP — Production Docker Image
 
+> **Not how DEKA ERP is deployed (note added 2026-11-24).** This folder is
+> upstream's single-container image: it clones `aureuserp/aureuserp`, not this
+> fork, and bundles MySQL. DEKA ERP production runs on **Laravel Cloud**
+> (`https://cloud.dekaerp.com`, deployed from the `production` branch) with
+> **Supabase PostgreSQL** and tenant S3 storage; see `README.md`,
+> `docs/supabase-database.md` and `docs/handover-actions.md`. Local
+> development uses Sail with PostgreSQL (`docker-compose.yml`,
+> `docs/running-tests.md`). The text below describes upstream's image as it
+> stands; keep it for reference, do not follow it to deploy DEKA ERP.
+
 A single-container, production-ready Docker image for
 [AureusERP](https://github.com/aureuserp/aureuserp). It bundles the application,
 MySQL, PHP-FPM, Nginx and Supervisor — everything needed to run the ERP with one

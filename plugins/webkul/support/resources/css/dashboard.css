@@ -44,12 +44,17 @@
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--stat-accent) 22%, transparent);
 }
 
+/* The trend caption has its own line under the label (2026-11-23). Beside the
+   value it could not wrap, and once it named the compared period ("New vs
+   1 Jan 2025 – 31 Dec 2025") the card's overflow cut it off on every
+   quarter-width tile. */
 .fi-wi-stats-overview-stat.dashboard-stat .fi-wi-stats-overview-stat-content {
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
-        'value desc'
-        'label label';
+        'value'
+        'label'
+        'desc';
     align-items: baseline;
     column-gap: 0.5rem;
     row-gap: 0.1rem;
@@ -66,9 +71,10 @@
 .fi-wi-stats-overview-stat.dashboard-stat .fi-wi-stats-overview-stat-description {
     grid-area: desc;
     justify-self: start;
+    margin-top: 0.2rem;
     font-size: 0.8rem;
     font-weight: normal;
-    white-space: nowrap;
+    white-space: normal;
 }
 
 .fi-wi-stats-overview-stat.dashboard-stat .fi-wi-stats-overview-stat-label-ctn {
@@ -108,6 +114,76 @@
 
 .fi-wi-stats-overview-stat.dashboard-stat--danger {
     --stat-accent: var(--danger-500);
+}
+
+/* Trend pill (DB-9, 2026-11-24, from TRACE365's reference screens): the
+   change sits in a tinted pill with its arrow, the caption around it stays
+   quiet. Built by BuildsDashboardStats::trendDescription(). */
+.dashboard-trend {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.05rem 0.45rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.35;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.dashboard-trend--success {
+    color: var(--success-700);
+    background: color-mix(in srgb, var(--success-500) 14%, transparent);
+}
+
+.dashboard-trend--danger {
+    color: var(--danger-700);
+    background: color-mix(in srgb, var(--danger-500) 14%, transparent);
+}
+
+.dashboard-trend--gray {
+    color: var(--gray-600);
+    background: color-mix(in srgb, var(--gray-500) 12%, transparent);
+}
+
+.dark .dashboard-trend--success {
+    color: var(--success-300);
+    background: color-mix(in srgb, var(--success-400) 18%, transparent);
+}
+
+.dark .dashboard-trend--danger {
+    color: var(--danger-300);
+    background: color-mix(in srgb, var(--danger-400) 18%, transparent);
+}
+
+.dark .dashboard-trend--gray {
+    color: var(--gray-300);
+    background: color-mix(in srgb, var(--gray-400) 16%, transparent);
+}
+
+.dashboard-trend-caption {
+    color: var(--gray-500);
+}
+
+.dark .dashboard-trend-caption {
+    color: var(--gray-400);
+}
+
+/* Headline cards get the same icon chip as the module cards (DB-9). */
+.fi-wi-stats-overview-stat.overview-headline-stat:not(.dashboard-stat) .fi-wi-stats-overview-stat-label-ctn > svg,
+.fi-wi-stats-overview-stat.overview-headline-stat:not(.dashboard-stat) .fi-wi-stats-overview-stat-label-ctn > .fi-icon {
+    width: 1.9rem;
+    height: 1.9rem;
+    padding: 0.4rem;
+    border-radius: 0.6rem;
+    color: var(--primary-600);
+    background: color-mix(in srgb, var(--primary-500) 12%, transparent);
+}
+
+.dark .fi-wi-stats-overview-stat.overview-headline-stat:not(.dashboard-stat) .fi-wi-stats-overview-stat-label-ctn > svg,
+.dark .fi-wi-stats-overview-stat.overview-headline-stat:not(.dashboard-stat) .fi-wi-stats-overview-stat-label-ctn > .fi-icon {
+    color: var(--primary-400);
+    background: color-mix(in srgb, var(--primary-400) 16%, transparent);
 }
 
 .dashboard-table-row .fi-ta-cell {

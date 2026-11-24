@@ -90,7 +90,7 @@ return [
             'delete' => [
                 'notification' => [
                     'title' => 'Leave accrual plans deleted',
-                    'body'  => 'The leave accrual plans has been deleted successfully.',
+                    'body'  => 'The leave accrual plans have been deleted successfully.',
                 ],
             ],
         ],

@@ -7,6 +7,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Webkul\Invoice\Filament\Widgets\Concerns\GuardsInvoiceDashboardWidget;
 use Webkul\Invoice\Filament\Widgets\Concerns\HasInvoiceDashboardFilters;
 use Webkul\Support\Filament\Concerns\HasChartTheme;
+use Webkul\Support\Filament\DashboardPeriod;
 
 class RevenueOverTimeWidget extends ChartWidget
 {
@@ -43,13 +44,12 @@ class RevenueOverTimeWidget extends ChartWidget
         // Upstream loaded every paid invoice of the period to add them up per
         // day in PHP. dailyBuckets() asks the database for one total per day
         // (docs/completed/dashboards-plan.md §2.4), with the company scope intact.
-        $data = $this->dailyBuckets($query->where($query->qualifyColumn('payment_state'), 'paid'), true);
-
-        $labels = [];
-
-        for ($date = (clone $start)->startOfDay(); $date->lte($end); $date->addDay()) {
-            $labels[] = $date->format('M d');
-        }
+        // Grouped by day, week or month for the period's length (DB-4).
+        ['labels' => $labels, 'values' => $data] = DashboardPeriod::rollUp(
+            $this->dailyBuckets($query->where($query->qualifyColumn('payment_state'), 'paid'), true),
+            $start,
+            $end,
+        );
 
         return [
             'datasets' => [

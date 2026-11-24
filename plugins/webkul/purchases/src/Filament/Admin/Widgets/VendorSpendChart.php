@@ -9,11 +9,17 @@ use Webkul\Support\Filament\Widgets\DashboardChartWidget;
 
 class VendorSpendChart extends DashboardChartWidget
 {
+    // DB-4 layout on the Overview's six-column grid (2026-11-23).
+    protected int|string|array $columnSpan = ['default' => 'full', 'xl' => 2];
+
     use GuardsPurchaseDashboardWidget, HasPurchaseDashboardFilters;
 
     protected const TOP_SLICES = 3;
 
     protected static ?int $sort = 3;
+
+    // Room for the legend rows below the ring (DB-9).
+    protected ?string $maxHeight = '300px';
 
     protected ?array $resolvedData = null;
 
@@ -29,7 +35,8 @@ class VendorSpendChart extends DashboardChartWidget
 
     protected function resolveData(): array
     {
-        $query = $this->purchaseOrders();
+        // Spend only: a quote or a cancelled order is not money spent (DB-2).
+        $query = $this->confirmedPurchaseOrders();
 
         $rows = $query
             ->leftJoin('partners_partners', 'partners_partners.id', '=', 'purchases_orders.partner_id')
@@ -64,6 +71,8 @@ class VendorSpendChart extends DashboardChartWidget
                     'data'            => $data,
                     'backgroundColor' => array_map(fn (int $index): string => $ramp[$index % count($ramp)], array_keys($data)),
                     'borderWidth'     => 0,
+                    // Centre total and "amount · %" legend rows (DB-9).
+                    ...$this->ringDetails($data, $this->dashboardCurrency(), __('purchases::filament/admin/widgets/purchase-dashboard.vendor-spend.total-purchased')),
                 ],
             ],
             'labels' => $labels,
@@ -72,10 +81,7 @@ class VendorSpendChart extends DashboardChartWidget
 
     protected function getOptions(): array
     {
-        return $this->doughnutChartOptions(
-            compact_money((float) array_sum($this->getData()['datasets'][0]['data']), $this->dashboardCurrency()),
-            __('purchases::filament/admin/widgets/purchase-dashboard.vendor-spend.total-purchased'),
-        );
+        return $this->ringChartOptions();
     }
 
     protected function getType(): string

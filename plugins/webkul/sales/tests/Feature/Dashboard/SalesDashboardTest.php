@@ -1,24 +1,32 @@
 <?php
 
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use Filament\Tables\Table;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Sale\Enums\OrderState;
+use Webkul\Sale\Filament\Clusters\Orders\Resources\CustomerResource;
+use Webkul\Sale\Filament\Clusters\Products\Resources\ProductResource as SaleProductResource;
+use Webkul\Sale\Filament\Clusters\Reporting\Pages\SalesAnalysis;
 use Webkul\Sale\Filament\Pages\SalesDashboard;
 use Webkul\Sale\Filament\Widgets\MonthlySalesChart;
+use Webkul\Sale\Filament\Widgets\OrderActivityWidget;
+use Webkul\Sale\Filament\Widgets\QuotationOutcomeChart;
 use Webkul\Sale\Filament\Widgets\RevenueByCategoryChart;
 use Webkul\Sale\Filament\Widgets\SalesPersonPerformanceChart;
 use Webkul\Sale\Filament\Widgets\SaleStatsOverview;
 use Webkul\Sale\Filament\Widgets\TopCustomersTable;
 use Webkul\Sale\Filament\Widgets\TopProductsTable;
+use Webkul\Sale\Filament\Widgets\TopQuotationsTable;
 use Webkul\Sale\Filament\Widgets\TopSalesOrdersTable;
-use Webkul\Sale\Filament\Clusters\Reporting\Pages\SalesAnalysis;
 use Webkul\Sale\Models\Order;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/CompanyHelper.php';
+require_once __DIR__.'/../../../../support/tests/Helpers/DashboardWidgetGuardHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/FilamentHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
 require_once __DIR__.'/../../Helpers/SaleHelper.php';
@@ -109,6 +117,79 @@ it('reads only the current company’s confirmed orders', function (): void {
 
     expect($ids)->toContain($own->getKey())
         ->not->toContain($foreign->getKey());
+});
+
+/**
+ * DB-3 (2026-11-22): an empty top-quotations list offers "Create a
+ * quotation", only to someone who may create one.
+ */
+it('offers the next step on an empty list only to users who may take it', function (): void {
+    $company = Company::factory()->create();
+
+    CompanyHelper::actingAsCompanyUser($company, ['create_sale_quotation', 'view_any_sale_quotation']);
+    $widget = new TopQuotationsTable;
+    $allowed = $widget->table(Table::make($widget));
+
+    CompanyHelper::actingAsCompanyUser($company, []);
+    $widget = new TopQuotationsTable;
+    $refused = $widget->table(Table::make($widget));
+
+    expect($allowed->getEmptyStateHeading())->toBe(__('support::filament/dashboard.empty-table'))
+        ->and($allowed->getEmptyStateActions())->toHaveCount(1)
+        ->and($refused->getEmptyStateActions())->toHaveCount(0);
+});
+
+/**
+ * DB-9 (2026-11-24): the customer and product lists open their whole list,
+ * and only for someone who may open it. The panel's resource answers, not a
+ * permission name here, so the test follows whichever policy the resource
+ * resolves.
+ */
+it('offers "View all" on the customer and product lists only to who may open them', function (): void {
+    FilamentHelper::bootAdminPanel();
+    $company = Company::factory()->create();
+
+    $headerActions = function (string $widgetClass): array {
+        $widget = new $widgetClass;
+        $widget->pageFilters = [];
+
+        return array_map(fn ($action): ?string => $action->getName(), array_values($widget->table(Table::make($widget))->getHeaderActions()));
+    };
+
+    CompanyHelper::actingAsCompanyUser($company, ['view_any_sale_customer', 'view_any_partner_partner', 'view_any_sale_product', 'view_any_product_product']);
+
+    expect(CustomerResource::canViewAny())->toBeTrue()
+        ->and(SaleProductResource::canViewAny())->toBeTrue()
+        ->and($headerActions(TopCustomersTable::class))->toContain('dashboardViewAll')
+        ->and($headerActions(TopProductsTable::class))->toContain('dashboardViewAll');
+
+    CompanyHelper::actingAsCompanyUser($company, []);
+
+    expect($headerActions(TopCustomersTable::class))->not->toContain('dashboardViewAll')
+        ->and($headerActions(TopProductsTable::class))->not->toContain('dashboardViewAll');
+});
+
+/**
+ * DB-7 (2026-11-22): top quotations rank by company-currency value. A USD
+ * quotation of 100 at 15.5 (1,550 local) outranks a local one of 500, which
+ * the old own-currency sort placed first.
+ */
+it('ranks top quotations by their value in the company currency', function (): void {
+    $company = Company::factory()->create();
+    $user = CompanyHelper::actingAsCompanyUser($company, []);
+
+    $usd = SaleHelper::order(['company_id' => $company->getKey(), 'user_id' => $user->getKey()]);
+    $local = SaleHelper::order(['company_id' => $company->getKey(), 'user_id' => $user->getKey()]);
+
+    Order::withoutGlobalScopes()->whereKey($usd->getKey())->update(['state' => OrderState::DRAFT->value, 'date_order' => now(), 'amount_total' => 100, 'currency_rate' => round(1 / 15.5, 6)]);
+    Order::withoutGlobalScopes()->whereKey($local->getKey())->update(['state' => OrderState::DRAFT->value, 'date_order' => now(), 'amount_total' => 500, 'currency_rate' => 1]);
+
+    $widget = new TopQuotationsTable;
+    $widget->pageFilters = [];
+
+    $ids = (fn () => $this->getTableQuery()->pluck('id')->all())->call($widget);
+
+    expect(array_slice($ids, 0, 2))->toBe([$usd->getKey(), $local->getKey()]);
 });
 
 /**
@@ -228,7 +309,11 @@ it('counts products of invoices made without an order, once', function (): void 
     $monthly = new MonthlySalesChart;
     $monthly->pageFilters = $filters;
 
-    expect(array_sum((fn (): array => $this->getData())->call($monthly)['datasets'][0]['data']))->toBe(120.0);
+    // Changed 2026-11-23 (DB-2): the monthly chart is invoiced revenue, the
+    // Revenue figure spread over months, so the invoice made from the order
+    // counts there too (120 + 500). Products, customers and salespeople
+    // below still count the sale once through its order.
+    expect(array_sum((fn (): array => $this->getData())->call($monthly)['datasets'][0]['data']))->toBe(620.0);
 
     $categories = new RevenueByCategoryChart;
     $categories->pageFilters = $filters;
@@ -271,4 +356,152 @@ it('lists only the current company’s members as salespersons', function (): vo
 
     expect($options)->toHaveKey($member->getKey())
         ->not->toHaveKey($outsider->getKey());
+});
+
+/**
+ * DB-4 (approved mockup, 2026-11-23): the Sales tab's third breakdown says
+ * what became of the period's quotations. It has no permission of its own:
+ * it opens for whoever may see "Top quotations", and for nobody else.
+ */
+it('says what became of the period\'s quotations, for whoever may see top quotations', function (): void {
+    FilamentHelper::bootAdminPanel();
+
+    $company = Company::factory()->create();
+    $user = CompanyHelper::actingAsCompanyUser($company, []);
+
+    foreach ([OrderState::SALE, OrderState::SALE, OrderState::DRAFT, OrderState::SENT, OrderState::CANCEL] as $state) {
+        $order = SaleHelper::order(['company_id' => $company->getKey(), 'user_id' => $user->getKey()]);
+        Order::withoutGlobalScopes()->whereKey($order->getKey())->update(['state' => $state->value, 'date_order' => now()]);
+    }
+
+    $old = SaleHelper::order(['company_id' => $company->getKey(), 'user_id' => $user->getKey()]);
+    Order::withoutGlobalScopes()->whereKey($old->getKey())->update(['state' => OrderState::SALE->value, 'date_order' => now()->subYears(2)]);
+
+    $widget = new QuotationOutcomeChart;
+    $widget->pageFilters = [];
+
+    expect($widget->outcomes())->toBe(['won' => 2, 'open' => 2, 'cancelled' => 1])
+        ->and(QuotationOutcomeChart::canView())->toBeFalse();
+
+    $permission = array_key_first(FilamentShield::getWidgets()[TopQuotationsTable::class]['permissions'] ?? []);
+    CompanyHelper::actingAsCompanyUser($company, [$permission]);
+
+    expect(QuotationOutcomeChart::canView())->toBeTrue();
+});
+
+/**
+ * DB-2 (2026-11-23): the monthly chart is the Revenue figure spread over
+ * months, net of credit notes. It used to add confirmed orders, so an order
+ * not yet invoiced showed in the chart but not in the figure above it.
+ * The chart also carries the compared period's same months (DB-4).
+ */
+it('draws the monthly chart from the same invoiced revenue as the revenue figure', function (): void {
+    $this->travelTo(Carbon::parse('2026-11-23 10:00'));
+
+    $company = Company::factory()->create();
+    $user = CompanyHelper::actingAsCompanyUser($company, []);
+
+    $move = fn (string $type, float $signed, string $date) => DB::table('accounts_account_moves')->insert([
+        'company_id'          => $company->getKey(),
+        'move_type'           => $type,
+        'state'               => 'posted',
+        'date'                => $date,
+        'invoice_date'        => $date,
+        'amount_total_signed' => $signed,
+        'creator_id'          => auth()->id(),
+        'created_at'          => now(),
+        'updated_at'          => now(),
+    ]);
+
+    $move('out_invoice', 300, '2026-03-10');
+    $move('out_invoice', 200, '2026-11-02');
+    $move('out_refund', -50, '2026-11-05');
+    $move('out_invoice', 80, '2025-03-15');
+
+    // Confirmed but never invoiced: not revenue, in neither place.
+    $order = SaleHelper::order(['company_id' => $company->getKey(), 'user_id' => $user->getKey()]);
+    Order::withoutGlobalScopes()->whereKey($order->getKey())->update(['state' => OrderState::SALE->value, 'date_order' => '2026-06-01', 'amount_total' => 999, 'currency_rate' => 1]);
+
+    $chart = new MonthlySalesChart;
+    $chart->pageFilters = [];
+    $data = (fn (): array => $this->getData())->call($chart);
+
+    $stats = new SaleStatsOverview;
+    $stats->pageFilters = [];
+
+    expect($data['labels'])->toHaveCount(11)
+        ->and(array_sum($data['datasets'][0]['data']))->toBe((fn (): float => $this->invoicedRevenue())->call($stats))
+        ->and(array_sum($data['datasets'][0]['data']))->toBe(450.0)
+        ->and($data['datasets'][0]['data'][2])->toBe(300.0)
+        ->and($data['datasets'][1]['data'][2])->toBe(80.0);
+
+    // DB-9 (2026-11-24): the switch regroups the same total.
+    $chart->filter = 'year';
+    $yearly = (fn (): array => $this->getData())->call($chart);
+
+    expect($yearly['labels'])->toBe([now()->format('Y')])
+        ->and($yearly['datasets'][0]['data'])->toBe([450.0])
+        ->and($yearly['datasets'][1]['data'])->toBe([80.0]);
+});
+
+/**
+ * Dashboard plan DB-3 (2026-11-23): every widget this dashboard lists is
+ * absent without its permission or once the module is off, and present with
+ * both. A widget added without its guard fails here.
+ */
+it('shows every sales dashboard widget only with its permission and the module', function (): void {
+    FilamentHelper::bootAdminPanel();
+
+    $company = Company::factory()->create();
+
+    // Order activity borrows the Key Metrics permission (DB-9).
+    $borrowed = array_keys(FilamentShield::getWidgets()[SaleStatsOverview::class]['permissions'] ?? []);
+
+    expect(DashboardWidgetGuardHelper::visibility(SalesDashboard::sectionWidgets(), 'sales', $company, $borrowed))
+        ->toBe(DashboardWidgetGuardHelper::guarded(SalesDashboard::sectionWidgets()));
+});
+
+/**
+ * DB-9 (2026-11-24): the order activity tiles split the period's confirmed
+ * orders by delivery and invoicing. Quotations and another company's orders
+ * are not counted, and each tile opens the order list on its own view.
+ */
+it('splits the period orders into to deliver, delivered, to invoice and invoiced', function (): void {
+    $company = Company::factory()->create();
+    $other = Company::factory()->create();
+    $user = CompanyHelper::actingAsCompanyUser($company, ['view_any_sale_order']);
+    $user->forceFill(['resource_permission' => 'global'])->saveQuietly();
+
+    $order = function (Company $owner, string $state, string $delivery, string $invoice) use ($user, $company): void {
+        // Another client's order is set up with nobody acting: the
+        // cross-company write guard (UF-025) refuses this user creating it.
+        $created = $owner->is($company)
+            ? SaleHelper::order(['company_id' => $owner->getKey(), 'user_id' => $user->getKey()])
+            : CompanyHelper::asNobody(fn () => SaleHelper::order(['company_id' => $owner->getKey()]));
+
+        Order::withoutGlobalScopes()->whereKey($created->getKey())->update([
+            'state'           => $state,
+            'date_order'      => now()->toDateString(),
+            'delivery_status' => $delivery,
+            'invoice_status'  => $invoice,
+        ]);
+    };
+
+    $order($company, OrderState::SALE->value, 'pending', 'to_invoice');
+    $order($company, OrderState::SALE->value, 'partial', 'to_invoice');
+    $order($company, OrderState::SALE->value, 'full', 'invoiced');
+    $order($company, OrderState::SALE->value, 'full', 'invoiced');
+    $order($company, OrderState::DRAFT->value, 'pending', 'to_invoice');
+    $order($other, OrderState::SALE->value, 'pending', 'to_invoice');
+
+    $widget = new OrderActivityWidget;
+    $widget->pageFilters = [];
+    $stats = (fn (): array => $this->getStats())->call($widget);
+
+    expect(array_map(fn ($stat): string => (string) $stat->getValue(), $stats))->toBe(['2', '2', '2', '2'])
+        ->and((string) $stats[0]->getDescription())->toBe(__('sales::filament/widgets/sales-dashboard.order-activity.share', ['percent' => 50, 'total' => '4']));
+
+    foreach (['to_deliver', 'delivered', 'to_invoice', 'invoiced'] as $index => $view) {
+        expect((string) $stats[$index]->getUrl())->toContain('activeTableView='.$view);
+    }
 });

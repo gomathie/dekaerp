@@ -127,6 +127,8 @@ class PurchaseServiceProvider extends PackageServiceProvider
             headline: PurchaseHeadlineWidget::class,
             attention: fn (): array => PurchaseHeadlineWidget::attention(),
             actions: fn (): array => PurchaseHeadlineWidget::actions(),
+            // DB-4 layout (approved mockup, 2026-11-23).
+            columns: 6,
         );
 
         Livewire::component('list-products', ListProducts::class);

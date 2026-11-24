@@ -39,7 +39,7 @@ class InvoicesTable
             ->reorderableColumns()
             ->columns(InvoiceResource::mergeCustomTableColumns([
                 // Number with its date under it, as on the reference lists TRACE365
-                // shared (2026-11-23, plan #10 R-9).
+                // shared (2026-11-23, plan #9 R-9).
                 TextColumn::make('name')
                     ->placeholder('-')
                     ->label(__('accounts::filament/resources/invoice.table.columns.number'))
@@ -62,6 +62,8 @@ class InvoicesTable
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('invoice_partner_display_name')
                     ->label(__('accounts::filament/resources/invoice.table.columns.customer'))
+                    // The company a contact works for, under their name (plan #9 R-9).
+                    ->description(fn ($record): ?string => $record->partner?->parent?->name)
                     ->placeholder('-')
                     ->searchable()
                     ->sortable(),
@@ -142,7 +144,7 @@ class InvoicesTable
                     ->description(fn ($record): ?string => CompanyCurrencyEquivalent::short((float) $record->amount_total_signed, $record->currency_id, $record->company))
                     ->toggleable(isToggledHiddenByDefault: false),
                 // Paid in green and due in red, each in the invoice's own currency
-                // (TRACE365, 2026-11-23, plan #10 R-9).
+                // (TRACE365, 2026-11-23, plan #9 R-9).
                 TextColumn::make('amount_paid')
                     ->label(__('accounts::filament/resources/invoice.table.columns.amount-paid'))
                     ->visibleFrom('lg')
@@ -385,7 +387,7 @@ class InvoicesTable
                 fn (Model $record): bool => InvoiceResource::can('delete', $record) && $record->state !== MoveState::POSTED,
             )
             ->modifyQueryUsing(function (Builder $query) {
-                $query->with('currency', 'company.currency');
+                $query->with('currency', 'company.currency', 'partner.parent');
             });
     }
 }

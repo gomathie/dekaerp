@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Package created',
-        'body'  => 'The package has been created successfully.',
+        'title' => 'Lot created',
+        'body'  => 'The lot has been created successfully.',
     ],
 ];

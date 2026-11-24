@@ -52,7 +52,7 @@ return [
             'edit' => [
                 'notification' => [
                     'title' => 'Feriado atualizado',
-                    'body'  => 'O feriado foi restaurado com sucesso.',
+                    'body'  => 'O feriado foi atualizado com sucesso.',
                 ],
             ],
 

@@ -47,14 +47,14 @@ return [
             'delete' => [
                 'notification' => [
                     'title' => 'Skills deleted',
-                    'body'  => 'The skills has been deleted successfully.',
+                    'body'  => 'The skills have been deleted successfully.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'title' => 'Skills force deleted',
-                    'body'  => 'The skills has been force deleted successfully.',
+                    'body'  => 'The skills have been force deleted successfully.',
                 ],
             ],
 

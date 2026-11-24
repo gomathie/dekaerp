@@ -8,12 +8,17 @@ use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
+use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\VendorResource;
 use Webkul\Purchase\Filament\Admin\Widgets\Concerns\GuardsPurchaseDashboardWidget;
 use Webkul\Purchase\Filament\Admin\Widgets\Concerns\HasPurchaseDashboardFilters;
+use Webkul\Support\Filament\Concerns\HasDashboardEmptyState;
 
 class TopVendorsWidget extends BaseWidget
 {
-    use GuardsPurchaseDashboardWidget, HasPurchaseDashboardFilters;
+    // DB-4 layout on the Overview's six-column grid (2026-11-23).
+    protected int|string|array $columnSpan = ['default' => 'full', 'xl' => 3];
+
+    use GuardsPurchaseDashboardWidget, HasDashboardEmptyState, HasPurchaseDashboardFilters;
 
     protected static ?int $sort = 7;
 
@@ -23,7 +28,13 @@ class TopVendorsWidget extends BaseWidget
     {
         return $table
             ->defaultKeySort(false)
-            ->recordClasses('dashboard-table-row');
+            ->recordClasses('dashboard-table-row')
+            // "View all" opens the whole list (DB-9).
+            ->headerActions($this->viewAllActions(VendorResource::canViewAny() ? VendorResource::getUrl('index') : null))
+            // Id 0 is orders with no vendor: nothing to open.
+            ->recordUrl(fn ($record): ?string => $record->id && VendorResource::canAccess()
+                ? VendorResource::getUrl('view', ['record' => $record->id])
+                : null);
     }
 
     protected function getTableHeading(): string|Htmlable|null
@@ -38,7 +49,8 @@ class TopVendorsWidget extends BaseWidget
 
     protected function getTableQuery(): Builder
     {
-        return $this->purchaseOrders()
+        // Spend only: a quote or a cancelled order is not money spent (DB-2).
+        return $this->confirmedPurchaseOrders()
             ->leftJoin('partners_partners', 'partners_partners.id', '=', 'purchases_orders.partner_id')
             ->groupBy('partners_partners.id', 'partners_partners.name')
             ->selectRaw('COALESCE(partners_partners.id, 0) as id')

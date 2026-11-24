@@ -48,7 +48,7 @@ return [
                     'approve'  => 'Approve',
                 ],
                 'notification' => [
-                    'title' => 'Allocation approved approved',
+                    'title' => 'Allocation approved',
                     'body'  => 'The allocation approved has been approved successfully.',
                 ],
             ],
@@ -73,7 +73,7 @@ return [
             'delete' => [
                 'notification' => [
                     'title' => 'Allocations deleted',
-                    'body'  => 'The allocations has been deleted successfully.',
+                    'body'  => 'The allocations have been deleted successfully.',
                 ],
             ],
         ],

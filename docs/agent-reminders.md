@@ -7,6 +7,21 @@ Note: this is a working log, separate from [`AGENTS.md`](../AGENTS.md) (Laravel
 Boost guidelines the agent follows) and [`CHANGELOG.md`](../CHANGELOG.md)
 (release notes). Code-change details go in [`docs/change-log.md`](change-log.md).
 
+## 2026-11-23
+
+**Requested:** Finish plan #3, Russian and Swahili, on a feature branch for
+the next monthly release.
+
+**Decision:** One Swahili locale, `sw` (D-LANG-1). The flag is Tanzania, `tz`.
+Russian's flag is `ru`. Ship machine-assisted translations and say so
+(D-LANG-2). Leave the in-app guides in English: the guide rewrite is not
+finished.
+
+**Implementation and verification:** See the handoff in
+`docs/completed/languages-ru-sw-plan.md` and `docs/change-log.md`. Database
+`aureuserp_testing_wp_lang` is free. The plugin suites were left for a
+local run.
+
 ## 2026-11-11
 
 **Requested:** Build the whole attendance plan (AT-1 to AT-7), then run all the

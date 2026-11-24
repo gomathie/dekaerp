@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Factura',
+    'title' => 'Reembolso',
 
     'navigation' => [
-        'title' => 'Facturas',
+        'title' => 'Reembolsos',
         'group' => 'Facturas',
     ],
 

@@ -7,6 +7,7 @@ return [
     'status'              => 'Statut',
     'delivery-status'     => 'Statut de livraison',
     'billing'             => 'Facturation',
+    'sales-value'         => 'Commandes confirmées et factures établies sans commande',
     'stats'               => [
         'heading'            => 'Indicateurs Clés',
         'total-quotations'   => 'Total des Devis',
@@ -15,11 +16,23 @@ return [
         'average-revenue'    => 'Revenu Moyen',
         'increase'           => 'augmentation',
         'decrease'           => 'diminution',
+        'this-month'         => 'Ce mois-ci',
+    ],
+
+    'order-activity'      => [
+        'heading'     => 'Suivi des commandes',
+        'description' => 'Commandes confirmées sur la période, selon leur état actuel',
+        'to-deliver'  => 'À livrer',
+        'delivered'   => 'Livrées',
+        'to-invoice'  => 'À facturer',
+        'invoiced'    => 'Facturées',
+        'share'       => ':percent% de :total commandes',
     ],
 
     'monthly-sales'       => [
-        'heading' => 'Ventes Mensuelles',
-        'revenue' => 'Revenu',
+        'heading'  => 'Ventes dans le temps',
+        'revenue'  => 'Revenu',
+        'previous' => 'Période comparée',
     ],
 
     'revenue-by-category' => [
@@ -30,6 +43,15 @@ return [
     'sales-persons'       => [
         'heading' => 'Performance des Commerciaux',
         'revenue' => 'Revenu',
+    ],
+
+    'quotation-outcome'   => [
+        'heading'     => 'Devis',
+        'description' => 'Ce que sont devenus les devis faits sur la période',
+        'won'         => 'Devenus commandes',
+        'open'        => 'Encore ouverts',
+        'cancelled'   => 'Annulés',
+        'count'       => 'Devis',
     ],
 
     'top-products'        => [

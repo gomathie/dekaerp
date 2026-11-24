@@ -12,10 +12,14 @@ use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\PurchaseOrderResour
 use Webkul\Purchase\Filament\Admin\Widgets\Concerns\GuardsPurchaseDashboardWidget;
 use Webkul\Purchase\Filament\Admin\Widgets\Concerns\HasPurchaseDashboardFilters;
 use Webkul\Purchase\Models\PurchaseOrder;
+use Webkul\Support\Filament\Concerns\HasDashboardEmptyState;
 
 class TopOrdersWidget extends BaseWidget
 {
-    use GuardsPurchaseDashboardWidget, HasPurchaseDashboardFilters;
+    // DB-4 layout on the Overview's six-column grid (2026-11-23).
+    protected int|string|array $columnSpan = ['default' => 'full', 'xl' => 3];
+
+    use GuardsPurchaseDashboardWidget, HasDashboardEmptyState, HasPurchaseDashboardFilters;
 
     protected static ?int $sort = 4;
 
@@ -26,6 +30,8 @@ class TopOrdersWidget extends BaseWidget
         return $table
             ->defaultKeySort(false)
             ->recordClasses('dashboard-table-row')
+            // "View all" opens the whole list (DB-9).
+            ->headerActions($this->viewAllActions(PurchaseOrderResource::canViewAny() ? PurchaseOrderResource::getUrl('index') : null))
             ->recordUrl(fn ($record): ?string => PurchaseOrderResource::canAccess()
                 ? PurchaseOrderResource::getUrl('view', ['record' => $record->id])
                 : null);
@@ -43,7 +49,8 @@ class TopOrdersWidget extends BaseWidget
 
     protected function getTableQuery(): Builder
     {
-        return $this->purchaseOrders()
+        // Orders, not quotes (they have Top RFQs) or cancelled ones (DB-2).
+        return $this->confirmedPurchaseOrders()
             ->with(['partner', 'currency'])
             ->where('total_amount', '>', 0)
             ->orderByDesc('total_amount')

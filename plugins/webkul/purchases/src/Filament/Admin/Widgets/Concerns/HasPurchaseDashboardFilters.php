@@ -5,6 +5,7 @@ namespace Webkul\Purchase\Filament\Admin\Widgets\Concerns;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
+use Webkul\Purchase\Enums\OrderState;
 use Webkul\Purchase\Models\OrderLine;
 use Webkul\Purchase\Models\PurchaseOrder;
 use Webkul\Support\Filament\DashboardPeriod;
@@ -68,19 +69,54 @@ trait HasPurchaseDashboardFilters
     }
 
     /**
+     * Orders that are spend: confirmed or done (DB-2, 2026-11-23). The vendor
+     * share, top vendors, top products and top orders summed every order of
+     * the period, so a draft quote or a cancelled order counted as spend and
+     * the vendor ring added up to more than the "Spend" figure above it.
+     * Quotes keep their own list (TopRfqsWidget).
+     */
+    protected function confirmedPurchaseOrders(?Carbon $start = null, ?Carbon $end = null): Builder
+    {
+        $query = $this->purchaseOrders($start, $end);
+
+        return $query->whereIn($query->qualifyColumn('state'), static::spendStates());
+    }
+
+    /**
+     * Lines of confirmedPurchaseOrders().
+     */
+    protected function confirmedPurchaseLines(?Carbon $start = null, ?Carbon $end = null): Builder
+    {
+        return OrderLine::query()
+            ->whereHas('order', fn (Builder $query) => $this->applyFilters($query, $start, $end)
+                ->whereIn($query->qualifyColumn('state'), static::spendStates()));
+    }
+
+    /**
+     * @return list<string>
+     */
+    protected static function spendStates(): array
+    {
+        return [OrderState::PURCHASE->value, OrderState::DONE->value];
+    }
+
+    /**
      * @return array{0: Carbon, 1: Carbon}
      */
     protected function periodRange(): array
     {
         $filters = $this->dashboardFilters();
 
+        // No period chosen: the year to date, like every dashboard (U68).
+        [$defaultStart, $defaultEnd] = DashboardPeriod::defaultRange();
+
         $start = ! empty($filters['start_date'])
             ? Carbon::parse($filters['start_date'])->startOfDay()
-            : now()->subMonth()->startOfDay();
+            : $defaultStart;
 
         $end = ! empty($filters['end_date'])
             ? Carbon::parse($filters['end_date'])->endOfDay()
-            : now()->endOfDay();
+            : $defaultEnd;
 
         return [$start, $end];
     }

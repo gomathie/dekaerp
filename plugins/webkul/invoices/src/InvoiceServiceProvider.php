@@ -65,6 +65,8 @@ class InvoiceServiceProvider extends PackageServiceProvider
             headline: InvoiceHeadlineWidget::class,
             attention: fn (): array => InvoiceAttention::items(),
             actions: fn (): array => InvoiceAttention::actions(),
+            // DB-4 layout (approved mockup, 2026-11-23).
+            columns: 6,
         );
 
         // The greeting's "today" line and quick actions come from the same

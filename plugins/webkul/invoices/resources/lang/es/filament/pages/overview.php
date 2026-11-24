@@ -34,6 +34,9 @@ return [
         'open-quotations' => 'Presupuestos abiertos',
         'spend'           => 'Gasto en compras',
         'open-rfqs'       => 'Solicitudes abiertas',
+        'to-receive'      => 'Por recibir',
+        'to-receive-hint' => 'Pedidos confirmados aún no recibidos del todo',
+        'empty-period'    => 'Nada en este periodo. El último es del :date; elija un periodo más largo arriba.',
         'to-collect'      => 'Por cobrar',
         'to-pay'          => 'Por pagar',
         'overdue'         => '{0} Ninguno vencido|{1} 1 vencido|[2,*] :count vencidos',
@@ -58,12 +61,22 @@ return [
 
     'cash' => [
         'heading'     => 'Entradas y salidas de dinero',
-        'description' => 'Facturas cobradas y facturas de proveedor pagadas por día',
         'in'          => 'Entradas',
         'out'         => 'Salidas',
     ],
 
     'trend' => ':change frente al periodo anterior',
+
+    'period' => [
+        'label'        => 'Periodo',
+        'this-month'   => 'Este mes',
+        'last-30-days' => 'Últimos 30 días',
+        'year-to-date' => 'En lo que va del año',
+        'last-year'    => 'Año pasado',
+        'custom'       => 'Personalizado',
+        'compared'     => ':period, comparado con :previous',
+        'custom-hint'  => 'Elija otras fechas en Filtros.',
+    ],
 
     'modules' => [
         'heading' => 'En toda la empresa',
@@ -90,11 +103,5 @@ return [
         'due-today'   => 'Vence hoy',
         'due-on'      => 'Vence el :date',
         'days-late'   => '{1} 1 día de retraso|[2,*] :count días de retraso',
-    ],
-
-    'cash-compare' => [
-        'previous'    => 'Periodo anterior',
-        'this-period' => 'Este periodo',
-        'vs-previous' => 'Frente al periodo anterior',
     ],
 ];

@@ -34,6 +34,9 @@ return [
         'open-quotations' => 'Open quotations',
         'spend'           => 'Purchase spend',
         'open-rfqs'       => 'Open RFQs',
+        'to-receive'      => 'To receive',
+        'to-receive-hint' => 'Confirmed orders not yet fully received',
+        'empty-period'    => 'Nothing in this period. The latest is dated :date; choose a longer period above.',
         'to-collect'      => 'To collect',
         'to-pay'          => 'To pay',
         'overdue'         => '{0} None overdue|{1} 1 overdue|[2,*] :count overdue',
@@ -58,12 +61,22 @@ return [
 
     'cash' => [
         'heading'     => 'Money in and out',
-        'description' => 'Paid invoices and paid bills per day',
         'in'          => 'Money in',
         'out'         => 'Money out',
     ],
 
     'trend' => ':change vs previous period',
+
+    'period' => [
+        'label'        => 'Period',
+        'this-month'   => 'This month',
+        'last-30-days' => 'Last 30 days',
+        'year-to-date' => 'Year to date',
+        'last-year'    => 'Last year',
+        'custom'       => 'Custom',
+        'compared'     => ':period, compared with :previous',
+        'custom-hint'  => 'Pick any other dates under Filters.',
+    ],
 
     'modules' => [
         'heading' => 'Across the company',
@@ -90,11 +103,5 @@ return [
         'due-today'   => 'Due today',
         'due-on'      => 'Due :date',
         'days-late'   => '{1} 1 day late|[2,*] :count days late',
-    ],
-
-    'cash-compare' => [
-        'previous'    => 'Previous period',
-        'this-period' => 'This period',
-        'vs-previous' => 'Vs previous period',
     ],
 ];

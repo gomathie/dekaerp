@@ -6,10 +6,14 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Carbon;
 use Webkul\Purchase\Filament\Admin\Widgets\Concerns\GuardsPurchaseDashboardWidget;
 use Webkul\Purchase\Filament\Admin\Widgets\Concerns\HasPurchaseDashboardFilters;
+use Webkul\Support\Filament\DashboardPeriod;
 use Webkul\Support\Filament\Widgets\DashboardChartWidget;
 
 class PurchaseTrendWidget extends DashboardChartWidget
 {
+    // DB-4 layout on the Overview's six-column grid (2026-11-23).
+    protected int|string|array $columnSpan = ['default' => 'full', 'xl' => 4];
+
     use GuardsPurchaseDashboardWidget, HasPurchaseDashboardFilters;
 
     protected const SERIES_COLORS = [
@@ -23,6 +27,20 @@ class PurchaseTrendWidget extends DashboardChartWidget
     protected static ?int $sort = 2;
 
     protected ?string $maxHeight = '240px';
+
+    /**
+     * The grouping switch (DB-9, 2026-11-24); Automatic keeps the
+     * period-length rule.
+     */
+    public ?string $filter = 'auto';
+
+    /**
+     * @return array<string, string>
+     */
+    protected function getFilters(): ?array
+    {
+        return DashboardPeriod::groupingOptions();
+    }
 
     public function getHeading(): string|Htmlable|null
     {
@@ -53,15 +71,23 @@ class PurchaseTrendWidget extends DashboardChartWidget
             $counts[Carbon::parse($row->bucket_day)->format('Y-m-d')][(string) $row->bucket_state] = (int) $row->bucket_count;
         }
 
-        $labels = [];
-        $series = array_fill_keys(array_keys(self::SERIES_COLORS), []);
+        $daily = array_fill_keys(array_keys(self::SERIES_COLORS), []);
 
         for ($date = (clone $start)->startOfDay(); $date->lte($end); $date->addDay()) {
-            $labels[] = $date->format('M d');
-
             foreach (array_keys(self::SERIES_COLORS) as $seriesState) {
-                $series[$seriesState][] = $counts[$date->format('Y-m-d')][$seriesState] ?? 0;
+                $daily[$seriesState][] = (float) ($counts[$date->format('Y-m-d')][$seriesState] ?? 0);
             }
+        }
+
+        // Grouped by the switch, or by the period's length (DB-4, DB-9).
+        $labels = [];
+        $series = [];
+
+        foreach ($daily as $seriesState => $values) {
+            ['labels' => $labels, 'values' => $grouped] = DashboardPeriod::rollUp($values, $start, $end, $this->filter);
+
+            // Order counts stay whole numbers.
+            $series[$seriesState] = array_map('intval', $grouped);
         }
 
         return [

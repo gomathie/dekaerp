@@ -48,7 +48,7 @@ class Invoicer
         // Public and called on its own, so it repeats invoiceOrder()'s check.
         SalesAccess::assertForCompany((int) $record->company_id);
 
-        $accountMove = AccountMove::create([
+        $accountMove = new AccountMove([
             'move_type'               => AccountEnums\MoveType::OUT_INVOICE,
             'invoice_origin'          => $record->name,
             'date'                    => now(),
@@ -58,6 +58,20 @@ class Invoicer
             'partner_id'              => $record->partner_id,
             'fiscal_position_id'      => $record->fiscal_position_id,
         ]);
+
+        // A rate confirmed on the quotation (MC-2b) carries to its invoice,
+        // before the first save, so the invoice is costed at the agreed rate,
+        // not the day's. forceFill: these fields are deliberately not
+        // fillable, so no request can set them.
+        if ($record->currency_rate_source === AccountMove::RATE_MANUAL && (float) $record->currency_rate > 0) {
+            $accountMove->forceFill([
+                'invoice_currency_rate'      => (float) $record->currency_rate,
+                'currency_rate_source'       => AccountMove::RATE_MANUAL,
+                'currency_rate_confirmed_by' => $record->currency_rate_confirmed_by,
+            ]);
+        }
+
+        $accountMove->save();
 
         $record->accountMoves()->attach($accountMove->id);
 

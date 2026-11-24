@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Invoice',
+    'title' => 'Bill',
 
     'navigation' => [
-        'title' => 'Invoices',
+        'title' => 'Bills',
         'group' => 'Invoices',
     ],
 
@@ -173,7 +173,7 @@ return [
             'delete' => [
                 'notification' => [
                     'title' => 'Payments deleted',
-                    'body'  => 'The payments has been deleted successfully.',
+                    'body'  => 'The bills have been deleted successfully.',
                 ],
             ],
         ],

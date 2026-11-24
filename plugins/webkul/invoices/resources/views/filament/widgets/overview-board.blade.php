@@ -96,7 +96,16 @@
     </style>
 
     <div class="ovb">
-        <p class="ovb__meta">{{ __('invoices::filament/pages/overview.board.updated', ['time' => $updatedAt->format('H:i')]) }}</p>
+        {{-- The viewer's clock, like the banner above it (2026-11-23): the
+             server's time sat beside the banner's local clock, three hours
+             apart for anyone outside UTC. The key changes with each refresh,
+             so Alpine formats the new time instead of keeping the old one. --}}
+        <p
+            class="ovb__meta"
+            wire:key="ovb-updated-{{ $updatedAt->getTimestamp() }}"
+            x-data
+            x-text="@js(__('invoices::filament/pages/overview.board.updated', ['time' => '__TIME__'])).replace('__TIME__', new Intl.DateTimeFormat(@js(\Webkul\Support\Filament\DashboardPeriod::browserLocale()), { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(@js($updatedAt->toIso8601String()))))"
+        >{{ __('invoices::filament/pages/overview.board.updated', ['time' => $updatedAt->format('H:i')]) }}</p>
 
         <div @class(['ovb__grid', 'ovb__grid--single' => $main === [] || $side === []])>
             @if ($main !== [])

@@ -8,6 +8,7 @@ use Filament\Forms\Components\Hidden;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Utilities\Set;
 use Malzariey\FilamentDaterangepickerFilter\Fields\DateRangePicker;
+use Webkul\Support\Filament\DashboardPeriod;
 
 /**
  * Dashboard filter date range.
@@ -38,7 +39,8 @@ class DashboardDateRange
                 ->label($label)
                 ->columnSpan($columnSpan ?? 1)
                 ->suffixIcon('heroicon-o-calendar')
-                ->defaultThisYear()
+                // The year to date, the default of every dashboard (U68).
+                ->defaultCustom(...DashboardPeriod::defaultRange())
                 ->ranges(static::ranges())
                 ->alwaysShowCalendar()
                 ->live()
@@ -50,10 +52,10 @@ class DashboardDateRange
                 }),
 
             Hidden::make($startKey)
-                ->default(now()->startOfYear()->toDateString()),
+                ->default(DashboardPeriod::defaultRange()[0]->toDateString()),
 
             Hidden::make($endKey)
-                ->default(now()->endOfYear()->toDateString()),
+                ->default(DashboardPeriod::defaultRange()[1]->toDateString()),
         ];
     }
 

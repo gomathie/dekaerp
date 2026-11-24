@@ -41,12 +41,12 @@ return [
                 'title' => 'Planejamento de força de trabalho',
 
                 'fields' => [
-                    'recruitment-target' => 'Meta de recrutamento',
-                    'date-from'          => 'Data inicial',
-                    'date-to'            => 'Data até',
-                    'expected-skills'    => 'Habilidades esperadas',
-                    'employment-type'    => 'Tipo de vínculo',
-                    'status'             => 'Status',
+                    'recruitment-target'         => 'Meta de recrutamento',
+                    'date-from'                  => 'Data inicial',
+                    'date-to'                    => 'Data até',
+                    'expected-skills'            => 'Habilidades esperadas',
+                    'employment-type'            => 'Tipo de vínculo',
+                    'status'                     => 'Status',
                 ],
             ],
 
@@ -138,8 +138,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Cargos',
-                    'body'  => 'Os cargos foram criados com sucesso.',
+                    'title' => 'Cargo criado',
+                    'body'  => 'O cargo foi criado com sucesso.',
                 ],
             ],
         ],

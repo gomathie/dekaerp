@@ -10,6 +10,43 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.17.0 — 2026-11-25
+
+### Improvements
+
+- Russian and Swahili are now languages you can choose, next to English, Arabic, Spanish, French and Portuguese (Brazil). These translations are machine-assisted. If a phrase sounds wrong, a native speaker's correction is welcome, and English stays one click away.
+- Corrected wording on several screens, in every language: activity types are no longer titled "Departments", creating a lot says "Lot created", time-off allocations, accrual plans, mandatory days and public holidays confirm the right action, resume entries no longer say "Skill Level", and employment types, job positions and skill types say what was saved.
+- Dashboards open on the year to date and compare it with the same days last year. A bar above each dashboard shows the period and switches it in one click: This month, Last 30 days, Year to date or Last year.
+- The Sales, Purchases and Invoices tabs are laid out the same way: four key figures first, then the main chart, three breakdowns, and the lists two to a row. The separate rows of count tiles are gone; their numbers are in the key figures.
+- Long periods are charted by week or by month instead of by day, so a year reads as twelve bars instead of hairline spikes.
+- Sales has a "Quotations" breakdown: how many of the period's quotations became orders, are still open or were cancelled. Purchases shows "To receive": confirmed orders whose goods have not all arrived.
+- When a period has nothing in it, the dashboard says when the latest record is, instead of only showing zeros.
+- Sales dashboard: the "Monthly Sales" chart adds up to the Revenue figure above it. It counted confirmed orders that were not invoiced yet. It also draws the compared period's months beside this period's.
+- Invoices dashboard: the customer revenue ring and the salesperson bars now deduct credit notes, so they add up to the "Total invoiced" figure beside them.
+- Sales dashboard: the breakdowns by salesperson, category, customer and product say what they count (confirmed orders and invoices made without an order), and a customer's number of sales no longer counts a credit note.
+- Overview: the date and clock in the welcome banner no longer change format a moment after the page opens, and "Updated" shows your own local time.
+- Dashboard figures show their full comparison ("New vs 1 Jan 2025 – 31 Dec 2025") on a line of their own instead of cutting it off.
+- Purchases dashboard: the supplier ring, top suppliers, top products and top orders count confirmed orders only, like the "Spend" figure. They also counted requests for quotation and cancelled orders.
+- Accounting dashboard: on each journal card, the due-date chart deducts credit notes and vendor refunds, so it adds up to "To Pay". "Late", and the Overdue list it opens, include partly paid invoices past their due date.
+- Logistics dashboard: "In transit" includes shipments that have been picked up, so it and "Out for delivery" add up to the Overview's "On the road".
+- Dashboards refresh themselves at most every 5 minutes. The Projects, Recruitments, Logistics and Time Off figures refreshed every few seconds, which slowed the application for everyone with a dashboard open.
+- The payment text message to a customer states one currency: it added an order's dollar and cedi invoices together, and counted a credit note as more invoiced.
+- Dashboard figures show their change as a coloured pill with an arrow (▲ 12% green, ▼ 4% red), and the Sales and Purchases headline figures have an icon, like the other cards.
+- The main chart on Sales, Purchases and Invoices has a switch to group it by day, week, month or year. "Automatic" keeps the grouping that suits the period. "Monthly Sales" is now "Sales over time".
+- Invoices and the Overview: "Money in and out" shows the two as paired bars, with both totals and their change against the previous period above the chart.
+- The revenue, supplier and customer rings list each slice's amount and share below the ring. Their centre total now follows the filters; it kept the first period's figure after a filter was changed.
+- Sales dashboard: a new "Order activity" row shows how many of the period's orders are to deliver, delivered, to invoice and invoiced. Each opens the order list on that view; the order list has new "To Deliver", "Delivered" and "Invoiced" views.
+- On the invoice and bill lists, a contact who works for a company has that company's name under their own.
+- Confirming an invoice or bill in another currency now first shows its total in your company currency, at the document's own exchange rate, and the date that rate belongs to, before it is posted.
+- The vendor bills, purchase orders, sales orders and payments received lists now show this month's figures at the top, the same as on their dashboards. These figures stay hidden for users who are not allowed to see money figures.
+- The invoice list opens with this month's figures above it: total invoiced, number of invoices, paid and unpaid, each with its change against the same number of days just before. They are the same figures as the Invoices dashboard and show for people who can see that dashboard.
+- Every dashboard list (orders, quotations, invoices, bills, requests for quotation, customers, vendors and products) has a "View all" button that opens the whole list. Vendors in the Purchases dashboard open when clicked.
+- New company setting "Ask which currency each sale is in". When it is on and the company has more than one currency, a new invoice first asks for the currency. For a foreign currency it shows the day's exchange rate, which you accept or correct, and the invoice keeps the rate you confirmed. A corrected rate is noted in the invoice's history. The rate you kept is shown under the currency, and "Currency and rate" at the top of the page lets you change it. New quotations and sales orders ask the same question, and an invoice made from the order keeps its rate.
+- The company form shows which currencies the company can use on documents right now.
+- Purchase agreements offer only the company's own currencies, like the other documents.
+- New report under Accounting › Reporting: "Multi-currency". Per currency, what was invoiced, received and is still open, in that currency and in the company currency at the rates booked, what the open amount is worth at today's rate, the exchange gains and losses booked, and the documents behind the figures. It can be exported to Excel.
+- Payments received show an "Unused amount" column: the part of a payment not yet matched to an invoice or bill. It is in the export too.
+
 # CHANGELOG — v1.16.13 — 2026-11-24
 
 ### Fixes

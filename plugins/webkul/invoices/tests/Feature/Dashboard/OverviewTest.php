@@ -3,6 +3,7 @@
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\TableWidget;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Enums\MoveType;
@@ -11,11 +12,14 @@ use Webkul\Invoice\Filament\Overview\InvoiceAttention;
 use Webkul\Invoice\Filament\Overview\OverviewRegistry;
 use Webkul\Invoice\Filament\Pages\Invoices;
 use Webkul\Invoice\Filament\Pages\Overview;
+use Webkul\Invoice\Filament\Widgets\BillStatsWidget;
 use Webkul\Invoice\Filament\Widgets\InvoiceHeadlineWidget;
+use Webkul\Invoice\Filament\Widgets\InvoiceStatsWidget;
 use Webkul\Invoice\Filament\Widgets\OverviewBoard;
 use Webkul\Invoice\Filament\Widgets\OverviewCashFlowChart;
 use Webkul\Invoice\Filament\Widgets\OverviewHeadlineWidget;
 use Webkul\Invoice\Filament\Widgets\OverviewModuleCards;
+use Webkul\Invoice\Filament\Widgets\RevenueOverTimeWidget;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Support\Filament\Contributions\DashboardBannerRegistry;
@@ -379,4 +383,123 @@ it('hides the overview or only its money sections by the user switches', functio
     expect(OverviewRegistry::visible())->toBe([])
         ->and(Overview::canAccess())->toBeFalse()
         ->and(Invoices::canAccess())->toBeFalse();
+});
+
+/**
+ * DB-4 (approved mockup, 2026-11-23): the period is a visible bar of
+ * one-click presets that says what it is compared with. A key the bar does
+ * not offer changes nothing, because the method is callable from the browser.
+ */
+it('sets the period from the bar and says what it is compared with', function (): void {
+    $this->travelTo(Carbon::parse('2026-11-23 10:00'));
+
+    $page = new Overview;
+    $page->filters = [];
+
+    $bar = fn (): array => (fn (): array => $this->periodBarData())->call($page);
+
+    expect($bar()['active'])->toBe('year-to-date')
+        ->and($bar()['period'])->toBe('1 Jan – 23 Nov')
+        ->and($bar()['previous'])->toBe('1 Jan 2025 – 23 Nov 2025');
+
+    $page->selectPeriod('last-year');
+
+    expect($page->filters['start_date'])->toBe('2025-01-01')
+        ->and($page->filters['end_date'])->toBe('2025-12-31')
+        ->and($page->filters['date_range'])->toBe('01/01/2025 - 31/12/2025')
+        ->and($bar()['active'])->toBe('last-year')
+        ->and($bar()['previous'])->toBe('1 Jan 2024 – 31 Dec 2024');
+
+    $page->selectPeriod('everything');
+
+    expect($page->filters['start_date'])->toBe('2025-01-01');
+
+    $page->filters = ['start_date' => '2026-03-03', 'end_date' => '2026-03-09'];
+
+    expect($bar()['active'])->toBeNull()
+        ->and($bar()['previous'])->toBe('24 Feb – 2 Mar');
+});
+
+/**
+ * DB-4 (approved mockup, 2026-11-23): the Invoices tab is key figures, money
+ * in and out across the page, three breakdowns and two lists, on a
+ * six-column grid. The separate count tiles are gone. A section that has
+ * not opted in keeps three columns, so other modules' widgets keep their
+ * width.
+ */
+it('lays the invoices tab out like the approved mockup, on six columns only there', function (): void {
+    CompanyHelper::actingAsCompanyUser(Company::factory()->create(), ['page_invoice_invoices']);
+
+    OverviewRegistry::register('test-section', fn (): string => 'Test', ['TestOnlyWidget'], fn (): array => [], fn (): bool => true, sort: 99);
+
+    $page = new Overview;
+
+    $page->filters = ['sections' => ['invoices']];
+
+    expect($page->getColumns())->toBe(['md' => 2, 'xl' => 6])
+        ->and(Invoices::sectionWidgets()[0])->toBe(OverviewCashFlowChart::class)
+        ->and(Invoices::sectionWidgets())->not->toContain(
+            InvoiceStatsWidget::class,
+            BillStatsWidget::class,
+            RevenueOverTimeWidget::class,
+        );
+
+    $page->filters = ['sections' => ['test-section']];
+    expect($page->getColumns())->toBe(['md' => 2, 'xl' => 3]);
+
+    $page->filters = [];
+    expect($page->getColumns())->toBe(['md' => 2, 'xl' => 3]);
+});
+
+/**
+ * DB-4 (2026-11-23): Invoiced and Billed moved into the key figures, but
+ * only for someone their own widgets admit. Moving a figure must not hand
+ * it to a role that could not see it before.
+ */
+it('shows invoiced and billed among the key figures only to whoever their widgets admit', function (): void {
+    FilamentHelper::bootAdminPanel();
+
+    $company = Company::factory()->create();
+    CompanyHelper::actingAsCompanyUser($company, ['page_invoice_invoices']);
+
+    $labels = fn (): array => array_map(fn ($stat): string => (string) $stat->getLabel(), app(InvoiceHeadlineWidget::class)->headlineStats([]));
+
+    expect($labels())->toBe(['To collect', 'To pay']);
+
+    $widgets = FilamentShield::getWidgets();
+    $permissions = array_map(
+        fn (string $class): string => array_key_first($widgets[$class]['permissions']),
+        [InvoiceStatsWidget::class, BillStatsWidget::class],
+    );
+
+    CompanyHelper::actingAsCompanyUser($company, ['page_invoice_invoices', ...$permissions]);
+
+    expect($labels())->toBe(['Total Invoiced', 'To collect', 'Total Billed', 'To pay']);
+});
+
+/**
+ * U69 (2026-11-23): an empty tab said nothing, and older figures looked
+ * lost. The key figures row names the latest invoice when the period has
+ * none, and says nothing when it has some.
+ */
+it('names the latest invoice above an empty period', function (): void {
+    $company = Company::factory()->create();
+    $user = CompanyHelper::actingAsCompanyUser($company, ['page_invoice_invoices']);
+    $user->forceFill(['resource_permission' => 'global'])->saveQuietly();
+
+    $move = Move::factory()->create(['company_id' => $company->getKey()]);
+    Move::withoutGlobalScopes()->whereKey($move->getKey())->update([
+        'company_id'   => $company->getKey(),
+        'move_type'    => MoveType::OUT_INVOICE,
+        'state'        => MoveState::POSTED,
+        'invoice_date' => '2025-06-10',
+    ]);
+
+    $headline = new OverviewHeadlineWidget;
+
+    $headline->pageFilters = ['sections' => ['invoices'], 'start_date' => now()->startOfMonth()->toDateString(), 'end_date' => now()->toDateString()];
+    expect($headline->getDescription())->toContain('10 Jun 2025');
+
+    $headline->pageFilters = ['sections' => ['invoices'], 'start_date' => '2025-01-01', 'end_date' => '2025-12-31'];
+    expect($headline->getDescription())->toBeNull();
 });

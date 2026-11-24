@@ -11,7 +11,11 @@ const themeColor = (name, fallback) => {
 const dashboardChartCenterText = {
     id: 'dashboardChartCenterText',
     afterDraw(chart) {
-        const config = chart.config?.options?.plugins?.centerText
+        // The dataset's copy first (DB-9): Filament sends only new data when
+        // the page filters change, so a total in the options went stale.
+        const fromData = chart.data?.datasets?.[0]?.centerText
+        const fromOptions = chart.config?.options?.plugins?.centerText
+        const config = fromData ? { ...(fromOptions || {}), ...fromData } : fromOptions
 
         if (! config || ! config.text) {
             return
@@ -63,6 +67,31 @@ const dashboardChartTooltipPercentage = {
             const percentage = total > 0 ? (current / total) * 100 : 0
 
             return `${percentage.toFixed(2)}%`
+        }
+    },
+}
+
+// Ring legend rows "Name · GH₵12.4k · 45%" (DB-9, 2026-11-24). The values
+// come with the data (dataset.legendValues), so they follow the filters.
+// Chart.js rebuilds the legend on every update and calls this again.
+const dashboardChartRingLegend = {
+    id: 'dashboardChartRingLegend',
+    beforeInit(chart) {
+        const legend = chart.config?.options?.plugins?.legend
+        const base = chart.constructor?.overrides?.[chart.config?.type]?.plugins?.legend?.labels?.generateLabels
+
+        if (! legend || ! base) {
+            return
+        }
+
+        legend.labels = legend.labels || {}
+
+        legend.labels.generateLabels = (current) => {
+            const values = current.data?.datasets?.[0]?.legendValues || []
+
+            return base(current).map((item) => (values[item.index]
+                ? { ...item, text: `${item.text} · ${values[item.index]}` }
+                : item))
         }
     },
 }
@@ -359,6 +388,7 @@ window.filamentChartJsGlobalPlugins.push(
     dashboardChartEmptyState,
     dashboardChartCenterText,
     dashboardChartTooltipPercentage,
+    dashboardChartRingLegend,
     dashboardChartHoverGrow,
     dashboardChartEntrance,
     dashboardChartLineGradient,

@@ -1,0 +1,97 @@
+<?php
+
+return [
+    'title' => 'Строки проводок',
+
+    'navigation' => [
+        'title' => 'Строки проводок',
+    ],
+
+    'table' => [
+        'total'   => 'Итого',
+        'columns' => [
+            'number'          => 'Номер',
+            'date'            => 'Дата',
+            'account'         => 'Счёт',
+            'partner'         => 'Контакт',
+            'label'           => 'Метка',
+            'reference'       => 'Ссылка',
+            'journal'         => 'Журнал',
+            'debit'           => 'Дебет',
+            'credit'          => 'Кредит',
+            'balance'         => 'Сальдо',
+            'currency'        => 'Валюта',
+            'company'         => 'Компания',
+            'status'          => 'Статус',
+            'amount-currency' => 'Сумма в валюте',
+            'amount-residual' => 'Остаток',
+            'reconciled'      => 'Сверено',
+            'due-date'        => 'Срок оплаты',
+        ],
+
+        'groups' => [
+            'journal-entry' => 'Проводка',
+            'account'       => 'Счёт',
+            'partner'       => 'Контакт',
+            'journal'       => 'Журнал',
+            'date'          => 'Дата',
+            'invoice-date'  => 'Дата счёта',
+            'matching'      => 'Сопоставление',
+            'status'        => 'Статус',
+            'company'       => 'Компания',
+        ],
+
+        'filters' => [
+            'number'          => 'Номер',
+            'label'           => 'Метка',
+            'reference'       => 'Ссылка',
+            'matching-number' => 'Номер сопоставления',
+            'account'         => 'Счёт',
+            'partner'         => 'Контакт',
+            'journal'         => 'Журнал',
+            'currency'        => 'Валюта',
+            'company'         => 'Компания',
+            'date'            => 'Дата',
+            'invoice-date'    => 'Дата счёта',
+            'due-date'        => 'Срок оплаты',
+            'discount-date'   => 'Дата скидки',
+            'debit'           => 'Дебет',
+            'credit'          => 'Кредит',
+            'balance'         => 'Сальдо',
+            'amount-currency' => 'Сумма в валюте',
+            'amount-residual' => 'Остаток',
+            'quantity'        => 'Количество',
+            'price-unit'      => 'Цена за единицу',
+            'discount'        => 'Скидка',
+            'reconciled'      => 'Сверено',
+            'imported'        => 'Импортировано',
+            'down-payment'    => 'Предоплата',
+            'created-at'      => 'Создано',
+            'updated-at'      => 'Обновлено',
+        ],
+
+        'saved-filters' => [
+            'label'         => 'Сохранённые фильтры',
+            'unposted'      => 'Не проведено',
+            'posted'        => 'Проведён',
+            'to-check'      => 'К проверке',
+            'unreconciled'  => 'Не сверено',
+            'with-residual' => 'С остатком',
+            'sales'         => 'Продажи',
+            'purchases'     => 'Закупки',
+            'bank'          => 'Банк',
+            'cash'          => 'Касса',
+            'credit'        => 'Кредит',
+            'miscellaneous' => 'Прочее',
+            'payable'       => 'Кредиторская задолженность',
+            'receivable'    => 'Дебиторская задолженность',
+            'pl-accounts'   => 'Счета прибылей и убытков',
+        ],
+
+        'toolbar-actions' => [
+            'export' => [
+                'label' => 'Экспорт',
+            ],
+        ],
+    ],
+];

@@ -7,6 +7,7 @@ return [
     'status'              => 'Status',
     'delivery-status'     => 'Delivery Status',
     'billing'             => 'Billing',
+    'sales-value'         => 'Confirmed orders and invoices made without an order',
     'stats'               => [
         'heading'            => 'Key Metrics',
         'total-quotations'   => 'Total Quotations',
@@ -15,11 +16,23 @@ return [
         'average-revenue'    => 'Average Revenue',
         'increase'           => 'increase',
         'decrease'           => 'decrease',
+        'this-month'         => 'This month',
+    ],
+
+    'order-activity'      => [
+        'heading'     => 'Order activity',
+        'description' => 'Orders confirmed in the period, by where they are now',
+        'to-deliver'  => 'To deliver',
+        'delivered'   => 'Delivered',
+        'to-invoice'  => 'To invoice',
+        'invoiced'    => 'Invoiced',
+        'share'       => ':percent% of :total orders',
     ],
 
     'monthly-sales'       => [
-        'heading' => 'Monthly Sales',
-        'revenue' => 'Revenue',
+        'heading'  => 'Sales over time',
+        'revenue'  => 'Revenue',
+        'previous' => 'Compared period',
     ],
 
     'revenue-by-category' => [
@@ -30,6 +43,15 @@ return [
     'sales-persons'       => [
         'heading' => 'Sales Person Performance',
         'revenue' => 'Revenue',
+    ],
+
+    'quotation-outcome'   => [
+        'heading'     => 'Quotations',
+        'description' => 'What became of the quotations made in the period',
+        'won'         => 'Became orders',
+        'open'        => 'Still open',
+        'cancelled'   => 'Cancelled',
+        'count'       => 'Quotations',
     ],
 
     'top-products'        => [

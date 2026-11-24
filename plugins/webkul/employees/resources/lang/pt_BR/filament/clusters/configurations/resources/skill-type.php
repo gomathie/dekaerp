@@ -92,8 +92,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Tipos de habilidade',
-                    'body'  => 'Os tipos de habilidade foram criados com sucesso.',
+                    'title' => 'Tipo de habilidade criado',
+                    'body'  => 'O tipo de habilidade foi criado com sucesso.',
                 ],
             ],
         ],

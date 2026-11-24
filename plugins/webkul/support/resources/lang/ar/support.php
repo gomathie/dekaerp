@@ -18,5 +18,13 @@ return [
         'vs'  => 'مقارنة بـ :range',
     ],
 
+    'grouping' => [
+        'auto'  => 'تلقائي',
+        'day'   => 'حسب اليوم',
+        'week'  => 'حسب الأسبوع',
+        'month' => 'حسب الشهر',
+        'year'  => 'حسب السنة',
+    ],
+
     'company-equivalent' => '≈ :amount · 1 :from = :rate :to',
 ];

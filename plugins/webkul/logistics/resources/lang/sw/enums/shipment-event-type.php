@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'created'             => 'Imeundwa',
+    'confirmed'           => 'Imethibitishwa',
+    'driver_assigned'     => 'Dereva amepangiwa',
+    'vehicle_assigned'    => 'Gari limepangiwa',
+    'trip_assigned'       => 'Safari imepangiwa',
+    'dispatched'          => 'Imetumwa',
+    'pickup_started'      => 'Uchukuaji umeanza',
+    'picked_up'           => 'Imechukuliwa',
+    'departed_origin'     => 'Imeondoka mahali pa kuanzia',
+    'in_transit'          => 'Iko njiani',
+    'arrived_destination' => 'Imefika mahali pa kufikia',
+    'out_for_delivery'    => 'Iko kwenye uwasilishaji',
+    'delivered'           => 'Imewasilishwa',
+    'delivery_failed'     => 'Uwasilishaji umeshindwa',
+    'delivery_retried'    => 'Uwasilishaji umejaribiwa tena',
+    'returned'            => 'Imerejeshwa',
+    'put_on_hold'         => 'Imesimamishwa',
+    'released'            => 'Imeachiliwa',
+    'cancelled'           => 'Imeghairiwa',
+    'pod_captured'        => 'Uthibitisho wa uwasilishaji umerekodiwa',
+    'invoice_created'     => 'Ankara imeundwa',
+    'position_update'     => 'Sasisho la mahali',
+];

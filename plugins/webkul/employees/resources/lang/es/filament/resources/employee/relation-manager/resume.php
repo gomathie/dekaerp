@@ -50,22 +50,22 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Nivel de competencia actualizado',
-                    'body'  => 'El nivel de competencia se ha actualizado correctamente.',
+                    'title' => 'Entrada del currículum actualizada',
+                    'body'  => 'La entrada del currículum se ha actualizado correctamente.',
                 ],
             ],
 
             'create' => [
                 'notification' => [
-                    'title' => 'Nivel de competencia creado',
-                    'body'  => 'El nivel de competencia se ha creado correctamente.',
+                    'title' => 'Entrada del currículum creada',
+                    'body'  => 'La entrada del currículum se ha creado correctamente.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Nivel de competencia eliminado',
-                    'body'  => 'El nivel de competencia se ha eliminado correctamente.',
+                    'title' => 'Entrada del currículum eliminada',
+                    'body'  => 'La entrada del currículum se ha eliminado correctamente.',
                 ],
             ],
         ],
@@ -73,8 +73,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Competencias eliminadas',
-                    'body'  => 'Las competencias se han eliminado correctamente.',
+                    'title' => 'Entradas del currículum eliminadas',
+                    'body'  => 'Las entradas del currículum se han eliminado correctamente.',
                 ],
             ],
         ],

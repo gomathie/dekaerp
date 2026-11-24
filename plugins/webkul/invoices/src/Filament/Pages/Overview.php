@@ -12,6 +12,7 @@ use Filament\Schemas\Schema;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\TableWidget;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Route;
 use Throwable;
 use Webkul\Invoice\Filament\Overview\OverviewRegistry;
@@ -21,6 +22,7 @@ use Webkul\Invoice\Filament\Widgets\OverviewModuleCards;
 use Webkul\Product\Models\Category;
 use Webkul\Product\Models\Product;
 use Webkul\Support\Enums\NavigationGroup;
+use Webkul\Support\Filament\DashboardPeriod;
 use Webkul\Support\Filament\Forms\Components\DashboardDateRange;
 use Webkul\Support\Filament\Forms\Components\DashboardFilters;
 
@@ -242,9 +244,58 @@ class Overview extends BaseDashboard
                     'sections' => array_map(fn (array $section): string => ($section['label'])(), OverviewRegistry::visible()),
                     'active'   => ((array) ($this->filters['sections'] ?? []))[0] ?? null,
                 ]),
+            View::make('invoices::filament.pages.overview-period')
+                ->viewData(fn (): array => $this->periodBarData()),
             $this->getFiltersFormContentComponent(),
             $this->getWidgetsContentComponent(),
         ]);
+    }
+
+    /**
+     * One-click periods (DB-4, 2026-11-23). The picker's own text is set
+     * too, so opening Filters shows the same dates. An unknown key changes
+     * nothing: the method is callable from the browser.
+     */
+    public function selectPeriod(string $preset): void
+    {
+        $range = DashboardPeriod::presets()[$preset] ?? null;
+
+        if ($range === null) {
+            return;
+        }
+
+        [$start, $end] = $range;
+
+        $this->filters = array_merge($this->filters ?? [], [
+            'start_date' => $start->toDateString(),
+            'end_date'   => $end->toDateString(),
+            'date_range' => $start->format('d/m/Y').' - '.$end->format('d/m/Y'),
+        ]);
+    }
+
+    /**
+     * What the period bar shows: the presets, which one is active, and the
+     * period with the one it is compared with, both from the shared rule.
+     *
+     * @return array{presets: array<string, string>, active: ?string, period: string, previous: string}
+     */
+    protected function periodBarData(): array
+    {
+        [$defaultStart, $defaultEnd] = DashboardPeriod::defaultRange();
+
+        $start = ! empty($this->filters['start_date']) ? Carbon::parse($this->filters['start_date'])->startOfDay() : $defaultStart;
+        $end = ! empty($this->filters['end_date']) ? Carbon::parse($this->filters['end_date'])->endOfDay() : $defaultEnd;
+
+        [$previousStart, $previousEnd] = DashboardPeriod::previous($start, $end);
+
+        return [
+            'presets'  => collect(DashboardPeriod::presets())
+                ->map(fn (array $range, string $key): string => __('invoices::filament/pages/overview.period.'.$key))
+                ->all(),
+            'active'   => DashboardPeriod::presetOf($start, $end),
+            'period'   => DashboardPeriod::label($start, $end),
+            'previous' => DashboardPeriod::label($previousStart, $previousEnd),
+        ];
     }
 
     public function selectSection(?string $section = null): void
@@ -284,6 +335,15 @@ class Overview extends BaseDashboard
      */
     public function getColumns(): int|array
     {
+        // A section laid out on six columns (DB-4: breakdowns three to a row,
+        // lists two to a row) gets them only while its own tab is open.
+        $sections = OverviewRegistry::visible();
+        $chosen = ((array) ($this->filters['sections'] ?? []))[0] ?? null;
+
+        if ($chosen !== null && ($sections[$chosen]['columns'] ?? 3) === 6) {
+            return ['md' => 2, 'xl' => 6];
+        }
+
         return ['md' => 2, 'xl' => 3];
     }
 

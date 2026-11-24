@@ -21,7 +21,7 @@ return [
     | (VersionMatchesChangelogTest). It was hard-coded at 1.5.0 in
     | HasFilamentDefaults while production ran 1.7.0 (2026-11-12).
     */
-    'version' => env('APP_VERSION', '1.16.13'),
+    'version' => env('APP_VERSION', '1.17.0'),
 
     /*
     | Set up accounting (chart, journals, taxes, payment methods) for a company
@@ -141,6 +141,21 @@ return [
             'label'  => 'Portuguese (Brazil)',
             'native' => 'Português (Brasil)',
             'flag'   => 'br',
+            'rtl'    => false,
+        ],
+        'ru' => [
+            'label'  => 'Russian',
+            'native' => 'Русский',
+            'flag'   => 'ru',
+            'rtl'    => false,
+        ],
+        // One Swahili, sw (D-LANG-1). The flag is Tanzania's: Swahili is
+        // that country's national language, and the switcher renders
+        // public/flags/{flag}.svg when that file exists.
+        'sw' => [
+            'label'  => 'Swahili',
+            'native' => 'Kiswahili',
+            'flag'   => 'tz',
             'rtl'    => false,
         ],
     ],

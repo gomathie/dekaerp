@@ -6,14 +6,16 @@ use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\HtmlString;
 use Webkul\Account\Enums\PaymentStatus;
 use Webkul\Account\Enums\PaymentType;
 use Webkul\Account\Models\Payment;
+use Webkul\Support\Filament\DashboardPeriod;
 
 /**
- * The one chart on the Overview's All tab (user, 2026-11-13): money in
- * (paid invoices) against money out (paid bills) per day, two thirds wide
- * beside Needs attention. The module tabs keep their full chart sets.
+ * The one chart on the Overview's All tab (user, 2026-11-13), and the main
+ * chart of the Invoices tab: money received against money paid out, as
+ * paired bars with both totals above them (DB-9, 2026-11-24).
  */
 class OverviewCashFlowChart extends RevenueOverTimeWidget
 {
@@ -22,9 +24,24 @@ class OverviewCashFlowChart extends RevenueOverTimeWidget
     // Every 5 minutes on the Overview (user, 2026-11-13); see OverviewHeadlineWidget.
     protected ?string $pollingInterval = '300s';
 
-    public ?string $filter = 'current';
+    /**
+     * The grouping switch (DB-9, approved 2026-11-24): Automatic keeps the
+     * period-length rule. *Superseded:* the select used to switch a faint
+     * "previous period" line on (DB-4); the comparison is now the two
+     * totals with their trend pills in the description, as on TRACE365's
+     * reference screens.
+     */
+    public ?string $filter = 'auto';
 
-    protected int|string|array $columnSpan = ['default' => 'full', 'md' => 2, 'xl' => 2];
+    protected int|string|array $columnSpan = 'full';
+
+    /**
+     * Daily series already read in this request, keyed by type and dates:
+     * the description and the bars use the same four series.
+     *
+     * @var array<string, list<float>>
+     */
+    protected array $paymentSeries = [];
 
     /**
      * Seen by whoever may see "Revenue over time": the same module switch and
@@ -44,55 +61,72 @@ class OverviewCashFlowChart extends RevenueOverTimeWidget
         return __('invoices::filament/pages/overview.cash.heading');
     }
 
+    /**
+     * Both totals above the bars, each with its change against the previous
+     * period (DB-9): "Money in GH₵12.4k [▲ 8%] · Money out GH₵3.1k [▼ 2%]
+     * vs 1 Jan – 24 Nov". Rendered by Blade on every update, so it follows
+     * the page filters; chart options would not (Filament sends only data).
+     * Money out uses lowerIsBetter: spending less is the good direction.
+     */
     public function getDescription(): string|Htmlable|null
     {
-        return __('invoices::filament/pages/overview.cash.description');
+        [$start, $end] = $this->periodRange();
+        [$previousStart, $previousEnd] = $this->previousPeriodRange();
+        $currency = $this->dashboardCurrency();
+
+        $parts = [];
+
+        foreach (['in' => PaymentType::RECEIVE, 'out' => PaymentType::SEND] as $key => $type) {
+            $total = array_sum($this->dailyPayments($type, $start, $end));
+            $previous = array_sum($this->dailyPayments($type, $previousStart, $previousEnd));
+
+            [$change, $icon, $color] = $this->statTrend($total, $previous, lowerIsBetter: $key === 'out', money: true);
+
+            $parts[] = (string) $this->trendDescription(
+                __('invoices::filament/pages/overview.cash.'.$key).' '.compact_money($total, $currency),
+                $change,
+                $icon,
+                $color,
+            );
+        }
+
+        return new HtmlString(implode(' · ', $parts).' <span class="dashboard-trend-caption">'.e(__('support::support.trend.vs', ['range' => $this->baselineLabel()])).'</span>');
     }
 
     protected function getData(): array
     {
         [$start, $end] = $this->periodRange();
 
-        $in = $this->dailyPayments(PaymentType::RECEIVE, $start, $end);
-        $out = $this->dailyPayments(PaymentType::SEND, $start, $end);
+        // Grouped by the switch, or by the period's length (DB-4, DB-9).
+        ['labels' => $labels, 'values' => $in] = DashboardPeriod::rollUp($this->dailyPayments(PaymentType::RECEIVE, $start, $end), $start, $end, $this->filter);
+        $out = DashboardPeriod::rollUp($this->dailyPayments(PaymentType::SEND, $start, $end), $start, $end, $this->filter)['values'];
 
-        $labels = [];
-
-        for ($date = (clone $start)->startOfDay(); $date->lte($end); $date->addDay()) {
-            $labels[] = $date->format('M d');
-        }
-
-        $outDataset = array_merge($this->gradientLineDataset($out, __('invoices::filament/pages/overview.cash.out')), [
-            'borderColor'          => $this->brandColor('gray', 400),
-            'backgroundColor'      => $this->brandColor('gray', 400, 0.10),
-            'pointBackgroundColor' => $this->brandColor('gray', 400),
-            'borderDash'           => [4, 4],
-        ]);
-
-        $datasets = [
-            $this->gradientLineDataset($in, __('invoices::filament/pages/overview.cash.in')),
-            $outDataset,
-        ];
-
-        // "vs previous period" (approved mockup): the money in of the period
-        // of the same length just before, day by day, as a faint line.
-        if ($this->filter === 'compare') {
-            [$previousStart, $previousEnd] = $this->previousPeriodRange();
-
-            $datasets[] = [
-                'label'       => __('invoices::filament/pages/overview.cash-compare.previous'),
-                'data'        => array_slice($this->dailyPayments(PaymentType::RECEIVE, $previousStart, $previousEnd), 0, count($labels)),
-                'borderColor' => $this->brandColor('primary', 500, 0.45),
-                'fill'        => false,
-                'tension'     => 0.4,
-                'borderWidth' => 1.5,
-                'pointRadius' => 0,
-            ];
-        }
-
+        // Paired bars (DB-9 board): money in in the brand colour, money out
+        // in grey, as in the references.
         return [
-            'datasets' => $datasets,
+            'datasets' => [
+                $this->cashBarDataset($in, __('invoices::filament/pages/overview.cash.in'), $this->brandColor('primary', 500)),
+                $this->cashBarDataset($out, __('invoices::filament/pages/overview.cash.out'), $this->brandColor('gray', 400)),
+            ],
             'labels'   => $labels,
+        ];
+    }
+
+    /**
+     * @param  list<float>  $values
+     * @return array<string, mixed>
+     */
+    protected function cashBarDataset(array $values, string $label, string $color): array
+    {
+        return [
+            'label'              => $label,
+            'data'               => $values,
+            'backgroundColor'    => $color,
+            'borderRadius'       => 6,
+            'borderSkipped'      => 'bottom',
+            'maxBarThickness'    => 28,
+            'categoryPercentage' => 0.7,
+            'barPercentage'      => 0.9,
         ];
     }
 
@@ -101,10 +135,7 @@ class OverviewCashFlowChart extends RevenueOverTimeWidget
      */
     protected function getFilters(): ?array
     {
-        return [
-            'current' => __('invoices::filament/pages/overview.cash-compare.this-period'),
-            'compare' => __('invoices::filament/pages/overview.cash-compare.vs-previous'),
-        ];
+        return DashboardPeriod::groupingOptions();
     }
 
     /**
@@ -122,14 +153,20 @@ class OverviewCashFlowChart extends RevenueOverTimeWidget
      */
     protected function dailyPayments(PaymentType $type, Carbon $start, Carbon $end): array
     {
-        $query = Payment::query();
+        $cacheKey = $type->value.'|'.$start->toDateString().'|'.$end->toDateString();
+
+        return $this->paymentSeries[$cacheKey] ??= $this->readDailyPayments($type, $start, $end);
+    }
+
+    /**
+     * @return list<float>
+     */
+    protected function readDailyPayments(PaymentType $type, Carbon $start, Carbon $end): array
+    {
         $filters = $this->dashboardFilters();
         $partnerFilter = $type === PaymentType::RECEIVE ? 'customer_id' : 'vendor_id';
 
-        $byDay = $query
-            ->where($query->qualifyColumn('payment_type'), $type)
-            ->whereIn($query->qualifyColumn('state'), [PaymentStatus::PAID, PaymentStatus::IN_PROCESS])
-            ->whereBetween($query->qualifyColumn('date'), [$start->toDateString(), $end->toDateString()])
+        $byDay = static::recordedPayments($type, $start, $end)
             ->when(! empty($filters[$partnerFilter]), fn (Builder $q) => $q->whereIn($q->qualifyColumn('partner_id'), (array) $filters[$partnerFilter]))
             ->toBase()
             ->selectRaw('date as bucket_day, SUM(ABS(amount_company_currency_signed)) as bucket_value')
@@ -146,17 +183,44 @@ class OverviewCashFlowChart extends RevenueOverTimeWidget
         return $series;
     }
 
+    /**
+     * The payments that count as money received (inbound) or paid out
+     * (outbound) between two dates, by payment date, in the company scope.
+     * Public so the cards above the payments list read the same rule
+     * (plan #9 R-9) instead of a second one; see dailyPayments() for why
+     * in process counts with paid.
+     */
+    public static function recordedPayments(PaymentType $type, Carbon $start, Carbon $end): Builder
+    {
+        $query = Payment::query();
+
+        return $query
+            ->where($query->qualifyColumn('payment_type'), $type)
+            ->whereIn($query->qualifyColumn('state'), [PaymentStatus::PAID, PaymentStatus::IN_PROCESS])
+            ->whereBetween($query->qualifyColumn('date'), [$start->toDateString(), $end->toDateString()]);
+    }
+
+    /**
+     * Bars with a legend naming the two series. No traffic-light gradient:
+     * it reads "high is good" and would colour spending green.
+     */
     protected function getOptions(): array
     {
-        $options = parent::getOptions();
+        return [
+            'maintainAspectRatio' => false,
+            'interaction'         => $this->chartInteraction('index'),
+            'plugins'             => [
+                'entrance' => ['type' => 'rising-bars', 'duration' => 700, 'stagger' => 40],
 
-        // The traffic-light gradient reads "high is good" and only suits a
-        // single revenue line; with money out beside it, it would colour
-        // spending green. A legend names the two lines instead.
-        unset($options['plugins']['lineGradient']);
+                'legend'  => ['display' => true, 'position' => 'bottom', 'labels' => ['usePointStyle' => true, 'pointStyle' => 'rectRounded', 'boxWidth' => 8]],
+                'tooltip' => $this->chartTooltip(),
+            ],
+            'scales'              => $this->cartesianScales(12),
+        ];
+    }
 
-        $options['plugins']['legend'] = ['display' => true, 'position' => 'bottom', 'labels' => ['usePointStyle' => true, 'boxWidth' => 8]];
-
-        return $options;
+    protected function getType(): string
+    {
+        return 'bar';
     }
 }

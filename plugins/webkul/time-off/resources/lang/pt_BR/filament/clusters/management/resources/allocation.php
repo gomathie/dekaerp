@@ -93,9 +93,9 @@ return [
             'allocation-details' => [
                 'title'   => 'Detalhes da alocação',
                 'entries' => [
-                    'name'            => 'Nome',
-                    'time-off-type'   => 'Tipo de ausência',
-                    'allocation-type' => 'Tipo de alocação',
+                    'name'                => 'Nome',
+                    'time-off-type'       => 'Tipo de ausência',
+                    'allocation-type'     => 'Tipo de alocação',
                 ],
             ],
 

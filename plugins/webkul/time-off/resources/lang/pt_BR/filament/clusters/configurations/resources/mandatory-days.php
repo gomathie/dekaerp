@@ -49,7 +49,7 @@ return [
             'edit' => [
                 'notification' => [
                     'title' => 'Dia obrigatório atualizado',
-                    'body'  => 'O dia obrigatório foi restaurado com sucesso.',
+                    'body'  => 'O dia obrigatório foi atualizado com sucesso.',
                 ],
             ],
 

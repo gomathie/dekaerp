@@ -7,6 +7,7 @@ return [
     'status'              => 'الحالة',
     'delivery-status'     => 'حالة التسليم',
     'billing'             => 'الفوترة',
+    'sales-value'         => 'الطلبات المؤكدة والفواتير الصادرة بدون طلب',
     'stats'               => [
         'heading'            => 'المؤشرات الرئيسية',
         'total-quotations'   => 'إجمالي عروض الأسعار',
@@ -15,11 +16,23 @@ return [
         'average-revenue'    => 'متوسط الإيرادات',
         'increase'           => 'زيادة',
         'decrease'           => 'انخفاض',
+        'this-month'         => 'هذا الشهر',
+    ],
+
+    'order-activity'      => [
+        'heading'     => 'نشاط الطلبات',
+        'description' => 'الطلبات المؤكدة في الفترة حسب حالتها الحالية',
+        'to-deliver'  => 'للتسليم',
+        'delivered'   => 'تم التسليم',
+        'to-invoice'  => 'للفوترة',
+        'invoiced'    => 'تمت الفوترة',
+        'share'       => ':percent% من :total طلبات',
     ],
 
     'monthly-sales'       => [
-        'heading' => 'المبيعات الشهرية',
-        'revenue' => 'الإيرادات',
+        'heading'  => 'المبيعات عبر الزمن',
+        'revenue'  => 'الإيرادات',
+        'previous' => 'فترة المقارنة',
     ],
 
     'revenue-by-category' => [
@@ -30,6 +43,15 @@ return [
     'sales-persons'       => [
         'heading' => 'أداء مندوبي المبيعات',
         'revenue' => 'الإيرادات',
+    ],
+
+    'quotation-outcome'   => [
+        'heading'     => 'عروض الأسعار',
+        'description' => 'ما آلت إليه عروض الأسعار التي أُعدّت في الفترة',
+        'won'         => 'أصبحت طلبات',
+        'open'        => 'ما زالت مفتوحة',
+        'cancelled'   => 'ملغاة',
+        'count'       => 'عروض الأسعار',
     ],
 
     'top-products'        => [

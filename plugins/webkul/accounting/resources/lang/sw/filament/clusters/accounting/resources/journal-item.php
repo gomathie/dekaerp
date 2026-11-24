@@ -1,0 +1,97 @@
+<?php
+
+return [
+    'title' => 'Vipengee vya jarida',
+
+    'navigation' => [
+        'title' => 'Vipengee vya jarida',
+    ],
+
+    'table' => [
+        'total'   => 'Jumla',
+        'columns' => [
+            'number'          => 'Nambari',
+            'date'            => 'Tarehe',
+            'account'         => 'Akaunti',
+            'partner'         => 'Mhusika',
+            'label'           => 'Lebo',
+            'reference'       => 'Kumbukumbu',
+            'journal'         => 'Jarida',
+            'debit'           => 'Debiti',
+            'credit'          => 'Krediti',
+            'balance'         => 'Salio',
+            'currency'        => 'Sarafu',
+            'company'         => 'Kampuni',
+            'status'          => 'Hali',
+            'amount-currency' => 'Kiasi kwa sarafu',
+            'amount-residual' => 'Kiasi kilichobaki',
+            'reconciled'      => 'Imelinganishwa',
+            'due-date'        => 'Tarehe ya mwisho',
+        ],
+
+        'groups' => [
+            'journal-entry' => 'Ingizo la jarida',
+            'account'       => 'Akaunti',
+            'partner'       => 'Mhusika',
+            'journal'       => 'Jarida',
+            'date'          => 'Tarehe',
+            'invoice-date'  => 'Tarehe ya ankara',
+            'matching'      => 'Ulinganisho',
+            'status'        => 'Hali',
+            'company'       => 'Kampuni',
+        ],
+
+        'filters' => [
+            'number'          => 'Nambari',
+            'label'           => 'Lebo',
+            'reference'       => 'Kumbukumbu',
+            'matching-number' => 'Nambari ya ulinganisho',
+            'account'         => 'Akaunti',
+            'partner'         => 'Mhusika',
+            'journal'         => 'Jarida',
+            'currency'        => 'Sarafu',
+            'company'         => 'Kampuni',
+            'date'            => 'Tarehe',
+            'invoice-date'    => 'Tarehe ya ankara',
+            'due-date'        => 'Tarehe ya mwisho',
+            'discount-date'   => 'Tarehe ya punguzo',
+            'debit'           => 'Debiti',
+            'credit'          => 'Krediti',
+            'balance'         => 'Salio',
+            'amount-currency' => 'Kiasi kwa sarafu',
+            'amount-residual' => 'Kiasi kilichobaki',
+            'quantity'        => 'Idadi',
+            'price-unit'      => 'Bei ya kipimo',
+            'discount'        => 'Punguzo',
+            'reconciled'      => 'Imelinganishwa',
+            'imported'        => 'Imeletwa',
+            'down-payment'    => 'Malipo ya awali',
+            'created-at'      => 'Iliundwa',
+            'updated-at'      => 'Ilisasishwa',
+        ],
+
+        'saved-filters' => [
+            'label'         => 'Vichujio vilivyohifadhiwa',
+            'unposted'      => 'Haijarekodiwa',
+            'posted'        => 'Imerekodiwa',
+            'to-check'      => 'Ya kukagua',
+            'unreconciled'  => 'Haijalinganishwa',
+            'with-residual' => 'Yenye salio',
+            'sales'         => 'Mauzo',
+            'purchases'     => 'Ununuzi',
+            'bank'          => 'Benki',
+            'cash'          => 'Fedha taslimu',
+            'credit'        => 'Krediti',
+            'miscellaneous' => 'Mengineyo',
+            'payable'       => 'Zinazolipwa',
+            'receivable'    => 'Zinazodaiwa',
+            'pl-accounts'   => 'Akaunti za faida na hasara',
+        ],
+
+        'toolbar-actions' => [
+            'export' => [
+                'label' => 'Hamisha',
+            ],
+        ],
+    ],
+];

@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Départements',
+    'title' => 'Types d\'activité',
 
     'navigation' => [
-        'title' => 'Départements',
+        'title' => 'Types d\'activité',
         'group' => 'Employés',
     ],
 
@@ -14,8 +14,8 @@ return [
                 'title' => 'Informations générales',
 
                 'fields' => [
-                    'name'                => "Type d'activité",
-                    'name-tooltip'        => "Saisissez le nom officiel du type d'activité",
+                    'name'                => 'Type d\'activité',
+                    'name-tooltip'        => 'Saisissez le nom officiel du type d\'activité',
                     'action'              => 'Action',
                     'default-user'        => 'Utilisateur par défaut',
                     'summary'             => 'Résumé',
@@ -29,7 +29,7 @@ return [
                 'fields' => [
                     'delay-count'            => 'Nombre de délais',
                     'delay-unit'             => 'Unité de délai',
-                    'delay-form'             => 'Formulaire de délai',
+                    'delay-form'             => 'Délai à partir de',
                     'delay-form-helper-text' => 'Source du calcul du délai',
                 ],
             ],
@@ -40,7 +40,7 @@ return [
                 'fields' => [
                     'icon'                => 'Icône',
                     'decoration-type'     => 'Type de décoration',
-                    'chaining-type'       => "Type d'enchaînement",
+                    'chaining-type'       => 'Type d\'enchaînement',
                     'suggest'             => 'Suggérer',
                     'trigger'             => 'Déclencher',
                 ],
@@ -59,7 +59,7 @@ return [
 
     'table' => [
         'columns' => [
-            'name'       => "Type d'activité",
+            'name'       => 'Type d\'activité',
             'summary'    => 'Résumé',
             'planned-in' => 'Planifié dans',
             'type'       => 'Type',
@@ -71,13 +71,13 @@ return [
 
         'groups' => [
             'name'             => 'Nom',
-            'action-category'  => "Catégorie d'action",
+            'action-category'  => 'Catégorie d\'action',
             'status'           => 'Statut',
             'delay-count'      => 'Nombre de délais',
             'delay-unit'       => 'Unité de délai',
             'delay-source'     => 'Source du délai',
             'associated-model' => 'Modèle associé',
-            'chaining-type'    => "Type d'enchaînement",
+            'chaining-type'    => 'Type d\'enchaînement',
             'decoration-type'  => 'Type de décoration',
             'default-user'     => 'Utilisateur par défaut',
             'creation-date'    => 'Date de création',
@@ -93,27 +93,27 @@ return [
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => "Type d'activité restauré",
-                    'body'  => "Le type d'activité a été restauré avec succès.",
+                    'title' => 'Type d\'activité restauré',
+                    'body'  => 'Le type d\'activité a été restauré avec succès.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => "Type d'activité supprimé",
-                    'body'  => "Le type d'activité a été supprimé avec succès.",
+                    'title' => 'Type d\'activité supprimé',
+                    'body'  => 'Le type d\'activité a été supprimé avec succès.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => "Type d'activité définitivement supprimé",
-                        'body'  => "Le type d'activité a été définitivement supprimé avec succès.",
+                        'title' => 'Type d\'activité définitivement supprimé',
+                        'body'  => 'Le type d\'activité a été définitivement supprimé avec succès.',
                     ],
                     'error' => [
-                        'title' => "Le type d'activité n'a pas pu être supprimé",
-                        'body'  => "Le type d'activité ne peut pas être supprimé car il est actuellement utilisé.",
+                        'title' => 'Le type d\'activité n\'a pas pu être supprimé',
+                        'body'  => 'Le type d\'activité ne peut pas être supprimé car il est actuellement utilisé.',
                     ],
                 ],
             ],
@@ -122,22 +122,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => "Types d'activité restaurés",
-                    'body'  => "Les types d'activité ont été restaurés avec succès.",
+                    'title' => 'Types d\'activité restaurés',
+                    'body'  => 'Les types d\'activité ont été restaurés avec succès.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => "Types d'activité supprimés",
-                    'body'  => "Les types d'activité ont été supprimés avec succès.",
+                    'title' => 'Types d\'activité supprimés',
+                    'body'  => 'Les types d\'activité ont été supprimés avec succès.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => "Types d'activité définitivement supprimés",
-                    'body'  => "Les types d'activité ont été définitivement supprimés avec succès.",
+                    'title' => 'Types d\'activité définitivement supprimés',
+                    'body'  => 'Les types d\'activité ont été définitivement supprimés avec succès.',
                 ],
             ],
         ],
@@ -149,8 +149,8 @@ return [
                 'title' => 'Informations générales',
 
                 'entries' => [
-                    'name'                => "Type d'activité",
-                    'name-tooltip'        => "Saisissez le nom officiel du type d'activité",
+                    'name'                => 'Type d\'activité',
+                    'name-tooltip'        => 'Saisissez le nom officiel du type d\'activité',
                     'action'              => 'Action',
                     'default-user'        => 'Utilisateur par défaut',
                     'plugin'              => 'Plugin',
@@ -165,7 +165,7 @@ return [
                 'entries' => [
                     'delay-count'            => 'Nombre de délais',
                     'delay-unit'             => 'Unité de délai',
-                    'delay-form'             => 'Formulaire de délai',
+                    'delay-form'             => 'Délai à partir de',
                     'delay-form-helper-text' => 'Source du calcul du délai',
                 ],
             ],
@@ -176,7 +176,7 @@ return [
                 'entries' => [
                     'icon'                => 'Icône',
                     'decoration-type'     => 'Type de décoration',
-                    'chaining-type'       => "Type d'enchaînement",
+                    'chaining-type'       => 'Type d\'enchaînement',
                     'suggest'             => 'Suggérer',
                     'trigger'             => 'Déclencher',
                 ],

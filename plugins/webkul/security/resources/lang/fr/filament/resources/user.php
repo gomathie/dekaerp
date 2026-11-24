@@ -13,7 +13,8 @@ return [
 
     'form' => [
         'validation' => [
-            'needs-attention'                 => 'Certains champs sont à compléter',            'cannot-remove-last-admin'        => 'Impossible de retirer le rôle administrateur du dernier utilisateur administrateur.',
+            'needs-attention'                 => 'Certains champs sont à compléter',
+            'cannot-remove-last-admin'        => 'Impossible de retirer le rôle administrateur du dernier utilisateur administrateur.',
             'company-invalid'                 => 'Une ou plusieurs sociétés sélectionnées ne sont pas valides.',
             'company-not-assigned'            => 'Vous ne pouvez affecter des utilisateurs qu’aux sociétés attribuées à votre compte.',
             'company-required'                => 'Sélectionnez au moins une société.',

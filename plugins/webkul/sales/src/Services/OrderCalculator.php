@@ -76,6 +76,13 @@ class OrderCalculator
             return;
         }
 
+        // A rate the person confirmed on the quotation (MC-2b) is kept.
+        // Re-reading the rate table here on every recompute would overwrite
+        // it. Order::saving drops it when the currency changes alone.
+        if ($record->currency_rate_source === Move::RATE_MANUAL && (float) $record->currency_rate > 0) {
+            return;
+        }
+
         if ($record->exists) {
             // Read past the scopes: a listener can run as no one, or as
             // another company's user.

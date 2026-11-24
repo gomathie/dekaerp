@@ -58,6 +58,7 @@ return [
         'description' => 'Currencies this company may use on invoices, bills, quotations and purchase orders, besides its default currency. Leave empty to allow every active currency.',
         'fields'      => [
             'permitted' => 'Additional currencies',
+            'available' => 'Available on documents now: :list',
         ],
     ],
 

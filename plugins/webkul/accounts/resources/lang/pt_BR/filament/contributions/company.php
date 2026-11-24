@@ -12,4 +12,11 @@ return [
             'reason'   => 'Motivo',
         ],
     ],
+
+    'sale-currency' => [
+        'title'       => 'Pergunta de moeda nas novas faturas',
+        'description' => 'Para empresas que vendem em mais de uma moeda.',
+        'field'       => 'Perguntar a moeda de cada venda',
+        'helper'      => 'Uma nova fatura, cotação ou pedido de venda pergunta primeiro a moeda e, se for estrangeira, pede a confirmação da taxa do dia. Só é perguntado se a empresa tiver mais de uma moeda.',
+    ],
 ];

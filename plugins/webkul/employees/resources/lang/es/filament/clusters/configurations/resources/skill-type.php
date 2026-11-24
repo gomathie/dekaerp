@@ -92,8 +92,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Tipos de competencia',
-                    'body'  => 'Los tipos de competencia se han creado correctamente.',
+                    'title' => 'Tipo de habilidad creado',
+                    'body'  => 'El tipo de habilidad se ha creado correctamente.',
                 ],
             ],
         ],

@@ -2100,6 +2100,27 @@ log named):
     the attribute escaped: Filament prints attribute values raw.
   - Tests: accounts `DocumentCurrencyTest`.
 
+• Confirmed exchange rate on an invoice, 2026-11-24 (plan #10 MC-2,
+  TRACE365; `docs/planned/10-multi-currency-plan.md` §5a):
+  - `Move::computeInvoiceCurrencyRate()` keeps `invoice_currency_rate` when
+    `currency_rate_source` is `manual`, and drops the manual rate when the
+    currency changes without a new rate. Do not remove the guard: every save
+    re-read the rate table and overwrote the rate the person confirmed.
+  - `currency_rate_source` and `currency_rate_confirmed_by` are **not
+    fillable**. Only the invoice page's currency question sets them
+    (`forceFill`), so an API payload cannot pin an arbitrary rate.
+  - The switch lives in `accounts_company_settings`, never in
+    `CompanyAwareSettingsRepository` (its default-company fallback would turn
+    it on for every company). Every rule is in `SaleCurrencyQuestion`.
+  - Tests: accounts `Workflows/SaleCurrencyQuestionTest.php`.
+  - Quotations and sales orders, 2026-11-24 (MC-2b): the same rule on
+    `sales_orders` (`currency_rate_source` / `currency_rate_confirmed_by`, not
+    fillable). `OrderCalculator::refreshCurrencyRate()` keeps a manual
+    rate; `Order::saving` drops it when the currency changes alone; an
+    invoice made from the order (`Invoicer::createInvoice()`) carries it. One
+    dialog for both, `Account\Filament\Concerns\AsksSaleCurrency`; do not copy
+    it into a page. Tests: sales `Workflows/QuotationSaleCurrencyTest.php`.
+
 • Customer page shipments, 2026-11-10 (`docs/logistics-plan.md`, WP-9b, D11):
   - The customer infolist tab is `PartnerSchemaRegistry` slot `tabs.append`.
     Do not add a relation-manager slot, and do not edit `PartnerResource` or
@@ -2141,6 +2162,16 @@ log named):
   `inventory_quantity_set`. It ran after every apply and deleted every pending
   count in every company. Test: inventories `QuantityResourceTest` "keeps other
   pending counts".
+
+• Sales orders carry their exchange rate, 2026-11-24 (hotfix v1.16.13,
+  TRACE365): `Sale\Services\OrderCalculator::refreshCurrencyRate()` sets
+  `sales_orders.currency_rate` (company -> order, as Purchases' UF-022 and
+  `Move`). Without it the column stays 0 and every dashboard and report that
+  divides by it counts a foreign order's own amount as company currency. An
+  order made from an invoice takes that invoice's rate. Do not remove the call
+  or the link write at the top of `OrderFromInvoice::createOrder()`. Tests:
+  sales `OrderFromInvoiceTest` "gives a sales order in another currency the
+  day's rate" and "... that invoice's rate".
 
 DONE RECENTLY (newest first; details in docs/change-log.md)
 
@@ -2273,7 +2304,7 @@ REFERENCES
 • docs/logistics-plan.md — Logistics plan, decisions D1–D15, status board, work
   packages, handoff log.
 • docs/completed/unified-product-resource-plan.md — cross-plugin product-resource plan.
-• docs/planned/08-landing-page-brief.md — public landing-page scope and constraints.
+• docs/planned/07-landing-page-brief.md — public landing-page scope and constraints.
 • docs/running-tests.md — how to run tests.
 • docs/completed/harness2-integration.md — assessment of Google's Harness² framework: why
   it cannot integrate with this repo or agent, plus the repo-owned evaluation

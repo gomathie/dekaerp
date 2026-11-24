@@ -69,7 +69,10 @@ class PurchaseAgreementForm
                                     ->relationship(
                                         name: 'currency',
                                         titleAttribute: 'name',
-                                        modifyQueryUsing: fn (Builder $query) => $query->active(),
+                                        // Only the company's currencies (CR-6; plan #10 MC-1,
+                                        // 2026-11-24): this was the one transaction picker
+                                        // still offering every active currency.
+                                        modifyQueryUsing: fn (Builder $query) => $query->active()->permittedFor(current_company_id()),
                                     )
                                     ->required()
                                     ->searchable()

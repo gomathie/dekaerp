@@ -18,6 +18,9 @@ use Webkul\Support\Filament\Concerns\HasDashboardEmptyState;
 
 class TopSalesOrdersTable extends TableWidget
 {
+    // DB-4 layout on the Overview's six-column grid (2026-11-23).
+    protected int|string|array $columnSpan = ['default' => 'full', 'xl' => 3];
+
     use GuardsSaleDashboardWidget, HasSaleDashboardFilters;
     use HasDashboardEmptyState;
 
@@ -31,6 +34,8 @@ class TopSalesOrdersTable extends TableWidget
         return $this->withDashboardEmptyState($table, 'order', OrderResource::canCreate() ? OrderResource::getUrl('create') : null)
             ->defaultKeySort(false)
             ->recordClasses('dashboard-table-row')
+            // "View all" opens the whole list (DB-9).
+            ->headerActions($this->viewAllActions(OrderResource::canViewAny() ? OrderResource::getUrl('index') : null))
             // Invoice rows carry a negative id and are not orders: no order link.
             ->recordUrl(fn ($record): ?string => $record->id > 0 && OrderResource::canAccess()
                 ? OrderResource::getUrl('view', ['record' => $record->id])

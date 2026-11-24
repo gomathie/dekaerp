@@ -8,7 +8,7 @@ use Webkul\Partner\Models\Partner;
 use Webkul\Support\Models\Company;
 
 /**
- * The parts every printed document shares (TRACE365, 2026-11-23, plan #10
+ * The parts every printed document shares (TRACE365, 2026-11-23, plan #9
  * R-8): the issuing company's header with its logo, and the customer or
  * supplier block. Each document (invoice, bill, quotation...) builds its own
  * lines and totals and renders them through the `support::pdfs.document`

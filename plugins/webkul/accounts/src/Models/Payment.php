@@ -3,9 +3,11 @@
 namespace Webkul\Account\Models;
 
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Auth;
 use Webkul\Account\Enums\AccountType;
 use Webkul\Account\Enums\JournalType;
@@ -99,6 +101,44 @@ class Payment extends Model
             'paymentMethod.name' => __('accounts::models/payment.log-attributes.payment-method'),
             'currency.name'      => __('accounts::models/payment.log-attributes.currency'),
         ];
+    }
+
+    /**
+     * The lines of the payment's own journal entry. Read past the global
+     * scopes: the payment itself is already company-scoped, and a scoped
+     * read would hide lines from a user who may see the payment.
+     */
+    public function entryLines(): HasMany
+    {
+        return $this->hasMany(MoveLine::class, 'move_id', 'move_id')->withoutGlobalScopes();
+    }
+
+    /**
+     * Loads what unusedAmount() reads, in one query for a whole list. An
+     * eager load, not a subquery select: Filament's column summaries walk
+     * the select list expecting plain strings, and an expression there
+     * breaks the Payments total.
+     */
+    public function scopeWithUnusedAmount(Builder $query): Builder
+    {
+        return $query->with(['entryLines' => fn ($lines) => $lines->select(['id', 'move_id', 'account_id', 'amount_residual_currency'])]);
+    }
+
+    /**
+     * What a payment has not yet settled (TRACE365, user 2026-11-24, Zoho's
+     * "Unused amount"): the open residual of its own customer or vendor
+     * line, in the payment's currency. Null for a payment with no journal
+     * entry yet (a draft).
+     */
+    public function unusedAmount(): ?float
+    {
+        if (! $this->move_id) {
+            return null;
+        }
+
+        return round((float) $this->entryLines
+            ->where('account_id', $this->destination_account_id)
+            ->sum(fn (MoveLine $line): float => abs((float) $line->amount_residual_currency)), 2);
     }
 
     public function move()

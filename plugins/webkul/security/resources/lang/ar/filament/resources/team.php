@@ -46,23 +46,6 @@ return [
     ],
 
     'infolist' => [
-        'sections' => [
-            'entries' => [
-                'name'          => 'الاسم',
-                'job-title'     => 'المسمى الوظيفي',
-                'work-email'    => 'البريد الإلكتروني للعمل',
-                'work-mobile'   => 'الجوال للعمل',
-                'work-phone'    => 'هاتف العمل',
-                'manager'       => 'المدير',
-                'department'    => 'القسم',
-                'job-position'  => 'المنصب الوظيفي',
-                'team-tags'     => 'وسوم الفريق',
-                'coach'         => 'المدرب',
-            ],
-        ],
-    ],
-
-    'infolist' => [
         'entries' => [
             'name' => 'الاسم',
         ],

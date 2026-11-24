@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'الأقسام',
+    'title' => 'أنواع الأنشطة',
 
     'navigation' => [
-        'title' => 'الأقسام',
+        'title' => 'أنواع الأنشطة',
         'group' => 'الموظفون',
     ],
 
@@ -29,7 +29,7 @@ return [
                 'fields' => [
                     'delay-count'            => 'عدد التأخير',
                     'delay-unit'             => 'وحدة التأخير',
-                    'delay-form'             => 'نموذج التأخير',
+                    'delay-form'             => 'التأخير من',
                     'delay-form-helper-text' => 'مصدر حساب التأخير',
                 ],
             ],
@@ -165,7 +165,7 @@ return [
                 'entries' => [
                     'delay-count'            => 'عدد التأخير',
                     'delay-unit'             => 'وحدة التأخير',
-                    'delay-form'             => 'نموذج التأخير',
+                    'delay-form'             => 'التأخير من',
                     'delay-form-helper-text' => 'مصدر حساب التأخير',
                 ],
             ],

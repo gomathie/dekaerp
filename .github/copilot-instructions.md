@@ -8,15 +8,23 @@ The Laravel Boost guidelines are specifically curated by Laravel maintainers for
 ## Foundational Context
 This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
 
-- php - 8.2.28
-- filament/filament (FILAMENT) - v4
-- laravel/framework (LARAVEL) - v11
+> **Corrected 2026-11-24.** This file is an old Laravel Boost export; the list
+> below was Laravel 11, Filament 4, Livewire 3, PHP 8.2 and PHPUnit. The
+> authoritative versions are `composer.json` / `composer.lock`, restated in
+> `AGENTS.md` ("DEKA ERP — PROJECT MEMORY"), which also holds the project's
+> working rules. Where a rule further down names Filament v4, Laravel 11 or
+> Livewire 3, follow the current version's documentation. Tests are written
+> with **Pest**, run in the Sail container (`docs/running-tests.md`).
+
+- php - 8.4.1 or later
+- filament/filament (FILAMENT) - v5.7
+- laravel/framework (LARAVEL) - v13.21
 - laravel/prompts (PROMPTS) - v0
-- livewire/livewire (LIVEWIRE) - v3
+- livewire/livewire (LIVEWIRE) - v4.3
 - laravel/mcp (MCP) - v0
 - laravel/pint (PINT) - v1
 - laravel/sail (SAIL) - v1
-- phpunit/phpunit (PHPUNIT) - v11
+- pestphp/pest (PEST) - v4.7, on phpunit/phpunit v12
 - rector/rector (RECTOR) - v2
 - tailwindcss (TAILWINDCSS) - v4
 

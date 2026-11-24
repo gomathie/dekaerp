@@ -50,22 +50,22 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Skill Level updated',
-                    'body'  => 'The skill level has been updated successfully.',
+                    'title' => 'Resume entry updated',
+                    'body'  => 'The resume entry has been updated successfully.',
                 ],
             ],
 
             'create' => [
                 'notification' => [
-                    'title' => 'Skill Level created',
-                    'body'  => 'The skill level has been created successfully.',
+                    'title' => 'Resume entry created',
+                    'body'  => 'The resume entry has been created successfully.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Skill Level deleted',
-                    'body'  => 'The skill level has been deleted successfully.',
+                    'title' => 'Resume entry deleted',
+                    'body'  => 'The resume entry has been deleted successfully.',
                 ],
             ],
         ],
@@ -73,8 +73,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Skills deleted',
-                    'body'  => 'The skills has been deleted successfully.',
+                    'title' => 'Resume entries deleted',
+                    'body'  => 'The resume entries have been deleted successfully.',
                 ],
             ],
         ],

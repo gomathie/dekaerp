@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Accrual Type updated',
-        'body'  => 'The accrual Type has been updated successfully.',
+        'title' => 'Accrual plan updated',
+        'body'  => 'The accrual plan has been updated successfully.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Accrual Type deleted',
-                'body'  => 'The accrual type has been deleted successfully.',
+                'title' => 'Accrual plan deleted',
+                'body'  => 'The accrual plan has been deleted successfully.',
             ],
         ],
     ],

@@ -25,7 +25,10 @@ class ShipmentStatsWidget extends BaseWidget
 {
     use HasWidgetShield;
 
-    protected ?string $pollingInterval = '60s';
+    // At most every 5 minutes (dashboard plan DB-6, 2026-11-23): Filament's 5-second
+    // default, and the 15/60-second values here, re-ran every query of every open
+    // dashboard many times a minute (the Overview's Sentry DEKAERP-11).
+    protected ?string $pollingInterval = '300s';
 
     protected static ?int $sort = 1;
 
@@ -61,7 +64,11 @@ class ShipmentStatsWidget extends BaseWidget
                 ->icon('heroicon-o-clock')
                 ->color('info'),
 
-            Stat::make(__(static::$lang.'.stats.in-transit'), $counts[ShipmentState::IN_TRANSIT->value] ?? 0)
+            // Picked up counts as in transit (dashboard plan DB-2,
+            // 2026-11-23): no tile showed a picked-up shipment, while the
+            // Overview's "On the road" counted it. Now On the road = In
+            // transit + Out for delivery.
+            Stat::make(__(static::$lang.'.stats.in-transit'), ($counts[ShipmentState::PICKED_UP->value] ?? 0) + ($counts[ShipmentState::IN_TRANSIT->value] ?? 0))
                 ->icon('heroicon-o-truck')
                 ->color('primary'),
 

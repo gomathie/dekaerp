@@ -50,22 +50,22 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Nível de habilidade atualizado',
-                    'body'  => 'O nível de habilidade foi atualizado com sucesso.',
+                    'title' => 'Item do currículo atualizado',
+                    'body'  => 'O item do currículo foi atualizado com sucesso.',
                 ],
             ],
 
             'create' => [
                 'notification' => [
-                    'title' => 'Nível de habilidade criado',
-                    'body'  => 'O nível de habilidade foi criado com sucesso.',
+                    'title' => 'Item do currículo criado',
+                    'body'  => 'O item do currículo foi criado com sucesso.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Nível de habilidade excluído',
-                    'body'  => 'O nível de habilidade foi excluído com sucesso.',
+                    'title' => 'Item do currículo excluído',
+                    'body'  => 'O item do currículo foi excluído com sucesso.',
                 ],
             ],
         ],
@@ -73,8 +73,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Habilidades excluídas',
-                    'body'  => 'As habilidades foram excluídas com sucesso.',
+                    'title' => 'Itens do currículo excluídos',
+                    'body'  => 'Os itens do currículo foram excluídos com sucesso.',
                 ],
             ],
         ],

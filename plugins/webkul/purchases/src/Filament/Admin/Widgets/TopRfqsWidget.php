@@ -18,6 +18,9 @@ use Webkul\Support\Filament\Concerns\HasDashboardEmptyState;
 
 class TopRfqsWidget extends BaseWidget
 {
+    // DB-4 layout on the Overview's six-column grid (2026-11-23).
+    protected int|string|array $columnSpan = ['default' => 'full', 'xl' => 3];
+
     use GuardsPurchaseDashboardWidget, HasPurchaseDashboardFilters;
     use HasDashboardEmptyState;
 
@@ -31,6 +34,8 @@ class TopRfqsWidget extends BaseWidget
         return $this->withDashboardEmptyState($table, 'rfq', RfqResource::canCreate() ? RfqResource::getUrl('create') : null)
             ->defaultKeySort(false)
             ->recordClasses('dashboard-table-row')
+            // "View all" opens the whole list (DB-9).
+            ->headerActions($this->viewAllActions(RfqResource::canViewAny() ? RfqResource::getUrl('index') : null))
             ->recordUrl(fn ($record): ?string => PurchaseOrderResource::canAccess()
                 ? PurchaseOrderResource::getUrl('view', ['record' => $record->id])
                 : null);

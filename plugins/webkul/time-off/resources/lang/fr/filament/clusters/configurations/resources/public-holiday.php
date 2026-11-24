@@ -52,7 +52,7 @@ return [
             'edit' => [
                 'notification' => [
                     'title' => 'Jour férié mis à jour',
-                    'body'  => 'Le jour férié a été restauré avec succès.',
+                    'body'  => 'Le jour férié a été mis à jour avec succès.',
                 ],
             ],
 

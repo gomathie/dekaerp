@@ -34,6 +34,9 @@ return [
         'open-quotations' => 'Devis ouverts',
         'spend'           => 'Dépenses d’achat',
         'open-rfqs'       => 'Demandes de prix ouvertes',
+        'to-receive'      => 'À réceptionner',
+        'to-receive-hint' => 'Commandes confirmées pas encore entièrement reçues',
+        'empty-period'    => 'Rien sur cette période. Le plus récent date du :date ; choisissez une période plus longue ci-dessus.',
         'to-collect'      => 'À encaisser',
         'to-pay'          => 'À payer',
         'overdue'         => '{0} Aucun en retard|{1} 1 en retard|[2,*] :count en retard',
@@ -58,12 +61,22 @@ return [
 
     'cash' => [
         'heading'     => 'Entrées et sorties d\'argent',
-        'description' => 'Factures encaissées et factures fournisseur payées par jour',
         'in'          => 'Entrées',
         'out'         => 'Sorties',
     ],
 
     'trend' => ':change par rapport à la période précédente',
+
+    'period' => [
+        'label'        => 'Période',
+        'this-month'   => 'Ce mois-ci',
+        'last-30-days' => '30 derniers jours',
+        'year-to-date' => 'Depuis le début de l’année',
+        'last-year'    => 'L’année dernière',
+        'custom'       => 'Personnalisée',
+        'compared'     => ':period, comparé à :previous',
+        'custom-hint'  => 'Choisissez d’autres dates dans Filtres.',
+    ],
 
     'modules' => [
         'heading' => 'Dans toute l\'entreprise',
@@ -90,11 +103,5 @@ return [
         'due-today'   => 'Échéance aujourd\'hui',
         'due-on'      => 'Échéance le :date',
         'days-late'   => '{1} 1 jour de retard|[2,*] :count jours de retard',
-    ],
-
-    'cash-compare' => [
-        'previous'    => 'Période précédente',
-        'this-period' => 'Cette période',
-        'vs-previous' => 'Comparer à la période précédente',
     ],
 ];

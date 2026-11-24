@@ -15,7 +15,10 @@ class JobPositionStatsWidget extends DashboardStatsWidget
 {
     use GuardsRecruitmentDashboardWidget, InteractsWithPageFilters;
 
-    protected ?string $pollingInterval = '15s';
+    // At most every 5 minutes (dashboard plan DB-6, 2026-11-23): Filament's 5-second
+    // default, and the 15/60-second values here, re-ran every query of every open
+    // dashboard many times a minute (the Overview's Sentry DEKAERP-11).
+    protected ?string $pollingInterval = '300s';
 
     protected static function getPagePermission(): ?string
     {

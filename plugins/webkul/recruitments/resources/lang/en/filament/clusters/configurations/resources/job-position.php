@@ -123,21 +123,21 @@ return [
             'restore' => [
                 'notification' => [
                     'title' => 'Job Positions restored',
-                    'body'  => 'The Job Positions has been restored successfully.',
+                    'body'  => 'The job positions have been restored successfully.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'title' => 'Job Positions deleted',
-                    'body'  => 'The Job Positions has been deleted successfully.',
+                    'body'  => 'The job positions have been deleted successfully.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'title' => 'Job Positions force deleted',
-                    'body'  => 'The Job Positions has been force deleted successfully.',
+                    'body'  => 'The job positions have been force deleted successfully.',
                 ],
             ],
         ],
@@ -145,8 +145,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Job Positions',
-                    'body'  => 'The Job Positions has been created successfully.',
+                    'title' => 'Job Position created',
+                    'body'  => 'The job position has been created successfully.',
                 ],
             ],
         ],

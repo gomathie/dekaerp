@@ -16,6 +16,7 @@ use Webkul\Account\Filament\Resources\InvoiceResource\Pages\CreateInvoice;
 use Webkul\Account\Filament\Resources\InvoiceResource\Pages\EditInvoice;
 use Webkul\Account\Filament\Resources\InvoiceResource\Pages\ListInvoices;
 use Webkul\Account\Models\Move;
+use Webkul\Account\Services\SaleCurrencyQuestion;
 use Webkul\Partner\Models\Partner;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Package;
@@ -53,6 +54,25 @@ it('lists invoices with their key columns for authorized users', function () {
         ->assertOk()
         ->assertCanRenderTableColumn('name')
         ->assertCanRenderTableColumn('state');
+});
+
+/**
+ * Plan #9 R-9 (2026-11-24): a contact's company shows under their name, so
+ * "Ama Mensah" reads as Acme's buyer without opening the invoice.
+ */
+it('shows the company a customer works for under their name', function () {
+    FilamentHelper::actingAs(['view_any_account_invoice']);
+
+    $acme = Partner::factory()->create(['company_id' => current_company_id(), 'name' => 'Acme Holdings Ltd']);
+    $buyer = AccountHelper::partner();
+    $buyer->forceFill(['name' => 'Ama Mensah', 'parent_id' => $acme->getKey()])->save();
+
+    $invoice = AccountHelper::invoice(MoveType::OUT_INVOICE, $buyer);
+
+    Livewire::test(ListInvoices::class)
+        ->assertCanSeeTableRecords([$invoice])
+        ->assertSee('Ama Mensah')
+        ->assertSee('Acme Holdings Ltd');
 });
 
 /**
@@ -140,6 +160,48 @@ it('fills the salesperson with the creator and lists only company members', func
         ->not->toHaveKey($stranger->getKey());
 });
 
+/**
+ * Sentry DEKAERP-22, 2026-11-22: "Paid now" on an invoice with no lines
+ * reached posting, whose plain Exception became an error page. It is now a
+ * warning, and nothing is saved.
+ */
+it('warns instead of failing when paid now is ticked on an invoice with no lines', function () {
+    AccountHelper::actingAsAdmin();
+    $bank = AccountHelper::bankJournal();
+    $customer = Partner::factory()->create(['company_id' => current_company_id()]);
+    $before = Move::query()->withoutGlobalScopes()->count();
+
+    Livewire::test(CreateInvoice::class)
+        ->fillForm(['partner_id' => $customer->getKey(), 'paid_now' => true, 'paid_journal_id' => $bank->getKey()])
+        ->call('create')
+        ->assertNotified(__('accounts::filament/resources/invoice/actions/confirm-action.notification.error.title'));
+
+    expect(Move::query()->withoutGlobalScopes()->count())->toBe($before);
+});
+
+/**
+ * "New direct sale" and its receipt (user, 2026-11-22): the button sits on
+ * the invoice list, and the receipt shows the sale's lines, total and what
+ * was paid, with customer text escaped.
+ */
+it('offers a direct sale on the invoice list and prints a receipt for it', function () {
+    AccountHelper::actingAsAdmin();
+
+    Livewire::test(ListInvoices::class)->assertActionVisible('newDirectSale');
+
+    $invoice = AccountHelper::invoice(MoveType::OUT_INVOICE);
+    $invoice->partner->forceFill(['name' => 'Ama <script>x</script>'])->save();
+    AccountHelper::productLine($invoice, AccountHelper::account('income'), qty: 2, priceUnit: 75);
+    AccountHelper::compute($invoice);
+
+    $html = view('accounts::invoice/actions/receipt.index', ['record' => $invoice->fresh(), 'isRtl' => false])->render();
+
+    expect($html)->toContain(__('accounts::filament/resources/invoice/pages/create-invoice.receipt.title'))
+        ->toContain('Ama &lt;script&gt;')
+        ->not->toContain('<script>x</script>')
+        ->toContain('150');
+});
+
 it('hides the add-customer button without the contact create permission', function () {
     FilamentHelper::actingAs(['view_any_account_invoice', 'create_account_invoice']);
 
@@ -185,6 +247,94 @@ it('posts a draft invoice through the confirm action', function () {
         ->callAction(ConfirmAction::class);
 
     expect($invoice->refresh()->state)->toBe(MoveState::POSTED);
+});
+
+/**
+ * Plan #10 MC-2 step 5 (TRACE365, 2026-11-24): before a foreign-currency
+ * invoice is posted, Confirm says what it books in the company currency, from
+ * the invoice's own rate (that of its date, not today's), and names the date
+ * the rate belongs to when that is not today.
+ */
+it('summarises a foreign-currency invoice in the company currency before posting it', function () {
+    FilamentHelper::actingAs(['view_any_account_invoice', 'update_account_invoice']);
+
+    $company = AccountHelper::company()->load('currency');
+    $foreign = AccountHelper::otherCurrency();
+    $invoiceDate = now()->subDays(3);
+    AccountHelper::setCurrencyRate($foreign, 10.0, now()->subDays(5)->toDateString());
+    // Today's rate differs: the summary must not use it.
+    AccountHelper::setCurrencyRate($foreign, 20.0, now()->toDateString());
+
+    $invoice = AccountHelper::invoice(MoveType::OUT_INVOICE, overrides: [
+        'currency_id'  => $foreign->getKey(),
+        'invoice_date' => $invoiceDate->toDateString(),
+        'date'         => $invoiceDate->toDateString(),
+    ]);
+    AccountHelper::productLine($invoice, AccountHelper::account('income'), qty: 2, priceUnit: 600);
+    AccountHelper::compute($invoice);
+
+    $lang = 'accounts::filament/resources/invoice/actions/confirm-action.currency-summary';
+    $question = app(SaleCurrencyQuestion::class);
+
+    // 1,200 in the invoice's currency at 10 per company unit is 120.
+    $total = __($lang.'.total', [
+        'amount' => money(1200.0, $foreign->name),
+        'value'  => money(120.0, $company->currency->name),
+        'rate'   => $question->label(10.0, $company->currency, $foreign),
+    ]);
+    $rateDate = __($lang.'.rate-date', ['date' => $invoiceDate->translatedFormat('j M Y')]);
+
+    expect($question->postingSummary($invoice->refresh()))->toBe($total.' '.$rateDate.' '.__($lang.'.question'));
+
+    $component = Livewire::test(EditInvoice::class, ['record' => $invoice->id])
+        ->mountAction(ConfirmAction::class)
+        ->assertActionMounted(ConfirmAction::class)
+        ->assertMountedActionModalSee([$total, $rateDate]);
+
+    // Nothing is posted until the summary is confirmed.
+    expect($invoice->refresh()->state)->toBe(MoveState::DRAFT);
+
+    $component->callMountedAction();
+
+    expect($invoice->refresh()->state)->toBe(MoveState::POSTED)
+        ->and(abs((float) $invoice->amount_total_signed))->toBe(120.0);
+});
+
+it('confirms a company-currency invoice with one click and summarises a foreign bill', function () {
+    FilamentHelper::actingAs(['view_any_account_invoice', 'update_account_invoice']);
+
+    $question = app(SaleCurrencyQuestion::class);
+
+    $invoice = AccountHelper::invoice(MoveType::OUT_INVOICE);
+    AccountHelper::productLine($invoice, AccountHelper::account('income'), qty: 2, priceUnit: 100);
+    AccountHelper::compute($invoice);
+
+    expect($question->postingSummary($invoice->refresh()))->toBeNull()
+        ->and($question->postingSummary(AccountHelper::journalEntry()))->toBeNull();
+
+    // No dialog: mounting the action posts straight away, as before.
+    Livewire::test(EditInvoice::class, ['record' => $invoice->id])
+        ->mountAction(ConfirmAction::class)
+        ->assertActionNotMounted(ConfirmAction::class);
+
+    expect($invoice->refresh()->state)->toBe(MoveState::POSTED);
+
+    $company = AccountHelper::company()->load('currency');
+    $foreign = AccountHelper::otherCurrency();
+    AccountHelper::setCurrencyRate($foreign, 4.0, now()->subDay()->toDateString());
+
+    $bill = AccountHelper::invoice(MoveType::IN_INVOICE, overrides: ['currency_id' => $foreign->getKey()]);
+    AccountHelper::productLine($bill, AccountHelper::account('expense'), qty: 1, priceUnit: 400);
+    AccountHelper::compute($bill);
+
+    // Dated today: no date sentence.
+    expect($question->postingSummary($bill->refresh()))->toBe(
+        __('accounts::filament/resources/invoice/actions/confirm-action.currency-summary.total', [
+            'amount' => money(400.0, $foreign->name),
+            'value'  => money(100.0, $company->currency->name),
+            'rate'   => $question->label(4.0, $company->currency, $foreign),
+        ]).' '.__('accounts::filament/resources/invoice/actions/confirm-action.currency-summary.question'),
+    );
 });
 
 it('cancels a draft invoice through the cancel action', function () {

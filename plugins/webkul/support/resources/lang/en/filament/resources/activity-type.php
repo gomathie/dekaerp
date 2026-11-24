@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Departments',
+    'title' => 'Activity Types',
 
     'navigation' => [
-        'title' => 'Departments',
+        'title' => 'Activity Types',
         'group' => 'Employees',
     ],
 
@@ -29,7 +29,7 @@ return [
                 'fields' => [
                     'delay-count'            => 'Delay Count',
                     'delay-unit'             => 'Delay Unit',
-                    'delay-form'             => 'Delay Form',
+                    'delay-form'             => 'Delay From',
                     'delay-form-helper-text' => 'Source of delay calculation',
                 ],
             ],
@@ -123,21 +123,21 @@ return [
             'restore' => [
                 'notification' => [
                     'title' => 'Activity types restored',
-                    'body'  => 'The activity types has been restored successfully.',
+                    'body'  => 'The activity types have been restored successfully.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'title' => 'Activity types deleted',
-                    'body'  => 'The activity types has been deleted successfully.',
+                    'body'  => 'The activity types have been deleted successfully.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'title' => 'Activity types force deleted',
-                    'body'  => 'The activity types has been force deleted successfully.',
+                    'body'  => 'The activity types have been force deleted successfully.',
                 ],
             ],
         ],
@@ -165,7 +165,7 @@ return [
                 'entries' => [
                     'delay-count'            => 'Delay Count',
                     'delay-unit'             => 'Delay Unit',
-                    'delay-form'             => 'Delay Form',
+                    'delay-form'             => 'Delay From',
                     'delay-form-helper-text' => 'Source of delay calculation',
                 ],
             ],

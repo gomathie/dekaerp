@@ -80,7 +80,7 @@ return [
             'delete' => [
                 'notification' => [
                     'title' => 'Time Offs deleted',
-                    'body'  => 'The time offs has been deleted successfully.',
+                    'body'  => 'The time off requests have been deleted successfully.',
                 ],
             ],
         ],
