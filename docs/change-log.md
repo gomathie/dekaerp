@@ -6,6 +6,66 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-24, v1.16.13 (hotfix): sales orders get their exchange rate (TRACE365)
+
+- **Why:** found while scoping MC-2b. `sales_orders.currency_rate` defaults
+  to 0 and nothing in Sales ever assigned it, so every figure that divides by
+  it (`CASE WHEN currency_rate > 0 ... ELSE amount`: Top sales orders, Top
+  customers and products, Salesperson performance, Sales analysis, Sales by
+  product, the order activity value) took an order's own-currency amount as
+  company currency. Purchases had the identical defect, fixed as UF-022 in
+  its own `OrderCalculator`; Sales never got it. Production check (read-only,
+  2026-11-24): all 13 orders are in their company's currency, so no figure is
+  wrong yet, but TRACE365 (base USD) invoices in GHS since today, and every
+  confirmed invoice makes a sales order (`OrderFromInvoice`) in the
+  invoice's currency. The first GHS invoice would have shown 1,180 GHS as
+  $1,180. TRACE365 issue, so a hotfix (fix only).
+- **How:** `Sale\Services\OrderCalculator::refreshCurrencyRate()`, called in
+  `recompute()`: company -> order rate at `date_order`, the same rule and
+  direction as Purchases and `Move::computeInvoiceCurrencyRate()`; 1 for an
+  order without currency. An order made from an invoice (a
+  `sales_invoice_order_links` row) takes that invoice's
+  `invoice_currency_rate` instead, read scope-free, when the currencies
+  match, so the order and its invoice show the same company value.
+  `OrderFromInvoice::createOrder()` now writes the link's `order_id` right
+  after creating the order, so the first recompute already sees it.
+- **Benefit:** foreign-currency orders count at their company value
+  everywhere the dashboards and reports already convert.
+- **Trade-off / risk:** existing orders keep rate 0 until their next
+  recompute; for orders in the company's own currency that is harmless (the
+  CASE falls back to the amount, which is right). No backfill needed today:
+  production has no foreign-currency order. Two small queries per recompute
+  (the link, the invoice rate).
+- **Verification:** `aureuserp_testing_v113_k1` (t3): sales
+  OrderFromInvoiceTest, SaleOrderTest, OrderInvoicingTest,
+  OneStepSaleOrderTest and the sales Dashboard folder: 75 passed, 1 failed
+  (233 assertions). The failure was the new test: `OrderFactory` dates an
+  order up to 30 days back, before the test's rate (yesterday), so the feed
+  rightly had no rate and gave 1. The test now dates both orders today;
+  OrderFromInvoiceTest re-ran 16 passed (61 assertions), same database,
+  recreated. Pint and `php -l`: passed. Production received the code only
+  (OrderCalculator, OrderFromInvoice, versions, CHANGELOG): production's
+  tree has never carried `OrderFromInvoiceTest.php`, so the new tests stay
+  on develop.
+- **Rollback:** revert the two service files; no schema change.
+
+## 2026-11-24, the contact's company under the customer and vendor (plan #10 R-9, develop, unreleased)
+
+- **Why:** R-9 "two-line cells": a person's name alone did not say which
+  client they buy for.
+- **How:** `->description()` with the partner's parent contact on the
+  customer column of `InvoicesTable` and the vendor column of `BillsTable`;
+  both tables now eager load `partner.parent` with their other relations, so
+  the line costs two queries per page, not two per row.
+- **Benefit:** the company is visible without opening the invoice or adding
+  a column (and the phone card gets it in the same cell).
+- **Trade-off / risk:** the parent is read through the scoped relation; a
+  parent the viewer may not see simply shows no line.
+- **Verification:** `aureuserp_testing_v113_k2` (t4): InvoiceResourceTest
+  (new: a contact of "Acme Holdings Ltd" shows the company under their name)
+  and BillResourceTest: 29 passed (129 assertions). Pint and `php -l`: passed.
+- **Rollback:** revert the commit.
+
 ## 2026-11-24, Russian and Swahili retranslated; English source mistakes corrected (branch feature/languages-ru-sw, unreleased)
 
 - **Why:** user, 2026-11-24: "work on all the language fixes and complete

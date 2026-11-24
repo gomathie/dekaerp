@@ -56,6 +56,25 @@ it('lists invoices with their key columns for authorized users', function () {
 });
 
 /**
+ * Plan #10 R-9 (2026-11-24): a contact's company shows under their name, so
+ * "Ama Mensah" reads as Acme's buyer without opening the invoice.
+ */
+it('shows the company a customer works for under their name', function () {
+    FilamentHelper::actingAs(['view_any_account_invoice']);
+
+    $acme = Partner::factory()->create(['company_id' => current_company_id(), 'name' => 'Acme Holdings Ltd']);
+    $buyer = AccountHelper::partner();
+    $buyer->forceFill(['name' => 'Ama Mensah', 'parent_id' => $acme->getKey()])->save();
+
+    $invoice = AccountHelper::invoice(MoveType::OUT_INVOICE, $buyer);
+
+    Livewire::test(ListInvoices::class)
+        ->assertCanSeeTableRecords([$invoice])
+        ->assertSee('Ama Mensah')
+        ->assertSee('Acme Holdings Ltd');
+});
+
+/**
  * Upstream #1671: the list ordered by id inside getEloquentQuery(), ahead of
  * any column sort, so clicking a column header changed nothing.
  */

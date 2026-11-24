@@ -163,5 +163,7 @@ Invoices dashboard's own `InvoiceStatsWidget` for this month, headed "This
 month": total invoiced (net of credit notes), count, paid, unpaid, each with
 its trend pill. Same widget and queries as the dashboard, so they cannot
 disagree; its guard (widget permission, module, money-figures switch) decides
-who sees it. Still open: the customer's company under the customer, and the
-other lists (bills, orders, payments).
+who sees it. *Also built the same day:* the contact's company (their parent
+contact) under the customer on the invoice list and the vendor on the bill
+list, eager loaded (`partner.parent`). Still open: summary cards and
+two-line cells on the other lists (bills, orders, payments).

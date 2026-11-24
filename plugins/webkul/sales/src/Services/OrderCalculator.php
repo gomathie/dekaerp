@@ -5,12 +5,14 @@ namespace Webkul\Sale\Services;
 use Webkul\Account\Enums as AccountEnums;
 use Webkul\Account\Enums\InvoicePolicy;
 use Webkul\Account\Facades\Tax;
+use Webkul\Account\Models\Move;
 use Webkul\Inventory\Enums as InventoryEnums;
 use Webkul\PluginManager\Package;
 use Webkul\Sale\Enums\InvoiceStatus;
 use Webkul\Sale\Enums\OrderDeliveryStatus;
 use Webkul\Sale\Enums\OrderState;
 use Webkul\Sale\Enums\QtyDeliveredMethod;
+use Webkul\Sale\Models\InvoiceOrderLink;
 use Webkul\Sale\Models\Order;
 use Webkul\Sale\Models\OrderLine;
 use Webkul\Sale\Settings\InvoiceSettings;
@@ -42,11 +44,63 @@ class OrderCalculator
 
         $record = $this->refreshInvoiceStatus($record);
 
+        $this->refreshCurrencyRate($record);
+
         $record->save();
 
         $record->refresh();
 
         return $record;
+    }
+
+    /**
+     * `sales_orders.currency_rate` defaults to 0 and nothing assigned it, so
+     * every dashboard and report that divides by it ("CASE WHEN currency_rate
+     * > 0 ... ELSE amount") took the order's own-currency total as company
+     * currency: a 1,180 GHS order counted as $1,180 in a USD company
+     * (TRACE365 invoices in cedis since 2026-11-24). Purchases had the same
+     * defect (UF-022) and was fixed in its own OrderCalculator; this is the
+     * same rule, same direction: company -> order, so dividing an
+     * order-currency total by it gives company currency, as
+     * Account\Models\Move::computeInvoiceCurrencyRate() does.
+     *
+     * An order made from an invoice (OrderFromInvoice) takes that invoice's
+     * own rate, so the order and the invoice it came from show the same
+     * company value, a rate the seller confirmed included.
+     */
+    protected function refreshCurrencyRate(Order $record): void
+    {
+        if (! $record->currency_id || ! $record->company?->currency) {
+            $record->currency_rate = 1;
+
+            return;
+        }
+
+        if ($record->exists) {
+            // Read past the scopes: a listener can run as no one, or as
+            // another company's user.
+            $invoiceId = InvoiceOrderLink::query()->where('order_id', $record->getKey())->value('move_id');
+
+            $invoiceRate = $invoiceId
+                ? Move::withoutGlobalScopes()
+                    ->whereKey($invoiceId)
+                    ->where('currency_id', $record->currency_id)
+                    ->value('invoice_currency_rate')
+                : null;
+
+            if ((float) $invoiceRate > 0) {
+                $record->currency_rate = (float) $invoiceRate;
+
+                return;
+            }
+        }
+
+        $record->currency_rate = $record->currency->getConversionRate(
+            fromCurrency: $record->company->currency,
+            toCurrency: $record->currency,
+            company: $record->company,
+            date: $record->date_order ?? now()->toDateString(),
+        );
     }
 
     public function recomputeLine(OrderLine $line): OrderLine

@@ -34,6 +34,7 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 - Invoices and the Overview: "Money in and out" shows the two as paired bars, with both totals and their change against the previous period above the chart.
 - The revenue, supplier and customer rings list each slice's amount and share below the ring. Their centre total now follows the filters; it kept the first period's figure after a filter was changed.
 - Sales dashboard: a new "Order activity" row shows how many of the period's orders are to deliver, delivered, to invoice and invoiced. Each opens the order list on that view; the order list has new "To Deliver", "Delivered" and "Invoiced" views.
+- On the invoice and bill lists, a contact who works for a company has that company's name under their own.
 - The invoice list opens with this month's figures above it: total invoiced, number of invoices, paid and unpaid, each with its change against the same number of days just before. They are the same figures as the Invoices dashboard and show for people who can see that dashboard.
 - Every dashboard list (orders, quotations, invoices, bills, requests for quotation, customers, vendors and products) has a "View all" button that opens the whole list. Vendors in the Purchases dashboard open when clicked.
 - New company setting "Ask which currency each sale is in". When it is on and the company has more than one currency, a new invoice first asks for the currency. For a foreign currency it shows the day's exchange rate, which you accept or correct, and the invoice keeps the rate you confirmed. A corrected rate is noted in the invoice's history. The rate you kept is shown under the currency, and "Currency and rate" at the top of the page lets you change it.
@@ -41,6 +42,12 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 - Purchase agreements offer only the company's own currencies, like the other documents.
 - New report under Accounting › Reporting: "Multi-currency". Per currency, what was invoiced, received and is still open, in that currency and in the company currency at the rates booked, what the open amount is worth at today's rate, the exchange gains and losses booked, and the documents behind the figures. It can be exported to Excel.
 - Payments received show an "Unused amount" column: the part of a payment not yet matched to an invoice or bill. It is in the export too.
+
+# CHANGELOG — v1.16.13 — 2026-11-24
+
+### Fixes
+
+- A sales order in another currency is now counted at its value in your company currency on the Sales dashboard and in the sales reports. Before, a 1,180 GHS order in a dollar company counted as $1,180. An order made from an invoice uses that invoice's exchange rate.
 
 # CHANGELOG — v1.16.12 — 2026-11-24
 
