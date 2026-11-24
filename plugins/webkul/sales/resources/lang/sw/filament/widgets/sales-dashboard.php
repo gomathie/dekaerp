@@ -16,6 +16,7 @@ return [
         'average-revenue'    => 'Wastani wa mapato',
         'increase'           => 'ongezeko',
         'decrease'           => 'upungufu',
+        'this-month'         => 'Mwezi huu',
     ],
 
     'order-activity'      => [

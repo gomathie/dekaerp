@@ -15,6 +15,7 @@ return [
         'increase'             => 'ongezeko la :percent%',
         'decrease'             => 'upungufu wa :percent%',
         'no-change'            => 'Hakuna mabadiliko',
+        'this-month'           => 'Mwezi huu',
     ],
 
     'trend'        => [

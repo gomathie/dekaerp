@@ -18,12 +18,19 @@ return [
         'this-month' => 'Mwezi huu',
     ],
 
+    'payment-stats'     => [
+        'heading'  => 'Malipo yaliyopokelewa',
+        'received' => 'Kilichopokelewa',
+        'count'    => 'Malipo',
+    ],
+
     'bill-stats'        => [
-        'heading' => 'Bili za wasambazaji',
-        'total'   => 'Jumla ya bili',
-        'count'   => 'Idadi ya bili',
-        'paid'    => 'Bili zilizolipwa',
-        'unpaid'  => 'Bili ambazo hazijalipwa',
+        'heading'    => 'Bili za wasambazaji',
+        'total'      => 'Jumla ya bili',
+        'count'      => 'Idadi ya bili',
+        'paid'       => 'Bili zilizolipwa',
+        'unpaid'     => 'Bili ambazo hazijalipwa',
+        'this-month' => 'Mwezi huu',
     ],
 
     'revenue-over-time' => [

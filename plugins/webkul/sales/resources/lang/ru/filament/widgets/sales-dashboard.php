@@ -16,6 +16,7 @@ return [
         'average-revenue'    => 'Средняя выручка',
         'increase'           => 'рост',
         'decrease'           => 'снижение',
+        'this-month'         => 'Этот месяц',
     ],
 
     'order-activity'      => [

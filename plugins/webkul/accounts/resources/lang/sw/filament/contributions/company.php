@@ -17,6 +17,6 @@ return [
         'title'       => 'Swali la sarafu kwenye ankara mpya',
         'description' => 'Kwa kampuni zinazouza kwa sarafu zaidi ya moja.',
         'field'       => 'Uliza kila mauzo ni kwa sarafu gani',
-        'helper'      => 'Ankara mpya huuliza kwanza sarafu na, kwa sarafu ya kigeni, huthibitisha kiwango cha ubadilishaji cha siku hiyo. Huulizwa tu ikiwa kampuni ina sarafu zaidi ya moja.',
+        'helper'      => 'Ankara mpya, nukuu ya bei au oda ya mauzo kwanza inauliza sarafu na, kwa sarafu ya kigeni, inathibitisha kiwango cha ubadilishaji cha siku. Huulizwa tu kampuni ikiwa na sarafu zaidi ya moja.',
     ],
 ];
