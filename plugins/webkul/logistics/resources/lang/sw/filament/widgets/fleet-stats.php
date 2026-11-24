@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'heading' => 'Fleet',
+    'heading' => 'Magari',
 
     'stats' => [
-        'active-trips'       => 'Washa road',
-        'planned-trips'      => 'Imepangwa safari',
-        'available-vehicles' => 'Magari inapatikana',
-        'available-drivers'  => 'Madereva inapatikana',
+        'active-trips'       => 'Barabarani',
+        'planned-trips'      => 'Safari zilizopangwa',
+        'available-vehicles' => 'Magari yanayopatikana',
+        'available-drivers'  => 'Madereva wanaopatikana',
     ],
 ];

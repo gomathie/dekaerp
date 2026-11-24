@@ -2,18 +2,18 @@
 
 return [
     'heading' => [
-        'title' => 'Likizo Requests',
+        'title' => 'Maombi ya likizo',
     ],
 
     'modal-actions' => [
         'edit' => [
             'title'                         => 'Hariri',
-            'duration-display'              => ':count working siku|:count working siku',
-            'duration-display-with-weekend' => ':count working siku (+ :weekend weekend siku)|:count working siku (+ :weekend weekend siku)',
+            'duration-display'              => 'Siku :count ya kazi|Siku :count za kazi',
+            'duration-display-with-weekend' => 'Siku :count ya kazi (+ siku :weekend ya mwisho wa wiki)|Siku :count za kazi (+ siku :weekend za mwisho wa wiki)',
 
             'notification' => [
-                'title' => 'Likizo Imesasishwa',
-                'body'  => 'Yako likizo request ina imesasishwa successfully.',
+                'title' => 'Likizo imesasishwa',
+                'body'  => 'Ombi lako la likizo limesasishwa kwa mafanikio.',
             ],
         ],
 
@@ -32,85 +32,85 @@ return [
     ],
 
     'view-action' => [
-        'title'       => 'Angalia',
-        'description' => 'Angalia Likizo Request',
+        'title'       => 'Tazama',
+        'description' => 'Tazama ombi la likizo',
     ],
 
     'notifications' => [
         'employee-not-found' => [
-            'title' => 'Mfanyakazi Si Imepatikana',
-            'body'  => 'Tafadhali ongeza mfanyakazi hadi yako wasifu kabla ya requesting likizo.',
+            'title' => 'Mfanyakazi hakupatikana',
+            'body'  => 'Tafadhali ongeza mfanyakazi kwenye wasifu wako kabla ya kuomba likizo.',
         ],
 
         'error' => [
-            'title' => 'Something went wrong',
-            'body'  => 'Sisi could si process yako likizo request. Tafadhali jaribu tena.',
+            'title' => 'Hitilafu fulani imetokea',
+            'body'  => 'Hatukuweza kushughulikia ombi lako la likizo. Tafadhali jaribu tena.',
         ],
     ],
 
     'header-actions' => [
         'create' => [
-            'title'       => 'Mpya Likizo',
-            'description' => 'Unda Likizo Request',
+            'title'       => 'Likizo mpya',
+            'description' => 'Unda ombi la likizo',
 
             'notification' => [
-                'title' => 'Likizo Imeundwa',
-                'body'  => 'Likizo request ina imeundwa successfully.',
+                'title' => 'Likizo imeundwa',
+                'body'  => 'Ombi la likizo limeundwa kwa mafanikio.',
             ],
 
             'employee-not-found' => [
                 'notification' => [
-                    'title' => 'Mfanyakazi Si Imepatikana',
-                    'body'  => 'Tafadhali ongeza mfanyakazi hadi yako wasifu kabla ya creating likizo request.',
+                    'title' => 'Mfanyakazi hakupatikana',
+                    'body'  => 'Tafadhali ongeza mfanyakazi kwenye wasifu wako kabla ya kuunda ombi la likizo.',
                 ],
             ],
 
             'success' => [
                 'notification' => [
-                    'title' => 'Likizo Imeundwa',
-                    'body'  => 'Yako likizo request ina imeundwa successfully.',
+                    'title' => 'Likizo imeundwa',
+                    'body'  => 'Ombi lako la likizo limeundwa kwa mafanikio.',
                 ],
             ],
         ],
     ],
 
     'form' => [
-        'title'       => 'Likizo Request',
-        'description' => 'Unda au hariri yako likizo request na ifuatayo maelezo:',
+        'title'       => 'Ombi la likizo',
+        'description' => 'Unda au hariri ombi lako la likizo kwa maelezo yafuatayo:',
 
         'fields' => [
-            'time-off-type'             => 'Likizo Aina',
-            'time-off-type-placeholder' => 'Chagua likizo aina',
-            'time-off-type-helper'      => 'Chagua aina ya likizo wewe ni requesting.',
-            'request-date-from'         => 'Request Tarehe Kutoka',
-            'request-date-to'           => 'Request Tarehe Hadi',
+            'time-off-type'             => 'Aina ya likizo',
+            'time-off-type-placeholder' => 'Chagua aina ya likizo',
+            'time-off-type-helper'      => 'Chagua aina ya likizo unayoomba.',
+            'request-date-from'         => 'Ombi kuanzia',
+            'request-date-to'           => 'Ombi hadi',
             'period'                    => 'Kipindi',
-            'half-day'                  => 'Half Siku',
-            'half-day-helper'           => 'Toggle kwa half-siku likizo.',
-            'requested-days'            => 'Requested (Siku/Saa)',
+            'half-day'                  => 'Nusu siku',
+            'half-day-helper'           => 'Washa kwa likizo ya nusu siku.',
+            'requested-days'            => 'Iliyoombwa (siku/saa)',
             'description'               => 'Maelezo',
-            'description-placeholder'   => 'Hakuna maelezo provided',
-            'description-helper'        => 'Provide brief maelezo ya yako likizo request.',
-            'duration'                  => 'Duration',
-            'please-select-dates'       => 'Tafadhali chagua request tarehe kutoka na hadi.',
+            'description-placeholder'   => 'Hakuna maelezo yaliyotolewa',
+            'description-helper'        => 'Toa maelezo mafupi ya ombi lako la likizo.',
+            'duration'                  => 'Muda',
+            'please-select-dates'       => 'Tafadhali chagua tarehe ya kuanzia na ya mwisho ya ombi.',
         ],
     ],
 
     'infolist' => [
-        'title'       => 'Likizo Maelezo',
-        'description' => 'Hapa ni maelezo ya yako likizo request:',
+        'title'       => 'Maelezo ya likizo',
+        'description' => 'Haya ni maelezo ya ombi lako la likizo:',
         'entries'     => [
-            'time-off-type'           => 'Likizo Aina',
-            'request-date-from'       => 'Request Tarehe Kutoka',
-            'request-date-to'         => 'Request Tarehe Hadi',
+            'time-off-type'           => 'Aina ya likizo',
+            'request-date-from'       => 'Ombi kuanzia',
+            'request-date-to'         => 'Ombi hadi',
             'description'             => 'Maelezo',
-            'description-placeholder' => 'Hakuna maelezo provided',
-            'duration'                => 'Duration',
+            'description-placeholder' => 'Hakuna maelezo yaliyotolewa',
+            'duration'                => 'Muda',
             'status'                  => 'Hali',
         ],
     ],
 
     'events' => [
-        'title' => ':name Washa :status: :days siku(s)',
+        'title' => ':name — :status: siku :days',
     ],
 ];

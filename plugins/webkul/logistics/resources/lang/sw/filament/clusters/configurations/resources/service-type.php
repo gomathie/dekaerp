@@ -2,21 +2,21 @@
 
 return [
     'navigation' => [
-        'title' => 'Service Types',
+        'title' => 'Aina za huduma',
     ],
 
     'form' => [
         'fields' => [
-            'transport-mode'           => 'Transport mode',
-            'product-reference'        => 'Service bidhaa kumbukumbu',
-            'product-reference-helper' => 'Kumbukumbu ya service bidhaa charged kwa hii service katika kila kampuni, e.g. LOG-FREIGHT.',
+            'transport-mode'           => 'Njia ya usafiri',
+            'product-reference'        => 'Marejeleo ya bidhaa ya huduma',
+            'product-reference-helper' => 'Marejeleo ya bidhaa ya huduma inayotozwa kwa huduma hii katika kila kampuni, k.m. LOG-FREIGHT.',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'transport-mode'    => 'Transport mode',
-            'product-reference' => 'Service bidhaa',
+            'transport-mode'    => 'Njia ya usafiri',
+            'product-reference' => 'Bidhaa ya huduma',
         ],
     ],
 ];

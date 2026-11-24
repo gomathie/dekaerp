@@ -3,67 +3,67 @@
 return [
     'title' => 'Likizo',
 
-    'model-label' => 'Yangu Likizo',
+    'model-label' => 'Likizo yangu',
 
     'navigation' => [
-        'title' => 'Yangu Likizo',
+        'title' => 'Likizo yangu',
     ],
 
     'form' => [
         'fields' => [
-            'time-off-type'     => 'Likizo Aina',
+            'time-off-type'     => 'Aina ya likizo',
             'date'              => 'Tarehe',
-            'dates'             => 'Dates',
-            'request-date-from' => 'Request Tarehe Kutoka',
-            'request-date-to'   => 'Request Tarehe Hadi',
+            'dates'             => 'Tarehe',
+            'request-date-from' => 'Ombi kuanzia',
+            'request-date-to'   => 'Ombi hadi',
             'description'       => 'Maelezo',
             'period'            => 'Kipindi',
-            'half-day'          => 'Half Siku',
-            'requested-days'    => 'Requested (Siku/Saa)',
+            'half-day'          => 'Nusu siku',
+            'requested-days'    => 'Iliyoombwa (siku/saa)',
             'description'       => 'Maelezo',
             'attachment'        => 'Kiambatisho',
-            'day'               => ':day siku',
-            'days'              => ':days siku(s)',
+            'day'               => 'Siku :day',
+            'days'              => 'Siku :days',
         ],
     ],
 
     'table' => [
         'columns' => [
             'employee-name'  => 'Mfanyakazi',
-            'time-off-type'  => 'Likizo Aina',
+            'time-off-type'  => 'Aina ya likizo',
             'description'    => 'Maelezo',
-            'date-from'      => 'Tarehe Kutoka',
-            'date-to'        => 'Tarehe Hadi',
-            'duration'       => 'Duration',
+            'date-from'      => 'Tarehe kuanzia',
+            'date-to'        => 'Tarehe hadi',
+            'duration'       => 'Muda',
             'status'         => 'Hali',
         ],
 
         'groups' => [
             'employee-name' => 'Mfanyakazi',
-            'time-off-type' => 'Likizo Aina',
+            'time-off-type' => 'Aina ya likizo',
             'status'        => 'Hali',
-            'start-date'    => 'Anza Tarehe',
-            'start-to'      => 'Mwisho Tarehe',
-            'updated-at'    => 'Imesasishwa',
-            'created-at'    => 'Imeundwa',
+            'start-date'    => 'Tarehe ya kuanza',
+            'start-to'      => 'Tarehe ya kumalizika',
+            'updated-at'    => 'Ilisasishwa',
+            'created-at'    => 'Iliundwa',
         ],
 
         'actions' => [
             'approve' => [
                 'title' => [
-                    'validate' => 'Validate',
+                    'validate' => 'Thibitisha',
                     'approve'  => 'Idhinisha',
                 ],
                 'notification' => [
                     'title' => 'Likizo imeidhinishwa',
-                    'body'  => 'likizo ina imeidhinishwa successfully.',
+                    'body'  => 'Likizo imeidhinishwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'title' => 'Likizo imefutwa',
-                    'body'  => 'likizo ina imefutwa successfully.',
+                    'body'  => 'Likizo imefutwa kwa mafanikio.',
                 ],
             ],
 
@@ -71,7 +71,7 @@ return [
                 'title'        => 'Kataa',
                 'notification' => [
                     'title' => 'Likizo imekataliwa',
-                    'body'  => 'likizo ina imekataliwa successfully.',
+                    'body'  => 'Likizo imekataliwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -79,8 +79,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Likizos imefutwa',
-                    'body'  => 'likizos ina imefutwa successfully.',
+                    'title' => 'Likizo zimefutwa',
+                    'body'  => 'Likizo zimefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -88,19 +88,19 @@ return [
 
     'infolist' => [
         'entries' => [
-            'time-off-type'     => 'Likizo Aina',
+            'time-off-type'     => 'Aina ya likizo',
             'date'              => 'Tarehe',
-            'dates'             => 'Dates',
-            'request-date-from' => 'Request Tarehe Kutoka',
-            'request-date-to'   => 'Request Tarehe Hadi',
+            'dates'             => 'Tarehe',
+            'request-date-from' => 'Ombi kuanzia',
+            'request-date-to'   => 'Ombi hadi',
             'description'       => 'Maelezo',
             'period'            => 'Kipindi',
-            'half-day'          => 'Half Siku',
-            'requested-days'    => 'Requested (Siku/Saa)',
+            'half-day'          => 'Nusu siku',
+            'requested-days'    => 'Iliyoombwa (siku/saa)',
             'description'       => 'Maelezo',
             'attachment'        => 'Kiambatisho',
-            'day'               => ':day siku',
-            'days'              => ':days siku(s)',
+            'day'               => 'Siku :day',
+            'days'              => 'Siku :days',
         ],
     ],
 ];

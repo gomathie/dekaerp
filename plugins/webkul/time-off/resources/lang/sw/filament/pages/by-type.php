@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Na Aina',
+        'title' => 'Kwa aina',
     ],
 ];

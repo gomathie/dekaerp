@@ -2,5 +2,5 @@
 
 return [
     'days'   => 'Siku',
-    'months' => 'Months',
+    'months' => 'Miezi',
 ];

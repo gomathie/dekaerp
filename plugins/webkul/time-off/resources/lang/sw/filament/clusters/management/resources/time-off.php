@@ -11,68 +11,68 @@ return [
 
     'global-search' => [
         'employee'      => 'Mfanyakazi',
-        'time-off-type' => 'Likizo Aina',
-        'date-from'     => 'Tarehe Kutoka',
-        'date-to'       => 'Tarehe Hadi',
+        'time-off-type' => 'Aina ya likizo',
+        'date-from'     => 'Tarehe kuanzia',
+        'date-to'       => 'Tarehe hadi',
     ],
 
     'form' => [
         'fields' => [
-            'employee-name'     => 'Mfanyakazi Jina',
-            'department-name'   => 'Idara Jina',
-            'time-off-type'     => 'Likizo Aina',
+            'employee-name'     => 'Jina la mfanyakazi',
+            'department-name'   => 'Jina la idara',
+            'time-off-type'     => 'Aina ya likizo',
             'date'              => 'Tarehe',
-            'dates'             => 'Dates',
-            'request-date-from' => 'Request Tarehe Kutoka',
-            'request-date-to'   => 'Request Tarehe Hadi',
+            'dates'             => 'Tarehe',
+            'request-date-from' => 'Ombi kuanzia',
+            'request-date-to'   => 'Ombi hadi',
             'description'       => 'Maelezo',
             'period'            => 'Kipindi',
-            'half-day'          => 'Half Siku',
-            'requested-days'    => 'Requested (Siku/Saa)',
+            'half-day'          => 'Nusu siku',
+            'requested-days'    => 'Iliyoombwa (siku/saa)',
             'description'       => 'Maelezo',
             'attachment'        => 'Kiambatisho',
-            'day'               => ':day siku',
-            'days'              => ':days siku(s)',
+            'day'               => 'Siku :day',
+            'days'              => 'Siku :days',
         ],
     ],
 
     'table' => [
         'columns' => [
             'employee-name'  => 'Mfanyakazi',
-            'time-off-type'  => 'Likizo Aina',
+            'time-off-type'  => 'Aina ya likizo',
             'description'    => 'Maelezo',
-            'date-from'      => 'Tarehe Kutoka',
-            'date-to'        => 'Tarehe Hadi',
-            'duration'       => 'Duration',
+            'date-from'      => 'Tarehe kuanzia',
+            'date-to'        => 'Tarehe hadi',
+            'duration'       => 'Muda',
             'status'         => 'Hali',
         ],
 
         'groups' => [
             'employee-name' => 'Mfanyakazi',
-            'time-off-type' => 'Likizo Aina',
+            'time-off-type' => 'Aina ya likizo',
             'status'        => 'Hali',
-            'start-date'    => 'Anza Tarehe',
-            'start-to'      => 'Mwisho Tarehe',
-            'updated-at'    => 'Imesasishwa',
-            'created-at'    => 'Imeundwa',
+            'start-date'    => 'Tarehe ya kuanza',
+            'start-to'      => 'Tarehe ya kumalizika',
+            'updated-at'    => 'Ilisasishwa',
+            'created-at'    => 'Iliundwa',
         ],
 
         'actions' => [
             'approve' => [
                 'title' => [
-                    'validate' => 'Validate',
+                    'validate' => 'Thibitisha',
                     'approve'  => 'Idhinisha',
                 ],
                 'notification' => [
                     'title' => 'Likizo imeidhinishwa',
-                    'body'  => 'likizo ina imeidhinishwa successfully.',
+                    'body'  => 'Likizo imeidhinishwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'title' => 'Likizo imefutwa',
-                    'body'  => 'likizo ina imefutwa successfully.',
+                    'body'  => 'Likizo imefutwa kwa mafanikio.',
                 ],
             ],
 
@@ -80,7 +80,7 @@ return [
                 'title'        => 'Kataa',
                 'notification' => [
                     'title' => 'Likizo imekataliwa',
-                    'body'  => 'likizo ina imekataliwa successfully.',
+                    'body'  => 'Likizo imekataliwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -89,7 +89,7 @@ return [
             'delete' => [
                 'notification' => [
                     'title' => 'Likizo imefutwa',
-                    'body'  => 'likizo ina imefutwa successfully.',
+                    'body'  => 'Likizo imefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -97,22 +97,22 @@ return [
 
     'infolist' => [
         'entries' => [
-            'employee-name'     => 'Mfanyakazi Jina',
-            'department-name'   => 'Idara Jina',
-            'time-off-type'     => 'Likizo Aina',
+            'employee-name'     => 'Jina la mfanyakazi',
+            'department-name'   => 'Jina la idara',
+            'time-off-type'     => 'Aina ya likizo',
             'date'              => 'Tarehe',
-            'dates'             => 'Dates',
-            'request-date-from' => 'Request Tarehe Kutoka',
-            'request-date-to'   => 'Request Tarehe Hadi',
+            'dates'             => 'Tarehe',
+            'request-date-from' => 'Ombi kuanzia',
+            'request-date-to'   => 'Ombi hadi',
             'description'       => 'Maelezo',
             'period'            => 'Kipindi',
-            'half-day'          => 'Half Siku',
-            'requested-days'    => 'Requested (Siku/Saa)',
+            'half-day'          => 'Nusu siku',
+            'requested-days'    => 'Iliyoombwa (siku/saa)',
             'attachment'        => 'Kiambatisho',
-            'day'               => ':day siku',
-            'days'              => ':days siku(s)',
-            'date-from'         => 'Tarehe Kutoka',
-            'date-to'           => 'Tarehe Hadi',
+            'day'               => 'Siku :day',
+            'days'              => 'Siku :days',
+            'date-from'         => 'Tarehe kuanzia',
+            'date-to'           => 'Tarehe hadi',
             'status'            => 'Hali',
         ],
     ],

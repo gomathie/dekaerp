@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'title' => 'Mandatory Siku',
+    'title' => 'Siku za lazima',
 
-    'model-label' => 'Mandatory Siku',
+    'model-label' => 'Siku ya lazima',
 
     'navigation' => [
-        'title' => 'Mandatory Holidays',
+        'title' => 'Siku za lazima',
     ],
 
     'form' => [
         'fields' => [
             'name'       => 'Jina',
-            'start-date' => 'Anza Tarehe',
-            'end-date'   => 'Mwisho Tarehe',
+            'start-date' => 'Tarehe ya kuanza',
+            'end-date'   => 'Tarehe ya kumalizika',
             'color'      => 'Rangi',
         ],
     ],
@@ -21,42 +21,42 @@ return [
     'table' => [
         'columns' => [
             'name'         => 'Jina',
-            'company-name' => 'Kampuni Jina',
-            'created-by'   => 'Imeundwa Na',
-            'start-date'   => 'Anza Tarehe',
-            'end-date'     => 'Mwisho Tarehe',
+            'company-name' => 'Kampuni',
+            'created-by'   => 'Imeundwa na',
+            'start-date'   => 'Tarehe ya kuanza',
+            'end-date'     => 'Tarehe ya kumalizika',
         ],
 
         'filters' => [
             'name'         => 'Jina',
-            'company-name' => 'Kampuni Jina',
-            'created-by'   => 'Imeundwa Na',
-            'start-date'   => 'Anza Tarehe',
-            'end-date'     => 'Mwisho Tarehe',
-            'created-at'   => 'Imeundwa',
-            'updated-at'   => 'Imesasishwa',
+            'company-name' => 'Kampuni',
+            'created-by'   => 'Imeundwa na',
+            'start-date'   => 'Tarehe ya kuanza',
+            'end-date'     => 'Tarehe ya kumalizika',
+            'created-at'   => 'Iliundwa',
+            'updated-at'   => 'Ilisasishwa',
         ],
 
         'groups' => [
             'name'         => 'Jina',
-            'company-name' => 'Kampuni Jina',
-            'created-by'   => 'Imeundwa Na',
-            'start-date'   => 'Anza Tarehe',
-            'end-date'     => 'Mwisho Tarehe',
+            'company-name' => 'Kampuni',
+            'created-by'   => 'Imeundwa na',
+            'start-date'   => 'Tarehe ya kuanza',
+            'end-date'     => 'Tarehe ya kumalizika',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Mandatory siku imesasishwa',
-                    'body'  => 'mandatory siku ina restored successfully.',
+                    'title' => 'Siku ya lazima imesasishwa',
+                    'body'  => 'Siku ya lazima imesasishwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Mandatory siku imefutwa',
-                    'body'  => 'mandatory siku ina imefutwa successfully.',
+                    'title' => 'Siku ya lazima imefutwa',
+                    'body'  => 'Siku ya lazima imefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -64,8 +64,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Mandatory siku imefutwa',
-                    'body'  => 'mandatory siku ina imefutwa successfully.',
+                    'title' => 'Siku za lazima zimefutwa',
+                    'body'  => 'Siku za lazima zimefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -74,8 +74,8 @@ return [
     'infolist' => [
         'entries' => [
             'name'       => 'Jina',
-            'start-date' => 'Anza Tarehe',
-            'end-date'   => 'Mwisho Tarehe',
+            'start-date' => 'Tarehe ya kuanza',
+            'end-date'   => 'Tarehe ya kumalizika',
             'color'      => 'Rangi',
         ],
     ],

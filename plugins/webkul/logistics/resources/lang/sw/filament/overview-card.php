@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'label'      => 'Usafirishaji',
-    'in-transit' => 'Washa road',
-    'late'       => 'Delivered late hii mwezi',
-    'failed'     => 'Imeshindwa deliveries',
-    'on-time'    => ':percent% washa time hii mwezi',
+    'label'      => 'Lojistiki',
+    'in-transit' => 'Barabarani',
+    'late'       => 'Zilizowasilishwa kwa kuchelewa mwezi huu',
+    'failed'     => 'Uwasilishaji ulioshindwa',
+    'on-time'    => ':percent% kwa wakati mwezi huu',
 ];

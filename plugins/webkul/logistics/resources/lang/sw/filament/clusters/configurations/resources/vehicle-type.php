@@ -2,20 +2,20 @@
 
 return [
     'navigation' => [
-        'title' => 'Gari Types',
+        'title' => 'Aina za magari',
     ],
 
     'form' => [
         'fields' => [
-            'capacity-kg' => 'Capacity (uzito)',
-            'capacity-m3' => 'Capacity (ujazo)',
+            'capacity-kg' => 'Uwezo (uzito)',
+            'capacity-m3' => 'Uwezo (ujazo)',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'capacity-kg' => 'Capacity (kg)',
-            'capacity-m3' => 'Capacity (m³)',
+            'capacity-kg' => 'Uwezo (kg)',
+            'capacity-m3' => 'Uwezo (m³)',
         ],
     ],
 ];

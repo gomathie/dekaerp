@@ -2,12 +2,12 @@
 
 return [
     'heading' => [
-        'title' => 'Отгул и отпуск Analysis',
+        'title' => 'Анализ отпусков',
     ],
 
     'stats' => [
-        'pending-requests'  => 'Ожидает Requests',
-        'valid-until'       => 'Действительно до :date',
-        'time-off-requests' => 'Отгул и отпуск Requests',
+        'pending-requests'  => 'Заявки на рассмотрении',
+        'valid-until'       => 'Действует до :date',
+        'time-off-requests' => 'Заявки на отпуск',
     ],
 ];

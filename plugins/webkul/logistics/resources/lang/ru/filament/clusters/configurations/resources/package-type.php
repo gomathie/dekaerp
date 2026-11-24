@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Упаковка Types',
+        'title' => 'Типы упаковки',
     ],
 ];

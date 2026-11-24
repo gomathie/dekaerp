@@ -2,8 +2,8 @@
 
 return [
     'label'      => 'Логистика',
-    'in-transit' => 'Вкл. road',
-    'late'       => 'Delivered late этот месяц',
-    'failed'     => 'Не удалось deliveries',
-    'on-time'    => ':percent% вкл. time этот месяц',
+    'in-transit' => 'В пути',
+    'late'       => 'Доставлено с опозданием в этом месяце',
+    'failed'     => 'Неудачные доставки',
+    'on-time'    => ':percent% вовремя в этом месяце',
 ];

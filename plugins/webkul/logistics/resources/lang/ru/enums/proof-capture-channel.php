@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'office'    => 'Введено в office',
-    'stop_link' => 'Captured в остановка',
+    'office'    => 'Введено в офисе',
+    'stop_link' => 'Зафиксировано на точке',
 ];

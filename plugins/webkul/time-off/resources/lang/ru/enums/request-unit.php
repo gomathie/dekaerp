@@ -2,6 +2,6 @@
 
 return [
     'day'      => 'День',
-    'half-day' => 'Half День',
+    'half-day' => 'Полдня',
     'hour'     => 'Час',
 ];

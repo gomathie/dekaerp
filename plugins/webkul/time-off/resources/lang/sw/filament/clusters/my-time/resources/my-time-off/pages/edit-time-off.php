@@ -3,14 +3,14 @@
 return [
     'notification' => [
         'title'              => 'Likizo imesasishwa',
-        'body'               => 'likizo ina imesasishwa successfully.',
+        'body'               => 'Likizo imesasishwa kwa mafanikio.',
         'action_not_allowed' => [
-            'title' => 'Kitendo Si Inaruhusiwa',
-            'body'  => 'Wewe haiwezekani modify hii likizo request kama hii ni katika imefungwa hali.',
+            'title' => 'Kitendo hakiruhusiwi',
+            'body'  => 'Huwezi kubadilisha ombi hili la likizo kwa sababu limefungwa.',
         ],
         'overlap' => [
-            'title' => 'Overlapping Likizo Request',
-            'body'  => 'imechaguliwa likizo dates overlap na existing request. Tafadhali chagua different dates.',
+            'title' => 'Ombi la likizo linaingiliana',
+            'body'  => 'Tarehe za likizo zilizochaguliwa zinaingiliana na ombi lililopo. Tafadhali chagua tarehe nyingine.',
         ],
     ],
 
@@ -18,7 +18,7 @@ return [
         'delete' => [
             'notification' => [
                 'title' => 'Likizo imefutwa',
-                'body'  => 'likizo ina imefutwa successfully.',
+                'body'  => 'Likizo imefutwa kwa mafanikio.',
             ],
         ],
     ],

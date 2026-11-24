@@ -2,20 +2,20 @@
 
 return [
     'navigation' => [
-        'title' => 'Транспорт Types',
+        'title' => 'Типы транспорта',
     ],
 
     'form' => [
         'fields' => [
-            'capacity-kg' => 'Capacity (вес)',
-            'capacity-m3' => 'Capacity (объём)',
+            'capacity-kg' => 'Грузоподъёмность (вес)',
+            'capacity-m3' => 'Вместимость (объём)',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'capacity-kg' => 'Capacity (kg)',
-            'capacity-m3' => 'Capacity (m³)',
+            'capacity-kg' => 'Грузоподъёмность (кг)',
+            'capacity-m3' => 'Вместимость (м³)',
         ],
     ],
 ];

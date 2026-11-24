@@ -2,6 +2,6 @@
 
 return [
     'day'      => 'Siku',
-    'half-day' => 'Half Siku',
+    'half-day' => 'Nusu siku',
     'hour'     => 'Saa',
 ];

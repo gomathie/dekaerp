@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'internal' => 'Ndani (catalog bidhaa)',
-    'external' => 'Nje (free-text)',
+    'internal' => 'Ndani (bidhaa ya katalogi)',
+    'external' => 'Nje (maandishi huru)',
 ];

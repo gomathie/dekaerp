@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'road'       => 'Road',
-    'air'        => 'Air',
-    'sea'        => 'Sea',
-    'rail'       => 'Rail',
-    'multimodal' => 'Multimodal',
+    'road'       => 'Barabara',
+    'air'        => 'Anga',
+    'sea'        => 'Bahari',
+    'rail'       => 'Reli',
+    'multimodal' => 'Njia mseto',
 ];

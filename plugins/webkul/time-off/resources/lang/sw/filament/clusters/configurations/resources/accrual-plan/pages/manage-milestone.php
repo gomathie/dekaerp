@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'label' => 'Manage Hatua kuu',
+        'label' => 'Dhibiti hatua',
     ],
 ];

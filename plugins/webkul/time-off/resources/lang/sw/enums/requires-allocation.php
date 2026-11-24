@@ -2,5 +2,5 @@
 
 return [
     'yes' => 'Ndiyo',
-    'no'  => 'Hakuna Limit',
+    'no'  => 'Bila kikomo',
 ];

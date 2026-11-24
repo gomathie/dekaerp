@@ -2,67 +2,67 @@
 
 return [
     'navigation' => [
-        'title' => 'Транспорт',
+        'title' => 'Транспортные средства',
     ],
 
     'form' => [
         'fields' => [
-            'registration-no'              => 'Registration номер',
+            'registration-no'              => 'Регистрационный номер',
             'name'                         => 'Название',
             'company'                      => 'Компания',
-            'vehicle-type'                 => 'Транспорт тип',
-            'ownership'                    => 'Ownership',
-            'carrier'                      => 'Carrier',
-            'default-driver'               => 'По умолчанию водитель',
-            'equipment'                    => 'Обслуживание equipment',
-            'telematics-device-ref'        => 'Telematics device ссылка',
-            'telematics-agent-id'          => 'Telematics agent Ид.',
-            'telematics-agent-id-helper'   => 'telematics platform’s собственную identifier для этот транспорт, который не device IMEI. PILOT calls этот agent Ид..',
-            'capacity-kg'                  => 'Capacity вес',
-            'capacity-m3'                  => 'Capacity объём',
+            'vehicle-type'                 => 'Тип транспорта',
+            'ownership'                    => 'Владение',
+            'carrier'                      => 'Перевозчик',
+            'default-driver'               => 'Водитель по умолчанию',
+            'equipment'                    => 'Оборудование обслуживания',
+            'telematics-device-ref'        => 'Ссылка на телематическое устройство',
+            'telematics-agent-id'          => 'ID агента телематики',
+            'telematics-agent-id-helper'   => 'Собственный идентификатор этого транспортного средства на платформе телематики — это не IMEI устройства. В PILOT он называется ID агента.',
+            'capacity-kg'                  => 'Грузоподъёмность',
+            'capacity-m3'                  => 'Вместимость по объёму',
             'is-active'                    => 'Активен',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'registration-no'       => 'Registration',
+            'registration-no'       => 'Госномер',
             'name'                  => 'Название',
-            'ownership'             => 'Ownership',
+            'ownership'             => 'Владение',
             'vehicle-type'          => 'Тип',
-            'carrier'               => 'Carrier',
-            'capacity-kg'           => 'Capacity',
-            'telematics-device-ref' => 'Telematics',
-            'telematics-agent-id'   => 'Telematics agent',
+            'carrier'               => 'Перевозчик',
+            'capacity-kg'           => 'Вместимость',
+            'telematics-device-ref' => 'Телематика',
+            'telematics-agent-id'   => 'Агент телематики',
             'company'               => 'Компания',
             'is-active'             => 'Активен',
         ],
 
         'filters' => [
-            'ownership'    => 'Ownership',
-            'vehicle-type' => 'Транспорт тип',
+            'ownership'    => 'Владение',
+            'vehicle-type' => 'Тип транспорта',
         ],
     ],
 
     'infolist' => [
         'sections' => [
-            'general'      => 'Транспорт',
-            'capacity'     => 'Capacity',
-            'integrations' => 'Integrations',
+            'general'      => 'Транспортное средство',
+            'capacity'     => 'Вместимость',
+            'integrations' => 'Интеграции',
         ],
     ],
 
     'actions' => [
         'import-maintenance-equipment' => [
-            'label' => 'Импорт от Обслуживание equipment',
+            'label' => 'Импорт из оборудования обслуживания',
 
             'fields' => [
-                'equipment' => 'Equipment',
+                'equipment' => 'Оборудование',
             ],
 
             'notification' => [
-                'title' => 'Обслуживание equipment импорт finished',
-                'body'  => ':created создано, :skipped skipped.',
+                'title' => 'Импорт оборудования обслуживания завершён',
+                'body'  => 'Создано: :created, пропущено: :skipped.',
             ],
         ],
     ],

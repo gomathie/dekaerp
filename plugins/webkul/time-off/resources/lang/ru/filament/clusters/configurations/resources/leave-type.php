@@ -1,25 +1,25 @@
 <?php
 
 return [
-    'title'      => 'Отпуск Тип',
+    'title'      => 'Тип отпуска',
     'navigation' => [
-        'title' => 'Отпуск Тип',
+        'title' => 'Тип отпуска',
     ],
 
     'form' => [
         'sections' => [
             'general' => [
-                'title'  => 'Общее Сведения',
+                'title'  => 'Общая информация',
                 'fields' => [
-                    'name'                => 'Заголовок',
-                    'approval'            => 'Approval',
-                    'requires-allocation' => 'Requires Allocation',
-                    'employee-requests'   => 'Сотрудник Requests',
-                    'display-option'      => 'Display Option',
+                    'name'                => 'Название',
+                    'approval'            => 'Утверждение',
+                    'requires-allocation' => 'Требуется распределение',
+                    'employee-requests'   => 'Запросы сотрудников',
+                    'display-option'      => 'Отображение',
                 ],
             ],
             'display-option' => [
-                'title'  => 'Display Option',
+                'title'  => 'Отображение',
                 'fields' => [
                     'color' => 'Цвет',
                 ],
@@ -28,15 +28,15 @@ return [
                 'title' => 'Конфигурация',
 
                 'fields' => [
-                    'notified-time-off-officers'          => 'Notified Отгул и отпуск Officers',
-                    'take-time-off-in'                    => 'Take Отгул и отпуск В',
-                    'public-holiday-included'             => 'Публичный Holiday Включено',
-                    'allow-to-attach-supporting-document' => 'Разрешить до Attach Supporting Документ',
-                    'show-on-dashboard'                   => 'Показать вкл. Панель',
-                    'allow-negative-cap'                  => 'Разрешить Negative Cap',
-                    'kind-off-time'                       => 'Kind Time',
-                    'max-negative-cap'                    => 'Max Negative Cap',
-                    'kind-of-time'                        => 'Kind Отгул и отпуск',
+                    'notified-time-off-officers'          => 'Уведомляемые ответственные за отпуска',
+                    'take-time-off-in'                    => 'Единица отпуска',
+                    'public-holiday-included'             => 'С учётом государственных праздников',
+                    'allow-to-attach-supporting-document' => 'Разрешить прикреплять подтверждающий документ',
+                    'show-on-dashboard'                   => 'Показывать на панели',
+                    'allow-negative-cap'                  => 'Разрешить отрицательный остаток',
+                    'kind-off-time'                       => 'Вид времени',
+                    'max-negative-cap'                    => 'Макс. отрицательный остаток',
+                    'kind-of-time'                        => 'Вид отпуска',
                 ],
             ],
         ],
@@ -47,22 +47,22 @@ return [
             'name'                      => 'Название',
             'company-name'              => 'Компания',
             'color'                     => 'Цвет',
-            'notified-time-officers'    => 'Notified Отгул и отпускicers',
-            'time-off-approval'         => 'Отгул и отпуск Approval',
-            'requires-allocation'       => 'Requires Allocation',
-            'allocation-approval'       => 'Allocation Approval',
-            'employee-request'          => 'Сотрудник Request',
+            'notified-time-officers'    => 'Уведомляемые ответственные',
+            'time-off-approval'         => 'Утверждение отпуска',
+            'requires-allocation'       => 'Требуется распределение',
+            'allocation-approval'       => 'Утверждение распределения',
+            'employee-request'          => 'Запрос сотрудника',
         ],
 
         'filters' => [
             'name'                => 'Название',
             'company-name'        => 'Компания',
-            'time-off-approval'   => 'Отгул и отпуск Approval',
-            'requires-allocation' => 'Requires Allocation',
-            'time-type'           => 'Time Тип',
-            'request-unit'        => 'Request Единица',
-            'created-by'          => 'Создано От',
-            'employee-request'    => 'Сотрудник Request',
+            'time-off-approval'   => 'Утверждение отпуска',
+            'requires-allocation' => 'Требуется распределение',
+            'time-type'           => 'Тип времени',
+            'request-unit'        => 'Единица запроса',
+            'created-by'          => 'Создал',
+            'employee-request'    => 'Запрос сотрудника',
             'created-at'          => 'Создано',
             'updated-at'          => 'Обновлено',
         ],
@@ -70,14 +70,14 @@ return [
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Отпуск Тип удалено',
-                    'body'  => 'Отпуск тип есть удалено successfully.',
+                    'title' => 'Тип отпуска удалён',
+                    'body'  => 'Тип отпуска успешно удалён.',
                 ],
             ],
             'restore' => [
                 'notification' => [
-                    'title' => 'Отпуск Тип restored',
-                    'body'  => 'Отпуск тип есть restored successfully.',
+                    'title' => 'Тип отпуска восстановлен',
+                    'body'  => 'Тип отпуска успешно восстановлен.',
                 ],
             ],
         ],
@@ -85,27 +85,27 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Отпуск Тип restored',
-                    'body'  => 'Отпуск Тип есть restored successfully.',
+                    'title' => 'Тип отпуска восстановлен',
+                    'body'  => 'Тип отпуска успешно восстановлен.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Отпуск Тип удалено',
-                    'body'  => 'Отпуск Тип есть удалено successfully.',
+                    'title' => 'Тип отпуска удалён',
+                    'body'  => 'Тип отпуска успешно удалён.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Отпуск Тип force удалено',
-                        'body'  => 'Отпуск Тип есть force удалено successfully.',
+                        'title' => 'Тип отпуска удалён безвозвратно',
+                        'body'  => 'Тип отпуска успешно удалён безвозвратно.',
                     ],
                     'error' => [
-                        'title' => 'Отпуск Тип could не быть удалено',
-                        'body'  => 'Отпуск Тип нельзя быть удалено потому что это currently в использовать.',
+                        'title' => 'Не удалось удалить тип отпуска',
+                        'body'  => 'Тип отпуска нельзя удалить, так как он сейчас используется.',
                     ],
                 ],
             ],
@@ -115,17 +115,17 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title'   => 'Общее Сведения',
+                'title'   => 'Общая информация',
                 'entries' => [
-                    'name'                => 'Заголовок',
-                    'approval'            => 'Approval',
-                    'requires-allocation' => 'Requires Allocation',
-                    'employee-requests'   => 'Сотрудник Requests',
-                    'display-option'      => 'Display Option',
+                    'name'                => 'Название',
+                    'approval'            => 'Утверждение',
+                    'requires-allocation' => 'Требуется распределение',
+                    'employee-requests'   => 'Запросы сотрудников',
+                    'display-option'      => 'Отображение',
                 ],
             ],
             'display-option' => [
-                'title'   => 'Display Option',
+                'title'   => 'Отображение',
                 'entries' => [
                     'color' => 'Цвет',
                 ],
@@ -134,14 +134,14 @@ return [
                 'title' => 'Конфигурация',
 
                 'entries' => [
-                    'notified-time-off-officers'          => 'Notified Отгул и отпуск Officers',
-                    'take-time-off-in'                    => 'Take Отгул и отпуск В',
-                    'public-holiday-included'             => 'Публичный Holiday Включено',
-                    'allow-to-attach-supporting-document' => 'Разрешить до Attach Supporting Документ',
-                    'show-on-dashboard'                   => 'Показать вкл. Панель',
-                    'kind-off-time'                       => 'Kind Time',
-                    'max-negative-cap'                    => 'Max Negative Cap',
-                    'kind-of-time'                        => 'Kind Отгул и отпуск',
+                    'notified-time-off-officers'          => 'Уведомляемые ответственные за отпуска',
+                    'take-time-off-in'                    => 'Единица отпуска',
+                    'public-holiday-included'             => 'С учётом государственных праздников',
+                    'allow-to-attach-supporting-document' => 'Разрешить прикреплять подтверждающий документ',
+                    'show-on-dashboard'                   => 'Показывать на панели',
+                    'kind-off-time'                       => 'Вид времени',
+                    'max-negative-cap'                    => 'Макс. отрицательный остаток',
+                    'kind-of-time'                        => 'Вид отпуска',
                 ],
             ],
         ],

@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'title' => 'Gharama kategoria',
+    'title' => 'Kategoria ya gharama',
 ];

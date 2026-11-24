@@ -2,12 +2,12 @@
 
 return [
     'preset-views' => [
-        'waiting-for-me'  => 'Waiting Для Мне',
-        'second-approval' => 'Second Approval',
-        'approved'        => 'Утверждён',
-        'currently-valid' => 'Currently Действительно',
-        'my-team'         => 'Мой Команда',
-        'my-department'   => 'Мой Отдел',
-        'refused'         => 'Отказано',
+        'waiting-for-me'  => 'Ожидают меня',
+        'second-approval' => 'Второе утверждение',
+        'approved'        => 'Утверждённые',
+        'currently-valid' => 'Действующие',
+        'my-team'         => 'Моя команда',
+        'my-department'   => 'Мой отдел',
+        'refused'         => 'Отклонённые',
     ],
 ];

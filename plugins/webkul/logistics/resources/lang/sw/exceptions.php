@@ -1,29 +1,29 @@
 <?php
 
 return [
-    'not-enabled'       => 'Usafirishaji ni si imewashwa kwa kampuni #:company. msimamizi unaweza washa hii chini ya Usafirishaji > Usanidi > Mipangilio.',
-    'company-mismatch'  => 'Hii :record belongs hadi different kampuni kuliko yake :related.',
-    'uninstall-blocked' => 'Usafirishaji unaweza’t kuwa uninstalled wakati :count shehena(s) exist: uninstalling deletes zote usafirishaji data. Rudi juu database, kisha weka Usafirishaji_Ruhusu_UNINSTALL_Na_DATA=ndiyo hadi proceed.',
+    'not-enabled'       => 'Lojistiki haijawezeshwa kwa kampuni #:company. Msimamizi anaweza kuiwezesha chini ya Lojistiki > Mipangilio > Mipangilio.',
+    'company-mismatch'  => ':record hii ni ya kampuni tofauti na :related yake.',
+    'uninstall-blocked' => 'Lojistiki haiwezi kuondolewa wakati kuna usafirishaji :count: kuiondoa kunafuta data yote ya lojistiki. Hifadhi nakala ya hifadhidata, kisha weka LOGISTICS_ALLOW_UNINSTALL_WITH_DATA=true ili kuendelea.',
 
-    'invalid-transition'      => 'shehena haiwezekani go kutoka “:from” hadi “:to”.',
-    'invalid-trip-transition' => 'safari haiwezekani go kutoka “:from” hadi “:to”.',
+    'invalid-transition'      => 'Usafirishaji hauwezi kutoka “:from” kwenda “:to”.',
+    'invalid-trip-transition' => 'Safari haiwezi kutoka “:from” kwenda “:to”.',
 
-    'trip-no-vehicle'              => 'Kabidhi gari hadi hii safari kabla ya dispatching hii.',
-    'trip-no-driver'               => 'Kabidhi dereva hadi hii safari kabla ya dispatching hii.',
-    'trip-inactive-vehicle'        => 'Gari :vehicle ni imehifadhiwa na haiwezekani kuwa dispatched.',
-    'trip-inactive-driver'         => 'Dereva :driver ni imehifadhiwa na haiwezekani kuwa dispatched.',
-    'trip-expired-license'         => 'Dereva :driver’s licence expired washa :date.',
-    'trip-shipment-not-confirmed'  => 'Shehena :shipment lazima kuwa imethibitishwa kabla ya hii unaweza kuwa added hadi safari.',
+    'trip-no-vehicle'              => 'Panga gari kwa safari hii kabla ya kuituma.',
+    'trip-no-driver'               => 'Panga dereva kwa safari hii kabla ya kuituma.',
+    'trip-inactive-vehicle'        => 'Gari :vehicle limewekwa kwenye kumbukumbu na haliwezi kutumwa.',
+    'trip-inactive-driver'         => 'Dereva :driver amewekwa kwenye kumbukumbu na hawezi kutumwa.',
+    'trip-expired-license'         => 'Leseni ya dereva :driver iliisha muda tarehe :date.',
+    'trip-shipment-not-confirmed'  => 'Usafirishaji :shipment lazima uthibitishwe kabla ya kuongezwa kwenye safari.',
 
-    'nothing-to-invoice' => 'Shehena :shipment ina hakuna billable charges iliyobaki hadi ankara.',
+    'nothing-to-invoice' => 'Usafirishaji :shipment hauna tozo zilizobaki za kutolewa ankara.',
 
-    'receipt-required' => 'Gharama katika “:category” kategoria need stakabadhi attached kabla ya wao unaweza kuwa submitted au imeidhinishwa.',
+    'receipt-required' => 'Gharama za kategoria “:category” zinahitaji risiti iambatishwe kabla ya kuwasilishwa au kuidhinishwa.',
 
-    'expense-not-attributable' => 'gharama lazima kuwa linked hadi shehena, safari au gari kabla ya hii unaweza kuwa submitted au imeidhinishwa.',
+    'expense-not-attributable' => 'Gharama lazima iunganishwe na usafirishaji, safari au gari kabla ya kuwasilishwa au kuidhinishwa.',
 
-    'nothing-to-bill'           => 'Shehena :shipment ina hakuna imeidhinishwa gharama iliyobaki hadi bili.',
-    'missing-partner'           => 'Gharama “:expense” ina hakuna payee, hivyo ni nobody hadi fanya bili nje hadi.',
-    'missing-employee-contact'  => ':employee ina hakuna mwasiliani rekodi, hivyo reimbursement haiwezekani kuwa billed hadi wao. Ongeza mwasiliani washa mfanyakazi kwanza.',
-    'missing-bill-journal'      => 'Hii kampuni ina hakuna bili ya msambazaji jarida weka. Chagua one chini ya Usafirishaji > Usanidi > Mipangilio.',
-    'missing-expense-account'   => 'Hii kampuni ina hakuna chaguo-msingi gharama akaunti weka. Chagua one chini ya Usafirishaji > Usanidi > Mipangilio.',
+    'nothing-to-bill'           => 'Usafirishaji :shipment hauna gharama zilizoidhinishwa zilizobaki za kutozwa bili.',
+    'missing-partner'           => 'Gharama “:expense” haina mlipwaji, hivyo hakuna wa kuandikiwa bili.',
+    'missing-employee-contact'  => ':employee hana rekodi ya mhusika, hivyo urejeshaji wa gharama hauwezi kutozwa bili kwake. Ongeza mhusika kwa mfanyakazi kwanza.',
+    'missing-bill-journal'      => 'Kampuni hii haina jarida la bili za wasambazaji. Chagua moja chini ya Lojistiki > Mipangilio > Mipangilio.',
+    'missing-expense-account'   => 'Kampuni hii haina akaunti chaguo-msingi ya gharama. Chagua moja chini ya Lojistiki > Mipangilio > Mipangilio.',
 ];

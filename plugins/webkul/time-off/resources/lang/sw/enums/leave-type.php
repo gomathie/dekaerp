@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'no-validation'                              => 'Hakuna Validation',
-    'by-time-off-officer'                        => 'Na Likizo Officer',
-    'by-employees-approver'                      => 'Na Employee\'s Approver',
-    'by-employees-approver-and-time-off-officer' => 'Na Employee\'s Approver na Likizo Officer',
+    'no-validation'                              => 'Bila idhini',
+    'by-time-off-officer'                        => 'Na afisa wa likizo',
+    'by-employees-approver'                      => 'Na mwidhinishaji wa mfanyakazi',
+    'by-employees-approver-and-time-off-officer' => 'Na mwidhinishaji wa mfanyakazi na afisa wa likizo',
 ];

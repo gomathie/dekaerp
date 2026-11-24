@@ -2,7 +2,7 @@
 
 return [
     'validation' => [
-        'upload-failed' => 'stakabadhi faili could si kuwa stored. Tafadhali jaribu tena.',
+        'upload-failed' => 'Faili ya risiti haikuweza kuhifadhiwa. Tafadhali jaribu tena.',
     ],
     'relation-manager' => [
         'title' => 'Gharama',
@@ -10,12 +10,12 @@ return [
         'fields' => [
             'date'           => 'Tarehe',
             'category'       => 'Kategoria',
-            'payee'          => 'Imelipwa hadi',
+            'payee'          => 'Amelipwa',
             'amount'         => 'Kiasi',
             'approved-total' => 'Imeidhinishwa',
             'state'          => 'Hali',
             'bill'           => 'Bili ya msambazaji',
-            'not-billed'     => 'Si billed',
+            'not-billed'     => 'Bili haijatolewa',
         ],
     ],
 
@@ -23,18 +23,18 @@ return [
         'heading' => 'Mapato na gharama',
         'revenue' => 'Mapato',
         'costs'   => 'Gharama',
-        'margin'  => 'Pembe',
-        'helper'  => 'Billable charges dhidi ya imeidhinishwa gharama. Rasimu na imekataliwa gharama ni si counted.',
+        'margin'  => 'Faida',
+        'helper'  => 'Tozo za mteja dhidi ya gharama zilizoidhinishwa. Gharama za rasimu na zilizokataliwa hazihesabiwi.',
     ],
 
     'actions' => [
         'post-bill' => [
             'label'          => 'Unda bili ya msambazaji',
-            'heading'        => 'Unda rasimu bili ya msambazajis?',
-            'description'    => 'Kila imeidhinishwa, unbilled gharama washa hii shehena becomes rasimu bili, one kwa payee. Nothing ni imewekwa: fedha bado reviews na posts wao.',
-            'cannot-post'    => 'Hizi gharama haiwezekani kuwa billed bado',
-            'draft-reminder' => 'Imeundwa kama drafts. Review na post wao katika Uhasibu.',
-            'notification'   => '{0}Nothing ilikuwa iliyobaki hadi bili.|{1}One rasimu bili ya msambazaji imeundwa.|[2,*]:count rasimu bili ya msambazajis imeundwa.',
+            'heading'        => 'Unda rasimu za bili za wasambazaji?',
+            'description'    => 'Kila gharama iliyoidhinishwa ambayo haijatozwa bili kwenye usafirishaji huu inakuwa rasimu ya bili, moja kwa kila mlipwaji. Hakuna kinachorekodiwa: idara ya fedha bado huzikagua na kuzirekodi.',
+            'cannot-post'    => 'Gharama hizi haziwezi kutozwa bili bado',
+            'draft-reminder' => 'Zimeundwa kama rasimu. Zikague na uzirekodi katika Uhasibu.',
+            'notification'   => '{0}Hakuna kilichobaki cha kutoza bili.|{1}Rasimu moja ya bili ya msambazaji imeundwa.|[2,*]Rasimu :count za bili za wasambazaji zimeundwa.',
         ],
     ],
 ];

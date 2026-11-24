@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Accrual Plan Imeundwa',
-        'body'  => 'accrual plan ina imeundwa successfully.',
+        'title' => 'Mpango wa ulimbikizaji umeundwa',
+        'body'  => 'Mpango wa ulimbikizaji umeundwa kwa mafanikio.',
     ],
 ];

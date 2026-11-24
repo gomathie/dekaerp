@@ -7,8 +7,8 @@ return [
 
     'form' => [
         'sections' => [
-            'details'   => 'Gharama maelezo',
-            'reference' => 'Kumbukumbu na stakabadhi',
+            'details'   => 'Maelezo ya gharama',
+            'reference' => 'Marejeleo na risiti',
         ],
         'fields' => [
             'company'          => 'Kampuni',
@@ -18,13 +18,13 @@ return [
             'category'         => 'Kategoria',
             'paid-by'          => 'Imelipwa na',
             'employee'         => 'Mfanyakazi',
-            'payee'            => 'Msambazaji au carrier',
-            'shipment'         => 'Shehena',
+            'payee'            => 'Msambazaji au msafirishaji',
+            'shipment'         => 'Usafirishaji',
             'trip'             => 'Safari',
             'vehicle'          => 'Gari',
-            'vendor-reference' => 'Msambazaji kumbukumbu',
+            'vendor-reference' => 'Marejeleo ya msambazaji',
             'description'      => 'Maelezo',
-            'receipt'          => 'Stakabadhi',
+            'receipt'          => 'Risiti',
         ],
     ],
 
@@ -35,7 +35,7 @@ return [
             'description' => 'Maelezo',
             'amount'      => 'Kiasi',
             'state'       => 'Hali',
-            'shipment'    => 'Shehena',
+            'shipment'    => 'Usafirishaji',
             'company'     => 'Kampuni',
         ],
         'filters' => [
@@ -53,10 +53,10 @@ return [
             'date'        => 'Tarehe',
             'amount'      => 'Kiasi',
             'category'    => 'Kategoria',
-            'shipment'    => 'Shehena',
+            'shipment'    => 'Usafirishaji',
             'trip'        => 'Safari',
             'vehicle'     => 'Gari',
-            'receipt'     => 'Stakabadhi',
+            'receipt'     => 'Risiti',
             'description' => 'Maelezo',
         ],
     ],
@@ -64,19 +64,19 @@ return [
     'actions' => [
         'submitExpense' => [
             'label'        => 'Wasilisha',
-            'heading'      => 'Wasilisha hii gharama?',
-            'notification' => 'Gharama submitted.',
+            'heading'      => 'Wasilisha gharama hii?',
+            'notification' => 'Gharama imewasilishwa.',
         ],
         'approveExpense' => [
             'label'        => 'Idhinisha',
-            'heading'      => 'Idhinisha hii gharama?',
+            'heading'      => 'Idhinisha gharama hii?',
             'notification' => 'Gharama imeidhinishwa.',
         ],
         'rejectExpense' => [
             'label'        => 'Kataa',
-            'heading'      => 'Kataa hii gharama?',
+            'heading'      => 'Kataa gharama hii?',
             'notification' => 'Gharama imekataliwa.',
         ],
-        'cannot-proceed' => 'Hii gharama ni si ready bado',
+        'cannot-proceed' => 'Gharama hii bado haiko tayari',
     ],
 ];

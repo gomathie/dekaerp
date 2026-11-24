@@ -2,18 +2,18 @@
 
 return [
     'heading' => [
-        'title' => 'Отгул и отпуск Requests',
+        'title' => 'Заявки на отпуск',
     ],
 
     'modal-actions' => [
         'edit' => [
             'title'                         => 'Изменить',
-            'duration-display'              => ':count working день|:count working дни',
-            'duration-display-with-weekend' => ':count working день (+ :weekend weekend день)|:count working дни (+ :weekend weekend дни)',
+            'duration-display'              => ':count рабочий день|:count рабочих дня|:count рабочих дней',
+            'duration-display-with-weekend' => ':count рабочий день (+ выходных: :weekend)|:count рабочих дня (+ выходных: :weekend)|:count рабочих дней (+ выходных: :weekend)',
 
             'notification' => [
-                'title' => 'Отгул и отпуск Обновлено',
-                'body'  => 'Ваш отгул и отпуск request есть обновлено successfully.',
+                'title' => 'Отпуск обновлён',
+                'body'  => 'Ваша заявка на отпуск успешно обновлена.',
             ],
         ],
 
@@ -33,84 +33,84 @@ return [
 
     'view-action' => [
         'title'       => 'Просмотр',
-        'description' => 'Просмотр Отгул и отпуск Request',
+        'description' => 'Просмотр заявки на отпуск',
     ],
 
     'notifications' => [
         'employee-not-found' => [
-            'title' => 'Сотрудник Не Найдено',
-            'body'  => 'Пожалуйста добавить сотрудник до ваш профиль до requesting отгул и отпуск.',
+            'title' => 'Сотрудник не найден',
+            'body'  => 'Перед подачей заявки на отпуск добавьте сотрудника в свой профиль.',
         ],
 
         'error' => [
-            'title' => 'Something went wrong',
-            'body'  => 'Мы could не process ваш отгул и отпуск request. Пожалуйста попробуйте снова.',
+            'title' => 'Что-то пошло не так',
+            'body'  => 'Не удалось обработать вашу заявку на отпуск. Попробуйте ещё раз.',
         ],
     ],
 
     'header-actions' => [
         'create' => [
-            'title'       => 'Новое Отгул и отпуск',
-            'description' => 'Создать Отгул и отпуск Request',
+            'title'       => 'Новый отпуск',
+            'description' => 'Создать заявку на отпуск',
 
             'notification' => [
-                'title' => 'Отгул и отпуск Создано',
-                'body'  => 'Отгул и отпуск request есть создано successfully.',
+                'title' => 'Отпуск создан',
+                'body'  => 'Заявка на отпуск успешно создана.',
             ],
 
             'employee-not-found' => [
                 'notification' => [
-                    'title' => 'Сотрудник Не Найдено',
-                    'body'  => 'Пожалуйста добавить сотрудник до ваш профиль до creating отгул и отпуск request.',
+                    'title' => 'Сотрудник не найден',
+                    'body'  => 'Перед созданием заявки на отпуск добавьте сотрудника в свой профиль.',
                 ],
             ],
 
             'success' => [
                 'notification' => [
-                    'title' => 'Отгул и отпуск Создано',
-                    'body'  => 'Ваш отгул и отпуск request есть создано successfully.',
+                    'title' => 'Отпуск создан',
+                    'body'  => 'Ваша заявка на отпуск успешно создана.',
                 ],
             ],
         ],
     ],
 
     'form' => [
-        'title'       => 'Отгул и отпуск Request',
-        'description' => 'Создать или изменить ваш отгул и отпуск request с следующий подробности:',
+        'title'       => 'Заявка на отпуск',
+        'description' => 'Создайте или измените заявку на отпуск, указав следующие данные:',
 
         'fields' => [
-            'time-off-type'             => 'Отгул и отпуск Тип',
-            'time-off-type-placeholder' => 'Выбрать отгул и отпуск тип',
-            'time-off-type-helper'      => 'Выбрать тип отгул и отпуск вы requesting.',
-            'request-date-from'         => 'Request Дата От',
-            'request-date-to'           => 'Request Дата До',
+            'time-off-type'             => 'Тип отпуска',
+            'time-off-type-placeholder' => 'Выберите тип отпуска',
+            'time-off-type-helper'      => 'Выберите тип запрашиваемого отпуска.',
+            'request-date-from'         => 'Запрошено с',
+            'request-date-to'           => 'Запрошено по',
             'period'                    => 'Период',
-            'half-day'                  => 'Half День',
-            'half-day-helper'           => 'Toggle для half-день отпуск.',
-            'requested-days'            => 'Requested (Дни/Часы)',
+            'half-day'                  => 'Полдня',
+            'half-day-helper'           => 'Включите для отпуска на полдня.',
+            'requested-days'            => 'Запрошено (дни/часы)',
             'description'               => 'Описание',
-            'description-placeholder'   => 'Нет описание provided',
-            'description-helper'        => 'Provide brief описание ваш отгул и отпуск request.',
-            'duration'                  => 'Duration',
-            'please-select-dates'       => 'Пожалуйста выбрать request дата от и до.',
+            'description-placeholder'   => 'Описание не указано',
+            'description-helper'        => 'Кратко опишите заявку на отпуск.',
+            'duration'                  => 'Продолжительность',
+            'please-select-dates'       => 'Выберите даты начала и окончания.',
         ],
     ],
 
     'infolist' => [
-        'title'       => 'Отгул и отпуск Подробности',
-        'description' => 'Здесь подробности ваш отгул и отпуск request:',
+        'title'       => 'Сведения об отпуске',
+        'description' => 'Сведения о вашей заявке на отпуск:',
         'entries'     => [
-            'time-off-type'           => 'Отгул и отпуск Тип',
-            'request-date-from'       => 'Request Дата От',
-            'request-date-to'         => 'Request Дата До',
+            'time-off-type'           => 'Тип отпуска',
+            'request-date-from'       => 'Запрошено с',
+            'request-date-to'         => 'Запрошено по',
             'description'             => 'Описание',
-            'description-placeholder' => 'Нет описание provided',
-            'duration'                => 'Duration',
+            'description-placeholder' => 'Описание не указано',
+            'duration'                => 'Продолжительность',
             'status'                  => 'Статус',
         ],
     ],
 
     'events' => [
-        'title' => ':name Вкл. :status: :days день(s)',
+        'title' => ':name — :status: :days дн.',
     ],
 ];

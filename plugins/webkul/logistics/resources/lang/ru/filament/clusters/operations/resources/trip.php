@@ -7,22 +7,22 @@ return [
 
     'form' => [
         'sections' => [
-            'crew'     => 'Транспорт и crew',
-            'schedule' => 'График',
+            'crew'     => 'Транспорт и экипаж',
+            'schedule' => 'Расписание',
         ],
 
         'fields' => [
             'company'            => 'Компания',
-            'number'             => 'Рейс номер',
-            'number-placeholder' => 'Назначен автоматически',
-            'vehicle'            => 'Транспорт',
+            'number'             => 'Номер рейса',
+            'number-placeholder' => 'Присваивается автоматически',
+            'vehicle'            => 'Транспортное средство',
             'driver'             => 'Водитель',
-            'dispatcher'         => 'Dispatcher',
-            'planned-start-at'   => 'Запланировано начать',
-            'planned-end-at'     => 'Запланировано конец',
-            'odometer-start'     => 'Odometer начать',
-            'odometer-end'       => 'Odometer конец',
-            'notes'              => 'Заметки',
+            'dispatcher'         => 'Диспетчер',
+            'planned-start-at'   => 'Плановое начало',
+            'planned-end-at'     => 'Плановое окончание',
+            'odometer-start'     => 'Одометр на старте',
+            'odometer-end'       => 'Одометр на финише',
+            'notes'              => 'Примечания',
         ],
     ],
 
@@ -30,28 +30,28 @@ return [
         'columns' => [
             'number'           => 'Рейс',
             'state'            => 'Статус',
-            'vehicle'          => 'Транспорт',
+            'vehicle'          => 'Транспортное средство',
             'driver'           => 'Водитель',
             'shipments'        => 'Отправки',
-            'planned-start-at' => 'Запланировано начать',
+            'planned-start-at' => 'Плановое начало',
             'company'          => 'Компания',
         ],
 
         'filters' => [
             'state'   => 'Статус',
-            'vehicle' => 'Транспорт',
+            'vehicle' => 'Транспортное средство',
             'driver'  => 'Водитель',
         ],
     ],
 
     'infolist' => [
         'summary'         => 'Рейс',
-        'schedule'        => 'График',
-        'load'            => 'Load',
-        'actual-start-at' => 'Факт начать',
-        'actual-end-at'   => 'Факт конец',
-        'capacity'        => 'Capacity',
-        'capacity-ok'     => 'В пределах транспорт’s capacity.',
+        'schedule'        => 'Расписание',
+        'load'            => 'Загрузка',
+        'actual-start-at' => 'Фактическое начало',
+        'actual-end-at'   => 'Фактическое окончание',
+        'capacity'        => 'Вместимость',
+        'capacity-ok'     => 'В пределах вместимости транспортного средства.',
     ],
 
     'relations' => [
@@ -61,14 +61,14 @@ return [
                 'number'   => 'Отправка',
                 'state'    => 'Статус',
                 'customer' => 'Клиент',
-                'weight'   => 'Вес (kg)',
-                'volume'   => 'Объём (m³)',
+                'weight'   => 'Вес (кг)',
+                'volume'   => 'Объём (м³)',
             ],
             'actions' => [
                 'attach' => [
-                    'label'        => 'Добавить отправка',
-                    'field'        => 'Подтверждён отправка',
-                    'notification' => 'Отправка added до этот рейс.',
+                    'label'        => 'Добавить отправку',
+                    'field'        => 'Подтверждённая отправка',
+                    'notification' => 'Отправка добавлена в этот рейс.',
                 ],
             ],
         ],
@@ -76,19 +76,19 @@ return [
 
     'actions' => [
         'dispatchTrip' => [
-            'label'        => 'Dispatch',
-            'heading'      => 'Dispatch этот рейс?',
-            'notification' => 'Рейс dispatched.',
+            'label'        => 'Отправить в рейс',
+            'heading'      => 'Отправить этот рейс?',
+            'notification' => 'Рейс отправлен.',
         ],
         'startTrip' => [
             'label'        => 'Начать',
             'heading'      => 'Начать этот рейс?',
-            'notification' => 'Рейс started.',
+            'notification' => 'Рейс начат.',
         ],
         'completeTrip' => [
             'label'        => 'Завершить',
             'heading'      => 'Завершить этот рейс?',
-            'notification' => 'Рейс завершено.',
+            'notification' => 'Рейс завершён.',
         ],
     ],
 ];

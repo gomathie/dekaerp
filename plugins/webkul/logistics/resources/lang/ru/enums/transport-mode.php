@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'road'       => 'Road',
-    'air'        => 'Air',
-    'sea'        => 'Sea',
-    'rail'       => 'Rail',
-    'multimodal' => 'Multimodal',
+    'road'       => 'Автомобильный',
+    'air'        => 'Воздушный',
+    'sea'        => 'Морской',
+    'rail'       => 'Железнодорожный',
+    'multimodal' => 'Мультимодальный',
 ];

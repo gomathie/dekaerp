@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'internal' => 'Внутренний (catalog товар)',
-    'external' => 'Внешний (free-text)',
+    'internal' => 'Внутренняя (товар из каталога)',
+    'external' => 'Внешняя (произвольный текст)',
 ];

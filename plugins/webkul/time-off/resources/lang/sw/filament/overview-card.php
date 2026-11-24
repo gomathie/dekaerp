@@ -2,8 +2,8 @@
 
 return [
     'label'          => 'Wafanyakazi',
-    'employees'      => 'Inatumika wafanyakazi',
-    'on-leave-today' => 'Washa likizo leo',
-    'to-approve'     => 'Likizo requests hadi idhinisha',
-    'available'      => ':percent% inapatikana leo',
+    'employees'      => 'Wafanyakazi hai',
+    'on-leave-today' => 'Wako likizoni leo',
+    'to-approve'     => 'Maombi ya likizo ya kuidhinisha',
+    'available'      => ':percent% wanapatikana leo',
 ];

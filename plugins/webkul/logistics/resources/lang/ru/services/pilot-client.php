@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'http-error'       => 'PILOT server returned HTTP :status.',
-    'invalid-response' => 'PILOT server returned unexpected response формат.',
+    'http-error'       => 'Сервер PILOT вернул HTTP :status.',
+    'invalid-response' => 'Сервер PILOT вернул ответ в неожиданном формате.',
 ];

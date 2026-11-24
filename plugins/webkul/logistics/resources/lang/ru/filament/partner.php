@@ -2,8 +2,8 @@
 
 return [
     'tab' => 'Отправки',
-    'shipments' => 'Недавние отправки',
-    'charges' => 'Открыт charges',
-    'empty-shipments' => 'Нет отправки для этот клиент.',
-    'empty-charges' => 'Нет открыт charges.',
+    'shipments' => 'Последние отправки',
+    'charges' => 'Открытые начисления',
+    'empty-shipments' => 'У этого клиента нет отправок.',
+    'empty-charges' => 'Нет открытых начислений.',
 ];

@@ -1,18 +1,18 @@
 <?php
 
 return [
-    'title'      => 'Accrual Plan',
+    'title'      => 'План начисления',
     'navigation' => [
-        'title' => 'Accrual Plan',
+        'title' => 'План начисления',
     ],
 
     'form' => [
         'fields' => [
-            'name'                    => 'Заголовок',
-            'is-based-on-worked-time' => 'Based вкл. Worked Time',
-            'accrued-gain-time'       => 'Accrued Gain Time',
-            'carry-over-time'         => 'Carry Более Time',
-            'carry-over-date'         => 'Carry Более Дата',
+            'name'                    => 'Название',
+            'is-based-on-worked-time' => 'На основе отработанного времени',
+            'accrued-gain-time'       => 'Момент начисления',
+            'carry-over-time'         => 'Время переноса',
+            'carry-over-date'         => 'Дата переноса',
             'status'                  => 'Статус',
         ],
     ],
@@ -20,14 +20,14 @@ return [
     'table' => [
         'columns' => [
             'name'   => 'Название',
-            'levels' => 'Levels',
+            'levels' => 'Уровни',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Accrual Plan удалено',
-                    'body'  => 'Accrual Plan есть удалено successfully.',
+                    'title' => 'План начисления удалён',
+                    'body'  => 'План начисления успешно удалён.',
                 ],
             ],
         ],
@@ -35,8 +35,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Accrual Plan удалено',
-                    'body'  => 'Accrual Plan есть удалено successfully.',
+                    'title' => 'План начисления удалён',
+                    'body'  => 'План начисления успешно удалён.',
                 ],
             ],
         ],
@@ -44,16 +44,16 @@ return [
 
     'infolist' => [
         'sections' => [
-            'basic-information' => 'Basic Сведения',
+            'basic-information' => 'Основная информация',
         ],
 
         'entries' => [
             'name'                    => 'Название',
-            'is-based-on-worked-time' => 'Based вкл. Worked Time',
-            'accrued-gain-time'       => 'Accrued Gain Time',
-            'carry-over-time'         => 'Carry Более Time',
-            'carry-over-day'          => 'Carry Более День',
-            'carry-over-month'        => 'Carry Более Месяц',
+            'is-based-on-worked-time' => 'На основе отработанного времени',
+            'accrued-gain-time'       => 'Момент начисления',
+            'carry-over-time'         => 'Время переноса',
+            'carry-over-day'          => 'День переноса',
+            'carry-over-month'        => 'Месяц переноса',
         ],
     ],
 ];

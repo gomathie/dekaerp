@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Kifurushi Types',
+        'title' => 'Aina za vifurushi',
     ],
 ];

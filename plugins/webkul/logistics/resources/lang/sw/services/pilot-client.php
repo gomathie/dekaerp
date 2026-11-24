@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'http-error'       => 'PILOT server returned HTTP :status.',
-    'invalid-response' => 'PILOT server returned unexpected response umbizo.',
+    'http-error'       => 'Seva ya PILOT ilirudisha HTTP :status.',
+    'invalid-response' => 'Seva ya PILOT ilirudisha jibu la muundo usiotarajiwa.',
 ];

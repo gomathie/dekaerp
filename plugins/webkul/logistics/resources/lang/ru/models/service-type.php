@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'title' => 'Service тип',
+    'title' => 'Тип услуги',
 ];

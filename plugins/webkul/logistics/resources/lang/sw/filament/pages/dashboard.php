@@ -2,8 +2,8 @@
 
 return [
     'navigation' => [
-        'title' => 'Usafirishaji',
+        'title' => 'Lojistiki',
     ],
 
-    'title' => 'Usafirishaji dashibodi',
+    'title' => 'Dashibodi ya Lojistiki',
 ];

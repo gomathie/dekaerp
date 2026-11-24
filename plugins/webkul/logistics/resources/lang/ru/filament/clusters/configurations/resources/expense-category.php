@@ -2,21 +2,21 @@
 
 return [
     'navigation' => [
-        'title' => 'Расход Категории',
+        'title' => 'Категории расходов',
     ],
 
     'form' => [
         'fields' => [
-            'requires-receipt'         => 'Приход обязательно',
-            'is-subcontracting'        => 'Subcontractor или carrier стоимость',
-            'is-subcontracting-helper' => 'Затраты в этот категория оплачен до поставщик (carrier, agent) и billed за поставщик.',
+            'requires-receipt'         => 'Требуется чек',
+            'is-subcontracting'        => 'Затраты субподрядчика или перевозчика',
+            'is-subcontracting-helper' => 'Затраты этой категории оплачиваются поставщику (перевозчику, агенту), а счета выставляются по каждому поставщику.',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'requires-receipt'  => 'Приход обязательно',
-            'is-subcontracting' => 'Subcontracting',
+            'requires-receipt'  => 'Требуется чек',
+            'is-subcontracting' => 'Субподряд',
         ],
     ],
 ];

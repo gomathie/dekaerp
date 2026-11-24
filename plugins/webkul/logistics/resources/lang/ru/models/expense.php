@@ -7,6 +7,6 @@ return [
         'state'    => 'Статус',
         'amount'   => 'Сумма',
         'category' => 'Категория',
-        'payee'    => 'Payee',
+        'payee'    => 'Получатель платежа',
     ],
 ];

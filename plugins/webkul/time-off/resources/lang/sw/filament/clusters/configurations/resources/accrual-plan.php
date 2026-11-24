@@ -1,18 +1,18 @@
 <?php
 
 return [
-    'title'      => 'Accrual Plan',
+    'title'      => 'Mpango wa ulimbikizaji',
     'navigation' => [
-        'title' => 'Accrual Plan',
+        'title' => 'Mpango wa ulimbikizaji',
     ],
 
     'form' => [
         'fields' => [
-            'name'                    => 'Kichwa',
-            'is-based-on-worked-time' => 'Ni Based washa Worked Time',
-            'accrued-gain-time'       => 'Accrued Gain Time',
-            'carry-over-time'         => 'Carry Zaidi ya Time',
-            'carry-over-date'         => 'Carry Zaidi ya Tarehe',
+            'name'                    => 'Jina',
+            'is-based-on-worked-time' => 'Inategemea muda wa kazi',
+            'accrued-gain-time'       => 'Wakati wa kulimbikiza',
+            'carry-over-time'         => 'Muda wa kuhamisha',
+            'carry-over-date'         => 'Tarehe ya kuhamisha',
             'status'                  => 'Hali',
         ],
     ],
@@ -20,14 +20,14 @@ return [
     'table' => [
         'columns' => [
             'name'   => 'Jina',
-            'levels' => 'Levels',
+            'levels' => 'Viwango',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Accrual Plan imefutwa',
-                    'body'  => 'Accrual Plan ina imefutwa successfully.',
+                    'title' => 'Mpango wa ulimbikizaji umefutwa',
+                    'body'  => 'Mpango wa ulimbikizaji umefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -35,8 +35,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Accrual Plan imefutwa',
-                    'body'  => 'Accrual Plan ina imefutwa successfully.',
+                    'title' => 'Mpango wa ulimbikizaji umefutwa',
+                    'body'  => 'Mpango wa ulimbikizaji umefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -44,16 +44,16 @@ return [
 
     'infolist' => [
         'sections' => [
-            'basic-information' => 'Basic Taarifa',
+            'basic-information' => 'Taarifa za msingi',
         ],
 
         'entries' => [
             'name'                    => 'Jina',
-            'is-based-on-worked-time' => 'Ni Based washa Worked Time',
-            'accrued-gain-time'       => 'Accrued Gain Time',
-            'carry-over-time'         => 'Carry Zaidi ya Time',
-            'carry-over-day'          => 'Carry Zaidi ya Siku',
-            'carry-over-month'        => 'Carry Zaidi ya Mwezi',
+            'is-based-on-worked-time' => 'Inategemea muda wa kazi',
+            'accrued-gain-time'       => 'Wakati wa kulimbikiza',
+            'carry-over-time'         => 'Muda wa kuhamisha',
+            'carry-over-day'          => 'Siku ya kuhamisha',
+            'carry-over-month'        => 'Mwezi wa kuhamisha',
         ],
     ],
 ];

@@ -1,42 +1,42 @@
 <?php
 
 return [
-    'title'      => 'Likizo Aina',
+    'title'      => 'Aina ya likizo',
     'navigation' => [
-        'title' => 'Likizo Aina',
+        'title' => 'Aina ya likizo',
     ],
 
     'form' => [
         'sections' => [
             'general' => [
-                'title'  => 'Jumla Taarifa',
+                'title'  => 'Taarifa za jumla',
                 'fields' => [
-                    'name'                => 'Kichwa',
-                    'approval'            => 'Approval',
-                    'requires-allocation' => 'Requires Allocation',
-                    'employee-requests'   => 'Mfanyakazi Requests',
-                    'display-option'      => 'Display Option',
+                    'name'                => 'Jina',
+                    'approval'            => 'Idhini',
+                    'requires-allocation' => 'Inahitaji mgao',
+                    'employee-requests'   => 'Maombi ya wafanyakazi',
+                    'display-option'      => 'Chaguo la kuonyesha',
                 ],
             ],
             'display-option' => [
-                'title'  => 'Display Option',
+                'title'  => 'Chaguo la kuonyesha',
                 'fields' => [
                     'color' => 'Rangi',
                 ],
             ],
             'configuration' => [
-                'title' => 'Usanidi',
+                'title' => 'Mipangilio',
 
                 'fields' => [
-                    'notified-time-off-officers'          => 'Notified Likizo Officers',
-                    'take-time-off-in'                    => 'Take Likizo Katika',
-                    'public-holiday-included'             => 'Hadharani Holiday Imejumuishwa',
-                    'allow-to-attach-supporting-document' => 'Ruhusu hadi Attach Supporting Hati',
-                    'show-on-dashboard'                   => 'Onyesha washa Dashibodi',
-                    'allow-negative-cap'                  => 'Ruhusu Negative Cap',
-                    'kind-off-time'                       => 'Kind ya Time',
-                    'max-negative-cap'                    => 'Max Negative Cap',
-                    'kind-of-time'                        => 'Kind ya Likizo',
+                    'notified-time-off-officers'          => 'Maafisa wa likizo wanaoarifiwa',
+                    'take-time-off-in'                    => 'Chukua likizo kwa',
+                    'public-holiday-included'             => 'Sikukuu za umma zimejumuishwa',
+                    'allow-to-attach-supporting-document' => 'Ruhusu kuambatisha hati ya ushahidi',
+                    'show-on-dashboard'                   => 'Onyesha kwenye dashibodi',
+                    'allow-negative-cap'                  => 'Ruhusu salio hasi',
+                    'kind-off-time'                       => 'Aina ya muda',
+                    'max-negative-cap'                    => 'Kiwango cha juu cha salio hasi',
+                    'kind-of-time'                        => 'Aina ya likizo',
                 ],
             ],
         ],
@@ -47,37 +47,37 @@ return [
             'name'                      => 'Jina',
             'company-name'              => 'Kampuni',
             'color'                     => 'Rangi',
-            'notified-time-officers'    => 'Notified Likizoicers',
-            'time-off-approval'         => 'Likizo Approval',
-            'requires-allocation'       => 'Requires Allocation',
-            'allocation-approval'       => 'Allocation Approval',
-            'employee-request'          => 'Mfanyakazi Request',
+            'notified-time-officers'    => 'Maafisa wanaoarifiwa',
+            'time-off-approval'         => 'Idhini ya likizo',
+            'requires-allocation'       => 'Inahitaji mgao',
+            'allocation-approval'       => 'Idhini ya mgao',
+            'employee-request'          => 'Ombi la mfanyakazi',
         ],
 
         'filters' => [
             'name'                => 'Jina',
             'company-name'        => 'Kampuni',
-            'time-off-approval'   => 'Likizo Approval',
-            'requires-allocation' => 'Requires Allocation',
-            'time-type'           => 'Time Aina',
-            'request-unit'        => 'Request Uniti',
-            'created-by'          => 'Imeundwa Na',
-            'employee-request'    => 'Mfanyakazi Request',
-            'created-at'          => 'Imeundwa',
-            'updated-at'          => 'Imesasishwa',
+            'time-off-approval'   => 'Idhini ya likizo',
+            'requires-allocation' => 'Inahitaji mgao',
+            'time-type'           => 'Aina ya muda',
+            'request-unit'        => 'Kipimo cha ombi',
+            'created-by'          => 'Imeundwa na',
+            'employee-request'    => 'Ombi la mfanyakazi',
+            'created-at'          => 'Iliundwa',
+            'updated-at'          => 'Ilisasishwa',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Likizo Aina imefutwa',
-                    'body'  => 'Likizo aina ina imefutwa successfully.',
+                    'title' => 'Aina ya likizo imefutwa',
+                    'body'  => 'Aina ya likizo imefutwa kwa mafanikio.',
                 ],
             ],
             'restore' => [
                 'notification' => [
-                    'title' => 'Likizo Aina restored',
-                    'body'  => 'Likizo aina ina restored successfully.',
+                    'title' => 'Aina ya likizo imerejeshwa',
+                    'body'  => 'Aina ya likizo imerejeshwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -85,27 +85,27 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Likizo Aina restored',
-                    'body'  => 'Likizo Aina ina restored successfully.',
+                    'title' => 'Aina ya likizo imerejeshwa',
+                    'body'  => 'Aina ya likizo imerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Likizo Aina imefutwa',
-                    'body'  => 'Likizo Aina ina imefutwa successfully.',
+                    'title' => 'Aina ya likizo imefutwa',
+                    'body'  => 'Aina ya likizo imefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Likizo Aina force imefutwa',
-                        'body'  => 'Likizo Aina ina force imefutwa successfully.',
+                        'title' => 'Aina ya likizo imefutwa kabisa',
+                        'body'  => 'Aina ya likizo imefutwa kabisa kwa mafanikio.',
                     ],
                     'error' => [
-                        'title' => 'Likizo Aina could si kuwa imefutwa',
-                        'body'  => 'Likizo Aina haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Aina ya likizo haikuweza kufutwa',
+                        'body'  => 'Aina ya likizo haiwezi kufutwa kwa sababu inatumika kwa sasa.',
                     ],
                 ],
             ],
@@ -115,33 +115,33 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title'   => 'Jumla Taarifa',
+                'title'   => 'Taarifa za jumla',
                 'entries' => [
-                    'name'                => 'Kichwa',
-                    'approval'            => 'Approval',
-                    'requires-allocation' => 'Requires Allocation',
-                    'employee-requests'   => 'Mfanyakazi Requests',
-                    'display-option'      => 'Display Option',
+                    'name'                => 'Jina',
+                    'approval'            => 'Idhini',
+                    'requires-allocation' => 'Inahitaji mgao',
+                    'employee-requests'   => 'Maombi ya wafanyakazi',
+                    'display-option'      => 'Chaguo la kuonyesha',
                 ],
             ],
             'display-option' => [
-                'title'   => 'Display Option',
+                'title'   => 'Chaguo la kuonyesha',
                 'entries' => [
                     'color' => 'Rangi',
                 ],
             ],
             'configuration' => [
-                'title' => 'Usanidi',
+                'title' => 'Mipangilio',
 
                 'entries' => [
-                    'notified-time-off-officers'          => 'Notified Likizo Officers',
-                    'take-time-off-in'                    => 'Take Likizo Katika',
-                    'public-holiday-included'             => 'Hadharani Holiday Imejumuishwa',
-                    'allow-to-attach-supporting-document' => 'Ruhusu hadi Attach Supporting Hati',
-                    'show-on-dashboard'                   => 'Onyesha washa Dashibodi',
-                    'kind-off-time'                       => 'Kind ya Time',
-                    'max-negative-cap'                    => 'Max Negative Cap',
-                    'kind-of-time'                        => 'Kind ya Likizo',
+                    'notified-time-off-officers'          => 'Maafisa wa likizo wanaoarifiwa',
+                    'take-time-off-in'                    => 'Chukua likizo kwa',
+                    'public-holiday-included'             => 'Sikukuu za umma zimejumuishwa',
+                    'allow-to-attach-supporting-document' => 'Ruhusu kuambatisha hati ya ushahidi',
+                    'show-on-dashboard'                   => 'Onyesha kwenye dashibodi',
+                    'kind-off-time'                       => 'Aina ya muda',
+                    'max-negative-cap'                    => 'Kiwango cha juu cha salio hasi',
+                    'kind-of-time'                        => 'Aina ya likizo',
                 ],
             ],
         ],

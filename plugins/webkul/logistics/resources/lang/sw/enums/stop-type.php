@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'pickup'   => 'Pickup',
-    'delivery' => 'Usafirishaji',
+    'pickup'   => 'Uchukuaji',
+    'delivery' => 'Uwasilishaji',
     'via'      => 'Kupitia',
 ];

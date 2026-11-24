@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Accrual Plan Создано',
-        'body'  => 'accrual plan есть создано successfully.',
+        'title' => 'План начисления создан',
+        'body'  => 'План начисления успешно создан.',
     ],
 ];

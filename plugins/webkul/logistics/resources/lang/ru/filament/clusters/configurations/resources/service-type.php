@@ -2,21 +2,21 @@
 
 return [
     'navigation' => [
-        'title' => 'Service Types',
+        'title' => 'Типы услуг',
     ],
 
     'form' => [
         'fields' => [
-            'transport-mode'           => 'Transport mode',
-            'product-reference'        => 'Service товар ссылка',
-            'product-reference-helper' => 'Ссылка service товар charged для этот service в каждый компания, e.g. LOG-FREIGHT.',
+            'transport-mode'           => 'Вид транспорта',
+            'product-reference'        => 'Ссылка на товар-услугу',
+            'product-reference-helper' => 'Ссылка на товар-услугу, начисляемый за эту услугу в каждой компании, например LOG-FREIGHT.',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'transport-mode'    => 'Transport mode',
-            'product-reference' => 'Service товар',
+            'transport-mode'    => 'Вид транспорта',
+            'product-reference' => 'Товар-услуга',
         ],
     ],
 ];

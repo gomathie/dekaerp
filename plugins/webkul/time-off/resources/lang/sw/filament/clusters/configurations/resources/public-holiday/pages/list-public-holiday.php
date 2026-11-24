@@ -3,12 +3,12 @@
 return [
     'header-actions' => [
         'create' => [
-            'title' => 'Mpya Hadharani Holiday',
+            'title' => 'Sikukuu mpya ya umma',
 
             'notification' => [
                 'created' => [
-                    'title' => 'Hadharani Holiday imeundwa',
-                    'body'  => 'hadharani holiday ina imeundwa successfully.',
+                    'title' => 'Sikukuu ya umma imeundwa',
+                    'body'  => 'Sikukuu ya umma imeundwa kwa mafanikio.',
                 ],
             ],
         ],

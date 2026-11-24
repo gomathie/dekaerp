@@ -7,8 +7,8 @@ return [
 
     'form' => [
         'sections' => [
-            'details'   => 'Расход подробности',
-            'reference' => 'Ссылка и приход',
+            'details'   => 'Сведения о расходе',
+            'reference' => 'Ссылка и чек',
         ],
         'fields' => [
             'company'          => 'Компания',
@@ -16,15 +16,15 @@ return [
             'amount'           => 'Сумма',
             'currency'         => 'Валюта',
             'category'         => 'Категория',
-            'paid-by'          => 'Оплачен от',
+            'paid-by'          => 'Кем оплачено',
             'employee'         => 'Сотрудник',
-            'payee'            => 'Поставщик или carrier',
+            'payee'            => 'Поставщик или перевозчик',
             'shipment'         => 'Отправка',
             'trip'             => 'Рейс',
-            'vehicle'          => 'Транспорт',
-            'vendor-reference' => 'Поставщик ссылка',
+            'vehicle'          => 'Транспортное средство',
+            'vendor-reference' => 'Ссылка поставщика',
             'description'      => 'Описание',
-            'receipt'          => 'Приход',
+            'receipt'          => 'Чек',
         ],
     ],
 
@@ -55,17 +55,17 @@ return [
             'category'    => 'Категория',
             'shipment'    => 'Отправка',
             'trip'        => 'Рейс',
-            'vehicle'     => 'Транспорт',
-            'receipt'     => 'Приход',
+            'vehicle'     => 'Транспортное средство',
+            'receipt'     => 'Чек',
             'description' => 'Описание',
         ],
     ],
 
     'actions' => [
         'submitExpense' => [
-            'label'        => 'Отправить',
-            'heading'      => 'Отправить этот расход?',
-            'notification' => 'Расход submitted.',
+            'label'        => 'Подать',
+            'heading'      => 'Подать этот расход?',
+            'notification' => 'Расход подан.',
         ],
         'approveExpense' => [
             'label'        => 'Утвердить',
@@ -77,6 +77,6 @@ return [
             'heading'      => 'Отклонить этот расход?',
             'notification' => 'Расход отклонён.',
         ],
-        'cannot-proceed' => 'Этот расход не ready ещё',
+        'cannot-proceed' => 'Этот расход ещё не готов',
     ],
 ];

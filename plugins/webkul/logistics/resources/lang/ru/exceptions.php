@@ -1,29 +1,29 @@
 <?php
 
 return [
-    'not-enabled'       => 'Логистика не включено для компания #:company. администратор можно включить это менее Логистика > Конфигурация > Настройки.',
-    'company-mismatch'  => 'Этот :record belongs до different компания чем его :related.',
-    'uninstall-blocked' => 'Логистика можно’t быть uninstalled пока :count отправка(s) exist: uninstalling deletes все логистика data. Назад вверх database, затем задать Логистика_Разрешить_UNINSTALL_С_DATA=да до proceed.',
+    'not-enabled'       => 'Логистика не включена для компании #:company. Администратор может включить её в разделе «Логистика > Конфигурация > Настройки».',
+    'company-mismatch'  => 'Запись :record принадлежит другой компании, чем связанная запись :related.',
+    'uninstall-blocked' => 'Логистику нельзя удалить, пока существуют отправки (:count): удаление стирает все данные логистики. Сделайте резервную копию базы данных, затем установите LOGISTICS_ALLOW_UNINSTALL_WITH_DATA=true, чтобы продолжить.',
 
-    'invalid-transition'      => 'отправка нельзя go от “:from” до “:to”.',
-    'invalid-trip-transition' => 'рейс нельзя go от “:from” до “:to”.',
+    'invalid-transition'      => 'Отправка не может перейти из статуса «:from» в «:to».',
+    'invalid-trip-transition' => 'Рейс не может перейти из статуса «:from» в «:to».',
 
-    'trip-no-vehicle'              => 'Назначить транспорт до этот рейс до dispatching это.',
-    'trip-no-driver'               => 'Назначить водитель до этот рейс до dispatching это.',
-    'trip-inactive-vehicle'        => 'Транспорт :vehicle в архиве и нельзя быть dispatched.',
-    'trip-inactive-driver'         => 'Водитель :driver в архиве и нельзя быть dispatched.',
-    'trip-expired-license'         => 'Водитель :driver’s licence expired вкл. :date.',
-    'trip-shipment-not-confirmed'  => 'Отправка :shipment нужно быть подтверждён до это можно быть added до рейс.',
+    'trip-no-vehicle'              => 'Назначьте транспортное средство на этот рейс перед отправкой.',
+    'trip-no-driver'               => 'Назначьте водителя на этот рейс перед отправкой.',
+    'trip-inactive-vehicle'        => 'Транспортное средство :vehicle в архиве, его нельзя отправить в рейс.',
+    'trip-inactive-driver'         => 'Водитель :driver в архиве, его нельзя отправить в рейс.',
+    'trip-expired-license'         => 'Водительское удостоверение :driver истекло :date.',
+    'trip-shipment-not-confirmed'  => 'Отправку :shipment нужно подтвердить, прежде чем добавить её в рейс.',
 
-    'nothing-to-invoice' => 'Отправка :shipment есть нет billable charges осталось до счёт.',
+    'nothing-to-invoice' => 'У отправки :shipment не осталось начислений для выставления счёта.',
 
-    'receipt-required' => 'Расходы в “:category” категория need приход attached до они можно быть submitted или утверждён.',
+    'receipt-required' => 'Для расходов категории «:category» перед подачей или утверждением нужно приложить чек.',
 
-    'expense-not-attributable' => 'расход нужно быть linked до отправка, рейс или транспорт до это можно быть submitted или утверждён.',
+    'expense-not-attributable' => 'Перед подачей или утверждением расход нужно связать с отправкой, рейсом или транспортным средством.',
 
-    'nothing-to-bill'           => 'Отправка :shipment есть нет утверждён расходы осталось до счёт поставщика.',
-    'missing-partner'           => 'Расход “:expense” есть нет payee, поэтому nobody до сделать счёт поставщика вне до.',
-    'missing-employee-contact'  => ':employee есть нет контакт запись, поэтому reimbursement нельзя быть billed до их. Добавить контакт вкл. сотрудник первый.',
-    'missing-bill-journal'      => 'Этот компания есть нет счёт поставщика журнал задать. Выбрать one менее Логистика > Конфигурация > Настройки.',
-    'missing-expense-account'   => 'Этот компания есть нет по умолчанию расход счёт задать. Выбрать one менее Логистика > Конфигурация > Настройки.',
+    'nothing-to-bill'           => 'У отправки :shipment не осталось утверждённых расходов для выставления счёта.',
+    'missing-partner'           => 'У расхода «:expense» нет получателя платежа, поэтому счёт выставить некому.',
+    'missing-employee-contact'  => 'У :employee нет записи контакта, поэтому возмещение нельзя оформить счётом. Сначала добавьте контакт сотруднику.',
+    'missing-bill-journal'      => 'Для этой компании не задан журнал счетов поставщиков. Выберите его в разделе «Логистика > Конфигурация > Настройки».',
+    'missing-expense-account'   => 'Для этой компании не задан счёт расходов по умолчанию. Выберите его в разделе «Логистика > Конфигурация > Настройки».',
 ];

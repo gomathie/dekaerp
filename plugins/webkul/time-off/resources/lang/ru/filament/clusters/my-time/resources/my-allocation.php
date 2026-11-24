@@ -1,70 +1,70 @@
 <?php
 
 return [
-    'title' => 'Мой Allocation',
+    'title' => 'Мои распределения',
 
-    'model-label' => 'Мой Allocation',
+    'model-label' => 'Мои распределения',
 
     'navigation' => [
-        'title' => 'Мой Allocation',
+        'title' => 'Мои распределения',
     ],
 
     'form' => [
         'fields' => [
             'name'                => 'Название',
-            'name-placeholder'    => 'Отгул и отпуск Тип (От validity начать до validity конец/нет limit)',
-            'time-off-type'       => 'Отгул и отпуск Тип',
-            'allocation-type'     => 'Allocation Тип',
-            'validity-period'     => 'Validity Период',
-            'date-from'           => 'Дата От',
-            'date-to'             => 'Дата До',
-            'date-to-placeholder' => 'Нет Limit',
-            'allocation'          => 'Allocation',
-            'allocation-suffix'   => 'Номер Дни',
+            'name-placeholder'    => 'Тип отпуска (от начала до конца срока действия / без ограничений)',
+            'time-off-type'       => 'Тип отпуска',
+            'allocation-type'     => 'Тип распределения',
+            'validity-period'     => 'Срок действия',
+            'date-from'           => 'Дата с',
+            'date-to'             => 'Дата по',
+            'date-to-placeholder' => 'Без ограничений',
+            'allocation'          => 'Распределение',
+            'allocation-suffix'   => 'Количество дней',
             'reason'              => 'Причина',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'time-off-type'   => 'Отгул и отпуск Тип',
-            'amount'          => 'Сумма',
-            'allocation-type' => 'Allocation Тип',
+            'time-off-type'   => 'Тип отпуска',
+            'amount'          => 'Количество',
+            'allocation-type' => 'Тип распределения',
             'status'          => 'Статус',
         ],
 
         'groups' => [
-            'time-off-type'   => 'Отгул и отпуск Тип',
-            'employee-name'   => 'Сотрудник Название',
-            'allocation-type' => 'Allocation Тип',
+            'time-off-type'   => 'Тип отпуска',
+            'employee-name'   => 'Имя сотрудника',
+            'allocation-type' => 'Тип распределения',
             'status'          => 'Статус',
-            'start-date'      => 'Начать Дата',
+            'start-date'      => 'Дата начала',
         ],
 
         'actions' => [
             'approve' => [
                 'title' => [
-                    'validate' => 'Validate',
+                    'validate' => 'Подтвердить',
                     'approve'  => 'Утвердить',
                 ],
                 'notification' => [
-                    'title' => 'Allocation утверждён утверждён',
-                    'body'  => 'allocation утверждён есть утверждён successfully.',
+                    'title' => 'Распределение утверждено',
+                    'body'  => 'Распределение успешно утверждено.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Allocation удалено',
-                    'body'  => 'allocation есть удалено successfully.',
+                    'title' => 'Распределение удалено',
+                    'body'  => 'Распределение успешно удалено.',
                 ],
             ],
 
             'refused' => [
-                'title'        => 'Отказать',
+                'title'        => 'Отклонить',
                 'notification' => [
-                    'title' => 'Allocation отказано',
-                    'body'  => 'allocation есть отказано successfully.',
+                    'title' => 'Распределение отклонено',
+                    'body'  => 'Распределение успешно отклонено.',
                 ],
             ],
         ],
@@ -72,8 +72,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Allocations удалено',
-                    'body'  => 'allocations есть удалено successfully.',
+                    'title' => 'Распределения удалены',
+                    'body'  => 'Распределения успешно удалены.',
                 ],
             ],
         ],
@@ -82,29 +82,29 @@ return [
     'infolist' => [
         'sections' => [
             'allocation-details' => [
-                'title'   => 'Allocation Подробности',
+                'title'   => 'Сведения о распределении',
                 'entries' => [
                     'name'                => 'Название',
-                    'time-off-type'       => 'Отгул и отпуск Тип',
-                    'allocation-type'     => 'Allocation Тип',
+                    'time-off-type'       => 'Тип отпуска',
+                    'allocation-type'     => 'Тип распределения',
                 ],
             ],
 
             'validity-period' => [
-                'title'   => 'Validity Период',
+                'title'   => 'Срок действия',
                 'entries' => [
-                    'date-from' => 'Дата От',
-                    'date-to'   => 'Дата До',
+                    'date-from' => 'Дата с',
+                    'date-to'   => 'Дата по',
                     'reason'    => 'Причина',
                 ],
             ],
             'allocation-status' => [
-                'title'   => 'Allocation Статус',
+                'title'   => 'Статус распределения',
                 'entries' => [
-                    'date-to-placeholder' => 'Нет Limit',
-                    'allocation'          => 'Номер День(s)',
-                    'allocation-value'    => ':days номер дни',
-                    'state'               => 'Состояние',
+                    'date-to-placeholder' => 'Без ограничений',
+                    'allocation'          => 'Количество дней',
+                    'allocation-value'    => 'Дней: :days',
+                    'state'               => 'Статус',
                 ],
             ],
         ],

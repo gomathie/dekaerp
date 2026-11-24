@@ -4,8 +4,8 @@ return [
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Allocation Imefutwa',
-                'body'  => 'allocation ina imefutwa successfully.',
+                'title' => 'Mgao umefutwa',
+                'body'  => 'Mgao umefutwa kwa mafanikio.',
             ],
         ],
     ],

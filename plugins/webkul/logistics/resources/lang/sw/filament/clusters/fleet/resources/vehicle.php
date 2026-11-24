@@ -7,62 +7,62 @@ return [
 
     'form' => [
         'fields' => [
-            'registration-no'              => 'Registration nambari',
+            'registration-no'              => 'Namba ya usajili',
             'name'                         => 'Jina',
             'company'                      => 'Kampuni',
-            'vehicle-type'                 => 'Gari aina',
-            'ownership'                    => 'Ownership',
-            'carrier'                      => 'Carrier',
-            'default-driver'               => 'Chaguo-msingi dereva',
-            'equipment'                    => 'Matengenezo equipment',
-            'telematics-device-ref'        => 'Telematics device kumbukumbu',
-            'telematics-agent-id'          => 'Telematics agent Kitambulisho',
-            'telematics-agent-id-helper'   => 'telematics platform’s yake identifier kwa hii gari, ambayo ni si device IMEI. PILOT calls hii agent Kitambulisho.',
-            'capacity-kg'                  => 'Capacity uzito',
-            'capacity-m3'                  => 'Capacity ujazo',
-            'is-active'                    => 'Inatumika',
+            'vehicle-type'                 => 'Aina ya gari',
+            'ownership'                    => 'Umiliki',
+            'carrier'                      => 'Msafirishaji',
+            'default-driver'               => 'Dereva chaguo-msingi',
+            'equipment'                    => 'Kifaa cha matengenezo',
+            'telematics-device-ref'        => 'Marejeleo ya kifaa cha telematiki',
+            'telematics-agent-id'          => 'Kitambulisho cha wakala wa telematiki',
+            'telematics-agent-id-helper'   => 'Kitambulisho cha jukwaa la telematiki kwa gari hili, ambacho si IMEI ya kifaa. PILOT hukiita kitambulisho cha wakala.',
+            'capacity-kg'                  => 'Uwezo wa uzito',
+            'capacity-m3'                  => 'Uwezo wa ujazo',
+            'is-active'                    => 'Hai',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'registration-no'       => 'Registration',
+            'registration-no'       => 'Usajili',
             'name'                  => 'Jina',
-            'ownership'             => 'Ownership',
+            'ownership'             => 'Umiliki',
             'vehicle-type'          => 'Aina',
-            'carrier'               => 'Carrier',
-            'capacity-kg'           => 'Capacity',
-            'telematics-device-ref' => 'Telematics',
-            'telematics-agent-id'   => 'Telematics agent',
+            'carrier'               => 'Msafirishaji',
+            'capacity-kg'           => 'Uwezo',
+            'telematics-device-ref' => 'Telematiki',
+            'telematics-agent-id'   => 'Wakala wa telematiki',
             'company'               => 'Kampuni',
-            'is-active'             => 'Inatumika',
+            'is-active'             => 'Hai',
         ],
 
         'filters' => [
-            'ownership'    => 'Ownership',
-            'vehicle-type' => 'Gari aina',
+            'ownership'    => 'Umiliki',
+            'vehicle-type' => 'Aina ya gari',
         ],
     ],
 
     'infolist' => [
         'sections' => [
             'general'      => 'Gari',
-            'capacity'     => 'Capacity',
-            'integrations' => 'Integrations',
+            'capacity'     => 'Uwezo',
+            'integrations' => 'Miunganisho',
         ],
     ],
 
     'actions' => [
         'import-maintenance-equipment' => [
-            'label' => 'Ingiza kutoka Matengenezo equipment',
+            'label' => 'Ingiza kutoka vifaa vya matengenezo',
 
             'fields' => [
-                'equipment' => 'Equipment',
+                'equipment' => 'Vifaa',
             ],
 
             'notification' => [
-                'title' => 'Matengenezo equipment ingiza finished',
-                'body'  => ':created imeundwa, :skipped skipped.',
+                'title' => 'Uingizaji wa vifaa vya matengenezo umekamilika',
+                'body'  => 'Vimeundwa :created, vimerukwa :skipped.',
             ],
         ],
     ],

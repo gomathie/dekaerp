@@ -2,15 +2,15 @@
 
 return [
     'heading' => [
-        'title' => 'Отгул и отпуск Обзор',
+        'title' => 'Обзор отпусков',
     ],
 
     'modal-actions' => [
         'edit' => [
             'title'        => 'Изменить',
             'notification' => [
-                'title' => 'Отгул и отпуск Обновлено',
-                'body'  => 'Отгул и отпуск request есть обновлено successfully.',
+                'title' => 'Отпуск обновлён',
+                'body'  => 'Заявка на отпуск успешно обновлена.',
             ],
         ],
 
@@ -21,23 +21,23 @@ return [
 
     'view-action' => [
         'title'       => 'Просмотр',
-        'description' => 'Просмотр Отгул и отпуск Request',
+        'description' => 'Просмотр заявки на отпуск',
     ],
 
     'header-actions' => [
         'create' => [
-            'title'       => 'Новое Отгул и отпуск',
-            'description' => 'Создать Отгул и отпуск Request',
+            'title'       => 'Новый отпуск',
+            'description' => 'Создать заявку на отпуск',
 
             'notification' => [
-                'title' => 'Отгул и отпуск Создано',
-                'body'  => 'Отгул и отпуск request есть создано successfully.',
+                'title' => 'Отпуск создан',
+                'body'  => 'Заявка на отпуск успешно создана.',
             ],
 
             'employee-not-found' => [
                 'notification' => [
-                    'title' => 'Сотрудник Не Найдено',
-                    'body'  => 'Пожалуйста добавить сотрудник до ваш профиль до creating отгул и отпуск request.',
+                    'title' => 'Сотрудник не найден',
+                    'body'  => 'Перед созданием заявки на отпуск добавьте сотрудника в свой профиль.',
                 ],
             ],
         ],
@@ -45,24 +45,24 @@ return [
 
     'form' => [
         'fields' => [
-            'time-off-type'     => 'Отгул и отпуск Тип',
-            'request-date-from' => 'Request Дата От',
-            'request-date-to'   => 'Request Дата До',
+            'time-off-type'     => 'Тип отпуска',
+            'request-date-from' => 'Запрошено с',
+            'request-date-to'   => 'Запрошено по',
             'period'            => 'Период',
-            'half-day'          => 'Half День',
-            'requested-days'    => 'Requested (Дни/Часы)',
+            'half-day'          => 'Полдня',
+            'requested-days'    => 'Запрошено (дни/часы)',
             'description'       => 'Описание',
         ],
     ],
 
     'infolist' => [
         'entries' => [
-            'time-off-type'           => 'Отгул и отпуск Тип',
-            'request-date-from'       => 'Request Дата От',
-            'request-date-to'         => 'Request Дата До',
+            'time-off-type'           => 'Тип отпуска',
+            'request-date-from'       => 'Запрошено с',
+            'request-date-to'         => 'Запрошено по',
             'description'             => 'Описание',
-            'description-placeholder' => 'Нет описание provided',
-            'duration'                => 'Duration',
+            'description-placeholder' => 'Описание не указано',
+            'duration'                => 'Продолжительность',
             'status'                  => 'Статус',
         ],
     ],

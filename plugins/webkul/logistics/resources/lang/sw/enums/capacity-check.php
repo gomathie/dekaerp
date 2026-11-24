@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'warn' => 'Warn wakati safari ni zaidi ya capacity',
-    'off'  => 'si hundi capacity',
+    'warn' => 'Onya safari inapozidi uwezo',
+    'off'  => 'Usikague uwezo',
 ];

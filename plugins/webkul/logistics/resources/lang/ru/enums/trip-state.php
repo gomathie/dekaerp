@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'planned'     => 'Запланировано',
+    'planned'     => 'Запланирован',
     'assigned'    => 'Назначен',
-    'dispatched'  => 'Dispatched',
-    'in_progress' => 'В Ход',
-    'completed'   => 'Завершено',
+    'dispatched'  => 'Отправлен',
+    'in_progress' => 'Выполняется',
+    'completed'   => 'Завершён',
     'cancelled'   => 'Отменён',
 ];

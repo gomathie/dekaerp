@@ -2,5 +2,5 @@
 
 return [
     'leave' => 'Kutokuwepo',
-    'other' => 'Worked Time',
+    'other' => 'Muda wa kazi',
 ];

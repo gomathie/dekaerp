@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'lost'    => 'Accrued time weka upya hadi zero',
-    'all'     => 'Zote accrued time carried zaidi ya',
-    'maximum' => 'Carry zaidi ya na maximum',
+    'lost'    => 'Muda uliolimbikizwa unarudishwa sifuri',
+    'all'     => 'Muda wote uliolimbikizwa unahamishwa',
+    'maximum' => 'Hamisha hadi kiwango cha juu',
 ];

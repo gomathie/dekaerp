@@ -2,6 +2,6 @@
 
 return [
     'header-actions' => [
-        'new-accrual-plan' => 'Mpya Accrual',
+        'new-accrual-plan' => 'Mpango mpya wa ulimbikizaji',
     ],
 ];

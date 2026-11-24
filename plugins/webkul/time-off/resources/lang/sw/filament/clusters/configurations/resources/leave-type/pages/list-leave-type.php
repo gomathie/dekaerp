@@ -2,11 +2,11 @@
 
 return [
     'header-actions' => [
-        'new-leave-type' => 'Mpya Likizo Aina',
+        'new-leave-type' => 'Aina mpya ya likizo',
     ],
 
     'tabs' => [
         'all'      => 'Zote',
-        'archived' => 'Imehifadhiwa',
+        'archived' => 'Zilizowekwa kumbukumbu',
     ],
 ];

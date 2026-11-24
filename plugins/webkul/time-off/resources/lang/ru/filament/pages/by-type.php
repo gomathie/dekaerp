@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'От Тип',
+        'title' => 'По типам',
     ],
 ];

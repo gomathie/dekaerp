@@ -4,22 +4,22 @@ return [
     'fields' => [
         'name'           => 'Jina',
         'code'           => 'Msimbo',
-        'is-active'      => 'Inatumika',
+        'is-active'      => 'Hai',
         'company'        => 'Kampuni',
-        'all-companies'  => 'Zote makampuni (shiriki)',
-        'company-helper' => 'Likizo tupu hadi share hii na kila kampuni. Tu watumiaji nani see zote makampuni unaweza unda au badilisha shiriki maingizo.',
+        'all-companies'  => 'Kampuni zote (pamoja)',
+        'company-helper' => 'Acha wazi ili kushiriki hiki na kila kampuni. Ni watumiaji wanaoona kampuni zote pekee wanaoweza kuunda au kubadilisha maingizo ya pamoja.',
     ],
 
     'columns' => [
         'name'          => 'Jina',
         'code'          => 'Msimbo',
-        'is-active'     => 'Inatumika',
+        'is-active'     => 'Hai',
         'company'       => 'Kampuni',
-        'all-companies' => 'Zote makampuni',
+        'all-companies' => 'Kampuni zote',
     ],
 
     'filters' => [
-        'is-active' => 'Inatumika',
+        'is-active' => 'Hai',
         'company'   => 'Kampuni',
     ],
 ];

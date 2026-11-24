@@ -4,21 +4,21 @@ return [
     'waiting-time' => [
         // A suggestion only: D14 bills detention when a person confirms it,
         // never automatically.
-        'description' => 'Waiting time saa :stop (:minutes min zaidi ya free allowance)',
+        'description' => 'Muda wa kusubiri katika :stop (dakika :minutes zaidi ya muda wa bure)',
     ],
 
     'charges' => [
-        'title'  => 'Charges',
+        'title'  => 'Tozo',
         'fields' => [
-            'product'            => 'Service',
+            'product'            => 'Huduma',
             'description'        => 'Maelezo',
-            'quantity'           => 'Kiasi',
-            'price-unit'         => 'Bei ya uniti',
+            'quantity'           => 'Idadi',
+            'price-unit'         => 'Bei ya kipimo',
             'discount'           => 'Punguzo (%)',
             'taxes'              => 'Kodi',
-            'is-billable'        => 'Billable',
-            'is-billable-helper' => 'Tu billable charges ni picked juu wakati ankara ni raised.',
-            'invoiced'           => 'Invoiced',
+            'is-billable'        => 'Inatozwa',
+            'is-billable-helper' => 'Tozo zinazotozwa pekee ndizo huchukuliwa ankara inapotolewa.',
+            'invoiced'           => 'Imetolewa ankara',
         ],
     ],
 
@@ -32,34 +32,34 @@ return [
             'total'         => 'Jumla',
         ],
         'actions' => [
-            'open' => 'Wazi katika Uhasibu',
+            'open' => 'Fungua katika Uhasibu',
         ],
     ],
 
     'unbilled' => [
-        'title'   => 'Unbilled charges',
+        'title'   => 'Tozo zisizotolewa ankara',
         'columns' => [
-            'shipment'    => 'Shehena',
+            'shipment'    => 'Usafirishaji',
             'customer'    => 'Mteja',
-            'description' => 'Charge',
-            'quantity'    => 'Qty',
+            'description' => 'Tozo',
+            'quantity'    => 'Idadi',
             'subtotal'    => 'Kiasi',
             'total'       => 'Jumla',
         ],
         'filters' => [
             'currency' => 'Sarafu',
-            'shipment' => 'Shehena',
+            'shipment' => 'Usafirishaji',
         ],
     ],
 
     'actions' => [
         'create-invoice' => [
             'label'              => 'Unda ankara',
-            'heading'            => 'Ankara hii shehena?',
-            'description'        => 'Kila billable charge hiyo ina si invoiced bado becomes mstari washa mpya Ankara ya mteja. Charges tayari invoiced ni iliyobaki alone.',
+            'heading'            => 'Toa ankara kwa usafirishaji huu?',
+            'description'        => 'Kila tozo inayotozwa ambayo bado haijatolewa ankara inakuwa mstari kwenye ankara mpya ya mteja. Tozo zilizokwisha tolewa ankara haziguswi.',
             'notification'       => 'Ankara imeundwa.',
-            'notification-body'  => 'Ankara :invoice ni katika Uhasibu, kama rasimu wewe unaweza review kabla ya posting.',
-            'nothing-to-invoice' => 'Nothing hadi ankara',
+            'notification-body'  => 'Ankara :invoice iko katika Uhasibu, kama rasimu unayoweza kukagua kabla ya kurekodi.',
+            'nothing-to-invoice' => 'Hakuna cha kutolea ankara',
         ],
     ],
 ];

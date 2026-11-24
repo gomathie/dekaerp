@@ -1,22 +1,22 @@
 <?php
 
 return [
-    'title' => 'Dispatch board',
+    'title' => 'Диспетчерская',
 
     'tabs' => [
-        'unassigned'      => 'Не назначен',
-        'awaiting-pickup' => 'Awaiting pickup',
-        'active'          => 'Активен рейсы',
-        'due-today'       => 'Due сегодня',
-        'overdue'         => 'Просрочен',
-        'failed'          => 'Не удалось',
+        'unassigned'      => 'Не назначены',
+        'awaiting-pickup' => 'Ожидают забора',
+        'active'          => 'Активные рейсы',
+        'due-today'       => 'Срок сегодня',
+        'overdue'         => 'Просрочены',
+        'failed'          => 'Неудачные',
     ],
 
     'columns' => [
         'number'               => 'Отправка',
         'state'                => 'Статус',
         'customer'             => 'Клиент',
-        'destination'          => 'Назначение',
-        'expected-delivery-at' => 'Ожидается доставка',
+        'destination'          => 'Пункт назначения',
+        'expected-delivery-at' => 'Ожидаемая доставка',
     ],
 ];

@@ -3,12 +3,12 @@
 return [
     'header-actions' => [
         'create' => [
-            'title' => 'Новое Публичный Holiday',
+            'title' => 'Новый государственный праздник',
 
             'notification' => [
                 'created' => [
-                    'title' => 'Публичный Holiday создано',
-                    'body'  => 'публичный holiday есть создано successfully.',
+                    'title' => 'Государственный праздник создан',
+                    'body'  => 'Государственный праздник успешно создан.',
                 ],
             ],
         ],

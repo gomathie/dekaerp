@@ -2,9 +2,9 @@
 
 return [
     'readiness' => [
-        'missing-currency'         => 'kampuni ina hakuna sarafu weka.',
-        'missing-sale-journal'     => 'kampuni ina hakuna mauzo jarida, hivyo shehena haiwezekani kuwa invoiced bado.',
-        'missing-purchase-journal' => 'kampuni ina hakuna ununuzi jarida, hivyo gharama haiwezekani kuwa billed bado.',
-        'missing-product-defaults' => '"Uniti" kipimo au root bidhaa kategoria ni haipo, hivyo chaguo-msingi service bidhaa haiwezekani kuwa imeundwa.',
+        'missing-currency'         => 'Kampuni haina sarafu iliyowekwa.',
+        'missing-sale-journal'     => 'Kampuni haina jarida la mauzo, hivyo usafirishaji hauwezi kutolewa ankara bado.',
+        'missing-purchase-journal' => 'Kampuni haina jarida la ununuzi, hivyo gharama haziwezi kutozwa bili bado.',
+        'missing-product-defaults' => 'Kipimo “Units” au kategoria kuu ya bidhaa haipo, hivyo bidhaa za huduma chaguo-msingi haziwezi kuundwa.',
     ],
 ];

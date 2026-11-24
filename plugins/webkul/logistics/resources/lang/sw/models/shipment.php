@@ -1,15 +1,15 @@
 <?php
 
 return [
-    'title' => 'Shehena',
+    'title' => 'Usafirishaji',
 
     'log-attributes' => [
         'state'                => 'Hali',
         'customer'             => 'Mteja',
-        'customer-reference'   => 'Kumbukumbu ya mteja',
-        'planned-pickup-at'    => 'Imepangwa pickup',
-        'expected-delivery-at' => 'Inatarajiwa usafirishaji',
-        'dispatcher'           => 'Dispatcher',
-        'carrier'              => 'Carrier',
+        'customer-reference'   => 'Marejeleo ya mteja',
+        'planned-pickup-at'    => 'Uchukuaji uliopangwa',
+        'expected-delivery-at' => 'Uwasilishaji unaotarajiwa',
+        'dispatcher'           => 'Mratibu',
+        'carrier'              => 'Msafirishaji',
     ],
 ];

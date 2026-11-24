@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'lost'    => 'Accrued time сбросить до zero',
-    'all'     => 'Все accrued time carried более',
-    'maximum' => 'Carry более с maximum',
+    'lost'    => 'Начисленное время обнуляется',
+    'all'     => 'Всё начисленное время переносится',
+    'maximum' => 'Перенос в пределах максимума',
 ];

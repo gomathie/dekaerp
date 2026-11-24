@@ -2,9 +2,9 @@
 
 return [
     'planned'     => 'Imepangwa',
-    'assigned'    => 'Amekabidhiwa',
-    'dispatched'  => 'Dispatched',
-    'in_progress' => 'Katika Maendeleo',
+    'assigned'    => 'Imekabidhiwa',
+    'dispatched'  => 'Imetumwa',
+    'in_progress' => 'Inaendelea',
     'completed'   => 'Imekamilika',
     'cancelled'   => 'Imeghairiwa',
 ];

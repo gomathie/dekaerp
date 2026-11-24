@@ -3,13 +3,13 @@
 return [
     'notification' => [
         'success' => [
-            'title' => 'Likizo imeundwa',
-            'body'  => 'likizo ina imeundwa successfully.',
+            'title' => 'Mgao umeundwa',
+            'body'  => 'Mgao umeundwa kwa mafanikio.',
         ],
 
         'warning' => [
-            'title' => 'Wewe don\'t ina mfanyakazi akaunti',
-            'body'  => 'Wewe don\'t ina mfanyakazi akaunti. Tafadhali mwasiliani yako msimamizi.',
+            'title' => 'Huna akaunti ya mfanyakazi',
+            'body'  => 'Huna akaunti ya mfanyakazi. Tafadhali wasiliana na msimamizi wako.',
         ],
     ],
 ];

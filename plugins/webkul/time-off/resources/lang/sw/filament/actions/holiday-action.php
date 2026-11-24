@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'title' => 'Holidays',
+    'title' => 'Sikukuu',
     'form'  => [
         'placeholders' => [
-            'public-holiday'    => 'Hadharani Holidays',
-            'mandatory-holiday' => 'Mandatory Holidays',
+            'public-holiday'    => 'Sikukuu za umma',
+            'mandatory-holiday' => 'Siku za lazima',
         ],
     ],
 ];

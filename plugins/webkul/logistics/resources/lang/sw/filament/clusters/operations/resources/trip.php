@@ -7,22 +7,22 @@ return [
 
     'form' => [
         'sections' => [
-            'crew'     => 'Gari na crew',
+            'crew'     => 'Gari na wafanyakazi',
             'schedule' => 'Ratiba',
         ],
 
         'fields' => [
             'company'            => 'Kampuni',
-            'number'             => 'Safari nambari',
-            'number-placeholder' => 'Amekabidhiwa kiotomatiki',
+            'number'             => 'Namba ya safari',
+            'number-placeholder' => 'Hutolewa kiotomatiki',
             'vehicle'            => 'Gari',
             'driver'             => 'Dereva',
-            'dispatcher'         => 'Dispatcher',
-            'planned-start-at'   => 'Imepangwa anza',
-            'planned-end-at'     => 'Imepangwa mwisho',
-            'odometer-start'     => 'Odometer anza',
-            'odometer-end'       => 'Odometer mwisho',
-            'notes'              => 'Maelezo',
+            'dispatcher'         => 'Mratibu',
+            'planned-start-at'   => 'Kuanza kulikopangwa',
+            'planned-end-at'     => 'Kumaliza kulikopangwa',
+            'odometer-start'     => 'Odomita mwanzoni',
+            'odometer-end'       => 'Odomita mwishoni',
+            'notes'              => 'Vidokezo',
         ],
     ],
 
@@ -32,8 +32,8 @@ return [
             'state'            => 'Hali',
             'vehicle'          => 'Gari',
             'driver'           => 'Dereva',
-            'shipments'        => 'Shehena',
-            'planned-start-at' => 'Imepangwa anza',
+            'shipments'        => 'Usafirishaji',
+            'planned-start-at' => 'Kuanza kulikopangwa',
             'company'          => 'Kampuni',
         ],
 
@@ -47,18 +47,18 @@ return [
     'infolist' => [
         'summary'         => 'Safari',
         'schedule'        => 'Ratiba',
-        'load'            => 'Load',
-        'actual-start-at' => 'Halisi anza',
-        'actual-end-at'   => 'Halisi mwisho',
-        'capacity'        => 'Capacity',
-        'capacity-ok'     => 'Ndani ya gari’s capacity.',
+        'load'            => 'Mzigo',
+        'actual-start-at' => 'Kuanza halisi',
+        'actual-end-at'   => 'Kumaliza halisi',
+        'capacity'        => 'Uwezo',
+        'capacity-ok'     => 'Ndani ya uwezo wa gari.',
     ],
 
     'relations' => [
         'shipments' => [
-            'title'   => 'Shehena',
+            'title'   => 'Usafirishaji',
             'columns' => [
-                'number'   => 'Shehena',
+                'number'   => 'Usafirishaji',
                 'state'    => 'Hali',
                 'customer' => 'Mteja',
                 'weight'   => 'Uzito (kg)',
@@ -66,9 +66,9 @@ return [
             ],
             'actions' => [
                 'attach' => [
-                    'label'        => 'Ongeza shehena',
-                    'field'        => 'Imethibitishwa shehena',
-                    'notification' => 'Shehena added hadi hii safari.',
+                    'label'        => 'Ongeza usafirishaji',
+                    'field'        => 'Usafirishaji uliothibitishwa',
+                    'notification' => 'Usafirishaji umeongezwa kwenye safari hii.',
                 ],
             ],
         ],
@@ -76,18 +76,18 @@ return [
 
     'actions' => [
         'dispatchTrip' => [
-            'label'        => 'Dispatch',
-            'heading'      => 'Dispatch hii safari?',
-            'notification' => 'Safari dispatched.',
+            'label'        => 'Tuma',
+            'heading'      => 'Tuma safari hii?',
+            'notification' => 'Safari imetumwa.',
         ],
         'startTrip' => [
             'label'        => 'Anza',
-            'heading'      => 'Anza hii safari?',
-            'notification' => 'Safari started.',
+            'heading'      => 'Anza safari hii?',
+            'notification' => 'Safari imeanza.',
         ],
         'completeTrip' => [
             'label'        => 'Kamilisha',
-            'heading'      => 'Kamilisha hii safari?',
+            'heading'      => 'Kamilisha safari hii?',
             'notification' => 'Safari imekamilika.',
         ],
     ],

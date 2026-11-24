@@ -2,5 +2,5 @@
 
 return [
     'company'  => 'Kampuni',
-    'employee' => 'Mfanyakazi (hadi reimburse)',
+    'employee' => 'Mfanyakazi (arejeshewe)',
 ];

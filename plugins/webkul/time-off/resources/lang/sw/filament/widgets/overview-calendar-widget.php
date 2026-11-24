@@ -2,15 +2,15 @@
 
 return [
     'heading' => [
-        'title' => 'Likizo Muhtasari',
+        'title' => 'Muhtasari wa likizo',
     ],
 
     'modal-actions' => [
         'edit' => [
             'title'        => 'Hariri',
             'notification' => [
-                'title' => 'Likizo Imesasishwa',
-                'body'  => 'Likizo request ina imesasishwa successfully.',
+                'title' => 'Likizo imesasishwa',
+                'body'  => 'Ombi la likizo limesasishwa kwa mafanikio.',
             ],
         ],
 
@@ -20,24 +20,24 @@ return [
     ],
 
     'view-action' => [
-        'title'       => 'Angalia',
-        'description' => 'Angalia Likizo Request',
+        'title'       => 'Tazama',
+        'description' => 'Tazama ombi la likizo',
     ],
 
     'header-actions' => [
         'create' => [
-            'title'       => 'Mpya Likizo',
-            'description' => 'Unda Likizo Request',
+            'title'       => 'Likizo mpya',
+            'description' => 'Unda ombi la likizo',
 
             'notification' => [
-                'title' => 'Likizo Imeundwa',
-                'body'  => 'Likizo request ina imeundwa successfully.',
+                'title' => 'Likizo imeundwa',
+                'body'  => 'Ombi la likizo limeundwa kwa mafanikio.',
             ],
 
             'employee-not-found' => [
                 'notification' => [
-                    'title' => 'Mfanyakazi Si Imepatikana',
-                    'body'  => 'Tafadhali ongeza mfanyakazi hadi yako wasifu kabla ya creating likizo request.',
+                    'title' => 'Mfanyakazi hakupatikana',
+                    'body'  => 'Tafadhali ongeza mfanyakazi kwenye wasifu wako kabla ya kuunda ombi la likizo.',
                 ],
             ],
         ],
@@ -45,24 +45,24 @@ return [
 
     'form' => [
         'fields' => [
-            'time-off-type'     => 'Likizo Aina',
-            'request-date-from' => 'Request Tarehe Kutoka',
-            'request-date-to'   => 'Request Tarehe Hadi',
+            'time-off-type'     => 'Aina ya likizo',
+            'request-date-from' => 'Ombi kuanzia',
+            'request-date-to'   => 'Ombi hadi',
             'period'            => 'Kipindi',
-            'half-day'          => 'Half Siku',
-            'requested-days'    => 'Requested (Siku/Saa)',
+            'half-day'          => 'Nusu siku',
+            'requested-days'    => 'Iliyoombwa (siku/saa)',
             'description'       => 'Maelezo',
         ],
     ],
 
     'infolist' => [
         'entries' => [
-            'time-off-type'           => 'Likizo Aina',
-            'request-date-from'       => 'Request Tarehe Kutoka',
-            'request-date-to'         => 'Request Tarehe Hadi',
+            'time-off-type'           => 'Aina ya likizo',
+            'request-date-from'       => 'Ombi kuanzia',
+            'request-date-to'         => 'Ombi hadi',
             'description'             => 'Maelezo',
-            'description-placeholder' => 'Hakuna maelezo provided',
-            'duration'                => 'Duration',
+            'description-placeholder' => 'Hakuna maelezo yaliyotolewa',
+            'duration'                => 'Muda',
             'status'                  => 'Hali',
         ],
     ],

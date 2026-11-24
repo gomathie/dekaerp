@@ -2,12 +2,12 @@
 
 return [
     'heading' => [
-        'title' => 'Likizo Analysis',
+        'title' => 'Uchambuzi wa likizo',
     ],
 
     'stats' => [
-        'pending-requests'  => 'Inasubiri Requests',
-        'valid-until'       => 'Halali mpaka :date',
-        'time-off-requests' => 'Likizo Requests',
+        'pending-requests'  => 'Maombi yanayosubiri',
+        'valid-until'       => 'Halali hadi :date',
+        'time-off-requests' => 'Maombi ya likizo',
     ],
 ];

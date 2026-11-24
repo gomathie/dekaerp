@@ -2,16 +2,16 @@
 
 return [
     'heading' => [
-        'title' => 'Отгул и отпуск Analysis',
+        'title' => 'Анализ отпусков',
     ],
 
     'label' => 'Обзор',
 
     'types' => [
         'draft'     => 'Черновик',
-        'confirmed' => 'Подтверждён',
-        'validated' => 'Validated',
-        'refused'   => 'Отказано',
-        'cancelled' => 'Отменён',
+        'confirmed' => 'Подтверждено',
+        'validated' => 'Утверждено',
+        'refused'   => 'Отклонено',
+        'cancelled' => 'Отменено',
     ],
 ];

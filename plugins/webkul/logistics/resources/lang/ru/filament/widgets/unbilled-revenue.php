@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'heading' => 'Unbilled выручка',
+    'heading' => 'Невыставленная выручка',
 
     'stats' => [
-        'unbilled'             => 'Awaiting счёт',
-        'nothing-outstanding'  => 'Everything billable есть invoiced.',
-        'unknown-currency'     => 'Неизвестно валюта',
+        'unbilled'             => 'Ожидает счёта',
+        'nothing-outstanding'  => 'Все оплачиваемые начисления выставлены.',
+        'unknown-currency'     => 'Неизвестная валюта',
     ],
 ];

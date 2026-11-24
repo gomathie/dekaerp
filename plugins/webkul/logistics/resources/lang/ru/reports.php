@@ -1,11 +1,11 @@
 <?php
 
 $dateFilters = [
-    'from'    => 'От',
-    'until'   => 'До',
-    'between' => 'От :from до :until',
-    'since'   => 'От :from',
-    'up-to'   => 'Вверх до :until',
+    'from'    => 'С',
+    'until'   => 'По',
+    'between' => 'С :from по :until',
+    'since'   => 'С :from',
+    'up-to'   => 'По :until',
 ];
 
 /*
@@ -17,37 +17,37 @@ $dateFilters = [
  */
 $tripColumns = [
     'reference' => 'Рейс',
-    'vehicle'   => 'Транспорт',
+    'vehicle'   => 'Транспортное средство',
     'driver'    => 'Водитель',
     'state'     => 'Статус',
-    'started'   => 'Started',
-    'ended'     => 'Ended',
+    'started'   => 'Начат',
+    'ended'     => 'Завершён',
     'shipments' => 'Отправки',
-    'distance'  => 'Distance',
+    'distance'  => 'Расстояние',
 ];
 
 $tripFilters = $dateFilters + [
-    'vehicle' => 'Транспорт',
+    'vehicle' => 'Транспортное средство',
     'driver'  => 'Водитель',
     'state'   => 'Статус',
 ];
 
 return [
     'export'          => 'Экспорт',
-    'export-complete' => 'Exported :count строки.',
+    'export-complete' => 'Экспортировано строк: :count.',
 
     'shipment-register' => [
-        'title'  => 'Отправка регистрация',
+        'title'  => 'Реестр отправок',
         'export' => 'Экспорт',
 
         'columns' => [
             'reference'   => 'Отправка',
             'customer'    => 'Клиент',
             'state'       => 'Статус',
-            'origin'      => 'От',
-            'destination' => 'До',
+            'origin'      => 'Откуда',
+            'destination' => 'Куда',
             'expected'    => 'Ожидается',
-            'delivered'   => 'Delivered',
+            'delivered'   => 'Доставлено',
             'company'     => 'Компания',
         ],
 
@@ -58,38 +58,38 @@ return [
     ],
 
     'delivery-performance' => [
-        'title'      => 'Доставка performance',
-        'subheading' => 'Measured против ожидается доставка дата. Отправки с нет ожидается дата не scored.',
+        'title'      => 'Показатели доставки',
+        'subheading' => 'Оценивается по ожидаемой дате доставки. Отправки без ожидаемой даты не оцениваются.',
         'export'     => 'Экспорт',
 
         'columns' => [
             'reference' => 'Отправка',
             'customer'  => 'Клиент',
             'expected'  => 'Ожидается',
-            'delivered' => 'Delivered',
-            'outcome'   => 'Outcome',
-            'delay'     => 'Late от',
+            'delivered' => 'Доставлено',
+            'outcome'   => 'Результат',
+            'delay'     => 'Опоздание',
         ],
 
         'outcomes' => [
-            'on-time'      => 'Вкл. time',
-            'late'         => 'Late',
+            'on-time'      => 'Вовремя',
+            'late'         => 'С опозданием',
             'failed'       => 'Не удалось',
-            'overdue'      => 'Просрочен',
-            'pending'      => 'В ход',
-            'not-measured' => 'Нет дата promised',
+            'overdue'      => 'Просрочено',
+            'pending'      => 'В процессе',
+            'not-measured' => 'Дата не обещана',
         ],
 
         'filters' => $dateFilters + [
             'customer'    => 'Клиент',
-            'late-only'   => 'Late только',
-            'failed-only' => 'Не удалось только',
+            'late-only'   => 'Только с опозданием',
+            'failed-only' => 'Только неудачные',
         ],
     ],
 
     'profitability' => [
-        'title'      => 'Отправка profitability',
-        'subheading' => 'Billable charges против утверждён затраты, каждый в отправка’s собственную валюта. Черновик затраты не counted.',
+        'title'      => 'Рентабельность отправок',
+        'subheading' => 'Начисления клиенту против утверждённых затрат, каждое в валюте своей отправки. Черновые затраты не учитываются.',
         'export'     => 'Экспорт',
 
         'columns' => [
@@ -103,19 +103,19 @@ return [
 
         'filters' => $dateFilters + [
             'customer'     => 'Клиент',
-            'loss-making'  => 'Убыток-making только',
+            'loss-making'  => 'Только убыточные',
         ],
     ],
 
     'vehicle-trips' => [
-        'title'   => 'Транспорт рейс история',
+        'title'   => 'История рейсов транспорта',
         'export'  => 'Экспорт',
         'columns' => $tripColumns,
         'filters' => $tripFilters,
     ],
 
     'driver-trips' => [
-        'title'   => 'Водитель рейс история',
+        'title'   => 'История рейсов водителей',
         'export'  => 'Экспорт',
         'columns' => $tripColumns,
         'filters' => $tripFilters,

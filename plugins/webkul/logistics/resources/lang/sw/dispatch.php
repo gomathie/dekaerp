@@ -3,7 +3,7 @@
 return [
     'capacity' => [
         // Warnings, not refusals: the dispatch still goes ahead (D5).
-        'weight' => 'Hii safari carries :load kg, zaidi ya gari’s :capacity kg capacity.',
-        'volume' => 'Hii safari carries :load m³, zaidi ya gari’s :capacity m³ capacity.',
+        'weight' => 'Safari hii inabeba :load kg, zaidi ya uwezo wa gari wa :capacity kg.',
+        'volume' => 'Safari hii inabeba :load m³, zaidi ya uwezo wa gari wa :capacity m³.',
     ],
 ];

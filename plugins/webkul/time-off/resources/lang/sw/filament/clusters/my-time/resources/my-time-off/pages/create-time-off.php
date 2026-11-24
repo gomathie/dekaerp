@@ -4,32 +4,32 @@ return [
     'notification' => [
         'success' => [
             'title' => 'Likizo imeundwa',
-            'body'  => 'likizo ina imeundwa successfully.',
+            'body'  => 'Likizo imeundwa kwa mafanikio.',
         ],
 
         'overlap' => [
-            'title' => 'Overlapping Likizo Request',
-            'body'  => 'imechaguliwa likizo dates overlap na existing request. Tafadhali chagua different dates.',
+            'title' => 'Ombi la likizo linaingiliana',
+            'body'  => 'Tarehe za likizo zilizochaguliwa zinaingiliana na ombi lililopo. Tafadhali chagua tarehe nyingine.',
         ],
 
         'warning' => [
-            'title' => 'Wewe don\'t ina mfanyakazi akaunti',
-            'body'  => 'Wewe don\'t ina mfanyakazi akaunti. Tafadhali mwasiliani yako msimamizi.',
+            'title' => 'Huna akaunti ya mfanyakazi',
+            'body'  => 'Huna akaunti ya mfanyakazi. Tafadhali wasiliana na msimamizi wako.',
         ],
 
         'invalid_half_day_leave' => [
-            'title' => 'Si halali Likizo Request',
-            'body'  => 'Half-siku likizo unaweza tu kuwa imetumika kwa single siku.',
+            'title' => 'Ombi la likizo si sahihi',
+            'body'  => 'Likizo ya nusu siku inaweza kuombwa kwa siku moja tu.',
         ],
 
         'leave_request_denied_no_allocation' => [
-            'title' => 'Likizo Request Imekataliwa',
-            'body'  => 'Wewe si ina yoyote allocated likizo kwa :leaveType.',
+            'title' => 'Ombi la likizo limekataliwa',
+            'body'  => 'Huna likizo yoyote uliyogawiwa kwa :leaveType.',
         ],
 
         'leave_request_denied_insufficient_balance' => [
-            'title' => 'Likizo Request Imekataliwa',
-            'body'  => 'Insufficient likizo salio. Wewe ina :available_balance siku(s) inapatikana. Requested: :requested_days siku(s).',
+            'title' => 'Ombi la likizo limekataliwa',
+            'body'  => 'Salio la likizo halitoshi. Una siku :available_balance zinazopatikana. Zilizoombwa: siku :requested_days.',
         ],
     ],
 ];

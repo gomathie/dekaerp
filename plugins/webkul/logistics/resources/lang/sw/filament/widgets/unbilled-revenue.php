@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'heading' => 'Unbilled mapato',
+    'heading' => 'Mapato yasiyotolewa ankara',
 
     'stats' => [
-        'unbilled'             => 'Awaiting ankara',
-        'nothing-outstanding'  => 'Everything billable ina invoiced.',
-        'unknown-currency'     => 'Haijulikani sarafu',
+        'unbilled'             => 'Inasubiri ankara',
+        'nothing-outstanding'  => 'Kila kinachotozwa kimetolewa ankara.',
+        'unknown-currency'     => 'Sarafu isiyojulikana',
     ],
 ];

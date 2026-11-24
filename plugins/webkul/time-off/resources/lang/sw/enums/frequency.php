@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'hourly'    => 'Hourly',
+    'hourly'    => 'Kila saa',
     'daily'     => 'Kila siku',
     'weekly'    => 'Kila wiki',
-    'bimonthly' => 'Mara mbili mwezi',
+    'bimonthly' => 'Mara mbili kwa mwezi',
     'monthly'   => 'Kila mwezi',
-    'biyearly'  => 'Mara mbili mwaka',
+    'biyearly'  => 'Mara mbili kwa mwaka',
     'yearly'    => 'Kila mwaka',
 ];

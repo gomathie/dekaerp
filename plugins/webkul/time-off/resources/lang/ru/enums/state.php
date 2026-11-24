@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'confirm'      => 'До Утвердить',
-    'refuse'       => 'Отказано',
-    'validate_one' => 'Second Approval',
-    'validate_two' => 'Утверждён',
+    'confirm'      => 'На утверждении',
+    'refuse'       => 'Отклонено',
+    'validate_one' => 'Второе утверждение',
+    'validate_two' => 'Утверждено',
 ];

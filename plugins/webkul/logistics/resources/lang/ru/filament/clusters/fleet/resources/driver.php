@@ -9,51 +9,51 @@ return [
         'fields' => [
             'company'            => 'Компания',
             'employee'           => 'Сотрудник',
-            'partner'            => 'Carrier контакт',
-            'name'               => 'Название',
+            'partner'            => 'Контакт перевозчика',
+            'name'               => 'Имя',
             'phone'              => 'Телефон',
-            'license-number'     => 'Licence номер',
-            'license-class'      => 'Licence class',
-            'license-expires-at' => 'Licence expires',
+            'license-number'     => 'Номер удостоверения',
+            'license-class'      => 'Категория удостоверения',
+            'license-expires-at' => 'Удостоверение действует до',
             'is-active'          => 'Активен',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'name'               => 'Название',
+            'name'               => 'Имя',
             'phone'              => 'Телефон',
             'employee'           => 'Сотрудник',
-            'partner'            => 'Carrier контакт',
-            'license-number'     => 'Licence номер',
-            'license-expires-at' => 'Licence expiry',
+            'partner'            => 'Контакт перевозчика',
+            'license-number'     => 'Номер удостоверения',
+            'license-expires-at' => 'Срок действия удостоверения',
             'company'            => 'Компания',
             'is-active'          => 'Активен',
         ],
 
         'filters' => [
-            'license-attention' => 'Expired или expiring скоро',
+            'license-attention' => 'Истёк или скоро истекает',
         ],
     ],
 
     'infolist' => [
         'sections' => [
             'general' => 'Водитель',
-            'license' => 'Licence',
+            'license' => 'Удостоверение',
         ],
     ],
 
     'actions' => [
         'add-drivers-from-employees' => [
-            'label' => 'Добавить водители от сотрудники',
+            'label' => 'Добавить водителей из сотрудников',
 
             'fields' => [
                 'employees' => 'Сотрудники',
             ],
 
             'notification' => [
-                'title' => 'Сотрудник импорт finished',
-                'body'  => ':created создано, :skipped skipped.',
+                'title' => 'Импорт сотрудников завершён',
+                'body'  => 'Создано: :created, пропущено: :skipped.',
             ],
         ],
     ],

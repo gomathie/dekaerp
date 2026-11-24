@@ -1,58 +1,58 @@
 <?php
 
 return [
-    'title' => 'Отгул и отпуск',
+    'title' => 'Отпуск',
 
-    'model-label' => 'Отгул и отпуск',
+    'model-label' => 'Отпуск',
 
     'navigation' => [
-        'title' => 'Отгул и отпуск',
+        'title' => 'Отпуск',
     ],
 
     'global-search' => [
         'employee'      => 'Сотрудник',
-        'time-off-type' => 'Отгул и отпуск Тип',
-        'date-from'     => 'Дата От',
-        'date-to'       => 'Дата До',
+        'time-off-type' => 'Тип отпуска',
+        'date-from'     => 'Дата с',
+        'date-to'       => 'Дата по',
     ],
 
     'form' => [
         'fields' => [
-            'employee-name'     => 'Сотрудник Название',
-            'department-name'   => 'Отдел Название',
-            'time-off-type'     => 'Отгул и отпуск Тип',
+            'employee-name'     => 'Имя сотрудника',
+            'department-name'   => 'Отдел',
+            'time-off-type'     => 'Тип отпуска',
             'date'              => 'Дата',
-            'dates'             => 'Dates',
-            'request-date-from' => 'Request Дата От',
-            'request-date-to'   => 'Request Дата До',
+            'dates'             => 'Даты',
+            'request-date-from' => 'Запрошено с',
+            'request-date-to'   => 'Запрошено по',
             'description'       => 'Описание',
             'period'            => 'Период',
-            'half-day'          => 'Half День',
-            'requested-days'    => 'Requested (Дни/Часы)',
+            'half-day'          => 'Полдня',
+            'requested-days'    => 'Запрошено (дни/часы)',
             'description'       => 'Описание',
             'attachment'        => 'Вложение',
-            'day'               => ':day день',
-            'days'              => ':days день(s)',
+            'day'               => ':day дн.',
+            'days'              => ':days дн.',
         ],
     ],
 
     'table' => [
         'columns' => [
             'employee-name'  => 'Сотрудник',
-            'time-off-type'  => 'Отгул и отпуск Тип',
+            'time-off-type'  => 'Тип отпуска',
             'description'    => 'Описание',
-            'date-from'      => 'Дата От',
-            'date-to'        => 'Дата До',
-            'duration'       => 'Duration',
+            'date-from'      => 'Дата с',
+            'date-to'        => 'Дата по',
+            'duration'       => 'Продолжительность',
             'status'         => 'Статус',
         ],
 
         'groups' => [
             'employee-name' => 'Сотрудник',
-            'time-off-type' => 'Отгул и отпуск Тип',
+            'time-off-type' => 'Тип отпуска',
             'status'        => 'Статус',
-            'start-date'    => 'Начать Дата',
-            'start-to'      => 'Конец Дата',
+            'start-date'    => 'Дата начала',
+            'start-to'      => 'Дата окончания',
             'updated-at'    => 'Обновлено',
             'created-at'    => 'Создано',
         ],
@@ -60,27 +60,27 @@ return [
         'actions' => [
             'approve' => [
                 'title' => [
-                    'validate' => 'Validate',
+                    'validate' => 'Подтвердить',
                     'approve'  => 'Утвердить',
                 ],
                 'notification' => [
-                    'title' => 'Отгул и отпуск утверждён',
-                    'body'  => 'отгул и отпуск есть утверждён successfully.',
+                    'title' => 'Отпуск утверждён',
+                    'body'  => 'Отпуск успешно утверждён.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Отгул и отпуск удалено',
-                    'body'  => 'отгул и отпуск есть удалено successfully.',
+                    'title' => 'Отпуск удалён',
+                    'body'  => 'Отпуск успешно удалён.',
                 ],
             ],
 
             'refused' => [
-                'title'        => 'Отказать',
+                'title'        => 'Отклонить',
                 'notification' => [
-                    'title' => 'Отгул и отпуск отказано',
-                    'body'  => 'отгул и отпуск есть отказано successfully.',
+                    'title' => 'Отпуск отклонён',
+                    'body'  => 'Отпуск успешно отклонён.',
                 ],
             ],
         ],
@@ -88,8 +88,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Отгул и отпуск удалено',
-                    'body'  => 'отгул и отпуск есть удалено successfully.',
+                    'title' => 'Отпуск удалён',
+                    'body'  => 'Отпуск успешно удалён.',
                 ],
             ],
         ],
@@ -97,22 +97,22 @@ return [
 
     'infolist' => [
         'entries' => [
-            'employee-name'     => 'Сотрудник Название',
-            'department-name'   => 'Отдел Название',
-            'time-off-type'     => 'Отгул и отпуск Тип',
+            'employee-name'     => 'Имя сотрудника',
+            'department-name'   => 'Отдел',
+            'time-off-type'     => 'Тип отпуска',
             'date'              => 'Дата',
-            'dates'             => 'Dates',
-            'request-date-from' => 'Request Дата От',
-            'request-date-to'   => 'Request Дата До',
+            'dates'             => 'Даты',
+            'request-date-from' => 'Запрошено с',
+            'request-date-to'   => 'Запрошено по',
             'description'       => 'Описание',
             'period'            => 'Период',
-            'half-day'          => 'Half День',
-            'requested-days'    => 'Requested (Дни/Часы)',
+            'half-day'          => 'Полдня',
+            'requested-days'    => 'Запрошено (дни/часы)',
             'attachment'        => 'Вложение',
-            'day'               => ':day день',
-            'days'              => ':days день(s)',
-            'date-from'         => 'Дата От',
-            'date-to'           => 'Дата До',
+            'day'               => ':day дн.',
+            'days'              => ':days дн.',
+            'date-from'         => 'Дата с',
+            'date-to'           => 'Дата по',
             'status'            => 'Статус',
         ],
     ],

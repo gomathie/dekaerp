@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'office'    => 'Imeingizwa katika office',
-    'stop_link' => 'Captured saa kituo',
+    'office'    => 'Imeingizwa ofisini',
+    'stop_link' => 'Imerekodiwa kituoni',
 ];

@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'year-start' => 'Saa anza ya mwaka',
-    'allocation' => 'Saa allocation tarehe',
+    'year-start' => 'Mwanzoni mwa mwaka',
+    'allocation' => 'Tarehe ya mgao',
     'other'      => 'Nyingine',
 ];

@@ -2,39 +2,39 @@
 
 return [
     'notification' => [
-        'title' => 'Allocation imesasishwa',
-        'body'  => 'allocation ina imesasishwa successfully.',
+        'title' => 'Mgao umesasishwa',
+        'body'  => 'Mgao umesasishwa kwa mafanikio.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Allocation imefutwa',
-                'body'  => 'allocation ina imefutwa successfully.',
+                'title' => 'Mgao umefutwa',
+                'body'  => 'Mgao umefutwa kwa mafanikio.',
             ],
         ],
         'approved' => [
-            'title' => 'Imeidhinishwa',
+            'title' => 'Idhinisha',
 
             'notification' => [
-                'title' => 'Allocation imeidhinishwa',
-                'body'  => 'allocation ina imeidhinishwa successfully.',
+                'title' => 'Mgao umeidhinishwa',
+                'body'  => 'Mgao umeidhinishwa kwa mafanikio.',
             ],
         ],
         'refuse' => [
             'title' => 'Kataa',
 
             'notification' => [
-                'title' => 'Allocation imekataliwa',
-                'body'  => 'allocation ina imekataliwa successfully.',
+                'title' => 'Mgao umekataliwa',
+                'body'  => 'Mgao umekataliwa kwa mafanikio.',
             ],
         ],
         'mark-as-ready-to-confirm' => [
-            'title' => 'Mark kama Ready hadi Thibitisha',
+            'title' => 'Weka tayari kuthibitishwa',
 
             'notification' => [
-                'title' => 'Marked kama ready hadi thibitisha',
-                'body'  => 'allocation ina marked kama ready hadi thibitisha successfully.',
+                'title' => 'Umewekwa tayari kuthibitishwa',
+                'body'  => 'Mgao umewekwa tayari kuthibitishwa kwa mafanikio.',
             ],
         ],
     ],

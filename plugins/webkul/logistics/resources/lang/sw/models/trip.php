@@ -7,6 +7,6 @@ return [
         'state'            => 'Hali',
         'vehicle'          => 'Gari',
         'driver'           => 'Dereva',
-        'planned-start-at' => 'Imepangwa anza',
+        'planned-start-at' => 'Kuanza kulikopangwa',
     ],
 ];

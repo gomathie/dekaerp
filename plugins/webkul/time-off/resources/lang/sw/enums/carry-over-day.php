@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'last-day-of-month' => 'Mwisho siku ya mwezi',
+    'last-day-of-month' => 'Siku ya mwisho ya mwezi',
     'day'               => 'Siku :day',
 ];

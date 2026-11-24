@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'owned'       => 'Owned',
-    'leased'      => 'Leased',
-    'third_party' => 'Third Party',
+    'owned'       => 'Собственное',
+    'leased'      => 'Лизинг',
+    'third_party' => 'Сторонний перевозчик',
 ];

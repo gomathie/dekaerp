@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Allocation обновлено',
-        'body'  => 'allocation есть обновлено successfully.',
+        'title' => 'Распределение обновлено',
+        'body'  => 'Распределение успешно обновлено.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Allocation удалено',
-                'body'  => 'allocation есть удалено successfully.',
+                'title' => 'Распределение удалено',
+                'body'  => 'Распределение успешно удалено.',
             ],
         ],
     ],

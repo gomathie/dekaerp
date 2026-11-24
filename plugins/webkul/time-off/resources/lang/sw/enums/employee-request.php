@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'yes' => 'Extra Siku Request Inaruhusiwa',
-    'no'  => 'Si Inaruhusiwa',
+    'yes' => 'Ombi la siku za ziada linaruhusiwa',
+    'no'  => 'Hairuhusiwi',
 ];

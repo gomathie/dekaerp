@@ -3,12 +3,12 @@
 return [
     'header-actions' => [
         'create' => [
-            'title' => 'Mpya Mandatory Siku',
+            'title' => 'Siku mpya ya lazima',
 
             'notification' => [
                 'created' => [
-                    'title' => 'Mandatory siku imeundwa',
-                    'body'  => 'mandatory siku ina imeundwa successfully.',
+                    'title' => 'Siku ya lazima imeundwa',
+                    'body'  => 'Siku ya lazima imeundwa kwa mafanikio.',
                 ],
             ],
         ],

@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Likizo imeundwa',
-        'body'  => 'likizo ina imeundwa successfully.',
+        'title' => 'Mgao umeundwa',
+        'body'  => 'Mgao umeundwa kwa mafanikio.',
     ],
 ];

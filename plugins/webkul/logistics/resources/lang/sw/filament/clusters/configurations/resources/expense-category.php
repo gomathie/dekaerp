@@ -2,21 +2,21 @@
 
 return [
     'navigation' => [
-        'title' => 'Gharama Kategoria',
+        'title' => 'Kategoria za gharama',
     ],
 
     'form' => [
         'fields' => [
-            'requires-receipt'         => 'Stakabadhi inahitajika',
-            'is-subcontracting'        => 'Subcontractor au carrier gharama',
-            'is-subcontracting-helper' => 'Gharama katika hii kategoria ni imelipwa hadi msambazaji (carrier, agent) na billed kwa msambazaji.',
+            'requires-receipt'         => 'Risiti inahitajika',
+            'is-subcontracting'        => 'Gharama ya mkandarasi mdogo au msafirishaji',
+            'is-subcontracting-helper' => 'Gharama za kategoria hii hulipwa kwa msambazaji (msafirishaji, wakala) na bili hutolewa kwa kila msambazaji.',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'requires-receipt'  => 'Stakabadhi inahitajika',
-            'is-subcontracting' => 'Subcontracting',
+            'requires-receipt'  => 'Risiti inahitajika',
+            'is-subcontracting' => 'Ukandarasi mdogo',
         ],
     ],
 ];

@@ -2,39 +2,39 @@
 
 return [
     'notification' => [
-        'title' => 'Allocation обновлено',
-        'body'  => 'allocation есть обновлено successfully.',
+        'title' => 'Распределение обновлено',
+        'body'  => 'Распределение успешно обновлено.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Allocation удалено',
-                'body'  => 'allocation есть удалено successfully.',
+                'title' => 'Распределение удалено',
+                'body'  => 'Распределение успешно удалено.',
             ],
         ],
         'approved' => [
-            'title' => 'Утверждён',
+            'title' => 'Утвердить',
 
             'notification' => [
-                'title' => 'Allocation утверждён',
-                'body'  => 'allocation есть утверждён successfully.',
+                'title' => 'Распределение утверждено',
+                'body'  => 'Распределение успешно утверждено.',
             ],
         ],
         'refuse' => [
-            'title' => 'Отказать',
+            'title' => 'Отклонить',
 
             'notification' => [
-                'title' => 'Allocation отказано',
-                'body'  => 'allocation есть отказано successfully.',
+                'title' => 'Распределение отклонено',
+                'body'  => 'Распределение успешно отклонено.',
             ],
         ],
         'mark-as-ready-to-confirm' => [
-            'title' => 'Mark как Ready до Подтвердить',
+            'title' => 'Отметить как готовое к подтверждению',
 
             'notification' => [
-                'title' => 'Marked как ready до подтвердить',
-                'body'  => 'allocation есть marked как ready до подтвердить successfully.',
+                'title' => 'Отмечено как готовое к подтверждению',
+                'body'  => 'Распределение отмечено как готовое к подтверждению.',
             ],
         ],
     ],

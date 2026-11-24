@@ -2,7 +2,7 @@
 
 return [
     'header-actions' => [
-        'new-leave-type' => 'Новое Отпуск Тип',
+        'new-leave-type' => 'Новый тип отпуска',
     ],
 
     'tabs' => [

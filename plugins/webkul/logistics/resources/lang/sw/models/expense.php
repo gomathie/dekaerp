@@ -7,6 +7,6 @@ return [
         'state'    => 'Hali',
         'amount'   => 'Kiasi',
         'category' => 'Kategoria',
-        'payee'    => 'Payee',
+        'payee'    => 'Mlipwaji',
     ],
 ];

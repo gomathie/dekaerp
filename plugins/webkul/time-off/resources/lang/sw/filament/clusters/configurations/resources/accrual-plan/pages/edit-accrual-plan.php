@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Accrual Aina imesasishwa',
-        'body'  => 'accrual Aina ina imesasishwa successfully.',
+        'title' => 'Mpango wa ulimbikizaji umesasishwa',
+        'body'  => 'Mpango wa ulimbikizaji umesasishwa kwa mafanikio.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Accrual Aina imefutwa',
-                'body'  => 'accrual aina ina imefutwa successfully.',
+                'title' => 'Mpango wa ulimbikizaji umefutwa',
+                'body'  => 'Mpango wa ulimbikizaji umefutwa kwa mafanikio.',
             ],
         ],
     ],

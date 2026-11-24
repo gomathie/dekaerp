@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'immediately'    => 'Immediately',
-    'end-of-accrual' => 'Baada ya hii accrual kipindi',
+    'immediately'    => 'Mara moja',
+    'end-of-accrual' => 'Baada ya kipindi hiki cha ulimbikizaji',
 ];

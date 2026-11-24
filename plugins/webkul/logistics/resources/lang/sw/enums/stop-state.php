@@ -2,7 +2,7 @@
 
 return [
     'pending'  => 'Inasubiri',
-    'arrived'  => 'Arrived',
-    'departed' => 'Departed',
-    'skipped'  => 'Skipped',
+    'arrived'  => 'Imefika',
+    'departed' => 'Imeondoka',
+    'skipped'  => 'Imerukwa',
 ];

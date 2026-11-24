@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'Na Wafanyakazi',
+    'title' => 'Kwa wafanyakazi',
 
     'navigation' => [
-        'title' => 'Na Wafanyakazi',
+        'title' => 'Kwa wafanyakazi',
     ],
 ];

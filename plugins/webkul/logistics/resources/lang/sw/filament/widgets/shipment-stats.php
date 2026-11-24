@@ -1,15 +1,15 @@
 <?php
 
 return [
-    'heading' => 'Shehena',
+    'heading' => 'Usafirishaji',
 
     'stats' => [
-        'created-today'    => 'Imeundwa leo',
-        'awaiting-pickup'  => 'Awaiting pickup',
-        'in-transit'       => 'Katika transit',
-        'out-for-delivery' => 'Nje kwa usafirishaji',
-        'delivered-today'  => 'Delivered leo',
-        'overdue'          => 'Imechelewa',
-        'failed'           => 'Imeshindwa usafirishaji',
+        'created-today'    => 'Zilizoundwa leo',
+        'awaiting-pickup'  => 'Zinasubiri kuchukuliwa',
+        'in-transit'       => 'Ziko njiani',
+        'out-for-delivery' => 'Ziko kwenye uwasilishaji',
+        'delivered-today'  => 'Zilizowasilishwa leo',
+        'overdue'          => 'Zimechelewa',
+        'failed'           => 'Uwasilishaji ulioshindwa',
     ],
 ];

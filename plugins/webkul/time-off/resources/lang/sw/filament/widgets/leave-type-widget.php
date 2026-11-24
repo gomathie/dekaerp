@@ -2,7 +2,7 @@
 
 return [
     'heading' => [
-        'title' => 'Likizo Analysis',
+        'title' => 'Uchambuzi wa likizo',
     ],
 
     'label' => 'Muhtasari',
@@ -10,7 +10,7 @@ return [
     'types' => [
         'draft'     => 'Rasimu',
         'confirmed' => 'Imethibitishwa',
-        'validated' => 'Validated',
+        'validated' => 'Imeidhinishwa',
         'refused'   => 'Imekataliwa',
         'cancelled' => 'Imeghairiwa',
     ],

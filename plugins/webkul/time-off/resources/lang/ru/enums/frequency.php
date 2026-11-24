@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'hourly'    => 'Hourly',
+    'hourly'    => 'Ежечасно',
     'daily'     => 'Ежедневно',
     'weekly'    => 'Еженедельно',
-    'bimonthly' => 'Дважды месяц',
+    'bimonthly' => 'Дважды в месяц',
     'monthly'   => 'Ежемесячно',
-    'biyearly'  => 'Дважды год',
+    'biyearly'  => 'Дважды в год',
     'yearly'    => 'Ежегодно',
 ];

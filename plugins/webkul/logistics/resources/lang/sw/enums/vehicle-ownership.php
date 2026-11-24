@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'owned'       => 'Owned',
-    'leased'      => 'Leased',
-    'third_party' => 'Third Party',
+    'owned'       => 'Inamilikiwa',
+    'leased'      => 'Imekodishwa',
+    'third_party' => 'Mtu wa tatu',
 ];

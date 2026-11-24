@@ -1,22 +1,22 @@
 <?php
 
 return [
-    'title' => 'Dispatch board',
+    'title' => 'Ubao wa utumaji',
 
     'tabs' => [
-        'unassigned'      => 'Hajakabidhiwa',
-        'awaiting-pickup' => 'Awaiting pickup',
-        'active'          => 'Inatumika safari',
-        'due-today'       => 'Due leo',
-        'overdue'         => 'Imechelewa',
-        'failed'          => 'Imeshindwa',
+        'unassigned'      => 'Hazijapangiwa',
+        'awaiting-pickup' => 'Zinasubiri kuchukuliwa',
+        'active'          => 'Safari zinazoendelea',
+        'due-today'       => 'Za leo',
+        'overdue'         => 'Zimechelewa',
+        'failed'          => 'Zimeshindwa',
     ],
 
     'columns' => [
-        'number'               => 'Shehena',
+        'number'               => 'Usafirishaji',
         'state'                => 'Hali',
         'customer'             => 'Mteja',
-        'destination'          => 'Unakoenda',
-        'expected-delivery-at' => 'Inatarajiwa usafirishaji',
+        'destination'          => 'Mahali pa kufikia',
+        'expected-delivery-at' => 'Uwasilishaji unaotarajiwa',
     ],
 ];

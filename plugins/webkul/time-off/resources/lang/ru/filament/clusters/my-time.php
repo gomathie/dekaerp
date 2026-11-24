@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Мой Time',
+        'title' => 'Моё время',
     ],
 ];

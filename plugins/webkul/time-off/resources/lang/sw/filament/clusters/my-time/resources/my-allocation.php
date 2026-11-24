@@ -1,70 +1,70 @@
 <?php
 
 return [
-    'title' => 'Yangu Allocation',
+    'title' => 'Mgao wangu',
 
-    'model-label' => 'Yangu Allocation',
+    'model-label' => 'Mgao wangu',
 
     'navigation' => [
-        'title' => 'Yangu Allocation',
+        'title' => 'Mgao wangu',
     ],
 
     'form' => [
         'fields' => [
             'name'                => 'Jina',
-            'name-placeholder'    => 'Likizo Aina (Kutoka validity anza hadi validity mwisho/hakuna limit)',
-            'time-off-type'       => 'Likizo Aina',
-            'allocation-type'     => 'Allocation Aina',
-            'validity-period'     => 'Validity Kipindi',
-            'date-from'           => 'Tarehe Kutoka',
-            'date-to'             => 'Tarehe Hadi',
-            'date-to-placeholder' => 'Hakuna Limit',
-            'allocation'          => 'Allocation',
-            'allocation-suffix'   => 'Nambari ya Siku',
+            'name-placeholder'    => 'Aina ya likizo (kuanzia mwanzo hadi mwisho wa uhalali/bila kikomo)',
+            'time-off-type'       => 'Aina ya likizo',
+            'allocation-type'     => 'Aina ya mgao',
+            'validity-period'     => 'Kipindi cha uhalali',
+            'date-from'           => 'Tarehe kuanzia',
+            'date-to'             => 'Tarehe hadi',
+            'date-to-placeholder' => 'Bila kikomo',
+            'allocation'          => 'Mgao',
+            'allocation-suffix'   => 'Idadi ya siku',
             'reason'              => 'Sababu',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'time-off-type'   => 'Likizo Aina',
+            'time-off-type'   => 'Aina ya likizo',
             'amount'          => 'Kiasi',
-            'allocation-type' => 'Allocation Aina',
+            'allocation-type' => 'Aina ya mgao',
             'status'          => 'Hali',
         ],
 
         'groups' => [
-            'time-off-type'   => 'Likizo Aina',
-            'employee-name'   => 'Mfanyakazi Jina',
-            'allocation-type' => 'Allocation Aina',
+            'time-off-type'   => 'Aina ya likizo',
+            'employee-name'   => 'Jina la mfanyakazi',
+            'allocation-type' => 'Aina ya mgao',
             'status'          => 'Hali',
-            'start-date'      => 'Anza Tarehe',
+            'start-date'      => 'Tarehe ya kuanza',
         ],
 
         'actions' => [
             'approve' => [
                 'title' => [
-                    'validate' => 'Validate',
+                    'validate' => 'Thibitisha',
                     'approve'  => 'Idhinisha',
                 ],
                 'notification' => [
-                    'title' => 'Allocation imeidhinishwa imeidhinishwa',
-                    'body'  => 'allocation imeidhinishwa ina imeidhinishwa successfully.',
+                    'title' => 'Mgao umeidhinishwa',
+                    'body'  => 'Mgao umeidhinishwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Allocation imefutwa',
-                    'body'  => 'allocation ina imefutwa successfully.',
+                    'title' => 'Mgao umefutwa',
+                    'body'  => 'Mgao umefutwa kwa mafanikio.',
                 ],
             ],
 
             'refused' => [
                 'title'        => 'Kataa',
                 'notification' => [
-                    'title' => 'Allocation imekataliwa',
-                    'body'  => 'allocation ina imekataliwa successfully.',
+                    'title' => 'Mgao umekataliwa',
+                    'body'  => 'Mgao umekataliwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -72,8 +72,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Allocations imefutwa',
-                    'body'  => 'allocations ina imefutwa successfully.',
+                    'title' => 'Migao imefutwa',
+                    'body'  => 'Migao imefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -82,28 +82,28 @@ return [
     'infolist' => [
         'sections' => [
             'allocation-details' => [
-                'title'   => 'Allocation Maelezo',
+                'title'   => 'Maelezo ya mgao',
                 'entries' => [
                     'name'                => 'Jina',
-                    'time-off-type'       => 'Likizo Aina',
-                    'allocation-type'     => 'Allocation Aina',
+                    'time-off-type'       => 'Aina ya likizo',
+                    'allocation-type'     => 'Aina ya mgao',
                 ],
             ],
 
             'validity-period' => [
-                'title'   => 'Validity Kipindi',
+                'title'   => 'Kipindi cha uhalali',
                 'entries' => [
-                    'date-from' => 'Tarehe Kutoka',
-                    'date-to'   => 'Tarehe Hadi',
+                    'date-from' => 'Tarehe kuanzia',
+                    'date-to'   => 'Tarehe hadi',
                     'reason'    => 'Sababu',
                 ],
             ],
             'allocation-status' => [
-                'title'   => 'Allocation Hali',
+                'title'   => 'Hali ya mgao',
                 'entries' => [
-                    'date-to-placeholder' => 'Hakuna Limit',
-                    'allocation'          => 'Nambari ya Siku(s)',
-                    'allocation-value'    => ':days nambari ya siku',
+                    'date-to-placeholder' => 'Bila kikomo',
+                    'allocation'          => 'Idadi ya siku',
+                    'allocation-value'    => 'Siku :days',
                     'state'               => 'Hali',
                 ],
             ],

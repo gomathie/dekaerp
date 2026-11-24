@@ -1,20 +1,20 @@
 <?php
 
 return [
-    'title' => 'Hadharani Holidays',
+    'title' => 'Sikukuu za umma',
 
-    'model-label' => 'Hadharani holiday',
+    'model-label' => 'Sikukuu ya umma',
 
     'navigation' => [
-        'title' => 'Hadharani Holidays',
+        'title' => 'Sikukuu za umma',
     ],
 
     'form' => [
         'fields' => [
             'name'             => 'Jina',
-            'name-placeholder' => 'Ingiza jina ya hadharani holiday',
-            'date-from'        => 'Anza Tarehe',
-            'date-to'          => 'Mwisho Tarehe',
+            'name-placeholder' => 'Weka jina la sikukuu ya umma',
+            'date-from'        => 'Tarehe ya kuanza',
+            'date-to'          => 'Tarehe ya kumalizika',
             'color'            => 'Rangi',
             'calendar'         => 'Kalenda',
         ],
@@ -23,43 +23,43 @@ return [
     'table' => [
         'columns' => [
             'name'         => 'Jina',
-            'company-name' => 'Kampuni Jina',
+            'company-name' => 'Kampuni',
             'calendar'     => 'Kalenda',
-            'created-by'   => 'Imeundwa Na',
-            'date-from'    => 'Anza Tarehe',
-            'date-to'      => 'Mwisho Tarehe',
+            'created-by'   => 'Imeundwa na',
+            'date-from'    => 'Tarehe ya kuanza',
+            'date-to'      => 'Tarehe ya kumalizika',
         ],
 
         'filters' => [
             'name'         => 'Jina',
-            'company-name' => 'Kampuni Jina',
-            'created-by'   => 'Imeundwa Na',
-            'date-from'    => 'Anza Tarehe',
-            'date-to'      => 'Mwisho Tarehe',
-            'created-at'   => 'Imeundwa',
-            'updated-at'   => 'Imesasishwa',
+            'company-name' => 'Kampuni',
+            'created-by'   => 'Imeundwa na',
+            'date-from'    => 'Tarehe ya kuanza',
+            'date-to'      => 'Tarehe ya kumalizika',
+            'created-at'   => 'Iliundwa',
+            'updated-at'   => 'Ilisasishwa',
         ],
 
         'groups' => [
             'name'         => 'Jina',
-            'company-name' => 'Kampuni Jina',
-            'created-by'   => 'Imeundwa Na',
-            'date-from'    => 'Anza Tarehe',
-            'date-to'      => 'Mwisho Tarehe',
+            'company-name' => 'Kampuni',
+            'created-by'   => 'Imeundwa na',
+            'date-from'    => 'Tarehe ya kuanza',
+            'date-to'      => 'Tarehe ya kumalizika',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Hadharani holiday imesasishwa',
-                    'body'  => 'hadharani holiday ina restored successfully.',
+                    'title' => 'Sikukuu ya umma imesasishwa',
+                    'body'  => 'Sikukuu ya umma imesasishwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Hadharani holiday imefutwa',
-                    'body'  => 'hadharani holiday ina imefutwa successfully.',
+                    'title' => 'Sikukuu ya umma imefutwa',
+                    'body'  => 'Sikukuu ya umma imefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -67,8 +67,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Hadharani holidays imefutwa',
-                    'body'  => 'hadharani holidays ina imefutwa successfully.',
+                    'title' => 'Sikukuu za umma zimefutwa',
+                    'body'  => 'Sikukuu za umma zimefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -77,8 +77,8 @@ return [
     'infolist' => [
         'entries' => [
             'name'      => 'Jina',
-            'date-from' => 'Anza Tarehe',
-            'date-to'   => 'Mwisho Tarehe',
+            'date-from' => 'Tarehe ya kuanza',
+            'date-to'   => 'Tarehe ya kumalizika',
             'color'     => 'Rangi',
         ],
     ],

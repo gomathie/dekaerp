@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Allocation imesasishwa',
-        'body'  => 'allocation ina imesasishwa successfully.',
+        'title' => 'Mgao umesasishwa',
+        'body'  => 'Mgao umesasishwa kwa mafanikio.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Allocation imefutwa',
-                'body'  => 'allocation ina imefutwa successfully.',
+                'title' => 'Mgao umefutwa',
+                'body'  => 'Mgao umefutwa kwa mafanikio.',
             ],
         ],
     ],

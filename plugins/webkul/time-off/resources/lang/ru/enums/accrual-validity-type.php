@@ -2,5 +2,5 @@
 
 return [
     'days'   => 'Дни',
-    'months' => 'Months',
+    'months' => 'Месяцы',
 ];

@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Yangu Time',
+        'title' => 'Muda wangu',
     ],
 ];

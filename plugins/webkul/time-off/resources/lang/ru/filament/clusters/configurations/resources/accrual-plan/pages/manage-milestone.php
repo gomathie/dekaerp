@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'label' => 'Manage Веха',
+        'label' => 'Управление этапами',
     ],
 ];

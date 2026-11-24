@@ -3,5 +3,5 @@
 return [
     'user'       => 'Пользователь',
     'system'     => 'Система',
-    'telematics' => 'Telematics',
+    'telematics' => 'Телематика',
 ];

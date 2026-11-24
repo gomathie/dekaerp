@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'confirm'      => 'Hadi Idhinisha',
+    'confirm'      => 'Inasubiri idhini',
     'refuse'       => 'Imekataliwa',
-    'validate_one' => 'Second Approval',
+    'validate_one' => 'Idhini ya pili',
     'validate_two' => 'Imeidhinishwa',
 ];

@@ -5,8 +5,8 @@ return [
 
     'log-attributes' => [
         'state'            => 'Статус',
-        'vehicle'          => 'Транспорт',
+        'vehicle'          => 'Транспортное средство',
         'driver'           => 'Водитель',
-        'planned-start-at' => 'Запланировано начать',
+        'planned-start-at' => 'Плановое начало',
     ],
 ];

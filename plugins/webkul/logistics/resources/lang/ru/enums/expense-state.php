@@ -2,8 +2,8 @@
 
 return [
     'draft'     => 'Черновик',
-    'submitted' => 'Submitted',
+    'submitted' => 'Подан',
     'approved'  => 'Утверждён',
     'rejected'  => 'Отклонён',
-    'billed'    => 'Billed',
+    'billed'    => 'Счёт выставлен',
 ];

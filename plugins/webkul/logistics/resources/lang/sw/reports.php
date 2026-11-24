@@ -1,11 +1,11 @@
 <?php
 
 $dateFilters = [
-    'from'    => 'Kutoka',
-    'until'   => 'Mpaka',
-    'between' => 'Kutoka :from hadi :until',
-    'since'   => 'Kutoka :from',
-    'up-to'   => 'Juu hadi :until',
+    'from'    => 'Kuanzia',
+    'until'   => 'Hadi',
+    'between' => 'Kuanzia :from hadi :until',
+    'since'   => 'Kuanzia :from',
+    'up-to'   => 'Hadi :until',
 ];
 
 /*
@@ -20,10 +20,10 @@ $tripColumns = [
     'vehicle'   => 'Gari',
     'driver'    => 'Dereva',
     'state'     => 'Hali',
-    'started'   => 'Started',
-    'ended'     => 'Ended',
-    'shipments' => 'Shehena',
-    'distance'  => 'Distance',
+    'started'   => 'Ilianza',
+    'ended'     => 'Iliisha',
+    'shipments' => 'Usafirishaji',
+    'distance'  => 'Umbali',
 ];
 
 $tripFilters = $dateFilters + [
@@ -34,20 +34,20 @@ $tripFilters = $dateFilters + [
 
 return [
     'export'          => 'Hamisha',
-    'export-complete' => 'Exported :count mistari.',
+    'export-complete' => 'Safu :count zimehamishwa.',
 
     'shipment-register' => [
-        'title'  => 'Shehena jisajili',
+        'title'  => 'Rejista ya usafirishaji',
         'export' => 'Hamisha',
 
         'columns' => [
-            'reference'   => 'Shehena',
+            'reference'   => 'Usafirishaji',
             'customer'    => 'Mteja',
             'state'       => 'Hali',
             'origin'      => 'Kutoka',
-            'destination' => 'Hadi',
+            'destination' => 'Kwenda',
             'expected'    => 'Inatarajiwa',
-            'delivered'   => 'Delivered',
+            'delivered'   => 'Imewasilishwa',
             'company'     => 'Kampuni',
         ],
 
@@ -58,64 +58,64 @@ return [
     ],
 
     'delivery-performance' => [
-        'title'      => 'Usafirishaji performance',
-        'subheading' => 'Measured dhidi ya inatarajiwa usafirishaji tarehe. Shehena na hakuna inatarajiwa tarehe ni si scored.',
+        'title'      => 'Utendaji wa uwasilishaji',
+        'subheading' => 'Hupimwa dhidi ya tarehe ya uwasilishaji inayotarajiwa. Usafirishaji usio na tarehe inayotarajiwa haupimwi.',
         'export'     => 'Hamisha',
 
         'columns' => [
-            'reference' => 'Shehena',
+            'reference' => 'Usafirishaji',
             'customer'  => 'Mteja',
             'expected'  => 'Inatarajiwa',
-            'delivered' => 'Delivered',
-            'outcome'   => 'Outcome',
-            'delay'     => 'Late na',
+            'delivered' => 'Imewasilishwa',
+            'outcome'   => 'Matokeo',
+            'delay'     => 'Imechelewa kwa',
         ],
 
         'outcomes' => [
-            'on-time'      => 'Washa time',
-            'late'         => 'Late',
+            'on-time'      => 'Kwa wakati',
+            'late'         => 'Imechelewa',
             'failed'       => 'Imeshindwa',
-            'overdue'      => 'Imechelewa',
-            'pending'      => 'Katika maendeleo',
-            'not-measured' => 'Hakuna tarehe promised',
+            'overdue'      => 'Imepita muda',
+            'pending'      => 'Inaendelea',
+            'not-measured' => 'Hakuna tarehe iliyoahidiwa',
         ],
 
         'filters' => $dateFilters + [
             'customer'    => 'Mteja',
-            'late-only'   => 'Late tu',
-            'failed-only' => 'Imeshindwa tu',
+            'late-only'   => 'Zilizochelewa pekee',
+            'failed-only' => 'Zilizoshindwa pekee',
         ],
     ],
 
     'profitability' => [
-        'title'      => 'Shehena profitability',
-        'subheading' => 'Billable charges dhidi ya imeidhinishwa gharama, kila katika shehena’s yake sarafu. Rasimu gharama ni si counted.',
+        'title'      => 'Faida ya usafirishaji',
+        'subheading' => 'Tozo za mteja dhidi ya gharama zilizoidhinishwa, kila moja katika sarafu ya usafirishaji husika. Gharama za rasimu hazihesabiwi.',
         'export'     => 'Hamisha',
 
         'columns' => [
-            'reference' => 'Shehena',
+            'reference' => 'Usafirishaji',
             'customer'  => 'Mteja',
             'revenue'   => 'Mapato',
             'costs'     => 'Gharama',
-            'margin'    => 'Pembe',
+            'margin'    => 'Faida',
             'currency'  => 'Sarafu',
         ],
 
         'filters' => $dateFilters + [
             'customer'     => 'Mteja',
-            'loss-making'  => 'Hasara-making tu',
+            'loss-making'  => 'Zenye hasara pekee',
         ],
     ],
 
     'vehicle-trips' => [
-        'title'   => 'Gari safari historia',
+        'title'   => 'Historia ya safari za magari',
         'export'  => 'Hamisha',
         'columns' => $tripColumns,
         'filters' => $tripFilters,
     ],
 
     'driver-trips' => [
-        'title'   => 'Dereva safari historia',
+        'title'   => 'Historia ya safari za madereva',
         'export'  => 'Hamisha',
         'columns' => $tripColumns,
         'filters' => $tripFilters,

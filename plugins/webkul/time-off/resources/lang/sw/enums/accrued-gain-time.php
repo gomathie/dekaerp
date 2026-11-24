@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'start' => 'Saa anza ya accrual kipindi',
-    'end'   => 'Saa mwisho ya accrual kipindi',
+    'start' => 'Mwanzoni mwa kipindi cha ulimbikizaji',
+    'end'   => 'Mwishoni mwa kipindi cha ulimbikizaji',
 ];

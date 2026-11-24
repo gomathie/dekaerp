@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Accrual Тип обновлено',
-        'body'  => 'accrual Тип есть обновлено successfully.',
+        'title' => 'План начисления обновлён',
+        'body'  => 'План начисления успешно обновлён.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Accrual Тип удалено',
-                'body'  => 'accrual тип есть удалено successfully.',
+                'title' => 'План начисления удалён',
+                'body'  => 'План начисления успешно удалён.',
             ],
         ],
     ],

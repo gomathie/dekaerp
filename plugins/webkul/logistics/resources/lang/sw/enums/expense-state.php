@@ -2,8 +2,8 @@
 
 return [
     'draft'     => 'Rasimu',
-    'submitted' => 'Submitted',
+    'submitted' => 'Imewasilishwa',
     'approved'  => 'Imeidhinishwa',
     'rejected'  => 'Imekataliwa',
-    'billed'    => 'Billed',
+    'billed'    => 'Imetozwa bili',
 ];
