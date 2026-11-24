@@ -17,4 +17,14 @@ return [
         'new' => 'Новое',
         'vs'  => 'vs :range',
     ],
+
+    'grouping' => [
+        'auto'  => 'Автоматически',
+        'day'   => 'По дням',
+        'week'  => 'По неделям',
+        'month' => 'По месяцам',
+        'year'  => 'По годам',
+    ],
+
+    'company-equivalent' => '≈ :amount · 1 :from = :rate :to',
 ];

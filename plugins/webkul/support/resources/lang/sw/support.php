@@ -17,4 +17,14 @@ return [
         'new' => 'Mpya',
         'vs'  => 'vs :range',
     ],
+
+    'grouping' => [
+        'auto'  => 'Kiotomatiki',
+        'day'   => 'Kwa siku',
+        'week'  => 'Kwa wiki',
+        'month' => 'Kwa mwezi',
+        'year'  => 'Kwa mwaka',
+    ],
+
+    'company-equivalent' => '≈ :amount · 1 :from = :rate :to',
 ];

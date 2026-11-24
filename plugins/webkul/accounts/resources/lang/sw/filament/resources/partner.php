@@ -15,9 +15,11 @@ return [
                         'title' => 'Mauzo',
 
                         'fields' => [
-                            'sales-person'   => 'Mauzo Person',
-                            'payment-terms'  => 'Masharti ya malipo',
-                            'payment-method' => 'Malipo Method',
+                            'sales-person'            => 'Mauzo Person',
+                            'payment-terms'           => 'Masharti ya malipo',
+                            'payment-method'          => 'Malipo Method',
+                            'default-currency'        => 'Sarafu chaguomsingi',
+                            'default-currency-helper' => 'Ankara, bili na oda za ununuzi za mhusika huyu hufunguka kwa sarafu hii. Acha wazi kutumia sarafu yako ya kawaida.',
                         ],
                     ],
 

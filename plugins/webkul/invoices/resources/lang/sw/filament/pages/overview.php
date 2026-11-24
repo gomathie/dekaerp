@@ -61,7 +61,6 @@ return [
 
     'cash' => [
         'heading'     => 'Pesa zinazoingia na nje',
-        'description' => 'Imelipwa ankara na imelipwa bili, na siku, wiki au mwezi',
         'in'          => 'Pesa zinazoingia',
         'out'         => 'Pesa zinazotoka',
     ],
@@ -104,11 +103,5 @@ return [
         'due-today'   => 'Due leo',
         'due-on'      => 'Due :date',
         'days-late'   => '{1} 1 siku late|[2,*] :count siku late',
-    ],
-
-    'cash-compare' => [
-        'previous'    => 'Iliyotangulia kipindi',
-        'this-period' => 'Hii kipindi',
-        'vs-previous' => 'Vs iliyotangulia kipindi',
     ],
 ];

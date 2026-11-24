@@ -7,6 +7,7 @@ return [
     'status'              => 'Hali',
     'delivery-status'     => 'Usafirishaji Hali',
     'billing'             => 'Billing',
+    'sales-value'         => 'Oda zilizothibitishwa na ankara zilizotolewa bila oda',
     'stats'               => [
         'heading'            => 'Key Metrics',
         'total-quotations'   => 'Jumla Nukuu',
@@ -15,6 +16,16 @@ return [
         'average-revenue'    => 'Average Mapato',
         'increase'           => 'increase',
         'decrease'           => 'decrease',
+    ],
+
+    'order-activity'      => [
+        'heading'     => 'Hali ya oda',
+        'description' => 'Oda zilizothibitishwa katika kipindi, kwa hatua zilipo sasa',
+        'to-deliver'  => 'Za kuwasilisha',
+        'delivered'   => 'Zimewasilishwa',
+        'to-invoice'  => 'Za kutozwa ankara',
+        'invoiced'    => 'Zimetozwa ankara',
+        'share'       => ':percent% ya oda :total',
     ],
 
     'monthly-sales'       => [

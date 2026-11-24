@@ -12,4 +12,11 @@ return [
             'reason'   => 'Sababu',
         ],
     ],
+
+    'sale-currency' => [
+        'title'       => 'Swali la sarafu kwenye ankara mpya',
+        'description' => 'Kwa kampuni zinazouza kwa sarafu zaidi ya moja.',
+        'field'       => 'Uliza kila mauzo yamefanyika kwa sarafu gani',
+        'helper'      => 'Ankara mpya kwanza inauliza sarafu na, kwa sarafu ya kigeni, inathibitisha kiwango cha ubadilishaji cha siku. Huulizwa tu kampuni ikiwa na sarafu zaidi ya moja.',
+    ],
 ];

@@ -45,6 +45,12 @@ return [
             'company'         => 'Kampuni',
             'currency'        => 'Sarafu',
             'created-by'      => 'Imeundwa Na',
+            'invoices'        => 'Ankara',
+            'unused'          => 'Kiasi kisichotumika',
+        ],
+
+        'summaries' => [
+            'total' => 'Jumla',
         ],
 
         'groups' => [
@@ -69,6 +75,10 @@ return [
             'payment-method-line'              => 'Malipo Method Mstari',
             'created-at'                       => 'Imeundwa',
             'updated-at'                       => 'Imesasishwa',
+            'year'                             => 'Mwaka',
+            'month'                            => 'Mwezi',
+            'any-year'                         => 'Mwaka wowote',
+            'whole-year'                       => 'Mwaka mzima',
         ],
 
         'actions' => [

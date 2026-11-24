@@ -58,6 +58,7 @@ return [
         'description' => 'Sarafu hii kampuni mei tumia washa ankara, bili, nukuu na agizo la ununuzis, besides yake chaguo-msingi sarafu. Likizo tupu hadi ruhusu kila inatumika sarafu.',
         'fields'      => [
             'permitted' => 'Additional sarafu',
+            'available' => 'Zinazopatikana kwenye nyaraka sasa: :list',
         ],
     ],
 

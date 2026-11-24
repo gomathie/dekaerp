@@ -10,11 +10,12 @@ return [
     'decrease'          => ':percent% decrease',
     'no-change'         => 'Нет изменить',
     'invoice-stats'     => [
-        'heading' => 'Счета',
-        'total'   => 'Итого Invoiced',
-        'count'   => 'Счёт Количество',
-        'paid'    => 'Оплачен Счета',
-        'unpaid'  => 'Не оплачен Счета',
+        'heading'    => 'Счета',
+        'total'      => 'Итого Invoiced',
+        'count'      => 'Счёт Количество',
+        'paid'       => 'Оплачен Счета',
+        'unpaid'     => 'Не оплачен Счета',
+        'this-month' => 'Этот месяц',
     ],
 
     'bill-stats'        => [

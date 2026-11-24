@@ -10,11 +10,12 @@ return [
     'decrease'          => ':percent% decrease',
     'no-change'         => 'Hakuna badilisha',
     'invoice-stats'     => [
-        'heading' => 'Ankara',
-        'total'   => 'Jumla Invoiced',
-        'count'   => 'Ankara Idadi',
-        'paid'    => 'Imelipwa Ankara',
-        'unpaid'  => 'Haijalipwa Ankara',
+        'heading'    => 'Ankara',
+        'total'      => 'Jumla Invoiced',
+        'count'      => 'Ankara Idadi',
+        'paid'       => 'Imelipwa Ankara',
+        'unpaid'     => 'Haijalipwa Ankara',
+        'this-month' => 'Mwezi huu',
     ],
 
     'bill-stats'        => [

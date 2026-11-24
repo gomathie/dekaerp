@@ -7,6 +7,7 @@ return [
     'status'              => 'Статус',
     'delivery-status'     => 'Доставка Статус',
     'billing'             => 'Billing',
+    'sales-value'         => 'Подтверждённые заказы и счета, выставленные без заказа',
     'stats'               => [
         'heading'            => 'Key Metrics',
         'total-quotations'   => 'Итого Коммерческие предложения',
@@ -15,6 +16,16 @@ return [
         'average-revenue'    => 'Average Выручка',
         'increase'           => 'increase',
         'decrease'           => 'decrease',
+    ],
+
+    'order-activity'      => [
+        'heading'     => 'Движение заказов',
+        'description' => 'Заказы, подтверждённые за период, по текущему этапу',
+        'to-deliver'  => 'К отгрузке',
+        'delivered'   => 'Отгружено',
+        'to-invoice'  => 'К выставлению счёта',
+        'invoiced'    => 'Счёт выставлен',
+        'share'       => ':percent% из :total заказов',
     ],
 
     'monthly-sales'       => [

@@ -15,9 +15,11 @@ return [
                         'title' => 'Продажи',
 
                         'fields' => [
-                            'sales-person'   => 'Продажи Person',
-                            'payment-terms'  => 'Условия оплаты',
-                            'payment-method' => 'Оплата Method',
+                            'sales-person'            => 'Продажи Person',
+                            'payment-terms'           => 'Условия оплаты',
+                            'payment-method'          => 'Оплата Method',
+                            'default-currency'        => 'Валюта по умолчанию',
+                            'default-currency-helper' => 'Счета, счета поставщиков и заказы на закупку для этого контрагента открываются в этой валюте. Оставьте пустым, чтобы использовать обычную валюту.',
                         ],
                     ],
 

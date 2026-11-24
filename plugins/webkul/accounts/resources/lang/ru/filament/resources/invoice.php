@@ -129,6 +129,7 @@ return [
             'tax-excluded'     => 'Налог Исключено',
             'tax'              => 'Налог',
             'total'            => 'Итого',
+            'amount-paid'      => 'Оплачено',
             'amount-due'       => 'Сумма Due',
             'invoice-currency' => 'Счёт Валюта',
         ],

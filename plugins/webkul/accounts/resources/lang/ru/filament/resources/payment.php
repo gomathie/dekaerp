@@ -45,6 +45,12 @@ return [
             'company'         => 'Компания',
             'currency'        => 'Валюта',
             'created-by'      => 'Создано От',
+            'invoices'        => 'Счёт',
+            'unused'          => 'Неиспользованная сумма',
+        ],
+
+        'summaries' => [
+            'total' => 'Итого',
         ],
 
         'groups' => [
@@ -69,6 +75,10 @@ return [
             'payment-method-line'              => 'Оплата Method Строка',
             'created-at'                       => 'Создано',
             'updated-at'                       => 'Обновлено',
+            'year'                             => 'Год',
+            'month'                            => 'Месяц',
+            'any-year'                         => 'Любой год',
+            'whole-year'                       => 'Весь год',
         ],
 
         'actions' => [

@@ -129,6 +129,7 @@ return [
             'tax-excluded'     => 'Kodi Haijajumuishwa',
             'tax'              => 'Kodi',
             'total'            => 'Jumla',
+            'amount-paid'      => 'Kilicholipwa',
             'amount-due'       => 'Kiasi Due',
             'invoice-currency' => 'Ankara Sarafu',
         ],
