@@ -11,6 +11,7 @@ use Webkul\Sale\Enums\OrderDeliveryStatus;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\OrderResource;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource\Pages\ListQuotations as BaseListOrders;
 use Webkul\Sale\Filament\Widgets\OrderActivityWidget;
+use Webkul\Sale\Filament\Widgets\SaleStatsOverview;
 use Webkul\TableViews\Filament\Components\PresetView;
 use Webkul\TableViews\Filament\Concerns\HasTableViews;
 
@@ -37,6 +38,22 @@ class ListOrders extends BaseListOrders
                 ->visible(fn (): bool => CustomerInvoiceResource::canAccess() && CustomerInvoiceResource::canCreate())
                 ->url(fn (): string => CustomerInvoiceResource::getUrl('create', ['direct_sale' => 1])),
             ...parent::getHeaderActions(),
+        ];
+    }
+
+    /**
+     * This month's sales figures above the orders list (plan #10 R-9), like
+     * the invoice list. It is the Sales dashboard's own widget and queries,
+     * so the list and the dashboard cannot disagree, and its guard (widget
+     * permission, Sales module) decides who sees it.
+     */
+    public function getHeaderWidgets(): array
+    {
+        return [
+            SaleStatsOverview::make([
+                'pageFilters'   => ['startDate' => now()->startOfMonth()->toDateString(), 'endDate' => now()->toDateString()],
+                'periodHeading' => __('sales::filament/widgets/sales-dashboard.stats.this-month'),
+            ]),
         ];
     }
 

@@ -18,6 +18,12 @@ return [
         'this-month' => 'هذا الشهر',
     ],
 
+    'payment-stats'     => [
+        'heading'  => 'المدفوعات المستلمة',
+        'received' => 'المستلم',
+        'count'    => 'المدفوعات',
+    ],
+
     'bill-stats'        => [
         'heading'    => 'فواتير الموردين',
         'total'      => 'إجمالي الفواتير',

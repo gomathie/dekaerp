@@ -16,6 +16,7 @@ return [
         'average-revenue'    => 'متوسط الإيرادات',
         'increase'           => 'زيادة',
         'decrease'           => 'انخفاض',
+        'this-month'         => 'هذا الشهر',
     ],
 
     'order-activity'      => [

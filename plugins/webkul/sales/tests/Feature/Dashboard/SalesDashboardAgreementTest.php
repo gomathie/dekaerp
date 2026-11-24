@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Support\Carbon;
 use Webkul\PluginManager\Support\PluginAccess;
+use Webkul\Sale\Filament\Clusters\Orders\Resources\OrderResource\Pages\ListOrders;
 use Webkul\Sale\Filament\Widgets\MonthlySalesChart;
 use Webkul\Sale\Filament\Widgets\RevenueByCategoryChart;
 use Webkul\Sale\Filament\Widgets\SaleHeadlineWidget;
@@ -102,4 +104,44 @@ it('tells the same story in the sales figures, charts and tables', function (): 
         ->and((new RevenueByCategoryChart)->getDescription())->toBe($caption)
         ->and((fn () => $this->getTableDescription())->call(new TopCustomersTable))->toBe($caption)
         ->and((fn () => $this->getTableDescription())->call(new TopProductsTable))->toBe($caption);
+});
+
+/**
+ * Plan #10 R-9 (2026-11-24): the cards above the sales orders list are the
+ * Sales dashboard's own key figures for this month, so on the last day of
+ * March they show exactly the March figures: no cancelled order, February
+ * order, draft invoice or other client.
+ */
+it('shows this month above the sales orders list, the same figures as the dashboard', function (): void {
+    $this->travelTo(Carbon::parse('2026-03-31 12:00'));
+
+    $own = Company::factory()->create();
+    $other = CompanyHelper::asNobody(fn () => Company::factory()->create());
+
+    DashboardFixtureHelper::sales($own, $other);
+
+    $user = CompanyHelper::actingAsCompanyUser($own, []);
+    $user->forceFill(['resource_permission' => 'global'])->saveQuietly();
+
+    $widgets = (new ListOrders)->getHeaderWidgets();
+
+    expect($widgets)->toHaveCount(1)
+        ->and($widgets[0]->widget)->toBe(SaleStatsOverview::class)
+        ->and($widgets[0]->getProperties()['pageFilters'])->toBe(['startDate' => '2026-03-01', 'endDate' => '2026-03-31']);
+
+    $cards = new SaleStatsOverview;
+
+    foreach ($widgets[0]->getProperties() as $property => $value) {
+        $cards->{$property} = $value;
+    }
+
+    $figures = (fn (): array => [
+        'revenue'    => $this->invoicedRevenue(),
+        'sales'      => $this->salesCount(),
+        'quotations' => $this->quotations()->count(),
+    ])->call($cards);
+
+    expect($figures)->toBe(['revenue' => 1200.0, 'sales' => 3, 'quotations' => 1])
+        ->and($cards->getHeading())->toBe(__('sales::filament/widgets/sales-dashboard.stats.this-month'))
+        ->and((new SaleStatsOverview)->getHeading())->toBe(__('sales::filament/widgets/sales-dashboard.stats.heading'));
 });

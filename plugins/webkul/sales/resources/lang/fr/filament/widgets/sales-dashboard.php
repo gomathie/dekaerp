@@ -16,6 +16,7 @@ return [
         'average-revenue'    => 'Revenu Moyen',
         'increase'           => 'augmentation',
         'decrease'           => 'diminution',
+        'this-month'         => 'Ce mois-ci',
     ],
 
     'order-activity'      => [
