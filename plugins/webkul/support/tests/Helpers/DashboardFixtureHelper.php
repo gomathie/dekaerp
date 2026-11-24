@@ -81,6 +81,45 @@ class DashboardFixtureHelper
     }
 
     /**
+     * Vendor bills in March 2026 for $own, the mirror of invoices():
+     *
+     *   BILL-A  1,000  paid      Vendor V  2 Mar
+     *   BILL-B    600  partial   Vendor W  3 Mar
+     *   BILL-C    400  not_paid  Vendor V  4 Mar
+     *   RBILL     200  vendor refund from Vendor V, 5 Mar
+     *
+     * and traps that must never count: a draft of 999 in March, a paid bill
+     * of 5,000 in February, and $other's paid bill of 9,000 in March.
+     *
+     * Known totals for March: billed net 1,800; 3 bills; 1 paid, 2 unpaid
+     * (partial counts as unpaid).
+     *
+     * @return array{vendorV: Partner, vendorW: Partner, bills: array<string, Move>}
+     */
+    public static function bills(Company $own, Company $other): array
+    {
+        return CompanyHelper::asNobody(function () use ($own, $other): array {
+            $vendorV = Partner::factory()->create(['company_id' => $own->getKey(), 'name' => 'Vendor V']);
+            $vendorW = Partner::factory()->create(['company_id' => $own->getKey(), 'name' => 'Vendor W']);
+            $outsider = Partner::factory()->create(['company_id' => $other->getKey(), 'name' => 'Other client vendor']);
+
+            $buyer = User::factory()->create(['name' => 'Buyer']);
+
+            $bills = [
+                'A'        => static::move($own, $vendorV, $buyer, 1000, '2026-03-02', 'paid', MoveType::IN_INVOICE),
+                'B'        => static::move($own, $vendorW, $buyer, 600, '2026-03-03', 'partial', MoveType::IN_INVOICE),
+                'C'        => static::move($own, $vendorV, $buyer, 400, '2026-03-04', 'not_paid', MoveType::IN_INVOICE),
+                'refund'   => static::move($own, $vendorV, $buyer, 200, '2026-03-05', 'paid', MoveType::IN_REFUND),
+                'draft'    => static::move($own, $vendorW, $buyer, 999, '2026-03-06', 'not_paid', MoveType::IN_INVOICE, MoveState::DRAFT),
+                'february' => static::move($own, $vendorW, $buyer, 5000, '2026-02-15', 'paid', MoveType::IN_INVOICE),
+                'other'    => static::move($other, $outsider, $buyer, 9000, '2026-03-02', 'paid', MoveType::IN_INVOICE),
+            ];
+
+            return compact('vendorV', 'vendorW', 'bills');
+        });
+    }
+
+    /**
      * Sales in March 2026 for $own (needs the sales plugin):
      *
      *   SO-1   confirmed 1,000  Customer X  salesperson A  2 Mar  Goods 10
@@ -273,8 +312,9 @@ class DashboardFixtureHelper
     ): Move {
         $move = Move::factory()->create(['company_id' => $company->getKey()]);
 
-        // A credit note's signed amount is negative, as the real ones are.
-        $signed = $type === MoveType::OUT_REFUND ? -$amount : $amount;
+        // A credit note's and a bill's signed amount is negative, as the real
+        // ones are; a vendor refund's is positive.
+        $signed = in_array($type, [MoveType::OUT_REFUND, MoveType::IN_INVOICE], true) ? -$amount : $amount;
 
         Move::withoutGlobalScopes()->whereKey($move->getKey())->update([
             'company_id'             => $company->getKey(),

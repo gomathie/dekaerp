@@ -15,6 +15,7 @@ return [
         'increase'             => ':percent% de aumento',
         'decrease'             => ':percent% de disminución',
         'no-change'            => 'Sin cambios',
+        'this-month'           => 'Este mes',
     ],
 
     'trend'        => [

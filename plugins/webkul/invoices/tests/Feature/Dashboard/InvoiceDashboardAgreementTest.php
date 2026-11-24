@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Carbon;
 use Webkul\Invoice\Filament\Clusters\Customers\Resources\InvoiceResource\Pages\ListInvoices;
+use Webkul\Invoice\Filament\Clusters\Vendors\Resources\BillResource\Pages\ListBills;
+use Webkul\Invoice\Filament\Widgets\BillStatsWidget;
 use Webkul\Invoice\Filament\Widgets\CustomerRevenueChart;
 use Webkul\Invoice\Filament\Widgets\InvoiceStatsWidget;
 use Webkul\Invoice\Filament\Widgets\InvoiceStatusChart;
@@ -130,4 +132,65 @@ it('shows this month above the invoice list, the same figures as the dashboard',
     expect($tiles)->toBe(['total' => 1800.0, 'count' => 3.0, 'paid' => 1.0, 'unpaid' => 2.0])
         ->and($cards->getHeading())->toBe(__('invoices::filament/widgets/invoice-dashboard.invoice-stats.this-month'))
         ->and((new InvoiceStatsWidget)->getHeading())->toBe(__('invoices::filament/widgets/invoice-dashboard.invoice-stats.heading'));
+});
+
+/**
+ * Plan #10 R-9 (2026-11-24): the cards above the vendor bill list are the
+ * dashboard's own bill widget for this month, so on the last day of March
+ * they show exactly the March bill tiles: net of the vendor refund, without
+ * the draft, February or the other client.
+ */
+it('shows this month above the vendor bill list, the same figures as the dashboard', function (): void {
+    $this->travelTo(Carbon::parse('2026-03-31 12:00'));
+
+    $own = Company::factory()->create();
+    $other = CompanyHelper::asNobody(fn () => Company::factory()->create());
+
+    DashboardFixtureHelper::bills($own, $other);
+
+    $user = CompanyHelper::actingAsCompanyUser($own, []);
+    $user->forceFill(['resource_permission' => 'global'])->saveQuietly();
+
+    $widgets = (new ListBills)->getHeaderWidgets();
+
+    expect($widgets)->toHaveCount(1)
+        ->and($widgets[0]->widget)->toBe(BillStatsWidget::class);
+
+    $cards = new BillStatsWidget;
+
+    foreach ($widgets[0]->getProperties() as $property => $value) {
+        $cards->{$property} = $value;
+    }
+
+    $billTiles = fn (): array => [
+        'total'  => abs($this->aggregate($this->vendorBillsNet(), true)),
+        'count'  => $this->aggregate($this->scope(), false),
+        'paid'   => $this->aggregate($this->stateScope('paid'), false),
+        'unpaid' => $this->aggregate($this->unpaidOnly($this->scope()), false),
+    ];
+
+    expect($billTiles->call($cards))->toBe(['total' => 1800.0, 'count' => 3.0, 'paid' => 1.0, 'unpaid' => 2.0])
+        // The dashboard's own widget, filtered to March, says the same.
+        ->and($billTiles->call(agreementWidget(BillStatsWidget::class)))->toBe($billTiles->call($cards))
+        ->and($cards->getHeading())->toBe(__('invoices::filament/widgets/invoice-dashboard.bill-stats.this-month'))
+        ->and((new BillStatsWidget)->getHeading())->toBe(__('invoices::filament/widgets/invoice-dashboard.bill-stats.heading'));
+});
+
+/**
+ * Plan #10 R-9 (2026-11-24): the month's totals above the invoice and bill
+ * lists are dashboard figures, so "See money figures" off removes them, as
+ * it removes the Invoices dashboard. The widgets' own guard does not read
+ * that switch; the lists do.
+ */
+it('hides the month figures above the invoice and bill lists when money figures are off', function (): void {
+    $company = Company::factory()->create();
+    $user = CompanyHelper::actingAsCompanyUser($company, []);
+
+    expect((new ListInvoices)->getHeaderWidgets())->toHaveCount(1)
+        ->and((new ListBills)->getHeaderWidgets())->toHaveCount(1);
+
+    $user->forceFill(['can_see_money_figures' => false])->save();
+
+    expect((new ListInvoices)->getHeaderWidgets())->toBe([])
+        ->and((new ListBills)->getHeaderWidgets())->toBe([]);
 });

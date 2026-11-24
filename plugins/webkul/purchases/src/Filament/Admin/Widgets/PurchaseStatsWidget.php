@@ -7,6 +7,7 @@ use Flowframe\Trend\Trend;
 use Flowframe\Trend\TrendValue;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
+use Livewire\Attributes\Locked;
 use Webkul\Purchase\Filament\Admin\Widgets\Concerns\GuardsPurchaseDashboardWidget;
 use Webkul\Purchase\Filament\Admin\Widgets\Concerns\HasPurchaseDashboardFilters;
 use Webkul\Support\Filament\Widgets\DashboardStatsWidget;
@@ -17,9 +18,17 @@ class PurchaseStatsWidget extends DashboardStatsWidget
 
     protected static ?int $sort = 1;
 
+    /**
+     * Set when these cards sit above the purchase order list (plan #10 R-9),
+     * which has no period bar: the heading then names the period instead of
+     * "Key Metrics". Locked: only the page that places it sets it.
+     */
+    #[Locked]
+    public ?string $periodHeading = null;
+
     public function getHeading(): ?string
     {
-        return __('purchases::filament/admin/widgets/purchase-dashboard.stats.heading');
+        return $this->periodHeading ?? __('purchases::filament/admin/widgets/purchase-dashboard.stats.heading');
     }
 
     protected function getStats(): array
