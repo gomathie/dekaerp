@@ -1,20 +1,20 @@
 <?php
 
 return [
-    'title' => 'Manage Операции',
+    'title' => 'Управление операциями',
 
     'form' => [
         'enable-packages'                     => 'Упаковки',
-        'enable-packages-helper-text'         => 'Put ваш товары в packs (e.g. parcels, boxes) и track их',
-        'configure-packages'                  => 'Configure Упаковки',
-        'enable-warnings'                     => 'Warnings',
-        'enable-warnings-helper-text'         => 'Получить informative или blocking warnings вкл. контрагенты',
-        'enable-reception-report'             => 'Reception Отчёт',
-        'enable-reception-report-helper-text' => 'Просмотр и allocate получено quantities.',
-        'annual-inventory-day'                => 'Годовой Склад День',
-        'annual-inventory-day-helper-text'    => 'день год когда вы perform ваш годовой склад',
-        'annual-inventory-month'              => 'Годовой Склад Месяц',
-        'annual-inventory-month-helper-text'  => 'месяц год когда вы perform ваш годовой склад',
+        'enable-packages-helper-text'         => 'Размещайте товары в упаковках (напр. посылки, коробки) и отслеживайте их',
+        'configure-packages'                  => 'Настроить упаковки',
+        'enable-warnings'                     => 'Предупреждения',
+        'enable-warnings-helper-text'         => 'Информационные или блокирующие предупреждения по контактам',
+        'enable-reception-report'             => 'Отчёт о приёмке',
+        'enable-reception-report-helper-text' => 'Просмотр и распределение полученных количеств.',
+        'annual-inventory-day'                => 'День ежегодной инвентаризации',
+        'annual-inventory-day-helper-text'    => 'День года, когда проводится ежегодная инвентаризация',
+        'annual-inventory-month'              => 'Месяц ежегодной инвентаризации',
+        'annual-inventory-month-helper-text'  => 'Месяц года, когда проводится ежегодная инвентаризация',
 
         'months' => [
             'january'   => 'Январь',

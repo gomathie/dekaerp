@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'title' => 'Rules',
+    'title' => 'Правила',
 
     'table' => [
         'header-actions' => [
             'create' => [
-                'label' => 'Добавить Rule',
+                'label' => 'Добавить правило',
 
                 'notification' => [
-                    'title' => 'Rule создано',
-                    'body'  => 'rule есть создано successfully.',
+                    'title' => 'Правило создано',
+                    'body'  => 'Правило успешно создано.',
                 ],
             ],
         ],

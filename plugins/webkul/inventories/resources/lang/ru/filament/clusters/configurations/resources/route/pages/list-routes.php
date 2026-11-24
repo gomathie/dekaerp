@@ -8,11 +8,11 @@ return [
 
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Маршрут',
+            'label' => 'Новый маршрут',
 
             'notification' => [
-                'title' => 'Маршрут создано',
-                'body'  => 'маршрут есть создано successfully.',
+                'title' => 'Маршрут создан',
+                'body'  => 'Маршрут успешно создан.',
             ],
         ],
     ],

@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'ask'    => 'Ask',
+    'ask'    => 'Uliza',
     'always' => 'Daima',
     'never'  => 'Kamwe',
 ];

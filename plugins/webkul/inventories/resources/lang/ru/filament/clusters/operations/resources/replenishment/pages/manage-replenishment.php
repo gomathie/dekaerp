@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'title' => 'Replenishment',
+    'title' => 'Пополнение',
 
     'tabs' => [
-        'trigger-manual'    => 'Trigger Вручную',
-        'trigger-automatic' => 'Trigger Автоматически',
-        'to-order'          => 'До Заказ',
-        'not-snoozed'       => 'Не Snoozed',
+        'trigger-manual'    => 'Ручной запуск',
+        'trigger-automatic' => 'Автоматический запуск',
+        'to-order'          => 'К заказу',
+        'not-snoozed'       => 'Не отложено',
     ],
 ];

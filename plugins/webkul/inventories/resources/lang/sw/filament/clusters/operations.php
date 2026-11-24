@@ -2,7 +2,7 @@
 
 return [
     'navigation' => [
-        'title' => 'Shughuli',
-        'group' => 'Ghala',
+        'title' => 'Operesheni',
+        'group' => 'Bidhaa ghalani',
     ],
 ];

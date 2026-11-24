@@ -2,19 +2,19 @@
 
 return [
     'notification' => [
-        'title' => 'Ghala imesasishwa',
-        'body'  => 'ghala ina imesasishwa successfully.',
+        'title' => 'Ghala limesasishwa',
+        'body'  => 'Ghala limesasishwa kwa mafanikio.',
 
         'error' => [
-            'title' => 'Ghala could si kuwa imesasishwa',
+            'title' => 'Ghala halikuweza kusasishwa',
         ],
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Ghala imefutwa',
-                'body'  => 'ghala ina imefutwa successfully.',
+                'title' => 'Ghala limefutwa',
+                'body'  => 'Ghala limefutwa kwa mafanikio.',
             ],
         ],
     ],

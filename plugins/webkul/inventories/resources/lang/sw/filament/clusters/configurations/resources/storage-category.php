@@ -2,8 +2,8 @@
 
 return [
     'navigation' => [
-        'title' => 'Storage Kategoria',
-        'group' => 'Ghala Management',
+        'title' => 'Kategoria za uhifadhi',
+        'group' => 'Usimamizi wa ghala',
     ],
 
     'form' => [
@@ -13,8 +13,8 @@ return [
 
                 'fields' => [
                     'name'               => 'Jina',
-                    'allow-new-products' => 'Ruhusu Mpya Bidhaa',
-                    'max-weight'         => 'Max Uzito',
+                    'allow-new-products' => 'Ruhusu bidhaa mpya',
+                    'max-weight'         => 'Uzito wa juu',
                     'company'            => 'Kampuni',
                 ],
             ],
@@ -24,25 +24,25 @@ return [
     'table' => [
         'columns' => [
             'name'               => 'Jina',
-            'allow-new-products' => 'Ruhusu Mpya Bidhaa',
-            'max-weight'         => 'Max Uzito',
+            'allow-new-products' => 'Ruhusu bidhaa mpya',
+            'max-weight'         => 'Uzito wa juu',
             'company'            => 'Kampuni',
-            'deleted-at'         => 'Imefutwa',
-            'created-at'         => 'Imeundwa',
-            'updated-at'         => 'Imesasishwa',
+            'deleted-at'         => 'Ilifutwa',
+            'created-at'         => 'Iliundwa',
+            'updated-at'         => 'Ilisasishwa',
         ],
 
         'groups' => [
-            'allow-new-products' => 'Ruhusu Mpya Bidhaa',
-            'created-at'         => 'Imeundwa',
-            'updated-at'         => 'Imesasishwa',
+            'allow-new-products' => 'Ruhusu bidhaa mpya',
+            'created-at'         => 'Iliundwa',
+            'updated-at'         => 'Ilisasishwa',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Storage Kategoria imefutwa',
-                    'body'  => 'storage kategoria ina imefutwa successfully.',
+                    'title' => 'Kategoria ya uhifadhi imefutwa',
+                    'body'  => 'Kategoria ya uhifadhi imefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -50,8 +50,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Storage Kategoria imefutwa',
-                    'body'  => 'storage kategoria ina imefutwa successfully.',
+                    'title' => 'Kategoria za uhifadhi zimefutwa',
+                    'body'  => 'Kategoria za uhifadhi zimefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -64,19 +64,19 @@ return [
 
                 'entries' => [
                     'name'               => 'Jina',
-                    'allow-new-products' => 'Ruhusu Mpya Bidhaa',
-                    'max-weight'         => 'Max Uzito',
+                    'allow-new-products' => 'Ruhusu bidhaa mpya',
+                    'max-weight'         => 'Uzito wa juu',
                     'company'            => 'Kampuni',
                 ],
             ],
 
             'record-information' => [
-                'title' => 'Rekodi Taarifa',
+                'title' => 'Taarifa za rekodi',
 
                 'entries' => [
-                    'created-by'   => 'Imeundwa Na',
-                    'created-at'   => 'Imeundwa',
-                    'last-updated' => 'Mwisho Imesasishwa',
+                    'created-by'   => 'Imeundwa na',
+                    'created-at'   => 'Iliundwa',
+                    'last-updated' => 'Ilisasishwa mwisho',
                 ],
             ],
         ],

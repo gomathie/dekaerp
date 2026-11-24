@@ -2,6 +2,6 @@
 
 return [
     'empty' => 'Tupu',
-    'same'  => 'Ile ile',
-    'mixed' => 'Mixed',
+    'same'  => 'Sawa',
+    'mixed' => 'Mchanganyiko',
 ];

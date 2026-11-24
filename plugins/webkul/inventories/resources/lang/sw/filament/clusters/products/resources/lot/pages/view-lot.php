@@ -9,13 +9,13 @@ return [
         'delete' => [
             'notification' => [
                 'success' => [
-                    'title' => 'Kundi Imefutwa',
-                    'body'  => 'kundi ina imefutwa successfully.',
+                    'title' => 'Kundi limefutwa',
+                    'body'  => 'Kundi limefutwa kwa mafanikio.',
                 ],
 
                 'error' => [
-                    'title' => 'Kundi could si kuwa imefutwa',
-                    'body'  => 'kundi haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                    'title' => 'Kundi halikuweza kufutwa',
+                    'body'  => 'Kundi haliwezi kufutwa kwa sababu linatumika.',
                 ],
             ],
         ],

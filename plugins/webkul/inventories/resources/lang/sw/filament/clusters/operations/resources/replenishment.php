@@ -2,8 +2,8 @@
 
 return [
     'navigation' => [
-        'title' => 'Replenishment',
-        'group' => 'Procurement',
+        'title' => 'Ujazaji upya',
+        'group' => 'Ununuzi',
     ],
 
     'form' => [
@@ -14,21 +14,21 @@ return [
     'table' => [
         'columns' => [
             'product'           => 'Bidhaa',
-            'location'          => 'Mahali',
+            'location'          => 'Eneo',
             'route'             => 'Njia',
             'vendor'            => 'Msambazaji',
-            'trigger'           => 'Trigger',
-            'on-hand'           => 'Washa Mkono',
-            'min'               => 'Min',
-            'max'               => 'Max',
-            'multiple-quantity' => 'Multiple Kiasi',
-            'to-order'          => 'Hadi Agizo',
-            'uom'               => 'UOM',
+            'trigger'           => 'Kichochezi',
+            'on-hand'           => 'Zilizopo',
+            'min'               => 'Chini',
+            'max'               => 'Juu',
+            'multiple-quantity' => 'Idadi ya kizidisho',
+            'to-order'          => 'Za kuagiza',
+            'uom'               => 'Kipimo',
             'company'           => 'Kampuni',
         ],
 
         'groups' => [
-            'location' => 'Mahali',
+            'location' => 'Eneo',
             'product'  => 'Bidhaa',
             'category' => 'Kategoria',
         ],
@@ -38,17 +38,17 @@ return [
 
         'header-actions' => [
             'create' => [
-                'label' => 'Ongeza Replenishment',
+                'label' => 'Ongeza ujazaji upya',
 
                 'notification' => [
-                    'title' => 'Replenishment added',
-                    'body'  => 'replenishment ina added successfully.',
+                    'title' => 'Ujazaji upya umeongezwa',
+                    'body'  => 'Ujazaji upya umeongezwa kwa mafanikio.',
                 ],
 
                 'before' => [
                     'notification' => [
-                        'title' => 'Replenishment tayari ipo',
-                        'body'  => 'replenishment tayari ipo kwa hii usanidi. Tafadhali sasisha existing replenishment instead.',
+                        'title' => 'Ujazaji upya tayari upo',
+                        'body'  => 'Ujazaji upya tayari upo kwa mpangilio huu. Tafadhali sasisha uliopo badala yake.',
                     ],
                 ],
             ],

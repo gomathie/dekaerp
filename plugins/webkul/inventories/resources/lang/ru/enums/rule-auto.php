@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'manual'      => 'Вручную Operation',
-    'transparent' => 'Автоматически Нет Step Added',
+    'manual'      => 'Ручная операция',
+    'transparent' => 'Автоматически, без дополнительного этапа',
 ];

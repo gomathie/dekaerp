@@ -3,16 +3,16 @@
 return [
     'tabs' => [
         'all'      => 'Zote',
-        'archived' => 'Imehifadhiwa',
+        'archived' => 'Kumbukumbu',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Storage Kategoria',
+            'label' => 'Kategoria mpya ya uhifadhi',
 
             'notification' => [
-                'title' => 'Storage Kategoria imeundwa',
-                'body'  => 'storage kategoria ina imeundwa successfully.',
+                'title' => 'Kategoria ya uhifadhi imeundwa',
+                'body'  => 'Kategoria ya uhifadhi imeundwa kwa mafanikio.',
             ],
         ],
     ],

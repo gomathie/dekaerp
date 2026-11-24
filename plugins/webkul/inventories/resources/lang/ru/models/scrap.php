@@ -1,24 +1,24 @@
 <?php
 
 return [
-    'title'          => 'Scrap',
+    'title'          => 'Списание',
 
     'log-attributes' => [
         'name'                          => 'Название',
-        'origin'                        => 'Происхождение',
-        'state'                         => 'Состояние',
+        'origin'                        => 'Источник',
+        'state'                         => 'Статус',
         'qty'                           => 'Количество',
-        'should_replenish'              => 'Следует Replenish',
-        'closed_at'                     => 'Закрыт В',
+        'should_replenish'              => 'Требуется пополнение',
+        'closed_at'                     => 'Закрыто',
         'product'                       => 'Товар',
-        'uom'                           => 'UOM',
+        'uom'                           => 'Ед. изм.',
         'lot'                           => 'Партия',
         'package'                       => 'Упаковка',
-        'partner'                       => 'Контрагент',
-        'operation'                     => 'Operation',
-        'source-location'               => 'Источник Место',
-        'destination-location'          => 'Назначение Место',
+        'partner'                       => 'Контакт',
+        'operation'                     => 'Операция',
+        'source-location'               => 'Исходное местоположение',
+        'destination-location'          => 'Местоположение назначения',
         'company'                       => 'Компания',
-        'creator'                       => 'Creator',
+        'creator'                       => 'Автор',
     ],
 ];

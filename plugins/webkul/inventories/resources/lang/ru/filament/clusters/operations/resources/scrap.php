@@ -2,8 +2,8 @@
 
 return [
     'navigation' => [
-        'title' => 'Scraps',
-        'group' => 'Adjustments',
+        'title' => 'Списания',
+        'group' => 'Корректировки',
     ],
 
     'form' => [
@@ -16,14 +16,14 @@ return [
                     'package'              => 'Упаковка',
                     'quantity'             => 'Количество',
                     'unit'                 => 'Единица измерения',
-                    'lot'                  => 'Партия/Серийный номер',
-                    'tags'                 => 'Метки',
+                    'lot'                  => 'Партия/серийный номер',
+                    'tags'                 => 'Теги',
                     'name'                 => 'Название',
                     'color'                => 'Цвет',
                     'owner'                => 'Владелец',
-                    'source-location'      => 'Источник Место',
-                    'destination-location' => 'Scrap Место',
-                    'source-document'      => 'Источник Документ',
+                    'source-location'      => 'Исходное местоположение',
+                    'destination-location' => 'Местоположение списания',
+                    'source-document'      => 'Исходный документ',
                     'company'              => 'Компания',
                 ],
             ],
@@ -33,39 +33,39 @@ return [
     'table' => [
         'columns' => [
             'date'            => 'Дата',
-            'reference'       => 'Ссылка',
+            'reference'       => 'Номер',
             'product'         => 'Товар',
             'package'         => 'Упаковка',
             'quantity'        => 'Количество',
             'uom'             => 'Единица измерения',
-            'source-location' => 'Источник Место',
-            'scrap-location'  => 'Scrap Место',
+            'source-location' => 'Исходное местоположение',
+            'scrap-location'  => 'Местоположение списания',
             'unit'            => 'Единица измерения',
-            'lot'             => 'Партия/Серийный номер',
-            'tags'            => 'Метки',
-            'state'           => 'Состояние',
+            'lot'             => 'Партия/серийный номер',
+            'tags'            => 'Теги',
+            'state'           => 'Статус',
         ],
 
         'groups' => [
             'product'              => 'Товар',
-            'source-location'      => 'Источник Место',
-            'destination-location' => 'Scrap Место',
+            'source-location'      => 'Исходное местоположение',
+            'destination-location' => 'Местоположение списания',
         ],
 
         'filters' => [
-            'source-location'      => 'Источник Место',
-            'destination-location' => 'Scrap Место',
+            'source-location'      => 'Исходное местоположение',
+            'destination-location' => 'Местоположение списания',
             'product'              => 'Товар',
-            'state'                => 'Состояние',
-            'product-category'     => 'Товар Категория',
+            'state'                => 'Статус',
+            'product-category'     => 'Категория товаров',
             'uom'                  => 'Единица измерения',
-            'lot'                  => 'Партия/Серийный номер',
+            'lot'                  => 'Партия/серийный номер',
             'package'              => 'Упаковка',
-            'tags'                 => 'Метки',
+            'tags'                 => 'Теги',
             'company'              => 'Компания',
             'quantity'             => 'Количество',
-            'creator'              => 'Creator',
-            'closed-at'            => 'Закрыт В',
+            'creator'              => 'Автор',
+            'closed-at'            => 'Закрыто',
             'created-at'           => 'Создано',
             'updated-at'           => 'Обновлено',
         ],
@@ -74,13 +74,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Scrap удалено',
-                        'body'  => 'scrap есть удалено successfully.',
+                        'title' => 'Списание удалено',
+                        'body'  => 'Списание успешно удалено.',
                     ],
 
                     'error' => [
-                        'title' => 'Scrap could не быть удалено',
-                        'body'  => 'scrap нельзя быть удалено потому что это currently в использовать.',
+                        'title' => 'Не удалось удалить списание',
+                        'body'  => 'Списание нельзя удалить, так как оно используется.',
                     ],
                 ],
             ],
@@ -90,13 +90,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Scraps удалено',
-                        'body'  => 'выбрано scraps есть удалено successfully.',
+                        'title' => 'Списания удалены',
+                        'body'  => 'Выбранные списания успешно удалены.',
                     ],
 
                     'error' => [
-                        'title' => 'Scraps could не быть удалено',
-                        'body'  => 'scraps нельзя быть удалено потому что они currently в использовать.',
+                        'title' => 'Не удалось удалить списания',
+                        'body'  => 'Списания нельзя удалить, так как они используются.',
                     ],
                 ],
             ],
@@ -106,29 +106,29 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Scrap Подробности',
+                'title' => 'Сведения о списании',
 
                 'entries' => [
                     'product'              => 'Товар',
                     'quantity'             => 'Количество',
                     'lot'                  => 'Партия',
-                    'tags'                 => 'Метки',
+                    'tags'                 => 'Теги',
                     'package'              => 'Упаковка',
                     'owner'                => 'Владелец',
-                    'source-location'      => 'Источник Место',
-                    'destination-location' => 'Scrap Место',
-                    'source-document'      => 'Источник Документ',
+                    'source-location'      => 'Исходное местоположение',
+                    'destination-location' => 'Местоположение списания',
+                    'source-document'      => 'Исходный документ',
                     'company'              => 'Компания',
                 ],
             ],
 
             'record-information' => [
-                'title' => 'Запись Сведения',
+                'title' => 'Сведения о записи',
 
                 'entries' => [
-                    'created-by'   => 'Создано От',
+                    'created-by'   => 'Создал',
                     'created-at'   => 'Создано',
-                    'last-updated' => 'Последний Обновлено',
+                    'last-updated' => 'Последнее обновление',
                 ],
             ],
         ],

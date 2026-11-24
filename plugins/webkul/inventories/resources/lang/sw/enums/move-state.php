@@ -2,10 +2,10 @@
 
 return [
     'draft'              => 'Rasimu',
-    'confirmed'          => 'Waiting',
-    'waiting'            => 'Waiting',
-    'assigned'           => 'Ready',
-    'partially-assigned' => 'Partially Ready',
+    'confirmed'          => 'Inasubiri',
+    'waiting'            => 'Inasubiri',
+    'assigned'           => 'Tayari',
+    'partially-assigned' => 'Tayari kwa sehemu',
     'done'               => 'Imekamilika',
     'canceled'           => 'Imeghairiwa',
 ];

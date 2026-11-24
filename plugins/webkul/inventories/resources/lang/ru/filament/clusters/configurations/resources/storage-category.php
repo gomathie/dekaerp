@@ -2,8 +2,8 @@
 
 return [
     'navigation' => [
-        'title' => 'Storage Категории',
-        'group' => 'Склад Management',
+        'title' => 'Категории хранения',
+        'group' => 'Управление складом',
     ],
 
     'form' => [
@@ -13,8 +13,8 @@ return [
 
                 'fields' => [
                     'name'               => 'Название',
-                    'allow-new-products' => 'Разрешить Новое Товары',
-                    'max-weight'         => 'Max Вес',
+                    'allow-new-products' => 'Разрешить новые товары',
+                    'max-weight'         => 'Макс. вес',
                     'company'            => 'Компания',
                 ],
             ],
@@ -24,8 +24,8 @@ return [
     'table' => [
         'columns' => [
             'name'               => 'Название',
-            'allow-new-products' => 'Разрешить Новое Товары',
-            'max-weight'         => 'Max Вес',
+            'allow-new-products' => 'Разрешить новые товары',
+            'max-weight'         => 'Макс. вес',
             'company'            => 'Компания',
             'deleted-at'         => 'Удалено',
             'created-at'         => 'Создано',
@@ -33,7 +33,7 @@ return [
         ],
 
         'groups' => [
-            'allow-new-products' => 'Разрешить Новое Товары',
+            'allow-new-products' => 'Разрешить новые товары',
             'created-at'         => 'Создано',
             'updated-at'         => 'Обновлено',
         ],
@@ -41,8 +41,8 @@ return [
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Storage Категория удалено',
-                    'body'  => 'storage категория есть удалено successfully.',
+                    'title' => 'Категория хранения удалена',
+                    'body'  => 'Категория хранения успешно удалена.',
                 ],
             ],
         ],
@@ -50,8 +50,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Storage Категории удалено',
-                    'body'  => 'storage категории есть удалено successfully.',
+                    'title' => 'Категории хранения удалены',
+                    'body'  => 'Категории хранения успешно удалены.',
                 ],
             ],
         ],
@@ -64,19 +64,19 @@ return [
 
                 'entries' => [
                     'name'               => 'Название',
-                    'allow-new-products' => 'Разрешить Новое Товары',
-                    'max-weight'         => 'Max Вес',
+                    'allow-new-products' => 'Разрешить новые товары',
+                    'max-weight'         => 'Макс. вес',
                     'company'            => 'Компания',
                 ],
             ],
 
             'record-information' => [
-                'title' => 'Запись Сведения',
+                'title' => 'Сведения о записи',
 
                 'entries' => [
-                    'created-by'   => 'Создано От',
+                    'created-by'   => 'Создал',
                     'created-at'   => 'Создано',
-                    'last-updated' => 'Последний Обновлено',
+                    'last-updated' => 'Последнее обновление',
                 ],
             ],
         ],

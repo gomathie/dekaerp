@@ -8,11 +8,11 @@ return [
 
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Rule',
+            'label' => 'Новое правило',
 
             'notification' => [
-                'title' => 'Rule создано',
-                'body'  => 'rule есть создано successfully.',
+                'title' => 'Правило создано',
+                'body'  => 'Правило успешно создано.',
             ],
         ],
     ],

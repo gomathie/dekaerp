@@ -8,11 +8,11 @@ return [
 
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Putaway Rule',
+            'label' => 'Новое правило размещения',
 
             'notification' => [
-                'title' => 'Putaway rule создано',
-                'body'  => 'putaway rule есть создано successfully.',
+                'title' => 'Правило размещения создано',
+                'body'  => 'Правило размещения успешно создано.',
             ],
         ],
     ],

@@ -3,75 +3,75 @@
 return [
     'table' => [
         'columns' => [
-            'on-hand'    => 'Washa Mkono',
-            'forecasted' => 'Forecasted',
+            'on-hand'    => 'Zilizopo',
+            'forecasted' => 'Utabiri',
         ],
     ],
 
     'navigation' => [
         'title' => 'Bidhaa',
-        'group' => 'Ghala',
+        'group' => 'Bidhaa ghalani',
     ],
 
     'form' => [
         'sections' => [
             'inventory' => [
-                'title' => 'Ghala',
+                'title' => 'Bidhaa ghalani',
 
                 'fieldsets' => [
                     'tracking' => [
-                        'title' => 'Tracking',
+                        'title' => 'Ufuatiliaji',
 
                         'fields' => [
-                            'track-inventory'              => 'Track Ghala',
-                            'track-inventory-hint-tooltip' => 'storable bidhaa ni one hiyo requires ghala management..',
-                            'track-by'                     => 'Track Na',
-                            'expiration-date'              => 'Expiration Tarehe',
-                            'expiration-date-hint-tooltip' => 'Ikiwa imechaguliwa, wewe unaweza specify expiration dates kwa bidhaa na yake associated kundi/nambari ya mfululizo numbers.',
+                            'track-inventory'              => 'Fuatilia bidhaa ghalani',
+                            'track-inventory-hint-tooltip' => 'Bidhaa inayohifadhiwa ni ile inayohitaji usimamizi wa bidhaa ghalani.',
+                            'track-by'                     => 'Fuatilia kwa',
+                            'expiration-date'              => 'Tarehe ya kuisha muda',
+                            'expiration-date-hint-tooltip' => 'Ikichaguliwa, unaweza kuweka tarehe za kuisha muda kwa bidhaa na makundi/nambari zake za mfululizo.',
                         ],
                     ],
 
                     'operation' => [
-                        'title' => 'Shughuli',
+                        'title' => 'Operesheni',
 
                         'fields' => [
                             'routes'              => 'Njia',
-                            'routes-hint-tooltip' => 'Based washa installed moduli, hii mpangilio allows wewe hadi define product\'s njia, kama hiyo kama purchasing, uzalishaji, au replenishing washa agizo.',
+                            'routes-hint-tooltip' => 'Kulingana na moduli zilizosakinishwa, mpangilio huu hukuruhusu kuweka njia ya bidhaa, kama vile ununuzi, uzalishaji au kujaza upya kwa oda.',
                         ],
                     ],
 
                     'logistics' => [
-                        'title' => 'Usafirishaji',
+                        'title' => 'Lojistiki',
 
                         'fields' => [
-                            'responsible'              => 'Responsible',
-                            'responsible-hint-tooltip' => 'Usafirishaji lead time (katika siku) represents promised duration kati ya agizo la mauzo confirmation na bidhaa usafirishaji.',
+                            'responsible'              => 'Msimamizi',
+                            'responsible-hint-tooltip' => 'Muda wa uwasilishaji (kwa siku) ni muda ulioahidiwa kati ya kuthibitishwa kwa oda ya mauzo na uwasilishaji wa bidhaa.',
                             'weight'                   => 'Uzito',
                             'volume'                   => 'Ujazo',
-                            'sale-delay'               => 'Mteja Lead Time (Siku)',
-                            'sale-delay-hint-tooltip'  => 'Usafirishaji lead time (katika siku) represents promised duration kati ya agizo la mauzo confirmation na bidhaa usafirishaji.',
+                            'sale-delay'               => 'Muda wa uwasilishaji kwa mteja (siku)',
+                            'sale-delay-hint-tooltip'  => 'Muda wa uwasilishaji (kwa siku) ni muda ulioahidiwa kati ya kuthibitishwa kwa oda ya mauzo na uwasilishaji wa bidhaa.',
                         ],
                     ],
 
                     'traceability' => [
-                        'title' => 'Traceability',
+                        'title' => 'Ufuatiliaji wa asili',
 
                         'fields' => [
-                            'expiration-date'               => 'Expiration Tarehe (Siku)',
-                            'expiration-date-hint-tooltip'  => 'Ikiwa imechaguliwa, wewe unaweza weka expiration dates kwa bidhaa na yake associated kundi/nambari ya mfululizo numbers.',
-                            'best-before-date'              => 'Best Kabla ya Tarehe (Siku)',
-                            'best-before-date-hint-tooltip' => 'nambari ya siku kabla ya expiration tarehe wakati bidhaa begins hadi deteriorate, though hii ni bado safe hadi tumia. Hii ni calculated based washa kundi/nambari ya mfululizo nambari.',
-                            'removal-date'                  => 'Removal Tarehe (Siku)',
-                            'removal-date-hint-tooltip'     => 'nambari ya siku kabla ya expiration tarehe wakati bidhaa unapaswa kuwa removed kutoka hisa. Hii ni calculated based washa kundi/nambari ya mfululizo nambari.',
-                            'alert-date'                    => 'Alert Tarehe (Siku)',
-                            'alert-date-hint-tooltip'       => 'nambari ya siku kabla ya expiration tarehe wakati alert unapaswa kuwa triggered kwa kundi/nambari ya mfululizo nambari. Hii ni calculated based washa kundi/nambari ya mfululizo nambari.',
+                            'expiration-date'               => 'Kuisha muda (siku)',
+                            'expiration-date-hint-tooltip'  => 'Ikichaguliwa, unaweza kuweka tarehe za kuisha muda kwa bidhaa na makundi/nambari zake za mfululizo.',
+                            'best-before-date'              => 'Bora kabla ya (siku)',
+                            'best-before-date-hint-tooltip' => 'Idadi ya siku kabla ya tarehe ya kuisha muda ambapo bidhaa huanza kuharibika, ingawa bado ni salama kutumia. Hukokotolewa kulingana na kundi/nambari ya mfululizo.',
+                            'removal-date'                  => 'Tarehe ya kuondoa (siku)',
+                            'removal-date-hint-tooltip'     => 'Idadi ya siku kabla ya tarehe ya kuisha muda ambapo bidhaa inapaswa kuondolewa ghalani. Hukokotolewa kulingana na kundi/nambari ya mfululizo.',
+                            'alert-date'                    => 'Tarehe ya tahadhari (siku)',
+                            'alert-date-hint-tooltip'       => 'Idadi ya siku kabla ya tarehe ya kuisha muda ambapo tahadhari inapaswa kutolewa kwa kundi/nambari ya mfululizo. Hukokotolewa kulingana na kundi/nambari ya mfululizo.',
                         ],
                     ],
                 ],
             ],
 
             'additional' => [
-                'title' => 'Additional',
+                'title' => 'Ziada',
             ],
         ],
     ],
@@ -79,24 +79,24 @@ return [
     'infolist' => [
         'sections' => [
             'inventory' => [
-                'title' => 'Ghala',
+                'title' => 'Bidhaa ghalani',
 
                 'entries' => [
                 ],
 
                 'fieldsets' => [
                     'tracking' => [
-                        'title' => 'Tracking',
+                        'title' => 'Ufuatiliaji',
 
                         'entries' => [
-                            'track-inventory' => 'Track Ghala',
-                            'track-by'        => 'Track Na',
-                            'expiration-date' => 'Expiration Tarehe',
+                            'track-inventory' => 'Fuatilia bidhaa ghalani',
+                            'track-by'        => 'Fuatilia kwa',
+                            'expiration-date' => 'Tarehe ya kuisha muda',
                         ],
                     ],
 
                     'operation' => [
-                        'title' => 'Shughuli',
+                        'title' => 'Operesheni',
 
                         'entries' => [
                             'routes' => 'Njia',
@@ -104,24 +104,24 @@ return [
                     ],
 
                     'logistics' => [
-                        'title' => 'Usafirishaji',
+                        'title' => 'Lojistiki',
 
                         'entries' => [
-                            'responsible' => 'Responsible',
+                            'responsible' => 'Msimamizi',
                             'weight'      => 'Uzito',
                             'volume'      => 'Ujazo',
-                            'sale-delay'  => 'Mteja Lead Time (Siku)',
+                            'sale-delay'  => 'Muda wa uwasilishaji kwa mteja (siku)',
                         ],
                     ],
 
                     'traceability' => [
-                        'title' => 'Traceability',
+                        'title' => 'Ufuatiliaji wa asili',
 
                         'entries' => [
-                            'expiration-date'  => 'Expiration Tarehe (Siku)',
-                            'best-before-date' => 'Best Kabla ya Tarehe (Siku)',
-                            'removal-date'     => 'Removal Tarehe (Siku)',
-                            'alert-date'       => 'Alert Tarehe (Siku)',
+                            'expiration-date'  => 'Kuisha muda (siku)',
+                            'best-before-date' => 'Bora kabla ya (siku)',
+                            'removal-date'     => 'Tarehe ya kuondoa (siku)',
+                            'alert-date'       => 'Tarehe ya tahadhari (siku)',
                         ],
                     ],
                 ],

@@ -9,11 +9,11 @@ return [
     'form' => [
         'sections' => [
             'inventory' => [
-                'title' => 'Ghala',
+                'title' => 'Bidhaa ghalani',
 
                 'fieldsets' => [
                     'logistics' => [
-                        'title' => 'Usafirishaji',
+                        'title' => 'Lojistiki',
 
                         'fields' => [
                             'routes' => 'Njia',
@@ -27,15 +27,15 @@ return [
     'infolist' => [
         'sections' => [
             'inventory' => [
-                'title' => 'Ghala',
+                'title' => 'Bidhaa ghalani',
 
                 'subsections' => [
                     'logistics' => [
-                        'title' => 'Usafirishaji',
+                        'title' => 'Lojistiki',
 
                         'entries' => [
-                            'routes'     => 'Ghala Njia',
-                            'route_name' => 'Njia Jina',
+                            'routes'     => 'Njia za ghala',
+                            'route_name' => 'Jina la njia',
                         ],
                     ],
                 ],

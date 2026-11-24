@@ -2,8 +2,8 @@
 
 return [
     'notification' => [
-        'title' => 'Kundi imesasishwa',
-        'body'  => 'kundi ina imesasishwa successfully.',
+        'title' => 'Kundi limesasishwa',
+        'body'  => 'Kundi limesasishwa kwa mafanikio.',
     ],
 
     'header-actions' => [
@@ -14,13 +14,13 @@ return [
         'delete' => [
             'notification' => [
                 'success' => [
-                    'title' => 'Kundi imefutwa',
-                    'body'  => 'kundi ina imefutwa successfully.',
+                    'title' => 'Kundi limefutwa',
+                    'body'  => 'Kundi limefutwa kwa mafanikio.',
                 ],
 
                 'error' => [
-                    'title' => 'Kundi could si kuwa imefutwa',
-                    'body'  => 'kundi haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                    'title' => 'Kundi halikuweza kufutwa',
+                    'body'  => 'Kundi haliwezi kufutwa kwa sababu linatumika.',
                 ],
             ],
         ],

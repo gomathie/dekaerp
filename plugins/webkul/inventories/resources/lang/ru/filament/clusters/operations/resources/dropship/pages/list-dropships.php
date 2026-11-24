@@ -3,11 +3,11 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Dropship',
+            'label' => 'Новая прямая поставка',
 
             'notification' => [
-                'title' => 'Dropship создано',
-                'body'  => 'dropship есть создано successfully.',
+                'title' => 'Прямая поставка создана',
+                'body'  => 'Прямая поставка успешно создана.',
             ],
         ],
     ],

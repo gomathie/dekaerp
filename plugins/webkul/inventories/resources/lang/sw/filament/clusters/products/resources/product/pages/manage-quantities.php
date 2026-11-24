@@ -1,60 +1,60 @@
 <?php
 
 return [
-    'title' => 'Quantities',
+    'title' => 'Idadi',
 
     'tabs' => [
-        'internal-locations' => 'Ndani Maeneo',
-        'transit-locations'  => 'Transit Maeneo',
-        'on-hand'            => 'Washa Mkono',
-        'to-count'           => 'Hadi Idadi',
-        'to-apply'           => 'Hadi Tumia',
+        'internal-locations' => 'Maeneo ya ndani',
+        'transit-locations'  => 'Maeneo ya mpito',
+        'on-hand'            => 'Zilizopo',
+        'to-count'           => 'Za kuhesabu',
+        'to-apply'           => 'Za kutumia',
     ],
 
     'form' => [
         'fields' => [
             'product'          => 'Bidhaa',
-            'location'         => 'Mahali',
+            'location'         => 'Eneo',
             'package'          => 'Kifurushi',
-            'lot'              => 'Kundi / Nambari ya mfululizo Numbers',
-            'on-hand-qty'      => 'Washa Mkono Kiasi',
-            'storage-category' => 'Storage Kategoria',
+            'lot'              => 'Makundi / Nambari za mfululizo',
+            'on-hand-qty'      => 'Idadi iliyopo',
+            'storage-category' => 'Kategoria ya uhifadhi',
         ],
     ],
 
     'table' => [
         'columns' => [
             'product'           => 'Bidhaa',
-            'location'          => 'Mahali',
-            'lot'               => 'Kundi / Nambari ya mfululizo Numbers',
-            'storage-category'  => 'Storage Kategoria',
-            'quantity'          => 'Kiasi',
+            'location'          => 'Eneo',
+            'lot'               => 'Makundi / Nambari za mfululizo',
+            'storage-category'  => 'Kategoria ya uhifadhi',
+            'quantity'          => 'Idadi',
             'package'           => 'Kifurushi',
-            'on-hand'           => 'Washa Mkono Kiasi',
-            'unit'              => 'Uniti',
-            'reserved-quantity' => 'Imehifadhiwa Kiasi',
+            'on-hand'           => 'Idadi iliyopo',
+            'unit'              => 'Kipimo',
+            'reserved-quantity' => 'Idadi iliyotengwa',
 
             'on-hand-before-state-updated' => [
                 'notification' => [
-                    'title' => 'Kiasi imesasishwa',
-                    'body'  => 'kiasi ina imesasishwa successfully.',
+                    'title' => 'Idadi imesasishwa',
+                    'body'  => 'Idadi imesasishwa kwa mafanikio.',
                 ],
             ],
         ],
 
         'header-actions' => [
             'create' => [
-                'label' => 'Ongeza Kiasi',
+                'label' => 'Ongeza idadi',
 
                 'notification' => [
-                    'title' => 'Kiasi added',
-                    'body'  => 'kiasi ina added successfully.',
+                    'title' => 'Idadi imeongezwa',
+                    'body'  => 'Idadi imeongezwa kwa mafanikio.',
                 ],
 
                 'before' => [
                     'notification' => [
-                        'title' => 'Kiasi tayari ipo',
-                        'body'  => 'Tayari ina kiasi kwa ile ile usanidi. Tafadhali sasisha kiasi instead.',
+                        'title' => 'Idadi tayari ipo',
+                        'body'  => 'Tayari kuna idadi kwa mpangilio huu. Tafadhali sasisha idadi badala yake.',
                     ],
                 ],
             ],
@@ -63,8 +63,8 @@ return [
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Kiasi imefutwa',
-                    'body'  => 'kiasi ina imefutwa successfully.',
+                    'title' => 'Idadi imefutwa',
+                    'body'  => 'Idadi imefutwa kwa mafanikio.',
                 ],
             ],
         ],

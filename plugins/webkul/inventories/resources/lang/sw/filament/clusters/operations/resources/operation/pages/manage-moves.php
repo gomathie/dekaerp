@@ -1,28 +1,28 @@
 <?php
 
 return [
-    'title' => 'Moves',
+    'title' => 'Mienendo',
 
     'table' => [
         'columns' => [
             'date'                 => 'Tarehe',
-            'reference'            => 'Kumbukumbu',
+            'reference'            => 'Marejeleo',
             'product'              => 'Bidhaa',
             'package'              => 'Kifurushi',
-            'lot'                  => 'Kundi / Nambari ya mfululizo Numbers',
-            'source-location'      => 'Chanzo Mahali',
-            'destination-location' => 'Unakoenda Mahali',
-            'quantity'             => 'Kiasi',
-            'unit'                 => 'Uniti',
+            'lot'                  => 'Makundi / Nambari za mfululizo',
+            'source-location'      => 'Eneo la chanzo',
+            'destination-location' => 'Eneo la kufikia',
+            'quantity'             => 'Idadi',
+            'unit'                 => 'Kipimo',
             'state'                => 'Hali',
-            'done-by'              => 'Imekamilika Na',
+            'done-by'              => 'Imefanywa na',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Hamisha imefutwa',
-                    'body'  => 'hamisha ina imefutwa successfully.',
+                    'title' => 'Mwendo umefutwa',
+                    'body'  => 'Mwendo umefutwa kwa mafanikio.',
                 ],
             ],
         ],

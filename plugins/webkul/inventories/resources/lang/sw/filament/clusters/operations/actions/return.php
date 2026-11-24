@@ -1,25 +1,25 @@
 <?php
 
 return [
-    'label' => 'Return',
+    'label' => 'Rudisha',
 
     'modal' => [
         'form' => [
             'columns' => [
                 'product'                 => 'Bidhaa',
-                'quantity'                => 'Kiasi',
-                'uom'                     => 'UOM',
-                'excess-quantity-tooltip' => 'kiasi hadi return ni greater kuliko kiasi processed katika original operation.',
+                'quantity'                => 'Idadi',
+                'uom'                     => 'Kipimo',
+                'excess-quantity-tooltip' => 'Idadi ya kurudisha ni kubwa kuliko idadi iliyoshughulikiwa katika operesheni ya awali.',
             ],
         ],
     ],
 
     'notification' => [
         'no-products' => [
-            'body' => 'Hakuna bidhaa hadi return (tu mistari katika Imekamilika hali na si fully returned bado unaweza kuwa returned).',
+            'body' => 'Hakuna bidhaa za kurudisha (mistari iliyokamilika na ambayo bado haijarudishwa kikamilifu pekee ndiyo inaweza kurudishwa).',
         ],
         'no-quantities' => [
-            'body' => 'Tafadhali specify saa kidogo one non-zero kiasi.',
+            'body' => 'Tafadhali weka angalau idadi moja isiyo sifuri.',
         ],
     ],
 ];

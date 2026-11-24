@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'uom-change' => 'Wewe haiwezekani badilisha kipimo kama ni tayari hisa moves kwa hii bidhaa. Ikiwa wewe want hadi badilisha uniti ya measure, wewe unapaswa rather archive hii bidhaa na unda mpya one.',
+    'uom-change' => 'Huwezi kubadilisha kipimo kwa sababu tayari kuna mienendo ya bidhaa hii. Ukitaka kubadilisha kipimo, ni bora kuweka bidhaa hii kumbukumbu na kuunda mpya.',
 ];

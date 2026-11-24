@@ -1,24 +1,24 @@
 <?php
 
 return [
-    'open'       => 'Открыт',
-    'to-receive' => ':count До Receive',
-    'to-deliver' => ':count До Deliver',
-    'to-process' => ':count До Process',
+    'open'       => 'Открыть',
+    'to-receive' => ':count к приёму',
+    'to-deliver' => ':count к отгрузке',
+    'to-process' => ':count к обработке',
     'links'      => [
-        'waiting'     => 'Waiting',
-        'late'        => 'Late',
-        'back-orders' => 'Назад Заказы',
+        'waiting'     => 'Ожидание',
+        'late'        => 'Просрочено',
+        'back-orders' => 'Недопоставки',
         'operations'  => 'Операции',
     ],
     'chart' => [
-        'before'             => 'До',
+        'before'             => 'Ранее',
         'yesterday'          => 'Вчера',
         'today'              => 'Сегодня',
         'tomorrow'           => 'Завтра',
-        'day-after-tomorrow' => 'день после завтра',
-        'after'              => 'После',
+        'day-after-tomorrow' => 'Послезавтра',
+        'after'              => 'Позже',
         'transfers'          => 'Перемещения',
-        'sample-data'        => 'Образец data',
+        'sample-data'        => 'Демо-данные',
     ],
 ];

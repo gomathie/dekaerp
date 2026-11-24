@@ -6,11 +6,11 @@ return [
     'table' => [
         'header-actions' => [
             'create' => [
-                'label' => 'Добавить Маршрут',
+                'label' => 'Добавить маршрут',
 
                 'notification' => [
-                    'title' => 'Маршрут создано',
-                    'body'  => 'маршрут есть создано successfully.',
+                    'title' => 'Маршрут создан',
+                    'body'  => 'Маршрут успешно создан.',
                 ],
             ],
         ],

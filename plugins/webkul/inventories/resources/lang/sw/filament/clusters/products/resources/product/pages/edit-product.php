@@ -5,28 +5,28 @@ return [
         'notification' => [
             'error' => [
                 'tracking-update' => [
-                    'title' => 'Hitilafu updating tracking',
-                    'body'  => 'Wewe unaweza si badilisha ghala tracking ya bidhaa hiyo ilikuwa tayari inatumika.',
+                    'title' => 'Hitilafu ya kusasisha ufuatiliaji',
+                    'body'  => 'Huwezi kubadilisha ufuatiliaji wa bidhaa ghalani kwa bidhaa ambayo tayari imetumika.',
                 ],
 
                 'reordering-rules' => [
-                    'title' => 'Hitilafu updating bidhaa',
-                    'body'  => 'Wewe bado ina baadhi inatumika reordering rules washa hii bidhaa. Tafadhali archive au futa wao kwanza.',
+                    'title' => 'Hitilafu ya kusasisha bidhaa',
+                    'body'  => 'Bidhaa hii bado ina kanuni hai za kuagiza upya. Tafadhali ziweke kumbukumbu au uzifute kwanza.',
                 ],
 
                 'reserved' => [
-                    'title' => 'Hitilafu updating tracking',
-                    'body'  => 'Wewe unaweza si badilisha ghala tracking ya bidhaa hiyo ni currently imehifadhiwa washa hisa hamisha. Ikiwa wewe need hadi badilisha ghala tracking, wewe unapaswa kwanza unreserve hisa hamisha.',
+                    'title' => 'Hitilafu ya kusasisha ufuatiliaji',
+                    'body'  => 'Huwezi kubadilisha ufuatiliaji wa bidhaa ambayo imetengwa kwenye mwendo wa bidhaa. Ukihitaji kuubadilisha, ondoa kwanza utengaji kwenye mwendo huo.',
                 ],
 
                 'qty-not-zero' => [
-                    'title' => 'Hitilafu updating tracking',
-                    'body'  => 'Inapatikana kiasi unapaswa kuwa weka hadi zero kabla ya changing ghala tracking.',
+                    'title' => 'Hitilafu ya kusasisha ufuatiliaji',
+                    'body'  => 'Idadi inayopatikana inapaswa kuwa sifuri kabla ya kubadilisha ufuatiliaji.',
                 ],
 
                 'track-by-update' => [
-                    'title' => 'Hitilafu updating tracking',
-                    'body'  => 'Wewe ina bidhaa(s) katika hisa hiyo ina hakuna kundi/nambari ya mfululizo nambari. Wewe unaweza kabidhi kundi/nambari ya mfululizo numbers na doing ghala adjustment.',
+                    'title' => 'Hitilafu ya kusasisha ufuatiliaji',
+                    'body'  => 'Una bidhaa ghalani zisizo na kundi/nambari ya mfululizo. Unaweza kuziwekea kwa kufanya marekebisho ya bidhaa ghalani.',
                 ],
             ],
         ],

@@ -1,27 +1,27 @@
 <?php
 
 return [
-    'title' => 'Manage Traceability',
+    'title' => 'Simamia ufuatiliaji wa asili',
 
     'form' => [
-        'enable-lots-serial-numbers'                             => 'Makundi & Nambari ya mfululizo Numbers',
-        'enable-lots-serial-numbers-helper-text'                 => 'Pata kamili traceability kutoka wasambazaji hadi wateja',
-        'configure-lots'                                         => 'Configure Makundi',
-        'enable-expiration-dates'                                => 'Expiration Dates',
-        'enable-expiration-dates-helper-text'                    => 'Weka expiration dates washa makundi & nambari ya mfululizo numbers',
-        'display-on-delivery-slips'                              => 'Display washa Usafirishaji Slips',
-        'display-on-delivery-slips-helper-text'                  => 'Makundi & Nambari ya mfululizo numbers ita appear washa usafirishaji slips',
-        'display-expiration-dates-on-delivery-slips'             => 'Display Expiration Dates washa Usafirishaji Slips',
-        'display-expiration-dates-on-delivery-slips-helper-text' => 'Expiration dates ita appear washa usafirishaji slip',
-        'enable-consignments'                                    => 'Consignments',
-        'enable-consignments-helper-text'                        => 'Weka mmiliki washa stored bidhaa',
+        'enable-lots-serial-numbers'                             => 'Makundi na nambari za mfululizo',
+        'enable-lots-serial-numbers-helper-text'                 => 'Pata ufuatiliaji kamili kutoka kwa wasambazaji hadi kwa wateja',
+        'configure-lots'                                         => 'Sanidi makundi',
+        'enable-expiration-dates'                                => 'Tarehe za kuisha muda',
+        'enable-expiration-dates-helper-text'                    => 'Weka tarehe za kuisha muda kwenye makundi na nambari za mfululizo',
+        'display-on-delivery-slips'                              => 'Onyesha kwenye hati za uwasilishaji',
+        'display-on-delivery-slips-helper-text'                  => 'Makundi na nambari za mfululizo zitaonekana kwenye hati za uwasilishaji',
+        'display-expiration-dates-on-delivery-slips'             => 'Onyesha tarehe za kuisha muda kwenye hati za uwasilishaji',
+        'display-expiration-dates-on-delivery-slips-helper-text' => 'Tarehe za kuisha muda zitaonekana kwenye hati ya uwasilishaji',
+        'enable-consignments'                                    => 'Bidhaa za amana',
+        'enable-consignments-helper-text'                        => 'Weka mmiliki wa bidhaa zilizohifadhiwa',
     ],
 
     'before-save' => [
         'notification' => [
             'warning' => [
-                'title' => 'Wewe ina bidhaa katika hisa hiyo ina kundi/nambari ya mfululizo nambari tracking imewashwa. ',
-                'body'  => 'Kwanza switch zima tracking washa zote bidhaa kabla ya switching zima hii mpangilio.',
+                'title' => 'Una bidhaa ghalani zenye ufuatiliaji wa kundi/nambari ya mfululizo umewashwa. ',
+                'body'  => 'Kwanza zima ufuatiliaji kwenye bidhaa zote kabla ya kuzima mpangilio huu.',
             ],
         ],
     ],

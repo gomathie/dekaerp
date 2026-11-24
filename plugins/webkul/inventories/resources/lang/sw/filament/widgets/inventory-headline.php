@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'section'    => 'Ghala',
-    'to-receive' => 'Hadi receive',
-    'to-deliver' => 'Hadi deliver',
-    'late'       => '{0} Hakuna late|{1} 1 late|[2,*] :count late',
-    'low-stock'        => 'Chini hisa',
-    'low-stock-hint'   => 'Saa au chini ya reorder minimum',
-    'stock-value'      => 'Hisa thamani',
-    'stock-value-hint' => 'Washa mkono saa gharama bei',
+    'section'    => 'Bidhaa ghalani',
+    'to-receive' => 'Za kupokea',
+    'to-deliver' => 'Za kuwasilisha',
+    'late'       => '{0} Hakuna zilizochelewa|{1} 1 imechelewa|[2,*] :count zimechelewa',
+    'low-stock'        => 'Bidhaa chache',
+    'low-stock-hint'   => 'Kwenye au chini ya kiwango cha chini cha kuagiza upya',
+    'stock-value'      => 'Thamani ya bidhaa ghalani',
+    'stock-value-hint' => 'Zilizopo kwa bei ya gharama',
 ];

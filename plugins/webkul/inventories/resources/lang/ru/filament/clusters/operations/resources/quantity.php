@@ -2,55 +2,55 @@
 
 return [
     'navigation' => [
-        'title' => 'Quantities',
-        'group' => 'Adjustments',
+        'title' => 'Количества',
+        'group' => 'Корректировки',
     ],
 
     'form' => [
         'fields' => [
-            'location'         => 'Место',
+            'location'         => 'Местоположение',
             'product'          => 'Товар',
             'package'          => 'Упаковка',
-            'lot'              => 'Партия / Серийный номер Numbers',
-            'counted-qty'      => 'Counted Количество',
-            'scheduled-at'     => 'Scheduled В',
-            'storage-category' => 'Storage Категория',
+            'lot'              => 'Партии / серийные номера',
+            'counted-qty'      => 'Подсчитанное количество',
+            'scheduled-at'     => 'Запланировано на',
+            'storage-category' => 'Категория хранения',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'location'           => 'Место',
+            'location'           => 'Местоположение',
             'product'            => 'Товар',
-            'product-category'   => 'Товар Категория',
-            'lot'                => 'Партия / Серийный номер Numbers',
-            'storage-category'   => 'Storage Категория',
-            'available-quantity' => 'Доступно Количество',
+            'product-category'   => 'Категория товаров',
+            'lot'                => 'Партии / серийные номера',
+            'storage-category'   => 'Категория хранения',
+            'available-quantity' => 'Доступное количество',
             'quantity'           => 'Количество',
             'package'            => 'Упаковка',
-            'last-counted-at'    => 'Последний Counted В',
-            'on-hand'            => 'Вкл. Вручную Количество',
-            'uom'                => 'UOM',
-            'counted'            => 'Counted Количество',
-            'difference'         => 'Difference',
-            'scheduled-at'       => 'Scheduled В',
+            'last-counted-at'    => 'Последний подсчёт',
+            'on-hand'            => 'Количество в наличии',
+            'uom'                => 'Ед. изм.',
+            'counted'            => 'Подсчитанное количество',
+            'difference'         => 'Разница',
+            'scheduled-at'       => 'Запланировано на',
             'user'               => 'Пользователь',
             'company'            => 'Компания',
 
             'on-hand-before-state-updated' => [
                 'notification' => [
                     'title' => 'Количество обновлено',
-                    'body'  => 'количество есть обновлено successfully.',
+                    'body'  => 'Количество успешно обновлено.',
                 ],
             ],
         ],
 
         'groups' => [
             'product'          => 'Товар',
-            'product-category' => 'Товар Категория',
-            'location'         => 'Место',
-            'storage-category' => 'Storage Категория',
-            'lot'              => 'Партия / Серийный номер Numbers',
+            'product-category' => 'Категория товаров',
+            'location'         => 'Местоположение',
+            'storage-category' => 'Категория хранения',
+            'lot'              => 'Партии / серийные номера',
             'company'          => 'Компания',
             'package'          => 'Упаковка',
         ],
@@ -58,36 +58,36 @@ return [
         'filters' => [
             'product'             => 'Товар',
             'uom'                 => 'Единица измерения',
-            'product-category'    => 'Товар Категория',
-            'location'            => 'Место',
-            'storage-category'    => 'Storage Категория',
-            'lot'                 => 'Партия / Серийный номер Numbers',
+            'product-category'    => 'Категория товаров',
+            'location'            => 'Местоположение',
+            'storage-category'    => 'Категория хранения',
+            'lot'                 => 'Партии / серийные номера',
             'company'             => 'Компания',
             'package'             => 'Упаковка',
-            'on-hand-quantity'    => 'Вкл. Вручную Количество',
-            'difference-quantity' => 'Difference Количество',
-            'incoming-at'         => 'Incoming В',
-            'scheduled-at'        => 'Scheduled В',
+            'on-hand-quantity'    => 'Количество в наличии',
+            'difference-quantity' => 'Разница в количестве',
+            'incoming-at'         => 'Ожидаемое поступление',
+            'scheduled-at'        => 'Запланировано на',
             'user'                => 'Пользователь',
             'created-at'          => 'Создано',
             'updated-at'          => 'Обновлено',
             'company'             => 'Компания',
-            'creator'             => 'Creator',
+            'creator'             => 'Автор',
         ],
 
         'header-actions' => [
             'create' => [
-                'label' => 'Добавить Количество',
+                'label' => 'Добавить количество',
 
                 'notification' => [
-                    'title' => 'Количество added',
-                    'body'  => 'количество есть added successfully.',
+                    'title' => 'Количество добавлено',
+                    'body'  => 'Количество успешно добавлено.',
                 ],
 
                 'before' => [
                     'notification' => [
                         'title' => 'Количество уже существует',
-                        'body'  => 'количество уже существует для этот конфигурация. Пожалуйста обновить existing количество instead.',
+                        'body'  => 'Для этой конфигурации количество уже существует. Обновите существующее количество.',
                     ],
                 ],
             ],
@@ -98,8 +98,8 @@ return [
                 'label' => 'Применить',
 
                 'notification' => [
-                    'title' => 'Количество changes применено',
-                    'body'  => 'количество changes есть применено successfully.',
+                    'title' => 'Изменения количества применены',
+                    'body'  => 'Изменения количества успешно применены.',
                 ],
             ],
 
@@ -107,8 +107,8 @@ return [
                 'label' => 'Очистить',
 
                 'notification' => [
-                    'title' => 'Количество changes cleared',
-                    'body'  => 'количество changes есть cleared successfully.',
+                    'title' => 'Изменения количества сброшены',
+                    'body'  => 'Изменения количества успешно сброшены.',
                 ],
             ],
         ],

@@ -7,16 +7,16 @@ return [
         'customer'   => 'Mteja',
         'production' => 'Uzalishaji',
         'vendor'     => 'Msambazaji',
-        'archived'   => 'Imehifadhiwa',
+        'archived'   => 'Kumbukumbu',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Mahali',
+            'label' => 'Eneo jipya',
 
             'notification' => [
-                'title' => 'Mahali imeundwa',
-                'body'  => 'mahali ina imeundwa successfully.',
+                'title' => 'Eneo limeundwa',
+                'body'  => 'Eneo limeundwa kwa mafanikio.',
             ],
         ],
     ],

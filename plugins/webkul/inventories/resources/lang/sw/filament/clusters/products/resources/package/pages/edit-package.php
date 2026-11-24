@@ -2,8 +2,8 @@
 
 return [
     'notification' => [
-        'title' => 'Kifurushi imesasishwa',
-        'body'  => 'kifurushi ina imesasishwa successfully.',
+        'title' => 'Kifurushi kimesasishwa',
+        'body'  => 'Kifurushi kimesasishwa kwa mafanikio.',
     ],
 
     'header-actions' => [
@@ -12,11 +12,11 @@ return [
 
             'actions' => [
                 'without-content' => [
-                    'label' => 'Chapisha Msimbo pau',
+                    'label' => 'Chapisha msimbopau',
                 ],
 
                 'with-content' => [
-                    'label' => 'Chapisha Msimbo pau Na Content',
+                    'label' => 'Chapisha msimbopau pamoja na yaliyomo',
                 ],
             ],
         ],
@@ -24,13 +24,13 @@ return [
         'delete' => [
             'notification' => [
                 'success' => [
-                    'title' => 'Kifurushi imefutwa',
-                    'body'  => 'kifurushi ina imefutwa successfully.',
+                    'title' => 'Kifurushi kimefutwa',
+                    'body'  => 'Kifurushi kimefutwa kwa mafanikio.',
                 ],
 
                 'error' => [
-                    'title' => 'Kifurushi could si kuwa imefutwa',
-                    'body'  => 'kifurushi haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                    'title' => 'Kifurushi hakikuweza kufutwa',
+                    'body'  => 'Kifurushi hakiwezi kufutwa kwa sababu kinatumika.',
                 ],
             ],
         ],

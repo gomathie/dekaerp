@@ -3,16 +3,16 @@
 return [
     'tabs' => [
         'all'      => 'Zote',
-        'archived' => 'Imehifadhiwa',
+        'archived' => 'Kumbukumbu',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Operation Aina',
+            'label' => 'Aina mpya ya operesheni',
 
             'notification' => [
-                'title' => 'Operation Aina imeundwa',
-                'body'  => 'operation aina ina imeundwa successfully.',
+                'title' => 'Aina ya operesheni imeundwa',
+                'body'  => 'Aina ya operesheni imeundwa kwa mafanikio.',
             ],
         ],
     ],

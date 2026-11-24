@@ -3,11 +3,11 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Ndani Uhamisho',
+            'label' => 'Uhamisho mpya wa ndani',
 
             'notification' => [
-                'title' => 'Ndani Uhamisho imeundwa',
-                'body'  => 'ndani uhamisho ina imeundwa successfully.',
+                'title' => 'Uhamisho wa ndani umeundwa',
+                'body'  => 'Uhamisho wa ndani umeundwa kwa mafanikio.',
             ],
         ],
     ],

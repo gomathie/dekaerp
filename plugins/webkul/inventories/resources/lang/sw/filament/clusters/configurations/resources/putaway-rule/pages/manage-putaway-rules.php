@@ -3,16 +3,16 @@
 return [
     'tabs' => [
         'all'      => 'Zote',
-        'archived' => 'Imehifadhiwa',
+        'archived' => 'Kumbukumbu',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Putaway Rule',
+            'label' => 'Kanuni mpya ya kuhifadhi',
 
             'notification' => [
-                'title' => 'Putaway rule imeundwa',
-                'body'  => 'putaway rule ina imeundwa successfully.',
+                'title' => 'Kanuni ya kuhifadhi imeundwa',
+                'body'  => 'Kanuni ya kuhifadhi imeundwa kwa mafanikio.',
             ],
         ],
     ],

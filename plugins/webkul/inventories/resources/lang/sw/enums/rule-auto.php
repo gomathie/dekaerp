@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'manual'      => 'Kwa mkono Operation',
-    'transparent' => 'Kiotomatiki Hakuna Step Added',
+    'manual'      => 'Operesheni ya mkono',
+    'transparent' => 'Kiotomatiki bila hatua ya ziada',
 ];

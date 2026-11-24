@@ -3,11 +3,11 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Usafirishaji',
+            'label' => 'Uwasilishaji mpya',
 
             'notification' => [
-                'title' => 'Usafirishaji imeundwa',
-                'body'  => 'usafirishaji ina imeundwa successfully.',
+                'title' => 'Uwasilishaji umeundwa',
+                'body'  => 'Uwasilishaji umeundwa kwa mafanikio.',
             ],
         ],
     ],

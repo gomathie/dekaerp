@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'label' => 'Ifuatayo Uhamisho',
+    'label' => 'Uhamisho unaofuata',
 ];

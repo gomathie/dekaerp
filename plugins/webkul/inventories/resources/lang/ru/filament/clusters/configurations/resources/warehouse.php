@@ -3,7 +3,7 @@
 return [
     'navigation' => [
         'title' => 'Склады',
-        'group' => 'Склад Management',
+        'group' => 'Управление складом',
     ],
 
     'form' => [
@@ -12,12 +12,12 @@ return [
                 'title'  => 'Общее',
                 'fields' => [
                     'name'                    => 'Название',
-                    'name-placeholder'        => 'eg. Central Склад',
-                    'code'                    => 'Short Название',
-                    'code-placeholder'        => 'eg. CW',
-                    'code-hint-tooltip'       => 'short название serves как identifier для склад.',
+                    'name-placeholder'        => 'напр. Центральный склад',
+                    'code'                    => 'Краткое название',
+                    'code-placeholder'        => 'напр. ЦС',
+                    'code-hint-tooltip'       => 'Краткое название служит идентификатором склада.',
                     'company'                 => 'Компания',
-                    'multi-warehouse-warning' => 'Creating новое склад автоматически activate Storage Места настройка.',
+                    'multi-warehouse-warning' => 'При создании нового склада автоматически включается настройка «Места хранения».',
                     'address'                 => 'Адрес',
                 ],
             ],
@@ -26,21 +26,21 @@ return [
                 'title'  => 'Настройки',
 
                 'fields' => [
-                    'shipment-management'              => 'Отправка Management',
-                    'incoming-shipments'               => 'Incoming Отправки',
-                    'incoming-shipments-hint-tooltip'  => 'По умолчанию incoming маршрут до follow',
-                    'outgoing-shipments'               => 'Outgoing Отправки',
-                    'outgoing-shipments-hint-tooltip'  => 'По умолчанию outgoing маршрут до follow',
+                    'shipment-management'              => 'Управление отправками',
+                    'incoming-shipments'               => 'Входящие отправки',
+                    'incoming-shipments-hint-tooltip'  => 'Входящий маршрут по умолчанию',
+                    'outgoing-shipments'               => 'Исходящие отправки',
+                    'outgoing-shipments-hint-tooltip'  => 'Исходящий маршрут по умолчанию',
                     'manufacture'                      => 'Производство',
-                    'manufacture-hint-tooltip'         => 'По умолчанию производство маршрут до follow',
-                    'resupply-management'              => 'Resupply Management',
-                    'resupply-management-hint-tooltip' => 'Маршруты быть автоматически generated до resupply этот склад от выбрано склады.',
-                    'resupply-from'                    => 'Resupply От',
+                    'manufacture-hint-tooltip'         => 'Маршрут производства по умолчанию',
+                    'resupply-management'              => 'Управление пополнением',
+                    'resupply-management-hint-tooltip' => 'Маршруты для пополнения этого склада с выбранных складов будут созданы автоматически.',
+                    'resupply-from'                    => 'Пополнять с',
                 ],
             ],
 
             'additional' => [
-                'title'  => 'Additional Сведения',
+                'title'  => 'Дополнительная информация',
             ],
         ],
     ],
@@ -48,10 +48,10 @@ return [
     'table' => [
         'columns' => [
             'name'       => 'Название',
-            'code'       => 'Short Название',
+            'code'       => 'Краткое название',
             'company'    => 'Компания',
             'address'    => 'Адрес',
-            'deleted-at' => 'удалено',
+            'deleted-at' => 'Удалено',
             'created-at' => 'Создано',
             'updated-at' => 'Обновлено',
         ],
@@ -70,28 +70,28 @@ return [
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Склад restored',
-                    'body'  => 'склад есть restored successfully.',
+                    'title' => 'Склад восстановлен',
+                    'body'  => 'Склад успешно восстановлен.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Склад удалено',
-                    'body'  => 'склад есть удалено successfully.',
+                    'title' => 'Склад удалён',
+                    'body'  => 'Склад успешно удалён.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Склад force удалено',
-                        'body'  => 'склад есть force удалено successfully.',
+                        'title' => 'Склад удалён безвозвратно',
+                        'body'  => 'Склад успешно удалён безвозвратно.',
                     ],
 
                     'error' => [
-                        'title' => 'Склад could не быть удалено',
-                        'body'  => 'склад нельзя быть удалено потому что это currently в использовать.',
+                        'title' => 'Не удалось удалить склад',
+                        'body'  => 'Склад нельзя удалить, так как он используется.',
                     ],
                 ],
             ],
@@ -100,28 +100,28 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Склады restored',
-                    'body'  => 'склады есть restored successfully.',
+                    'title' => 'Склады восстановлены',
+                    'body'  => 'Склады успешно восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Склады удалено',
-                    'body'  => 'склады есть удалено successfully.',
+                    'title' => 'Склады удалены',
+                    'body'  => 'Склады успешно удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Склады force удалено',
-                        'body'  => 'склады есть force удалено successfully.',
+                        'title' => 'Склады удалены безвозвратно',
+                        'body'  => 'Склады успешно удалены безвозвратно.',
                     ],
 
                     'error' => [
-                        'title' => 'Склады could не быть удалено',
-                        'body'  => 'склады нельзя быть удалено потому что они currently в использовать.',
+                        'title' => 'Не удалось удалить склады',
+                        'body'  => 'Склады нельзя удалить, так как они используются.',
                     ],
                 ],
             ],
@@ -131,11 +131,11 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Общее Сведения',
+                'title' => 'Общая информация',
 
                 'entries' => [
-                    'name'    => 'Склад Название',
-                    'code'    => 'Склад Код',
+                    'name'    => 'Название склада',
+                    'code'    => 'Код склада',
                     'company' => 'Компания',
                     'address' => 'Адрес',
                 ],
@@ -145,21 +145,21 @@ return [
                 'title' => 'Настройки',
 
                 'entries' => [
-                    'shipment-management' => 'Отправка Management',
-                    'incoming-shipments'  => 'Incoming Отправки',
-                    'outgoing-shipments'  => 'Outgoing Отправки',
-                    'resupply-management' => 'Resupply Management',
-                    'resupply-from'       => 'Resupply От',
+                    'shipment-management' => 'Управление отправками',
+                    'incoming-shipments'  => 'Входящие отправки',
+                    'outgoing-shipments'  => 'Исходящие отправки',
+                    'resupply-management' => 'Управление пополнением',
+                    'resupply-from'       => 'Пополнять с',
                 ],
             ],
 
             'record-information' => [
-                'title' => 'Запись Сведения',
+                'title' => 'Сведения о записи',
 
                 'entries' => [
-                    'created-by'   => 'Создано От',
+                    'created-by'   => 'Создал',
                     'created-at'   => 'Создано',
-                    'last-updated' => 'Последний Обновлено',
+                    'last-updated' => 'Последнее обновление',
                 ],
             ],
         ],

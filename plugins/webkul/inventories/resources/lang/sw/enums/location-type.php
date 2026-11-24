@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'supplier'   => 'Msambazaji Mahali',
-    'view'       => 'Angalia',
-    'internal'   => 'Ndani Mahali',
-    'customer'   => 'Mteja Mahali',
-    'inventory'  => 'Ghala Hasara',
+    'supplier'   => 'Eneo la msambazaji',
+    'view'       => 'Mwonekano',
+    'internal'   => 'Eneo la ndani',
+    'customer'   => 'Eneo la mteja',
+    'inventory'  => 'Upotevu wa bidhaa',
     'production' => 'Uzalishaji',
-    'transit'    => 'Transit Mahali',
+    'transit'    => 'Eneo la mpito',
 ];

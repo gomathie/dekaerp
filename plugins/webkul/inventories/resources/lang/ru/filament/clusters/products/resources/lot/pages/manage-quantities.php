@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'title' => 'Места',
+    'title' => 'Местоположения',
 
     'table' => [
         'columns' => [
             'product'          => 'Товар',
-            'location'         => 'Место',
-            'storage-category' => 'Storage Категория',
+            'location'         => 'Местоположение',
+            'storage-category' => 'Категория хранения',
             'quantity'         => 'Количество',
             'package'          => 'Упаковка',
-            'on-hand'          => 'Вкл. Вручную Количество',
+            'on-hand'          => 'Количество в наличии',
             'unit'             => 'Единица',
         ],
 
@@ -18,7 +18,7 @@ return [
             'delete' => [
                 'notification' => [
                     'title' => 'Количество удалено',
-                    'body'  => 'количество есть удалено successfully.',
+                    'body'  => 'Количество успешно удалено.',
                 ],
             ],
         ],

@@ -9,13 +9,13 @@ return [
         'delete' => [
             'notification' => [
                 'success' => [
-                    'title' => 'Ndani Uhamisho Imefutwa',
-                    'body'  => 'ndani uhamisho ina imefutwa successfully.',
+                    'title' => 'Uhamisho wa ndani umefutwa',
+                    'body'  => 'Uhamisho wa ndani umefutwa kwa mafanikio.',
                 ],
 
                 'error' => [
-                    'title' => 'Ndani Uhamisho could si kuwa imefutwa',
-                    'body'  => 'ndani uhamisho haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                    'title' => 'Uhamisho wa ndani haukuweza kufutwa',
+                    'body'  => 'Uhamisho wa ndani hauwezi kufutwa kwa sababu unatumika.',
                 ],
             ],
         ],

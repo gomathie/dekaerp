@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'incoming'    => 'Stakabadhi',
-    'outgoing'    => 'Usafirishaji',
+    'incoming'    => 'Upokeaji',
+    'outgoing'    => 'Uwasilishaji',
     'internal'    => 'Ndani',
-    'dropship'    => 'Dropship',
-    'manufacture' => 'Manufacture',
+    'dropship'    => 'Usafirishaji wa moja kwa moja',
+    'manufacture' => 'Uzalishaji',
 ];

@@ -1,45 +1,45 @@
 <?php
 
 return [
-    'label'             => 'Validate',
-    'modal-heading'     => 'Unda Rudi Agizo?',
-    'modal-description' => 'Unda backorder ikiwa iliyobaki bidhaa ita kuwa processed later. Ikiwa si, si generate backorder.',
+    'label'             => 'Thibitisha',
+    'modal-heading'     => 'Unda oda iliyosalia?',
+    'modal-description' => 'Unda oda iliyosalia ikiwa bidhaa zilizobaki zitashughulikiwa baadaye. Vinginevyo, usiiunde.',
 
     'extra-modal-footer-actions' => [
         'no-backorder' => [
-            'label' => 'Hakuna Backorder',
+            'label' => 'Bila oda iliyosalia',
         ],
     ],
 
     'notification' => [
         'error' => [
-            'title' => 'Validation Imeshindwa',
+            'title' => 'Uthibitishaji umeshindwa',
         ],
 
         'warning' => [
             'lines-missing' => [
-                'title' => 'Hakuna quantities ni imehifadhiwa',
-                'body'  => 'Hakuna quantities ni imehifadhiwa kwa uhamisho.',
+                'title' => 'Hakuna idadi zilizotengwa',
+                'body'  => 'Hakuna idadi zilizotengwa kwa uhamisho huu.',
             ],
 
             'no-quantities-reserved' => [
-                'title' => 'Hakuna quantities ni imehifadhiwa',
-                'body'  => 'Hakuna quantities ni imehifadhiwa kwa uhamisho.',
+                'title' => 'Hakuna idadi zilizotengwa',
+                'body'  => 'Hakuna idadi zilizotengwa kwa uhamisho huu.',
             ],
 
             'lot-missing' => [
-                'title' => 'Supply Kundi/Nambari ya mfululizo Nambari',
-                'body'  => 'Wewe need hadi supply Kundi/Nambari ya mfululizo Nambari kwa bidhaa :products.',
+                'title' => 'Weka kundi/nambari ya mfululizo',
+                'body'  => 'Unahitaji kuweka kundi/nambari ya mfululizo kwa bidhaa :products.',
             ],
 
             'serial-qty' => [
-                'title' => 'Nambari ya mfululizo Nambari Tayari Amekabidhiwa',
-                'body'  => 'nambari ya mfululizo nambari ina tayari amekabidhiwa hadi another bidhaa.',
+                'title' => 'Nambari ya mfululizo tayari imewekwa',
+                'body'  => 'Nambari hii ya mfululizo tayari imewekwa kwa bidhaa nyingine.',
             ],
 
             'partial-package' => [
-                'title' => 'Unaweza si hamisha ile ile kifurushi content',
-                'body'  => 'Wewe haiwezekani hamisha ile ile kifurushi contents zaidi kuliko mara moja ndani ya single uhamisho au split kifurushi kati ya two maeneo.',
+                'title' => 'Haiwezekani kuhamisha yaliyomo sawa ya kifurushi',
+                'body'  => 'Huwezi kuhamisha yaliyomo sawa ya kifurushi zaidi ya mara moja katika uhamisho mmoja au kugawa kifurushi kati ya maeneo mawili.',
             ],
         ],
     ],

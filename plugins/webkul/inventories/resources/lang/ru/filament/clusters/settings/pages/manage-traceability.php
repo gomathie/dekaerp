@@ -1,27 +1,27 @@
 <?php
 
 return [
-    'title' => 'Manage Traceability',
+    'title' => 'Управление прослеживаемостью',
 
     'form' => [
-        'enable-lots-serial-numbers'                             => 'Партии & Серийный номер Numbers',
-        'enable-lots-serial-numbers-helper-text'                 => 'Получить полный traceability от поставщики до клиенты',
-        'configure-lots'                                         => 'Configure Партии',
-        'enable-expiration-dates'                                => 'Expiration Dates',
-        'enable-expiration-dates-helper-text'                    => 'Задать expiration dates вкл. партии & серийный номер numbers',
-        'display-on-delivery-slips'                              => 'Display вкл. Доставка Slips',
-        'display-on-delivery-slips-helper-text'                  => 'Партии & Серийный номер numbers appear вкл. доставка slips',
-        'display-expiration-dates-on-delivery-slips'             => 'Display Expiration Dates вкл. Доставка Slips',
-        'display-expiration-dates-on-delivery-slips-helper-text' => 'Expiration dates appear вкл. доставка slip',
-        'enable-consignments'                                    => 'Consignments',
-        'enable-consignments-helper-text'                        => 'Задать владелец вкл. stored товары',
+        'enable-lots-serial-numbers'                             => 'Партии и серийные номера',
+        'enable-lots-serial-numbers-helper-text'                 => 'Полная прослеживаемость от поставщиков до клиентов',
+        'configure-lots'                                         => 'Настроить партии',
+        'enable-expiration-dates'                                => 'Сроки годности',
+        'enable-expiration-dates-helper-text'                    => 'Задавайте сроки годности для партий и серийных номеров',
+        'display-on-delivery-slips'                              => 'Показывать в накладных на отгрузку',
+        'display-on-delivery-slips-helper-text'                  => 'Партии и серийные номера будут отображаться в накладных на отгрузку',
+        'display-expiration-dates-on-delivery-slips'             => 'Показывать сроки годности в накладных на отгрузку',
+        'display-expiration-dates-on-delivery-slips-helper-text' => 'Сроки годности будут отображаться в накладной на отгрузку',
+        'enable-consignments'                                    => 'Консигнация',
+        'enable-consignments-helper-text'                        => 'Указывайте владельца хранимых товаров',
     ],
 
     'before-save' => [
         'notification' => [
             'warning' => [
-                'title' => 'Вы есть товары в запас тот есть партия/серийный номер номер tracking включено. ',
-                'body'  => 'Первый switch выкл. tracking вкл. все товары до switching выкл. этот настройка.',
+                'title' => 'На складе есть товары с включённым отслеживанием партий/серийных номеров. ',
+                'body'  => 'Прежде чем отключить эту настройку, отключите отслеживание у всех товаров.',
             ],
         ],
     ],

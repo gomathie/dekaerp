@@ -2,11 +2,11 @@
 
 return [
     'notification' => [
-        'title' => 'Mahali imesasishwa',
-        'body'  => 'mahali ina imesasishwa successfully.',
+        'title' => 'Eneo limesasishwa',
+        'body'  => 'Eneo limesasishwa kwa mafanikio.',
 
         'error' => [
-            'title' => 'Mahali could si kuwa imesasishwa',
+            'title' => 'Eneo halikuweza kusasishwa',
         ],
     ],
 
@@ -17,8 +17,8 @@ return [
 
         'delete' => [
             'notification' => [
-                'title' => 'Mahali imefutwa',
-                'body'  => 'mahali ina imefutwa successfully.',
+                'title' => 'Eneo limefutwa',
+                'body'  => 'Eneo limefutwa kwa mafanikio.',
             ],
         ],
     ],

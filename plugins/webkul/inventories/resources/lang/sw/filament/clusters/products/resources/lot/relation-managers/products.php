@@ -6,7 +6,7 @@ return [
     'table' => [
         'columns' => [
             'product'         => 'Bidhaa',
-            'quantity'        => 'Kiasi',
+            'quantity'        => 'Idadi',
             'unit-of-measure' => 'Kipimo',
         ],
     ],

@@ -6,11 +6,11 @@ return [
     'table' => [
         'header-actions' => [
             'create' => [
-                'label' => 'Unda Mahali',
+                'label' => 'Unda eneo',
 
                 'notification' => [
-                    'title' => 'Mahali Imeundwa',
-                    'body'  => 'mahali ina imeundwa.',
+                    'title' => 'Eneo limeundwa',
+                    'body'  => 'Eneo limeundwa.',
                 ],
             ],
         ],

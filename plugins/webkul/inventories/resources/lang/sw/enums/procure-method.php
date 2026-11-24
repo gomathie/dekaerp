@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'make-to-stock' => 'Take Kutoka Hisa',
-    'make-to-order' => 'Trigger Another Rule',
-    'mts-else-mto'  => 'Take Kutoka Hisa, ikiwa haipatikani, Trigger Another Rule',
+    'make-to-stock' => 'Chukua kutoka ghalani',
+    'make-to-order' => 'Anzisha kanuni nyingine',
+    'mts-else-mto'  => 'Chukua kutoka ghalani, kama hakuna, anzisha kanuni nyingine',
 ];

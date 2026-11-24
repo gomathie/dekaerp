@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Создать Dropship',
+    'title' => 'Создать прямую поставку',
 
     'notification' => [
-        'title' => 'Dropship создано',
-        'body'  => 'dropship есть создано successfully.',
+        'title' => 'Прямая поставка создана',
+        'body'  => 'Прямая поставка успешно создана.',
     ],
 ];

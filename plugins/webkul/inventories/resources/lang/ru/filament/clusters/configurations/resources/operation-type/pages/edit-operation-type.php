@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Operation Тип обновлено',
-        'body'  => 'operation тип есть обновлено successfully.',
+        'title' => 'Тип операции обновлён',
+        'body'  => 'Тип операции успешно обновлён.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Operation Тип удалено',
-                'body'  => 'operation тип есть удалено successfully.',
+                'title' => 'Тип операции удалён',
+                'body'  => 'Тип операции успешно удалён.',
             ],
         ],
     ],

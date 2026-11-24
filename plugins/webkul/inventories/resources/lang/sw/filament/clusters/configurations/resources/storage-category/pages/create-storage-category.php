@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Storage Kategoria imeundwa',
-        'body'  => 'storage kategoria ina imeundwa successfully.',
+        'title' => 'Kategoria ya uhifadhi imeundwa',
+        'body'  => 'Kategoria ya uhifadhi imeundwa kwa mafanikio.',
     ],
 ];

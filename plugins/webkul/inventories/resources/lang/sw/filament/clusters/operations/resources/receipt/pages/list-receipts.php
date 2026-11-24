@@ -3,11 +3,11 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Stakabadhi',
+            'label' => 'Upokeaji mpya',
 
             'notification' => [
-                'title' => 'Stakabadhi imeundwa',
-                'body'  => 'stakabadhi ina imeundwa successfully.',
+                'title' => 'Upokeaji umeundwa',
+                'body'  => 'Upokeaji umeundwa kwa mafanikio.',
             ],
         ],
     ],

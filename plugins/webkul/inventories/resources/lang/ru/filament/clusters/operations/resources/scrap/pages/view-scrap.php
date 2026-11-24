@@ -3,17 +3,17 @@
 return [
     'header-actions' => [
         'validate' => [
-            'label' => 'Validate',
+            'label' => 'Проверить',
 
             'notification' => [
                 'warning' => [
-                    'title' => 'Insufficient запас',
-                    'body'  => 'scrap есть insufficient запас до validate.',
+                    'title' => 'Недостаточно запасов',
+                    'body'  => 'Для проверки списания недостаточно запасов.',
                 ],
 
                 'success' => [
-                    'title' => 'Scrap marked как завершён',
-                    'body'  => 'scrap есть marked как завершён successfully.',
+                    'title' => 'Списание отмечено выполненным',
+                    'body'  => 'Списание успешно отмечено выполненным.',
                 ],
             ],
         ],
@@ -21,13 +21,13 @@ return [
         'delete' => [
             'notification' => [
                 'success' => [
-                    'title' => 'Scrap Удалено',
-                    'body'  => 'scrap есть удалено successfully.',
+                    'title' => 'Списание удалено',
+                    'body'  => 'Списание успешно удалено.',
                 ],
 
                 'error' => [
-                    'title' => 'Scraps could не быть удалено',
-                    'body'  => 'scraps нельзя быть удалено потому что они currently в использовать.',
+                    'title' => 'Не удалось удалить списания',
+                    'body'  => 'Списания нельзя удалить, так как они используются.',
                 ],
             ],
         ],

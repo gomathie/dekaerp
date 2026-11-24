@@ -2,8 +2,8 @@
 
 return [
     'notification' => [
-        'title' => 'Dropship обновлено',
-        'body'  => 'dropship есть обновлено successfully.',
+        'title' => 'Прямая поставка обновлена',
+        'body'  => 'Прямая поставка успешно обновлена.',
     ],
 
     'header-actions' => [
@@ -14,13 +14,13 @@ return [
         'delete' => [
             'notification' => [
                 'success' => [
-                    'title' => 'Dropship удалено',
-                    'body'  => 'dropship есть удалено successfully.',
+                    'title' => 'Прямая поставка удалена',
+                    'body'  => 'Прямая поставка успешно удалена.',
                 ],
 
                 'error' => [
-                    'title' => 'Dropship could не быть удалено',
-                    'body'  => 'dropship нельзя быть удалено потому что это currently в использовать.',
+                    'title' => 'Не удалось удалить прямую поставку',
+                    'body'  => 'Прямую поставку нельзя удалить, так как она используется.',
                 ],
             ],
         ],

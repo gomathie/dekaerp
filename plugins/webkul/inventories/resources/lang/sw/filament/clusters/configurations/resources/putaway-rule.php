@@ -2,70 +2,70 @@
 
 return [
     'navigation' => [
-        'title' => 'Putaway Rules',
-        'group' => 'Ghala Management',
+        'title' => 'Kanuni za kuhifadhi',
+        'group' => 'Usimamizi wa ghala',
     ],
 
     'form' => [
         'fields' => [
-            'in-location'          => 'Wakati Bidhaa Arrives Katika',
+            'in-location'          => 'Bidhaa inapofika katika',
             'product'              => 'Bidhaa',
-            'product-placeholder'  => 'Zote Bidhaa',
-            'category'             => 'Bidhaa Kategoria',
-            'category-placeholder' => 'Zote Kategoria',
-            'storage-category'     => 'Storage Kategoria',
-            'out-location'         => 'Store Hadi',
-            'sub-location'         => 'Sub Mahali',
+            'product-placeholder'  => 'Bidhaa zote',
+            'category'             => 'Kategoria ya bidhaa',
+            'category-placeholder' => 'Kategoria zote',
+            'storage-category'     => 'Kategoria ya uhifadhi',
+            'out-location'         => 'Hifadhi katika',
+            'sub-location'         => 'Eneo dogo',
             'company'              => 'Kampuni',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'in-location'      => 'Wakati Bidhaa Arrives Katika',
+            'in-location'      => 'Bidhaa inapofika katika',
             'product'          => 'Bidhaa',
-            'category'         => 'Bidhaa Kategoria',
-            'storage-category' => 'Storage Kategoria',
-            'out-location'     => 'Store Hadi',
-            'sub-location'     => 'Sub Mahali',
+            'category'         => 'Kategoria ya bidhaa',
+            'storage-category' => 'Kategoria ya uhifadhi',
+            'out-location'     => 'Hifadhi katika',
+            'sub-location'     => 'Eneo dogo',
             'company'          => 'Kampuni',
-            'deleted-at'       => 'Imefutwa',
-            'created-at'       => 'Imeundwa',
-            'updated-at'       => 'Imesasishwa',
+            'deleted-at'       => 'Ilifutwa',
+            'created-at'       => 'Iliundwa',
+            'updated-at'       => 'Ilisasishwa',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Putaway rule imesasishwa',
-                    'body'  => 'putaway rule ina imesasishwa successfully.',
+                    'title' => 'Kanuni ya kuhifadhi imesasishwa',
+                    'body'  => 'Kanuni ya kuhifadhi imesasishwa kwa mafanikio.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Putaway rule restored',
-                    'body'  => 'putaway rule ina restored successfully.',
+                    'title' => 'Kanuni ya kuhifadhi imerejeshwa',
+                    'body'  => 'Kanuni ya kuhifadhi imerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Putaway rule imefutwa',
-                    'body'  => 'putaway rule ina imefutwa successfully.',
+                    'title' => 'Kanuni ya kuhifadhi imefutwa',
+                    'body'  => 'Kanuni ya kuhifadhi imefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'error' => [
-                        'title' => 'Putaway rule could si kuwa imefutwa',
-                        'body'  => 'putaway rule haiwezekani kuwa permanently imefutwa kwa sababu hii ni referenced na nyingine rekodi.',
+                        'title' => 'Kanuni ya kuhifadhi haikuweza kufutwa',
+                        'body'  => 'Kanuni ya kuhifadhi haiwezi kufutwa kabisa kwa sababu inatumiwa na rekodi nyingine.',
                     ],
 
                     'success' => [
-                        'title' => 'Putaway rule permanently imefutwa',
-                        'body'  => 'putaway rule ina permanently imefutwa successfully.',
+                        'title' => 'Kanuni ya kuhifadhi imefutwa kabisa',
+                        'body'  => 'Kanuni ya kuhifadhi imefutwa kabisa kwa mafanikio.',
                     ],
                 ],
             ],
@@ -74,28 +74,28 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Putaway rules restored',
-                    'body'  => 'putaway rules ina restored successfully.',
+                    'title' => 'Kanuni za kuhifadhi zimerejeshwa',
+                    'body'  => 'Kanuni za kuhifadhi zimerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Putaway rules imefutwa',
-                    'body'  => 'putaway rules ina imefutwa successfully.',
+                    'title' => 'Kanuni za kuhifadhi zimefutwa',
+                    'body'  => 'Kanuni za kuhifadhi zimefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'error' => [
-                        'title' => 'Putaway rules could si kuwa imefutwa',
-                        'body'  => 'Baadhi putaway rules haiwezekani kuwa permanently imefutwa kwa sababu wao ni referenced na nyingine rekodi.',
+                        'title' => 'Kanuni za kuhifadhi hazikuweza kufutwa',
+                        'body'  => 'Baadhi ya kanuni za kuhifadhi haziwezi kufutwa kabisa kwa sababu zinatumiwa na rekodi nyingine.',
                     ],
 
                     'success' => [
-                        'title' => 'Putaway rules permanently imefutwa',
-                        'body'  => 'putaway rules ina permanently imefutwa successfully.',
+                        'title' => 'Kanuni za kuhifadhi zimefutwa kabisa',
+                        'body'  => 'Kanuni za kuhifadhi zimefutwa kabisa kwa mafanikio.',
                     ],
                 ],
             ],

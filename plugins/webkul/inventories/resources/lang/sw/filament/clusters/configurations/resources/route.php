@@ -3,7 +3,7 @@
 return [
     'navigation' => [
         'title' => 'Njia',
-        'group' => 'Ghala Management',
+        'group' => 'Usimamizi wa ghala',
     ],
 
     'form' => [
@@ -13,24 +13,24 @@ return [
 
                 'fields' => [
                     'route'             => 'Njia',
-                    'route-placeholder' => 'eg. Two Step Reception',
+                    'route-placeholder' => 'mf. Upokeaji wa hatua mbili',
                     'company'           => 'Kampuni',
                 ],
             ],
 
             'applicable-on' => [
-                'title'       => 'Applicable Washa',
-                'description' => 'Chagua maeneo wapi hii njia unaweza kuwa imetumika.',
+                'title'       => 'Inatumika kwa',
+                'description' => 'Chagua maeneo ambapo njia hii inaweza kutumika.',
 
                 'fields' => [
                     'products'                        => 'Bidhaa',
-                    'products-hint-tooltip'           => 'Ikiwa imechaguliwa, hii njia ita kuwa inapatikana kwa selection washa bidhaa.',
-                    'product-categories'              => 'Bidhaa Kategoria',
-                    'product-categories-hint-tooltip' => 'Ikiwa imechaguliwa, hii njia ita kuwa inapatikana kwa selection washa bidhaa kategoria.',
+                    'products-hint-tooltip'           => 'Ikichaguliwa, njia hii itapatikana kuchaguliwa kwenye bidhaa.',
+                    'product-categories'              => 'Kategoria za bidhaa',
+                    'product-categories-hint-tooltip' => 'Ikichaguliwa, njia hii itapatikana kuchaguliwa kwenye kategoria ya bidhaa.',
                     'warehouses'                      => 'Maghala',
-                    'warehouses-hint-tooltip'         => 'Wakati ghala ni amekabidhiwa hadi hii njia, hii ita kuwa considered chaguo-msingi njia kwa bidhaa moving kupitia hiyo ghala.',
-                    'packaging'                       => 'Kifungashio',
-                    'packaging-hint-tooltip'          => 'Ikiwa imechaguliwa, hii njia ita kuwa inapatikana kwa selection washa kifungashio.',
+                    'warehouses-hint-tooltip'         => 'Ghala likiwekwa kwenye njia hii, njia hii itakuwa chaguomsingi kwa bidhaa zinazopita katika ghala hilo.',
+                    'packaging'                       => 'Ufungashaji',
+                    'packaging-hint-tooltip'          => 'Ikichaguliwa, njia hii itapatikana kuchaguliwa kwenye ufungashaji.',
                 ],
             ],
         ],
@@ -40,14 +40,14 @@ return [
         'columns' => [
             'route'      => 'Njia',
             'company'    => 'Kampuni',
-            'deleted-at' => 'Imefutwa',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'deleted-at' => 'Ilifutwa',
+            'created-at' => 'Iliundwa',
+            'updated-at' => 'Ilisasishwa',
         ],
 
         'groups' => [
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'created-at' => 'Iliundwa',
+            'updated-at' => 'Ilisasishwa',
         ],
 
         'filters' => [
@@ -58,34 +58,34 @@ return [
             'edit' => [
                 'notification' => [
                     'title' => 'Njia imesasishwa',
-                    'body'  => 'njia ina imesasishwa successfully.',
+                    'body'  => 'Njia imesasishwa kwa mafanikio.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Njia restored',
-                    'body'  => 'njia ina restored successfully.',
+                    'title' => 'Njia imerejeshwa',
+                    'body'  => 'Njia imerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'title' => 'Njia imefutwa',
-                    'body'  => 'njia ina imefutwa successfully.',
+                    'body'  => 'Njia imefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Njia force imefutwa',
-                        'body'  => 'njia ina force imefutwa successfully.',
+                        'title' => 'Njia imefutwa kabisa',
+                        'body'  => 'Njia imefutwa kabisa kwa mafanikio.',
                     ],
 
                     'error' => [
-                        'title' => 'Njia could si kuwa imefutwa',
-                        'body'  => 'njia haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Njia haikuweza kufutwa',
+                        'body'  => 'Njia haiwezi kufutwa kwa sababu inatumika.',
                     ],
                 ],
             ],
@@ -94,28 +94,28 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Njia restored',
-                    'body'  => 'njia ina restored successfully.',
+                    'title' => 'Njia zimerejeshwa',
+                    'body'  => 'Njia zimerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Njia imefutwa',
-                    'body'  => 'njia ina imefutwa successfully.',
+                    'title' => 'Njia zimefutwa',
+                    'body'  => 'Njia zimefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Njia force imefutwa',
-                        'body'  => 'njia ina force imefutwa successfully.',
+                        'title' => 'Njia zimefutwa kabisa',
+                        'body'  => 'Njia zimefutwa kabisa kwa mafanikio.',
                     ],
 
                     'error' => [
-                        'title' => 'Njia could si kuwa imefutwa',
-                        'body'  => 'njia haiwezekani kuwa imefutwa kwa sababu wao ni currently katika tumia.',
+                        'title' => 'Njia hazikuweza kufutwa',
+                        'body'  => 'Njia haziwezi kufutwa kwa sababu zinatumika.',
                     ],
                 ],
             ],
@@ -129,34 +129,34 @@ return [
 
                 'entries' => [
                     'route'             => 'Njia',
-                    'route-placeholder' => 'eg. Two Step Reception',
+                    'route-placeholder' => 'mf. Upokeaji wa hatua mbili',
                     'company'           => 'Kampuni',
                 ],
             ],
 
             'applicable-on' => [
-                'title'       => 'Applicable Washa',
-                'description' => 'Chagua places wapi hii njia unaweza kuwa imechaguliwa.',
+                'title'       => 'Inatumika kwa',
+                'description' => 'Chagua mahali ambapo njia hii inaweza kuchaguliwa.',
 
                 'entries' => [
                     'products'                        => 'Bidhaa',
-                    'products-hint-tooltip'           => 'Ikiwa imechaguliwa, hii njia ita kuwa inapatikana kwa selection washa bidhaa.',
-                    'product-categories'              => 'Bidhaa Kategoria',
-                    'product-categories-hint-tooltip' => 'Ikiwa imechaguliwa, hii njia ita kuwa inapatikana kwa selection washa bidhaa kategoria.',
+                    'products-hint-tooltip'           => 'Ikichaguliwa, njia hii itapatikana kuchaguliwa kwenye bidhaa.',
+                    'product-categories'              => 'Kategoria za bidhaa',
+                    'product-categories-hint-tooltip' => 'Ikichaguliwa, njia hii itapatikana kuchaguliwa kwenye kategoria ya bidhaa.',
                     'warehouses'                      => 'Maghala',
-                    'warehouses-hint-tooltip'         => 'Wakati ghala ni amekabidhiwa hadi hii njia, hii ita kuwa considered chaguo-msingi njia kwa bidhaa moving kupitia hiyo ghala.',
-                    'packaging'                       => 'Kifungashio',
-                    'packaging-hint-tooltip'          => 'Ikiwa imechaguliwa, hii njia ita kuwa inapatikana kwa selection washa kifungashio.',
+                    'warehouses-hint-tooltip'         => 'Ghala likiwekwa kwenye njia hii, njia hii itakuwa chaguomsingi kwa bidhaa zinazopita katika ghala hilo.',
+                    'packaging'                       => 'Ufungashaji',
+                    'packaging-hint-tooltip'          => 'Ikichaguliwa, njia hii itapatikana kuchaguliwa kwenye ufungashaji.',
                 ],
             ],
 
             'record-information' => [
-                'title' => 'Rekodi Taarifa',
+                'title' => 'Taarifa za rekodi',
 
                 'entries' => [
-                    'created-by'   => 'Imeundwa Na',
-                    'created-at'   => 'Imeundwa',
-                    'last-updated' => 'Mwisho Imesasishwa',
+                    'created-by'   => 'Imeundwa na',
+                    'created-at'   => 'Iliundwa',
+                    'last-updated' => 'Ilisasishwa mwisho',
                 ],
             ],
         ],

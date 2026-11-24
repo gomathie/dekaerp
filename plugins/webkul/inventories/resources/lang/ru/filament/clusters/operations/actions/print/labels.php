@@ -1,35 +1,35 @@
 <?php
 
 return [
-    'label' => 'Labels',
+    'label' => 'Этикетки',
 
     'form' => [
         'fields' => [
-            'type'          => 'Тип Labels',
+            'type'          => 'Тип этикеток',
             'quantity'      => 'Количество',
             'format'        => 'Формат',
-            'layout'        => 'Layout Labels',
-            'quantity-type' => 'Количество До Печать',
+            'layout'        => 'Макет этикеток',
+            'quantity-type' => 'Количество для печати',
             'quantity'      => 'Количество',
 
             'quantity-type-options' => [
-                'operation' => 'Operation Количество',
-                'custom'    => 'Свой Количество',
-                'per-slot'  => 'One за партия/SN',
-                'per-unit'  => 'One за единица',
+                'operation' => 'Количество в операции',
+                'custom'    => 'Своё количество',
+                'per-slot'  => 'По одной на партию/СН',
+                'per-unit'  => 'По одной на единицу',
             ],
 
             'type-options' => [
-                'product' => 'Товар Labels',
-                'lot'     => 'Партия/SN Labels',
+                'product' => 'Этикетки товаров',
+                'lot'     => 'Этикетки партий/СН',
             ],
 
             'format-options' => [
                 'dymo'       => 'Dymo',
-                '2x7_price'  => '2x7 с цена',
-                '4x7_price'  => '4x7 с цена',
+                '2x7_price'  => '2x7 с ценой',
+                '4x7_price'  => '4x7 с ценой',
                 '4x12'       => '4x12',
-                '4x12_price' => '4x12 с цена',
+                '4x12_price' => '4x12 с ценой',
             ],
         ],
     ],

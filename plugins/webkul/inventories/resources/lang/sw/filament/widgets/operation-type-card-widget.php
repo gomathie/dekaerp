@@ -1,24 +1,24 @@
 <?php
 
 return [
-    'open'       => 'Wazi',
-    'to-receive' => ':count Hadi Receive',
-    'to-deliver' => ':count Hadi Deliver',
-    'to-process' => ':count Hadi Process',
+    'open'       => 'Fungua',
+    'to-receive' => ':count za kupokea',
+    'to-deliver' => ':count za kuwasilisha',
+    'to-process' => ':count za kushughulikia',
     'links'      => [
-        'waiting'     => 'Waiting',
-        'late'        => 'Late',
-        'back-orders' => 'Rudi Maagizo',
-        'operations'  => 'Shughuli',
+        'waiting'     => 'Zinasubiri',
+        'late'        => 'Zimechelewa',
+        'back-orders' => 'Oda zilizosalia',
+        'operations'  => 'Operesheni',
     ],
     'chart' => [
-        'before'             => 'Kabla ya',
+        'before'             => 'Kabla',
         'yesterday'          => 'Jana',
         'today'              => 'Leo',
         'tomorrow'           => 'Kesho',
-        'day-after-tomorrow' => 'siku baada ya kesho',
-        'after'              => 'Baada ya',
+        'day-after-tomorrow' => 'Kesho kutwa',
+        'after'              => 'Baadaye',
         'transfers'          => 'Uhamisho',
-        'sample-data'        => 'Sampuli data',
+        'sample-data'        => 'Data ya mfano',
     ],
 ];

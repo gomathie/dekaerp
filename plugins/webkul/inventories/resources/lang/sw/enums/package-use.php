@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'disposable' => 'Disposable',
-    'reusable'   => 'Reusable',
+    'disposable' => 'Cha kutupwa',
+    'reusable'   => 'Cha kutumika tena',
 ];

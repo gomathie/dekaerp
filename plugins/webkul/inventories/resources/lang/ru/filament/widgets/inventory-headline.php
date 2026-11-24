@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'section'    => 'Склад',
-    'to-receive' => 'До receive',
-    'to-deliver' => 'До deliver',
-    'late'       => '{0} Нет late|{1} 1 late|[2,*] :count late',
-    'low-stock'        => 'Низкий запас',
-    'low-stock-hint'   => 'В или ниже reorder minimum',
-    'stock-value'      => 'Запас значение',
-    'stock-value-hint' => 'Вкл. вручную в стоимость цена',
+    'section'    => 'Запасы',
+    'to-receive' => 'К приёму',
+    'to-deliver' => 'К отгрузке',
+    'late'       => '{0} Без просрочек|{1} :count просрочка|[2,4] :count просрочки|[5,*] :count просрочек',
+    'low-stock'        => 'Мало на складе',
+    'low-stock-hint'   => 'На уровне минимума дозаказа или ниже',
+    'stock-value'      => 'Стоимость запасов',
+    'stock-value-hint' => 'В наличии по себестоимости',
 ];

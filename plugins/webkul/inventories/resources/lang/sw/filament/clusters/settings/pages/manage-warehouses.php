@@ -1,22 +1,22 @@
 <?php
 
 return [
-    'title' => 'Manage Maghala',
+    'title' => 'Simamia maghala',
 
     'form' => [
         'enable-locations'                      => 'Maeneo',
-        'enable-locations-helper-text'          => 'Track bidhaa mahali katika yako ghala',
-        'configure-locations'                   => 'Configure Maeneo',
-        'enable-multi-steps-routes'             => 'Multi Steps Njia',
-        'enable-multi-steps-routes-helper-text' => 'Tumia yako yake njia hadi manage uhamisho ya bidhaa kati ya maghala',
-        'configure-routes'                      => 'Configure Ghala Njia',
+        'enable-locations-helper-text'          => 'Fuatilia eneo la bidhaa ghalani mwako',
+        'configure-locations'                   => 'Sanidi maeneo',
+        'enable-multi-steps-routes'             => 'Njia za hatua nyingi',
+        'enable-multi-steps-routes-helper-text' => 'Tumia njia zako mwenyewe kusimamia uhamisho wa bidhaa kati ya maghala',
+        'configure-routes'                      => 'Sanidi njia za ghala',
     ],
 
     'before-save' => [
         'notification' => [
             'warning' => [
-                'title' => 'Ina multiple maghala',
-                'body'  => 'Wewe can\'t deactivate multi-mahali ikiwa wewe ina zaidi kuliko one ghala.',
+                'title' => 'Kuna maghala mengi',
+                'body'  => 'Huwezi kuzima maeneo mengi ikiwa una zaidi ya ghala moja.',
             ],
         ],
     ],

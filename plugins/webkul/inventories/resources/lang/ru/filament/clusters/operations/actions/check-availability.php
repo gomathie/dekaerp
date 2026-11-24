@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'label' => 'Чек Availability',
+    'label' => 'Проверить наличие',
 ];

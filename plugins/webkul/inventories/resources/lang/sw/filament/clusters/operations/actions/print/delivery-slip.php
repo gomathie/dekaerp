@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'label' => 'Usafirishaji Slip',
+    'label' => 'Hati ya uwasilishaji',
 ];

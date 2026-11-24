@@ -2,17 +2,17 @@
 
 return [
     'one-step' => [
-        'name'        => 'One step',
-        'description' => 'Receive na Store (One step)',
+        'name'        => 'Hatua moja',
+        'description' => 'Pokea na hifadhi (hatua moja)',
     ],
 
     'two-steps' => [
-        'name'        => 'Two steps',
-        'description' => 'Receive kisha Store (Two steps)',
+        'name'        => 'Hatua mbili',
+        'description' => 'Pokea kisha hifadhi (hatua mbili)',
     ],
 
     'three-steps' => [
-        'name'        => 'Three steps',
-        'description' => 'Receive, Quality Control, kisha Store (Three steps)',
+        'name'        => 'Hatua tatu',
+        'description' => 'Pokea, kagua ubora, kisha hifadhi (hatua tatu)',
     ],
 ];

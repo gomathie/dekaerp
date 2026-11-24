@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Kifurushi Aina imesasishwa',
-        'body'  => 'kifurushi aina ina imesasishwa successfully.',
+        'title' => 'Aina ya kifurushi imesasishwa',
+        'body'  => 'Aina ya kifurushi imesasishwa kwa mafanikio.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Kifurushi Aina imefutwa',
-                'body'  => 'kifurushi aina ina imefutwa successfully.',
+                'title' => 'Aina ya kifurushi imefutwa',
+                'body'  => 'Aina ya kifurushi imefutwa kwa mafanikio.',
             ],
         ],
     ],

@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Rule imesasishwa',
-        'body'  => 'rule ina imesasishwa successfully.',
+        'title' => 'Kanuni imesasishwa',
+        'body'  => 'Kanuni imesasishwa kwa mafanikio.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Rule imefutwa',
-                'body'  => 'rule ina imefutwa successfully.',
+                'title' => 'Kanuni imefutwa',
+                'body'  => 'Kanuni imefutwa kwa mafanikio.',
             ],
         ],
     ],

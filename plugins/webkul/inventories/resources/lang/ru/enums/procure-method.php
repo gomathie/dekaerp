@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'make-to-stock' => 'Take От Запас',
-    'make-to-order' => 'Trigger Another Rule',
-    'mts-else-mto'  => 'Take От Запас, если недоступно, Trigger Another Rule',
+    'make-to-stock' => 'Взять со склада',
+    'make-to-order' => 'Запустить другое правило',
+    'mts-else-mto'  => 'Взять со склада, при отсутствии запустить другое правило',
 ];

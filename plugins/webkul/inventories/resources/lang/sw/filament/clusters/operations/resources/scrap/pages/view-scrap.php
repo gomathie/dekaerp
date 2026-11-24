@@ -3,17 +3,17 @@
 return [
     'header-actions' => [
         'validate' => [
-            'label' => 'Validate',
+            'label' => 'Thibitisha',
 
             'notification' => [
                 'warning' => [
-                    'title' => 'Insufficient hisa',
-                    'body'  => 'scrap ina insufficient hisa hadi validate.',
+                    'title' => 'Bidhaa hazitoshi',
+                    'body'  => 'Bidhaa ghalani hazitoshi kuthibitisha rekodi hii ya chakavu.',
                 ],
 
                 'success' => [
-                    'title' => 'Scrap marked kama imekamilika',
-                    'body'  => 'scrap ina marked kama imekamilika successfully.',
+                    'title' => 'Rekodi ya chakavu imekamilishwa',
+                    'body'  => 'Rekodi ya chakavu imekamilishwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -21,13 +21,13 @@ return [
         'delete' => [
             'notification' => [
                 'success' => [
-                    'title' => 'Scrap Imefutwa',
-                    'body'  => 'scrap ina imefutwa successfully.',
+                    'title' => 'Rekodi ya chakavu imefutwa',
+                    'body'  => 'Rekodi ya chakavu imefutwa kwa mafanikio.',
                 ],
 
                 'error' => [
-                    'title' => 'Scraps could si kuwa imefutwa',
-                    'body'  => 'scraps haiwezekani kuwa imefutwa kwa sababu wao ni currently katika tumia.',
+                    'title' => 'Rekodi za chakavu hazikuweza kufutwa',
+                    'body'  => 'Rekodi za chakavu haziwezi kufutwa kwa sababu zinatumika.',
                 ],
             ],
         ],

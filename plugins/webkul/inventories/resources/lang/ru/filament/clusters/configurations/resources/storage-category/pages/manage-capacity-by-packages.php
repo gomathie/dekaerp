@@ -1,42 +1,42 @@
 <?php
 
 return [
-    'title' => 'Capacity От Упаковки',
+    'title' => 'Вместимость по упаковкам',
 
     'form' => [
-        'package-type' => 'Упаковка Тип',
+        'package-type' => 'Тип упаковки',
         'qty'          => 'Количество',
     ],
 
     'table' => [
         'header-actions' => [
             'create' => [
-                'label' => 'Добавить Упаковка Тип Capacity',
+                'label' => 'Добавить вместимость по типу упаковки',
 
                 'notification' => [
-                    'title' => 'Упаковка Тип Capacity создано',
-                    'body'  => 'упаковка тип capacity added successfully.',
+                    'title' => 'Вместимость по типу упаковки создана',
+                    'body'  => 'Вместимость по типу упаковки успешно добавлена.',
                 ],
             ],
         ],
 
         'columns' => [
-            'package-type' => 'Упаковка Тип',
+            'package-type' => 'Тип упаковки',
             'qty'          => 'Количество',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Упаковка Тип Capacity обновлено',
-                    'body'  => 'упаковка тип capacity есть обновлено successfully.',
+                    'title' => 'Вместимость по типу упаковки обновлена',
+                    'body'  => 'Вместимость по типу упаковки успешно обновлена.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Упаковка Тип Capacity удалено',
-                    'body'  => 'упаковка тип capacity есть удалено successfully.',
+                    'title' => 'Вместимость по типу упаковки удалена',
+                    'body'  => 'Вместимость по типу упаковки успешно удалена.',
                 ],
             ],
         ],

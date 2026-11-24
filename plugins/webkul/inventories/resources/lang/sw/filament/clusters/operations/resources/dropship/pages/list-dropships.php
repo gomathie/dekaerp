@@ -3,11 +3,11 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Dropship',
+            'label' => 'Usafirishaji mpya wa moja kwa moja',
 
             'notification' => [
-                'title' => 'Dropship imeundwa',
-                'body'  => 'dropship ina imeundwa successfully.',
+                'title' => 'Usafirishaji wa moja kwa moja umeundwa',
+                'body'  => 'Usafirishaji wa moja kwa moja umeundwa kwa mafanikio.',
             ],
         ],
     ],

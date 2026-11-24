@@ -2,13 +2,13 @@
 
 return [
     'navigation' => [
-        'title' => 'Dropships',
+        'title' => 'Usafirishaji wa moja kwa moja',
         'group' => 'Uhamisho',
     ],
 
     'global-search' => [
-        'partner' => 'Mshirika',
-        'origin'  => 'Asili',
+        'partner' => 'Mhusika',
+        'origin'  => 'Chanzo',
     ],
 
     'table' => [
@@ -16,13 +16,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Dropship imefutwa',
-                        'body'  => 'dropship ras imefutwa successfully.',
+                        'title' => 'Usafirishaji wa moja kwa moja umefutwa',
+                        'body'  => 'Usafirishaji wa moja kwa moja umefutwa kwa mafanikio.',
                     ],
 
                     'error' => [
-                        'title' => 'Dropship could si kuwa imefutwa',
-                        'body'  => 'dropship haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Usafirishaji wa moja kwa moja haukuweza kufutwa',
+                        'body'  => 'Usafirishaji wa moja kwa moja hauwezi kufutwa kwa sababu unatumika.',
                     ],
                 ],
             ],
@@ -32,13 +32,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Dropships imefutwa',
-                        'body'  => 'dropships ina imefutwa successfully.',
+                        'title' => 'Usafirishaji wa moja kwa moja umefutwa',
+                        'body'  => 'Usafirishaji wa moja kwa moja umefutwa kwa mafanikio.',
                     ],
 
                     'error' => [
-                        'title' => 'Dropships could si kuwa imefutwa',
-                        'body'  => 'dropships haiwezekani kuwa imefutwa kwa sababu wao ni currently katika tumia.',
+                        'title' => 'Usafirishaji wa moja kwa moja haukuweza kufutwa',
+                        'body'  => 'Usafirishaji wa moja kwa moja hauwezi kufutwa kwa sababu unatumika.',
                     ],
                 ],
             ],

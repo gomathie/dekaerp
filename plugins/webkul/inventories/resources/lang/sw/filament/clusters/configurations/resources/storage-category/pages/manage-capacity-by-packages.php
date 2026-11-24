@@ -1,42 +1,42 @@
 <?php
 
 return [
-    'title' => 'Capacity Na Vifurushi',
+    'title' => 'Uwezo kwa vifurushi',
 
     'form' => [
-        'package-type' => 'Kifurushi Aina',
-        'qty'          => 'Kiasi',
+        'package-type' => 'Aina ya kifurushi',
+        'qty'          => 'Idadi',
     ],
 
     'table' => [
         'header-actions' => [
             'create' => [
-                'label' => 'Ongeza Kifurushi Aina Capacity',
+                'label' => 'Ongeza uwezo wa aina ya kifurushi',
 
                 'notification' => [
-                    'title' => 'Kifurushi Aina Capacity imeundwa',
-                    'body'  => 'kifurushi aina capacity added successfully.',
+                    'title' => 'Uwezo wa aina ya kifurushi umeundwa',
+                    'body'  => 'Uwezo wa aina ya kifurushi umeongezwa kwa mafanikio.',
                 ],
             ],
         ],
 
         'columns' => [
-            'package-type' => 'Kifurushi Aina',
-            'qty'          => 'Kiasi',
+            'package-type' => 'Aina ya kifurushi',
+            'qty'          => 'Idadi',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Kifurushi Aina Capacity imesasishwa',
-                    'body'  => 'kifurushi aina capacity ina imesasishwa successfully.',
+                    'title' => 'Uwezo wa aina ya kifurushi umesasishwa',
+                    'body'  => 'Uwezo wa aina ya kifurushi umesasishwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Kifurushi Aina Capacity imefutwa',
-                    'body'  => 'kifurushi aina capacity ina imefutwa successfully.',
+                    'title' => 'Uwezo wa aina ya kifurushi umefutwa',
+                    'body'  => 'Uwezo wa aina ya kifurushi umefutwa kwa mafanikio.',
                 ],
             ],
         ],

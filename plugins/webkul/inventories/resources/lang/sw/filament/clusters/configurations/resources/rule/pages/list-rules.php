@@ -3,16 +3,16 @@
 return [
     'tabs' => [
         'all'      => 'Zote',
-        'archived' => 'Imehifadhiwa',
+        'archived' => 'Kumbukumbu',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Rule',
+            'label' => 'Kanuni mpya',
 
             'notification' => [
-                'title' => 'Rule imeundwa',
-                'body'  => 'rule ina imeundwa successfully.',
+                'title' => 'Kanuni imeundwa',
+                'body'  => 'Kanuni imeundwa kwa mafanikio.',
             ],
         ],
     ],

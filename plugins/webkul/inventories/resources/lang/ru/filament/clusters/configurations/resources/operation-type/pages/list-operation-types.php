@@ -8,11 +8,11 @@ return [
 
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Operation Тип',
+            'label' => 'Новый тип операции',
 
             'notification' => [
-                'title' => 'Operation Тип создано',
-                'body'  => 'operation тип есть создано successfully.',
+                'title' => 'Тип операции создан',
+                'body'  => 'Тип операции успешно создан.',
             ],
         ],
     ],

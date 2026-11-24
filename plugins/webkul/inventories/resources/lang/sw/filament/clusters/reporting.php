@@ -3,29 +3,29 @@
 return [
     'navigation' => [
         'title' => 'Ripoti',
-        'group' => 'Ghala',
+        'group' => 'Bidhaa ghalani',
     ],
 
     'moves' => [
         'navigation' => [
-            'title' => 'Moves Historia',
+            'title' => 'Historia ya mienendo',
         ],
 
         'filters' => [
-            'product-category'     => 'Bidhaa Kategoria',
-            'source-location'      => 'Chanzo Mahali',
-            'destination-location' => 'Unakoenda Mahali',
+            'product-category'     => 'Kategoria ya bidhaa',
+            'source-location'      => 'Eneo la chanzo',
+            'destination-location' => 'Eneo la kufikia',
             'package'              => 'Kifurushi',
-            'lot'                  => 'Kundi/Nambari ya mfululizo Nambari',
-            'package-type'         => 'Kifurushi Aina',
+            'lot'                  => 'Kundi/Nambari ya mfululizo',
+            'package-type'         => 'Aina ya kifurushi',
         ],
 
         'groups' => [
             'product'   => 'Bidhaa',
             'status'    => 'Hali',
             'date'      => 'Tarehe',
-            'operation' => 'Operation',
-            'location'  => 'Mahali',
+            'operation' => 'Operesheni',
+            'location'  => 'Eneo',
             'category'  => 'Kategoria',
         ],
     ],
@@ -37,20 +37,20 @@ return [
 
         'filters' => [
             'warehouse'        => 'Ghala',
-            'location'         => 'Mahali',
-            'product-category' => 'Bidhaa Kategoria',
-            'storage-category' => 'Storage Kategoria',
+            'location'         => 'Eneo',
+            'product-category' => 'Kategoria ya bidhaa',
+            'storage-category' => 'Kategoria ya uhifadhi',
             'package'          => 'Kifurushi',
-            'lot'              => 'Kundi/Nambari ya mfululizo Nambari',
-            'package-type'     => 'Kifurushi Aina',
+            'lot'              => 'Kundi/Nambari ya mfululizo',
+            'package-type'     => 'Aina ya kifurushi',
         ],
 
         'groups' => [
             'product'          => 'Bidhaa',
-            'product-category' => 'Bidhaa Kategoria',
-            'location'         => 'Mahali',
-            'storage-category' => 'Storage Kategoria',
-            'lot'              => 'Kundi/Nambari ya mfululizo Nambari',
+            'product-category' => 'Kategoria ya bidhaa',
+            'location'         => 'Eneo',
+            'storage-category' => 'Kategoria ya uhifadhi',
+            'lot'              => 'Kundi/Nambari ya mfululizo',
             'package'          => 'Kifurushi',
             'company'          => 'Kampuni',
         ],

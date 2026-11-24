@@ -3,8 +3,8 @@
 return [
     'tabs' => [
         'all'        => 'Zote',
-        'receipts'   => 'Stakabadhi',
-        'deliveries' => 'Usafirishaji Maagizo',
-        'internal'   => 'Ndani Uhamisho',
+        'receipts'   => 'Upokeaji',
+        'deliveries' => 'Oda za uwasilishaji',
+        'internal'   => 'Uhamisho wa ndani',
     ],
 ];

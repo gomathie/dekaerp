@@ -3,16 +3,16 @@
 return [
     'tabs' => [
         'all'      => 'Zote',
-        'internal' => 'Ndani Maeneo',
+        'internal' => 'Maeneo ya ndani',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Kundi / Nambari ya mfululizo Nambari',
+            'label' => 'Kundi / Nambari mpya ya mfululizo',
 
             'notification' => [
-                'title' => 'Kifurushi imeundwa',
-                'body'  => 'kifurushi ina imeundwa successfully.',
+                'title' => 'Kifurushi kimeundwa',
+                'body'  => 'Kifurushi kimeundwa kwa mafanikio.',
             ],
         ],
     ],

@@ -3,7 +3,7 @@
 return [
     'navigation' => [
         'title' => 'Маршруты',
-        'group' => 'Склад Management',
+        'group' => 'Управление складом',
     ],
 
     'form' => [
@@ -13,24 +13,24 @@ return [
 
                 'fields' => [
                     'route'             => 'Маршрут',
-                    'route-placeholder' => 'eg. Two Step Reception',
+                    'route-placeholder' => 'напр. Приёмка в два этапа',
                     'company'           => 'Компания',
                 ],
             ],
 
             'applicable-on' => [
-                'title'       => 'Applicable Вкл.',
-                'description' => 'Выбрать места где этот маршрут можно быть применено.',
+                'title'       => 'Применимо к',
+                'description' => 'Выберите местоположения, где можно применять этот маршрут.',
 
                 'fields' => [
                     'products'                        => 'Товары',
-                    'products-hint-tooltip'           => 'Если выбрано, этот маршрут быть доступно для selection вкл. товар.',
-                    'product-categories'              => 'Товар Категории',
-                    'product-categories-hint-tooltip' => 'Если выбрано, этот маршрут быть доступно для selection вкл. товар категория.',
+                    'products-hint-tooltip'           => 'Если отмечено, маршрут можно выбрать в карточке товара.',
+                    'product-categories'              => 'Категории товаров',
+                    'product-categories-hint-tooltip' => 'Если отмечено, маршрут можно выбрать в категории товаров.',
                     'warehouses'                      => 'Склады',
-                    'warehouses-hint-tooltip'         => 'Когда склад назначен до этот маршрут, это быть considered по умолчанию маршрут для товары moving через тот склад.',
-                    'packaging'                       => 'Упаковка',
-                    'packaging-hint-tooltip'          => 'Если выбрано, этот маршрут быть доступно для selection вкл. упаковка.',
+                    'warehouses-hint-tooltip'         => 'Если маршрут назначен складу, он считается маршрутом по умолчанию для товаров, проходящих через этот склад.',
+                    'packaging'                       => 'Фасовка',
+                    'packaging-hint-tooltip'          => 'Если отмечено, маршрут можно выбрать в фасовке.',
                 ],
             ],
         ],
@@ -57,35 +57,35 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Маршрут обновлено',
-                    'body'  => 'маршрут есть обновлено successfully.',
+                    'title' => 'Маршрут обновлён',
+                    'body'  => 'Маршрут успешно обновлён.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Маршрут restored',
-                    'body'  => 'маршрут есть restored successfully.',
+                    'title' => 'Маршрут восстановлен',
+                    'body'  => 'Маршрут успешно восстановлен.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Маршрут удалено',
-                    'body'  => 'маршрут есть удалено successfully.',
+                    'title' => 'Маршрут удалён',
+                    'body'  => 'Маршрут успешно удалён.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Маршрут force удалено',
-                        'body'  => 'маршрут есть force удалено successfully.',
+                        'title' => 'Маршрут удалён безвозвратно',
+                        'body'  => 'Маршрут успешно удалён безвозвратно.',
                     ],
 
                     'error' => [
-                        'title' => 'Маршрут could не быть удалено',
-                        'body'  => 'маршрут нельзя быть удалено потому что это currently в использовать.',
+                        'title' => 'Не удалось удалить маршрут',
+                        'body'  => 'Маршрут нельзя удалить, так как он используется.',
                     ],
                 ],
             ],
@@ -94,28 +94,28 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Маршруты restored',
-                    'body'  => 'маршруты есть restored successfully.',
+                    'title' => 'Маршруты восстановлены',
+                    'body'  => 'Маршруты успешно восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Маршруты удалено',
-                    'body'  => 'маршруты есть удалено successfully.',
+                    'title' => 'Маршруты удалены',
+                    'body'  => 'Маршруты успешно удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Маршруты force удалено',
-                        'body'  => 'маршруты есть force удалено successfully.',
+                        'title' => 'Маршруты удалены безвозвратно',
+                        'body'  => 'Маршруты успешно удалены безвозвратно.',
                     ],
 
                     'error' => [
-                        'title' => 'Маршруты could не быть удалено',
-                        'body'  => 'маршруты нельзя быть удалено потому что они currently в использовать.',
+                        'title' => 'Не удалось удалить маршруты',
+                        'body'  => 'Маршруты нельзя удалить, так как они используются.',
                     ],
                 ],
             ],
@@ -129,34 +129,34 @@ return [
 
                 'entries' => [
                     'route'             => 'Маршрут',
-                    'route-placeholder' => 'eg. Two Step Reception',
+                    'route-placeholder' => 'напр. Приёмка в два этапа',
                     'company'           => 'Компания',
                 ],
             ],
 
             'applicable-on' => [
-                'title'       => 'Applicable Вкл.',
-                'description' => 'Выбрать places где этот маршрут можно быть выбрано.',
+                'title'       => 'Применимо к',
+                'description' => 'Выберите, где можно выбрать этот маршрут.',
 
                 'entries' => [
                     'products'                        => 'Товары',
-                    'products-hint-tooltip'           => 'Если выбрано, этот маршрут быть доступно для selection вкл. товар.',
-                    'product-categories'              => 'Товар Категории',
-                    'product-categories-hint-tooltip' => 'Если выбрано, этот маршрут быть доступно для selection вкл. товар категория.',
+                    'products-hint-tooltip'           => 'Если отмечено, маршрут можно выбрать в карточке товара.',
+                    'product-categories'              => 'Категории товаров',
+                    'product-categories-hint-tooltip' => 'Если отмечено, маршрут можно выбрать в категории товаров.',
                     'warehouses'                      => 'Склады',
-                    'warehouses-hint-tooltip'         => 'Когда склад назначен до этот маршрут, это быть considered по умолчанию маршрут для товары moving через тот склад.',
-                    'packaging'                       => 'Упаковка',
-                    'packaging-hint-tooltip'          => 'Если выбрано, этот маршрут быть доступно для selection вкл. упаковка.',
+                    'warehouses-hint-tooltip'         => 'Если маршрут назначен складу, он считается маршрутом по умолчанию для товаров, проходящих через этот склад.',
+                    'packaging'                       => 'Фасовка',
+                    'packaging-hint-tooltip'          => 'Если отмечено, маршрут можно выбрать в фасовке.',
                 ],
             ],
 
             'record-information' => [
-                'title' => 'Запись Сведения',
+                'title' => 'Сведения о записи',
 
                 'entries' => [
-                    'created-by'   => 'Создано От',
+                    'created-by'   => 'Создал',
                     'created-at'   => 'Создано',
-                    'last-updated' => 'Последний Обновлено',
+                    'last-updated' => 'Последнее обновление',
                 ],
             ],
         ],

@@ -3,16 +3,16 @@
 return [
     'tabs' => [
         'all'      => 'Zote',
-        'archived' => 'Imehifadhiwa',
+        'archived' => 'Kumbukumbu',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Ghala',
+            'label' => 'Ghala jipya',
 
             'notification' => [
-                'title' => 'Ghala imeundwa',
-                'body'  => 'ghala ina imeundwa successfully.',
+                'title' => 'Ghala limeundwa',
+                'body'  => 'Ghala limeundwa kwa mafanikio.',
             ],
         ],
     ],

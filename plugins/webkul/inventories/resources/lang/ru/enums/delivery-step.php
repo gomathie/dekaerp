@@ -2,17 +2,17 @@
 
 return [
     'one-step' => [
-        'name'        => 'One step',
-        'description' => 'Deliver (One step)',
+        'name'        => 'Один этап',
+        'description' => 'Отгрузка (один этап)',
     ],
 
     'two-steps' => [
-        'name'        => 'Two steps',
-        'description' => 'Pick затем Deliver (Two steps)',
+        'name'        => 'Два этапа',
+        'description' => 'Комплектация, затем отгрузка (два этапа)',
     ],
 
     'three-steps' => [
-        'name'        => 'Three steps',
-        'description' => 'Pick, Pack, затем Deliver (Three steps)',
+        'name'        => 'Три этапа',
+        'description' => 'Комплектация, упаковка, затем отгрузка (три этапа)',
     ],
 ];

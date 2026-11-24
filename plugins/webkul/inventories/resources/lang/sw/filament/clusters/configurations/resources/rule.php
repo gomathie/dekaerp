@@ -2,8 +2,8 @@
 
 return [
     'navigation' => [
-        'title' => 'Rules',
-        'group' => 'Ghala Management',
+        'title' => 'Kanuni',
+        'group' => 'Usimamizi wa ghala',
     ],
 
     'form' => [
@@ -14,19 +14,19 @@ return [
                 'fields' => [
                     'name'                        => 'Jina',
                     'action'                      => 'Kitendo',
-                    'operation-type'              => 'Operation Aina',
-                    'source-location'             => 'Chanzo Mahali',
-                    'destination-location'        => 'Unakoenda Mahali',
-                    'supply-method'               => 'Supply Method',
-                    'supply-method-hint-tooltip'  => 'Take Kutoka Hisa: Bidhaa ni sourced directly kutoka inapatikana hisa katika chanzo mahali.<br/>Trigger Another Rule: mfumo ignores inapatikana hisa na searches kwa hisa rule hadi replenish chanzo mahali.<br/>Take Kutoka Hisa, ikiwa Haipatikani, Trigger Another Rule: Bidhaa ni kwanza taken kutoka inapatikana hisa. Ikiwa hakuna ni inapatikana, mfumo inatumika hisa rule hadi bring bidhaa ndani chanzo mahali.',
-                    'automatic-move'              => 'Kiotomatiki Hamisha',
-                    'automatic-move-hint-tooltip' => 'Kwa mkono Operation: Creates separate hisa hamisha baada ya sasa one.<br/>Kiotomatiki Hakuna Step Added: Directly replaces mahali katika original hamisha bila adding extra step.',
+                    'operation-type'              => 'Aina ya operesheni',
+                    'source-location'             => 'Eneo la chanzo',
+                    'destination-location'        => 'Eneo la kufikia',
+                    'supply-method'               => 'Njia ya ugavi',
+                    'supply-method-hint-tooltip'  => 'Chukua kutoka ghalani: Bidhaa huchukuliwa moja kwa moja kutoka akiba iliyopo katika eneo la chanzo.<br/>Anzisha kanuni nyingine: Mfumo hupuuza akiba iliyopo na hutafuta kanuni ya kujaza upya eneo la chanzo.<br/>Chukua kutoka ghalani, kama hakuna, anzisha kanuni nyingine: Bidhaa huchukuliwa kwanza kutoka akiba iliyopo. Kama hakuna, mfumo hutumia kanuni ya kuleta bidhaa katika eneo la chanzo.',
+                    'automatic-move'              => 'Uhamisho wa kiotomatiki',
+                    'automatic-move-hint-tooltip' => 'Operesheni ya mkono: Huunda mwendo tofauti wa bidhaa baada ya ule wa sasa.<br/>Kiotomatiki bila hatua ya ziada: Hubadilisha eneo moja kwa moja katika mwendo wa awali bila kuongeza hatua.',
 
                     'action-information' => [
-                        'pull'        => 'Wakati bidhaa ni inahitajika katika <b>:sourceLocation</b>, :operation ni generated kutoka <b>:destinationLocation</b> hadi meet mahitaji.',
-                        'push'        => 'Wakati bidhaa reach <b>:sourceLocation</b>,</br><b>:operation</b> ni generated hadi uhamisho wao hadi <b>:destinationLocation</b>.',
-                        'buy'         => 'Wakati bidhaa ni needed katika <b>:destinationLocation</b>, request kwa nukuu ni imeundwa hadi fulfill need.',
-                        'manufacture' => 'Wakati bidhaa ni needed katika <b>:destinationLocation</b>, uzalishaji agizo ni imeundwa hadi fulfill need.',
+                        'pull'        => 'Bidhaa zinapohitajika katika <b>:sourceLocation</b>, :operation huundwa kutoka <b>:destinationLocation</b> ili kukidhi mahitaji.',
+                        'push'        => 'Bidhaa zinapofika <b>:sourceLocation</b>,</br><b>:operation</b> huundwa ili kuzihamisha hadi <b>:destinationLocation</b>.',
+                        'buy'         => 'Bidhaa zinapohitajika katika <b>:destinationLocation</b>, ombi la nukuu ya bei huundwa ili kukidhi hitaji.',
+                        'manufacture' => 'Bidhaa zinapohitajika katika <b>:destinationLocation</b>, oda ya uzalishaji huundwa ili kukidhi hitaji.',
                     ],
                 ],
             ],
@@ -35,15 +35,15 @@ return [
                 'title'  => 'Mipangilio',
 
                 'fields' => [
-                    'partner-address'              => 'Mshirika Anwani',
-                    'partner-address-hint-tooltip' => 'Anwani wapi goods unapaswa kuwa delivered. Si lazima.',
-                    'lead-time'                    => 'Lead Time (Siku)',
-                    'lead-time-hint-tooltip'       => 'inatarajiwa uhamisho tarehe ita kuwa calculated kwa kutumia hii lead time.',
+                    'partner-address'              => 'Anwani ya mhusika',
+                    'partner-address-hint-tooltip' => 'Anwani ambapo bidhaa zinapaswa kuwasilishwa. Si lazima.',
+                    'lead-time'                    => 'Muda wa maandalizi (siku)',
+                    'lead-time-hint-tooltip'       => 'Tarehe inayotarajiwa ya uhamisho itakokotolewa kwa kutumia muda huu.',
                 ],
 
                 'fieldsets' => [
                     'applicability' => [
-                        'title'  => 'Applicability',
+                        'title'  => 'Matumizi',
 
                         'fields' => [
                             'route'   => 'Njia',
@@ -52,14 +52,14 @@ return [
                     ],
 
                     'propagation' => [
-                        'title'  => 'Propagation',
+                        'title'  => 'Usambazaji',
 
                         'fields' => [
-                            'propagation-procurement-group'              => 'Propagation ya Procurement Kundi',
-                            'propagation-procurement-group-hint-tooltip' => 'Ikiwa imechaguliwa, canceling hamisha imeundwa na hii rule ita pia ghairi subsequent hamisha.',
-                            'cancel-next-move'                           => 'Ghairi Ifuatayo Hamisha',
-                            'warehouse-to-propagate'                     => 'Ghala hadi Propagate',
-                            'warehouse-to-propagate-hint-tooltip'        => 'ghala amekabidhiwa hadi imeundwa hamisha au procurement, ambayo mei differ kutoka ghala hii rule inatumika hadi (e.g., kwa resupply rules kutoka another ghala).',
+                            'propagation-procurement-group'              => 'Usambazaji wa kikundi cha ununuzi',
+                            'propagation-procurement-group-hint-tooltip' => 'Ikichaguliwa, kughairi mwendo ulioundwa na kanuni hii pia kutaghairi mwendo unaofuata.',
+                            'cancel-next-move'                           => 'Ghairi mwendo unaofuata',
+                            'warehouse-to-propagate'                     => 'Ghala la kusambaza',
+                            'warehouse-to-propagate-hint-tooltip'        => 'Ghala linalowekwa kwa mwendo au ununuzi ulioundwa, ambalo linaweza kutofautiana na ghala ambalo kanuni hii inatumika (mf. kwa kanuni za kujaza upya kutoka ghala jingine).',
                         ],
                     ],
                 ],
@@ -72,27 +72,27 @@ return [
         'columns' => [
             'name'                 => 'Jina',
             'action'               => 'Kitendo',
-            'source-location'      => 'Chanzo Mahali',
-            'destination-location' => 'Unakoenda Mahali',
+            'source-location'      => 'Eneo la chanzo',
+            'destination-location' => 'Eneo la kufikia',
             'route'                => 'Njia',
-            'deleted-at'           => 'Imefutwa',
-            'created-at'           => 'Imeundwa',
-            'updated-at'           => 'Imesasishwa',
+            'deleted-at'           => 'Ilifutwa',
+            'created-at'           => 'Iliundwa',
+            'updated-at'           => 'Ilisasishwa',
         ],
 
         'groups' => [
             'action'               => 'Kitendo',
-            'source-location'      => 'Chanzo Mahali',
-            'destination-location' => 'Unakoenda Mahali',
+            'source-location'      => 'Eneo la chanzo',
+            'destination-location' => 'Eneo la kufikia',
             'route'                => 'Njia',
-            'created-at'           => 'Imeundwa',
-            'updated-at'           => 'Imesasishwa',
+            'created-at'           => 'Iliundwa',
+            'updated-at'           => 'Ilisasishwa',
         ],
 
         'filters' => [
             'action'               => 'Kitendo',
-            'source-location'      => 'Chanzo Mahali',
-            'destination-location' => 'Unakoenda Mahali',
+            'source-location'      => 'Eneo la chanzo',
+            'destination-location' => 'Eneo la kufikia',
             'route'                => 'Njia',
             'company'              => 'Kampuni',
         ],
@@ -100,35 +100,35 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Rule imesasishwa',
-                    'body'  => 'rule ina imesasishwa successfully.',
+                    'title' => 'Kanuni imesasishwa',
+                    'body'  => 'Kanuni imesasishwa kwa mafanikio.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Rule restored',
-                    'body'  => 'rule ina restored successfully.',
+                    'title' => 'Kanuni imerejeshwa',
+                    'body'  => 'Kanuni imerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Rule imefutwa',
-                    'body'  => 'rule ina imefutwa successfully.',
+                    'title' => 'Kanuni imefutwa',
+                    'body'  => 'Kanuni imefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Rule force imefutwa',
-                        'body'  => 'rule ina force imefutwa successfully.',
+                        'title' => 'Kanuni imefutwa kabisa',
+                        'body'  => 'Kanuni imefutwa kabisa kwa mafanikio.',
                     ],
 
                     'error' => [
-                        'title' => 'Rule could si kuwa imefutwa',
-                        'body'  => 'rule haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Kanuni haikuweza kufutwa',
+                        'body'  => 'Kanuni haiwezi kufutwa kwa sababu inatumika.',
                     ],
                 ],
             ],
@@ -137,28 +137,28 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Rules restored',
-                    'body'  => 'rules ina restored successfully.',
+                    'title' => 'Kanuni zimerejeshwa',
+                    'body'  => 'Kanuni zimerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Rules imefutwa',
-                    'body'  => 'rules ina imefutwa successfully.',
+                    'title' => 'Kanuni zimefutwa',
+                    'body'  => 'Kanuni zimefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Rules force imefutwa',
-                        'body'  => 'rules ina force imefutwa successfully.',
+                        'title' => 'Kanuni zimefutwa kabisa',
+                        'body'  => 'Kanuni zimefutwa kabisa kwa mafanikio.',
                     ],
 
                     'error' => [
-                        'title' => 'Rules could si kuwa imefutwa',
-                        'body'  => 'rules haiwezekani kuwa imefutwa kwa sababu wao ni currently katika tumia.',
+                        'title' => 'Kanuni hazikuweza kufutwa',
+                        'body'  => 'Kanuni haziwezi kufutwa kwa sababu zinatumika.',
                     ],
                 ],
             ],
@@ -168,34 +168,34 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Rule Maelezo',
+                'title' => 'Maelezo ya kanuni',
 
                 'description' => [
-                    'pull' => 'Wakati bidhaa ni inahitajika katika <b>:sourceLocation</b>, <b>:operation</b> ni generated kutoka <b>:destinationLocation</b> hadi meet mahitaji.',
-                    'push' => 'Wakati bidhaa reach katika <b>:sourceLocation</b>, <b>:operation</b> ni generated hadi uhamisho wao hadi <b>:destinationLocation</b>.',
+                    'pull' => 'Bidhaa zinapohitajika katika <b>:sourceLocation</b>, <b>:operation</b> huundwa kutoka <b>:destinationLocation</b> ili kukidhi mahitaji.',
+                    'push' => 'Bidhaa zinapofika katika <b>:sourceLocation</b>, <b>:operation</b> huundwa ili kuzihamisha hadi <b>:destinationLocation</b>.',
                 ],
 
                 'entries' => [
-                    'name'                 => 'Rule Jina',
+                    'name'                 => 'Jina la kanuni',
                     'action'               => 'Kitendo',
-                    'operation-type'       => 'Operation Aina',
-                    'source-location'      => 'Chanzo Mahali',
-                    'destination-location' => 'Unakoenda Mahali',
+                    'operation-type'       => 'Aina ya operesheni',
+                    'source-location'      => 'Eneo la chanzo',
+                    'destination-location' => 'Eneo la kufikia',
                     'route'                => 'Njia',
                     'company'              => 'Kampuni',
-                    'partner-address'      => 'Mshirika Anwani',
-                    'lead-time'            => 'Lead Time',
-                    'action-information'   => 'Kitendo Taarifa',
+                    'partner-address'      => 'Anwani ya mhusika',
+                    'lead-time'            => 'Muda wa maandalizi',
+                    'action-information'   => 'Taarifa za kitendo',
                 ],
             ],
 
             'record-information' => [
-                'title' => 'Rekodi Taarifa',
+                'title' => 'Taarifa za rekodi',
 
                 'entries' => [
-                    'created-by'   => 'Imeundwa Na',
-                    'created-at'   => 'Imeundwa',
-                    'last-updated' => 'Mwisho Imesasishwa',
+                    'created-by'   => 'Imeundwa na',
+                    'created-at'   => 'Iliundwa',
+                    'last-updated' => 'Ilisasishwa mwisho',
                 ],
             ],
         ],

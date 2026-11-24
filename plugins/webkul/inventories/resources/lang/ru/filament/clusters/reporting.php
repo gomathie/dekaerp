@@ -3,54 +3,54 @@
 return [
     'navigation' => [
         'title' => 'Отчёты',
-        'group' => 'Склад',
+        'group' => 'Запасы',
     ],
 
     'moves' => [
         'navigation' => [
-            'title' => 'Moves История',
+            'title' => 'История движений',
         ],
 
         'filters' => [
-            'product-category'     => 'Товар Категория',
-            'source-location'      => 'Источник Место',
-            'destination-location' => 'Назначение Место',
+            'product-category'     => 'Категория товаров',
+            'source-location'      => 'Исходное местоположение',
+            'destination-location' => 'Местоположение назначения',
             'package'              => 'Упаковка',
-            'lot'                  => 'Партия/Серийный номер Номер',
-            'package-type'         => 'Упаковка Тип',
+            'lot'                  => 'Партия/серийный номер',
+            'package-type'         => 'Тип упаковки',
         ],
 
         'groups' => [
             'product'   => 'Товар',
             'status'    => 'Статус',
             'date'      => 'Дата',
-            'operation' => 'Operation',
-            'location'  => 'Место',
+            'operation' => 'Операция',
+            'location'  => 'Местоположение',
             'category'  => 'Категория',
         ],
     ],
 
     'quantities' => [
         'navigation' => [
-            'title' => 'Места',
+            'title' => 'Местоположения',
         ],
 
         'filters' => [
             'warehouse'        => 'Склад',
-            'location'         => 'Место',
-            'product-category' => 'Товар Категория',
-            'storage-category' => 'Storage Категория',
+            'location'         => 'Местоположение',
+            'product-category' => 'Категория товаров',
+            'storage-category' => 'Категория хранения',
             'package'          => 'Упаковка',
-            'lot'              => 'Партия/Серийный номер Номер',
-            'package-type'     => 'Упаковка Тип',
+            'lot'              => 'Партия/серийный номер',
+            'package-type'     => 'Тип упаковки',
         ],
 
         'groups' => [
             'product'          => 'Товар',
-            'product-category' => 'Товар Категория',
-            'location'         => 'Место',
-            'storage-category' => 'Storage Категория',
-            'lot'              => 'Партия/Серийный номер Номер',
+            'product-category' => 'Категория товаров',
+            'location'         => 'Местоположение',
+            'storage-category' => 'Категория хранения',
+            'lot'              => 'Партия/серийный номер',
             'package'          => 'Упаковка',
             'company'          => 'Компания',
         ],

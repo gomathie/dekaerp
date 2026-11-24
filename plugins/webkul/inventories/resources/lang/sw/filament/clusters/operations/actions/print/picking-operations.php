@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'label' => 'Picking Shughuli',
+    'label' => 'Operesheni za uchukuaji',
 ];

@@ -3,6 +3,6 @@
 return [
     'navigation' => [
         'title' => 'Bidhaa',
-        'group' => 'Ghala',
+        'group' => 'Bidhaa ghalani',
     ],
 ];

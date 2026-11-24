@@ -3,16 +3,16 @@
 return [
     'tabs' => [
         'all'      => 'Zote',
-        'archived' => 'Imehifadhiwa',
+        'archived' => 'Kumbukumbu',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Njia',
+            'label' => 'Njia mpya',
 
             'notification' => [
                 'title' => 'Njia imeundwa',
-                'body'  => 'njia ina imeundwa successfully.',
+                'body'  => 'Njia imeundwa kwa mafanikio.',
             ],
         ],
     ],

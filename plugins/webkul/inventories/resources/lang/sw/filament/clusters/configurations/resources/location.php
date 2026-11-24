@@ -3,7 +3,7 @@
 return [
     'navigation' => [
         'title' => 'Maeneo',
-        'group' => 'Ghala Management',
+        'group' => 'Usimamizi wa ghala',
     ],
 
     'form' => [
@@ -12,11 +12,11 @@ return [
                 'title'  => 'Jumla',
 
                 'fields' => [
-                    'location'                     => 'Mahali',
-                    'location-placeholder'         => 'eg. Spare Hisa',
-                    'parent-location'              => 'Parent Mahali',
-                    'parent-location-hint-tooltip' => 'main mahali hiyo encompasses hii mahali. Kwa mfano, \'Dispatch Zone\' ni part ya \'Gate 1\' parent mahali.',
-                    'external-notes'               => 'Nje Maelezo',
+                    'location'                     => 'Eneo',
+                    'location-placeholder'         => 'mf. Akiba ya ziada',
+                    'parent-location'              => 'Eneo kuu',
+                    'parent-location-hint-tooltip' => 'Eneo kuu linalojumuisha eneo hili. Kwa mfano, «Eneo la kusafirisha» ni sehemu ya eneo kuu «Lango 1».',
+                    'external-notes'               => 'Vidokezo vya nje',
                 ],
             ],
 
@@ -24,53 +24,53 @@ return [
                 'title'  => 'Mipangilio',
 
                 'fields' => [
-                    'location-type'                 => 'Mahali Aina',
+                    'location-type'                 => 'Aina ya eneo',
                     'company'                       => 'Kampuni',
-                    'storage-category'              => 'Storage Kategoria',
-                    'is-scrap'                      => 'Ni Scrap Mahali?',
-                    'is-scrap-hint-tooltip'         => 'Chagua hii checkbox hadi designate hii mahali kwa storing scrapped au damaged goods.',
-                    'is-dock'                       => 'Ni Dock Mahali?',
-                    'is-dock-hint-tooltip'          => 'Chagua hii checkbox hadi designate hii mahali kwa storing goods hiyo ni ready kwa shehena.',
-                    'is-replenish'                  => 'Ni Replenish Mahali?',
-                    'is-replenish-hint-tooltip'     => 'Washa hii function hadi retrieve zote quantities needed kwa replenishment saa hii mahali.',
-                    'logistics'                     => 'Usafirishaji',
-                    'removal-strategy'              => 'Removal Strategy',
-                    'removal-strategy-hint-tooltip' => 'Specifies chaguo-msingi method kwa determining exact shelf, kundi, na mahali kutoka ambayo hadi pick bidhaa. Hii method unaweza kuwa enforced saa bidhaa kategoria level, na fallback hadi parent maeneo ikiwa si weka hapa.',
-                    'cyclic-counting'               => 'Cyclic Counting',
-                    'inventory-frequency'           => 'Ghala Frequency',
-                    'last-inventory'                => 'Mwisho Ghala',
-                    'last-inventory-hint-tooltip'   => 'Tarehe ya mwisho ghala saa hii mahali.',
-                    'next-expected'                 => 'Ifuatayo inatarajiwa',
-                    'next-expected-hint-tooltip'    => 'Tarehe kwa ifuatayo imepangwa ghala based washa cyclic ratiba.',
+                    'storage-category'              => 'Kategoria ya uhifadhi',
+                    'is-scrap'                      => 'Ni eneo la chakavu?',
+                    'is-scrap-hint-tooltip'         => 'Chagua kisanduku hiki ili eneo hili lihifadhi bidhaa chakavu au zilizoharibika.',
+                    'is-dock'                       => 'Ni eneo la upakiaji?',
+                    'is-dock-hint-tooltip'          => 'Chagua kisanduku hiki ili eneo hili lihifadhi bidhaa zilizo tayari kusafirishwa.',
+                    'is-replenish'                  => 'Ni eneo la kujaza upya?',
+                    'is-replenish-hint-tooltip'     => 'Washa ili kupata idadi zote zinazohitajika kujaza upya eneo hili.',
+                    'logistics'                     => 'Lojistiki',
+                    'removal-strategy'              => 'Mkakati wa kutoa',
+                    'removal-strategy-hint-tooltip' => 'Huweka njia chaguomsingi ya kuamua rafu, kundi na eneo halisi la kuchukua bidhaa. Njia hii inaweza kuwekwa kwenye kategoria ya bidhaa; isipowekwa hapa, njia ya eneo kuu hutumika.',
+                    'cyclic-counting'               => 'Hesabu ya mzunguko',
+                    'inventory-frequency'           => 'Marudio ya hesabu ya bidhaa',
+                    'last-inventory'                => 'Hesabu ya mwisho',
+                    'last-inventory-hint-tooltip'   => 'Tarehe ya hesabu ya mwisho ya bidhaa katika eneo hili.',
+                    'next-expected'                 => 'Inayofuata',
+                    'next-expected-hint-tooltip'    => 'Tarehe ya hesabu inayofuata iliyopangwa kwa ratiba ya mzunguko.',
                 ],
             ],
 
             'additional' => [
-                'title'  => 'Additional Taarifa',
+                'title'  => 'Taarifa za ziada',
             ],
         ],
     ],
 
     'table' => [
         'columns' => [
-            'location'         => 'Mahali',
+            'location'         => 'Eneo',
             'type'             => 'Aina',
-            'storage-category' => 'Storage Kategoria',
+            'storage-category' => 'Kategoria ya uhifadhi',
             'company'          => 'Kampuni',
-            'deleted-at'       => 'imefutwa',
-            'created-at'       => 'Imeundwa',
-            'updated-at'       => 'Imesasishwa',
+            'deleted-at'       => 'Ilifutwa',
+            'created-at'       => 'Iliundwa',
+            'updated-at'       => 'Ilisasishwa',
         ],
 
         'groups' => [
             'warehouse'       => 'Ghala',
             'type'            => 'Aina',
-            'created-at'      => 'Imeundwa',
-            'updated-at'      => 'Imesasishwa',
+            'created-at'      => 'Iliundwa',
+            'updated-at'      => 'Ilisasishwa',
         ],
 
         'filters' => [
-            'location' => 'Mahali',
+            'location' => 'Eneo',
             'type'     => 'Aina',
             'company'  => 'Kampuni',
         ],
@@ -78,35 +78,35 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Mahali imesasishwa',
-                    'body'  => 'mahali ina imesasishwa successfully.',
+                    'title' => 'Eneo limesasishwa',
+                    'body'  => 'Eneo limesasishwa kwa mafanikio.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Mahali restored',
-                    'body'  => 'mahali ina restored successfully.',
+                    'title' => 'Eneo limerejeshwa',
+                    'body'  => 'Eneo limerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Mahali imefutwa',
-                    'body'  => 'mahali ina imefutwa successfully.',
+                    'title' => 'Eneo limefutwa',
+                    'body'  => 'Eneo limefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Mahali force imefutwa',
-                        'body'  => 'mahali ina force imefutwa successfully.',
+                        'title' => 'Eneo limefutwa kabisa',
+                        'body'  => 'Eneo limefutwa kabisa kwa mafanikio.',
                     ],
 
                     'error' => [
-                        'title' => 'Mahali could si kuwa imefutwa',
-                        'body'  => 'mahali haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Eneo halikuweza kufutwa',
+                        'body'  => 'Eneo haliwezi kufutwa kwa sababu linatumika.',
                     ],
                 ],
             ],
@@ -114,33 +114,33 @@ return [
 
         'bulk-actions' => [
             'print' => [
-                'label' => 'Chapisha Msimbo pau',
+                'label' => 'Chapisha msimbopau',
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Maeneo restored',
-                    'body'  => 'maeneo ina restored successfully.',
+                    'title' => 'Maeneo yamerejeshwa',
+                    'body'  => 'Maeneo yamerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Maeneo imefutwa',
-                    'body'  => 'maeneo ina imefutwa successfully.',
+                    'title' => 'Maeneo yamefutwa',
+                    'body'  => 'Maeneo yamefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Maeneo force imefutwa',
-                        'body'  => 'maeneo ina force imefutwa successfully.',
+                        'title' => 'Maeneo yamefutwa kabisa',
+                        'body'  => 'Maeneo yamefutwa kabisa kwa mafanikio.',
                     ],
 
                     'error' => [
-                        'title' => 'Maeneo could si kuwa imefutwa',
-                        'body'  => 'maeneo haiwezekani kuwa imefutwa kwa sababu wao ni currently katika tumia.',
+                        'title' => 'Maeneo hayakuweza kufutwa',
+                        'body'  => 'Maeneo hayawezi kufutwa kwa sababu yanatumika.',
                     ],
                 ],
             ],
@@ -153,11 +153,11 @@ return [
                 'title'  => 'Jumla',
 
                 'entries' => [
-                    'location'                     => 'Mahali',
-                    'location-placeholder'         => 'eg. Spare Hisa',
-                    'parent-location'              => 'Parent Mahali',
-                    'parent-location-hint-tooltip' => 'main mahali hiyo encompasses hii mahali. Kwa mfano, \'Dispatch Zone\' ni part ya \'Gate 1\' parent mahali.',
-                    'external-notes'               => 'Nje Maelezo',
+                    'location'                     => 'Eneo',
+                    'location-placeholder'         => 'mf. Akiba ya ziada',
+                    'parent-location'              => 'Eneo kuu',
+                    'parent-location-hint-tooltip' => 'Eneo kuu linalojumuisha eneo hili. Kwa mfano, «Eneo la kusafirisha» ni sehemu ya eneo kuu «Lango 1».',
+                    'external-notes'               => 'Vidokezo vya nje',
                 ],
             ],
 
@@ -165,38 +165,38 @@ return [
                 'title'  => 'Mipangilio',
 
                 'entries' => [
-                    'location-type'                 => 'Mahali Aina',
+                    'location-type'                 => 'Aina ya eneo',
                     'company'                       => 'Kampuni',
-                    'storage-category'              => 'Storage Kategoria',
-                    'is-scrap'                      => 'Ni Scrap Mahali?',
-                    'is-scrap-hint-tooltip'         => 'Chagua hii checkbox hadi designate hii mahali kwa storing scrapped au damaged goods.',
-                    'is-dock'                       => 'Ni Dock Mahali?',
-                    'is-dock-hint-tooltip'          => 'Chagua hii checkbox hadi designate hii mahali kwa storing goods hiyo ni ready kwa shehena.',
-                    'is-replenish'                  => 'Ni Replenish Mahali?',
-                    'is-replenish-hint-tooltip'     => 'Washa hii function hadi retrieve zote quantities needed kwa replenishment saa hii mahali.',
-                    'logistics'                     => 'Usafirishaji',
-                    'removal-strategy'              => 'Removal Strategy',
-                    'removal-strategy-hint-tooltip' => 'Specifies chaguo-msingi method kwa determining exact shelf, kundi, na mahali kutoka ambayo hadi pick bidhaa. Hii method unaweza kuwa enforced saa bidhaa kategoria level, na fallback hadi parent maeneo ikiwa si weka hapa.',
-                    'cyclic-counting'               => 'Cyclic Counting',
-                    'inventory-frequency'           => 'Ghala Frequency',
-                    'last-inventory'                => 'Mwisho Ghala',
-                    'last-inventory-hint-tooltip'   => 'Tarehe ya mwisho ghala saa hii mahali.',
-                    'next-expected'                 => 'Ifuatayo inatarajiwa',
-                    'next-expected-hint-tooltip'    => 'Tarehe kwa ifuatayo imepangwa ghala based washa cyclic ratiba.',
+                    'storage-category'              => 'Kategoria ya uhifadhi',
+                    'is-scrap'                      => 'Ni eneo la chakavu?',
+                    'is-scrap-hint-tooltip'         => 'Chagua kisanduku hiki ili eneo hili lihifadhi bidhaa chakavu au zilizoharibika.',
+                    'is-dock'                       => 'Ni eneo la upakiaji?',
+                    'is-dock-hint-tooltip'          => 'Chagua kisanduku hiki ili eneo hili lihifadhi bidhaa zilizo tayari kusafirishwa.',
+                    'is-replenish'                  => 'Ni eneo la kujaza upya?',
+                    'is-replenish-hint-tooltip'     => 'Washa ili kupata idadi zote zinazohitajika kujaza upya eneo hili.',
+                    'logistics'                     => 'Lojistiki',
+                    'removal-strategy'              => 'Mkakati wa kutoa',
+                    'removal-strategy-hint-tooltip' => 'Huweka njia chaguomsingi ya kuamua rafu, kundi na eneo halisi la kuchukua bidhaa. Njia hii inaweza kuwekwa kwenye kategoria ya bidhaa; isipowekwa hapa, njia ya eneo kuu hutumika.',
+                    'cyclic-counting'               => 'Hesabu ya mzunguko',
+                    'inventory-frequency'           => 'Marudio ya hesabu ya bidhaa',
+                    'last-inventory'                => 'Hesabu ya mwisho',
+                    'last-inventory-hint-tooltip'   => 'Tarehe ya hesabu ya mwisho ya bidhaa katika eneo hili.',
+                    'next-expected'                 => 'Inayofuata',
+                    'next-expected-hint-tooltip'    => 'Tarehe ya hesabu inayofuata iliyopangwa kwa ratiba ya mzunguko.',
                 ],
             ],
 
             'additional' => [
-                'title'  => 'Additional Taarifa',
+                'title'  => 'Taarifa za ziada',
             ],
 
             'record-information' => [
-                'title' => 'Rekodi Taarifa',
+                'title' => 'Taarifa za rekodi',
 
                 'entries' => [
-                    'created-by'   => 'Imeundwa Na',
-                    'created-at'   => 'Imeundwa',
-                    'last-updated' => 'Mwisho Imesasishwa',
+                    'created-by'   => 'Imeundwa na',
+                    'created-at'   => 'Iliundwa',
+                    'last-updated' => 'Ilisasishwa mwisho',
                 ],
             ],
         ],

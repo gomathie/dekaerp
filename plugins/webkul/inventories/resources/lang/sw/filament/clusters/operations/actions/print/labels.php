@@ -1,27 +1,27 @@
 <?php
 
 return [
-    'label' => 'Labels',
+    'label' => 'Lebo',
 
     'form' => [
         'fields' => [
-            'type'          => 'Aina Ya Labels',
-            'quantity'      => 'Kiasi',
-            'format'        => 'Umbizo',
-            'layout'        => 'Layout Ya Labels',
-            'quantity-type' => 'Kiasi Hadi Chapisha',
-            'quantity'      => 'Kiasi',
+            'type'          => 'Aina ya lebo',
+            'quantity'      => 'Idadi',
+            'format'        => 'Muundo',
+            'layout'        => 'Mpangilio wa lebo',
+            'quantity-type' => 'Idadi ya kuchapisha',
+            'quantity'      => 'Idadi',
 
             'quantity-type-options' => [
-                'operation' => 'Operation Kiasi',
-                'custom'    => 'Maalum Kiasi',
-                'per-slot'  => 'One kwa kundi/SN',
-                'per-unit'  => 'One kwa uniti',
+                'operation' => 'Idadi ya operesheni',
+                'custom'    => 'Idadi maalum',
+                'per-slot'  => 'Moja kwa kila kundi/mfululizo',
+                'per-unit'  => 'Moja kwa kila kipimo',
             ],
 
             'type-options' => [
-                'product' => 'Bidhaa Labels',
-                'lot'     => 'Kundi/SN Labels',
+                'product' => 'Lebo za bidhaa',
+                'lot'     => 'Lebo za kundi/mfululizo',
             ],
 
             'format-options' => [

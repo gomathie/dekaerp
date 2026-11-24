@@ -2,26 +2,26 @@
 
 return [
     'navigation' => [
-        'title' => 'Packagings',
+        'title' => 'Фасовки',
         'group' => 'Товары',
     ],
 
     'form' => [
-        'package-type' => 'Упаковка Тип',
+        'package-type' => 'Тип упаковки',
         'routes'       => 'Маршруты',
     ],
 
     'table' => [
         'columns' => [
-            'package-type' => 'Упаковка Тип',
+            'package-type' => 'Тип упаковки',
         ],
 
         'groups' => [
-            'package-type' => 'Упаковка Тип',
+            'package-type' => 'Тип упаковки',
         ],
 
         'filters' => [
-            'package-type' => 'Упаковка Тип',
+            'package-type' => 'Тип упаковки',
         ],
     ],
 
@@ -29,16 +29,16 @@ return [
         'sections' => [
             'general' => [
                 'entries' => [
-                    'package_type' => 'Упаковка Тип',
+                    'package_type' => 'Тип упаковки',
                 ],
             ],
 
             'routing' => [
-                'title' => 'Routing Сведения',
+                'title' => 'Маршрутизация',
 
                 'entries' => [
-                    'routes'     => 'Склад Маршруты',
-                    'route_name' => 'Маршрут Название',
+                    'routes'     => 'Маршруты склада',
+                    'route_name' => 'Название маршрута',
                 ],
             ],
         ],

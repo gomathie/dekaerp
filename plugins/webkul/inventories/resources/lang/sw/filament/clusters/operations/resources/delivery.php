@@ -2,13 +2,13 @@
 
 return [
     'navigation' => [
-        'title' => 'Deliveries',
+        'title' => 'Uwasilishaji',
         'group' => 'Uhamisho',
     ],
 
     'global-search' => [
-        'partner' => 'Mshirika',
-        'origin'  => 'Asili',
+        'partner' => 'Mhusika',
+        'origin'  => 'Chanzo',
     ],
 
     'table' => [
@@ -16,13 +16,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Usafirishaji imefutwa',
-                        'body'  => 'usafirishaji ras imefutwa successfully.',
+                        'title' => 'Uwasilishaji umefutwa',
+                        'body'  => 'Uwasilishaji umefutwa kwa mafanikio.',
                     ],
 
                     'error' => [
-                        'title' => 'Usafirishaji could si kuwa imefutwa',
-                        'body'  => 'usafirishaji haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Uwasilishaji haukuweza kufutwa',
+                        'body'  => 'Uwasilishaji hauwezi kufutwa kwa sababu unatumika.',
                     ],
                 ],
             ],
@@ -32,13 +32,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Deliveries imefutwa',
-                        'body'  => 'deliveries ina imefutwa successfully.',
+                        'title' => 'Uwasilishaji umefutwa',
+                        'body'  => 'Uwasilishaji umefutwa kwa mafanikio.',
                     ],
 
                     'error' => [
-                        'title' => 'Deliveries could si kuwa imefutwa',
-                        'body'  => 'deliveries haiwezekani kuwa imefutwa kwa sababu wao ni currently katika tumia.',
+                        'title' => 'Uwasilishaji haukuweza kufutwa',
+                        'body'  => 'Uwasilishaji hauwezi kufutwa kwa sababu unatumika.',
                     ],
                 ],
             ],

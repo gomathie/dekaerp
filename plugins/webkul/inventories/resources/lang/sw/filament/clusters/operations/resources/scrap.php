@@ -2,8 +2,8 @@
 
 return [
     'navigation' => [
-        'title' => 'Scraps',
-        'group' => 'Adjustments',
+        'title' => 'Chakavu',
+        'group' => 'Marekebisho',
     ],
 
     'form' => [
@@ -14,16 +14,16 @@ return [
                 'fields' => [
                     'product'              => 'Bidhaa',
                     'package'              => 'Kifurushi',
-                    'quantity'             => 'Kiasi',
+                    'quantity'             => 'Idadi',
                     'unit'                 => 'Kipimo',
-                    'lot'                  => 'Kundi/Nambari ya mfululizo',
-                    'tags'                 => 'Lebo',
+                    'lot'                  => 'Kundi/Mfululizo',
+                    'tags'                 => 'Tagi',
                     'name'                 => 'Jina',
                     'color'                => 'Rangi',
                     'owner'                => 'Mmiliki',
-                    'source-location'      => 'Chanzo Mahali',
-                    'destination-location' => 'Scrap Mahali',
-                    'source-document'      => 'Chanzo Hati',
+                    'source-location'      => 'Eneo la chanzo',
+                    'destination-location' => 'Eneo la chakavu',
+                    'source-document'      => 'Hati chanzo',
                     'company'              => 'Kampuni',
                 ],
             ],
@@ -33,54 +33,54 @@ return [
     'table' => [
         'columns' => [
             'date'            => 'Tarehe',
-            'reference'       => 'Kumbukumbu',
+            'reference'       => 'Marejeleo',
             'product'         => 'Bidhaa',
             'package'         => 'Kifurushi',
-            'quantity'        => 'Kiasi',
+            'quantity'        => 'Idadi',
             'uom'             => 'Kipimo',
-            'source-location' => 'Chanzo Mahali',
-            'scrap-location'  => 'Scrap Mahali',
+            'source-location' => 'Eneo la chanzo',
+            'scrap-location'  => 'Eneo la chakavu',
             'unit'            => 'Kipimo',
-            'lot'             => 'Kundi/Nambari ya mfululizo',
-            'tags'            => 'Lebo',
+            'lot'             => 'Kundi/Mfululizo',
+            'tags'            => 'Tagi',
             'state'           => 'Hali',
         ],
 
         'groups' => [
             'product'              => 'Bidhaa',
-            'source-location'      => 'Chanzo Mahali',
-            'destination-location' => 'Scrap Mahali',
+            'source-location'      => 'Eneo la chanzo',
+            'destination-location' => 'Eneo la chakavu',
         ],
 
         'filters' => [
-            'source-location'      => 'Chanzo Mahali',
-            'destination-location' => 'Scrap Mahali',
+            'source-location'      => 'Eneo la chanzo',
+            'destination-location' => 'Eneo la chakavu',
             'product'              => 'Bidhaa',
             'state'                => 'Hali',
-            'product-category'     => 'Bidhaa Kategoria',
+            'product-category'     => 'Kategoria ya bidhaa',
             'uom'                  => 'Kipimo',
-            'lot'                  => 'Kundi/Nambari ya mfululizo',
+            'lot'                  => 'Kundi/Mfululizo',
             'package'              => 'Kifurushi',
-            'tags'                 => 'Lebo',
+            'tags'                 => 'Tagi',
             'company'              => 'Kampuni',
-            'quantity'             => 'Kiasi',
-            'creator'              => 'Creator',
-            'closed-at'            => 'Imefungwa Saa',
-            'created-at'           => 'Imeundwa',
-            'updated-at'           => 'Imesasishwa',
+            'quantity'             => 'Idadi',
+            'creator'              => 'Muundaji',
+            'closed-at'            => 'Ilifungwa',
+            'created-at'           => 'Iliundwa',
+            'updated-at'           => 'Ilisasishwa',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Scrap imefutwa',
-                        'body'  => 'scrap ina imefutwa successfully.',
+                        'title' => 'Rekodi ya chakavu imefutwa',
+                        'body'  => 'Rekodi ya chakavu imefutwa kwa mafanikio.',
                     ],
 
                     'error' => [
-                        'title' => 'Scrap could si kuwa imefutwa',
-                        'body'  => 'scrap haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Rekodi ya chakavu haikuweza kufutwa',
+                        'body'  => 'Rekodi ya chakavu haiwezi kufutwa kwa sababu inatumika.',
                     ],
                 ],
             ],
@@ -90,13 +90,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Scraps imefutwa',
-                        'body'  => 'imechaguliwa scraps ina imefutwa successfully.',
+                        'title' => 'Rekodi za chakavu zimefutwa',
+                        'body'  => 'Rekodi za chakavu zilizochaguliwa zimefutwa kwa mafanikio.',
                     ],
 
                     'error' => [
-                        'title' => 'Scraps could si kuwa imefutwa',
-                        'body'  => 'scraps haiwezekani kuwa imefutwa kwa sababu wao ni currently katika tumia.',
+                        'title' => 'Rekodi za chakavu hazikuweza kufutwa',
+                        'body'  => 'Rekodi za chakavu haziwezi kufutwa kwa sababu zinatumika.',
                     ],
                 ],
             ],
@@ -106,29 +106,29 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Scrap Maelezo',
+                'title' => 'Maelezo ya chakavu',
 
                 'entries' => [
                     'product'              => 'Bidhaa',
-                    'quantity'             => 'Kiasi',
+                    'quantity'             => 'Idadi',
                     'lot'                  => 'Kundi',
-                    'tags'                 => 'Lebo',
+                    'tags'                 => 'Tagi',
                     'package'              => 'Kifurushi',
                     'owner'                => 'Mmiliki',
-                    'source-location'      => 'Chanzo Mahali',
-                    'destination-location' => 'Scrap Mahali',
-                    'source-document'      => 'Chanzo Hati',
+                    'source-location'      => 'Eneo la chanzo',
+                    'destination-location' => 'Eneo la chakavu',
+                    'source-document'      => 'Hati chanzo',
                     'company'              => 'Kampuni',
                 ],
             ],
 
             'record-information' => [
-                'title' => 'Rekodi Taarifa',
+                'title' => 'Taarifa za rekodi',
 
                 'entries' => [
-                    'created-by'   => 'Imeundwa Na',
-                    'created-at'   => 'Imeundwa',
-                    'last-updated' => 'Mwisho Imesasishwa',
+                    'created-by'   => 'Imeundwa na',
+                    'created-at'   => 'Iliundwa',
+                    'last-updated' => 'Ilisasishwa mwisho',
                 ],
             ],
         ],

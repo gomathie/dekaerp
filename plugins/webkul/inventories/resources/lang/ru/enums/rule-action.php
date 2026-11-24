@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'pull'        => 'Pull От',
-    'push'        => 'Push До',
-    'pull-push'   => 'Pull & Push',
-    'buy'         => 'Buy',
-    'manufacture' => 'Manufacture',
+    'pull'        => 'Забрать из',
+    'push'        => 'Переместить в',
+    'pull-push'   => 'Забрать и переместить',
+    'buy'         => 'Купить',
+    'manufacture' => 'Произвести',
 ];

@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'label'          => 'Ghala',
-    'receipts-today' => 'Stakabadhi due leo',
-    'ready-to-ship'  => 'Ready hadi ship',
-    'late'           => 'Late shughuli',
-    'on-schedule'    => ':percent% ya wazi shughuli washa ratiba',
+    'label'          => 'Bidhaa ghalani',
+    'receipts-today' => 'Upokeaji wa leo',
+    'ready-to-ship'  => 'Tayari kusafirishwa',
+    'late'           => 'Operesheni zilizochelewa',
+    'on-schedule'    => ':percent% ya operesheni zilizo wazi ziko kwa ratiba',
 ];

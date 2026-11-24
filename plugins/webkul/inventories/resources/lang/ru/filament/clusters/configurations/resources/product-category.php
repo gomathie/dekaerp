@@ -9,7 +9,7 @@ return [
     'form' => [
         'sections' => [
             'inventory' => [
-                'title' => 'Склад',
+                'title' => 'Запасы',
 
                 'fieldsets' => [
                     'logistics' => [
@@ -27,15 +27,15 @@ return [
     'infolist' => [
         'sections' => [
             'inventory' => [
-                'title' => 'Склад',
+                'title' => 'Запасы',
 
                 'subsections' => [
                     'logistics' => [
                         'title' => 'Логистика',
 
                         'entries' => [
-                            'routes'     => 'Склад Маршруты',
-                            'route_name' => 'Маршрут Название',
+                            'routes'     => 'Маршруты склада',
+                            'route_name' => 'Название маршрута',
                         ],
                     ],
                 ],

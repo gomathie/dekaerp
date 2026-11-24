@@ -2,17 +2,17 @@
 
 return [
     'one-step' => [
-        'name'        => 'One step',
-        'description' => 'Manufacture (1 step)',
+        'name'        => 'Hatua moja',
+        'description' => 'Zalisha (hatua 1)',
     ],
 
     'two-steps' => [
-        'name'        => 'Two steps',
-        'description' => 'Pick components kisha manufacture (2 steps)',
+        'name'        => 'Hatua mbili',
+        'description' => 'Chagua vipengele kisha zalisha (hatua 2)',
     ],
 
     'three-steps' => [
-        'name'        => 'Three steps',
-        'description' => 'Pick components, manufacture, kisha store bidhaa (3 steps)',
+        'name'        => 'Hatua tatu',
+        'description' => 'Chagua vipengele, zalisha, kisha hifadhi bidhaa (hatua 3)',
     ],
 ];

@@ -1,14 +1,14 @@
 <?php
 
 return [
-    'label'                     => 'Sasisha Kiasi',
-    'modal-heading'             => 'Sasisha Bidhaa Kiasi',
+    'label'                     => 'Sasisha idadi',
+    'modal-heading'             => 'Sasisha idadi ya bidhaa',
     'modal-submit-action-label' => 'Sasisha',
 
     'form' => [
         'fields' => [
             'product'     => 'Bidhaa',
-            'on-hand-qty' => 'Washa Mkono Kiasi',
+            'on-hand-qty' => 'Idadi iliyopo',
         ],
     ],
 ];

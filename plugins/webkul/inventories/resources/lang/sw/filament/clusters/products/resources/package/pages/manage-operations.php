@@ -1,14 +1,14 @@
 <?php
 
 return [
-    'title' => 'Manage Shughuli',
+    'title' => 'Simamia operesheni',
 
     'table' => [
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Ndani Uhamisho imeundwa',
-                    'body'  => 'ndani uhamisho ina imeundwa successfully.',
+                    'title' => 'Uhamisho wa ndani umeundwa',
+                    'body'  => 'Uhamisho wa ndani umeundwa kwa mafanikio.',
                 ],
             ],
         ],

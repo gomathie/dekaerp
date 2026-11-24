@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'title' => 'Kiasi Adjustments',
+    'title' => 'Marekebisho ya idadi',
 
     'tabs' => [
-        'internal-locations' => 'Ndani Maeneo',
-        'transit-locations'  => 'Transit Maeneo',
-        'on-hand'            => 'Washa Mkono',
-        'to-count'           => 'Hadi Idadi',
-        'to-apply'           => 'Hadi Tumia',
+        'internal-locations' => 'Maeneo ya ndani',
+        'transit-locations'  => 'Maeneo ya mpito',
+        'on-hand'            => 'Zilizopo',
+        'to-count'           => 'Za kuhesabu',
+        'to-apply'           => 'Za kutumia',
     ],
 ];

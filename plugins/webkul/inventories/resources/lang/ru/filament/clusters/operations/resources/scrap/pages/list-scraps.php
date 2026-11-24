@@ -3,11 +3,11 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Scrap',
+            'label' => 'Новое списание',
 
             'notification' => [
-                'title' => 'Scrap создано',
-                'body'  => 'scrap есть создано successfully.',
+                'title' => 'Списание создано',
+                'body'  => 'Списание успешно создано.',
             ],
         ],
     ],

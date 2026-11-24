@@ -1,42 +1,42 @@
 <?php
 
 return [
-    'title' => 'Capacity Na Bidhaa',
+    'title' => 'Uwezo kwa bidhaa',
 
     'form' => [
         'product' => 'Bidhaa',
-        'qty'     => 'Kiasi',
+        'qty'     => 'Idadi',
     ],
 
     'table' => [
         'header-actions' => [
             'create' => [
-                'label' => 'Ongeza bidhaa Capacity',
+                'label' => 'Ongeza uwezo wa bidhaa',
 
                 'notification' => [
-                    'title' => 'Bidhaa Capacity imeundwa',
-                    'body'  => 'bidhaa capacity added successfully.',
+                    'title' => 'Uwezo wa bidhaa umeundwa',
+                    'body'  => 'Uwezo wa bidhaa umeongezwa kwa mafanikio.',
                 ],
             ],
         ],
 
         'columns' => [
             'product' => 'Bidhaa',
-            'qty'     => 'Kiasi',
+            'qty'     => 'Idadi',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Bidhaa Capacity imesasishwa',
-                    'body'  => 'bidhaa capacity ina imesasishwa successfully.',
+                    'title' => 'Uwezo wa bidhaa umesasishwa',
+                    'body'  => 'Uwezo wa bidhaa umesasishwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Bidhaa Capacity imefutwa',
-                    'body'  => 'bidhaa capacity ina imefutwa successfully.',
+                    'title' => 'Uwezo wa bidhaa umefutwa',
+                    'body'  => 'Uwezo wa bidhaa umefutwa kwa mafanikio.',
                 ],
             ],
         ],

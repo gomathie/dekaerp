@@ -4,8 +4,8 @@ return [
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Маршрут удалено',
-                'body'  => 'маршрут есть удалено successfully.',
+                'title' => 'Маршрут удалён',
+                'body'  => 'Маршрут успешно удалён.',
             ],
         ],
     ],

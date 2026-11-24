@@ -1,15 +1,15 @@
 <?php
 
 return [
-    'title' => 'Manage Bidhaa',
+    'title' => 'Simamia bidhaa',
 
     'form' => [
-        'enable-variants'               => 'Variants',
-        'enable-variants-helper-text'   => 'Weka bidhaa attributes (e.g. rangi, ukubwa) hadi manage variants',
+        'enable-variants'               => 'Vibadala',
+        'enable-variants-helper-text'   => 'Weka sifa za bidhaa (mf. rangi, ukubwa) ili kusimamia vibadala',
         'enable-uom'                    => 'Kipimo',
-        'enable-uom-helper-text'        => 'Sell na ununuzi bidhaa katika different uniti ya measure',
-        'enable-packagings'             => 'Packagings',
-        'enable-packagings-helper-text' => 'Manage bidhaa packagings (e.g. pack ya 6 bottles, box ya 10 pieces)',
-        'configure-packagings'          => 'Configure Packagings',
+        'enable-uom-helper-text'        => 'Uza na nunua bidhaa kwa vipimo tofauti',
+        'enable-packagings'             => 'Ufungashaji',
+        'enable-packagings-helper-text' => 'Simamia ufungashaji wa bidhaa (mf. pakiti ya chupa 6, sanduku la vipande 10)',
+        'configure-packagings'          => 'Sanidi ufungashaji',
     ],
 ];

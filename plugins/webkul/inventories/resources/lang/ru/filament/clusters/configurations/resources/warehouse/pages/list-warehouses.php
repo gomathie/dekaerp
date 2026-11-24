@@ -8,11 +8,11 @@ return [
 
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Склад',
+            'label' => 'Новый склад',
 
             'notification' => [
-                'title' => 'Склад создано',
-                'body'  => 'склад есть создано successfully.',
+                'title' => 'Склад создан',
+                'body'  => 'Склад успешно создан.',
             ],
         ],
     ],

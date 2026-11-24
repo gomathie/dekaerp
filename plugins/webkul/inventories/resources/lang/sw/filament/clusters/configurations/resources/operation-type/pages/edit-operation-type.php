@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Operation Aina imesasishwa',
-        'body'  => 'operation aina ina imesasishwa successfully.',
+        'title' => 'Aina ya operesheni imesasishwa',
+        'body'  => 'Aina ya operesheni imesasishwa kwa mafanikio.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Operation Aina imefutwa',
-                'body'  => 'operation aina ina imefutwa successfully.',
+                'title' => 'Aina ya operesheni imefutwa',
+                'body'  => 'Aina ya operesheni imefutwa kwa mafanikio.',
             ],
         ],
     ],

@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'serial' => 'Na Unique Nambari ya mfululizo Nambari',
-    'lot'    => 'Na Makundi',
-    'qty'    => 'Na Kiasi',
+    'serial' => 'Kwa nambari ya kipekee ya mfululizo',
+    'lot'    => 'Kwa makundi',
+    'qty'    => 'Kwa idadi',
 ];

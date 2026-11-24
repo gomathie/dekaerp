@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'direct' => 'Kama hivi karibuni kama possible',
-    'one'    => 'Wakati zote bidhaa ni ready',
+    'direct' => 'Haraka iwezekanavyo',
+    'one'    => 'Bidhaa zote zikiwa tayari',
 ];

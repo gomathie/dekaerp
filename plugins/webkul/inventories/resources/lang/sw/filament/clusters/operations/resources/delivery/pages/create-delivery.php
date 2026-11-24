@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Unda Usafirishaji',
+    'title' => 'Unda uwasilishaji',
 
     'notification' => [
-        'title' => 'Usafirishaji imeundwa',
-        'body'  => 'usafirishaji ina imeundwa successfully.',
+        'title' => 'Uwasilishaji umeundwa',
+        'body'  => 'Uwasilishaji umeundwa kwa mafanikio.',
     ],
 ];

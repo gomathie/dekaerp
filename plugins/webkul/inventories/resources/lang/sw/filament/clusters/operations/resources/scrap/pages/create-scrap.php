@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'title' => 'Unda Scrap',
+    'title' => 'Unda rekodi ya chakavu',
 ];

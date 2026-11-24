@@ -2,9 +2,9 @@
 
 return [
     'draft'     => 'Rasimu',
-    'confirmed' => 'Waiting',
-    'waiting'   => 'Waiting Another Operation',
-    'assigned'  => 'Ready',
+    'confirmed' => 'Inasubiri',
+    'waiting'   => 'Inasubiri operesheni nyingine',
+    'assigned'  => 'Tayari',
     'done'      => 'Imekamilika',
     'canceled'  => 'Imeghairiwa',
 ];

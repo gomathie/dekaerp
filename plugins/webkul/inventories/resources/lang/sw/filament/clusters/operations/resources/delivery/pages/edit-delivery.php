@@ -2,8 +2,8 @@
 
 return [
     'notification' => [
-        'title' => 'Usafirishaji imesasishwa',
-        'body'  => 'usafirishaji ina imesasishwa successfully.',
+        'title' => 'Uwasilishaji umesasishwa',
+        'body'  => 'Uwasilishaji umesasishwa kwa mafanikio.',
     ],
 
     'header-actions' => [
@@ -14,13 +14,13 @@ return [
         'delete' => [
             'notification' => [
                 'success' => [
-                    'title' => 'Usafirishaji imefutwa',
-                    'body'  => 'usafirishaji ina imefutwa successfully.',
+                    'title' => 'Uwasilishaji umefutwa',
+                    'body'  => 'Uwasilishaji umefutwa kwa mafanikio.',
                 ],
 
                 'error' => [
-                    'title' => 'Usafirishaji could si kuwa imefutwa',
-                    'body'  => 'usafirishaji haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                    'title' => 'Uwasilishaji haukuweza kufutwa',
+                    'body'  => 'Uwasilishaji hauwezi kufutwa kwa sababu unatumika.',
                 ],
             ],
         ],

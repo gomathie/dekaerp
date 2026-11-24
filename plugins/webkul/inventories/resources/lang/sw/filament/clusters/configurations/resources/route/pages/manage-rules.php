@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'title' => 'Rules',
+    'title' => 'Kanuni',
 
     'table' => [
         'header-actions' => [
             'create' => [
-                'label' => 'Ongeza Rule',
+                'label' => 'Ongeza kanuni',
 
                 'notification' => [
-                    'title' => 'Rule imeundwa',
-                    'body'  => 'rule ina imeundwa successfully.',
+                    'title' => 'Kanuni imeundwa',
+                    'body'  => 'Kanuni imeundwa kwa mafanikio.',
                 ],
             ],
         ],

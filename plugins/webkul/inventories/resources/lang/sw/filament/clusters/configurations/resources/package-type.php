@@ -2,8 +2,8 @@
 
 return [
     'navigation' => [
-        'title' => 'Kifurushi Types',
-        'group' => 'Usafirishaji',
+        'title' => 'Aina za vifurushi',
+        'group' => 'Uwasilishaji',
     ],
 
     'form' => [
@@ -13,19 +13,19 @@ return [
 
                 'fields' => [
                     'name'       => 'Jina',
-                    'barcode'    => 'Msimbo pau',
+                    'barcode'    => 'Msimbopau',
                     'company'    => 'Kampuni',
                     'weight'     => 'Uzito',
-                    'max-weight' => 'Max Uzito',
+                    'max-weight' => 'Uzito wa juu',
 
                     'fieldsets' => [
                         'size' => [
                             'title' => 'Ukubwa',
 
                             'fields' => [
-                                'length' => 'Length',
+                                'length' => 'Urefu',
                                 'width'  => 'Upana',
-                                'height' => 'Urefu',
+                                'height' => 'Kimo',
                             ],
                         ],
                     ],
@@ -37,26 +37,26 @@ return [
     'table' => [
         'columns' => [
             'name'       => 'Jina',
-            'barcode'    => 'Msimbo pau',
+            'barcode'    => 'Msimbopau',
             'weight'     => 'Uzito',
-            'max-weight' => 'Max Uzito',
+            'max-weight' => 'Uzito wa juu',
             'width'      => 'Upana',
-            'height'     => 'Urefu',
-            'length'     => 'Length',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'height'     => 'Kimo',
+            'length'     => 'Urefu',
+            'created-at' => 'Iliundwa',
+            'updated-at' => 'Ilisasishwa',
         ],
 
         'groups' => [
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'created-at' => 'Iliundwa',
+            'updated-at' => 'Ilisasishwa',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Kifurushi Aina imefutwa',
-                    'body'  => 'kifurushi aina ina imefutwa successfully.',
+                    'title' => 'Aina ya kifurushi imefutwa',
+                    'body'  => 'Aina ya kifurushi imefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -64,8 +64,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Kifurushi Aina imefutwa',
-                    'body'  => 'kifurushi aina ina imefutwa successfully.',
+                    'title' => 'Aina ya kifurushi imefutwa',
+                    'body'  => 'Aina ya kifurushi imefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -74,35 +74,35 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title'   => 'Jumla Taarifa',
+                'title'   => 'Taarifa za jumla',
                 'entries' => [
                     'name'      => 'Jina',
                     'fieldsets' => [
                         'size' => [
-                            'title'   => 'Kifurushi Dimensions',
+                            'title'   => 'Vipimo vya kifurushi',
                             'entries' => [
-                                'length' => 'Length',
+                                'length' => 'Urefu',
                                 'width'  => 'Upana',
-                                'height' => 'Urefu',
+                                'height' => 'Kimo',
                             ],
                         ],
                     ],
-                    'weight'     => 'Base Uzito',
-                    'max-weight' => 'Maximum Uzito',
-                    'barcode'    => 'Msimbo pau',
+                    'weight'     => 'Uzito wa msingi',
+                    'max-weight' => 'Uzito wa juu kabisa',
+                    'barcode'    => 'Msimbopau',
                     'company'    => 'Kampuni',
-                    'created-at' => 'Imeundwa',
-                    'updated-at' => 'Mwisho Imesasishwa',
+                    'created-at' => 'Iliundwa',
+                    'updated-at' => 'Ilisasishwa mwisho',
                 ],
             ],
 
             'record-information' => [
-                'title' => 'Rekodi Taarifa',
+                'title' => 'Taarifa za rekodi',
 
                 'entries' => [
-                    'created-by'   => 'Imeundwa Na',
-                    'created-at'   => 'Imeundwa',
-                    'last-updated' => 'Mwisho Imesasishwa',
+                    'created-by'   => 'Imeundwa na',
+                    'created-at'   => 'Iliundwa',
+                    'last-updated' => 'Ilisasishwa mwisho',
                 ],
             ],
         ],

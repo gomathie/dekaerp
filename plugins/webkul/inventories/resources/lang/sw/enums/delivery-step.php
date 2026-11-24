@@ -2,17 +2,17 @@
 
 return [
     'one-step' => [
-        'name'        => 'One step',
-        'description' => 'Deliver (One step)',
+        'name'        => 'Hatua moja',
+        'description' => 'Wasilisha (hatua moja)',
     ],
 
     'two-steps' => [
-        'name'        => 'Two steps',
-        'description' => 'Pick kisha Deliver (Two steps)',
+        'name'        => 'Hatua mbili',
+        'description' => 'Chagua kisha wasilisha (hatua mbili)',
     ],
 
     'three-steps' => [
-        'name'        => 'Three steps',
-        'description' => 'Pick, Pack, kisha Deliver (Three steps)',
+        'name'        => 'Hatua tatu',
+        'description' => 'Chagua, funga, kisha wasilisha (hatua tatu)',
     ],
 ];

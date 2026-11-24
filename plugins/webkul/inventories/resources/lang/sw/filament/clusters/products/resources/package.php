@@ -3,13 +3,13 @@
 return [
     'navigation' => [
         'title' => 'Vifurushi',
-        'group' => 'Ghala',
+        'group' => 'Bidhaa ghalani',
     ],
 
     'global-search' => [
         'name'         => 'Jina',
-        'package-type' => 'Kifurushi Aina',
-        'location'     => 'Mahali',
+        'package-type' => 'Aina ya kifurushi',
+        'location'     => 'Eneo',
     ],
 
     'form' => [
@@ -19,10 +19,10 @@ return [
 
                 'fields' => [
                     'name'             => 'Jina',
-                    'name-placeholder' => 'eg. PACK007',
-                    'package-type'     => 'Kifurushi Aina',
-                    'pack-date'        => 'Pack Tarehe',
-                    'location'         => 'Mahali',
+                    'name-placeholder' => 'mf. PACK007',
+                    'package-type'     => 'Aina ya kifurushi',
+                    'pack-date'        => 'Tarehe ya kufunga',
+                    'location'         => 'Eneo',
                 ],
             ],
         ],
@@ -31,23 +31,23 @@ return [
     'table' => [
         'columns' => [
             'name'         => 'Jina',
-            'package-type' => 'Kifurushi Aina',
-            'location'     => 'Mahali',
+            'package-type' => 'Aina ya kifurushi',
+            'location'     => 'Eneo',
             'company'      => 'Kampuni',
-            'created-at'   => 'Imeundwa',
-            'updated-at'   => 'Imesasishwa',
+            'created-at'   => 'Iliundwa',
+            'updated-at'   => 'Ilisasishwa',
         ],
 
         'groups' => [
-            'package-type'   => 'Kifurushi Aina',
-            'location'       => 'Mahali',
-            'created-at'     => 'Imeundwa',
+            'package-type'   => 'Aina ya kifurushi',
+            'location'       => 'Eneo',
+            'created-at'     => 'Iliundwa',
         ],
 
         'filters' => [
-            'package-type' => 'Kifurushi Aina',
-            'location'     => 'Mahali',
-            'creator'      => 'Creator',
+            'package-type' => 'Aina ya kifurushi',
+            'location'     => 'Eneo',
+            'creator'      => 'Muundaji',
             'company'      => 'Kampuni',
         ],
 
@@ -55,13 +55,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Kifurushi imefutwa',
-                        'body'  => 'kifurushi ina imefutwa successfully.',
+                        'title' => 'Kifurushi kimefutwa',
+                        'body'  => 'Kifurushi kimefutwa kwa mafanikio.',
                     ],
 
                     'error' => [
-                        'title' => 'Kifurushi could si kuwa imefutwa',
-                        'body'  => 'kifurushi haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Kifurushi hakikuweza kufutwa',
+                        'body'  => 'Kifurushi hakiwezi kufutwa kwa sababu kinatumika.',
                     ],
                 ],
             ],
@@ -69,23 +69,23 @@ return [
 
         'bulk-actions' => [
             'print-without-content' => [
-                'label' => 'Chapisha Msimbo pau',
+                'label' => 'Chapisha msimbopau',
             ],
 
             'print-with-content' => [
-                'label' => 'Chapisha Msimbo pau Na Content',
+                'label' => 'Chapisha msimbopau pamoja na yaliyomo',
             ],
 
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Vifurushi imefutwa',
-                        'body'  => 'vifurushi ina imefutwa successfully.',
+                        'title' => 'Vifurushi vimefutwa',
+                        'body'  => 'Vifurushi vimefutwa kwa mafanikio.',
                     ],
 
                     'error' => [
-                        'title' => 'Vifurushi could si kuwa imefutwa',
-                        'body'  => 'vifurushi haiwezekani kuwa imefutwa kwa sababu wao ni currently katika tumia.',
+                        'title' => 'Vifurushi havikuweza kufutwa',
+                        'body'  => 'Vifurushi haviwezi kufutwa kwa sababu vinatumika.',
                     ],
                 ],
             ],
@@ -95,26 +95,26 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Kifurushi Maelezo',
+                'title' => 'Maelezo ya kifurushi',
 
                 'entries' => [
-                    'name'         => 'Kifurushi Jina',
-                    'package-type' => 'Kifurushi Aina',
-                    'pack-date'    => 'Pack Tarehe',
-                    'location'     => 'Mahali',
+                    'name'         => 'Jina la kifurushi',
+                    'package-type' => 'Aina ya kifurushi',
+                    'pack-date'    => 'Tarehe ya kufunga',
+                    'location'     => 'Eneo',
                     'company'      => 'Kampuni',
-                    'created-at'   => 'Imeundwa',
-                    'updated-at'   => 'Mwisho Imesasishwa',
+                    'created-at'   => 'Iliundwa',
+                    'updated-at'   => 'Ilisasishwa mwisho',
                 ],
             ],
 
             'record-information' => [
-                'title' => 'Rekodi Taarifa',
+                'title' => 'Taarifa za rekodi',
 
                 'entries' => [
-                    'created-by'   => 'Imeundwa Na',
-                    'created-at'   => 'Imeundwa',
-                    'last-updated' => 'Mwisho Imesasishwa',
+                    'created-by'   => 'Imeundwa na',
+                    'created-at'   => 'Iliundwa',
+                    'last-updated' => 'Ilisasishwa mwisho',
                 ],
             ],
         ],

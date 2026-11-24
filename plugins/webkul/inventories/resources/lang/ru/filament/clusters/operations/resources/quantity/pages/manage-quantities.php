@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'title' => 'Количество Adjustments',
+    'title' => 'Корректировка количества',
 
     'tabs' => [
-        'internal-locations' => 'Внутренний Места',
-        'transit-locations'  => 'Transit Места',
-        'on-hand'            => 'Вкл. Вручную',
-        'to-count'           => 'До Количество',
-        'to-apply'           => 'До Применить',
+        'internal-locations' => 'Внутренние местоположения',
+        'transit-locations'  => 'Транзитные местоположения',
+        'on-hand'            => 'В наличии',
+        'to-count'           => 'К подсчёту',
+        'to-apply'           => 'К применению',
     ],
 ];

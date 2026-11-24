@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'no'               => 'Hakuna',
-    'last-used'        => 'Mwisho Inatumika',
-    'closest-location' => 'Closest Mahali',
+    'no'               => 'Hapana',
+    'last-used'        => 'Lililotumika mwisho',
+    'closest-location' => 'Eneo lililo karibu zaidi',
 ];

@@ -3,13 +3,13 @@
 return [
     'navigation' => [
         'title' => 'Упаковки',
-        'group' => 'Склад',
+        'group' => 'Запасы',
     ],
 
     'global-search' => [
         'name'         => 'Название',
-        'package-type' => 'Упаковка Тип',
-        'location'     => 'Место',
+        'package-type' => 'Тип упаковки',
+        'location'     => 'Местоположение',
     ],
 
     'form' => [
@@ -19,10 +19,10 @@ return [
 
                 'fields' => [
                     'name'             => 'Название',
-                    'name-placeholder' => 'eg. PACK007',
-                    'package-type'     => 'Упаковка Тип',
-                    'pack-date'        => 'Pack Дата',
-                    'location'         => 'Место',
+                    'name-placeholder' => 'напр. PACK007',
+                    'package-type'     => 'Тип упаковки',
+                    'pack-date'        => 'Дата упаковки',
+                    'location'         => 'Местоположение',
                 ],
             ],
         ],
@@ -31,23 +31,23 @@ return [
     'table' => [
         'columns' => [
             'name'         => 'Название',
-            'package-type' => 'Упаковка Тип',
-            'location'     => 'Место',
+            'package-type' => 'Тип упаковки',
+            'location'     => 'Местоположение',
             'company'      => 'Компания',
             'created-at'   => 'Создано',
             'updated-at'   => 'Обновлено',
         ],
 
         'groups' => [
-            'package-type'   => 'Упаковка Тип',
-            'location'       => 'Место',
+            'package-type'   => 'Тип упаковки',
+            'location'       => 'Местоположение',
             'created-at'     => 'Создано',
         ],
 
         'filters' => [
-            'package-type' => 'Упаковка Тип',
-            'location'     => 'Место',
-            'creator'      => 'Creator',
+            'package-type' => 'Тип упаковки',
+            'location'     => 'Местоположение',
+            'creator'      => 'Автор',
             'company'      => 'Компания',
         ],
 
@@ -55,13 +55,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Упаковка удалено',
-                        'body'  => 'упаковка есть удалено successfully.',
+                        'title' => 'Упаковка удалена',
+                        'body'  => 'Упаковка успешно удалена.',
                     ],
 
                     'error' => [
-                        'title' => 'Упаковка could не быть удалено',
-                        'body'  => 'упаковка нельзя быть удалено потому что это currently в использовать.',
+                        'title' => 'Не удалось удалить упаковку',
+                        'body'  => 'Упаковку нельзя удалить, так как она используется.',
                     ],
                 ],
             ],
@@ -69,23 +69,23 @@ return [
 
         'bulk-actions' => [
             'print-without-content' => [
-                'label' => 'Печать Штрихкод',
+                'label' => 'Печать штрихкода',
             ],
 
             'print-with-content' => [
-                'label' => 'Печать Штрихкод С Content',
+                'label' => 'Печать штрихкода с содержимым',
             ],
 
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Упаковки удалено',
-                        'body'  => 'упаковки есть удалено successfully.',
+                        'title' => 'Упаковки удалены',
+                        'body'  => 'Упаковки успешно удалены.',
                     ],
 
                     'error' => [
-                        'title' => 'Упаковки could не быть удалено',
-                        'body'  => 'упаковки нельзя быть удалено потому что они currently в использовать.',
+                        'title' => 'Не удалось удалить упаковки',
+                        'body'  => 'Упаковки нельзя удалить, так как они используются.',
                     ],
                 ],
             ],
@@ -95,26 +95,26 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Упаковка Подробности',
+                'title' => 'Сведения об упаковке',
 
                 'entries' => [
-                    'name'         => 'Упаковка Название',
-                    'package-type' => 'Упаковка Тип',
-                    'pack-date'    => 'Pack Дата',
-                    'location'     => 'Место',
+                    'name'         => 'Название упаковки',
+                    'package-type' => 'Тип упаковки',
+                    'pack-date'    => 'Дата упаковки',
+                    'location'     => 'Местоположение',
                     'company'      => 'Компания',
                     'created-at'   => 'Создано',
-                    'updated-at'   => 'Последний Обновлено',
+                    'updated-at'   => 'Последнее обновление',
                 ],
             ],
 
             'record-information' => [
-                'title' => 'Запись Сведения',
+                'title' => 'Сведения о записи',
 
                 'entries' => [
-                    'created-by'   => 'Создано От',
+                    'created-by'   => 'Создал',
                     'created-at'   => 'Создано',
-                    'last-updated' => 'Последний Обновлено',
+                    'last-updated' => 'Последнее обновление',
                 ],
             ],
         ],

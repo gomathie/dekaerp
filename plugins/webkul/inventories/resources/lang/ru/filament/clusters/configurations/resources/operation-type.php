@@ -2,22 +2,22 @@
 
 return [
     'navigation' => [
-        'title' => 'Operation Types',
-        'group' => 'Склад Management',
+        'title' => 'Типы операций',
+        'group' => 'Управление складом',
     ],
 
     'form' => [
         'sections' => [
             'general' => [
                 'fields' => [
-                    'operator-type'             => 'Operation Тип',
-                    'operator-type-placeholder' => 'eg. Receptions',
+                    'operator-type'             => 'Тип операции',
+                    'operator-type-placeholder' => 'напр. Поступления',
                 ],
             ],
 
             'applicable-on' => [
-                'title'       => 'Applicable Вкл.',
-                'description' => 'Выбрать places где этот маршрут можно быть выбрано.',
+                'title'       => 'Применимо к',
+                'description' => 'Выберите, где можно выбрать этот маршрут.',
 
                 'fields' => [
                 ],
@@ -29,39 +29,39 @@ return [
                 'title'  => 'Общее',
 
                 'fields' => [
-                    'operator-type'                      => 'Operation Тип',
-                    'sequence-prefix'                    => 'Нумерация Префикс',
-                    'generate-shipping-labels'           => 'Generate Shipping Labels',
+                    'operator-type'                      => 'Тип операции',
+                    'sequence-prefix'                    => 'Префикс нумерации',
+                    'generate-shipping-labels'           => 'Создавать транспортные этикетки',
                     'warehouse'                          => 'Склад',
-                    'show-reception-report'              => 'Показать Reception Отчёт в Validation',
-                    'show-reception-report-hint-tooltip' => 'Если выбрано, система автоматически display reception отчёт upon validation, provided moves до allocate.',
+                    'show-reception-report'              => 'Показывать отчёт о приёмке при проверке',
+                    'show-reception-report-hint-tooltip' => 'Если отмечено, при проверке автоматически показывается отчёт о приёмке, если есть движения для распределения.',
                     'company'                            => 'Компания',
-                    'return-type'                        => 'Return Тип',
-                    'create-backorder'                   => 'Создать Backorder',
-                    'move-type'                          => 'Переместить Тип',
-                    'move-type-hint-tooltip'             => 'Unless defined от источник документ, этот serve как по умолчанию picking policy для этот operation тип.',
+                    'return-type'                        => 'Тип возврата',
+                    'create-backorder'                   => 'Создавать недопоставку',
+                    'move-type'                          => 'Тип перемещения',
+                    'move-type-hint-tooltip'             => 'Если не задано в исходном документе, это политика комплектации по умолчанию для данного типа операции.',
                 ],
 
                 'fieldsets' => [
                     'lots' => [
-                        'title'  => 'Партии/Серийный номер Numbers',
+                        'title'  => 'Партии/серийные номера',
 
                         'fields' => [
-                            'create-new'                => 'Создать Новое',
-                            'create-new-hint-tooltip'   => 'Если выбрано, система assume вы intend до создать новое Партии/Серийный номер Numbers, allowing вы до введите их в text поле.',
-                            'use-existing'              => 'Использовать Existing',
-                            'use-existing-hint-tooltip' => 'Если выбрано, вы можно выбрать Партии/Серийный номер Numbers или opt не до назначить любой. Этот allows запас до быть создано без партия или без restrictions вкл. партия используется.',
+                            'create-new'                => 'Создавать новые',
+                            'create-new-hint-tooltip'   => 'Если отмечено, система считает, что вы создаёте новые партии/серийные номера, и позволяет ввести их в текстовом поле.',
+                            'use-existing'              => 'Использовать существующие',
+                            'use-existing-hint-tooltip' => 'Если отмечено, можно выбрать партии/серийные номера или не назначать их. Это позволяет создавать запасы без партии или без ограничений на используемую партию.',
                         ],
                     ],
 
                     'locations' => [
-                        'title'  => 'Места',
+                        'title'  => 'Местоположения',
 
                         'fields' => [
-                            'source-location'                   => 'Источник Место',
-                            'source-location-hint-tooltip'      => 'Этот serves как по умолчанию источник место когда вручную creating этот operation. However, это можно быть изменено later, и маршруты май назначить different по умолчанию место.',
-                            'destination-location'              => 'Назначение Место',
-                            'destination-location-hint-tooltip' => 'Этот по умолчанию назначение место для вручную создано операции. However, это можно быть modified later, и маршруты май назначить different по умолчанию место.',
+                            'source-location'                   => 'Исходное местоположение',
+                            'source-location-hint-tooltip'      => 'Исходное местоположение по умолчанию при ручном создании операции. Его можно изменить позже, а маршруты могут назначить другое местоположение по умолчанию.',
+                            'destination-location'              => 'Местоположение назначения',
+                            'destination-location-hint-tooltip' => 'Местоположение назначения по умолчанию для операций, созданных вручную. Его можно изменить позже, а маршруты могут назначить другое местоположение по умолчанию.',
                         ],
                     ],
 
@@ -69,50 +69,50 @@ return [
                         'title'  => 'Упаковки',
 
                         'fields' => [
-                            'show-entire-package'              => 'Переместить Entire Упаковка',
-                            'show-entire-package-hint-tooltip' => 'Если выбрано, вы можно переместить entire упаковки.',
+                            'show-entire-package'              => 'Перемещать упаковку целиком',
+                            'show-entire-package-hint-tooltip' => 'Если отмечено, можно перемещать упаковки целиком.',
                         ],
                     ],
                 ],
             ],
 
             'hardware' => [
-                'title'  => 'Hardware',
+                'title'  => 'Оборудование',
 
                 'fieldsets' => [
                     'print-on-validation' => [
-                        'title'  => 'Печать вкл. Validation',
+                        'title'  => 'Печать при проверке',
 
                         'fields' => [
-                            'delivery-slip'              => 'Доставка Slip',
-                            'delivery-slip-hint-tooltip' => 'Если выбрано, система автоматически печать доставка slip когда picking validated.',
+                            'delivery-slip'              => 'Накладная на отгрузку',
+                            'delivery-slip-hint-tooltip' => 'Если отмечено, накладная на отгрузку печатается автоматически при проверке комплектации.',
 
-                            'return-slip'              => 'Return Slip',
-                            'return-slip-hint-tooltip' => 'Если выбрано, система автоматически печать return slip когда picking validated.',
+                            'return-slip'              => 'Накладная на возврат',
+                            'return-slip-hint-tooltip' => 'Если отмечено, накладная на возврат печатается автоматически при проверке комплектации.',
 
-                            'product-labels'              => 'Товар Labels',
-                            'product-labels-hint-tooltip' => 'Если выбрано, система автоматически печать товар labels когда picking validated.',
+                            'product-labels'              => 'Этикетки товаров',
+                            'product-labels-hint-tooltip' => 'Если отмечено, этикетки товаров печатаются автоматически при проверке комплектации.',
 
-                            'lots-labels'              => 'Партия/SN Labels',
-                            'lots-labels-hint-tooltip' => 'Если выбрано, система автоматически печать партия/серийный номер номер labels когда picking validated.',
+                            'lots-labels'              => 'Этикетки партий/СН',
+                            'lots-labels-hint-tooltip' => 'Если отмечено, этикетки партий/серийных номеров печатаются автоматически при проверке комплектации.',
 
-                            'reception-report'              => 'Reception Отчёт',
-                            'reception-report-hint-tooltip' => 'Если выбрано, система автоматически печать reception отчёт когда picking validated и contains назначен moves.',
+                            'reception-report'              => 'Отчёт о приёмке',
+                            'reception-report-hint-tooltip' => 'Если отмечено, отчёт о приёмке печатается автоматически при проверке комплектации с назначенными движениями.',
 
-                            'reception-report-labels'              => 'Reception Отчёт Labels',
-                            'reception-report-labels-hint-tooltip' => 'Если выбрано, система автоматически печать reception отчёт labels когда picking validated.',
+                            'reception-report-labels'              => 'Этикетки отчёта о приёмке',
+                            'reception-report-labels-hint-tooltip' => 'Если отмечено, этикетки отчёта о приёмке печатаются автоматически при проверке комплектации.',
 
-                            'package-content'              => 'Упаковка Content',
-                            'package-content-hint-tooltip' => 'Если выбрано, система автоматически печать упаковка подробности и их contents когда picking validated.',
+                            'package-content'              => 'Содержимое упаковки',
+                            'package-content-hint-tooltip' => 'Если отмечено, сведения об упаковках и их содержимом печатаются автоматически при проверке комплектации.',
                         ],
                     ],
 
                     'print-on-pack' => [
-                        'title'  => 'Печать вкл. "Put в Pack"',
+                        'title'  => 'Печать при «Упаковать»',
 
                         'fields' => [
-                            'package-label'              => 'Упаковка Подпись',
-                            'package-label-hint-tooltip' => 'Если выбрано, система автоматически печать упаковка подпись когда "Put в Pack" button используется.',
+                            'package-label'              => 'Этикетка упаковки',
+                            'package-label-hint-tooltip' => 'Если отмечено, этикетка упаковки печатается автоматически при нажатии кнопки «Упаковать».',
                         ],
                     ],
                 ],
@@ -146,28 +146,28 @@ return [
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Operation Тип restored',
-                    'body'  => 'operation тип есть restored successfully.',
+                    'title' => 'Тип операции восстановлен',
+                    'body'  => 'Тип операции успешно восстановлен.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Operation Тип удалено',
-                    'body'  => 'operation тип есть удалено successfully.',
+                    'title' => 'Тип операции удалён',
+                    'body'  => 'Тип операции успешно удалён.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Operation Тип force удалено',
-                        'body'  => 'operation тип есть force удалено successfully.',
+                        'title' => 'Тип операции удалён безвозвратно',
+                        'body'  => 'Тип операции успешно удалён безвозвратно.',
                     ],
 
                     'error' => [
-                        'title' => 'Operation Тип could не быть удалено',
-                        'body'  => 'operation тип нельзя быть удалено потому что это currently в использовать.',
+                        'title' => 'Не удалось удалить тип операции',
+                        'body'  => 'Тип операции нельзя удалить, так как он используется.',
                     ],
                 ],
             ],
@@ -176,28 +176,28 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Operation Types restored',
-                    'body'  => 'operation types есть restored successfully.',
+                    'title' => 'Типы операций восстановлены',
+                    'body'  => 'Типы операций успешно восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Operation Types удалено',
-                    'body'  => 'operation types есть удалено successfully.',
+                    'title' => 'Типы операций удалены',
+                    'body'  => 'Типы операций успешно удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Операции Types force удалено',
-                        'body'  => 'operation types есть force удалено successfully.',
+                        'title' => 'Типы операций удалены безвозвратно',
+                        'body'  => 'Типы операций успешно удалены безвозвратно.',
                     ],
 
                     'error' => [
-                        'title' => 'Операции Types could не быть удалено',
-                        'body'  => 'operation types нельзя быть удалено потому что они currently в использовать.',
+                        'title' => 'Не удалось удалить типы операций',
+                        'body'  => 'Типы операций нельзя удалить, так как они используются.',
                     ],
                 ],
             ],
@@ -205,7 +205,7 @@ return [
 
         'empty-actions' => [
             'create' => [
-                'label' => 'Создать Operation Тип',
+                'label' => 'Создать тип операции',
             ],
         ],
     ],
@@ -213,7 +213,7 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Общее Сведения',
+                'title' => 'Общая информация',
 
                 'entries' => [
                     'name' => 'Название',
@@ -221,12 +221,12 @@ return [
             ],
 
             'record-information' => [
-                'title' => 'Запись Сведения',
+                'title' => 'Сведения о записи',
 
                 'entries' => [
-                    'created-by'   => 'Создано От',
+                    'created-by'   => 'Создал',
                     'created-at'   => 'Создано',
-                    'last-updated' => 'Последний Обновлено',
+                    'last-updated' => 'Последнее обновление',
                 ],
             ],
         ],
@@ -236,16 +236,16 @@ return [
                 'title' => 'Общее',
 
                 'entries' => [
-                    'type'                       => 'Operation Тип',
-                    'sequence_code'              => 'Нумерация Код',
-                    'print_label'                => 'Печать Подпись',
+                    'type'                       => 'Тип операции',
+                    'sequence_code'              => 'Код нумерации',
+                    'print_label'                => 'Печать этикетки',
                     'warehouse'                  => 'Склад',
-                    'reservation_method'         => 'Reservation Method',
-                    'auto_show_reception_report' => 'Auto Показать Reception Отчёт',
+                    'reservation_method'         => 'Метод резервирования',
+                    'auto_show_reception_report' => 'Автопоказ отчёта о приёмке',
                     'company'                    => 'Компания',
-                    'return_operation_type'      => 'Return Operation Тип',
-                    'create_backorder'           => 'Создать Backorder',
-                    'move_type'                  => 'Переместить Тип',
+                    'return_operation_type'      => 'Тип операции возврата',
+                    'create_backorder'           => 'Создавать недопоставку',
+                    'move_type'                  => 'Тип перемещения',
                 ],
 
                 'fieldsets' => [
@@ -253,44 +253,44 @@ return [
                         'title' => 'Партии',
 
                         'entries' => [
-                            'use_create_lots'   => 'Использовать Создать Партии',
-                            'use_existing_lots' => 'Использовать Existing Партии',
+                            'use_create_lots'   => 'Создавать партии',
+                            'use_existing_lots' => 'Использовать существующие партии',
                         ],
                     ],
 
                     'locations' => [
-                        'title' => 'Места',
+                        'title' => 'Местоположения',
 
                         'entries' => [
-                            'source_location'      => 'Источник Место',
-                            'destination_location' => 'Назначение Место',
+                            'source_location'      => 'Исходное местоположение',
+                            'destination_location' => 'Местоположение назначения',
                         ],
                     ],
                 ],
             ],
             'hardware' => [
-                'title' => 'Hardware',
+                'title' => 'Оборудование',
 
                 'fieldsets' => [
                     'print_on_validation' => [
-                        'title' => 'Печать вкл. Validation',
+                        'title' => 'Печать при проверке',
 
                         'entries' => [
-                            'auto_print_delivery_slip'           => 'Auto Печать Доставка Slip',
-                            'auto_print_return_slip'             => 'Auto Печать Return Slip',
-                            'auto_print_product_labels'          => 'Auto Печать Товар Labels',
-                            'auto_print_lot_labels'              => 'Auto Печать Партия Labels',
-                            'auto_print_reception_report'        => 'Auto Печать Reception Отчёт',
-                            'auto_print_reception_report_labels' => 'Auto Печать Reception Отчёт Labels',
-                            'auto_print_packages'                => 'Auto Печать Упаковки',
+                            'auto_print_delivery_slip'           => 'Автопечать накладной на отгрузку',
+                            'auto_print_return_slip'             => 'Автопечать накладной на возврат',
+                            'auto_print_product_labels'          => 'Автопечать этикеток товаров',
+                            'auto_print_lot_labels'              => 'Автопечать этикеток партий',
+                            'auto_print_reception_report'        => 'Автопечать отчёта о приёмке',
+                            'auto_print_reception_report_labels' => 'Автопечать этикеток отчёта о приёмке',
+                            'auto_print_packages'                => 'Автопечать упаковок',
                         ],
                     ],
 
                     'print_on_pack' => [
-                        'title' => 'Печать вкл. Pack',
+                        'title' => 'Печать при упаковке',
 
                         'entries' => [
-                            'auto_print_package_label' => 'Auto Печать Упаковка Подпись',
+                            'auto_print_package_label' => 'Автопечать этикетки упаковки',
                         ],
                     ],
                 ],

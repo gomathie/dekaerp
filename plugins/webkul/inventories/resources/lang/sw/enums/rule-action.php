@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'pull'        => 'Pull Kutoka',
-    'push'        => 'Push Hadi',
-    'pull-push'   => 'Pull & Push',
-    'buy'         => 'Buy',
-    'manufacture' => 'Manufacture',
+    'pull'        => 'Vuta kutoka',
+    'push'        => 'Sukuma kwenda',
+    'pull-push'   => 'Vuta na sukuma',
+    'buy'         => 'Nunua',
+    'manufacture' => 'Zalisha',
 ];

@@ -3,63 +3,63 @@
 return [
     'inventory-manager' => [
         'check-availability' => [
-            'no-moves' => 'Nothing hadi hundi availability kwa.',
+            'no-moves' => 'Hakuna cha kuangalia upatikanaji wake.',
         ],
 
         'cancel-move' => [
-            'already-done' => 'Wewe haiwezekani ghairi hisa hamisha hiyo ina weka hadi \'Done\'. Unda return katika agizo hadi reverse moves ambayo took place.',
+            'already-done' => 'Huwezi kughairi mwendo wa bidhaa uliowekwa «Imekamilika». Unda marejesho ili kubatilisha mienendo iliyofanyika.',
         ],
 
         'unreserve-move' => [
-            'already-done' => "Wewe unaweza si unreserve hisa hamisha hiyo ina weka hadi 'Done'.",
+            'already-done' => 'Huwezi kuondoa utengaji kwenye mwendo wa bidhaa uliowekwa «Imekamilika».',
         ],
 
         'validate' => [
-            'quantity-rounding-mismatch' => 'kiasi imekamilika kwa bidhaa ":product" doesn\'t respect rounding precision defined washa kipimo ":unit". Tafadhali badilisha kiasi imekamilika au rounding precision ya yako uniti ya measure.',
-            'no-negative-quantities'     => 'Hakuna negative quantities inaruhusiwa',
-            'missing-lot-serial-number'  => "Wewe need hadi supply Kundi/Nambari ya mfululizo Nambari kwa bidhaa:n:products",
+            'quantity-rounding-mismatch' => 'Idadi iliyokamilika ya bidhaa «:product» haizingatii usahihi wa ukadiriaji wa kipimo «:unit». Tafadhali badilisha idadi iliyokamilika au usahihi wa ukadiriaji wa kipimo chako.',
+            'no-negative-quantities'     => 'Idadi hasi haziruhusiwi',
+            'missing-lot-serial-number'  => "Unahitaji kuweka kundi/nambari ya mfululizo kwa bidhaa:\n:products",
         ],
 
         'run-procurement' => [
-            'no-rule-found'      => "Hakuna rule ina imepatikana hadi replenish \":product\" katika \":location\".nVerify njia usanidi washa bidhaa.",
-            'no-source-location' => 'Hakuna chanzo mahali defined washa hisa rule: :name!',
-            'no-vendor-price'    => 'ni hakuna matching msambazaji bei hadi generate agizo la ununuzi kwa bidhaa :product (hakuna msambazaji defined, minimum kiasi si reached, dates si halali,...). Go washa bidhaa fomu na kamilisha orodha ya wasambazaji.',
+            'no-rule-found'      => "Hakuna kanuni iliyopatikana ya kujaza upya «:product» katika «:location».\nHakiki mipangilio ya njia kwenye bidhaa.",
+            'no-source-location' => 'Hakuna eneo la chanzo lililowekwa kwenye kanuni ya bidhaa: :name!',
+            'no-vendor-price'    => 'Hakuna bei ya msambazaji inayolingana ili kuunda oda ya ununuzi kwa bidhaa :product (hakuna msambazaji, idadi ya chini haijafikiwa, tarehe si halali, ...). Fungua fomu ya bidhaa na ukamilishe orodha ya wasambazaji.',
         ],
 
         'return' => [
-            'origin' => 'Return ya :operation_name',
+            'origin' => 'Marejesho ya :operation_name',
         ],
     ],
 
     'move-line' => [
-        'negative-quantity-not-allowed' => 'Reserving negative kiasi ni si inaruhusiwa.',
+        'negative-quantity-not-allowed' => 'Kutenga idadi hasi hakuruhusiwi.',
     ],
 
     'product-quantity' => [
-        'quantity-not-set'                 => 'Kiasi au Imehifadhiwa Kiasi unapaswa kuwa weka.',
-        'removal-strategy-not-implemented' => 'Removal strategy :strategy si implemented.',
-        'unreserve-more-than-stock'        => 'Hii ni si possible hadi unreserve zaidi bidhaa ya :name kuliko wewe ina katika hisa.',
+        'quantity-not-set'                 => 'Idadi au idadi iliyotengwa inapaswa kuwekwa.',
+        'removal-strategy-not-implemented' => 'Mkakati wa kutoa :strategy haujatekelezwa.',
+        'unreserve-more-than-stock'        => 'Haiwezekani kuondoa utengaji wa bidhaa nyingi za :name kuliko ulizonazo ghalani.',
     ],
 
     'product' => [
-        'endless-loop-rule' => "Si halali rule's usanidi, ifuatayo rule causes endless loop: :name",
+        'endless-loop-rule' => 'Mipangilio ya kanuni si sahihi, kanuni ifuatayo husababisha mzunguko usio na mwisho: :name',
     ],
 
     'move' => [
-        'quantity-rounding-mismatch' => 'kiasi imekamilika kwa bidhaa :product doesn\'t respect rounding precision defined washa kipimo :unit. Tafadhali badilisha kiasi imekamilika au rounding precision ya yako uniti ya measure.',
-        'split-done-or-cancel'       => 'Wewe haiwezekani split hisa hamisha hiyo ina weka hadi \'Done\' au \'Cancel\'.',
-        'split-draft'                => 'Wewe haiwezekani split rasimu hamisha. Hii needs hadi kuwa imethibitishwa kwanza.',
-        'serial-already-assigned'    => 'nambari ya mfululizo nambari ina tayari amekabidhiwa hadi Bidhaa: :product, Nambari ya mfululizo Nambari: :serial_number',
+        'quantity-rounding-mismatch' => 'Idadi iliyokamilika ya bidhaa :product haizingatii usahihi wa ukadiriaji wa kipimo :unit. Tafadhali badilisha idadi iliyokamilika au usahihi wa ukadiriaji wa kipimo chako.',
+        'split-done-or-cancel'       => 'Huwezi kugawa mwendo wa bidhaa uliowekwa «Imekamilika» au «Imeghairiwa».',
+        'split-draft'                => 'Huwezi kugawa mwendo wa rasimu. Unahitaji kuthibitishwa kwanza.',
+        'serial-already-assigned'    => 'Nambari ya mfululizo tayari imewekwa kwa bidhaa: :product, nambari ya mfululizo: :serial_number',
 
         'cross-company' => [
-            'title' => 'Cross-kampuni uhamisho si inaruhusiwa',
-            'body'  => 'uhamisho haiwezekani hamisha hisa directly kati ya maeneo hiyo belong hadi different makampuni (:source na :destination). Inter-kampuni uhamisho ni si supported bado.',
+            'title' => 'Uhamisho kati ya kampuni hauruhusiwi',
+            'body'  => 'Uhamisho hauwezi kuhamisha bidhaa moja kwa moja kati ya maeneo ya kampuni tofauti (:source na :destination). Uhamisho kati ya kampuni bado hautumiki.',
         ],
     ],
 
     'rule' => [
-        'delay-on'     => 'Delay washa :name',
-        'days'         => '+ :days siku(s)',
-        'time-horizon' => 'Time Horizon',
+        'delay-on'     => 'Ucheleweshaji wa :name',
+        'days'         => '+ siku :days',
+        'time-horizon' => 'Kipindi cha mpango',
     ],
 ];

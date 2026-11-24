@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Unda Stakabadhi',
+    'title' => 'Unda upokeaji',
 
     'notification' => [
-        'title' => 'Stakabadhi imeundwa',
-        'body'  => 'stakabadhi ina imeundwa successfully.',
+        'title' => 'Upokeaji umeundwa',
+        'body'  => 'Upokeaji umeundwa kwa mafanikio.',
     ],
 ];

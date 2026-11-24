@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'at-confirm' => 'Saa Thibitisha',
+    'at-confirm' => 'Wakati wa kuthibitisha',
     'manual'     => 'Kwa mkono',
-    'by-date'    => 'Kabla ya Scheduled Tarehe',
+    'by-date'    => 'Kabla ya tarehe iliyopangwa',
 ];

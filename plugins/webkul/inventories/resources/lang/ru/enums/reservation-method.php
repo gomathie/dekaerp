@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'at-confirm' => 'В Подтвердить',
+    'at-confirm' => 'При подтверждении',
     'manual'     => 'Вручную',
-    'by-date'    => 'До Scheduled Дата',
+    'by-date'    => 'До запланированной даты',
 ];

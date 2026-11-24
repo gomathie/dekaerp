@@ -1,24 +1,24 @@
 <?php
 
 return [
-    'title'          => 'Scrap',
+    'title'          => 'Chakavu',
 
     'log-attributes' => [
         'name'                          => 'Jina',
-        'origin'                        => 'Asili',
+        'origin'                        => 'Chanzo',
         'state'                         => 'Hali',
-        'qty'                           => 'Kiasi',
-        'should_replenish'              => 'Unapaswa Replenish',
-        'closed_at'                     => 'Imefungwa Saa',
+        'qty'                           => 'Idadi',
+        'should_replenish'              => 'Inahitaji kujazwa upya',
+        'closed_at'                     => 'Ilifungwa',
         'product'                       => 'Bidhaa',
-        'uom'                           => 'UOM',
+        'uom'                           => 'Kipimo',
         'lot'                           => 'Kundi',
         'package'                       => 'Kifurushi',
-        'partner'                       => 'Mshirika',
-        'operation'                     => 'Operation',
-        'source-location'               => 'Chanzo Mahali',
-        'destination-location'          => 'Unakoenda Mahali',
+        'partner'                       => 'Mhusika',
+        'operation'                     => 'Operesheni',
+        'source-location'               => 'Eneo la chanzo',
+        'destination-location'          => 'Eneo la kufikia',
         'company'                       => 'Kampuni',
-        'creator'                       => 'Creator',
+        'creator'                       => 'Muundaji',
     ],
 ];

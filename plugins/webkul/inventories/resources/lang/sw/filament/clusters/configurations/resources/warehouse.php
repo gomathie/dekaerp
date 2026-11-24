@@ -3,7 +3,7 @@
 return [
     'navigation' => [
         'title' => 'Maghala',
-        'group' => 'Ghala Management',
+        'group' => 'Usimamizi wa ghala',
     ],
 
     'form' => [
@@ -12,12 +12,12 @@ return [
                 'title'  => 'Jumla',
                 'fields' => [
                     'name'                    => 'Jina',
-                    'name-placeholder'        => 'eg. Central Ghala',
-                    'code'                    => 'Short Jina',
-                    'code-placeholder'        => 'eg. CW',
-                    'code-hint-tooltip'       => 'short jina serves kama identifier kwa ghala.',
+                    'name-placeholder'        => 'mf. Ghala kuu',
+                    'code'                    => 'Jina fupi',
+                    'code-placeholder'        => 'mf. GK',
+                    'code-hint-tooltip'       => 'Jina fupi hutumika kama kitambulisho cha ghala.',
                     'company'                 => 'Kampuni',
-                    'multi-warehouse-warning' => 'Creating mpya ghala ita kiotomatiki activate Storage Maeneo mpangilio.',
+                    'multi-warehouse-warning' => 'Kuunda ghala jipya kutawasha kiotomatiki mpangilio wa «Maeneo ya uhifadhi».',
                     'address'                 => 'Anwani',
                 ],
             ],
@@ -26,21 +26,21 @@ return [
                 'title'  => 'Mipangilio',
 
                 'fields' => [
-                    'shipment-management'              => 'Shehena Management',
-                    'incoming-shipments'               => 'Incoming Shehena',
-                    'incoming-shipments-hint-tooltip'  => 'Chaguo-msingi incoming njia hadi follow',
-                    'outgoing-shipments'               => 'Outgoing Shehena',
-                    'outgoing-shipments-hint-tooltip'  => 'Chaguo-msingi outgoing njia hadi follow',
+                    'shipment-management'              => 'Usimamizi wa usafirishaji',
+                    'incoming-shipments'               => 'Usafirishaji unaoingia',
+                    'incoming-shipments-hint-tooltip'  => 'Njia chaguomsingi ya kuingia',
+                    'outgoing-shipments'               => 'Usafirishaji unaotoka',
+                    'outgoing-shipments-hint-tooltip'  => 'Njia chaguomsingi ya kutoka',
                     'manufacture'                      => 'Uzalishaji',
-                    'manufacture-hint-tooltip'         => 'Chaguo-msingi uzalishaji njia hadi follow',
-                    'resupply-management'              => 'Resupply Management',
-                    'resupply-management-hint-tooltip' => 'Njia ita kuwa kiotomatiki generated hadi resupply hii ghala kutoka imechaguliwa maghala.',
-                    'resupply-from'                    => 'Resupply Kutoka',
+                    'manufacture-hint-tooltip'         => 'Njia chaguomsingi ya uzalishaji',
+                    'resupply-management'              => 'Usimamizi wa kujaza upya',
+                    'resupply-management-hint-tooltip' => 'Njia zitaundwa kiotomatiki ili kujaza upya ghala hili kutoka maghala yaliyochaguliwa.',
+                    'resupply-from'                    => 'Jaza upya kutoka',
                 ],
             ],
 
             'additional' => [
-                'title'  => 'Additional Taarifa',
+                'title'  => 'Taarifa za ziada',
             ],
         ],
     ],
@@ -48,19 +48,19 @@ return [
     'table' => [
         'columns' => [
             'name'       => 'Jina',
-            'code'       => 'Short Jina',
+            'code'       => 'Jina fupi',
             'company'    => 'Kampuni',
             'address'    => 'Anwani',
-            'deleted-at' => 'imefutwa',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'deleted-at' => 'Ilifutwa',
+            'created-at' => 'Iliundwa',
+            'updated-at' => 'Ilisasishwa',
         ],
 
         'groups' => [
             'address'       => 'Anwani',
             'company'       => 'Kampuni',
-            'created-at'    => 'Imeundwa',
-            'updated-at'    => 'Imesasishwa',
+            'created-at'    => 'Iliundwa',
+            'updated-at'    => 'Ilisasishwa',
         ],
 
         'filters' => [
@@ -70,28 +70,28 @@ return [
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Ghala restored',
-                    'body'  => 'ghala ina restored successfully.',
+                    'title' => 'Ghala limerejeshwa',
+                    'body'  => 'Ghala limerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Ghala imefutwa',
-                    'body'  => 'ghala ina imefutwa successfully.',
+                    'title' => 'Ghala limefutwa',
+                    'body'  => 'Ghala limefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Ghala force imefutwa',
-                        'body'  => 'ghala ina force imefutwa successfully.',
+                        'title' => 'Ghala limefutwa kabisa',
+                        'body'  => 'Ghala limefutwa kabisa kwa mafanikio.',
                     ],
 
                     'error' => [
-                        'title' => 'Ghala could si kuwa imefutwa',
-                        'body'  => 'ghala haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Ghala halikuweza kufutwa',
+                        'body'  => 'Ghala haliwezi kufutwa kwa sababu linatumika.',
                     ],
                 ],
             ],
@@ -100,28 +100,28 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Maghala restored',
-                    'body'  => 'maghala ina restored successfully.',
+                    'title' => 'Maghala yamerejeshwa',
+                    'body'  => 'Maghala yamerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Maghala imefutwa',
-                    'body'  => 'maghala ina imefutwa successfully.',
+                    'title' => 'Maghala yamefutwa',
+                    'body'  => 'Maghala yamefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Maghala force imefutwa',
-                        'body'  => 'maghala ina force imefutwa successfully.',
+                        'title' => 'Maghala yamefutwa kabisa',
+                        'body'  => 'Maghala yamefutwa kabisa kwa mafanikio.',
                     ],
 
                     'error' => [
-                        'title' => 'Maghala could si kuwa imefutwa',
-                        'body'  => 'maghala haiwezekani kuwa imefutwa kwa sababu wao ni currently katika tumia.',
+                        'title' => 'Maghala hayakuweza kufutwa',
+                        'body'  => 'Maghala hayawezi kufutwa kwa sababu yanatumika.',
                     ],
                 ],
             ],
@@ -131,11 +131,11 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Jumla Taarifa',
+                'title' => 'Taarifa za jumla',
 
                 'entries' => [
-                    'name'    => 'Ghala Jina',
-                    'code'    => 'Ghala Msimbo',
+                    'name'    => 'Jina la ghala',
+                    'code'    => 'Msimbo wa ghala',
                     'company' => 'Kampuni',
                     'address' => 'Anwani',
                 ],
@@ -145,21 +145,21 @@ return [
                 'title' => 'Mipangilio',
 
                 'entries' => [
-                    'shipment-management' => 'Shehena Management',
-                    'incoming-shipments'  => 'Incoming Shehena',
-                    'outgoing-shipments'  => 'Outgoing Shehena',
-                    'resupply-management' => 'Resupply Management',
-                    'resupply-from'       => 'Resupply Kutoka',
+                    'shipment-management' => 'Usimamizi wa usafirishaji',
+                    'incoming-shipments'  => 'Usafirishaji unaoingia',
+                    'outgoing-shipments'  => 'Usafirishaji unaotoka',
+                    'resupply-management' => 'Usimamizi wa kujaza upya',
+                    'resupply-from'       => 'Jaza upya kutoka',
                 ],
             ],
 
             'record-information' => [
-                'title' => 'Rekodi Taarifa',
+                'title' => 'Taarifa za rekodi',
 
                 'entries' => [
-                    'created-by'   => 'Imeundwa Na',
-                    'created-at'   => 'Imeundwa',
-                    'last-updated' => 'Mwisho Imesasishwa',
+                    'created-by'   => 'Imeundwa na',
+                    'created-at'   => 'Iliundwa',
+                    'last-updated' => 'Ilisasishwa mwisho',
                 ],
             ],
         ],

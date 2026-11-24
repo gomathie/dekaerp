@@ -9,13 +9,13 @@ return [
         'delete' => [
             'notification' => [
                 'success' => [
-                    'title' => 'Stakabadhi Imefutwa',
-                    'body'  => 'stakabadhi ina imefutwa successfully.',
+                    'title' => 'Upokeaji umefutwa',
+                    'body'  => 'Upokeaji umefutwa kwa mafanikio.',
                 ],
 
                 'error' => [
-                    'title' => 'Stakabadhi could si kuwa imefutwa',
-                    'body'  => 'Stakabadhi haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                    'title' => 'Upokeaji haukuweza kufutwa',
+                    'body'  => 'Upokeaji hauwezi kufutwa kwa sababu unatumika.',
                 ],
             ],
         ],

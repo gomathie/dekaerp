@@ -2,8 +2,8 @@
 
 return [
     'navigation' => [
-        'title' => 'Replenishment',
-        'group' => 'Procurement',
+        'title' => 'Пополнение',
+        'group' => 'Снабжение',
     ],
 
     'form' => [
@@ -14,21 +14,21 @@ return [
     'table' => [
         'columns' => [
             'product'           => 'Товар',
-            'location'          => 'Место',
+            'location'          => 'Местоположение',
             'route'             => 'Маршрут',
             'vendor'            => 'Поставщик',
-            'trigger'           => 'Trigger',
-            'on-hand'           => 'Вкл. Вручную',
-            'min'               => 'Min',
-            'max'               => 'Max',
-            'multiple-quantity' => 'Multiple Количество',
-            'to-order'          => 'До Заказ',
-            'uom'               => 'UOM',
+            'trigger'           => 'Триггер',
+            'on-hand'           => 'В наличии',
+            'min'               => 'Мин.',
+            'max'               => 'Макс.',
+            'multiple-quantity' => 'Кратность',
+            'to-order'          => 'К заказу',
+            'uom'               => 'Ед. изм.',
             'company'           => 'Компания',
         ],
 
         'groups' => [
-            'location' => 'Место',
+            'location' => 'Местоположение',
             'product'  => 'Товар',
             'category' => 'Категория',
         ],
@@ -38,17 +38,17 @@ return [
 
         'header-actions' => [
             'create' => [
-                'label' => 'Добавить Replenishment',
+                'label' => 'Добавить пополнение',
 
                 'notification' => [
-                    'title' => 'Replenishment added',
-                    'body'  => 'replenishment есть added successfully.',
+                    'title' => 'Пополнение добавлено',
+                    'body'  => 'Пополнение успешно добавлено.',
                 ],
 
                 'before' => [
                     'notification' => [
-                        'title' => 'Replenishment уже существует',
-                        'body'  => 'replenishment уже существует для этот конфигурация. Пожалуйста обновить existing replenishment instead.',
+                        'title' => 'Пополнение уже существует',
+                        'body'  => 'Для этой конфигурации пополнение уже существует. Обновите существующее пополнение.',
                     ],
                 ],
             ],

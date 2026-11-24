@@ -1,22 +1,22 @@
 <?php
 
 return [
-    'title' => 'Manage Склады',
+    'title' => 'Управление складами',
 
     'form' => [
-        'enable-locations'                      => 'Места',
-        'enable-locations-helper-text'          => 'Track товар место в ваш склад',
-        'configure-locations'                   => 'Configure Места',
-        'enable-multi-steps-routes'             => 'Multi Steps Маршруты',
-        'enable-multi-steps-routes-helper-text' => 'Использовать ваш собственную маршруты до manage перевод товары между склады',
-        'configure-routes'                      => 'Configure Склад Маршруты',
+        'enable-locations'                      => 'Местоположения',
+        'enable-locations-helper-text'          => 'Отслеживайте местоположение товаров на складе',
+        'configure-locations'                   => 'Настроить местоположения',
+        'enable-multi-steps-routes'             => 'Многоэтапные маршруты',
+        'enable-multi-steps-routes-helper-text' => 'Используйте свои маршруты для перемещения товаров между складами',
+        'configure-routes'                      => 'Настроить маршруты склада',
     ],
 
     'before-save' => [
         'notification' => [
             'warning' => [
-                'title' => 'Есть multiple склады',
-                'body'  => 'Вы can\'t deactivate multi-место если вы есть больше чем one склад.',
+                'title' => 'Несколько складов',
+                'body'  => 'Нельзя отключить несколько местоположений, если у вас больше одного склада.',
             ],
         ],
     ],

@@ -6,19 +6,19 @@ return [
     'table' => [
         'columns' => [
             'product'          => 'Bidhaa',
-            'location'         => 'Mahali',
-            'storage-category' => 'Storage Kategoria',
-            'quantity'         => 'Kiasi',
+            'location'         => 'Eneo',
+            'storage-category' => 'Kategoria ya uhifadhi',
+            'quantity'         => 'Idadi',
             'package'          => 'Kifurushi',
-            'on-hand'          => 'Washa Mkono Kiasi',
-            'unit'             => 'Uniti',
+            'on-hand'          => 'Idadi iliyopo',
+            'unit'             => 'Kipimo',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Kiasi imefutwa',
-                    'body'  => 'kiasi ina imefutwa successfully.',
+                    'title' => 'Idadi imefutwa',
+                    'body'  => 'Idadi imefutwa kwa mafanikio.',
                 ],
             ],
         ],

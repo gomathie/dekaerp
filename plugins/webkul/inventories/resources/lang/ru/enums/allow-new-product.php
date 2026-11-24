@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'empty' => 'Пусто',
+    'empty' => 'Пустое',
     'same'  => 'Тот же',
-    'mixed' => 'Mixed',
+    'mixed' => 'Смешанное',
 ];

@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Storage Kategoria imesasishwa',
-        'body'  => 'storage kategoria ina imesasishwa successfully.',
+        'title' => 'Kategoria ya uhifadhi imesasishwa',
+        'body'  => 'Kategoria ya uhifadhi imesasishwa kwa mafanikio.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Storage Kategoria imefutwa',
-                'body'  => 'storage kategoria ina imefutwa successfully.',
+                'title' => 'Kategoria ya uhifadhi imefutwa',
+                'body'  => 'Kategoria ya uhifadhi imefutwa kwa mafanikio.',
             ],
         ],
     ],

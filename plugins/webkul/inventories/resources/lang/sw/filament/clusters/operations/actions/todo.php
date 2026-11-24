@@ -1,17 +1,17 @@
 <?php
 
 return [
-    'label' => 'Mark kama Todo',
+    'label' => 'Weka kama ya kufanya',
 
     'notification' => [
         'warning' => [
-            'title' => 'Stakabadhi ina hakuna moves',
-            'body'  => 'stakabadhi ina hakuna moves hadi mark kama todo.',
+            'title' => 'Upokeaji hauna mienendo',
+            'body'  => 'Upokeaji hauna mienendo ya kuweka kama ya kufanya.',
         ],
 
         'success' => [
-            'title' => 'Stakabadhi marked kama todo',
-            'body'  => 'stakabadhi ina marked kama todo successfully.',
+            'title' => 'Upokeaji umewekwa kama wa kufanya',
+            'body'  => 'Upokeaji umewekwa kama wa kufanya kwa mafanikio.',
         ],
     ],
 ];

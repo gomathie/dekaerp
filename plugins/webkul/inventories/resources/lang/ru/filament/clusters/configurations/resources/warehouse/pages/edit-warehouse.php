@@ -2,19 +2,19 @@
 
 return [
     'notification' => [
-        'title' => 'Склад обновлено',
-        'body'  => 'склад есть обновлено successfully.',
+        'title' => 'Склад обновлён',
+        'body'  => 'Склад успешно обновлён.',
 
         'error' => [
-            'title' => 'Склад could не быть обновлено',
+            'title' => 'Не удалось обновить склад',
         ],
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Склад удалено',
-                'body'  => 'склад есть удалено successfully.',
+                'title' => 'Склад удалён',
+                'body'  => 'Склад успешно удалён.',
             ],
         ],
     ],

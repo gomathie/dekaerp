@@ -2,8 +2,8 @@
 
 return [
     'navigation' => [
-        'title' => 'Упаковка Types',
-        'group' => 'Доставка',
+        'title' => 'Типы упаковки',
+        'group' => 'Отгрузка',
     ],
 
     'form' => [
@@ -16,14 +16,14 @@ return [
                     'barcode'    => 'Штрихкод',
                     'company'    => 'Компания',
                     'weight'     => 'Вес',
-                    'max-weight' => 'Max Вес',
+                    'max-weight' => 'Макс. вес',
 
                     'fieldsets' => [
                         'size' => [
                             'title' => 'Размер',
 
                             'fields' => [
-                                'length' => 'Length',
+                                'length' => 'Длина',
                                 'width'  => 'Ширина',
                                 'height' => 'Высота',
                             ],
@@ -39,10 +39,10 @@ return [
             'name'       => 'Название',
             'barcode'    => 'Штрихкод',
             'weight'     => 'Вес',
-            'max-weight' => 'Max Вес',
+            'max-weight' => 'Макс. вес',
             'width'      => 'Ширина',
             'height'     => 'Высота',
-            'length'     => 'Length',
+            'length'     => 'Длина',
             'created-at' => 'Создано',
             'updated-at' => 'Обновлено',
         ],
@@ -55,8 +55,8 @@ return [
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Упаковка Тип удалено',
-                    'body'  => 'упаковка тип есть удалено successfully.',
+                    'title' => 'Тип упаковки удалён',
+                    'body'  => 'Тип упаковки успешно удалён.',
                 ],
             ],
         ],
@@ -64,8 +64,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Упаковка Тип удалено',
-                    'body'  => 'упаковка тип есть удалено successfully.',
+                    'title' => 'Тип упаковки удалён',
+                    'body'  => 'Тип упаковки успешно удалён.',
                 ],
             ],
         ],
@@ -74,35 +74,35 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title'   => 'Общее Сведения',
+                'title'   => 'Общая информация',
                 'entries' => [
                     'name'      => 'Название',
                     'fieldsets' => [
                         'size' => [
-                            'title'   => 'Упаковка Dimensions',
+                            'title'   => 'Размеры упаковки',
                             'entries' => [
-                                'length' => 'Length',
+                                'length' => 'Длина',
                                 'width'  => 'Ширина',
                                 'height' => 'Высота',
                             ],
                         ],
                     ],
-                    'weight'     => 'Base Вес',
-                    'max-weight' => 'Maximum Вес',
+                    'weight'     => 'Собственный вес',
+                    'max-weight' => 'Максимальный вес',
                     'barcode'    => 'Штрихкод',
                     'company'    => 'Компания',
                     'created-at' => 'Создано',
-                    'updated-at' => 'Последний Обновлено',
+                    'updated-at' => 'Последнее обновление',
                 ],
             ],
 
             'record-information' => [
-                'title' => 'Запись Сведения',
+                'title' => 'Сведения о записи',
 
                 'entries' => [
-                    'created-by'   => 'Создано От',
+                    'created-by'   => 'Создал',
                     'created-at'   => 'Создано',
-                    'last-updated' => 'Последний Обновлено',
+                    'last-updated' => 'Последнее обновление',
                 ],
             ],
         ],

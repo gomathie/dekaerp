@@ -2,8 +2,8 @@
 
 return [
     'navigation' => [
-        'title' => 'Места',
-        'group' => 'Склад Management',
+        'title' => 'Местоположения',
+        'group' => 'Управление складом',
     ],
 
     'form' => [
@@ -12,11 +12,11 @@ return [
                 'title'  => 'Общее',
 
                 'fields' => [
-                    'location'                     => 'Место',
-                    'location-placeholder'         => 'eg. Spare Запас',
-                    'parent-location'              => 'Parent Место',
-                    'parent-location-hint-tooltip' => 'main место тот encompasses этот место. Для пример, \'Dispatch Zone\' part \'Gate 1\' parent место.',
-                    'external-notes'               => 'Внешний Заметки',
+                    'location'                     => 'Местоположение',
+                    'location-placeholder'         => 'напр. Резервный запас',
+                    'parent-location'              => 'Родительское местоположение',
+                    'parent-location-hint-tooltip' => 'Основное местоположение, в которое входит данное. Например, «Зона отправки» входит в родительское местоположение «Ворота 1».',
+                    'external-notes'               => 'Внешние примечания',
                 ],
             ],
 
@@ -24,40 +24,40 @@ return [
                 'title'  => 'Настройки',
 
                 'fields' => [
-                    'location-type'                 => 'Место Тип',
+                    'location-type'                 => 'Тип местоположения',
                     'company'                       => 'Компания',
-                    'storage-category'              => 'Storage Категория',
-                    'is-scrap'                      => 'Scrap Место?',
-                    'is-scrap-hint-tooltip'         => 'Выбрать этот checkbox до designate этот место для storing scrapped или damaged goods.',
-                    'is-dock'                       => 'Dock Место?',
-                    'is-dock-hint-tooltip'          => 'Выбрать этот checkbox до designate этот место для storing goods тот ready для отправка.',
-                    'is-replenish'                  => 'Replenish Место?',
-                    'is-replenish-hint-tooltip'     => 'Включить этот function до retrieve все quantities needed для replenishment в этот место.',
+                    'storage-category'              => 'Категория хранения',
+                    'is-scrap'                      => 'Местоположение для списания?',
+                    'is-scrap-hint-tooltip'         => 'Отметьте, чтобы использовать это местоположение для хранения списанных или повреждённых товаров.',
+                    'is-dock'                       => 'Местоположение погрузки?',
+                    'is-dock-hint-tooltip'          => 'Отметьте, чтобы использовать это местоположение для хранения товаров, готовых к отгрузке.',
+                    'is-replenish'                  => 'Местоположение пополнения?',
+                    'is-replenish-hint-tooltip'     => 'Включите, чтобы получать все количества, необходимые для пополнения этого местоположения.',
                     'logistics'                     => 'Логистика',
-                    'removal-strategy'              => 'Removal Strategy',
-                    'removal-strategy-hint-tooltip' => 'Specifies по умолчанию method для determining exact shelf, партия, и место от который до pick товары. Этот method можно быть enforced в товар категория level, с fallback до parent места если не задать здесь.',
-                    'cyclic-counting'               => 'Cyclic Counting',
-                    'inventory-frequency'           => 'Склад Frequency',
-                    'last-inventory'                => 'Последний Склад',
-                    'last-inventory-hint-tooltip'   => 'Дата последний склад в этот место.',
-                    'next-expected'                 => 'Далее ожидается',
-                    'next-expected-hint-tooltip'    => 'Дата для далее запланировано склад based вкл. cyclic график.',
+                    'removal-strategy'              => 'Стратегия изъятия',
+                    'removal-strategy-hint-tooltip' => 'Задаёт метод по умолчанию для выбора полки, партии и местоположения, откуда берутся товары. Метод можно задать на уровне категории товаров; если он не задан здесь, используется метод родительского местоположения.',
+                    'cyclic-counting'               => 'Циклическая инвентаризация',
+                    'inventory-frequency'           => 'Частота инвентаризации',
+                    'last-inventory'                => 'Последняя инвентаризация',
+                    'last-inventory-hint-tooltip'   => 'Дата последней инвентаризации в этом местоположении.',
+                    'next-expected'                 => 'Следующая ожидаемая',
+                    'next-expected-hint-tooltip'    => 'Дата следующей плановой инвентаризации по циклическому графику.',
                 ],
             ],
 
             'additional' => [
-                'title'  => 'Additional Сведения',
+                'title'  => 'Дополнительная информация',
             ],
         ],
     ],
 
     'table' => [
         'columns' => [
-            'location'         => 'Место',
+            'location'         => 'Местоположение',
             'type'             => 'Тип',
-            'storage-category' => 'Storage Категория',
+            'storage-category' => 'Категория хранения',
             'company'          => 'Компания',
-            'deleted-at'       => 'удалено',
+            'deleted-at'       => 'Удалено',
             'created-at'       => 'Создано',
             'updated-at'       => 'Обновлено',
         ],
@@ -70,7 +70,7 @@ return [
         ],
 
         'filters' => [
-            'location' => 'Место',
+            'location' => 'Местоположение',
             'type'     => 'Тип',
             'company'  => 'Компания',
         ],
@@ -78,35 +78,35 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Место обновлено',
-                    'body'  => 'место есть обновлено successfully.',
+                    'title' => 'Местоположение обновлено',
+                    'body'  => 'Местоположение успешно обновлено.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Место restored',
-                    'body'  => 'место есть restored successfully.',
+                    'title' => 'Местоположение восстановлено',
+                    'body'  => 'Местоположение успешно восстановлено.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Место удалено',
-                    'body'  => 'место есть удалено successfully.',
+                    'title' => 'Местоположение удалено',
+                    'body'  => 'Местоположение успешно удалено.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Место force удалено',
-                        'body'  => 'место есть force удалено successfully.',
+                        'title' => 'Местоположение удалено безвозвратно',
+                        'body'  => 'Местоположение успешно удалено безвозвратно.',
                     ],
 
                     'error' => [
-                        'title' => 'Место could не быть удалено',
-                        'body'  => 'место нельзя быть удалено потому что это currently в использовать.',
+                        'title' => 'Не удалось удалить местоположение',
+                        'body'  => 'Местоположение нельзя удалить, так как оно используется.',
                     ],
                 ],
             ],
@@ -114,33 +114,33 @@ return [
 
         'bulk-actions' => [
             'print' => [
-                'label' => 'Печать Штрихкод',
+                'label' => 'Печать штрихкода',
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Места restored',
-                    'body'  => 'места есть restored successfully.',
+                    'title' => 'Местоположения восстановлены',
+                    'body'  => 'Местоположения успешно восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Места удалено',
-                    'body'  => 'места есть удалено successfully.',
+                    'title' => 'Местоположения удалены',
+                    'body'  => 'Местоположения успешно удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Места force удалено',
-                        'body'  => 'места есть force удалено successfully.',
+                        'title' => 'Местоположения удалены безвозвратно',
+                        'body'  => 'Местоположения успешно удалены безвозвратно.',
                     ],
 
                     'error' => [
-                        'title' => 'Места could не быть удалено',
-                        'body'  => 'места нельзя быть удалено потому что они currently в использовать.',
+                        'title' => 'Не удалось удалить местоположения',
+                        'body'  => 'Местоположения нельзя удалить, так как они используются.',
                     ],
                 ],
             ],
@@ -153,11 +153,11 @@ return [
                 'title'  => 'Общее',
 
                 'entries' => [
-                    'location'                     => 'Место',
-                    'location-placeholder'         => 'eg. Spare Запас',
-                    'parent-location'              => 'Parent Место',
-                    'parent-location-hint-tooltip' => 'main место тот encompasses этот место. Для пример, \'Dispatch Zone\' part \'Gate 1\' parent место.',
-                    'external-notes'               => 'Внешний Заметки',
+                    'location'                     => 'Местоположение',
+                    'location-placeholder'         => 'напр. Резервный запас',
+                    'parent-location'              => 'Родительское местоположение',
+                    'parent-location-hint-tooltip' => 'Основное местоположение, в которое входит данное. Например, «Зона отправки» входит в родительское местоположение «Ворота 1».',
+                    'external-notes'               => 'Внешние примечания',
                 ],
             ],
 
@@ -165,38 +165,38 @@ return [
                 'title'  => 'Настройки',
 
                 'entries' => [
-                    'location-type'                 => 'Место Тип',
+                    'location-type'                 => 'Тип местоположения',
                     'company'                       => 'Компания',
-                    'storage-category'              => 'Storage Категория',
-                    'is-scrap'                      => 'Scrap Место?',
-                    'is-scrap-hint-tooltip'         => 'Выбрать этот checkbox до designate этот место для storing scrapped или damaged goods.',
-                    'is-dock'                       => 'Dock Место?',
-                    'is-dock-hint-tooltip'          => 'Выбрать этот checkbox до designate этот место для storing goods тот ready для отправка.',
-                    'is-replenish'                  => 'Replenish Место?',
-                    'is-replenish-hint-tooltip'     => 'Включить этот function до retrieve все quantities needed для replenishment в этот место.',
+                    'storage-category'              => 'Категория хранения',
+                    'is-scrap'                      => 'Местоположение для списания?',
+                    'is-scrap-hint-tooltip'         => 'Отметьте, чтобы использовать это местоположение для хранения списанных или повреждённых товаров.',
+                    'is-dock'                       => 'Местоположение погрузки?',
+                    'is-dock-hint-tooltip'          => 'Отметьте, чтобы использовать это местоположение для хранения товаров, готовых к отгрузке.',
+                    'is-replenish'                  => 'Местоположение пополнения?',
+                    'is-replenish-hint-tooltip'     => 'Включите, чтобы получать все количества, необходимые для пополнения этого местоположения.',
                     'logistics'                     => 'Логистика',
-                    'removal-strategy'              => 'Removal Strategy',
-                    'removal-strategy-hint-tooltip' => 'Specifies по умолчанию method для determining exact shelf, партия, и место от который до pick товары. Этот method можно быть enforced в товар категория level, с fallback до parent места если не задать здесь.',
-                    'cyclic-counting'               => 'Cyclic Counting',
-                    'inventory-frequency'           => 'Склад Frequency',
-                    'last-inventory'                => 'Последний Склад',
-                    'last-inventory-hint-tooltip'   => 'Дата последний склад в этот место.',
-                    'next-expected'                 => 'Далее ожидается',
-                    'next-expected-hint-tooltip'    => 'Дата для далее запланировано склад based вкл. cyclic график.',
+                    'removal-strategy'              => 'Стратегия изъятия',
+                    'removal-strategy-hint-tooltip' => 'Задаёт метод по умолчанию для выбора полки, партии и местоположения, откуда берутся товары. Метод можно задать на уровне категории товаров; если он не задан здесь, используется метод родительского местоположения.',
+                    'cyclic-counting'               => 'Циклическая инвентаризация',
+                    'inventory-frequency'           => 'Частота инвентаризации',
+                    'last-inventory'                => 'Последняя инвентаризация',
+                    'last-inventory-hint-tooltip'   => 'Дата последней инвентаризации в этом местоположении.',
+                    'next-expected'                 => 'Следующая ожидаемая',
+                    'next-expected-hint-tooltip'    => 'Дата следующей плановой инвентаризации по циклическому графику.',
                 ],
             ],
 
             'additional' => [
-                'title'  => 'Additional Сведения',
+                'title'  => 'Дополнительная информация',
             ],
 
             'record-information' => [
-                'title' => 'Запись Сведения',
+                'title' => 'Сведения о записи',
 
                 'entries' => [
-                    'created-by'   => 'Создано От',
+                    'created-by'   => 'Создал',
                     'created-at'   => 'Создано',
-                    'last-updated' => 'Последний Обновлено',
+                    'last-updated' => 'Последнее обновление',
                 ],
             ],
         ],

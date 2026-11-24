@@ -9,13 +9,13 @@ return [
         'delete' => [
             'notification' => [
                 'success' => [
-                    'title' => 'Dropship Imefutwa',
-                    'body'  => 'dropship ina imefutwa successfully.',
+                    'title' => 'Usafirishaji wa moja kwa moja umefutwa',
+                    'body'  => 'Usafirishaji wa moja kwa moja umefutwa kwa mafanikio.',
                 ],
 
                 'error' => [
-                    'title' => 'Dropship could si kuwa imefutwa',
-                    'body'  => 'dropship haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                    'title' => 'Usafirishaji wa moja kwa moja haukuweza kufutwa',
+                    'body'  => 'Usafirishaji wa moja kwa moja hauwezi kufutwa kwa sababu unatumika.',
                 ],
             ],
         ],

@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'none'      => 'Likizo Tupu',
-    'propagate' => 'Propagate',
-    'fixed'     => 'Isiyobadilika',
+    'none'      => 'Acha tupu',
+    'propagate' => 'Sambaza',
+    'fixed'     => 'Imewekwa',
 ];

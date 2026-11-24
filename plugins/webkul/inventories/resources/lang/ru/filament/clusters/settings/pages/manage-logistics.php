@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Manage Логистика',
+    'title' => 'Управление логистикой',
 
     'form' => [
-        'enable-dropshipping'             => 'Dropshipping',
-        'enable-dropshipping-helper-text' => 'Этот enables dropshipping маршрут для товары, allowing поставщики до ship directly до клиенты. Когда товар задать до dropship, закупка request для коммерческое предложение generated upon заказ на продажу confirmation. Этот вкл.-потребность process, с customer\'s доставка адрес используется instead склад адрес.',
+        'enable-dropshipping'             => 'Прямая поставка',
+        'enable-dropshipping-helper-text' => 'Включает маршрут прямой поставки: поставщики отправляют товар напрямую клиентам. Если для товара задана прямая поставка, при подтверждении заказа на продажу создаётся запрос цены. Процесс выполняется по требованию, и вместо адреса склада используется адрес доставки клиента.',
     ],
 ];

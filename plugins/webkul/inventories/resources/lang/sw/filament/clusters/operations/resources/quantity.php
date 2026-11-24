@@ -2,55 +2,55 @@
 
 return [
     'navigation' => [
-        'title' => 'Quantities',
-        'group' => 'Adjustments',
+        'title' => 'Idadi',
+        'group' => 'Marekebisho',
     ],
 
     'form' => [
         'fields' => [
-            'location'         => 'Mahali',
+            'location'         => 'Eneo',
             'product'          => 'Bidhaa',
             'package'          => 'Kifurushi',
-            'lot'              => 'Kundi / Nambari ya mfululizo Numbers',
-            'counted-qty'      => 'Counted Kiasi',
-            'scheduled-at'     => 'Scheduled Saa',
-            'storage-category' => 'Storage Kategoria',
+            'lot'              => 'Makundi / Nambari za mfululizo',
+            'counted-qty'      => 'Idadi iliyohesabiwa',
+            'scheduled-at'     => 'Imepangwa',
+            'storage-category' => 'Kategoria ya uhifadhi',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'location'           => 'Mahali',
+            'location'           => 'Eneo',
             'product'            => 'Bidhaa',
-            'product-category'   => 'Bidhaa Kategoria',
-            'lot'                => 'Kundi / Nambari ya mfululizo Numbers',
-            'storage-category'   => 'Storage Kategoria',
-            'available-quantity' => 'Inapatikana Kiasi',
-            'quantity'           => 'Kiasi',
+            'product-category'   => 'Kategoria ya bidhaa',
+            'lot'                => 'Makundi / Nambari za mfululizo',
+            'storage-category'   => 'Kategoria ya uhifadhi',
+            'available-quantity' => 'Idadi inayopatikana',
+            'quantity'           => 'Idadi',
             'package'            => 'Kifurushi',
-            'last-counted-at'    => 'Mwisho Counted Saa',
-            'on-hand'            => 'Washa Mkono Kiasi',
-            'uom'                => 'UOM',
-            'counted'            => 'Counted Kiasi',
-            'difference'         => 'Difference',
-            'scheduled-at'       => 'Scheduled Saa',
+            'last-counted-at'    => 'Ilihesabiwa mwisho',
+            'on-hand'            => 'Idadi iliyopo',
+            'uom'                => 'Kipimo',
+            'counted'            => 'Idadi iliyohesabiwa',
+            'difference'         => 'Tofauti',
+            'scheduled-at'       => 'Imepangwa',
             'user'               => 'Mtumiaji',
             'company'            => 'Kampuni',
 
             'on-hand-before-state-updated' => [
                 'notification' => [
-                    'title' => 'Kiasi imesasishwa',
-                    'body'  => 'kiasi ina imesasishwa successfully.',
+                    'title' => 'Idadi imesasishwa',
+                    'body'  => 'Idadi imesasishwa kwa mafanikio.',
                 ],
             ],
         ],
 
         'groups' => [
             'product'          => 'Bidhaa',
-            'product-category' => 'Bidhaa Kategoria',
-            'location'         => 'Mahali',
-            'storage-category' => 'Storage Kategoria',
-            'lot'              => 'Kundi / Nambari ya mfululizo Numbers',
+            'product-category' => 'Kategoria ya bidhaa',
+            'location'         => 'Eneo',
+            'storage-category' => 'Kategoria ya uhifadhi',
+            'lot'              => 'Makundi / Nambari za mfululizo',
             'company'          => 'Kampuni',
             'package'          => 'Kifurushi',
         ],
@@ -58,36 +58,36 @@ return [
         'filters' => [
             'product'             => 'Bidhaa',
             'uom'                 => 'Kipimo',
-            'product-category'    => 'Bidhaa Kategoria',
-            'location'            => 'Mahali',
-            'storage-category'    => 'Storage Kategoria',
-            'lot'                 => 'Kundi / Nambari ya mfululizo Numbers',
+            'product-category'    => 'Kategoria ya bidhaa',
+            'location'            => 'Eneo',
+            'storage-category'    => 'Kategoria ya uhifadhi',
+            'lot'                 => 'Makundi / Nambari za mfululizo',
             'company'             => 'Kampuni',
             'package'             => 'Kifurushi',
-            'on-hand-quantity'    => 'Washa Mkono Kiasi',
-            'difference-quantity' => 'Difference Kiasi',
-            'incoming-at'         => 'Incoming Saa',
-            'scheduled-at'        => 'Scheduled Saa',
+            'on-hand-quantity'    => 'Idadi iliyopo',
+            'difference-quantity' => 'Tofauti ya idadi',
+            'incoming-at'         => 'Inatarajiwa kuingia',
+            'scheduled-at'        => 'Imepangwa',
             'user'                => 'Mtumiaji',
-            'created-at'          => 'Imeundwa',
-            'updated-at'          => 'Imesasishwa',
+            'created-at'          => 'Iliundwa',
+            'updated-at'          => 'Ilisasishwa',
             'company'             => 'Kampuni',
-            'creator'             => 'Creator',
+            'creator'             => 'Muundaji',
         ],
 
         'header-actions' => [
             'create' => [
-                'label' => 'Ongeza Kiasi',
+                'label' => 'Ongeza idadi',
 
                 'notification' => [
-                    'title' => 'Kiasi added',
-                    'body'  => 'kiasi ina added successfully.',
+                    'title' => 'Idadi imeongezwa',
+                    'body'  => 'Idadi imeongezwa kwa mafanikio.',
                 ],
 
                 'before' => [
                     'notification' => [
-                        'title' => 'Kiasi tayari ipo',
-                        'body'  => 'kiasi tayari ipo kwa hii usanidi. Tafadhali sasisha existing kiasi instead.',
+                        'title' => 'Idadi tayari ipo',
+                        'body'  => 'Idadi tayari ipo kwa mpangilio huu. Tafadhali sasisha idadi iliyopo badala yake.',
                     ],
                 ],
             ],
@@ -98,17 +98,17 @@ return [
                 'label' => 'Tumia',
 
                 'notification' => [
-                    'title' => 'Kiasi changes imetumika',
-                    'body'  => 'kiasi changes ina imetumika successfully.',
+                    'title' => 'Mabadiliko ya idadi yametumika',
+                    'body'  => 'Mabadiliko ya idadi yametumika kwa mafanikio.',
                 ],
             ],
 
             'clear' => [
-                'label' => 'Futa',
+                'label' => 'Ondoa',
 
                 'notification' => [
-                    'title' => 'Kiasi changes cleared',
-                    'body'  => 'kiasi changes ina cleared successfully.',
+                    'title' => 'Mabadiliko ya idadi yameondolewa',
+                    'body'  => 'Mabadiliko ya idadi yameondolewa kwa mafanikio.',
                 ],
             ],
         ],

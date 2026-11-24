@@ -1,25 +1,25 @@
 <?php
 
 return [
-    'label' => 'Return',
+    'label' => 'Возврат',
 
     'modal' => [
         'form' => [
             'columns' => [
                 'product'                 => 'Товар',
                 'quantity'                => 'Количество',
-                'uom'                     => 'UOM',
-                'excess-quantity-tooltip' => 'количество до return greater чем количество processed в original operation.',
+                'uom'                     => 'Ед. изм.',
+                'excess-quantity-tooltip' => 'Количество к возврату превышает количество, обработанное в исходной операции.',
             ],
         ],
     ],
 
     'notification' => [
         'no-products' => [
-            'body' => 'Нет товары до return (только строки в Завершён состояние и не fully returned ещё можно быть returned).',
+            'body' => 'Нет товаров для возврата (вернуть можно только выполненные строки, ещё не возвращённые полностью).',
         ],
         'no-quantities' => [
-            'body' => 'Пожалуйста specify в наименее one non-zero количество.',
+            'body' => 'Укажите хотя бы одно ненулевое количество.',
         ],
     ],
 ];

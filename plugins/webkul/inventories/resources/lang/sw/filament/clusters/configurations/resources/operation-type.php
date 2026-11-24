@@ -2,22 +2,22 @@
 
 return [
     'navigation' => [
-        'title' => 'Operation Types',
-        'group' => 'Ghala Management',
+        'title' => 'Aina za operesheni',
+        'group' => 'Usimamizi wa ghala',
     ],
 
     'form' => [
         'sections' => [
             'general' => [
                 'fields' => [
-                    'operator-type'             => 'Operation Aina',
-                    'operator-type-placeholder' => 'eg. Receptions',
+                    'operator-type'             => 'Aina ya operesheni',
+                    'operator-type-placeholder' => 'mf. Mapokezi',
                 ],
             ],
 
             'applicable-on' => [
-                'title'       => 'Applicable Washa',
-                'description' => 'Chagua places wapi hii njia unaweza kuwa imechaguliwa.',
+                'title'       => 'Inatumika kwa',
+                'description' => 'Chagua mahali ambapo njia hii inaweza kuchaguliwa.',
 
                 'fields' => [
                 ],
@@ -29,28 +29,28 @@ return [
                 'title'  => 'Jumla',
 
                 'fields' => [
-                    'operator-type'                      => 'Operation Aina',
-                    'sequence-prefix'                    => 'Mfuatano Kiambishi',
-                    'generate-shipping-labels'           => 'Generate Shipping Labels',
+                    'operator-type'                      => 'Aina ya operesheni',
+                    'sequence-prefix'                    => 'Kiambishi awali cha mfuatano',
+                    'generate-shipping-labels'           => 'Tengeneza lebo za usafirishaji',
                     'warehouse'                          => 'Ghala',
-                    'show-reception-report'              => 'Onyesha Reception Ripoti saa Validation',
-                    'show-reception-report-hint-tooltip' => 'Ikiwa imechaguliwa, mfumo ita kiotomatiki display reception ripoti upon validation, provided ni moves hadi allocate.',
+                    'show-reception-report'              => 'Onyesha ripoti ya upokeaji wakati wa kuthibitisha',
+                    'show-reception-report-hint-tooltip' => 'Ikichaguliwa, mfumo utaonyesha ripoti ya upokeaji kiotomatiki wakati wa kuthibitisha, ikiwa kuna mienendo ya kugawa.',
                     'company'                            => 'Kampuni',
-                    'return-type'                        => 'Return Aina',
-                    'create-backorder'                   => 'Unda Backorder',
-                    'move-type'                          => 'Hamisha Aina',
-                    'move-type-hint-tooltip'             => 'Unless defined na chanzo hati, hii ita serve kama chaguo-msingi picking policy kwa hii operation aina.',
+                    'return-type'                        => 'Aina ya marejesho',
+                    'create-backorder'                   => 'Unda oda iliyosalia',
+                    'move-type'                          => 'Aina ya uhamisho',
+                    'move-type-hint-tooltip'             => 'Isipowekwa na hati chanzo, hii itakuwa sera chaguomsingi ya uchukuaji kwa aina hii ya operesheni.',
                 ],
 
                 'fieldsets' => [
                     'lots' => [
-                        'title'  => 'Makundi/Nambari ya mfululizo Numbers',
+                        'title'  => 'Makundi/Nambari za mfululizo',
 
                         'fields' => [
-                            'create-new'                => 'Unda Mpya',
-                            'create-new-hint-tooltip'   => 'Ikiwa imechaguliwa, mfumo ita assume wewe intend hadi unda mpya Makundi/Nambari ya mfululizo Numbers, allowing wewe hadi ingiza wao katika text sehemu.',
-                            'use-existing'              => 'Tumia Existing',
-                            'use-existing-hint-tooltip' => 'Ikiwa imechaguliwa, wewe unaweza chagua Makundi/Nambari ya mfululizo Numbers au opt si hadi kabidhi yoyote. Hii allows hisa hadi kuwa imeundwa bila kundi au bila restrictions washa kundi inatumika.',
+                            'create-new'                => 'Unda mapya',
+                            'create-new-hint-tooltip'   => 'Ikichaguliwa, mfumo utachukulia kuwa unakusudia kuunda makundi/nambari mpya za mfululizo, na utaweza kuziandika kwenye kisanduku cha maandishi.',
+                            'use-existing'              => 'Tumia yaliyopo',
+                            'use-existing-hint-tooltip' => 'Ikichaguliwa, unaweza kuchagua makundi/nambari za mfululizo au kutoweka yoyote. Hii huruhusu bidhaa kuingizwa bila kundi au bila vikwazo vya kundi linalotumika.',
                         ],
                     ],
 
@@ -58,10 +58,10 @@ return [
                         'title'  => 'Maeneo',
 
                         'fields' => [
-                            'source-location'                   => 'Chanzo Mahali',
-                            'source-location-hint-tooltip'      => 'Hii serves kama chaguo-msingi chanzo mahali wakati kwa mkono creating hii operation. However, hii unaweza kuwa imebadilishwa later, na njia mei kabidhi different chaguo-msingi mahali.',
-                            'destination-location'              => 'Unakoenda Mahali',
-                            'destination-location-hint-tooltip' => 'Hii ni chaguo-msingi unakoenda mahali kwa kwa mkono imeundwa shughuli. However, hii unaweza kuwa modified later, na njia mei kabidhi different chaguo-msingi mahali.',
+                            'source-location'                   => 'Eneo la chanzo',
+                            'source-location-hint-tooltip'      => 'Hili ni eneo chaguomsingi la chanzo unapounda operesheni hii kwa mkono. Linaweza kubadilishwa baadaye, na njia zinaweza kuweka eneo chaguomsingi tofauti.',
+                            'destination-location'              => 'Eneo la kufikia',
+                            'destination-location-hint-tooltip' => 'Hili ni eneo chaguomsingi la kufikia kwa operesheni zinazoundwa kwa mkono. Linaweza kubadilishwa baadaye, na njia zinaweza kuweka eneo chaguomsingi tofauti.',
                         ],
                     ],
 
@@ -69,50 +69,50 @@ return [
                         'title'  => 'Vifurushi',
 
                         'fields' => [
-                            'show-entire-package'              => 'Hamisha Entire Kifurushi',
-                            'show-entire-package-hint-tooltip' => 'Ikiwa imechaguliwa, wewe unaweza hamisha entire vifurushi.',
+                            'show-entire-package'              => 'Hamisha kifurushi kizima',
+                            'show-entire-package-hint-tooltip' => 'Ikichaguliwa, unaweza kuhamisha vifurushi vizima.',
                         ],
                     ],
                 ],
             ],
 
             'hardware' => [
-                'title'  => 'Hardware',
+                'title'  => 'Vifaa',
 
                 'fieldsets' => [
                     'print-on-validation' => [
-                        'title'  => 'Chapisha washa Validation',
+                        'title'  => 'Chapisha wakati wa kuthibitisha',
 
                         'fields' => [
-                            'delivery-slip'              => 'Usafirishaji Slip',
-                            'delivery-slip-hint-tooltip' => 'Ikiwa imechaguliwa, mfumo ita kiotomatiki chapisha usafirishaji slip wakati picking ni validated.',
+                            'delivery-slip'              => 'Hati ya uwasilishaji',
+                            'delivery-slip-hint-tooltip' => 'Ikichaguliwa, mfumo utachapisha hati ya uwasilishaji kiotomatiki uchukuaji unapothibitishwa.',
 
-                            'return-slip'              => 'Return Slip',
-                            'return-slip-hint-tooltip' => 'Ikiwa imechaguliwa, mfumo ita kiotomatiki chapisha return slip wakati picking ni validated.',
+                            'return-slip'              => 'Hati ya marejesho',
+                            'return-slip-hint-tooltip' => 'Ikichaguliwa, mfumo utachapisha hati ya marejesho kiotomatiki uchukuaji unapothibitishwa.',
 
-                            'product-labels'              => 'Bidhaa Labels',
-                            'product-labels-hint-tooltip' => 'Ikiwa imechaguliwa, mfumo ita kiotomatiki chapisha bidhaa labels wakati picking ni validated.',
+                            'product-labels'              => 'Lebo za bidhaa',
+                            'product-labels-hint-tooltip' => 'Ikichaguliwa, mfumo utachapisha lebo za bidhaa kiotomatiki uchukuaji unapothibitishwa.',
 
-                            'lots-labels'              => 'Kundi/SN Labels',
-                            'lots-labels-hint-tooltip' => 'Ikiwa imechaguliwa, mfumo ita kiotomatiki chapisha kundi/nambari ya mfululizo nambari labels wakati picking ni validated.',
+                            'lots-labels'              => 'Lebo za kundi/mfululizo',
+                            'lots-labels-hint-tooltip' => 'Ikichaguliwa, mfumo utachapisha lebo za makundi/nambari za mfululizo kiotomatiki uchukuaji unapothibitishwa.',
 
-                            'reception-report'              => 'Reception Ripoti',
-                            'reception-report-hint-tooltip' => 'Ikiwa imechaguliwa, mfumo ita kiotomatiki chapisha reception ripoti wakati picking ni validated na contains amekabidhiwa moves.',
+                            'reception-report'              => 'Ripoti ya upokeaji',
+                            'reception-report-hint-tooltip' => 'Ikichaguliwa, mfumo utachapisha ripoti ya upokeaji kiotomatiki uchukuaji unapothibitishwa na una mienendo iliyogawiwa.',
 
-                            'reception-report-labels'              => 'Reception Ripoti Labels',
-                            'reception-report-labels-hint-tooltip' => 'Ikiwa imechaguliwa, mfumo ita kiotomatiki chapisha reception ripoti labels wakati picking ni validated.',
+                            'reception-report-labels'              => 'Lebo za ripoti ya upokeaji',
+                            'reception-report-labels-hint-tooltip' => 'Ikichaguliwa, mfumo utachapisha lebo za ripoti ya upokeaji kiotomatiki uchukuaji unapothibitishwa.',
 
-                            'package-content'              => 'Kifurushi Content',
-                            'package-content-hint-tooltip' => 'Ikiwa imechaguliwa, mfumo ita kiotomatiki chapisha kifurushi maelezo na yao contents wakati picking ni validated.',
+                            'package-content'              => 'Yaliyomo kwenye kifurushi',
+                            'package-content-hint-tooltip' => 'Ikichaguliwa, mfumo utachapisha maelezo ya vifurushi na yaliyomo kiotomatiki uchukuaji unapothibitishwa.',
                         ],
                     ],
 
                     'print-on-pack' => [
-                        'title'  => 'Chapisha washa "Put katika Pack"',
+                        'title'  => 'Chapisha kwa «Weka kwenye kifurushi»',
 
                         'fields' => [
-                            'package-label'              => 'Kifurushi Lebo',
-                            'package-label-hint-tooltip' => 'Ikiwa imechaguliwa, mfumo ita kiotomatiki chapisha kifurushi lebo wakati "Put katika Pack" button ni inatumika.',
+                            'package-label'              => 'Lebo ya kifurushi',
+                            'package-label-hint-tooltip' => 'Ikichaguliwa, mfumo utachapisha lebo ya kifurushi kiotomatiki kitufe cha «Weka kwenye kifurushi» kinapotumika.',
                         ],
                     ],
                 ],
@@ -125,16 +125,16 @@ return [
             'name'       => 'Jina',
             'warehouse'  => 'Ghala',
             'company'    => 'Kampuni',
-            'deleted-at' => 'Imefutwa',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'deleted-at' => 'Ilifutwa',
+            'created-at' => 'Iliundwa',
+            'updated-at' => 'Ilisasishwa',
         ],
 
         'groups' => [
             'type'       => 'Aina',
             'warehouse'  => 'Ghala',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'created-at' => 'Iliundwa',
+            'updated-at' => 'Ilisasishwa',
         ],
 
         'filters' => [
@@ -146,28 +146,28 @@ return [
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Operation Aina restored',
-                    'body'  => 'operation aina ina restored successfully.',
+                    'title' => 'Aina ya operesheni imerejeshwa',
+                    'body'  => 'Aina ya operesheni imerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Operation Aina imefutwa',
-                    'body'  => 'operation aina ina imefutwa successfully.',
+                    'title' => 'Aina ya operesheni imefutwa',
+                    'body'  => 'Aina ya operesheni imefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Operation Aina force imefutwa',
-                        'body'  => 'operation aina ina force imefutwa successfully.',
+                        'title' => 'Aina ya operesheni imefutwa kabisa',
+                        'body'  => 'Aina ya operesheni imefutwa kabisa kwa mafanikio.',
                     ],
 
                     'error' => [
-                        'title' => 'Operation Aina could si kuwa imefutwa',
-                        'body'  => 'operation aina haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Aina ya operesheni haikuweza kufutwa',
+                        'body'  => 'Aina ya operesheni haiwezi kufutwa kwa sababu inatumika.',
                     ],
                 ],
             ],
@@ -176,28 +176,28 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Operation Types restored',
-                    'body'  => 'operation types ina restored successfully.',
+                    'title' => 'Aina za operesheni zimerejeshwa',
+                    'body'  => 'Aina za operesheni zimerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Operation Types imefutwa',
-                    'body'  => 'operation types ina imefutwa successfully.',
+                    'title' => 'Aina za operesheni zimefutwa',
+                    'body'  => 'Aina za operesheni zimefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Shughuli Types force imefutwa',
-                        'body'  => 'operation types ina force imefutwa successfully.',
+                        'title' => 'Aina za operesheni zimefutwa kabisa',
+                        'body'  => 'Aina za operesheni zimefutwa kabisa kwa mafanikio.',
                     ],
 
                     'error' => [
-                        'title' => 'Shughuli Types could si kuwa imefutwa',
-                        'body'  => 'operation types haiwezekani kuwa imefutwa kwa sababu wao ni currently katika tumia.',
+                        'title' => 'Aina za operesheni hazikuweza kufutwa',
+                        'body'  => 'Aina za operesheni haziwezi kufutwa kwa sababu zinatumika.',
                     ],
                 ],
             ],
@@ -205,7 +205,7 @@ return [
 
         'empty-actions' => [
             'create' => [
-                'label' => 'Unda Operation Aina',
+                'label' => 'Unda aina ya operesheni',
             ],
         ],
     ],
@@ -213,7 +213,7 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Jumla Taarifa',
+                'title' => 'Taarifa za jumla',
 
                 'entries' => [
                     'name' => 'Jina',
@@ -221,12 +221,12 @@ return [
             ],
 
             'record-information' => [
-                'title' => 'Rekodi Taarifa',
+                'title' => 'Taarifa za rekodi',
 
                 'entries' => [
-                    'created-by'   => 'Imeundwa Na',
-                    'created-at'   => 'Imeundwa',
-                    'last-updated' => 'Mwisho Imesasishwa',
+                    'created-by'   => 'Imeundwa na',
+                    'created-at'   => 'Iliundwa',
+                    'last-updated' => 'Ilisasishwa mwisho',
                 ],
             ],
         ],
@@ -236,16 +236,16 @@ return [
                 'title' => 'Jumla',
 
                 'entries' => [
-                    'type'                       => 'Operation Aina',
-                    'sequence_code'              => 'Mfuatano Msimbo',
-                    'print_label'                => 'Chapisha Lebo',
+                    'type'                       => 'Aina ya operesheni',
+                    'sequence_code'              => 'Msimbo wa mfuatano',
+                    'print_label'                => 'Chapisha lebo',
                     'warehouse'                  => 'Ghala',
-                    'reservation_method'         => 'Reservation Method',
-                    'auto_show_reception_report' => 'Auto Onyesha Reception Ripoti',
+                    'reservation_method'         => 'Njia ya kutenga bidhaa',
+                    'auto_show_reception_report' => 'Onyesha ripoti ya upokeaji kiotomatiki',
                     'company'                    => 'Kampuni',
-                    'return_operation_type'      => 'Return Operation Aina',
-                    'create_backorder'           => 'Unda Backorder',
-                    'move_type'                  => 'Hamisha Aina',
+                    'return_operation_type'      => 'Aina ya operesheni ya marejesho',
+                    'create_backorder'           => 'Unda oda iliyosalia',
+                    'move_type'                  => 'Aina ya uhamisho',
                 ],
 
                 'fieldsets' => [
@@ -253,8 +253,8 @@ return [
                         'title' => 'Makundi',
 
                         'entries' => [
-                            'use_create_lots'   => 'Tumia Unda Makundi',
-                            'use_existing_lots' => 'Tumia Existing Makundi',
+                            'use_create_lots'   => 'Unda makundi',
+                            'use_existing_lots' => 'Tumia makundi yaliyopo',
                         ],
                     ],
 
@@ -262,35 +262,35 @@ return [
                         'title' => 'Maeneo',
 
                         'entries' => [
-                            'source_location'      => 'Chanzo Mahali',
-                            'destination_location' => 'Unakoenda Mahali',
+                            'source_location'      => 'Eneo la chanzo',
+                            'destination_location' => 'Eneo la kufikia',
                         ],
                     ],
                 ],
             ],
             'hardware' => [
-                'title' => 'Hardware',
+                'title' => 'Vifaa',
 
                 'fieldsets' => [
                     'print_on_validation' => [
-                        'title' => 'Chapisha washa Validation',
+                        'title' => 'Chapisha wakati wa kuthibitisha',
 
                         'entries' => [
-                            'auto_print_delivery_slip'           => 'Auto Chapisha Usafirishaji Slip',
-                            'auto_print_return_slip'             => 'Auto Chapisha Return Slip',
-                            'auto_print_product_labels'          => 'Auto Chapisha Bidhaa Labels',
-                            'auto_print_lot_labels'              => 'Auto Chapisha Kundi Labels',
-                            'auto_print_reception_report'        => 'Auto Chapisha Reception Ripoti',
-                            'auto_print_reception_report_labels' => 'Auto Chapisha Reception Ripoti Labels',
-                            'auto_print_packages'                => 'Auto Chapisha Vifurushi',
+                            'auto_print_delivery_slip'           => 'Chapisha hati ya uwasilishaji kiotomatiki',
+                            'auto_print_return_slip'             => 'Chapisha hati ya marejesho kiotomatiki',
+                            'auto_print_product_labels'          => 'Chapisha lebo za bidhaa kiotomatiki',
+                            'auto_print_lot_labels'              => 'Chapisha lebo za makundi kiotomatiki',
+                            'auto_print_reception_report'        => 'Chapisha ripoti ya upokeaji kiotomatiki',
+                            'auto_print_reception_report_labels' => 'Chapisha lebo za ripoti ya upokeaji kiotomatiki',
+                            'auto_print_packages'                => 'Chapisha vifurushi kiotomatiki',
                         ],
                     ],
 
                     'print_on_pack' => [
-                        'title' => 'Chapisha washa Pack',
+                        'title' => 'Chapisha wakati wa kufunga',
 
                         'entries' => [
-                            'auto_print_package_label' => 'Auto Chapisha Kifurushi Lebo',
+                            'auto_print_package_label' => 'Chapisha lebo ya kifurushi kiotomatiki',
                         ],
                     ],
                 ],

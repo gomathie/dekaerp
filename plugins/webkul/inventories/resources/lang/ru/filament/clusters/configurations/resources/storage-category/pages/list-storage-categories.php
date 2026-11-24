@@ -8,11 +8,11 @@ return [
 
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Storage Категория',
+            'label' => 'Новая категория хранения',
 
             'notification' => [
-                'title' => 'Storage Категория создано',
-                'body'  => 'storage категория есть создано successfully.',
+                'title' => 'Категория хранения создана',
+                'body'  => 'Категория хранения успешно создана.',
             ],
         ],
     ],

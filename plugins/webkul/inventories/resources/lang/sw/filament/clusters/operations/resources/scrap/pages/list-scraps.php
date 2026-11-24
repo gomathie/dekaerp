@@ -3,11 +3,11 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Scrap',
+            'label' => 'Rekodi mpya ya chakavu',
 
             'notification' => [
-                'title' => 'Scrap imeundwa',
-                'body'  => 'scrap ina imeundwa successfully.',
+                'title' => 'Rekodi ya chakavu imeundwa',
+                'body'  => 'Rekodi ya chakavu imeundwa kwa mafanikio.',
             ],
         ],
     ],

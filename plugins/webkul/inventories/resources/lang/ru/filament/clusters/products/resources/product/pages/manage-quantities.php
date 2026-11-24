@@ -1,60 +1,60 @@
 <?php
 
 return [
-    'title' => 'Quantities',
+    'title' => 'Количества',
 
     'tabs' => [
-        'internal-locations' => 'Внутренний Места',
-        'transit-locations'  => 'Transit Места',
-        'on-hand'            => 'Вкл. Вручную',
-        'to-count'           => 'До Количество',
-        'to-apply'           => 'До Применить',
+        'internal-locations' => 'Внутренние местоположения',
+        'transit-locations'  => 'Транзитные местоположения',
+        'on-hand'            => 'В наличии',
+        'to-count'           => 'К подсчёту',
+        'to-apply'           => 'К применению',
     ],
 
     'form' => [
         'fields' => [
             'product'          => 'Товар',
-            'location'         => 'Место',
+            'location'         => 'Местоположение',
             'package'          => 'Упаковка',
-            'lot'              => 'Партия / Серийный номер Numbers',
-            'on-hand-qty'      => 'Вкл. Вручную Количество',
-            'storage-category' => 'Storage Категория',
+            'lot'              => 'Партии / серийные номера',
+            'on-hand-qty'      => 'Количество в наличии',
+            'storage-category' => 'Категория хранения',
         ],
     ],
 
     'table' => [
         'columns' => [
             'product'           => 'Товар',
-            'location'          => 'Место',
-            'lot'               => 'Партия / Серийный номер Numbers',
-            'storage-category'  => 'Storage Категория',
+            'location'          => 'Местоположение',
+            'lot'               => 'Партии / серийные номера',
+            'storage-category'  => 'Категория хранения',
             'quantity'          => 'Количество',
             'package'           => 'Упаковка',
-            'on-hand'           => 'Вкл. Вручную Количество',
+            'on-hand'           => 'Количество в наличии',
             'unit'              => 'Единица',
-            'reserved-quantity' => 'Зарезервировано Количество',
+            'reserved-quantity' => 'Зарезервированное количество',
 
             'on-hand-before-state-updated' => [
                 'notification' => [
                     'title' => 'Количество обновлено',
-                    'body'  => 'количество есть обновлено successfully.',
+                    'body'  => 'Количество успешно обновлено.',
                 ],
             ],
         ],
 
         'header-actions' => [
             'create' => [
-                'label' => 'Добавить Количество',
+                'label' => 'Добавить количество',
 
                 'notification' => [
-                    'title' => 'Количество added',
-                    'body'  => 'количество есть added successfully.',
+                    'title' => 'Количество добавлено',
+                    'body'  => 'Количество успешно добавлено.',
                 ],
 
                 'before' => [
                     'notification' => [
                         'title' => 'Количество уже существует',
-                        'body'  => 'Уже есть количество для тот же конфигурация. Пожалуйста обновить количество instead.',
+                        'body'  => 'Для этой конфигурации количество уже задано. Обновите количество.',
                     ],
                 ],
             ],
@@ -64,7 +64,7 @@ return [
             'delete' => [
                 'notification' => [
                     'title' => 'Количество удалено',
-                    'body'  => 'количество есть удалено successfully.',
+                    'body'  => 'Количество успешно удалено.',
                 ],
             ],
         ],

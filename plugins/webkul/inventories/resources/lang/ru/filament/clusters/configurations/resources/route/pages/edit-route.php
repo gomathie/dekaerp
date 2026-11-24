@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Маршрут обновлено',
-        'body'  => 'маршрут есть обновлено successfully.',
+        'title' => 'Маршрут обновлён',
+        'body'  => 'Маршрут успешно обновлён.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Маршрут удалено',
-                'body'  => 'маршрут есть удалено successfully.',
+                'title' => 'Маршрут удалён',
+                'body'  => 'Маршрут успешно удалён.',
             ],
         ],
     ],

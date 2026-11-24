@@ -1,20 +1,20 @@
 <?php
 
 return [
-    'title' => 'Manage Shughuli',
+    'title' => 'Simamia operesheni',
 
     'form' => [
         'enable-packages'                     => 'Vifurushi',
-        'enable-packages-helper-text'         => 'Put yako bidhaa katika packs (e.g. parcels, boxes) na track wao',
-        'configure-packages'                  => 'Configure Vifurushi',
-        'enable-warnings'                     => 'Warnings',
-        'enable-warnings-helper-text'         => 'Pata informative au blocking warnings washa washirika',
-        'enable-reception-report'             => 'Reception Ripoti',
-        'enable-reception-report-helper-text' => 'Angalia na allocate imepokelewa quantities.',
-        'annual-inventory-day'                => 'Wa mwaka Ghala Siku',
-        'annual-inventory-day-helper-text'    => 'siku ya mwaka wakati wewe perform yako wa mwaka ghala',
-        'annual-inventory-month'              => 'Wa mwaka Ghala Mwezi',
-        'annual-inventory-month-helper-text'  => 'mwezi ya mwaka wakati wewe perform yako wa mwaka ghala',
+        'enable-packages-helper-text'         => 'Weka bidhaa zako kwenye vifurushi (mf. vifurushi vya posta, masanduku) na uvifuatilie',
+        'configure-packages'                  => 'Sanidi vifurushi',
+        'enable-warnings'                     => 'Maonyo',
+        'enable-warnings-helper-text'         => 'Pata maonyo ya taarifa au ya kuzuia kwa wahusika',
+        'enable-reception-report'             => 'Ripoti ya upokeaji',
+        'enable-reception-report-helper-text' => 'Tazama na ugawe idadi zilizopokelewa.',
+        'annual-inventory-day'                => 'Siku ya hesabu ya mwaka',
+        'annual-inventory-day-helper-text'    => 'Siku ya mwaka unapofanya hesabu ya mwaka ya bidhaa',
+        'annual-inventory-month'              => 'Mwezi wa hesabu ya mwaka',
+        'annual-inventory-month-helper-text'  => 'Mwezi wa mwaka unapofanya hesabu ya mwaka ya bidhaa',
 
         'months' => [
             'january'   => 'Januari',

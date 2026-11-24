@@ -2,13 +2,13 @@
 
 return [
     'navigation' => [
-        'title' => 'Dropships',
+        'title' => 'Прямые поставки',
         'group' => 'Перемещения',
     ],
 
     'global-search' => [
-        'partner' => 'Контрагент',
-        'origin'  => 'Происхождение',
+        'partner' => 'Контакт',
+        'origin'  => 'Источник',
     ],
 
     'table' => [
@@ -16,13 +16,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Dropship удалено',
-                        'body'  => 'dropship ras удалено successfully.',
+                        'title' => 'Прямая поставка удалена',
+                        'body'  => 'Прямая поставка успешно удалена.',
                     ],
 
                     'error' => [
-                        'title' => 'Dropship could не быть удалено',
-                        'body'  => 'dropship нельзя быть удалено потому что это currently в использовать.',
+                        'title' => 'Не удалось удалить прямую поставку',
+                        'body'  => 'Прямую поставку нельзя удалить, так как она используется.',
                     ],
                 ],
             ],
@@ -32,13 +32,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Dropships удалено',
-                        'body'  => 'dropships есть удалено successfully.',
+                        'title' => 'Прямые поставки удалены',
+                        'body'  => 'Прямые поставки успешно удалены.',
                     ],
 
                     'error' => [
-                        'title' => 'Dropships could не быть удалено',
-                        'body'  => 'dropships нельзя быть удалено потому что они currently в использовать.',
+                        'title' => 'Не удалось удалить прямые поставки',
+                        'body'  => 'Прямые поставки нельзя удалить, так как они используются.',
                     ],
                 ],
             ],

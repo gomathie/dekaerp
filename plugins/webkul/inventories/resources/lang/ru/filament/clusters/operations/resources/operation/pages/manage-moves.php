@@ -1,28 +1,28 @@
 <?php
 
 return [
-    'title' => 'Moves',
+    'title' => 'Движения',
 
     'table' => [
         'columns' => [
             'date'                 => 'Дата',
-            'reference'            => 'Ссылка',
+            'reference'            => 'Номер',
             'product'              => 'Товар',
             'package'              => 'Упаковка',
-            'lot'                  => 'Партия / Серийный номер Numbers',
-            'source-location'      => 'Источник Место',
-            'destination-location' => 'Назначение Место',
+            'lot'                  => 'Партии / серийные номера',
+            'source-location'      => 'Исходное местоположение',
+            'destination-location' => 'Местоположение назначения',
             'quantity'             => 'Количество',
             'unit'                 => 'Единица',
-            'state'                => 'Состояние',
-            'done-by'              => 'Завершён От',
+            'state'                => 'Статус',
+            'done-by'              => 'Выполнил',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Переместить удалено',
-                    'body'  => 'переместить есть удалено successfully.',
+                    'title' => 'Движение удалено',
+                    'body'  => 'Движение успешно удалено.',
                 ],
             ],
         ],

@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'title' => 'Capacity От Товары',
+    'title' => 'Вместимость по товарам',
 
     'form' => [
         'product' => 'Товар',
@@ -11,11 +11,11 @@ return [
     'table' => [
         'header-actions' => [
             'create' => [
-                'label' => 'Добавить товар Capacity',
+                'label' => 'Добавить вместимость по товару',
 
                 'notification' => [
-                    'title' => 'Товар Capacity создано',
-                    'body'  => 'товар capacity added successfully.',
+                    'title' => 'Вместимость по товару создана',
+                    'body'  => 'Вместимость по товару успешно добавлена.',
                 ],
             ],
         ],
@@ -28,15 +28,15 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Товар Capacity обновлено',
-                    'body'  => 'товар capacity есть обновлено successfully.',
+                    'title' => 'Вместимость по товару обновлена',
+                    'body'  => 'Вместимость по товару успешно обновлена.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Товар Capacity удалено',
-                    'body'  => 'товар capacity есть удалено successfully.',
+                    'title' => 'Вместимость по товару удалена',
+                    'body'  => 'Вместимость по товару успешно удалена.',
                 ],
             ],
         ],

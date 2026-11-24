@@ -8,8 +8,8 @@ return [
 
         'delete' => [
             'notification' => [
-                'title' => 'Mahali imefutwa',
-                'body'  => 'mahali ina imefutwa successfully.',
+                'title' => 'Eneo limefutwa',
+                'body'  => 'Eneo limefutwa kwa mafanikio.',
             ],
         ],
     ],

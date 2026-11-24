@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Storage Категория обновлено',
-        'body'  => 'storage категория есть обновлено successfully.',
+        'title' => 'Категория хранения обновлена',
+        'body'  => 'Категория хранения успешно обновлена.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Storage Категория удалено',
-                'body'  => 'storage категория есть удалено successfully.',
+                'title' => 'Категория хранения удалена',
+                'body'  => 'Категория хранения успешно удалена.',
             ],
         ],
     ],

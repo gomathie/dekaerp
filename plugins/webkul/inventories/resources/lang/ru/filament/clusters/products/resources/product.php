@@ -3,31 +3,31 @@
 return [
     'table' => [
         'columns' => [
-            'on-hand'    => 'Вкл. Вручную',
-            'forecasted' => 'Forecasted',
+            'on-hand'    => 'В наличии',
+            'forecasted' => 'Прогноз',
         ],
     ],
 
     'navigation' => [
         'title' => 'Товары',
-        'group' => 'Склад',
+        'group' => 'Запасы',
     ],
 
     'form' => [
         'sections' => [
             'inventory' => [
-                'title' => 'Склад',
+                'title' => 'Запасы',
 
                 'fieldsets' => [
                     'tracking' => [
-                        'title' => 'Tracking',
+                        'title' => 'Отслеживание',
 
                         'fields' => [
-                            'track-inventory'              => 'Track Склад',
-                            'track-inventory-hint-tooltip' => 'storable товар one тот requires склад management..',
-                            'track-by'                     => 'Track От',
-                            'expiration-date'              => 'Expiration Дата',
-                            'expiration-date-hint-tooltip' => 'Если выбрано, вы можно specify expiration dates для товар и его associated партия/серийный номер numbers.',
+                            'track-inventory'              => 'Отслеживать запасы',
+                            'track-inventory-hint-tooltip' => 'Складируемый товар — это товар, требующий учёта запасов.',
+                            'track-by'                     => 'Отслеживать по',
+                            'expiration-date'              => 'Срок годности',
+                            'expiration-date-hint-tooltip' => 'Если отмечено, можно задавать сроки годности для товара и связанных с ним партий/серийных номеров.',
                         ],
                     ],
 
@@ -36,7 +36,7 @@ return [
 
                         'fields' => [
                             'routes'              => 'Маршруты',
-                            'routes-hint-tooltip' => 'Based вкл. installed модули, этот настройка allows вы до define product\'s маршрут, такой как purchasing, производство, или replenishing вкл. заказ.',
+                            'routes-hint-tooltip' => 'В зависимости от установленных модулей эта настройка позволяет задать маршрут товара: закупка, производство или пополнение под заказ.',
                         ],
                     ],
 
@@ -44,34 +44,34 @@ return [
                         'title' => 'Логистика',
 
                         'fields' => [
-                            'responsible'              => 'Responsible',
-                            'responsible-hint-tooltip' => 'Доставка lead time (в дни) represents promised duration между заказ на продажу confirmation и товар доставка.',
+                            'responsible'              => 'Ответственный',
+                            'responsible-hint-tooltip' => 'Срок доставки (в днях) — обещанное время между подтверждением заказа на продажу и доставкой товара.',
                             'weight'                   => 'Вес',
                             'volume'                   => 'Объём',
-                            'sale-delay'               => 'Клиент Lead Time (Дни)',
-                            'sale-delay-hint-tooltip'  => 'Доставка lead time (в дни) represents promised duration между заказ на продажу confirmation и товар доставка.',
+                            'sale-delay'               => 'Срок доставки клиенту (дни)',
+                            'sale-delay-hint-tooltip'  => 'Срок доставки (в днях) — обещанное время между подтверждением заказа на продажу и доставкой товара.',
                         ],
                     ],
 
                     'traceability' => [
-                        'title' => 'Traceability',
+                        'title' => 'Прослеживаемость',
 
                         'fields' => [
-                            'expiration-date'               => 'Expiration Дата (Дни)',
-                            'expiration-date-hint-tooltip'  => 'Если выбрано, вы можно задать expiration dates для товар и его associated партия/серийный номер numbers.',
-                            'best-before-date'              => 'Best До Дата (Дни)',
-                            'best-before-date-hint-tooltip' => 'номер дни до expiration дата когда товар begins до deteriorate, though это всё ещё safe до использовать. Этот calculated based вкл. партия/серийный номер номер.',
-                            'removal-date'                  => 'Removal Дата (Дни)',
-                            'removal-date-hint-tooltip'     => 'номер дни до expiration дата когда товар следует быть removed от запас. Этот calculated based вкл. партия/серийный номер номер.',
-                            'alert-date'                    => 'Alert Дата (Дни)',
-                            'alert-date-hint-tooltip'       => 'номер дни до expiration дата когда alert следует быть triggered для партия/серийный номер номер. Этот calculated based вкл. партия/серийный номер номер.',
+                            'expiration-date'               => 'Срок годности (дни)',
+                            'expiration-date-hint-tooltip'  => 'Если отмечено, можно задавать сроки годности для товара и связанных с ним партий/серийных номеров.',
+                            'best-before-date'              => 'Годен до (дни)',
+                            'best-before-date-hint-tooltip' => 'Количество дней до истечения срока годности, когда товар начинает портиться, но ещё безопасен для использования. Рассчитывается по партии/серийному номеру.',
+                            'removal-date'                  => 'Дата изъятия (дни)',
+                            'removal-date-hint-tooltip'     => 'Количество дней до истечения срока годности, когда товар нужно изъять из запасов. Рассчитывается по партии/серийному номеру.',
+                            'alert-date'                    => 'Дата оповещения (дни)',
+                            'alert-date-hint-tooltip'       => 'Количество дней до истечения срока годности, когда должно срабатывать оповещение по партии/серийному номеру. Рассчитывается по партии/серийному номеру.',
                         ],
                     ],
                 ],
             ],
 
             'additional' => [
-                'title' => 'Additional',
+                'title' => 'Дополнительно',
             ],
         ],
     ],
@@ -79,19 +79,19 @@ return [
     'infolist' => [
         'sections' => [
             'inventory' => [
-                'title' => 'Склад',
+                'title' => 'Запасы',
 
                 'entries' => [
                 ],
 
                 'fieldsets' => [
                     'tracking' => [
-                        'title' => 'Tracking',
+                        'title' => 'Отслеживание',
 
                         'entries' => [
-                            'track-inventory' => 'Track Склад',
-                            'track-by'        => 'Track От',
-                            'expiration-date' => 'Expiration Дата',
+                            'track-inventory' => 'Отслеживать запасы',
+                            'track-by'        => 'Отслеживать по',
+                            'expiration-date' => 'Срок годности',
                         ],
                     ],
 
@@ -107,21 +107,21 @@ return [
                         'title' => 'Логистика',
 
                         'entries' => [
-                            'responsible' => 'Responsible',
+                            'responsible' => 'Ответственный',
                             'weight'      => 'Вес',
                             'volume'      => 'Объём',
-                            'sale-delay'  => 'Клиент Lead Time (Дни)',
+                            'sale-delay'  => 'Срок доставки клиенту (дни)',
                         ],
                     ],
 
                     'traceability' => [
-                        'title' => 'Traceability',
+                        'title' => 'Прослеживаемость',
 
                         'entries' => [
-                            'expiration-date'  => 'Expiration Дата (Дни)',
-                            'best-before-date' => 'Best До Дата (Дни)',
-                            'removal-date'     => 'Removal Дата (Дни)',
-                            'alert-date'       => 'Alert Дата (Дни)',
+                            'expiration-date'  => 'Срок годности (дни)',
+                            'best-before-date' => 'Годен до (дни)',
+                            'removal-date'     => 'Дата изъятия (дни)',
+                            'alert-date'       => 'Дата оповещения (дни)',
                         ],
                     ],
                 ],

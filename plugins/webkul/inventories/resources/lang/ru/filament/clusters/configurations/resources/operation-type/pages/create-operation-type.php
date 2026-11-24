@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Operation Тип создано',
-        'body'  => 'operation тип есть создано successfully.',
+        'title' => 'Тип операции создан',
+        'body'  => 'Тип операции успешно создан.',
     ],
 ];

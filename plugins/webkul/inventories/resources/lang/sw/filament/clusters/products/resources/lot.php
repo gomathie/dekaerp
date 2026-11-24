@@ -2,12 +2,12 @@
 
 return [
     'navigation' => [
-        'title' => 'Makundi / Nambari ya mfululizo Numbers',
-        'group' => 'Ghala',
+        'title' => 'Makundi / Nambari za mfululizo',
+        'group' => 'Bidhaa ghalani',
     ],
 
     'global-search' => [
-        'ref'     => 'Kumbukumbu',
+        'ref'     => 'Marejeleo',
         'product' => 'Bidhaa',
     ],
 
@@ -18,12 +18,12 @@ return [
 
                 'fields' => [
                     'name'                   => 'Jina',
-                    'name-placeholder'       => 'e.g. Kundi/0001/20121',
+                    'name-placeholder'       => 'mf. LOT/0001/20121',
                     'product'                => 'Bidhaa',
-                    'product-hint-tooltip'   => 'bidhaa associated na hii kundi/nambari ya mfululizo nambari. Hii haiwezekani kuwa imebadilishwa ikiwa hii ina tayari moved.',
+                    'product-hint-tooltip'   => 'Bidhaa inayohusiana na kundi/nambari hii ya mfululizo. Haiwezi kubadilishwa ikiwa tayari imehamishwa.',
                     'company'                => 'Kampuni',
-                    'reference'              => 'Kumbukumbu',
-                    'reference-hint-tooltip' => 'ndani kumbukumbu nambari, ikiwa different kutoka manufacturer\'s kundi/nambari ya mfululizo nambari.',
+                    'reference'              => 'Marejeleo',
+                    'reference-hint-tooltip' => 'Nambari ya marejeleo ya ndani, ikiwa ni tofauti na nambari ya kundi/mfululizo ya mtengenezaji.',
                     'description'            => 'Maelezo',
                 ],
             ],
@@ -34,22 +34,22 @@ return [
         'columns' => [
             'name'         => 'Jina',
             'product'      => 'Bidhaa',
-            'on-hand-qty'  => 'Washa Mkono Kiasi',
-            'reference'    => 'Ndani Kumbukumbu',
-            'created-at'   => 'Imeundwa',
-            'updated-at'   => 'Imesasishwa',
+            'on-hand-qty'  => 'Idadi iliyopo',
+            'reference'    => 'Marejeleo ya ndani',
+            'created-at'   => 'Iliundwa',
+            'updated-at'   => 'Ilisasishwa',
         ],
 
         'groups' => [
             'product'        => 'Bidhaa',
-            'location'       => 'Mahali',
-            'created-at'     => 'Imeundwa',
+            'location'       => 'Eneo',
+            'created-at'     => 'Iliundwa',
         ],
 
         'filters' => [
             'product'  => 'Bidhaa',
-            'location' => 'Mahali',
-            'creator'  => 'Creator',
+            'location' => 'Eneo',
+            'creator'  => 'Muundaji',
             'company'  => 'Kampuni',
         ],
 
@@ -57,13 +57,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Kundi imefutwa',
-                        'body'  => 'kundi ina imefutwa successfully.',
+                        'title' => 'Kundi limefutwa',
+                        'body'  => 'Kundi limefutwa kwa mafanikio.',
                     ],
 
                     'error' => [
-                        'title' => 'Kundi could si kuwa imefutwa',
-                        'body'  => 'kundi haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Kundi halikuweza kufutwa',
+                        'body'  => 'Kundi haliwezi kufutwa kwa sababu linatumika.',
                     ],
                 ],
             ],
@@ -71,19 +71,19 @@ return [
 
         'bulk-actions' => [
             'print' => [
-                'label' => 'Chapisha Msimbo pau',
+                'label' => 'Chapisha msimbopau',
             ],
 
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Makundi imefutwa',
-                        'body'  => 'makundi ina imefutwa successfully.',
+                        'title' => 'Makundi yamefutwa',
+                        'body'  => 'Makundi yamefutwa kwa mafanikio.',
                     ],
 
                     'error' => [
-                        'title' => 'Makundi could si kuwa imefutwa',
-                        'body'  => 'makundi haiwezekani kuwa imefutwa kwa sababu wao ni currently katika tumia.',
+                        'title' => 'Makundi hayakuweza kufutwa',
+                        'body'  => 'Makundi hayawezi kufutwa kwa sababu yanatumika.',
                     ],
                 ],
             ],
@@ -93,27 +93,27 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Kundi/Nambari ya mfululizo Nambari Maelezo',
+                'title' => 'Maelezo ya kundi/nambari ya mfululizo',
 
                 'entries' => [
-                    'name'        => 'Kundi Jina',
+                    'name'        => 'Jina la kundi',
                     'product'     => 'Bidhaa',
-                    'reference'   => 'Kumbukumbu',
+                    'reference'   => 'Marejeleo',
                     'description' => 'Maelezo',
-                    'on-hand-qty' => 'Washa-Mkono Kiasi',
+                    'on-hand-qty' => 'Idadi iliyopo',
                     'company'     => 'Kampuni',
-                    'created-at'  => 'Imeundwa',
-                    'updated-at'  => 'Mwisho Imesasishwa',
+                    'created-at'  => 'Iliundwa',
+                    'updated-at'  => 'Ilisasishwa mwisho',
                 ],
             ],
 
             'record-information' => [
-                'title' => 'Rekodi Taarifa',
+                'title' => 'Taarifa za rekodi',
 
                 'entries' => [
-                    'created-by'   => 'Imeundwa Na',
-                    'created-at'   => 'Imeundwa',
-                    'last-updated' => 'Mwisho Imesasishwa',
+                    'created-by'   => 'Imeundwa na',
+                    'created-at'   => 'Iliundwa',
+                    'last-updated' => 'Ilisasishwa mwisho',
                 ],
             ],
         ],
