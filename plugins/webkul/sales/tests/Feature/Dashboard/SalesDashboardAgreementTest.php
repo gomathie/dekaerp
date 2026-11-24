@@ -145,3 +145,19 @@ it('shows this month above the sales orders list, the same figures as the dashbo
         ->and($cards->getHeading())->toBe(__('sales::filament/widgets/sales-dashboard.stats.this-month'))
         ->and((new SaleStatsOverview)->getHeading())->toBe(__('sales::filament/widgets/sales-dashboard.stats.heading'));
 });
+
+/**
+ * The money-figures switch (users.can_see_money_figures) hides the month's
+ * revenue above the orders list, as on the invoice, bill and purchase order
+ * lists; the widget's own guard does not read it.
+ */
+it('hides the month figures above the sales orders list when money figures are off', function (): void {
+    $company = Company::factory()->create();
+    $user = CompanyHelper::actingAsCompanyUser($company, []);
+
+    expect((new ListOrders)->getHeaderWidgets())->toHaveCount(1);
+
+    $user->forceFill(['can_see_money_figures' => false])->save();
+
+    expect((new ListOrders)->getHeaderWidgets())->toBe([]);
+});

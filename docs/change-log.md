@@ -6,6 +6,57 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-24, posting summary (MC-2) and this month's cards on four more lists (R-9) (develop, unreleased)
+
+- **Why:** the remaining plan #11 MC-2 step (posting summary) and plan #10
+  R-9 (summary cards on bills, orders and payments), built by three agents
+  in their own worktrees (user: "work with multiple agents"), reviewed and
+  merged here. Found on the way: the per-user money-figures switch
+  (`users.can_see_money_figures`) did not hide the cards above lists,
+  because `GuardsDashboardWidget::canView()` checks only "See dashboard";
+  only the dashboard pages read the money switch. The invoice list (built
+  earlier today) therefore showed the month's invoiced total to a user with
+  money figures off.
+- **How:**
+  - Posting summary: `SaleCurrencyQuestion::postingSummary(Move)` and
+    `InvoiceResource\Actions\ConfirmAction` (which also serves bills,
+    refunds and journal entries): a foreign-currency document confirms
+    through a dialog "Total USD 1,200.00 = GH₵ 14,160.00 at 1 USD = 11.8
+    GHS", plus the rate's date when it is not today. The company value is
+    the document's stored `amount_total_signed` (fallback: total ÷
+    `invoice_currency_rate`), never today's rate. Company-currency documents
+    and journal entries confirm in one click as before.
+  - Cards, each the dashboard's own widget with this month's filters and a
+    locked `periodHeading` (as `InvoiceStatsWidget`): vendor bills
+    (`BillStatsWidget`), purchase orders (`PurchaseStatsWidget`), sales
+    orders (`SaleStatsOverview`). Payments received: new invoices
+    `PaymentStatsWidget` (Received, Payments), reading
+    `OverviewCashFlowChart::recordedPayments()`, now public and also used
+    by the chart, so "Received" equals the chart's money in; guarded by the
+    payments list's own `canViewAny()`, the Invoices module and the money
+    switch.
+  - Money switch: `getHeaderWidgets()` on the invoice, bill, purchase order
+    and sales order lists returns nothing when
+    `DashboardAccess::mayViewMoney()` is false. The shared guard was not
+    changed (it would touch every dashboard widget): a decision for later.
+- **Benefit:** a foreign-currency post states its company value first; five
+  lists open with the month's state; money stays hidden from users without
+  money figures.
+- **Trade-off / risk:** a feed rate can still move between the last save and
+  posting (posting re-saves and re-reads the feed for the invoice date); a
+  manual rate does not. The Accounting plugin's own payments page has no
+  cards yet.
+- **Verification:** agents' runs, each on its own database:
+  `aureuserp_testing_agent_a` InvoiceResource, BillResource,
+  RefundResource, SaleCurrencyQuestion: 47 passed (229 assertions);
+  `aureuserp_testing_agent_b` invoices Dashboard trio 32 passed (124),
+  purchases Dashboard pair 12 passed (49), PurchaseOrderResource +
+  PluginEntitlement 17 passed (77); `aureuserp_testing_agent_c` invoices
+  PaymentsListCards, OverviewTest, InvoiceDashboard×2, sales
+  SalesDashboard×2, OrderResource: 62 passed (256). Merged run on develop:
+  MERGED_RESULT.
+- **Rollback:** revert the merge commits; no schema change.
+
 ## 2026-11-24, MC-2b: the currency question on quotations and sales orders (develop, unreleased)
 
 - **Why:** plan #11 MC-2b (TRACE365, user "yes start MC-2b"). A quotation

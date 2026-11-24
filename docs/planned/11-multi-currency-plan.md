@@ -216,8 +216,11 @@ recorded under their name.
   has dropped the rate. "Currency and rate" in the create page's header
   reopens the same dialog, so there is one set of rules. The wording of a
   rate is `SaleCurrencyQuestion::label()`, shared with the chatter note.
-  *Not yet:* the posting summary, and the phone bottom-sheet styling (the
-  dialog is Filament's modal, full width on a phone).
+  *Posting summary built the same day:* `SaleCurrencyQuestion::postingSummary()`
+  in the Confirm action (invoices, bills, refunds), at the document's own
+  stored rate and naming the rate's date when it is not today. "Offer
+  today's rate" was not built. Phone bottom-sheet styling: not done; the
+  dialog is Filament's modal, full width on a phone.
 - **MC-2b built (2026-11-24).** The dialog, its locked answer, the header
   action and the rate-applying step moved from `CreateInvoice` into one trait,
   `Account\Filament\Concerns\AsksSaleCurrency`, used by `CreateInvoice` and

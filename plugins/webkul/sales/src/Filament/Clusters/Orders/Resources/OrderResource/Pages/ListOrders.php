@@ -12,6 +12,7 @@ use Webkul\Sale\Filament\Clusters\Orders\Resources\OrderResource;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource\Pages\ListQuotations as BaseListOrders;
 use Webkul\Sale\Filament\Widgets\OrderActivityWidget;
 use Webkul\Sale\Filament\Widgets\SaleStatsOverview;
+use Webkul\Support\Filament\DashboardAccess;
 use Webkul\TableViews\Filament\Components\PresetView;
 use Webkul\TableViews\Filament\Concerns\HasTableViews;
 
@@ -46,9 +47,18 @@ class ListOrders extends BaseListOrders
      * the invoice list. It is the Sales dashboard's own widget and queries,
      * so the list and the dashboard cannot disagree, and its guard (widget
      * permission, Sales module) decides who sees it.
+     *
+     * The money-figures switch is checked here because the widget's guard
+     * does not: only the dashboard pages read it, so without this line a
+     * user with money figures off saw the month's revenue here (as on the
+     * invoice, bill and purchase order lists).
      */
     public function getHeaderWidgets(): array
     {
+        if (! DashboardAccess::mayViewMoney()) {
+            return [];
+        }
+
         return [
             SaleStatsOverview::make([
                 'pageFilters'   => ['startDate' => now()->startOfMonth()->toDateString(), 'endDate' => now()->toDateString()],
