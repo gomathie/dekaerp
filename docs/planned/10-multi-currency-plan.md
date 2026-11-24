@@ -216,9 +216,23 @@ recorded under their name.
   has dropped the rate. "Currency and rate" in the create page's header
   reopens the same dialog, so there is one set of rules. The wording of a
   rate is `SaleCurrencyQuestion::label()`, shared with the chatter note.
-  *Not yet:* the posting summary, and the phone bottom-sheet styling (the
-  dialog is Filament's modal, full width on a phone).
-- **MC-2b (quotations, sales orders) not started.**
+  *Posting summary built the same day:* `SaleCurrencyQuestion::postingSummary()`
+  in the Confirm action (invoices, bills, refunds), at the document's own
+  stored rate and naming the rate's date when it is not today. "Offer
+  today's rate" was not built. Phone bottom-sheet styling: not done; the
+  dialog is Filament's modal, full width on a phone.
+- **MC-2b built (2026-11-24).** The dialog, its locked answer, the header
+  action and the rate-applying step moved from `CreateInvoice` into one trait,
+  `Account\Filament\Concerns\AsksSaleCurrency`, used by `CreateInvoice` and
+  `Sale\...\CreateQuotation` (and so `CreateOrder`). Orders keep the rate in
+  `sales_orders.currency_rate` with new `currency_rate_source` /
+  `currency_rate_confirmed_by` (sales migration `2026_11_24_000001`, not
+  fillable). `OrderCalculator::refreshCurrencyRate()` keeps a manual rate;
+  `Order::saving` drops it when the currency changes alone. The quotation
+  form shows the same rate line (`keptRateText()` now takes the record's rate
+  column). `Invoicer::createInvoice()` gives the invoice the order's
+  confirmed rate, so the invoice matches the quotation. Same company switch
+  as invoices. Bills and purchase orders: not asked for.
 - **MC-3 built.** `Accounting\...\Reporting\Pages\MultiCurrency`, figures
   from `Accounting\Support\MultiCurrencyReport` (page and Excel export share
   them), permission `page_accounting_multi_currency`. Current company only:

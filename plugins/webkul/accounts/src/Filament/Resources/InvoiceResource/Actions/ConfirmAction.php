@@ -11,6 +11,7 @@ use Webkul\Account\Enums\AutoPost;
 use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Facades\Account as AccountFacade;
 use Webkul\Account\Models\Move;
+use Webkul\Account\Services\SaleCurrencyQuestion;
 
 class ConfirmAction extends Action
 {
@@ -28,6 +29,12 @@ class ConfirmAction extends Action
         $this
             ->label(__('accounts::filament/resources/invoice/actions/confirm-action.title'))
             ->color('primary')
+            // A foreign-currency invoice or bill shows what it will book in
+            // the company currency before posting (plan #10 MC-2 step 5).
+            // Without a summary (company currency, journal entries) there is
+            // no dialog, so those confirm with one click, as before.
+            ->requiresConfirmation(fn (Move $record): bool => filled(app(SaleCurrencyQuestion::class)->postingSummary($record)))
+            ->modalDescription(fn (Move $record): ?string => app(SaleCurrencyQuestion::class)->postingSummary($record))
             ->action(function (Move $record, Component $livewire): void {
                 $record->checked = $record->journal->auto_check_on_post;
 

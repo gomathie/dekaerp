@@ -52,7 +52,7 @@ class BillsTable
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('invoice_partner_display_name')
                     ->label(__('accounts::filament/resources/bill.table.columns.customer'))
-                    // The company a contact works for, under their name (plan #10 R-9).
+                    // The company a contact works for, under their name (plan #9 R-9).
                     ->description(fn ($record): ?string => $record->partner?->parent?->name)
                     ->placeholder('-')
                     ->searchable()

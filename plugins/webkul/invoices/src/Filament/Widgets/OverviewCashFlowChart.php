@@ -163,14 +163,10 @@ class OverviewCashFlowChart extends RevenueOverTimeWidget
      */
     protected function readDailyPayments(PaymentType $type, Carbon $start, Carbon $end): array
     {
-        $query = Payment::query();
         $filters = $this->dashboardFilters();
         $partnerFilter = $type === PaymentType::RECEIVE ? 'customer_id' : 'vendor_id';
 
-        $byDay = $query
-            ->where($query->qualifyColumn('payment_type'), $type)
-            ->whereIn($query->qualifyColumn('state'), [PaymentStatus::PAID, PaymentStatus::IN_PROCESS])
-            ->whereBetween($query->qualifyColumn('date'), [$start->toDateString(), $end->toDateString()])
+        $byDay = static::recordedPayments($type, $start, $end)
             ->when(! empty($filters[$partnerFilter]), fn (Builder $q) => $q->whereIn($q->qualifyColumn('partner_id'), (array) $filters[$partnerFilter]))
             ->toBase()
             ->selectRaw('date as bucket_day, SUM(ABS(amount_company_currency_signed)) as bucket_value')
@@ -185,6 +181,23 @@ class OverviewCashFlowChart extends RevenueOverTimeWidget
         }
 
         return $series;
+    }
+
+    /**
+     * The payments that count as money received (inbound) or paid out
+     * (outbound) between two dates, by payment date, in the company scope.
+     * Public so the cards above the payments list read the same rule
+     * (plan #9 R-9) instead of a second one; see dailyPayments() for why
+     * in process counts with paid.
+     */
+    public static function recordedPayments(PaymentType $type, Carbon $start, Carbon $end): Builder
+    {
+        $query = Payment::query();
+
+        return $query
+            ->where($query->qualifyColumn('payment_type'), $type)
+            ->whereIn($query->qualifyColumn('state'), [PaymentStatus::PAID, PaymentStatus::IN_PROCESS])
+            ->whereBetween($query->qualifyColumn('date'), [$start->toDateString(), $end->toDateString()]);
     }
 
     /**

@@ -18,12 +18,19 @@ return [
         'this-month' => 'This month',
     ],
 
+    'payment-stats'     => [
+        'heading'  => 'Payments received',
+        'received' => 'Received',
+        'count'    => 'Payments',
+    ],
+
     'bill-stats'        => [
-        'heading' => 'Vendor Bills',
-        'total'   => 'Total Billed',
-        'count'   => 'Bill Count',
-        'paid'    => 'Paid Bills',
-        'unpaid'  => 'Unpaid Bills',
+        'heading'    => 'Vendor Bills',
+        'total'      => 'Total Billed',
+        'count'      => 'Bill Count',
+        'paid'       => 'Paid Bills',
+        'unpaid'     => 'Unpaid Bills',
+        'this-month' => 'This month',
     ],
 
     'revenue-over-time' => [

@@ -167,3 +167,11 @@ who sees it. *Also built the same day:* the contact's company (their parent
 contact) under the customer on the invoice list and the vendor on the bill
 list, eager loaded (`partner.parent`). Still open: summary cards and
 two-line cells on the other lists (bills, orders, payments).
+
+*Cards built the same day:* vendor bills (`BillStatsWidget`), purchase
+orders (`PurchaseStatsWidget`), sales orders (`SaleStatsOverview`) and
+payments received (new invoices `PaymentStatsWidget`, on
+`OverviewCashFlowChart::recordedPayments()`), each the dashboard's own
+figures for this month. Every list's cards are hidden when the user's
+money-figures switch is off. Still open: the Accounting plugin's own
+payments page, and two-line cells on orders and payments.

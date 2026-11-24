@@ -2,6 +2,7 @@
 
 namespace Webkul\Account\Services;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use InvalidArgumentException;
 use Webkul\Account\Models\CompanySetting;
@@ -130,9 +131,12 @@ class SaleCurrencyQuestion
      * currency was changed afterwards the answer no longer applies; saying
      * so matters, because the create page then drops it.
      *
+     * $record is an invoice (rate in invoice_currency_rate) or a quotation or
+     * sales order (rate in currency_rate, MC-2b): $rateColumn names it.
+     *
      * @param  array{0: ?int, 1: ?float}|null  $pending
      */
-    public function keptRateText(?int $currencyId, ?Company $company, ?Move $record = null, ?array $pending = null): ?string
+    public function keptRateText(?int $currencyId, ?Company $company, ?Model $record = null, ?array $pending = null, string $rateColumn = 'invoice_currency_rate'): ?string
     {
         $lang = 'accounts::filament/resources/invoice/pages/create-invoice.sale-currency';
         $base = $company?->currency;
@@ -143,7 +147,7 @@ class SaleCurrencyQuestion
         }
 
         if ($record?->exists && $record->currency_rate_source === Move::RATE_MANUAL && (int) $record->currency_id === $currencyId) {
-            $rate = $this->label((float) $record->invoice_currency_rate, $base, $currency);
+            $rate = $this->label((float) $record->{$rateColumn}, $base, $currency);
             $name = $record->currency_rate_confirmed_by
                 ? User::query()->whereKey($record->currency_rate_confirmed_by)->value('name')
                 : null;
@@ -160,6 +164,55 @@ class SaleCurrencyQuestion
         return (int) $pendingCurrencyId === $currencyId
             ? __($lang.'.kept', ['rate' => $this->label($pendingRate, $base, $currency)])
             : __($lang.'.dropped');
+    }
+
+    /**
+     * The summary shown before an invoice or bill in another currency is
+     * posted (MC-2 step 5): "Total USD 1,200.00 = GH₵ 14,160.00 at
+     * 1 USD = 11.8 GHS. Confirm and post it?". After posting the rate never
+     * changes, so this is the last moment to notice a wrong one.
+     *
+     * The company value comes from the document's own stored figures, never
+     * from today's rate: it is what the books will carry. Null for a
+     * document in the company's own currency (and for journal entries),
+     * which confirm without a dialog, as before.
+     */
+    public function postingSummary(Move $move): ?string
+    {
+        $lang = 'accounts::filament/resources/invoice/actions/confirm-action.currency-summary';
+        $base = $move->company?->currency;
+        $currency = $move->currency;
+
+        if (! $move->isInvoice(true) || ! $base || ! $currency || (int) $currency->getKey() === (int) $base->getKey()) {
+            return null;
+        }
+
+        $rate = (float) $move->invoice_currency_rate;
+        $total = abs((float) $move->amount_total);
+        $companyTotal = abs((float) $move->amount_total_signed);
+
+        // A draft whose company total was never computed still has a total
+        // and a stored rate; derive the value from those rather than show 0.
+        if ($companyTotal <= 0 && $total > 0 && $rate > 0) {
+            $companyTotal = $total / $rate;
+        }
+
+        $sentences = [__($lang.'.total', [
+            'amount' => money($total, $currency->name),
+            'value'  => money($companyTotal, $base->name),
+            // label() divides by the rate; a zero rate must not break posting.
+            'rate'   => $rate > 0 ? $this->label($rate, $base, $currency) : '—',
+        ])];
+
+        // The stored rate belongs to the invoice date; on a back- or
+        // forward-dated document people otherwise assume it is today's.
+        if ($move->invoice_date && ! $move->invoice_date->isToday()) {
+            $sentences[] = __($lang.'.rate-date', ['date' => $move->invoice_date->translatedFormat('j M Y')]);
+        }
+
+        $sentences[] = __($lang.'.question');
+
+        return implode(' ', $sentences);
     }
 
     /**

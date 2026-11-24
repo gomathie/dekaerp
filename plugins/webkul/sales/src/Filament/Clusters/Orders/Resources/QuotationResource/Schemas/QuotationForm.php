@@ -17,11 +17,14 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 use Webkul\Account\Models\PaymentTerm;
+use Webkul\Account\Services\SaleCurrencyQuestion;
 use Webkul\Field\Filament\Forms\Components\ProgressStepper as FormProgressStepper;
 use Webkul\Sale\Enums\OrderState;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\CustomerResource;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource;
+use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource\Pages\CreateQuotation;
 use Webkul\Sale\Livewire\QuotationSummary;
+use Webkul\Sale\Models\Order;
 use Webkul\Sale\Models\Partner;
 use Webkul\Sale\Settings\PriceSettings;
 use Webkul\Sale\Settings\QuotationAndOrderSettings;
@@ -256,7 +259,17 @@ class QuotationForm
                                             // Same as invoices (v1.12.2): switching currency converts
                                             // every line at the company's rate, or warns when no rate
                                             // exists instead of silently keeping the old figures.
-                                            ->afterStateUpdated(fn (Set $set, Get $get, $state, $old, $livewire) => QuotationResource::afterCurrencyUpdated($set, $get, $state, $old, $livewire)),
+                                            ->afterStateUpdated(fn (Set $set, Get $get, $state, $old, $livewire) => QuotationResource::afterCurrencyUpdated($set, $get, $state, $old, $livewire))
+                                            // The rate confirmed for this sale (plan #10 MC-2b), as on
+                                            // invoices: visible once the dialog is closed, and it says
+                                            // so when a currency change has dropped it.
+                                            ->helperText(fn (Get $get, $livewire, $record): ?string => app(SaleCurrencyQuestion::class)->keptRateText(
+                                                (int) $get('currency_id') ?: null,
+                                                Company::withoutGlobalScopes()->with('currency')->find($get('company_id') ?: $record?->company_id ?: current_company_id()),
+                                                $record instanceof Order ? $record : null,
+                                                $livewire instanceof CreateQuotation ? [$livewire->saleCurrencyId, $livewire->saleCurrencyRate] : null,
+                                                'currency_rate',
+                                            )),
                                         ...QuotationResource::getCustomFormFields(),
                                     ]),
                             ]),

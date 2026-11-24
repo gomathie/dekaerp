@@ -18,12 +18,19 @@ return [
         'this-month' => 'Este mes',
     ],
 
+    'payment-stats'     => [
+        'heading'  => 'Pagos recibidos',
+        'received' => 'Recibido',
+        'count'    => 'Pagos',
+    ],
+
     'bill-stats'        => [
-        'heading' => 'Facturas de Proveedor',
-        'total'   => 'Total Facturado',
-        'count'   => 'Cantidad de Facturas',
-        'paid'    => 'Facturas Pagadas',
-        'unpaid'  => 'Facturas Impagas',
+        'heading'    => 'Facturas de Proveedor',
+        'total'      => 'Total Facturado',
+        'count'      => 'Cantidad de Facturas',
+        'paid'       => 'Facturas Pagadas',
+        'unpaid'     => 'Facturas Impagas',
+        'this-month' => 'Este mes',
     ],
 
     'revenue-over-time' => [

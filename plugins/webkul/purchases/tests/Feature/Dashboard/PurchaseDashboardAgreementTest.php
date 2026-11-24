@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Support\Carbon;
 use Webkul\PluginManager\Support\PluginAccess;
+use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\PurchaseOrderResource\Pages\ListPurchaseOrders;
 use Webkul\Purchase\Filament\Admin\Widgets\PurchaseHeadlineWidget;
 use Webkul\Purchase\Filament\Admin\Widgets\PurchaseStatsWidget;
 use Webkul\Purchase\Filament\Admin\Widgets\TopOrdersWidget;
@@ -79,4 +81,62 @@ it('tells the same story in the purchase figures, ring and lists', function (): 
         // Top orders are orders; the quote is in Top RFQs.
         ->and($orders->pluck('id')->all())->toBe([$fixture['PO-1']->getKey(), $fixture['PO-2']->getKey()])
         ->and($rfqs->pluck('id')->all())->toBe([$fixture['RFQ-1']->getKey()]);
+});
+
+/**
+ * Plan #9 R-9 (2026-11-24): the cards above the purchase order list are the
+ * Purchases dashboard's own figures widget for this month, so on the last
+ * day of March they show exactly the March figures: the cancelled order,
+ * February and the other client never count.
+ */
+it('shows this month above the purchase order list, the same figures as the dashboard', function (): void {
+    $this->travelTo(Carbon::parse('2026-03-31 12:00'));
+
+    $own = Company::factory()->create();
+    $other = CompanyHelper::asNobody(fn () => Company::factory()->create());
+
+    DashboardFixtureHelper::purchases($own, $other);
+
+    $user = CompanyHelper::actingAsCompanyUser($own, []);
+    $user->forceFill(['resource_permission' => 'global'])->saveQuietly();
+
+    $widgets = (new ListPurchaseOrders)->getHeaderWidgets();
+
+    expect($widgets)->toHaveCount(1)
+        ->and($widgets[0]->widget)->toBe(PurchaseStatsWidget::class);
+
+    $cards = new PurchaseStatsWidget;
+
+    foreach ($widgets[0]->getProperties() as $property => $value) {
+        $cards->{$property} = $value;
+    }
+
+    $figures = fn (): array => [
+        'drafts'    => $this->countByState(['draft']),
+        'sent'      => $this->countByState(['sent']),
+        'confirmed' => $this->countByState(['purchase', 'done']),
+        'value'     => $this->sumByState(['purchase', 'done']),
+    ];
+
+    expect($figures->call($cards))->toBe(['drafts' => 1.0, 'sent' => 0.0, 'confirmed' => 2.0, 'value' => 1500.0])
+        // The dashboard's own widget, filtered to March, says the same.
+        ->and($figures->call(purchaseAgreementWidget(PurchaseStatsWidget::class)))->toBe($figures->call($cards))
+        ->and($cards->getHeading())->toBe(__('purchases::filament/admin/widgets/purchase-dashboard.stats.this-month'))
+        ->and((new PurchaseStatsWidget)->getHeading())->toBe(__('purchases::filament/admin/widgets/purchase-dashboard.stats.heading'));
+});
+
+/**
+ * Plan #9 R-9 (2026-11-24): the month's purchase value is a dashboard
+ * figure, so "See money figures" off removes the cards, as it removes the
+ * Purchases dashboard. The widget's own guard does not read that switch.
+ */
+it('hides the month figures above the purchase order list when money figures are off', function (): void {
+    $company = Company::factory()->create();
+    $user = CompanyHelper::actingAsCompanyUser($company, []);
+
+    expect((new ListPurchaseOrders)->getHeaderWidgets())->toHaveCount(1);
+
+    $user->forceFill(['can_see_money_figures' => false])->save();
+
+    expect((new ListPurchaseOrders)->getHeaderWidgets())->toBe([]);
 });

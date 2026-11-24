@@ -16,6 +16,7 @@ return [
         'average-revenue'    => 'Receita Média',
         'increase'           => 'aumento',
         'decrease'           => 'redução',
+        'this-month'         => 'Este mês',
     ],
 
     'order-activity'      => [
