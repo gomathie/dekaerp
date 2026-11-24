@@ -40,5 +40,9 @@ return [
         'stale'       => 'A última taxa registrada é de :date, há mais de 3 dias. Verifique-a antes de continuar.',
         'no-rate'     => 'Não há taxa registrada para esta moeda. Digite a taxa combinada.',
         'chatter'     => 'Taxa de câmbio confirmada na criação da fatura: :rate.',
+        'change'      => 'Moeda e taxa',
+        'kept'        => 'Taxa mantida para esta venda: :rate.',
+        'kept-by'     => 'Taxa mantida para esta venda: :rate, confirmada por :name.',
+        'dropped'     => 'A taxa confirmada era de outra moeda, então esta fatura usa a taxa do dia.',
     ],
 ];

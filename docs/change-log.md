@@ -6,6 +6,61 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-24, this month's figures above the invoice list (plan #10 R-9, develop, unreleased)
+
+- **Why:** TRACE365's reference invoice lists open with summary cards; R-9
+  asked for them "read from the same queries as the Invoices dashboard, so
+  the list and the dashboard agree".
+- **How:** the invoices plugin's `ListInvoices::getHeaderWidgets()` places
+  `InvoiceStatsWidget` with this month's `start_date`/`end_date` as its page
+  filters and a locked `periodHeading` ("This month"). No second query: the
+  widget is the dashboard's. Filament only shows header widgets whose
+  `canView()` passes, so the dashboard guard (widget permission, Invoices
+  module, `DashboardAccess` money switch) applies unchanged. The accounts
+  base page is untouched: it cannot reference the invoices plugin.
+- **Benefit:** the list opens with the month's state of invoicing, and it
+  agrees with the dashboard by construction.
+- **Trade-off / risk:** four cards push the list down a little; they follow
+  the month, not the list's own filters or tabs (the heading says so).
+- **Verification:** `aureuserp_testing_v113_k2` (t4): invoices Dashboard
+  (with the new agreement test on 31 March 2026: the list's cards equal the
+  March dashboard tiles, 1,800 net, 3 invoices, 1 paid, 2 unpaid): 36 passed
+  (145 assertions). Pint and `php -l`: passed.
+- **Rollback:** revert the commit; no schema change.
+
+## 2026-11-24, MC-2 rate bar and "View all" on every dashboard list (develop, unreleased)
+
+- **Why:** U92: once the currency dialog closed, the confirmed rate was
+  invisible, and choosing a customer with another default currency dropped
+  it silently (`handleRecordCreation` applies it only to the currency it was
+  confirmed for). DB-9 left "View all" off the customer and product lists;
+  Purchases' order, vendor and product lists lacked it too.
+- **How:** `SaleCurrencyQuestion::keptRateText()` is the helper line under
+  the invoice's currency (shared `InvoiceForm`): before saving it reads the
+  dialog's locked answer, afterwards the invoice's manual rate and who
+  confirmed it, and it says when the answer no longer applies.
+  `SaleCurrencyQuestion::label()` is the one wording of a rate (also the
+  chatter note). `CreateInvoice::getHeaderActions()` returns the same
+  `askSaleCurrency` action as "Currency and rate", visible under the same
+  rule as the question. "View all" (`HasDashboardEmptyState::viewAllActions()`)
+  added to TopCustomersTable, TopProductsTable, TopOrdersWidget,
+  TopVendorsWidget, TopPurchasedProductsWidget, each only when that
+  resource's `canViewAny()` allows; vendor rows link to the vendor.
+- **Benefit:** the person sees which rate the sale will be booked at and can
+  change it; every dashboard list leads to its full list.
+- **Trade-off / risk:** the helper line runs one company and one currency
+  read per form render; it is blank for every invoice that follows the feed.
+- **Verification:** `aureuserp_testing_v113_k2` (t4): SaleCurrencyQuestion,
+  InvoiceResource, DocumentCurrency, Invoice: first run 8 failed (a `null +
+  array` in `keptRateText()` when no pending answer is passed, which broke
+  every invoice form render); fixed, re-run 60 passed (246 assertions).
+  `aureuserp_testing_v113_k1` (t3): sales + purchases Dashboard: first run
+  2 failed (the new tests read `getHeaderActions()` keys, which are list
+  indexes, not names; the widgets were right); test fixed to read
+  `getName()`, re-run 34 passed (129 assertions). Pint and `php -l` on the
+  changed files: passed.
+- **Rollback:** revert the commit; no schema change.
+
 ## 2026-11-24, dashboards DB-9, the sale currency question, the Multi-currency report and Unused amount (develop, unreleased)
 
 - **Why:** DB-9 board approved by the user (all four parts, Sales first).

@@ -10,11 +10,12 @@ return [
     'decrease'          => ':percent% de redução',
     'no-change'         => 'Sem alteração',
     'invoice-stats'     => [
-        'heading' => 'Faturas',
-        'total'   => 'Total Faturado',
-        'count'   => 'Quantidade de Faturas',
-        'paid'    => 'Faturas Pagas',
-        'unpaid'  => 'Faturas em Aberto',
+        'heading'    => 'Faturas',
+        'total'      => 'Total Faturado',
+        'count'      => 'Quantidade de Faturas',
+        'paid'       => 'Faturas Pagas',
+        'unpaid'     => 'Faturas em Aberto',
+        'this-month' => 'Este mês',
     ],
 
     'bill-stats'        => [

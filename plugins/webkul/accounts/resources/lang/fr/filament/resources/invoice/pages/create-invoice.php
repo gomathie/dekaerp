@@ -40,5 +40,9 @@ return [
         'stale'       => 'Le dernier taux enregistré date du :date, il y a plus de 3 jours. Vérifiez-le avant de continuer.',
         'no-rate'     => 'Aucun taux n\'est enregistré pour cette devise. Saisissez le taux convenu.',
         'chatter'     => 'Taux de change confirmé à la création de la facture : :rate.',
+        'change'      => 'Devise et taux',
+        'kept'        => 'Taux retenu pour cette vente : :rate.',
+        'kept-by'     => 'Taux retenu pour cette vente : :rate, confirmé par :name.',
+        'dropped'     => 'Le taux confirmé portait sur une autre devise : cette facture utilise le taux du jour.',
     ],
 ];

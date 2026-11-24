@@ -1,14 +1,21 @@
 <?php
 
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use Filament\Tables\Table;
 use Illuminate\Support\Facades\DB;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
+use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\PurchaseOrderResource;
+use Webkul\Purchase\Filament\Admin\Clusters\Orders\Resources\VendorResource;
+use Webkul\Purchase\Filament\Admin\Clusters\Products\Resources\ProductResource as PurchaseProductResource;
 use Webkul\Purchase\Filament\Admin\Pages\Purchases;
 use Webkul\Purchase\Filament\Admin\Widgets\PurchaseHeadlineWidget;
 use Webkul\Purchase\Filament\Admin\Widgets\PurchaseStatsWidget;
 use Webkul\Purchase\Filament\Admin\Widgets\PurchaseTrendWidget;
+use Webkul\Purchase\Filament\Admin\Widgets\TopOrdersWidget;
+use Webkul\Purchase\Filament\Admin\Widgets\TopPurchasedProductsWidget;
 use Webkul\Purchase\Filament\Admin\Widgets\TopRfqsWidget;
+use Webkul\Purchase\Filament\Admin\Widgets\TopVendorsWidget;
 use Webkul\Purchase\Models\Order;
 use Webkul\Support\Models\Company;
 
@@ -217,4 +224,39 @@ it('shows every purchase dashboard widget only with its permission and the modul
 
     expect(DashboardWidgetGuardHelper::visibility(Purchases::sectionWidgets(), 'purchases', $company))
         ->toBe(DashboardWidgetGuardHelper::guarded(Purchases::sectionWidgets()));
+});
+
+/**
+ * DB-9 (2026-11-24): every purchase dashboard list opens its whole list, and
+ * only for someone who may open it. The resource answers, not a permission
+ * name here.
+ */
+it('offers "View all" on the order, vendor and product lists only to who may open them', function (): void {
+    FilamentHelper::bootAdminPanel();
+    $company = Company::factory()->create();
+
+    $headerActions = function (string $widgetClass): array {
+        $widget = new $widgetClass;
+        $widget->pageFilters = [];
+
+        return array_map(fn ($action): ?string => $action->getName(), array_values($widget->table(Table::make($widget))->getHeaderActions()));
+    };
+
+    $widgets = [TopOrdersWidget::class, TopVendorsWidget::class, TopPurchasedProductsWidget::class];
+
+    CompanyHelper::actingAsCompanyUser($company, ['view_any_purchase_purchase::order', 'view_any_purchase_vendor', 'view_any_partner_partner', 'view_any_purchase_product', 'view_any_product_product']);
+
+    expect(PurchaseOrderResource::canViewAny())->toBeTrue()
+        ->and(VendorResource::canViewAny())->toBeTrue()
+        ->and(PurchaseProductResource::canViewAny())->toBeTrue();
+
+    foreach ($widgets as $widgetClass) {
+        expect($headerActions($widgetClass))->toContain('dashboardViewAll');
+    }
+
+    CompanyHelper::actingAsCompanyUser($company, []);
+
+    foreach ($widgets as $widgetClass) {
+        expect($headerActions($widgetClass))->not->toContain('dashboardViewAll');
+    }
 });

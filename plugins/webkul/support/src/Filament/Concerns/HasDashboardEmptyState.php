@@ -35,8 +35,7 @@ trait HasDashboardEmptyState
      * reference screens): the dashboard shows the top few, the button opens
      * the whole list. The caller passes the URL only when the resource's own
      * canViewAny() allows it, so nobody is offered a page they cannot open.
-     */
-    /**
+     *
      * @return list<Action>
      */
     protected function viewAllActions(?string $url): array

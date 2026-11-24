@@ -29,11 +29,14 @@ use Webkul\Account\Enums\PaymentState;
 use Webkul\Account\Enums\PaymentType;
 use Webkul\Account\Filament\Resources\BankAccountResource;
 use Webkul\Account\Filament\Resources\InvoiceResource;
+use Webkul\Account\Filament\Resources\InvoiceResource\Pages\CreateInvoice;
 use Webkul\Account\Filament\Resources\InvoiceResource\Support\InvoiceSchemaRegistry;
 use Webkul\Account\Filament\Resources\JournalResource;
 use Webkul\Account\Models\FiscalPosition;
 use Webkul\Account\Models\Journal;
+use Webkul\Account\Models\Move;
 use Webkul\Account\Models\Partner;
+use Webkul\Account\Services\SaleCurrencyQuestion;
 use Webkul\Account\Settings\CustomerInvoiceSettings;
 use Webkul\Account\Support\DocumentCurrency;
 use Webkul\Field\Filament\Forms\Components\ProgressStepper as FormProgressStepper;
@@ -299,6 +302,15 @@ class InvoiceForm
                                                     // the old currency's prices and the summary its old symbol
                                                     // (client report, 2026-11-19).
                                                     ->afterStateUpdated(fn (Set $set, Get $get, $state, $old, $livewire) => InvoiceResource::afterCurrencyUpdated($set, $get, $state, $old, $livewire))
+                                                    // The rate the person confirmed (plan #11 MC-2): without
+                                                    // this line the dialog's answer was invisible once closed,
+                                                    // and a later currency change dropped it silently.
+                                                    ->helperText(fn (Get $get, $livewire, $record): ?string => app(SaleCurrencyQuestion::class)->keptRateText(
+                                                        (int) $get('currency_id') ?: null,
+                                                        Company::withoutGlobalScopes()->with('currency')->find($get('company_id') ?: $record?->company_id ?: current_company_id()),
+                                                        $record instanceof Move ? $record : null,
+                                                        $livewire instanceof CreateInvoice ? [$livewire->saleCurrencyId, $livewire->saleCurrencyRate] : null,
+                                                    ))
                                                     ->disabled(fn ($record) => in_array($record?->state, [MoveState::POSTED, MoveState::CANCEL])),
                                             ])
                                             ->columns(2),

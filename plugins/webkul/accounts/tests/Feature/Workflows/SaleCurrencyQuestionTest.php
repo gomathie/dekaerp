@@ -171,6 +171,50 @@ it('opens the question with a new invoice and keeps a corrected rate on the crea
         ->and((int) $invoice->currency_rate_confirmed_by)->toBe((int) auth()->id());
 });
 
+/**
+ * MC-2 rate bar (2026-11-24): the confirmed rate stays visible under the
+ * currency, and says so when a currency change has dropped it.
+ */
+it('shows the kept rate under the currency, who confirmed it, and when it no longer applies', function () {
+    $company = AccountHelper::company()->load('currency');
+    $foreign = AccountHelper::otherCurrency();
+    $question = app(SaleCurrencyQuestion::class);
+    $lang = 'accounts::filament/resources/invoice/pages/create-invoice.sale-currency';
+
+    $label = $question->label(12.5, $company->currency, $foreign);
+
+    expect($label)->toBe('1 '.$company->currency->name.' = 12.5 '.$foreign->name)
+        // Following the feed: nothing to say.
+        ->and($question->keptRateText($foreign->getKey(), $company))->toBeNull()
+        ->and($question->keptRateText($foreign->getKey(), $company, null, [$foreign->getKey(), 12.5]))->toBe(__($lang.'.kept', ['rate' => $label]))
+        ->and($question->keptRateText($company->currency_id, $company, null, [$foreign->getKey(), 12.5]))->toBe(__($lang.'.dropped'));
+
+    AccountHelper::setCurrencyRate($foreign, 10.0, now()->subDay()->toDateString());
+    $invoice = AccountHelper::invoice(MoveType::OUT_INVOICE, $this->partner, null, ['currency_id' => $foreign->getKey()]);
+    $invoice->forceFill([
+        'invoice_currency_rate'      => 12.5,
+        'currency_rate_source'       => Move::RATE_MANUAL,
+        'currency_rate_confirmed_by' => auth()->id(),
+    ])->save();
+
+    expect($question->keptRateText($foreign->getKey(), $company, $invoice->refresh()))
+        ->toBe(__($lang.'.kept-by', ['rate' => $label, 'name' => auth()->user()->name]));
+});
+
+it('offers "Currency and rate" on a new invoice once the question is on', function () {
+    $company = Company::query()->findOrFail(current_company_id());
+    $foreign = AccountHelper::otherCurrency();
+    allowSaleCurrencies($company, $foreign);
+    AccountHelper::setCurrencyRate($foreign, 10.0, now()->toDateString());
+
+    Livewire::test(CreateInvoice::class)
+        ->assertActionVisible('askSaleCurrency')
+        ->callAction('askSaleCurrency', data: ['currency_id' => $foreign->getKey(), 'rate' => 12.5])
+        ->assertSee(__('accounts::filament/resources/invoice/pages/create-invoice.sale-currency.kept', [
+            'rate' => app(SaleCurrencyQuestion::class)->label(12.5, $company->currency, $foreign),
+        ]));
+});
+
 it('leaves the feed rate unpinned and asks nothing when the switch is off', function () {
     $company = Company::query()->findOrFail(current_company_id());
     $foreign = AccountHelper::otherCurrency();

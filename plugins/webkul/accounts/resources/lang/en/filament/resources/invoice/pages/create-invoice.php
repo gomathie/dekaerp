@@ -40,5 +40,9 @@ return [
         'stale'       => 'The latest rate on file is from :date, more than 3 days ago. Check it before you continue.',
         'no-rate'     => 'There is no rate on file for this currency. Type the rate you agreed.',
         'chatter'     => 'Exchange rate confirmed when the invoice was created: :rate.',
+        'change'      => 'Currency and rate',
+        'kept'        => 'Rate kept for this sale: :rate.',
+        'kept-by'     => 'Rate kept for this sale: :rate, confirmed by :name.',
+        'dropped'     => 'The rate you confirmed was for another currency, so this invoice uses the day\'s rate.',
     ],
 ];

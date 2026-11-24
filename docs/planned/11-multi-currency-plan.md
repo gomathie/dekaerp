@@ -210,9 +210,14 @@ recorded under their name.
   `currency_rate_confirmed_by`, both deliberately not fillable. Engine:
   `Move::computeInvoiceCurrencyRate()` keeps a manual rate, and drops it when
   the currency changes without a new rate. A chatter note records the rate.
-  *Not yet:* the rate bar with a Change link on the form, the posting
-  summary, and the phone bottom-sheet styling (the dialog is Filament's
-  modal, full width on a phone).
+  *Rate bar, built the same day:* the line under the invoice's currency
+  (`SaleCurrencyQuestion::keptRateText()`) names the rate kept for the sale,
+  and who confirmed it once saved; it says so when a later currency change
+  has dropped the rate. "Currency and rate" in the create page's header
+  reopens the same dialog, so there is one set of rules. The wording of a
+  rate is `SaleCurrencyQuestion::label()`, shared with the chatter note.
+  *Not yet:* the posting summary, and the phone bottom-sheet styling (the
+  dialog is Filament's modal, full width on a phone).
 - **MC-2b (quotations, sales orders) not started.**
 - **MC-3 built.** `Accounting\...\Reporting\Pages\MultiCurrency`, figures
   from `Accounting\Support\MultiCurrencyReport` (page and Excel export share

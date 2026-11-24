@@ -156,3 +156,12 @@ Draft, To pay and Overdue tabs, with To pay and Overdue now shown as tabs
 (`ListInvoices::presetCount()` applies the tab's own condition, so the count
 matches the list; bills inherit it). Still open: the summary cards, the
 customer's company under the customer, and the other lists.
+
+*Summary cards built 2026-11-24 (develop, unreleased):* the Invoices list
+(invoices plugin, `Customers\...\ListInvoices::getHeaderWidgets()`) shows the
+Invoices dashboard's own `InvoiceStatsWidget` for this month, headed "This
+month": total invoiced (net of credit notes), count, paid, unpaid, each with
+its trend pill. Same widget and queries as the dashboard, so they cannot
+disagree; its guard (widget permission, module, money-figures switch) decides
+who sees it. Still open: the customer's company under the customer, and the
+other lists (bills, orders, payments).

@@ -208,6 +208,23 @@ class CreateInvoice extends CreateRecord
             });
     }
 
+    /**
+     * "Currency and rate" reopens the same question, so a rate can be
+     * corrected after the dialog is closed (MC-2 rate bar). It is the one
+     * action, not a copy: a second dialog would be a second set of rules.
+     */
+    protected function getHeaderActions(): array
+    {
+        return [
+            $this->askSaleCurrencyAction()
+                ->label(__('accounts::filament/resources/invoice/pages/create-invoice.sale-currency.change'))
+                ->icon('heroicon-o-banknotes')
+                ->color('gray')
+                ->visible(fn (): bool => ($this->data['move_type'] ?? null) === MoveType::OUT_INVOICE->value
+                    && app(SaleCurrencyQuestion::class)->isAsked(current_company_id())),
+        ];
+    }
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['move_type'] ??= MoveType::OUT_INVOICE;
@@ -250,12 +267,10 @@ class CreateInvoice extends CreateRecord
         $record = $this->getRecord();
 
         if ($record->currency_rate_source === Move::RATE_MANUAL && $record->currency && $record->company?->currency) {
-            $shown = app(SaleCurrencyQuestion::class)->display((float) $record->invoice_currency_rate, $record->company->currency, $record->currency);
-
             $record->addMessage([
                 'type' => 'note',
                 'body' => e(__('accounts::filament/resources/invoice/pages/create-invoice.sale-currency.chatter', [
-                    'rate' => '1 '.$shown['from'].' = '.rtrim(rtrim(number_format($shown['amount'], 6, '.', ''), '0'), '.').' '.$shown['to'],
+                    'rate' => app(SaleCurrencyQuestion::class)->label((float) $record->invoice_currency_rate, $record->company->currency, $record->currency),
                 ])),
             ]);
         }

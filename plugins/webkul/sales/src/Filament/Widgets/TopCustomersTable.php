@@ -12,13 +12,14 @@ use Webkul\Sale\Filament\Clusters\Orders\Resources\CustomerResource;
 use Webkul\Sale\Filament\Widgets\Concerns\GuardsSaleDashboardWidget;
 use Webkul\Sale\Filament\Widgets\Concerns\HasSaleDashboardFilters;
 use Webkul\Sale\Models\Order;
+use Webkul\Support\Filament\Concerns\HasDashboardEmptyState;
 
 class TopCustomersTable extends TableWidget
 {
     // DB-4 layout on the Overview's six-column grid (2026-11-23).
     protected int|string|array $columnSpan = ['default' => 'full', 'xl' => 3];
 
-    use GuardsSaleDashboardWidget, HasSaleDashboardFilters;
+    use GuardsSaleDashboardWidget, HasDashboardEmptyState, HasSaleDashboardFilters;
 
     protected const BAR_COLOR = 'var(--primary-500)';
 
@@ -35,6 +36,8 @@ class TopCustomersTable extends TableWidget
         return $table
             ->defaultKeySort(false)
             ->recordClasses('dashboard-table-row')
+            // "View all" opens the whole list (DB-9).
+            ->headerActions($this->viewAllActions(CustomerResource::canViewAny() ? CustomerResource::getUrl('index') : null))
             ->recordUrl(fn ($record): ?string => $record->id && CustomerResource::canAccess()
                 ? CustomerResource::getUrl('view', ['record' => $record->id])
                 : null);

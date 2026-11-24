@@ -40,5 +40,9 @@ return [
         'stale'       => 'El último tipo registrado es del :date, hace más de 3 días. Revíselo antes de continuar.',
         'no-rate'     => 'No hay ningún tipo registrado para esta moneda. Escriba el tipo acordado.',
         'chatter'     => 'Tipo de cambio confirmado al crear la factura: :rate.',
+        'change'      => 'Moneda y tipo',
+        'kept'        => 'Tipo fijado para esta venta: :rate.',
+        'kept-by'     => 'Tipo fijado para esta venta: :rate, confirmado por :name.',
+        'dropped'     => 'El tipo confirmado era para otra moneda, así que esta factura usa el tipo del día.',
     ],
 ];

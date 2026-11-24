@@ -5,6 +5,7 @@ namespace Webkul\Invoice\Filament\Widgets;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
+use Livewire\Attributes\Locked;
 use Webkul\Invoice\Filament\Widgets\Concerns\GuardsInvoiceDashboardWidget;
 use Webkul\Invoice\Filament\Widgets\Concerns\HasInvoiceDashboardFilters;
 
@@ -22,9 +23,17 @@ class InvoiceStatsWidget extends BaseWidget
 
     protected int|string|array $columnSpan = 'full';
 
+    /**
+     * Set when these cards sit above the invoice list (plan #10 R-9), which
+     * has no period bar: the heading then names the period instead of
+     * repeating "Invoices". Locked: only the page that places it sets it.
+     */
+    #[Locked]
+    public ?string $periodHeading = null;
+
     public function getHeading(): ?string
     {
-        return __('invoices::filament/widgets/invoice-dashboard.invoice-stats.heading');
+        return $this->periodHeading ?? __('invoices::filament/widgets/invoice-dashboard.invoice-stats.heading');
     }
 
     protected function getStats(): array

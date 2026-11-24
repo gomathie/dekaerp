@@ -11,13 +11,14 @@ use Webkul\Sale\Filament\Clusters\Products\Resources\ProductResource;
 use Webkul\Sale\Filament\Widgets\Concerns\GuardsSaleDashboardWidget;
 use Webkul\Sale\Filament\Widgets\Concerns\HasSaleDashboardFilters;
 use Webkul\Sale\Models\OrderLine;
+use Webkul\Support\Filament\Concerns\HasDashboardEmptyState;
 
 class TopProductsTable extends TableWidget
 {
     // DB-4 layout on the Overview's six-column grid (2026-11-23).
     protected int|string|array $columnSpan = ['default' => 'full', 'xl' => 3];
 
-    use GuardsSaleDashboardWidget, HasSaleDashboardFilters;
+    use GuardsSaleDashboardWidget, HasDashboardEmptyState, HasSaleDashboardFilters;
 
     protected const BAR_COLOR = 'var(--primary-500)';
 
@@ -34,6 +35,8 @@ class TopProductsTable extends TableWidget
         return $table
             ->defaultKeySort(false)
             ->recordClasses('dashboard-table-row')
+            // "View all" opens the whole list (DB-9).
+            ->headerActions($this->viewAllActions(ProductResource::canViewAny() ? ProductResource::getUrl('index') : null))
             ->recordUrl(fn ($record): ?string => $record->id && ProductResource::canAccess()
                 ? ProductResource::getUrl('view', ['record' => $record->id])
                 : null);

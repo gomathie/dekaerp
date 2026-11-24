@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\DB;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Support\PluginAccess;
 use Webkul\Sale\Enums\OrderState;
+use Webkul\Sale\Filament\Clusters\Orders\Resources\CustomerResource;
+use Webkul\Sale\Filament\Clusters\Products\Resources\ProductResource as SaleProductResource;
 use Webkul\Sale\Filament\Clusters\Reporting\Pages\SalesAnalysis;
 use Webkul\Sale\Filament\Pages\SalesDashboard;
 use Webkul\Sale\Filament\Widgets\MonthlySalesChart;
@@ -135,6 +137,36 @@ it('offers the next step on an empty list only to users who may take it', functi
     expect($allowed->getEmptyStateHeading())->toBe(__('support::filament/dashboard.empty-table'))
         ->and($allowed->getEmptyStateActions())->toHaveCount(1)
         ->and($refused->getEmptyStateActions())->toHaveCount(0);
+});
+
+/**
+ * DB-9 (2026-11-24): the customer and product lists open their whole list,
+ * and only for someone who may open it. The panel's resource answers, not a
+ * permission name here, so the test follows whichever policy the resource
+ * resolves.
+ */
+it('offers "View all" on the customer and product lists only to who may open them', function (): void {
+    FilamentHelper::bootAdminPanel();
+    $company = Company::factory()->create();
+
+    $headerActions = function (string $widgetClass): array {
+        $widget = new $widgetClass;
+        $widget->pageFilters = [];
+
+        return array_map(fn ($action): ?string => $action->getName(), array_values($widget->table(Table::make($widget))->getHeaderActions()));
+    };
+
+    CompanyHelper::actingAsCompanyUser($company, ['view_any_sale_customer', 'view_any_partner_partner', 'view_any_sale_product', 'view_any_product_product']);
+
+    expect(CustomerResource::canViewAny())->toBeTrue()
+        ->and(SaleProductResource::canViewAny())->toBeTrue()
+        ->and($headerActions(TopCustomersTable::class))->toContain('dashboardViewAll')
+        ->and($headerActions(TopProductsTable::class))->toContain('dashboardViewAll');
+
+    CompanyHelper::actingAsCompanyUser($company, []);
+
+    expect($headerActions(TopCustomersTable::class))->not->toContain('dashboardViewAll')
+        ->and($headerActions(TopProductsTable::class))->not->toContain('dashboardViewAll');
 });
 
 /**

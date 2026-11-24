@@ -10,13 +10,14 @@ use Illuminate\Database\Eloquent\Builder;
 use Webkul\Purchase\Filament\Admin\Clusters\Products\Resources\ProductResource;
 use Webkul\Purchase\Filament\Admin\Widgets\Concerns\GuardsPurchaseDashboardWidget;
 use Webkul\Purchase\Filament\Admin\Widgets\Concerns\HasPurchaseDashboardFilters;
+use Webkul\Support\Filament\Concerns\HasDashboardEmptyState;
 
 class TopPurchasedProductsWidget extends BaseWidget
 {
     // DB-4 layout on the Overview's six-column grid (2026-11-23).
     protected int|string|array $columnSpan = ['default' => 'full', 'xl' => 3];
 
-    use GuardsPurchaseDashboardWidget, HasPurchaseDashboardFilters;
+    use GuardsPurchaseDashboardWidget, HasDashboardEmptyState, HasPurchaseDashboardFilters;
 
     protected const BAR_COLOR = 'var(--primary-500)';
 
@@ -33,6 +34,8 @@ class TopPurchasedProductsWidget extends BaseWidget
         return $table
             ->defaultKeySort(false)
             ->recordClasses('dashboard-table-row')
+            // "View all" opens the whole list (DB-9).
+            ->headerActions($this->viewAllActions(ProductResource::canViewAny() ? ProductResource::getUrl('index') : null))
             ->recordUrl(fn ($record): ?string => $record->id && ProductResource::canAccess()
                 ? ProductResource::getUrl('view', ['record' => $record->id])
                 : null);

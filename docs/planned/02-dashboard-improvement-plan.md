@@ -496,8 +496,12 @@ Purchases.
   with the filters.
 - "View all": `HasDashboardEmptyState::viewAllActions()` on the five record
   lists (orders, quotations, invoices, bills, RFQs), only when the
-  resource's `canViewAny()` allows. Customers and products lists, status
-  pills: not done yet.
+  resource's `canViewAny()` allows. *Completed the same day:* the customer
+  and product lists (Sales), and purchase orders, vendors and purchased
+  products (Purchases) too; vendor rows now open the vendor. Status pills
+  needed no change: every status column on these lists is already a badge
+  coloured by its enum (`HasColor`), or by an explicit match for Sales'
+  invoice status.
 
 ## Verification for every package
 
