@@ -41,6 +41,12 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 - New report under Accounting › Reporting: "Multi-currency". Per currency, what was invoiced, received and is still open, in that currency and in the company currency at the rates booked, what the open amount is worth at today's rate, the exchange gains and losses booked, and the documents behind the figures. It can be exported to Excel.
 - Payments received show an "Unused amount" column: the part of a payment not yet matched to an invoice or bill. It is in the export too.
 
+# CHANGELOG — v1.16.13 — 2026-11-24
+
+### Fixes
+
+- A sales order in another currency is now counted at its value in your company currency on the Sales dashboard and in the sales reports. Before, a 1,180 GHS order in a dollar company counted as $1,180. An order made from an invoice uses that invoice's exchange rate.
+
 # CHANGELOG — v1.16.12 — 2026-11-24
 
 ### Fixes

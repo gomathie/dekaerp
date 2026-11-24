@@ -22,6 +22,8 @@ use Webkul\Sale\Models\Order;
 use Webkul\Sale\Services\OrderFromInvoice;
 use Webkul\Sale\Settings\QuotationAndOrderSettings;
 use Webkul\Sale\Support\DirectInvoices;
+use Webkul\Support\Models\Currency;
+use Webkul\Support\Models\CurrencyRate;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
 require_once __DIR__.'/../../../../inventories/tests/Helpers/InventoryHelper.php';
@@ -113,6 +115,63 @@ it('makes a confirmed, invoiced sales order when the invoice is confirmed', func
         ->and((float) $order->lines->first()->qty_invoiced)->toBe(3.0)
         ->and($order->lines->first()->accountMoveLines->pluck('move_id')->all())->toBe([$invoice->id])
         ->and(InvoiceOrderLink::query()->where('move_id', $invoice->id)->value('order_id'))->toBe($order->id);
+});
+
+/**
+ * A foreign-currency order's company value (TRACE365, 2026-11-24).
+ * `sales_orders.currency_rate` was never set, so it stayed 0 and every figure
+ * dividing by it took the order's own amount as company currency.
+ */
+function foreignSaleCurrency(float $rate): Currency
+{
+    $company = SaleHelper::company();
+    $foreign = Currency::query()->where('id', '!=', $company->currency_id)->firstOrFail();
+    $foreign->forceFill(['active' => true])->save();
+
+    CurrencyRate::factory()->create([
+        'currency_id' => $foreign->id,
+        'company_id'  => $company->id,
+        'rate'        => $rate,
+        'name'        => now()->subDay()->toDateString(),
+    ]);
+
+    return $foreign;
+}
+
+it('gives a sales order in another currency the day\'s rate, and one in the company currency 1', function () {
+    $foreign = foreignSaleCurrency(11.8);
+
+    // Dated today: the factory picks a random day in the last month, before
+    // yesterday's rate, which would leave no rate to find.
+    $foreignOrder = SaleHelper::order(['warehouse_id' => $this->warehouse->id, 'currency_id' => $foreign->id, 'date_order' => now()]);
+    SaleHelper::line($foreignOrder, $this->product, 2, 59);
+    SaleHelper::compute($foreignOrder);
+
+    $baseOrder = SaleHelper::order(['warehouse_id' => $this->warehouse->id, 'currency_id' => SaleHelper::company()->currency_id, 'date_order' => now()]);
+    SaleHelper::line($baseOrder, $this->product, 1, 10);
+    SaleHelper::compute($baseOrder);
+
+    expect((float) $foreignOrder->refresh()->currency_rate)->toBe(11.8)
+        // 118 in the order's currency is 10 in the company's.
+        ->and(round((float) $foreignOrder->amount_total / (float) $foreignOrder->currency_rate, 2))->toBe(10.0)
+        ->and((float) $baseOrder->refresh()->currency_rate)->toBe(1.0);
+});
+
+it('gives an order made from a foreign-currency invoice that invoice\'s rate', function () {
+    $foreign = foreignSaleCurrency(11.8);
+
+    $invoice = directDraftInvoice($this->product, 2, 59);
+    $invoice->update(['currency_id' => $foreign->id]);
+    AccountFacade::computeAccountMove($invoice->refresh());
+
+    app(OrderFromInvoice::class)->request($invoice->refresh(), auth()->id());
+    SaleHelper::postInvoice($invoice);
+
+    $order = ordersMadeFrom($invoice)->firstOrFail();
+
+    expect((float) $invoice->refresh()->invoice_currency_rate)->toBe(11.8)
+        ->and($order->currency_id)->toBe($foreign->id)
+        ->and((float) $order->currency_rate)->toBe((float) $invoice->invoice_currency_rate);
 });
 
 it('counts the sale once: the invoice leaves the direct-invoice figures', function () {

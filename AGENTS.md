@@ -2156,6 +2156,16 @@ log named):
   count in every company. Test: inventories `QuantityResourceTest` "keeps other
   pending counts".
 
+• Sales orders carry their exchange rate, 2026-11-24 (hotfix v1.16.13,
+  TRACE365): `Sale\Services\OrderCalculator::refreshCurrencyRate()` sets
+  `sales_orders.currency_rate` (company -> order, as Purchases' UF-022 and
+  `Move`). Without it the column stays 0 and every dashboard and report that
+  divides by it counts a foreign order's own amount as company currency. An
+  order made from an invoice takes that invoice's rate. Do not remove the call
+  or the link write at the top of `OrderFromInvoice::createOrder()`. Tests:
+  sales `OrderFromInvoiceTest` "gives a sales order in another currency the
+  day's rate" and "... that invoice's rate".
+
 DONE RECENTLY (newest first; details in docs/change-log.md)
 
 • 2026-11-19 — Hotfixes v1.12.1 to v1.12.5, all from TRACE365 use
