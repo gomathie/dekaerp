@@ -10,6 +10,12 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.16.13 — 2026-11-24
+
+### Fixes
+
+- A sales order in another currency is now counted at its value in your company currency on the Sales dashboard and in the sales reports. Before, a 1,180 GHS order in a dollar company counted as $1,180. An order made from an invoice uses that invoice's exchange rate.
+
 # CHANGELOG — v1.16.12 — 2026-11-24
 
 ### Fixes

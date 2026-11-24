@@ -195,6 +195,11 @@ class OrderFromInvoice
             'state'              => OrderState::DRAFT,
         ]);
 
+        // Linked at once, not after this method returns: OrderCalculator
+        // reads the link to give the order its invoice's exchange rate, and
+        // the first computeSaleOrder() below would otherwise take the day's.
+        $link->update(['order_id' => $order->getKey()]);
+
         // Read past the global scopes: the invoice's own lines, whoever is
         // acting (a listener can run as another company's user or no one).
         $invoiceLines = MoveLine::withoutGlobalScopes()
