@@ -18,6 +18,12 @@ return [
         'this-month' => 'Este mês',
     ],
 
+    'payment-stats'     => [
+        'heading'  => 'Pagamentos recebidos',
+        'received' => 'Recebido',
+        'count'    => 'Pagamentos',
+    ],
+
     'bill-stats'        => [
         'heading' => 'Faturas de Fornecedor',
         'total'   => 'Total Faturado',

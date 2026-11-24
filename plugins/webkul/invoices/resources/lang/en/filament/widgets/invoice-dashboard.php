@@ -18,6 +18,12 @@ return [
         'this-month' => 'This month',
     ],
 
+    'payment-stats'     => [
+        'heading'  => 'Payments received',
+        'received' => 'Received',
+        'count'    => 'Payments',
+    ],
+
     'bill-stats'        => [
         'heading' => 'Vendor Bills',
         'total'   => 'Total Billed',
