@@ -19,11 +19,12 @@ return [
     ],
 
     'bill-stats'        => [
-        'heading' => 'Faturas de Fornecedor',
-        'total'   => 'Total Faturado',
-        'count'   => 'Quantidade de Faturas',
-        'paid'    => 'Faturas Pagas',
-        'unpaid'  => 'Faturas em Aberto',
+        'heading'    => 'Faturas de Fornecedor',
+        'total'      => 'Total Faturado',
+        'count'      => 'Quantidade de Faturas',
+        'paid'       => 'Faturas Pagas',
+        'unpaid'     => 'Faturas em Aberto',
+        'this-month' => 'Este mês',
     ],
 
     'revenue-over-time' => [

@@ -19,11 +19,12 @@ return [
     ],
 
     'bill-stats'        => [
-        'heading' => 'Vendor Bills',
-        'total'   => 'Total Billed',
-        'count'   => 'Bill Count',
-        'paid'    => 'Paid Bills',
-        'unpaid'  => 'Unpaid Bills',
+        'heading'    => 'Vendor Bills',
+        'total'      => 'Total Billed',
+        'count'      => 'Bill Count',
+        'paid'       => 'Paid Bills',
+        'unpaid'     => 'Unpaid Bills',
+        'this-month' => 'This month',
     ],
 
     'revenue-over-time' => [
