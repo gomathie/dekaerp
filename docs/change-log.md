@@ -6,6 +6,73 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-24, dashboards DB-9, the sale currency question, the Multi-currency report and Unused amount (develop, unreleased)
+
+- **Why:** DB-9 board approved by the user (all four parts, Sales first).
+  Plan #11 MC-2 and MC-3 (TRACE365, user 2026-11-24; D-MC-1..4 taken as
+  recommended under the 12-hour delegation). "Unused amount" on Payments
+  received (TRACE365, Zoho comparison). Found on the way: the ring charts'
+  centre total went stale after a filter change, because Filament's
+  ChartWidget sends only new data on update, never new options.
+- **How:**
+  - DB-9 (a) trend pill: `BuildsDashboardStats::trendDescription()` renders
+    caption, ▲/▼ pill and tail, every part escaped with `e()`; Sales and
+    Purchases headlines use it (`dashboard.css`, support.css rebuilt).
+  - DB-9 (b) chart switch: `DashboardPeriod::rollUp()` takes an optional
+    unit (day/week/month/year, anything else = automatic);
+    "Sales over time", the purchase trend and the cash chart get the
+    Automatic/By day/week/month/year filter. The cash chart is now paired
+    bars with money in/out totals and their trend pills in the description,
+    replacing DB-4's "vs previous period" toggle (superseded, approved board).
+  - DB-9 (c) ring legend: `HasChartTheme::ringDetails()` puts the centre text
+    and "amount · N%" legend values on the dataset, which updates do carry;
+    `dashboard-charts.js` reads them there (the stale centre text fix) and
+    appends the values to the legend.
+  - DB-9 (d) order activity: `Sale\...\OrderActivityWidget` (to deliver,
+    delivered, to invoice, invoiced in the period, each linking to a new
+    Orders preset view), behind `SaleStatsOverview`'s permission;
+    `HasDashboardEmptyState::viewAllActions()` adds "View all" to the five
+    top-list tables, only when the viewer may open that list.
+  - MC-1: the permitted-currencies field shows "Available on documents now".
+  - MC-2a: company setting `accounts_company_settings.ask_sale_currency`
+    (Company currencies section). A new customer invoice opens a currency
+    question; a foreign currency shows the feed rate the way people read it
+    (`SaleCurrencyQuestion::display()`), and a corrected rate is kept as
+    `currency_rate_source = manual` with `currency_rate_confirmed_by`, plus a
+    chatter note. `Move::computeInvoiceCurrencyRate()` keeps a manual rate
+    through every recompute and drops it when the currency changes alone.
+    Neither field is fillable; the dialog's answer is `#[Locked]`, and the
+    rate direction is derived on the server.
+  - MC-3: Accounting › Reporting › Multi-currency
+    (`MultiCurrencyReport`, page permission `page_accounting_multi_currency`,
+    Excel export): per currency invoiced, received, open, booked value,
+    value at today's rate and the difference, plus realised exchange gains
+    and losses, current company only.
+  - Unused amount: `Payment::unusedAmount()` = open part of the payment's
+    customer/vendor line, eager loaded (`withUnusedAmount()`), on the list
+    and the export. A subquery select was rejected: Filament's summarizers
+    type-hint the select columns as strings and would break the totals row.
+- **Benefit:** dashboards read like the approved board; TRACE365 can confirm
+  the day's rate when a sale is in cedis and see what each currency is worth
+  now; an overpayment shows what is left to apply.
+- **Trade-off / risk:** the manual-rate guard sits in the `Move` saving hook
+  that every invoice save passes; it fires only on `source = manual`. The
+  sale question is off for every company until switched on. Quotations and
+  sales orders (MC-2b) and the rate bar on the form are not built.
+- **Verification:** `aureuserp_testing_v113_k2` (t4): SaleCurrencyQuestion,
+  PaymentsReceivedList, InvoiceResource, Invoice, DocumentCurrency,
+  MultiCurrencyReport, ReportsPage, CurrencyPickerScope,
+  CompanyCurrenciesForm: 111 passed (422 assertions).
+  `aureuserp_testing_v113_k1` (t3): support/sales/purchases/invoices
+  Dashboard + sales OrderResourceTest: 102 passed, 1 failed (382
+  assertions). The failure was the new order-activity test creating another
+  company's order as a non-member, refused by the UF-025 write guard as it
+  should be; the test now sets it up with nobody acting, and
+  SalesDashboardTest re-ran 13 passed (45 assertions, same database,
+  recreated). Pint and `php -l` on all 91 changed PHP files: passed.
+- **Rollback:** revert the commit; the migration's `down()` drops
+  `accounts_company_settings` and the two `accounts_account_moves` columns.
+
 ## 2026-11-24, multi-currency plan #11 and MC-1 (TRACE365 sees USD and GHS only)
 
 - **Why:** user, 2026-11-24: "when currencies are selected for a company,

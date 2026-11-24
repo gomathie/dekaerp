@@ -163,10 +163,14 @@ class PurchaseHeadlineWidget extends StatsOverviewWidget
                 ->icon('heroicon-o-shopping-cart')
                 // Its own key: "orders" says "sales" since sales started
                 // counting invoices (DB-8), which read "No sales" here.
-                ->description(trans_choice('invoices::filament/pages/overview.headline.purchase-orders', $orders, ['count' => $orders])
-                    .' · '.__('invoices::filament/pages/overview.trend', ['change' => $change]))
-                ->descriptionIcon($trendIcon)
-                ->descriptionColor($trendColor)
+                // The trend as a pill with its arrow (DB-9, 2026-11-24).
+                ->description($this->trendDescription(
+                    trans_choice('invoices::filament/pages/overview.headline.purchase-orders', $orders, ['count' => $orders]),
+                    $change,
+                    $trendIcon,
+                    $trendColor,
+                    trim(__('invoices::filament/pages/overview.trend', ['change' => ''])),
+                ))
                 ->chart($this->dailySpend(clone $confirmed))
                 ->color('primary')
                 ->extraAttributes(['class' => 'overview-headline-stat']),

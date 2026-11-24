@@ -3,6 +3,7 @@
 namespace Webkul\Support\Filament\Concerns;
 
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\HtmlString;
 use Webkul\Support\Filament\DashboardPeriod;
 
 trait BuildsDashboardStats
@@ -39,17 +40,47 @@ trait BuildsDashboardStats
     }
 
     /**
+     * A figure card's caption with its trend as a pill (DB-9, decided
+     * 2026-11-24 from TRACE365's reference screens): "41 sales  [▲ 21%] vs …".
+     * The arrow is part of the pill's text, so the direction never rests on
+     * colour alone (DB-5). Every part is escaped; the colour is one of the
+     * three statTrend() returns, mapped to a fixed class.
+     */
+    protected function trendDescription(?string $caption, string $change, string $icon, string $color, ?string $after = null): HtmlString
+    {
+        $arrow = match (true) {
+            str_contains($icon, 'trending-up')   => '▲ ',
+            str_contains($icon, 'trending-down') => '▼ ',
+            default                              => '',
+        };
+
+        $tone = in_array($color, ['success', 'danger'], true) ? $color : 'gray';
+
+        $parts = array_filter([
+            filled($caption) ? '<span class="dashboard-trend-caption">'.e($caption).'</span>' : null,
+            '<span class="dashboard-trend dashboard-trend--'.$tone.'">'.e($arrow.$change).'</span>',
+            filled($after) ? '<span class="dashboard-trend-caption">'.e($after).'</span>' : null,
+        ]);
+
+        return new HtmlString(implode(' ', $parts));
+    }
+
+    /**
      * @param  list<float>  $series
      */
     protected function themedStat(string $label, string $icon, string $color, string $value, float $current, float $previous, array $series = [], ?string $title = null, bool $lowerIsBetter = false, ?float $previousRecords = null, bool $money = false, ?string $baseline = null): Stat
     {
-        [$description, $descriptionIcon, $trendColor] = $this->statTrend($current, $previous, $lowerIsBetter, $previousRecords, $money);
+        [$change, $trendIcon, $trendColor] = $this->statTrend($current, $previous, $lowerIsBetter, $previousRecords, $money);
 
         // Say what the change is measured against (DB-1, 2026-11-22): "+12%"
         // alone did not say compared with when.
-        if ($baseline !== null) {
-            $description .= ' '.__('support::support.trend.vs', ['range' => $baseline]);
-        }
+        $description = $this->trendDescription(
+            null,
+            $change,
+            $trendIcon,
+            $trendColor,
+            $baseline !== null ? __('support::support.trend.vs', ['range' => $baseline]) : null,
+        );
 
         $attributes = [
             'class' => 'dashboard-stat dashboard-stat--'.$color,
@@ -61,8 +92,6 @@ trait BuildsDashboardStats
 
         $stat = Stat::make($label, $value)
             ->description($description)
-            ->descriptionIcon($descriptionIcon)
-            ->descriptionColor($trendColor)
             ->chartColor($color)
             ->icon($icon)
             ->extraAttributes($attributes);

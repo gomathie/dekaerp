@@ -2100,6 +2100,20 @@ log named):
     the attribute escaped: Filament prints attribute values raw.
   - Tests: accounts `DocumentCurrencyTest`.
 
+• Confirmed exchange rate on an invoice, 2026-11-24 (plan #11 MC-2,
+  TRACE365; `docs/planned/11-multi-currency-plan.md` §5a):
+  - `Move::computeInvoiceCurrencyRate()` keeps `invoice_currency_rate` when
+    `currency_rate_source` is `manual`, and drops the manual rate when the
+    currency changes without a new rate. Do not remove the guard: every save
+    re-read the rate table and overwrote the rate the person confirmed.
+  - `currency_rate_source` and `currency_rate_confirmed_by` are **not
+    fillable**. Only the invoice page's currency question sets them
+    (`forceFill`), so an API payload cannot pin an arbitrary rate.
+  - The switch lives in `accounts_company_settings`, never in
+    `CompanyAwareSettingsRepository` (its default-company fallback would turn
+    it on for every company). Every rule is in `SaleCurrencyQuestion`.
+  - Tests: accounts `Workflows/SaleCurrencyQuestionTest.php`.
+
 • Customer page shipments, 2026-11-10 (`docs/logistics-plan.md`, WP-9b, D11):
   - The customer infolist tab is `PartnerSchemaRegistry` slot `tabs.append`.
     Do not add a relation-manager slot, and do not edit `PartnerResource` or

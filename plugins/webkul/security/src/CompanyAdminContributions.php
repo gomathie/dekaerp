@@ -14,6 +14,7 @@ use Webkul\Security\Filament\Resources\CompanyResource\Schemas\AdministratorPane
 use Webkul\Security\Models\User;
 use Webkul\Support\Filament\Resources\CompanyResource\Support\CompanySchemaRegistry;
 use Webkul\Support\Models\Company;
+use Webkul\Support\Models\Currency;
 
 /**
  * The "Administrator" section on the company form.
@@ -144,7 +145,15 @@ class CompanyAdminContributions
                     )
                     ->multiple()
                     ->searchable()
-                    ->preload(),
+                    ->preload()
+                    // What the company sees right now (plan #11 MC-1, D-MC-1):
+                    // an empty list allows every active currency, which was
+                    // not visible anywhere and surprised TRACE365.
+                    ->helperText(fn (?Company $record): ?string => $record?->exists
+                        ? __('security::filament/contributions/company.currencies.fields.available', [
+                            'list' => Currency::query()->active()->permittedFor($record->getKey())->orderBy('name')->pluck('name')->implode(', '),
+                        ])
+                        : null),
             ])
             ->collapsible()
             ->columns(1);

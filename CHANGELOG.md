@@ -27,6 +27,17 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 - Logistics dashboard: "In transit" includes shipments that have been picked up, so it and "Out for delivery" add up to the Overview's "On the road".
 - Dashboards refresh themselves at most every 5 minutes. The Projects, Recruitments, Logistics and Time Off figures refreshed every few seconds, which slowed the application for everyone with a dashboard open.
 - The payment text message to a customer states one currency: it added an order's dollar and cedi invoices together, and counted a credit note as more invoiced.
+- Dashboard figures show their change as a coloured pill with an arrow (▲ 12% green, ▼ 4% red), and the Sales and Purchases headline figures have an icon, like the other cards.
+- The main chart on Sales, Purchases and Invoices has a switch to group it by day, week, month or year. "Automatic" keeps the grouping that suits the period. "Monthly Sales" is now "Sales over time".
+- Invoices and the Overview: "Money in and out" shows the two as paired bars, with both totals and their change against the previous period above the chart.
+- The revenue, supplier and customer rings list each slice's amount and share below the ring. Their centre total now follows the filters; it kept the first period's figure after a filter was changed.
+- Sales dashboard: a new "Order activity" row shows how many of the period's orders are to deliver, delivered, to invoice and invoiced. Each opens the order list on that view; the order list has new "To Deliver", "Delivered" and "Invoiced" views.
+- Dashboard lists of orders, quotations, invoices, bills and requests for quotation have a "View all" button that opens the whole list.
+- New company setting "Ask which currency each sale is in". When it is on and the company has more than one currency, a new invoice first asks for the currency. For a foreign currency it shows the day's exchange rate, which you accept or correct, and the invoice keeps the rate you confirmed. A corrected rate is noted in the invoice's history.
+- The company form shows which currencies the company can use on documents right now.
+- Purchase agreements offer only the company's own currencies, like the other documents.
+- New report under Accounting › Reporting: "Multi-currency". Per currency, what was invoiced, received and is still open, in that currency and in the company currency at the rates booked, what the open amount is worth at today's rate, the exchange gains and losses booked, and the documents behind the figures. It can be exported to Excel.
+- Payments received show an "Unused amount" column: the part of a payment not yet matched to an invoice or bill. It is in the export too.
 
 # CHANGELOG — v1.16.12 — 2026-11-24
 

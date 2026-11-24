@@ -6,6 +6,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Carbon;
 use Webkul\Sale\Filament\Widgets\Concerns\GuardsSaleDashboardWidget;
 use Webkul\Sale\Filament\Widgets\Concerns\HasSaleDashboardFilters;
+use Webkul\Support\Filament\DashboardPeriod;
 use Webkul\Support\Filament\Widgets\DashboardChartWidget;
 
 class MonthlySalesChart extends DashboardChartWidget
@@ -22,9 +23,23 @@ class MonthlySalesChart extends DashboardChartWidget
     }
 
     /**
-     * Invoiced revenue per month, the same figure as the Revenue tile above
-     * it (DB-2, 2026-11-23), beside the same months of the compared period
-     * (DB-4 mockup). It used to add confirmed orders to invoices made
+     * The grouping switch (DB-9, 2026-11-24): Automatic keeps the period-length
+     * rule, which is by month for the year to date the dashboard opens on.
+     */
+    public ?string $filter = 'auto';
+
+    /**
+     * @return array<string, string>
+     */
+    protected function getFilters(): ?array
+    {
+        return DashboardPeriod::groupingOptions();
+    }
+
+    /**
+     * Invoiced revenue over the period, the same figure as the Revenue tile
+     * above it (DB-2, 2026-11-23), beside the same dates of the compared
+     * period (DB-4 mockup). It used to add confirmed orders to invoices made
      * without one, so an order not yet invoiced was in the chart but not in
      * the tile, dated by the order rather than the invoice.
      */
@@ -33,26 +48,17 @@ class MonthlySalesChart extends DashboardChartWidget
         [$start, $end] = $this->periodRange();
         [$previousStart, $previousEnd] = $this->previousPeriodRange();
 
-        $current = $this->monthlyRevenue($start, $end);
-        $previous = $this->monthlyRevenue($previousStart, $previousEnd);
+        // One total per day, grouped by the switch (DB-9). It used to group
+        // by month in SQL, so a week or a day could not be shown at all.
+        ['labels' => $labels, 'values' => $data] = DashboardPeriod::rollUp($this->dailyRevenueSeries($start, $end), $start, $end, $this->filter);
 
-        $format = $start->year === $end->year ? 'M' : 'M Y';
-
-        $labels = [];
-        $data = [];
-        $previousData = [];
-
-        $cursor = $start->copy()->startOfMonth();
-        $previousCursor = $previousStart->copy()->startOfMonth();
-
-        while ($cursor <= $end) {
-            $labels[] = $cursor->translatedFormat($format);
-            $data[] = round($current[$cursor->format('Y-m')] ?? 0.0, 2);
-            $previousData[] = round($previous[$previousCursor->format('Y-m')] ?? 0.0, 2);
-
-            $cursor->addMonth();
-            $previousCursor->addMonth();
-        }
+        // The compared period is grouped the same way and laid over the same
+        // positions; a shorter one (29 February) is padded with nothing sold.
+        $previousData = array_pad(
+            array_slice(DashboardPeriod::rollUp($this->dailyRevenueSeries($previousStart, $previousEnd), $previousStart, $previousEnd, $this->filter)['values'], 0, count($labels)),
+            count($labels),
+            0.0,
+        );
 
         return [
             'datasets' => [
@@ -73,19 +79,32 @@ class MonthlySalesChart extends DashboardChartWidget
     }
 
     /**
-     * @return array<string, float> keyed Y-m
+     * Invoiced revenue per day from $start to $end, zero-filled, in company
+     * currency: one grouped query over the same rows as the Revenue figure.
+     *
+     * @return list<float>
      */
-    protected function monthlyRevenue(Carbon $start, Carbon $end): array
+    protected function dailyRevenueSeries(Carbon $start, Carbon $end): array
     {
         $query = $this->invoicedSales($start, $end);
-        $bucket = db_dialect()->monthBucket($query->qualifyColumn('invoice_date'));
+        $day = 'CAST('.$query->qualifyColumn('invoice_date').' AS date)';
 
-        return $query->toBase()
-            ->selectRaw("{$bucket} as period, SUM(".$query->qualifyColumn('amount_total_signed').') as revenue')
-            ->groupByRaw($bucket)
-            ->pluck('revenue', 'period')
-            ->map(fn ($revenue): float => (float) $revenue)
-            ->all();
+        $totals = [];
+
+        foreach ($query->toBase()
+            ->selectRaw("{$day} as day, SUM(".$query->qualifyColumn('amount_total_signed').') as revenue')
+            ->groupByRaw($day)
+            ->pluck('revenue', 'day') as $date => $revenue) {
+            $totals[Carbon::parse($date)->toDateString()] = (float) $revenue;
+        }
+
+        $series = [];
+
+        for ($date = $start->copy()->startOfDay(); $date->lte($end); $date->addDay()) {
+            $series[] = $totals[$date->toDateString()] ?? 0.0;
+        }
+
+        return $series;
     }
 
     protected function getOptions(): array

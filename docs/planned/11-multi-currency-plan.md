@@ -186,6 +186,40 @@ the dashboards canvas before code, as for DB-4.
 | MC-2b | Same for quotations and sales orders | S |
 | MC-3 | Mockup, then the report and its export | M |
 
+## 5a. Built (develop, unreleased, 2026-11-24)
+
+Decisions taken as recommended, under the user's 12-hour delegation of
+2026-11-24 ("all decisions are yours"): D-MC-1 keep, D-MC-2 keep the invoice
+in its currency, D-MC-3 three days, D-MC-4 anyone creating the invoice,
+recorded under their name.
+
+- **MC-1 done.** TRACE365's list is USD + GHS (production, through the
+  company form); purchase agreement picker and the picker guard test
+  (commit 85cfebf68); the company form's Currencies field now says what the
+  company sees right now (`CompanyAdminContributions` helper text).
+- **MC-2a built (invoices).** Setting: `accounts_company_settings`
+  (`Account\Models\CompanySetting::forCompany()`), switched on the company
+  edit page ("Currency question on new invoices",
+  `CompanyCurrencyContributions`). Rules: `Account\Services\SaleCurrencyQuestion`
+  (asked only when on and more than one permitted currency; base first; the
+  feed rate with its date and a stale flag; "1 X = n Y" display with n of at
+  least 1). Dialog: `CreateInvoice::askSaleCurrencyAction()`, opened with the
+  page through `$defaultAction`. A rate equal to the feed's is not pinned; a
+  corrected one is applied before the first save (`handleRecordCreation`), so
+  every line is costed at it, with `currency_rate_source = manual` and
+  `currency_rate_confirmed_by`, both deliberately not fillable. Engine:
+  `Move::computeInvoiceCurrencyRate()` keeps a manual rate, and drops it when
+  the currency changes without a new rate. A chatter note records the rate.
+  *Not yet:* the rate bar with a Change link on the form, the posting
+  summary, and the phone bottom-sheet styling (the dialog is Filament's
+  modal, full width on a phone).
+- **MC-2b (quotations, sales orders) not started.**
+- **MC-3 built.** `Accounting\...\Reporting\Pages\MultiCurrency`, figures
+  from `Accounting\Support\MultiCurrencyReport` (page and Excel export share
+  them), permission `page_accounting_multi_currency`. Current company only:
+  its base currency is the column everything converts into. Built without
+  the mockup step; the user can ask for changes on the page itself.
+
 ## 6. Decisions for the user
 
 - **D-MC-1** Empty permitted list: keep "every active currency" (recommended,

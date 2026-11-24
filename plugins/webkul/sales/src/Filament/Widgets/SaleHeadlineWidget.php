@@ -154,10 +154,14 @@ class SaleHeadlineWidget extends StatsOverviewWidget
             Stat::make(__('invoices::filament/pages/overview.headline.revenue'), compact_money($revenue, $currency))
                 ->url(OrderResource::canViewAny() ? OrderResource::getUrl('index') : null)
                 ->icon('heroicon-o-banknotes')
-                ->description(trans_choice('invoices::filament/pages/overview.headline.orders', $orders, ['count' => $orders])
-                    .' · '.__('invoices::filament/pages/overview.trend', ['change' => $change]))
-                ->descriptionIcon($trendIcon)
-                ->descriptionColor($trendColor)
+                // The trend as a pill with its arrow (DB-9, 2026-11-24).
+                ->description($this->trendDescription(
+                    trans_choice('invoices::filament/pages/overview.headline.orders', $orders, ['count' => $orders]),
+                    $change,
+                    $trendIcon,
+                    $trendColor,
+                    trim(__('invoices::filament/pages/overview.trend', ['change' => ''])),
+                ))
                 ->chart($this->dailyRevenue())
                 ->color('success')
                 ->extraAttributes(['class' => 'overview-headline-stat']),

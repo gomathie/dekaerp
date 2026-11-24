@@ -78,3 +78,32 @@ it('lists the payments received in the chosen month, with the invoice each one s
         ->filterTable('period', ['year' => 2026, 'month' => null])
         ->assertCanSeeTableRecords([$march, $april]);
 });
+
+/**
+ * TRACE365, 2026-11-24 (Zoho's "Unused amount"): what a payment has not yet
+ * settled is the open part of its customer line; a payment that settled its
+ * invoice exactly has nothing left.
+ */
+it('shows what a payment has not yet settled', function () {
+    FilamentHelper::actingAs(['view_any_account_payment']);
+
+    $invoice = AccountHelper::invoice(MoveType::OUT_INVOICE);
+    AccountHelper::productLine($invoice, AccountHelper::account('income'), qty: 1, priceUnit: 500);
+    AccountHelper::compute($invoice);
+    AccountHelper::post($invoice);
+    AccountHelper::pay($invoice, 650.0);
+
+    $over = Payment::query()->whereHas('invoices', fn ($query) => $query->whereKey($invoice->getKey()))->firstOrFail();
+    $exact = paidInvoiceOn(300, now()->toDateString());
+
+    $rows = Payment::query()->withUnusedAmount()->whereKey([$over->getKey(), $exact->getKey()])->get()->keyBy('id');
+
+    expect($rows[$over->getKey()]->unusedAmount())->toBe(150.0)
+        ->and($rows[$exact->getKey()]->unusedAmount())->toBe(0.0)
+        ->and($rows[$over->getKey()]->relationLoaded('entryLines'))->toBeTrue();
+
+    Livewire::test(ListPayments::class)
+        ->set('activeTableView', 'customer_payments')
+        ->assertCanRenderTableColumn('unused_amount')
+        ->assertCanSeeTableRecords([$over, $exact]);
+});

@@ -7,8 +7,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Webkul\Invoice\Filament\Clusters\Customers\Resources\InvoiceResource as CustomerInvoiceResource;
 use Webkul\Sale\Enums\InvoiceStatus;
+use Webkul\Sale\Enums\OrderDeliveryStatus;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\OrderResource;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource\Pages\ListQuotations as BaseListOrders;
+use Webkul\Sale\Filament\Widgets\OrderActivityWidget;
 use Webkul\TableViews\Filament\Components\PresetView;
 use Webkul\TableViews\Filament\Concerns\HasTableViews;
 
@@ -56,6 +58,17 @@ class ListOrders extends BaseListOrders
                 ->icon('heroicon-s-receipt-refund')
                 ->favorite()
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('invoice_status', InvoiceStatus::UP_SELLING)),
+            // Opened by the Sales dashboard's order activity tiles (DB-9,
+            // 2026-11-24); not favourites, so the tab row stays as it was.
+            'to_deliver' => PresetView::make(__('sales::filament/clusters/orders/resources/order/pages/list-orders.tabs.to-deliver'))
+                ->icon('heroicon-s-truck')
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('delivery_status', OrderActivityWidget::TO_DELIVER)),
+            'delivered' => PresetView::make(__('sales::filament/clusters/orders/resources/order/pages/list-orders.tabs.delivered'))
+                ->icon('heroicon-s-check-circle')
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('delivery_status', OrderDeliveryStatus::FULL)),
+            'invoiced' => PresetView::make(__('sales::filament/clusters/orders/resources/order/pages/list-orders.tabs.invoiced'))
+                ->icon('heroicon-s-document-check')
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('invoice_status', InvoiceStatus::INVOICED)),
             'archived' => PresetView::make(__('sales::filament/clusters/orders/resources/order/pages/list-orders.tabs.archived'))
                 ->icon('heroicon-s-archive-box')
                 ->favorite()

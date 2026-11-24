@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\DB;
 use Webkul\Partner\Models\Partner;
 use Webkul\Purchase\Filament\Admin\Widgets\Concerns\HasPurchaseDashboardFilters;
 use Webkul\Sale\Filament\Widgets\Concerns\HasSaleDashboardFilters;
+use Webkul\Support\Filament\Concerns\HasChartTheme;
+use Webkul\Support\Filament\Concerns\HasDashboardEmptyState;
 use Webkul\Support\Filament\Concerns\HasDashboardMetrics;
 use Webkul\Support\Filament\DashboardPeriod;
 
@@ -267,6 +269,24 @@ it('groups a chart by day, week or month for the length of the period', function
 });
 
 /**
+ * DB-9 (2026-11-24): the chart switch picks the grouping; Automatic, or any
+ * value that is not one of the four, keeps the period-length rule.
+ */
+it('groups a chart by the switch, and falls back to automatic for anything else', function () {
+    $start = Carbon::parse('2025-12-30');
+    $end = Carbon::parse('2026-01-02')->endOfDay();
+    $daily = [1.0, 2.0, 3.0, 4.0];
+
+    expect(DashboardPeriod::rollUp($daily, $start, $end, 'year'))->toBe(['labels' => ['2025', '2026'], 'values' => [3.0, 7.0]])
+        ->and(DashboardPeriod::rollUp($daily, $start, $end, 'month'))->toBe(['labels' => ['Dec 2025', 'Jan 2026'], 'values' => [3.0, 7.0]])
+        // 29 Dec 2025 is a Monday: all four days are one week.
+        ->and(DashboardPeriod::rollUp($daily, $start, $end, 'week')['values'])->toBe([10.0])
+        ->and(DashboardPeriod::rollUp($daily, $start, $end, 'auto'))->toBe(DashboardPeriod::rollUp($daily, $start, $end))
+        ->and(DashboardPeriod::rollUp($daily, $start, $end, 'hour<script>'))->toBe(DashboardPeriod::rollUp($daily, $start, $end, 'day'))
+        ->and(array_keys(DashboardPeriod::groupingOptions()))->toBe(['auto', ...DashboardPeriod::UNITS]);
+});
+
+/**
  * 2026-11-23: plain "en" made the browser write the banner's date and clock
  * in US form ("November 23", "01:29 AM") over the server's "23 November",
  * "22:29", so the text changed format on every load.
@@ -282,4 +302,78 @@ it('hands the browser a day-first, 24-hour English and keeps other languages', f
     app()->setLocale('en');
 
     expect($locales)->toBe(['en' => 'en-GB', 'fr' => 'fr', 'pt_BR' => 'pt-BR']);
+});
+
+/**
+ * DB-9 (2026-11-24): the trend is a pill whose text carries the arrow, so the
+ * direction never rests on colour alone, and every part is escaped because
+ * the description is rendered as HTML.
+ */
+it('renders the trend as a pill with its arrow and escapes every part', function () {
+    $html = (string) dashboardMetricsHost()->call(
+        'trendDescription',
+        '<b>3</b> sales',
+        '21%',
+        'heroicon-m-arrow-trending-up',
+        'success',
+        'vs <i>last</i> month',
+    );
+
+    expect($html)->toContain('class="dashboard-trend dashboard-trend--success">▲ 21%</span>')
+        ->and($html)->toContain('&lt;b&gt;3&lt;/b&gt; sales')
+        ->and($html)->toContain('vs &lt;i&gt;last&lt;/i&gt; month')
+        ->and($html)->not->toContain('<b>')
+        ->and(html_entity_decode(strip_tags($html)))->toBe('<b>3</b> sales ▲ 21% vs <i>last</i> month');
+});
+
+it('maps any other trend colour to the neutral pill', function () {
+    $html = (string) dashboardMetricsHost()->call('trendDescription', null, 'New', 'heroicon-m-sparkles', 'warning<script>');
+
+    expect($html)->toBe('<span class="dashboard-trend dashboard-trend--gray">New</span>');
+});
+
+/**
+ * DB-9 (2026-11-24): a money ring's centre total and legend rows travel in
+ * its data, because Filament sends only new data when the filters change.
+ */
+it('gives a ring its centre total and an amount and share per slice', function () {
+    $host = new class
+    {
+        use HasChartTheme;
+
+        public function details(array $amounts): array
+        {
+            return $this->ringDetails($amounts, null, 'Revenue');
+        }
+    };
+
+    $details = $host->details([300.0, 100.0]);
+
+    expect($details['centerText'])->toBe(['text' => compact_money(400.0, null), 'label' => 'Revenue'])
+        ->and($details['legendValues'])->toBe([compact_money(300.0, null).' · 75%', compact_money(100.0, null).' · 25%'])
+        ->and($host->details([])['legendValues'])->toBe([])
+        ->and($host->details([0.0])['legendValues'])->toBe([compact_money(0.0, null).' · 0%']);
+});
+
+/**
+ * DB-9 (2026-11-24): "View all" shows only with a URL, and callers pass one
+ * only when the resource's canViewAny() allows it.
+ */
+it('offers view all only when there is a list the user may open', function () {
+    $host = new class
+    {
+        use HasDashboardEmptyState;
+
+        public function actions(?string $url): array
+        {
+            return $this->viewAllActions($url);
+        }
+    };
+
+    $actions = $host->actions('https://example.test/admin/orders');
+
+    expect($host->actions(null))->toBe([])
+        ->and($actions)->toHaveCount(1)
+        ->and($actions[0]->getName())->toBe('dashboardViewAll')
+        ->and($actions[0]->getLabel())->toBe(__('support::filament/dashboard.view-all'));
 });

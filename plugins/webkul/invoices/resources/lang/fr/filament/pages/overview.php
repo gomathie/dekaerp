@@ -61,7 +61,6 @@ return [
 
     'cash' => [
         'heading'     => 'Entrées et sorties d\'argent',
-        'description' => 'Factures encaissées et factures fournisseur payées, par jour, semaine ou mois',
         'in'          => 'Entrées',
         'out'         => 'Sorties',
     ],
@@ -104,11 +103,5 @@ return [
         'due-today'   => 'Échéance aujourd\'hui',
         'due-on'      => 'Échéance le :date',
         'days-late'   => '{1} 1 jour de retard|[2,*] :count jours de retard',
-    ],
-
-    'cash-compare' => [
-        'previous'    => 'Période précédente',
-        'this-period' => 'Cette période',
-        'vs-previous' => 'Comparer à la période précédente',
     ],
 ];

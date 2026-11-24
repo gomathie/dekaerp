@@ -28,6 +28,20 @@ class PurchaseTrendWidget extends DashboardChartWidget
 
     protected ?string $maxHeight = '240px';
 
+    /**
+     * The grouping switch (DB-9, 2026-11-24); Automatic keeps the
+     * period-length rule.
+     */
+    public ?string $filter = 'auto';
+
+    /**
+     * @return array<string, string>
+     */
+    protected function getFilters(): ?array
+    {
+        return DashboardPeriod::groupingOptions();
+    }
+
     public function getHeading(): string|Htmlable|null
     {
         return __('purchases::filament/admin/widgets/purchase-dashboard.trend.heading');
@@ -65,12 +79,12 @@ class PurchaseTrendWidget extends DashboardChartWidget
             }
         }
 
-        // Grouped by day, week or month for the period's length (DB-4).
+        // Grouped by the switch, or by the period's length (DB-4, DB-9).
         $labels = [];
         $series = [];
 
         foreach ($daily as $seriesState => $values) {
-            ['labels' => $labels, 'values' => $grouped] = DashboardPeriod::rollUp($values, $start, $end);
+            ['labels' => $labels, 'values' => $grouped] = DashboardPeriod::rollUp($values, $start, $end, $this->filter);
 
             // Order counts stay whole numbers.
             $series[$seriesState] = array_map('intval', $grouped);

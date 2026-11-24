@@ -18,8 +18,18 @@ return [
         'decrease'           => 'redução',
     ],
 
+    'order-activity'      => [
+        'heading'     => 'Atividade dos pedidos',
+        'description' => 'Pedidos confirmados no período, conforme o estado atual',
+        'to-deliver'  => 'A entregar',
+        'delivered'   => 'Entregues',
+        'to-invoice'  => 'A faturar',
+        'invoiced'    => 'Faturados',
+        'share'       => ':percent% de :total pedidos',
+    ],
+
     'monthly-sales'       => [
-        'heading'  => 'Vendas Mensais',
+        'heading'  => 'Vendas ao longo do tempo',
         'revenue'  => 'Receita',
         'previous' => 'Período comparado',
     ],

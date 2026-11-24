@@ -133,6 +133,8 @@ class AccountServiceProvider extends PackageServiceProvider
                 '2026_11_20_000001_provision_payment_ways_for_companies',
                 // A contact's default currency (TRACE365, user 2026-11-23).
                 '2026_11_23_000001_add_default_currency_to_partners_partners',
+                // "Ask which currency each sale is in" (plan #11 MC-2, 2026-11-24).
+                '2026_11_24_000001_add_sale_currency_question',
             ])
             ->runsMigrations()
             ->hasSettings([

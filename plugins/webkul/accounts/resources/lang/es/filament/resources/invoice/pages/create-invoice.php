@@ -29,4 +29,16 @@ return [
         'balance'   => 'Saldo pendiente',
         'thank-you' => 'Gracias por su compra.',
     ],
+
+    'sale-currency' => [
+        'heading'     => '¿En qué moneda se hizo esta venta?',
+        'description' => 'Elija la moneda en la que paga el cliente. La factura se emite en esa moneda y su valor en la moneda de la empresa se muestra junto a los totales.',
+        'base'        => ':code (moneda de la empresa)',
+        'continue'    => 'Continuar',
+        'rate'        => 'Tipo de cambio',
+        'feed'        => 'Tipo del día según la fuente diaria, con fecha :date. Cámbielo si acordó otro tipo.',
+        'stale'       => 'El último tipo registrado es del :date, hace más de 3 días. Revíselo antes de continuar.',
+        'no-rate'     => 'No hay ningún tipo registrado para esta moneda. Escriba el tipo acordado.',
+        'chatter'     => 'Tipo de cambio confirmado al crear la factura: :rate.',
+    ],
 ];

@@ -46,6 +46,7 @@ return [
             'currency'        => 'Moneda',
             'created-by'      => 'Creado por',
             'invoices'        => 'Factura',
+            'unused'          => 'Importe no utilizado',
         ],
 
         'summaries' => [

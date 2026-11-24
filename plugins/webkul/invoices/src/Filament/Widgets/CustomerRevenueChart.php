@@ -25,7 +25,8 @@ class CustomerRevenueChart extends ChartWidget
 
     protected static bool $isLazy = true;
 
-    protected ?string $maxHeight = '240px';
+    // Room for the legend rows below the ring (DB-9).
+    protected ?string $maxHeight = '300px';
 
     /**
      * @var array{labels: list<string>, data: list<float>}|null
@@ -88,6 +89,8 @@ class CustomerRevenueChart extends ChartWidget
                     'backgroundColor' => array_slice($this->chartRamp(), 0, max(count($data), 1)),
                     'borderWidth'     => 0,
                     'hoverOffset'     => 0,
+                    // Centre total and "amount · %" legend rows (DB-9).
+                    ...$this->ringDetails($data, $this->dashboardCurrency(), __('invoices::filament/widgets/invoice-dashboard.customer-revenue.center-label')),
                 ],
             ],
             'labels' => $labels,
@@ -96,33 +99,31 @@ class CustomerRevenueChart extends ChartWidget
 
     protected function getOptions(): array
     {
-        $total = array_sum($this->resolveChartData()['data']);
-
         return [
             'maintainAspectRatio' => false,
             'cutout'              => '62%',
-            'layout'              => ['padding' => 26],
+            'layout'              => ['padding' => 12],
             'interaction'         => $this->chartInteraction('nearest', true),
             'plugins'             => [
                 'entrance'   => ['type' => 'sweep', 'duration' => 900],
 
                 'hoverGrow'  => ['grow' => 20, 'speed' => 0.16],
 
+                // Below the ring: its "amount · %" rows squeezed it (DB-9).
                 'legend'     => [
-                    'position' => 'right',
+                    'position' => 'bottom',
                     'labels'   => [
                         'color'         => $this->brandColor('gray', 500),
                         'boxWidth'      => 12,
                         'boxHeight'     => 12,
                         'usePointStyle' => true,
                         'pointStyle'    => 'rectRounded',
-                        'padding'       => 14,
+                        'padding'       => 10,
                     ],
                 ],
                 'tooltip'    => array_merge($this->chartTooltip(), ['percentage' => true]),
+                // Text and label come with the data (ringDetails()).
                 'centerText' => [
-                    'text'       => compact_money($total, $this->dashboardCurrency()),
-                    'label'      => __('invoices::filament/widgets/invoice-dashboard.customer-revenue.center-label'),
                     'labelColor' => $this->brandColor('gray', 500),
                 ],
             ],

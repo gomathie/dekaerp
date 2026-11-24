@@ -61,7 +61,6 @@ return [
 
     'cash' => [
         'heading'     => 'Entradas e saídas de dinheiro',
-        'description' => 'Faturas recebidas e contas pagas, por dia, semana ou mês',
         'in'          => 'Entradas',
         'out'         => 'Saídas',
     ],
@@ -104,11 +103,5 @@ return [
         'due-today'   => 'Vence hoje',
         'due-on'      => 'Vence em :date',
         'days-late'   => '{1} 1 dia de atraso|[2,*] :count dias de atraso',
-    ],
-
-    'cash-compare' => [
-        'previous'    => 'Período anterior',
-        'this-period' => 'Este período',
-        'vs-previous' => 'Comparar com o período anterior',
     ],
 ];

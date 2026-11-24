@@ -6,6 +6,7 @@ return [
     'show-details'  => 'Afficher / masquer les détails',
     'no-chart-data' => 'Aucune donnée pour cette période',
     'empty-table'   => 'Rien sur cette période pour le moment',
+    'view-all'      => 'Tout voir',
     'empty-actions' => [
         'quotation' => 'Créer un devis',
         'order'     => 'Nouvelle commande',

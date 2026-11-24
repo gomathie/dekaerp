@@ -46,6 +46,7 @@ return [
             'currency'        => 'العملة',
             'created-by'      => 'أنشئ بواسطة',
             'invoices'        => 'الفاتورة',
+            'unused'          => 'المبلغ غير المستخدم',
         ],
 
         'summaries' => [

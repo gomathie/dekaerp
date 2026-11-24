@@ -116,6 +116,76 @@
     --stat-accent: var(--danger-500);
 }
 
+/* Trend pill (DB-9, 2026-11-24, from TRACE365's reference screens): the
+   change sits in a tinted pill with its arrow, the caption around it stays
+   quiet. Built by BuildsDashboardStats::trendDescription(). */
+.dashboard-trend {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.05rem 0.45rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.35;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.dashboard-trend--success {
+    color: var(--success-700);
+    background: color-mix(in srgb, var(--success-500) 14%, transparent);
+}
+
+.dashboard-trend--danger {
+    color: var(--danger-700);
+    background: color-mix(in srgb, var(--danger-500) 14%, transparent);
+}
+
+.dashboard-trend--gray {
+    color: var(--gray-600);
+    background: color-mix(in srgb, var(--gray-500) 12%, transparent);
+}
+
+.dark .dashboard-trend--success {
+    color: var(--success-300);
+    background: color-mix(in srgb, var(--success-400) 18%, transparent);
+}
+
+.dark .dashboard-trend--danger {
+    color: var(--danger-300);
+    background: color-mix(in srgb, var(--danger-400) 18%, transparent);
+}
+
+.dark .dashboard-trend--gray {
+    color: var(--gray-300);
+    background: color-mix(in srgb, var(--gray-400) 16%, transparent);
+}
+
+.dashboard-trend-caption {
+    color: var(--gray-500);
+}
+
+.dark .dashboard-trend-caption {
+    color: var(--gray-400);
+}
+
+/* Headline cards get the same icon chip as the module cards (DB-9). */
+.fi-wi-stats-overview-stat.overview-headline-stat:not(.dashboard-stat) .fi-wi-stats-overview-stat-label-ctn > svg,
+.fi-wi-stats-overview-stat.overview-headline-stat:not(.dashboard-stat) .fi-wi-stats-overview-stat-label-ctn > .fi-icon {
+    width: 1.9rem;
+    height: 1.9rem;
+    padding: 0.4rem;
+    border-radius: 0.6rem;
+    color: var(--primary-600);
+    background: color-mix(in srgb, var(--primary-500) 12%, transparent);
+}
+
+.dark .fi-wi-stats-overview-stat.overview-headline-stat:not(.dashboard-stat) .fi-wi-stats-overview-stat-label-ctn > svg,
+.dark .fi-wi-stats-overview-stat.overview-headline-stat:not(.dashboard-stat) .fi-wi-stats-overview-stat-label-ctn > .fi-icon {
+    color: var(--primary-400);
+    background: color-mix(in srgb, var(--primary-400) 16%, transparent);
+}
+
 .dashboard-table-row .fi-ta-cell {
     padding: 0px 4px;
 }

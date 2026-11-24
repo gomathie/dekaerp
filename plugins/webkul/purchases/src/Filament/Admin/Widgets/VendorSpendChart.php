@@ -18,6 +18,9 @@ class VendorSpendChart extends DashboardChartWidget
 
     protected static ?int $sort = 3;
 
+    // Room for the legend rows below the ring (DB-9).
+    protected ?string $maxHeight = '300px';
+
     protected ?array $resolvedData = null;
 
     public function getHeading(): string|Htmlable|null
@@ -68,6 +71,8 @@ class VendorSpendChart extends DashboardChartWidget
                     'data'            => $data,
                     'backgroundColor' => array_map(fn (int $index): string => $ramp[$index % count($ramp)], array_keys($data)),
                     'borderWidth'     => 0,
+                    // Centre total and "amount · %" legend rows (DB-9).
+                    ...$this->ringDetails($data, $this->dashboardCurrency(), __('purchases::filament/admin/widgets/purchase-dashboard.vendor-spend.total-purchased')),
                 ],
             ],
             'labels' => $labels,
@@ -76,10 +81,7 @@ class VendorSpendChart extends DashboardChartWidget
 
     protected function getOptions(): array
     {
-        return $this->doughnutChartOptions(
-            compact_money((float) array_sum($this->getData()['datasets'][0]['data']), $this->dashboardCurrency()),
-            __('purchases::filament/admin/widgets/purchase-dashboard.vendor-spend.total-purchased'),
-        );
+        return $this->ringChartOptions();
     }
 
     protected function getType(): string

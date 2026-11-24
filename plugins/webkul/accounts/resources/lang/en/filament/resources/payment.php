@@ -46,6 +46,7 @@ return [
             'currency'        => 'Currency',
             'created-by'      => 'Created By',
             'invoices'        => 'Invoice',
+            'unused'          => 'Unused amount',
         ],
 
         'summaries' => [

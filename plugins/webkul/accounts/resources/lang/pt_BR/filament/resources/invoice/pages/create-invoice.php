@@ -29,4 +29,16 @@ return [
         'balance'   => 'Saldo devedor',
         'thank-you' => 'Obrigado pela preferência.',
     ],
+
+    'sale-currency' => [
+        'heading'     => 'Em que moeda foi feita esta venda?',
+        'description' => 'Escolha a moeda em que o cliente paga. A fatura é emitida nessa moeda, e o valor na moeda da empresa aparece ao lado dos totais.',
+        'base'        => ':code (moeda da empresa)',
+        'continue'    => 'Continuar',
+        'rate'        => 'Taxa de câmbio',
+        'feed'        => 'Taxa do dia do feed diário, de :date. Altere-a se combinou outra taxa.',
+        'stale'       => 'A última taxa registrada é de :date, há mais de 3 dias. Verifique-a antes de continuar.',
+        'no-rate'     => 'Não há taxa registrada para esta moeda. Digite a taxa combinada.',
+        'chatter'     => 'Taxa de câmbio confirmada na criação da fatura: :rate.',
+    ],
 ];

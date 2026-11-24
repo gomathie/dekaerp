@@ -18,8 +18,18 @@ return [
         'decrease'           => 'انخفاض',
     ],
 
+    'order-activity'      => [
+        'heading'     => 'نشاط الطلبات',
+        'description' => 'الطلبات المؤكدة في الفترة حسب حالتها الحالية',
+        'to-deliver'  => 'للتسليم',
+        'delivered'   => 'تم التسليم',
+        'to-invoice'  => 'للفوترة',
+        'invoiced'    => 'تمت الفوترة',
+        'share'       => ':percent% من :total طلبات',
+    ],
+
     'monthly-sales'       => [
-        'heading'  => 'المبيعات الشهرية',
+        'heading'  => 'المبيعات عبر الزمن',
         'revenue'  => 'الإيرادات',
         'previous' => 'فترة المقارنة',
     ],

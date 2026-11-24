@@ -19,6 +19,9 @@ class RevenueByCategoryChart extends DashboardChartWidget
 
     protected static ?int $sort = 3;
 
+    // Room for the legend rows below the ring (DB-9).
+    protected ?string $maxHeight = '300px';
+
     /**
      * @var array{labels: list<string>, data: list<float>}|null
      */
@@ -91,6 +94,8 @@ class RevenueByCategoryChart extends DashboardChartWidget
                     'backgroundColor' => array_slice($this->chartRamp(), 0, max(count($data), 1)),
                     'borderWidth'     => 0,
                     'hoverOffset'     => 0,
+                    // Centre total and "amount · %" legend rows (DB-9).
+                    ...$this->ringDetails($data, current_company()?->currency?->name, __('sales::filament/widgets/sales-dashboard.revenue-by-category.revenue')),
                 ],
             ],
             'labels' => $labels,
@@ -99,12 +104,7 @@ class RevenueByCategoryChart extends DashboardChartWidget
 
     protected function getOptions(): array
     {
-        $total = array_sum($this->resolveChartData()['data']);
-
-        return $this->doughnutChartOptions(
-            compact_money($total, current_company()?->currency?->name),
-            __('sales::filament/widgets/sales-dashboard.revenue-by-category.revenue'),
-        );
+        return $this->ringChartOptions();
     }
 
     protected function getType(): string

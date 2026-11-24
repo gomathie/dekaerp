@@ -32,6 +32,8 @@ class TopInvoicesWidget extends BaseWidget
         return $this->withDashboardEmptyState($table, 'invoice', InvoiceResource::canCreate() ? InvoiceResource::getUrl('create') : null)
             ->defaultKeySort(false)
             ->recordClasses('dashboard-table-row')
+            // "View all" opens the whole list (DB-9).
+            ->headerActions($this->viewAllActions(InvoiceResource::canViewAny() ? InvoiceResource::getUrl('index') : null))
             ->recordUrl(fn ($record): ?string => $record && InvoiceResource::canAccess()
                 ? InvoiceResource::getUrl('view', ['record' => $record])
                 : null);

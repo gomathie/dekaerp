@@ -467,6 +467,38 @@ answer, as for DB-4.
 and legend, order activity with "View all"), Sales first, then Invoices and
 Purchases.
 
+*Built 2026-11-24 (develop, unreleased):*
+- Figure cards: `BuildsDashboardStats::trendDescription()` renders the change
+  as a pill whose text carries ▲/▼ (never colour alone), every part escaped;
+  CSS in support `dashboard.css`. Sales and Purchases headline cards use it
+  and get the icon chip.
+- Chart switch: `DashboardPeriod::rollUp()` takes a unit (day, week, month,
+  year; anything else falls back to automatic), options in
+  `DashboardPeriod::groupingOptions()`, on Filament's chart select. Main
+  charts: Sales `MonthlySalesChart` (now a zero-filled daily series rolled
+  up, heading "Sales over time"), Purchases `PurchaseTrendWidget`, Invoices
+  `OverviewCashFlowChart`. *Superseded:* the cash chart's DB-4 "vs previous
+  period" line toggle; the comparison is now both totals with trend pills in
+  its description (Blade, so it follows the filters), and the chart is
+  paired bars. `RevenueOverTimeWidget` is on no page and was left alone.
+- Rings: `HasChartTheme::ringDetails()` puts the centre total and the
+  "amount · %" legend rows in the dataset; `dashboard-charts.js`
+  (`dashboardChartRingLegend`, centre text) reads them from the data. Root
+  cause fixed on the way: Filament's `updateChartData` sends only data, so a
+  centre total in the options stayed at the first period after a filter
+  change. Count per slice left out: the rings are net amounts (credit notes
+  deducted), so a count needs a second rule.
+- Order activity: `Sale\...\Widgets\OrderActivityWidget`, the period's
+  confirmed orders split into to deliver, delivered, to invoice, invoiced,
+  borrowing `SaleStatsOverview`'s permission; tiles open new `ListOrders`
+  presets (`to_deliver`, `delivered`, `invoiced`) or `to_invoice`.
+  Period-scoped like every other figure, not "today's state", so it agrees
+  with the filters.
+- "View all": `HasDashboardEmptyState::viewAllActions()` on the five record
+  lists (orders, quotations, invoices, bills, RFQs), only when the
+  resource's `canViewAny()` allows. Customers and products lists, status
+  pills: not done yet.
+
 ## Verification for every package
 
 - Pest: known totals, a foreign-company row that must not count, and the
