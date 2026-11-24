@@ -291,6 +291,18 @@ class Order extends Model
         });
 
         static::saving(function ($order) {
+            // A confirmed rate (MC-2b) belongs to the currency it was confirmed
+            // for: changing the currency without a new rate drops it, so one
+            // currency's rate never prices another. OrderCalculator then takes
+            // the day's rate, as for every order.
+            if ($order->currency_rate_source === Move::RATE_MANUAL
+                && $order->exists
+                && $order->isDirty('currency_id')
+                && ! $order->isDirty('currency_rate')) {
+                $order->currency_rate_source = null;
+                $order->currency_rate_confirmed_by = null;
+            }
+
             $order->updateName();
 
             $order->lines->each->update(['state' => $order->state]);

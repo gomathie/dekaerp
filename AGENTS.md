@@ -2113,6 +2113,13 @@ log named):
     `CompanyAwareSettingsRepository` (its default-company fallback would turn
     it on for every company). Every rule is in `SaleCurrencyQuestion`.
   - Tests: accounts `Workflows/SaleCurrencyQuestionTest.php`.
+  - Quotations and sales orders, 2026-11-24 (MC-2b): the same rule on
+    `sales_orders` (`currency_rate_source` / `currency_rate_confirmed_by`, not
+    fillable). `OrderCalculator::refreshCurrencyRate()` keeps a manual
+    rate; `Order::saving` drops it when the currency changes alone; an
+    invoice made from the order (`Invoicer::createInvoice()`) carries it. One
+    dialog for both, `Account\Filament\Concerns\AsksSaleCurrency`; do not copy
+    it into a page. Tests: sales `Workflows/QuotationSaleCurrencyTest.php`.
 
 • Customer page shipments, 2026-11-10 (`docs/logistics-plan.md`, WP-9b, D11):
   - The customer infolist tab is `PartnerSchemaRegistry` slot `tabs.append`.

@@ -6,6 +6,43 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-24, MC-2b: the currency question on quotations and sales orders (develop, unreleased)
+
+- **Why:** plan #11 MC-2b (TRACE365, user "yes start MC-2b"). A quotation
+  priced in cedis at an agreed rate lost that rate: the order followed the
+  daily feed (since the v1.16.13 fix), and its invoice took the feed again.
+- **How:**
+  - One dialog: the question, its locked answer, "Currency and rate" and
+    the rate-applying step moved from `CreateInvoice` into the trait
+    `Account\Filament\Concerns\AsksSaleCurrency`; `CreateInvoice` and
+    `CreateQuotation` (and `CreateOrder`, its subclass) use it, each naming
+    its rate column. `CreateInvoice` behaves as before.
+  - Sales migration `2026_11_24_000001` adds `currency_rate_source` and
+    `currency_rate_confirmed_by` to `sales_orders`, not fillable.
+    `OrderCalculator::refreshCurrencyRate()` keeps a manual rate;
+    `Order::saving` drops it when the currency changes without a new rate.
+  - `Invoicer::createInvoice()` builds the invoice with the order's
+    confirmed rate before its first save (`forceFill`, source manual, same
+    confirming user).
+  - Quotation form: the rate line under the currency (`keptRateText()`
+    takes the record's rate column). A history note on the quotation.
+  - Wording: the dialog description, the "dropped" line and the company
+    setting's help now say document / quotation, in five locales.
+- **Benefit:** the rate agreed on a quotation stays on it and on its invoice.
+- **Trade-off / risk:** a quotation edited later keeps its confirmed rate
+  until its currency changes; "Currency and rate" is on the create pages
+  only, as for invoices.
+- **Verification:** `aureuserp_testing_v113_k2`: accounts
+  SaleCurrencyQuestion, InvoiceResource, CreditNoteResource, Invoice: 63
+  passed (241 assertions), so the invoice page behaves as before on the
+  trait. `aureuserp_testing_v113_k1`: sales QuotationSaleCurrency (new),
+  QuotationResource, OrderFromInvoice, OrderInvoicing, SaleOrder: 54 passed,
+  1 failed (the new create test did not fill the required payment term);
+  fixed, QuotationSaleCurrencyTest re-ran 4 passed (27 assertions). Pint and
+  `php -l` on every changed file: passed.
+- **Rollback:** revert the commit; the migration's `down()` drops the two
+  columns.
+
 ## 2026-11-24, v1.16.13 (hotfix): sales orders get their exchange rate (TRACE365)
 
 - **Why:** found while scoping MC-2b. `sales_orders.currency_rate` defaults

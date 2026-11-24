@@ -2,6 +2,7 @@
 
 namespace Webkul\Account\Services;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use InvalidArgumentException;
 use Webkul\Account\Models\CompanySetting;
@@ -130,9 +131,12 @@ class SaleCurrencyQuestion
      * currency was changed afterwards the answer no longer applies; saying
      * so matters, because the create page then drops it.
      *
+     * $record is an invoice (rate in invoice_currency_rate) or a quotation or
+     * sales order (rate in currency_rate, MC-2b): $rateColumn names it.
+     *
      * @param  array{0: ?int, 1: ?float}|null  $pending
      */
-    public function keptRateText(?int $currencyId, ?Company $company, ?Move $record = null, ?array $pending = null): ?string
+    public function keptRateText(?int $currencyId, ?Company $company, ?Model $record = null, ?array $pending = null, string $rateColumn = 'invoice_currency_rate'): ?string
     {
         $lang = 'accounts::filament/resources/invoice/pages/create-invoice.sale-currency';
         $base = $company?->currency;
@@ -143,7 +147,7 @@ class SaleCurrencyQuestion
         }
 
         if ($record?->exists && $record->currency_rate_source === Move::RATE_MANUAL && (int) $record->currency_id === $currencyId) {
-            $rate = $this->label((float) $record->invoice_currency_rate, $base, $currency);
+            $rate = $this->label((float) $record->{$rateColumn}, $base, $currency);
             $name = $record->currency_rate_confirmed_by
                 ? User::query()->whereKey($record->currency_rate_confirmed_by)->value('name')
                 : null;
