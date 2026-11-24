@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Work График Plan обновлено',
-        'body'  => 'work график plan есть обновлено successfully.',
+        'title' => 'Рабочий график обновлён',
+        'body'  => 'Рабочий график обновлён.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Work График Plan удалено',
-                'body'  => 'work график plan есть удалено successfully.',
+                'title' => 'Рабочий график удалён',
+                'body'  => 'Рабочий график удалён.',
             ],
         ],
     ],

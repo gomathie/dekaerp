@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Skill Types',
+    'title' => 'Aina za ujuzi',
 
     'navigation' => [
-        'title' => 'Skill Types',
+        'title' => 'Aina za ujuzi',
         'group' => 'Mfanyakazi',
     ],
 
@@ -12,7 +12,7 @@ return [
         'sections' => [
             'fields' => [
                 'name'             => 'Jina',
-                'name-placeholder' => 'Ingiza skill aina jina',
+                'name-placeholder' => 'Weka jina la aina ya ujuzi',
                 'color'            => 'Rangi',
                 'status'           => 'Hali',
             ],
@@ -21,31 +21,31 @@ return [
 
     'table' => [
         'columns' => [
-            'id'         => 'Kitambulisho',
-            'name'       => 'Skill Aina',
+            'id'         => 'ID',
+            'name'       => 'Aina ya ujuzi',
             'status'     => 'Hali',
             'color'      => 'Rangi',
-            'skills'     => 'Skills',
-            'levels'     => 'Levels',
-            'created-by' => 'Imeundwa Na',
+            'skills'     => 'Ujuzi',
+            'levels'     => 'Viwango',
+            'created-by' => 'Imeundwa na',
             'created-at' => 'Imeundwa',
             'updated-at' => 'Imesasishwa',
         ],
 
         'filters' => [
-            'skill-levels' => 'Skill Levels',
-            'skills'       => 'Skills',
-            'created-by'   => 'Imeundwa Na',
+            'skill-levels' => 'Viwango vya ujuzi',
+            'skills'       => 'Ujuzi',
+            'created-by'   => 'Imeundwa na',
             'status'       => 'Hali',
             'updated-at'   => 'Imesasishwa',
             'created-at'   => 'Imeundwa',
         ],
 
         'groups' => [
-            'name'       => 'Skill Aina',
+            'name'       => 'Aina ya ujuzi',
             'color'      => 'Rangi',
             'status'     => 'Hali',
-            'created-by' => 'Imeundwa Na',
+            'created-by' => 'Imeundwa na',
             'created-at' => 'Imeundwa',
             'updated-at' => 'Imesasishwa',
         ],
@@ -53,15 +53,15 @@ return [
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Skill Aina restored',
-                    'body'  => 'Skill Aina ina restored successfully.',
+                    'title' => 'Aina ya ujuzi imerejeshwa',
+                    'body'  => 'Aina ya ujuzi imerejeshwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Skill Aina imefutwa',
-                    'body'  => 'Skill Aina ina imefutwa successfully.',
+                    'title' => 'Aina ya ujuzi imefutwa',
+                    'body'  => 'Aina ya ujuzi imefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -69,22 +69,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Skill Types restored',
-                    'body'  => 'Skill Types ina restored successfully.',
+                    'title' => 'Aina za ujuzi zimerejeshwa',
+                    'body'  => 'Aina za ujuzi zimerejeshwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Skill Types imefutwa',
-                    'body'  => 'Skill Types ina imefutwa successfully.',
+                    'title' => 'Aina za ujuzi zimefutwa',
+                    'body'  => 'Aina za ujuzi zimefutwa kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Skill Types force imefutwa',
-                    'body'  => 'Skill Types ina force imefutwa successfully.',
+                    'title' => 'Aina za ujuzi zimefutwa kabisa',
+                    'body'  => 'Aina za ujuzi zimefutwa kabisa.',
                 ],
             ],
         ],
@@ -92,8 +92,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Skill Types',
-                    'body'  => 'Skill Types ina imeundwa successfully.',
+                    'title' => 'Aina ya ujuzi imeundwa',
+                    'body'  => 'Aina ya ujuzi imeundwa kikamilifu.',
                 ],
             ],
         ],
@@ -102,7 +102,7 @@ return [
     'infolist' => [
         'sections' => [
             'entries' => [
-                'name'   => 'Skill Aina',
+                'name'   => 'Aina ya ujuzi',
                 'color'  => 'Rangi',
                 'status' => 'Hali',
             ],

@@ -3,11 +3,11 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Employment Aina',
+            'label' => 'Aina mpya ya ajira',
 
             'notification' => [
-                'title' => 'Employment Aina imeundwa',
-                'body'  => 'employment aina ina imeundwa successfully.',
+                'title' => 'Aina ya ajira imeundwa',
+                'body'  => 'Aina ya ajira imeundwa kikamilifu.',
             ],
         ],
     ],

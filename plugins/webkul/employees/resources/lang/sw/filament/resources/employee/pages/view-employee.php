@@ -4,8 +4,8 @@ return [
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Mfanyakazi imefutwa',
-                'body'  => 'mfanyakazi ina imefutwa successfully.',
+                'title' => 'Mfanyakazi amefutwa',
+                'body'  => 'Mfanyakazi amefutwa kikamilifu.',
             ],
         ],
     ],

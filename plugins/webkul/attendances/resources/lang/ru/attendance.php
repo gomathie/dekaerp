@@ -2,10 +2,10 @@
 
 return [
     'actions' => [
-        'clock-in'  => 'Clock в',
-        'clock-out' => 'Clock вне',
-        'correct'   => 'Correct посещаемость',
-        'export'    => 'Экспорт посещаемость',
+        'clock-in'  => 'Отметить приход',
+        'clock-out' => 'Отметить уход',
+        'correct'   => 'Исправить посещаемость',
+        'export'    => 'Экспорт посещаемости',
     ],
     'capture' => [
         'off'      => 'Выкл.',
@@ -13,23 +13,23 @@ return [
         'required' => 'Обязательно',
     ],
     'exceptions' => [
-        'not-enabled' => 'Посещаемость не включено для компания :company.',
+        'not-enabled' => 'Учёт посещаемости не включён для компании :company.',
     ],
     'notifications' => [
-        'failed' => 'Тот не work. изменить был не saved.',
+        'failed' => 'Не получилось. Изменение не сохранено.',
     ],
     'statuses' => [
-        'clocked-in'     => 'Clocked в since :time',
-        'not-clocked-in' => 'Не clocked в',
-        'on-leave'       => 'Вкл. отпуск',
+        'clocked-in'     => 'На работе с :time',
+        'not-clocked-in' => 'Приход не отмечен',
+        'on-leave'       => 'В отпуске',
     ],
     'validation' => [
-        'check-out-order'     => 'Чек-вне есть до быть после чек-в.',
-        'location-required'   => 'место обязательно до clock в или вне.',
-        'no-employee'         => 'Вы не есть сотрудник запись в этот компания.',
-        'not-allowed'         => 'Вы можно только correct посещаемость для ваш собственную команда.',
-        'not-clocked-in'      => 'Вы не clocked в.',
-        'not-your-attendance' => 'Вы можно только clock yourself в или вне.',
-        'reason-required'     => 'correction needs причина.',
+        'check-out-order'     => 'Уход должен быть позже прихода.',
+        'location-required'   => 'Чтобы отметить приход или уход, нужно местоположение.',
+        'no-employee'         => 'У вас нет карточки сотрудника в этой компании.',
+        'not-allowed'         => 'Исправлять посещаемость можно только для своей команды.',
+        'not-clocked-in'      => 'Вы не отметили приход.',
+        'not-your-attendance' => 'Отмечать приход и уход можно только для себя.',
+        'reason-required'     => 'Для исправления нужна причина.',
     ],
 ];

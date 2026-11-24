@@ -1,30 +1,30 @@
 <?php
 
 return [
-    'empty' => 'Nothing до отчёт для этот период.',
+    'empty' => 'За этот период данных нет.',
     'range' => [
-        'from'  => 'От',
-        'until' => 'До',
+        'from'  => 'С',
+        'until' => 'По',
     ],
     'columns' => [
         'employee'         => 'Сотрудник',
         'date'             => 'Дата',
-        'check_in'         => 'Clock в',
-        'late_minutes'     => 'Late (минуты)',
-        'worked_minutes'   => 'Worked (минуты)',
-        'expected_minutes' => 'Scheduled (минуты)',
-        'overtime_minutes' => 'Сверхурочные (минуты)',
+        'check_in'         => 'Приход',
+        'late_minutes'     => 'Опоздание (мин)',
+        'worked_minutes'   => 'Отработано (мин)',
+        'expected_minutes' => 'По графику (мин)',
+        'overtime_minutes' => 'Сверхурочно (мин)',
     ],
     'lateness' => [
-        'title'      => 'Опоздание',
-        'subheading' => 'Clock-ins после scheduled начать, beyond компания tolerance.',
+        'title'      => 'Опоздания',
+        'subheading' => 'Приходы после начала по графику сверх допуска компании.',
     ],
     'overtime' => [
         'title'      => 'Сверхурочные',
-        'subheading' => 'Time worked прошлые scheduled length, beyond компания tolerance.',
+        'subheading' => 'Время работы сверх длительности по графику и допуска компании.',
     ],
     'absence' => [
-        'title'      => 'Отсутствие',
-        'subheading' => 'Scheduled working дни с нет посещаемость. Утверждён отпуск не counted.',
+        'title'      => 'Отсутствия',
+        'subheading' => 'Рабочие дни по графику без отметок. Одобренный отпуск не учитывается.',
     ],
 ];

@@ -2,13 +2,13 @@
 
 return [
     'activity'         => 'Shughuli',
-    'created-by'       => 'Imeundwa Na',
+    'created-by'       => 'Imeundwa na',
     'summary'          => 'Muhtasari',
-    'due-date'         => 'Tarehe ya malipo',
-    'assigned-to'      => 'Amekabidhiwa Hadi',
-    'due-in-days'      => 'Due katika :days siku',
+    'due-date'         => 'Tarehe ya mwisho',
+    'assigned-to'      => 'Amekabidhiwa',
+    'due-in-days'      => 'Inaisha baada ya siku :days',
     'today'            => 'Leo',
     'tomorrow'         => 'Kesho',
-    'one-day-overdue'  => '1 Siku Imechelewa',
-    'days-overdue'     => ':days siku imechelewa',
+    'one-day-overdue'  => 'Imechelewa siku 1',
+    'days-overdue'     => 'Imechelewa siku :days',
 ];

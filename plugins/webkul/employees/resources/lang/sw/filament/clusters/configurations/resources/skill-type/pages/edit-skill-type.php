@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Skill Aina imesasishwa',
-        'body'  => 'skill aina ina imesasishwa successfully.',
+        'title' => 'Aina ya ujuzi imesasishwa',
+        'body'  => 'Aina ya ujuzi imesasishwa kikamilifu.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Skill Aina imefutwa',
-                'body'  => 'skill aina ina imefutwa successfully.',
+                'title' => 'Aina ya ujuzi imefutwa',
+                'body'  => 'Aina ya ujuzi imefutwa kikamilifu.',
             ],
         ],
     ],

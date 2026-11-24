@@ -17,28 +17,28 @@ return [
         ],
 
         'filters' => [
-            'deleted-records' => 'Imefutwa Rekodi',
+            'deleted-records' => 'Rekodi zilizofutwa',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Skill imesasishwa',
-                    'body'  => 'skill ina imesasishwa successfully.',
+                    'title' => 'Ujuzi umesasishwa',
+                    'body'  => 'Ujuzi umesasishwa kikamilifu.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Skill restored',
-                    'body'  => 'skill ina restored successfully.',
+                    'title' => 'Ujuzi umerejeshwa',
+                    'body'  => 'Ujuzi umerejeshwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Skill imefutwa',
-                    'body'  => 'skill ina imefutwa successfully.',
+                    'title' => 'Ujuzi umefutwa',
+                    'body'  => 'Ujuzi umefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -46,22 +46,22 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Skills imefutwa',
-                    'body'  => 'skills ina imefutwa successfully.',
+                    'title' => 'Ujuzi umefutwa',
+                    'body'  => 'Ujuzi umefutwa kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Skills force imefutwa',
-                    'body'  => 'skills ina force imefutwa successfully.',
+                    'title' => 'Ujuzi umefutwa kabisa',
+                    'body'  => 'Ujuzi umefutwa kabisa.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Skills force restored',
-                    'body'  => 'skills ina force restored successfully.',
+                    'title' => 'Ujuzi umerejeshwa',
+                    'body'  => 'Ujuzi umerejeshwa kikamilifu.',
                 ],
             ],
         ],

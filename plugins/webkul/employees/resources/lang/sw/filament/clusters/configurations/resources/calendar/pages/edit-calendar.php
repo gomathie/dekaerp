@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Work Ratiba Plan imesasishwa',
-        'body'  => 'work ratiba plan ina imesasishwa successfully.',
+        'title' => 'Ratiba ya kazi imesasishwa',
+        'body'  => 'Ratiba ya kazi imesasishwa kikamilifu.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Work Ratiba Plan imefutwa',
-                'body'  => 'work ratiba plan ina imefutwa successfully.',
+                'title' => 'Ratiba ya kazi imefutwa',
+                'body'  => 'Ratiba ya kazi imefutwa kikamilifu.',
             ],
         ],
     ],

@@ -2,29 +2,29 @@
 
 return [
     'setup' => [
-        'title'        => 'Log Заметка',
-        'submit-title' => 'Log',
+        'title'        => 'Записать заметку',
+        'submit-title' => 'Записать',
 
         'form' => [
             'fields' => [
-                'hide-subject'            => 'Скрыть Subject',
-                'add-subject'             => 'Добавить Subject',
-                'subject'                 => 'Subject',
-                'write-message-here'      => 'Запись ваш сообщение здесь',
-                'attachments-helper-text' => 'Max файл размер: 10MB. Разрешено types: Images, PDF, Word, Excel, Text',
+                'hide-subject'            => 'Скрыть тему',
+                'add-subject'             => 'Добавить тему',
+                'subject'                 => 'Тема',
+                'write-message-here'      => 'Введите сообщение',
+                'attachments-helper-text' => 'Макс. размер файла: 10 МБ. Типы: изображения, PDF, Word, Excel, текст',
             ],
         ],
 
         'actions' => [
             'notification' => [
                 'success' => [
-                    'title' => 'Log Заметка added',
-                    'body'  => 'Ваш log заметка added successfully.',
+                    'title' => 'Заметка добавлена',
+                    'body'  => 'Ваша заметка добавлена.',
                 ],
 
                 'error' => [
-                    'title' => 'Log добавить ошибка',
-                    'body'  => 'Не удалось до добавить ваш log заметка',
+                    'title' => 'Ошибка добавления заметки',
+                    'body'  => 'Не удалось добавить заметку',
                 ],
             ],
         ],

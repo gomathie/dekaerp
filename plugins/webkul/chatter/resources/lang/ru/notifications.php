@@ -3,32 +3,32 @@
 return [
     'database' => [
         'actions' => [
-            'view' => 'Просмотр',
+            'view' => 'Открыть',
         ],
 
         'mention' => [
-            'title' => ':causer mentioned вы в :record',
+            'title' => ':causer упомянул(а) вас в :record',
         ],
 
         'assigned' => [
-            'title' => ':causer назначен :record до вы',
-            'body'  => 'Вы сейчас responsible для :record.',
+            'title' => ':causer назначил(а) вам :record',
+            'body'  => 'Теперь вы отвечаете за :record.',
         ],
 
         'activity' => [
-            'title' => ':causer scheduled активность вкл. :record',
+            'title' => ':causer запланировал(а) действие по :record',
         ],
 
         'created' => [
-            'title' => ':causer создано :record',
+            'title' => ':causer создал(а) :record',
         ],
 
         'updated' => [
-            'title' => ':causer обновлено :record',
+            'title' => ':causer изменил(а) :record',
         ],
 
         'message' => [
-            'title' => ':causer проведён вкл. :record',
+            'title' => ':causer написал(а) в :record',
         ],
     ],
 ];

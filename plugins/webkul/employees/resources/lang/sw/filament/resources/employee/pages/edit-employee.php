@@ -2,17 +2,17 @@
 
 return [
     'notification' => [
-        'title' => 'Mfanyakazi imesasishwa',
-        'body'  => 'mfanyakazi ina imesasishwa successfully.',
+        'title' => 'Mfanyakazi amesasishwa',
+        'body'  => 'Mfanyakazi amesasishwa kikamilifu.',
     ],
 
     'header-actions' => [
         'delete' => [
-            'label' => 'Mpya Mfanyakazi',
+            'label' => 'Mfanyakazi mpya',
 
             'notification' => [
-                'title' => 'Mfanyakazi imefutwa',
-                'body'  => 'mfanyakazi ina imefutwa successfully.',
+                'title' => 'Mfanyakazi amefutwa',
+                'body'  => 'Mfanyakazi amefutwa kikamilifu.',
             ],
         ],
     ],

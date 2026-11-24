@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'title' => 'Departure Reasons',
+    'title' => 'Sababu za kuondoka',
 
     'navigation' => [
-        'title' => 'Departure Reasons',
+        'title' => 'Sababu za kuondoka',
         'group' => 'Mfanyakazi',
     ],
 
     'groups' => [
         'status'     => 'Hali',
-        'created-by' => 'Imeundwa Na',
+        'created-by' => 'Imeundwa na',
         'created-at' => 'Imeundwa',
         'updated-at' => 'Imesasishwa',
     ],
@@ -23,9 +23,9 @@ return [
 
     'table' => [
         'columns' => [
-            'id'         => 'Kitambulisho',
+            'id'         => 'ID',
             'name'       => 'Jina',
-            'created-by' => 'Imeundwa Na',
+            'created-by' => 'Imeundwa na',
             'created-at' => 'Imeundwa',
             'updated-at' => 'Imesasishwa',
         ],
@@ -33,7 +33,7 @@ return [
         'filters' => [
             'name'       => 'Jina',
             'employee'   => 'Mfanyakazi',
-            'created-by' => 'Imeundwa Na',
+            'created-by' => 'Imeundwa na',
             'updated-at' => 'Imesasishwa',
             'created-at' => 'Imeundwa',
         ],
@@ -41,15 +41,15 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Departure sababu imesasishwa',
-                    'body'  => 'departure sababu ina imesasishwa successfully.',
+                    'title' => 'Sababu ya kuondoka imesasishwa',
+                    'body'  => 'Sababu ya kuondoka imesasishwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Departure sababu imefutwa',
-                    'body'  => 'departure sababu ina imefutwa successfully.',
+                    'title' => 'Sababu ya kuondoka imefutwa',
+                    'body'  => 'Sababu ya kuondoka imefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -57,8 +57,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Departure reasons imefutwa',
-                    'body'  => 'departure reasons ina imefutwa successfully.',
+                    'title' => 'Sababu za kuondoka zimefutwa',
+                    'body'  => 'Sababu za kuondoka zimefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -66,8 +66,8 @@ return [
         'empty-state-action' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Departure sababu imeundwa',
-                    'body'  => 'departure sababu ina imeundwa successfully.',
+                    'title' => 'Sababu ya kuondoka imeundwa',
+                    'body'  => 'Sababu ya kuondoka imeundwa kikamilifu.',
                 ],
             ],
         ],

@@ -1,89 +1,89 @@
 <?php
 
 return [
-    'title' => 'Work Места',
+    'title' => 'Места работы',
 
     'navigation' => [
-        'title' => 'Work Места',
+        'title' => 'Места работы',
         'group' => 'Сотрудник',
     ],
 
     'form' => [
         'name'            => 'Название',
         'company'         => 'Компания',
-        'location-type'   => 'Место Тип',
-        'location-number' => 'Место Номер',
+        'location-type'   => 'Тип места',
+        'location-number' => 'Номер места',
         'status'          => 'Статус',
     ],
 
     'table' => [
         'columns' => [
-            'id'              => 'Ид.',
+            'id'              => 'ID',
             'name'            => 'Название',
             'status'          => 'Статус',
             'company'         => 'Компания',
-            'location-type'   => 'Место Тип',
-            'location-number' => 'Место Номер',
+            'location-type'   => 'Тип места',
+            'location-number' => 'Номер места',
             'deleted-at'      => 'Удалено',
-            'created-by'      => 'Создано От',
+            'created-by'      => 'Создал',
             'created-at'      => 'Создано',
-            'updated-at'      => 'Обновлено',
+            'updated-at'      => 'Изменено',
         ],
 
         'filters' => [
             'name'            => 'Название',
             'status'          => 'Статус',
-            'created-by'      => 'Создано От',
+            'created-by'      => 'Создал',
             'company'         => 'Компания',
-            'location-number' => 'Место Номер',
-            'location-type'   => 'Место Тип',
-            'updated-at'      => 'Обновлено',
+            'location-number' => 'Номер места',
+            'location-type'   => 'Тип места',
+            'updated-at'      => 'Изменено',
             'created-at'      => 'Создано',
         ],
 
         'groups' => [
             'name'          => 'Название',
             'status'        => 'Статус',
-            'location-type' => 'Место Тип',
+            'location-type' => 'Тип места',
             'company'       => 'Компания',
-            'created-by'    => 'Создано От',
+            'created-by'    => 'Создал',
             'created-at'    => 'Создано',
-            'updated-at'    => 'Обновлено',
+            'updated-at'    => 'Изменено',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Work Место обновлено',
-                    'body'  => 'work Место есть обновлено successfully.',
+                    'title' => 'Место работы обновлено',
+                    'body'  => 'Место работы обновлено.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Work Место restored',
-                    'body'  => 'work Место есть restored successfully.',
+                    'title' => 'Место работы восстановлено',
+                    'body'  => 'Место работы восстановлено.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Work Место удалено',
-                    'body'  => 'work Место есть удалено successfully.',
+                    'title' => 'Место работы удалено',
+                    'body'  => 'Место работы удалено.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Work Место force удалено',
-                    'body'  => 'work Место есть force удалено successfully.',
+                    'title' => 'Место работы удалено навсегда',
+                    'body'  => 'Место работы удалено навсегда.',
                 ],
             ],
 
             'empty-state' => [
                 'notification' => [
-                    'title' => 'Work Место создано',
-                    'body'  => 'Work Место есть создано successfully.',
+                    'title' => 'Место работы создано',
+                    'body'  => 'Место работы создано.',
                 ],
             ],
         ],
@@ -91,15 +91,15 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Work Места удалено',
-                    'body'  => 'work Места есть удалено successfully.',
+                    'title' => 'Места работы удалены',
+                    'body'  => 'Места работы удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Work Места force удалено',
-                    'body'  => 'work Места есть force удалено successfully.',
+                    'title' => 'Места работы удалены навсегда',
+                    'body'  => 'Места работы удалены навсегда.',
                 ],
             ],
         ],
@@ -108,8 +108,8 @@ return [
     'infolist' => [
         'name'            => 'Название',
         'company'         => 'Компания',
-        'location-type'   => 'Место Тип',
-        'location-number' => 'Место Номер',
+        'location-type'   => 'Тип места',
+        'location-number' => 'Номер места',
         'status'          => 'Статус',
     ],
 ];

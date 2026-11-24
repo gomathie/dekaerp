@@ -3,17 +3,17 @@
 return [
     'form' => [
         'name'          => 'Название',
-        'level'         => 'Level',
-        'default-level' => 'По умолчанию Level',
+        'level'         => 'Уровень',
+        'default-level' => 'Уровень по умолчанию',
     ],
 
     'table' => [
         'columns' => [
             'name'          => 'Название',
-            'level'         => 'Level',
-            'default-level' => 'По умолчанию Level',
+            'level'         => 'Уровень',
+            'default-level' => 'Уровень по умолчанию',
             'created-at'    => 'Создано',
-            'updated-at'    => 'Обновлено',
+            'updated-at'    => 'Изменено',
         ],
 
         'groups' => [
@@ -21,35 +21,35 @@ return [
         ],
 
         'filters' => [
-            'deleted-records' => 'Удалено Записи',
+            'deleted-records' => 'Удалённые записи',
         ],
 
         'actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Skill Level создано',
-                    'body'  => 'skill level есть создано successfully.',
+                    'title' => 'Уровень навыка создан',
+                    'body'  => 'Уровень навыка создан.',
                 ],
             ],
 
             'edit' => [
                 'notification' => [
-                    'title' => 'Skill Level обновлено',
-                    'body'  => 'skill level есть обновлено successfully.',
+                    'title' => 'Уровень навыка обновлён',
+                    'body'  => 'Уровень навыка обновлён.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Skill Level restored',
-                    'body'  => 'skill level есть restored successfully.',
+                    'title' => 'Уровень навыка восстановлен',
+                    'body'  => 'Уровень навыка восстановлен.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Skill Level удалено',
-                    'body'  => 'skill level есть удалено successfully.',
+                    'title' => 'Уровень навыка удалён',
+                    'body'  => 'Уровень навыка удалён.',
                 ],
             ],
         ],
@@ -57,22 +57,22 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Skill Levels удалено',
-                    'body'  => 'skills есть удалено successfully.',
+                    'title' => 'Уровни навыков удалены',
+                    'body'  => 'Уровни навыков удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Skill Levels force удалено',
-                    'body'  => 'skills есть force удалено successfully.',
+                    'title' => 'Уровни навыков удалены навсегда',
+                    'body'  => 'Уровни навыков удалены навсегда.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Skill Levels force restored',
-                    'body'  => 'skills есть force restored successfully.',
+                    'title' => 'Уровни навыков восстановлены',
+                    'body'  => 'Уровни навыков восстановлены.',
                 ],
             ],
         ],
@@ -81,8 +81,8 @@ return [
     'infolist' => [
         'entries' => [
             'name'          => 'Название',
-            'level'         => 'Level',
-            'default-level' => 'По умолчанию Level',
+            'level'         => 'Уровень',
+            'default-level' => 'Уровень по умолчанию',
         ],
     ],
 ];

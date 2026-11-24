@@ -4,15 +4,15 @@ return [
     'update' => [
         'success' => [
             'notification' => [
-                'title' => 'Отдел обновлено',
-                'body'  => 'отдел есть обновлено successfully.',
+                'title' => 'Отдел обновлён',
+                'body'  => 'Отдел обновлён.',
             ],
         ],
 
         'error' => [
             'notification' => [
-                'title' => 'Отдел обновить не удалось',
-                'body'  => 'был ошибка updating отдел.',
+                'title' => 'Не удалось обновить отдел',
+                'body'  => 'При обновлении отдела произошла ошибка.',
             ],
         ],
     ],
@@ -20,8 +20,8 @@ return [
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Отдел удалено',
-                'body'  => 'отдел есть удалено successfully.',
+                'title' => 'Отдел удалён',
+                'body'  => 'Отдел удалён.',
             ],
         ],
     ],

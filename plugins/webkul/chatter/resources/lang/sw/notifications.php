@@ -3,32 +3,32 @@
 return [
     'database' => [
         'actions' => [
-            'view' => 'Angalia',
+            'view' => 'Tazama',
         ],
 
         'mention' => [
-            'title' => ':causer mentioned wewe katika :record',
+            'title' => ':causer amekutaja katika :record',
         ],
 
         'assigned' => [
-            'title' => ':causer amekabidhiwa :record hadi wewe',
-            'body'  => 'Wewe ni sasa responsible kwa :record.',
+            'title' => ':causer amekukabidhi :record',
+            'body'  => 'Sasa unawajibika kwa :record.',
         ],
 
         'activity' => [
-            'title' => ':causer scheduled shughuli washa :record',
+            'title' => ':causer amepanga shughuli kwenye :record',
         ],
 
         'created' => [
-            'title' => ':causer imeundwa :record',
+            'title' => ':causer ameunda :record',
         ],
 
         'updated' => [
-            'title' => ':causer imesasishwa :record',
+            'title' => ':causer amesasisha :record',
         ],
 
         'message' => [
-            'title' => ':causer imewekwa washa :record',
+            'title' => ':causer ameandika kwenye :record',
         ],
     ],
 ];

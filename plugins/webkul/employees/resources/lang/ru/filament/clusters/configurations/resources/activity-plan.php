@@ -2,13 +2,13 @@
 
 return [
     'navigation' => [
-        'title' => 'Активность Plans',
+        'title' => 'Планы действий',
     ],
 
     'form' => [
         'sections' => [
             'general' => [
-                'title'  => 'Общее Сведения',
+                'title'  => 'Общие сведения',
                 'fields' => [
                     'name'       => 'Название',
                     'status'     => 'Статус',
@@ -26,49 +26,49 @@ return [
             'department' => 'Отдел',
             'company'    => 'Компания',
             'manager'    => 'Руководитель',
-            'created-by' => 'Создано От',
+            'created-by' => 'Создал',
             'created-at' => 'Создано',
-            'updated-at' => 'Обновлено',
+            'updated-at' => 'Изменено',
         ],
 
         'filters' => [
             'name'           => 'Название',
             'plugin'         => 'Модуль',
-            'activity-types' => 'Активность Types',
+            'activity-types' => 'Типы действий',
             'company'        => 'Компания',
             'department'     => 'Отдел',
             'is-active'      => 'Статус',
-            'updated-at'     => 'Обновлено',
+            'updated-at'     => 'Изменено',
             'created-at'     => 'Создано',
         ],
 
         'groups' => [
             'status'     => 'Статус',
             'name'       => 'Название',
-            'created-by' => 'Создано От',
+            'created-by' => 'Создал',
             'created-at' => 'Создано',
-            'updated-at' => 'Обновлено',
+            'updated-at' => 'Изменено',
         ],
 
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Активность Plan restored',
-                    'body'  => 'активность plan есть restored successfully.',
+                    'title' => 'План действий восстановлен',
+                    'body'  => 'План действий восстановлен.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Активность Plan удалено',
-                    'body'  => 'активность plan есть удалено successfully.',
+                    'title' => 'План действий удалён',
+                    'body'  => 'План действий удалён.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Активность Plan force удалено',
-                    'body'  => 'активность plan есть force удалено successfully.',
+                    'title' => 'План действий удалён навсегда',
+                    'body'  => 'План действий удалён навсегда.',
                 ],
             ],
         ],
@@ -76,22 +76,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Активность Plans restored',
-                    'body'  => 'активность plans есть restored successfully.',
+                    'title' => 'Планы действий восстановлены',
+                    'body'  => 'Планы действий восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Активность Plans удалено',
-                    'body'  => 'активность plans есть удалено successfully.',
+                    'title' => 'Планы действий удалены',
+                    'body'  => 'Планы действий удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Активность Plans force удалено',
-                    'body'  => 'активность plans есть force удалено successfully.',
+                    'title' => 'Планы действий удалены навсегда',
+                    'body'  => 'Планы действий удалены навсегда.',
                 ],
             ],
         ],
@@ -99,8 +99,8 @@ return [
         'activity-plan' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Активность Plan создано',
-                    'body'  => 'активность plan есть создано successfully.',
+                    'title' => 'План действий создан',
+                    'body'  => 'План действий создан.',
                 ],
             ],
         ],
@@ -108,8 +108,8 @@ return [
         'empty-state' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Активность Plan создано',
-                    'body'  => 'активность plan есть создано successfully.',
+                    'title' => 'План действий создан',
+                    'body'  => 'План действий создан.',
                 ],
             ],
         ],
@@ -118,7 +118,7 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title'   => 'Общее Сведения',
+                'title'   => 'Общие сведения',
                 'entries' => [
                     'name'       => 'Название',
                     'status'     => 'Статус',

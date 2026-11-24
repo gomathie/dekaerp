@@ -8,11 +8,11 @@ return [
 
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Skill Тип',
+            'label' => 'Новый тип навыка',
 
             'notification' => [
-                'title' => 'Skill Тип создано',
-                'body'  => 'skill тип есть создано successfully.',
+                'title' => 'Тип навыка создан',
+                'body'  => 'Тип навыка создан.',
             ],
         ],
     ],

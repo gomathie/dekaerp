@@ -3,16 +3,16 @@
 return [
     'tabs' => [
         'all'      => 'Zote',
-        'archived' => 'Imehifadhiwa',
+        'archived' => 'Kwenye kumbukumbu',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Skill Aina',
+            'label' => 'Aina mpya ya ujuzi',
 
             'notification' => [
-                'title' => 'Skill Aina imeundwa',
-                'body'  => 'skill aina ina imeundwa successfully.',
+                'title' => 'Aina ya ujuzi imeundwa',
+                'body'  => 'Aina ya ujuzi imeundwa kikamilifu.',
             ],
         ],
     ],

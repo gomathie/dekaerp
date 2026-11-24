@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Shughuli Plan imesasishwa',
-        'body'  => 'shughuli plan ina imesasishwa successfully.',
+        'title' => 'Mpango wa shughuli umesasishwa',
+        'body'  => 'Mpango wa shughuli umesasishwa kikamilifu.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Shughuli Plan imefutwa',
-                'body'  => 'shughuli plan ina imefutwa successfully.',
+                'title' => 'Mpango wa shughuli umefutwa',
+                'body'  => 'Mpango wa shughuli umefutwa kikamilifu.',
             ],
         ],
     ],

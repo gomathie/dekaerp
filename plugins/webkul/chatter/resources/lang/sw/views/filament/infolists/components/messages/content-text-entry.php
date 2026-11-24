@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'subject'          => 'Subject',
-    'changes-made'     => 'Changes Imefanywa',
-    'modified'         => '<b>:field</b> ina',
-    'preview'          => 'Preview',
+    'subject'          => 'Mada',
+    'changes-made'     => 'Mabadiliko yaliyofanywa',
+    'modified'         => '<b>:field</b> imebadilishwa',
+    'preview'          => 'Hakiki',
     'download'         => 'Pakua',
 ];

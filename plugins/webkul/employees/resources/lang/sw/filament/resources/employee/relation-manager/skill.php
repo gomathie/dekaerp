@@ -4,57 +4,57 @@ return [
     'form' => [
         'sections' => [
             'fields' => [
-                'skill-type'  => 'Skill Aina',
-                'skill'       => 'Skill',
-                'skill-level' => 'Skill Level',
+                'skill-type'  => 'Aina ya ujuzi',
+                'skill'       => 'Ujuzi',
+                'skill-level' => 'Kiwango cha ujuzi',
             ],
         ],
     ],
 
     'table' => [
         'columns' => [
-            'skill-type'    => 'Skill Aina',
-            'skill'         => 'Skill',
-            'skill-level'   => 'Skill Level',
-            'level-percent' => 'Level Asilimia',
-            'created-by'    => 'Imeundwa Na',
+            'skill-type'    => 'Aina ya ujuzi',
+            'skill'         => 'Ujuzi',
+            'skill-level'   => 'Kiwango cha ujuzi',
+            'level-percent' => 'Asilimia ya kiwango',
+            'created-by'    => 'Imeundwa na',
             'user'          => 'Mtumiaji',
             'created-at'    => 'Imeundwa',
         ],
 
         'groups' => [
-            'skill-type' => 'Skill Aina',
+            'skill-type' => 'Aina ya ujuzi',
         ],
 
         'header-actions' => [
-            'add-skill' => 'Ongeza Skill',
+            'add-skill' => 'Ongeza ujuzi',
         ],
 
         'filters' => [
-            'activity-type'   => 'Shughuli Aina',
-            'activity-status' => 'Shughuli Hali',
-            'has-delay'       => 'Ina Delay',
+            'activity-type'   => 'Aina ya shughuli',
+            'activity-status' => 'Hali ya shughuli',
+            'has-delay'       => 'Ina ucheleweshaji',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Skill imesasishwa',
-                    'body'  => 'skill ina imesasishwa successfully.',
+                    'title' => 'Ujuzi umesasishwa',
+                    'body'  => 'Ujuzi umesasishwa kikamilifu.',
                 ],
             ],
 
             'create' => [
                 'notification' => [
-                    'title' => 'Skill imeundwa',
-                    'body'  => 'skill ina imeundwa successfully.',
+                    'title' => 'Ujuzi umeundwa',
+                    'body'  => 'Ujuzi umeundwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Skill imefutwa',
-                    'body'  => 'skill ina imefutwa successfully.',
+                    'title' => 'Ujuzi umefutwa',
+                    'body'  => 'Ujuzi umefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -62,8 +62,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Skills imefutwa',
-                    'body'  => 'skills ina imefutwa successfully.',
+                    'title' => 'Ujuzi umefutwa',
+                    'body'  => 'Ujuzi umefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -71,10 +71,10 @@ return [
 
     'infolist' => [
         'entries' => [
-            'skill-type'    => 'Skill Aina',
-            'skill'         => 'Skill',
-            'skill-level'   => 'Skill Level',
-            'level-percent' => 'Level Asilimia',
+            'skill-type'    => 'Aina ya ujuzi',
+            'skill'         => 'Ujuzi',
+            'skill-level'   => 'Kiwango cha ujuzi',
+            'level-percent' => 'Asilimia ya kiwango',
         ],
     ],
 ];

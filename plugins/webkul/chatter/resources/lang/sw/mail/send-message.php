@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'subject' => 'Mpya Ujumbe kutoka :app',
+    'subject' => 'Ujumbe mpya kutoka :app',
 ];

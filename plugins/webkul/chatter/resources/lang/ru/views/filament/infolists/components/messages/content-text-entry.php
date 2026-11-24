@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'subject'          => 'Subject',
-    'changes-made'     => 'Changes Сделано',
-    'modified'         => '<b>:field</b> есть',
-    'preview'          => 'Preview',
+    'subject'          => 'Тема',
+    'changes-made'     => 'Внесённые изменения',
+    'modified'         => 'Поле <b>:field</b> изменено',
+    'preview'          => 'Просмотр',
     'download'         => 'Скачать',
 ];

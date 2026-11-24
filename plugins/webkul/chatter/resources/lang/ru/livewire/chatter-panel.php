@@ -1,77 +1,77 @@
 <?php
 
 return [
-    'heading' => 'Chatter',
+    'heading' => 'Обсуждение',
 
     'placeholders' => [
-        'no-record-found' => 'Нет запись найдено.',
-        'loading'         => 'Загрузка Chatter...',
+        'no-record-found' => 'Запись не найдена.',
+        'loading'         => 'Загрузка обсуждения...',
     ],
 
     'activity-infolist' => [
-        'title' => 'Деятельность',
+        'title' => 'Действия',
     ],
 
     'cancel-activity-plan-action' => [
-        'title' => 'Отмена Активность',
+        'title' => 'Отменить действие',
     ],
 
     'delete-message-action' => [
-        'title' => 'Удалить Сообщение',
+        'title' => 'Удалить сообщение',
     ],
 
     'edit-activity' => [
-        'title' => 'Изменить Активность',
+        'title' => 'Изменить действие',
 
         'form' => [
             'fields' => [
-                'activity-plan' => 'Активность Plan',
-                'plan-date'     => 'Plan Дата',
-                'plan-summary'  => 'Plan Сводка',
-                'activity-type' => 'Активность Тип',
-                'due-date'      => 'Срок оплаты',
+                'activity-plan' => 'План действий',
+                'plan-date'     => 'Дата плана',
+                'plan-summary'  => 'Сводка плана',
+                'activity-type' => 'Тип действия',
+                'due-date'      => 'Срок',
                 'summary'       => 'Сводка',
-                'assigned-to'   => 'Назначен До',
+                'assigned-to'   => 'Ответственный',
             ],
         ],
 
         'action' => [
             'notification' => [
                 'success' => [
-                    'title' => 'Активность обновлено',
-                    'body'  => 'активность есть обновлено successfully.',
+                    'title' => 'Действие обновлено',
+                    'body'  => 'Действие обновлено.',
                 ],
             ],
         ],
     ],
 
     'process-message' => [
-        'original-note' => '<br><div><span class="font-bold">Original Заметка</span>: :body</div>',
-        'original-note' => '<br><div><span class="font-bold">Original Заметка</span>: :body</div>',
-        'feedback'      => '<div><span class="font-bold">Feedback</span>: <p>:feedback</p></div>',
+        'original-note' => '<br><div><span class="font-bold">Исходная заметка</span>: :body</div>',
+        'original-note' => '<br><div><span class="font-bold">Исходная заметка</span>: :body</div>',
+        'feedback'      => '<div><span class="font-bold">Отзыв</span>: <p>:feedback</p></div>',
     ],
 
     'mark-as-done' => [
-        'title'   => 'Mark как завершён',
+        'title'   => 'Отметить выполненным',
         'actions' => [
             'done' => [
-                'label' => 'Завершён',
+                'label' => 'Готово',
             ],
         ],
         'form'  => [
             'fields' => [
-                'feedback' => 'Feedback',
+                'feedback' => 'Отзыв',
             ],
         ],
 
         'footer-actions' => [
-            'label' => 'Завершён & График Далее',
+            'label' => 'Готово и запланировать следующее',
 
             'actions' => [
                 'notification' => [
                     'mark-as-done' => [
-                        'title' => 'Активность mark как завершён',
-                        'body'  => 'активность mark как завершён successfully.',
+                        'title' => 'Действие выполнено',
+                        'body'  => 'Действие отмечено как выполненное.',
                     ],
                 ],
             ],

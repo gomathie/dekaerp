@@ -2,46 +2,46 @@
 
 return [
     'modal' => [
-        'title' => 'Working Saa',
+        'title' => 'Saa za kazi',
     ],
 
     'form' => [
         'sections' => [
             'general' => [
-                'title'  => 'Jumla Taarifa',
+                'title'  => 'Taarifa za jumla',
                 'fields' => [
-                    'attendance-name' => 'Mahudhurio Jina',
-                    'attendance-name' => 'Mahudhurio Jina',
-                    'day-of-week'     => 'Siku ya Wiki',
+                    'attendance-name' => 'Jina la kipindi',
+                    'attendance-name' => 'Jina la kipindi',
+                    'day-of-week'     => 'Siku ya wiki',
                 ],
             ],
 
             'timing-information' => [
-                'title' => 'Timing Taarifa',
+                'title' => 'Taarifa za muda',
 
                 'fields' => [
-                    'day-period' => 'Siku Periods',
-                    'week-type'  => 'Wiki Aina',
-                    'work-from'  => 'Work Kutoka',
-                    'work-to'    => 'Work Hadi',
+                    'day-period' => 'Vipindi vya siku',
+                    'week-type'  => 'Aina ya wiki',
+                    'work-from'  => 'Kazi kuanzia',
+                    'work-to'    => 'Kazi hadi',
                 ],
             ],
 
             'date-information' => [
-                'title' => 'Tarehe Taarifa',
+                'title' => 'Taarifa za tarehe',
 
                 'fields' => [
-                    'starting-date' => 'Starting Tarehe',
-                    'ending-date'   => 'Ending Tarehe',
+                    'starting-date' => 'Tarehe ya kuanza',
+                    'ending-date'   => 'Tarehe ya kumaliza',
                 ],
             ],
 
             'additional-information' => [
-                'title' => 'Additional Taarifa',
+                'title' => 'Taarifa za ziada',
 
                 'fields' => [
-                    'durations-days' => 'Duration (Siku)',
-                    'display-type'   => 'Display Aina',
+                    'durations-days' => 'Muda (siku)',
+                    'display-type'   => 'Aina ya maonyesho',
                 ],
             ],
         ],
@@ -49,62 +49,62 @@ return [
 
     'table' => [
         'columns' => [
-            'name'          => 'Mahudhurio Jina',
-            'day-of-week'   => 'Siku ya Wiki',
-            'day-period'    => 'Siku Periods',
-            'work-from'     => 'Work Kutoka',
-            'work-to'       => 'Work Hadi',
-            'starting-date' => 'Starting Tarehe',
-            'ending-date'   => 'Ending Tarehe',
-            'display-type'  => 'Display Aina',
-            'created-by'    => 'Imeundwa Na',
+            'name'          => 'Jina la kipindi',
+            'day-of-week'   => 'Siku ya wiki',
+            'day-period'    => 'Vipindi vya siku',
+            'work-from'     => 'Kazi kuanzia',
+            'work-to'       => 'Kazi hadi',
+            'starting-date' => 'Tarehe ya kuanza',
+            'ending-date'   => 'Tarehe ya kumaliza',
+            'display-type'  => 'Aina ya maonyesho',
+            'created-by'    => 'Imeundwa na',
             'created-at'    => 'Imeundwa',
             'updated-at'    => 'Imesasishwa',
         ],
 
         'groups' => [
-            'activity-type' => 'Shughuli Aina',
-            'assignment'    => 'Assignment',
-            'assigned-to'   => 'Amekabidhiwa Hadi',
-            'interval'      => 'Interval',
-            'delay-unit'    => 'Delay Uniti',
-            'delay-from'    => 'Delay Kutoka',
-            'created-by'    => 'Imeundwa Na',
+            'activity-type' => 'Aina ya shughuli',
+            'assignment'    => 'Ukabidhiwaji',
+            'assigned-to'   => 'Amekabidhiwa',
+            'interval'      => 'Muda kati',
+            'delay-unit'    => 'Kipimo cha ucheleweshaji',
+            'delay-from'    => 'Ucheleweshaji kuanzia',
+            'created-by'    => 'Imeundwa na',
             'created-at'    => 'Imeundwa',
             'updated-at'    => 'Imesasishwa',
         ],
 
         'filters' => [
-            'display-type' => 'Display Aina',
-            'day-of-week'  => 'Siku ya Wiki',
+            'display-type' => 'Aina ya maonyesho',
+            'day-of-week'  => 'Siku ya wiki',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Working Saa imesasishwa',
-                    'body'  => 'working saa ina imesasishwa successfully.',
+                    'title' => 'Saa za kazi zimesasishwa',
+                    'body'  => 'Saa za kazi zimesasishwa kikamilifu.',
                 ],
             ],
 
             'create' => [
                 'notification' => [
-                    'title' => 'Working Saa imeundwa',
-                    'body'  => 'working saa ina imeundwa successfully.',
+                    'title' => 'Saa za kazi zimeundwa',
+                    'body'  => 'Saa za kazi zimeundwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Working Saa imefutwa',
-                    'body'  => 'working saa ina imefutwa successfully.',
+                    'title' => 'Saa za kazi zimefutwa',
+                    'body'  => 'Saa za kazi zimefutwa kikamilifu.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Working Saa restored',
-                    'body'  => 'working saa ina restored successfully.',
+                    'title' => 'Saa za kazi zimerejeshwa',
+                    'body'  => 'Saa za kazi zimerejeshwa kikamilifu.',
                 ],
             ],
         ],
@@ -112,22 +112,22 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Working Saa imefutwa',
-                    'body'  => 'working saa ina imefutwa successfully.',
+                    'title' => 'Saa za kazi zimefutwa',
+                    'body'  => 'Saa za kazi zimefutwa kikamilifu.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Working Saa imefutwa',
-                    'body'  => 'working saa ina imefutwa successfully.',
+                    'title' => 'Saa za kazi zimefutwa',
+                    'body'  => 'Saa za kazi zimefutwa kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Working Saa imefutwa',
-                    'body'  => 'working saa ina imefutwa successfully.',
+                    'title' => 'Saa za kazi zimefutwa',
+                    'body'  => 'Saa za kazi zimefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -136,44 +136,44 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Jumla Taarifa',
+                'title' => 'Taarifa za jumla',
 
                 'entries' => [
-                    'name'        => 'Mahudhurio Jina',
-                    'day-of-week' => 'Siku ya Wiki',
+                    'name'        => 'Jina la kipindi',
+                    'day-of-week' => 'Siku ya wiki',
                 ],
             ],
 
             'timing-information' => [
-                'title' => 'Timing Taarifa',
+                'title' => 'Taarifa za muda',
 
                 'entries' => [
-                    'day-period' => 'Siku Periods',
-                    'week-type'  => 'Wiki Aina',
-                    'work-from'  => 'Work Kutoka',
-                    'work-to'    => 'Work Hadi',
+                    'day-period' => 'Vipindi vya siku',
+                    'week-type'  => 'Aina ya wiki',
+                    'work-from'  => 'Kazi kuanzia',
+                    'work-to'    => 'Kazi hadi',
                 ],
             ],
 
             'date-information' => [
-                'title' => 'Tarehe Taarifa',
+                'title' => 'Taarifa za tarehe',
 
                 'entries' => [
-                    'starting-date' => 'Starting Tarehe',
-                    'ending-date'   => 'Ending Tarehe',
+                    'starting-date' => 'Tarehe ya kuanza',
+                    'ending-date'   => 'Tarehe ya kumaliza',
                 ],
             ],
 
             'additional-information' => [
-                'title' => 'Additional Taarifa',
+                'title' => 'Taarifa za ziada',
 
                 'entries' => [
-                    'durations-days' => 'Duration (Siku)',
-                    'display-type'   => 'Display Aina',
+                    'durations-days' => 'Muda (siku)',
+                    'display-type'   => 'Aina ya maonyesho',
                 ],
             ],
         ],
 
-        'note' => 'Maelezo',
+        'note' => 'Kidokezo',
     ],
 ];

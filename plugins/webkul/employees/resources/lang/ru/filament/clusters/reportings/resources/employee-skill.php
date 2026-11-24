@@ -1,30 +1,30 @@
 <?php
 
 return [
-    'title' => 'Skills',
+    'title' => 'Навыки',
 
     'navigation' => [
-        'title' => 'Skills',
+        'title' => 'Навыки',
     ],
 
     'form' => [
         'sections' => [
             'skill-details' => [
-                'title' => 'Skill Подробности',
+                'title' => 'Сведения о навыке',
 
                 'fields' => [
                     'employee'       => 'Сотрудник',
-                    'skill'          => 'Skill',
-                    'skill-level'    => 'Level',
-                    'skill-type'     => 'Skill Тип',
+                    'skill'          => 'Навык',
+                    'skill-level'    => 'Уровень',
+                    'skill-type'     => 'Тип навыка',
                 ],
             ],
             'addition-information' => [
-                'title' => 'Additional Сведения',
+                'title' => 'Дополнительно',
 
                 'fields' => [
-                    'created-by' => 'Создано От',
-                    'updated-by' => 'Обновлено От',
+                    'created-by' => 'Создал',
+                    'updated-by' => 'Изменил',
                 ],
             ],
         ],
@@ -32,53 +32,53 @@ return [
 
     'table' => [
         'columns' => [
-            'id'              => 'Ид.',
+            'id'              => 'ID',
             'employee'        => 'Сотрудник',
-            'skill'           => 'Skill',
-            'skill-level'     => 'Level',
-            'skill-type'      => 'Skill Тип',
+            'skill'           => 'Навык',
+            'skill-level'     => 'Уровень',
+            'skill-type'      => 'Тип навыка',
             'user'            => 'Пользователь',
-            'proficiency'     => 'Proficiency',
-            'created-by'      => 'Создано От',
+            'proficiency'     => 'Владение',
+            'created-by'      => 'Создал',
             'created-at'      => 'Создано',
         ],
 
         'filters' => [
             'employee'        => 'Сотрудник',
-            'skill'           => 'Skill',
-            'skill-level'     => 'Level',
-            'skill-type'      => 'Skill Тип',
+            'skill'           => 'Навык',
+            'skill-level'     => 'Уровень',
+            'skill-type'      => 'Тип навыка',
             'user'            => 'Пользователь',
-            'created-by'      => 'Создано От',
+            'created-by'      => 'Создал',
             'created-at'      => 'Создано',
-            'updated-at'      => 'Обновлено',
+            'updated-at'      => 'Изменено',
         ],
 
         'groups' => [
             'employee'   => 'Сотрудник',
-            'skill-type' => 'Skill Тип',
+            'skill-type' => 'Тип навыка',
         ],
     ],
 
     'infolist' => [
         'sections' => [
             'skill-details' => [
-                'title' => 'Skill Подробности',
+                'title' => 'Сведения о навыке',
 
                 'entries' => [
                     'employee'        => 'Сотрудник',
-                    'skill'           => 'Skill',
-                    'skill-level'     => 'Level',
-                    'skill-type'      => 'Skill Тип',
+                    'skill'           => 'Навык',
+                    'skill-level'     => 'Уровень',
+                    'skill-type'      => 'Тип навыка',
                 ],
             ],
 
             'additional-information' => [
-                'title' => 'Additional Сведения',
+                'title' => 'Дополнительно',
 
                 'entries' => [
-                    'created-by' => 'Создано От',
-                    'updated-by' => 'Обновлено От',
+                    'created-by' => 'Создал',
+                    'updated-by' => 'Изменил',
                 ],
             ],
         ],

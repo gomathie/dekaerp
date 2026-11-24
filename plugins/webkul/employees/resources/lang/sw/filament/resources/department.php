@@ -15,22 +15,22 @@ return [
     'form' => [
         'sections' => [
             'general' => [
-                'title' => 'Jumla Taarifa',
+                'title' => 'Taarifa za jumla',
 
                 'fields' => [
                     'name'                => 'Jina',
                     'manager'             => 'Meneja',
-                    'parent-department'   => 'Parent Idara',
-                    'manager-placeholder' => 'Chagua Meneja',
+                    'parent-department'   => 'Idara mama',
+                    'manager-placeholder' => 'Chagua meneja',
                     'company'             => 'Kampuni',
-                    'company-placeholder' => 'Chagua Kampuni',
+                    'company-placeholder' => 'Chagua kampuni',
                     'color'               => 'Rangi',
                 ],
             ],
 
             'additional' => [
-                'title'       => 'Additional Taarifa',
-                'description' => 'Additional taarifa kuhusu hii idara.',
+                'title'       => 'Taarifa za ziada',
+                'description' => 'Taarifa za ziada kuhusu idara hii.',
             ],
         ],
     ],
@@ -61,22 +61,22 @@ return [
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Idara restored',
-                    'body'  => 'idara ina restored successfully.',
+                    'title' => 'Idara imerejeshwa',
+                    'body'  => 'Idara imerejeshwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'title' => 'Idara imefutwa',
-                    'body'  => 'idara ina imefutwa successfully.',
+                    'body'  => 'Idara imefutwa kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Idara force imefutwa',
-                    'body'  => 'idara ina force imefutwa successfully.',
+                    'title' => 'Idara imefutwa kabisa',
+                    'body'  => 'Idara imefutwa kabisa.',
                 ],
             ],
         ],
@@ -84,22 +84,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Idara restored',
-                    'body'  => 'idara ina restored successfully.',
+                    'title' => 'Idara zimerejeshwa',
+                    'body'  => 'Idara zimerejeshwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Idara imefutwa',
-                    'body'  => 'idara ina imefutwa successfully.',
+                    'title' => 'Idara zimefutwa',
+                    'body'  => 'Idara zimefutwa kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Idara force imefutwa',
-                    'body'  => 'idara ina force imefutwa successfully.',
+                    'title' => 'Idara zimefutwa kabisa',
+                    'body'  => 'Idara zimefutwa kabisa.',
                 ],
             ],
         ],
@@ -115,7 +115,7 @@ return [
                     'manager'         => 'Meneja',
                     'company'         => 'Kampuni',
                     'color'           => 'Rangi',
-                    'hierarchy-title' => 'Idara Organization',
+                    'hierarchy-title' => 'Muundo wa idara',
                 ],
             ],
         ],

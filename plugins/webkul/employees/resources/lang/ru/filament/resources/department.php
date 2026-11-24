@@ -15,22 +15,22 @@ return [
     'form' => [
         'sections' => [
             'general' => [
-                'title' => 'Общее Сведения',
+                'title' => 'Общие сведения',
 
                 'fields' => [
                     'name'                => 'Название',
                     'manager'             => 'Руководитель',
-                    'parent-department'   => 'Parent Отдел',
-                    'manager-placeholder' => 'Выбрать Руководитель',
+                    'parent-department'   => 'Вышестоящий отдел',
+                    'manager-placeholder' => 'Выберите руководителя',
                     'company'             => 'Компания',
-                    'company-placeholder' => 'Выбрать Компания',
+                    'company-placeholder' => 'Выберите компанию',
                     'color'               => 'Цвет',
                 ],
             ],
 
             'additional' => [
-                'title'       => 'Additional Сведения',
-                'description' => 'Additional сведения около этот отдел.',
+                'title'       => 'Дополнительно',
+                'description' => 'Дополнительные сведения об этом отделе.',
             ],
         ],
     ],
@@ -46,7 +46,7 @@ return [
             'name'       => 'Название',
             'manager'    => 'Руководитель',
             'company'    => 'Компания',
-            'updated-at' => 'Обновлено',
+            'updated-at' => 'Изменено',
             'created-at' => 'Создано',
         ],
 
@@ -54,29 +54,29 @@ return [
             'name'         => 'Название',
             'manager-name' => 'Руководитель',
             'company-name' => 'Компания',
-            'updated-at'   => 'Обновлено',
+            'updated-at'   => 'Изменено',
             'created-at'   => 'Создано',
         ],
 
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Отдел restored',
-                    'body'  => 'отдел есть restored successfully.',
+                    'title' => 'Отдел восстановлен',
+                    'body'  => 'Отдел восстановлен.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Отдел удалено',
-                    'body'  => 'отдел есть удалено successfully.',
+                    'title' => 'Отдел удалён',
+                    'body'  => 'Отдел удалён.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Отдел force удалено',
-                    'body'  => 'отдел есть force удалено successfully.',
+                    'title' => 'Отдел удалён навсегда',
+                    'body'  => 'Отдел удалён навсегда.',
                 ],
             ],
         ],
@@ -84,22 +84,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Отделы restored',
-                    'body'  => 'отделы есть restored successfully.',
+                    'title' => 'Отделы восстановлены',
+                    'body'  => 'Отделы восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Отделы удалено',
-                    'body'  => 'отделы есть удалено successfully.',
+                    'title' => 'Отделы удалены',
+                    'body'  => 'Отделы удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Отделы force удалено',
-                    'body'  => 'отделы есть force удалено successfully.',
+                    'title' => 'Отделы удалены навсегда',
+                    'body'  => 'Отделы удалены навсегда.',
                 ],
             ],
         ],
@@ -115,7 +115,7 @@ return [
                     'manager'         => 'Руководитель',
                     'company'         => 'Компания',
                     'color'           => 'Цвет',
-                    'hierarchy-title' => 'Отдел Organization',
+                    'hierarchy-title' => 'Структура отдела',
                 ],
             ],
         ],

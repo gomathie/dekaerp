@@ -2,39 +2,39 @@
 
     return [
         'setup' => [
-            'title'               => 'Followers',
-            'submit-action-title' => 'Ongeza Follower',
-            'tooltip'             => 'Ongeza Follower',
+            'title'               => 'Wafuasi',
+            'submit-action-title' => 'Ongeza mfuasi',
+            'tooltip'             => 'Ongeza mfuasi',
 
             'form' => [
                 'fields' => [
-                    'recipients'  => 'Recipients',
-                    'notify-user' => 'Notify Mtumiaji',
-                    'add-a-note'  => 'Ongeza maelezo',
+                    'recipients'  => 'Wapokeaji',
+                    'notify-user' => 'Arifu mtumiaji',
+                    'add-a-note'  => 'Ongeza kidokezo',
                 ],
             ],
 
             'actions' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Follower Added',
-                        'body'  => 'Follower ina added Successfully.',
+                        'title' => 'Mfuasi ameongezwa',
+                        'body'  => 'Mfuasi ameongezwa kikamilifu.',
                     ],
 
                     'partial_message' => [
-                        'title'    => 'Ujumbe imetumwa na notice',
-                        'single'   => ':count follower ilikuwa si notified due hadi haipo barua pepe: :names',
-                        'multiple' => ':count followers zilikuwa si notified due hadi haipo emails: :names',
+                        'title'    => 'Ujumbe umetumwa pamoja na tahadhari',
+                        'single'   => 'Mfuasi :count hakuarifiwa kwa kukosa barua pepe: :names',
+                        'multiple' => 'Wafuasi :count hawakuarifiwa kwa kukosa barua pepe: :names',
                     ],
 
                     'error' => [
-                        'title' => 'Follower added hitilafu',
-                        'body'  => 'Imeshindwa hadi ongeza ":partner" kama follower',
+                        'title' => 'Hitilafu ya kuongeza mfuasi',
+                        'body'  => 'Imeshindwa kumwongeza ":partner" kama mfuasi',
                     ],
                 ],
 
                 'mail' => [
-                    'subject' => 'Mwaliko hadi follow :model: :department',
+                    'subject' => 'Mwaliko wa kufuatilia :model: :department',
                 ],
             ],
         ],

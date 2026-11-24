@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Manage Wafanyakazi',
+        'title' => 'Simamia wafanyakazi',
     ],
 ];

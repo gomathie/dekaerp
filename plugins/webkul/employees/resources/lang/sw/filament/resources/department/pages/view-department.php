@@ -5,7 +5,7 @@ return [
         'delete' => [
             'notification' => [
                 'title' => 'Idara imefutwa',
-                'body'  => 'idara ina imefutwa successfully.',
+                'body'  => 'Idara imefutwa kikamilifu.',
             ],
         ],
     ],

@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'home'   => 'Главная',
-    'office' => 'Office',
+    'home'   => 'Дом',
+    'office' => 'Офис',
     'other'  => 'Другое',
 ];

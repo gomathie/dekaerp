@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'title' => 'Employment Types',
+    'title' => 'Типы занятости',
 
     'navigation' => [
-        'title' => 'Employment Types',
-        'group' => 'Подбор',
+        'title' => 'Типы занятости',
+        'group' => 'Подбор персонала',
     ],
 
     'form' => [
         'fields' => [
-            'name'    => 'Employment Тип',
+            'name'    => 'Тип занятости',
             'code'    => 'Код',
             'country' => 'Страна',
         ],
@@ -18,44 +18,44 @@ return [
 
     'table' => [
         'columns' => [
-            'id'         => 'Ид.',
-            'name'       => 'Employment Тип',
+            'id'         => 'ID',
+            'name'       => 'Тип занятости',
             'code'       => 'Код',
             'country'    => 'Страна',
-            'created-by' => 'Создано От',
+            'created-by' => 'Создал',
             'created-at' => 'Создано',
-            'updated-at' => 'Обновлено',
+            'updated-at' => 'Изменено',
         ],
 
         'filters' => [
-            'name'       => 'Employment Тип',
+            'name'       => 'Тип занятости',
             'country'    => 'Страна',
-            'created-by' => 'Создано От',
-            'updated-at' => 'Обновлено',
+            'created-by' => 'Создал',
+            'updated-at' => 'Изменено',
             'created-at' => 'Создано',
         ],
 
         'groups' => [
-            'name'       => 'Employment Тип',
+            'name'       => 'Тип занятости',
             'country'    => 'Страна',
             'code'       => 'Код',
-            'created-by' => 'Создано От',
+            'created-by' => 'Создал',
             'created-at' => 'Создано',
-            'updated-at' => 'Обновлено',
+            'updated-at' => 'Изменено',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Employment Тип',
-                    'body'  => 'Employment Тип есть edited successfully.',
+                    'title' => 'Тип занятости изменён',
+                    'body'  => 'Тип занятости изменён.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Employment Тип удалено',
-                    'body'  => 'Employment Тип есть удалено successfully.',
+                    'title' => 'Тип занятости удалён',
+                    'body'  => 'Тип занятости удалён.',
                 ],
             ],
         ],
@@ -63,8 +63,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Employment Types удалено',
-                    'body'  => 'Employment Types есть удалено successfully.',
+                    'title' => 'Типы занятости удалены',
+                    'body'  => 'Типы занятости удалены.',
                 ],
             ],
         ],
@@ -72,8 +72,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Employment Types',
-                    'body'  => 'Employment Types есть создано successfully.',
+                    'title' => 'Тип занятости создан',
+                    'body'  => 'Тип занятости создан.',
                 ],
             ],
         ],
@@ -81,7 +81,7 @@ return [
 
     'infolist' => [
         'entries' => [
-            'name'    => 'Employment Тип',
+            'name'    => 'Тип занятости',
             'code'    => 'Код',
             'country' => 'Страна',
         ],

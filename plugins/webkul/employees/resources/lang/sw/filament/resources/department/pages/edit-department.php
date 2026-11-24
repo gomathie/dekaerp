@@ -5,14 +5,14 @@ return [
         'success' => [
             'notification' => [
                 'title' => 'Idara imesasishwa',
-                'body'  => 'idara ina imesasishwa successfully.',
+                'body'  => 'Idara imesasishwa kikamilifu.',
             ],
         ],
 
         'error' => [
             'notification' => [
-                'title' => 'Idara sasisha imeshindwa',
-                'body'  => 'ilikuwa hitilafu updating idara.',
+                'title' => 'Imeshindwa kusasisha idara',
+                'body'  => 'Kulikuwa na hitilafu wakati wa kusasisha idara.',
             ],
         ],
     ],
@@ -21,7 +21,7 @@ return [
         'delete' => [
             'notification' => [
                 'title' => 'Idara imefutwa',
-                'body'  => 'idara ina imefutwa successfully.',
+                'body'  => 'Idara imefutwa kikamilifu.',
             ],
         ],
     ],

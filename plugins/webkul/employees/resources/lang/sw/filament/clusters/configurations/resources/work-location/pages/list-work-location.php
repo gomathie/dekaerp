@@ -3,18 +3,18 @@
 return [
     'tabs' => [
         'all'      => 'Zote',
-        'office'   => 'Office',
+        'office'   => 'Ofisini',
         'home'     => 'Nyumbani',
         'other'    => 'Nyingine',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Work Mahali',
+            'label' => 'Eneo jipya la kazi',
 
             'notification' => [
-                'title' => 'Work Mahali imeundwa',
-                'body'  => 'work mahali ina imeundwa successfully.',
+                'title' => 'Eneo la kazi limeundwa',
+                'body'  => 'Eneo la kazi limeundwa kikamilifu.',
             ],
         ],
     ],

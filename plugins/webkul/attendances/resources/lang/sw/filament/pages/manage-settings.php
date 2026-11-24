@@ -2,25 +2,25 @@
 
 return [
     'navigation' => [
-        'title' => 'Mahudhurio mipangilio',
+        'title' => 'Mipangilio ya mahudhurio',
     ],
-    'title'      => 'Mahudhurio mipangilio',
-    'subheading' => 'Mahudhurio kwa :company. Switch hii washa hapa, kisha wafanyakazi unaweza clock katika kutoka dashibodi.',
-    'no-company' => 'Chagua kampuni hadi manage yake mahudhurio mipangilio.',
+    'title'      => 'Mipangilio ya mahudhurio',
+    'subheading' => 'Mahudhurio ya :company. Yawashe hapa, kisha wafanyakazi wataweza kuingia kazini kutoka dashibodi.',
+    'no-company' => 'Chagua kampuni ili kusimamia mipangilio yake ya mahudhurio.',
     'sections'   => [
         'status' => 'Hali',
-        'rules'  => 'Rules',
+        'rules'  => 'Kanuni',
     ],
     'status' => [
-        'enabled'  => 'Washa kwa hii kampuni',
-        'disabled' => 'Zima kwa hii kampuni',
+        'enabled'  => 'Imewashwa kwa kampuni hii',
+        'disabled' => 'Imezimwa kwa kampuni hii',
     ],
     'fields' => [
-        'auto-checkout'         => 'Kiotomatiki hundi-nje baada ya',
-        'auto-checkout-help'    => 'forgotten hundi-nje ni imefungwa baada ya hii nyingi saa na flagged kwa review.',
-        'capture-location'      => 'Mahali saa clock-katika',
-        'capture-location-help' => 'Zima: nothing ni recorded. Si lazima: recorded wakati device shares hii. Inahitajika: clock-katika needs hii.',
-        'late-tolerance'        => 'Late baada ya',
+        'auto-checkout'         => 'Kutoka kiotomatiki baada ya',
+        'auto-checkout-help'    => 'Kutoka kulikosahaulika hufungwa baada ya saa hizi na kuwekwa alama ya kukaguliwa.',
+        'capture-location'      => 'Eneo wakati wa kuingia',
+        'capture-location-help' => 'Imezimwa: hakuna kinachorekodiwa. Si lazima: hurekodiwa kifaa kikilishiriki. Lazima: kuingia kunalihitaji.',
+        'late-tolerance'        => 'Kuchelewa baada ya',
         'overtime-tolerance'    => 'Muda wa ziada baada ya',
     ],
     'units' => [
@@ -30,19 +30,19 @@ return [
     'actions' => [
         'save'   => 'Hifadhi',
         'enable' => [
-            'label'        => 'Switch washa',
-            'heading'      => 'Switch mahudhurio washa?',
-            'description'  => 'Wafanyakazi ya hii kampuni na mfanyakazi rekodi unaweza clock katika na nje kutoka dashibodi. Managers see yao timu.',
-            'notification' => 'Mahudhurio ni washa kwa hii kampuni.',
+            'label'        => 'Washa',
+            'heading'      => 'Washa mahudhurio?',
+            'description'  => 'Wafanyakazi wa kampuni hii wenye rekodi ya mfanyakazi wanaweza kuingia na kutoka kazini kutoka dashibodi. Wasimamizi huona timu yao.',
+            'notification' => 'Mahudhurio yamewashwa kwa kampuni hii.',
         ],
         'disable' => [
-            'label'        => 'Switch zima',
-            'heading'      => 'Switch mahudhurio zima?',
-            'description'  => 'Clocking katika vituo na mahudhurio screens ni imefichwa. Existing rekodi ni kept.',
-            'notification' => 'Mahudhurio ni zima kwa hii kampuni.',
+            'label'        => 'Zima',
+            'heading'      => 'Zima mahudhurio?',
+            'description'  => 'Kuingia kazini kunasimama na skrini za mahudhurio zinafichwa. Rekodi zilizopo zinabaki.',
+            'notification' => 'Mahudhurio yamezimwa kwa kampuni hii.',
         ],
     ],
     'notifications' => [
-        'saved' => 'Mahudhurio mipangilio saved.',
+        'saved' => 'Mipangilio ya mahudhurio imehifadhiwa.',
     ],
 ];

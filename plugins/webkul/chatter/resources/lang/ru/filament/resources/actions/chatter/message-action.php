@@ -2,16 +2,16 @@
 
 return [
     'setup' => [
-        'title'        => 'Send Сообщение',
-        'submit-title' => 'Send',
+        'title'        => 'Отправить сообщение',
+        'submit-title' => 'Отправить',
 
         'form' => [
             'fields' => [
-                'hide-subject'            => 'Скрыть Subject',
-                'add-subject'             => 'Добавить Subject',
-                'subject'                 => 'Subject',
-                'write-message-here'      => 'Запись ваш сообщение здесь',
-                'attachments-helper-text' => 'Max файл размер: 10MB. Разрешено types: Images, PDF, Word, Excel, Text',
+                'hide-subject'            => 'Скрыть тему',
+                'add-subject'             => 'Добавить тему',
+                'subject'                 => 'Тема',
+                'write-message-here'      => 'Введите сообщение',
+                'attachments-helper-text' => 'Макс. размер файла: 10 МБ. Типы: изображения, PDF, Word, Excel, текст',
             ],
         ],
 
@@ -19,12 +19,12 @@ return [
             'notification' => [
                 'success' => [
                     'title' => 'Сообщение отправлено',
-                    'body'  => 'Ваш сообщение есть send successfully.',
+                    'body'  => 'Ваше сообщение отправлено.',
                 ],
 
                 'error' => [
-                    'title' => 'Сообщение отправлено ошибка',
-                    'body'  => 'Не удалось до send ваш сообщение',
+                    'title' => 'Ошибка отправки сообщения',
+                    'body'  => 'Не удалось отправить сообщение',
                 ],
             ],
 

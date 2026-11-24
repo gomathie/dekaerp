@@ -2,39 +2,39 @@
 
     return [
         'setup' => [
-            'title'               => 'Followers',
-            'submit-action-title' => 'Добавить Follower',
-            'tooltip'             => 'Добавить Follower',
+            'title'               => 'Подписчики',
+            'submit-action-title' => 'Добавить подписчика',
+            'tooltip'             => 'Добавить подписчика',
 
             'form' => [
                 'fields' => [
-                    'recipients'  => 'Recipients',
-                    'notify-user' => 'Notify Пользователь',
-                    'add-a-note'  => 'Добавить заметка',
+                    'recipients'  => 'Получатели',
+                    'notify-user' => 'Уведомить пользователя',
+                    'add-a-note'  => 'Добавить примечание',
                 ],
             ],
 
             'actions' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Follower Added',
-                        'body'  => 'Follower есть added Successfully.',
+                        'title' => 'Подписчик добавлен',
+                        'body'  => 'Подписчик добавлен.',
                     ],
 
                     'partial_message' => [
-                        'title'    => 'Сообщение отправлено с notice',
-                        'single'   => ':count follower был не notified due до отсутствует эл. почта: :names',
-                        'multiple' => ':count followers были не notified due до отсутствует emails: :names',
+                        'title'    => 'Сообщение отправлено с замечанием',
+                        'single'   => 'Не уведомлено подписчиков без эл. почты: :count (:names)',
+                        'multiple' => 'Не уведомлено подписчиков без эл. почты: :count (:names)',
                     ],
 
                     'error' => [
-                        'title' => 'Follower added ошибка',
-                        'body'  => 'Не удалось до добавить ":partner" как follower',
+                        'title' => 'Ошибка добавления подписчика',
+                        'body'  => 'Не удалось добавить «:partner» в подписчики',
                     ],
                 ],
 
                 'mail' => [
-                    'subject' => 'Приглашение до follow :model: :department',
+                    'subject' => 'Приглашение следить за :model: :department',
                 ],
             ],
         ],

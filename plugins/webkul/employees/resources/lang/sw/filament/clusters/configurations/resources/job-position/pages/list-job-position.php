@@ -2,13 +2,13 @@
 
 return [
     'tabs' => [
-        'my-department' => 'Yangu Idara',
-        'archived'      => 'Imehifadhiwa',
+        'my-department' => 'Idara yangu',
+        'archived'      => 'Kwenye kumbukumbu',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Kazi Cheo',
+            'label' => 'Cheo cha kazi',
         ],
     ],
 ];

@@ -1,30 +1,30 @@
 <?php
 
 return [
-    'empty' => 'Nothing hadi ripoti kwa hii kipindi.',
+    'empty' => 'Hakuna cha kuripoti kwa kipindi hiki.',
     'range' => [
-        'from'  => 'Kutoka',
-        'until' => 'Mpaka',
+        'from'  => 'Kuanzia',
+        'until' => 'Hadi',
     ],
     'columns' => [
         'employee'         => 'Mfanyakazi',
         'date'             => 'Tarehe',
-        'check_in'         => 'Clock katika',
-        'late_minutes'     => 'Late (dakika)',
-        'worked_minutes'   => 'Worked (dakika)',
-        'expected_minutes' => 'Scheduled (dakika)',
+        'check_in'         => 'Kuingia',
+        'late_minutes'     => 'Kuchelewa (dakika)',
+        'worked_minutes'   => 'Muda wa kazi (dakika)',
+        'expected_minutes' => 'Uliopangwa (dakika)',
         'overtime_minutes' => 'Muda wa ziada (dakika)',
     ],
     'lateness' => [
         'title'      => 'Kuchelewa',
-        'subheading' => 'Clock-ins baada ya scheduled anza, beyond kampuni tolerance.',
+        'subheading' => 'Kuingia baada ya muda uliopangwa wa kuanza, zaidi ya uvumilivu wa kampuni.',
     ],
     'overtime' => [
         'title'      => 'Muda wa ziada',
-        'subheading' => 'Time worked zilizopita scheduled length, beyond kampuni tolerance.',
+        'subheading' => 'Muda wa kazi zaidi ya urefu uliopangwa, zaidi ya uvumilivu wa kampuni.',
     ],
     'absence' => [
         'title'      => 'Kutokuwepo',
-        'subheading' => 'Scheduled working siku na hakuna mahudhurio. Imeidhinishwa likizo ni si counted.',
+        'subheading' => 'Siku za kazi zilizopangwa bila mahudhurio. Likizo iliyoidhinishwa haihesabiwi.',
     ],
 ];

@@ -1,57 +1,57 @@
 <?php
 
 return [
-    'title' => 'Kazi Positions',
+    'title' => 'Vyeo vya kazi',
 
     'navigation' => [
-        'title' => 'Kazi Positions',
-        'group' => 'Ajira',
+        'title' => 'Vyeo vya kazi',
+        'group' => 'Uajiri',
     ],
 
     'form' => [
         'sections' => [
             'employment-information' => [
-                'title' => 'Employment Taarifa',
+                'title' => 'Taarifa za ajira',
 
                 'fields' => [
-                    'job-position-title'         => 'Kazi Cheo Kichwa',
-                    'job-position-title-tooltip' => 'Ingiza official kazi cheo kichwa',
+                    'job-position-title'         => 'Jina la cheo cha kazi',
+                    'job-position-title-tooltip' => 'Weka jina rasmi la cheo cha kazi',
                     'department'                 => 'Idara',
-                    'department-modal-title'     => 'Unda Idara',
-                    'company-modal-title'        => 'Unda Kampuni',
-                    'job-location'               => 'Kazi Mahali',
-                    'industry'                   => 'Industry',
+                    'department-modal-title'     => 'Unda idara',
+                    'company-modal-title'        => 'Unda kampuni',
+                    'job-location'               => 'Mahali pa kazi',
+                    'industry'                   => 'Sekta',
                     'company'                    => 'Kampuni',
-                    'employment-type'            => 'Employment Aina',
-                    'recruiter'                  => 'Recruiter',
-                    'interviewer'                => 'Interviewer',
+                    'employment-type'            => 'Aina ya ajira',
+                    'recruiter'                  => 'Afisa uajiri',
+                    'interviewer'                => 'Msaili',
                 ],
             ],
 
             'job-description' => [
-                'title' => 'Kazi Maelezo',
+                'title' => 'Maelezo ya kazi',
 
                 'fields' => [
-                    'job-description'  => 'Kazi Maelezo',
-                    'job-requirements' => 'Kazi Requirements',
+                    'job-description'  => 'Maelezo ya kazi',
+                    'job-requirements' => 'Mahitaji ya kazi',
                 ],
             ],
 
             'workforce-planning' => [
-                'title' => 'Workforce Planning',
+                'title' => 'Mipango ya wafanyakazi',
 
                 'fields' => [
-                    'recruitment-target'         => 'Ajira Lengwa',
-                    'date-from'                  => 'Tarehe Kutoka',
-                    'date-to'                    => 'Tarehe Hadi',
-                    'expected-skills'            => 'Inatarajiwa Skills',
-                    'employment-type'            => 'Employment Aina',
+                    'recruitment-target'         => 'Lengo la uajiri',
+                    'date-from'                  => 'Tarehe kuanzia',
+                    'date-to'                    => 'Tarehe hadi',
+                    'expected-skills'            => 'Ujuzi unaotarajiwa',
+                    'employment-type'            => 'Aina ya ajira',
                     'status'                     => 'Hali',
                 ],
             ],
 
             'position-status' => [
-                'title' => 'Cheo Hali',
+                'title' => 'Hali ya cheo',
 
                 'fields' => [
                     'status' => 'Hali',
@@ -62,36 +62,36 @@ return [
 
     'table' => [
         'columns' => [
-            'id'                 => 'Kitambulisho',
-            'name'               => 'Kazi Cheo',
+            'id'                 => 'ID',
+            'name'               => 'Cheo cha kazi',
             'department'         => 'Idara',
-            'job-position'       => 'Kazi Cheo',
+            'job-position'       => 'Cheo cha kazi',
             'company'            => 'Kampuni',
-            'expected-employees' => 'Inatarajiwa Wafanyakazi',
-            'current-employees'  => 'Sasa Wafanyakazi',
+            'expected-employees' => 'Wafanyakazi wanaotarajiwa',
+            'current-employees'  => 'Wafanyakazi wa sasa',
             'status'             => 'Hali',
-            'created-by'         => 'Imeundwa Na',
+            'created-by'         => 'Imeundwa na',
             'created-at'         => 'Imeundwa',
             'updated-at'         => 'Imesasishwa',
         ],
 
         'filters' => [
             'department'      => 'Idara',
-            'employment-type' => 'Employment Aina',
-            'job-position'    => 'Kazi Cheo',
+            'employment-type' => 'Aina ya ajira',
+            'job-position'    => 'Cheo cha kazi',
             'company'         => 'Kampuni',
             'status'          => 'Hali',
-            'created-by'      => 'Imeundwa Na',
+            'created-by'      => 'Imeundwa na',
             'updated-at'      => 'Imesasishwa',
             'created-at'      => 'Imeundwa',
         ],
 
         'groups' => [
-            'job-position'    => 'Kazi Cheo',
+            'job-position'    => 'Cheo cha kazi',
             'company'         => 'Kampuni',
             'department'      => 'Idara',
-            'employment-type' => 'Employment Aina',
-            'created-by'      => 'Imeundwa Na',
+            'employment-type' => 'Aina ya ajira',
+            'created-by'      => 'Imeundwa na',
             'created-at'      => 'Imeundwa',
             'updated-at'      => 'Imesasishwa',
         ],
@@ -99,15 +99,15 @@ return [
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Kazi Cheo restored',
-                    'body'  => 'Kazi Cheo ina restored successfully.',
+                    'title' => 'Cheo cha kazi kimerejeshwa',
+                    'body'  => 'Cheo cha kazi kimerejeshwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Kazi Cheo imefutwa',
-                    'body'  => 'Kazi Cheo ina imefutwa successfully.',
+                    'title' => 'Cheo cha kazi kimefutwa',
+                    'body'  => 'Cheo cha kazi kimefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -115,22 +115,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Kazi Positions restored',
-                    'body'  => 'Kazi Positions ina restored successfully.',
+                    'title' => 'Vyeo vya kazi vimerejeshwa',
+                    'body'  => 'Vyeo vya kazi vimerejeshwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Kazi Positions imefutwa',
-                    'body'  => 'Kazi Positions ina imefutwa successfully.',
+                    'title' => 'Vyeo vya kazi vimefutwa',
+                    'body'  => 'Vyeo vya kazi vimefutwa kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Kazi Positions force imefutwa',
-                    'body'  => 'Kazi Positions ina force imefutwa successfully.',
+                    'title' => 'Vyeo vya kazi vimefutwa kabisa',
+                    'body'  => 'Vyeo vya kazi vimefutwa kabisa.',
                 ],
             ],
         ],
@@ -138,8 +138,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Kazi Positions',
-                    'body'  => 'Kazi Positions ina imeundwa successfully.',
+                    'title' => 'Cheo cha kazi kimeundwa',
+                    'body'  => 'Cheo cha kazi kimeundwa kikamilifu.',
                 ],
             ],
         ],
@@ -148,38 +148,38 @@ return [
     'infolist' => [
         'sections' => [
             'employment-information' => [
-                'title' => 'Employment Taarifa',
+                'title' => 'Taarifa za ajira',
 
                 'entries' => [
-                    'job-position-title' => 'Kazi Cheo Kichwa',
+                    'job-position-title' => 'Jina la cheo cha kazi',
                     'department'         => 'Idara',
                     'company'            => 'Kampuni',
-                    'employment-type'    => 'Employment Aina',
-                    'job-location'       => 'Kazi Mahali',
-                    'industry'           => 'Industry',
+                    'employment-type'    => 'Aina ya ajira',
+                    'job-location'       => 'Mahali pa kazi',
+                    'industry'           => 'Sekta',
                 ],
             ],
             'job-description' => [
-                'title' => 'Kazi Maelezo',
+                'title' => 'Maelezo ya kazi',
 
                 'entries' => [
-                    'job-description'  => 'Kazi Maelezo',
-                    'job-requirements' => 'Kazi Requirements',
+                    'job-description'  => 'Maelezo ya kazi',
+                    'job-requirements' => 'Mahitaji ya kazi',
                 ],
             ],
             'work-planning' => [
-                'title' => 'Workforce Planning',
+                'title' => 'Mipango ya wafanyakazi',
 
                 'entries' => [
-                    'expected-employees' => 'Inatarajiwa Wafanyakazi',
-                    'current-employees'  => 'Sasa Wafanyakazi',
-                    'date-from'          => 'Tarehe Kutoka',
-                    'date-to'            => 'Tarehe Hadi',
-                    'recruitment-target' => 'Ajira Lengwa',
+                    'expected-employees' => 'Wafanyakazi wanaotarajiwa',
+                    'current-employees'  => 'Wafanyakazi wa sasa',
+                    'date-from'          => 'Tarehe kuanzia',
+                    'date-to'            => 'Tarehe hadi',
+                    'recruitment-target' => 'Lengo la uajiri',
                 ],
             ],
             'position-status' => [
-                'title' => 'Cheo Hali',
+                'title' => 'Hali ya cheo',
 
                 'entries' => [
                     'status' => 'Hali',

@@ -3,11 +3,11 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Departure Причина',
+            'label' => 'Новая причина увольнения',
 
             'notification' => [
-                'title' => 'Departure Причина создано',
-                'body'  => 'departure причина есть создано successfully.',
+                'title' => 'Причина увольнения создана',
+                'body'  => 'Причина увольнения создана.',
             ],
         ],
     ],

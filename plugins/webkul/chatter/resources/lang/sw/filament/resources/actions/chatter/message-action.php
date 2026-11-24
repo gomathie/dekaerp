@@ -2,29 +2,29 @@
 
 return [
     'setup' => [
-        'title'        => 'Send Ujumbe',
-        'submit-title' => 'Send',
+        'title'        => 'Tuma ujumbe',
+        'submit-title' => 'Tuma',
 
         'form' => [
             'fields' => [
-                'hide-subject'            => 'Ficha Subject',
-                'add-subject'             => 'Ongeza Subject',
-                'subject'                 => 'Subject',
-                'write-message-here'      => 'Kuandika yako ujumbe hapa',
-                'attachments-helper-text' => 'Max faili ukubwa: 10MB. Inaruhusiwa types: Images, PDF, Word, Excel, Text',
+                'hide-subject'            => 'Ficha mada',
+                'add-subject'             => 'Ongeza mada',
+                'subject'                 => 'Mada',
+                'write-message-here'      => 'Andika ujumbe wako hapa',
+                'attachments-helper-text' => 'Ukubwa wa juu wa faili: 10MB. Aina zinazoruhusiwa: Picha, PDF, Word, Excel, Maandishi',
             ],
         ],
 
         'actions' => [
             'notification' => [
                 'success' => [
-                    'title' => 'Ujumbe imetumwa',
-                    'body'  => 'Yako ujumbe ina send successfully.',
+                    'title' => 'Ujumbe umetumwa',
+                    'body'  => 'Ujumbe wako umetumwa kikamilifu.',
                 ],
 
                 'error' => [
-                    'title' => 'Ujumbe imetumwa hitilafu',
-                    'body'  => 'Imeshindwa hadi send yako ujumbe',
+                    'title' => 'Hitilafu ya kutuma ujumbe',
+                    'body'  => 'Imeshindwa kutuma ujumbe wako',
                 ],
             ],
 

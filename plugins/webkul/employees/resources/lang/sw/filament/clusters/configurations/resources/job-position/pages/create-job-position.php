@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Kazi Cheo imeundwa',
-        'body'  => 'kazi cheo ina imeundwa successfully.',
+        'title' => 'Cheo cha kazi kimeundwa',
+        'body'  => 'Cheo cha kazi kimeundwa kikamilifu.',
     ],
 ];

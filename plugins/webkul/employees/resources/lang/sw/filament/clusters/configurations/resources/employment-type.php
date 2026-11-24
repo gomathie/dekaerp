@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'title' => 'Employment Types',
+    'title' => 'Aina za ajira',
 
     'navigation' => [
-        'title' => 'Employment Types',
-        'group' => 'Ajira',
+        'title' => 'Aina za ajira',
+        'group' => 'Uajiri',
     ],
 
     'form' => [
         'fields' => [
-            'name'    => 'Employment Aina',
+            'name'    => 'Aina ya ajira',
             'code'    => 'Msimbo',
             'country' => 'Nchi',
         ],
@@ -18,28 +18,28 @@ return [
 
     'table' => [
         'columns' => [
-            'id'         => 'Kitambulisho',
-            'name'       => 'Employment Aina',
+            'id'         => 'ID',
+            'name'       => 'Aina ya ajira',
             'code'       => 'Msimbo',
             'country'    => 'Nchi',
-            'created-by' => 'Imeundwa Na',
+            'created-by' => 'Imeundwa na',
             'created-at' => 'Imeundwa',
             'updated-at' => 'Imesasishwa',
         ],
 
         'filters' => [
-            'name'       => 'Employment Aina',
+            'name'       => 'Aina ya ajira',
             'country'    => 'Nchi',
-            'created-by' => 'Imeundwa Na',
+            'created-by' => 'Imeundwa na',
             'updated-at' => 'Imesasishwa',
             'created-at' => 'Imeundwa',
         ],
 
         'groups' => [
-            'name'       => 'Employment Aina',
+            'name'       => 'Aina ya ajira',
             'country'    => 'Nchi',
             'code'       => 'Msimbo',
-            'created-by' => 'Imeundwa Na',
+            'created-by' => 'Imeundwa na',
             'created-at' => 'Imeundwa',
             'updated-at' => 'Imesasishwa',
         ],
@@ -47,15 +47,15 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Employment Aina',
-                    'body'  => 'Employment Aina ina edited successfully.',
+                    'title' => 'Aina ya ajira imehaririwa',
+                    'body'  => 'Aina ya ajira imehaririwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Employment Aina imefutwa',
-                    'body'  => 'Employment Aina ina imefutwa successfully.',
+                    'title' => 'Aina ya ajira imefutwa',
+                    'body'  => 'Aina ya ajira imefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -63,8 +63,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Employment Types imefutwa',
-                    'body'  => 'Employment Types ina imefutwa successfully.',
+                    'title' => 'Aina za ajira zimefutwa',
+                    'body'  => 'Aina za ajira zimefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -72,8 +72,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Employment Types',
-                    'body'  => 'Employment Types ina imeundwa successfully.',
+                    'title' => 'Aina ya ajira imeundwa',
+                    'body'  => 'Aina ya ajira imeundwa kikamilifu.',
                 ],
             ],
         ],
@@ -81,7 +81,7 @@ return [
 
     'infolist' => [
         'entries' => [
-            'name'    => 'Employment Aina',
+            'name'    => 'Aina ya ajira',
             'code'    => 'Msimbo',
             'country' => 'Nchi',
         ],

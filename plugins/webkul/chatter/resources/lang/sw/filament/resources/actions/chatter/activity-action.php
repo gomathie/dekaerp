@@ -2,38 +2,38 @@
 
 return [
     'setup' => [
-        'title'               => 'Ratiba Shughuli',
-        'submit-action-title' => 'Ratiba',
+        'title'               => 'Panga shughuli',
+        'submit-action-title' => 'Panga',
 
         'form' => [
             'fields' => [
-                'activity-plan' => 'Shughuli Plan',
-                'plan-date'     => 'Plan Tarehe',
-                'plan-summary'  => 'Plan Muhtasari',
-                'activity-type' => 'Shughuli Aina',
-                'due-date'      => 'Tarehe ya malipo',
+                'activity-plan' => 'Mpango wa shughuli',
+                'plan-date'     => 'Tarehe ya mpango',
+                'plan-summary'  => 'Muhtasari wa mpango',
+                'activity-type' => 'Aina ya shughuli',
+                'due-date'      => 'Tarehe ya mwisho',
                 'summary'       => 'Muhtasari',
-                'assigned-to'   => 'Amekabidhiwa Hadi',
-                'log-note'      => 'Log maelezo',
-                'body'          => 'Aina yako ujumbe hapa',
+                'assigned-to'   => 'Amekabidhiwa',
+                'log-note'      => 'Andika kidokezo',
+                'body'          => 'Andika ujumbe wako hapa',
             ],
         ],
 
         'actions' => [
             'notification' => [
                 'success' => [
-                    'title' => 'Shughuli Imeundwa',
-                    'body'  => 'shughuli ina imeundwa.',
+                    'title' => 'Shughuli imeundwa',
+                    'body'  => 'Shughuli imeundwa.',
                 ],
 
                 'warning'  => [
-                    'title' => 'Hakuna mpya faili',
-                    'body'  => 'Zote faili ina tayari uploaded.',
+                    'title' => 'Hakuna faili mpya',
+                    'body'  => 'Faili zote zimeshapakiwa.',
                 ],
 
                 'error' => [
-                    'title' => 'Shughuli creation imeshindwa',
-                    'body'  => 'Imeshindwa hadi unda shughuli ',
+                    'title' => 'Imeshindwa kuunda shughuli',
+                    'body'  => 'Imeshindwa kuunda shughuli ',
                 ],
             ],
         ],

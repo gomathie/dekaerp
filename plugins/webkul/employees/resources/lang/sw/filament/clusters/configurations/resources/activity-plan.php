@@ -2,13 +2,13 @@
 
 return [
     'navigation' => [
-        'title' => 'Shughuli Plans',
+        'title' => 'Mipango ya shughuli',
     ],
 
     'form' => [
         'sections' => [
             'general' => [
-                'title'  => 'Jumla Taarifa',
+                'title'  => 'Taarifa za jumla',
                 'fields' => [
                     'name'       => 'Jina',
                     'status'     => 'Hali',
@@ -26,7 +26,7 @@ return [
             'department' => 'Idara',
             'company'    => 'Kampuni',
             'manager'    => 'Meneja',
-            'created-by' => 'Imeundwa Na',
+            'created-by' => 'Imeundwa na',
             'created-at' => 'Imeundwa',
             'updated-at' => 'Imesasishwa',
         ],
@@ -34,7 +34,7 @@ return [
         'filters' => [
             'name'           => 'Jina',
             'plugin'         => 'Programu-jalizi',
-            'activity-types' => 'Shughuli Types',
+            'activity-types' => 'Aina za shughuli',
             'company'        => 'Kampuni',
             'department'     => 'Idara',
             'is-active'      => 'Hali',
@@ -45,7 +45,7 @@ return [
         'groups' => [
             'status'     => 'Hali',
             'name'       => 'Jina',
-            'created-by' => 'Imeundwa Na',
+            'created-by' => 'Imeundwa na',
             'created-at' => 'Imeundwa',
             'updated-at' => 'Imesasishwa',
         ],
@@ -53,22 +53,22 @@ return [
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Shughuli Plan restored',
-                    'body'  => 'shughuli plan ina restored successfully.',
+                    'title' => 'Mpango wa shughuli umerejeshwa',
+                    'body'  => 'Mpango wa shughuli umerejeshwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Shughuli Plan imefutwa',
-                    'body'  => 'shughuli plan ina imefutwa successfully.',
+                    'title' => 'Mpango wa shughuli umefutwa',
+                    'body'  => 'Mpango wa shughuli umefutwa kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Shughuli Plan force imefutwa',
-                    'body'  => 'shughuli plan ina force imefutwa successfully.',
+                    'title' => 'Mpango wa shughuli umefutwa kabisa',
+                    'body'  => 'Mpango wa shughuli umefutwa kabisa.',
                 ],
             ],
         ],
@@ -76,22 +76,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Shughuli Plans restored',
-                    'body'  => 'shughuli plans ina restored successfully.',
+                    'title' => 'Mipango ya shughuli imerejeshwa',
+                    'body'  => 'Mipango ya shughuli imerejeshwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Shughuli Plans imefutwa',
-                    'body'  => 'shughuli plans ina imefutwa successfully.',
+                    'title' => 'Mipango ya shughuli imefutwa',
+                    'body'  => 'Mipango ya shughuli imefutwa kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Shughuli Plans force imefutwa',
-                    'body'  => 'shughuli plans ina force imefutwa successfully.',
+                    'title' => 'Mipango ya shughuli imefutwa kabisa',
+                    'body'  => 'Mipango ya shughuli imefutwa kabisa.',
                 ],
             ],
         ],
@@ -99,8 +99,8 @@ return [
         'activity-plan' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Shughuli Plan imeundwa',
-                    'body'  => 'shughuli plan ina imeundwa successfully.',
+                    'title' => 'Mpango wa shughuli umeundwa',
+                    'body'  => 'Mpango wa shughuli umeundwa kikamilifu.',
                 ],
             ],
         ],
@@ -108,8 +108,8 @@ return [
         'empty-state' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Shughuli Plan imeundwa',
-                    'body'  => 'shughuli plan ina imeundwa successfully.',
+                    'title' => 'Mpango wa shughuli umeundwa',
+                    'body'  => 'Mpango wa shughuli umeundwa kikamilifu.',
                 ],
             ],
         ],
@@ -118,7 +118,7 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title'   => 'Jumla Taarifa',
+                'title'   => 'Taarifa za jumla',
                 'entries' => [
                     'name'       => 'Jina',
                     'status'     => 'Hali',

@@ -2,12 +2,12 @@
 
 return [
     'tabs' => [
-        'archived-departments' => 'Imehifadhiwa Idara',
+        'archived-departments' => 'Idara zilizo kwenye kumbukumbu',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Idara',
+            'label' => 'Idara mpya',
         ],
     ],
 ];

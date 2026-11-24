@@ -2,13 +2,13 @@
 
 return [
     'tabs' => [
-        'my-department' => 'Мой Отдел',
+        'my-department' => 'Мой отдел',
         'archived'      => 'В архиве',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Должность Должность',
+            'label' => 'Должность',
         ],
     ],
 ];

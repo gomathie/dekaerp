@@ -1,31 +1,31 @@
 <?php
 
 return [
-    'title' => 'Work Maeneo',
+    'title' => 'Maeneo ya kazi',
 
     'navigation' => [
-        'title' => 'Work Maeneo',
+        'title' => 'Maeneo ya kazi',
         'group' => 'Mfanyakazi',
     ],
 
     'form' => [
         'name'            => 'Jina',
         'company'         => 'Kampuni',
-        'location-type'   => 'Mahali Aina',
-        'location-number' => 'Mahali Nambari',
+        'location-type'   => 'Aina ya eneo',
+        'location-number' => 'Nambari ya eneo',
         'status'          => 'Hali',
     ],
 
     'table' => [
         'columns' => [
-            'id'              => 'Kitambulisho',
+            'id'              => 'ID',
             'name'            => 'Jina',
             'status'          => 'Hali',
             'company'         => 'Kampuni',
-            'location-type'   => 'Mahali Aina',
-            'location-number' => 'Mahali Nambari',
+            'location-type'   => 'Aina ya eneo',
+            'location-number' => 'Nambari ya eneo',
             'deleted-at'      => 'Imefutwa',
-            'created-by'      => 'Imeundwa Na',
+            'created-by'      => 'Imeundwa na',
             'created-at'      => 'Imeundwa',
             'updated-at'      => 'Imesasishwa',
         ],
@@ -33,10 +33,10 @@ return [
         'filters' => [
             'name'            => 'Jina',
             'status'          => 'Hali',
-            'created-by'      => 'Imeundwa Na',
+            'created-by'      => 'Imeundwa na',
             'company'         => 'Kampuni',
-            'location-number' => 'Mahali Nambari',
-            'location-type'   => 'Mahali Aina',
+            'location-number' => 'Nambari ya eneo',
+            'location-type'   => 'Aina ya eneo',
             'updated-at'      => 'Imesasishwa',
             'created-at'      => 'Imeundwa',
         ],
@@ -44,9 +44,9 @@ return [
         'groups' => [
             'name'          => 'Jina',
             'status'        => 'Hali',
-            'location-type' => 'Mahali Aina',
+            'location-type' => 'Aina ya eneo',
             'company'       => 'Kampuni',
-            'created-by'    => 'Imeundwa Na',
+            'created-by'    => 'Imeundwa na',
             'created-at'    => 'Imeundwa',
             'updated-at'    => 'Imesasishwa',
         ],
@@ -54,36 +54,36 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Work Mahali imesasishwa',
-                    'body'  => 'work Mahali ina imesasishwa successfully.',
+                    'title' => 'Eneo la kazi limesasishwa',
+                    'body'  => 'Eneo la kazi limesasishwa kikamilifu.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Work Mahali restored',
-                    'body'  => 'work Mahali ina restored successfully.',
+                    'title' => 'Eneo la kazi limerejeshwa',
+                    'body'  => 'Eneo la kazi limerejeshwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Work Mahali imefutwa',
-                    'body'  => 'work Mahali ina imefutwa successfully.',
+                    'title' => 'Eneo la kazi limefutwa',
+                    'body'  => 'Eneo la kazi limefutwa kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Work Mahali force imefutwa',
-                    'body'  => 'work Mahali ina force imefutwa successfully.',
+                    'title' => 'Eneo la kazi limefutwa kabisa',
+                    'body'  => 'Eneo la kazi limefutwa kabisa.',
                 ],
             ],
 
             'empty-state' => [
                 'notification' => [
-                    'title' => 'Work Mahali imeundwa',
-                    'body'  => 'Work Mahali ina imeundwa successfully.',
+                    'title' => 'Eneo la kazi limeundwa',
+                    'body'  => 'Eneo la kazi limeundwa kikamilifu.',
                 ],
             ],
         ],
@@ -91,15 +91,15 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Work Maeneo imefutwa',
-                    'body'  => 'work Maeneo ina imefutwa successfully.',
+                    'title' => 'Maeneo ya kazi yamefutwa',
+                    'body'  => 'Maeneo ya kazi yamefutwa kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Work Maeneo force imefutwa',
-                    'body'  => 'work Maeneo ina force imefutwa successfully.',
+                    'title' => 'Maeneo ya kazi yamefutwa kabisa',
+                    'body'  => 'Maeneo ya kazi yamefutwa kabisa.',
                 ],
             ],
         ],
@@ -108,8 +108,8 @@ return [
     'infolist' => [
         'name'            => 'Jina',
         'company'         => 'Kampuni',
-        'location-type'   => 'Mahali Aina',
-        'location-number' => 'Mahali Nambari',
+        'location-type'   => 'Aina ya eneo',
+        'location-number' => 'Nambari ya eneo',
         'status'          => 'Hali',
     ],
 ];

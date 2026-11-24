@@ -1,18 +1,18 @@
 <?php
 
 return [
-    'title' => 'Departure Reasons',
+    'title' => 'Причины увольнения',
 
     'navigation' => [
-        'title' => 'Departure Reasons',
+        'title' => 'Причины увольнения',
         'group' => 'Сотрудник',
     ],
 
     'groups' => [
         'status'     => 'Статус',
-        'created-by' => 'Создано От',
+        'created-by' => 'Создал',
         'created-at' => 'Создано',
-        'updated-at' => 'Обновлено',
+        'updated-at' => 'Изменено',
     ],
 
     'form' => [
@@ -23,33 +23,33 @@ return [
 
     'table' => [
         'columns' => [
-            'id'         => 'Ид.',
+            'id'         => 'ID',
             'name'       => 'Название',
-            'created-by' => 'Создано От',
+            'created-by' => 'Создал',
             'created-at' => 'Создано',
-            'updated-at' => 'Обновлено',
+            'updated-at' => 'Изменено',
         ],
 
         'filters' => [
             'name'       => 'Название',
             'employee'   => 'Сотрудник',
-            'created-by' => 'Создано От',
-            'updated-at' => 'Обновлено',
+            'created-by' => 'Создал',
+            'updated-at' => 'Изменено',
             'created-at' => 'Создано',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Departure причина обновлено',
-                    'body'  => 'departure причина есть обновлено successfully.',
+                    'title' => 'Причина увольнения обновлена',
+                    'body'  => 'Причина увольнения обновлена.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Departure причина удалено',
-                    'body'  => 'departure причина есть удалено successfully.',
+                    'title' => 'Причина увольнения удалена',
+                    'body'  => 'Причина увольнения удалена.',
                 ],
             ],
         ],
@@ -57,8 +57,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Departure reasons удалено',
-                    'body'  => 'departure reasons есть удалено successfully.',
+                    'title' => 'Причины увольнения удалены',
+                    'body'  => 'Причины увольнения удалены.',
                 ],
             ],
         ],
@@ -66,8 +66,8 @@ return [
         'empty-state-action' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Departure причина создано',
-                    'body'  => 'departure причина есть создано successfully.',
+                    'title' => 'Причина увольнения создана',
+                    'body'  => 'Причина увольнения создана.',
                 ],
             ],
         ],

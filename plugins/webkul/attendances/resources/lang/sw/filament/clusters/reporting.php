@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Mahudhurio ripoti',
+        'title' => 'Ripoti za mahudhurio',
     ],
 ];

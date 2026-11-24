@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Skill Тип обновлено',
-        'body'  => 'skill тип есть обновлено successfully.',
+        'title' => 'Тип навыка обновлён',
+        'body'  => 'Тип навыка обновлён.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Skill Тип удалено',
-                'body'  => 'skill тип есть удалено successfully.',
+                'title' => 'Тип навыка удалён',
+                'body'  => 'Тип навыка удалён.',
             ],
         ],
     ],

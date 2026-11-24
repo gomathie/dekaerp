@@ -3,18 +3,18 @@
 return [
     'tabs' => [
         'all'      => 'Все',
-        'office'   => 'Office',
-        'home'     => 'Главная',
+        'office'   => 'Офис',
+        'home'     => 'Дом',
         'other'    => 'Другое',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Work Место',
+            'label' => 'Новое место работы',
 
             'notification' => [
-                'title' => 'Work Место создано',
-                'body'  => 'work место есть создано successfully.',
+                'title' => 'Место работы создано',
+                'body'  => 'Место работы создано.',
             ],
         ],
     ],

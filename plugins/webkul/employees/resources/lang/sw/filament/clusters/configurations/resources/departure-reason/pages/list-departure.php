@@ -3,11 +3,11 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Departure Sababu',
+            'label' => 'Sababu mpya ya kuondoka',
 
             'notification' => [
-                'title' => 'Departure Sababu imeundwa',
-                'body'  => 'departure sababu ina imeundwa successfully.',
+                'title' => 'Sababu ya kuondoka imeundwa',
+                'body'  => 'Sababu ya kuondoka imeundwa kikamilifu.',
             ],
         ],
     ],

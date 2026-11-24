@@ -10,7 +10,7 @@ return [
 
     'groups' => [
         'status'     => 'Hali',
-        'created-by' => 'Imeundwa Na',
+        'created-by' => 'Imeundwa na',
         'created-at' => 'Imeundwa',
         'updated-at' => 'Imesasishwa',
     ],
@@ -18,34 +18,34 @@ return [
     'form' => [
         'fields' => [
             'name'             => 'Jina',
-            'name-placeholder' => 'Ingiza jina ya lebo',
+            'name-placeholder' => 'Weka jina la lebo',
             'color'            => 'Rangi',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'id'         => 'Kitambulisho',
+            'id'         => 'ID',
             'name'       => 'Jina',
             'color'      => 'Rangi',
-            'created-by' => 'Imeundwa Na',
+            'created-by' => 'Imeundwa na',
             'created-at' => 'Imeundwa',
             'updated-at' => 'Imesasishwa',
         ],
 
         'filters' => [
             'name'       => 'Jina',
-            'created-by' => 'Imeundwa Na',
-            'updated-by' => 'Imesasishwa Na',
+            'created-by' => 'Imeundwa na',
+            'updated-by' => 'Imesasishwa na',
             'updated-at' => 'Imesasishwa',
             'created-at' => 'Imeundwa',
         ],
 
         'groups' => [
             'name'         => 'Jina',
-            'job-position' => 'Kazi Cheo',
+            'job-position' => 'Cheo cha kazi',
             'color'        => 'Rangi',
-            'created-by'   => 'Imeundwa Na',
+            'created-by'   => 'Imeundwa na',
             'created-at'   => 'Imeundwa',
             'updated-at'   => 'Imesasishwa',
         ],
@@ -54,14 +54,14 @@ return [
             'edit' => [
                 'notification' => [
                     'title' => 'Lebo imesasishwa',
-                    'body'  => 'lebo ina imesasishwa successfully.',
+                    'body'  => 'Lebo imesasishwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'title' => 'Lebo imefutwa',
-                    'body'  => 'lebo ina imefutwa successfully.',
+                    'body'  => 'Lebo imefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -69,8 +69,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Lebo imefutwa',
-                    'body'  => 'lebo ina imefutwa successfully.',
+                    'title' => 'Lebo zimefutwa',
+                    'body'  => 'Lebo zimefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -79,7 +79,7 @@ return [
             'create' => [
                 'notification' => [
                     'title' => 'Lebo imeundwa',
-                    'body'  => 'lebo ina imeundwa successfully.',
+                    'body'  => 'Lebo imeundwa kikamilifu.',
                 ],
             ],
         ],

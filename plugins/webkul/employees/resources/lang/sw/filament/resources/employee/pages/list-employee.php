@@ -2,15 +2,15 @@
 
 return [
     'tabs' => [
-        'my-team'       => 'Yangu Timu',
-        'my-department' => 'Yangu Idara',
-        'archived'      => 'Imehifadhiwa',
-        'newly-hired'   => 'Newly Hired',
+        'my-team'       => 'Timu yangu',
+        'my-department' => 'Idara yangu',
+        'archived'      => 'Kwenye kumbukumbu',
+        'newly-hired'   => 'Walioajiriwa karibuni',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Mfanyakazi',
+            'label' => 'Mfanyakazi mpya',
         ],
     ],
 ];

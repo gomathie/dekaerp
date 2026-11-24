@@ -8,11 +8,11 @@ return [
                 'type'         => 'Тип',
                 'name'         => 'Название',
                 'type'         => 'Тип',
-                'create-type'  => 'Создать Тип',
-                'duration'     => 'Duration',
-                'start-date'   => 'Начать Дата',
-                'end-date'     => 'Конец Дата',
-                'display-type' => 'Display Тип',
+                'create-type'  => 'Создать тип',
+                'duration'     => 'Период',
+                'start-date'   => 'Дата начала',
+                'end-date'     => 'Дата окончания',
+                'display-type' => 'Тип отображения',
                 'description'  => 'Описание',
             ],
         ],
@@ -21,51 +21,51 @@ return [
     'table' => [
         'columns' => [
             'title'        => 'Заголовок',
-            'start-date'   => 'Начать Дата',
-            'end-date'     => 'Конец Дата',
-            'display-type' => 'Display Тип',
+            'start-date'   => 'Дата начала',
+            'end-date'     => 'Дата окончания',
+            'display-type' => 'Тип отображения',
             'description'  => 'Описание',
-            'created-by'   => 'Создано От',
+            'created-by'   => 'Создал',
             'created-at'   => 'Создано',
-            'updated-at'   => 'Обновлено',
+            'updated-at'   => 'Изменено',
         ],
 
         'groups' => [
-            'group-by-type'         => 'Группа От Тип',
-            'group-by-display-type' => 'Группа От Display Тип',
+            'group-by-type'         => 'Группировать по типу',
+            'group-by-display-type' => 'Группировать по типу отображения',
         ],
 
         'header-actions' => [
-            'add-resume' => 'Добавить Resume',
+            'add-resume' => 'Добавить запись резюме',
         ],
 
         'filters' => [
             'type'            => 'Тип',
-            'start-date-from' => 'Начать Дата От',
-            'start-date-to'   => 'Начать Дата До',
-            'created-from'    => 'Создано От',
-            'created-to'      => 'Создано До',
+            'start-date-from' => 'Дата начала с',
+            'start-date-to'   => 'Дата начала по',
+            'created-from'    => 'Создано с',
+            'created-to'      => 'Создано по',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Skill Level обновлено',
-                    'body'  => 'skill level есть обновлено successfully.',
+                    'title' => 'Запись резюме обновлена',
+                    'body'  => 'Запись резюме обновлена.',
                 ],
             ],
 
             'create' => [
                 'notification' => [
-                    'title' => 'Skill Level создано',
-                    'body'  => 'skill level есть создано successfully.',
+                    'title' => 'Запись резюме создана',
+                    'body'  => 'Запись резюме создана.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Skill Level удалено',
-                    'body'  => 'skill level есть удалено successfully.',
+                    'title' => 'Запись резюме удалена',
+                    'body'  => 'Запись резюме удалена.',
                 ],
             ],
         ],
@@ -73,8 +73,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Skills удалено',
-                    'body'  => 'skills есть удалено successfully.',
+                    'title' => 'Записи резюме удалены',
+                    'body'  => 'Записи резюме удалены.',
                 ],
             ],
         ],
@@ -83,12 +83,12 @@ return [
     'infolist' => [
         'entries' => [
             'title'        => 'Заголовок',
-            'display-type' => 'Display Тип',
+            'display-type' => 'Тип отображения',
             'type'         => 'Тип',
             'description'  => 'Описание',
-            'duration'     => 'Duration',
-            'start-date'   => 'Начать Дата',
-            'end-date'     => 'Конец Дата',
+            'duration'     => 'Период',
+            'start-date'   => 'Дата начала',
+            'end-date'     => 'Дата окончания',
         ],
     ],
 ];

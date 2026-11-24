@@ -2,6 +2,6 @@
 
 return [
     'home'   => 'Nyumbani',
-    'office' => 'Office',
+    'office' => 'Ofisini',
     'other'  => 'Nyingine',
 ];

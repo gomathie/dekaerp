@@ -1,14 +1,14 @@
 <?php
 
 return [
-    'activity'         => 'Активность',
-    'created-by'       => 'Создано От',
+    'activity'         => 'Действие',
+    'created-by'       => 'Создал',
     'summary'          => 'Сводка',
-    'due-date'         => 'Срок оплаты',
-    'assigned-to'      => 'Назначен До',
-    'due-in-days'      => 'Due в :days дни',
+    'due-date'         => 'Срок',
+    'assigned-to'      => 'Ответственный',
+    'due-in-days'      => 'Срок через :days дн.',
     'today'            => 'Сегодня',
     'tomorrow'         => 'Завтра',
-    'one-day-overdue'  => '1 День Просрочен',
-    'days-overdue'     => ':days дни просрочен',
+    'one-day-overdue'  => 'Просрочено на 1 день',
+    'days-overdue'     => 'Просрочено на :days дн.',
 ];

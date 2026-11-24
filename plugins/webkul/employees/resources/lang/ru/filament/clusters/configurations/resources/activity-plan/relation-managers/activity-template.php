@@ -4,32 +4,32 @@ return [
     'form' => [
         'sections' => [
             'activity-details' => [
-                'title' => 'Активность Подробности',
+                'title' => 'Сведения о действии',
 
                 'fields' => [
-                    'activity-type' => 'Активность Тип',
+                    'activity-type' => 'Тип действия',
                     'summary'       => 'Сводка',
-                    'note'          => 'Заметка',
+                    'note'          => 'Примечание',
                 ],
             ],
 
             'assignment' => [
-                'title' => 'Assignment',
+                'title' => 'Назначение',
 
                 'fields' => [
-                    'assignment' => 'Assignment',
-                    'assignee'   => 'Assignee',
+                    'assignment' => 'Назначение',
+                    'assignee'   => 'Исполнитель',
                 ],
             ],
 
             'delay-information' => [
-                'title' => 'Delay Сведения',
+                'title' => 'Сведения об отсрочке',
 
                 'fields' => [
-                    'delay-count'            => 'Delay Количество',
-                    'delay-unit'             => 'Delay Единица',
-                    'delay-from'             => 'Delay От',
-                    'delay-from-helper-text' => 'Источник delay calculation',
+                    'delay-count'            => 'Величина отсрочки',
+                    'delay-unit'             => 'Единица отсрочки',
+                    'delay-from'             => 'Отсрочка от',
+                    'delay-from-helper-text' => 'Начало отсчёта отсрочки',
                 ],
             ],
         ],
@@ -37,55 +37,55 @@ return [
 
     'table' => [
         'columns' => [
-            'activity-type' => 'Активность Тип',
+            'activity-type' => 'Тип действия',
             'summary'       => 'Сводка',
-            'assignment'    => 'Assignment',
-            'assigned-to'   => 'Назначен До',
-            'interval'      => 'Interval',
-            'delay-unit'    => 'Delay Единица',
-            'delay-from'    => 'Delay От',
-            'created-by'    => 'Создано От',
+            'assignment'    => 'Назначение',
+            'assigned-to'   => 'Ответственный',
+            'interval'      => 'Интервал',
+            'delay-unit'    => 'Единица отсрочки',
+            'delay-from'    => 'Отсрочка от',
+            'created-by'    => 'Создал',
             'created-at'    => 'Создано',
-            'updated-at'    => 'Обновлено',
+            'updated-at'    => 'Изменено',
         ],
 
         'groups' => [
-            'activity-type' => 'Активность Тип',
-            'assignment'    => 'Assignment',
-            'assigned-to'   => 'Назначен До',
-            'interval'      => 'Interval',
-            'delay-unit'    => 'Delay Единица',
-            'delay-from'    => 'Delay От',
-            'created-by'    => 'Создано От',
+            'activity-type' => 'Тип действия',
+            'assignment'    => 'Назначение',
+            'assigned-to'   => 'Ответственный',
+            'interval'      => 'Интервал',
+            'delay-unit'    => 'Единица отсрочки',
+            'delay-from'    => 'Отсрочка от',
+            'created-by'    => 'Создал',
             'created-at'    => 'Создано',
-            'updated-at'    => 'Обновлено',
+            'updated-at'    => 'Изменено',
         ],
 
         'filters' => [
-            'activity-type'   => 'Активность Тип',
-            'activity-status' => 'Активность Статус',
-            'has-delay'       => 'Есть Delay',
+            'activity-type'   => 'Тип действия',
+            'activity-status' => 'Статус действия',
+            'has-delay'       => 'С отсрочкой',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Активность шаблон обновлено',
-                    'body'  => 'активность шаблон есть обновлено successfully.',
+                    'title' => 'Шаблон действия обновлён',
+                    'body'  => 'Шаблон действия обновлён.',
                 ],
             ],
 
             'create' => [
                 'notification' => [
-                    'title' => 'Активность шаблон создано',
-                    'body'  => 'активность шаблон есть создано successfully.',
+                    'title' => 'Шаблон действия создан',
+                    'body'  => 'Шаблон действия создан.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Активность шаблон удалено',
-                    'body'  => 'активность шаблон есть удалено successfully.',
+                    'title' => 'Шаблон действия удалён',
+                    'body'  => 'Шаблон действия удалён.',
                 ],
             ],
         ],
@@ -93,8 +93,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Активность шаблоны удалено',
-                    'body'  => 'активность шаблоны есть удалено successfully.',
+                    'title' => 'Шаблоны действий удалены',
+                    'body'  => 'Шаблоны действий удалены.',
                 ],
             ],
         ],
@@ -103,35 +103,35 @@ return [
     'infolist' => [
         'sections' => [
             'activity-details' => [
-                'title' => 'Активность Подробности',
+                'title' => 'Сведения о действии',
 
                 'entries' => [
-                    'activity-type' => 'Активность Тип',
+                    'activity-type' => 'Тип действия',
                     'summary'       => 'Сводка',
                 ],
             ],
 
             'assignment' => [
-                'title' => 'Assignment',
+                'title' => 'Назначение',
 
                 'entries' => [
-                    'assignment' => 'Assignment',
-                    'assignee'   => 'Assignee',
+                    'assignment' => 'Назначение',
+                    'assignee'   => 'Исполнитель',
                 ],
             ],
 
             'delay-information' => [
-                'title' => 'Delay Сведения',
+                'title' => 'Сведения об отсрочке',
 
                 'entries' => [
-                    'delay-count'            => 'Delay Количество',
-                    'delay-unit'             => 'Delay Единица',
-                    'delay-from'             => 'Delay От',
-                    'delay-from-helper-text' => 'Источник delay calculation',
+                    'delay-count'            => 'Величина отсрочки',
+                    'delay-unit'             => 'Единица отсрочки',
+                    'delay-from'             => 'Отсрочка от',
+                    'delay-from-helper-text' => 'Начало отсчёта отсрочки',
                 ],
             ],
         ],
 
-        'note' => 'Заметка',
+        'note' => 'Примечание',
     ],
 ];

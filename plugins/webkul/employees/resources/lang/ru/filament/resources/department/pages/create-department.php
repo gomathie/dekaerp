@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Отдел создано',
-        'body'  => 'отдел есть создано successfully.',
+        'title' => 'Отдел создан',
+        'body'  => 'Отдел создан.',
     ],
 ];

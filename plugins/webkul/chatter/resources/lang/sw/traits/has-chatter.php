@@ -2,6 +2,6 @@
 
 return [
     'responsible' => [
-        'label' => 'Assignees',
+        'label' => 'Waliokabidhiwa',
     ],
 ];

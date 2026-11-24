@@ -8,11 +8,11 @@ return [
                 'type'         => 'Aina',
                 'name'         => 'Jina',
                 'type'         => 'Aina',
-                'create-type'  => 'Unda Aina',
-                'duration'     => 'Duration',
-                'start-date'   => 'Anza Tarehe',
-                'end-date'     => 'Mwisho Tarehe',
-                'display-type' => 'Display Aina',
+                'create-type'  => 'Unda aina',
+                'duration'     => 'Muda',
+                'start-date'   => 'Tarehe ya kuanza',
+                'end-date'     => 'Tarehe ya kumaliza',
+                'display-type' => 'Aina ya maonyesho',
                 'description'  => 'Maelezo',
             ],
         ],
@@ -21,51 +21,51 @@ return [
     'table' => [
         'columns' => [
             'title'        => 'Kichwa',
-            'start-date'   => 'Anza Tarehe',
-            'end-date'     => 'Mwisho Tarehe',
-            'display-type' => 'Display Aina',
+            'start-date'   => 'Tarehe ya kuanza',
+            'end-date'     => 'Tarehe ya kumaliza',
+            'display-type' => 'Aina ya maonyesho',
             'description'  => 'Maelezo',
-            'created-by'   => 'Imeundwa Na',
+            'created-by'   => 'Imeundwa na',
             'created-at'   => 'Imeundwa',
             'updated-at'   => 'Imesasishwa',
         ],
 
         'groups' => [
-            'group-by-type'         => 'Kundi Na Aina',
-            'group-by-display-type' => 'Kundi Na Display Aina',
+            'group-by-type'         => 'Panga kwa aina',
+            'group-by-display-type' => 'Panga kwa aina ya maonyesho',
         ],
 
         'header-actions' => [
-            'add-resume' => 'Ongeza Resume',
+            'add-resume' => 'Ongeza wasifu',
         ],
 
         'filters' => [
             'type'            => 'Aina',
-            'start-date-from' => 'Anza Tarehe Kutoka',
-            'start-date-to'   => 'Anza Tarehe Hadi',
-            'created-from'    => 'Imeundwa Kutoka',
-            'created-to'      => 'Imeundwa Hadi',
+            'start-date-from' => 'Tarehe ya kuanza kuanzia',
+            'start-date-to'   => 'Tarehe ya kuanza hadi',
+            'created-from'    => 'Imeundwa kuanzia',
+            'created-to'      => 'Imeundwa hadi',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Skill Level imesasishwa',
-                    'body'  => 'skill level ina imesasishwa successfully.',
+                    'title' => 'Kipengele cha wasifu kimesasishwa',
+                    'body'  => 'Kipengele cha wasifu kimesasishwa kikamilifu.',
                 ],
             ],
 
             'create' => [
                 'notification' => [
-                    'title' => 'Skill Level imeundwa',
-                    'body'  => 'skill level ina imeundwa successfully.',
+                    'title' => 'Kipengele cha wasifu kimeundwa',
+                    'body'  => 'Kipengele cha wasifu kimeundwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Skill Level imefutwa',
-                    'body'  => 'skill level ina imefutwa successfully.',
+                    'title' => 'Kipengele cha wasifu kimefutwa',
+                    'body'  => 'Kipengele cha wasifu kimefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -73,8 +73,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Skills imefutwa',
-                    'body'  => 'skills ina imefutwa successfully.',
+                    'title' => 'Vipengele vya wasifu vimefutwa',
+                    'body'  => 'Vipengele vya wasifu vimefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -83,12 +83,12 @@ return [
     'infolist' => [
         'entries' => [
             'title'        => 'Kichwa',
-            'display-type' => 'Display Aina',
+            'display-type' => 'Aina ya maonyesho',
             'type'         => 'Aina',
             'description'  => 'Maelezo',
-            'duration'     => 'Duration',
-            'start-date'   => 'Anza Tarehe',
-            'end-date'     => 'Mwisho Tarehe',
+            'duration'     => 'Muda',
+            'start-date'   => 'Tarehe ya kuanza',
+            'end-date'     => 'Tarehe ya kumaliza',
         ],
     ],
 ];

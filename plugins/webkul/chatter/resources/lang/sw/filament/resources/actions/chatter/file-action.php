@@ -3,19 +3,19 @@
 return [
     'setup' => [
         'title'   => 'Viambatisho',
-        'tooltip' => 'Pakia Viambatisho',
+        'tooltip' => 'Pakia viambatisho',
 
         'modal-submit-action-label' => 'Pakia',
 
         'form' => [
             'fields' => [
                 'files'                  => 'Faili',
-                'attachment-helper-text' => 'Max faili ukubwa: 10MB. Inaruhusiwa types: Images, PDF, Word, Excel, Text',
+                'attachment-helper-text' => 'Ukubwa wa juu wa faili: 10MB. Aina zinazoruhusiwa: Picha, PDF, Word, Excel, Maandishi',
 
                 'actions' => [
                     'delete' => [
                         'title' => 'Faili imefutwa',
-                        'body'  => 'Faili ina imefutwa successfully.',
+                        'body'  => 'Faili imefutwa kikamilifu.',
                     ],
                 ],
             ],
@@ -24,18 +24,18 @@ return [
         'actions' => [
             'notification' => [
                 'success' => [
-                    'title' => 'Viambatisho Uploaded',
-                    'body'  => 'Viambatisho uploaded successfully.',
+                    'title' => 'Viambatisho vimepakiwa',
+                    'body'  => 'Viambatisho vimepakiwa kikamilifu.',
                 ],
 
                 'warning'  => [
-                    'title' => 'Hakuna mpya faili',
-                    'body'  => 'Zote faili ina tayari uploaded.',
+                    'title' => 'Hakuna faili mpya',
+                    'body'  => 'Faili zote zimeshapakiwa.',
                 ],
 
                 'error' => [
-                    'title' => 'Kiambatisho pakia hitilafu',
-                    'body'  => 'Imeshindwa hadi pakia viambatisho ',
+                    'title' => 'Hitilafu ya kupakia viambatisho',
+                    'body'  => 'Imeshindwa kupakia viambatisho ',
                 ],
             ],
         ],

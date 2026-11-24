@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'working' => 'Working',
-    'off'     => 'Zima',
-    'holiday' => 'Holiday',
+    'working' => 'Siku ya kazi',
+    'off'     => 'Mapumziko',
+    'holiday' => 'Sikukuu',
 ];

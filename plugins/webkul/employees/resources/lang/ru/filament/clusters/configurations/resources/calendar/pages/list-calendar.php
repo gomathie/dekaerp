@@ -8,11 +8,11 @@ return [
 
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Working График',
+            'label' => 'Новый рабочий график',
 
             'notification' => [
-                'title' => 'Working График создано',
-                'body'  => 'working график есть создано successfully.',
+                'title' => 'Рабочий график создан',
+                'body'  => 'Рабочий график создан.',
             ],
         ],
     ],

@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'danger'  => 'Danger',
-    'gray'    => 'Gray',
-    'info'    => 'Info',
-    'success' => 'Успешно',
+    'danger'  => 'Опасность',
+    'gray'    => 'Серый',
+    'info'    => 'Информация',
+    'success' => 'Успех',
     'warning' => 'Предупреждение',
 ];

@@ -2,8 +2,8 @@
 
 return [
     'tabs' => [
-        'with-skill'    => 'С Skill',
-        'without-skill' => 'Без Skill',
+        'with-skill'    => 'С навыком',
+        'without-skill' => 'Без навыка',
         'archived'      => 'В архиве',
     ],
 ];

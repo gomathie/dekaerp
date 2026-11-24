@@ -2,34 +2,34 @@
 
 return [
     'actions' => [
-        'clock-in'  => 'Clock katika',
-        'clock-out' => 'Clock nje',
-        'correct'   => 'Correct mahudhurio',
+        'clock-in'  => 'Ingia kazini',
+        'clock-out' => 'Toka kazini',
+        'correct'   => 'Sahihisha mahudhurio',
         'export'    => 'Hamisha mahudhurio',
     ],
     'capture' => [
-        'off'      => 'Zima',
+        'off'      => 'Imezimwa',
         'optional' => 'Si lazima',
-        'required' => 'Inahitajika',
+        'required' => 'Lazima',
     ],
     'exceptions' => [
-        'not-enabled' => 'Mahudhurio ni si imewashwa kwa kampuni :company.',
+        'not-enabled' => 'Mahudhurio hayajawashwa kwa kampuni :company.',
     ],
     'notifications' => [
-        'failed' => 'Hiyo si work. badilisha ilikuwa si saved.',
+        'failed' => 'Haikufanikiwa. Badiliko halijahifadhiwa.',
     ],
     'statuses' => [
-        'clocked-in'     => 'Clocked katika since :time',
-        'not-clocked-in' => 'Si clocked katika',
-        'on-leave'       => 'Washa likizo',
+        'clocked-in'     => 'Uko kazini tangu :time',
+        'not-clocked-in' => 'Hujaingia kazini',
+        'on-leave'       => 'Yuko likizoni',
     ],
     'validation' => [
-        'check-out-order'     => 'Hundi-nje ina hadi kuwa baada ya hundi-katika.',
-        'location-required'   => 'mahali ni inahitajika hadi clock katika au nje.',
-        'no-employee'         => 'Wewe si ina mfanyakazi rekodi katika hii kampuni.',
-        'not-allowed'         => 'Wewe unaweza tu correct mahudhurio kwa yako yake timu.',
-        'not-clocked-in'      => 'Wewe ni si clocked katika.',
-        'not-your-attendance' => 'Wewe unaweza tu clock yourself katika au nje.',
-        'reason-required'     => 'correction needs sababu.',
+        'check-out-order'     => 'Muda wa kutoka lazima uwe baada ya muda wa kuingia.',
+        'location-required'   => 'Eneo linahitajika ili kuingia au kutoka kazini.',
+        'no-employee'         => 'Huna rekodi ya mfanyakazi katika kampuni hii.',
+        'not-allowed'         => 'Unaweza kusahihisha mahudhurio ya timu yako tu.',
+        'not-clocked-in'      => 'Hujaingia kazini.',
+        'not-your-attendance' => 'Unaweza kujiandikisha kuingia au kutoka wewe mwenyewe tu.',
+        'reason-required'     => 'Usahihishaji unahitaji sababu.',
     ],
 ];

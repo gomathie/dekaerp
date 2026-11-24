@@ -3,19 +3,19 @@
 return [
     'setup' => [
         'title'   => 'Вложения',
-        'tooltip' => 'Загрузить Вложения',
+        'tooltip' => 'Загрузить вложения',
 
         'modal-submit-action-label' => 'Загрузить',
 
         'form' => [
             'fields' => [
                 'files'                  => 'Файлы',
-                'attachment-helper-text' => 'Max файл размер: 10MB. Разрешено types: Images, PDF, Word, Excel, Text',
+                'attachment-helper-text' => 'Макс. размер файла: 10 МБ. Типы: изображения, PDF, Word, Excel, текст',
 
                 'actions' => [
                     'delete' => [
-                        'title' => 'Файл удалено',
-                        'body'  => 'Файл есть удалено successfully.',
+                        'title' => 'Файл удалён',
+                        'body'  => 'Файл удалён.',
                     ],
                 ],
             ],
@@ -24,18 +24,18 @@ return [
         'actions' => [
             'notification' => [
                 'success' => [
-                    'title' => 'Вложения Uploaded',
-                    'body'  => 'Вложения uploaded successfully.',
+                    'title' => 'Вложения загружены',
+                    'body'  => 'Вложения загружены.',
                 ],
 
                 'warning'  => [
-                    'title' => 'Нет новое файлы',
-                    'body'  => 'Все файлы есть уже uploaded.',
+                    'title' => 'Нет новых файлов',
+                    'body'  => 'Все файлы уже загружены.',
                 ],
 
                 'error' => [
-                    'title' => 'Вложение загрузить ошибка',
-                    'body'  => 'Не удалось до загрузить вложения ',
+                    'title' => 'Ошибка загрузки вложений',
+                    'body'  => 'Не удалось загрузить вложения ',
                 ],
             ],
         ],

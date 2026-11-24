@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'subject' => 'Mpya follower arifa',
+    'subject' => 'Arifa ya mfuasi mpya',
 ];

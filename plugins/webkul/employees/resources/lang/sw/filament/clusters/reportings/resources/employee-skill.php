@@ -1,30 +1,30 @@
 <?php
 
 return [
-    'title' => 'Skills',
+    'title' => 'Ujuzi',
 
     'navigation' => [
-        'title' => 'Skills',
+        'title' => 'Ujuzi',
     ],
 
     'form' => [
         'sections' => [
             'skill-details' => [
-                'title' => 'Skill Maelezo',
+                'title' => 'Maelezo ya ujuzi',
 
                 'fields' => [
                     'employee'       => 'Mfanyakazi',
-                    'skill'          => 'Skill',
-                    'skill-level'    => 'Level',
-                    'skill-type'     => 'Skill Aina',
+                    'skill'          => 'Ujuzi',
+                    'skill-level'    => 'Kiwango',
+                    'skill-type'     => 'Aina ya ujuzi',
                 ],
             ],
             'addition-information' => [
-                'title' => 'Additional Taarifa',
+                'title' => 'Taarifa za ziada',
 
                 'fields' => [
-                    'created-by' => 'Imeundwa Na',
-                    'updated-by' => 'Imesasishwa Na',
+                    'created-by' => 'Imeundwa na',
+                    'updated-by' => 'Imesasishwa na',
                 ],
             ],
         ],
@@ -32,53 +32,53 @@ return [
 
     'table' => [
         'columns' => [
-            'id'              => 'Kitambulisho',
+            'id'              => 'ID',
             'employee'        => 'Mfanyakazi',
-            'skill'           => 'Skill',
-            'skill-level'     => 'Level',
-            'skill-type'      => 'Skill Aina',
+            'skill'           => 'Ujuzi',
+            'skill-level'     => 'Kiwango',
+            'skill-type'      => 'Aina ya ujuzi',
             'user'            => 'Mtumiaji',
-            'proficiency'     => 'Proficiency',
-            'created-by'      => 'Imeundwa Na',
+            'proficiency'     => 'Umahiri',
+            'created-by'      => 'Imeundwa na',
             'created-at'      => 'Imeundwa',
         ],
 
         'filters' => [
             'employee'        => 'Mfanyakazi',
-            'skill'           => 'Skill',
-            'skill-level'     => 'Level',
-            'skill-type'      => 'Skill Aina',
+            'skill'           => 'Ujuzi',
+            'skill-level'     => 'Kiwango',
+            'skill-type'      => 'Aina ya ujuzi',
             'user'            => 'Mtumiaji',
-            'created-by'      => 'Imeundwa Na',
+            'created-by'      => 'Imeundwa na',
             'created-at'      => 'Imeundwa',
             'updated-at'      => 'Imesasishwa',
         ],
 
         'groups' => [
             'employee'   => 'Mfanyakazi',
-            'skill-type' => 'Skill Aina',
+            'skill-type' => 'Aina ya ujuzi',
         ],
     ],
 
     'infolist' => [
         'sections' => [
             'skill-details' => [
-                'title' => 'Skill Maelezo',
+                'title' => 'Maelezo ya ujuzi',
 
                 'entries' => [
                     'employee'        => 'Mfanyakazi',
-                    'skill'           => 'Skill',
-                    'skill-level'     => 'Level',
-                    'skill-type'      => 'Skill Aina',
+                    'skill'           => 'Ujuzi',
+                    'skill-level'     => 'Kiwango',
+                    'skill-type'      => 'Aina ya ujuzi',
                 ],
             ],
 
             'additional-information' => [
-                'title' => 'Additional Taarifa',
+                'title' => 'Taarifa za ziada',
 
                 'entries' => [
-                    'created-by' => 'Imeundwa Na',
-                    'updated-by' => 'Imesasishwa Na',
+                    'created-by' => 'Imeundwa na',
+                    'updated-by' => 'Imesasishwa na',
                 ],
             ],
         ],

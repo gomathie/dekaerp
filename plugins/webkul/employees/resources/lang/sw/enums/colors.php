@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'danger'  => 'Danger',
-    'gray'    => 'Gray',
-    'info'    => 'Info',
-    'success' => 'Imefanikiwa',
-    'warning' => 'Onyo',
+    'danger'  => 'Hatari',
+    'gray'    => 'Kijivu',
+    'info'    => 'Taarifa',
+    'success' => 'Mafanikio',
+    'warning' => 'Tahadhari',
 ];

@@ -1,57 +1,57 @@
 <?php
 
 return [
-    'title' => 'Должность Positions',
+    'title' => 'Должности',
 
     'navigation' => [
-        'title' => 'Должность Positions',
-        'group' => 'Подбор',
+        'title' => 'Должности',
+        'group' => 'Подбор персонала',
     ],
 
     'form' => [
         'sections' => [
             'employment-information' => [
-                'title' => 'Employment Сведения',
+                'title' => 'Сведения о занятости',
 
                 'fields' => [
-                    'job-position-title'         => 'Должность Должность Заголовок',
-                    'job-position-title-tooltip' => 'Введите official должность должность заголовок',
+                    'job-position-title'         => 'Название должности',
+                    'job-position-title-tooltip' => 'Введите официальное название должности',
                     'department'                 => 'Отдел',
-                    'department-modal-title'     => 'Создать Отдел',
-                    'company-modal-title'        => 'Создать Компания',
-                    'job-location'               => 'Должность Место',
-                    'industry'                   => 'Industry',
+                    'department-modal-title'     => 'Создать отдел',
+                    'company-modal-title'        => 'Создать компанию',
+                    'job-location'               => 'Место работы',
+                    'industry'                   => 'Отрасль',
                     'company'                    => 'Компания',
-                    'employment-type'            => 'Employment Тип',
-                    'recruiter'                  => 'Recruiter',
-                    'interviewer'                => 'Interviewer',
+                    'employment-type'            => 'Тип занятости',
+                    'recruiter'                  => 'Рекрутер',
+                    'interviewer'                => 'Интервьюер',
                 ],
             ],
 
             'job-description' => [
-                'title' => 'Должность Описание',
+                'title' => 'Описание должности',
 
                 'fields' => [
-                    'job-description'  => 'Должность Описание',
-                    'job-requirements' => 'Должность Requirements',
+                    'job-description'  => 'Описание должности',
+                    'job-requirements' => 'Требования к должности',
                 ],
             ],
 
             'workforce-planning' => [
-                'title' => 'Workforce Planning',
+                'title' => 'Планирование персонала',
 
                 'fields' => [
-                    'recruitment-target'         => 'Подбор Назначение',
-                    'date-from'                  => 'Дата От',
-                    'date-to'                    => 'Дата До',
-                    'expected-skills'            => 'Ожидается Skills',
-                    'employment-type'            => 'Employment Тип',
+                    'recruitment-target'         => 'План найма',
+                    'date-from'                  => 'Дата с',
+                    'date-to'                    => 'Дата по',
+                    'expected-skills'            => 'Ожидаемые навыки',
+                    'employment-type'            => 'Тип занятости',
                     'status'                     => 'Статус',
                 ],
             ],
 
             'position-status' => [
-                'title' => 'Должность Статус',
+                'title' => 'Статус должности',
 
                 'fields' => [
                     'status' => 'Статус',
@@ -62,52 +62,52 @@ return [
 
     'table' => [
         'columns' => [
-            'id'                 => 'Ид.',
-            'name'               => 'Должность Должность',
+            'id'                 => 'ID',
+            'name'               => 'Должность',
             'department'         => 'Отдел',
-            'job-position'       => 'Должность Должность',
+            'job-position'       => 'Должность',
             'company'            => 'Компания',
-            'expected-employees' => 'Ожидается Сотрудники',
-            'current-employees'  => 'Текущий Сотрудники',
+            'expected-employees' => 'Ожидается сотрудников',
+            'current-employees'  => 'Текущих сотрудников',
             'status'             => 'Статус',
-            'created-by'         => 'Создано От',
+            'created-by'         => 'Создал',
             'created-at'         => 'Создано',
-            'updated-at'         => 'Обновлено',
+            'updated-at'         => 'Изменено',
         ],
 
         'filters' => [
             'department'      => 'Отдел',
-            'employment-type' => 'Employment Тип',
-            'job-position'    => 'Должность Должность',
+            'employment-type' => 'Тип занятости',
+            'job-position'    => 'Должность',
             'company'         => 'Компания',
             'status'          => 'Статус',
-            'created-by'      => 'Создано От',
-            'updated-at'      => 'Обновлено',
+            'created-by'      => 'Создал',
+            'updated-at'      => 'Изменено',
             'created-at'      => 'Создано',
         ],
 
         'groups' => [
-            'job-position'    => 'Должность Должность',
+            'job-position'    => 'Должность',
             'company'         => 'Компания',
             'department'      => 'Отдел',
-            'employment-type' => 'Employment Тип',
-            'created-by'      => 'Создано От',
+            'employment-type' => 'Тип занятости',
+            'created-by'      => 'Создал',
             'created-at'      => 'Создано',
-            'updated-at'      => 'Обновлено',
+            'updated-at'      => 'Изменено',
         ],
 
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Должность Должность restored',
-                    'body'  => 'Должность Должность есть restored successfully.',
+                    'title' => 'Должность восстановлена',
+                    'body'  => 'Должность восстановлена.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Должность Должность удалено',
-                    'body'  => 'Должность Должность есть удалено successfully.',
+                    'title' => 'Должность удалена',
+                    'body'  => 'Должность удалена.',
                 ],
             ],
         ],
@@ -115,22 +115,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Должность Positions restored',
-                    'body'  => 'Должность Positions есть restored successfully.',
+                    'title' => 'Должности восстановлены',
+                    'body'  => 'Должности восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Должность Positions удалено',
-                    'body'  => 'Должность Positions есть удалено successfully.',
+                    'title' => 'Должности удалены',
+                    'body'  => 'Должности удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Должность Positions force удалено',
-                    'body'  => 'Должность Positions есть force удалено successfully.',
+                    'title' => 'Должности удалены навсегда',
+                    'body'  => 'Должности удалены навсегда.',
                 ],
             ],
         ],
@@ -138,8 +138,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Должность Positions',
-                    'body'  => 'Должность Positions есть создано successfully.',
+                    'title' => 'Должность создана',
+                    'body'  => 'Должность создана.',
                 ],
             ],
         ],
@@ -148,38 +148,38 @@ return [
     'infolist' => [
         'sections' => [
             'employment-information' => [
-                'title' => 'Employment Сведения',
+                'title' => 'Сведения о занятости',
 
                 'entries' => [
-                    'job-position-title' => 'Должность Должность Заголовок',
+                    'job-position-title' => 'Название должности',
                     'department'         => 'Отдел',
                     'company'            => 'Компания',
-                    'employment-type'    => 'Employment Тип',
-                    'job-location'       => 'Должность Место',
-                    'industry'           => 'Industry',
+                    'employment-type'    => 'Тип занятости',
+                    'job-location'       => 'Место работы',
+                    'industry'           => 'Отрасль',
                 ],
             ],
             'job-description' => [
-                'title' => 'Должность Описание',
+                'title' => 'Описание должности',
 
                 'entries' => [
-                    'job-description'  => 'Должность Описание',
-                    'job-requirements' => 'Должность Requirements',
+                    'job-description'  => 'Описание должности',
+                    'job-requirements' => 'Требования к должности',
                 ],
             ],
             'work-planning' => [
-                'title' => 'Workforce Planning',
+                'title' => 'Планирование персонала',
 
                 'entries' => [
-                    'expected-employees' => 'Ожидается Сотрудники',
-                    'current-employees'  => 'Текущий Сотрудники',
-                    'date-from'          => 'Дата От',
-                    'date-to'            => 'Дата До',
-                    'recruitment-target' => 'Подбор Назначение',
+                    'expected-employees' => 'Ожидается сотрудников',
+                    'current-employees'  => 'Текущих сотрудников',
+                    'date-from'          => 'Дата с',
+                    'date-to'            => 'Дата по',
+                    'recruitment-target' => 'План найма',
                 ],
             ],
             'position-status' => [
-                'title' => 'Должность Статус',
+                'title' => 'Статус должности',
 
                 'entries' => [
                     'status' => 'Статус',

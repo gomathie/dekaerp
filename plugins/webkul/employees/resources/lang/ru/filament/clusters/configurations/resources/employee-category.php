@@ -1,67 +1,67 @@
 <?php
 
 return [
-    'title' => 'Метки',
+    'title' => 'Теги',
 
     'navigation' => [
-        'title' => 'Метки',
+        'title' => 'Теги',
         'group' => 'Сотрудник',
     ],
 
     'groups' => [
         'status'     => 'Статус',
-        'created-by' => 'Создано От',
+        'created-by' => 'Создал',
         'created-at' => 'Создано',
-        'updated-at' => 'Обновлено',
+        'updated-at' => 'Изменено',
     ],
 
     'form' => [
         'fields' => [
             'name'             => 'Название',
-            'name-placeholder' => 'Введите название метка',
+            'name-placeholder' => 'Введите название тега',
             'color'            => 'Цвет',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'id'         => 'Ид.',
+            'id'         => 'ID',
             'name'       => 'Название',
             'color'      => 'Цвет',
-            'created-by' => 'Создано От',
+            'created-by' => 'Создал',
             'created-at' => 'Создано',
-            'updated-at' => 'Обновлено',
+            'updated-at' => 'Изменено',
         ],
 
         'filters' => [
             'name'       => 'Название',
-            'created-by' => 'Создано От',
-            'updated-by' => 'Обновлено От',
-            'updated-at' => 'Обновлено',
+            'created-by' => 'Создал',
+            'updated-by' => 'Изменил',
+            'updated-at' => 'Изменено',
             'created-at' => 'Создано',
         ],
 
         'groups' => [
             'name'         => 'Название',
-            'job-position' => 'Должность Должность',
+            'job-position' => 'Должность',
             'color'        => 'Цвет',
-            'created-by'   => 'Создано От',
+            'created-by'   => 'Создал',
             'created-at'   => 'Создано',
-            'updated-at'   => 'Обновлено',
+            'updated-at'   => 'Изменено',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Метка обновлено',
-                    'body'  => 'метка есть обновлено successfully.',
+                    'title' => 'Тег обновлён',
+                    'body'  => 'Тег обновлён.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Метка удалено',
-                    'body'  => 'метка есть удалено successfully.',
+                    'title' => 'Тег удалён',
+                    'body'  => 'Тег удалён.',
                 ],
             ],
         ],
@@ -69,8 +69,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Метки удалено',
-                    'body'  => 'метки есть удалено successfully.',
+                    'title' => 'Теги удалены',
+                    'body'  => 'Теги удалены.',
                 ],
             ],
         ],
@@ -78,8 +78,8 @@ return [
         'empty-state-action' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Метка создано',
-                    'body'  => 'метка есть создано successfully.',
+                    'title' => 'Тег создан',
+                    'body'  => 'Тег создан.',
                 ],
             ],
         ],

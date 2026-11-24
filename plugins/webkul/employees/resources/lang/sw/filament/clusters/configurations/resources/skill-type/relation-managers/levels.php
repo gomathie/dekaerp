@@ -3,15 +3,15 @@
 return [
     'form' => [
         'name'          => 'Jina',
-        'level'         => 'Level',
-        'default-level' => 'Chaguo-msingi Level',
+        'level'         => 'Kiwango',
+        'default-level' => 'Kiwango chaguo-msingi',
     ],
 
     'table' => [
         'columns' => [
             'name'          => 'Jina',
-            'level'         => 'Level',
-            'default-level' => 'Chaguo-msingi Level',
+            'level'         => 'Kiwango',
+            'default-level' => 'Kiwango chaguo-msingi',
             'created-at'    => 'Imeundwa',
             'updated-at'    => 'Imesasishwa',
         ],
@@ -21,35 +21,35 @@ return [
         ],
 
         'filters' => [
-            'deleted-records' => 'Imefutwa Rekodi',
+            'deleted-records' => 'Rekodi zilizofutwa',
         ],
 
         'actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Skill Level imeundwa',
-                    'body'  => 'skill level ina imeundwa successfully.',
+                    'title' => 'Kiwango cha ujuzi kimeundwa',
+                    'body'  => 'Kiwango cha ujuzi kimeundwa kikamilifu.',
                 ],
             ],
 
             'edit' => [
                 'notification' => [
-                    'title' => 'Skill Level imesasishwa',
-                    'body'  => 'skill level ina imesasishwa successfully.',
+                    'title' => 'Kiwango cha ujuzi kimesasishwa',
+                    'body'  => 'Kiwango cha ujuzi kimesasishwa kikamilifu.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Skill Level restored',
-                    'body'  => 'skill level ina restored successfully.',
+                    'title' => 'Kiwango cha ujuzi kimerejeshwa',
+                    'body'  => 'Kiwango cha ujuzi kimerejeshwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Skill Level imefutwa',
-                    'body'  => 'skill level ina imefutwa successfully.',
+                    'title' => 'Kiwango cha ujuzi kimefutwa',
+                    'body'  => 'Kiwango cha ujuzi kimefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -57,22 +57,22 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Skill Levels imefutwa',
-                    'body'  => 'skills ina imefutwa successfully.',
+                    'title' => 'Viwango vya ujuzi vimefutwa',
+                    'body'  => 'Viwango vya ujuzi vimefutwa kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Skill Levels force imefutwa',
-                    'body'  => 'skills ina force imefutwa successfully.',
+                    'title' => 'Viwango vya ujuzi vimefutwa kabisa',
+                    'body'  => 'Viwango vya ujuzi vimefutwa kabisa.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Skill Levels force restored',
-                    'body'  => 'skills ina force restored successfully.',
+                    'title' => 'Viwango vya ujuzi vimerejeshwa',
+                    'body'  => 'Viwango vya ujuzi vimerejeshwa kikamilifu.',
                 ],
             ],
         ],
@@ -81,8 +81,8 @@ return [
     'infolist' => [
         'entries' => [
             'name'          => 'Jina',
-            'level'         => 'Level',
-            'default-level' => 'Chaguo-msingi Level',
+            'level'         => 'Kiwango',
+            'default-level' => 'Kiwango chaguo-msingi',
         ],
     ],
 ];

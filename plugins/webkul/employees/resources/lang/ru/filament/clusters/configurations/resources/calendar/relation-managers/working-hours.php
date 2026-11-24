@@ -2,46 +2,46 @@
 
 return [
     'modal' => [
-        'title' => 'Working Часы',
+        'title' => 'Рабочие часы',
     ],
 
     'form' => [
         'sections' => [
             'general' => [
-                'title'  => 'Общее Сведения',
+                'title'  => 'Общие сведения',
                 'fields' => [
-                    'attendance-name' => 'Посещаемость Название',
-                    'attendance-name' => 'Посещаемость Название',
-                    'day-of-week'     => 'День Неделя',
+                    'attendance-name' => 'Название интервала',
+                    'attendance-name' => 'Название интервала',
+                    'day-of-week'     => 'День недели',
                 ],
             ],
 
             'timing-information' => [
-                'title' => 'Timing Сведения',
+                'title' => 'Время',
 
                 'fields' => [
-                    'day-period' => 'День Periods',
-                    'week-type'  => 'Неделя Тип',
-                    'work-from'  => 'Work От',
-                    'work-to'    => 'Work До',
+                    'day-period' => 'Часть дня',
+                    'week-type'  => 'Тип недели',
+                    'work-from'  => 'Работа с',
+                    'work-to'    => 'Работа до',
                 ],
             ],
 
             'date-information' => [
-                'title' => 'Дата Сведения',
+                'title' => 'Даты',
 
                 'fields' => [
-                    'starting-date' => 'Starting Дата',
-                    'ending-date'   => 'Ending Дата',
+                    'starting-date' => 'Дата начала',
+                    'ending-date'   => 'Дата окончания',
                 ],
             ],
 
             'additional-information' => [
-                'title' => 'Additional Сведения',
+                'title' => 'Дополнительно',
 
                 'fields' => [
-                    'durations-days' => 'Duration (Дни)',
-                    'display-type'   => 'Display Тип',
+                    'durations-days' => 'Длительность (дней)',
+                    'display-type'   => 'Тип отображения',
                 ],
             ],
         ],
@@ -49,62 +49,62 @@ return [
 
     'table' => [
         'columns' => [
-            'name'          => 'Посещаемость Название',
-            'day-of-week'   => 'День Неделя',
-            'day-period'    => 'День Periods',
-            'work-from'     => 'Work От',
-            'work-to'       => 'Work До',
-            'starting-date' => 'Starting Дата',
-            'ending-date'   => 'Ending Дата',
-            'display-type'  => 'Display Тип',
-            'created-by'    => 'Создано От',
+            'name'          => 'Название интервала',
+            'day-of-week'   => 'День недели',
+            'day-period'    => 'Часть дня',
+            'work-from'     => 'Работа с',
+            'work-to'       => 'Работа до',
+            'starting-date' => 'Дата начала',
+            'ending-date'   => 'Дата окончания',
+            'display-type'  => 'Тип отображения',
+            'created-by'    => 'Создал',
             'created-at'    => 'Создано',
-            'updated-at'    => 'Обновлено',
+            'updated-at'    => 'Изменено',
         ],
 
         'groups' => [
-            'activity-type' => 'Активность Тип',
-            'assignment'    => 'Assignment',
-            'assigned-to'   => 'Назначен До',
-            'interval'      => 'Interval',
-            'delay-unit'    => 'Delay Единица',
-            'delay-from'    => 'Delay От',
-            'created-by'    => 'Создано От',
+            'activity-type' => 'Тип действия',
+            'assignment'    => 'Назначение',
+            'assigned-to'   => 'Ответственный',
+            'interval'      => 'Интервал',
+            'delay-unit'    => 'Единица отсрочки',
+            'delay-from'    => 'Отсрочка от',
+            'created-by'    => 'Создал',
             'created-at'    => 'Создано',
-            'updated-at'    => 'Обновлено',
+            'updated-at'    => 'Изменено',
         ],
 
         'filters' => [
-            'display-type' => 'Display Тип',
-            'day-of-week'  => 'День Неделя',
+            'display-type' => 'Тип отображения',
+            'day-of-week'  => 'День недели',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Working Часы обновлено',
-                    'body'  => 'working часы есть обновлено successfully.',
+                    'title' => 'Рабочие часы обновлены',
+                    'body'  => 'Рабочие часы обновлены.',
                 ],
             ],
 
             'create' => [
                 'notification' => [
-                    'title' => 'Working Часы создано',
-                    'body'  => 'working часы есть создано successfully.',
+                    'title' => 'Рабочие часы созданы',
+                    'body'  => 'Рабочие часы созданы.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Working Часы удалено',
-                    'body'  => 'working часы есть удалено successfully.',
+                    'title' => 'Рабочие часы удалены',
+                    'body'  => 'Рабочие часы удалены.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Working Часы restored',
-                    'body'  => 'working часы есть restored successfully.',
+                    'title' => 'Рабочие часы восстановлены',
+                    'body'  => 'Рабочие часы восстановлены.',
                 ],
             ],
         ],
@@ -112,22 +112,22 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Working Часы удалено',
-                    'body'  => 'working часы есть удалено successfully.',
+                    'title' => 'Рабочие часы удалены',
+                    'body'  => 'Рабочие часы удалены.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Working Часы удалено',
-                    'body'  => 'working часы есть удалено successfully.',
+                    'title' => 'Рабочие часы удалены',
+                    'body'  => 'Рабочие часы удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Working Часы удалено',
-                    'body'  => 'working часы есть удалено successfully.',
+                    'title' => 'Рабочие часы удалены',
+                    'body'  => 'Рабочие часы удалены.',
                 ],
             ],
         ],
@@ -136,44 +136,44 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Общее Сведения',
+                'title' => 'Общие сведения',
 
                 'entries' => [
-                    'name'        => 'Посещаемость Название',
-                    'day-of-week' => 'День Неделя',
+                    'name'        => 'Название интервала',
+                    'day-of-week' => 'День недели',
                 ],
             ],
 
             'timing-information' => [
-                'title' => 'Timing Сведения',
+                'title' => 'Время',
 
                 'entries' => [
-                    'day-period' => 'День Periods',
-                    'week-type'  => 'Неделя Тип',
-                    'work-from'  => 'Work От',
-                    'work-to'    => 'Work До',
+                    'day-period' => 'Часть дня',
+                    'week-type'  => 'Тип недели',
+                    'work-from'  => 'Работа с',
+                    'work-to'    => 'Работа до',
                 ],
             ],
 
             'date-information' => [
-                'title' => 'Дата Сведения',
+                'title' => 'Даты',
 
                 'entries' => [
-                    'starting-date' => 'Starting Дата',
-                    'ending-date'   => 'Ending Дата',
+                    'starting-date' => 'Дата начала',
+                    'ending-date'   => 'Дата окончания',
                 ],
             ],
 
             'additional-information' => [
-                'title' => 'Additional Сведения',
+                'title' => 'Дополнительно',
 
                 'entries' => [
-                    'durations-days' => 'Duration (Дни)',
-                    'display-type'   => 'Display Тип',
+                    'durations-days' => 'Длительность (дней)',
+                    'display-type'   => 'Тип отображения',
                 ],
             ],
         ],
 
-        'note' => 'Заметка',
+        'note' => 'Примечание',
     ],
 ];

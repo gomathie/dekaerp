@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Skill Types',
+    'title' => 'Типы навыков',
 
     'navigation' => [
-        'title' => 'Skill Types',
+        'title' => 'Типы навыков',
         'group' => 'Сотрудник',
     ],
 
@@ -12,7 +12,7 @@ return [
         'sections' => [
             'fields' => [
                 'name'             => 'Название',
-                'name-placeholder' => 'Введите skill тип название',
+                'name-placeholder' => 'Введите название типа навыка',
                 'color'            => 'Цвет',
                 'status'           => 'Статус',
             ],
@@ -21,47 +21,47 @@ return [
 
     'table' => [
         'columns' => [
-            'id'         => 'Ид.',
-            'name'       => 'Skill Тип',
+            'id'         => 'ID',
+            'name'       => 'Тип навыка',
             'status'     => 'Статус',
             'color'      => 'Цвет',
-            'skills'     => 'Skills',
-            'levels'     => 'Levels',
-            'created-by' => 'Создано От',
+            'skills'     => 'Навыки',
+            'levels'     => 'Уровни',
+            'created-by' => 'Создал',
             'created-at' => 'Создано',
-            'updated-at' => 'Обновлено',
+            'updated-at' => 'Изменено',
         ],
 
         'filters' => [
-            'skill-levels' => 'Skill Levels',
-            'skills'       => 'Skills',
-            'created-by'   => 'Создано От',
+            'skill-levels' => 'Уровни навыков',
+            'skills'       => 'Навыки',
+            'created-by'   => 'Создал',
             'status'       => 'Статус',
-            'updated-at'   => 'Обновлено',
+            'updated-at'   => 'Изменено',
             'created-at'   => 'Создано',
         ],
 
         'groups' => [
-            'name'       => 'Skill Тип',
+            'name'       => 'Тип навыка',
             'color'      => 'Цвет',
             'status'     => 'Статус',
-            'created-by' => 'Создано От',
+            'created-by' => 'Создал',
             'created-at' => 'Создано',
-            'updated-at' => 'Обновлено',
+            'updated-at' => 'Изменено',
         ],
 
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Skill Тип restored',
-                    'body'  => 'Skill Тип есть restored successfully.',
+                    'title' => 'Тип навыка восстановлен',
+                    'body'  => 'Тип навыка восстановлен.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Skill Тип удалено',
-                    'body'  => 'Skill Тип есть удалено successfully.',
+                    'title' => 'Тип навыка удалён',
+                    'body'  => 'Тип навыка удалён.',
                 ],
             ],
         ],
@@ -69,22 +69,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Skill Types restored',
-                    'body'  => 'Skill Types есть restored successfully.',
+                    'title' => 'Типы навыков восстановлены',
+                    'body'  => 'Типы навыков восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Skill Types удалено',
-                    'body'  => 'Skill Types есть удалено successfully.',
+                    'title' => 'Типы навыков удалены',
+                    'body'  => 'Типы навыков удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Skill Types force удалено',
-                    'body'  => 'Skill Types есть force удалено successfully.',
+                    'title' => 'Типы навыков удалены навсегда',
+                    'body'  => 'Типы навыков удалены навсегда.',
                 ],
             ],
         ],
@@ -92,8 +92,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Skill Types',
-                    'body'  => 'Skill Types есть создано successfully.',
+                    'title' => 'Тип навыка создан',
+                    'body'  => 'Тип навыка создан.',
                 ],
             ],
         ],
@@ -102,7 +102,7 @@ return [
     'infolist' => [
         'sections' => [
             'entries' => [
-                'name'   => 'Skill Тип',
+                'name'   => 'Тип навыка',
                 'color'  => 'Цвет',
                 'status' => 'Статус',
             ],

@@ -2,8 +2,8 @@
 
 return [
     'tabs' => [
-        'with-skill'    => 'Na Skill',
-        'without-skill' => 'Bila Skill',
-        'archived'      => 'Imehifadhiwa',
+        'with-skill'    => 'Wenye ujuzi',
+        'without-skill' => 'Wasio na ujuzi',
+        'archived'      => 'Kwenye kumbukumbu',
     ],
 ];

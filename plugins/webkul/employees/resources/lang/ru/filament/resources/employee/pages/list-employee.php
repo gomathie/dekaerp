@@ -2,15 +2,15 @@
 
 return [
     'tabs' => [
-        'my-team'       => 'Мой Команда',
-        'my-department' => 'Мой Отдел',
+        'my-team'       => 'Моя команда',
+        'my-department' => 'Мой отдел',
         'archived'      => 'В архиве',
-        'newly-hired'   => 'Newly Hired',
+        'newly-hired'   => 'Недавно принятые',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Сотрудник',
+            'label' => 'Новый сотрудник',
         ],
     ],
 ];
