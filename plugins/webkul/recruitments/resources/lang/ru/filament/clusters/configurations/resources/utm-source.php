@@ -1,57 +1,57 @@
 <?php
 
 return [
-    'title' => 'Sources',
+    'title' => 'Источники',
 
     'navigation' => [
-        'title' => 'Sources',
-        'group' => 'UTMs',
+        'title' => 'Источники',
+        'group' => 'UTM',
     ],
 
     'groups' => [
         'status'     => 'Статус',
-        'created-by' => 'Создано От',
-        'created-at' => 'Создано',
-        'updated-at' => 'Обновлено',
+        'created-by' => 'Создал',
+        'created-at' => 'Дата создания',
+        'updated-at' => 'Дата изменения',
     ],
 
     'form' => [
         'fields' => [
             'name'             => 'Название',
-            'name-placeholder' => 'Введите название источник',
+            'name-placeholder' => 'Введите название источника',
             'status'           => 'Статус',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'id'         => 'Ид.',
+            'id'         => 'ID',
             'name'       => 'Название',
             'status'     => 'Статус',
-            'created-by' => 'Создано От',
-            'created-at' => 'Создано',
-            'updated-at' => 'Обновлено',
+            'created-by' => 'Создал',
+            'created-at' => 'Дата создания',
+            'updated-at' => 'Дата изменения',
         ],
 
         'filters' => [
             'name'       => 'Название',
-            'created-by' => 'Создано От',
-            'updated-at' => 'Обновлено',
-            'created-at' => 'Создано',
+            'created-by' => 'Создал',
+            'updated-at' => 'Дата изменения',
+            'created-at' => 'Дата создания',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Источник обновлено',
-                    'body'  => 'источник есть обновлено successfully.',
+                    'title' => 'Источник обновлён',
+                    'body'  => 'Источник успешно обновлён.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Источник удалено',
-                    'body'  => 'источник есть удалено successfully.',
+                    'title' => 'Источник удалён',
+                    'body'  => 'Источник успешно удалён.',
                 ],
             ],
         ],
@@ -59,8 +59,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Sources удалено',
-                    'body'  => 'Sources есть удалено successfully.',
+                    'title' => 'Источники удалены',
+                    'body'  => 'Источники успешно удалены.',
                 ],
             ],
         ],
@@ -68,8 +68,8 @@ return [
         'empty-state-action' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Источник создано',
-                    'body'  => 'источник есть создано successfully.',
+                    'title' => 'Источник создан',
+                    'body'  => 'Источник успешно создан.',
                 ],
             ],
         ],

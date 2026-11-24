@@ -2,12 +2,12 @@
 
 return [
     'navigation' => [
-        'title' => 'Milestones',
+        'title' => 'Вехи',
     ],
 
     'form' => [
         'name'         => 'Название',
-        'deadline'     => 'Deadline',
+        'deadline'     => 'Срок',
         'is-completed' => 'Завершено',
         'project'      => 'Проект',
     ],
@@ -15,40 +15,40 @@ return [
     'table' => [
         'columns' => [
             'name'         => 'Название',
-            'deadline'     => 'Deadline',
+            'deadline'     => 'Срок',
             'is-completed' => 'Завершено',
-            'completed-at' => 'Завершено В',
+            'completed-at' => 'Дата завершения',
             'project'      => 'Проект',
-            'creator'      => 'Creator',
-            'created-at'   => 'Создано',
-            'updated-at'   => 'Обновлено',
+            'creator'      => 'Автор',
+            'created-at'   => 'Дата создания',
+            'updated-at'   => 'Дата изменения',
         ],
 
         'groups' => [
             'name'         => 'Название',
             'is-completed' => 'Завершено',
             'project'      => 'Проект',
-            'created-at'   => 'Создано',
+            'created-at'   => 'Дата создания',
         ],
 
         'filters' => [
             'is-completed' => 'Завершено',
             'project'      => 'Проект',
-            'creator'      => 'Creator',
+            'creator'      => 'Автор',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Веха обновить',
-                    'body'  => 'веха есть обновить successfully.',
+                    'title' => 'Веха обновлена',
+                    'body'  => 'Веха успешно обновлена.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Веха удалено',
-                    'body'  => 'веха есть удалено successfully.',
+                    'title' => 'Веха удалена',
+                    'body'  => 'Веха успешно удалена.',
                 ],
             ],
         ],
@@ -56,8 +56,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Milestones удалено',
-                    'body'  => 'milestones есть удалено successfully.',
+                    'title' => 'Вехи удалены',
+                    'body'  => 'Вехи успешно удалены.',
                 ],
             ],
         ],

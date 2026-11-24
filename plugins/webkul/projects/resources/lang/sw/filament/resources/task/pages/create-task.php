@@ -3,6 +3,6 @@
 return [
     'notification' => [
         'title' => 'Kazi imeundwa',
-        'body'  => 'kazi ina imeundwa successfully.',
+        'body'  => 'Kazi imeundwa kwa mafanikio.',
     ],
 ];

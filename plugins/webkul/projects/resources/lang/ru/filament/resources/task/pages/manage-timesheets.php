@@ -7,18 +7,18 @@ return [
         'date'                   => 'Дата',
         'employee'               => 'Сотрудник',
         'description'            => 'Описание',
-        'time-spent'             => 'Time Spent',
-        'time-spent-helper-text' => 'Time spent в часы (Eg. 1.5 часы means 1 час 30 минуты)',
+        'time-spent'             => 'Затраченное время',
+        'time-spent-helper-text' => 'Затраченное время в часах (например, 1,5 часа — это 1 час 30 минут)',
     ],
 
     'table' => [
         'header-actions' => [
             'create' => [
-                'label' => 'Добавить Табель',
+                'label' => 'Добавить запись табеля',
 
                 'notification' => [
-                    'title' => 'Табель создано',
-                    'body'  => 'табель есть создано successfully.',
+                    'title' => 'Запись табеля создана',
+                    'body'  => 'Запись табеля успешно создана.',
                 ],
             ],
         ],
@@ -27,24 +27,24 @@ return [
             'date'                   => 'Дата',
             'employee'               => 'Сотрудник',
             'description'            => 'Описание',
-            'time-spent'             => 'Time Spent',
-            'time-spent-on-subtasks' => 'Time Spent вкл. Subtasks',
-            'total-time-spent'       => 'Итого Time Spent',
-            'remaining-time'         => 'Осталось Time',
+            'time-spent'             => 'Затраченное время',
+            'time-spent-on-subtasks' => 'Время на подзадачи',
+            'total-time-spent'       => 'Всего затрачено времени',
+            'remaining-time'         => 'Оставшееся время',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Табель обновлено',
-                    'body'  => 'табель есть обновлено successfully.',
+                    'title' => 'Запись табеля обновлена',
+                    'body'  => 'Запись табеля успешно обновлена.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Табель удалено',
-                    'body'  => 'табель есть удалено successfully.',
+                    'title' => 'Запись табеля удалена',
+                    'body'  => 'Запись табеля успешно удалена.',
                 ],
             ],
         ],

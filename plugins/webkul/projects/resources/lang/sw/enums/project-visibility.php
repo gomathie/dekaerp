@@ -3,5 +3,5 @@
 return [
     'private'  => 'Binafsi',
     'internal' => 'Ndani',
-    'public'   => 'Hadharani',
+    'public'   => 'Umma',
 ];

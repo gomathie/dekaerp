@@ -1,56 +1,56 @@
 <?php
 
 return [
-    'title' => 'Degrees',
+    'title' => 'Степени',
 
     'navigation' => [
-        'title' => 'Degrees',
-        'group' => 'Applications',
+        'title' => 'Степени',
+        'group' => 'Заявки',
     ],
 
     'groups' => [
         'status'     => 'Статус',
-        'created-by' => 'Создано От',
-        'created-at' => 'Создано',
-        'updated-at' => 'Обновлено',
+        'created-by' => 'Создал',
+        'created-at' => 'Дата создания',
+        'updated-at' => 'Дата изменения',
     ],
 
     'form' => [
         'fields' => [
             'name'             => 'Название',
-            'name-placeholder' => 'Введите название degree',
+            'name-placeholder' => 'Введите название степени',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'id'         => 'Ид.',
+            'id'         => 'ID',
             'name'       => 'Название',
-            'created-by' => 'Создано От',
-            'created-at' => 'Создано',
-            'updated-at' => 'Обновлено',
+            'created-by' => 'Создал',
+            'created-at' => 'Дата создания',
+            'updated-at' => 'Дата изменения',
         ],
 
         'filters' => [
             'name'       => 'Название',
             'employee'   => 'Сотрудник',
-            'created-by' => 'Создано От',
-            'updated-at' => 'Обновлено',
-            'created-at' => 'Создано',
+            'created-by' => 'Создал',
+            'updated-at' => 'Дата изменения',
+            'created-at' => 'Дата создания',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Degree обновлено',
-                    'body'  => 'degree есть обновлено successfully.',
+                    'title' => 'Степень обновлена',
+                    'body'  => 'Степень успешно обновлена.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Degree удалено',
-                    'body'  => 'degree есть удалено successfully.',
+                    'title' => 'Степень удалена',
+                    'body'  => 'Степень успешно удалена.',
                 ],
             ],
         ],
@@ -58,8 +58,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Degrees удалено',
-                    'body'  => 'degrees есть удалено successfully.',
+                    'title' => 'Степени удалены',
+                    'body'  => 'Степени успешно удалены.',
                 ],
             ],
         ],
@@ -67,8 +67,8 @@ return [
         'empty-state-action' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Degree создано',
-                    'body'  => 'degree есть создано successfully.',
+                    'title' => 'Степень создана',
+                    'body'  => 'Степень успешно создана.',
                 ],
             ],
         ],

@@ -4,11 +4,11 @@ return [
     'table' => [
         'header-actions' => [
             'create' => [
-                'label' => 'Добавить Sub Задача',
+                'label' => 'Добавить подзадачу',
 
                 'notification' => [
-                    'title' => 'Задача создано',
-                    'body'  => 'задача есть создано successfully.',
+                    'title' => 'Задача создана',
+                    'body'  => 'Задача успешно создана.',
                 ],
             ],
         ],
@@ -16,22 +16,22 @@ return [
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Задача restored',
-                    'body'  => 'задача есть restored successfully.',
+                    'title' => 'Задача восстановлена',
+                    'body'  => 'Задача успешно восстановлена.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Задача удалено',
-                    'body'  => 'задача есть удалено successfully.',
+                    'title' => 'Задача удалена',
+                    'body'  => 'Задача успешно удалена.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Задача force удалено',
-                    'body'  => 'задача есть force удалено successfully.',
+                    'title' => 'Задача удалена безвозвратно',
+                    'body'  => 'Задача удалена безвозвратно.',
                 ],
             ],
         ],

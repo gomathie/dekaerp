@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'title' => 'Kataa Sababu',
+    'title' => 'Sababu ya kukataa',
 
     'navigation' => [
-        'title' => 'Kataa Reasons',
-        'group' => 'Applications',
+        'title' => 'Sababu za kukataa',
+        'group' => 'Maombi',
     ],
 
     'form' => [
@@ -13,43 +13,43 @@ return [
             'name'             => 'Jina',
             'template'         => [
                 'title'                    => 'Kiolezo',
-                'applicant-refuse'         => 'Mwombaji Kataa',
-                'applicant-not-interested' => 'Mwombaji Si Interested',
+                'applicant-refuse'         => 'Kukataliwa kwa mwombaji',
+                'applicant-not-interested' => 'Mwombaji hana nia',
             ],
-            'name-placeholder' => 'Ingiza jina ya kataa sababu',
+            'name-placeholder' => 'Weka jina la sababu ya kukataa',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'id'         => 'Kitambulisho',
+            'id'         => 'ID',
             'name'       => 'Jina',
             'template'   => 'Kiolezo',
-            'created-by' => 'Imeundwa Na',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'created-by' => 'Imeundwa na',
+            'created-at' => 'Tarehe ya kuundwa',
+            'updated-at' => 'Tarehe ya kusasishwa',
         ],
 
         'filters' => [
             'name'       => 'Jina',
             'employee'   => 'Mfanyakazi',
-            'created-by' => 'Imeundwa Na',
-            'updated-at' => 'Imesasishwa',
-            'created-at' => 'Imeundwa',
+            'created-by' => 'Imeundwa na',
+            'updated-at' => 'Tarehe ya kusasishwa',
+            'created-at' => 'Tarehe ya kuundwa',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Kataa sababu imesasishwa',
-                    'body'  => 'kataa sababu ina imesasishwa successfully.',
+                    'title' => 'Sababu ya kukataa imesasishwa',
+                    'body'  => 'Sababu ya kukataa imesasishwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Kataa sababu imefutwa',
-                    'body'  => 'kataa sababu ina imefutwa successfully.',
+                    'title' => 'Sababu ya kukataa imefutwa',
+                    'body'  => 'Sababu ya kukataa imefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -57,8 +57,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Kataa reasons imefutwa',
-                    'body'  => 'kataa reasons ina imefutwa successfully.',
+                    'title' => 'Sababu za kukataa zimefutwa',
+                    'body'  => 'Sababu za kukataa zimefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -66,8 +66,8 @@ return [
         'empty-state-action' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Kataa sababu imeundwa',
-                    'body'  => 'kataa sababu ina imeundwa successfully.',
+                    'title' => 'Sababu ya kukataa imeundwa',
+                    'body'  => 'Sababu ya kukataa imeundwa kwa mafanikio.',
                 ],
             ],
         ],

@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'in-progress'      => 'В Ход',
-    'change-requested' => 'Изменить Requested',
-    'approved'         => 'Утверждён',
-    'cancelled'        => 'Отменён',
-    'done'             => 'Завершён',
+    'in-progress'      => 'В работе',
+    'change-requested' => 'Запрошены изменения',
+    'approved'         => 'Утверждено',
+    'cancelled'        => 'Отменено',
+    'done'             => 'Выполнено',
 ];

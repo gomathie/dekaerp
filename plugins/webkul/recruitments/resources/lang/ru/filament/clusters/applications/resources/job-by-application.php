@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Должность Должность',
+    'title' => 'Должность',
 
     'navigation' => [
-        'title' => 'Должность Positions',
+        'title' => 'Должности',
     ],
 
     'table' => [
@@ -16,15 +16,15 @@ return [
 
         'actions' => [
             'applications' => [
-                'new-applications' => ':count Новое Applications',
+                'new-applications' => 'Новые заявки: :count',
             ],
 
             'to-recruitment' => [
-                'to-recruitment' => ':count До Подбор',
+                'to-recruitment' => 'К найму: :count',
             ],
 
             'total-application' => [
-                'total-application' => ':count Applications',
+                'total-application' => 'Заявки: :count',
             ],
         ],
     ],

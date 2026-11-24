@@ -5,7 +5,7 @@ return [
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Kazi',
+            'label' => 'Kazi mpya',
         ],
     ],
 
@@ -13,33 +13,33 @@ return [
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Kazi restored',
-                    'body'  => 'kazi ina restored successfully.',
+                    'title' => 'Kazi imerejeshwa',
+                    'body'  => 'Kazi imerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'title' => 'Kazi imefutwa',
-                    'body'  => 'kazi ina imefutwa successfully.',
+                    'body'  => 'Kazi imefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Kazi force imefutwa',
-                    'body'  => 'kazi ina force imefutwa successfully.',
+                    'title' => 'Kazi imefutwa kabisa',
+                    'body'  => 'Kazi imefutwa kabisa.',
                 ],
             ],
         ],
     ],
 
     'tabs' => [
-        'open-tasks'       => 'Wazi Kazi',
-        'my-tasks'         => 'Yangu Kazi',
-        'unassigned-tasks' => 'Hajakabidhiwa Kazi',
-        'closed-tasks'     => 'Imefungwa Kazi',
-        'starred-tasks'    => 'Starred Kazi',
-        'archived-tasks'   => 'Imehifadhiwa Kazi',
+        'open-tasks'       => 'Kazi zilizo wazi',
+        'my-tasks'         => 'Kazi zangu',
+        'unassigned-tasks' => 'Kazi zisizokabidhiwa',
+        'closed-tasks'     => 'Kazi zilizofungwa',
+        'starred-tasks'    => 'Kazi zenye nyota',
+        'archived-tasks'   => 'Kazi kwenye kumbukumbu',
     ],
 ];

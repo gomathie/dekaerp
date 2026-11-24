@@ -3,6 +3,6 @@
 return [
     'tabs' => [
         'all'      => 'Zote',
-        'archived' => 'Imehifadhiwa',
+        'archived' => 'Kwenye kumbukumbu',
     ],
 ];

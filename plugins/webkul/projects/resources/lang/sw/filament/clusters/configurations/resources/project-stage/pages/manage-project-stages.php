@@ -3,17 +3,17 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Mradi Hatua',
+            'label' => 'Hatua mpya ya mradi',
 
             'notification' => [
-                'title' => 'Mradi hatua imeundwa',
-                'body'  => 'mradi hatua ina imeundwa successfully.',
+                'title' => 'Hatua ya mradi imeundwa',
+                'body'  => 'Hatua ya mradi imeundwa kwa mafanikio.',
             ],
         ],
     ],
 
     'tabs' => [
         'all'      => 'Zote',
-        'archived' => 'Imehifadhiwa',
+        'archived' => 'Kwenye kumbukumbu',
     ],
 ];

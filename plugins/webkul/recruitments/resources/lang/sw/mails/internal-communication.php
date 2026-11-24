@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'breadcrumb'             => 'Ndani Mawasiliano: Wewe ina amekabidhiwa hadi Mwombaji :applicant.',
-    'greeting'               => 'Dear :interviewer,',
-    'assignment_message'     => 'Wewe ina amekabidhiwa hadi Mwombaji',
-    'internal_communication' => 'Ndani mawasiliano:',
-    'internal_note'          => 'Replying ita post ndani maelezo. Followers won’t receive yoyote barua pepe arifa.',
-    'view_applicant'         => 'Angalia Mwombaji',
+    'breadcrumb'             => 'Mawasiliano ya ndani: Umepewa mwombaji :applicant.',
+    'greeting'               => 'Mpendwa :interviewer,',
+    'assignment_message'     => 'Umepewa mwombaji',
+    'internal_communication' => 'Mawasiliano ya ndani:',
+    'internal_note'          => 'Ukijibu, kidokezo cha ndani kitachapishwa. Wafuatiliaji hawatapokea arifa ya barua pepe.',
+    'view_applicant'         => 'Tazama mwombaji',
 ];

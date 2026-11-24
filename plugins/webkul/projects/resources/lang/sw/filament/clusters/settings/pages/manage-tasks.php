@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'title' => 'Manage Kazi',
+    'title' => 'Simamia kazi',
 
     'form' => [
-        'enable-project-stages'             => 'Washa Mradi Hatua',
-        'enable-project-stages-helper-text' => 'Track maendeleo ya yako miradi',
-        'configure-stages'                  => 'Configure Hatua',
-        'enable-milestones'                 => 'Washa Milestones',
-        'enable-milestones-helper-text'     => 'Track major maendeleo points hiyo lazima kuwa reached hadi achieve imefanikiwa',
+        'enable-project-stages'             => 'Washa hatua za mradi',
+        'enable-project-stages-helper-text' => 'Fuatilia maendeleo ya miradi yako',
+        'configure-stages'                  => 'Sanidi hatua',
+        'enable-milestones'                 => 'Washa hatua muhimu',
+        'enable-milestones-helper-text'     => 'Fuatilia hatua kuu zinazopaswa kufikiwa ili kufanikiwa',
     ],
 ];

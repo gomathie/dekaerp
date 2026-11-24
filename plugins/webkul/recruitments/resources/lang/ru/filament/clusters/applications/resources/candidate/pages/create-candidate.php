@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Candidate создано',
-        'body'  => 'candidate есть создано successfully.',
+        'title' => 'Кандидат создан',
+        'body'  => 'Кандидат успешно создан.',
     ],
 ];

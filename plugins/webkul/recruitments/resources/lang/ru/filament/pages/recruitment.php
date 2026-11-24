@@ -2,11 +2,11 @@
 
 return [
     'navigation' => [
-        'title' => 'Подбор',
+        'title' => 'Подбор персонала',
     ],
 
     'filters-form' => [
-        'job-position' => 'Должность Должность',
+        'job-position' => 'Должность',
         'departments'  => 'Отделы',
         'companies'    => 'Компании',
         'stages'       => 'Этапы',
@@ -14,15 +14,15 @@ return [
             'title'   => 'Статус',
             'options' => [
                 'all'      => 'Все',
-                'ongoing'  => 'Ongoing',
-                'hired'    => 'Hired',
+                'ongoing'  => 'В процессе',
+                'hired'    => 'Нанят',
                 'refused'  => 'Отказано',
                 'archived' => 'В архиве',
             ],
         ],
 
-        'start-date' => 'Начать Дата',
-        'date-range' => 'Диапазон дат',
-        'end-date'   => 'Конец Дата',
+        'start-date' => 'Дата начала',
+        'date-range' => 'Период',
+        'end-date'   => 'Дата окончания',
     ],
 ];

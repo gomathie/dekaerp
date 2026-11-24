@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Candidate imeundwa',
-        'body'  => 'candidate ina imeundwa successfully.',
+        'title' => 'Mgombea ameundwa',
+        'body'  => 'Mgombea ameundwa kwa mafanikio.',
     ],
 ];

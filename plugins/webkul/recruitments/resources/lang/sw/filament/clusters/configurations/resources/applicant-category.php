@@ -5,47 +5,47 @@ return [
 
     'navigation' => [
         'title' => 'Lebo',
-        'group' => 'Applications',
+        'group' => 'Maombi',
     ],
 
     'form' => [
         'fields' => [
             'name'             => 'Jina',
-            'name-placeholder' => 'Ingiza jina ya lebo',
+            'name-placeholder' => 'Weka jina la lebo',
             'color'            => 'Rangi',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'id'         => 'Kitambulisho',
+            'id'         => 'ID',
             'name'       => 'Jina',
             'color'      => 'Rangi',
-            'created-by' => 'Imeundwa Na',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'created-by' => 'Imeundwa na',
+            'created-at' => 'Tarehe ya kuundwa',
+            'updated-at' => 'Tarehe ya kusasishwa',
         ],
 
         'filters' => [
             'name'       => 'Jina',
             'employee'   => 'Mfanyakazi',
-            'created-by' => 'Imeundwa Na',
-            'updated-at' => 'Imesasishwa',
-            'created-at' => 'Imeundwa',
+            'created-by' => 'Imeundwa na',
+            'updated-at' => 'Tarehe ya kusasishwa',
+            'created-at' => 'Tarehe ya kuundwa',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Lebo imesasishwa',
-                    'body'  => 'lebo ina imesasishwa successfully.',
+                    'title' => 'Lebo zimesasishwa',
+                    'body'  => 'Lebo zimesasishwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Lebo imefutwa',
-                    'body'  => 'lebo ina imefutwa successfully.',
+                    'title' => 'Lebo zimefutwa',
+                    'body'  => 'Lebo zimefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -53,8 +53,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Mwombaji Kategoria imefutwa',
-                    'body'  => 'mwombaji Kategoria ina imefutwa successfully.',
+                    'title' => 'Kategoria za waombaji zimefutwa',
+                    'body'  => 'Kategoria za waombaji zimefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -62,8 +62,8 @@ return [
         'empty-state-action' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Lebo imeundwa',
-                    'body'  => 'lebo ina imeundwa successfully.',
+                    'title' => 'Lebo zimeundwa',
+                    'body'  => 'Lebo zimeundwa kwa mafanikio.',
                 ],
             ],
         ],

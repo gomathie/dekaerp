@@ -2,12 +2,12 @@
 
 return [
     'heading' => [
-        'title' => 'Top Assignees',
+        'title' => 'Лучшие исполнители',
     ],
 
     'table-columns' => [
         'user'        => 'Пользователь',
-        'hours-spent' => 'Часы Spent',
+        'hours-spent' => 'Затрачено часов',
         'tasks'       => 'Задачи',
     ],
 ];

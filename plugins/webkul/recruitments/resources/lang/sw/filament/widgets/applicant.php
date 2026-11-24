@@ -2,11 +2,11 @@
 
 return [
     'heading' => [
-        'title' => 'Mwombaji Muhtasari',
+        'title' => 'Muhtasari wa waombaji',
     ],
 
-    'ongoing'  => 'Ongoing',
-    'hired'    => 'Hired',
-    'refused'  => 'Imekataliwa',
-    'archived' => 'Imehifadhiwa',
+    'ongoing'  => 'Yanayoendelea',
+    'hired'    => 'Ameajiriwa',
+    'refused'  => 'Amekataliwa',
+    'archived' => 'Kwenye kumbukumbu',
 ];

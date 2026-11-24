@@ -2,13 +2,13 @@
 
 return [
     'heading' => [
-        'title' => 'Stats Muhtasari',
+        'title' => 'Muhtasari wa takwimu',
     ],
 
-    'total-tasks'          => 'Jumla Kazi',
-    'total-hours-spent'    => 'Jumla Saa Spent',
-    'total-time-remaining' => 'Jumla Time Iliyobaki',
+    'total-tasks'          => 'Jumla ya kazi',
+    'total-hours-spent'    => 'Jumla ya saa zilizotumika',
+    'total-time-remaining' => 'Jumla ya muda uliobaki',
 
-    'increase' => 'increase',
-    'decrease' => 'decrease',
+    'increase' => 'ongezeko',
+    'decrease' => 'upungufu',
 ];

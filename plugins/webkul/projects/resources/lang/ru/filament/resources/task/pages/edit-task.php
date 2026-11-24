@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Задача обновлено',
-        'body'  => 'задача есть обновлено successfully.',
+        'title' => 'Задача обновлена',
+        'body'  => 'Задача успешно обновлена.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Задача удалено',
-                'body'  => 'задача есть удалено successfully.',
+                'title' => 'Задача удалена',
+                'body'  => 'Задача успешно удалена.',
             ],
         ],
     ],

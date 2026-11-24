@@ -2,8 +2,8 @@
 
 return [
     'label'           => 'Проекты',
-    'active-projects' => 'Активен проекты',
-    'open-tasks'      => 'Открыт задачи',
-    'overdue-tasks'   => 'Задачи просрочен',
-    'done'            => ':percent% задачи завершён',
+    'active-projects' => 'Активные проекты',
+    'open-tasks'      => 'Открытые задачи',
+    'overdue-tasks'   => 'Просроченные задачи',
+    'done'            => 'Выполнено :percent% задач',
 ];

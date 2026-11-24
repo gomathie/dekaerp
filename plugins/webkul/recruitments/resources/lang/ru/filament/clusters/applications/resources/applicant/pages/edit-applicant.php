@@ -1,75 +1,75 @@
 <?php
 
 return [
-    'create-employee' => 'Создать Сотрудник',
-    'goto-employee'   => 'Go до Сотрудник',
+    'create-employee' => 'Создать сотрудника',
+    'goto-employee'   => 'Перейти к сотруднику',
 
     'notification' => [
-        'title' => 'Кандидат обновлено',
-        'body'  => 'кандидат есть обновлено successfully.',
+        'title' => 'Соискатель обновлён',
+        'body'  => 'Соискатель успешно обновлён.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Кандидат удалено',
-                'body'  => 'кандидат есть удалено successfully.',
+                'title' => 'Соискатель удалён',
+                'body'  => 'Соискатель успешно удалён.',
             ],
         ],
         'force-delete' => [
             'notification' => [
-                'title' => 'Кандидат удалено',
-                'body'  => 'кандидат есть force удалено successfully.',
+                'title' => 'Соискатель удалён',
+                'body'  => 'Соискатель удалён безвозвратно.',
             ],
         ],
 
         'restore' => [
             'notification' => [
-                'title' => 'Кандидат restored',
-                'body'  => 'кандидат есть restored successfully.',
+                'title' => 'Соискатель восстановлен',
+                'body'  => 'Соискатель успешно восстановлен.',
             ],
         ],
 
         'refuse' => [
-            'title'        => 'Отказать Причина',
+            'title'        => 'Причина отказа',
             'form'         => [
                 'fields' => [
-                    'notify'   => 'Notify',
-                    'email-to' => 'Эл. почта До',
+                    'notify'   => 'Уведомить',
+                    'email-to' => 'Кому',
                 ],
             ],
             'notification' => [
-                'title' => 'Кандидат отказано',
-                'body'  => 'кандидат есть отказано successfully.',
+                'title' => 'Соискателю отказано',
+                'body'  => 'Соискателю успешно отказано.',
             ],
         ],
 
         'reopen' => [
-            'title'        => 'Reopen Кандидат',
+            'title'        => 'Вернуть соискателя',
             'notification' => [
-                'title' => 'Кандидат reopened',
-                'body'  => 'кандидат есть reopened successfully.',
+                'title' => 'Соискатель возвращён',
+                'body'  => 'Соискатель успешно возвращён в работу.',
             ],
         ],
 
         'state' => [
             'notification' => [
-                'title' => 'Кандидат состояние обновлено',
-                'body'  => 'кандидат состояние есть обновлено successfully.',
+                'title' => 'Статус соискателя обновлён',
+                'body'  => 'Статус соискателя успешно обновлён.',
             ],
         ],
     ],
 
     'mail' => [
         'application-refused' => [
-            'subject' => 'Ваш Должность Application: :application',
+            'subject' => 'Ваша заявка на вакансию: :application',
         ],
 
         'application-confirm' => [
-            'subject' => 'Ваш Должность Application: :job_position',
+            'subject' => 'Ваша заявка на вакансию: :job_position',
         ],
         'interviewer-assigned' => [
-            'subject' => 'Вы есть назначен до Кандидат :applicant.',
+            'subject' => 'Вам назначен соискатель :applicant.',
         ],
     ],
 ];

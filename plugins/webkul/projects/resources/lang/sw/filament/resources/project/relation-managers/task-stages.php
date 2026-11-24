@@ -4,11 +4,11 @@ return [
     'table' => [
         'header-actions' => [
             'create' => [
-                'label' => 'Ongeza Kazi Hatua',
+                'label' => 'Ongeza hatua ya kazi',
 
                 'notification' => [
-                    'title' => 'Kazi Hatua imeundwa',
-                    'body'  => 'kazi Hatua ina imeundwa successfully.',
+                    'title' => 'Hatua ya kazi imeundwa',
+                    'body'  => 'Hatua ya kazi imeundwa kwa mafanikio.',
                 ],
             ],
         ],

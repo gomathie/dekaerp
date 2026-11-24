@@ -1,42 +1,42 @@
 <?php
 
 return [
-    'title' => 'Candidate',
+    'title' => 'Кандидат',
 
     'navigation' => [
-        'title' => 'Candidates',
+        'title' => 'Кандидаты',
     ],
 
     'global-search' => [
-        'email-from' => 'Эл. почта От',
+        'email-from' => 'Отправитель',
         'phone'      => 'Телефон',
         'company'    => 'Компания',
-        'degree'     => 'Degree',
+        'degree'     => 'Степень',
     ],
 
     'form' => [
         'sections' => [
             'basic-information' => [
-                'title' => 'Basic Сведения',
+                'title' => 'Основные сведения',
 
                 'fields' => [
-                    'full-name' => 'Полный Название',
-                    'email'     => 'Эл. почта Адрес',
-                    'phone'     => 'Телефон Номер',
-                    'linkedin'  => 'LinkedIn Профиль',
+                    'full-name' => 'Полное имя',
+                    'email'     => 'Адрес эл. почты',
+                    'phone'     => 'Номер телефона',
+                    'linkedin'  => 'Профиль LinkedIn',
                     'contact'   => 'Контакт',
                 ],
             ],
 
             'additional-details' => [
-                'title' => 'Additional Подробности',
+                'title' => 'Дополнительные сведения',
 
                 'fields' => [
                     'company'           => 'Компания',
-                    'degree'            => 'Degree',
-                    'tags'              => 'Метки',
+                    'degree'            => 'Степень',
+                    'tags'              => 'Теги',
                     'manager'           => 'Руководитель',
-                    'availability-date' => 'Availability Дата',
+                    'availability-date' => 'Дата готовности',
 
                     'priority-options' => [
                         'low'    => 'Низкий',
@@ -51,16 +51,16 @@ return [
 
                 'fields' => [
                     'active'     => 'Активен',
-                    'evaluation' => 'Evaluation',
+                    'evaluation' => 'Оценка',
                 ],
             ],
 
             'communication' => [
-                'title' => 'Сообщения',
+                'title' => 'Связь',
 
                 'fields' => [
-                    'cc-email'      => 'CC Эл. почта',
-                    'email-bounced' => 'Эл. почта Bounced',
+                    'cc-email'      => 'Копия на эл. почту',
+                    'email-bounced' => 'Письмо не доставлено',
                 ],
             ],
         ],
@@ -68,15 +68,15 @@ return [
 
     'table' => [
         'columns' => [
-            'name'       => 'Полный Название',
-            'tags'       => 'Метки',
-            'evaluation' => 'Evaluation',
+            'name'       => 'Полное имя',
+            'tags'       => 'Теги',
+            'evaluation' => 'Оценка',
         ],
 
         'filters' => [
             'company'      => 'Компания',
             'partner-name' => 'Контакт',
-            'degree'       => 'Degree',
+            'degree'       => 'Степень',
             'manager-name' => 'Руководитель',
         ],
 
@@ -87,16 +87,16 @@ return [
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Candidate Удалено',
-                    'body'  => 'candidates есть удалено successfully.',
+                    'title' => 'Кандидат удалён',
+                    'body'  => 'Кандидаты успешно удалены.',
                 ],
             ],
 
             'empty-state-actions' => [
                 'create' => [
                     'notification' => [
-                        'title' => 'Candidate Создано',
-                        'body'  => 'candidates есть создано successfully.',
+                        'title' => 'Кандидат создан',
+                        'body'  => 'Кандидат успешно создан.',
                     ],
                 ],
             ],
@@ -105,8 +105,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Candidates Удалено',
-                    'body'  => 'candidates есть удалено successfully.',
+                    'title' => 'Кандидаты удалены',
+                    'body'  => 'Кандидаты успешно удалены.',
                 ],
             ],
         ],
@@ -115,26 +115,26 @@ return [
     'infolist' => [
         'sections' => [
             'basic-information' => [
-                'title' => 'Basic Сведения',
+                'title' => 'Основные сведения',
 
                 'entries' => [
-                    'full-name' => 'Полный Название',
-                    'email'     => 'Эл. почта Адрес',
-                    'phone'     => 'Телефон Номер',
-                    'linkedin'  => 'LinkedIn Профиль',
+                    'full-name' => 'Полное имя',
+                    'email'     => 'Адрес эл. почты',
+                    'phone'     => 'Номер телефона',
+                    'linkedin'  => 'Профиль LinkedIn',
                     'contact'   => 'Контакт',
                 ],
             ],
 
             'additional-details' => [
-                'title' => 'Additional Подробности',
+                'title' => 'Дополнительные сведения',
 
                 'entries' => [
                     'company'           => 'Компания',
-                    'degree'            => 'Degree',
-                    'tags'              => 'Метки',
+                    'degree'            => 'Степень',
+                    'tags'              => 'Теги',
                     'manager'           => 'Руководитель',
-                    'availability-date' => 'Availability Дата',
+                    'availability-date' => 'Дата готовности',
 
                     'priority-options' => [
                         'low'    => 'Низкий',
@@ -149,16 +149,16 @@ return [
 
                 'entries' => [
                     'active'     => 'Активен',
-                    'evaluation' => 'Evaluation',
+                    'evaluation' => 'Оценка',
                 ],
             ],
 
             'communication' => [
-                'title' => 'Сообщения',
+                'title' => 'Связь',
 
                 'entries' => [
-                    'cc-email'      => 'CC Эл. почта',
-                    'email-bounced' => 'Эл. почта Bounced',
+                    'cc-email'      => 'Копия на эл. почту',
+                    'email-bounced' => 'Письмо не доставлено',
                 ],
             ],
         ],

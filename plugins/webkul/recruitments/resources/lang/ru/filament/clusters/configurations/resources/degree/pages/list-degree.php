@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Degree создано',
-        'body'  => 'degree есть создано successfully.',
+        'title' => 'Степень создана',
+        'body'  => 'Степень успешно создана.',
     ],
 ];

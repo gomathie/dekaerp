@@ -1,23 +1,23 @@
 <?php
 
 return [
-    'title'          => 'Candidate',
+    'title'          => 'Кандидат',
 
     'log-attributes' => [
         'company'           => 'Компания',
         'contact'           => 'Контакт',
-        'degree'            => 'Degree',
+        'degree'            => 'Степень',
         'manager'           => 'Руководитель',
         'employee'          => 'Сотрудник',
-        'creator'           => 'Создано От',
+        'creator'           => 'Создал',
         'phone'             => 'Телефон',
         'email'             => 'Эл. почта',
-        'email_cc'          => 'Эл. почта CC',
-        'name'              => 'Candidate Название',
-        'email_from'        => 'Эл. почта От',
+        'email_cc'          => 'Копия эл. почты',
+        'name'              => 'Имя кандидата',
+        'email_from'        => 'Отправитель',
         'phone_raw'         => 'Телефон',
-        'linkedin_profile'  => 'LinkedIn Профиль',
-        'availability_date' => 'Availability Дата',
+        'linkedin_profile'  => 'Профиль LinkedIn',
+        'availability_date' => 'Дата готовности',
         'is_active'         => 'Статус',
     ],
 ];

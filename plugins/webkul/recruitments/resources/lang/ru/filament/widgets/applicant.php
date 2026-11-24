@@ -2,11 +2,11 @@
 
 return [
     'heading' => [
-        'title' => 'Кандидат Обзор',
+        'title' => 'Обзор соискателей',
     ],
 
-    'ongoing'  => 'Ongoing',
-    'hired'    => 'Hired',
+    'ongoing'  => 'В процессе',
+    'hired'    => 'Нанят',
     'refused'  => 'Отказано',
     'archived' => 'В архиве',
 ];

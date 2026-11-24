@@ -1,42 +1,42 @@
 <?php
 
 return [
-    'title' => 'Candidate',
+    'title' => 'Mgombea',
 
     'navigation' => [
-        'title' => 'Candidates',
+        'title' => 'Wagombea',
     ],
 
     'global-search' => [
-        'email-from' => 'Barua pepe Kutoka',
+        'email-from' => 'Barua pepe kutoka',
         'phone'      => 'Simu',
         'company'    => 'Kampuni',
-        'degree'     => 'Degree',
+        'degree'     => 'Shahada',
     ],
 
     'form' => [
         'sections' => [
             'basic-information' => [
-                'title' => 'Basic Taarifa',
+                'title' => 'Taarifa za msingi',
 
                 'fields' => [
-                    'full-name' => 'Kamili Jina',
-                    'email'     => 'Barua pepe Anwani',
-                    'phone'     => 'Simu Nambari',
-                    'linkedin'  => 'LinkedIn Wasifu',
-                    'contact'   => 'Mwasiliani',
+                    'full-name' => 'Jina kamili',
+                    'email'     => 'Anwani ya barua pepe',
+                    'phone'     => 'Namba ya simu',
+                    'linkedin'  => 'Wasifu wa LinkedIn',
+                    'contact'   => 'Mhusika',
                 ],
             ],
 
             'additional-details' => [
-                'title' => 'Additional Maelezo',
+                'title' => 'Maelezo ya ziada',
 
                 'fields' => [
                     'company'           => 'Kampuni',
-                    'degree'            => 'Degree',
+                    'degree'            => 'Shahada',
                     'tags'              => 'Lebo',
                     'manager'           => 'Meneja',
-                    'availability-date' => 'Availability Tarehe',
+                    'availability-date' => 'Tarehe ya kupatikana',
 
                     'priority-options' => [
                         'low'    => 'Chini',
@@ -50,8 +50,8 @@ return [
                 'title' => 'Hali',
 
                 'fields' => [
-                    'active'     => 'Inatumika',
-                    'evaluation' => 'Evaluation',
+                    'active'     => 'Hai',
+                    'evaluation' => 'Tathmini',
                 ],
             ],
 
@@ -59,8 +59,8 @@ return [
                 'title' => 'Mawasiliano',
 
                 'fields' => [
-                    'cc-email'      => 'CC Barua pepe',
-                    'email-bounced' => 'Barua pepe Bounced',
+                    'cc-email'      => 'Nakala ya barua pepe',
+                    'email-bounced' => 'Barua pepe imerudishwa',
                 ],
             ],
         ],
@@ -68,15 +68,15 @@ return [
 
     'table' => [
         'columns' => [
-            'name'       => 'Kamili Jina',
+            'name'       => 'Jina kamili',
             'tags'       => 'Lebo',
-            'evaluation' => 'Evaluation',
+            'evaluation' => 'Tathmini',
         ],
 
         'filters' => [
             'company'      => 'Kampuni',
-            'partner-name' => 'Mwasiliani',
-            'degree'       => 'Degree',
+            'partner-name' => 'Mhusika',
+            'degree'       => 'Shahada',
             'manager-name' => 'Meneja',
         ],
 
@@ -87,16 +87,16 @@ return [
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Candidate Imefutwa',
-                    'body'  => 'candidates ina imefutwa successfully.',
+                    'title' => 'Mgombea amefutwa',
+                    'body'  => 'Wagombea wamefutwa kwa mafanikio.',
                 ],
             ],
 
             'empty-state-actions' => [
                 'create' => [
                     'notification' => [
-                        'title' => 'Candidate Imeundwa',
-                        'body'  => 'candidates ina imeundwa successfully.',
+                        'title' => 'Mgombea ameundwa',
+                        'body'  => 'Mgombea ameundwa kwa mafanikio.',
                     ],
                 ],
             ],
@@ -105,8 +105,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Candidates Imefutwa',
-                    'body'  => 'candidates ina imefutwa successfully.',
+                    'title' => 'Wagombea wamefutwa',
+                    'body'  => 'Wagombea wamefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -115,26 +115,26 @@ return [
     'infolist' => [
         'sections' => [
             'basic-information' => [
-                'title' => 'Basic Taarifa',
+                'title' => 'Taarifa za msingi',
 
                 'entries' => [
-                    'full-name' => 'Kamili Jina',
-                    'email'     => 'Barua pepe Anwani',
-                    'phone'     => 'Simu Nambari',
-                    'linkedin'  => 'LinkedIn Wasifu',
-                    'contact'   => 'Mwasiliani',
+                    'full-name' => 'Jina kamili',
+                    'email'     => 'Anwani ya barua pepe',
+                    'phone'     => 'Namba ya simu',
+                    'linkedin'  => 'Wasifu wa LinkedIn',
+                    'contact'   => 'Mhusika',
                 ],
             ],
 
             'additional-details' => [
-                'title' => 'Additional Maelezo',
+                'title' => 'Maelezo ya ziada',
 
                 'entries' => [
                     'company'           => 'Kampuni',
-                    'degree'            => 'Degree',
+                    'degree'            => 'Shahada',
                     'tags'              => 'Lebo',
                     'manager'           => 'Meneja',
-                    'availability-date' => 'Availability Tarehe',
+                    'availability-date' => 'Tarehe ya kupatikana',
 
                     'priority-options' => [
                         'low'    => 'Chini',
@@ -148,8 +148,8 @@ return [
                 'title' => 'Hali',
 
                 'entries' => [
-                    'active'     => 'Inatumika',
-                    'evaluation' => 'Evaluation',
+                    'active'     => 'Hai',
+                    'evaluation' => 'Tathmini',
                 ],
             ],
 
@@ -157,8 +157,8 @@ return [
                 'title' => 'Mawasiliano',
 
                 'entries' => [
-                    'cc-email'      => 'CC Barua pepe',
-                    'email-bounced' => 'Barua pepe Bounced',
+                    'cc-email'      => 'Nakala ya barua pepe',
+                    'email-bounced' => 'Barua pepe imerudishwa',
                 ],
             ],
         ],

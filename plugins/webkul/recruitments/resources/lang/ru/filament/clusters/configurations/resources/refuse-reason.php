@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'title' => 'Отказать Причина',
+    'title' => 'Причина отказа',
 
     'navigation' => [
-        'title' => 'Отказать Reasons',
-        'group' => 'Applications',
+        'title' => 'Причины отказа',
+        'group' => 'Заявки',
     ],
 
     'form' => [
@@ -13,43 +13,43 @@ return [
             'name'             => 'Название',
             'template'         => [
                 'title'                    => 'Шаблон',
-                'applicant-refuse'         => 'Кандидат Отказать',
-                'applicant-not-interested' => 'Кандидат Не Interested',
+                'applicant-refuse'         => 'Отказ соискателю',
+                'applicant-not-interested' => 'Соискатель не заинтересован',
             ],
-            'name-placeholder' => 'Введите название отказать причина',
+            'name-placeholder' => 'Введите причину отказа',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'id'         => 'Ид.',
+            'id'         => 'ID',
             'name'       => 'Название',
             'template'   => 'Шаблон',
-            'created-by' => 'Создано От',
-            'created-at' => 'Создано',
-            'updated-at' => 'Обновлено',
+            'created-by' => 'Создал',
+            'created-at' => 'Дата создания',
+            'updated-at' => 'Дата изменения',
         ],
 
         'filters' => [
             'name'       => 'Название',
             'employee'   => 'Сотрудник',
-            'created-by' => 'Создано От',
-            'updated-at' => 'Обновлено',
-            'created-at' => 'Создано',
+            'created-by' => 'Создал',
+            'updated-at' => 'Дата изменения',
+            'created-at' => 'Дата создания',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Отказать причина обновлено',
-                    'body'  => 'отказать причина есть обновлено successfully.',
+                    'title' => 'Причина отказа обновлена',
+                    'body'  => 'Причина отказа успешно обновлена.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Отказать причина удалено',
-                    'body'  => 'отказать причина есть удалено successfully.',
+                    'title' => 'Причина отказа удалена',
+                    'body'  => 'Причина отказа успешно удалена.',
                 ],
             ],
         ],
@@ -57,8 +57,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Отказать reasons удалено',
-                    'body'  => 'отказать reasons есть удалено successfully.',
+                    'title' => 'Причины отказа удалены',
+                    'body'  => 'Причины отказа успешно удалены.',
                 ],
             ],
         ],
@@ -66,8 +66,8 @@ return [
         'empty-state-action' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Отказать причина создано',
-                    'body'  => 'отказать причина есть создано successfully.',
+                    'title' => 'Причина отказа создана',
+                    'body'  => 'Причина отказа успешно создана.',
                 ],
             ],
         ],

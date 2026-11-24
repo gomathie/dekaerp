@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'label'            => 'Ajira',
-    'open-positions'   => 'Wazi positions',
-    'new-applicants'   => 'Mpya waombaji (7 siku)',
-    'hired-this-month' => 'Hired hii mwezi',
-    'in-progress'      => ':count applications katika maendeleo',
+    'label'            => 'Uajiri',
+    'open-positions'   => 'Nafasi zilizo wazi',
+    'new-applicants'   => 'Waombaji wapya (siku 7)',
+    'hired-this-month' => 'Walioajiriwa mwezi huu',
+    'in-progress'      => 'Maombi yanayoendelea: :count',
 ];

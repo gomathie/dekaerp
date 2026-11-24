@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'title' => 'Manage Задачи',
+    'title' => 'Управление задачами',
 
     'form' => [
-        'enable-project-stages'             => 'Включить Проект Этапы',
-        'enable-project-stages-helper-text' => 'Track ход ваш проекты',
-        'configure-stages'                  => 'Configure Этапы',
-        'enable-milestones'                 => 'Включить Milestones',
-        'enable-milestones-helper-text'     => 'Track major ход points тот нужно быть reached до achieve успешно',
+        'enable-project-stages'             => 'Включить этапы проектов',
+        'enable-project-stages-helper-text' => 'Отслеживайте ход ваших проектов',
+        'configure-stages'                  => 'Настроить этапы',
+        'enable-milestones'                 => 'Включить вехи',
+        'enable-milestones-helper-text'     => 'Отслеживайте ключевые точки, которые нужно пройти для успеха',
     ],
 ];

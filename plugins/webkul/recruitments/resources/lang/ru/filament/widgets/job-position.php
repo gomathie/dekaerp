@@ -2,10 +2,10 @@
 
 return [
     'heading' => [
-        'title' => 'Должность Должность Обзор',
+        'title' => 'Обзор должностей',
     ],
 
-    'active-job-applications' => 'Активен Должность Applications',
-    'total-applications'      => 'Итого Applications',
-    'hired-candidate'         => 'Hired Candidates',
+    'active-job-applications' => 'Активные заявки',
+    'total-applications'      => 'Всего заявок',
+    'hired-candidate'         => 'Нанятые кандидаты',
 ];

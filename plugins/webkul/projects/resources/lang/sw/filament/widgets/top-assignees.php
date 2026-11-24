@@ -2,12 +2,12 @@
 
 return [
     'heading' => [
-        'title' => 'Top Assignees',
+        'title' => 'Waliokabidhiwa wakuu',
     ],
 
     'table-columns' => [
         'user'        => 'Mtumiaji',
-        'hours-spent' => 'Saa Spent',
+        'hours-spent' => 'Saa zilizotumika',
         'tasks'       => 'Kazi',
     ],
 ];

@@ -3,11 +3,11 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Wastani',
+            'label' => 'Njia mpya',
 
             'notification' => [
-                'title' => 'Wastani imeundwa',
-                'body'  => 'wastani ina imeundwa successfully.',
+                'title' => 'Njia imeundwa',
+                'body'  => 'Njia imeundwa kwa mafanikio.',
             ],
         ],
     ],

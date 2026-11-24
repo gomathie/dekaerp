@@ -5,43 +5,43 @@ return [
 
     'navigation' => [
         'title' => 'Этапы',
-        'group' => 'Должность Positions',
+        'group' => 'Должности',
     ],
 
     'form' => [
         'sections' => [
             'general-information' => [
-                'title' => 'Общее Сведения',
+                'title' => 'Общие сведения',
 
                 'fields' => [
-                    'stage-name'   => 'Этап Название',
-                    'sort'         => 'Нумерация Заказ',
-                    'requirements' => 'Requirements',
+                    'stage-name'   => 'Название этапа',
+                    'sort'         => 'Порядок',
+                    'requirements' => 'Требования',
                 ],
             ],
 
             'tooltips' => [
-                'title'       => 'Tooltips',
-                'description' => 'Define свой подпись для application статус.',
+                'title'       => 'Подсказки',
+                'description' => 'Задайте свои подписи для статусов заявки.',
 
                 'fields' => [
-                    'gray-label'          => 'Gray Подпись',
-                    'gray-label-tooltip'  => 'подпись для gray статус.',
-                    'red-label'           => 'Red Подпись',
-                    'red-label-tooltip'   => 'подпись для red статус.',
-                    'green-label'         => 'Green Подпись',
-                    'green-label-tooltip' => 'подпись для green статус.',
+                    'gray-label'          => 'Серая метка',
+                    'gray-label-tooltip'  => 'Подпись для серого статуса.',
+                    'red-label'           => 'Красная метка',
+                    'red-label-tooltip'   => 'Подпись для красного статуса.',
+                    'green-label'         => 'Зелёная метка',
+                    'green-label-tooltip' => 'Подпись для зелёного статуса.',
                 ],
             ],
 
             'additional-information' => [
-                'title' => 'Additional Сведения',
+                'title' => 'Дополнительная информация',
 
                 'fields' => [
-                    'job-positions' => 'Должность Positions',
-                    'folded'        => 'Folded',
-                    'hired-stage'   => 'Hired Этап',
-                    'default-stage' => 'По умолчанию Этап',
+                    'job-positions' => 'Должности',
+                    'folded'        => 'Свёрнут',
+                    'hired-stage'   => 'Этап найма',
+                    'default-stage' => 'Этап по умолчанию',
                 ],
             ],
         ],
@@ -49,52 +49,52 @@ return [
 
     'table' => [
         'columns' => [
-            'id'                 => 'Ид.',
-            'name'               => 'Этап Название',
-            'hired-stage'        => 'Hired Этап',
-            'default-stage'      => 'По умолчанию Этап',
-            'folded'             => 'Folded',
-            'job-positions'      => 'Должность Positions',
-            'created-by'         => 'Создано От',
-            'created-at'         => 'Создано',
-            'updated-at'         => 'Обновлено',
+            'id'                 => 'ID',
+            'name'               => 'Название этапа',
+            'hired-stage'        => 'Этап найма',
+            'default-stage'      => 'Этап по умолчанию',
+            'folded'             => 'Свёрнут',
+            'job-positions'      => 'Должности',
+            'created-by'         => 'Создал',
+            'created-at'         => 'Дата создания',
+            'updated-at'         => 'Дата изменения',
         ],
 
         'filters' => [
-            'name'         => 'Этап Название',
-            'job-position' => 'Должность Должность',
-            'folded'       => 'Folded',
-            'gray-label'   => 'Gray Подпись',
-            'red-label'    => 'Red Подпись',
-            'green-label'  => 'Green Подпись',
-            'created-by'   => 'Создано От',
-            'created-at'   => 'Создано',
-            'updated-at'   => 'Обновлено',
+            'name'         => 'Название этапа',
+            'job-position' => 'Должность',
+            'folded'       => 'Свёрнут',
+            'gray-label'   => 'Серая метка',
+            'red-label'    => 'Красная метка',
+            'green-label'  => 'Зелёная метка',
+            'created-by'   => 'Создал',
+            'created-at'   => 'Дата создания',
+            'updated-at'   => 'Дата изменения',
         ],
 
         'groups' => [
-            'job-position' => 'Должность Должность',
-            'stage-name'   => 'Этап Название',
-            'folded'       => 'Folded',
-            'gray-label'   => 'Gray Подпись',
-            'red-label'    => 'Red Подпись',
-            'green-label'  => 'Green Подпись',
-            'created-by'   => 'Создано От',
-            'created-at'   => 'Создано',
-            'updated-at'   => 'Обновлено',
+            'job-position' => 'Должность',
+            'stage-name'   => 'Название этапа',
+            'folded'       => 'Свёрнут',
+            'gray-label'   => 'Серая метка',
+            'red-label'    => 'Красная метка',
+            'green-label'  => 'Зелёная метка',
+            'created-by'   => 'Создал',
+            'created-at'   => 'Дата создания',
+            'updated-at'   => 'Дата изменения',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Этапы удалено',
-                        'body'  => 'Этапы есть удалено successfully.',
+                        'title' => 'Этапы удалены',
+                        'body'  => 'Этапы успешно удалены.',
                     ],
 
                     'error' => [
-                        'title' => 'Этапы could не быть удалено',
-                        'body'  => 'Этапы нельзя быть удалено потому что это currently в использовать.',
+                        'title' => 'Не удалось удалить этапы',
+                        'body'  => 'Этапы нельзя удалить, так как они используются.',
                     ],
                 ],
             ],
@@ -103,15 +103,15 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Этапы удалено',
-                    'body'  => 'Этапы есть удалено successfully.',
+                    'title' => 'Этапы удалены',
+                    'body'  => 'Этапы успешно удалены.',
                 ],
             ],
         ],
 
         'empty-state-actions' => [
             'create' => [
-                'label' => 'Новое Этап',
+                'label' => 'Новый этап',
             ],
         ],
     ],
@@ -119,37 +119,37 @@ return [
     'infolist' => [
         'sections' => [
             'general-information' => [
-                'title' => 'Общее Сведения',
+                'title' => 'Общие сведения',
 
                 'entries' => [
-                    'stage-name'   => 'Этап Название',
-                    'sort'         => 'Нумерация Заказ',
-                    'requirements' => 'Requirements',
+                    'stage-name'   => 'Название этапа',
+                    'sort'         => 'Порядок',
+                    'requirements' => 'Требования',
                 ],
             ],
 
             'tooltips' => [
-                'title'       => 'Tooltips',
-                'description' => 'Define свой подпись для application статус.',
+                'title'       => 'Подсказки',
+                'description' => 'Задайте свои подписи для статусов заявки.',
 
                 'entries' => [
-                    'gray-label'          => 'Gray Подпись',
-                    'gray-label-tooltip'  => 'подпись для gray статус.',
-                    'red-label'           => 'Red Подпись',
-                    'red-label-tooltip'   => 'подпись для red статус.',
-                    'green-label'         => 'Green Подпись',
-                    'green-label-tooltip' => 'подпись для green статус.',
+                    'gray-label'          => 'Серая метка',
+                    'gray-label-tooltip'  => 'Подпись для серого статуса.',
+                    'red-label'           => 'Красная метка',
+                    'red-label-tooltip'   => 'Подпись для красного статуса.',
+                    'green-label'         => 'Зелёная метка',
+                    'green-label-tooltip' => 'Подпись для зелёного статуса.',
                 ],
             ],
 
             'additional-information' => [
-                'title' => 'Additional Сведения',
+                'title' => 'Дополнительная информация',
 
                 'entries' => [
-                    'job-positions'      => 'Должность Должность',
-                    'folded'             => 'Folded',
-                    'hired-stage'        => 'Hired Этап',
-                    'default-stage'      => 'По умолчанию Этап',
+                    'job-positions'      => 'Должность',
+                    'folded'             => 'Свёрнут',
+                    'hired-stage'        => 'Этап найма',
+                    'default-stage'      => 'Этап по умолчанию',
                 ],
             ],
         ],

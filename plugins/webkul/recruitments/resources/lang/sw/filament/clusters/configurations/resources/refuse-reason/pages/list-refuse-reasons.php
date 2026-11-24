@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Kataa sababu imeundwa',
-        'body'  => 'kataa sababu ina imeundwa successfully.',
+        'title' => 'Sababu ya kukataa imeundwa',
+        'body'  => 'Sababu ya kukataa imeundwa kwa mafanikio.',
     ],
 ];

@@ -7,11 +7,11 @@ return [
 
     'filters-form' => [
         'project'    => 'Mradi',
-        'assignees'  => 'Assignees',
+        'assignees'  => 'Waliokabidhiwa',
         'tags'       => 'Lebo',
         'customer'   => 'Mteja',
-        'start-date' => 'Anza Tarehe',
-        'date-range' => 'Kipindi cha tarehe',
-        'end-date'   => 'Mwisho Tarehe',
+        'start-date' => 'Tarehe ya kuanza',
+        'date-range' => 'Kipindi',
+        'end-date'   => 'Tarehe ya kumaliza',
     ],
 ];

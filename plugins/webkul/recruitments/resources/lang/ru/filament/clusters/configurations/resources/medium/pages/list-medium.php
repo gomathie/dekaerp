@@ -3,11 +3,11 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Средний',
+            'label' => 'Новый канал',
 
             'notification' => [
-                'title' => 'Средний создано',
-                'body'  => 'средний есть создано successfully.',
+                'title' => 'Канал создан',
+                'body'  => 'Канал успешно создан.',
             ],
         ],
     ],

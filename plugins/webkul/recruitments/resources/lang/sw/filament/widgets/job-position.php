@@ -2,10 +2,10 @@
 
 return [
     'heading' => [
-        'title' => 'Kazi Cheo Muhtasari',
+        'title' => 'Muhtasari wa nafasi za kazi',
     ],
 
-    'active-job-applications' => 'Inatumika Kazi Applications',
-    'total-applications'      => 'Jumla Applications',
-    'hired-candidate'         => 'Hired Candidates',
+    'active-job-applications' => 'Maombi ya kazi yanayoendelea',
+    'total-applications'      => 'Jumla ya maombi',
+    'hired-candidate'         => 'Wagombea walioajiriwa',
 ];

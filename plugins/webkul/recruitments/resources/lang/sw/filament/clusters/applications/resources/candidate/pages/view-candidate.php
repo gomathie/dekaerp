@@ -2,13 +2,13 @@
 
 return [
     'create-employee'       => 'Unda mfanyakazi',
-    'goto-employee-tooltip' => 'Go hadi mfanyakazi',
+    'goto-employee-tooltip' => 'Nenda kwa mfanyakazi',
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Candidate imefutwa',
-                'body'  => 'candidate ina imefutwa successfully.',
+                'title' => 'Mgombea amefutwa',
+                'body'  => 'Mgombea amefutwa kwa mafanikio.',
             ],
         ],
     ],

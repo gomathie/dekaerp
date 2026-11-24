@@ -3,11 +3,11 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Chanzo',
+            'label' => 'Chanzo kipya',
 
             'notification' => [
-                'title' => 'Chanzo imeundwa',
-                'body'  => 'chanzo ina imeundwa successfully.',
+                'title' => 'Chanzo kimeundwa',
+                'body'  => 'Chanzo kimeundwa kwa mafanikio.',
             ],
         ],
     ],

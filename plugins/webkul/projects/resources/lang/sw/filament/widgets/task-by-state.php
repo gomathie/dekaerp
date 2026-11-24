@@ -2,6 +2,6 @@
 
 return [
     'heading' => [
-        'title' => 'Kazi Na Hali',
+        'title' => 'Kazi kwa hali',
     ],
 ];

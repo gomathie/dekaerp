@@ -2,8 +2,8 @@
 
 return [
     'label'           => 'Miradi',
-    'active-projects' => 'Inatumika miradi',
-    'open-tasks'      => 'Wazi kazi',
-    'overdue-tasks'   => 'Kazi imechelewa',
-    'done'            => ':percent% ya kazi imekamilika',
+    'active-projects' => 'Miradi hai',
+    'open-tasks'      => 'Kazi zilizo wazi',
+    'overdue-tasks'   => 'Kazi zilizochelewa',
+    'done'            => 'Kazi :percent% zimekamilika',
 ];

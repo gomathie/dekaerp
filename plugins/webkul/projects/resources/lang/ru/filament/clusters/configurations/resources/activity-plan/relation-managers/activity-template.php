@@ -4,32 +4,32 @@ return [
     'form' => [
         'sections' => [
             'activity-details' => [
-                'title' => 'Активность Подробности',
+                'title' => 'Сведения о действии',
 
                 'fields' => [
-                    'activity-type' => 'Активность Тип',
-                    'summary'       => 'Сводка',
-                    'note'          => 'Заметка',
+                    'activity-type' => 'Тип действия',
+                    'summary'       => 'Краткое описание',
+                    'note'          => 'Примечание',
                 ],
             ],
 
             'assignment' => [
-                'title' => 'Assignment',
+                'title' => 'Назначение',
 
                 'fields' => [
-                    'assignment' => 'Assignment',
-                    'assignee'   => 'Assignee',
+                    'assignment' => 'Назначение',
+                    'assignee'   => 'Исполнитель',
                 ],
             ],
 
             'delay-information' => [
-                'title' => 'Delay Сведения',
+                'title' => 'Сведения о задержке',
 
                 'fields' => [
-                    'delay-count'            => 'Delay Количество',
-                    'delay-unit'             => 'Delay Единица',
-                    'delay-from'             => 'Delay От',
-                    'delay-from-helper-text' => 'Источник delay calculation',
+                    'delay-count'            => 'Величина задержки',
+                    'delay-unit'             => 'Единица задержки',
+                    'delay-from'             => 'Отсчёт задержки от',
+                    'delay-from-helper-text' => 'Точка отсчёта задержки',
                 ],
             ],
         ],
@@ -37,41 +37,41 @@ return [
 
     'table' => [
         'columns' => [
-            'activity-type' => 'Активность Тип',
-            'summary'       => 'Сводка',
-            'assignment'    => 'Assignment',
-            'assigned-to'   => 'Назначен До',
-            'interval'      => 'Interval',
-            'delay-unit'    => 'Delay Единица',
-            'delay-from'    => 'Delay От',
-            'created-by'    => 'Создано От',
-            'created-at'    => 'Создано',
-            'updated-at'    => 'Обновлено',
+            'activity-type' => 'Тип действия',
+            'summary'       => 'Краткое описание',
+            'assignment'    => 'Назначение',
+            'assigned-to'   => 'Назначено',
+            'interval'      => 'Интервал',
+            'delay-unit'    => 'Единица задержки',
+            'delay-from'    => 'Отсчёт задержки от',
+            'created-by'    => 'Создал',
+            'created-at'    => 'Дата создания',
+            'updated-at'    => 'Дата изменения',
         ],
 
         'groups' => [
-            'activity-type' => 'Активность Тип',
-            'assignment'    => 'Assignment',
-            'assigned-to'   => 'Назначен До',
-            'interval'      => 'Interval',
-            'delay-unit'    => 'Delay Единица',
-            'delay-from'    => 'Delay От',
-            'created-by'    => 'Создано От',
-            'created-at'    => 'Создано',
-            'updated-at'    => 'Обновлено',
+            'activity-type' => 'Тип действия',
+            'assignment'    => 'Назначение',
+            'assigned-to'   => 'Назначено',
+            'interval'      => 'Интервал',
+            'delay-unit'    => 'Единица задержки',
+            'delay-from'    => 'Отсчёт задержки от',
+            'created-by'    => 'Создал',
+            'created-at'    => 'Дата создания',
+            'updated-at'    => 'Дата изменения',
         ],
 
         'filters' => [
-            'activity-type'   => 'Активность Тип',
-            'activity-status' => 'Активность Статус',
-            'has-delay'       => 'Есть Delay',
+            'activity-type'   => 'Тип действия',
+            'activity-status' => 'Статус действия',
+            'has-delay'       => 'С задержкой',
         ],
 
         'header-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Активность plan шаблон создано',
-                    'body'  => 'активность plan шаблон есть создано successfully.',
+                    'title' => 'Шаблон плана действий создан',
+                    'body'  => 'Шаблон плана действий успешно создан.',
                 ],
             ],
         ],
@@ -79,15 +79,15 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Активность шаблон обновлено',
-                    'body'  => 'активность шаблон есть обновлено successfully.',
+                    'title' => 'Шаблон действия обновлён',
+                    'body'  => 'Шаблон действия успешно обновлён.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Активность шаблон удалено',
-                    'body'  => 'активность шаблон есть удалено successfully.',
+                    'title' => 'Шаблон действия удалён',
+                    'body'  => 'Шаблон действия успешно удалён.',
                 ],
             ],
         ],
@@ -95,8 +95,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Активность шаблоны удалено',
-                    'body'  => 'активность шаблоны есть удалено successfully.',
+                    'title' => 'Шаблоны действий удалены',
+                    'body'  => 'Шаблоны действий успешно удалены.',
                 ],
             ],
         ],

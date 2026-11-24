@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'breadcrumb'        => 'Application Hali kwa :applicant',
-    'greeting'          => 'Hello,',
-    'thank-you-message' => 'Thank wewe kwa yako interest katika joining <b>:company</b> timu.',
-    'future-endeavors'  => 'Sisi wanted hadi ruhusu wewe know hiyo, although yako resume ni competitive, yetu hiring timu reviewed yako application na <b> si chagua hii kwa further consideration</b>.',
+    'breadcrumb'        => 'Hali ya ombi la :applicant',
+    'greeting'          => 'Habari,',
+    'thank-you-message' => 'Asante kwa nia yako ya kujiunga na timu ya <b>:company</b>.',
+    'future-endeavors'  => 'Tunapenda kukujulisha kwamba, ingawa wasifu wako una ushindani, timu yetu ya uajiri imepitia ombi lako na <b>haikulichagua kwa hatua inayofuata</b>.',
     'admin-details'     => [
         'name'  => '-- <br><strong>:name</strong>',
         'email' => 'Barua pepe: :email',

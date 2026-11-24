@@ -2,7 +2,7 @@
 
 return [
     'navigation' => [
-        'title' => 'Shughuli Plans',
+        'title' => 'Mipango ya shughuli',
     ],
 
     'form' => [
@@ -14,36 +14,36 @@ return [
         'columns' => [
             'name'       => 'Jina',
             'status'     => 'Hali',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'created-at' => 'Tarehe ya kuundwa',
+            'updated-at' => 'Tarehe ya kusasishwa',
         ],
 
         'groups' => [
             'name'       => 'Jina',
             'status'     => 'Hali',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'created-at' => 'Tarehe ya kuundwa',
+            'updated-at' => 'Tarehe ya kusasishwa',
         ],
 
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Shughuli Plan restored',
-                    'body'  => 'shughuli plan ina restored successfully.',
+                    'title' => 'Mpango wa shughuli umerejeshwa',
+                    'body'  => 'Mpango wa shughuli umerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Shughuli Plan imefutwa',
-                    'body'  => 'shughuli plan ina imefutwa successfully.',
+                    'title' => 'Mpango wa shughuli umefutwa',
+                    'body'  => 'Mpango wa shughuli umefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Shughuli Plan force imefutwa',
-                    'body'  => 'shughuli plan ina force imefutwa successfully.',
+                    'title' => 'Mpango wa shughuli umefutwa kabisa',
+                    'body'  => 'Mpango wa shughuli umefutwa kabisa.',
                 ],
             ],
         ],
@@ -51,22 +51,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Shughuli Plans restored',
-                    'body'  => 'shughuli plans ina restored successfully.',
+                    'title' => 'Mipango ya shughuli imerejeshwa',
+                    'body'  => 'Mipango ya shughuli imerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Shughuli Plans imefutwa',
-                    'body'  => 'shughuli plans ina imefutwa successfully.',
+                    'title' => 'Mipango ya shughuli imefutwa',
+                    'body'  => 'Mipango ya shughuli imefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Shughuli Plans force imefutwa',
-                    'body'  => 'shughuli plans ina force imefutwa successfully.',
+                    'title' => 'Mipango ya shughuli imefutwa kabisa',
+                    'body'  => 'Mipango ya shughuli imefutwa kabisa.',
                 ],
             ],
         ],
@@ -74,8 +74,8 @@ return [
         'empty-state' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Shughuli Plan imeundwa',
-                    'body'  => 'shughuli plan ina imeundwa successfully.',
+                    'title' => 'Mpango wa shughuli umeundwa',
+                    'body'  => 'Mpango wa shughuli umeundwa kwa mafanikio.',
                 ],
             ],
         ],

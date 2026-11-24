@@ -3,17 +3,17 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Kazi Hatua',
+            'label' => 'Hatua mpya ya kazi',
 
             'notification' => [
-                'title' => 'Kazi hatua imeundwa',
-                'body'  => 'kazi hatua ina imeundwa successfully.',
+                'title' => 'Hatua ya kazi imeundwa',
+                'body'  => 'Hatua ya kazi imeundwa kwa mafanikio.',
             ],
         ],
     ],
 
     'tabs' => [
         'all'      => 'Zote',
-        'archived' => 'Imehifadhiwa',
+        'archived' => 'Kwenye kumbukumbu',
     ],
 ];

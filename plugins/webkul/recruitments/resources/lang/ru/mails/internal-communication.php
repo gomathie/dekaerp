@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'breadcrumb'             => 'Внутренний Сообщения: Вы есть назначен до Кандидат :applicant.',
-    'greeting'               => 'Dear :interviewer,',
-    'assignment_message'     => 'Вы есть назначен до Кандидат',
-    'internal_communication' => 'Внутренний сообщения:',
-    'internal_note'          => 'Replying post внутренний заметка. Followers won’t receive любой эл. почта уведомление.',
-    'view_applicant'         => 'Просмотр Кандидат',
+    'breadcrumb'             => 'Внутреннее сообщение: вам назначен соискатель :applicant.',
+    'greeting'               => 'Уважаемый(-ая) :interviewer!',
+    'assignment_message'     => 'Вам назначен соискатель',
+    'internal_communication' => 'Внутреннее сообщение:',
+    'internal_note'          => 'Ответ будет опубликован как внутреннее примечание. Подписчики не получат уведомление по эл. почте.',
+    'view_applicant'         => 'Открыть соискателя',
 ];

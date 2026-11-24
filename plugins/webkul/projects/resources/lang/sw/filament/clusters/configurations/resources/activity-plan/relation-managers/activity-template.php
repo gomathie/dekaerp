@@ -4,32 +4,32 @@ return [
     'form' => [
         'sections' => [
             'activity-details' => [
-                'title' => 'Shughuli Maelezo',
+                'title' => 'Maelezo ya shughuli',
 
                 'fields' => [
-                    'activity-type' => 'Shughuli Aina',
+                    'activity-type' => 'Aina ya shughuli',
                     'summary'       => 'Muhtasari',
-                    'note'          => 'Maelezo',
+                    'note'          => 'Kidokezo',
                 ],
             ],
 
             'assignment' => [
-                'title' => 'Assignment',
+                'title' => 'Ugawaji',
 
                 'fields' => [
-                    'assignment' => 'Assignment',
-                    'assignee'   => 'Assignee',
+                    'assignment' => 'Ugawaji',
+                    'assignee'   => 'Aliyekabidhiwa',
                 ],
             ],
 
             'delay-information' => [
-                'title' => 'Delay Taarifa',
+                'title' => 'Taarifa za ucheleweshaji',
 
                 'fields' => [
-                    'delay-count'            => 'Delay Idadi',
-                    'delay-unit'             => 'Delay Uniti',
-                    'delay-from'             => 'Delay Kutoka',
-                    'delay-from-helper-text' => 'Chanzo ya delay calculation',
+                    'delay-count'            => 'Idadi ya ucheleweshaji',
+                    'delay-unit'             => 'Kipimo cha ucheleweshaji',
+                    'delay-from'             => 'Ucheleweshaji kuanzia',
+                    'delay-from-helper-text' => 'Msingi wa kukokotoa ucheleweshaji',
                 ],
             ],
         ],
@@ -37,41 +37,41 @@ return [
 
     'table' => [
         'columns' => [
-            'activity-type' => 'Shughuli Aina',
+            'activity-type' => 'Aina ya shughuli',
             'summary'       => 'Muhtasari',
-            'assignment'    => 'Assignment',
-            'assigned-to'   => 'Amekabidhiwa Hadi',
-            'interval'      => 'Interval',
-            'delay-unit'    => 'Delay Uniti',
-            'delay-from'    => 'Delay Kutoka',
-            'created-by'    => 'Imeundwa Na',
-            'created-at'    => 'Imeundwa',
-            'updated-at'    => 'Imesasishwa',
+            'assignment'    => 'Ugawaji',
+            'assigned-to'   => 'Amepewa',
+            'interval'      => 'Muda',
+            'delay-unit'    => 'Kipimo cha ucheleweshaji',
+            'delay-from'    => 'Ucheleweshaji kuanzia',
+            'created-by'    => 'Imeundwa na',
+            'created-at'    => 'Tarehe ya kuundwa',
+            'updated-at'    => 'Tarehe ya kusasishwa',
         ],
 
         'groups' => [
-            'activity-type' => 'Shughuli Aina',
-            'assignment'    => 'Assignment',
-            'assigned-to'   => 'Amekabidhiwa Hadi',
-            'interval'      => 'Interval',
-            'delay-unit'    => 'Delay Uniti',
-            'delay-from'    => 'Delay Kutoka',
-            'created-by'    => 'Imeundwa Na',
-            'created-at'    => 'Imeundwa',
-            'updated-at'    => 'Imesasishwa',
+            'activity-type' => 'Aina ya shughuli',
+            'assignment'    => 'Ugawaji',
+            'assigned-to'   => 'Amepewa',
+            'interval'      => 'Muda',
+            'delay-unit'    => 'Kipimo cha ucheleweshaji',
+            'delay-from'    => 'Ucheleweshaji kuanzia',
+            'created-by'    => 'Imeundwa na',
+            'created-at'    => 'Tarehe ya kuundwa',
+            'updated-at'    => 'Tarehe ya kusasishwa',
         ],
 
         'filters' => [
-            'activity-type'   => 'Shughuli Aina',
-            'activity-status' => 'Shughuli Hali',
-            'has-delay'       => 'Ina Delay',
+            'activity-type'   => 'Aina ya shughuli',
+            'activity-status' => 'Hali ya shughuli',
+            'has-delay'       => 'Ina ucheleweshaji',
         ],
 
         'header-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Shughuli plan kiolezo imeundwa',
-                    'body'  => 'shughuli plan kiolezo ina imeundwa successfully.',
+                    'title' => 'Kiolezo cha mpango wa shughuli kimeundwa',
+                    'body'  => 'Kiolezo cha mpango wa shughuli kimeundwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -79,15 +79,15 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Shughuli kiolezo imesasishwa',
-                    'body'  => 'shughuli kiolezo ina imesasishwa successfully.',
+                    'title' => 'Kiolezo cha shughuli kimesasishwa',
+                    'body'  => 'Kiolezo cha shughuli kimesasishwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Shughuli kiolezo imefutwa',
-                    'body'  => 'shughuli kiolezo ina imefutwa successfully.',
+                    'title' => 'Kiolezo cha shughuli kimefutwa',
+                    'body'  => 'Kiolezo cha shughuli kimefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -95,8 +95,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Shughuli violezo imefutwa',
-                    'body'  => 'shughuli violezo ina imefutwa successfully.',
+                    'title' => 'Violezo vya shughuli vimefutwa',
+                    'body'  => 'Violezo vya shughuli vimefutwa kwa mafanikio.',
                 ],
             ],
         ],

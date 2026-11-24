@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'title' => 'Sub Kazi',
+    'title' => 'Kazi ndogo',
 
     'table' => [
         'header-actions' => [
             'create' => [
-                'label' => 'Ongeza Sub Kazi',
+                'label' => 'Ongeza kazi ndogo',
 
                 'notification' => [
                     'title' => 'Kazi imeundwa',
-                    'body'  => 'kazi ina imeundwa successfully.',
+                    'body'  => 'Kazi imeundwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -18,22 +18,22 @@ return [
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Kazi restored',
-                    'body'  => 'kazi ina restored successfully.',
+                    'title' => 'Kazi imerejeshwa',
+                    'body'  => 'Kazi imerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'title' => 'Kazi imefutwa',
-                    'body'  => 'kazi ina imefutwa successfully.',
+                    'body'  => 'Kazi imefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Kazi force imefutwa',
-                    'body'  => 'kazi ina force imefutwa successfully.',
+                    'title' => 'Kazi imefutwa kabisa',
+                    'body'  => 'Kazi imefutwa kabisa.',
                 ],
             ],
         ],

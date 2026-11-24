@@ -3,14 +3,14 @@
 return [
     'notification' => [
         'title' => 'Hatua imesasishwa',
-        'body'  => 'hatua ina imesasishwa successfully.',
+        'body'  => 'Hatua imesasishwa kwa mafanikio.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
                 'title' => 'Hatua imefutwa',
-                'body'  => 'hatua ina imefutwa successfully.',
+                'body'  => 'Hatua imefutwa kwa mafanikio.',
             ],
         ],
     ],

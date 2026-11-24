@@ -2,13 +2,13 @@
 
 return [
     'notification' => [
-        'title' => 'Lebo imeundwa',
-        'body'  => 'lebo ina imeundwa successfully.',
+        'title' => 'Lebo zimeundwa',
+        'body'  => 'Lebo zimeundwa kwa mafanikio.',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Lebo',
+            'label' => 'Lebo mpya',
         ],
     ],
 ];

@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Degree imeundwa',
-        'body'  => 'degree ina imeundwa successfully.',
+        'title' => 'Shahada imeundwa',
+        'body'  => 'Shahada imeundwa kwa mafanikio.',
     ],
 ];

@@ -2,15 +2,15 @@
 
 return [
     'tabs' => [
-        'my-projects'          => 'Yangu Miradi',
-        'my-favorite-projects' => 'Yangu Favorites',
-        'unassigned-projects'  => 'Hajakabidhiwa Miradi',
-        'archived-projects'    => 'Imehifadhiwa Miradi',
+        'my-projects'          => 'Miradi yangu',
+        'my-favorite-projects' => 'Vipendwa vyangu',
+        'unassigned-projects'  => 'Miradi isiyokabidhiwa',
+        'archived-projects'    => 'Miradi kwenye kumbukumbu',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Mradi',
+            'label' => 'Mradi mpya',
         ],
     ],
 ];

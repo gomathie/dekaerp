@@ -2,7 +2,7 @@
 
 return [
     'heading' => [
-        'title' => 'Waombaji na Hatua',
+        'title' => 'Waombaji kwa hatua',
     ],
 
     'dataset' => 'Waombaji',

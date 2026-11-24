@@ -3,16 +3,16 @@
 return [
     'tabs' => [
         'all'      => 'Zote',
-        'archived' => 'Imehifadhiwa',
+        'archived' => 'Kwenye kumbukumbu',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Shughuli Plan',
+            'label' => 'Mpango mpya wa shughuli',
 
             'notification' => [
-                'title' => 'Shughuli Plan imeundwa',
-                'body'  => 'shughuli plan ina imeundwa successfully.',
+                'title' => 'Mpango wa shughuli umeundwa',
+                'body'  => 'Mpango wa shughuli umeundwa kwa mafanikio.',
             ],
         ],
     ],

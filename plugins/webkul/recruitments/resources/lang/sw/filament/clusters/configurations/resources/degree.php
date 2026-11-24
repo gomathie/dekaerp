@@ -1,56 +1,56 @@
 <?php
 
 return [
-    'title' => 'Degrees',
+    'title' => 'Shahada',
 
     'navigation' => [
-        'title' => 'Degrees',
-        'group' => 'Applications',
+        'title' => 'Shahada',
+        'group' => 'Maombi',
     ],
 
     'groups' => [
         'status'     => 'Hali',
-        'created-by' => 'Imeundwa Na',
-        'created-at' => 'Imeundwa',
-        'updated-at' => 'Imesasishwa',
+        'created-by' => 'Imeundwa na',
+        'created-at' => 'Tarehe ya kuundwa',
+        'updated-at' => 'Tarehe ya kusasishwa',
     ],
 
     'form' => [
         'fields' => [
             'name'             => 'Jina',
-            'name-placeholder' => 'Ingiza jina ya degree',
+            'name-placeholder' => 'Weka jina la shahada',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'id'         => 'Kitambulisho',
+            'id'         => 'ID',
             'name'       => 'Jina',
-            'created-by' => 'Imeundwa Na',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'created-by' => 'Imeundwa na',
+            'created-at' => 'Tarehe ya kuundwa',
+            'updated-at' => 'Tarehe ya kusasishwa',
         ],
 
         'filters' => [
             'name'       => 'Jina',
             'employee'   => 'Mfanyakazi',
-            'created-by' => 'Imeundwa Na',
-            'updated-at' => 'Imesasishwa',
-            'created-at' => 'Imeundwa',
+            'created-by' => 'Imeundwa na',
+            'updated-at' => 'Tarehe ya kusasishwa',
+            'created-at' => 'Tarehe ya kuundwa',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Degree imesasishwa',
-                    'body'  => 'degree ina imesasishwa successfully.',
+                    'title' => 'Shahada imesasishwa',
+                    'body'  => 'Shahada imesasishwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Degree imefutwa',
-                    'body'  => 'degree ina imefutwa successfully.',
+                    'title' => 'Shahada imefutwa',
+                    'body'  => 'Shahada imefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -58,8 +58,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Degrees imefutwa',
-                    'body'  => 'degrees ina imefutwa successfully.',
+                    'title' => 'Shahada zimefutwa',
+                    'body'  => 'Shahada zimefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -67,8 +67,8 @@ return [
         'empty-state-action' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Degree imeundwa',
-                    'body'  => 'degree ina imeundwa successfully.',
+                    'title' => 'Shahada imeundwa',
+                    'body'  => 'Shahada imeundwa kwa mafanikio.',
                 ],
             ],
         ],

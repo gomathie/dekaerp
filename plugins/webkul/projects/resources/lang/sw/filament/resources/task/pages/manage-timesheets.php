@@ -1,24 +1,24 @@
 <?php
 
 return [
-    'title' => 'Karatasi za muda',
+    'title' => 'Rejista za muda',
 
     'form' => [
         'date'                   => 'Tarehe',
         'employee'               => 'Mfanyakazi',
         'description'            => 'Maelezo',
-        'time-spent'             => 'Time Spent',
-        'time-spent-helper-text' => 'Time spent katika saa (Eg. 1.5 saa means 1 saa 30 dakika)',
+        'time-spent'             => 'Muda uliotumika',
+        'time-spent-helper-text' => 'Muda uliotumika kwa saa (mf. saa 1.5 ni saa 1 na dakika 30)',
     ],
 
     'table' => [
         'header-actions' => [
             'create' => [
-                'label' => 'Ongeza Karatasi ya muda',
+                'label' => 'Ongeza rejista ya muda',
 
                 'notification' => [
-                    'title' => 'Karatasi ya muda imeundwa',
-                    'body'  => 'karatasi ya muda ina imeundwa successfully.',
+                    'title' => 'Rejista ya muda imeundwa',
+                    'body'  => 'Rejista ya muda imeundwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -27,24 +27,24 @@ return [
             'date'                   => 'Tarehe',
             'employee'               => 'Mfanyakazi',
             'description'            => 'Maelezo',
-            'time-spent'             => 'Time Spent',
-            'time-spent-on-subtasks' => 'Time Spent washa Subtasks',
-            'total-time-spent'       => 'Jumla Time Spent',
-            'remaining-time'         => 'Iliyobaki Time',
+            'time-spent'             => 'Muda uliotumika',
+            'time-spent-on-subtasks' => 'Muda uliotumika kwenye kazi ndogo',
+            'total-time-spent'       => 'Jumla ya muda uliotumika',
+            'remaining-time'         => 'Muda uliobaki',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Karatasi ya muda imesasishwa',
-                    'body'  => 'karatasi ya muda ina imesasishwa successfully.',
+                    'title' => 'Rejista ya muda imesasishwa',
+                    'body'  => 'Rejista ya muda imesasishwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Karatasi ya muda imefutwa',
-                    'body'  => 'karatasi ya muda ina imefutwa successfully.',
+                    'title' => 'Rejista ya muda imefutwa',
+                    'body'  => 'Rejista ya muda imefutwa kwa mafanikio.',
                 ],
             ],
         ],

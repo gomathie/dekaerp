@@ -1,23 +1,23 @@
 <?php
 
 return [
-    'title'          => 'Candidate',
+    'title'          => 'Mgombea',
 
     'log-attributes' => [
         'company'           => 'Kampuni',
-        'contact'           => 'Mwasiliani',
-        'degree'            => 'Degree',
+        'contact'           => 'Mhusika',
+        'degree'            => 'Shahada',
         'manager'           => 'Meneja',
         'employee'          => 'Mfanyakazi',
-        'creator'           => 'Imeundwa Na',
+        'creator'           => 'Imeundwa na',
         'phone'             => 'Simu',
         'email'             => 'Barua pepe',
-        'email_cc'          => 'Barua pepe CC',
-        'name'              => 'Candidate Jina',
-        'email_from'        => 'Barua pepe Kutoka',
+        'email_cc'          => 'Nakala ya barua pepe',
+        'name'              => 'Jina la mgombea',
+        'email_from'        => 'Barua pepe kutoka',
         'phone_raw'         => 'Simu',
-        'linkedin_profile'  => 'LinkedIn Wasifu',
-        'availability_date' => 'Availability Tarehe',
+        'linkedin_profile'  => 'Wasifu wa LinkedIn',
+        'availability_date' => 'Tarehe ya kupatikana',
         'is_active'         => 'Hali',
     ],
 ];

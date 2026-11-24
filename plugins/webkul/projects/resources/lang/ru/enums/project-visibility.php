@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'private'  => 'Личный',
+    'private'  => 'Частный',
     'internal' => 'Внутренний',
     'public'   => 'Публичный',
 ];

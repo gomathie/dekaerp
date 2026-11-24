@@ -1,48 +1,48 @@
 <?php
 
 return [
-    'title' => 'Mediums',
+    'title' => 'Njia',
 
     'navigation' => [
-        'title' => 'Mediums',
-        'group' => 'UTMs',
+        'title' => 'Njia',
+        'group' => 'UTM',
     ],
 
     'form' => [
         'fields' => [
             'name'             => 'Jina',
-            'name-placeholder' => 'Ingiza jina ya wastani',
+            'name-placeholder' => 'Weka jina la njia',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'id'         => 'Kitambulisho',
+            'id'         => 'ID',
             'name'       => 'Jina',
-            'created-by' => 'Imeundwa Na',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'created-by' => 'Imeundwa na',
+            'created-at' => 'Tarehe ya kuundwa',
+            'updated-at' => 'Tarehe ya kusasishwa',
         ],
 
         'filters' => [
             'name'       => 'Jina',
-            'created-by' => 'Imeundwa Na',
-            'updated-at' => 'Imesasishwa',
-            'created-at' => 'Imeundwa',
+            'created-by' => 'Imeundwa na',
+            'updated-at' => 'Tarehe ya kusasishwa',
+            'created-at' => 'Tarehe ya kuundwa',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Wastani imesasishwa',
-                    'body'  => 'wastani ina imesasishwa successfully.',
+                    'title' => 'Njia imesasishwa',
+                    'body'  => 'Njia imesasishwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Wastani imefutwa',
-                    'body'  => 'wastani ina imefutwa successfully.',
+                    'title' => 'Njia imefutwa',
+                    'body'  => 'Njia imefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -50,8 +50,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Mediums imefutwa',
-                    'body'  => 'Mediums ina imefutwa successfully.',
+                    'title' => 'Njia zimefutwa',
+                    'body'  => 'Njia zimefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -59,8 +59,8 @@ return [
         'empty-state-action' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Wastani imeundwa',
-                    'body'  => 'wastani ina imeundwa successfully.',
+                    'title' => 'Njia imeundwa',
+                    'body'  => 'Njia imeundwa kwa mafanikio.',
                 ],
             ],
         ],

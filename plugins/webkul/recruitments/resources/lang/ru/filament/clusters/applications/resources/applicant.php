@@ -1,47 +1,47 @@
 <?php
 
 return [
-    'title' => 'Кандидат',
+    'title' => 'Соискатель',
 
     'navigation' => [
-        'title' => 'Кандидаты',
+        'title' => 'Соискатели',
     ],
 
     'global-search' => [
         'department' => 'Отдел',
-        'work-email' => 'Work Эл. почта',
-        'work-phone' => 'Work Телефон',
+        'work-email' => 'Рабочая эл. почта',
+        'work-phone' => 'Рабочий телефон',
     ],
 
     'form' => [
         'sections' => [
             'general-information' => [
-                'title' => 'Общее Сведения',
+                'title' => 'Общие сведения',
 
                 'fields' => [
-                    'evaluation-good'           => 'Evaluation: Good',
-                    'evaluation-very-good'      => 'Evaluation: Очень Good',
-                    'evaluation-very-excellent' => 'Evaluation: Очень Excellent',
-                    'hired'                     => 'Hired',
-                    'candidate-name'            => 'Candidate название',
-                    'email'                     => 'Emails',
+                    'evaluation-good'           => 'Оценка: хорошо',
+                    'evaluation-very-good'      => 'Оценка: очень хорошо',
+                    'evaluation-very-excellent' => 'Оценка: отлично',
+                    'hired'                     => 'Нанят',
+                    'candidate-name'            => 'Имя кандидата',
+                    'email'                     => 'Эл. почта',
                     'phone'                     => 'Телефон',
-                    'linkedin-profile'          => 'Linkedin Профиль',
-                    'recruiter'                 => 'Recruiter',
-                    'interviewer'               => 'Interviewer',
-                    'tags'                      => 'Метки',
-                    'notes'                     => 'Заметки',
-                    'hired-date'                => 'Hired Дата',
-                    'job-position'              => 'Должность Positions',
+                    'linkedin-profile'          => 'Профиль LinkedIn',
+                    'recruiter'                 => 'Рекрутер',
+                    'interviewer'               => 'Интервьюер',
+                    'tags'                      => 'Теги',
+                    'notes'                     => 'Примечания',
+                    'hired-date'                => 'Дата найма',
+                    'job-position'              => 'Должности',
                 ],
             ],
 
             'education-and-availability' => [
-                'title' => 'Education & Availability',
+                'title' => 'Образование и доступность',
 
                 'fields' => [
-                    'degree'            => 'Degree',
-                    'availability-date' => 'Availability Дата',
+                    'degree'            => 'Степень',
+                    'availability-date' => 'Дата готовности',
                 ],
             ],
 
@@ -50,22 +50,22 @@ return [
             ],
 
             'salary' => [
-                'title' => 'Ожидается & Proposed Salary',
+                'title' => 'Ожидаемая и предлагаемая зарплата',
 
                 'fields' => [
-                    'expected-salary'       => 'Ожидается Salary',
-                    'salary-proposed-extra' => 'Другое Benefit',
-                    'proposed-salary'       => 'Proposed Salary',
-                    'salary-expected-extra' => 'Другое Benefit',
+                    'expected-salary'       => 'Ожидаемая зарплата',
+                    'salary-proposed-extra' => 'Прочие льготы',
+                    'proposed-salary'       => 'Предлагаемая зарплата',
+                    'salary-expected-extra' => 'Прочие льготы',
                 ],
             ],
 
             'source-and-medium' => [
-                'title' => 'Источник & Средний',
+                'title' => 'Источник и канал',
 
                 'fields' => [
                     'source' => 'Источник',
-                    'medium' => 'Средний',
+                    'medium' => 'Канал',
                 ],
             ],
         ],
@@ -73,79 +73,79 @@ return [
 
     'table' => [
         'columns' => [
-            'partner-name'       => 'Контрагент Название',
-            'applied-on'         => 'Применено Вкл.',
-            'job-position'       => 'Должность Должность',
+            'partner-name'       => 'Имя контакта',
+            'applied-on'         => 'Дата подачи',
+            'job-position'       => 'Должность',
             'stage'              => 'Этап',
-            'candidate-name'     => 'Candidate Название',
-            'evaluation'         => 'Evaluation',
-            'application-status' => 'Application Статус',
-            'tags'               => 'Метки',
-            'refuse-reason'      => 'Отказать Причина',
+            'candidate-name'     => 'Имя кандидата',
+            'evaluation'         => 'Оценка',
+            'application-status' => 'Статус заявки',
+            'tags'               => 'Теги',
+            'refuse-reason'      => 'Причина отказа',
             'email'              => 'Эл. почта',
-            'recruiter'          => 'Recruiter',
-            'interviewer'        => 'Interviewer',
+            'recruiter'          => 'Рекрутер',
+            'interviewer'        => 'Интервьюер',
             'candidate-phone'    => 'Телефон',
-            'medium'             => 'Средний',
+            'medium'             => 'Канал',
             'source'             => 'Источник',
-            'salary-expected'    => 'Ожидается Salary',
-            'availability-date'  => 'Availability Дата',
+            'salary-expected'    => 'Ожидаемая зарплата',
+            'availability-date'  => 'Дата готовности',
         ],
 
         'filters' => [
             'source'                  => 'Источник',
-            'medium'                  => 'Средний',
-            'candidate'               => 'Candidate',
+            'medium'                  => 'Канал',
+            'candidate'               => 'Кандидат',
             'priority'                => 'Приоритет',
-            'salary-proposed-extra'   => 'Salary Proposed Extra',
-            'salary-expected-extra'   => 'Salary Ожидается Extra',
-            'applicant-notes'         => 'Кандидат Заметки',
-            'create-date'             => 'Применено Вкл.',
-            'date-closed'             => 'Hired Дата',
-            'date-last-stage-updated' => 'Последний Этап Обновлено',
+            'salary-proposed-extra'   => 'Доп. льготы (предлагаемые)',
+            'salary-expected-extra'   => 'Доп. льготы (ожидаемые)',
+            'applicant-notes'         => 'Примечания о соискателе',
+            'create-date'             => 'Дата подачи',
+            'date-closed'             => 'Дата найма',
+            'date-last-stage-updated' => 'Последняя смена этапа',
             'stage'                   => 'Этап',
-            'job-position'            => 'Должность Должность',
+            'job-position'            => 'Должность',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Кандидат Удалено',
-                    'body'  => 'кандидат был successfully удалено.',
+                    'title' => 'Соискатель удалён',
+                    'body'  => 'Соискатель успешно удалён.',
                 ],
             ],
         ],
 
         'groups' => [
             'stage'          => 'Этап',
-            'job-position'   => 'Должность Должность',
-            'candidate-name' => 'Candidate Название',
-            'responsible'    => 'Responsible',
-            'creation-date'  => 'Creation Дата',
-            'hired-date'     => 'Hired Дата',
-            'last-stage'     => 'Последний Этап',
-            'refuse-reason'  => 'Отказать Причина',
+            'job-position'   => 'Должность',
+            'candidate-name' => 'Имя кандидата',
+            'responsible'    => 'Ответственный',
+            'creation-date'  => 'Дата создания',
+            'hired-date'     => 'Дата найма',
+            'last-stage'     => 'Последний этап',
+            'refuse-reason'  => 'Причина отказа',
         ],
 
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Сотрудники удалено',
-                    'body'  => 'сотрудники есть удалено successfully.',
+                    'title' => 'Сотрудники удалены',
+                    'body'  => 'Сотрудники успешно удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Сотрудники удалено',
-                    'body'  => 'сотрудники есть удалено successfully.',
+                    'title' => 'Сотрудники удалены',
+                    'body'  => 'Сотрудники успешно удалены.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Сотрудники restored',
-                    'body'  => 'сотрудники есть restored successfully.',
+                    'title' => 'Сотрудники восстановлены',
+                    'body'  => 'Сотрудники успешно восстановлены.',
                 ],
             ],
         ],
@@ -154,31 +154,31 @@ return [
     'infolist' => [
         'sections' => [
             'general-information' => [
-                'title' => 'Общее Сведения',
+                'title' => 'Общие сведения',
 
                 'entries' => [
-                    'evaluation-good'           => 'Evaluation: Good',
-                    'evaluation-very-good'      => 'Evaluation: Очень Good',
-                    'evaluation-very-excellent' => 'Evaluation: Очень Excellent',
-                    'hired'                     => 'Hired',
-                    'candidate-name'            => 'Candidate название',
-                    'email'                     => 'Emails',
+                    'evaluation-good'           => 'Оценка: хорошо',
+                    'evaluation-very-good'      => 'Оценка: очень хорошо',
+                    'evaluation-very-excellent' => 'Оценка: отлично',
+                    'hired'                     => 'Нанят',
+                    'candidate-name'            => 'Имя кандидата',
+                    'email'                     => 'Эл. почта',
                     'phone'                     => 'Телефон',
-                    'linkedin-profile'          => 'Linkedin Профиль',
-                    'recruiter'                 => 'Recruiter',
-                    'interviewer'               => 'Interviewer',
-                    'tags'                      => 'Метки',
-                    'notes'                     => 'Заметки',
-                    'job-position'              => 'Должность Positions',
+                    'linkedin-profile'          => 'Профиль LinkedIn',
+                    'recruiter'                 => 'Рекрутер',
+                    'interviewer'               => 'Интервьюер',
+                    'tags'                      => 'Теги',
+                    'notes'                     => 'Примечания',
+                    'job-position'              => 'Должности',
                 ],
             ],
 
             'education-and-availability' => [
-                'title' => 'Education & Availability',
+                'title' => 'Образование и доступность',
 
                 'entries' => [
-                    'degree'            => 'Degree',
-                    'availability-date' => 'Availability Дата',
+                    'degree'            => 'Степень',
+                    'availability-date' => 'Дата готовности',
                 ],
             ],
 
@@ -187,22 +187,22 @@ return [
             ],
 
             'salary' => [
-                'title' => 'Ожидается & Proposed Salary',
+                'title' => 'Ожидаемая и предлагаемая зарплата',
 
                 'entries' => [
-                    'expected-salary'       => 'Ожидается Salary',
-                    'salary-proposed-extra' => 'Другое Benefit',
-                    'proposed-salary'       => 'Proposed Salary',
-                    'salary-expected-extra' => 'Другое Benefit',
+                    'expected-salary'       => 'Ожидаемая зарплата',
+                    'salary-proposed-extra' => 'Прочие льготы',
+                    'proposed-salary'       => 'Предлагаемая зарплата',
+                    'salary-expected-extra' => 'Прочие льготы',
                 ],
             ],
 
             'source-and-medium' => [
-                'title' => 'Источник & Средний',
+                'title' => 'Источник и канал',
 
                 'entries' => [
                     'source' => 'Источник',
-                    'medium' => 'Средний',
+                    'medium' => 'Канал',
                 ],
             ],
         ],

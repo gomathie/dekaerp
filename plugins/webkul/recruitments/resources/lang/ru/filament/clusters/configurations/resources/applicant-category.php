@@ -1,51 +1,51 @@
 <?php
 
 return [
-    'title' => 'Метки',
+    'title' => 'Теги',
 
     'navigation' => [
-        'title' => 'Метки',
-        'group' => 'Applications',
+        'title' => 'Теги',
+        'group' => 'Заявки',
     ],
 
     'form' => [
         'fields' => [
             'name'             => 'Название',
-            'name-placeholder' => 'Введите название метки',
+            'name-placeholder' => 'Введите название тега',
             'color'            => 'Цвет',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'id'         => 'Ид.',
+            'id'         => 'ID',
             'name'       => 'Название',
             'color'      => 'Цвет',
-            'created-by' => 'Создано От',
-            'created-at' => 'Создано',
-            'updated-at' => 'Обновлено',
+            'created-by' => 'Создал',
+            'created-at' => 'Дата создания',
+            'updated-at' => 'Дата изменения',
         ],
 
         'filters' => [
             'name'       => 'Название',
             'employee'   => 'Сотрудник',
-            'created-by' => 'Создано От',
-            'updated-at' => 'Обновлено',
-            'created-at' => 'Создано',
+            'created-by' => 'Создал',
+            'updated-at' => 'Дата изменения',
+            'created-at' => 'Дата создания',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Метки обновлено',
-                    'body'  => 'метки есть обновлено successfully.',
+                    'title' => 'Теги обновлены',
+                    'body'  => 'Теги успешно обновлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Метки удалено',
-                    'body'  => 'метки есть удалено successfully.',
+                    'title' => 'Теги удалены',
+                    'body'  => 'Теги успешно удалены.',
                 ],
             ],
         ],
@@ -53,8 +53,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Кандидат Категории удалено',
-                    'body'  => 'кандидат Категории есть удалено successfully.',
+                    'title' => 'Категории соискателей удалены',
+                    'body'  => 'Категории соискателей успешно удалены.',
                 ],
             ],
         ],
@@ -62,8 +62,8 @@ return [
         'empty-state-action' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Метки создано',
-                    'body'  => 'метки есть создано successfully.',
+                    'title' => 'Теги созданы',
+                    'body'  => 'Теги успешно созданы.',
                 ],
             ],
         ],

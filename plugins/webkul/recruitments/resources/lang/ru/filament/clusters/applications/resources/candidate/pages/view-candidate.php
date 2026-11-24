@@ -1,14 +1,14 @@
 <?php
 
 return [
-    'create-employee'       => 'Создать сотрудник',
-    'goto-employee-tooltip' => 'Go до сотрудник',
+    'create-employee'       => 'Создать сотрудника',
+    'goto-employee-tooltip' => 'Перейти к сотруднику',
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Candidate удалено',
-                'body'  => 'candidate есть удалено successfully.',
+                'title' => 'Кандидат удалён',
+                'body'  => 'Кандидат успешно удалён.',
             ],
         ],
     ],

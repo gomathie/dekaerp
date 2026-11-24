@@ -2,7 +2,7 @@
 
 return [
     'navigation' => [
-        'title' => 'Kazi Hatua',
+        'title' => 'Hatua za kazi',
     ],
 
     'form' => [
@@ -14,13 +14,13 @@ return [
         'columns' => [
             'name'       => 'Jina',
             'project'    => 'Mradi',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'created-at' => 'Tarehe ya kuundwa',
+            'updated-at' => 'Tarehe ya kusasishwa',
         ],
 
         'groups' => [
             'project'    => 'Mradi',
-            'created-at' => 'Imeundwa',
+            'created-at' => 'Tarehe ya kuundwa',
         ],
 
         'filters' => [
@@ -30,34 +30,34 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Kazi hatua imesasishwa',
-                    'body'  => 'kazi hatua ina imesasishwa successfully.',
+                    'title' => 'Hatua ya kazi imesasishwa',
+                    'body'  => 'Hatua ya kazi imesasishwa kwa mafanikio.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Kazi hatua restored',
-                    'body'  => 'kazi hatua ina restored successfully.',
+                    'title' => 'Hatua ya kazi imerejeshwa',
+                    'body'  => 'Hatua ya kazi imerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Kazi hatua imefutwa',
-                    'body'  => 'kazi hatua ina imefutwa successfully.',
+                    'title' => 'Hatua ya kazi imefutwa',
+                    'body'  => 'Hatua ya kazi imefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Kazi hatua force imefutwa',
-                        'body'  => 'Kazi hatua ina force imefutwa successfully.',
+                        'title' => 'Hatua ya kazi imefutwa kabisa',
+                        'body'  => 'Hatua ya kazi imefutwa kabisa.',
                     ],
                     'error' => [
-                        'title' => 'Kazi hatua could si kuwa imefutwa',
-                        'body'  => 'Kazi hatua haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Hatua ya kazi haikuweza kufutwa',
+                        'body'  => 'Hatua ya kazi haiwezi kufutwa kwa sababu inatumika.',
                     ],
                 ],
             ],
@@ -66,22 +66,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Kazi hatua restored',
-                    'body'  => 'kazi hatua ina restored successfully.',
+                    'title' => 'Hatua za kazi zimerejeshwa',
+                    'body'  => 'Hatua za kazi zimerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Kazi hatua imefutwa',
-                    'body'  => 'kazi hatua ina imefutwa successfully.',
+                    'title' => 'Hatua za kazi zimefutwa',
+                    'body'  => 'Hatua za kazi zimefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Kazi hatua force imefutwa',
-                    'body'  => 'kazi hatua ina force imefutwa successfully.',
+                    'title' => 'Hatua za kazi zimefutwa kabisa',
+                    'body'  => 'Hatua za kazi zimefutwa kabisa.',
                 ],
             ],
         ],

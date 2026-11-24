@@ -3,13 +3,13 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Kazi',
+            'label' => 'Kazi mpya',
         ],
 
         'delete' => [
             'notification' => [
                 'title' => 'Kazi imefutwa',
-                'body'  => 'kazi ina imefutwa successfully.',
+                'body'  => 'Kazi imefutwa kwa mafanikio.',
             ],
         ],
     ],

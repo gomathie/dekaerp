@@ -2,13 +2,13 @@
 
 return [
     'notification' => [
-        'title' => 'Метки создано',
-        'body'  => 'метки есть создано successfully.',
+        'title' => 'Теги созданы',
+        'body'  => 'Теги успешно созданы.',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Метка',
+            'label' => 'Новый тег',
         ],
     ],
 ];

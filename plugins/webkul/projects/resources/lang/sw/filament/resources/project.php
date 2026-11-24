@@ -6,7 +6,7 @@ return [
     ],
 
     'global-search' => [
-        'project-manager' => 'Mradi Meneja',
+        'project-manager' => 'Meneja wa mradi',
         'customer'        => 'Mteja',
     ],
 
@@ -17,21 +17,21 @@ return [
 
                 'fields' => [
                     'name'             => 'Jina',
-                    'name-placeholder' => 'Mradi Jina...',
+                    'name-placeholder' => 'Jina la mradi...',
                     'description'      => 'Maelezo',
                 ],
             ],
 
             'additional' => [
-                'title' => 'Additional Taarifa',
+                'title' => 'Taarifa za ziada',
 
                 'fields' => [
-                    'project-manager'             => 'Mradi Meneja',
+                    'project-manager'             => 'Meneja wa mradi',
                     'customer'                    => 'Mteja',
-                    'start-date'                  => 'Anza Tarehe',
-                    'end-date'                    => 'Mwisho Tarehe',
-                    'allocated-hours'             => 'Allocated Saa',
-                    'allocated-hours-helper-text' => 'Katika saa (Eg. 1.5 saa means 1 saa 30 dakika)',
+                    'start-date'                  => 'Tarehe ya kuanza',
+                    'end-date'                    => 'Tarehe ya kumaliza',
+                    'allocated-hours'             => 'Saa zilizotengwa',
+                    'allocated-hours-helper-text' => 'Kwa saa (mf. saa 1.5 ni saa 1 na dakika 30)',
                     'tags'                        => 'Lebo',
                     'company'                     => 'Kampuni',
                 ],
@@ -41,17 +41,17 @@ return [
                 'title' => 'Mipangilio',
 
                 'fields' => [
-                    'visibility'                   => 'Visibility',
-                    'visibility-hint-tooltip'      => 'Ruhusu wafanyakazi hadi access yako mradi au kazi na adding wao kama followers. Wao ita kiotomatiki gain access hadi yoyote kazi amekabidhiwa hadi wao..',
-                    'private-description'          => 'Invited ndani watumiaji tu.',
-                    'internal-description'         => 'Zote ndani watumiaji unaweza see.',
-                    'public-description'           => 'Invited lango watumiaji na zote ndani watumiaji.',
-                    'time-management'              => 'Time Management',
-                    'allow-timesheets'             => 'Ruhusu Karatasi za muda',
-                    'allow-timesheets-helper-text' => 'Log time washa kazi na track maendeleo',
-                    'task-management'              => 'Kazi Management',
-                    'allow-milestones'             => 'Ruhusu Milestones',
-                    'allow-milestones-helper-text' => 'Monitor key milestones hiyo ni essential kwa achieving imefanikiwa.',
+                    'visibility'                   => 'Mwonekano',
+                    'visibility-hint-tooltip'      => 'Wape wafanyakazi ufikiaji wa mradi au kazi zako kwa kuwaongeza kama wafuatiliaji. Watapata ufikiaji wa kazi zote walizopewa moja kwa moja.',
+                    'private-description'          => 'Watumiaji wa ndani walioalikwa pekee.',
+                    'internal-description'         => 'Watumiaji wote wa ndani wanaweza kuona.',
+                    'public-description'           => 'Watumiaji wa portal walioalikwa na watumiaji wote wa ndani.',
+                    'time-management'              => 'Usimamizi wa muda',
+                    'allow-timesheets'             => 'Ruhusu rejista za muda',
+                    'allow-timesheets-helper-text' => 'Rekodi muda kwenye kazi na ufuatilie maendeleo',
+                    'task-management'              => 'Usimamizi wa kazi',
+                    'allow-milestones'             => 'Ruhusu hatua muhimu',
+                    'allow-milestones-helper-text' => 'Fuatilia hatua muhimu zinazohitajika ili kufanikiwa.',
                 ],
             ],
         ],
@@ -61,53 +61,53 @@ return [
         'columns' => [
             'name'            => 'Jina',
             'customer'        => 'Mteja',
-            'start-date'      => 'Anza Tarehe',
-            'end-date'        => 'Mwisho Tarehe',
-            'planned-date'    => 'Imepangwa Tarehe',
-            'remaining-hours' => 'Iliyobaki Saa',
-            'project-manager' => 'Mradi Meneja',
+            'start-date'      => 'Tarehe ya kuanza',
+            'end-date'        => 'Tarehe ya kumaliza',
+            'planned-date'    => 'Tarehe iliyopangwa',
+            'remaining-hours' => 'Saa zilizobaki',
+            'project-manager' => 'Meneja wa mradi',
         ],
 
         'groups' => [
             'stage'           => 'Hatua',
-            'project-manager' => 'Mradi Meneja',
+            'project-manager' => 'Meneja wa mradi',
             'customer'        => 'Mteja',
-            'created-at'      => 'Imeundwa',
+            'created-at'      => 'Tarehe ya kuundwa',
         ],
 
         'filters' => [
             'name'             => 'Jina',
-            'visibility'       => 'Visibility',
-            'start-date'       => 'Anza Tarehe',
-            'end-date'         => 'Mwisho Tarehe',
-            'allow-timesheets' => 'Ruhusu Karatasi za muda',
-            'allow-milestones' => 'Ruhusu Milestones',
-            'allocated-hours'  => 'Allocated Saa',
-            'created-at'       => 'Imeundwa',
-            'updated-at'       => 'Imesasishwa',
+            'visibility'       => 'Mwonekano',
+            'start-date'       => 'Tarehe ya kuanza',
+            'end-date'         => 'Tarehe ya kumaliza',
+            'allow-timesheets' => 'Ruhusu rejista za muda',
+            'allow-milestones' => 'Ruhusu hatua muhimu',
+            'allocated-hours'  => 'Saa zilizotengwa',
+            'created-at'       => 'Tarehe ya kuundwa',
+            'updated-at'       => 'Tarehe ya kusasishwa',
             'stage'            => 'Hatua',
             'customer'         => 'Mteja',
-            'project-manager'  => 'Mradi Meneja',
+            'project-manager'  => 'Meneja wa mradi',
             'company'          => 'Kampuni',
-            'creator'          => 'Creator',
+            'creator'          => 'Aliyeunda',
             'tags'             => 'Lebo',
         ],
 
         'actions' => [
-            'tasks'      => ':count Kazi',
-            'milestones' => ':completed milestones imekamilika nje ya :all',
+            'tasks'      => 'Kazi: :count',
+            'milestones' => 'Hatua muhimu :completed kati ya :all zimekamilika',
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Mradi restored',
-                    'body'  => 'mradi ina restored successfully.',
+                    'title' => 'Mradi umerejeshwa',
+                    'body'  => 'Mradi umerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Mradi imefutwa',
-                    'body'  => 'mradi ina imefutwa successfully.',
+                    'title' => 'Mradi umefutwa',
+                    'body'  => 'Mradi umefutwa kwa mafanikio.',
                 ],
             ],
 
@@ -116,13 +116,13 @@ return [
                 'notification' => [
 
                     'success' => [
-                        'title' => 'Mradi permanently imefutwa',
-                        'body'  => 'mradi ina permanently imefutwa successfully.',
+                        'title' => 'Mradi umefutwa kabisa',
+                        'body'  => 'Mradi umefutwa kabisa.',
                     ],
 
                     'error' => [
-                        'title' => 'Mradi haiwezekani kuwa permanently imefutwa',
-                        'body'  => 'mradi ni associated na nyingine rekodi.',
+                        'title' => 'Mradi hauwezi kufutwa kabisa',
+                        'body'  => 'Mradi unahusishwa na rekodi nyingine.',
                     ],
 
                 ],
@@ -138,53 +138,53 @@ return [
 
                 'entries' => [
                     'name'             => 'Jina',
-                    'name-placeholder' => 'Mradi Jina...',
+                    'name-placeholder' => 'Jina la mradi...',
                     'description'      => 'Maelezo',
                 ],
             ],
 
             'additional' => [
-                'title' => 'Additional Taarifa',
+                'title' => 'Taarifa za ziada',
 
                 'entries' => [
-                    'project-manager'        => 'Mradi Meneja',
+                    'project-manager'        => 'Meneja wa mradi',
                     'customer'               => 'Mteja',
-                    'project-timeline'       => 'Mradi Timeline',
-                    'allocated-hours'        => 'Allocated Saa',
-                    'allocated-hours-suffix' => ' Saa',
-                    'remaining-hours'        => 'Iliyobaki Saa',
-                    'remaining-hours-suffix' => ' Saa',
-                    'current-stage'          => 'Sasa Hatua',
+                    'project-timeline'       => 'Ratiba ya mradi',
+                    'allocated-hours'        => 'Saa zilizotengwa',
+                    'allocated-hours-suffix' => ' saa',
+                    'remaining-hours'        => 'Saa zilizobaki',
+                    'remaining-hours-suffix' => ' saa',
+                    'current-stage'          => 'Hatua ya sasa',
                     'tags'                   => 'Lebo',
                 ],
             ],
 
             'statistics' => [
-                'title' => 'Statistics',
+                'title' => 'Takwimu',
 
                 'entries' => [
-                    'total-tasks'         => 'Jumla Kazi',
-                    'milestones-progress' => 'Milestones Maendeleo',
+                    'total-tasks'         => 'Jumla ya kazi',
+                    'milestones-progress' => 'Maendeleo ya hatua muhimu',
                 ],
             ],
 
             'record-information' => [
-                'title' => 'Rekodi Taarifa',
+                'title' => 'Taarifa za rekodi',
 
                 'entries' => [
-                    'created-at'   => 'Imeundwa',
-                    'created-by'   => 'Imeundwa Na',
-                    'last-updated' => 'Mwisho Imesasishwa',
+                    'created-at'   => 'Tarehe ya kuundwa',
+                    'created-by'   => 'Imeundwa na',
+                    'last-updated' => 'Ilisasishwa mwisho',
                 ],
             ],
 
             'settings' => [
-                'title' => 'Mradi Mipangilio',
+                'title' => 'Mipangilio ya mradi',
 
                 'entries' => [
-                    'visibility'         => 'Visibility',
-                    'timesheets-enabled' => 'Karatasi za muda Imewashwa',
-                    'milestones-enabled' => 'Milestones Imewashwa',
+                    'visibility'         => 'Mwonekano',
+                    'timesheets-enabled' => 'Rejista za muda zimewashwa',
+                    'milestones-enabled' => 'Hatua muhimu zimewashwa',
                 ],
             ],
         ],

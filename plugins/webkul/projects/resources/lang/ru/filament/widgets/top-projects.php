@@ -2,12 +2,12 @@
 
 return [
     'heading' => [
-        'title' => 'Top Проекты',
+        'title' => 'Ведущие проекты',
     ],
 
     'table-columns' => [
         'project-name' => 'Проект',
-        'hours-spent'  => 'Часы Spent',
+        'hours-spent'  => 'Затрачено часов',
         'tasks'        => 'Задачи',
     ],
 ];

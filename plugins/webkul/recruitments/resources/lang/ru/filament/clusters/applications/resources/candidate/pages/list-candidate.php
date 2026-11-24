@@ -2,15 +2,15 @@
 
 return [
     'tabs' => [
-        'my-applicants'          => 'Мой Кандидаты',
-        'un-assigned'            => 'Un Назначен',
-        'in-progress'            => 'В Ход',
-        'hired'                  => 'Hired',
+        'my-applicants'          => 'Мои соискатели',
+        'un-assigned'            => 'Без ответственного',
+        'in-progress'            => 'В работе',
+        'hired'                  => 'Нанят',
         'refused'                => 'Отказано',
         'archived'               => 'В архиве',
-        'blocked'                => 'Blocked',
-        'directly-available'     => 'Directly Доступно',
-        'created-recently'       => 'Создано Recently',
-        'stage-updated-recently' => 'Этап Обновлено Recently',
+        'blocked'                => 'Заблокирован',
+        'directly-available'     => 'Готов приступить',
+        'created-recently'       => 'Недавно созданные',
+        'stage-updated-recently' => 'Недавно сменили этап',
     ],
 ];

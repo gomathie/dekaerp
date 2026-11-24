@@ -4,44 +4,44 @@ return [
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Кандидат удалено',
-                'body'  => 'кандидат есть удалено successfully.',
+                'title' => 'Соискатель удалён',
+                'body'  => 'Соискатель успешно удалён.',
             ],
         ],
 
         'refuse' => [
-            'title'        => 'Отказать Причина',
+            'title'        => 'Причина отказа',
             'form'         => [
                 'fields' => [
-                    'notify'   => 'Notify',
-                    'email-to' => 'Эл. почта До',
+                    'notify'   => 'Уведомить',
+                    'email-to' => 'Кому',
                 ],
             ],
             'notification' => [
-                'title' => 'Кандидат отказано',
-                'body'  => 'кандидат есть отказано successfully.',
+                'title' => 'Соискателю отказано',
+                'body'  => 'Соискателю успешно отказано.',
             ],
         ],
 
         'reopen' => [
-            'title'        => 'Восстановить Кандидат от отказать',
+            'title'        => 'Отменить отказ соискателю',
             'notification' => [
-                'title' => 'Кандидат reopened',
-                'body'  => 'кандидат есть reopened successfully.',
+                'title' => 'Соискатель возвращён',
+                'body'  => 'Соискатель успешно возвращён в работу.',
             ],
         ],
 
         'state' => [
             'notification' => [
-                'title' => 'Кандидат состояние обновлено',
-                'body'  => 'кандидат состояние есть обновлено successfully.',
+                'title' => 'Статус соискателя обновлён',
+                'body'  => 'Статус соискателя успешно обновлён.',
             ],
         ],
     ],
 
     'mail' => [
         'application-refused' => [
-            'subject' => 'Ваш Должность Application: :application',
+            'subject' => 'Ваша заявка на вакансию: :application',
         ],
     ],
 ];

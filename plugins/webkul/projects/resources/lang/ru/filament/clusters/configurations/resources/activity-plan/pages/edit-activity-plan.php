@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Активность Plan обновлено',
-        'body'  => 'активность plan есть обновлено successfully.',
+        'title' => 'План действий обновлён',
+        'body'  => 'План действий успешно обновлён.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Активность Plan удалено',
-                'body'  => 'активность plan есть удалено successfully.',
+                'title' => 'План действий удалён',
+                'body'  => 'План действий успешно удалён.',
             ],
         ],
     ],

@@ -5,7 +5,7 @@ return [
 
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Задача',
+            'label' => 'Новая задача',
         ],
     ],
 
@@ -13,33 +13,33 @@ return [
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Задача restored',
-                    'body'  => 'задача есть restored successfully.',
+                    'title' => 'Задача восстановлена',
+                    'body'  => 'Задача успешно восстановлена.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Задача удалено',
-                    'body'  => 'задача есть удалено successfully.',
+                    'title' => 'Задача удалена',
+                    'body'  => 'Задача успешно удалена.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Задача force удалено',
-                    'body'  => 'задача есть force удалено successfully.',
+                    'title' => 'Задача удалена безвозвратно',
+                    'body'  => 'Задача удалена безвозвратно.',
                 ],
             ],
         ],
     ],
 
     'tabs' => [
-        'open-tasks'       => 'Открыт Задачи',
-        'my-tasks'         => 'Мой Задачи',
-        'unassigned-tasks' => 'Не назначен Задачи',
-        'closed-tasks'     => 'Закрыт Задачи',
-        'starred-tasks'    => 'Starred Задачи',
-        'archived-tasks'   => 'В архиве Задачи',
+        'open-tasks'       => 'Открытые задачи',
+        'my-tasks'         => 'Мои задачи',
+        'unassigned-tasks' => 'Неназначенные задачи',
+        'closed-tasks'     => 'Закрытые задачи',
+        'starred-tasks'    => 'Отмеченные задачи',
+        'archived-tasks'   => 'Задачи в архиве',
     ],
 ];

@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Kazi Cheo',
+    'title' => 'Nafasi ya kazi',
 
     'navigation' => [
-        'title' => 'Kazi Positions',
+        'title' => 'Nafasi za kazi',
     ],
 
     'table' => [
@@ -16,15 +16,15 @@ return [
 
         'actions' => [
             'applications' => [
-                'new-applications' => ':count Mpya Applications',
+                'new-applications' => 'Maombi mapya: :count',
             ],
 
             'to-recruitment' => [
-                'to-recruitment' => ':count Hadi Ajira',
+                'to-recruitment' => 'Wa kuajiriwa: :count',
             ],
 
             'total-application' => [
-                'total-application' => ':count Applications',
+                'total-application' => 'Maombi: :count',
             ],
         ],
     ],

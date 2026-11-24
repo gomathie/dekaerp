@@ -3,11 +3,11 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Веха',
+            'label' => 'Новая веха',
 
             'notification' => [
-                'title' => 'Веха создано',
-                'body'  => 'веха есть создано successfully.',
+                'title' => 'Веха создана',
+                'body'  => 'Веха успешно создана.',
             ],
         ],
     ],

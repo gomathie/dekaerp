@@ -2,10 +2,10 @@
 
 return [
     'heading' => [
-        'title' => 'Kazi na Hatua',
+        'title' => 'Kazi kwa hatua',
     ],
 
     'datasets' => [
-        'label' => 'Kazi imeundwa',
+        'label' => 'Kazi zilizoundwa',
     ],
 ];

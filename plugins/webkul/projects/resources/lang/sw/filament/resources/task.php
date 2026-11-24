@@ -10,7 +10,7 @@ return [
     'global-search' => [
         'project'   => 'Mradi',
         'customer'  => 'Mteja',
-        'milestone' => 'Hatua kuu',
+        'milestone' => 'Hatua muhimu',
     ],
 
     'form' => [
@@ -20,20 +20,20 @@ return [
 
                 'fields' => [
                     'title'             => 'Kichwa',
-                    'title-placeholder' => 'Kazi Kichwa...',
+                    'title-placeholder' => 'Kichwa cha kazi...',
                     'tags'              => 'Lebo',
                     'name'              => 'Jina',
                     'color'             => 'Rangi',
                     'description'       => 'Maelezo',
                     'project'           => 'Mradi',
                     'status'            => 'Hali',
-                    'start_date'        => 'Anza Tarehe',
-                    'end_date'          => 'Mwisho Tarehe',
+                    'start_date'        => 'Tarehe ya kuanza',
+                    'end_date'          => 'Tarehe ya kumaliza',
                 ],
             ],
 
             'additional' => [
-                'title' => 'Additional Taarifa',
+                'title' => 'Taarifa za ziada',
             ],
 
             'settings' => [
@@ -41,15 +41,15 @@ return [
 
                 'fields' => [
                     'project'                     => 'Mradi',
-                    'milestone'                   => 'Hatua kuu',
-                    'milestone-hint-text'         => 'Kiotomatiki deliver yako services upon reaching hatua kuu na linking hii hadi agizo la mauzo kipengee.',
+                    'milestone'                   => 'Hatua muhimu',
+                    'milestone-hint-text'         => 'Unganisha hatua muhimu na bidhaa ya oda ya mauzo ili huduma zako ziwasilishwe kiotomatiki inapofikiwa.',
                     'name'                        => 'Jina',
-                    'deadline'                    => 'Deadline',
-                    'is-completed'                => 'Ni Imekamilika',
+                    'deadline'                    => 'Tarehe ya mwisho',
+                    'is-completed'                => 'Imekamilika',
                     'customer'                    => 'Mteja',
-                    'assignees'                   => 'Assignees',
-                    'allocated-hours'             => 'Allocated Saa',
-                    'allocated-hours-helper-text' => 'Katika saa (Eg. 1.5 saa means 1 saa 30 dakika)',
+                    'assignees'                   => 'Waliokabidhiwa',
+                    'allocated-hours'             => 'Saa zilizotengwa',
+                    'allocated-hours-helper-text' => 'Kwa saa (mf. saa 1.5 ni saa 1 na dakika 30)',
                 ],
             ],
         ],
@@ -57,22 +57,22 @@ return [
 
     'table' => [
         'columns' => [
-            'id'                  => 'Kitambulisho',
+            'id'                  => 'ID',
             'priority'            => 'Kipaumbele',
             'state'               => 'Hali',
-            'new-state'           => 'Mpya Hali',
-            'update-state'        => 'Sasisha Hali',
+            'new-state'           => 'Hali mpya',
+            'update-state'        => 'Sasisha hali',
             'title'               => 'Kichwa',
             'project'             => 'Mradi',
-            'project-placeholder' => 'Binafsi Kazi',
-            'milestone'           => 'Hatua kuu',
+            'project-placeholder' => 'Kazi binafsi',
+            'milestone'           => 'Hatua muhimu',
             'customer'            => 'Mteja',
-            'assignees'           => 'Assignees',
-            'allocated-time'      => 'Allocated Time',
-            'time-spent'          => 'Time Spent',
-            'time-remaining'      => 'Time Iliyobaki',
+            'assignees'           => 'Waliokabidhiwa',
+            'allocated-time'      => 'Muda uliotengwa',
+            'time-spent'          => 'Muda uliotumika',
+            'time-remaining'      => 'Muda uliobaki',
             'progress'            => 'Maendeleo',
-            'deadline'            => 'Deadline',
+            'deadline'            => 'Tarehe ya mwisho',
             'tags'                => 'Lebo',
             'stage'               => 'Hatua',
         ],
@@ -80,11 +80,11 @@ return [
         'groups' => [
             'state'      => 'Hali',
             'project'    => 'Mradi',
-            'milestone'  => 'Hatua kuu',
+            'milestone'  => 'Hatua muhimu',
             'customer'   => 'Mteja',
-            'deadline'   => 'Deadline',
+            'deadline'   => 'Tarehe ya mwisho',
             'stage'      => 'Hatua',
-            'created-at' => 'Imeundwa',
+            'created-at' => 'Tarehe ya kuundwa',
         ],
 
         'filters' => [
@@ -94,46 +94,46 @@ return [
             'high'              => 'Juu',
             'state'             => 'Hali',
             'tags'              => 'Lebo',
-            'allocated-hours'   => 'Allocated Saa',
-            'total-hours-spent' => 'Jumla Saa Spent',
-            'remaining-hours'   => 'Iliyobaki Saa',
+            'allocated-hours'   => 'Saa zilizotengwa',
+            'total-hours-spent' => 'Jumla ya saa zilizotumika',
+            'remaining-hours'   => 'Saa zilizobaki',
             'overtime'          => 'Muda wa ziada',
             'progress'          => 'Maendeleo',
-            'deadline'          => 'Deadline',
-            'created-at'        => 'Imeundwa',
-            'updated-at'        => 'Imesasishwa',
-            'assignees'         => 'Assignees',
+            'deadline'          => 'Tarehe ya mwisho',
+            'created-at'        => 'Tarehe ya kuundwa',
+            'updated-at'        => 'Tarehe ya kusasishwa',
+            'assignees'         => 'Waliokabidhiwa',
             'customer'          => 'Mteja',
             'project'           => 'Mradi',
             'stage'             => 'Hatua',
-            'milestone'         => 'Hatua kuu',
+            'milestone'         => 'Hatua muhimu',
             'company'           => 'Kampuni',
-            'creator'           => 'Creator',
+            'creator'           => 'Aliyeunda',
         ],
 
         'actions' => [
             'update-state' => [
-                'modal-heading' => 'Sasisha Kazi Hali',
+                'modal-heading' => 'Sasisha hali ya kazi',
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Kazi restored',
-                    'body'  => 'kazi ina restored successfully.',
+                    'title' => 'Kazi imerejeshwa',
+                    'body'  => 'Kazi imerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'title' => 'Kazi imefutwa',
-                    'body'  => 'kazi ina imefutwa successfully.',
+                    'body'  => 'Kazi imefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Kazi force imefutwa',
-                    'body'  => 'kazi ina force imefutwa successfully.',
+                    'title' => 'Kazi imefutwa kabisa',
+                    'body'  => 'Kazi imefutwa kabisa.',
                 ],
             ],
         ],
@@ -141,22 +141,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Kazi restored',
-                    'body'  => 'kazi ina restored successfully.',
+                    'title' => 'Kazi zimerejeshwa',
+                    'body'  => 'Kazi zimerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Kazi imefutwa',
-                    'body'  => 'kazi ina imefutwa successfully.',
+                    'title' => 'Kazi zimefutwa',
+                    'body'  => 'Kazi zimefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Kazi force imefutwa',
-                    'body'  => 'kazi ina force imefutwa successfully.',
+                    'title' => 'Kazi zimefutwa kabisa',
+                    'body'  => 'Kazi zimefutwa kabisa.',
                 ],
             ],
         ],
@@ -177,51 +177,51 @@ return [
             ],
 
             'project-information' => [
-                'title' => 'Mradi Taarifa',
+                'title' => 'Taarifa za mradi',
 
                 'entries' => [
                     'project'   => 'Mradi',
-                    'milestone' => 'Hatua kuu',
+                    'milestone' => 'Hatua muhimu',
                     'customer'  => 'Mteja',
-                    'assignees' => 'Assignees',
-                    'deadline'  => 'Deadline',
+                    'assignees' => 'Waliokabidhiwa',
+                    'deadline'  => 'Tarehe ya mwisho',
                     'stage'     => 'Hatua',
                 ],
             ],
 
             'time-tracking' => [
-                'title' => 'Time Tracking',
+                'title' => 'Ufuatiliaji wa muda',
 
                 'entries' => [
-                    'allocated-time'        => 'Allocated Time',
-                    'time-spent'            => 'Time Spent',
-                    'time-spent-suffix'     => ' Saa',
-                    'time-remaining'        => 'Time Iliyobaki',
-                    'time-remaining-suffix' => ' Saa',
+                    'allocated-time'        => 'Muda uliotengwa',
+                    'time-spent'            => 'Muda uliotumika',
+                    'time-spent-suffix'     => ' saa',
+                    'time-remaining'        => 'Muda uliobaki',
+                    'time-remaining-suffix' => ' saa',
                     'progress'              => 'Maendeleo',
                 ],
             ],
 
             'additional-information' => [
-                'title' => 'Additional Taarifa',
+                'title' => 'Taarifa za ziada',
             ],
 
             'record-information' => [
-                'title' => 'Rekodi Taarifa',
+                'title' => 'Taarifa za rekodi',
 
                 'entries' => [
-                    'created-at'   => 'Imeundwa',
-                    'created-by'   => 'Imeundwa Na',
-                    'last-updated' => 'Mwisho Imesasishwa',
+                    'created-at'   => 'Tarehe ya kuundwa',
+                    'created-by'   => 'Imeundwa na',
+                    'last-updated' => 'Ilisasishwa mwisho',
                 ],
             ],
 
             'statistics' => [
-                'title' => 'Statistics',
+                'title' => 'Takwimu',
 
                 'entries' => [
-                    'sub-tasks'         => 'Sub Kazi',
-                    'timesheet-entries' => 'Karatasi ya muda Maingizo',
+                    'sub-tasks'         => 'Kazi ndogo',
+                    'timesheet-entries' => 'Maingizo ya rejista ya muda',
                 ],
             ],
         ],

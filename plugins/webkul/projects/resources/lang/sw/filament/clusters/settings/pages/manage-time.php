@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Manage Time',
+    'title' => 'Simamia muda',
 
     'form' => [
-        'enable-timesheets'             => 'Washa Karatasi za muda',
-        'enable-timesheets-helper-text' => 'Track time spent washa miradi na kazi',
+        'enable-timesheets'             => 'Washa rejista za muda',
+        'enable-timesheets-helper-text' => 'Fuatilia muda uliotumika kwenye miradi na kazi',
     ],
 ];

@@ -20,20 +20,20 @@ return [
 
                 'fields' => [
                     'title'             => 'Заголовок',
-                    'title-placeholder' => 'Задача Заголовок...',
-                    'tags'              => 'Метки',
+                    'title-placeholder' => 'Заголовок задачи...',
+                    'tags'              => 'Теги',
                     'name'              => 'Название',
                     'color'             => 'Цвет',
                     'description'       => 'Описание',
                     'project'           => 'Проект',
                     'status'            => 'Статус',
-                    'start_date'        => 'Начать Дата',
-                    'end_date'          => 'Конец Дата',
+                    'start_date'        => 'Дата начала',
+                    'end_date'          => 'Дата окончания',
                 ],
             ],
 
             'additional' => [
-                'title' => 'Additional Сведения',
+                'title' => 'Дополнительная информация',
             ],
 
             'settings' => [
@@ -42,14 +42,14 @@ return [
                 'fields' => [
                     'project'                     => 'Проект',
                     'milestone'                   => 'Веха',
-                    'milestone-hint-text'         => 'Автоматически deliver ваш services upon reaching веха от linking это до заказ на продажу позиция.',
+                    'milestone-hint-text'         => 'Свяжите веху со строкой заказа на продажу, чтобы услуги оказывались автоматически по её достижении.',
                     'name'                        => 'Название',
-                    'deadline'                    => 'Deadline',
+                    'deadline'                    => 'Срок',
                     'is-completed'                => 'Завершено',
                     'customer'                    => 'Клиент',
-                    'assignees'                   => 'Assignees',
-                    'allocated-hours'             => 'Allocated Часы',
-                    'allocated-hours-helper-text' => 'В часы (Eg. 1.5 часы means 1 час 30 минуты)',
+                    'assignees'                   => 'Исполнители',
+                    'allocated-hours'             => 'Выделено часов',
+                    'allocated-hours-helper-text' => 'В часах (например, 1,5 часа — это 1 час 30 минут)',
                 ],
             ],
         ],
@@ -57,23 +57,23 @@ return [
 
     'table' => [
         'columns' => [
-            'id'                  => 'Ид.',
+            'id'                  => 'ID',
             'priority'            => 'Приоритет',
             'state'               => 'Состояние',
-            'new-state'           => 'Новое Состояние',
-            'update-state'        => 'Обновить Состояние',
+            'new-state'           => 'Новое состояние',
+            'update-state'        => 'Изменить состояние',
             'title'               => 'Заголовок',
             'project'             => 'Проект',
-            'project-placeholder' => 'Личный Задача',
+            'project-placeholder' => 'Личная задача',
             'milestone'           => 'Веха',
             'customer'            => 'Клиент',
-            'assignees'           => 'Assignees',
-            'allocated-time'      => 'Allocated Time',
-            'time-spent'          => 'Time Spent',
-            'time-remaining'      => 'Time Осталось',
-            'progress'            => 'Ход',
-            'deadline'            => 'Deadline',
-            'tags'                => 'Метки',
+            'assignees'           => 'Исполнители',
+            'allocated-time'      => 'Выделенное время',
+            'time-spent'          => 'Затраченное время',
+            'time-remaining'      => 'Оставшееся время',
+            'progress'            => 'Прогресс',
+            'deadline'            => 'Срок',
+            'tags'                => 'Теги',
             'stage'               => 'Этап',
         ],
 
@@ -82,9 +82,9 @@ return [
             'project'    => 'Проект',
             'milestone'  => 'Веха',
             'customer'   => 'Клиент',
-            'deadline'   => 'Deadline',
+            'deadline'   => 'Срок',
             'stage'      => 'Этап',
-            'created-at' => 'Создано',
+            'created-at' => 'Дата создания',
         ],
 
         'filters' => [
@@ -93,47 +93,47 @@ return [
             'low'               => 'Низкий',
             'high'              => 'Высокий',
             'state'             => 'Состояние',
-            'tags'              => 'Метки',
-            'allocated-hours'   => 'Allocated Часы',
-            'total-hours-spent' => 'Итого Часы Spent',
-            'remaining-hours'   => 'Осталось Часы',
-            'overtime'          => 'Сверхурочные',
-            'progress'          => 'Ход',
-            'deadline'          => 'Deadline',
-            'created-at'        => 'Создано',
-            'updated-at'        => 'Обновлено',
-            'assignees'         => 'Assignees',
+            'tags'              => 'Теги',
+            'allocated-hours'   => 'Выделено часов',
+            'total-hours-spent' => 'Всего затрачено часов',
+            'remaining-hours'   => 'Осталось часов',
+            'overtime'          => 'Сверхурочно',
+            'progress'          => 'Прогресс',
+            'deadline'          => 'Срок',
+            'created-at'        => 'Дата создания',
+            'updated-at'        => 'Дата изменения',
+            'assignees'         => 'Исполнители',
             'customer'          => 'Клиент',
             'project'           => 'Проект',
             'stage'             => 'Этап',
             'milestone'         => 'Веха',
             'company'           => 'Компания',
-            'creator'           => 'Creator',
+            'creator'           => 'Автор',
         ],
 
         'actions' => [
             'update-state' => [
-                'modal-heading' => 'Обновить Задача Состояние',
+                'modal-heading' => 'Изменить состояние задачи',
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Задача restored',
-                    'body'  => 'задача есть restored successfully.',
+                    'title' => 'Задача восстановлена',
+                    'body'  => 'Задача успешно восстановлена.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Задача удалено',
-                    'body'  => 'задача есть удалено successfully.',
+                    'title' => 'Задача удалена',
+                    'body'  => 'Задача успешно удалена.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Задача force удалено',
-                    'body'  => 'задача есть force удалено successfully.',
+                    'title' => 'Задача удалена безвозвратно',
+                    'body'  => 'Задача удалена безвозвратно.',
                 ],
             ],
         ],
@@ -141,22 +141,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Задачи restored',
-                    'body'  => 'задачи есть restored successfully.',
+                    'title' => 'Задачи восстановлены',
+                    'body'  => 'Задачи успешно восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Задачи удалено',
-                    'body'  => 'задачи есть удалено successfully.',
+                    'title' => 'Задачи удалены',
+                    'body'  => 'Задачи успешно удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Задачи force удалено',
-                    'body'  => 'задачи есть force удалено successfully.',
+                    'title' => 'Задачи удалены безвозвратно',
+                    'body'  => 'Задачи удалены безвозвратно.',
                 ],
             ],
         ],
@@ -170,58 +170,58 @@ return [
                 'entries' => [
                     'title'       => 'Заголовок',
                     'state'       => 'Состояние',
-                    'tags'        => 'Метки',
+                    'tags'        => 'Теги',
                     'priority'    => 'Приоритет',
                     'description' => 'Описание',
                 ],
             ],
 
             'project-information' => [
-                'title' => 'Проект Сведения',
+                'title' => 'Сведения о проекте',
 
                 'entries' => [
                     'project'   => 'Проект',
                     'milestone' => 'Веха',
                     'customer'  => 'Клиент',
-                    'assignees' => 'Assignees',
-                    'deadline'  => 'Deadline',
+                    'assignees' => 'Исполнители',
+                    'deadline'  => 'Срок',
                     'stage'     => 'Этап',
                 ],
             ],
 
             'time-tracking' => [
-                'title' => 'Time Tracking',
+                'title' => 'Учёт времени',
 
                 'entries' => [
-                    'allocated-time'        => 'Allocated Time',
-                    'time-spent'            => 'Time Spent',
-                    'time-spent-suffix'     => ' Часы',
-                    'time-remaining'        => 'Time Осталось',
-                    'time-remaining-suffix' => ' Часы',
-                    'progress'              => 'Ход',
+                    'allocated-time'        => 'Выделенное время',
+                    'time-spent'            => 'Затраченное время',
+                    'time-spent-suffix'     => ' ч',
+                    'time-remaining'        => 'Оставшееся время',
+                    'time-remaining-suffix' => ' ч',
+                    'progress'              => 'Прогресс',
                 ],
             ],
 
             'additional-information' => [
-                'title' => 'Additional Сведения',
+                'title' => 'Дополнительная информация',
             ],
 
             'record-information' => [
-                'title' => 'Запись Сведения',
+                'title' => 'Сведения о записи',
 
                 'entries' => [
-                    'created-at'   => 'Создано',
-                    'created-by'   => 'Создано От',
-                    'last-updated' => 'Последний Обновлено',
+                    'created-at'   => 'Дата создания',
+                    'created-by'   => 'Создал',
+                    'last-updated' => 'Последнее изменение',
                 ],
             ],
 
             'statistics' => [
-                'title' => 'Statistics',
+                'title' => 'Статистика',
 
                 'entries' => [
-                    'sub-tasks'         => 'Sub Задачи',
-                    'timesheet-entries' => 'Табель Проводки',
+                    'sub-tasks'         => 'Подзадачи',
+                    'timesheet-entries' => 'Записи табеля',
                 ],
             ],
         ],

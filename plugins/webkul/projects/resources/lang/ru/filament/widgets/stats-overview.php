@@ -2,13 +2,13 @@
 
 return [
     'heading' => [
-        'title' => 'Stats Обзор',
+        'title' => 'Обзор статистики',
     ],
 
-    'total-tasks'          => 'Итого Задачи',
-    'total-hours-spent'    => 'Итого Часы Spent',
-    'total-time-remaining' => 'Итого Time Осталось',
+    'total-tasks'          => 'Всего задач',
+    'total-hours-spent'    => 'Всего затрачено часов',
+    'total-time-remaining' => 'Всего осталось времени',
 
-    'increase' => 'increase',
-    'decrease' => 'decrease',
+    'increase' => 'рост',
+    'decrease' => 'снижение',
 ];

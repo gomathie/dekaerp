@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Этап обновлено',
-        'body'  => 'этап есть обновлено successfully.',
+        'title' => 'Этап обновлён',
+        'body'  => 'Этап успешно обновлён.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Этап удалено',
-                'body'  => 'этап есть удалено successfully.',
+                'title' => 'Этап удалён',
+                'body'  => 'Этап успешно удалён.',
             ],
         ],
     ],

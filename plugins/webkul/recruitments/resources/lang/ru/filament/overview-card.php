@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'label'            => 'Подбор',
-    'open-positions'   => 'Открыт positions',
-    'new-applicants'   => 'Новое кандидаты (7 дни)',
-    'hired-this-month' => 'Hired этот месяц',
-    'in-progress'      => ':count applications в ход',
+    'label'            => 'Подбор персонала',
+    'open-positions'   => 'Открытые вакансии',
+    'new-applicants'   => 'Новые соискатели (7 дней)',
+    'hired-this-month' => 'Нанято в этом месяце',
+    'in-progress'      => 'Заявок в работе: :count',
 ];

@@ -2,32 +2,32 @@
 
 return [
     'notification' => [
-        'title' => 'Кандидат создано',
-        'body'  => 'кандидат есть создано successf ully.',
+        'title' => 'Соискатель создан',
+        'body'  => 'Соискатель успешно создан.',
     ],
 
     'tabs' => [
-        'my-applicants'          => 'Мой Кандидаты',
-        'un-assigned'            => 'Un Назначен',
-        'in-progress'            => 'В Ход',
-        'hired'                  => 'Hired',
+        'my-applicants'          => 'Мои соискатели',
+        'un-assigned'            => 'Без ответственного',
+        'in-progress'            => 'В работе',
+        'hired'                  => 'Нанят',
         'refused'                => 'Отказано',
         'archived'               => 'В архиве',
-        'blocked'                => 'Blocked',
-        'directly-available'     => 'Directly Доступно',
-        'created-recently'       => 'Создано Recently',
-        'stage-updated-recently' => 'Этап Обновлено Recently',
+        'blocked'                => 'Заблокирован',
+        'directly-available'     => 'Готов приступить',
+        'created-recently'       => 'Недавно созданные',
+        'stage-updated-recently' => 'Недавно сменили этап',
     ],
 
     'header-actions' => [
         'create-applicant' => [
-            'label' => 'Новое Кандидат',
+            'label' => 'Новый соискатель',
 
-            'modal-title' => 'Создать Кандидат',
+            'modal-title' => 'Создать соискателя',
 
             'form' => [
                 'fields' => [
-                    'candidate' => 'Candidate',
+                    'candidate' => 'Кандидат',
                 ],
             ],
         ],

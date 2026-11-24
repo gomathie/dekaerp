@@ -4,8 +4,8 @@ return [
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Mradi imefutwa',
-                'body'  => 'mradi ina imefutwa successfully.',
+                'title' => 'Mradi umefutwa',
+                'body'  => 'Mradi umefutwa kwa mafanikio.',
             ],
         ],
     ],

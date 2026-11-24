@@ -8,11 +8,11 @@ return [
 
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Активность Plan',
+            'label' => 'Новый план действий',
 
             'notification' => [
-                'title' => 'Активность Plan создано',
-                'body'  => 'активность plan есть создано successfully.',
+                'title' => 'План действий создан',
+                'body'  => 'План действий успешно создан.',
             ],
         ],
     ],

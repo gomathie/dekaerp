@@ -2,32 +2,32 @@
 
 return [
     'notification' => [
-        'title' => 'Mwombaji imeundwa',
-        'body'  => 'mwombaji ina imeundwa successf ully.',
+        'title' => 'Mwombaji ameundwa',
+        'body'  => 'Mwombaji ameundwa kwa mafanikio.',
     ],
 
     'tabs' => [
-        'my-applicants'          => 'Yangu Waombaji',
-        'un-assigned'            => 'Un Amekabidhiwa',
-        'in-progress'            => 'Katika Maendeleo',
-        'hired'                  => 'Hired',
-        'refused'                => 'Imekataliwa',
-        'archived'               => 'Imehifadhiwa',
-        'blocked'                => 'Blocked',
-        'directly-available'     => 'Directly Inapatikana',
-        'created-recently'       => 'Imeundwa Recently',
-        'stage-updated-recently' => 'Hatua Imesasishwa Recently',
+        'my-applicants'          => 'Waombaji wangu',
+        'un-assigned'            => 'Hawajakabidhiwa',
+        'in-progress'            => 'Inaendelea',
+        'hired'                  => 'Ameajiriwa',
+        'refused'                => 'Amekataliwa',
+        'archived'               => 'Kwenye kumbukumbu',
+        'blocked'                => 'Imezuiwa',
+        'directly-available'     => 'Anapatikana mara moja',
+        'created-recently'       => 'Zilizoundwa hivi karibuni',
+        'stage-updated-recently' => 'Hatua ilibadilishwa hivi karibuni',
     ],
 
     'header-actions' => [
         'create-applicant' => [
-            'label' => 'Mpya Mwombaji',
+            'label' => 'Mwombaji mpya',
 
-            'modal-title' => 'Unda Mwombaji',
+            'modal-title' => 'Unda mwombaji',
 
             'form' => [
                 'fields' => [
-                    'candidate' => 'Candidate',
+                    'candidate' => 'Mgombea',
                 ],
             ],
         ],

@@ -3,13 +3,13 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Задача',
+            'label' => 'Новая задача',
         ],
 
         'delete' => [
             'notification' => [
-                'title' => 'Задача удалено',
-                'body'  => 'задача есть удалено successfully.',
+                'title' => 'Задача удалена',
+                'body'  => 'Задача успешно удалена.',
             ],
         ],
     ],

@@ -7,11 +7,11 @@ return [
 
     'filters-form' => [
         'project'    => 'Проект',
-        'assignees'  => 'Assignees',
-        'tags'       => 'Метки',
+        'assignees'  => 'Исполнители',
+        'tags'       => 'Теги',
         'customer'   => 'Клиент',
-        'start-date' => 'Начать Дата',
-        'date-range' => 'Диапазон дат',
-        'end-date'   => 'Конец Дата',
+        'start-date' => 'Дата начала',
+        'date-range' => 'Период',
+        'end-date'   => 'Дата окончания',
     ],
 ];

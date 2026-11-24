@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'group' => 'Kazi Positions',
+        'group' => 'Nafasi za kazi',
     ],
 ];

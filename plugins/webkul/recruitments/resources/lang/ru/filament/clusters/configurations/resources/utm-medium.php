@@ -1,48 +1,48 @@
 <?php
 
 return [
-    'title' => 'Mediums',
+    'title' => 'Каналы',
 
     'navigation' => [
-        'title' => 'Mediums',
-        'group' => 'UTMs',
+        'title' => 'Каналы',
+        'group' => 'UTM',
     ],
 
     'form' => [
         'fields' => [
             'name'             => 'Название',
-            'name-placeholder' => 'Введите название средний',
+            'name-placeholder' => 'Введите название канала',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'id'         => 'Ид.',
+            'id'         => 'ID',
             'name'       => 'Название',
-            'created-by' => 'Создано От',
-            'created-at' => 'Создано',
-            'updated-at' => 'Обновлено',
+            'created-by' => 'Создал',
+            'created-at' => 'Дата создания',
+            'updated-at' => 'Дата изменения',
         ],
 
         'filters' => [
             'name'       => 'Название',
-            'created-by' => 'Создано От',
-            'updated-at' => 'Обновлено',
-            'created-at' => 'Создано',
+            'created-by' => 'Создал',
+            'updated-at' => 'Дата изменения',
+            'created-at' => 'Дата создания',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Средний обновлено',
-                    'body'  => 'средний есть обновлено successfully.',
+                    'title' => 'Канал обновлён',
+                    'body'  => 'Канал успешно обновлён.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Средний удалено',
-                    'body'  => 'средний есть удалено successfully.',
+                    'title' => 'Канал удалён',
+                    'body'  => 'Канал успешно удалён.',
                 ],
             ],
         ],
@@ -50,8 +50,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Mediums удалено',
-                    'body'  => 'Mediums есть удалено successfully.',
+                    'title' => 'Каналы удалены',
+                    'body'  => 'Каналы успешно удалены.',
                 ],
             ],
         ],
@@ -59,8 +59,8 @@ return [
         'empty-state-action' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Средний создано',
-                    'body'  => 'средний есть создано successfully.',
+                    'title' => 'Канал создан',
+                    'body'  => 'Канал успешно создан.',
                 ],
             ],
         ],

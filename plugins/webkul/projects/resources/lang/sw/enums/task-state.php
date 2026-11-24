@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'in-progress'      => 'Katika Maendeleo',
-    'change-requested' => 'Badilisha Requested',
+    'in-progress'      => 'Inaendelea',
+    'change-requested' => 'Mabadiliko yameombwa',
     'approved'         => 'Imeidhinishwa',
     'cancelled'        => 'Imeghairiwa',
     'done'             => 'Imekamilika',

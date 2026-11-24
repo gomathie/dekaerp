@@ -2,7 +2,7 @@
 
 return [
     'navigation' => [
-        'title' => 'Активность Plans',
+        'title' => 'Планы действий',
     ],
 
     'form' => [
@@ -14,36 +14,36 @@ return [
         'columns' => [
             'name'       => 'Название',
             'status'     => 'Статус',
-            'created-at' => 'Создано',
-            'updated-at' => 'Обновлено',
+            'created-at' => 'Дата создания',
+            'updated-at' => 'Дата изменения',
         ],
 
         'groups' => [
             'name'       => 'Название',
             'status'     => 'Статус',
-            'created-at' => 'Создано',
-            'updated-at' => 'Обновлено',
+            'created-at' => 'Дата создания',
+            'updated-at' => 'Дата изменения',
         ],
 
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Активность Plan restored',
-                    'body'  => 'активность plan есть restored successfully.',
+                    'title' => 'План действий восстановлен',
+                    'body'  => 'План действий успешно восстановлен.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Активность Plan удалено',
-                    'body'  => 'активность plan есть удалено successfully.',
+                    'title' => 'План действий удалён',
+                    'body'  => 'План действий успешно удалён.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Активность Plan force удалено',
-                    'body'  => 'активность plan есть force удалено successfully.',
+                    'title' => 'План действий удалён безвозвратно',
+                    'body'  => 'План действий удалён безвозвратно.',
                 ],
             ],
         ],
@@ -51,22 +51,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Активность Plans restored',
-                    'body'  => 'активность plans есть restored successfully.',
+                    'title' => 'Планы действий восстановлены',
+                    'body'  => 'Планы действий успешно восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Активность Plans удалено',
-                    'body'  => 'активность plans есть удалено successfully.',
+                    'title' => 'Планы действий удалены',
+                    'body'  => 'Планы действий успешно удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Активность Plans force удалено',
-                    'body'  => 'активность plans есть force удалено successfully.',
+                    'title' => 'Планы действий удалены безвозвратно',
+                    'body'  => 'Планы действий удалены безвозвратно.',
                 ],
             ],
         ],
@@ -74,8 +74,8 @@ return [
         'empty-state' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Активность Plan создано',
-                    'body'  => 'активность plan есть создано successfully.',
+                    'title' => 'План действий создан',
+                    'body'  => 'План действий успешно создан.',
                 ],
             ],
         ],

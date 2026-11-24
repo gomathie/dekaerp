@@ -4,11 +4,11 @@ return [
     'table' => [
         'header-actions' => [
             'create' => [
-                'label' => 'Добавить Проект Веха',
+                'label' => 'Добавить веху проекта',
 
                 'notification' => [
-                    'title' => 'Веха создано',
-                    'body'  => 'веха есть создано successfully.',
+                    'title' => 'Веха создана',
+                    'body'  => 'Веха успешно создана.',
                 ],
             ],
         ],

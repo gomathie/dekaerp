@@ -1,75 +1,75 @@
 <?php
 
 return [
-    'create-employee' => 'Unda Mfanyakazi',
-    'goto-employee'   => 'Go hadi Mfanyakazi',
+    'create-employee' => 'Unda mfanyakazi',
+    'goto-employee'   => 'Nenda kwa mfanyakazi',
 
     'notification' => [
-        'title' => 'Mwombaji imesasishwa',
-        'body'  => 'mwombaji ina imesasishwa successfully.',
+        'title' => 'Mwombaji amesasishwa',
+        'body'  => 'Mwombaji amesasishwa kwa mafanikio.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Mwombaji imefutwa',
-                'body'  => 'mwombaji ina imefutwa successfully.',
+                'title' => 'Mwombaji amefutwa',
+                'body'  => 'Mwombaji amefutwa kwa mafanikio.',
             ],
         ],
         'force-delete' => [
             'notification' => [
-                'title' => 'Mwombaji imefutwa',
-                'body'  => 'mwombaji ina force imefutwa successfully.',
+                'title' => 'Mwombaji amefutwa',
+                'body'  => 'Mwombaji amefutwa kabisa.',
             ],
         ],
 
         'restore' => [
             'notification' => [
-                'title' => 'Mwombaji restored',
-                'body'  => 'mwombaji ina restored successfully.',
+                'title' => 'Mwombaji amerejeshwa',
+                'body'  => 'Mwombaji amerejeshwa kwa mafanikio.',
             ],
         ],
 
         'refuse' => [
-            'title'        => 'Kataa Sababu',
+            'title'        => 'Sababu ya kukataa',
             'form'         => [
                 'fields' => [
-                    'notify'   => 'Notify',
-                    'email-to' => 'Barua pepe Hadi',
+                    'notify'   => 'Arifu',
+                    'email-to' => 'Tuma kwa',
                 ],
             ],
             'notification' => [
-                'title' => 'Mwombaji imekataliwa',
-                'body'  => 'mwombaji ina imekataliwa successfully.',
+                'title' => 'Mwombaji amekataliwa',
+                'body'  => 'Mwombaji amekataliwa kwa mafanikio.',
             ],
         ],
 
         'reopen' => [
-            'title'        => 'Reopen Mwombaji',
+            'title'        => 'Fungua upya mwombaji',
             'notification' => [
-                'title' => 'Mwombaji reopened',
-                'body'  => 'mwombaji ina reopened successfully.',
+                'title' => 'Mwombaji amefunguliwa upya',
+                'body'  => 'Mwombaji amefunguliwa upya kwa mafanikio.',
             ],
         ],
 
         'state' => [
             'notification' => [
-                'title' => 'Mwombaji hali imesasishwa',
-                'body'  => 'mwombaji hali ina imesasishwa successfully.',
+                'title' => 'Hali ya mwombaji imesasishwa',
+                'body'  => 'Hali ya mwombaji imesasishwa kwa mafanikio.',
             ],
         ],
     ],
 
     'mail' => [
         'application-refused' => [
-            'subject' => 'Yako Kazi Application: :application',
+            'subject' => 'Ombi lako la kazi: :application',
         ],
 
         'application-confirm' => [
-            'subject' => 'Yako Kazi Application: :job_position',
+            'subject' => 'Ombi lako la kazi: :job_position',
         ],
         'interviewer-assigned' => [
-            'subject' => 'Wewe ina amekabidhiwa hadi Mwombaji :applicant.',
+            'subject' => 'Umepewa mwombaji :applicant.',
         ],
     ],
 ];

@@ -4,44 +4,44 @@ return [
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Mwombaji imefutwa',
-                'body'  => 'mwombaji ina imefutwa successfully.',
+                'title' => 'Mwombaji amefutwa',
+                'body'  => 'Mwombaji amefutwa kwa mafanikio.',
             ],
         ],
 
         'refuse' => [
-            'title'        => 'Kataa Sababu',
+            'title'        => 'Sababu ya kukataa',
             'form'         => [
                 'fields' => [
-                    'notify'   => 'Notify',
-                    'email-to' => 'Barua pepe Hadi',
+                    'notify'   => 'Arifu',
+                    'email-to' => 'Tuma kwa',
                 ],
             ],
             'notification' => [
-                'title' => 'Mwombaji imekataliwa',
-                'body'  => 'mwombaji ina imekataliwa successfully.',
+                'title' => 'Mwombaji amekataliwa',
+                'body'  => 'Mwombaji amekataliwa kwa mafanikio.',
             ],
         ],
 
         'reopen' => [
-            'title'        => 'Rejesha Mwombaji kutoka kataa',
+            'title'        => 'Rejesha mwombaji aliyekataliwa',
             'notification' => [
-                'title' => 'Mwombaji reopened',
-                'body'  => 'mwombaji ina reopened successfully.',
+                'title' => 'Mwombaji amefunguliwa upya',
+                'body'  => 'Mwombaji amefunguliwa upya kwa mafanikio.',
             ],
         ],
 
         'state' => [
             'notification' => [
-                'title' => 'Mwombaji hali imesasishwa',
-                'body'  => 'mwombaji hali ina imesasishwa successfully.',
+                'title' => 'Hali ya mwombaji imesasishwa',
+                'body'  => 'Hali ya mwombaji imesasishwa kwa mafanikio.',
             ],
         ],
     ],
 
     'mail' => [
         'application-refused' => [
-            'subject' => 'Yako Kazi Application: :application',
+            'subject' => 'Ombi lako la kazi: :application',
         ],
     ],
 ];

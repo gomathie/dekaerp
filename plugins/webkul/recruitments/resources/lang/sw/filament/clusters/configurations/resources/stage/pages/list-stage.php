@@ -3,7 +3,7 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Hatua',
+            'label' => 'Hatua mpya',
         ],
     ],
 ];

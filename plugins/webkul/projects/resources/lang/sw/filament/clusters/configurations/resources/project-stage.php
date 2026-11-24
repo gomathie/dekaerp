@@ -2,7 +2,7 @@
 
 return [
     'navigation' => [
-        'title' => 'Mradi Hatua',
+        'title' => 'Hatua za mradi',
     ],
 
     'form' => [
@@ -12,54 +12,54 @@ return [
     'table' => [
         'columns' => [
             'name'       => 'Jina',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'created-at' => 'Tarehe ya kuundwa',
+            'updated-at' => 'Tarehe ya kusasishwa',
         ],
 
         'groups' => [
             'name'         => 'Jina',
-            'is-completed' => 'Ni Imekamilika',
+            'is-completed' => 'Imekamilika',
             'project'      => 'Mradi',
-            'created-at'   => 'Imeundwa',
+            'created-at'   => 'Tarehe ya kuundwa',
         ],
 
         'filters' => [
-            'is-completed' => 'Ni Imekamilika',
+            'is-completed' => 'Imekamilika',
             'project'      => 'Mradi',
-            'creator'      => 'Creator',
+            'creator'      => 'Aliyeunda',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Mradi hatua imesasishwa',
-                    'body'  => 'mradi hatua ina imesasishwa successfully.',
+                    'title' => 'Hatua ya mradi imesasishwa',
+                    'body'  => 'Hatua ya mradi imesasishwa kwa mafanikio.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Mradi hatua restored',
-                    'body'  => 'mradi hatua ina restored successfully.',
+                    'title' => 'Hatua ya mradi imerejeshwa',
+                    'body'  => 'Hatua ya mradi imerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Mradi hatua imefutwa',
-                    'body'  => 'mradi hatua ina imefutwa successfully.',
+                    'title' => 'Hatua ya mradi imefutwa',
+                    'body'  => 'Hatua ya mradi imefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Mradi hatua force imefutwa',
-                        'body'  => 'mradi hatua ina force imefutwa successfully.',
+                        'title' => 'Hatua ya mradi imefutwa kabisa',
+                        'body'  => 'Hatua ya mradi imefutwa kabisa.',
                     ],
                     'error' => [
-                        'title' => 'Mradi Hatua could si kuwa imefutwa',
-                        'body'  => 'Mradi Hatua haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Hatua ya mradi haikuweza kufutwa',
+                        'body'  => 'Hatua ya mradi haiwezi kufutwa kwa sababu inatumika.',
                     ],
                 ],
             ],
@@ -68,22 +68,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Mradi hatua restored',
-                    'body'  => 'mradi hatua ina restored successfully.',
+                    'title' => 'Hatua za mradi zimerejeshwa',
+                    'body'  => 'Hatua za mradi zimerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Mradi hatua imefutwa',
-                    'body'  => 'mradi hatua ina imefutwa successfully.',
+                    'title' => 'Hatua za mradi zimefutwa',
+                    'body'  => 'Hatua za mradi zimefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Mradi hatua force imefutwa',
-                    'body'  => 'mradi hatua ina force imefutwa successfully.',
+                    'title' => 'Hatua za mradi zimefutwa kabisa',
+                    'body'  => 'Hatua za mradi zimefutwa kabisa.',
                 ],
             ],
         ],

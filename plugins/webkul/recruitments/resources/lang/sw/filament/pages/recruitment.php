@@ -2,27 +2,27 @@
 
 return [
     'navigation' => [
-        'title' => 'Ajira',
+        'title' => 'Uajiri',
     ],
 
     'filters-form' => [
-        'job-position' => 'Kazi Cheo',
+        'job-position' => 'Nafasi ya kazi',
         'departments'  => 'Idara',
-        'companies'    => 'Makampuni',
+        'companies'    => 'Kampuni',
         'stages'       => 'Hatua',
         'status'       => [
             'title'   => 'Hali',
             'options' => [
                 'all'      => 'Zote',
-                'ongoing'  => 'Ongoing',
-                'hired'    => 'Hired',
-                'refused'  => 'Imekataliwa',
-                'archived' => 'Imehifadhiwa',
+                'ongoing'  => 'Yanayoendelea',
+                'hired'    => 'Ameajiriwa',
+                'refused'  => 'Amekataliwa',
+                'archived' => 'Kwenye kumbukumbu',
             ],
         ],
 
-        'start-date' => 'Anza Tarehe',
-        'date-range' => 'Kipindi cha tarehe',
-        'end-date'   => 'Mwisho Tarehe',
+        'start-date' => 'Tarehe ya kuanza',
+        'date-range' => 'Kipindi',
+        'end-date'   => 'Tarehe ya kumaliza',
     ],
 ];

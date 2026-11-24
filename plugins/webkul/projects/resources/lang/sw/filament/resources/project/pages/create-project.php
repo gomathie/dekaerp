@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Mradi imeundwa',
-        'body'  => 'mradi ina imeundwa successfully.',
+        'title' => 'Mradi umeundwa',
+        'body'  => 'Mradi umeundwa kwa mafanikio.',
     ],
 ];

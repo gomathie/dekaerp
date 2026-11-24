@@ -6,7 +6,7 @@ return [
     ],
 
     'global-search' => [
-        'project-manager' => 'Проект Руководитель',
+        'project-manager' => 'Руководитель проекта',
         'customer'        => 'Клиент',
     ],
 
@@ -17,22 +17,22 @@ return [
 
                 'fields' => [
                     'name'             => 'Название',
-                    'name-placeholder' => 'Проект Название...',
+                    'name-placeholder' => 'Название проекта...',
                     'description'      => 'Описание',
                 ],
             ],
 
             'additional' => [
-                'title' => 'Additional Сведения',
+                'title' => 'Дополнительная информация',
 
                 'fields' => [
-                    'project-manager'             => 'Проект Руководитель',
+                    'project-manager'             => 'Руководитель проекта',
                     'customer'                    => 'Клиент',
-                    'start-date'                  => 'Начать Дата',
-                    'end-date'                    => 'Конец Дата',
-                    'allocated-hours'             => 'Allocated Часы',
-                    'allocated-hours-helper-text' => 'В часы (Eg. 1.5 часы means 1 час 30 минуты)',
-                    'tags'                        => 'Метки',
+                    'start-date'                  => 'Дата начала',
+                    'end-date'                    => 'Дата окончания',
+                    'allocated-hours'             => 'Выделено часов',
+                    'allocated-hours-helper-text' => 'В часах (например, 1,5 часа — это 1 час 30 минут)',
+                    'tags'                        => 'Теги',
                     'company'                     => 'Компания',
                 ],
             ],
@@ -41,17 +41,17 @@ return [
                 'title' => 'Настройки',
 
                 'fields' => [
-                    'visibility'                   => 'Visibility',
-                    'visibility-hint-tooltip'      => 'Разрешить сотрудники до access ваш проект или задачи от adding их как followers. Они автоматически gain access до любой задачи назначен до их..',
-                    'private-description'          => 'Invited внутренний пользователи только.',
-                    'internal-description'         => 'Все внутренний пользователи можно see.',
-                    'public-description'           => 'Invited портал пользователи и все внутренний пользователи.',
-                    'time-management'              => 'Time Management',
-                    'allow-timesheets'             => 'Разрешить Табели',
-                    'allow-timesheets-helper-text' => 'Log time вкл. задачи и track ход',
-                    'task-management'              => 'Задача Management',
-                    'allow-milestones'             => 'Разрешить Milestones',
-                    'allow-milestones-helper-text' => 'Monitor key milestones тот essential для achieving успешно.',
+                    'visibility'                   => 'Видимость',
+                    'visibility-hint-tooltip'      => 'Дайте сотрудникам доступ к проекту или задачам, добавив их в подписчики. Они автоматически получат доступ ко всем назначенным им задачам.',
+                    'private-description'          => 'Только приглашённые внутренние пользователи.',
+                    'internal-description'         => 'Видят все внутренние пользователи.',
+                    'public-description'           => 'Приглашённые пользователи портала и все внутренние пользователи.',
+                    'time-management'              => 'Учёт времени',
+                    'allow-timesheets'             => 'Разрешить табели',
+                    'allow-timesheets-helper-text' => 'Записывайте время по задачам и отслеживайте ход работ',
+                    'task-management'              => 'Управление задачами',
+                    'allow-milestones'             => 'Разрешить вехи',
+                    'allow-milestones-helper-text' => 'Отслеживайте ключевые вехи, важные для успеха.',
                 ],
             ],
         ],
@@ -61,53 +61,53 @@ return [
         'columns' => [
             'name'            => 'Название',
             'customer'        => 'Клиент',
-            'start-date'      => 'Начать Дата',
-            'end-date'        => 'Конец Дата',
-            'planned-date'    => 'Запланировано Дата',
-            'remaining-hours' => 'Осталось Часы',
-            'project-manager' => 'Проект Руководитель',
+            'start-date'      => 'Дата начала',
+            'end-date'        => 'Дата окончания',
+            'planned-date'    => 'Плановая дата',
+            'remaining-hours' => 'Осталось часов',
+            'project-manager' => 'Руководитель проекта',
         ],
 
         'groups' => [
             'stage'           => 'Этап',
-            'project-manager' => 'Проект Руководитель',
+            'project-manager' => 'Руководитель проекта',
             'customer'        => 'Клиент',
-            'created-at'      => 'Создано',
+            'created-at'      => 'Дата создания',
         ],
 
         'filters' => [
             'name'             => 'Название',
-            'visibility'       => 'Visibility',
-            'start-date'       => 'Начать Дата',
-            'end-date'         => 'Конец Дата',
-            'allow-timesheets' => 'Разрешить Табели',
-            'allow-milestones' => 'Разрешить Milestones',
-            'allocated-hours'  => 'Allocated Часы',
-            'created-at'       => 'Создано',
-            'updated-at'       => 'Обновлено',
+            'visibility'       => 'Видимость',
+            'start-date'       => 'Дата начала',
+            'end-date'         => 'Дата окончания',
+            'allow-timesheets' => 'Разрешить табели',
+            'allow-milestones' => 'Разрешить вехи',
+            'allocated-hours'  => 'Выделено часов',
+            'created-at'       => 'Дата создания',
+            'updated-at'       => 'Дата изменения',
             'stage'            => 'Этап',
             'customer'         => 'Клиент',
-            'project-manager'  => 'Проект Руководитель',
+            'project-manager'  => 'Руководитель проекта',
             'company'          => 'Компания',
-            'creator'          => 'Creator',
-            'tags'             => 'Метки',
+            'creator'          => 'Автор',
+            'tags'             => 'Теги',
         ],
 
         'actions' => [
-            'tasks'      => ':count Задачи',
-            'milestones' => ':completed milestones завершено вне :all',
+            'tasks'      => 'Задачи: :count',
+            'milestones' => 'Выполнено вех: :completed из :all',
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Проект restored',
-                    'body'  => 'проект есть restored successfully.',
+                    'title' => 'Проект восстановлен',
+                    'body'  => 'Проект успешно восстановлен.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Проект удалено',
-                    'body'  => 'проект есть удалено successfully.',
+                    'title' => 'Проект удалён',
+                    'body'  => 'Проект успешно удалён.',
                 ],
             ],
 
@@ -116,13 +116,13 @@ return [
                 'notification' => [
 
                     'success' => [
-                        'title' => 'Проект permanently удалено',
-                        'body'  => 'проект есть permanently удалено successfully.',
+                        'title' => 'Проект удалён безвозвратно',
+                        'body'  => 'Проект удалён безвозвратно.',
                     ],
 
                     'error' => [
-                        'title' => 'Проект нельзя быть permanently удалено',
-                        'body'  => 'проект associated с другое записи.',
+                        'title' => 'Проект нельзя удалить безвозвратно',
+                        'body'  => 'Проект связан с другими записями.',
                     ],
 
                 ],
@@ -138,53 +138,53 @@ return [
 
                 'entries' => [
                     'name'             => 'Название',
-                    'name-placeholder' => 'Проект Название...',
+                    'name-placeholder' => 'Название проекта...',
                     'description'      => 'Описание',
                 ],
             ],
 
             'additional' => [
-                'title' => 'Additional Сведения',
+                'title' => 'Дополнительная информация',
 
                 'entries' => [
-                    'project-manager'        => 'Проект Руководитель',
+                    'project-manager'        => 'Руководитель проекта',
                     'customer'               => 'Клиент',
-                    'project-timeline'       => 'Проект Timeline',
-                    'allocated-hours'        => 'Allocated Часы',
-                    'allocated-hours-suffix' => ' Часы',
-                    'remaining-hours'        => 'Осталось Часы',
-                    'remaining-hours-suffix' => ' Часы',
-                    'current-stage'          => 'Текущий Этап',
-                    'tags'                   => 'Метки',
+                    'project-timeline'       => 'Сроки проекта',
+                    'allocated-hours'        => 'Выделено часов',
+                    'allocated-hours-suffix' => ' ч',
+                    'remaining-hours'        => 'Осталось часов',
+                    'remaining-hours-suffix' => ' ч',
+                    'current-stage'          => 'Текущий этап',
+                    'tags'                   => 'Теги',
                 ],
             ],
 
             'statistics' => [
-                'title' => 'Statistics',
+                'title' => 'Статистика',
 
                 'entries' => [
-                    'total-tasks'         => 'Итого Задачи',
-                    'milestones-progress' => 'Milestones Ход',
+                    'total-tasks'         => 'Всего задач',
+                    'milestones-progress' => 'Ход по вехам',
                 ],
             ],
 
             'record-information' => [
-                'title' => 'Запись Сведения',
+                'title' => 'Сведения о записи',
 
                 'entries' => [
-                    'created-at'   => 'Создано',
-                    'created-by'   => 'Создано От',
-                    'last-updated' => 'Последний Обновлено',
+                    'created-at'   => 'Дата создания',
+                    'created-by'   => 'Создал',
+                    'last-updated' => 'Последнее изменение',
                 ],
             ],
 
             'settings' => [
-                'title' => 'Проект Настройки',
+                'title' => 'Настройки проекта',
 
                 'entries' => [
-                    'visibility'         => 'Visibility',
-                    'timesheets-enabled' => 'Табели Включено',
-                    'milestones-enabled' => 'Milestones Включено',
+                    'visibility'         => 'Видимость',
+                    'timesheets-enabled' => 'Табели включены',
+                    'milestones-enabled' => 'Вехи включены',
                 ],
             ],
         ],

@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'breadcrumb'           => 'Ваш Кандидат',
-    'hello'                => 'Hello,',
-    'application_received' => 'Мы подтвердить мы successfully получено ваш application для должность ":job_position" :company.',
-    'response_soon'        => 'Мы come назад до вы shortly.',
-    'next_step_title'      => 'Что далее step?',
-    'next_step_content'    => 'Мы usually <strong>answer applications в пределах мало дни.</strong>',
-    'contact_us'           => 'Feel free до <strong>контакт us если вы want faster feedback</strong> или если вы don\'t получить news от us quickly достаточно (только reply до этот эл. почта).',
+    'breadcrumb'           => 'Ваша заявка',
+    'hello'                => 'Здравствуйте!',
+    'application_received' => 'Подтверждаем, что мы получили вашу заявку на вакансию «:job_position» :company.',
+    'response_soon'        => 'Мы скоро с вами свяжемся.',
+    'next_step_title'      => 'Что дальше?',
+    'next_step_content'    => 'Обычно мы <strong>отвечаем на заявки в течение нескольких дней.</strong>',
+    'contact_us'           => '<strong>Свяжитесь с нами, если хотите получить ответ быстрее</strong> или долго не получаете от нас новостей (просто ответьте на это письмо).',
 ];

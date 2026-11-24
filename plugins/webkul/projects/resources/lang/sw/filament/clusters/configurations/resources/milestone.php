@@ -2,53 +2,53 @@
 
 return [
     'navigation' => [
-        'title' => 'Milestones',
+        'title' => 'Hatua muhimu',
     ],
 
     'form' => [
         'name'         => 'Jina',
-        'deadline'     => 'Deadline',
-        'is-completed' => 'Ni Imekamilika',
+        'deadline'     => 'Tarehe ya mwisho',
+        'is-completed' => 'Imekamilika',
         'project'      => 'Mradi',
     ],
 
     'table' => [
         'columns' => [
             'name'         => 'Jina',
-            'deadline'     => 'Deadline',
-            'is-completed' => 'Ni Imekamilika',
-            'completed-at' => 'Imekamilika Saa',
+            'deadline'     => 'Tarehe ya mwisho',
+            'is-completed' => 'Imekamilika',
+            'completed-at' => 'Tarehe ya kukamilika',
             'project'      => 'Mradi',
-            'creator'      => 'Creator',
-            'created-at'   => 'Imeundwa',
-            'updated-at'   => 'Imesasishwa',
+            'creator'      => 'Aliyeunda',
+            'created-at'   => 'Tarehe ya kuundwa',
+            'updated-at'   => 'Tarehe ya kusasishwa',
         ],
 
         'groups' => [
             'name'         => 'Jina',
-            'is-completed' => 'Ni Imekamilika',
+            'is-completed' => 'Imekamilika',
             'project'      => 'Mradi',
-            'created-at'   => 'Imeundwa',
+            'created-at'   => 'Tarehe ya kuundwa',
         ],
 
         'filters' => [
-            'is-completed' => 'Ni Imekamilika',
+            'is-completed' => 'Imekamilika',
             'project'      => 'Mradi',
-            'creator'      => 'Creator',
+            'creator'      => 'Aliyeunda',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Hatua kuu sasisha',
-                    'body'  => 'hatua kuu ina sasisha successfully.',
+                    'title' => 'Hatua muhimu imesasishwa',
+                    'body'  => 'Hatua muhimu imesasishwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Hatua kuu imefutwa',
-                    'body'  => 'hatua kuu ina imefutwa successfully.',
+                    'title' => 'Hatua muhimu imefutwa',
+                    'body'  => 'Hatua muhimu imefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -56,8 +56,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Milestones imefutwa',
-                    'body'  => 'milestones ina imefutwa successfully.',
+                    'title' => 'Hatua muhimu zimefutwa',
+                    'body'  => 'Hatua muhimu zimefutwa kwa mafanikio.',
                 ],
             ],
         ],

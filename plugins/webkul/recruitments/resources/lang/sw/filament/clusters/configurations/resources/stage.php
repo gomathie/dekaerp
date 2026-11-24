@@ -5,43 +5,43 @@ return [
 
     'navigation' => [
         'title' => 'Hatua',
-        'group' => 'Kazi Positions',
+        'group' => 'Nafasi za kazi',
     ],
 
     'form' => [
         'sections' => [
             'general-information' => [
-                'title' => 'Jumla Taarifa',
+                'title' => 'Taarifa za jumla',
 
                 'fields' => [
-                    'stage-name'   => 'Hatua Jina',
-                    'sort'         => 'Mfuatano Agizo',
-                    'requirements' => 'Requirements',
+                    'stage-name'   => 'Jina la hatua',
+                    'sort'         => 'Mpangilio',
+                    'requirements' => 'Mahitaji',
                 ],
             ],
 
             'tooltips' => [
-                'title'       => 'Tooltips',
-                'description' => 'Define maalum lebo kwa application hali.',
+                'title'       => 'Vidokezo vya msaada',
+                'description' => 'Weka lebo maalum za hali ya ombi.',
 
                 'fields' => [
-                    'gray-label'          => 'Gray Lebo',
-                    'gray-label-tooltip'  => 'lebo kwa gray hali.',
-                    'red-label'           => 'Red Lebo',
-                    'red-label-tooltip'   => 'lebo kwa red hali.',
-                    'green-label'         => 'Green Lebo',
-                    'green-label-tooltip' => 'lebo kwa green hali.',
+                    'gray-label'          => 'Lebo ya kijivu',
+                    'gray-label-tooltip'  => 'Lebo ya hali ya kijivu.',
+                    'red-label'           => 'Lebo nyekundu',
+                    'red-label-tooltip'   => 'Lebo ya hali nyekundu.',
+                    'green-label'         => 'Lebo ya kijani',
+                    'green-label-tooltip' => 'Lebo ya hali ya kijani.',
                 ],
             ],
 
             'additional-information' => [
-                'title' => 'Additional Taarifa',
+                'title' => 'Taarifa za ziada',
 
                 'fields' => [
-                    'job-positions' => 'Kazi Positions',
-                    'folded'        => 'Folded',
-                    'hired-stage'   => 'Hired Hatua',
-                    'default-stage' => 'Chaguo-msingi Hatua',
+                    'job-positions' => 'Nafasi za kazi',
+                    'folded'        => 'Imekunjwa',
+                    'hired-stage'   => 'Hatua ya kuajiriwa',
+                    'default-stage' => 'Hatua chaguo-msingi',
                 ],
             ],
         ],
@@ -49,52 +49,52 @@ return [
 
     'table' => [
         'columns' => [
-            'id'                 => 'Kitambulisho',
-            'name'               => 'Hatua Jina',
-            'hired-stage'        => 'Hired Hatua',
-            'default-stage'      => 'Chaguo-msingi Hatua',
-            'folded'             => 'Folded',
-            'job-positions'      => 'Kazi Positions',
-            'created-by'         => 'Imeundwa Na',
-            'created-at'         => 'Imeundwa',
-            'updated-at'         => 'Imesasishwa',
+            'id'                 => 'ID',
+            'name'               => 'Jina la hatua',
+            'hired-stage'        => 'Hatua ya kuajiriwa',
+            'default-stage'      => 'Hatua chaguo-msingi',
+            'folded'             => 'Imekunjwa',
+            'job-positions'      => 'Nafasi za kazi',
+            'created-by'         => 'Imeundwa na',
+            'created-at'         => 'Tarehe ya kuundwa',
+            'updated-at'         => 'Tarehe ya kusasishwa',
         ],
 
         'filters' => [
-            'name'         => 'Hatua Jina',
-            'job-position' => 'Kazi Cheo',
-            'folded'       => 'Folded',
-            'gray-label'   => 'Gray Lebo',
-            'red-label'    => 'Red Lebo',
-            'green-label'  => 'Green Lebo',
-            'created-by'   => 'Imeundwa Na',
-            'created-at'   => 'Imeundwa',
-            'updated-at'   => 'Imesasishwa',
+            'name'         => 'Jina la hatua',
+            'job-position' => 'Nafasi ya kazi',
+            'folded'       => 'Imekunjwa',
+            'gray-label'   => 'Lebo ya kijivu',
+            'red-label'    => 'Lebo nyekundu',
+            'green-label'  => 'Lebo ya kijani',
+            'created-by'   => 'Imeundwa na',
+            'created-at'   => 'Tarehe ya kuundwa',
+            'updated-at'   => 'Tarehe ya kusasishwa',
         ],
 
         'groups' => [
-            'job-position' => 'Kazi Cheo',
-            'stage-name'   => 'Hatua Jina',
-            'folded'       => 'Folded',
-            'gray-label'   => 'Gray Lebo',
-            'red-label'    => 'Red Lebo',
-            'green-label'  => 'Green Lebo',
-            'created-by'   => 'Imeundwa Na',
-            'created-at'   => 'Imeundwa',
-            'updated-at'   => 'Imesasishwa',
+            'job-position' => 'Nafasi ya kazi',
+            'stage-name'   => 'Jina la hatua',
+            'folded'       => 'Imekunjwa',
+            'gray-label'   => 'Lebo ya kijivu',
+            'red-label'    => 'Lebo nyekundu',
+            'green-label'  => 'Lebo ya kijani',
+            'created-by'   => 'Imeundwa na',
+            'created-at'   => 'Tarehe ya kuundwa',
+            'updated-at'   => 'Tarehe ya kusasishwa',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Hatua imefutwa',
-                        'body'  => 'Hatua ina imefutwa successfully.',
+                        'title' => 'Hatua zimefutwa',
+                        'body'  => 'Hatua zimefutwa kwa mafanikio.',
                     ],
 
                     'error' => [
-                        'title' => 'Hatua could si kuwa imefutwa',
-                        'body'  => 'Hatua haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Hatua hazikuweza kufutwa',
+                        'body'  => 'Hatua haziwezi kufutwa kwa sababu zinatumika.',
                     ],
                 ],
             ],
@@ -103,15 +103,15 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Hatua imefutwa',
-                    'body'  => 'Hatua ina imefutwa successfully.',
+                    'title' => 'Hatua zimefutwa',
+                    'body'  => 'Hatua zimefutwa kwa mafanikio.',
                 ],
             ],
         ],
 
         'empty-state-actions' => [
             'create' => [
-                'label' => 'Mpya Hatua',
+                'label' => 'Hatua mpya',
             ],
         ],
     ],
@@ -119,37 +119,37 @@ return [
     'infolist' => [
         'sections' => [
             'general-information' => [
-                'title' => 'Jumla Taarifa',
+                'title' => 'Taarifa za jumla',
 
                 'entries' => [
-                    'stage-name'   => 'Hatua Jina',
-                    'sort'         => 'Mfuatano Agizo',
-                    'requirements' => 'Requirements',
+                    'stage-name'   => 'Jina la hatua',
+                    'sort'         => 'Mpangilio',
+                    'requirements' => 'Mahitaji',
                 ],
             ],
 
             'tooltips' => [
-                'title'       => 'Tooltips',
-                'description' => 'Define maalum lebo kwa application hali.',
+                'title'       => 'Vidokezo vya msaada',
+                'description' => 'Weka lebo maalum za hali ya ombi.',
 
                 'entries' => [
-                    'gray-label'          => 'Gray Lebo',
-                    'gray-label-tooltip'  => 'lebo kwa gray hali.',
-                    'red-label'           => 'Red Lebo',
-                    'red-label-tooltip'   => 'lebo kwa red hali.',
-                    'green-label'         => 'Green Lebo',
-                    'green-label-tooltip' => 'lebo kwa green hali.',
+                    'gray-label'          => 'Lebo ya kijivu',
+                    'gray-label-tooltip'  => 'Lebo ya hali ya kijivu.',
+                    'red-label'           => 'Lebo nyekundu',
+                    'red-label-tooltip'   => 'Lebo ya hali nyekundu.',
+                    'green-label'         => 'Lebo ya kijani',
+                    'green-label-tooltip' => 'Lebo ya hali ya kijani.',
                 ],
             ],
 
             'additional-information' => [
-                'title' => 'Additional Taarifa',
+                'title' => 'Taarifa za ziada',
 
                 'entries' => [
-                    'job-positions'      => 'Kazi Cheo',
-                    'folded'             => 'Folded',
-                    'hired-stage'        => 'Hired Hatua',
-                    'default-stage'      => 'Chaguo-msingi Hatua',
+                    'job-positions'      => 'Nafasi ya kazi',
+                    'folded'             => 'Imekunjwa',
+                    'hired-stage'        => 'Hatua ya kuajiriwa',
+                    'default-stage'      => 'Hatua chaguo-msingi',
                 ],
             ],
         ],

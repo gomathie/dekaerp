@@ -4,57 +4,57 @@ return [
     'form' => [
         'sections' => [
             'fields' => [
-                'skill-type'  => 'Skill Тип',
-                'skill'       => 'Skill',
-                'skill-level' => 'Skill Level',
+                'skill-type'  => 'Тип навыка',
+                'skill'       => 'Навык',
+                'skill-level' => 'Уровень навыка',
             ],
         ],
     ],
 
     'table' => [
         'columns' => [
-            'skill-type'    => 'Skill Тип',
-            'skill'         => 'Skill',
-            'skill-level'   => 'Skill Level',
-            'level-percent' => 'Level Процент',
-            'created-by'    => 'Создано От',
+            'skill-type'    => 'Тип навыка',
+            'skill'         => 'Навык',
+            'skill-level'   => 'Уровень навыка',
+            'level-percent' => 'Уровень, %',
+            'created-by'    => 'Создал',
             'user'          => 'Пользователь',
-            'created-at'    => 'Создано',
+            'created-at'    => 'Дата создания',
         ],
 
         'groups' => [
-            'skill-type' => 'Skill Тип',
+            'skill-type' => 'Тип навыка',
         ],
 
         'header-actions' => [
-            'add-skill' => 'Добавить Skill',
+            'add-skill' => 'Добавить навык',
         ],
 
         'filters' => [
-            'activity-type'   => 'Активность Тип',
-            'activity-status' => 'Активность Статус',
-            'has-delay'       => 'Есть Delay',
+            'activity-type'   => 'Тип действия',
+            'activity-status' => 'Статус действия',
+            'has-delay'       => 'С задержкой',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Skill обновлено',
-                    'body'  => 'skill есть обновлено successfully.',
+                    'title' => 'Навык обновлён',
+                    'body'  => 'Навык успешно обновлён.',
                 ],
             ],
 
             'create' => [
                 'notification' => [
-                    'title' => 'Skill создано',
-                    'body'  => 'skill есть создано successfully.',
+                    'title' => 'Навык создан',
+                    'body'  => 'Навык успешно создан.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Skill удалено',
-                    'body'  => 'skill есть удалено successfully.',
+                    'title' => 'Навык удалён',
+                    'body'  => 'Навык успешно удалён.',
                 ],
             ],
         ],
@@ -62,8 +62,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Skills удалено',
-                    'body'  => 'skills есть удалено successfully.',
+                    'title' => 'Навыки удалены',
+                    'body'  => 'Навыки успешно удалены.',
                 ],
             ],
         ],
@@ -71,10 +71,10 @@ return [
 
     'infolist' => [
         'entries' => [
-            'skill-type'    => 'Skill Тип',
-            'skill'         => 'Skill',
-            'skill-level'   => 'Skill Level',
-            'level-percent' => 'Level Процент',
+            'skill-type'    => 'Тип навыка',
+            'skill'         => 'Навык',
+            'skill-level'   => 'Уровень навыка',
+            'level-percent' => 'Уровень, %',
         ],
     ],
 ];

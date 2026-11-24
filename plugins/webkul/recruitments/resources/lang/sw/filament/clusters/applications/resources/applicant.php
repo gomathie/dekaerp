@@ -9,39 +9,39 @@ return [
 
     'global-search' => [
         'department' => 'Idara',
-        'work-email' => 'Work Barua pepe',
-        'work-phone' => 'Work Simu',
+        'work-email' => 'Barua pepe ya kazini',
+        'work-phone' => 'Simu ya kazini',
     ],
 
     'form' => [
         'sections' => [
             'general-information' => [
-                'title' => 'Jumla Taarifa',
+                'title' => 'Taarifa za jumla',
 
                 'fields' => [
-                    'evaluation-good'           => 'Evaluation: Good',
-                    'evaluation-very-good'      => 'Evaluation: Sana Good',
-                    'evaluation-very-excellent' => 'Evaluation: Sana Excellent',
-                    'hired'                     => 'Hired',
-                    'candidate-name'            => 'Candidate jina',
-                    'email'                     => 'Emails',
+                    'evaluation-good'           => 'Tathmini: Nzuri',
+                    'evaluation-very-good'      => 'Tathmini: Nzuri sana',
+                    'evaluation-very-excellent' => 'Tathmini: Bora kabisa',
+                    'hired'                     => 'Ameajiriwa',
+                    'candidate-name'            => 'Jina la mgombea',
+                    'email'                     => 'Barua pepe',
                     'phone'                     => 'Simu',
-                    'linkedin-profile'          => 'Linkedin Wasifu',
-                    'recruiter'                 => 'Recruiter',
-                    'interviewer'               => 'Interviewer',
+                    'linkedin-profile'          => 'Wasifu wa LinkedIn',
+                    'recruiter'                 => 'Afisa uajiri',
+                    'interviewer'               => 'Msaili',
                     'tags'                      => 'Lebo',
-                    'notes'                     => 'Maelezo',
-                    'hired-date'                => 'Hired Tarehe',
-                    'job-position'              => 'Kazi Positions',
+                    'notes'                     => 'Vidokezo',
+                    'hired-date'                => 'Tarehe ya kuajiriwa',
+                    'job-position'              => 'Nafasi za kazi',
                 ],
             ],
 
             'education-and-availability' => [
-                'title' => 'Education & Availability',
+                'title' => 'Elimu na upatikanaji',
 
                 'fields' => [
-                    'degree'            => 'Degree',
-                    'availability-date' => 'Availability Tarehe',
+                    'degree'            => 'Shahada',
+                    'availability-date' => 'Tarehe ya kupatikana',
                 ],
             ],
 
@@ -50,22 +50,22 @@ return [
             ],
 
             'salary' => [
-                'title' => 'Inatarajiwa & Proposed Salary',
+                'title' => 'Mshahara unaotarajiwa na unaopendekezwa',
 
                 'fields' => [
-                    'expected-salary'       => 'Inatarajiwa Salary',
-                    'salary-proposed-extra' => 'Nyingine Benefit',
-                    'proposed-salary'       => 'Proposed Salary',
-                    'salary-expected-extra' => 'Nyingine Benefit',
+                    'expected-salary'       => 'Mshahara unaotarajiwa',
+                    'salary-proposed-extra' => 'Marupurupu mengine',
+                    'proposed-salary'       => 'Mshahara unaopendekezwa',
+                    'salary-expected-extra' => 'Marupurupu mengine',
                 ],
             ],
 
             'source-and-medium' => [
-                'title' => 'Chanzo & Wastani',
+                'title' => 'Chanzo na njia',
 
                 'fields' => [
                     'source' => 'Chanzo',
-                    'medium' => 'Wastani',
+                    'medium' => 'Njia',
                 ],
             ],
         ],
@@ -73,79 +73,79 @@ return [
 
     'table' => [
         'columns' => [
-            'partner-name'       => 'Mshirika Jina',
-            'applied-on'         => 'Imetumika Washa',
-            'job-position'       => 'Kazi Cheo',
+            'partner-name'       => 'Jina la mhusika',
+            'applied-on'         => 'Tarehe ya kuomba',
+            'job-position'       => 'Nafasi ya kazi',
             'stage'              => 'Hatua',
-            'candidate-name'     => 'Candidate Jina',
-            'evaluation'         => 'Evaluation',
-            'application-status' => 'Application Hali',
+            'candidate-name'     => 'Jina la mgombea',
+            'evaluation'         => 'Tathmini',
+            'application-status' => 'Hali ya ombi',
             'tags'               => 'Lebo',
-            'refuse-reason'      => 'Kataa Sababu',
+            'refuse-reason'      => 'Sababu ya kukataa',
             'email'              => 'Barua pepe',
-            'recruiter'          => 'Recruiter',
-            'interviewer'        => 'Interviewer',
+            'recruiter'          => 'Afisa uajiri',
+            'interviewer'        => 'Msaili',
             'candidate-phone'    => 'Simu',
-            'medium'             => 'Wastani',
+            'medium'             => 'Njia',
             'source'             => 'Chanzo',
-            'salary-expected'    => 'Inatarajiwa Salary',
-            'availability-date'  => 'Availability Tarehe',
+            'salary-expected'    => 'Mshahara unaotarajiwa',
+            'availability-date'  => 'Tarehe ya kupatikana',
         ],
 
         'filters' => [
             'source'                  => 'Chanzo',
-            'medium'                  => 'Wastani',
-            'candidate'               => 'Candidate',
+            'medium'                  => 'Njia',
+            'candidate'               => 'Mgombea',
             'priority'                => 'Kipaumbele',
-            'salary-proposed-extra'   => 'Salary Proposed Extra',
-            'salary-expected-extra'   => 'Salary Inatarajiwa Extra',
-            'applicant-notes'         => 'Mwombaji Maelezo',
-            'create-date'             => 'Imetumika Washa',
-            'date-closed'             => 'Hired Tarehe',
-            'date-last-stage-updated' => 'Mwisho Hatua Imesasishwa',
+            'salary-proposed-extra'   => 'Marupurupu yanayopendekezwa',
+            'salary-expected-extra'   => 'Marupurupu yanayotarajiwa',
+            'applicant-notes'         => 'Vidokezo vya mwombaji',
+            'create-date'             => 'Tarehe ya kuomba',
+            'date-closed'             => 'Tarehe ya kuajiriwa',
+            'date-last-stage-updated' => 'Hatua ilibadilishwa mwisho',
             'stage'                   => 'Hatua',
-            'job-position'            => 'Kazi Cheo',
+            'job-position'            => 'Nafasi ya kazi',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Mwombaji Imefutwa',
-                    'body'  => 'mwombaji ilikuwa successfully imefutwa.',
+                    'title' => 'Mwombaji amefutwa',
+                    'body'  => 'Mwombaji amefutwa kwa mafanikio.',
                 ],
             ],
         ],
 
         'groups' => [
             'stage'          => 'Hatua',
-            'job-position'   => 'Kazi Cheo',
-            'candidate-name' => 'Candidate Jina',
-            'responsible'    => 'Responsible',
-            'creation-date'  => 'Creation Tarehe',
-            'hired-date'     => 'Hired Tarehe',
-            'last-stage'     => 'Mwisho Hatua',
-            'refuse-reason'  => 'Kataa Sababu',
+            'job-position'   => 'Nafasi ya kazi',
+            'candidate-name' => 'Jina la mgombea',
+            'responsible'    => 'Msimamizi',
+            'creation-date'  => 'Tarehe ya kuundwa',
+            'hired-date'     => 'Tarehe ya kuajiriwa',
+            'last-stage'     => 'Hatua ya mwisho',
+            'refuse-reason'  => 'Sababu ya kukataa',
         ],
 
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Wafanyakazi imefutwa',
-                    'body'  => 'wafanyakazi ina imefutwa successfully.',
+                    'title' => 'Wafanyakazi wamefutwa',
+                    'body'  => 'Wafanyakazi wamefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Wafanyakazi imefutwa',
-                    'body'  => 'wafanyakazi ina imefutwa successfully.',
+                    'title' => 'Wafanyakazi wamefutwa',
+                    'body'  => 'Wafanyakazi wamefutwa kwa mafanikio.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Wafanyakazi restored',
-                    'body'  => 'wafanyakazi ina restored successfully.',
+                    'title' => 'Wafanyakazi wamerejeshwa',
+                    'body'  => 'Wafanyakazi wamerejeshwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -154,31 +154,31 @@ return [
     'infolist' => [
         'sections' => [
             'general-information' => [
-                'title' => 'Jumla Taarifa',
+                'title' => 'Taarifa za jumla',
 
                 'entries' => [
-                    'evaluation-good'           => 'Evaluation: Good',
-                    'evaluation-very-good'      => 'Evaluation: Sana Good',
-                    'evaluation-very-excellent' => 'Evaluation: Sana Excellent',
-                    'hired'                     => 'Hired',
-                    'candidate-name'            => 'Candidate jina',
-                    'email'                     => 'Emails',
+                    'evaluation-good'           => 'Tathmini: Nzuri',
+                    'evaluation-very-good'      => 'Tathmini: Nzuri sana',
+                    'evaluation-very-excellent' => 'Tathmini: Bora kabisa',
+                    'hired'                     => 'Ameajiriwa',
+                    'candidate-name'            => 'Jina la mgombea',
+                    'email'                     => 'Barua pepe',
                     'phone'                     => 'Simu',
-                    'linkedin-profile'          => 'Linkedin Wasifu',
-                    'recruiter'                 => 'Recruiter',
-                    'interviewer'               => 'Interviewer',
+                    'linkedin-profile'          => 'Wasifu wa LinkedIn',
+                    'recruiter'                 => 'Afisa uajiri',
+                    'interviewer'               => 'Msaili',
                     'tags'                      => 'Lebo',
-                    'notes'                     => 'Maelezo',
-                    'job-position'              => 'Kazi Positions',
+                    'notes'                     => 'Vidokezo',
+                    'job-position'              => 'Nafasi za kazi',
                 ],
             ],
 
             'education-and-availability' => [
-                'title' => 'Education & Availability',
+                'title' => 'Elimu na upatikanaji',
 
                 'entries' => [
-                    'degree'            => 'Degree',
-                    'availability-date' => 'Availability Tarehe',
+                    'degree'            => 'Shahada',
+                    'availability-date' => 'Tarehe ya kupatikana',
                 ],
             ],
 
@@ -187,22 +187,22 @@ return [
             ],
 
             'salary' => [
-                'title' => 'Inatarajiwa & Proposed Salary',
+                'title' => 'Mshahara unaotarajiwa na unaopendekezwa',
 
                 'entries' => [
-                    'expected-salary'       => 'Inatarajiwa Salary',
-                    'salary-proposed-extra' => 'Nyingine Benefit',
-                    'proposed-salary'       => 'Proposed Salary',
-                    'salary-expected-extra' => 'Nyingine Benefit',
+                    'expected-salary'       => 'Mshahara unaotarajiwa',
+                    'salary-proposed-extra' => 'Marupurupu mengine',
+                    'proposed-salary'       => 'Mshahara unaopendekezwa',
+                    'salary-expected-extra' => 'Marupurupu mengine',
                 ],
             ],
 
             'source-and-medium' => [
-                'title' => 'Chanzo & Wastani',
+                'title' => 'Chanzo na njia',
 
                 'entries' => [
                     'source' => 'Chanzo',
-                    'medium' => 'Wastani',
+                    'medium' => 'Njia',
                 ],
             ],
         ],

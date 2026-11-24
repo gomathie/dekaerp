@@ -2,17 +2,17 @@
 
 return [
     'notification' => [
-        'title' => 'Mradi imesasishwa',
-        'body'  => 'mradi ina imesasishwa successfully.',
+        'title' => 'Mradi umesasishwa',
+        'body'  => 'Mradi umesasishwa kwa mafanikio.',
     ],
 
     'header-actions' => [
         'delete' => [
-            'label' => 'Mpya Mradi',
+            'label' => 'Mradi mpya',
 
             'notification' => [
-                'title' => 'Mradi imesasishwa',
-                'body'  => 'mradi ina imesasishwa successfully.',
+                'title' => 'Mradi umesasishwa',
+                'body'  => 'Mradi umesasishwa kwa mafanikio.',
             ],
         ],
     ],

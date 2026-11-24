@@ -2,19 +2,19 @@
 
 return [
     'tabs' => [
-        'open-tasks'       => 'Wazi Kazi',
-        'my-tasks'         => 'Yangu Kazi',
-        'unassigned-tasks' => 'Hajakabidhiwa Kazi',
-        'private-tasks'    => 'Binafsi Kazi',
-        'followed-tasks'   => 'Followed Kazi',
-        'closed-tasks'     => 'Imefungwa Kazi',
-        'starred-tasks'    => 'Starred Kazi',
-        'archived-tasks'   => 'Imehifadhiwa Kazi',
+        'open-tasks'       => 'Kazi zilizo wazi',
+        'my-tasks'         => 'Kazi zangu',
+        'unassigned-tasks' => 'Kazi zisizokabidhiwa',
+        'private-tasks'    => 'Kazi binafsi',
+        'followed-tasks'   => 'Kazi ninazofuatilia',
+        'closed-tasks'     => 'Kazi zilizofungwa',
+        'starred-tasks'    => 'Kazi zenye nyota',
+        'archived-tasks'   => 'Kazi kwenye kumbukumbu',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Kazi',
+            'label' => 'Kazi mpya',
         ],
     ],
 ];

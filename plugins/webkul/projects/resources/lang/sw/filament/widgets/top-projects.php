@@ -2,12 +2,12 @@
 
 return [
     'heading' => [
-        'title' => 'Top Miradi',
+        'title' => 'Miradi inayoongoza',
     ],
 
     'table-columns' => [
         'project-name' => 'Mradi',
-        'hours-spent'  => 'Saa Spent',
+        'hours-spent'  => 'Saa zilizotumika',
         'tasks'        => 'Kazi',
     ],
 ];
