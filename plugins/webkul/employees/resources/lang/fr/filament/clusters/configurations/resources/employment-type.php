@@ -47,7 +47,7 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Type d\'emploi',
+                    'title' => 'Type d\'emploi mis à jour',
                     'body'  => 'Le type d\'emploi a été modifié avec succès.',
                 ],
             ],
@@ -72,8 +72,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Types d\'emploi',
-                    'body'  => 'Les types d\'emploi ont été créés avec succès.',
+                    'title' => 'Type d\'emploi créé',
+                    'body'  => 'Le type d\'emploi a été créé avec succès.',
                 ],
             ],
         ],

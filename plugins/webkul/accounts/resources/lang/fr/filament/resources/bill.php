@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Facture',
+    'title' => 'Facture fournisseur',
 
     'navigation' => [
-        'title' => 'Factures',
+        'title' => 'Factures fournisseurs',
         'group' => 'Factures',
     ],
 
@@ -173,7 +173,7 @@ return [
             'delete' => [
                 'notification' => [
                     'title' => 'Paiements supprimés',
-                    'body'  => 'Les paiements ont été supprimés avec succès.',
+                    'body'  => 'Les factures fournisseurs ont été supprimées avec succès.',
                 ],
             ],
         ],

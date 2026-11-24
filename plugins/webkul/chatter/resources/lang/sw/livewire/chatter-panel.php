@@ -47,7 +47,6 @@ return [
 
     'process-message' => [
         'original-note' => '<br><div><span class="font-bold">Kidokezo cha awali</span>: :body</div>',
-        'original-note' => '<br><div><span class="font-bold">Kidokezo cha awali</span>: :body</div>',
         'feedback'      => '<div><span class="font-bold">Maoni</span>: <p>:feedback</p></div>',
     ],
 

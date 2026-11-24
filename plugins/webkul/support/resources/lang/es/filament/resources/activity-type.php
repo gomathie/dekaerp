@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Departamentos',
+    'title' => 'Tipos de actividad',
 
     'navigation' => [
-        'title' => 'Departamentos',
+        'title' => 'Tipos de actividad',
         'group' => 'Empleados',
     ],
 
@@ -29,7 +29,7 @@ return [
                 'fields' => [
                     'delay-count'            => 'Cantidad de retraso',
                     'delay-unit'             => 'Unidad de retraso',
-                    'delay-form'             => 'Origen del retraso',
+                    'delay-form'             => 'Retraso desde',
                     'delay-form-helper-text' => 'Fuente del cálculo del retraso',
                 ],
             ],
@@ -165,7 +165,7 @@ return [
                 'entries' => [
                     'delay-count'            => 'Cantidad de retraso',
                     'delay-unit'             => 'Unidad de retraso',
-                    'delay-form'             => 'Origen del retraso',
+                    'delay-form'             => 'Retraso desde',
                     'delay-form-helper-text' => 'Fuente del cálculo del retraso',
                 ],
             ],

@@ -51,21 +51,21 @@ return [
             'edit' => [
                 'notification' => [
                     'title' => 'Kipengele cha wasifu kimesasishwa',
-                    'body'  => 'Kipengele cha wasifu kimesasishwa kikamilifu.',
+                    'body'  => 'Kipengele cha wasifu kimesasishwa kwa mafanikio.',
                 ],
             ],
 
             'create' => [
                 'notification' => [
                     'title' => 'Kipengele cha wasifu kimeundwa',
-                    'body'  => 'Kipengele cha wasifu kimeundwa kikamilifu.',
+                    'body'  => 'Kipengele cha wasifu kimeundwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'title' => 'Kipengele cha wasifu kimefutwa',
-                    'body'  => 'Kipengele cha wasifu kimefutwa kikamilifu.',
+                    'body'  => 'Kipengele cha wasifu kimefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -74,7 +74,7 @@ return [
             'delete' => [
                 'notification' => [
                     'title' => 'Vipengele vya wasifu vimefutwa',
-                    'body'  => 'Vipengele vya wasifu vimefutwa kikamilifu.',
+                    'body'  => 'Vipengele vya wasifu vimefutwa kwa mafanikio.',
                 ],
             ],
         ],

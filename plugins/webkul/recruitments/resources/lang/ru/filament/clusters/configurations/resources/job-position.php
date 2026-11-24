@@ -145,7 +145,7 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Должности',
+                    'title' => 'Должность создана',
                     'body'  => 'Должность успешно создана.',
                 ],
             ],

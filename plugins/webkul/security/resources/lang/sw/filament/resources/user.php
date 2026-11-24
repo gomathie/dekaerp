@@ -13,7 +13,8 @@ return [
 
     'form' => [
         'validation' => [
-            'needs-attention'                 => 'Baadhi ya sehemu zinahitaji kuangaliwa',            'cannot-remove-last-admin'        => 'Haiwezekani kuondoa jukumu la msimamizi kwa msimamizi wa mwisho.',
+            'needs-attention'                 => 'Baadhi ya sehemu zinahitaji kuangaliwa',
+            'cannot-remove-last-admin'        => 'Haiwezekani kuondoa jukumu la msimamizi kwa msimamizi wa mwisho.',
             'company-invalid'                 => 'Kampuni moja au zaidi zilizochaguliwa si halali.',
             'company-not-assigned'            => 'Unaweza kugawa watumiaji kwa kampuni zilizogawiwa akaunti yako pekee.',
             'company-required'                => 'Chagua angalau kampuni moja.',

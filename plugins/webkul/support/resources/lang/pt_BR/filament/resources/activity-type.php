@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Departamentos',
+    'title' => 'Tipos de atividade',
 
     'navigation' => [
-        'title' => 'Departamentos',
+        'title' => 'Tipos de atividade',
         'group' => 'Colaboradores',
     ],
 
@@ -14,12 +14,12 @@ return [
                 'title' => 'Informações gerais',
 
                 'fields' => [
-                    'name'         => 'Tipo de atividade',
-                    'name-tooltip' => 'Informe o nome oficial do tipo de atividade',
-                    'action'       => 'Ação',
-                    'default-user' => 'Usuário padrão',
-                    'summary'      => 'Resumo',
-                    'note'         => 'Nota',
+                    'name'                => 'Tipo de atividade',
+                    'name-tooltip'        => 'Informe o nome oficial do tipo de atividade',
+                    'action'              => 'Ação',
+                    'default-user'        => 'Usuário padrão',
+                    'summary'             => 'Resumo',
+                    'note'                => 'Nota',
                 ],
             ],
 
@@ -29,7 +29,7 @@ return [
                 'fields' => [
                     'delay-count'            => 'Contagem de atraso',
                     'delay-unit'             => 'Unidade de atraso',
-                    'delay-form'             => 'Formulário de atraso',
+                    'delay-form'             => 'Atraso a partir de',
                     'delay-form-helper-text' => 'Origem do cálculo do atraso',
                 ],
             ],
@@ -38,11 +38,11 @@ return [
                 'title' => 'Informações avançadas',
 
                 'fields' => [
-                    'icon'            => 'Ícone',
-                    'decoration-type' => 'Tipo de decoração',
-                    'chaining-type'   => 'Tipo de encadeamento',
-                    'suggest'         => 'Sugerir',
-                    'trigger'         => 'Disparar',
+                    'icon'                => 'Ícone',
+                    'decoration-type'     => 'Tipo de decoração',
+                    'chaining-type'       => 'Tipo de encadeamento',
+                    'suggest'             => 'Sugerir',
+                    'trigger'             => 'Disparar',
                 ],
             ],
 
@@ -149,13 +149,13 @@ return [
                 'title' => 'Informações gerais',
 
                 'entries' => [
-                    'name'         => 'Tipo de atividade',
-                    'name-tooltip' => 'Informe o nome oficial do tipo de atividade',
-                    'action'       => 'Ação',
-                    'default-user' => 'Usuário padrão',
-                    'plugin'       => 'Plugin',
-                    'summary'      => 'Resumo',
-                    'note'         => 'Nota',
+                    'name'                => 'Tipo de atividade',
+                    'name-tooltip'        => 'Informe o nome oficial do tipo de atividade',
+                    'action'              => 'Ação',
+                    'default-user'        => 'Usuário padrão',
+                    'plugin'              => 'Plugin',
+                    'summary'             => 'Resumo',
+                    'note'                => 'Nota',
                 ],
             ],
 
@@ -165,7 +165,7 @@ return [
                 'entries' => [
                     'delay-count'            => 'Contagem de atraso',
                     'delay-unit'             => 'Unidade de atraso',
-                    'delay-form'             => 'Formulário de atraso',
+                    'delay-form'             => 'Atraso a partir de',
                     'delay-form-helper-text' => 'Origem do cálculo do atraso',
                 ],
             ],
@@ -174,11 +174,11 @@ return [
                 'title' => 'Informações avançadas',
 
                 'entries' => [
-                    'icon'            => 'Ícone',
-                    'decoration-type' => 'Tipo de decoração',
-                    'chaining-type'   => 'Tipo de encadeamento',
-                    'suggest'         => 'Sugerir',
-                    'trigger'         => 'Disparar',
+                    'icon'                => 'Ícone',
+                    'decoration-type'     => 'Tipo de decoração',
+                    'chaining-type'       => 'Tipo de encadeamento',
+                    'suggest'             => 'Sugerir',
+                    'trigger'             => 'Disparar',
                 ],
             ],
 

@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Fatura',
+    'title' => 'Fatura de fornecedor',
 
     'navigation' => [
-        'title' => 'Faturas',
+        'title' => 'Faturas de fornecedor',
         'group' => 'Faturas',
     ],
 
@@ -67,7 +67,7 @@ return [
             ],
 
             'other-information' => [
-                'title' => 'Outras informações',
+                'title'    => 'Outras informações',
 
                 'fieldset' => [
                     'accounting' => [
@@ -98,21 +98,21 @@ return [
     'table' => [
         'total'   => 'Total',
         'columns' => [
-            'number'          => 'Número',
-            'state'           => 'Estado',
-            'customer'        => 'Cliente',
-            'bill-date'       => 'Data da fatura de fornecedor',
-            'checked'         => 'Verificado',
-            'accounting-date' => 'Contabilidade',
-            'due-date'        => 'Data de vencimento',
-            'source-document' => 'Documento de origem',
-            'reference'       => 'Referência',
-            'sales-person'    => 'Vendedor',
-            'tax-excluded'    => 'Imposto excluído',
-            'tax'             => 'Imposto',
-            'total'           => 'Total',
-            'amount-due'      => 'Valor devido',
-            'bill-currency'   => 'Moeda da fatura de fornecedor',
+            'number'           => 'Número',
+            'state'            => 'Estado',
+            'customer'         => 'Cliente',
+            'bill-date'        => 'Data da fatura de fornecedor',
+            'checked'          => 'Verificado',
+            'accounting-date'  => 'Contabilidade',
+            'due-date'         => 'Data de vencimento',
+            'source-document'  => 'Documento de origem',
+            'reference'        => 'Referência',
+            'sales-person'     => 'Vendedor',
+            'tax-excluded'     => 'Imposto excluído',
+            'tax'              => 'Imposto',
+            'total'            => 'Total',
+            'amount-due'       => 'Valor devido',
+            'bill-currency'    => 'Moeda da fatura de fornecedor',
         ],
 
         'summarizers' => [
@@ -120,17 +120,17 @@ return [
         ],
 
         'groups' => [
-            'name'                      => 'Nome',
-            'bill-partner-display-name' => 'Nome de exibição do parceiro da fatura de fornecedor',
-            'bill-date'                 => 'Data da fatura de fornecedor',
-            'checked'                   => 'Verificado',
-            'date'                      => 'Data',
-            'bill-due-date'             => 'Data de vencimento da fatura de fornecedor',
-            'bill-origin'               => 'Origem da fatura de fornecedor',
-            'sales-person'              => 'Vendedor',
-            'currency'                  => 'Moeda',
-            'created-at'                => 'Criado em',
-            'updated-at'                => 'Atualizado em',
+            'name'                         => 'Nome',
+            'bill-partner-display-name'    => 'Nome de exibição do parceiro da fatura de fornecedor',
+            'bill-date'                    => 'Data da fatura de fornecedor',
+            'checked'                      => 'Verificado',
+            'date'                         => 'Data',
+            'bill-due-date'                => 'Data de vencimento da fatura de fornecedor',
+            'bill-origin'                  => 'Origem da fatura de fornecedor',
+            'sales-person'                 => 'Vendedor',
+            'currency'                     => 'Moeda',
+            'created-at'                   => 'Criado em',
+            'updated-at'                   => 'Atualizado em',
         ],
 
         'filters' => [
@@ -173,7 +173,7 @@ return [
             'delete' => [
                 'notification' => [
                     'title' => 'Pagamentos excluídos',
-                    'body'  => 'Os pagamentos foram excluídos com sucesso.',
+                    'body'  => 'As faturas de fornecedor foram excluídas com sucesso.',
                 ],
             ],
         ],
@@ -188,7 +188,7 @@ return [
     'infolist' => [
         'section' => [
             'general' => [
-                'title' => 'Geral',
+                'title'   => 'Geral',
 
                 'entries' => [
                     'vendor-invoice'    => 'Fatura de fornecedor',

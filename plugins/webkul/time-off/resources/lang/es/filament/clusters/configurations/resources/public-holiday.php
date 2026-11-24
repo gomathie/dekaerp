@@ -52,7 +52,7 @@ return [
             'edit' => [
                 'notification' => [
                     'title' => 'Día festivo actualizado',
-                    'body'  => 'El día festivo se ha restaurado correctamente.',
+                    'body'  => 'El día festivo se ha actualizado correctamente.',
                 ],
             ],
 

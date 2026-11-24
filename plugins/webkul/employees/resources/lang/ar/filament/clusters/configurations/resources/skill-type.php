@@ -92,7 +92,7 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'أنواع المهارات',
+                    'title' => 'تم إنشاء نوع المهارة',
                     'body'  => 'تم إنشاء نوع المهارة بنجاح.',
                 ],
             ],

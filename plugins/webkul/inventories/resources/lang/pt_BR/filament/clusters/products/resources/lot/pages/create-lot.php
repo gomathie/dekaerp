@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Embalagem criada',
-        'body'  => 'A embalagem foi criada com sucesso.',
+        'title' => 'Lote criado',
+        'body'  => 'O lote foi criado com sucesso.',
     ],
 ];

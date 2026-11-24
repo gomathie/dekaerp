@@ -46,23 +46,6 @@ return [
     ],
 
     'infolist' => [
-        'sections' => [
-            'entries' => [
-                'name'          => 'Название',
-                'job-title'     => 'Должность',
-                'work-email'    => 'Рабочая эл. почта',
-                'work-mobile'   => 'Рабочий мобильный',
-                'work-phone'    => 'Рабочий телефон',
-                'manager'       => 'Руководитель',
-                'department'    => 'Отдел',
-                'job-position'  => 'Позиция',
-                'team-tags'     => 'Теги команды',
-                'coach'         => 'Наставник',
-            ],
-        ],
-    ],
-
-    'infolist' => [
         'entries' => [
             'name' => 'Название',
         ],

@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Ankara',
+    'title' => 'Bili',
 
     'navigation' => [
-        'title' => 'Ankara',
+        'title' => 'Bili',
         'group' => 'Ankara',
     ],
 
@@ -173,7 +173,7 @@ return [
             'delete' => [
                 'notification' => [
                     'title' => 'Malipo yamefutwa',
-                    'body'  => 'Malipo yote yamefutwa kikamilifu.',
+                    'body'  => 'Bili zimefutwa kwa mafanikio.',
                 ],
             ],
         ],

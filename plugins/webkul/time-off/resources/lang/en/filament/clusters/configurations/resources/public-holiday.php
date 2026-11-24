@@ -52,7 +52,7 @@ return [
             'edit' => [
                 'notification' => [
                     'title' => 'Public holiday updated',
-                    'body'  => 'The public holiday has been restored successfully.',
+                    'body'  => 'The public holiday has been updated successfully.',
                 ],
             ],
 
@@ -68,7 +68,7 @@ return [
             'delete' => [
                 'notification' => [
                     'title' => 'Public holidays deleted',
-                    'body'  => 'The public holidays has been deleted successfully.',
+                    'body'  => 'The public holidays have been deleted successfully.',
                 ],
             ],
         ],

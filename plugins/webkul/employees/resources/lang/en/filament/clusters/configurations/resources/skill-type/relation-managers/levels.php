@@ -58,14 +58,14 @@ return [
             'delete' => [
                 'notification' => [
                     'title' => 'Skill Levels deleted',
-                    'body'  => 'The skills has been deleted successfully.',
+                    'body'  => 'The skill levels have been deleted successfully.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'title' => 'Skill Levels force deleted',
-                    'body'  => 'The skills has been force deleted successfully.',
+                    'body'  => 'The skill levels have been force deleted successfully.',
                 ],
             ],
 

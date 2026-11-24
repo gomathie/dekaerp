@@ -47,7 +47,7 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Employment Type',
+                    'title' => 'Employment Type updated',
                     'body'  => 'The Employment Type has been edited successfully.',
                 ],
             ],
@@ -64,7 +64,7 @@ return [
             'delete' => [
                 'notification' => [
                     'title' => 'Employment Types deleted',
-                    'body'  => 'The Employment Types has been deleted successfully.',
+                    'body'  => 'The employment types have been deleted successfully.',
                 ],
             ],
         ],
@@ -72,8 +72,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Employment Types',
-                    'body'  => 'The Employment Types has been created successfully.',
+                    'title' => 'Employment Type created',
+                    'body'  => 'The employment type has been created successfully.',
                 ],
             ],
         ],

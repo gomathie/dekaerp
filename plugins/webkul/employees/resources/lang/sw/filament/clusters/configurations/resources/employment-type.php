@@ -47,7 +47,7 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Aina ya ajira imehaririwa',
+                    'title' => 'Aina ya ajira imesasishwa',
                     'body'  => 'Aina ya ajira imehaririwa kikamilifu.',
                 ],
             ],
@@ -73,7 +73,7 @@ return [
             'create' => [
                 'notification' => [
                     'title' => 'Aina ya ajira imeundwa',
-                    'body'  => 'Aina ya ajira imeundwa kikamilifu.',
+                    'body'  => 'Aina ya ajira imeundwa kwa mafanikio.',
                 ],
             ],
         ],

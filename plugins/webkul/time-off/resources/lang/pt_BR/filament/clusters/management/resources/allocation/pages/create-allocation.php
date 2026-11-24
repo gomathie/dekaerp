@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Ausência criada',
-        'body'  => 'A ausência foi criada com sucesso.',
+        'title' => 'Alocação criada',
+        'body'  => 'A alocação foi criada com sucesso.',
     ],
 ];

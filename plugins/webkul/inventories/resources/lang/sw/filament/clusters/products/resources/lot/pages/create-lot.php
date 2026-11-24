@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Kifurushi kimeundwa',
-        'body'  => 'Kifurushi kimeundwa kwa mafanikio.',
+        'title' => 'Kundi limeundwa',
+        'body'  => 'Kundi limeundwa kwa mafanikio.',
     ],
 ];

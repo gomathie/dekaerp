@@ -145,7 +145,7 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Nafasi za kazi',
+                    'title' => 'Nafasi ya kazi imeundwa',
                     'body'  => 'Nafasi ya kazi imeundwa kwa mafanikio.',
                 ],
             ],

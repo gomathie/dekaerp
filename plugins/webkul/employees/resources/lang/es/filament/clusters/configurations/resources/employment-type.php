@@ -47,7 +47,7 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Tipo de empleo',
+                    'title' => 'Tipo de empleo actualizado',
                     'body'  => 'El tipo de empleo se ha editado correctamente.',
                 ],
             ],
@@ -72,8 +72,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Tipos de empleo',
-                    'body'  => 'Los tipos de empleo se han creado correctamente.',
+                    'title' => 'Tipo de empleo creado',
+                    'body'  => 'El tipo de empleo se ha creado correctamente.',
                 ],
             ],
         ],

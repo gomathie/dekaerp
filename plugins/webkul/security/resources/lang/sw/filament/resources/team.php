@@ -46,23 +46,6 @@ return [
     ],
 
     'infolist' => [
-        'sections' => [
-            'entries' => [
-                'name'          => 'Jina',
-                'job-title'     => 'Cheo',
-                'work-email'    => 'Barua pepe ya kazini',
-                'work-mobile'   => 'Simu ya mkononi ya kazini',
-                'work-phone'    => 'Simu ya kazini',
-                'manager'       => 'Meneja',
-                'department'    => 'Idara',
-                'job-position'  => 'Nafasi ya kazi',
-                'team-tags'     => 'Lebo za timu',
-                'coach'         => 'Mlezi',
-            ],
-        ],
-    ],
-
-    'infolist' => [
         'entries' => [
             'name' => 'Jina',
         ],

@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Idara',
+    'title' => 'Aina za shughuli',
 
     'navigation' => [
-        'title' => 'Idara',
+        'title' => 'Aina za shughuli',
         'group' => 'Wafanyakazi',
     ],
 
@@ -29,7 +29,7 @@ return [
                 'fields' => [
                     'delay-count'            => 'Idadi ya kuchelewa',
                     'delay-unit'             => 'Kipimo cha kuchelewa',
-                    'delay-form'             => 'Kuchelewa kuanzia',
+                    'delay-form'             => 'Ucheleweshaji kuanzia',
                     'delay-form-helper-text' => 'Chanzo cha kukokotoa kuchelewa',
                 ],
             ],
@@ -165,7 +165,7 @@ return [
                 'entries' => [
                     'delay-count'            => 'Idadi ya kuchelewa',
                     'delay-unit'             => 'Kipimo cha kuchelewa',
-                    'delay-form'             => 'Kuchelewa kuanzia',
+                    'delay-form'             => 'Ucheleweshaji kuanzia',
                     'delay-form-helper-text' => 'Chanzo cha kukokotoa kuchelewa',
                 ],
             ],

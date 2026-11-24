@@ -145,8 +145,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Postes',
-                    'body'  => 'Les postes ont été créés avec succès.',
+                    'title' => 'Poste créé',
+                    'body'  => 'Le poste a été créé avec succès.',
                 ],
             ],
         ],

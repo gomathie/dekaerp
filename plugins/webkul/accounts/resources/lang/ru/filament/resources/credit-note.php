@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Счёт',
+    'title' => 'Кредит-нота',
 
     'navigation' => [
-        'title' => 'Счета',
+        'title' => 'Кредит-ноты',
         'group' => 'Счета',
     ],
 

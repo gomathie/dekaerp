@@ -138,8 +138,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Cheo cha kazi kimeundwa',
-                    'body'  => 'Cheo cha kazi kimeundwa kikamilifu.',
+                    'title' => 'Nafasi ya kazi imeundwa',
+                    'body'  => 'Nafasi ya kazi imeundwa kwa mafanikio.',
                 ],
             ],
         ],

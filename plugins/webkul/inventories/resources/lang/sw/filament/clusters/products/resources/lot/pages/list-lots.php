@@ -11,8 +11,8 @@ return [
             'label' => 'Kundi / Nambari mpya ya mfululizo',
 
             'notification' => [
-                'title' => 'Kifurushi kimeundwa',
-                'body'  => 'Kifurushi kimeundwa kwa mafanikio.',
+                'title' => 'Kundi limeundwa',
+                'body'  => 'Kundi limeundwa kwa mafanikio.',
             ],
         ],
     ],

@@ -3,8 +3,8 @@
 return [
     'notification' => [
         'success' => [
-            'title' => 'Ausencia creada',
-            'body'  => 'La ausencia se ha creado correctamente.',
+            'title' => 'Asignación creada',
+            'body'  => 'La asignación se ha creado correctamente.',
         ],
 
         'warning' => [

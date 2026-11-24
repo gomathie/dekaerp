@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Ankara',
+    'title' => 'Hati ya mkopo',
 
     'navigation' => [
-        'title' => 'Ankara',
+        'title' => 'Hati za mkopo',
         'group' => 'Ankara',
     ],
 

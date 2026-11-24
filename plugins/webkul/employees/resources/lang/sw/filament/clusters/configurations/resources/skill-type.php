@@ -93,7 +93,7 @@ return [
             'create' => [
                 'notification' => [
                     'title' => 'Aina ya ujuzi imeundwa',
-                    'body'  => 'Aina ya ujuzi imeundwa kikamilifu.',
+                    'body'  => 'Aina ya ujuzi imeundwa kwa mafanikio.',
                 ],
             ],
         ],

@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Ankara',
+    'title' => 'Marejesho',
 
     'navigation' => [
-        'title' => 'Ankara',
+        'title' => 'Marejesho',
         'group' => 'Ankara',
     ],
 

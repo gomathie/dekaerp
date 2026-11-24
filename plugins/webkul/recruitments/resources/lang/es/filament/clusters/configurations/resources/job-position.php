@@ -145,8 +145,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Puestos de trabajo',
-                    'body'  => 'Los puestos de trabajo se han creado correctamente.',
+                    'title' => 'Puesto de trabajo creado',
+                    'body'  => 'El puesto de trabajo se ha creado correctamente.',
                 ],
             ],
         ],

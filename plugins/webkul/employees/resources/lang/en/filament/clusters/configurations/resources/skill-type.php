@@ -70,21 +70,21 @@ return [
             'restore' => [
                 'notification' => [
                     'title' => 'Skill Types restored',
-                    'body'  => 'The Skill Types has been restored successfully.',
+                    'body'  => 'The skill types have been restored successfully.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'title' => 'Skill Types deleted',
-                    'body'  => 'The Skill Types has been deleted successfully.',
+                    'body'  => 'The skill types have been deleted successfully.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'title' => 'Skill Types force deleted',
-                    'body'  => 'The Skill Types has been force deleted successfully.',
+                    'body'  => 'The skill types have been force deleted successfully.',
                 ],
             ],
         ],
@@ -92,8 +92,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Skill Types',
-                    'body'  => 'The Skill Types has been created successfully.',
+                    'title' => 'Skill Type created',
+                    'body'  => 'The skill type has been created successfully.',
                 ],
             ],
         ],

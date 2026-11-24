@@ -50,22 +50,22 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'CV mis à jour',
-                    'body'  => 'Le CV a été mis à jour avec succès.',
+                    'title' => 'Entrée du CV mise à jour',
+                    'body'  => 'L\'entrée du CV a été mise à jour avec succès.',
                 ],
             ],
 
             'create' => [
                 'notification' => [
-                    'title' => 'CV créé',
-                    'body'  => 'Le CV a été créé avec succès.',
+                    'title' => 'Entrée du CV créée',
+                    'body'  => 'L\'entrée du CV a été créée avec succès.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'CV supprimé',
-                    'body'  => 'Le CV a été supprimé avec succès.',
+                    'title' => 'Entrée du CV supprimée',
+                    'body'  => 'L\'entrée du CV a été supprimée avec succès.',
                 ],
             ],
         ],
@@ -73,8 +73,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'CV supprimés',
-                    'body'  => 'Les CV ont été supprimés avec succès.',
+                    'title' => 'Entrées du CV supprimées',
+                    'body'  => 'Les entrées du CV ont été supprimées avec succès.',
                 ],
             ],
         ],
@@ -82,13 +82,13 @@ return [
 
     'infolist' => [
         'entries' => [
-            'title'           => 'Titre',
-            'display-type'    => 'Type d\'affichage',
-            'type'            => 'Type',
-            'description'     => 'Description',
-            'duration'        => 'Durée',
-            'start-date'      => 'Date de début',
-            'end-date'        => 'Date de fin',
+            'title'        => 'Titre',
+            'display-type' => 'Type d\'affichage',
+            'type'         => 'Type',
+            'description'  => 'Description',
+            'duration'     => 'Durée',
+            'start-date'   => 'Date de début',
+            'end-date'     => 'Date de fin',
         ],
     ],
 ];

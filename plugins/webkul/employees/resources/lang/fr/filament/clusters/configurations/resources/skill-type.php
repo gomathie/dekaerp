@@ -92,8 +92,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Types de compétence',
-                    'body'  => 'Les types de compétence ont été créés avec succès.',
+                    'title' => 'Type de compétence créé',
+                    'body'  => 'Le type de compétence a été créé avec succès.',
                 ],
             ],
         ],
