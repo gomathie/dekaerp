@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'biggest-tax' => 'Modify налог сумма',
-    'add-invoice' => 'Добавить Счёт Строка',
+    'biggest-tax' => 'Изменить сумму налога',
+    'add-invoice' => 'Добавить строку счёта',
 ];

@@ -3,35 +3,35 @@
 return [
     'form' => [
         'value'                  => 'Thamani',
-        'due'                    => 'Due',
-        'delay-due'              => 'Delay Due',
-        'delay-type'             => 'Delay Aina',
-        'days-on-the-next-month' => 'Siku washa ifuatayo mwezi',
+        'due'                    => 'Inadaiwa',
+        'delay-due'              => 'Muda wa kusubiri',
+        'delay-type'             => 'Aina ya muda wa kusubiri',
+        'days-on-the-next-month' => 'Siku za mwezi unaofuata',
         'days'                   => 'Siku',
-        'payment-term'           => 'Masharti ya malipo',
+        'payment-term'           => 'Sharti la malipo',
     ],
 
     'table' => [
         'columns' => [
-            'due'          => 'Due',
+            'due'          => 'Inadaiwa',
             'value'        => 'Thamani',
-            'value-amount' => 'Thamani Kiasi',
+            'value-amount' => 'Kiasi cha thamani',
             'after'        => 'Baada ya',
-            'delay-type'   => 'Delay Aina',
+            'delay-type'   => 'Aina ya muda wa kusubiri',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Malipo Due Term imesasishwa',
-                    'body'  => 'malipo due term ina imesasishwa successfully.',
+                    'title' => 'Awamu ya malipo imesasishwa',
+                    'body'  => 'Awamu ya malipo imesasishwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Malipo Due Term imefutwa',
-                    'body'  => 'malipo due term ina imefutwa successfully.',
+                    'title' => 'Awamu ya malipo imefutwa',
+                    'body'  => 'Awamu ya malipo imefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -39,8 +39,8 @@ return [
         'header-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Malipo Due Term imeundwa',
-                    'body'  => 'malipo due term ina imeundwa successfully.',
+                    'title' => 'Awamu ya malipo imeundwa',
+                    'body'  => 'Awamu ya malipo imeundwa kikamilifu.',
                 ],
             ],
         ],

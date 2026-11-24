@@ -2,5 +2,5 @@
 
 return [
     'aureus'   => 'DEKA',
-    'european' => 'European',
+    'european' => 'Ya Ulaya',
 ];

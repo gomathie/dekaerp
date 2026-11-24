@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Касса rounding создано',
-        'body'  => 'касса rounding есть создано successfully.',
+        'title' => 'Округление наличных создано',
+        'body'  => 'Округление наличных успешно создано.',
     ],
 ];

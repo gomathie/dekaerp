@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'fixed'    => 'Isiyobadilika',
-    'group'    => 'Kundi',
+    'fixed'    => 'Kiasi maalum',
+    'group'    => 'Kikundi',
     'percent'  => 'Asilimia',
-    'division' => 'Division',
-    'code'     => 'Maalum Formula',
+    'division' => 'Mgawanyo',
+    'code'     => 'Fomula maalum',
 ];

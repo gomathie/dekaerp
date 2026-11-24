@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Manage Distribution Для Счёт',
+        'title' => 'Распределение для счетов',
     ],
 ];

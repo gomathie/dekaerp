@@ -12,7 +12,7 @@ return [
         'columns' => [
             'code'       => 'Msimbo',
             'name'       => 'Jina',
-            'created-by' => 'Imeundwa Na',
+            'created-by' => 'Imeundwa na',
         ],
 
         'groups' => [
@@ -24,21 +24,21 @@ return [
             'edit' => [
                 'notification' => [
                     'title' => 'Incoterm imesasishwa',
-                    'body'  => 'incoterm ina imesasishwa successfully.',
+                    'body'  => 'Incoterm imesasishwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'title' => 'Incoterm imefutwa',
-                    'body'  => 'incoterm ina imefutwa successfully.',
+                    'body'  => 'Incoterm imefutwa kikamilifu.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Incoterm restored',
-                    'body'  => 'incoterm ina restored successfully.',
+                    'title' => 'Incoterm imerejeshwa',
+                    'body'  => 'Incoterm imerejeshwa kikamilifu.',
                 ],
             ],
         ],
@@ -46,22 +46,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Incoterms restored',
-                    'body'  => 'incoterms ina restored successfully.',
+                    'title' => 'Incoterm zimerejeshwa',
+                    'body'  => 'Incoterm zimerejeshwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Incoterms imefutwa',
-                    'body'  => 'incoterms ina imefutwa successfully.',
+                    'title' => 'Incoterm zimefutwa',
+                    'body'  => 'Incoterm zimefutwa kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Incoterms force imefutwa',
-                    'body'  => 'incoterms ina force imefutwa successfully.',
+                    'title' => 'Incoterm zimefutwa kabisa',
+                    'body'  => 'Incoterm zimefutwa kabisa kikamilifu.',
                 ],
             ],
         ],

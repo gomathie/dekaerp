@@ -4,8 +4,8 @@ return [
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Masharti ya malipo imefutwa',
-                'body'  => 'Masharti ya malipo ina imefutwa successfully.',
+                'title' => 'Sharti la malipo limefutwa',
+                'body'  => 'Sharti la malipo limefutwa kikamilifu.',
             ],
         ],
     ],

@@ -4,22 +4,22 @@ return [
     'assets' => [
         'label'   => 'Активы',
         'options' => [
-            'receivable'  => 'К получению',
-            'cash'        => 'Банк и Касса',
-            'current'     => 'Текущий Активы',
-            'non-current' => 'Non-текущий Активы',
-            'prepayments' => 'Prepayments',
-            'fixed'       => 'Фиксированный Активы',
+            'receivable'  => 'Дебиторская задолженность',
+            'cash'        => 'Банк и касса',
+            'current'     => 'Оборотные активы',
+            'non-current' => 'Внеоборотные активы',
+            'prepayments' => 'Авансы выданные',
+            'fixed'       => 'Основные средства',
         ],
     ],
 
     'liabilities' => [
         'label'   => 'Обязательства',
         'options' => [
-            'payable'     => 'К оплате',
-            'credit-card' => 'Кредит Card',
-            'current'     => 'Текущий Обязательства',
-            'non-current' => 'Non-текущий Обязательства',
+            'payable'     => 'Кредиторская задолженность',
+            'credit-card' => 'Кредитная карта',
+            'current'     => 'Краткосрочные обязательства',
+            'non-current' => 'Долгосрочные обязательства',
         ],
     ],
 
@@ -27,15 +27,15 @@ return [
         'label'   => 'Капитал',
         'options' => [
             'equity'     => 'Капитал',
-            'unaffected' => 'Текущий Год Прибыль',
+            'unaffected' => 'Прибыль текущего года',
         ],
     ],
 
     'income' => [
-        'label'   => 'Доход',
+        'label'   => 'Доходы',
         'options' => [
-            'income' => 'Доход',
-            'other'  => 'Другое Доход',
+            'income' => 'Доходы',
+            'other'  => 'Прочие доходы',
         ],
     ],
 
@@ -43,15 +43,15 @@ return [
         'label'   => 'Расходы',
         'options' => [
             'expense'      => 'Расходы',
-            'depreciation' => 'Depreciation',
-            'direct-cost'  => 'Стоимость Выручка',
+            'depreciation' => 'Амортизация',
+            'direct-cost'  => 'Себестоимость продаж',
         ],
     ],
 
     'off-balance' => [
-        'label'   => 'Выкл.-Остаток Sheet',
+        'label'   => 'Забалансовые счета',
         'options' => [
-            'off-balance' => 'Выкл.-Остаток Sheet',
+            'off-balance' => 'Забалансовые счета',
         ],
     ],
 ];

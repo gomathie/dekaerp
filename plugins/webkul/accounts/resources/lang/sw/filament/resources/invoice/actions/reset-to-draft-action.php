@@ -1,14 +1,14 @@
 <?php
 
 return [
-    'title' => 'Weka upya Hadi Rasimu',
+    'title' => 'Rudisha kuwa rasimu',
 
     'validation' => [
         'notification' => [
             'error' => [
                 'invalid-state' => [
-                    'title' => 'Uingizaji wa jarida Hali Si halali',
-                    'body'  => 'Tu imewekwa au imeghairiwa uingizaji wa jarida unaweza kuwa weka upya hadi rasimu.',
+                    'title' => 'Hali ya ingizo la jarida si sahihi',
+                    'body'  => 'Maingizo ya jarida yaliyorekodiwa au kughairiwa pekee ndiyo yanaweza kurudishwa kuwa rasimu.',
                 ],
             ],
         ],

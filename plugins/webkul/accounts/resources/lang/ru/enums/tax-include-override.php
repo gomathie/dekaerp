@@ -2,6 +2,6 @@
 
 return [
     'default'  => 'По умолчанию',
-    'included' => 'Включено',
-    'excluded' => 'Исключено',
+    'included' => 'Включён',
+    'excluded' => 'Не включён',
 ];

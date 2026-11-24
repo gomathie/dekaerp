@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'send'    => 'Send',
-    'receive' => 'Receive',
+    'send'    => 'Tuma',
+    'receive' => 'Pokea',
 ];

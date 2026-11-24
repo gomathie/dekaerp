@@ -2,17 +2,17 @@
 
 return [
     'move' => [
-        'no-journal-found-title' => 'Учёт не задать вверх',
-        'no-journal-found'       => 'Нет журнал could быть найдено в компания :company для любой те types: :types. Пожалуйста задать вверх план счетов для этот компания первый.',
+        'no-journal-found-title' => 'Учёт не настроен',
+        'no-journal-found'       => 'В компании :company не найден журнал ни одного из типов: :types. Сначала настройте план счетов для этой компании.',
     ],
 
     'tax-formula' => [
-        'empty'                => 'formula нельзя быть пусто.',
-        'invalid-character'    => 'formula contains недействительно character: :character',
-        'unexpected-token'     => 'formula contains unexpected token: :token',
-        'unexpected-end'       => 'formula ends unexpectedly.',
-        'unclosed-parenthesis' => 'formula contains unclosed parenthesis.',
-        'unknown-variable'     => 'Неизвестно variable ":variable". Только эти variables доступно: :variables',
-        'unknown-function'     => 'Неизвестно function ":function". Только эти functions доступно: :functions',
+        'empty'                => 'Формула не может быть пустой.',
+        'invalid-character'    => 'Формула содержит недопустимый символ: :character',
+        'unexpected-token'     => 'Формула содержит неожиданный элемент: :token',
+        'unexpected-end'       => 'Формула неожиданно обрывается.',
+        'unclosed-parenthesis' => 'В формуле есть незакрытая скобка.',
+        'unknown-variable'     => 'Неизвестная переменная «:variable». Доступны только переменные: :variables',
+        'unknown-function'     => 'Неизвестная функция «:function». Доступны только функции: :functions',
     ],
 ];

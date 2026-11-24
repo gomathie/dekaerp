@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'title' => 'Reverse',
+    'title' => 'Сторнировать',
 
     'modal' => [
-        'heading' => 'Создать Reverse',
+        'heading' => 'Создать сторно',
 
         'form' => [
-            'reason'  => 'Причина displayed вкл. Reverse',
+            'reason'  => 'Причина в документе сторно',
             'journal' => 'Журнал',
             'date'    => 'Дата',
         ],

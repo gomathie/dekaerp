@@ -11,13 +11,13 @@ return [
     'form' => [
         'section' => [
             'general' => [
-                'title'  => 'Jumla',
+                'title'  => 'Taarifa za jumla',
                 'fields' => [
-                    'customer-invoice' => 'Mteja Noti ya mkopo',
+                    'customer-invoice' => 'Hati ya mkopo ya mteja',
                     'customer'         => 'Mteja',
                     'invoice-date'     => 'Tarehe ya ankara',
-                    'due-date'         => 'Tarehe ya malipo',
-                    'payment-term'     => 'Masharti ya malipo',
+                    'due-date'         => 'Tarehe ya mwisho',
+                    'payment-term'     => 'Sharti la malipo',
                 ],
             ],
         ],
@@ -33,11 +33,11 @@ return [
 
                         'fields' => [
                             'product'             => 'Bidhaa',
-                            'quantity'            => 'Kiasi',
-                            'unit'                => 'Uniti',
+                            'quantity'            => 'Idadi',
+                            'unit'                => 'Kipimo',
                             'taxes'               => 'Kodi',
-                            'discount-percentage' => 'Punguzo',
-                            'unit-price'          => 'Bei ya uniti',
+                            'discount-percentage' => 'Asilimia ya punguzo',
+                            'unit-price'          => 'Bei ya kipimo',
                             'sub-total'           => 'Jumla ndogo',
                         ],
                     ],
@@ -45,16 +45,16 @@ return [
             ],
 
             'other-information' => [
-                'title'    => 'Nyingine Taarifa',
+                'title'    => 'Taarifa nyingine',
                 'fieldset' => [
                     'invoice' => [
                         'title'  => 'Ankara',
                         'fields' => [
-                            'customer-reference' => 'Kumbukumbu ya mteja',
-                            'sales-person'       => 'Mauzo Person',
-                            'payment-reference'  => 'Malipo Kumbukumbu',
-                            'recipient-bank'     => 'Mpokeaji Benki',
-                            'delivery-date'      => 'Usafirishaji Tarehe',
+                            'customer-reference' => 'Rejea ya mteja',
+                            'sales-person'       => 'Muuzaji',
+                            'payment-reference'  => 'Rejea ya malipo',
+                            'recipient-bank'     => 'Benki ya mpokeaji',
+                            'delivery-date'      => 'Tarehe ya uwasilishaji',
                         ],
                     ],
 
@@ -63,15 +63,15 @@ return [
 
                         'fields' => [
                             'incoterm'          => 'Incoterm',
-                            'incoterm-location' => 'Incoterm Mahali',
-                            'payment-method'    => 'Malipo Method',
-                            'auto-post'         => 'Auto Post',
-                            'checked'           => 'Checked',
+                            'incoterm-location' => 'Mahali pa Incoterm',
+                            'payment-method'    => 'Njia ya malipo',
+                            'auto-post'         => 'Rekodi kiotomatiki',
+                            'checked'           => 'Imekaguliwa',
                         ],
                     ],
 
                     'additional-information' => [
-                        'title'  => 'Additional Taarifa',
+                        'title'  => 'Taarifa za ziada',
                         'fields' => [
                             'company'  => 'Kampuni',
                             'currency' => 'Sarafu',
@@ -79,10 +79,10 @@ return [
                     ],
 
                     'marketing' => [
-                        'title'  => 'Marketing',
+                        'title'  => 'Masoko',
                         'fields' => [
-                            'campaign' => 'Campaign',
-                            'medium'   => 'Wastani',
+                            'campaign' => 'Kampeni',
+                            'medium'   => 'Njia',
                             'source'   => 'Chanzo',
                         ],
                     ],
@@ -90,7 +90,7 @@ return [
             ],
 
             'term-and-conditions' => [
-                'title' => 'Term & Conditions',
+                'title' => 'Sheria na masharti',
             ],
         ],
     ],
@@ -98,13 +98,13 @@ return [
     'infolist' => [
         'section' => [
             'general' => [
-                'title'   => 'Jumla',
+                'title'   => 'Taarifa za jumla',
                 'entries' => [
-                    'customer-invoice' => 'Mteja Noti ya mkopo',
+                    'customer-invoice' => 'Hati ya mkopo ya mteja',
                     'customer'         => 'Mteja',
                     'invoice-date'     => 'Tarehe ya ankara',
-                    'due-date'         => 'Tarehe ya malipo',
-                    'payment-term'     => 'Masharti ya malipo',
+                    'due-date'         => 'Tarehe ya mwisho',
+                    'payment-term'     => 'Sharti la malipo',
                 ],
             ],
         ],
@@ -117,11 +117,11 @@ return [
                     'products' => [
                         'entries' => [
                             'product'             => 'Bidhaa',
-                            'quantity'            => 'Kiasi',
+                            'quantity'            => 'Idadi',
                             'unit'                => 'Kipimo',
                             'taxes'               => 'Kodi',
-                            'discount-percentage' => 'Punguzo',
-                            'unit-price'          => 'Bei ya uniti',
+                            'discount-percentage' => 'Asilimia ya punguzo',
+                            'unit-price'          => 'Bei ya kipimo',
                             'sub-total'           => 'Jumla ndogo',
                             'total'               => 'Jumla',
                         ],
@@ -130,16 +130,16 @@ return [
             ],
 
             'other-information' => [
-                'title'    => 'Nyingine Taarifa',
+                'title'    => 'Taarifa nyingine',
                 'fieldset' => [
                     'invoice' => [
                         'title'   => 'Ankara',
                         'entries' => [
-                            'customer-reference' => 'Kumbukumbu ya mteja',
-                            'sales-person'       => 'Mauzo Person',
-                            'payment-reference'  => 'Malipo Kumbukumbu',
-                            'recipient-bank'     => 'Mpokeaji Benki',
-                            'delivery-date'      => 'Usafirishaji Tarehe',
+                            'customer-reference' => 'Rejea ya mteja',
+                            'sales-person'       => 'Muuzaji',
+                            'payment-reference'  => 'Rejea ya malipo',
+                            'recipient-bank'     => 'Benki ya mpokeaji',
+                            'delivery-date'      => 'Tarehe ya uwasilishaji',
                         ],
                     ],
 
@@ -148,15 +148,15 @@ return [
 
                         'fieldset' => [
                             'incoterm'          => 'Incoterm',
-                            'incoterm-location' => 'Incoterm Mahali',
-                            'payment-method'    => 'Malipo Method',
-                            'auto-post'         => 'Auto Post',
-                            'checked'           => 'Checked',
+                            'incoterm-location' => 'Mahali pa Incoterm',
+                            'payment-method'    => 'Njia ya malipo',
+                            'auto-post'         => 'Rekodi kiotomatiki',
+                            'checked'           => 'Imekaguliwa',
                         ],
                     ],
 
                     'additional-information' => [
-                        'title'   => 'Additional Taarifa',
+                        'title'   => 'Taarifa za ziada',
                         'entries' => [
                             'company'  => 'Kampuni',
                             'currency' => 'Sarafu',
@@ -164,10 +164,10 @@ return [
                     ],
 
                     'marketing' => [
-                        'title'   => 'Marketing',
+                        'title'   => 'Masoko',
                         'entries' => [
-                            'campaign' => 'Campaign',
-                            'medium'   => 'Wastani',
+                            'campaign' => 'Kampeni',
+                            'medium'   => 'Njia',
                             'source'   => 'Chanzo',
                         ],
                     ],
@@ -175,7 +175,7 @@ return [
             ],
 
             'term-and-conditions' => [
-                'title' => 'Term & Conditions',
+                'title' => 'Sheria na masharti',
             ],
         ],
     ],

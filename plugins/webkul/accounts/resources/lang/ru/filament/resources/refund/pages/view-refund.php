@@ -4,8 +4,8 @@ return [
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Возврат удалено',
-                'body'  => 'Возврат есть удалено successfully.',
+                'title' => 'Возврат удалён',
+                'body'  => 'Возврат успешно удалён.',
             ],
         ],
     ],

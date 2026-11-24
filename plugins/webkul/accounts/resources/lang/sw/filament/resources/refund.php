@@ -11,17 +11,17 @@ return [
     'form' => [
         'section' => [
             'general' => [
-                'title'  => 'Jumla',
+                'title'  => 'Taarifa za jumla',
                 'fields' => [
-                    'vendor-credit-note' => 'Msambazaji Noti ya mkopo',
+                    'vendor-credit-note' => 'Hati ya mkopo ya msambazaji',
                     'vendor'             => 'Msambazaji',
-                    'bill-date'          => 'Bili Tarehe',
-                    'bill-reference'     => 'Bili Kumbukumbu',
-                    'accounting-date'    => 'Uhasibu Tarehe',
-                    'payment-reference'  => 'Malipo Kumbukumbu',
-                    'recipient-bank'     => 'Mpokeaji Benki',
-                    'due-date'           => 'Tarehe ya malipo',
-                    'payment-term'       => 'Masharti ya malipo',
+                    'bill-date'          => 'Tarehe ya bili',
+                    'bill-reference'     => 'Rejea ya bili',
+                    'accounting-date'    => 'Tarehe ya uhasibu',
+                    'payment-reference'  => 'Rejea ya malipo',
+                    'recipient-bank'     => 'Benki ya mpokeaji',
+                    'due-date'           => 'Tarehe ya mwisho',
+                    'payment-term'       => 'Sharti la malipo',
                 ],
             ],
         ],
@@ -37,11 +37,11 @@ return [
 
                         'fields' => [
                             'product'             => 'Bidhaa',
-                            'quantity'            => 'Kiasi',
-                            'unit'                => 'Uniti',
+                            'quantity'            => 'Idadi',
+                            'unit'                => 'Kipimo',
                             'taxes'               => 'Kodi',
-                            'discount-percentage' => 'Punguzo',
-                            'unit-price'          => 'Bei ya uniti',
+                            'discount-percentage' => 'Asilimia ya punguzo',
+                            'unit-price'          => 'Bei ya kipimo',
                             'sub-total'           => 'Jumla ndogo',
                         ],
                     ],
@@ -49,28 +49,28 @@ return [
             ],
 
             'other-information' => [
-                'title'    => 'Nyingine Taarifa',
+                'title'    => 'Taarifa nyingine',
                 'fieldset' => [
                     'accounting' => [
                         'title' => 'Uhasibu',
 
                         'fields' => [
                             'incoterm'          => 'Incoterm',
-                            'incoterm-location' => 'Incoterm Mahali',
+                            'incoterm-location' => 'Mahali pa Incoterm',
                         ],
                     ],
 
                     'secured' => [
-                        'title'  => 'Secured',
+                        'title'  => 'Imelindwa',
                         'fields' => [
-                            'payment-method' => 'Malipo Method',
-                            'auto-post'      => 'Auto Post',
-                            'checked'        => 'Checked',
+                            'payment-method' => 'Njia ya malipo',
+                            'auto-post'      => 'Rekodi kiotomatiki',
+                            'checked'        => 'Imekaguliwa',
                         ],
                     ],
 
                     'additional-information' => [
-                        'title'  => 'Additional Taarifa',
+                        'title'  => 'Taarifa za ziada',
                         'fields' => [
                             'company'  => 'Kampuni',
                             'currency' => 'Sarafu',
@@ -80,7 +80,7 @@ return [
             ],
 
             'term-and-conditions' => [
-                'title' => 'Term & Conditions',
+                'title' => 'Sheria na masharti',
             ],
         ],
     ],
@@ -88,17 +88,17 @@ return [
     'infolist' => [
         'section' => [
             'general' => [
-                'title'   => 'Jumla',
+                'title'   => 'Taarifa za jumla',
                 'entries' => [
-                    'vendor-invoice'    => 'Msambazaji Ankara',
+                    'vendor-invoice'    => 'Ankara ya msambazaji',
                     'vendor'            => 'Msambazaji',
-                    'bill-date'         => 'Bili Tarehe',
-                    'bill-reference'    => 'Bili Kumbukumbu',
-                    'accounting-date'   => 'Uhasibu Tarehe',
-                    'payment-reference' => 'Malipo Kumbukumbu',
-                    'recipient-bank'    => 'Mpokeaji Benki',
-                    'due-date'          => 'Tarehe ya malipo',
-                    'payment-term'      => 'Masharti ya malipo',
+                    'bill-date'         => 'Tarehe ya bili',
+                    'bill-reference'    => 'Rejea ya bili',
+                    'accounting-date'   => 'Tarehe ya uhasibu',
+                    'payment-reference' => 'Rejea ya malipo',
+                    'recipient-bank'    => 'Benki ya mpokeaji',
+                    'due-date'          => 'Tarehe ya mwisho',
+                    'payment-term'      => 'Sharti la malipo',
                 ],
             ],
         ],
@@ -114,11 +114,11 @@ return [
 
                         'entries' => [
                             'product'             => 'Bidhaa',
-                            'quantity'            => 'Kiasi',
-                            'unit'                => 'Uniti',
+                            'quantity'            => 'Idadi',
+                            'unit'                => 'Kipimo',
                             'taxes'               => 'Kodi',
-                            'discount-percentage' => 'Punguzo',
-                            'unit-price'          => 'Bei ya uniti',
+                            'discount-percentage' => 'Asilimia ya punguzo',
+                            'unit-price'          => 'Bei ya kipimo',
                             'sub-total'           => 'Jumla ndogo',
                         ],
                     ],
@@ -126,28 +126,28 @@ return [
             ],
 
             'other-information' => [
-                'title'    => 'Nyingine Taarifa',
+                'title'    => 'Taarifa nyingine',
                 'fieldset' => [
                     'accounting' => [
                         'title' => 'Uhasibu',
 
                         'entries' => [
                             'incoterm'          => 'Incoterm',
-                            'incoterm-location' => 'Incoterm Mahali',
+                            'incoterm-location' => 'Mahali pa Incoterm',
                         ],
                     ],
 
                     'secured' => [
-                        'title'   => 'Secured',
+                        'title'   => 'Imelindwa',
                         'entries' => [
-                            'payment-method' => 'Malipo Method',
-                            'auto-post'      => 'Auto Post',
-                            'checked'        => 'Checked',
+                            'payment-method' => 'Njia ya malipo',
+                            'auto-post'      => 'Rekodi kiotomatiki',
+                            'checked'        => 'Imekaguliwa',
                         ],
                     ],
 
                     'additional-information' => [
-                        'title'   => 'Additional Taarifa',
+                        'title'   => 'Taarifa za ziada',
                         'entries' => [
                             'company'  => 'Kampuni',
                             'currency' => 'Sarafu',
@@ -157,7 +157,7 @@ return [
             ],
 
             'term-and-conditions' => [
-                'title' => 'Term & Conditions',
+                'title' => 'Sheria na masharti',
             ],
         ],
     ],

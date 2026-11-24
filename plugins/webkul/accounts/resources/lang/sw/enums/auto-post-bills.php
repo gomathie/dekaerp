@@ -2,6 +2,6 @@
 
 return [
     'always' => 'Daima',
-    'ask'    => 'Ask baada ya 3 validations bila edits',
+    'ask'    => 'Uliza baada ya uthibitisho 3 bila marekebisho',
     'never'  => 'Kamwe',
 ];

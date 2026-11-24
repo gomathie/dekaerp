@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'title' => 'Reverse',
+    'title' => 'Batilisha',
 
     'modal' => [
-        'heading' => 'Unda Reverse',
+        'heading' => 'Unda ubatilishaji',
 
         'form' => [
-            'reason'  => 'Sababu displayed washa Reverse',
+            'reason'  => 'Sababu inayoonyeshwa kwenye ubatilishaji',
             'journal' => 'Jarida',
             'date'    => 'Tarehe',
         ],

@@ -11,20 +11,20 @@ return [
     'global-search' => [
         'customer' => 'Mteja',
         'date'     => 'Tarehe',
-        'due-date' => 'Tarehe ya malipo',
+        'due-date' => 'Tarehe ya mwisho',
     ],
 
     'form' => [
         'section' => [
             'general' => [
-                'title'  => 'Jumla',
+                'title'  => 'Taarifa za jumla',
 
                 'fields' => [
                     'customer-invoice' => 'Ankara ya mteja',
                     'customer'         => 'Mteja',
                     'invoice-date'     => 'Tarehe ya ankara',
-                    'due-date'         => 'Tarehe ya malipo',
-                    'payment-term'     => 'Masharti ya malipo',
+                    'due-date'         => 'Tarehe ya mwisho',
+                    'payment-term'     => 'Sharti la malipo',
                     'journal'          => 'Jarida',
                     'currency'         => 'Sarafu',
                 ],
@@ -34,7 +34,7 @@ return [
         'notifications' => [
             'missing-rate' => [
                 'title' => 'Hakuna kiwango cha ubadilishaji',
-                'body'  => 'Hakuna kiwango cha ubadilishaji kati ya :from na :to, hivyo bei hazikubadilishwa. Ongeza kiwango chini ya Usanidi → Sarafu, au ingiza bei mwenyewe.',
+                'body'  => 'Hakuna kiwango cha ubadilishaji kati ya :from na :to, kwa hiyo bei hazikubadilishwa. Ongeza kiwango chini ya Mipangilio → Sarafu, au weka bei kwa mkono.',
             ],
         ],
 
@@ -46,25 +46,25 @@ return [
                     'products' => [
                         'title'       => 'Bidhaa',
                         'add-product' => 'Ongeza bidhaa',
-                        'price-hint'  => 'Bei iliyobadilishwa hapa inatumika kwa ankara hii tu. Bidhaa inabaki na bei yake.',
+                        'price-hint'  => 'Bei ya kipimo ikibadilishwa hapa inahusu ankara hii pekee. Bidhaa inabaki na bei yake.',
 
                         'columns' => [
                             'product'             => 'Bidhaa',
-                            'quantity'            => 'Kiasi',
-                            'unit'                => 'Uniti',
+                            'quantity'            => 'Idadi',
+                            'unit'                => 'Kipimo',
                             'taxes'               => 'Kodi',
                             'discount-percentage' => 'Punguzo',
-                            'unit-price'          => 'Bei ya uniti',
+                            'unit-price'          => 'Bei ya kipimo',
                             'sub-total'           => 'Jumla ndogo',
                         ],
 
                         'fields' => [
                             'product'             => 'Bidhaa',
-                            'quantity'            => 'Kiasi',
-                            'unit'                => 'Uniti',
+                            'quantity'            => 'Idadi',
+                            'unit'                => 'Kipimo',
                             'taxes'               => 'Kodi',
-                            'discount-percentage' => 'Punguzo',
-                            'unit-price'          => 'Bei ya uniti',
+                            'discount-percentage' => 'Asilimia ya punguzo',
+                            'unit-price'          => 'Bei ya kipimo',
                             'sub-total'           => 'Jumla ndogo',
                         ],
                     ],
@@ -72,18 +72,18 @@ return [
             ],
 
             'other-information' => [
-                'title'    => 'Nyingine Taarifa',
+                'title'    => 'Taarifa nyingine',
 
                 'fieldset' => [
                     'invoice' => [
                         'title'  => 'Ankara',
 
                         'fields' => [
-                            'customer-reference' => 'Kumbukumbu ya mteja',
-                            'sales-person'       => 'Mauzo Person',
-                            'payment-reference'  => 'Malipo Kumbukumbu',
-                            'recipient-bank'     => 'Mpokeaji Benki',
-                            'delivery-date'      => 'Usafirishaji Tarehe',
+                            'customer-reference' => 'Rejea ya mteja',
+                            'sales-person'       => 'Muuzaji',
+                            'payment-reference'  => 'Rejea ya malipo',
+                            'recipient-bank'     => 'Benki ya mpokeaji',
+                            'delivery-date'      => 'Tarehe ya uwasilishaji',
                         ],
                     ],
 
@@ -93,21 +93,21 @@ return [
                         'fields' => [
                             'company'                 => 'Kampuni',
                             'incoterm'                => 'Incoterm',
-                            'incoterm-location'       => 'Incoterm Mahali',
-                            'fiscal-position'         => 'Kifedha Cheo',
-                            'fiscal-position-tooltip' => 'Kifedha positions ni inatumika hadi adapt kodi na akaunti based washa mteja mahali.',
-                            'cash-rounding'           => 'Taslimu Rounding Method',
-                            'cash-rounding-tooltip'   => 'Specifies smallest taslimu-ya kulipa uniti ya sarafu.',
-                            'payment-method'          => 'Malipo Method',
-                            'auto-post'               => 'Auto Post',
-                            'checked'                 => 'Checked',
+                            'incoterm-location'       => 'Mahali pa Incoterm',
+                            'fiscal-position'         => 'Nafasi ya kodi',
+                            'fiscal-position-tooltip' => 'Nafasi za kodi hurekebisha kodi na akaunti kulingana na mahali mteja alipo.',
+                            'cash-rounding'           => 'Njia ya ukadiriaji wa fedha taslimu',
+                            'cash-rounding-tooltip'   => 'Kipimo kidogo zaidi cha sarafu kinachoweza kulipwa kwa fedha taslimu.',
+                            'payment-method'          => 'Njia ya malipo',
+                            'auto-post'               => 'Rekodi kiotomatiki',
+                            'checked'                 => 'Imekaguliwa',
                         ],
                     ],
                 ],
             ],
 
             'term-and-conditions' => [
-                'title' => 'Term & Conditions',
+                'title' => 'Sheria na masharti',
             ],
         ],
     ],
@@ -117,21 +117,21 @@ return [
         'columns' => [
             'number'           => 'Nambari',
             'state'            => 'Hali',
-            'created-by'       => 'Imeundwa Na',
+            'created-by'       => 'Imeundwa na',
             'customer'         => 'Mteja',
             'invoice-date'     => 'Tarehe ya ankara',
-            'checked'          => 'Checked',
+            'checked'          => 'Imekaguliwa',
             'accounting-date'  => 'Uhasibu',
-            'due-date'         => 'Tarehe ya malipo',
-            'source-document'  => 'Chanzo Hati',
-            'reference'        => 'Kumbukumbu',
-            'sales-person'     => 'Mauzo Person',
-            'tax-excluded'     => 'Kodi Haijajumuishwa',
+            'due-date'         => 'Tarehe ya mwisho',
+            'source-document'  => 'Hati chanzo',
+            'reference'        => 'Rejea',
+            'sales-person'     => 'Muuzaji',
+            'tax-excluded'     => 'Bila kodi',
             'tax'              => 'Kodi',
             'total'            => 'Jumla',
-            'amount-paid'      => 'Kilicholipwa',
-            'amount-due'       => 'Kiasi Due',
-            'invoice-currency' => 'Ankara Sarafu',
+            'amount-paid'      => 'Imelipwa',
+            'amount-due'       => 'Kiasi kinachodaiwa',
+            'invoice-currency' => 'Sarafu ya ankara',
         ],
 
         'summarizers' => [
@@ -140,50 +140,50 @@ return [
 
         'groups' => [
             'name'                         => 'Jina',
-            'invoice-partner-display-name' => 'Ankara Mshirika Display Jina',
+            'invoice-partner-display-name' => 'Jina la mhusika kwenye ankara',
             'invoice-date'                 => 'Tarehe ya ankara',
-            'checked'                      => 'Checked',
+            'checked'                      => 'Imekaguliwa',
             'date'                         => 'Tarehe',
-            'invoice-due-date'             => 'Ankara Tarehe ya malipo',
-            'invoice-origin'               => 'Ankara Asili',
-            'sales-person'                 => 'Mauzo Person',
+            'invoice-due-date'             => 'Tarehe ya mwisho ya ankara',
+            'invoice-origin'               => 'Chanzo cha ankara',
+            'sales-person'                 => 'Muuzaji',
             'currency'                     => 'Sarafu',
-            'created-at'                   => 'Imeundwa',
-            'updated-at'                   => 'Imesasishwa',
+            'created-at'                   => 'Iliundwa',
+            'updated-at'                   => 'Ilisasishwa',
         ],
 
         'filters' => [
             'number'                       => 'Nambari',
-            'invoice-partner-display-name' => 'Ankara Mshirika Display Jina',
+            'invoice-partner-display-name' => 'Jina la mhusika kwenye ankara',
             'invoice-date'                 => 'Tarehe ya ankara',
-            'invoice-due-date'             => 'Ankara Tarehe ya malipo',
-            'invoice-origin'               => 'Ankara Asili',
-            'reference'                    => 'Kumbukumbu',
-            'payment-reference'            => 'Malipo Kumbukumbu',
-            'narration'                    => 'Narration',
-            'partner'                      => 'Mshirika',
+            'invoice-due-date'             => 'Tarehe ya mwisho ya ankara',
+            'invoice-origin'               => 'Chanzo cha ankara',
+            'reference'                    => 'Rejea',
+            'payment-reference'            => 'Rejea ya malipo',
+            'narration'                    => 'Maelezo',
+            'partner'                      => 'Mhusika',
             'journal'                      => 'Jarida',
-            'fiscal-position'              => 'Kifedha Cheo',
+            'fiscal-position'              => 'Nafasi ya kodi',
             'currency'                     => 'Sarafu',
             'company'                      => 'Kampuni',
-            'date'                         => 'Uhasibu Tarehe',
-            'delivery-date'                => 'Usafirishaji Tarehe',
-            'amount-untaxed'               => 'Bila kodi Kiasi',
-            'amount-tax'                   => 'Kodi Kiasi',
-            'amount-total'                 => 'Jumla Kiasi',
-            'amount-residual'              => 'Kiasi Due',
-            'checked'                      => 'Checked',
-            'posted-before'                => 'Imewekwa Kabla ya',
+            'date'                         => 'Tarehe ya uhasibu',
+            'delivery-date'                => 'Tarehe ya uwasilishaji',
+            'amount-untaxed'               => 'Kiasi bila kodi',
+            'amount-tax'                   => 'Kiasi cha kodi',
+            'amount-total'                 => 'Kiasi cha jumla',
+            'amount-residual'              => 'Kiasi kinachodaiwa',
+            'checked'                      => 'Imekaguliwa',
+            'posted-before'                => 'Ilirekodiwa awali',
             'is-move-sent'                 => 'Imetumwa',
-            'created-at'                   => 'Imeundwa',
-            'updated-at'                   => 'Imesasishwa',
+            'created-at'                   => 'Iliundwa',
+            'updated-at'                   => 'Ilisasishwa',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Malipo imefutwa',
-                    'body'  => 'malipo ina imefutwa successfully.',
+                    'title' => 'Malipo yamefutwa',
+                    'body'  => 'Malipo yamefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -191,8 +191,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Malipo imefutwa',
-                    'body'  => 'malipo ina imefutwa successfully.',
+                    'title' => 'Malipo yamefutwa',
+                    'body'  => 'Malipo yote yamefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -207,13 +207,13 @@ return [
     'infolist' => [
         'section' => [
             'general' => [
-                'title'   => 'Jumla',
+                'title'   => 'Taarifa za jumla',
                 'entries' => [
                     'customer-invoice' => 'Ankara ya mteja',
                     'customer'         => 'Mteja',
                     'invoice-date'     => 'Tarehe ya ankara',
-                    'due-date'         => 'Tarehe ya malipo',
-                    'payment-term'     => 'Masharti ya malipo',
+                    'due-date'         => 'Tarehe ya mwisho',
+                    'payment-term'     => 'Sharti la malipo',
                     'journal'          => 'Jarida',
                     'currency'         => 'Sarafu',
                 ],
@@ -228,11 +228,11 @@ return [
                     'products' => [
                         'entries' => [
                             'product'             => 'Bidhaa',
-                            'quantity'            => 'Kiasi',
+                            'quantity'            => 'Idadi',
                             'unit'                => 'Kipimo',
                             'taxes'               => 'Kodi',
-                            'discount-percentage' => 'Punguzo',
-                            'unit-price'          => 'Bei ya uniti',
+                            'discount-percentage' => 'Asilimia ya punguzo',
+                            'unit-price'          => 'Bei ya kipimo',
                             'sub-total'           => 'Jumla ndogo',
                             'total'               => 'Jumla',
                         ],
@@ -241,18 +241,18 @@ return [
             ],
 
             'other-information' => [
-                'title'    => 'Nyingine Taarifa',
+                'title'    => 'Taarifa nyingine',
 
                 'fieldset' => [
                     'invoice' => [
                         'title'   => 'Ankara',
 
                         'entries' => [
-                            'customer-reference' => 'Kumbukumbu ya mteja',
-                            'sales-person'       => 'Mauzo Person',
-                            'payment-reference'  => 'Malipo Kumbukumbu',
-                            'recipient-bank'     => 'Mpokeaji Benki',
-                            'delivery-date'      => 'Usafirishaji Tarehe',
+                            'customer-reference' => 'Rejea ya mteja',
+                            'sales-person'       => 'Muuzaji',
+                            'payment-reference'  => 'Rejea ya malipo',
+                            'recipient-bank'     => 'Benki ya mpokeaji',
+                            'delivery-date'      => 'Tarehe ya uwasilishaji',
                         ],
                     ],
 
@@ -262,31 +262,31 @@ return [
                         'entries' => [
                             'company'           => 'Kampuni',
                             'incoterm'          => 'Incoterm',
-                            'incoterm-location' => 'Incoterm Mahali',
-                            'payment-method'    => 'Malipo Method',
-                            'cash-rounding'     => 'Taslimu Rounding Method',
-                            'fiscal-position'   => 'Kifedha Cheo',
-                            'auto-post'         => 'Auto Post',
-                            'checked'           => 'Checked',
+                            'incoterm-location' => 'Mahali pa Incoterm',
+                            'payment-method'    => 'Njia ya malipo',
+                            'cash-rounding'     => 'Njia ya ukadiriaji wa fedha taslimu',
+                            'fiscal-position'   => 'Nafasi ya kodi',
+                            'auto-post'         => 'Rekodi kiotomatiki',
+                            'checked'           => 'Imekaguliwa',
                         ],
                     ],
                 ],
             ],
 
             'term-and-conditions' => [
-                'title' => 'Term & Conditions',
+                'title' => 'Sheria na masharti',
             ],
 
             'journal-items' => [
-                'title' => 'Jarida Vipengee',
+                'title' => 'Vipengee vya jarida',
 
                 'repeater' => [
                     'entries' => [
                         'account'  => 'Akaunti',
-                        'partner'  => 'Mshirika',
-                        'label'    => 'Lebo',
+                        'partner'  => 'Mhusika',
+                        'label'    => 'Maelezo',
                         'currency' => 'Sarafu',
-                        'due-date' => 'Tarehe ya malipo',
+                        'due-date' => 'Tarehe ya mwisho',
                         'taxes'    => 'Kodi',
                         'debit'    => 'Debiti',
                         'credit'   => 'Krediti',
@@ -303,7 +303,7 @@ return [
             ],
 
             'unreconcile' => [
-                'label' => 'Unlink',
+                'label' => 'Tenganisha',
             ],
         ],
     ],

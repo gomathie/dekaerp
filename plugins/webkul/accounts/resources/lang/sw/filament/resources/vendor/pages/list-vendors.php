@@ -5,7 +5,7 @@ return  [
 
     'header-actions' => [
         'create' => [
-            'title' => 'Mpya Msambazaji',
+            'title' => 'Msambazaji mpya',
         ]
     ]
 ];

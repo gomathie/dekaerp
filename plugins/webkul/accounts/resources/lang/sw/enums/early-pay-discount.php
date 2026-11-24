@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'included' => 'Washa Early Malipo',
+    'included' => 'Kwa malipo ya mapema',
     'excluded' => 'Kamwe',
-    'mixed'    => 'Daima (Upon Ankara)',
+    'mixed'    => 'Daima (wakati wa ankara)',
 ];

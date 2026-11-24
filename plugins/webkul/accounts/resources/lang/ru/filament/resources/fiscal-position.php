@@ -2,29 +2,29 @@
 
 return [
     'global-search' => [
-        'zip-from' => 'Zip От',
-        'zip-to'   => 'Zip До',
+        'zip-from' => 'Индекс с',
+        'zip-to'   => 'Индекс по',
         'name'     => 'Название',
     ],
 
     'form' => [
         'fields' => [
             'name'                   => 'Название',
-            'foreign-vat'            => 'Foreign НДС',
+            'foreign-vat'            => 'Иностранный VAT',
             'country'                => 'Страна',
-            'country-group'          => 'Страна Группа',
-            'zip-from'               => 'Zip От',
-            'zip-to'                 => 'Zip До',
-            'detect-automatically'   => 'Detect Автоматически',
-            'notes'                  => 'Заметки',
+            'country-group'          => 'Группа стран',
+            'zip-from'               => 'Индекс с',
+            'zip-to'                 => 'Индекс по',
+            'detect-automatically'   => 'Определять автоматически',
+            'notes'                  => 'Примечания',
             'company'                => 'Компания',
         ],
         'tabs' => [
             'account-mapping' => [
                 'table' => [
                     'columns' => [
-                        'source-account'      => 'Источник Счёт',
-                        'destination-account' => 'Назначение Счёт',
+                        'source-account'      => 'Исходный счёт',
+                        'destination-account' => 'Целевой счёт',
                     ],
                 ],
 
@@ -32,8 +32,8 @@ return [
             'tax-mapping' => [
                 'table' => [
                     'columns' => [
-                        'tax-source'      => 'Налог Источник',
-                        'tax-destination' => 'Налог Назначение',
+                        'tax-source'      => 'Исходный налог',
+                        'tax-destination' => 'Целевой налог',
                     ],
                 ],
             ],
@@ -45,19 +45,19 @@ return [
             'name'                 => 'Название',
             'company'              => 'Компания',
             'country'              => 'Страна',
-            'country-group'        => 'Страна Группа',
-            'created-by'           => 'Создано От',
-            'zip-from'             => 'Zip От',
-            'zip-to'               => 'Zip До',
+            'country-group'        => 'Группа стран',
+            'created-by'           => 'Создал',
+            'zip-from'             => 'Индекс с',
+            'zip-to'               => 'Индекс по',
             'status'               => 'Статус',
-            'detect-automatically' => 'Detect Автоматически',
+            'detect-automatically' => 'Определять автоматически',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
                     'title' => 'Условие оплаты удалено',
-                    'body'  => 'Условие оплаты есть удалено successfully.',
+                    'body'  => 'Условие оплаты успешно удалено.',
                 ],
             ],
         ],
@@ -65,8 +65,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Финансовый Должность удалено',
-                    'body'  => 'финансовый Должность есть удалено successfully.',
+                    'title' => 'Налоговая позиция удалена',
+                    'body'  => 'Налоговая позиция успешно удалена.',
                 ],
             ],
         ],
@@ -75,13 +75,13 @@ return [
     'infolist' => [
         'entries' => [
             'name'                 => 'Название',
-            'foreign-vat'          => 'Foreign НДС',
+            'foreign-vat'          => 'Иностранный VAT',
             'country'              => 'Страна',
-            'country-group'        => 'Страна Группа',
-            'zip-from'             => 'Zip От',
-            'zip-to'               => 'Zip До',
-            'detect-automatically' => 'Detect Автоматически',
-            'notes'                => 'Заметки',
+            'country-group'        => 'Группа стран',
+            'zip-from'             => 'Индекс с',
+            'zip-to'               => 'Индекс по',
+            'detect-automatically' => 'Определять автоматически',
+            'notes'                => 'Примечания',
         ],
     ],
 ];

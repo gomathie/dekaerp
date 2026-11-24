@@ -2,5 +2,5 @@
 
 return [
     'percent' => 'Asilimia',
-    'fixed'   => 'Isiyobadilika',
+    'fixed'   => 'Kiasi maalum',
 ];

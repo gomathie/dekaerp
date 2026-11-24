@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'entry'       => 'Uingizaji wa jarida',
+    'entry'       => 'Ingizo la jarida',
     'out-invoice' => 'Ankara ya mteja',
-    'out-refund'  => 'Mteja Noti ya mkopo',
+    'out-refund'  => 'Hati ya mkopo ya mteja',
     'in-invoice'  => 'Bili ya msambazaji',
-    'in-refund'   => 'Msambazaji Noti ya mkopo',
-    'out-receipt' => 'Mauzo Stakabadhi',
-    'in-receipt'  => 'Ununuzi Stakabadhi',
+    'in-refund'   => 'Hati ya mkopo ya msambazaji',
+    'out-receipt' => 'Stakabadhi ya mauzo',
+    'in-receipt'  => 'Stakabadhi ya ununuzi',
 ];

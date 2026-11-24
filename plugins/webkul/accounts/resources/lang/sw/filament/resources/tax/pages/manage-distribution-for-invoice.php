@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Manage Distribution Kwa Ankara',
+        'title' => 'Simamia mgawanyo wa ankara',
     ],
 ];

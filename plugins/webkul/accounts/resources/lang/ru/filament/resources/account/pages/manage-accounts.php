@@ -4,19 +4,19 @@ return [
     'header-actions' => [
         'create' => [
             'notification' => [
-                'title' => 'Счёт создано',
-                'body'  => 'счёт есть создано successfully.',
+                'title' => 'Счёт создан',
+                'body'  => 'Счёт успешно создан.',
             ],
         ],
     ],
 
     'tabs' => [
-        'receivable' => 'К получению',
-        'payable'    => 'К оплате',
+        'receivable' => 'Дебиторская',
+        'payable'    => 'Кредиторская',
         'equity'     => 'Капитал',
         'assets'     => 'Активы',
-        'liability'  => 'Обязательство',
-        'income'     => 'Доход',
+        'liability'  => 'Обязательства',
+        'income'     => 'Доходы',
         'expenses'   => 'Расходы',
     ],
 

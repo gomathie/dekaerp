@@ -2,38 +2,38 @@
 
 return [
     'form' => [
-        'factor-percent'    => 'Factor Asilimia',
-        'factor-ratio'      => 'Factor Ratio',
-        'repartition-type'  => 'Repartition Aina',
-        'document-type'     => 'Hati Aina',
+        'factor-percent'    => 'Asilimia ya kipengele',
+        'factor-ratio'      => 'Uwiano wa kipengele',
+        'repartition-type'  => 'Aina ya mgawanyo',
+        'document-type'     => 'Aina ya hati',
         'account'           => 'Akaunti',
         'tax'               => 'Kodi',
-        'tax-closing-entry' => 'Kodi Closing Entry',
+        'tax-closing-entry' => 'Ingizo la kufunga kodi',
     ],
 
     'table' => [
         'columns' => [
-            'factor-percent'    => 'Factor Asilimia(%)',
+            'factor-percent'    => 'Asilimia ya kipengele (%)',
             'account'           => 'Akaunti',
             'tax'               => 'Kodi',
             'company'           => 'Kampuni',
-            'repartition-type'  => 'Repartition Aina',
-            'document-type'     => 'Hati Aina',
-            'tax-closing-entry' => 'Kodi Closing Entry',
+            'repartition-type'  => 'Aina ya mgawanyo',
+            'document-type'     => 'Aina ya hati',
+            'tax-closing-entry' => 'Ingizo la kufunga kodi',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Kodi Partition imesasishwa',
-                    'body'  => 'kodi partition ina imesasishwa successfully.',
+                    'title' => 'Mgawanyo wa kodi umesasishwa',
+                    'body'  => 'Mgawanyo wa kodi umesasishwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Kodi Partition Term imefutwa',
-                    'body'  => 'kodi Partition term ina imefutwa successfully.',
+                    'title' => 'Mstari wa mgawanyo wa kodi umefutwa',
+                    'body'  => 'Mstari wa mgawanyo wa kodi umefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -41,8 +41,8 @@ return [
         'header-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Kodi Partition Term imeundwa',
-                    'body'  => 'kodi Partition term ina imeundwa successfully.',
+                    'title' => 'Mstari wa mgawanyo wa kodi umeundwa',
+                    'body'  => 'Mstari wa mgawanyo wa kodi umeundwa kikamilifu.',
                 ],
             ],
         ],

@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'mark-as-sent'   => 'Mark kama Imetumwa',
-    'unmark-as-sent' => 'Unmark kama Imetumwa',
+    'mark-as-sent'   => 'Weka alama ya kutumwa',
+    'unmark-as-sent' => 'Ondoa alama ya kutumwa',
 ];

@@ -5,13 +5,13 @@ return [
         'delete' => [
             'notification' => [
                 'title' => 'Bili imefutwa',
-                'body'  => 'Bili ina imefutwa successfully.',
+                'body'  => 'Bili imefutwa kikamilifu.',
             ],
         ],
 
         'reverse' => [
-            'label'         => 'Rudisho',
-            'modal-heading' => 'Unda Rudisho',
+            'label'         => 'Marejesho',
+            'modal-heading' => 'Unda marejesho',
         ],
     ],
 ];

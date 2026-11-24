@@ -5,7 +5,7 @@ return [
 
     'notification' => [
         'error' => [
-            'title' => 'Confirmation Hitilafu',
+            'title' => 'Hitilafu ya uthibitisho',
         ],
     ],
 ];

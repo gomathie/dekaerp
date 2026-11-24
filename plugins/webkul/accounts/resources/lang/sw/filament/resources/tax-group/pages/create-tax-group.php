@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Kodi kundi imeundwa',
-        'body'  => 'kodi kundi ina imeundwa successfully.',
+        'title' => 'Kikundi cha kodi kimeundwa',
+        'body'  => 'Kikundi cha kodi kimeundwa kikamilifu.',
     ],
 ];

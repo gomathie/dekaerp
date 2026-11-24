@@ -4,74 +4,74 @@ return [
     'form' => [
         'tabs' => [
             'journal-entries' => [
-                'title' => 'Uingizaji wa jarida',
+                'title' => 'Maingizo ya jarida',
 
                 'field-set' => [
                     'accounting-information' => [
-                        'title'  => 'Uhasibu Taarifa',
+                        'title'  => 'Taarifa za uhasibu',
                         'fields' => [
-                            'dedicated-credit-note-sequence' => 'Dedicated Noti ya mkopo Mfuatano',
-                            'dedicated-payment-sequence'     => 'Dedicated Malipo Mfuatano',
-                            'sort-code-placeholder'          => 'Ingiza jarida msimbo',
-                            'sort-code'                      => 'Sort',
+                            'dedicated-credit-note-sequence' => 'Mfuatano maalum wa hati za mkopo',
+                            'dedicated-payment-sequence'     => 'Mfuatano maalum wa malipo',
+                            'sort-code-placeholder'          => 'Weka msimbo wa jarida',
+                            'sort-code'                      => 'Mpangilio',
                             'currency'                       => 'Sarafu',
                             'color'                          => 'Rangi',
-                            'default-account'                => 'Chaguo-msingi Akaunti',
-                            'profit-account'                 => 'Faida Akaunti',
-                            'loss-account'                   => 'Hasara Akaunti',
-                            'suspense-account'               => 'Suspense Akaunti',
+                            'default-account'                => 'Akaunti chaguo-msingi',
+                            'profit-account'                 => 'Akaunti ya faida',
+                            'loss-account'                   => 'Akaunti ya hasara',
+                            'suspense-account'               => 'Akaunti ya muda',
                             'bank-account'                   => 'Akaunti ya benki',
                         ],
                     ],
 
                     'bank-account-number' => [
-                        'title' => 'Akaunti ya benki Nambari',
+                        'title' => 'Nambari ya akaunti ya benki',
                     ],
                 ],
             ],
 
             'incoming-payments' => [
-                'title'            => 'Incoming Malipo',
-                'add-action-label' => 'Ongeza Mstari',
+                'title'            => 'Malipo yanayoingia',
+                'add-action-label' => 'Ongeza mstari',
 
                 'fields' => [
-                    'payment-method'             => 'Malipo Method',
-                    'display-name'               => 'Display Jina',
-                    'account-number'             => 'Outstanding Stakabadhi Akaunti',
-                    'relation-notes'             => 'Relation Maelezo',
-                    'relation-notes-placeholder' => 'Ingiza yoyote relation maelezo',
+                    'payment-method'             => 'Njia ya malipo',
+                    'display-name'               => 'Jina la kuonyesha',
+                    'account-number'             => 'Akaunti za stakabadhi ambazo hazijashughulikiwa',
+                    'relation-notes'             => 'Vidokezo vya uhusiano',
+                    'relation-notes-placeholder' => 'Weka maelezo yoyote ya uhusiano',
                 ],
             ],
 
             'outgoing-payments' => [
-                'title'            => 'Outgoing Malipo',
-                'add-action-label' => 'Ongeza Mstari',
+                'title'            => 'Malipo yanayotoka',
+                'add-action-label' => 'Ongeza mstari',
 
                 'fields' => [
-                    'payment-method'             => 'Malipo Method',
-                    'display-name'               => 'Display Jina',
-                    'account-number'             => 'Outstanding Malipo Akaunti',
-                    'relation-notes'             => 'Relation Maelezo',
-                    'relation-notes-placeholder' => 'Ingiza yoyote relation maelezo',
+                    'payment-method'             => 'Njia ya malipo',
+                    'display-name'               => 'Jina la kuonyesha',
+                    'account-number'             => 'Akaunti za malipo ambayo hayajashughulikiwa',
+                    'relation-notes'             => 'Vidokezo vya uhusiano',
+                    'relation-notes-placeholder' => 'Weka maelezo yoyote ya uhusiano',
                 ],
             ],
 
             'advanced-settings' => [
-                'title'  => 'Advanced Mipangilio',
+                'title'  => 'Mipangilio ya kina',
 
                 'fields' => [
-                    'allowed-accounts'       => 'Inaruhusiwa Akaunti',
-                    'control-access'         => 'Control Access',
-                    'payment-communication'  => 'Malipo Mawasiliano',
-                    'auto-check-on-post'     => 'Auto Hundi washa Post',
-                    'communication-type'     => 'Mawasiliano Aina',
-                    'communication-standard' => 'Mawasiliano Standard',
+                    'allowed-accounts'       => 'Akaunti zinazoruhusiwa',
+                    'control-access'         => 'Dhibiti ufikiaji',
+                    'payment-communication'  => 'Maelezo ya malipo',
+                    'auto-check-on-post'     => 'Kagua kiotomatiki wakati wa kurekodi',
+                    'communication-type'     => 'Aina ya maelezo',
+                    'communication-standard' => 'Kiwango cha maelezo',
                 ],
             ],
         ],
 
         'general' => [
-            'title' => 'Jumla Taarifa',
+            'title' => 'Taarifa za jumla',
 
             'fields' => [
                 'name'    => 'Jina',
@@ -87,7 +87,7 @@ return [
             'type'       => 'Aina',
             'code'       => 'Msimbo',
             'currency'   => 'Sarafu',
-            'created-by' => 'Imeundwa Na',
+            'created-by' => 'Imeundwa na',
             'status'     => 'Hali',
         ],
 
@@ -95,13 +95,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Jarida imefutwa',
-                        'body'  => 'jarida ina imefutwa successfully.',
+                        'title' => 'Jarida limefutwa',
+                        'body'  => 'Jarida limefutwa kikamilifu.',
                     ],
 
                     'error' => [
-                        'title' => 'Jarida deletion imeshindwa',
-                        'body'  => 'jarida haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Imeshindwa kufuta jarida',
+                        'body'  => 'Jarida haliwezi kufutwa kwa sababu linatumika kwa sasa.',
                     ],
                 ],
             ],
@@ -111,13 +111,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Jarida imefutwa',
-                        'body'  => 'jarida ina imefutwa successfully.',
+                        'title' => 'Majarida yamefutwa',
+                        'body'  => 'Majarida yamefutwa kikamilifu.',
                     ],
 
                     'error' => [
-                        'title' => 'Majarida deletion imeshindwa',
-                        'body'  => 'majarida haiwezekani kuwa imefutwa kwa sababu wao ni currently katika tumia.',
+                        'title' => 'Imeshindwa kufuta majarida',
+                        'body'  => 'Majarida hayawezi kufutwa kwa sababu yanatumika kwa sasa.',
                     ],
                 ],
             ],
@@ -127,86 +127,86 @@ return [
     'infolist' => [
         'tabs' => [
             'journal-entries' => [
-                'title' => 'Uingizaji wa jarida',
+                'title' => 'Maingizo ya jarida',
 
                 'field-set' => [
                     'accounting-information' => [
-                        'title'   => 'Uhasibu Taarifa',
+                        'title'   => 'Taarifa za uhasibu',
 
                         'entries' => [
-                            'dedicated-credit-note-sequence' => 'Dedicated Noti ya mkopo Mfuatano',
-                            'dedicated-payment-sequence'     => 'Dedicated Malipo Mfuatano',
-                            'sort-code-placeholder'          => 'Ingiza jarida msimbo',
-                            'sort-code'                      => 'Sort',
+                            'dedicated-credit-note-sequence' => 'Mfuatano maalum wa hati za mkopo',
+                            'dedicated-payment-sequence'     => 'Mfuatano maalum wa malipo',
+                            'sort-code-placeholder'          => 'Weka msimbo wa jarida',
+                            'sort-code'                      => 'Mpangilio',
                             'currency'                       => 'Sarafu',
                             'color'                          => 'Rangi',
-                            'default-account'                => 'Chaguo-msingi Akaunti',
-                            'profit-account'                 => 'Faida Akaunti',
-                            'loss-account'                   => 'Hasara Akaunti',
-                            'suspense-account'               => 'Suspense Akaunti',
+                            'default-account'                => 'Akaunti chaguo-msingi',
+                            'profit-account'                 => 'Akaunti ya faida',
+                            'loss-account'                   => 'Akaunti ya hasara',
+                            'suspense-account'               => 'Akaunti ya muda',
                         ],
                     ],
 
                     'bank-account-number' => [
-                        'title' => 'Akaunti ya benki Nambari',
+                        'title' => 'Nambari ya akaunti ya benki',
 
                         'entries' => [
-                            'account-number' => 'Akaunti Nambari',
+                            'account-number' => 'Nambari ya akaunti',
                         ],
                     ],
                 ],
             ],
 
             'incoming-payments' => [
-                'title' => 'Incoming Malipo',
+                'title' => 'Malipo yanayoingia',
 
                 'entries' => [
-                    'payment-method'             => 'Malipo Method',
-                    'display-name'               => 'Display Jina',
-                    'account-number'             => 'Outstanding Stakabadhi Akaunti',
-                    'relation-notes'             => 'Relation Maelezo',
-                    'relation-notes-placeholder' => 'Ingiza yoyote relation maelezo',
+                    'payment-method'             => 'Njia ya malipo',
+                    'display-name'               => 'Jina la kuonyesha',
+                    'account-number'             => 'Akaunti za stakabadhi ambazo hazijashughulikiwa',
+                    'relation-notes'             => 'Vidokezo vya uhusiano',
+                    'relation-notes-placeholder' => 'Weka maelezo yoyote ya uhusiano',
                 ],
             ],
 
             'outgoing-payments' => [
-                'title' => 'Outgoing Malipo',
+                'title' => 'Malipo yanayotoka',
 
                 'entries' => [
-                    'payment-method'             => 'Malipo Method',
-                    'display-name'               => 'Display Jina',
-                    'account-number'             => 'Outstanding Malipo Akaunti',
-                    'relation-notes'             => 'Relation Maelezo',
-                    'relation-notes-placeholder' => 'Ingiza yoyote relation maelezo',
+                    'payment-method'             => 'Njia ya malipo',
+                    'display-name'               => 'Jina la kuonyesha',
+                    'account-number'             => 'Akaunti za malipo ambayo hayajashughulikiwa',
+                    'relation-notes'             => 'Vidokezo vya uhusiano',
+                    'relation-notes-placeholder' => 'Weka maelezo yoyote ya uhusiano',
                 ],
             ],
 
             'advanced-settings' => [
-                'title'   => 'Advanced Mipangilio',
+                'title'   => 'Mipangilio ya kina',
 
                 'allowed-accounts' => [
-                    'title' => 'Inaruhusiwa Akaunti',
+                    'title' => 'Akaunti zinazoruhusiwa',
 
                     'entries' => [
-                        'allowed-accounts'       => 'Inaruhusiwa Akaunti',
-                        'control-access'         => 'Control Access',
-                        'auto-check-on-post'     => 'Auto Hundi washa Post',
+                        'allowed-accounts'       => 'Akaunti zinazoruhusiwa',
+                        'control-access'         => 'Dhibiti ufikiaji',
+                        'auto-check-on-post'     => 'Kagua kiotomatiki wakati wa kurekodi',
                     ],
                 ],
 
                 'payment-communication'  => [
-                    'title' => 'Malipo Mawasiliano',
+                    'title' => 'Maelezo ya malipo',
 
                     'entries' => [
-                        'communication-type'     => 'Mawasiliano Aina',
-                        'communication-standard' => 'Mawasiliano Standard',
+                        'communication-type'     => 'Aina ya maelezo',
+                        'communication-standard' => 'Kiwango cha maelezo',
                     ],
                 ],
             ],
         ],
 
         'general' => [
-            'title' => 'Jumla Taarifa',
+            'title' => 'Taarifa za jumla',
 
             'entries' => [
                 'name'    => 'Jina',

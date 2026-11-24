@@ -10,19 +10,19 @@ return [
         'sections' => [
             'fields' => [
                 'code'                   => 'Код',
-                'account-name'           => 'Счёт Название',
+                'account-name'           => 'Название счёта',
                 'accounting'             => 'Учёт',
-                'account-type'           => 'Счёт Тип',
-                'parent-account'         => 'Parent Счёт',
-                'parent-account-helper'  => 'Выбрать existing счёт до сделать этот sub-счёт.',
-                'default-taxes'          => 'По умолчанию Налоги',
-                'tags'                   => 'Метки',
+                'account-type'           => 'Тип счёта',
+                'parent-account'         => 'Родительский счёт',
+                'parent-account-helper'  => 'Выберите существующий счёт, чтобы сделать этот счёт его субсчётом.',
+                'default-taxes'          => 'Налоги по умолчанию',
+                'tags'                   => 'Теги',
                 'journals'               => 'Журналы',
-                'journals-helper'        => 'Suggested автоматически based вкл. выбрано Счёт Тип. Вы можно override selection.',
+                'journals-helper'        => 'Подбирается автоматически по выбранному типу счёта. Выбор можно изменить.',
                 'currency'               => 'Валюта',
-                'deprecated'             => 'Deprecated',
-                'reconcile'              => 'Разрешить Сверить',
-                'non-trade'              => 'Non Trade',
+                'deprecated'             => 'Устаревший',
+                'reconcile'              => 'Разрешить сверку',
+                'non-trade'              => 'Неторговый',
                 'companies'              => 'Компании',
             ],
         ],
@@ -31,45 +31,45 @@ return [
     'table' => [
         'columns' => [
             'code'           => 'Код',
-            'account-name'   => 'Счёт Название',
+            'account-name'   => 'Название счёта',
             'account-type'   => 'Счёт',
-            'parent-account' => 'Parent Счёт',
+            'parent-account' => 'Родительский счёт',
             'currency'       => 'Валюта',
             'journals'       => 'Журналы',
-            'reconcile'      => 'Разрешить Сверить',
+            'reconcile'      => 'Разрешить сверку',
         ],
 
         'grouping' => [
-            'account-type' => 'Счёт Тип',
+            'account-type' => 'Тип счёта',
         ],
 
         'filters' => [
-            'account-type'     => 'Счёт Тип',
-            'parent-account'   => 'Parent Счёт',
-            'allow-reconcile'  => 'Разрешить Сверить',
+            'account-type'     => 'Тип счёта',
+            'parent-account'   => 'Родительский счёт',
+            'allow-reconcile'  => 'Разрешить сверку',
             'currency'         => 'Валюта',
             'account-journals' => 'Журналы',
-            'non-trade'        => 'Non Trade',
+            'non-trade'        => 'Неторговый',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Счёт обновлено',
-                    'body'  => 'счёт есть обновлено successfully.',
+                    'title' => 'Счёт обновлён',
+                    'body'  => 'Счёт успешно обновлён.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Счёт удалено',
-                        'body'  => 'счёт есть удалено successfully.',
+                        'title' => 'Счёт удалён',
+                        'body'  => 'Счёт успешно удалён.',
                     ],
 
                     'error' => [
-                        'title' => 'Счёт deletion не удалось',
-                        'body'  => 'счёт could не быть удалено потому что это есть associated журнал позиции.',
+                        'title' => 'Не удалось удалить счёт',
+                        'body'  => 'Счёт нельзя удалить: по нему есть записи в журнале.',
                     ],
                 ],
             ],
@@ -79,13 +79,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Счета удалено',
-                        'body'  => 'счета есть удалено successfully.',
+                        'title' => 'Счета удалены',
+                        'body'  => 'Счета успешно удалены.',
                     ],
 
                     'error' => [
-                        'title' => 'Счета deletion не удалось',
-                        'body'  => 'счета could не быть удалено потому что они есть associated журнал позиции.',
+                        'title' => 'Не удалось удалить счета',
+                        'body'  => 'Счета нельзя удалить: по ним есть записи в журнале.',
                     ],
                 ],
             ],
@@ -96,18 +96,18 @@ return [
         'sections' => [
             'entries' => [
                 'code'           => 'Код',
-                'account-name'   => 'Счёт Название',
+                'account-name'   => 'Название счёта',
                 'accounting'     => 'Учёт',
-                'account-type'   => 'Счёт Тип',
-                'parent-account' => 'Parent Счёт',
-                'sub-accounts'   => 'Sub Счета',
-                'default-taxes'  => 'По умолчанию Налоги',
-                'tags'           => 'Метки',
+                'account-type'   => 'Тип счёта',
+                'parent-account' => 'Родительский счёт',
+                'sub-accounts'   => 'Субсчета',
+                'default-taxes'  => 'Налоги по умолчанию',
+                'tags'           => 'Теги',
                 'journals'       => 'Журналы',
                 'currency'       => 'Валюта',
-                'deprecated'     => 'Deprecated',
-                'reconcile'      => 'Сверить',
-                'non-trade'      => 'Non Trade',
+                'deprecated'     => 'Устаревший',
+                'reconcile'      => 'Сверка',
+                'non-trade'      => 'Неторговый',
             ],
         ],
     ],

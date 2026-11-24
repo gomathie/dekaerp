@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Jarida imesasishwa',
-        'body'  => 'jarida ina imesasishwa successfully.',
+        'title' => 'Jarida limesasishwa',
+        'body'  => 'Jarida limesasishwa kikamilifu.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Jarida imefutwa',
-                'body'  => 'jarida ina imefutwa successfully.',
+                'title' => 'Jarida limefutwa',
+                'body'  => 'Jarida limefutwa kikamilifu.',
             ],
         ],
     ],

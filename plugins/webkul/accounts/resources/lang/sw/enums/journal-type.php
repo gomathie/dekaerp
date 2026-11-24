@@ -3,8 +3,8 @@
 return [
     'sale'     => 'Mauzo',
     'purchase' => 'Ununuzi',
-    'cash'     => 'Taslimu',
+    'cash'     => 'Fedha taslimu',
     'bank'     => 'Benki',
-    'credit'   => 'Krediti Card',
-    'general'  => 'Miscellaneous',
+    'credit'   => 'Kadi ya mkopo',
+    'general'  => 'Mengineyo',
 ];

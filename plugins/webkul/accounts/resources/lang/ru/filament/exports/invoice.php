@@ -3,21 +3,21 @@
 return [
     'columns' => [
         'number'           => 'Номер',
-        'state'            => 'Состояние',
+        'state'            => 'Статус',
         'customer'         => 'Клиент',
         'invoice-date'     => 'Дата счёта',
         'due-date'         => 'Срок оплаты',
-        'tax-excluded'     => 'Налог Исключено',
+        'tax-excluded'     => 'Без налога',
         'tax'              => 'Налог',
         'total'            => 'Итого',
-        'amount-due'       => 'Сумма Due',
-        'payment-state'    => 'Оплата Состояние',
-        'checked'          => 'Checked',
-        'accounting-date'  => 'Учёт Дата',
-        'source-document'  => 'Источник Документ',
+        'amount-due'       => 'К оплате',
+        'payment-state'    => 'Статус оплаты',
+        'checked'          => 'Проверен',
+        'accounting-date'  => 'Дата учёта',
+        'source-document'  => 'Исходный документ',
         'reference'        => 'Ссылка',
-        'sales-person'     => 'Продажи Person',
-        'invoice-currency' => 'Счёт Валюта',
+        'sales-person'     => 'Менеджер по продажам',
+        'invoice-currency' => 'Валюта счёта',
     ],
 
     'values' => [
@@ -26,7 +26,7 @@ return [
     ],
 
     'notification' => [
-        'completed' => 'Ваш счёт экспорт есть завершено и :count строка(s) exported.',
-        'failed'    => ':count строка(s) не удалось до экспорт.',
+        'completed' => 'Экспорт счетов завершён, экспортировано строк: :count.',
+        'failed'    => 'Не удалось экспортировать строк: :count.',
     ],
 ];

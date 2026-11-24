@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'biggest-tax' => 'Modify kodi kiasi',
-    'add-invoice' => 'Ongeza Ankara Mstari',
+    'biggest-tax' => 'Rekebisha kiasi cha kodi',
+    'add-invoice' => 'Ongeza mstari wa ankara',
 ];

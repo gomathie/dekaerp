@@ -1,33 +1,33 @@
 <?php
 
 return [
-    'title' => 'Pay',
+    'title' => 'Оплатить',
 
     'paid-now' => [
-        'label'   => 'Оплачен сейчас',
-        'helper'  => 'Saving confirms счёт и записи полный оплата.',
-        'invalid' => 'Этот way до pay нельзя быть используется для этот счёт.',
+        'label'   => 'Оплачено сейчас',
+        'helper'  => 'При сохранении счёт подтверждается и записывается полная оплата.',
+        'invalid' => 'Этот способ оплаты нельзя использовать для этого счёта.',
     ],
 
     'form' => [
-        'more-options' => 'Больше options',
+        'more-options' => 'Другие варианты',
         'fields'       => [
-            'paid-how'               => 'Как был это оплачен?',
-            'new-way'                => 'Новое way до pay (e.g. Wave, Card)',
+            'paid-how'               => 'Как оплачено?',
+            'new-way'                => 'Новый способ оплаты (например, Wave, карта)',
             'journal'                => 'Журнал',
             'amount'                 => 'Сумма',
             'currency'               => 'Валюта',
-            'payment-method-line'    => 'Оплата Method Строка',
-            'payment-date'           => 'Оплата Дата',
-            'recipient-bank-account' => 'Получатель Банковский счёт',
-            'communication'          => 'Memo',
+            'payment-method-line'    => 'Способ оплаты',
+            'payment-date'           => 'Дата платежа',
+            'recipient-bank-account' => 'Банковский счёт получателя',
+            'communication'          => 'Комментарий',
         ],
     ],
 
     'notifications' => [
         'payment-failed' => [
-            'title'      => 'Оплата Не удалось',
-            'plain-body' => 'Этот оплата could не быть prepared. Наш команда есть notified. Пожалуйста попробуйте снова в moment, или контакт support.',
+            'title'      => 'Ошибка платежа',
+            'plain-body' => 'Не удалось подготовить платёж. Наша команда уже уведомлена. Повторите попытку чуть позже или обратитесь в поддержку.',
         ],
     ],
 ];

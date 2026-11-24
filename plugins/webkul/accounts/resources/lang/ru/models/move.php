@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'title'          => 'Переместить',
+    'title'          => 'Документ',
 
     'titles'         => [
         'invoice'     => 'Счёт',
@@ -11,24 +11,24 @@ return [
     ],
 
     'log-attributes' => [
-        'name'                  => 'Счёт Ссылка',
+        'name'                  => 'Ссылка на счёт',
         'reference'             => 'Ссылка',
         'date'                  => 'Дата счёта',
-        'state'                 => 'Счёт Статус',
-        'move-type'             => 'Переместить Тип',
-        'checked'               => 'Checked',
-        'payment-reference'     => 'Оплата Ссылка',
-        'payment-state'         => 'Оплата Статус',
-        'amount-untaxed'        => 'Промежуточный итог',
-        'invoice-source-email'  => 'Источник Эл. почта',
-        'is-move-sent'          => 'Переместить Отправлено',
-        'invoice-origin'        => 'Счёт Происхождение',
+        'state'                 => 'Статус счёта',
+        'move-type'             => 'Тип документа',
+        'checked'               => 'Проверен',
+        'payment-reference'     => 'Назначение платежа',
+        'payment-state'         => 'Статус оплаты',
+        'amount-untaxed'        => 'Подытог',
+        'invoice-source-email'  => 'Эл. почта источника',
+        'is-move-sent'          => 'Документ отправлен',
+        'invoice-origin'        => 'Источник счёта',
         'currency'              => 'Валюта',
-        'partner'               => 'Контрагент',
-        'partner-bank'          => 'Контрагент Банк',
-        'invoice-user'          => 'Счёт Пользователь',
-        'fiscal-position'       => 'Финансовый Должность',
-        'invoice-payment-term'  => 'Счёт Условие оплаты',
-        'invoice-cash-rounding' => 'Счёт Касса Rounding',
+        'partner'               => 'Контакт',
+        'partner-bank'          => 'Банк контакта',
+        'invoice-user'          => 'Ответственный за счёт',
+        'fiscal-position'       => 'Налоговая позиция',
+        'invoice-payment-term'  => 'Условие оплаты счёта',
+        'invoice-cash-rounding' => 'Округление наличных в счёте',
     ],
 ];

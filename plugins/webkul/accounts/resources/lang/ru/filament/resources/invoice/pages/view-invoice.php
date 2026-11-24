@@ -4,14 +4,14 @@ return [
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Счёт удалено',
-                'body'  => 'счёт есть удалено successfully.',
+                'title' => 'Счёт удалён',
+                'body'  => 'Счёт успешно удалён.',
             ],
         ],
 
         'reverse' => [
             'label'         => 'Кредит-нота',
-            'modal-heading' => 'Создать Кредит-нота',
+            'modal-heading' => 'Создать кредит-ноту',
         ],
     ],
 ];

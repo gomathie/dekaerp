@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'currency-change' => 'Wewe haiwezekani badilisha sarafu ya kampuni kama ni tayari jarida vipengee recorded kwa hii. Uhasibu maingizo would hakuna longer kilinganacho kampuni sarafu.',
+    'currency-change' => 'Huwezi kubadilisha sarafu ya kampuni kwa sababu tayari ina vipengee vya jarida vilivyorekodiwa. Maingizo ya uhasibu hayangelingana tena na sarafu ya kampuni.',
 ];

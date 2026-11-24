@@ -4,8 +4,8 @@ return [
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Taslimu rounding imefutwa',
-                'body'  => 'taslimu rounding ina imefutwa successfully.',
+                'title' => 'Ukadiriaji wa fedha taslimu umefutwa',
+                'body'  => 'Ukadiriaji wa fedha taslimu umefutwa kikamilifu.',
             ],
         ],
     ],

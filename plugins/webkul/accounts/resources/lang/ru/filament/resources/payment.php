@@ -1,15 +1,15 @@
 <?php
 
 return [
-    'title' => 'Оплата',
+    'title' => 'Платёж',
 
     'navigation' => [
-        'title' => 'Оплаты',
+        'title' => 'Платежи',
         'group' => 'Счета',
     ],
 
     'global-search' => [
-        'partner' => 'Контрагент',
+        'partner' => 'Контакт',
         'amount'  => 'Сумма',
         'date'    => 'Дата',
     ],
@@ -17,17 +17,17 @@ return [
     'form' => [
         'sections' => [
             'fields' => [
-                'payment-type'          => 'Оплата Тип',
-                'memo'                  => 'Memo',
+                'payment-type'          => 'Тип платежа',
+                'memo'                  => 'Комментарий',
                 'date'                  => 'Дата',
                 'amount'                => 'Сумма',
                 'currency'              => 'Валюта',
-                'payment-method'        => 'Оплата Method',
+                'payment-method'        => 'Способ оплаты',
                 'customer'              => 'Клиент',
                 'vendor'                => 'Поставщик',
                 'journal'               => 'Журнал',
-                'customer-bank-account' => 'Клиент Банковский счёт',
-                'vendor-bank-account'   => 'Поставщик Банковский счёт',
+                'customer-bank-account' => 'Банковский счёт клиента',
+                'vendor-bank-account'   => 'Банковский счёт поставщика',
             ],
         ],
     ],
@@ -37,14 +37,14 @@ return [
             'name'            => 'Название',
             'date'            => 'Дата',
             'journal'         => 'Журнал',
-            'payment-method'  => 'Оплата Method',
-            'partner'         => 'Контрагент',
-            'amount-currency' => 'Сумма (Валюта)',
+            'payment-method'  => 'Способ оплаты',
+            'partner'         => 'Контакт',
+            'amount-currency' => 'Сумма (в валюте)',
             'amount'          => 'Сумма',
-            'state'           => 'Состояние',
+            'state'           => 'Статус',
             'company'         => 'Компания',
             'currency'        => 'Валюта',
-            'created-by'      => 'Создано От',
+            'created-by'      => 'Создал',
             'invoices'        => 'Счёт',
             'unused'          => 'Неиспользованная сумма',
         ],
@@ -57,10 +57,10 @@ return [
             'name'                             => 'Название',
             'company'                          => 'Компания',
             'journal'                          => 'Журнал',
-            'partner'                          => 'Контрагент',
-            'payment-method-line'              => 'Оплата Method Строка',
-            'payment-method'                   => 'Оплата Method',
-            'partner-bank-account'             => 'Контрагент Банковский счёт',
+            'partner'                          => 'Контакт',
+            'payment-method-line'              => 'Способ оплаты (строка)',
+            'payment-method'                   => 'Способ оплаты',
+            'partner-bank-account'             => 'Банковский счёт контакта',
             'created-at'                       => 'Создано',
             'updated-at'                       => 'Обновлено',
         ],
@@ -68,11 +68,11 @@ return [
         'filters' => [
             'company'                          => 'Компания',
             'journal'                          => 'Журнал',
-            'customer-bank-account'            => 'Клиент Банковский счёт',
-            'payment-method'                   => 'Оплата Method',
+            'customer-bank-account'            => 'Банковский счёт клиента',
+            'payment-method'                   => 'Способ оплаты',
             'currency'                         => 'Валюта',
-            'partner'                          => 'Контрагент',
-            'payment-method-line'              => 'Оплата Method Строка',
+            'partner'                          => 'Контакт',
+            'payment-method-line'              => 'Способ оплаты (строка)',
             'created-at'                       => 'Создано',
             'updated-at'                       => 'Обновлено',
             'year'                             => 'Год',
@@ -84,8 +84,8 @@ return [
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Оплата удалено',
-                    'body'  => 'оплата есть удалено successfully.',
+                    'title' => 'Платёж удалён',
+                    'body'  => 'Платёж успешно удалён.',
                 ],
             ],
         ],
@@ -93,8 +93,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Оплаты удалено',
-                    'body'  => 'оплаты есть удалено successfully.',
+                    'title' => 'Платежи удалены',
+                    'body'  => 'Платежи успешно удалены.',
                 ],
             ],
         ],
@@ -109,19 +109,19 @@ return [
     'infolist' => [
         'sections' => [
             'payment-information' => [
-                'title'   => 'Оплата Сведения',
+                'title'   => 'Платёжная информация',
                 'entries' => [
-                    'state'                 => 'Состояние',
+                    'state'                 => 'Статус',
                     'vendor'                => 'Поставщик',
                     'customer'              => 'Клиент',
-                    'payment-type'          => 'Оплата Тип',
+                    'payment-type'          => 'Тип платежа',
                     'journal'               => 'Журнал',
-                    'customer-bank-account' => 'Клиент Банковский счёт',
-                    'vendor-bank-account'   => 'Поставщик Банковский счёт',
+                    'customer-bank-account' => 'Банковский счёт клиента',
+                    'vendor-bank-account'   => 'Банковский счёт поставщика',
                     'amount'                => 'Сумма',
-                    'payment-method'        => 'Оплата Method',
+                    'payment-method'        => 'Способ оплаты',
                     'date'                  => 'Дата',
-                    'memo'                  => 'Memo',
+                    'memo'                  => 'Комментарий',
                 ],
             ],
         ],

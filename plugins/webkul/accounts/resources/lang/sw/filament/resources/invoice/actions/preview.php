@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Preview',
+    'title' => 'Hakiki',
 
     'modal' => [
-        'title' => 'Preview Ankara',
+        'title' => 'Hakiki ankara',
 
         'action' => [
             'close' => [

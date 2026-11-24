@@ -2,11 +2,11 @@
 
 return [
     'tabs' => [
-        'sale'      => 'Продажа',
-        'purchase'  => 'Закупка',
-        'tax-scope' => 'Налог Scope',
-        'goods'     => 'Goods',
+        'sale'      => 'Продажи',
+        'purchase'  => 'Закупки',
+        'tax-scope' => 'Область налога',
+        'goods'     => 'Товары',
         'active'    => 'Активен',
-        'in-active' => 'В активен',
+        'in-active' => 'Неактивен',
     ],
 ];

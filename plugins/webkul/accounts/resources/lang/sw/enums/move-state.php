@@ -2,6 +2,6 @@
 
 return [
     'draft'  => 'Rasimu',
-    'posted' => 'Imewekwa',
+    'posted' => 'Imerekodiwa',
     'cancel' => 'Imeghairiwa',
 ];

@@ -4,8 +4,8 @@ return [
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Malipo imefutwa',
-                'body'  => 'malipo ina imefutwa successfully.',
+                'title' => 'Malipo yamefutwa',
+                'body'  => 'Malipo yamefutwa kikamilifu.',
             ],
         ],
     ],

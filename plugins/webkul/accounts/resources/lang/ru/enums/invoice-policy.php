@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'order'    => 'Ordered Quantities',
-    'delivery' => 'Delivered Quantities',
+    'order'    => 'Заказанное количество',
+    'delivery' => 'Отгруженное количество',
 ];

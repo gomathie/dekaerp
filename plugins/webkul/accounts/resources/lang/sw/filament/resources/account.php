@@ -10,20 +10,20 @@ return [
         'sections' => [
             'fields' => [
                 'code'                   => 'Msimbo',
-                'account-name'           => 'Akaunti Jina',
+                'account-name'           => 'Jina la akaunti',
                 'accounting'             => 'Uhasibu',
-                'account-type'           => 'Akaunti Aina',
-                'parent-account'         => 'Parent Akaunti',
-                'parent-account-helper'  => 'Chagua existing akaunti hadi fanya hii sub-akaunti.',
-                'default-taxes'          => 'Chaguo-msingi Kodi',
+                'account-type'           => 'Aina ya akaunti',
+                'parent-account'         => 'Akaunti mzazi',
+                'parent-account-helper'  => 'Chagua akaunti iliyopo ili hii iwe akaunti ndogo yake.',
+                'default-taxes'          => 'Kodi chaguo-msingi',
                 'tags'                   => 'Lebo',
                 'journals'               => 'Majarida',
-                'journals-helper'        => 'Suggested kiotomatiki based washa imechaguliwa Akaunti Aina. Wewe unaweza override selection.',
+                'journals-helper'        => 'Hupendekezwa kiotomatiki kulingana na aina ya akaunti iliyochaguliwa. Unaweza kubadilisha chaguo.',
                 'currency'               => 'Sarafu',
-                'deprecated'             => 'Deprecated',
-                'reconcile'              => 'Ruhusu Patanisha',
-                'non-trade'              => 'Non Trade',
-                'companies'              => 'Makampuni',
+                'deprecated'             => 'Imesitishwa',
+                'reconcile'              => 'Ruhusu upatanisho',
+                'non-trade'              => 'Isiyo ya biashara',
+                'companies'              => 'Kampuni',
             ],
         ],
     ],
@@ -31,32 +31,32 @@ return [
     'table' => [
         'columns' => [
             'code'           => 'Msimbo',
-            'account-name'   => 'Akaunti Jina',
+            'account-name'   => 'Jina la akaunti',
             'account-type'   => 'Akaunti',
-            'parent-account' => 'Parent Akaunti',
+            'parent-account' => 'Akaunti mzazi',
             'currency'       => 'Sarafu',
             'journals'       => 'Majarida',
-            'reconcile'      => 'Ruhusu Patanisha',
+            'reconcile'      => 'Ruhusu upatanisho',
         ],
 
         'grouping' => [
-            'account-type' => 'Akaunti Aina',
+            'account-type' => 'Aina ya akaunti',
         ],
 
         'filters' => [
-            'account-type'     => 'Akaunti Aina',
-            'parent-account'   => 'Parent Akaunti',
-            'allow-reconcile'  => 'Ruhusu Patanisha',
+            'account-type'     => 'Aina ya akaunti',
+            'parent-account'   => 'Akaunti mzazi',
+            'allow-reconcile'  => 'Ruhusu upatanisho',
             'currency'         => 'Sarafu',
             'account-journals' => 'Majarida',
-            'non-trade'        => 'Non Trade',
+            'non-trade'        => 'Isiyo ya biashara',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
                     'title' => 'Akaunti imesasishwa',
-                    'body'  => 'akaunti ina imesasishwa successfully.',
+                    'body'  => 'Akaunti imesasishwa kikamilifu.',
                 ],
             ],
 
@@ -64,12 +64,12 @@ return [
                 'notification' => [
                     'success' => [
                         'title' => 'Akaunti imefutwa',
-                        'body'  => 'akaunti ina imefutwa successfully.',
+                        'body'  => 'Akaunti imefutwa kikamilifu.',
                     ],
 
                     'error' => [
-                        'title' => 'Akaunti deletion imeshindwa',
-                        'body'  => 'akaunti could si kuwa imefutwa kwa sababu hii ina associated jarida vipengee.',
+                        'title' => 'Imeshindwa kufuta akaunti',
+                        'body'  => 'Akaunti haikuweza kufutwa kwa sababu ina vipengee vya jarida vinavyohusiana nayo.',
                     ],
                 ],
             ],
@@ -79,13 +79,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Akaunti imefutwa',
-                        'body'  => 'akaunti ina imefutwa successfully.',
+                        'title' => 'Akaunti zimefutwa',
+                        'body'  => 'Akaunti zimefutwa kikamilifu.',
                     ],
 
                     'error' => [
-                        'title' => 'Akaunti deletion imeshindwa',
-                        'body'  => 'akaunti could si kuwa imefutwa kwa sababu wao ina associated jarida vipengee.',
+                        'title' => 'Imeshindwa kufuta akaunti',
+                        'body'  => 'Akaunti hazikuweza kufutwa kwa sababu zina vipengee vya jarida vinavyohusiana nazo.',
                     ],
                 ],
             ],
@@ -96,18 +96,18 @@ return [
         'sections' => [
             'entries' => [
                 'code'           => 'Msimbo',
-                'account-name'   => 'Akaunti Jina',
+                'account-name'   => 'Jina la akaunti',
                 'accounting'     => 'Uhasibu',
-                'account-type'   => 'Akaunti Aina',
-                'parent-account' => 'Parent Akaunti',
-                'sub-accounts'   => 'Sub Akaunti',
-                'default-taxes'  => 'Chaguo-msingi Kodi',
+                'account-type'   => 'Aina ya akaunti',
+                'parent-account' => 'Akaunti mzazi',
+                'sub-accounts'   => 'Akaunti ndogo',
+                'default-taxes'  => 'Kodi chaguo-msingi',
                 'tags'           => 'Lebo',
                 'journals'       => 'Majarida',
                 'currency'       => 'Sarafu',
-                'deprecated'     => 'Deprecated',
-                'reconcile'      => 'Patanisha',
-                'non-trade'      => 'Non Trade',
+                'deprecated'     => 'Imesitishwa',
+                'reconcile'      => 'Upatanisho',
+                'non-trade'      => 'Isiyo ya biashara',
             ],
         ],
     ],

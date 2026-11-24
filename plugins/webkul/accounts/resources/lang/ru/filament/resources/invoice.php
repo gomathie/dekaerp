@@ -20,7 +20,7 @@ return [
                 'title'  => 'Общее',
 
                 'fields' => [
-                    'customer-invoice' => 'Счёт клиенту',
+                    'customer-invoice' => 'Счёт клиента',
                     'customer'         => 'Клиент',
                     'invoice-date'     => 'Дата счёта',
                     'due-date'         => 'Срок оплаты',
@@ -33,8 +33,8 @@ return [
 
         'notifications' => [
             'missing-rate' => [
-                'title' => 'Нет обменного курса',
-                'body'  => 'Нет обменного курса между :from и :to, поэтому цены не пересчитаны. Добавьте курс в разделе Конфигурация → Валюты или введите цены вручную.',
+                'title' => 'Нет курса обмена',
+                'body'  => 'Нет курса обмена между :from и :to, поэтому цены не пересчитаны. Добавьте курс в разделе Конфигурация → Валюты или введите цены вручную.',
             ],
         ],
 
@@ -46,33 +46,33 @@ return [
                     'products' => [
                         'title'       => 'Товары',
                         'add-product' => 'Добавить товар',
-                        'price-hint'  => 'Цена, изменённая здесь, действует только для этого счёта. У товара остаётся своя цена.',
+                        'price-hint'  => 'Цена за единицу, изменённая здесь, действует только для этого счёта. Цена товара не меняется.',
 
                         'columns' => [
                             'product'             => 'Товар',
                             'quantity'            => 'Количество',
-                            'unit'                => 'Единица',
+                            'unit'                => 'Ед. изм.',
                             'taxes'               => 'Налоги',
                             'discount-percentage' => 'Скидка',
-                            'unit-price'          => 'Цена за единицу',
-                            'sub-total'           => 'Промежуточный итог',
+                            'unit-price'          => 'Цена за ед.',
+                            'sub-total'           => 'Подытог',
                         ],
 
                         'fields' => [
                             'product'             => 'Товар',
                             'quantity'            => 'Количество',
-                            'unit'                => 'Единица',
+                            'unit'                => 'Ед. изм.',
                             'taxes'               => 'Налоги',
-                            'discount-percentage' => 'Скидка',
-                            'unit-price'          => 'Цена за единицу',
-                            'sub-total'           => 'Промежуточный итог',
+                            'discount-percentage' => 'Скидка, %',
+                            'unit-price'          => 'Цена за ед.',
+                            'sub-total'           => 'Подытог',
                         ],
                     ],
                 ],
             ],
 
             'other-information' => [
-                'title'    => 'Другое Сведения',
+                'title'    => 'Прочая информация',
 
                 'fieldset' => [
                     'invoice' => [
@@ -80,10 +80,10 @@ return [
 
                         'fields' => [
                             'customer-reference' => 'Ссылка клиента',
-                            'sales-person'       => 'Продажи Person',
-                            'payment-reference'  => 'Оплата Ссылка',
-                            'recipient-bank'     => 'Получатель Банк',
-                            'delivery-date'      => 'Доставка Дата',
+                            'sales-person'       => 'Менеджер по продажам',
+                            'payment-reference'  => 'Назначение платежа',
+                            'recipient-bank'     => 'Банк получателя',
+                            'delivery-date'      => 'Дата отгрузки',
                         ],
                     ],
 
@@ -92,22 +92,22 @@ return [
 
                         'fields' => [
                             'company'                 => 'Компания',
-                            'incoterm'                => 'Incoterm',
-                            'incoterm-location'       => 'Incoterm Место',
-                            'fiscal-position'         => 'Финансовый Должность',
-                            'fiscal-position-tooltip' => 'Финансовый positions используется до adapt налоги и счета based вкл. клиент место.',
-                            'cash-rounding'           => 'Касса Rounding Method',
-                            'cash-rounding-tooltip'   => 'Specifies smallest касса-к оплате единица валюта.',
-                            'payment-method'          => 'Оплата Method',
-                            'auto-post'               => 'Auto Post',
-                            'checked'                 => 'Checked',
+                            'incoterm'                => 'Инкотермс',
+                            'incoterm-location'       => 'Место по Инкотермс',
+                            'fiscal-position'         => 'Налоговая позиция',
+                            'fiscal-position-tooltip' => 'Налоговые позиции адаптируют налоги и счета к местонахождению клиента.',
+                            'cash-rounding'           => 'Способ округления наличных',
+                            'cash-rounding-tooltip'   => 'Наименьшая денежная единица валюты, которую можно оплатить наличными.',
+                            'payment-method'          => 'Способ оплаты',
+                            'auto-post'               => 'Автопроведение',
+                            'checked'                 => 'Проверен',
                         ],
                     ],
                 ],
             ],
 
             'term-and-conditions' => [
-                'title' => 'Term & Conditions',
+                'title' => 'Условия',
             ],
         ],
     ],
@@ -116,22 +116,22 @@ return [
         'total'   => 'Итого',
         'columns' => [
             'number'           => 'Номер',
-            'state'            => 'Состояние',
-            'created-by'       => 'Создано От',
+            'state'            => 'Статус',
+            'created-by'       => 'Создал',
             'customer'         => 'Клиент',
             'invoice-date'     => 'Дата счёта',
-            'checked'          => 'Checked',
+            'checked'          => 'Проверен',
             'accounting-date'  => 'Учёт',
             'due-date'         => 'Срок оплаты',
-            'source-document'  => 'Источник Документ',
+            'source-document'  => 'Исходный документ',
             'reference'        => 'Ссылка',
-            'sales-person'     => 'Продажи Person',
-            'tax-excluded'     => 'Налог Исключено',
+            'sales-person'     => 'Менеджер по продажам',
+            'tax-excluded'     => 'Без налога',
             'tax'              => 'Налог',
             'total'            => 'Итого',
             'amount-paid'      => 'Оплачено',
-            'amount-due'       => 'Сумма Due',
-            'invoice-currency' => 'Счёт Валюта',
+            'amount-due'       => 'К оплате',
+            'invoice-currency' => 'Валюта счёта',
         ],
 
         'summarizers' => [
@@ -140,13 +140,13 @@ return [
 
         'groups' => [
             'name'                         => 'Название',
-            'invoice-partner-display-name' => 'Счёт Контрагент Display Название',
+            'invoice-partner-display-name' => 'Отображаемое имя контакта',
             'invoice-date'                 => 'Дата счёта',
-            'checked'                      => 'Checked',
+            'checked'                      => 'Проверен',
             'date'                         => 'Дата',
-            'invoice-due-date'             => 'Счёт Срок оплаты',
-            'invoice-origin'               => 'Счёт Происхождение',
-            'sales-person'                 => 'Продажи Person',
+            'invoice-due-date'             => 'Срок оплаты счёта',
+            'invoice-origin'               => 'Источник счёта',
+            'sales-person'                 => 'Менеджер по продажам',
             'currency'                     => 'Валюта',
             'created-at'                   => 'Создано',
             'updated-at'                   => 'Обновлено',
@@ -154,27 +154,27 @@ return [
 
         'filters' => [
             'number'                       => 'Номер',
-            'invoice-partner-display-name' => 'Счёт Контрагент Display Название',
+            'invoice-partner-display-name' => 'Отображаемое имя контакта',
             'invoice-date'                 => 'Дата счёта',
-            'invoice-due-date'             => 'Счёт Срок оплаты',
-            'invoice-origin'               => 'Счёт Происхождение',
+            'invoice-due-date'             => 'Срок оплаты счёта',
+            'invoice-origin'               => 'Источник счёта',
             'reference'                    => 'Ссылка',
-            'payment-reference'            => 'Оплата Ссылка',
-            'narration'                    => 'Narration',
-            'partner'                      => 'Контрагент',
+            'payment-reference'            => 'Назначение платежа',
+            'narration'                    => 'Комментарий',
+            'partner'                      => 'Контакт',
             'journal'                      => 'Журнал',
-            'fiscal-position'              => 'Финансовый Должность',
+            'fiscal-position'              => 'Налоговая позиция',
             'currency'                     => 'Валюта',
             'company'                      => 'Компания',
-            'date'                         => 'Учёт Дата',
-            'delivery-date'                => 'Доставка Дата',
-            'amount-untaxed'               => 'Без налога Сумма',
-            'amount-tax'                   => 'Налог Сумма',
-            'amount-total'                 => 'Итого Сумма',
-            'amount-residual'              => 'Сумма Due',
-            'checked'                      => 'Checked',
-            'posted-before'                => 'Проведён До',
-            'is-move-sent'                 => 'Отправлено',
+            'date'                         => 'Дата учёта',
+            'delivery-date'                => 'Дата отгрузки',
+            'amount-untaxed'               => 'Сумма без налога',
+            'amount-tax'                   => 'Сумма налога',
+            'amount-total'                 => 'Общая сумма',
+            'amount-residual'              => 'К оплате',
+            'checked'                      => 'Проверен',
+            'posted-before'                => 'Ранее проводился',
+            'is-move-sent'                 => 'Отправлен',
             'created-at'                   => 'Создано',
             'updated-at'                   => 'Обновлено',
         ],
@@ -182,8 +182,8 @@ return [
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Оплата удалено',
-                    'body'  => 'оплата есть удалено successfully.',
+                    'title' => 'Платёж удалён',
+                    'body'  => 'Платёж успешно удалён.',
                 ],
             ],
         ],
@@ -191,8 +191,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Оплаты удалено',
-                    'body'  => 'оплаты есть удалено successfully.',
+                    'title' => 'Платежи удалены',
+                    'body'  => 'Платежи успешно удалены.',
                 ],
             ],
         ],
@@ -209,7 +209,7 @@ return [
             'general' => [
                 'title'   => 'Общее',
                 'entries' => [
-                    'customer-invoice' => 'Счёт клиенту',
+                    'customer-invoice' => 'Счёт клиента',
                     'customer'         => 'Клиент',
                     'invoice-date'     => 'Дата счёта',
                     'due-date'         => 'Срок оплаты',
@@ -231,9 +231,9 @@ return [
                             'quantity'            => 'Количество',
                             'unit'                => 'Единица измерения',
                             'taxes'               => 'Налоги',
-                            'discount-percentage' => 'Скидка',
-                            'unit-price'          => 'Цена за единицу',
-                            'sub-total'           => 'Промежуточный итог',
+                            'discount-percentage' => 'Скидка, %',
+                            'unit-price'          => 'Цена за ед.',
+                            'sub-total'           => 'Подытог',
                             'total'               => 'Итого',
                         ],
                     ],
@@ -241,7 +241,7 @@ return [
             ],
 
             'other-information' => [
-                'title'    => 'Другое Сведения',
+                'title'    => 'Прочая информация',
 
                 'fieldset' => [
                     'invoice' => [
@@ -249,10 +249,10 @@ return [
 
                         'entries' => [
                             'customer-reference' => 'Ссылка клиента',
-                            'sales-person'       => 'Продажи Person',
-                            'payment-reference'  => 'Оплата Ссылка',
-                            'recipient-bank'     => 'Получатель Банк',
-                            'delivery-date'      => 'Доставка Дата',
+                            'sales-person'       => 'Менеджер по продажам',
+                            'payment-reference'  => 'Назначение платежа',
+                            'recipient-bank'     => 'Банк получателя',
+                            'delivery-date'      => 'Дата отгрузки',
                         ],
                     ],
 
@@ -261,30 +261,30 @@ return [
 
                         'entries' => [
                             'company'           => 'Компания',
-                            'incoterm'          => 'Incoterm',
-                            'incoterm-location' => 'Incoterm Место',
-                            'payment-method'    => 'Оплата Method',
-                            'cash-rounding'     => 'Касса Rounding Method',
-                            'fiscal-position'   => 'Финансовый Должность',
-                            'auto-post'         => 'Auto Post',
-                            'checked'           => 'Checked',
+                            'incoterm'          => 'Инкотермс',
+                            'incoterm-location' => 'Место по Инкотермс',
+                            'payment-method'    => 'Способ оплаты',
+                            'cash-rounding'     => 'Способ округления наличных',
+                            'fiscal-position'   => 'Налоговая позиция',
+                            'auto-post'         => 'Автопроведение',
+                            'checked'           => 'Проверен',
                         ],
                     ],
                 ],
             ],
 
             'term-and-conditions' => [
-                'title' => 'Term & Conditions',
+                'title' => 'Условия',
             ],
 
             'journal-items' => [
-                'title' => 'Журнал Позиции',
+                'title' => 'Строки журнала',
 
                 'repeater' => [
                     'entries' => [
                         'account'  => 'Счёт',
-                        'partner'  => 'Контрагент',
-                        'label'    => 'Подпись',
+                        'partner'  => 'Контакт',
+                        'label'    => 'Описание',
                         'currency' => 'Валюта',
                         'due-date' => 'Срок оплаты',
                         'taxes'    => 'Налоги',
@@ -303,7 +303,7 @@ return [
             ],
 
             'unreconcile' => [
-                'label' => 'Unlink',
+                'label' => 'Отвязать',
             ],
         ],
     ],

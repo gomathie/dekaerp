@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'create-bank-account' => 'Unda Akaunti ya benki',
+    'create-bank-account' => 'Unda akaunti ya benki',
 ];

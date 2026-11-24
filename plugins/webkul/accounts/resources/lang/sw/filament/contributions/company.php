@@ -2,13 +2,13 @@
 
 return [
     'base-currency' => [
-        'title'       => 'Base sarafu',
-        'description' => 'Badilisha uhasibu sarafu ya kampuni hiyo tayari ina maingizo. Super Msimamizi tu, na recorded katika shughuli log.',
-        'action'      => 'Badilisha base sarafu',
-        'warning'     => 'Hii kampuni ina :count imewekwa maingizo. Wao weka yao yake sarafu na kiwango, lakini ripoti kutoka sasa washa tumia mpya base sarafu. badilisha, yako jina na yako sababu ni recorded.',
-        'changed'     => 'Base sarafu imebadilishwa',
+        'title'       => 'Sarafu ya msingi',
+        'description' => 'Badilisha sarafu ya uhasibu ya kampuni ambayo tayari ina maingizo. Ni kwa Msimamizi Mkuu pekee, na hurekodiwa kwenye kumbukumbu za shughuli.',
+        'action'      => 'Badilisha sarafu ya msingi',
+        'warning'     => 'Kampuni hii ina maingizo :count yaliyorekodiwa. Yatabaki na sarafu na kiwango chake, lakini ripoti kuanzia sasa zitatumia sarafu mpya ya msingi. Mabadiliko, jina lako na sababu yako hurekodiwa.',
+        'changed'     => 'Sarafu ya msingi imebadilishwa',
         'fields'      => [
-            'currency' => 'Mpya base sarafu',
+            'currency' => 'Sarafu mpya ya msingi',
             'reason'   => 'Sababu',
         ],
     ],
@@ -16,7 +16,7 @@ return [
     'sale-currency' => [
         'title'       => 'Swali la sarafu kwenye ankara mpya',
         'description' => 'Kwa kampuni zinazouza kwa sarafu zaidi ya moja.',
-        'field'       => 'Uliza kila mauzo yamefanyika kwa sarafu gani',
-        'helper'      => 'Ankara mpya kwanza inauliza sarafu na, kwa sarafu ya kigeni, inathibitisha kiwango cha ubadilishaji cha siku. Huulizwa tu kampuni ikiwa na sarafu zaidi ya moja.',
+        'field'       => 'Uliza kila mauzo ni kwa sarafu gani',
+        'helper'      => 'Ankara mpya huuliza kwanza sarafu na, kwa sarafu ya kigeni, huthibitisha kiwango cha ubadilishaji cha siku hiyo. Huulizwa tu ikiwa kampuni ina sarafu zaidi ya moja.',
     ],
 ];

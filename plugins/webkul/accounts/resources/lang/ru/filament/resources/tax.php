@@ -5,51 +5,51 @@ return [
         'sections' => [
             'fields' => [
                 'name'                         => 'Название',
-                'tax-type'                     => 'Налог Тип',
-                'tax-computation'              => 'Налог Computation',
-                'tax-scope'                    => 'Налог Scope',
+                'tax-type'                     => 'Тип налога',
+                'tax-computation'              => 'Расчёт налога',
+                'tax-scope'                    => 'Область налога',
                 'status'                       => 'Статус',
                 'amount'                       => 'Сумма',
-                'formula'                      => 'Formula',
-                'formula-helper-text'          => 'Arithmetic только: numbers, + - * / ( ), functions :functions и эти variables: :variables',
-                'children-taxes'               => 'Children Налоги',
-                'children-taxes-helper-text'   => 'сумма этот налог sum его children налоги.',
-                'children-taxes-type-mismatch' => 'children налоги нужно быть :type налог тип или есть нет налог тип. Эти не: :taxes',
+                'formula'                      => 'Формула',
+                'formula-helper-text'          => 'Только арифметика: числа, + - * / ( ), функции :functions и переменные: :variables',
+                'children-taxes'               => 'Дочерние налоги',
+                'children-taxes-helper-text'   => 'Сумма этого налога равна сумме его дочерних налогов.',
+                'children-taxes-type-mismatch' => 'Дочерние налоги должны иметь тип :type или не иметь типа. Эти не подходят: :taxes',
             ],
 
             'repeater' => [
                 'invoice-repartition-lines' => [
-                    'label' => 'Счёт Repartition Строки',
+                    'label' => 'Строки распределения для счетов',
                 ],
 
                 'refund-repartition-lines' => [
-                    'label' => 'Возврат Repartition Строки',
+                    'label' => 'Строки распределения для возвратов',
                 ],
 
                 'fields' => [
                     'type'           => 'Тип',
-                    'factor-percent' => 'Factor %',
+                    'factor-percent' => 'Коэффициент, %',
                     'account'        => 'Счёт',
                 ],
             ],
 
             'field-set' => [
                 'advanced-options' => [
-                    'title' => 'Advanced Options',
+                    'title' => 'Дополнительные параметры',
 
                     'fields' => [
-                        'invoice-label'       => 'Счёт подпись',
-                        'tax-group'           => 'Налог Группа',
+                        'invoice-label'       => 'Название в счёте',
+                        'tax-group'           => 'Группа налогов',
                         'country'             => 'Страна',
-                        'include-in-price'    => 'Включено в Цена',
-                        'include-base-amount' => 'Affect Base Subsequent Налоги',
-                        'is-base-affected'    => 'Base Affected от Предыдущий Налоги',
+                        'include-in-price'    => 'Включён в цену',
+                        'include-base-amount' => 'Влияет на базу следующих налогов',
+                        'is-base-affected'    => 'База зависит от предыдущих налогов',
                     ],
                 ],
 
                 'fields' => [
                     'description' => 'Описание',
-                    'legal-notes' => 'Legal Заметки',
+                    'legal-notes' => 'Юридические примечания',
                 ],
             ],
         ],
@@ -58,44 +58,44 @@ return [
     'table' => [
         'columns' => [
             'name'                   => 'Название',
-            'amount-type'            => 'Сумма Тип',
+            'amount-type'            => 'Тип суммы',
             'company'                => 'Компания',
-            'tax-group'              => 'Налог Группа',
+            'tax-group'              => 'Группа налогов',
             'country'                => 'Страна',
-            'tax-type'               => 'Налог Тип',
-            'tax-scope'              => 'Налог Scope',
-            'amount-type'            => 'Сумма Тип',
-            'invoice-label'          => 'Счёт Подпись',
-            'tax-exigibility'        => 'Налог Exigibility',
-            'price-include-override' => 'Цена Include Override',
+            'tax-type'               => 'Тип налога',
+            'tax-scope'              => 'Область налога',
+            'amount-type'            => 'Тип суммы',
+            'invoice-label'          => 'Название в счёте',
+            'tax-exigibility'        => 'Момент признания налога',
+            'price-include-override' => 'Переопределение включения в цену',
             'amount'                 => 'Сумма',
             'status'                 => 'Статус',
-            'include-base-amount'    => 'Include Base Сумма',
-            'is-base-affected'       => 'Base Affected',
+            'include-base-amount'    => 'Включать в базу',
+            'is-base-affected'       => 'База зависит',
         ],
 
         'groups' => [
             'name'         => 'Название',
             'company'      => 'Компания',
-            'tax-group'    => 'Налог Группа',
+            'tax-group'    => 'Группа налогов',
             'country'      => 'Страна',
-            'created-by'   => 'Создано От',
-            'type-tax-use' => 'Тип Налог Использовать',
-            'tax-scope'    => 'Налог Scope',
-            'amount-type'  => 'Сумма Тип',
+            'created-by'   => 'Создал',
+            'type-tax-use' => 'Применение налога',
+            'tax-scope'    => 'Область налога',
+            'amount-type'  => 'Тип суммы',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Налог удалено',
-                        'body'  => 'Налог есть удалено successfully.',
+                        'title' => 'Налог удалён',
+                        'body'  => 'Налог успешно удалён.',
                     ],
 
                     'error' => [
-                        'title' => 'Налог could не быть удалено',
-                        'body'  => 'налог нельзя быть удалено потому что это currently в использовать.',
+                        'title' => 'Не удалось удалить налог',
+                        'body'  => 'Налог нельзя удалить: он сейчас используется.',
                     ],
                 ],
             ],
@@ -105,13 +105,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Налоги удалено',
-                        'body'  => 'налоги есть удалено successfully.',
+                        'title' => 'Налоги удалены',
+                        'body'  => 'Налоги успешно удалены.',
                     ],
 
                     'error' => [
-                        'title' => 'Налоги could не быть удалено',
-                        'body'  => 'налоги нельзя быть удалено потому что они currently в использовать.',
+                        'title' => 'Не удалось удалить налоги',
+                        'body'  => 'Налоги нельзя удалить: они сейчас используются.',
                     ],
                 ],
             ],
@@ -121,7 +121,7 @@ return [
             'create' => [
                 'notifications' => [
                     'invalid-repartition-lines' => [
-                        'title' => 'Недействительно Repartition Строки',
+                        'title' => 'Неверные строки распределения',
                     ],
                 ],
             ],
@@ -129,7 +129,7 @@ return [
             'edit' => [
                 'notifications' => [
                     'invalid-repartition-lines' => [
-                        'title' => 'Недействительно Repartition Строки',
+                        'title' => 'Неверные строки распределения',
                     ],
                 ],
             ],
@@ -140,34 +140,34 @@ return [
         'sections' => [
             'entries' => [
                 'name'            => 'Название',
-                'tax-type'        => 'Налог Тип',
-                'tax-computation' => 'Налог Computation',
-                'tax-scope'       => 'Налог Scope',
+                'tax-type'        => 'Тип налога',
+                'tax-computation' => 'Расчёт налога',
+                'tax-scope'       => 'Область налога',
                 'status'          => 'Статус',
                 'amount'          => 'Сумма',
-                'formula'         => 'Formula',
-                'children-taxes'  => 'Children Налоги',
+                'formula'         => 'Формула',
+                'children-taxes'  => 'Дочерние налоги',
             ],
 
             'field-set' => [
                 'advanced-options' => [
-                    'title' => 'Advanced Options',
+                    'title' => 'Дополнительные параметры',
 
                     'entries' => [
-                        'invoice-label'       => 'Счёт подпись',
-                        'tax-group'           => 'Налог Группа',
+                        'invoice-label'       => 'Название в счёте',
+                        'tax-group'           => 'Группа налогов',
                         'country'             => 'Страна',
-                        'include-in-price'    => 'Include в цена',
-                        'include-base-amount' => 'Include base сумма',
-                        'is-base-affected'    => 'base affected',
+                        'include-in-price'    => 'Включать в цену',
+                        'include-base-amount' => 'Включать в базу',
+                        'is-base-affected'    => 'База зависит',
                     ],
                 ],
 
                 'description-and-legal-notes' => [
-                    'title'   => 'Описание & Счёт Legal Заметки',
+                    'title'   => 'Описание и юридические примечания в счёте',
                     'entries' => [
                         'description' => 'Описание',
-                        'legal-notes' => 'Legal Заметки',
+                        'legal-notes' => 'Юридические примечания',
                     ],
                 ],
             ],

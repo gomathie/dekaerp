@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Контрагенты',
+    'title' => 'Контакты',
 
     'navigation' => [
-        'title' => 'Контрагенты',
+        'title' => 'Контакты',
     ],
 
     'form' => [
@@ -15,71 +15,71 @@ return [
                         'title' => 'Продажи',
 
                         'fields' => [
-                            'sales-person'            => 'Продажи Person',
+                            'sales-person'            => 'Менеджер по продажам',
                             'payment-terms'           => 'Условия оплаты',
-                            'payment-method'          => 'Оплата Method',
+                            'payment-method'          => 'Способ оплаты',
                             'default-currency'        => 'Валюта по умолчанию',
-                            'default-currency-helper' => 'Счета, счета поставщиков и заказы на закупку для этого контрагента открываются в этой валюте. Оставьте пустым, чтобы использовать обычную валюту.',
+                            'default-currency-helper' => 'Счета, счета поставщиков и заказы на закупку для этого контакта открываются в этой валюте. Оставьте пустым, чтобы использовать обычную валюту.',
                         ],
                     ],
 
                     'purchase' => [
-                        'title' => 'Закупка',
+                        'title' => 'Закупки',
 
                         'fields' => [
                             'payment-terms'  => 'Условия оплаты',
-                            'payment-method' => 'Оплата Method',
+                            'payment-method' => 'Способ оплаты',
                         ],
                     ],
 
                     'fiscal-information' => [
-                        'title' => 'Финансовый Сведения',
+                        'title' => 'Налоговые сведения',
 
                         'fields' => [
-                            'fiscal-position'    => 'Финансовый Должность',
+                            'fiscal-position'    => 'Налоговая позиция',
                         ],
                     ],
                 ],
             ],
 
             'invoicing' => [
-                'title'  => 'Invoicing',
+                'title'  => 'Выставление счетов',
 
                 'fieldsets' => [
                     'customer-invoices' => [
-                        'title' => 'Счёт клиентуs',
+                        'title' => 'Счета клиентов',
 
                         'fields' => [
-                            'invoice-sending-method'   => 'Счёт Sending Method',
-                            'invoice-edi-format-store' => 'eInvoice Формат',
-                            'peppol-eas'               => 'Peppol Адрес',
-                            'endpoint'                 => 'Endpoint',
+                            'invoice-sending-method'   => 'Способ отправки счетов',
+                            'invoice-edi-format-store' => 'Формат электронного счёта',
+                            'peppol-eas'               => 'Адрес Peppol',
+                            'endpoint'                 => 'Конечная точка',
                         ],
                     ],
 
                     'accounting-entries' => [
-                        'title' => 'Учёт Проводки',
+                        'title' => 'Учётные проводки',
 
                         'fields' => [
-                            'account-receivable' => 'Счёт К получению',
-                            'account-payable'    => 'Счёт К оплате',
+                            'account-receivable' => 'Счёт дебиторской задолженности',
+                            'account-payable'    => 'Счёт кредиторской задолженности',
                         ],
                     ],
 
                     'automation' => [
-                        'title' => 'Automation',
+                        'title' => 'Автоматизация',
 
                         'fields' => [
-                            'auto-post-bills'                => 'Auto Post Счета поставщиков',
-                            'ignore-abnormal-invoice-amount' => 'Ignore Abnormal Счёт Сумма',
-                            'ignore-abnormal-invoice-date'   => 'Ignore Abnormal Дата счёта',
+                            'auto-post-bills'                => 'Автопроведение счетов поставщиков',
+                            'ignore-abnormal-invoice-amount' => 'Не проверять необычную сумму счёта',
+                            'ignore-abnormal-invoice-date'   => 'Не проверять необычную дату счёта',
                         ],
                     ],
                 ],
             ],
 
             'internal-notes' => [
-                'title' => 'Внутренний Заметки',
+                'title' => 'Внутренние примечания',
             ],
         ],
     ],
@@ -93,69 +93,69 @@ return [
                         'title' => 'Продажи',
 
                         'entries' => [
-                            'sales-person'   => 'Продажи Person',
+                            'sales-person'   => 'Менеджер по продажам',
                             'payment-terms'  => 'Условия оплаты',
-                            'payment-method' => 'Оплата Method',
+                            'payment-method' => 'Способ оплаты',
                         ],
                     ],
 
                     'purchase' => [
-                        'title' => 'Закупка',
+                        'title' => 'Закупки',
 
                         'entries' => [
                             'payment-terms'  => 'Условия оплаты',
-                            'payment-method' => 'Оплата Method',
+                            'payment-method' => 'Способ оплаты',
                         ],
                     ],
 
                     'fiscal-information' => [
-                        'title' => 'Финансовый Сведения',
+                        'title' => 'Налоговые сведения',
 
                         'entries' => [
-                            'fiscal-position'    => 'Финансовый Должность',
+                            'fiscal-position'    => 'Налоговая позиция',
                         ],
                     ],
                 ],
             ],
 
             'invoicing' => [
-                'title'  => 'Invoicing',
+                'title'  => 'Выставление счетов',
 
                 'fieldsets' => [
                     'customer-invoices' => [
-                        'title' => 'Счёт клиентуs',
+                        'title' => 'Счета клиентов',
 
                         'entries' => [
-                            'invoice-sending-method'   => 'Счёт Sending Method',
-                            'invoice-edi-format-store' => 'eInvoice Формат',
-                            'peppol-eas'               => 'Peppol Адрес',
-                            'endpoint'                 => 'Endpoint',
+                            'invoice-sending-method'   => 'Способ отправки счетов',
+                            'invoice-edi-format-store' => 'Формат электронного счёта',
+                            'peppol-eas'               => 'Адрес Peppol',
+                            'endpoint'                 => 'Конечная точка',
                         ],
                     ],
 
                     'accounting-entries' => [
-                        'title' => 'Учёт Проводки',
+                        'title' => 'Учётные проводки',
 
                         'entries' => [
-                            'account-receivable' => 'Счёт К получению',
-                            'account-payable'    => 'Счёт К оплате',
+                            'account-receivable' => 'Счёт дебиторской задолженности',
+                            'account-payable'    => 'Счёт кредиторской задолженности',
                         ],
                     ],
 
                     'automation' => [
-                        'title' => 'Automation',
+                        'title' => 'Автоматизация',
 
                         'entries' => [
-                            'auto-post-bills'                => 'Auto Post Счета поставщиков',
-                            'ignore-abnormal-invoice-amount' => 'Ignore Abnormal Счёт Сумма',
-                            'ignore-abnormal-invoice-date'   => 'Ignore Abnormal Дата счёта',
+                            'auto-post-bills'                => 'Автопроведение счетов поставщиков',
+                            'ignore-abnormal-invoice-amount' => 'Не проверять необычную сумму счёта',
+                            'ignore-abnormal-invoice-date'   => 'Не проверять необычную дату счёта',
                         ],
                     ],
                 ],
             ],
 
             'internal-notes' => [
-                'title' => 'Внутренний Заметки',
+                'title' => 'Внутренние примечания',
             ],
         ],
     ],

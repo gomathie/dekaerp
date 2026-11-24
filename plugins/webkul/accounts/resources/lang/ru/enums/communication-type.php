@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'open'    => 'Открыт',
-    'partner' => 'Base вкл. Контрагент',
-    'invoice' => 'Base вкл. Счёт',
+    'open'    => 'Свободное',
+    'partner' => 'По контакту',
+    'invoice' => 'По счёту',
 ];

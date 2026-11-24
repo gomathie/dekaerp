@@ -3,29 +3,29 @@
 return [
     'form' => [
         'fields' => [
-            'tax-source'      => 'Налог Источник',
-            'tax-destination' => 'Налог Назначение',
+            'tax-source'      => 'Исходный налог',
+            'tax-destination' => 'Целевой налог',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'tax-source'      => 'Налог Источник',
-            'tax-destination' => 'Налог Назначение',
+            'tax-source'      => 'Исходный налог',
+            'tax-destination' => 'Целевой налог',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Оплата Due Term обновлено',
-                    'body'  => 'оплата due term есть обновлено successfully.',
+                    'title' => 'Срок платежа обновлён',
+                    'body'  => 'Срок платежа успешно обновлён.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Оплата Due Term удалено',
-                    'body'  => 'оплата due term есть удалено successfully.',
+                    'title' => 'Срок платежа удалён',
+                    'body'  => 'Срок платежа успешно удалён.',
                 ],
             ],
         ],
@@ -33,8 +33,8 @@ return [
         'header-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Оплата Due Term создано',
-                    'body'  => 'оплата due term есть создано successfully.',
+                    'title' => 'Срок платежа создан',
+                    'body'  => 'Срок платежа успешно создан.',
                 ],
             ],
         ],
@@ -42,8 +42,8 @@ return [
 
     'infolist' => [
         'entries' => [
-            'tax-source'      => 'Налог Источник',
-            'tax-destination' => 'Налог Назначение',
+            'tax-source'      => 'Исходный налог',
+            'tax-destination' => 'Целевой налог',
         ],
     ],
 ];

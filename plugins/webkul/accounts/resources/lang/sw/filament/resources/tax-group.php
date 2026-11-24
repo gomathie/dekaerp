@@ -7,7 +7,7 @@ return [
                 'company'            => 'Kampuni',
                 'country'            => 'Nchi',
                 'name'               => 'Jina',
-                'preceding-subtotal' => 'Preceding Jumla ndogo',
+                'preceding-subtotal' => 'Jumla ndogo iliyotangulia',
             ],
         ],
     ],
@@ -16,33 +16,33 @@ return [
         'columns' => [
             'company'            => 'Kampuni',
             'country'            => 'Nchi',
-            'created-by'         => 'Imeundwa Na',
+            'created-by'         => 'Imeundwa na',
             'name'               => 'Jina',
-            'preceding-subtotal' => 'Preceding Jumla ndogo',
-            'created-at'         => 'Imeundwa',
-            'updated-at'         => 'Imesasishwa',
+            'preceding-subtotal' => 'Jumla ndogo iliyotangulia',
+            'created-at'         => 'Iliundwa',
+            'updated-at'         => 'Ilisasishwa',
         ],
 
         'groups' => [
             'name'       => 'Jina',
             'company'    => 'Kampuni',
             'country'    => 'Nchi',
-            'created-by' => 'Imeundwa Na',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'created-by' => 'Imeundwa na',
+            'created-at' => 'Iliundwa',
+            'updated-at' => 'Ilisasishwa',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Kodi Kundi imefutwa',
-                        'body'  => 'kodi kundi ina imefutwa successfully.',
+                        'title' => 'Kikundi cha kodi kimefutwa',
+                        'body'  => 'Kikundi cha kodi kimefutwa kikamilifu.',
                     ],
 
                     'error' => [
-                        'title' => 'Kodi Kundi could si kuwa imefutwa',
-                        'body'  => 'kodi kundi haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Kikundi cha kodi hakikuweza kufutwa',
+                        'body'  => 'Kikundi cha kodi hakiwezi kufutwa kwa sababu kinatumika kwa sasa.',
                     ],
                 ],
             ],
@@ -52,13 +52,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Kodi Groups imefutwa',
-                        'body'  => 'kodi groups ina imefutwa successfully.',
+                        'title' => 'Vikundi vya kodi vimefutwa',
+                        'body'  => 'Vikundi vya kodi vimefutwa kikamilifu.',
                     ],
 
                     'error' => [
-                        'title' => 'Kodi Groups could si kuwa imefutwa',
-                        'body'  => 'kodi groups haiwezekani kuwa imefutwa kwa sababu wao ni currently katika tumia.',
+                        'title' => 'Vikundi vya kodi havikuweza kufutwa',
+                        'body'  => 'Vikundi vya kodi haviwezi kufutwa kwa sababu vinatumika kwa sasa.',
                     ],
                 ],
             ],
@@ -71,7 +71,7 @@ return [
                 'company'            => 'Kampuni',
                 'country'            => 'Nchi',
                 'name'               => 'Jina',
-                'preceding-subtotal' => 'Preceding Jumla ndogo',
+                'preceding-subtotal' => 'Jumla ndogo iliyotangulia',
             ],
         ],
     ],

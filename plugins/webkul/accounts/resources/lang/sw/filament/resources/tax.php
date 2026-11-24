@@ -5,51 +5,51 @@ return [
         'sections' => [
             'fields' => [
                 'name'                         => 'Jina',
-                'tax-type'                     => 'Kodi Aina',
-                'tax-computation'              => 'Kodi Computation',
-                'tax-scope'                    => 'Kodi Scope',
+                'tax-type'                     => 'Aina ya kodi',
+                'tax-computation'              => 'Ukokotoaji wa kodi',
+                'tax-scope'                    => 'Wigo wa kodi',
                 'status'                       => 'Hali',
                 'amount'                       => 'Kiasi',
-                'formula'                      => 'Formula',
-                'formula-helper-text'          => 'Arithmetic tu: numbers, + - * / ( ), functions :functions na hizi variables: :variables',
-                'children-taxes'               => 'Children Kodi',
-                'children-taxes-helper-text'   => 'kiasi ya hii kodi ni sum ya yake children kodi.',
-                'children-taxes-type-mismatch' => 'children kodi lazima kuwa ya :type kodi aina au ina hakuna kodi aina. Hizi si: :taxes',
+                'formula'                      => 'Fomula',
+                'formula-helper-text'          => 'Hesabu pekee: namba, + - * / ( ), vitendakazi :functions na vigeu hivi: :variables',
+                'children-taxes'               => 'Kodi tanzu',
+                'children-taxes-helper-text'   => 'Kiasi cha kodi hii ni jumla ya kodi zake tanzu.',
+                'children-taxes-type-mismatch' => 'Kodi tanzu lazima ziwe za aina ya kodi :type au zisiwe na aina. Hizi haziko hivyo: :taxes',
             ],
 
             'repeater' => [
                 'invoice-repartition-lines' => [
-                    'label' => 'Ankara Repartition Mistari',
+                    'label' => 'Mistari ya mgawanyo wa ankara',
                 ],
 
                 'refund-repartition-lines' => [
-                    'label' => 'Rudisho Repartition Mistari',
+                    'label' => 'Mistari ya mgawanyo wa marejesho',
                 ],
 
                 'fields' => [
                     'type'           => 'Aina',
-                    'factor-percent' => 'Factor %',
+                    'factor-percent' => 'Kipengele %',
                     'account'        => 'Akaunti',
                 ],
             ],
 
             'field-set' => [
                 'advanced-options' => [
-                    'title' => 'Advanced Options',
+                    'title' => 'Chaguo za kina',
 
                     'fields' => [
-                        'invoice-label'       => 'Ankara lebo',
-                        'tax-group'           => 'Kodi Kundi',
+                        'invoice-label'       => 'Lebo ya ankara',
+                        'tax-group'           => 'Kikundi cha kodi',
                         'country'             => 'Nchi',
-                        'include-in-price'    => 'Imejumuishwa katika Bei',
-                        'include-base-amount' => 'Affect Base ya Subsequent Kodi',
-                        'is-base-affected'    => 'Base Affected na Iliyotangulia Kodi',
+                        'include-in-price'    => 'Imejumuishwa kwenye bei',
+                        'include-base-amount' => 'Huathiri msingi wa kodi zinazofuata',
+                        'is-base-affected'    => 'Msingi huathiriwa na kodi zilizotangulia',
                     ],
                 ],
 
                 'fields' => [
                     'description' => 'Maelezo',
-                    'legal-notes' => 'Legal Maelezo',
+                    'legal-notes' => 'Vidokezo vya kisheria',
                 ],
             ],
         ],
@@ -58,31 +58,31 @@ return [
     'table' => [
         'columns' => [
             'name'                   => 'Jina',
-            'amount-type'            => 'Kiasi Aina',
+            'amount-type'            => 'Aina ya kiasi',
             'company'                => 'Kampuni',
-            'tax-group'              => 'Kodi Kundi',
+            'tax-group'              => 'Kikundi cha kodi',
             'country'                => 'Nchi',
-            'tax-type'               => 'Kodi Aina',
-            'tax-scope'              => 'Kodi Scope',
-            'amount-type'            => 'Kiasi Aina',
-            'invoice-label'          => 'Ankara Lebo',
-            'tax-exigibility'        => 'Kodi Exigibility',
-            'price-include-override' => 'Bei Include Override',
+            'tax-type'               => 'Aina ya kodi',
+            'tax-scope'              => 'Wigo wa kodi',
+            'amount-type'            => 'Aina ya kiasi',
+            'invoice-label'          => 'Lebo ya ankara',
+            'tax-exigibility'        => 'Wakati kodi inadaiwa',
+            'price-include-override' => 'Ubatilishaji wa ujumuishaji wa bei',
             'amount'                 => 'Kiasi',
             'status'                 => 'Hali',
-            'include-base-amount'    => 'Include Base Kiasi',
-            'is-base-affected'       => 'Ni Base Affected',
+            'include-base-amount'    => 'Jumuisha kiasi cha msingi',
+            'is-base-affected'       => 'Msingi umeathiriwa',
         ],
 
         'groups' => [
             'name'         => 'Jina',
             'company'      => 'Kampuni',
-            'tax-group'    => 'Kodi Kundi',
+            'tax-group'    => 'Kikundi cha kodi',
             'country'      => 'Nchi',
-            'created-by'   => 'Imeundwa Na',
-            'type-tax-use' => 'Aina Kodi Tumia',
-            'tax-scope'    => 'Kodi Scope',
-            'amount-type'  => 'Kiasi Aina',
+            'created-by'   => 'Imeundwa na',
+            'type-tax-use' => 'Matumizi ya kodi',
+            'tax-scope'    => 'Wigo wa kodi',
+            'amount-type'  => 'Aina ya kiasi',
         ],
 
         'actions' => [
@@ -90,12 +90,12 @@ return [
                 'notification' => [
                     'success' => [
                         'title' => 'Kodi imefutwa',
-                        'body'  => 'Kodi ina imefutwa successfully.',
+                        'body'  => 'Kodi imefutwa kikamilifu.',
                     ],
 
                     'error' => [
-                        'title' => 'Kodi could si kuwa imefutwa',
-                        'body'  => 'kodi haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Kodi haikuweza kufutwa',
+                        'body'  => 'Kodi haiwezi kufutwa kwa sababu inatumika kwa sasa.',
                     ],
                 ],
             ],
@@ -105,13 +105,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Kodi imefutwa',
-                        'body'  => 'kodi ina imefutwa successfully.',
+                        'title' => 'Kodi zimefutwa',
+                        'body'  => 'Kodi zimefutwa kikamilifu.',
                     ],
 
                     'error' => [
-                        'title' => 'Kodi could si kuwa imefutwa',
-                        'body'  => 'kodi haiwezekani kuwa imefutwa kwa sababu wao ni currently katika tumia.',
+                        'title' => 'Kodi hazikuweza kufutwa',
+                        'body'  => 'Kodi haziwezi kufutwa kwa sababu zinatumika kwa sasa.',
                     ],
                 ],
             ],
@@ -121,7 +121,7 @@ return [
             'create' => [
                 'notifications' => [
                     'invalid-repartition-lines' => [
-                        'title' => 'Si halali Repartition Mistari',
+                        'title' => 'Mistari ya mgawanyo si sahihi',
                     ],
                 ],
             ],
@@ -129,7 +129,7 @@ return [
             'edit' => [
                 'notifications' => [
                     'invalid-repartition-lines' => [
-                        'title' => 'Si halali Repartition Mistari',
+                        'title' => 'Mistari ya mgawanyo si sahihi',
                     ],
                 ],
             ],
@@ -140,34 +140,34 @@ return [
         'sections' => [
             'entries' => [
                 'name'            => 'Jina',
-                'tax-type'        => 'Kodi Aina',
-                'tax-computation' => 'Kodi Computation',
-                'tax-scope'       => 'Kodi Scope',
+                'tax-type'        => 'Aina ya kodi',
+                'tax-computation' => 'Ukokotoaji wa kodi',
+                'tax-scope'       => 'Wigo wa kodi',
                 'status'          => 'Hali',
                 'amount'          => 'Kiasi',
-                'formula'         => 'Formula',
-                'children-taxes'  => 'Children Kodi',
+                'formula'         => 'Fomula',
+                'children-taxes'  => 'Kodi tanzu',
             ],
 
             'field-set' => [
                 'advanced-options' => [
-                    'title' => 'Advanced Options',
+                    'title' => 'Chaguo za kina',
 
                     'entries' => [
-                        'invoice-label'       => 'Ankara lebo',
-                        'tax-group'           => 'Kodi Kundi',
+                        'invoice-label'       => 'Lebo ya ankara',
+                        'tax-group'           => 'Kikundi cha kodi',
                         'country'             => 'Nchi',
-                        'include-in-price'    => 'Include katika bei',
-                        'include-base-amount' => 'Include base kiasi',
-                        'is-base-affected'    => 'Ni base affected',
+                        'include-in-price'    => 'Jumuisha kwenye bei',
+                        'include-base-amount' => 'Jumuisha kiasi cha msingi',
+                        'is-base-affected'    => 'Msingi umeathiriwa',
                     ],
                 ],
 
                 'description-and-legal-notes' => [
-                    'title'   => 'Maelezo & Ankara Legal Maelezo',
+                    'title'   => 'Maelezo na vidokezo vya kisheria vya ankara',
                     'entries' => [
                         'description' => 'Maelezo',
-                        'legal-notes' => 'Legal Maelezo',
+                        'legal-notes' => 'Vidokezo vya kisheria',
                     ],
                 ],
             ],

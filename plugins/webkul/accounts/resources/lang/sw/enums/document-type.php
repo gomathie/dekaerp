@@ -2,5 +2,5 @@
 
 return [
     'invoice' => 'Ankara',
-    'refund'  => 'Rudisho',
+    'refund'  => 'Marejesho',
 ];

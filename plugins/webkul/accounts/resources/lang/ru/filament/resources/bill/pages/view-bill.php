@@ -4,14 +4,14 @@ return [
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Счёт поставщика удалено',
-                'body'  => 'Счёт поставщика есть удалено successfully.',
+                'title' => 'Счёт поставщика удалён',
+                'body'  => 'Счёт поставщика успешно удалён.',
             ],
         ],
 
         'reverse' => [
             'label'         => 'Возврат',
-            'modal-heading' => 'Создать Возврат',
+            'modal-heading' => 'Создать возврат',
         ],
     ],
 ];

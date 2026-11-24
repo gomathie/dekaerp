@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Kifedha Cheo imeundwa',
-        'body'  => 'kifedha cheo ina imeundwa successfully.',
+        'title' => 'Nafasi ya kodi imeundwa',
+        'body'  => 'Nafasi ya kodi imeundwa kikamilifu.',
     ],
 ];

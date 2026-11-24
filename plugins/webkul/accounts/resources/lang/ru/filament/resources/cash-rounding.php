@@ -4,38 +4,38 @@ return [
     'form' => [
         'fields' => [
             'name'               => 'Название',
-            'rounding-precision' => 'Rounding Precision',
-            'rounding-strategy'  => 'Rounding Strategy',
-            'profit-account'     => 'Прибыль Счёт',
-            'loss-account'       => 'Убыток Счёт',
-            'rounding-method'    => 'Rounding Method',
+            'rounding-precision' => 'Точность округления',
+            'rounding-strategy'  => 'Стратегия округления',
+            'profit-account'     => 'Счёт прибыли',
+            'loss-account'       => 'Счёт убытков',
+            'rounding-method'    => 'Способ округления',
         ],
     ],
 
     'table' => [
         'columns' => [
             'name'                 => 'Название',
-            'rounding-strategy'    => 'Rounding Strategy',
-            'rounding-method'      => 'Rounding Method',
-            'created-by'           => 'Создано От',
-            'profit-account'       => 'Прибыль Счёт',
-            'loss-account'         => 'Убыток Счёт',
+            'rounding-strategy'    => 'Стратегия округления',
+            'rounding-method'      => 'Способ округления',
+            'created-by'           => 'Создал',
+            'profit-account'       => 'Счёт прибыли',
+            'loss-account'         => 'Счёт убытков',
         ],
 
         'groups' => [
             'name'              => 'Название',
-            'rounding-strategy' => 'Rounding Strategy',
-            'rounding-method'   => 'Rounding Method',
-            'created-by'        => 'Создано От',
-            'profit-account'    => 'Прибыль Счёт',
-            'loss-account'      => 'Убыток Счёт',
+            'rounding-strategy' => 'Стратегия округления',
+            'rounding-method'   => 'Способ округления',
+            'created-by'        => 'Создал',
+            'profit-account'    => 'Счёт прибыли',
+            'loss-account'      => 'Счёт убытков',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Касса Rounding удалено',
-                    'body'  => 'касса rounding есть удалено successfully.',
+                    'title' => 'Округление наличных удалено',
+                    'body'  => 'Округление наличных успешно удалено.',
                 ],
             ],
         ],
@@ -43,8 +43,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Касса Rounding удалено',
-                    'body'  => 'касса rounding есть удалено successfully.',
+                    'title' => 'Округления наличных удалены',
+                    'body'  => 'Округления наличных успешно удалены.',
                 ],
             ],
         ],
@@ -53,11 +53,11 @@ return [
     'infolist' => [
         'entries' => [
             'name'               => 'Название',
-            'rounding-precision' => 'Rounding Precision',
-            'rounding-strategy'  => 'Rounding Strategy',
-            'profit-account'     => 'Прибыль Счёт',
-            'loss-account'       => 'Убыток Счёт',
-            'rounding-method'    => 'Rounding Method',
+            'rounding-precision' => 'Точность округления',
+            'rounding-strategy'  => 'Стратегия округления',
+            'profit-account'     => 'Счёт прибыли',
+            'loss-account'       => 'Счёт убытков',
+            'rounding-method'    => 'Способ округления',
         ],
     ],
 ];

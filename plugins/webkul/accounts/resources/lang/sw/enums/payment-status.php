@@ -2,9 +2,9 @@
 
 return [
     'draft'      => 'Rasimu',
-    'in-process' => 'Katika Process',
+    'in-process' => 'Inashughulikiwa',
     'paid'       => 'Imelipwa',
-    'not-paid'   => 'Si Imelipwa',
+    'not-paid'   => 'Haijalipwa',
     'canceled'   => 'Imeghairiwa',
     'rejected'   => 'Imekataliwa',
 ];

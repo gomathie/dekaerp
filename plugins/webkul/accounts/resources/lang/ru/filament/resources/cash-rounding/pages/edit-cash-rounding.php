@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Касса rounding обновлено',
-        'body'  => 'касса rounding есть обновлено successfully.',
+        'title' => 'Округление наличных обновлено',
+        'body'  => 'Округление наличных успешно обновлено.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Касса rounding удалено',
-                'body'  => 'касса rounding есть удалено successfully.',
+                'title' => 'Округление наличных удалено',
+                'body'  => 'Округление наличных успешно удалено.',
             ],
         ],
     ],

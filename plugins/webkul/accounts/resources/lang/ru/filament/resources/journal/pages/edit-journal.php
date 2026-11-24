@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Журнал обновлено',
-        'body'  => 'журнал есть обновлено successfully.',
+        'title' => 'Журнал обновлён',
+        'body'  => 'Журнал успешно обновлён.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Журнал удалено',
-                'body'  => 'журнал есть удалено successfully.',
+                'title' => 'Журнал удалён',
+                'body'  => 'Журнал успешно удалён.',
             ],
         ],
     ],

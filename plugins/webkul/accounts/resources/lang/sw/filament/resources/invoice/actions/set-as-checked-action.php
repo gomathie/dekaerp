@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'title' => 'Weka kama Checked',
+    'title' => 'Weka kama imekaguliwa',
 ];

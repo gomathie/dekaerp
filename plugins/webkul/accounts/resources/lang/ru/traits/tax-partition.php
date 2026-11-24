@@ -2,38 +2,38 @@
 
 return [
     'form' => [
-        'factor-percent'    => 'Factor Процент',
-        'factor-ratio'      => 'Factor Ratio',
-        'repartition-type'  => 'Repartition Тип',
-        'document-type'     => 'Документ Тип',
+        'factor-percent'    => 'Коэффициент, %',
+        'factor-ratio'      => 'Доля',
+        'repartition-type'  => 'Тип распределения',
+        'document-type'     => 'Тип документа',
         'account'           => 'Счёт',
         'tax'               => 'Налог',
-        'tax-closing-entry' => 'Налог Closing Entry',
+        'tax-closing-entry' => 'Проводка закрытия налога',
     ],
 
     'table' => [
         'columns' => [
-            'factor-percent'    => 'Factor Процент(%)',
+            'factor-percent'    => 'Коэффициент (%)',
             'account'           => 'Счёт',
             'tax'               => 'Налог',
             'company'           => 'Компания',
-            'repartition-type'  => 'Repartition Тип',
-            'document-type'     => 'Документ Тип',
-            'tax-closing-entry' => 'Налог Closing Entry',
+            'repartition-type'  => 'Тип распределения',
+            'document-type'     => 'Тип документа',
+            'tax-closing-entry' => 'Проводка закрытия налога',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Налог Partition обновлено',
-                    'body'  => 'налог partition есть обновлено successfully.',
+                    'title' => 'Распределение налога обновлено',
+                    'body'  => 'Распределение налога успешно обновлено.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Налог Partition Term удалено',
-                    'body'  => 'налог Partition term есть удалено successfully.',
+                    'title' => 'Строка распределения налога удалена',
+                    'body'  => 'Строка распределения налога успешно удалена.',
                 ],
             ],
         ],
@@ -41,8 +41,8 @@ return [
         'header-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Налог Partition Term создано',
-                    'body'  => 'налог Partition term есть создано successfully.',
+                    'title' => 'Строка распределения налога создана',
+                    'body'  => 'Строка распределения налога успешно создана.',
                 ],
             ],
         ],

@@ -1,18 +1,18 @@
 <?php
 
 return [
-    'title'          => 'Оплата',
+    'title'          => 'Платёж',
 
     'log-attributes' => [
         'date'              => 'Дата',
-        'payment-type'      => 'Оплата Тип',
-        'partner-type'      => 'Контрагент Тип',
-        'memo'              => 'Memo',
-        'payment-reference' => 'Оплата Ссылка',
+        'payment-type'      => 'Тип платежа',
+        'partner-type'      => 'Тип контакта',
+        'memo'              => 'Комментарий',
+        'payment-reference' => 'Назначение платежа',
         'amount'            => 'Сумма',
-        'partner'           => 'Контрагент',
-        'partner-bank'      => 'Контрагент Банк',
-        'payment-method'    => 'Оплата Method',
+        'partner'           => 'Контакт',
+        'partner-bank'      => 'Банк контакта',
+        'payment-method'    => 'Способ оплаты',
         'currency'          => 'Валюта',
     ],
 ];

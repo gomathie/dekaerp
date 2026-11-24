@@ -8,70 +8,70 @@ return [
 
                 'field-set' => [
                     'accounting-information' => [
-                        'title'  => 'Учёт Сведения',
+                        'title'  => 'Учётная информация',
                         'fields' => [
-                            'dedicated-credit-note-sequence' => 'Dedicated Кредит-нота Нумерация',
-                            'dedicated-payment-sequence'     => 'Dedicated Оплата Нумерация',
-                            'sort-code-placeholder'          => 'Введите журнал код',
-                            'sort-code'                      => 'Sort',
+                            'dedicated-credit-note-sequence' => 'Отдельная нумерация кредит-нот',
+                            'dedicated-payment-sequence'     => 'Отдельная нумерация платежей',
+                            'sort-code-placeholder'          => 'Введите код журнала',
+                            'sort-code'                      => 'Порядок',
                             'currency'                       => 'Валюта',
                             'color'                          => 'Цвет',
-                            'default-account'                => 'По умолчанию Счёт',
-                            'profit-account'                 => 'Прибыль Счёт',
-                            'loss-account'                   => 'Убыток Счёт',
-                            'suspense-account'               => 'Suspense Счёт',
+                            'default-account'                => 'Счёт по умолчанию',
+                            'profit-account'                 => 'Счёт прибыли',
+                            'loss-account'                   => 'Счёт убытков',
+                            'suspense-account'               => 'Промежуточный счёт',
                             'bank-account'                   => 'Банковский счёт',
                         ],
                     ],
 
                     'bank-account-number' => [
-                        'title' => 'Банковский счёт Номер',
+                        'title' => 'Номер банковского счёта',
                     ],
                 ],
             ],
 
             'incoming-payments' => [
-                'title'            => 'Incoming Оплаты',
-                'add-action-label' => 'Добавить Строка',
+                'title'            => 'Входящие платежи',
+                'add-action-label' => 'Добавить строку',
 
                 'fields' => [
-                    'payment-method'             => 'Оплата Method',
-                    'display-name'               => 'Display Название',
-                    'account-number'             => 'Outstanding Приходы Счета',
-                    'relation-notes'             => 'Relation Заметки',
-                    'relation-notes-placeholder' => 'Введите любой relation подробности',
+                    'payment-method'             => 'Способ оплаты',
+                    'display-name'               => 'Отображаемое имя',
+                    'account-number'             => 'Счета неучтённых поступлений',
+                    'relation-notes'             => 'Примечания к связи',
+                    'relation-notes-placeholder' => 'Введите сведения о связи',
                 ],
             ],
 
             'outgoing-payments' => [
-                'title'            => 'Outgoing Оплаты',
-                'add-action-label' => 'Добавить Строка',
+                'title'            => 'Исходящие платежи',
+                'add-action-label' => 'Добавить строку',
 
                 'fields' => [
-                    'payment-method'             => 'Оплата Method',
-                    'display-name'               => 'Display Название',
-                    'account-number'             => 'Outstanding Оплаты Счета',
-                    'relation-notes'             => 'Relation Заметки',
-                    'relation-notes-placeholder' => 'Введите любой relation подробности',
+                    'payment-method'             => 'Способ оплаты',
+                    'display-name'               => 'Отображаемое имя',
+                    'account-number'             => 'Счета неучтённых платежей',
+                    'relation-notes'             => 'Примечания к связи',
+                    'relation-notes-placeholder' => 'Введите сведения о связи',
                 ],
             ],
 
             'advanced-settings' => [
-                'title'  => 'Advanced Настройки',
+                'title'  => 'Дополнительные настройки',
 
                 'fields' => [
-                    'allowed-accounts'       => 'Разрешено Счета',
-                    'control-access'         => 'Control Access',
-                    'payment-communication'  => 'Оплата Сообщения',
-                    'auto-check-on-post'     => 'Auto Чек вкл. Post',
-                    'communication-type'     => 'Сообщения Тип',
-                    'communication-standard' => 'Сообщения Standard',
+                    'allowed-accounts'       => 'Разрешённые счета',
+                    'control-access'         => 'Контроль доступа',
+                    'payment-communication'  => 'Назначение платежа',
+                    'auto-check-on-post'     => 'Отмечать проверенным при проведении',
+                    'communication-type'     => 'Тип назначения',
+                    'communication-standard' => 'Стандарт назначения',
                 ],
             ],
         ],
 
         'general' => [
-            'title' => 'Общее Сведения',
+            'title' => 'Общая информация',
 
             'fields' => [
                 'name'    => 'Название',
@@ -87,7 +87,7 @@ return [
             'type'       => 'Тип',
             'code'       => 'Код',
             'currency'   => 'Валюта',
-            'created-by' => 'Создано От',
+            'created-by' => 'Создал',
             'status'     => 'Статус',
         ],
 
@@ -95,13 +95,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Журнал удалено',
-                        'body'  => 'журнал есть удалено successfully.',
+                        'title' => 'Журнал удалён',
+                        'body'  => 'Журнал успешно удалён.',
                     ],
 
                     'error' => [
-                        'title' => 'Журнал deletion не удалось',
-                        'body'  => 'журнал нельзя быть удалено потому что это currently в использовать.',
+                        'title' => 'Не удалось удалить журнал',
+                        'body'  => 'Журнал нельзя удалить: он сейчас используется.',
                     ],
                 ],
             ],
@@ -111,13 +111,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Журнал удалено',
-                        'body'  => 'журнал есть удалено successfully.',
+                        'title' => 'Журналы удалены',
+                        'body'  => 'Журналы успешно удалены.',
                     ],
 
                     'error' => [
-                        'title' => 'Журналы deletion не удалось',
-                        'body'  => 'журналы нельзя быть удалено потому что они currently в использовать.',
+                        'title' => 'Не удалось удалить журналы',
+                        'body'  => 'Журналы нельзя удалить: они сейчас используются.',
                     ],
                 ],
             ],
@@ -131,82 +131,82 @@ return [
 
                 'field-set' => [
                     'accounting-information' => [
-                        'title'   => 'Учёт Сведения',
+                        'title'   => 'Учётная информация',
 
                         'entries' => [
-                            'dedicated-credit-note-sequence' => 'Dedicated Кредит-нота Нумерация',
-                            'dedicated-payment-sequence'     => 'Dedicated Оплата Нумерация',
-                            'sort-code-placeholder'          => 'Введите журнал код',
-                            'sort-code'                      => 'Sort',
+                            'dedicated-credit-note-sequence' => 'Отдельная нумерация кредит-нот',
+                            'dedicated-payment-sequence'     => 'Отдельная нумерация платежей',
+                            'sort-code-placeholder'          => 'Введите код журнала',
+                            'sort-code'                      => 'Порядок',
                             'currency'                       => 'Валюта',
                             'color'                          => 'Цвет',
-                            'default-account'                => 'По умолчанию Счёт',
-                            'profit-account'                 => 'Прибыль Счёт',
-                            'loss-account'                   => 'Убыток Счёт',
-                            'suspense-account'               => 'Suspense Счёт',
+                            'default-account'                => 'Счёт по умолчанию',
+                            'profit-account'                 => 'Счёт прибыли',
+                            'loss-account'                   => 'Счёт убытков',
+                            'suspense-account'               => 'Промежуточный счёт',
                         ],
                     ],
 
                     'bank-account-number' => [
-                        'title' => 'Банковский счёт Номер',
+                        'title' => 'Номер банковского счёта',
 
                         'entries' => [
-                            'account-number' => 'Счёт Номер',
+                            'account-number' => 'Номер счёта',
                         ],
                     ],
                 ],
             ],
 
             'incoming-payments' => [
-                'title' => 'Incoming Оплаты',
+                'title' => 'Входящие платежи',
 
                 'entries' => [
-                    'payment-method'             => 'Оплата Method',
-                    'display-name'               => 'Display Название',
-                    'account-number'             => 'Outstanding Приходы Счета',
-                    'relation-notes'             => 'Relation Заметки',
-                    'relation-notes-placeholder' => 'Введите любой relation подробности',
+                    'payment-method'             => 'Способ оплаты',
+                    'display-name'               => 'Отображаемое имя',
+                    'account-number'             => 'Счета неучтённых поступлений',
+                    'relation-notes'             => 'Примечания к связи',
+                    'relation-notes-placeholder' => 'Введите сведения о связи',
                 ],
             ],
 
             'outgoing-payments' => [
-                'title' => 'Outgoing Оплаты',
+                'title' => 'Исходящие платежи',
 
                 'entries' => [
-                    'payment-method'             => 'Оплата Method',
-                    'display-name'               => 'Display Название',
-                    'account-number'             => 'Outstanding Оплаты Счета',
-                    'relation-notes'             => 'Relation Заметки',
-                    'relation-notes-placeholder' => 'Введите любой relation подробности',
+                    'payment-method'             => 'Способ оплаты',
+                    'display-name'               => 'Отображаемое имя',
+                    'account-number'             => 'Счета неучтённых платежей',
+                    'relation-notes'             => 'Примечания к связи',
+                    'relation-notes-placeholder' => 'Введите сведения о связи',
                 ],
             ],
 
             'advanced-settings' => [
-                'title'   => 'Advanced Настройки',
+                'title'   => 'Дополнительные настройки',
 
                 'allowed-accounts' => [
-                    'title' => 'Разрешено Счета',
+                    'title' => 'Разрешённые счета',
 
                     'entries' => [
-                        'allowed-accounts'       => 'Разрешено Счета',
-                        'control-access'         => 'Control Access',
-                        'auto-check-on-post'     => 'Auto Чек вкл. Post',
+                        'allowed-accounts'       => 'Разрешённые счета',
+                        'control-access'         => 'Контроль доступа',
+                        'auto-check-on-post'     => 'Отмечать проверенным при проведении',
                     ],
                 ],
 
                 'payment-communication'  => [
-                    'title' => 'Оплата Сообщения',
+                    'title' => 'Назначение платежа',
 
                     'entries' => [
-                        'communication-type'     => 'Сообщения Тип',
-                        'communication-standard' => 'Сообщения Standard',
+                        'communication-type'     => 'Тип назначения',
+                        'communication-standard' => 'Стандарт назначения',
                     ],
                 ],
             ],
         ],
 
         'general' => [
-            'title' => 'Общее Сведения',
+            'title' => 'Общая информация',
 
             'entries' => [
                 'name'    => 'Название',

@@ -3,5 +3,5 @@
 return [
     'up'      => 'Вверх',
     'down'    => 'Вниз',
-    'half-up' => 'Nearest',
+    'half-up' => 'До ближайшего',
 ];

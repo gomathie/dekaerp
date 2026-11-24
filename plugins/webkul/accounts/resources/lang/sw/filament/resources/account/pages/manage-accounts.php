@@ -5,17 +5,17 @@ return [
         'create' => [
             'notification' => [
                 'title' => 'Akaunti imeundwa',
-                'body'  => 'akaunti ina imeundwa successfully.',
+                'body'  => 'Akaunti imeundwa kikamilifu.',
             ],
         ],
     ],
 
     'tabs' => [
-        'receivable' => 'Ya kupokea',
-        'payable'    => 'Ya kulipa',
+        'receivable' => 'Zinazodaiwa',
+        'payable'    => 'Zinazolipwa',
         'equity'     => 'Mtaji',
         'assets'     => 'Mali',
-        'liability'  => 'Dhima',
+        'liability'  => 'Madeni',
         'income'     => 'Mapato',
         'expenses'   => 'Gharama',
     ],

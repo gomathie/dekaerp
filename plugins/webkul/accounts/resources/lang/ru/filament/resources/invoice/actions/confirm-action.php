@@ -5,7 +5,7 @@ return [
 
     'notification' => [
         'error' => [
-            'title' => 'Confirmation Ошибка',
+            'title' => 'Ошибка подтверждения',
         ],
     ],
 ];

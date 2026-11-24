@@ -1,28 +1,28 @@
 <?php
 
 return [
-    'title' => 'Chapisha & Send',
+    'title' => 'Chapisha na tuma',
 
     'modal' => [
-        'title' => 'Preview Ankara',
+        'title' => 'Hakiki ankara',
 
         'form' => [
             'partners'    => 'Mteja',
-            'subject'     => 'Subject',
+            'subject'     => 'Kichwa',
             'description' => 'Maelezo',
             'files'       => 'Kiambatisho',
         ],
 
         'action' => [
             'submit' => [
-                'title' => 'Send',
+                'title' => 'Tuma',
             ],
         ],
 
         'notification' => [
             'invoice-sent' => [
-                'title' => 'Ankara Imetumwa',
-                'body'  => 'Ankara ina imetumwa successfully.',
+                'title' => 'Ankara imetumwa',
+                'body'  => 'Ankara imetumwa kikamilifu.',
             ],
         ],
     ],

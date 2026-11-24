@@ -2,17 +2,17 @@
 
 return [
     'move' => [
-        'no-journal-found-title' => 'Uhasibu ni si weka juu',
-        'no-journal-found'       => 'Hakuna jarida could kuwa imepatikana katika kampuni :company kwa yoyote ya zile types: :types. Tafadhali weka juu chati ya akaunti kwa hii kampuni kwanza.',
+        'no-journal-found-title' => 'Uhasibu haujawekwa',
+        'no-journal-found'       => 'Hakuna jarida lililopatikana katika kampuni :company kwa aina yoyote kati ya hizi: :types. Tafadhali weka chati ya akaunti kwa kampuni hii kwanza.',
     ],
 
     'tax-formula' => [
-        'empty'                => 'formula haiwezekani kuwa tupu.',
-        'invalid-character'    => 'formula contains si halali character: :character',
-        'unexpected-token'     => 'formula contains unexpected token: :token',
-        'unexpected-end'       => 'formula ends unexpectedly.',
-        'unclosed-parenthesis' => 'formula contains unclosed parenthesis.',
-        'unknown-variable'     => 'Haijulikani variable ":variable". Tu hizi variables ni inapatikana: :variables',
-        'unknown-function'     => 'Haijulikani function ":function". Tu hizi functions ni inapatikana: :functions',
+        'empty'                => 'Fomula haiwezi kuwa tupu.',
+        'invalid-character'    => 'Fomula ina herufi isiyo sahihi: :character',
+        'unexpected-token'     => 'Fomula ina kipengele kisichotarajiwa: :token',
+        'unexpected-end'       => 'Fomula inaisha ghafla.',
+        'unclosed-parenthesis' => 'Fomula ina mabano ambayo hayajafungwa.',
+        'unknown-variable'     => 'Kigeu kisichojulikana ":variable". Vigeu vinavyopatikana ni hivi pekee: :variables',
+        'unknown-function'     => 'Kitendakazi kisichojulikana ":function". Vitendakazi vinavyopatikana ni hivi pekee: :functions',
     ],
 ];

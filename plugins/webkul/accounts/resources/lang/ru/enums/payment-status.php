@@ -2,9 +2,9 @@
 
 return [
     'draft'      => 'Черновик',
-    'in-process' => 'В Process',
+    'in-process' => 'В обработке',
     'paid'       => 'Оплачен',
-    'not-paid'   => 'Не Оплачен',
+    'not-paid'   => 'Не оплачен',
     'canceled'   => 'Отменён',
     'rejected'   => 'Отклонён',
 ];

@@ -3,5 +3,5 @@
 return [
     'up'      => 'Juu',
     'down'    => 'Chini',
-    'half-up' => 'Nearest',
+    'half-up' => 'Karibu zaidi',
 ];

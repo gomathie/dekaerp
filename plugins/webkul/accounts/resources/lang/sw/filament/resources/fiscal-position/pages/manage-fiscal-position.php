@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Manage Kifedha Cheo Kodi',
+        'title' => 'Simamia kodi za nafasi ya kodi',
     ],
 ];

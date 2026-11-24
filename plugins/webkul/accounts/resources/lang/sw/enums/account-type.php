@@ -4,22 +4,22 @@ return [
     'assets' => [
         'label'   => 'Mali',
         'options' => [
-            'receivable'  => 'Ya kupokea',
-            'cash'        => 'Benki na Taslimu',
-            'current'     => 'Sasa Mali',
-            'non-current' => 'Non-sasa Mali',
-            'prepayments' => 'Prepayments',
-            'fixed'       => 'Isiyobadilika Mali',
+            'receivable'  => 'Zinazodaiwa',
+            'cash'        => 'Benki na fedha taslimu',
+            'current'     => 'Mali za muda mfupi',
+            'non-current' => 'Mali za muda mrefu',
+            'prepayments' => 'Malipo ya awali',
+            'fixed'       => 'Mali za kudumu',
         ],
     ],
 
     'liabilities' => [
-        'label'   => 'Dhima',
+        'label'   => 'Madeni',
         'options' => [
-            'payable'     => 'Ya kulipa',
-            'credit-card' => 'Krediti Card',
-            'current'     => 'Sasa Dhima',
-            'non-current' => 'Non-sasa Dhima',
+            'payable'     => 'Zinazolipwa',
+            'credit-card' => 'Kadi ya mkopo',
+            'current'     => 'Madeni ya muda mfupi',
+            'non-current' => 'Madeni ya muda mrefu',
         ],
     ],
 
@@ -27,7 +27,7 @@ return [
         'label'   => 'Mtaji',
         'options' => [
             'equity'     => 'Mtaji',
-            'unaffected' => 'Sasa Mwaka Mapato',
+            'unaffected' => 'Mapato ya mwaka huu',
         ],
     ],
 
@@ -35,7 +35,7 @@ return [
         'label'   => 'Mapato',
         'options' => [
             'income' => 'Mapato',
-            'other'  => 'Nyingine Mapato',
+            'other'  => 'Mapato mengine',
         ],
     ],
 
@@ -43,15 +43,15 @@ return [
         'label'   => 'Gharama',
         'options' => [
             'expense'      => 'Gharama',
-            'depreciation' => 'Depreciation',
-            'direct-cost'  => 'Gharama ya Mapato',
+            'depreciation' => 'Uchakavu',
+            'direct-cost'  => 'Gharama ya mauzo',
         ],
     ],
 
     'off-balance' => [
-        'label'   => 'Zima-Salio Sheet',
+        'label'   => 'Nje ya mizania',
         'options' => [
-            'off-balance' => 'Zima-Salio Sheet',
+            'off-balance' => 'Nje ya mizania',
         ],
     ],
 ];

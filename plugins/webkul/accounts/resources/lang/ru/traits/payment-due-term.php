@@ -3,35 +3,35 @@
 return [
     'form' => [
         'value'                  => 'Значение',
-        'due'                    => 'Due',
-        'delay-due'              => 'Delay Due',
-        'delay-type'             => 'Delay Тип',
-        'days-on-the-next-month' => 'Дни вкл. далее месяц',
+        'due'                    => 'Срок',
+        'delay-due'              => 'Отсрочка',
+        'delay-type'             => 'Тип отсрочки',
+        'days-on-the-next-month' => 'Число следующего месяца',
         'days'                   => 'Дни',
         'payment-term'           => 'Условие оплаты',
     ],
 
     'table' => [
         'columns' => [
-            'due'          => 'Due',
+            'due'          => 'Срок',
             'value'        => 'Значение',
-            'value-amount' => 'Значение Сумма',
-            'after'        => 'После',
-            'delay-type'   => 'Delay Тип',
+            'value-amount' => 'Сумма значения',
+            'after'        => 'Через',
+            'delay-type'   => 'Тип отсрочки',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Оплата Due Term обновлено',
-                    'body'  => 'оплата due term есть обновлено successfully.',
+                    'title' => 'Срок платежа обновлён',
+                    'body'  => 'Срок платежа успешно обновлён.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Оплата Due Term удалено',
-                    'body'  => 'оплата due term есть удалено successfully.',
+                    'title' => 'Срок платежа удалён',
+                    'body'  => 'Срок платежа успешно удалён.',
                 ],
             ],
         ],
@@ -39,8 +39,8 @@ return [
         'header-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Оплата Due Term создано',
-                    'body'  => 'оплата due term есть создано successfully.',
+                    'title' => 'Срок платежа создан',
+                    'body'  => 'Срок платежа успешно создан.',
                 ],
             ],
         ],

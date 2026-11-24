@@ -4,15 +4,15 @@ return [
     'form' => [
         'fieldsets' => [
             'account-properties' => [
-                'label' => 'Счёт Properties',
+                'label' => 'Учётные свойства',
 
                 'fields' => [
-                    'income-account'                    => 'Доход Счёт',
-                    'income-account-hint-tooltip'       => 'Этот счёт быть используется когда validating Счёт клиенту.',
-                    'expense-account'                   => 'Расход Счёт',
-                    'expense-account-hint-tooltip'      => 'расход recorded когда счёт поставщика validated, except менее Anglo-Saxon учёт с perpetual склад valuation, где это instead recognized как Себестоимость Sold когда Счёт клиенту validated.',
-                    'down-payment-account'              => 'Вниз Оплата Счёт',
-                    'down-payment-account-hint-tooltip' => 'Выбрать счёт до который вниз оплаты от этот категория быть recorded.',
+                    'income-account'                    => 'Счёт доходов',
+                    'income-account-hint-tooltip'       => 'Этот счёт используется при подтверждении счёта клиента.',
+                    'expense-account'                   => 'Счёт расходов',
+                    'expense-account-hint-tooltip'      => 'Расход учитывается при подтверждении счёта поставщика, кроме англосаксонского учёта с непрерывной оценкой запасов: там он признаётся как себестоимость продаж при подтверждении счёта клиента.',
+                    'down-payment-account'              => 'Счёт авансов',
+                    'down-payment-account-hint-tooltip' => 'Выберите счёт, на котором будут учитываться авансы по этой категории.',
                 ],
             ],
         ],

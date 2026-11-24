@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Manage Distribution Kwa Rudisho',
+        'title' => 'Simamia mgawanyo wa marejesho',
     ],
 ];

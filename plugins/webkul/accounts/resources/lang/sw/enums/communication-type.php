@@ -2,6 +2,6 @@
 
 return [
     'open'    => 'Wazi',
-    'partner' => 'Base washa Mshirika',
-    'invoice' => 'Base washa Ankara',
+    'partner' => 'Kulingana na mhusika',
+    'invoice' => 'Kulingana na ankara',
 ];

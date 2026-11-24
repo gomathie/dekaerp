@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Washirika',
+    'title' => 'Wahusika',
 
     'navigation' => [
-        'title' => 'Washirika',
+        'title' => 'Wahusika',
     ],
 
     'form' => [
@@ -15,11 +15,11 @@ return [
                         'title' => 'Mauzo',
 
                         'fields' => [
-                            'sales-person'            => 'Mauzo Person',
+                            'sales-person'            => 'Muuzaji',
                             'payment-terms'           => 'Masharti ya malipo',
-                            'payment-method'          => 'Malipo Method',
-                            'default-currency'        => 'Sarafu chaguomsingi',
-                            'default-currency-helper' => 'Ankara, bili na oda za ununuzi za mhusika huyu hufunguka kwa sarafu hii. Acha wazi kutumia sarafu yako ya kawaida.',
+                            'payment-method'          => 'Njia ya malipo',
+                            'default-currency'        => 'Sarafu chaguo-msingi',
+                            'default-currency-helper' => 'Ankara, bili na oda za ununuzi za mhusika huyu hufunguliwa kwa sarafu hii. Acha wazi ili kutumia sarafu yako ya kawaida.',
                         ],
                     ],
 
@@ -28,58 +28,58 @@ return [
 
                         'fields' => [
                             'payment-terms'  => 'Masharti ya malipo',
-                            'payment-method' => 'Malipo Method',
+                            'payment-method' => 'Njia ya malipo',
                         ],
                     ],
 
                     'fiscal-information' => [
-                        'title' => 'Kifedha Taarifa',
+                        'title' => 'Taarifa za kodi',
 
                         'fields' => [
-                            'fiscal-position'    => 'Kifedha Cheo',
+                            'fiscal-position'    => 'Nafasi ya kodi',
                         ],
                     ],
                 ],
             ],
 
             'invoicing' => [
-                'title'  => 'Invoicing',
+                'title'  => 'Utoaji wa ankara',
 
                 'fieldsets' => [
                     'customer-invoices' => [
-                        'title' => 'Ankara ya mtejas',
+                        'title' => 'Ankara za wateja',
 
                         'fields' => [
-                            'invoice-sending-method'   => 'Ankara Sending Method',
-                            'invoice-edi-format-store' => 'eInvoice Umbizo',
-                            'peppol-eas'               => 'Peppol Anwani',
-                            'endpoint'                 => 'Endpoint',
+                            'invoice-sending-method'   => 'Njia ya kutuma ankara',
+                            'invoice-edi-format-store' => 'Muundo wa ankara ya kielektroniki',
+                            'peppol-eas'               => 'Anwani ya Peppol',
+                            'endpoint'                 => 'Sehemu ya mwisho',
                         ],
                     ],
 
                     'accounting-entries' => [
-                        'title' => 'Uhasibu Maingizo',
+                        'title' => 'Maingizo ya uhasibu',
 
                         'fields' => [
-                            'account-receivable' => 'Akaunti Ya kupokea',
-                            'account-payable'    => 'Akaunti Ya kulipa',
+                            'account-receivable' => 'Akaunti ya zinazodaiwa',
+                            'account-payable'    => 'Akaunti ya zinazolipwa',
                         ],
                     ],
 
                     'automation' => [
-                        'title' => 'Automation',
+                        'title' => 'Uendeshaji otomatiki',
 
                         'fields' => [
-                            'auto-post-bills'                => 'Auto Post Bili',
-                            'ignore-abnormal-invoice-amount' => 'Ignore Abnormal Ankara Kiasi',
-                            'ignore-abnormal-invoice-date'   => 'Ignore Abnormal Tarehe ya ankara',
+                            'auto-post-bills'                => 'Rekodi bili kiotomatiki',
+                            'ignore-abnormal-invoice-amount' => 'Puuza kiasi kisicho cha kawaida cha ankara',
+                            'ignore-abnormal-invoice-date'   => 'Puuza tarehe isiyo ya kawaida ya ankara',
                         ],
                     ],
                 ],
             ],
 
             'internal-notes' => [
-                'title' => 'Ndani Maelezo',
+                'title' => 'Vidokezo vya ndani',
             ],
         ],
     ],
@@ -93,9 +93,9 @@ return [
                         'title' => 'Mauzo',
 
                         'entries' => [
-                            'sales-person'   => 'Mauzo Person',
+                            'sales-person'   => 'Muuzaji',
                             'payment-terms'  => 'Masharti ya malipo',
-                            'payment-method' => 'Malipo Method',
+                            'payment-method' => 'Njia ya malipo',
                         ],
                     ],
 
@@ -104,58 +104,58 @@ return [
 
                         'entries' => [
                             'payment-terms'  => 'Masharti ya malipo',
-                            'payment-method' => 'Malipo Method',
+                            'payment-method' => 'Njia ya malipo',
                         ],
                     ],
 
                     'fiscal-information' => [
-                        'title' => 'Kifedha Taarifa',
+                        'title' => 'Taarifa za kodi',
 
                         'entries' => [
-                            'fiscal-position'    => 'Kifedha Cheo',
+                            'fiscal-position'    => 'Nafasi ya kodi',
                         ],
                     ],
                 ],
             ],
 
             'invoicing' => [
-                'title'  => 'Invoicing',
+                'title'  => 'Utoaji wa ankara',
 
                 'fieldsets' => [
                     'customer-invoices' => [
-                        'title' => 'Ankara ya mtejas',
+                        'title' => 'Ankara za wateja',
 
                         'entries' => [
-                            'invoice-sending-method'   => 'Ankara Sending Method',
-                            'invoice-edi-format-store' => 'eInvoice Umbizo',
-                            'peppol-eas'               => 'Peppol Anwani',
-                            'endpoint'                 => 'Endpoint',
+                            'invoice-sending-method'   => 'Njia ya kutuma ankara',
+                            'invoice-edi-format-store' => 'Muundo wa ankara ya kielektroniki',
+                            'peppol-eas'               => 'Anwani ya Peppol',
+                            'endpoint'                 => 'Sehemu ya mwisho',
                         ],
                     ],
 
                     'accounting-entries' => [
-                        'title' => 'Uhasibu Maingizo',
+                        'title' => 'Maingizo ya uhasibu',
 
                         'entries' => [
-                            'account-receivable' => 'Akaunti Ya kupokea',
-                            'account-payable'    => 'Akaunti Ya kulipa',
+                            'account-receivable' => 'Akaunti ya zinazodaiwa',
+                            'account-payable'    => 'Akaunti ya zinazolipwa',
                         ],
                     ],
 
                     'automation' => [
-                        'title' => 'Automation',
+                        'title' => 'Uendeshaji otomatiki',
 
                         'entries' => [
-                            'auto-post-bills'                => 'Auto Post Bili',
-                            'ignore-abnormal-invoice-amount' => 'Ignore Abnormal Ankara Kiasi',
-                            'ignore-abnormal-invoice-date'   => 'Ignore Abnormal Tarehe ya ankara',
+                            'auto-post-bills'                => 'Rekodi bili kiotomatiki',
+                            'ignore-abnormal-invoice-amount' => 'Puuza kiasi kisicho cha kawaida cha ankara',
+                            'ignore-abnormal-invoice-date'   => 'Puuza tarehe isiyo ya kawaida ya ankara',
                         ],
                     ],
                 ],
             ],
 
             'internal-notes' => [
-                'title' => 'Ndani Maelezo',
+                'title' => 'Vidokezo vya ndani',
             ],
         ],
     ],

@@ -5,14 +5,14 @@ return [
 
     'log-attributes' => [
         'date'              => 'Tarehe',
-        'payment-type'      => 'Malipo Aina',
-        'partner-type'      => 'Mshirika Aina',
-        'memo'              => 'Memo',
-        'payment-reference' => 'Malipo Kumbukumbu',
+        'payment-type'      => 'Aina ya malipo',
+        'partner-type'      => 'Aina ya mhusika',
+        'memo'              => 'Kumbukumbu',
+        'payment-reference' => 'Rejea ya malipo',
         'amount'            => 'Kiasi',
-        'partner'           => 'Mshirika',
-        'partner-bank'      => 'Mshirika Benki',
-        'payment-method'    => 'Malipo Method',
+        'partner'           => 'Mhusika',
+        'partner-bank'      => 'Benki ya mhusika',
+        'payment-method'    => 'Njia ya malipo',
         'currency'          => 'Sarafu',
     ],
 ];

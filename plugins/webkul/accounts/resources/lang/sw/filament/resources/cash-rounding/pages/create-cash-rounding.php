@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Taslimu rounding imeundwa',
-        'body'  => 'taslimu rounding ina imeundwa successfully.',
+        'title' => 'Ukadiriaji wa fedha taslimu umeundwa',
+        'body'  => 'Ukadiriaji wa fedha taslimu umeundwa kikamilifu.',
     ],
 ];

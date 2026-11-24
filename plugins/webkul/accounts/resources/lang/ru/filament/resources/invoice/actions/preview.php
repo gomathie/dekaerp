@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Preview',
+    'title' => 'Предпросмотр',
 
     'modal' => [
-        'title' => 'Preview Счёт',
+        'title' => 'Предпросмотр счёта',
 
         'action' => [
             'close' => [

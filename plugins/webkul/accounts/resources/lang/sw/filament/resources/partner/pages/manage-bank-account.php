@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'title' => 'Akaunti ya benkis',
+    'title' => 'Akaunti za benki',
 
     'table' => [
         'header-actions' => [
             'create' => [
-                'title' => 'Mpya Akaunti ya benki',
+                'title' => 'Akaunti mpya ya benki',
             ],
         ],
     ],

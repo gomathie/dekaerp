@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'next'        => 'Ifuatayo',
-    'overdue'     => 'Imechelewa',
-    'before-date' => 'Kabla ya Tarehe',
+    'next'        => 'Inayofuata',
+    'overdue'     => 'Iliyochelewa',
+    'before-date' => 'Kabla ya tarehe',
     'full'        => 'Kamili',
 ];

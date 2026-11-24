@@ -2,20 +2,20 @@
 
 return [
     'notification' => [
-        'title' => 'Rudisho imesasishwa',
-        'body'  => 'rudisho ina imesasishwa successfully.',
+        'title' => 'Marejesho yamesasishwa',
+        'body'  => 'Marejesho yamesasishwa kikamilifu.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Rudisho imefutwa',
-                'body'  => 'Rudisho ina imefutwa successfully.',
+                'title' => 'Marejesho yamefutwa',
+                'body'  => 'Marejesho yamefutwa kikamilifu.',
             ],
         ],
 
         'preview' => [
-            'modal-heading' => 'Preview Rudisho',
+            'modal-heading' => 'Hakiki marejesho',
         ],
     ],
 ];

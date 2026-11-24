@@ -4,13 +4,13 @@ return [
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Кредит-нота удалено',
-                'body'  => 'Кредит-нота есть удалено successfully.',
+                'title' => 'Кредит-нота удалена',
+                'body'  => 'Кредит-нота успешно удалена.',
             ],
         ],
 
         'preview' => [
-            'modal-heading' => 'Preview Кредит-нота',
+            'modal-heading' => 'Просмотр кредит-ноты',
         ],
     ],
 ];

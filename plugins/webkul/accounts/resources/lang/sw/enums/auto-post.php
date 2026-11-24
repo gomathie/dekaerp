@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'no'        => 'Hakuna',
-    'at-date'   => 'Saa Tarehe',
+    'no'        => 'Hapana',
+    'at-date'   => 'Kwenye tarehe',
     'monthly'   => 'Kila mwezi',
-    'quarterly' => 'Quarterly',
+    'quarterly' => 'Kila robo mwaka',
     'yearly'    => 'Kila mwaka',
 ];

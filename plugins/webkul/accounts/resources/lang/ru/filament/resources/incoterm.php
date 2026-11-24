@@ -12,7 +12,7 @@ return [
         'columns' => [
             'code'       => 'Код',
             'name'       => 'Название',
-            'created-by' => 'Создано От',
+            'created-by' => 'Создал',
         ],
 
         'groups' => [
@@ -23,22 +23,22 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Incoterm обновлено',
-                    'body'  => 'incoterm есть обновлено successfully.',
+                    'title' => 'Инкотермс обновлён',
+                    'body'  => 'Условие Инкотермс успешно обновлено.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Incoterm удалено',
-                    'body'  => 'incoterm есть удалено successfully.',
+                    'title' => 'Инкотермс удалён',
+                    'body'  => 'Условие Инкотермс успешно удалено.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Incoterm restored',
-                    'body'  => 'incoterm есть restored successfully.',
+                    'title' => 'Инкотермс восстановлен',
+                    'body'  => 'Условие Инкотермс успешно восстановлено.',
                 ],
             ],
         ],
@@ -46,22 +46,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Incoterms restored',
-                    'body'  => 'incoterms есть restored successfully.',
+                    'title' => 'Инкотермс восстановлены',
+                    'body'  => 'Условия Инкотермс успешно восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Incoterms удалено',
-                    'body'  => 'incoterms есть удалено successfully.',
+                    'title' => 'Инкотермс удалены',
+                    'body'  => 'Условия Инкотермс успешно удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Incoterms force удалено',
-                    'body'  => 'incoterms есть force удалено successfully.',
+                    'title' => 'Инкотермс удалены навсегда',
+                    'body'  => 'Условия Инкотермс успешно удалены навсегда.',
                 ],
             ],
         ],

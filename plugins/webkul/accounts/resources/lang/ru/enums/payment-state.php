@@ -2,10 +2,10 @@
 
 return [
     'not-paid'         => 'Не оплачен',
-    'in-payment'       => 'В оплата',
+    'in-payment'       => 'В процессе оплаты',
     'paid'             => 'Оплачен',
-    'partial'          => 'Частичный',
-    'reversed'         => 'Reversed',
-    'blocked'          => 'Blocked',
-    'invoicing-legacy' => 'Invoicing legacy',
+    'partial'          => 'Частично оплачен',
+    'reversed'         => 'Сторнирован',
+    'blocked'          => 'Заблокирован',
+    'invoicing-legacy' => 'Унаследованный учёт',
 ];

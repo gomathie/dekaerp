@@ -13,7 +13,7 @@ return [
             'general' => [
                 'title'  => 'Общее',
                 'fields' => [
-                    'customer-invoice' => 'Клиент Кредит-нота',
+                    'customer-invoice' => 'Кредит-нота клиента',
                     'customer'         => 'Клиент',
                     'invoice-date'     => 'Дата счёта',
                     'due-date'         => 'Срок оплаты',
@@ -34,27 +34,27 @@ return [
                         'fields' => [
                             'product'             => 'Товар',
                             'quantity'            => 'Количество',
-                            'unit'                => 'Единица',
+                            'unit'                => 'Ед. изм.',
                             'taxes'               => 'Налоги',
-                            'discount-percentage' => 'Скидка',
-                            'unit-price'          => 'Цена за единицу',
-                            'sub-total'           => 'Промежуточный итог',
+                            'discount-percentage' => 'Скидка, %',
+                            'unit-price'          => 'Цена за ед.',
+                            'sub-total'           => 'Подытог',
                         ],
                     ],
                 ],
             ],
 
             'other-information' => [
-                'title'    => 'Другое Сведения',
+                'title'    => 'Прочая информация',
                 'fieldset' => [
                     'invoice' => [
                         'title'  => 'Счёт',
                         'fields' => [
                             'customer-reference' => 'Ссылка клиента',
-                            'sales-person'       => 'Продажи Person',
-                            'payment-reference'  => 'Оплата Ссылка',
-                            'recipient-bank'     => 'Получатель Банк',
-                            'delivery-date'      => 'Доставка Дата',
+                            'sales-person'       => 'Менеджер по продажам',
+                            'payment-reference'  => 'Назначение платежа',
+                            'recipient-bank'     => 'Банк получателя',
+                            'delivery-date'      => 'Дата отгрузки',
                         ],
                     ],
 
@@ -62,16 +62,16 @@ return [
                         'title' => 'Учёт',
 
                         'fields' => [
-                            'incoterm'          => 'Incoterm',
-                            'incoterm-location' => 'Incoterm Место',
-                            'payment-method'    => 'Оплата Method',
-                            'auto-post'         => 'Auto Post',
-                            'checked'           => 'Checked',
+                            'incoterm'          => 'Инкотермс',
+                            'incoterm-location' => 'Место по Инкотермс',
+                            'payment-method'    => 'Способ оплаты',
+                            'auto-post'         => 'Автопроведение',
+                            'checked'           => 'Проверен',
                         ],
                     ],
 
                     'additional-information' => [
-                        'title'  => 'Additional Сведения',
+                        'title'  => 'Дополнительная информация',
                         'fields' => [
                             'company'  => 'Компания',
                             'currency' => 'Валюта',
@@ -79,10 +79,10 @@ return [
                     ],
 
                     'marketing' => [
-                        'title'  => 'Marketing',
+                        'title'  => 'Маркетинг',
                         'fields' => [
-                            'campaign' => 'Campaign',
-                            'medium'   => 'Средний',
+                            'campaign' => 'Кампания',
+                            'medium'   => 'Канал',
                             'source'   => 'Источник',
                         ],
                     ],
@@ -90,7 +90,7 @@ return [
             ],
 
             'term-and-conditions' => [
-                'title' => 'Term & Conditions',
+                'title' => 'Условия',
             ],
         ],
     ],
@@ -100,7 +100,7 @@ return [
             'general' => [
                 'title'   => 'Общее',
                 'entries' => [
-                    'customer-invoice' => 'Клиент Кредит-нота',
+                    'customer-invoice' => 'Кредит-нота клиента',
                     'customer'         => 'Клиент',
                     'invoice-date'     => 'Дата счёта',
                     'due-date'         => 'Срок оплаты',
@@ -120,9 +120,9 @@ return [
                             'quantity'            => 'Количество',
                             'unit'                => 'Единица измерения',
                             'taxes'               => 'Налоги',
-                            'discount-percentage' => 'Скидка',
-                            'unit-price'          => 'Цена за единицу',
-                            'sub-total'           => 'Промежуточный итог',
+                            'discount-percentage' => 'Скидка, %',
+                            'unit-price'          => 'Цена за ед.',
+                            'sub-total'           => 'Подытог',
                             'total'               => 'Итого',
                         ],
                     ],
@@ -130,16 +130,16 @@ return [
             ],
 
             'other-information' => [
-                'title'    => 'Другое Сведения',
+                'title'    => 'Прочая информация',
                 'fieldset' => [
                     'invoice' => [
                         'title'   => 'Счёт',
                         'entries' => [
                             'customer-reference' => 'Ссылка клиента',
-                            'sales-person'       => 'Продажи Person',
-                            'payment-reference'  => 'Оплата Ссылка',
-                            'recipient-bank'     => 'Получатель Банк',
-                            'delivery-date'      => 'Доставка Дата',
+                            'sales-person'       => 'Менеджер по продажам',
+                            'payment-reference'  => 'Назначение платежа',
+                            'recipient-bank'     => 'Банк получателя',
+                            'delivery-date'      => 'Дата отгрузки',
                         ],
                     ],
 
@@ -147,16 +147,16 @@ return [
                         'title' => 'Учёт',
 
                         'fieldset' => [
-                            'incoterm'          => 'Incoterm',
-                            'incoterm-location' => 'Incoterm Место',
-                            'payment-method'    => 'Оплата Method',
-                            'auto-post'         => 'Auto Post',
-                            'checked'           => 'Checked',
+                            'incoterm'          => 'Инкотермс',
+                            'incoterm-location' => 'Место по Инкотермс',
+                            'payment-method'    => 'Способ оплаты',
+                            'auto-post'         => 'Автопроведение',
+                            'checked'           => 'Проверен',
                         ],
                     ],
 
                     'additional-information' => [
-                        'title'   => 'Additional Сведения',
+                        'title'   => 'Дополнительная информация',
                         'entries' => [
                             'company'  => 'Компания',
                             'currency' => 'Валюта',
@@ -164,10 +164,10 @@ return [
                     ],
 
                     'marketing' => [
-                        'title'   => 'Marketing',
+                        'title'   => 'Маркетинг',
                         'entries' => [
-                            'campaign' => 'Campaign',
-                            'medium'   => 'Средний',
+                            'campaign' => 'Кампания',
+                            'medium'   => 'Канал',
                             'source'   => 'Источник',
                         ],
                     ],
@@ -175,7 +175,7 @@ return [
             ],
 
             'term-and-conditions' => [
-                'title' => 'Term & Conditions',
+                'title' => 'Условия',
             ],
         ],
     ],

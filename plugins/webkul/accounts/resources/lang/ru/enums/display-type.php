@@ -2,12 +2,12 @@
 
 return [
     'product'      => 'Товар',
-    'cogs'         => 'Себестоимость Sold',
+    'cogs'         => 'Себестоимость продаж',
     'tax'          => 'Налог',
     'discount'     => 'Скидка',
-    'rounding'     => 'Rounding',
+    'rounding'     => 'Округление',
     'payment_term' => 'Условие оплаты',
     'line_section' => 'Раздел',
-    'line_note'    => 'Заметка',
-    'epd'          => 'Early Оплата Скидка',
+    'line_note'    => 'Примечание',
+    'epd'          => 'Скидка за досрочную оплату',
 ];

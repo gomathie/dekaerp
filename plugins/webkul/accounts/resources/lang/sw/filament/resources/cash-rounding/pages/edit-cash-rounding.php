@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Taslimu rounding imesasishwa',
-        'body'  => 'taslimu rounding ina imesasishwa successfully.',
+        'title' => 'Ukadiriaji wa fedha taslimu umesasishwa',
+        'body'  => 'Ukadiriaji wa fedha taslimu umesasishwa kikamilifu.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Taslimu rounding imefutwa',
-                'body'  => 'taslimu rounding ina imefutwa successfully.',
+                'title' => 'Ukadiriaji wa fedha taslimu umefutwa',
+                'body'  => 'Ukadiriaji wa fedha taslimu umefutwa kikamilifu.',
             ],
         ],
     ],

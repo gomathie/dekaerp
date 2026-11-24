@@ -1,33 +1,33 @@
 <?php
 
 return [
-    'title' => 'Pay',
+    'title' => 'Lipa',
 
     'paid-now' => [
         'label'   => 'Imelipwa sasa',
-        'helper'  => 'Saving confirms ankara na rekodi kamili malipo.',
-        'invalid' => 'Hii way hadi pay haiwezekani kuwa inatumika kwa hii ankara.',
+        'helper'  => 'Kuhifadhi kunathibitisha ankara na kurekodi malipo kamili.',
+        'invalid' => 'Njia hii ya kulipa haiwezi kutumika kwa ankara hii.',
     ],
 
     'form' => [
-        'more-options' => 'Zaidi options',
+        'more-options' => 'Chaguo zaidi',
         'fields'       => [
-            'paid-how'               => 'Jinsi ilikuwa hii imelipwa?',
-            'new-way'                => 'Mpya way hadi pay (e.g. Wave, Card)',
+            'paid-how'               => 'Ililipwa vipi?',
+            'new-way'                => 'Njia mpya ya kulipa (k.m. Wave, kadi)',
             'journal'                => 'Jarida',
             'amount'                 => 'Kiasi',
             'currency'               => 'Sarafu',
-            'payment-method-line'    => 'Malipo Method Mstari',
-            'payment-date'           => 'Malipo Tarehe',
-            'recipient-bank-account' => 'Mpokeaji Akaunti ya benki',
-            'communication'          => 'Memo',
+            'payment-method-line'    => 'Njia ya malipo',
+            'payment-date'           => 'Tarehe ya malipo',
+            'recipient-bank-account' => 'Akaunti ya benki ya mpokeaji',
+            'communication'          => 'Kumbukumbu',
         ],
     ],
 
     'notifications' => [
         'payment-failed' => [
-            'title'      => 'Malipo Imeshindwa',
-            'plain-body' => 'Hii malipo could si kuwa prepared. Yetu timu ina notified. Tafadhali jaribu tena katika moment, au mwasiliani support.',
+            'title'      => 'Malipo yameshindwa',
+            'plain-body' => 'Malipo haya hayakuweza kuandaliwa. Timu yetu imearifiwa. Tafadhali jaribu tena baada ya muda mfupi, au wasiliana na huduma kwa wateja.',
         ],
     ],
 ];

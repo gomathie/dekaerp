@@ -5,16 +5,16 @@ return [
         'date'            => 'Дата',
         'name'            => 'Название',
         'journal'         => 'Журнал',
-        'payment-method'  => 'Оплата Method',
-        'partner'         => 'Контрагент',
-        'amount-currency' => 'Сумма Валюта',
+        'payment-method'  => 'Способ оплаты',
+        'partner'         => 'Контакт',
+        'amount-currency' => 'Сумма в валюте',
         'amount'          => 'Сумма',
-        'state'           => 'Состояние',
+        'state'           => 'Статус',
         'company'         => 'Компания',
     ],
 
     'notification' => [
-        'completed' => 'Ваш оплата экспорт есть завершено и :count строка(s) exported.',
-        'failed'    => ':count строка(s) не удалось до экспорт.',
+        'completed' => 'Экспорт платежей завершён, экспортировано строк: :count.',
+        'failed'    => 'Не удалось экспортировать строк: :count.',
     ],
 ];

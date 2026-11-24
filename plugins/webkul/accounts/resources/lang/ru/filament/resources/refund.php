@@ -13,13 +13,13 @@ return [
             'general' => [
                 'title'  => 'Общее',
                 'fields' => [
-                    'vendor-credit-note' => 'Поставщик Кредит-нота',
+                    'vendor-credit-note' => 'Кредит-нота поставщика',
                     'vendor'             => 'Поставщик',
-                    'bill-date'          => 'Счёт поставщика Дата',
-                    'bill-reference'     => 'Счёт поставщика Ссылка',
-                    'accounting-date'    => 'Учёт Дата',
-                    'payment-reference'  => 'Оплата Ссылка',
-                    'recipient-bank'     => 'Получатель Банк',
+                    'bill-date'          => 'Дата счёта',
+                    'bill-reference'     => 'Номер счёта поставщика',
+                    'accounting-date'    => 'Дата учёта',
+                    'payment-reference'  => 'Назначение платежа',
+                    'recipient-bank'     => 'Банк получателя',
                     'due-date'           => 'Срок оплаты',
                     'payment-term'       => 'Условие оплаты',
                 ],
@@ -38,39 +38,39 @@ return [
                         'fields' => [
                             'product'             => 'Товар',
                             'quantity'            => 'Количество',
-                            'unit'                => 'Единица',
+                            'unit'                => 'Ед. изм.',
                             'taxes'               => 'Налоги',
-                            'discount-percentage' => 'Скидка',
-                            'unit-price'          => 'Цена за единицу',
-                            'sub-total'           => 'Промежуточный итог',
+                            'discount-percentage' => 'Скидка, %',
+                            'unit-price'          => 'Цена за ед.',
+                            'sub-total'           => 'Подытог',
                         ],
                     ],
                 ],
             ],
 
             'other-information' => [
-                'title'    => 'Другое Сведения',
+                'title'    => 'Прочая информация',
                 'fieldset' => [
                     'accounting' => [
                         'title' => 'Учёт',
 
                         'fields' => [
-                            'incoterm'          => 'Incoterm',
-                            'incoterm-location' => 'Incoterm Место',
+                            'incoterm'          => 'Инкотермс',
+                            'incoterm-location' => 'Место по Инкотермс',
                         ],
                     ],
 
                     'secured' => [
-                        'title'  => 'Secured',
+                        'title'  => 'Защищён',
                         'fields' => [
-                            'payment-method' => 'Оплата Method',
-                            'auto-post'      => 'Auto Post',
-                            'checked'        => 'Checked',
+                            'payment-method' => 'Способ оплаты',
+                            'auto-post'      => 'Автопроведение',
+                            'checked'        => 'Проверен',
                         ],
                     ],
 
                     'additional-information' => [
-                        'title'  => 'Additional Сведения',
+                        'title'  => 'Дополнительная информация',
                         'fields' => [
                             'company'  => 'Компания',
                             'currency' => 'Валюта',
@@ -80,7 +80,7 @@ return [
             ],
 
             'term-and-conditions' => [
-                'title' => 'Term & Conditions',
+                'title' => 'Условия',
             ],
         ],
     ],
@@ -90,13 +90,13 @@ return [
             'general' => [
                 'title'   => 'Общее',
                 'entries' => [
-                    'vendor-invoice'    => 'Поставщик Счёт',
+                    'vendor-invoice'    => 'Счёт поставщика',
                     'vendor'            => 'Поставщик',
-                    'bill-date'         => 'Счёт поставщика Дата',
-                    'bill-reference'    => 'Счёт поставщика Ссылка',
-                    'accounting-date'   => 'Учёт Дата',
-                    'payment-reference' => 'Оплата Ссылка',
-                    'recipient-bank'    => 'Получатель Банк',
+                    'bill-date'         => 'Дата счёта',
+                    'bill-reference'    => 'Номер счёта поставщика',
+                    'accounting-date'   => 'Дата учёта',
+                    'payment-reference' => 'Назначение платежа',
+                    'recipient-bank'    => 'Банк получателя',
                     'due-date'          => 'Срок оплаты',
                     'payment-term'      => 'Условие оплаты',
                 ],
@@ -115,39 +115,39 @@ return [
                         'entries' => [
                             'product'             => 'Товар',
                             'quantity'            => 'Количество',
-                            'unit'                => 'Единица',
+                            'unit'                => 'Ед. изм.',
                             'taxes'               => 'Налоги',
-                            'discount-percentage' => 'Скидка',
-                            'unit-price'          => 'Цена за единицу',
-                            'sub-total'           => 'Промежуточный итог',
+                            'discount-percentage' => 'Скидка, %',
+                            'unit-price'          => 'Цена за ед.',
+                            'sub-total'           => 'Подытог',
                         ],
                     ],
                 ],
             ],
 
             'other-information' => [
-                'title'    => 'Другое Сведения',
+                'title'    => 'Прочая информация',
                 'fieldset' => [
                     'accounting' => [
                         'title' => 'Учёт',
 
                         'entries' => [
-                            'incoterm'          => 'Incoterm',
-                            'incoterm-location' => 'Incoterm Место',
+                            'incoterm'          => 'Инкотермс',
+                            'incoterm-location' => 'Место по Инкотермс',
                         ],
                     ],
 
                     'secured' => [
-                        'title'   => 'Secured',
+                        'title'   => 'Защищён',
                         'entries' => [
-                            'payment-method' => 'Оплата Method',
-                            'auto-post'      => 'Auto Post',
-                            'checked'        => 'Checked',
+                            'payment-method' => 'Способ оплаты',
+                            'auto-post'      => 'Автопроведение',
+                            'checked'        => 'Проверен',
                         ],
                     ],
 
                     'additional-information' => [
-                        'title'   => 'Additional Сведения',
+                        'title'   => 'Дополнительная информация',
                         'entries' => [
                             'company'  => 'Компания',
                             'currency' => 'Валюта',
@@ -157,7 +157,7 @@ return [
             ],
 
             'term-and-conditions' => [
-                'title' => 'Term & Conditions',
+                'title' => 'Условия',
             ],
         ],
     ],

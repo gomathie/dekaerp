@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'base' => 'Base',
-    'tax'  => 'ya Kodi',
+    'base' => 'Msingi',
+    'tax'  => 'ya kodi',
 ];

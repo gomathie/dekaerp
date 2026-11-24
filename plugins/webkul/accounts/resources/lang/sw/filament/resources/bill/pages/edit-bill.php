@@ -3,24 +3,24 @@
 return [
     'notification' => [
         'title' => 'Bili imesasishwa',
-        'body'  => 'bili ina imesasishwa successfully.',
+        'body'  => 'Bili imesasishwa kikamilifu.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
                 'title' => 'Bili imefutwa',
-                'body'  => 'Bili ina imefutwa successfully.',
+                'body'  => 'Bili imefutwa kikamilifu.',
             ],
         ],
 
         'preview' => [
-            'modal-heading' => 'Preview Bili',
+            'modal-heading' => 'Hakiki bili',
         ],
 
         'reverse' => [
-            'label'         => 'Rudisho',
-            'modal-heading' => 'Unda Rudisho',
+            'label'         => 'Marejesho',
+            'modal-heading' => 'Unda marejesho',
         ],
     ],
 ];

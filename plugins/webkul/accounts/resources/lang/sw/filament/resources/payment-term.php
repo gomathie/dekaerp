@@ -4,29 +4,29 @@ return [
     'form' => [
         'sections' => [
             'fields' => [
-                'payment-term'         => 'Masharti ya malipo',
+                'payment-term'         => 'Sharti la malipo',
                 'company'              => 'Kampuni',
-                'company-placeholder'  => 'Zote Makampuni',
-                'early-discount'       => 'Early Punguzo',
-                'discount-days-prefix' => 'ikiwa imelipwa ndani ya',
+                'company-placeholder'  => 'Kampuni zote',
+                'early-discount'       => 'Punguzo la mapema',
+                'discount-days-prefix' => 'ikilipwa ndani ya',
                 'discount-days-suffix' => 'siku',
-                'reduced-tax'          => 'Reduced kodi',
-                'note'                 => 'Maelezo',
+                'reduced-tax'          => 'Kodi iliyopunguzwa',
+                'note'                 => 'Kidokezo',
                 'status'               => 'Hali',
             ],
         ],
 
         'tabs' => [
             'due-terms' => [
-                'title' => 'Due Terms',
+                'title' => 'Awamu za malipo',
 
                 'repeater' => [
                     'due-terms' => [
                         'fields' => [
                             'value'                  => 'Thamani',
-                            'due'                    => 'Due',
-                            'delay-type'             => 'Delay Aina',
-                            'days-on-the-next-month' => 'Siku washa ifuatayo mwezi',
+                            'due'                    => 'Inadaiwa',
+                            'delay-type'             => 'Aina ya muda wa kusubiri',
+                            'days-on-the-next-month' => 'Siku za mwezi unaofuata',
                             'days'                   => 'Siku',
                         ],
                     ],
@@ -37,47 +37,47 @@ return [
 
     'table' => [
         'columns' => [
-            'payment-term' => 'Masharti ya malipo',
+            'payment-term' => 'Sharti la malipo',
             'company'      => 'Kampuni',
-            'created-at'   => 'Imeundwa',
-            'updated-at'   => 'Imesasishwa',
+            'created-at'   => 'Iliundwa',
+            'updated-at'   => 'Ilisasishwa',
         ],
 
         'groups' => [
-            'company-name'        => 'Kampuni Jina',
-            'discount-days'       => 'Punguzo Siku',
-            'early-pay-discount'  => 'Early Pay Punguzo',
-            'payment-term'        => 'Masharti ya malipo',
-            'display-on-invoice'  => 'Display washa Ankara',
-            'early-discount'      => 'Early Punguzo',
-            'discount-percentage' => 'Punguzo',
+            'company-name'        => 'Jina la kampuni',
+            'discount-days'       => 'Siku za punguzo',
+            'early-pay-discount'  => 'Punguzo la malipo ya mapema',
+            'payment-term'        => 'Sharti la malipo',
+            'display-on-invoice'  => 'Onyesha kwenye ankara',
+            'early-discount'      => 'Punguzo la mapema',
+            'discount-percentage' => 'Asilimia ya punguzo',
         ],
 
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Masharti ya malipo restored',
-                    'body'  => 'Masharti ya malipo ina restored successfully.',
+                    'title' => 'Sharti la malipo limerejeshwa',
+                    'body'  => 'Sharti la malipo limerejeshwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Masharti ya malipo imefutwa',
-                    'body'  => 'Masharti ya malipo ina imefutwa successfully.',
+                    'title' => 'Sharti la malipo limefutwa',
+                    'body'  => 'Sharti la malipo limefutwa kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Masharti ya malipo force imefutwa',
-                        'body'  => 'Masharti ya malipo ina force imefutwa successfully.',
+                        'title' => 'Sharti la malipo limefutwa kabisa',
+                        'body'  => 'Sharti la malipo limefutwa kabisa kikamilifu.',
                     ],
 
                     'error' => [
-                        'title' => 'Masharti ya malipo force deletion imeshindwa',
-                        'body'  => 'Masharti ya malipo could si kuwa force imefutwa kwa sababu hii ni associated uingizaji wa jarida.',
+                        'title' => 'Imeshindwa kufuta kabisa sharti la malipo',
+                        'body'  => 'Sharti la malipo halikuweza kufutwa kabisa kwa sababu lina maingizo ya jarida yanayohusiana nalo.',
                     ],
                 ],
             ],
@@ -86,28 +86,28 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Masharti ya malipo restored',
-                    'body'  => 'masharti ya malipo ina restored successfully.',
+                    'title' => 'Masharti ya malipo yamerejeshwa',
+                    'body'  => 'Masharti ya malipo yamerejeshwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Masharti ya malipo imefutwa',
-                    'body'  => 'masharti ya malipo ina imefutwa successfully.',
+                    'title' => 'Masharti ya malipo yamefutwa',
+                    'body'  => 'Masharti ya malipo yamefutwa kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Masharti ya malipo force imefutwa',
-                        'body'  => 'masharti ya malipo ina force imefutwa successfully.',
+                        'title' => 'Masharti ya malipo yamefutwa kabisa',
+                        'body'  => 'Masharti ya malipo yamefutwa kabisa kikamilifu.',
                     ],
 
                     'error' => [
-                        'title' => 'Masharti ya malipo force deletion imeshindwa',
-                        'body'  => 'masharti ya malipo could si kuwa force imefutwa kwa sababu wao ina associated uingizaji wa jarida.',
+                        'title' => 'Imeshindwa kufuta kabisa masharti ya malipo',
+                        'body'  => 'Masharti ya malipo hayakuweza kufutwa kabisa kwa sababu yana maingizo ya jarida yanayohusiana nayo.',
                     ],
                 ],
             ],
@@ -117,28 +117,28 @@ return [
     'infolist' => [
         'sections' => [
             'entries' => [
-                'payment-term'         => 'Masharti ya malipo',
-                'early-discount'       => 'Early Punguzo',
-                'discount-percentage'  => 'Punguzo',
-                'discount-days-prefix' => 'ikiwa imelipwa ndani ya',
+                'payment-term'         => 'Sharti la malipo',
+                'early-discount'       => 'Punguzo la mapema',
+                'discount-percentage'  => 'Asilimia ya punguzo',
+                'discount-days-prefix' => 'ikilipwa ndani ya',
                 'discount-days-suffix' => 'siku',
-                'reduced-tax'          => 'Reduced kodi',
-                'note'                 => 'Maelezo',
+                'reduced-tax'          => 'Kodi iliyopunguzwa',
+                'note'                 => 'Kidokezo',
                 'status'               => 'Hali',
             ],
         ],
 
         'tabs' => [
             'due-terms' => [
-                'title' => 'Due Terms',
+                'title' => 'Awamu za malipo',
 
                 'repeater' => [
                     'due-terms' => [
                         'entries' => [
                             'value'                  => 'Thamani',
-                            'due'                    => 'Due',
-                            'delay-type'             => 'Delay Aina',
-                            'days-on-the-next-month' => 'Siku washa ifuatayo mwezi',
+                            'due'                    => 'Inadaiwa',
+                            'delay-type'             => 'Aina ya muda wa kusubiri',
+                            'days-on-the-next-month' => 'Siku za mwezi unaofuata',
                             'days'                   => 'Siku',
                         ],
                     ],

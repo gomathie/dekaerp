@@ -6,12 +6,12 @@ return [
             'notification' => [
                 'success' => [
                     'title' => 'Kodi imefutwa',
-                    'body'  => 'kodi ina imefutwa successfully.',
+                    'body'  => 'Kodi imefutwa kikamilifu.',
                 ],
 
                 'error' => [
-                    'title' => 'Kodi could si kuwa imefutwa',
-                    'body'  => 'kodi haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                    'title' => 'Kodi haikuweza kufutwa',
+                    'body'  => 'Kodi haiwezi kufutwa kwa sababu inatumika kwa sasa.',
                 ],
             ],
         ],

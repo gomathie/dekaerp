@@ -4,13 +4,13 @@ return [
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Noti ya mkopo imefutwa',
-                'body'  => 'Noti ya mkopo ina imefutwa successfully.',
+                'title' => 'Hati ya mkopo imefutwa',
+                'body'  => 'Hati ya mkopo imefutwa kikamilifu.',
             ],
         ],
 
         'preview' => [
-            'modal-heading' => 'Preview Noti ya mkopo',
+            'modal-heading' => 'Hakiki hati ya mkopo',
         ],
     ],
 ];

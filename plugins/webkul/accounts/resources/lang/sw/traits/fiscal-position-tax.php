@@ -3,29 +3,29 @@
 return [
     'form' => [
         'fields' => [
-            'tax-source'      => 'Kodi Chanzo',
-            'tax-destination' => 'Kodi Unakoenda',
+            'tax-source'      => 'Kodi chanzo',
+            'tax-destination' => 'Kodi lengwa',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'tax-source'      => 'Kodi Chanzo',
-            'tax-destination' => 'Kodi Unakoenda',
+            'tax-source'      => 'Kodi chanzo',
+            'tax-destination' => 'Kodi lengwa',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Malipo Due Term imesasishwa',
-                    'body'  => 'malipo due term ina imesasishwa successfully.',
+                    'title' => 'Awamu ya malipo imesasishwa',
+                    'body'  => 'Awamu ya malipo imesasishwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Malipo Due Term imefutwa',
-                    'body'  => 'malipo due term ina imefutwa successfully.',
+                    'title' => 'Awamu ya malipo imefutwa',
+                    'body'  => 'Awamu ya malipo imefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -33,8 +33,8 @@ return [
         'header-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Malipo Due Term imeundwa',
-                    'body'  => 'malipo due term ina imeundwa successfully.',
+                    'title' => 'Awamu ya malipo imeundwa',
+                    'body'  => 'Awamu ya malipo imeundwa kikamilifu.',
                 ],
             ],
         ],
@@ -42,8 +42,8 @@ return [
 
     'infolist' => [
         'entries' => [
-            'tax-source'      => 'Kodi Chanzo',
-            'tax-destination' => 'Kodi Unakoenda',
+            'tax-source'      => 'Kodi chanzo',
+            'tax-destination' => 'Kodi lengwa',
         ],
     ],
 ];

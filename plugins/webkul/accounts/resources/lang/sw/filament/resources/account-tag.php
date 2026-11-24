@@ -5,10 +5,10 @@ return [
         'fields' => [
             'color'         => 'Rangi',
             'country'       => 'Nchi',
-            'applicability' => 'Applicability',
+            'applicability' => 'Matumizi',
             'name'          => 'Jina',
             'status'        => 'Hali',
-            'tax-negate'    => 'Kodi Negate',
+            'tax-negate'    => 'Geuza kodi',
         ],
     ],
 
@@ -16,42 +16,42 @@ return [
         'columns' => [
             'color'         => 'Rangi',
             'country'       => 'Nchi',
-            'created-by'    => 'Imeundwa Na',
-            'applicability' => 'Applicability',
+            'created-by'    => 'Imeundwa na',
+            'applicability' => 'Matumizi',
             'name'          => 'Jina',
             'status'        => 'Hali',
-            'tax-negate'    => 'Kodi Negate',
-            'created-at'    => 'Imeundwa',
-            'updated-at'    => 'Imesasishwa',
-            'deleted-at'    => 'Imefutwa',
+            'tax-negate'    => 'Geuza kodi',
+            'created-at'    => 'Iliundwa',
+            'updated-at'    => 'Ilisasishwa',
+            'deleted-at'    => 'Ilifutwa',
         ],
 
         'filters' => [
             'bank'           => 'Benki',
-            'account-holder' => 'Akaunti Holder',
-            'creator'        => 'Creator',
-            'can-send-money' => 'Unaweza Send Money',
+            'account-holder' => 'Mmiliki wa akaunti',
+            'creator'        => 'Muundaji',
+            'can-send-money' => 'Inaweza kutuma pesa',
         ],
 
         'groups' => [
             'country'       => 'Nchi',
-            'created-by'    => 'Imeundwa Na',
-            'applicability' => 'Applicability',
+            'created-by'    => 'Imeundwa na',
+            'applicability' => 'Matumizi',
             'name'          => 'Jina',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Akaunti Lebo imesasishwa',
-                    'body'  => 'akaunti Lebo ina imesasishwa successfully.',
+                    'title' => 'Lebo ya akaunti imesasishwa',
+                    'body'  => 'Lebo ya akaunti imesasishwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Akaunti Lebo imefutwa',
-                    'body'  => 'akaunti Lebo ina imefutwa successfully.',
+                    'title' => 'Lebo ya akaunti imefutwa',
+                    'body'  => 'Lebo ya akaunti imefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -59,8 +59,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Akaunti Lebo imefutwa',
-                    'body'  => 'akaunti Lebo ina imefutwa successfully.',
+                    'title' => 'Lebo za akaunti zimefutwa',
+                    'body'  => 'Lebo za akaunti zimefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -70,10 +70,10 @@ return [
         'entries' => [
             'color'         => 'Rangi',
             'country'       => 'Nchi',
-            'applicability' => 'Applicability',
+            'applicability' => 'Matumizi',
             'name'          => 'Jina',
             'status'        => 'Hali',
-            'tax-negate'    => 'Kodi Negate',
+            'tax-negate'    => 'Geuza kodi',
         ],
     ],
 ];

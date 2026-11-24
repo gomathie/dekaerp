@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'title' => 'Angalia Mteja',
+    'title' => 'Tazama mteja',
 ];

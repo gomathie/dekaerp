@@ -3,8 +3,8 @@
 return [
     'header-actions' => [
         'notification' => [
-            'title' => 'Akaunti lebo imeundwa',
-            'body'  => 'akaunti lebo ina imeundwa successfully.',
+            'title' => 'Lebo ya akaunti imeundwa',
+            'body'  => 'Lebo ya akaunti imeundwa kikamilifu.',
         ],
     ],
 ];

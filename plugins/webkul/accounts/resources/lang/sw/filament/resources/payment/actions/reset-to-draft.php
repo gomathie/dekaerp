@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'title' => 'Weka upya hadi Rasimu',
+    'title' => 'Rudisha kuwa rasimu',
 ];

@@ -2,20 +2,20 @@
 
 return [
     'notification' => [
-        'title' => 'Возврат обновлено',
-        'body'  => 'возврат есть обновлено successfully.',
+        'title' => 'Возврат обновлён',
+        'body'  => 'Возврат успешно обновлён.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Возврат удалено',
-                'body'  => 'Возврат есть удалено successfully.',
+                'title' => 'Возврат удалён',
+                'body'  => 'Возврат успешно удалён.',
             ],
         ],
 
         'preview' => [
-            'modal-heading' => 'Preview Возврат',
+            'modal-heading' => 'Просмотр возврата',
         ],
     ],
 ];

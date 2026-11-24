@@ -3,13 +3,13 @@
 return [
     'notification' => [
         'success' => [
-            'title' => 'Masharti ya malipo imeundwa',
-            'body'  => 'Masharti ya malipo ina imeundwa successfully.',
+            'title' => 'Sharti la malipo limeundwa',
+            'body'  => 'Sharti la malipo limeundwa kikamilifu.',
         ],
 
         'validation-error' => [
-            'title' => 'Validation Hitilafu',
-            'body'  => 'Due Term lazima ina saa kidogo one asilimia mstari na sum ya asilimia lazima kuwa 100%.',
+            'title' => 'Hitilafu ya uthibitishaji',
+            'body'  => 'Awamu za malipo lazima ziwe na angalau mstari mmoja wa asilimia, na jumla ya asilimia lazima iwe 100%.',
         ],
     ],
 ];

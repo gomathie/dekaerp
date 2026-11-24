@@ -4,8 +4,8 @@ return [
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Журнал удалено',
-                'body'  => 'журнал есть удалено successfully.',
+                'title' => 'Журнал удалён',
+                'body'  => 'Журнал успешно удалён.',
             ],
         ],
     ],

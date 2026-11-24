@@ -3,21 +3,21 @@
 return [
     'notification' => [
         'success' => [
-            'title' => 'Masharti ya malipo imesasishwa',
-            'body'  => 'Masharti ya malipo ina imesasishwa successfully.',
+            'title' => 'Sharti la malipo limesasishwa',
+            'body'  => 'Sharti la malipo limesasishwa kikamilifu.',
         ],
 
         'validation-error' => [
-            'title' => 'Validation Hitilafu',
-            'body'  => 'Due Term lazima ina saa kidogo one asilimia mstari na sum ya asilimia lazima kuwa 100%.',
+            'title' => 'Hitilafu ya uthibitishaji',
+            'body'  => 'Awamu za malipo lazima ziwe na angalau mstari mmoja wa asilimia, na jumla ya asilimia lazima iwe 100%.',
         ],
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Masharti ya malipo imefutwa',
-                'body'  => 'Masharti ya malipo ina imefutwa successfully.',
+                'title' => 'Sharti la malipo limefutwa',
+                'body'  => 'Sharti la malipo limefutwa kikamilifu.',
             ],
         ],
     ],

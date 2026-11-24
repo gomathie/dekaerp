@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'sale'     => 'Продажа',
-    'purchase' => 'Закупка',
+    'sale'     => 'Продажи',
+    'purchase' => 'Закупки',
     'cash'     => 'Касса',
     'bank'     => 'Банк',
-    'credit'   => 'Кредит Card',
-    'general'  => 'Miscellaneous',
+    'credit'   => 'Кредитная карта',
+    'general'  => 'Прочее',
 ];

@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Kifedha cheo imesasishwa',
-        'body'  => 'kifedha cheo ina imesasishwa successfully.',
+        'title' => 'Nafasi ya kodi imesasishwa',
+        'body'  => 'Nafasi ya kodi imesasishwa kikamilifu.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Kifedha cheo imefutwa',
-                'body'  => 'kifedha cheo ina imefutwa successfully.',
+                'title' => 'Nafasi ya kodi imefutwa',
+                'body'  => 'Nafasi ya kodi imefutwa kikamilifu.',
             ],
         ],
     ],

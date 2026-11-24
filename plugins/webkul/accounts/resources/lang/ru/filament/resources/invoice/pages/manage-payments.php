@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Оплаты',
+        'title' => 'Платежи',
     ],
 ];

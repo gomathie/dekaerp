@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'mark-as-sent'   => 'Mark как Отправлено',
-    'unmark-as-sent' => 'Unmark как Отправлено',
+    'mark-as-sent'   => 'Отметить как отправленный',
+    'unmark-as-sent' => 'Снять отметку об отправке',
 ];

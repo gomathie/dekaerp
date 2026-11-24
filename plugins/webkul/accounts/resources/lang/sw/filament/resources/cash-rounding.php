@@ -4,38 +4,38 @@ return [
     'form' => [
         'fields' => [
             'name'               => 'Jina',
-            'rounding-precision' => 'Rounding Precision',
-            'rounding-strategy'  => 'Rounding Strategy',
-            'profit-account'     => 'Faida Akaunti',
-            'loss-account'       => 'Hasara Akaunti',
-            'rounding-method'    => 'Rounding Method',
+            'rounding-precision' => 'Usahihi wa ukadiriaji',
+            'rounding-strategy'  => 'Mkakati wa ukadiriaji',
+            'profit-account'     => 'Akaunti ya faida',
+            'loss-account'       => 'Akaunti ya hasara',
+            'rounding-method'    => 'Njia ya ukadiriaji',
         ],
     ],
 
     'table' => [
         'columns' => [
             'name'                 => 'Jina',
-            'rounding-strategy'    => 'Rounding Strategy',
-            'rounding-method'      => 'Rounding Method',
-            'created-by'           => 'Imeundwa Na',
-            'profit-account'       => 'Faida Akaunti',
-            'loss-account'         => 'Hasara Akaunti',
+            'rounding-strategy'    => 'Mkakati wa ukadiriaji',
+            'rounding-method'      => 'Njia ya ukadiriaji',
+            'created-by'           => 'Imeundwa na',
+            'profit-account'       => 'Akaunti ya faida',
+            'loss-account'         => 'Akaunti ya hasara',
         ],
 
         'groups' => [
             'name'              => 'Jina',
-            'rounding-strategy' => 'Rounding Strategy',
-            'rounding-method'   => 'Rounding Method',
-            'created-by'        => 'Imeundwa Na',
-            'profit-account'    => 'Faida Akaunti',
-            'loss-account'      => 'Hasara Akaunti',
+            'rounding-strategy' => 'Mkakati wa ukadiriaji',
+            'rounding-method'   => 'Njia ya ukadiriaji',
+            'created-by'        => 'Imeundwa na',
+            'profit-account'    => 'Akaunti ya faida',
+            'loss-account'      => 'Akaunti ya hasara',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Taslimu Rounding imefutwa',
-                    'body'  => 'taslimu rounding ina imefutwa successfully.',
+                    'title' => 'Ukadiriaji wa fedha taslimu umefutwa',
+                    'body'  => 'Ukadiriaji wa fedha taslimu umefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -43,8 +43,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Taslimu Rounding imefutwa',
-                    'body'  => 'taslimu rounding ina imefutwa successfully.',
+                    'title' => 'Ukadiriaji wa fedha taslimu umefutwa',
+                    'body'  => 'Ukadiriaji wa fedha taslimu umefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -53,11 +53,11 @@ return [
     'infolist' => [
         'entries' => [
             'name'               => 'Jina',
-            'rounding-precision' => 'Rounding Precision',
-            'rounding-strategy'  => 'Rounding Strategy',
-            'profit-account'     => 'Faida Akaunti',
-            'loss-account'       => 'Hasara Akaunti',
-            'rounding-method'    => 'Rounding Method',
+            'rounding-precision' => 'Usahihi wa ukadiriaji',
+            'rounding-strategy'  => 'Mkakati wa ukadiriaji',
+            'profit-account'     => 'Akaunti ya faida',
+            'loss-account'       => 'Akaunti ya hasara',
+            'rounding-method'    => 'Njia ya ukadiriaji',
         ],
     ],
 ];

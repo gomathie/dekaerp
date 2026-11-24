@@ -5,10 +5,10 @@ return [
         'fields' => [
             'color'         => 'Цвет',
             'country'       => 'Страна',
-            'applicability' => 'Applicability',
+            'applicability' => 'Применимость',
             'name'          => 'Название',
             'status'        => 'Статус',
-            'tax-negate'    => 'Налог Negate',
+            'tax-negate'    => 'Инвертировать налог',
         ],
     ],
 
@@ -16,11 +16,11 @@ return [
         'columns' => [
             'color'         => 'Цвет',
             'country'       => 'Страна',
-            'created-by'    => 'Создано От',
-            'applicability' => 'Applicability',
+            'created-by'    => 'Создал',
+            'applicability' => 'Применимость',
             'name'          => 'Название',
             'status'        => 'Статус',
-            'tax-negate'    => 'Налог Negate',
+            'tax-negate'    => 'Инвертировать налог',
             'created-at'    => 'Создано',
             'updated-at'    => 'Обновлено',
             'deleted-at'    => 'Удалено',
@@ -28,30 +28,30 @@ return [
 
         'filters' => [
             'bank'           => 'Банк',
-            'account-holder' => 'Счёт Holder',
-            'creator'        => 'Creator',
-            'can-send-money' => 'Можно Send Money',
+            'account-holder' => 'Владелец счёта',
+            'creator'        => 'Автор',
+            'can-send-money' => 'Может отправлять деньги',
         ],
 
         'groups' => [
             'country'       => 'Страна',
-            'created-by'    => 'Создано От',
-            'applicability' => 'Applicability',
+            'created-by'    => 'Создал',
+            'applicability' => 'Применимость',
             'name'          => 'Название',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Счёт Метка обновлено',
-                    'body'  => 'счёт Метка есть обновлено successfully.',
+                    'title' => 'Тег счёта обновлён',
+                    'body'  => 'Тег счёта успешно обновлён.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Счёт Метка удалено',
-                    'body'  => 'счёт Метка есть удалено successfully.',
+                    'title' => 'Тег счёта удалён',
+                    'body'  => 'Тег счёта успешно удалён.',
                 ],
             ],
         ],
@@ -59,8 +59,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Счёт Метки удалено',
-                    'body'  => 'счёт Метки есть удалено successfully.',
+                    'title' => 'Теги счетов удалены',
+                    'body'  => 'Теги счетов успешно удалены.',
                 ],
             ],
         ],
@@ -70,10 +70,10 @@ return [
         'entries' => [
             'color'         => 'Цвет',
             'country'       => 'Страна',
-            'applicability' => 'Applicability',
+            'applicability' => 'Применимость',
             'name'          => 'Название',
             'status'        => 'Статус',
-            'tax-negate'    => 'Налог Negate',
+            'tax-negate'    => 'Инвертировать налог',
         ],
     ],
 ];

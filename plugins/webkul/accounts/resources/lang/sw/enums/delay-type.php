@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'days-after'                   => 'Siku Baada ya',
-    'days-after-end-of-month'      => 'Siku Baada ya Mwisho ya Mwezi',
-    'days-after-end-of-next-month' => 'Siku Baada ya Mwisho ya Ifuatayo Mwezi',
-    'days-end-of-month-no-the'     => 'Siku Mwisho ya Mwezi Hakuna',
+    'days-after'                   => 'Siku baada ya',
+    'days-after-end-of-month'      => 'Siku baada ya mwisho wa mwezi',
+    'days-after-end-of-next-month' => 'Siku baada ya mwisho wa mwezi ujao',
+    'days-end-of-month-no-the'     => 'Mwisho wa mwezi, tarehe',
 ];

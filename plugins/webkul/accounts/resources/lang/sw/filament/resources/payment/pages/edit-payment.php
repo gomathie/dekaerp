@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Malipo imesasishwa',
-        'body'  => 'malipo ina imesasishwa successfully.',
+        'title' => 'Malipo yamesasishwa',
+        'body'  => 'Malipo yamesasishwa kikamilifu.',
     ],
 ];

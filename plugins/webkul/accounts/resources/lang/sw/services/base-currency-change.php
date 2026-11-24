@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'not-allowed'       => 'Tu inatumika Super Msimamizi unaweza badilisha kampuni’s base sarafu.',
-    'reason-required'   => 'Give sababu kwa changing base sarafu.',
-    'currency-invalid'  => 'Chagua inatumika sarafu.',
-    'same-currency'     => 'kampuni tayari uses hii sarafu.',
+    'not-allowed'       => 'Msimamizi Mkuu aliye hai pekee ndiye anaweza kubadilisha sarafu ya msingi ya kampuni.',
+    'reason-required'   => 'Toa sababu ya kubadilisha sarafu ya msingi.',
+    'currency-invalid'  => 'Chagua sarafu inayotumika.',
+    'same-currency'     => 'Kampuni tayari inatumia sarafu hii.',
 ];

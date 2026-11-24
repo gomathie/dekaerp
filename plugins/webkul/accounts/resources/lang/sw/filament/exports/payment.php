@@ -5,16 +5,16 @@ return [
         'date'            => 'Tarehe',
         'name'            => 'Jina',
         'journal'         => 'Jarida',
-        'payment-method'  => 'Malipo Method',
-        'partner'         => 'Mshirika',
-        'amount-currency' => 'Kiasi Sarafu',
+        'payment-method'  => 'Njia ya malipo',
+        'partner'         => 'Mhusika',
+        'amount-currency' => 'Kiasi kwa sarafu',
         'amount'          => 'Kiasi',
         'state'           => 'Hali',
         'company'         => 'Kampuni',
     ],
 
     'notification' => [
-        'completed' => 'Yako malipo hamisha ina imekamilika na :count mstari(s) exported.',
-        'failed'    => ':count mstari(s) imeshindwa hadi hamisha.',
+        'completed' => 'Uhamishaji wa malipo umekamilika na safu :count zimehamishwa.',
+        'failed'    => 'Safu :count hazikuweza kuhamishwa.',
     ],
 ];

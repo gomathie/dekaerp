@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Manage Distribution Для Возврат',
+        'title' => 'Распределение для возвратов',
     ],
 ];

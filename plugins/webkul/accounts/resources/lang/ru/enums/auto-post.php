@@ -2,8 +2,8 @@
 
 return [
     'no'        => 'Нет',
-    'at-date'   => 'В Дата',
+    'at-date'   => 'На дату',
     'monthly'   => 'Ежемесячно',
-    'quarterly' => 'Quarterly',
+    'quarterly' => 'Ежеквартально',
     'yearly'    => 'Ежегодно',
 ];

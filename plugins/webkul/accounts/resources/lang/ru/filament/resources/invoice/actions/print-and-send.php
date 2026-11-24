@@ -1,28 +1,28 @@
 <?php
 
 return [
-    'title' => 'Печать & Send',
+    'title' => 'Печать и отправка',
 
     'modal' => [
-        'title' => 'Preview Счёт',
+        'title' => 'Предпросмотр счёта',
 
         'form' => [
             'partners'    => 'Клиент',
-            'subject'     => 'Subject',
+            'subject'     => 'Тема',
             'description' => 'Описание',
             'files'       => 'Вложение',
         ],
 
         'action' => [
             'submit' => [
-                'title' => 'Send',
+                'title' => 'Отправить',
             ],
         ],
 
         'notification' => [
             'invoice-sent' => [
-                'title' => 'Счёт Отправлено',
-                'body'  => 'Счёт есть отправлено successfully.',
+                'title' => 'Счёт отправлен',
+                'body'  => 'Счёт успешно отправлен.',
             ],
         ],
     ],
