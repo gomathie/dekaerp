@@ -6,7 +6,7 @@ return [
     ],
 
     'global-search' => [
-        'project-manager' => 'Проект Руководитель',
+        'project-manager' => 'Руководитель проекта',
         'customer'        => 'Клиент',
     ],
 ];

@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Unda Sarafu',
+    'title' => 'Unda sarafu',
 
     'notification' => [
         'title' => 'Sarafu imeundwa',
-        'body'  => 'sarafu ina imeundwa successfully.',
+        'body'  => 'Sarafu imeundwa kikamilifu.',
     ],
 ];

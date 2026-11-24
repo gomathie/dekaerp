@@ -10,29 +10,29 @@ return [
     'form' => [
         'sections' => [
             'currency-details' => [
-                'title' => 'Валюта Сведения',
+                'title' => 'Сведения о валюте',
 
                 'fields' => [
-                    'name'         => 'Валюта Название',
-                    'name-tooltip' => 'Введите official валюта название',
-                    'symbol'       => 'Валюта Symbol',
-                    'full-name'    => 'Полный Название',
-                    'iso-numeric'  => 'ISO Numeric Код',
+                    'name'         => 'Название валюты',
+                    'name-tooltip' => 'Введите официальное название валюты',
+                    'symbol'       => 'Символ валюты',
+                    'full-name'    => 'Полное название',
+                    'iso-numeric'  => 'Цифровой код ISO',
                 ],
             ],
 
             'format-information' => [
-                'title' => 'Формат Конфигурация',
+                'title' => 'Формат',
 
                 'fields' => [
-                    'decimal-places'        => 'Decimal Places',
-                    'rounding'              => 'Rounding Precision',
-                    'rounding-helper-text'  => 'Задать rounding precision для валюта calculations',
+                    'decimal-places'        => 'Знаков после запятой',
+                    'rounding'              => 'Точность округления',
+                    'rounding-helper-text'  => 'Задайте точность округления для расчётов в валюте',
                 ],
             ],
 
             'status-and-configuration-information' => [
-                'title' => 'Статус & Конфигурация',
+                'title' => 'Статус и настройки',
 
                 'fields' => [
                     'status' => 'Статус',
@@ -40,29 +40,29 @@ return [
             ],
 
             'rates' => [
-                'title'       => 'Валюта Ставки',
-                'description' => 'Manage historic обменный курсs для этот валюта relative до base валюта (USD).',
+                'title'       => 'Курсы валюты',
+                'description' => 'Управляйте историей курсов этой валюты относительно базовой валюты (USD).',
 
                 'fields' => [
                     'name'              => 'Дата',
-                    'unit-per-currency' => 'Единица За :currency',
-                    'currency-per-unit' => ':currency За Единица',
+                    'unit-per-currency' => 'Единиц за 1 :currency',
+                    'currency-per-unit' => ':currency за единицу',
                 ],
 
-                'add-rate'   => 'Добавить Ставка',
-                'item-label' => 'Ставка',
+                'add-rate'   => 'Добавить курс',
+                'item-label' => 'Курс',
             ],
         ],
     ],
 
     'table' => [
         'columns' => [
-            'name'           => 'Валюта Название',
-            'symbol'         => 'Symbol',
-            'full-name'      => 'Полный Название',
-            'iso-numeric'    => 'ISO Код',
-            'decimal-places' => 'Decimal Places',
-            'rounding'       => 'Rounding',
+            'name'           => 'Название валюты',
+            'symbol'         => 'Символ',
+            'full-name'      => 'Полное название',
+            'iso-numeric'    => 'Код ISO',
+            'decimal-places' => 'Знаков после запятой',
+            'rounding'       => 'Округление',
             'status'         => 'Статус',
             'created-at'     => 'Создано',
             'updated-at'     => 'Обновлено',
@@ -71,9 +71,9 @@ return [
         'groups' => [
             'name'           => 'Название',
             'status'         => 'Статус',
-            'decimal-places' => 'Decimal Places',
-            'creation-date'  => 'Creation Дата',
-            'last-update'    => 'Последний Обновить',
+            'decimal-places' => 'Знаков после запятой',
+            'creation-date'  => 'Дата создания',
+            'last-update'    => 'Последнее обновление',
         ],
 
         'filters' => [
@@ -83,25 +83,25 @@ return [
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title'   => 'Валюта удалено',
-                    'body'    => 'валюта есть удалено successfully.',
+                    'title'   => 'Валюта удалена',
+                    'body'    => 'Валюта успешно удалена.',
 
                     'success' => [
-                        'title' => 'Валюта удалено',
-                        'body'  => 'валюта есть удалено successfully.',
+                        'title' => 'Валюта удалена',
+                        'body'  => 'Валюта успешно удалена.',
                     ],
 
                     'error' => [
-                        'title' => 'Валюта could не быть удалено',
-                        'body'  => 'валюта нельзя быть удалено потому что это currently в использовать.',
+                        'title' => 'Не удалось удалить валюту',
+                        'body'  => 'Валюту нельзя удалить, так как она сейчас используется.',
                     ],
                 ],
             ],
 
             'deactivate' => [
                 'notification' => [
-                    'title' => 'Валюта нельзя быть deactivated',
-                    'body'  => 'Этот валюта в использовать от one или больше компании и нельзя быть deactivated.',
+                    'title' => 'Нельзя деактивировать валюту',
+                    'body'  => 'Эту валюту используют одна или несколько компаний, поэтому её нельзя деактивировать.',
                 ],
             ],
         ],
@@ -109,8 +109,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Валюты удалено',
-                    'body'  => 'валюты есть удалено successfully.',
+                    'title' => 'Валюты удалены',
+                    'body'  => 'Валюты успешно удалены.',
                 ],
             ],
         ],
@@ -119,27 +119,27 @@ return [
     'infolist' => [
         'sections' => [
             'currency-details' => [
-                'title' => 'Валюта Сведения',
+                'title' => 'Сведения о валюте',
 
                 'entries' => [
-                    'name'         => 'Валюта Название',
-                    'symbol'       => 'Валюта Symbol',
-                    'full-name'    => 'Полный Название',
-                    'iso-numeric'  => 'ISO Numeric Код',
+                    'name'         => 'Название валюты',
+                    'symbol'       => 'Символ валюты',
+                    'full-name'    => 'Полное название',
+                    'iso-numeric'  => 'Цифровой код ISO',
                 ],
             ],
 
             'format-information' => [
-                'title' => 'Формат Конфигурация',
+                'title' => 'Формат',
 
                 'entries' => [
-                    'decimal-places' => 'Decimal Places',
-                    'rounding'       => 'Rounding Precision',
+                    'decimal-places' => 'Знаков после запятой',
+                    'rounding'       => 'Точность округления',
                 ],
             ],
 
             'status-and-configuration-information' => [
-                'title' => 'Статус & Конфигурация',
+                'title' => 'Статус и настройки',
 
                 'entries' => [
                     'status' => 'Статус',
@@ -147,12 +147,12 @@ return [
             ],
 
             'rates' => [
-                'title'       => 'Валюта Ставки',
+                'title'       => 'Курсы валюты',
 
                 'entries' => [
                     'name'              => 'Дата',
-                    'unit-per-currency' => 'Единица За :currency',
-                    'currency-per-unit' => ':currency За Единица',
+                    'unit-per-currency' => 'Единиц за 1 :currency',
+                    'currency-per-unit' => ':currency за единицу',
                 ],
             ],
         ],

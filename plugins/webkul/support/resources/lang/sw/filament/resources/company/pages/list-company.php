@@ -3,15 +3,15 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Kampuni',
+            'label' => 'Kampuni mpya',
         ],
     ],
 
     'tabs' => [
 
-        'all' => 'Zote Makampuni',
+        'all' => 'Kampuni zote',
 
-        'archived' => 'Imehifadhiwa Makampuni',
+        'archived' => 'Kampuni za kumbukumbu',
 
     ],
 ];

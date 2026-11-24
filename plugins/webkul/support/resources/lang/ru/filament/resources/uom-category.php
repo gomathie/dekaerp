@@ -2,13 +2,13 @@
 
 return [
     'navigation' => [
-        'title' => 'UOM Категории',
+        'title' => 'Категории единиц измерения',
     ],
 
     'form' => [
         'sections' => [
             'general' => [
-                'title' => 'Общее',
+                'title' => 'Общие',
 
                 'fields' => [
                     'name' => 'Название',
@@ -16,25 +16,25 @@ return [
             ],
 
             'uoms' => [
-                'title' => 'Единицы Measure',
+                'title' => 'Единицы измерения',
 
                 'fields' => [
                     'uoms'     => 'Единицы',
                     'type'     => 'Тип',
                     'name'     => 'Единица измерения',
-                    'ratio'    => 'Ratio',
-                    'rounding' => 'Rounding Precision',
+                    'ratio'    => 'Коэффициент',
+                    'rounding' => 'Точность округления',
                 ],
 
                 'validations' => [
-                    'missing-reference'          => 'Этот категория следует есть ссылка единица измерения.',
-                    'multiple-references'        => 'Этот категория следует только есть one ссылка единица измерения.',
-                    'ratio-greater-than-zero'    => 'conversion ratio для единица измерения нельзя быть zero.',
-                    'rounding-greater-than-zero' => 'rounding precision нужно быть strictly positive.',
+                    'missing-reference'          => 'В этой категории должна быть базовая единица измерения.',
+                    'multiple-references'        => 'В этой категории должна быть только одна базовая единица измерения.',
+                    'ratio-greater-than-zero'    => 'Коэффициент пересчёта единицы измерения не может быть равен нулю.',
+                    'rounding-greater-than-zero' => 'Точность округления должна быть больше нуля.',
                 ],
 
                 'actions' => [
-                    'add' => 'Добавить Единица',
+                    'add' => 'Добавить единицу',
                 ],
             ],
         ],
@@ -43,7 +43,7 @@ return [
     'table' => [
         'columns' => [
             'name'       => 'Название',
-            'uoms'       => 'UOMs',
+            'uoms'       => 'Единицы',
             'created-at' => 'Создано',
             'updated-at' => 'Обновлено',
         ],
@@ -55,15 +55,15 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'UOM Категория обновлено',
-                    'body'  => 'UOM категория есть обновлено successfully.',
+                    'title' => 'Категория единиц обновлена',
+                    'body'  => 'Категория единиц успешно обновлена.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'UOM Категория удалено',
-                    'body'  => 'UOM категория есть удалено successfully.',
+                    'title' => 'Категория единиц удалена',
+                    'body'  => 'Категория единиц успешно удалена.',
                 ],
             ],
         ],
@@ -71,8 +71,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'UOM Категории удалено',
-                    'body'  => 'UOM категории есть удалено successfully.',
+                    'title' => 'Категории единиц удалены',
+                    'body'  => 'Категории единиц успешно удалены.',
                 ],
             ],
         ],

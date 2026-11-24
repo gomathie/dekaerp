@@ -3,38 +3,38 @@
 return [
     'model-label' => 'Mfuatano',
 
-    'plural-model-label' => 'Sequences',
+    'plural-model-label' => 'Mifuatano',
 
     'navigation' => [
-        'title' => 'Sequences',
+        'title' => 'Mifuatano',
     ],
 
     'form' => [
         'sections' => [
             'general' => [
                 'title'       => 'Jumla',
-                'description' => 'Sequences kwa majarida, maghala na operation types ni imeundwa kiotomatiki wakati zile rekodi ni imeundwa — hariri wao hapa. Kwa mkono creation ni tu needed kwa maalum msimbo-based sequences.',
+                'description' => 'Mifuatano ya majarida, maghala na aina za operesheni huundwa kiotomatiki rekodi hizo zinapoundwa — zihariri hapa. Kuunda kwa mkono kunahitajika tu kwa mifuatano maalum inayotegemea msimbo.',
 
                 'fields' => [
                     'name'      => 'Jina',
                     'code'      => 'Msimbo',
-                    'code-help' => 'Technical identifier inatumika na hati, e.g. mauzo.agizo. Auto-imeundwa sequences tayari ina kulia msimbo.',
+                    'code-help' => 'Kitambulisho cha kiufundi kinachotumiwa na hati, mf. sales.order. Mifuatano iliyoundwa kiotomatiki tayari ina msimbo sahihi.',
                     'company'   => 'Kampuni',
                 ],
             ],
 
             'format' => [
-                'title' => 'Numbering',
+                'title' => 'Upangaji wa namba',
 
                 'fields' => [
-                    'prefix'           => 'Kiambishi',
-                    'prefix-help'      => 'Placeholders: %(mwaka), %(y), %(mwezi), %(siku). Mfano: INV/%(mwaka)/',
+                    'prefix'           => 'Kiambishi awali',
+                    'prefix-help'      => 'Vishika nafasi: %(year), %(y), %(month), %(day). Mfano: INV/%(year)/',
                     'suffix'           => 'Kiambishi tamati',
-                    'padding'          => 'Nambari Padding',
-                    'next-number'      => 'Ifuatayo Nambari',
-                    'next-number-help' => 'Unaweza tu kuwa increased. Hadi restart numbering safely, futa mfuatano — hii ita kuwa recreated kutoka highest existing hati nambari.',
-                    'step'             => 'Step',
-                    'reset-frequency'  => 'Weka upya Counter',
+                    'padding'          => 'Idadi ya tarakimu',
+                    'next-number'      => 'Namba inayofuata',
+                    'next-number-help' => 'Inaweza kuongezwa tu. Ili kuanza upya upangaji wa namba kwa usalama, futa mfuatano — utaundwa upya kuanzia namba ya juu zaidi ya hati iliyopo.',
+                    'step'             => 'Hatua',
+                    'reset-frequency'  => 'Weka upya kihesabu',
                 ],
             ],
         ],
@@ -44,17 +44,17 @@ return [
         'columns' => [
             'name'            => 'Jina',
             'code'            => 'Msimbo',
-            'applies-to'      => 'Inatumika Hadi',
+            'applies-to'      => 'Inatumika kwa',
             'company'         => 'Kampuni',
-            'next-preview'    => 'Ifuatayo Hati Nambari',
-            'next-number'     => 'Ifuatayo Nambari',
-            'reset-frequency' => 'Weka upya Counter',
+            'next-preview'    => 'Namba ya hati inayofuata',
+            'next-number'     => 'Namba inayofuata',
+            'reset-frequency' => 'Weka upya kihesabu',
         ],
 
         'variants' => [
-            'refund'         => 'Rudisho',
+            'refund'         => 'Marejesho',
             'payment'        => 'Malipo',
-            'refund-payment' => 'Rudisho + Malipo',
+            'refund-payment' => 'Marejesho + malipo',
         ],
 
         'filters' => [
@@ -64,15 +64,15 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Mfuatano imesasishwa',
-                    'body'  => 'mfuatano ina imesasishwa successfully.',
+                    'title' => 'Mfuatano umesasishwa',
+                    'body'  => 'Mfuatano umesasishwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Mfuatano imefutwa',
-                    'body'  => 'mfuatano ina imefutwa successfully.',
+                    'title' => 'Mfuatano umefutwa',
+                    'body'  => 'Mfuatano umefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -80,8 +80,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Sequences imefutwa',
-                    'body'  => 'sequences ina imefutwa successfully.',
+                    'title' => 'Mifuatano imefutwa',
+                    'body'  => 'Mifuatano imefutwa kikamilifu.',
                 ],
             ],
         ],

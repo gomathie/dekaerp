@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'title' => 'UOM Kategoria',
+    'title' => 'Kategoria za vipimo',
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya UOM Kategoria',
+            'label' => 'Kategoria mpya ya vipimo',
         ],
     ],
 ];

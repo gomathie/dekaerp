@@ -3,17 +3,17 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Метка',
+            'label' => 'Новый тег',
 
             'notification' => [
-                'title' => 'Метка создано',
-                'body'  => 'метка есть создано successfully.',
+                'title' => 'Тег создан',
+                'body'  => 'Тег успешно создан.',
             ],
         ],
     ],
 
     'tabs' => [
         'all'      => 'Все',
-        'archived' => 'В архиве',
+        'archived' => 'Архив',
     ],
 ];

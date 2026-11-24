@@ -3,6 +3,6 @@
 return [
     'notification' => [
         'title' => 'Kampuni imeundwa',
-        'body'  => 'kampuni ina imeundwa successfully.',
+        'body'  => 'Kampuni imeundwa kikamilifu.',
     ],
 ];

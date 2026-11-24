@@ -3,17 +3,17 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Ongeza Karatasi ya muda',
+            'label' => 'Ongeza rejista ya muda',
 
             'notification' => [
-                'title' => 'Karatasi ya muda imeundwa',
-                'body'  => 'karatasi ya muda ina imeundwa successfully.',
+                'title' => 'Rejista ya muda imeundwa',
+                'body'  => 'Rejista ya muda imeundwa kikamilifu.',
             ],
         ],
     ],
 
     'tabs' => [
-        'all'           => 'Zote Karatasi za muda',
-        'my-timesheets' => 'Yangu Karatasi za muda',
+        'all'           => 'Rejista zote za muda',
+        'my-timesheets' => 'Rejista zangu za muda',
     ],
 ];

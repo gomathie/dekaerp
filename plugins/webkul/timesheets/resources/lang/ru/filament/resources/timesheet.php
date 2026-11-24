@@ -19,8 +19,8 @@ return [
         'project'                => 'Проект',
         'task'                   => 'Задача',
         'description'            => 'Описание',
-        'time-spent'             => 'Time Spent',
-        'time-spent-helper-text' => 'Time spent в часы (Eg. 1.5 часы means 1 час 30 минуты)',
+        'time-spent'             => 'Затраченное время',
+        'time-spent-helper-text' => 'Затраченное время в часах (например, 1,5 — это 1 час 30 минут)',
     ],
 
     'table' => [
@@ -30,7 +30,7 @@ return [
             'project'     => 'Проект',
             'task'        => 'Задача',
             'description' => 'Описание',
-            'time-spent'  => 'Time Spent',
+            'time-spent'  => 'Затраченное время',
             'created-at'  => 'Создано',
             'updated-at'  => 'Обновлено',
         ],
@@ -40,30 +40,30 @@ return [
             'employee'   => 'Сотрудник',
             'project'    => 'Проект',
             'task'       => 'Задача',
-            'creator'    => 'Creator',
+            'creator'    => 'Автор',
         ],
 
         'filters' => [
-            'date-from'  => 'Дата От',
-            'date-until' => 'Дата До',
+            'date-from'  => 'Дата с',
+            'date-until' => 'Дата по',
             'employee'   => 'Сотрудник',
             'project'    => 'Проект',
             'task'       => 'Задача',
-            'creator'    => 'Creator',
+            'creator'    => 'Автор',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Табель обновлено',
-                    'body'  => 'табель есть обновлено successfully.',
+                    'title' => 'Табель обновлён',
+                    'body'  => 'Табель успешно обновлён.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Табель удалено',
-                    'body'  => 'табель есть удалено successfully.',
+                    'title' => 'Табель удалён',
+                    'body'  => 'Табель успешно удалён.',
                 ],
             ],
         ],
@@ -71,8 +71,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Табели удалено',
-                    'body'  => 'табели есть удалено successfully.',
+                    'title' => 'Табели удалены',
+                    'body'  => 'Табели успешно удалены.',
                 ],
             ],
         ],

@@ -1,30 +1,30 @@
 <?php
 
 return [
-    'label' => 'Добавить Новое',
+    'label' => 'Добавить',
 
     'form' => [
         'name'                  => 'Название',
         'color'                 => 'Цвет',
         'icon'                  => 'Значок',
-        'add-to-favorites'      => 'Добавить До Favorites',
-        'add-to-favorites-help' => 'Добавить этот фильтр до ваш favorites',
-        'make-public'           => 'Сделать Публичный',
-        'make-public-help'      => 'Сделать этот фильтр доступно до все пользователи',
+        'add-to-favorites'      => 'Добавить в избранное',
+        'add-to-favorites-help' => 'Добавить этот фильтр в избранное',
+        'make-public'           => 'Сделать общедоступным',
+        'make-public-help'      => 'Сделать этот фильтр доступным всем пользователям',
         'options'               => [
-            'danger'  => 'Danger',
-            'gray'    => 'Gray',
-            'info'    => 'Сведения',
-            'success' => 'Успешно',
+            'danger'  => 'Опасность',
+            'gray'    => 'Серый',
+            'info'    => 'Информация',
+            'success' => 'Успех',
             'warning' => 'Предупреждение',
         ],
 
         'notification' => [
-            'created' => 'Просмотр создано successfully',
+            'created' => 'Представление создано',
         ],
 
         'modal' => [
-            'title' => 'Сохранить Просмотр',
+            'title' => 'Сохранить представление',
         ],
     ],
 ];

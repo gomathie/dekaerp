@@ -6,85 +6,85 @@ return [
     ],
 
     'title'      => 'Msaada',
-    'heading'    => 'Msaada & Resources',
-    'subheading' => 'Everything wewe need hadi pata wengi nje ya :app.',
+    'heading'    => 'Msaada na rasilimali',
+    'subheading' => 'Kila unachohitaji ili kunufaika kikamilifu na :app.',
 
     'guides' => [
         'group' => 'Miongozo',
 
         'superadmin' => [
-            'title'       => 'Msimamizi mkuu Mwongozo',
-            'description' => 'Administer :app installation itself: moduli, makampuni, msimamizi majukumu, upgrades na matengenezo.',
-            'button'      => 'Wazi Msimamizi mkuu Mwongozo',
+            'title'       => 'Mwongozo wa msimamizi mkuu',
+            'description' => 'Simamia usakinishaji wa :app wenyewe: moduli, kampuni, majukumu ya wasimamizi, masasisho na matengenezo.',
+            'button'      => 'Fungua mwongozo wa msimamizi mkuu',
         ],
 
         'admin' => [
-            'title'       => 'Msimamizi Mwongozo',
-            'description' => 'Weka juu :app kwa yako kampuni, teams, moduli na controls kabla ya kila siku work begins.',
-            'button'      => 'Msimamizi setup checklist',
+            'title'       => 'Mwongozo wa msimamizi',
+            'description' => 'Sanidi :app kwa kampuni yako, timu, moduli na udhibiti kabla kazi za kila siku hazijaanza.',
+            'button'      => 'Orodha ya ukaguzi wa usanidi',
             'sections'    => [
                 [
-                    'title' => 'Weka juu kampuni',
+                    'title' => 'Sanidi kampuni',
                     'items' => [
-                        '0' => 'Unda au review makampuni, maghala, sarafu, kodi na kifedha mipangilio.',
-                        '1' => 'Kabidhi watumiaji hadi makampuni wao unaweza access na thibitisha inatumika kampuni switcher.',
-                        '2' => 'Configure sequences, masharti ya malipo, bidhaa, uniti ya measure na hati violezo kabla ya transactions begin.',
+                        '0' => 'Unda au kagua kampuni, maghala, sarafu, kodi na mipangilio ya mwaka wa fedha.',
+                        '1' => 'Wape watumiaji kampuni wanazoweza kufikia na uthibitishe kibadilishaji cha kampuni hai.',
+                        '2' => 'Sanidi mfuatano wa namba, masharti ya malipo, bidhaa, vipimo na violezo vya hati kabla miamala haijaanza.',
                     ],
                 ],
                 [
-                    'title' => 'Control access',
+                    'title' => 'Dhibiti ufikiaji',
                     'items' => [
-                        '0' => 'Unda majukumu kwa fedha, mauzo, ghala, Rasilimali watu, mradi na management teams.',
-                        '1' => 'Grant module ruhusa tu hadi watumiaji nani need wao.',
-                        '2' => 'Review maalum sehemu, imports, exports na API tokens kabla ya giving broad access.',
+                        '0' => 'Unda majukumu kwa timu za fedha, mauzo, hisa, rasilimali watu, miradi na uongozi.',
+                        '1' => 'Toa ruhusa za moduli kwa watumiaji wanaozihitaji tu.',
+                        '2' => 'Kagua sehemu maalum, uingizaji, uhamishaji na tokeni za API kabla ya kutoa ufikiaji mpana.',
                     ],
                 ],
                 [
-                    'title' => 'Operate na maintain',
+                    'title' => 'Endesha na tunza',
                     'items' => [
-                        '0' => 'Install tu moduli business uses, kisha ficha au ondoa unused moduli.',
-                        '1' => 'Monitor discussions, viambatisho, approvals na rekodi ownership wakati wa rollout.',
-                        '2' => 'Weka barua pepe, PDF, backup na sasisha mipangilio aligned na deployment policy.',
+                        '0' => 'Sakinisha moduli zinazotumiwa na biashara tu, kisha ficha au ondoa zisizotumika.',
+                        '1' => 'Fuatilia majadiliano, viambatisho, idhini na umiliki wa rekodi wakati wa kuanza kutumia mfumo.',
+                        '2' => 'Weka mipangilio ya barua pepe, PDF, nakala rudufu na masasisho sawa na sera ya usambazaji.',
                     ],
                 ],
             ],
         ],
 
         'user' => [
-            'title'          => 'Mtumiaji Mwongozo',
-            'description'    => 'Tumia built-katika mtumiaji mwongozo kwa DEKA walkthroughs na module-kumbukumbu kurasa kwa kila siku work katika :app.',
-            'button'         => 'Wazi Mtumiaji Mwongozo',
-            'full_heading'   => 'Kamili Mtumiaji Mwongozo',
+            'title'          => 'Mwongozo wa mtumiaji',
+            'description'    => 'Tumia mwongozo wa mtumiaji uliojengewa ndani kwa maelekezo ya DEKA na kurasa za marejeo ya moduli kwa kazi za kila siku kwenye :app.',
+            'button'         => 'Fungua mwongozo wa mtumiaji',
+            'full_heading'   => 'Mwongozo kamili wa mtumiaji',
             'count'          => '{0} Hakuna kurasa za mwongozo|{1} Ukurasa 1 wa mwongozo|[2,*] Kurasa :count za mwongozo',
             'category_count' => '{0} Hakuna kurasa|{1} Ukurasa 1|[2,*] Kurasa :count',
             'callouts'       => [
-                'tip'       => 'Tip',
-                'note'      => 'Maelezo',
-                'important' => 'Important',
+                'tip'       => 'Kidokezo',
+                'note'      => 'Kumbuka',
+                'important' => 'Muhimu',
             ],
             'sections'    => [
                 [
-                    'title' => 'Getting started',
+                    'title' => 'Kuanza',
                     'items' => [
-                        '0' => 'Platform Muhtasari & Navigation',
-                        '1' => 'Multi-Kampuni Setup & Switcher',
+                        '0' => 'Muhtasari wa jukwaa na urambazaji',
+                        '1' => 'Kampuni nyingi na kibadilishaji',
                     ],
                 ],
                 [
-                    'title' => 'Core workflows',
+                    'title' => 'Michakato mikuu',
                     'items' => [
-                        '0' => 'Sell: Mauzo & Invoicing',
-                        '1' => 'Buy: Purchasing & Uhasibu',
-                        '2' => 'Fanya & Hamisha: Ghala & Uzalishaji',
-                        '3' => 'Run: Miradi, Rasilimali watu & Matengenezo',
-                        '4' => 'Jukwaa, API na seva yako',
+                        '0' => 'Uza: mauzo na ankara',
+                        '1' => 'Nunua: ununuzi na uhasibu',
+                        '2' => 'Tengeneza na sogeza: hisa na uzalishaji',
+                        '3' => 'Endesha: miradi, rasilimali watu na matengenezo',
+                        '4' => 'Jukwaa, API na kujipangishia',
                     ],
                 ],
                 [
-                    'title' => 'Module kumbukumbu: 12 moduli / 69 kurasa',
+                    'title' => 'Marejeo ya moduli: moduli 12 / kurasa 69',
                     'items' => [
-                        '0' => 'Ankara, Mauzo, Ununuzi, Ghala, Uzalishaji, Matengenezo',
-                        '1' => 'Mawasiliano, Mradi, Wafanyakazi, Ajira, Likizo',
+                        '0' => 'Ankara, mauzo, ununuzi, hisa, uzalishaji, matengenezo',
+                        '1' => 'Wahusika, miradi, wafanyakazi, uajiri, likizo',
                     ],
                 ],
             ],
@@ -92,61 +92,61 @@ return [
     ],
 
     'services' => [
-        'group' => 'Services',
+        'group' => 'Huduma',
 
         'cloud' => [
-            'title'       => 'Cloud Hosting',
-            'description' => 'Gharama-effective, managed cloud hosting — deploy yako ERP katika dakika, fully optimised, secure na scalable.',
-            'button'      => 'See Pricing',
+            'title'       => 'Upangishaji wa wingu',
+            'description' => 'Upangishaji wa wingu unaosimamiwa kwa gharama nafuu: weka ERP yako kwa dakika chache, ikiwa imeboreshwa, salama na inayoweza kukua.',
+            'button'      => 'Tazama bei',
         ],
 
         'support' => [
-            'title'       => 'Support & Matengenezo',
-            'description' => 'Dedicated technical support na ongoing matengenezo plans hadi weka yako ERP secure, imesasishwa na running smoothly.',
-            'button'      => 'Angalia Maelezo',
+            'title'       => 'Usaidizi na matengenezo',
+            'description' => 'Usaidizi maalum wa kiufundi na mipango ya matengenezo endelevu ili ERP yako ibaki salama, ya kisasa na ifanye kazi vizuri.',
+            'button'      => 'Tazama maelezo',
         ],
 
         'paid' => [
-            'title'       => 'Imelipwa Services',
-            'description' => 'Expert msaada kwa module development, customisation, data migration, toleo upgrades na bespoke integrations.',
-            'button'      => 'Pata Started',
+            'title'       => 'Huduma za kulipia',
+            'description' => 'Msaada wa wataalamu katika kutengeneza moduli, ubinafsishaji, uhamishaji wa data, kusasisha matoleo na miunganisho maalum.',
+            'button'      => 'Anza',
         ],
     ],
 
     'resources' => [
-        'group' => 'Resources & Documentation',
+        'group' => 'Rasilimali na nyaraka',
 
         'extensions' => [
             'title'       => 'Moduli',
-            'description' => 'Browse official na community ongeza-ons hadi extend :app na mpya moduli na features.',
-            'button'      => 'Browse Moduli',
+            'description' => 'Vinjari nyongeza rasmi na za jamii ili kupanua :app kwa moduli na vipengele vipya.',
+            'button'      => 'Vinjari moduli',
         ],
 
         'docs' => [
-            'title'       => 'Dev Docs',
-            'description' => 'Developer miongozo na references hadi msaada wewe build programu-jalizi, customise moduli na extend platform.',
-            'button'      => 'Kusoma Docs',
+            'title'       => 'Nyaraka za wasanidi',
+            'description' => 'Miongozo na marejeo ya wasanidi ya kukusaidia kutengeneza programu-jalizi, kubinafsisha moduli na kupanua jukwaa.',
+            'button'      => 'Soma nyaraka',
         ],
 
         'guide' => [
-            'title'       => 'Mtumiaji Mwongozo',
-            'description' => 'Step-na-step miongozo covering setup, usanidi na everyday tumia ya kila ERP module.',
-            'button'      => 'Wazi Mwongozo',
+            'title'       => 'Mwongozo wa mtumiaji',
+            'description' => 'Miongozo ya hatua kwa hatua kuhusu usakinishaji, usanidi na matumizi ya kila siku ya kila moduli ya ERP.',
+            'button'      => 'Fungua mwongozo',
         ],
 
         'website' => [
-            'title'       => 'Bidhaa Site',
-            'description' => 'Module overviews, toleo maelezo na everything :app unaweza, washa bidhaa tovuti.',
-            'button'      => 'Visit Tovuti',
+            'title'       => 'Tovuti ya bidhaa',
+            'description' => 'Muhtasari wa moduli, maelezo ya matoleo na kila kitu :app inachoweza kufanya, kwenye tovuti ya bidhaa.',
+            'button'      => 'Tembelea tovuti',
         ],
     ],
 
-    'empty' => 'Msaada links ina si weka juu kwa hii :app installation bado. Mwasiliani yako mfumo msimamizi kwa assistance.',
+    'empty' => 'Viungo vya msaada bado havijawekwa kwa usakinishaji huu wa :app. Wasiliana na msimamizi wa mfumo wako kwa msaada.',
 
     'contact' => [
-        'title'       => 'Bado need mkono?',
-        'description' => 'Talk hadi yetu timu kuhusu hosting, implementation, maalum development au anything vinginevyo.',
-        'live_chat'   => 'Live Chat',
-        'button'      => 'Mwasiliani Us',
+        'title'       => 'Bado unahitaji msaada?',
+        'description' => 'Zungumza na timu yetu kuhusu upangishaji, utekelezaji, utengenezaji maalum au jambo lingine lolote.',
+        'live_chat'   => 'Gumzo la moja kwa moja',
+        'button'      => 'Wasiliana nasi',
     ],
 ];

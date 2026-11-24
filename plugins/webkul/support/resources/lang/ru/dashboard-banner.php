@@ -1,17 +1,17 @@
 <?php
 
 return [
-    'label'         => 'Добро пожаловать banner',
-    'working-at'    => 'Вы working в :location',
-    'working-here'  => 'Вы working здесь',
-    'tagline'       => 'Здесь что happening в :company сегодня.',
-    'tagline-solo'  => 'Здесь что happening сегодня.',
-    'local-time'    => 'Ваш local time',
-    'quick-actions' => 'Quick действия',
-    'needs-you'     => '{1} One thing needs вы сегодня.|[2,*] :count things need вы сегодня.',
+    'label'         => 'Приветственный баннер',
+    'working-at'    => 'Вы работаете в :location',
+    'working-here'  => 'Вы работаете здесь',
+    'tagline'       => 'Вот что сегодня происходит в :company.',
+    'tagline-solo'  => 'Вот что происходит сегодня.',
+    'local-time'    => 'Ваше местное время',
+    'quick-actions' => 'Быстрые действия',
+    'needs-you'     => ':count дело ждёт вас сегодня.|:count дела ждут вас сегодня.|:count дел ждут вас сегодня.',
     'greetings'     => [
-        'morning'   => 'Good morning',
-        'afternoon' => 'Good afternoon',
-        'evening'   => 'Good evening',
+        'morning'   => 'Доброе утро',
+        'afternoon' => 'Добрый день',
+        'evening'   => 'Добрый вечер',
     ],
 ];

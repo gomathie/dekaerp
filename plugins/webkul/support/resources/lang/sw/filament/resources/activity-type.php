@@ -11,47 +11,47 @@ return [
     'form' => [
         'sections' => [
             'activity-type-details' => [
-                'title' => 'Jumla Taarifa',
+                'title' => 'Taarifa za jumla',
 
                 'fields' => [
-                    'name'                => 'Shughuli Aina',
-                    'name-tooltip'        => 'Ingiza official shughuli aina jina',
+                    'name'                => 'Aina ya shughuli',
+                    'name-tooltip'        => 'Weka jina rasmi la aina ya shughuli',
                     'action'              => 'Kitendo',
-                    'default-user'        => 'Chaguo-msingi Mtumiaji',
+                    'default-user'        => 'Mtumiaji chaguo-msingi',
                     'summary'             => 'Muhtasari',
-                    'note'                => 'Maelezo',
+                    'note'                => 'Kidokezo',
                 ],
             ],
 
             'delay-information' => [
-                'title' => 'Delay Taarifa',
+                'title' => 'Taarifa za kuchelewa',
 
                 'fields' => [
-                    'delay-count'            => 'Delay Idadi',
-                    'delay-unit'             => 'Delay Uniti',
-                    'delay-form'             => 'Delay Fomu',
-                    'delay-form-helper-text' => 'Chanzo ya delay calculation',
+                    'delay-count'            => 'Idadi ya kuchelewa',
+                    'delay-unit'             => 'Kipimo cha kuchelewa',
+                    'delay-form'             => 'Kuchelewa kuanzia',
+                    'delay-form-helper-text' => 'Chanzo cha kukokotoa kuchelewa',
                 ],
             ],
 
             'advanced-information' => [
-                'title' => 'Advanced Taarifa',
+                'title' => 'Taarifa za ziada',
 
                 'fields' => [
-                    'icon'                => 'Ikon',
-                    'decoration-type'     => 'Decoration Aina',
-                    'chaining-type'       => 'Chaining Aina',
-                    'suggest'             => 'Suggest',
-                    'trigger'             => 'Trigger',
+                    'icon'                => 'Aikoni',
+                    'decoration-type'     => 'Aina ya mapambo',
+                    'chaining-type'       => 'Aina ya mfuatano',
+                    'suggest'             => 'Pendekeza',
+                    'trigger'             => 'Anzisha',
                 ],
             ],
 
             'status-and-configuration-information' => [
-                'title' => 'Hali & Usanidi',
+                'title' => 'Hali na mipangilio',
 
                 'fields' => [
                     'status'               => 'Hali',
-                    'keep-done-activities' => 'Weka Imekamilika Shughuli',
+                    'keep-done-activities' => 'Hifadhi shughuli zilizokamilika',
                 ],
             ],
         ],
@@ -59,61 +59,61 @@ return [
 
     'table' => [
         'columns' => [
-            'name'       => 'Shughuli Aina',
+            'name'       => 'Aina ya shughuli',
             'summary'    => 'Muhtasari',
-            'planned-in' => 'Imepangwa Katika',
+            'planned-in' => 'Imepangwa ndani ya',
             'type'       => 'Aina',
             'action'     => 'Kitendo',
             'status'     => 'Hali',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'created-at' => 'Iliundwa',
+            'updated-at' => 'Ilisasishwa',
         ],
 
         'groups' => [
             'name'             => 'Jina',
-            'action-category'  => 'Kitendo Kategoria',
+            'action-category'  => 'Kategoria ya kitendo',
             'status'           => 'Hali',
-            'delay-count'      => 'Delay Idadi',
-            'delay-unit'       => 'Delay Uniti',
-            'delay-source'     => 'Delay Chanzo',
-            'associated-model' => 'Associated Model',
-            'chaining-type'    => 'Chaining Aina',
-            'decoration-type'  => 'Decoration Aina',
-            'default-user'     => 'Chaguo-msingi Mtumiaji',
-            'creation-date'    => 'Creation Tarehe',
-            'last-update'      => 'Mwisho Sasisha',
+            'delay-count'      => 'Idadi ya kuchelewa',
+            'delay-unit'       => 'Kipimo cha kuchelewa',
+            'delay-source'     => 'Chanzo cha kuchelewa',
+            'associated-model' => 'Modeli husika',
+            'chaining-type'    => 'Aina ya mfuatano',
+            'decoration-type'  => 'Aina ya mapambo',
+            'default-user'     => 'Mtumiaji chaguo-msingi',
+            'creation-date'    => 'Tarehe ya kuundwa',
+            'last-update'      => 'Sasisho la mwisho',
         ],
 
         'filters' => [
             'action'    => 'Kitendo',
             'status'    => 'Hali',
-            'has-delay' => 'Ina Delay',
+            'has-delay' => 'Ina kuchelewa',
         ],
 
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Shughuli aina restored',
-                    'body'  => 'shughuli aina ina restored successfully.',
+                    'title' => 'Aina ya shughuli imerejeshwa',
+                    'body'  => 'Aina ya shughuli imerejeshwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Shughuli aina imefutwa',
-                    'body'  => 'shughuli aina ina imefutwa successfully.',
+                    'title' => 'Aina ya shughuli imefutwa',
+                    'body'  => 'Aina ya shughuli imefutwa kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Shughuli aina force imefutwa',
-                        'body'  => 'Shughuli aina ina force imefutwa successfully.',
+                        'title' => 'Aina ya shughuli imefutwa kabisa',
+                        'body'  => 'Aina ya shughuli imefutwa kabisa.',
                     ],
                     'error' => [
-                        'title' => 'Shughuli aina could si kuwa imefutwa',
-                        'body'  => 'Shughuli aina haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Aina ya shughuli haikuweza kufutwa',
+                        'body'  => 'Aina ya shughuli haiwezi kufutwa kwa sababu inatumika kwa sasa.',
                     ],
                 ],
             ],
@@ -122,22 +122,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Shughuli types restored',
-                    'body'  => 'shughuli types ina restored successfully.',
+                    'title' => 'Aina za shughuli zimerejeshwa',
+                    'body'  => 'Aina za shughuli zimerejeshwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Shughuli types imefutwa',
-                    'body'  => 'shughuli types ina imefutwa successfully.',
+                    'title' => 'Aina za shughuli zimefutwa',
+                    'body'  => 'Aina za shughuli zimefutwa kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Shughuli types force imefutwa',
-                    'body'  => 'shughuli types ina force imefutwa successfully.',
+                    'title' => 'Aina za shughuli zimefutwa kabisa',
+                    'body'  => 'Aina za shughuli zimefutwa kabisa.',
                 ],
             ],
         ],
@@ -146,48 +146,48 @@ return [
     'infolist' => [
         'sections' => [
             'activity-type-details' => [
-                'title' => 'Jumla Taarifa',
+                'title' => 'Taarifa za jumla',
 
                 'entries' => [
-                    'name'                => 'Shughuli Aina',
-                    'name-tooltip'        => 'Ingiza official shughuli aina jina',
+                    'name'                => 'Aina ya shughuli',
+                    'name-tooltip'        => 'Weka jina rasmi la aina ya shughuli',
                     'action'              => 'Kitendo',
-                    'default-user'        => 'Chaguo-msingi Mtumiaji',
+                    'default-user'        => 'Mtumiaji chaguo-msingi',
                     'plugin'              => 'Programu-jalizi',
                     'summary'             => 'Muhtasari',
-                    'note'                => 'Maelezo',
+                    'note'                => 'Kidokezo',
                 ],
             ],
 
             'delay-information' => [
-                'title' => 'Delay Taarifa',
+                'title' => 'Taarifa za kuchelewa',
 
                 'entries' => [
-                    'delay-count'            => 'Delay Idadi',
-                    'delay-unit'             => 'Delay Uniti',
-                    'delay-form'             => 'Delay Fomu',
-                    'delay-form-helper-text' => 'Chanzo ya delay calculation',
+                    'delay-count'            => 'Idadi ya kuchelewa',
+                    'delay-unit'             => 'Kipimo cha kuchelewa',
+                    'delay-form'             => 'Kuchelewa kuanzia',
+                    'delay-form-helper-text' => 'Chanzo cha kukokotoa kuchelewa',
                 ],
             ],
 
             'advanced-information' => [
-                'title' => 'Advanced Taarifa',
+                'title' => 'Taarifa za ziada',
 
                 'entries' => [
-                    'icon'                => 'Ikon',
-                    'decoration-type'     => 'Decoration Aina',
-                    'chaining-type'       => 'Chaining Aina',
-                    'suggest'             => 'Suggest',
-                    'trigger'             => 'Trigger',
+                    'icon'                => 'Aikoni',
+                    'decoration-type'     => 'Aina ya mapambo',
+                    'chaining-type'       => 'Aina ya mfuatano',
+                    'suggest'             => 'Pendekeza',
+                    'trigger'             => 'Anzisha',
                 ],
             ],
 
             'status-and-configuration-information' => [
-                'title' => 'Hali & Usanidi',
+                'title' => 'Hali na mipangilio',
 
                 'entries' => [
                     'status'               => 'Hali',
-                    'keep-done-activities' => 'Weka Imekamilika Shughuli',
+                    'keep-done-activities' => 'Hifadhi shughuli zilizokamilika',
                 ],
             ],
         ],

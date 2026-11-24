@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'title'            => 'DEKA Central - Enterprise Resource Planning',
-    'meta_description' => 'DEKA Central - Modern Enterprise Resource Planning Система',
+    'title'            => 'DEKA Central — система управления ресурсами предприятия',
+    'meta_description' => 'DEKA Central — современная система управления ресурсами предприятия',
 
     'nav' => [
         'dashboard' => 'Панель',
@@ -11,61 +11,61 @@ return [
     ],
 
     'hero' => [
-        'title'         => 'Добро пожаловать до DEKA Central',
-        'subtitle'      => 'Modern Enterprise Resource Planning Solution',
-        'description'   => 'Streamline ваш business операции с наш comprehensive ERP система. Manage продажи, закупки, склад, учёт, и больше от single platform.',
-        'cta_primary'   => 'Получить Started',
-        'cta_secondary' => 'Learn Больше',
+        'title'         => 'Добро пожаловать в DEKA Central',
+        'subtitle'      => 'Современное решение для управления ресурсами предприятия',
+        'description'   => 'Упростите работу компании с помощью нашей комплексной ERP-системы. Управляйте продажами, закупками, запасами, бухгалтерией и многим другим на одной платформе.',
+        'cta_primary'   => 'Начать',
+        'cta_secondary' => 'Подробнее',
     ],
 
     'features' => [
-        'title' => 'Features',
+        'title' => 'Возможности',
         'sales' => [
-            'title'       => 'Продажи Management',
-            'description' => 'Manage ваш продажи pipeline, коммерческие предложения, и заказы efficiently. Track клиент relationships и boost ваш выручка.',
+            'title'       => 'Управление продажами',
+            'description' => 'Эффективно управляйте воронкой продаж, коммерческими предложениями и заказами. Отслеживайте отношения с клиентами и увеличивайте выручку.',
         ],
         'purchases' => [
-            'title'       => 'Закупка Management',
-            'description' => 'Streamline ваш procurement process. Manage поставщики, заказ на закупкуs, и поставщик relationships seamlessly.',
+            'title'       => 'Управление закупками',
+            'description' => 'Упростите процесс закупок. Удобно управляйте поставщиками, заказами на закупку и отношениями с ними.',
         ],
         'inventory' => [
-            'title'       => 'Склад Control',
-            'description' => 'Оставить track ваш запас levels, manage склады, и optimize ваш supply chain операции.',
+            'title'       => 'Управление запасами',
+            'description' => 'Следите за уровнем запасов, управляйте складами и оптимизируйте цепочку поставок.',
         ],
         'accounting' => [
-            'title'       => 'Financial Учёт',
-            'description' => 'Comprehensive учёт module для invoicing, оплаты, и financial отчёты.',
+            'title'       => 'Финансовый учёт',
+            'description' => 'Полноценный модуль бухгалтерии для выставления счетов, платежей и финансовой отчётности.',
         ],
         'hr' => [
-            'title'       => 'Кадры',
-            'description' => 'Manage сотрудники, посещаемость, time-выкл. requests, и подбор processes efficiently.',
+            'title'       => 'Управление персоналом',
+            'description' => 'Эффективно управляйте сотрудниками, посещаемостью, заявками на отпуск и подбором персонала.',
         ],
         'projects' => [
-            'title'       => 'Проект Management',
-            'description' => 'Plan, track, и deliver проекты вкл. time с наш integrated проект management tools.',
+            'title'       => 'Управление проектами',
+            'description' => 'Планируйте, отслеживайте и сдавайте проекты в срок с помощью встроенных инструментов управления проектами.',
         ],
     ],
 
     'stats' => [
-        'modules'      => 'Integrated Модули',
-        'users'        => 'Активен Пользователи',
-        'transactions' => 'Ежедневно Transactions',
-        'uptime'       => 'Система Uptime',
+        'modules'      => 'Интегрированные модули',
+        'users'        => 'Активные пользователи',
+        'transactions' => 'Ежедневные операции',
+        'uptime'       => 'Время безотказной работы',
     ],
 
     'cta' => [
-        'title'       => 'Ready до Transform Ваш Business?',
-        'description' => 'Join thousands businesses тот trust DEKA Central для их ежедневно операции.',
-        'button'      => 'Начать Free Trial',
+        'title'       => 'Готовы изменить свой бизнес?',
+        'description' => 'Присоединяйтесь к тысячам компаний, которые доверяют DEKA Central свою ежедневную работу.',
+        'button'      => 'Начать бесплатный пробный период',
     ],
 
     'footer' => [
-        'copyright'  => 'Все rights зарезервировано.',
-        'powered_by' => 'Powered от Laravel',
+        'copyright'  => 'Все права защищены.',
+        'powered_by' => 'Работает на Laravel',
         'links'      => [
-            'privacy' => 'Privacy Policy',
-            'terms'   => 'Terms Service',
-            'contact' => 'Контакт Us',
+            'privacy' => 'Политика конфиденциальности',
+            'terms'   => 'Условия использования',
+            'contact' => 'Связаться с нами',
         ],
     ],
 ];

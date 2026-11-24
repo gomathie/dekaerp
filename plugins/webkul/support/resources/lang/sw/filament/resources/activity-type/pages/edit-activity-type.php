@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Shughuli Aina imesasishwa',
-        'body'  => 'shughuli aina ina imesasishwa successfully.',
+        'title' => 'Aina ya shughuli imesasishwa',
+        'body'  => 'Aina ya shughuli imesasishwa kikamilifu.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Shughuli aina imefutwa',
-                'body'  => 'shughuli aina ina imefutwa successfully.',
+                'title' => 'Aina ya shughuli imefutwa',
+                'body'  => 'Aina ya shughuli imefutwa kikamilifu.',
             ],
         ],
     ],

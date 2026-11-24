@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'companies'     => 'Makampuni',
-    'all_companies' => 'Zote makampuni',
+    'companies'     => 'Kampuni',
+    'all_companies' => 'Kampuni zote',
     'confirm'       => 'Thibitisha',
     'reset'         => 'Weka upya',
 ];

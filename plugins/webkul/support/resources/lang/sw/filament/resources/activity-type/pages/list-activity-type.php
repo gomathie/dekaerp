@@ -3,12 +3,12 @@
 return [
     'tabs' => [
         'all'      => 'Zote',
-        'archived' => 'Imehifadhiwa',
+        'archived' => 'Kumbukumbu',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Shughuli Aina',
+            'label' => 'Aina mpya ya shughuli',
         ],
     ],
 ];

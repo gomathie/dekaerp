@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Industries',
+        'title' => 'Sekta',
     ],
 ];

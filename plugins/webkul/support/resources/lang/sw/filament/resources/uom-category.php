@@ -2,7 +2,7 @@
 
 return [
     'navigation' => [
-        'title' => 'UOM Kategoria',
+        'title' => 'Kategoria za vipimo',
     ],
 
     'form' => [
@@ -16,25 +16,25 @@ return [
             ],
 
             'uoms' => [
-                'title' => 'Uniti ya Measure',
+                'title' => 'Vipimo',
 
                 'fields' => [
-                    'uoms'     => 'Uniti',
+                    'uoms'     => 'Vipimo',
                     'type'     => 'Aina',
                     'name'     => 'Kipimo',
-                    'ratio'    => 'Ratio',
-                    'rounding' => 'Rounding Precision',
+                    'ratio'    => 'Uwiano',
+                    'rounding' => 'Usahihi wa ukadiriaji',
                 ],
 
                 'validations' => [
-                    'missing-reference'          => 'Hii kategoria unapaswa ina kumbukumbu kipimo.',
-                    'multiple-references'        => 'Hii kategoria unapaswa tu ina one kumbukumbu kipimo.',
-                    'ratio-greater-than-zero'    => 'conversion ratio kwa kipimo haiwezekani kuwa zero.',
-                    'rounding-greater-than-zero' => 'rounding precision lazima kuwa strictly positive.',
+                    'missing-reference'          => 'Kategoria hii inapaswa kuwa na kipimo cha rejea.',
+                    'multiple-references'        => 'Kategoria hii inapaswa kuwa na kipimo kimoja tu cha rejea.',
+                    'ratio-greater-than-zero'    => 'Uwiano wa ubadilishaji wa kipimo hauwezi kuwa sifuri.',
+                    'rounding-greater-than-zero' => 'Usahihi wa ukadiriaji lazima uwe zaidi ya sifuri.',
                 ],
 
                 'actions' => [
-                    'add' => 'Ongeza Uniti',
+                    'add' => 'Ongeza kipimo',
                 ],
             ],
         ],
@@ -43,27 +43,27 @@ return [
     'table' => [
         'columns' => [
             'name'       => 'Jina',
-            'uoms'       => 'UOMs',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'uoms'       => 'Vipimo',
+            'created-at' => 'Iliundwa',
+            'updated-at' => 'Ilisasishwa',
         ],
 
         'groups' => [
-            'created-at' => 'Imeundwa',
+            'created-at' => 'Iliundwa',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'UOM Kategoria imesasishwa',
-                    'body'  => 'UOM kategoria ina imesasishwa successfully.',
+                    'title' => 'Kategoria ya vipimo imesasishwa',
+                    'body'  => 'Kategoria ya vipimo imesasishwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'UOM Kategoria imefutwa',
-                    'body'  => 'UOM kategoria ina imefutwa successfully.',
+                    'title' => 'Kategoria ya vipimo imefutwa',
+                    'body'  => 'Kategoria ya vipimo imefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -71,8 +71,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'UOM Kategoria imefutwa',
-                    'body'  => 'UOM kategoria ina imefutwa successfully.',
+                    'title' => 'Kategoria za vipimo zimefutwa',
+                    'body'  => 'Kategoria za vipimo zimefutwa kikamilifu.',
                 ],
             ],
         ],

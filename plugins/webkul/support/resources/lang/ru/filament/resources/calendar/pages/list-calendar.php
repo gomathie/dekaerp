@@ -3,16 +3,16 @@
 return [
     'tabs' => [
         'all'      => 'Все',
-        'archived' => 'В архиве',
+        'archived' => 'Архив',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Working График',
+            'label' => 'Новый рабочий график',
 
             'notification' => [
-                'title' => 'Working График создано',
-                'body'  => 'working график есть создано successfully.',
+                'title' => 'Рабочий график создан',
+                'body'  => 'Рабочий график успешно создан.',
             ],
         ],
     ],

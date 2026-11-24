@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'company-mismatch'       => 'Hii :record belongs hadi different kampuni kuliko yake :related.',
-    'currency-not-permitted' => 'Hii kampuni mei si tumia hiyo sarafu. Ask installation staff hadi ongeza hii hadi kampuni’s sarafu.',
-    'page-not-available'     => 'Hiyo ukurasa ni si inapatikana hadi wewe au yako kampuni. Wewe ni rudi washa dashibodi.',
+    'company-mismatch'       => 'Rekodi hii ya :record ni ya kampuni tofauti na :related yake.',
+    'currency-not-permitted' => 'Kampuni hii haiwezi kutumia sarafu hiyo. Waombe wafanyakazi wa usakinishaji waiongeze kwenye sarafu za kampuni.',
+    'page-not-available'     => 'Ukurasa huo haupatikani kwako au kwa kampuni yako. Umerudishwa kwenye dashibodi.',
 ];

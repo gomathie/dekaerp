@@ -1,46 +1,46 @@
 <?php
 
 return [
-    'breadcrumb' => 'Branding',
-    'title'      => 'Branding',
-    'group'      => 'Общее',
+    'breadcrumb' => 'Брендинг',
+    'title'      => 'Брендинг',
+    'group'      => 'Общие',
 
     'navigation' => [
-        'label' => 'Branding',
+        'label' => 'Брендинг',
     ],
 
     'form' => [
         'sections' => [
             'logo' => [
-                'title'       => 'Логотип & Favicon',
-                'description' => 'Override logos, favicon и логотип высота используется по администратор и клиент panels. Отпуск поле пусто до оставить по умолчанию.',
+                'title'       => 'Логотип и значок сайта',
+                'description' => 'Замените логотипы, значок сайта и высоту логотипа в панелях администратора и клиентов. Оставьте поле пустым, чтобы использовать значение по умолчанию.',
             ],
             'colors' => [
-                'title'       => 'Colors',
-                'description' => 'Override тема colors используется по администратор и клиент panels. Отпуск цвет пусто до оставить по умолчанию.',
+                'title'       => 'Цвета',
+                'description' => 'Замените цвета темы в панелях администратора и клиентов. Оставьте цвет пустым, чтобы использовать значение по умолчанию.',
             ],
         ],
         'fields' => [
-            'light-logo'         => 'Светлая Логотип',
-            'light-logo-helper'  => 'Shown вкл. светлая backgrounds. Replaces по умолчанию логотип.',
-            'dark-logo'          => 'Тёмная Логотип',
-            'dark-logo-helper'   => 'Shown когда тёмная mode включено.',
-            'favicon'            => 'Favicon',
-            'favicon-helper'     => 'Browser вкладка значок.',
-            'logo-height'        => 'Логотип Высота',
-            'logo-height-helper' => 'CSS высота значение, e.g. 2rem или 40px.',
-            'primary-color'      => 'Primary',
-            'gray-color'         => 'Gray',
-            'danger-color'       => 'Danger',
-            'info-color'         => 'Info',
-            'success-color'      => 'Успешно',
+            'light-logo'         => 'Светлый логотип',
+            'light-logo-helper'  => 'Показывается на светлом фоне. Заменяет логотип по умолчанию.',
+            'dark-logo'          => 'Тёмный логотип',
+            'dark-logo-helper'   => 'Показывается в тёмном режиме.',
+            'favicon'            => 'Значок сайта',
+            'favicon-helper'     => 'Значок вкладки браузера.',
+            'logo-height'        => 'Высота логотипа',
+            'logo-height-helper' => 'Значение высоты CSS, например 2rem или 40px.',
+            'primary-color'      => 'Основной',
+            'gray-color'         => 'Серый',
+            'danger-color'       => 'Опасность',
+            'info-color'         => 'Информация',
+            'success-color'      => 'Успех',
             'warning-color'      => 'Предупреждение',
         ],
     ],
 
     'actions' => [
         'reset' => [
-            'label' => 'Сбросить до по умолчанию',
+            'label' => 'Сбросить по умолчанию',
         ],
     ],
 ];

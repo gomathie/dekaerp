@@ -2,11 +2,11 @@
 
 return [
     'navigation' => [
-        'title' => 'Mawasiliano',
+        'title' => 'Wahusika',
     ],
 
     'global-search' => [
-        'project-manager' => 'Mradi Meneja',
+        'project-manager' => 'Msimamizi wa mradi',
         'customer'        => 'Mteja',
     ],
 ];

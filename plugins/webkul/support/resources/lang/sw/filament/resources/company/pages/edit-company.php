@@ -3,14 +3,14 @@
 return [
     'notification' => [
         'title' => 'Kampuni imesasishwa',
-        'body'  => 'kampuni ina imesasishwa successfully.',
+        'body'  => 'Kampuni imesasishwa kikamilifu.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
                 'title' => 'Kampuni imefutwa',
-                'body'  => 'kampuni ina imefutwa successfully.',
+                'body'  => 'Kampuni imefutwa kikamilifu.',
             ],
         ],
     ],

@@ -1,51 +1,51 @@
 <?php
 
 return [
-    'title' => 'Working Schedules',
+    'title' => 'Ratiba za kazi',
 
     'navigation' => [
-        'title' => 'Working Schedules',
+        'title' => 'Ratiba za kazi',
     ],
 
     'groups' => [
         'status'     => 'Hali',
-        'created-by' => 'Imeundwa Na',
-        'created-at' => 'Imeundwa',
-        'updated-at' => 'Imesasishwa',
+        'created-by' => 'Imeundwa na',
+        'created-at' => 'Iliundwa',
+        'updated-at' => 'Ilisasishwa',
     ],
 
     'form' => [
         'sections' => [
             'general' => [
-                'title'  => 'Jumla Taarifa',
+                'title'  => 'Taarifa za jumla',
                 'fields' => [
                     'name'                  => 'Jina',
-                    'schedule-name'         => 'Ratiba Jina',
-                    'schedule-name-tooltip' => 'Tafadhali kuandika descriptive working ratiba jina.',
-                    'timezone'              => 'Timezone',
-                    'timezone-tooltip'      => 'Tafadhali chagua timezone kwa working ratiba.',
+                    'schedule-name'         => 'Jina la ratiba',
+                    'schedule-name-tooltip' => 'Tafadhali andika jina linaloeleza ratiba ya kazi.',
+                    'timezone'              => 'Saa za eneo',
+                    'timezone-tooltip'      => 'Tafadhali chagua saa za eneo kwa ratiba ya kazi.',
                     'company'               => 'Kampuni',
                 ],
             ],
 
             'configuration' => [
-                'title'  => 'Work Saa Usanidi',
+                'title'  => 'Mipangilio ya saa za kazi',
                 'fields' => [
-                    'hours-per-day'                   => 'Saa Kwa Siku',
+                    'hours-per-day'                   => 'Saa kwa siku',
                     'hours-per-day-suffix'            => 'Saa',
-                    'full-time-required-hours'        => 'Kamili Time Inahitajika Saa',
-                    'full-time-required-hours-suffix' => 'Saa Kwa Wiki',
+                    'full-time-required-hours'        => 'Saa zinazohitajika kwa muda wote',
+                    'full-time-required-hours-suffix' => 'Saa kwa wiki',
                 ],
             ],
 
             'flexibility' => [
-                'title'  => 'Flexibility',
+                'title'  => 'Unyumbufu',
                 'fields' => [
                     'status'                     => 'Hali',
-                    'two-weeks-calendar'         => 'Two Weeks Kalenda',
-                    'two-weeks-calendar-tooltip' => 'Washa alternating two-wiki work ratiba.',
-                    'flexible-hours'             => 'Flexible Saa',
-                    'flexible-hours-tooltip'     => 'Ruhusu wafanyakazi hadi ina flexible work saa.',
+                    'two-weeks-calendar'         => 'Kalenda ya wiki mbili',
+                    'two-weeks-calendar-tooltip' => 'Washa ratiba ya kazi ya wiki mbili zinazopishana.',
+                    'flexible-hours'             => 'Saa zinazonyumbulika',
+                    'flexible-hours-tooltip'     => 'Ruhusu wafanyakazi kuwa na saa za kazi zinazonyumbulika.',
                 ],
             ],
         ],
@@ -53,63 +53,63 @@ return [
 
     'table' => [
         'columns' => [
-            'id'             => 'Kitambulisho',
-            'name'           => 'Ratiba Jina',
-            'timezone'       => 'Timezone',
+            'id'             => 'ID',
+            'name'           => 'Jina la ratiba',
+            'timezone'       => 'Saa za eneo',
             'company'        => 'Kampuni',
-            'flexible-hours' => 'Flexible Saa',
+            'flexible-hours' => 'Saa zinazonyumbulika',
             'status'         => 'Hali',
-            'daily-hours'    => 'Kila siku Saa',
-            'created-by'     => 'Imeundwa Na',
-            'created-at'     => 'Imeundwa',
-            'updated-at'     => 'Imesasishwa',
+            'daily-hours'    => 'Saa za kila siku',
+            'created-by'     => 'Imeundwa na',
+            'created-at'     => 'Iliundwa',
+            'updated-at'     => 'Ilisasishwa',
         ],
 
         'filters' => [
             'company'                  => 'Kampuni',
             'is-active'                => 'Hali',
-            'two-week-calendar'        => 'Two Weeks Kalenda',
-            'flexible-hours'           => 'Flexible Saa',
-            'timezone'                 => 'Timezone',
-            'name'                     => 'Ratiba Jina',
+            'two-week-calendar'        => 'Kalenda ya wiki mbili',
+            'flexible-hours'           => 'Saa zinazonyumbulika',
+            'timezone'                 => 'Saa za eneo',
+            'name'                     => 'Jina la ratiba',
             'attendance'               => 'Mahudhurio',
-            'created-by'               => 'Imeundwa Na',
-            'daily-hours'              => 'Kila siku Saa',
-            'full-time-required-hours' => 'Kamili Time Inahitajika Saa',
-            'updated-at'               => 'Imesasishwa',
-            'created-at'               => 'Imeundwa',
+            'created-by'               => 'Imeundwa na',
+            'daily-hours'              => 'Saa za kila siku',
+            'full-time-required-hours' => 'Saa zinazohitajika kwa muda wote',
+            'updated-at'               => 'Ilisasishwa',
+            'created-at'               => 'Iliundwa',
         ],
 
         'groups' => [
-            'name'           => 'Ratiba Jina',
+            'name'           => 'Jina la ratiba',
             'status'         => 'Hali',
-            'timezone'       => 'Timezone',
-            'flexible-hours' => 'Flexible Saa',
-            'daily-hours'    => 'Kila siku Saa',
-            'created-by'     => 'Imeundwa Na',
-            'created-at'     => 'Imeundwa',
-            'updated-at'     => 'Imesasishwa',
+            'timezone'       => 'Saa za eneo',
+            'flexible-hours' => 'Saa zinazonyumbulika',
+            'daily-hours'    => 'Saa za kila siku',
+            'created-by'     => 'Imeundwa na',
+            'created-at'     => 'Iliundwa',
+            'updated-at'     => 'Ilisasishwa',
         ],
 
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Kalenda Plan restored',
-                    'body'  => 'kalenda plan ina restored successfully.',
+                    'title' => 'Ratiba imerejeshwa',
+                    'body'  => 'Ratiba imerejeshwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Kalenda Plan imefutwa',
-                    'body'  => 'kalenda plan ina imefutwa successfully.',
+                    'title' => 'Ratiba imefutwa',
+                    'body'  => 'Ratiba imefutwa kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Kalenda Plan force imefutwa',
-                    'body'  => 'kalenda plan ina force imefutwa successfully.',
+                    'title' => 'Ratiba imefutwa kabisa',
+                    'body'  => 'Ratiba imefutwa kabisa.',
                 ],
             ],
         ],
@@ -117,22 +117,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Kalenda Plans restored',
-                    'body'  => 'kalenda plans ina restored successfully.',
+                    'title' => 'Ratiba zimerejeshwa',
+                    'body'  => 'Ratiba zimerejeshwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Kalenda Plans imefutwa',
-                    'body'  => 'kalenda plans ina imefutwa successfully.',
+                    'title' => 'Ratiba zimefutwa',
+                    'body'  => 'Ratiba zimefutwa kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Kalenda Plans force imefutwa',
-                    'body'  => 'kalenda plans ina force imefutwa successfully.',
+                    'title' => 'Ratiba zimefutwa kabisa',
+                    'body'  => 'Ratiba zimefutwa kabisa.',
                 ],
             ],
         ],
@@ -141,35 +141,35 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title'   => 'Jumla Taarifa',
+                'title'   => 'Taarifa za jumla',
                 'entries' => [
                     'name'                  => 'Jina',
-                    'schedule-name'         => 'Ratiba Jina',
-                    'schedule-name-tooltip' => 'Tafadhali kuandika descriptive working ratiba jina.',
-                    'timezone'              => 'Timezone',
-                    'timezone-tooltip'      => 'Tafadhali chagua timezone kwa working ratiba.',
+                    'schedule-name'         => 'Jina la ratiba',
+                    'schedule-name-tooltip' => 'Tafadhali andika jina linaloeleza ratiba ya kazi.',
+                    'timezone'              => 'Saa za eneo',
+                    'timezone-tooltip'      => 'Tafadhali chagua saa za eneo kwa ratiba ya kazi.',
                     'company'               => 'Kampuni',
                 ],
             ],
 
             'configuration' => [
-                'title'   => 'Work Saa Usanidi',
+                'title'   => 'Mipangilio ya saa za kazi',
                 'entries' => [
-                    'hours-per-day'                   => 'Saa Kwa Siku',
-                    'hours-per-day-suffix'            => ' Saa',
-                    'full-time-required-hours'        => 'Kamili Time Inahitajika Saa',
-                    'full-time-required-hours-suffix' => ' Saa Kwa Wiki',
+                    'hours-per-day'                   => 'Saa kwa siku',
+                    'hours-per-day-suffix'            => ' saa',
+                    'full-time-required-hours'        => 'Saa zinazohitajika kwa muda wote',
+                    'full-time-required-hours-suffix' => ' saa kwa wiki',
                 ],
             ],
 
             'flexibility' => [
-                'title'   => 'Flexibility',
+                'title'   => 'Unyumbufu',
                 'entries' => [
                     'status'                     => 'Hali',
-                    'two-weeks-calendar'         => 'Two Weeks Kalenda',
-                    'two-weeks-calendar-tooltip' => 'Washa alternating two-wiki work ratiba.',
-                    'flexible-hours'             => 'Flexible Saa',
-                    'flexible-hours-tooltip'     => 'Ruhusu wafanyakazi hadi ina flexible work saa.',
+                    'two-weeks-calendar'         => 'Kalenda ya wiki mbili',
+                    'two-weeks-calendar-tooltip' => 'Washa ratiba ya kazi ya wiki mbili zinazopishana.',
+                    'flexible-hours'             => 'Saa zinazonyumbulika',
+                    'flexible-hours-tooltip'     => 'Ruhusu wafanyakazi kuwa na saa za kazi zinazonyumbulika.',
                 ],
             ],
         ],

@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'title' => 'Angalia UOM Kategoria',
+    'title' => 'Tazama kategoria ya vipimo',
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'UOM kategoria imefutwa',
-                'body'  => 'UOM kategoria ina imefutwa successfully.',
+                'title' => 'Kategoria ya vipimo imefutwa',
+                'body'  => 'Kategoria ya vipimo imefutwa kikamilifu.',
             ],
         ],
     ],

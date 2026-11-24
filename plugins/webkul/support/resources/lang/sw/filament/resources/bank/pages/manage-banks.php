@@ -3,17 +3,17 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Benki',
+            'label' => 'Benki mpya',
 
             'notification' => [
                 'title' => 'Benki imeundwa',
-                'body'  => 'benki ina imeundwa successfully.',
+                'body'  => 'Benki imeundwa kikamilifu.',
             ],
         ],
     ],
 
     'tabs' => [
         'all'      => 'Zote',
-        'archived' => 'Imehifadhiwa',
+        'archived' => 'Kumbukumbu',
     ],
 ];

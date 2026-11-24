@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'working' => 'Working',
-    'off'     => 'Выкл.',
-    'holiday' => 'Holiday',
+    'working' => 'Рабочий',
+    'off'     => 'Выходной',
+    'holiday' => 'Праздник',
 ];

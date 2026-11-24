@@ -3,17 +3,17 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Добавить Табель',
+            'label' => 'Добавить табель',
 
             'notification' => [
-                'title' => 'Табель создано',
-                'body'  => 'табель есть создано successfully.',
+                'title' => 'Табель создан',
+                'body'  => 'Табель успешно создан.',
             ],
         ],
     ],
 
     'tabs' => [
-        'all'           => 'Все Табели',
-        'my-timesheets' => 'Мой Табели',
+        'all'           => 'Все табели',
+        'my-timesheets' => 'Мои табели',
     ],
 ];

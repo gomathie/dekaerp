@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'title'            => 'DEKA Central - Enterprise Resource Planning',
-    'meta_description' => 'DEKA Central - Modern Enterprise Resource Planning Mfumo',
+    'title'            => 'DEKA Central - Mfumo wa kupanga rasilimali za biashara',
+    'meta_description' => 'DEKA Central - Mfumo wa kisasa wa kupanga rasilimali za biashara',
 
     'nav' => [
         'dashboard' => 'Dashibodi',
@@ -11,61 +11,61 @@ return [
     ],
 
     'hero' => [
-        'title'         => 'Karibu hadi DEKA Central',
-        'subtitle'      => 'Modern Enterprise Resource Planning Solution',
-        'description'   => 'Streamline yako business shughuli na yetu comprehensive ERP mfumo. Manage mauzo, ununuzi, ghala, uhasibu, na zaidi kutoka single platform.',
-        'cta_primary'   => 'Pata Started',
-        'cta_secondary' => 'Learn Zaidi',
+        'title'         => 'Karibu DEKA Central',
+        'subtitle'      => 'Suluhisho la kisasa la kupanga rasilimali za biashara',
+        'description'   => 'Rahisisha shughuli za biashara yako kwa mfumo wetu kamili wa ERP. Simamia mauzo, ununuzi, hisa, uhasibu na mengineyo kutoka jukwaa moja.',
+        'cta_primary'   => 'Anza',
+        'cta_secondary' => 'Jifunze zaidi',
     ],
 
     'features' => [
-        'title' => 'Features',
+        'title' => 'Vipengele',
         'sales' => [
-            'title'       => 'Mauzo Management',
-            'description' => 'Manage yako mauzo pipeline, nukuu, na maagizo efficiently. Track mteja relationships na boost yako mapato.',
+            'title'       => 'Usimamizi wa mauzo',
+            'description' => 'Simamia mfululizo wa mauzo, nukuu za bei na oda kwa ufanisi. Fuatilia mahusiano na wateja na ongeza mapato yako.',
         ],
         'purchases' => [
-            'title'       => 'Ununuzi Management',
-            'description' => 'Streamline yako procurement process. Manage wasambazaji, agizo la ununuzis, na msambazaji relationships seamlessly.',
+            'title'       => 'Usimamizi wa ununuzi',
+            'description' => 'Rahisisha mchakato wa ununuzi. Simamia wasambazaji, oda za ununuzi na mahusiano nao bila usumbufu.',
         ],
         'inventory' => [
-            'title'       => 'Ghala Control',
-            'description' => 'Weka track ya yako hisa levels, manage maghala, na optimize yako supply chain shughuli.',
+            'title'       => 'Udhibiti wa hisa',
+            'description' => 'Fuatilia viwango vya hisa, simamia maghala na boresha mnyororo wako wa ugavi.',
         ],
         'accounting' => [
-            'title'       => 'Financial Uhasibu',
-            'description' => 'Comprehensive uhasibu module kwa invoicing, malipo, na financial ripoti.',
+            'title'       => 'Uhasibu wa fedha',
+            'description' => 'Moduli kamili ya uhasibu kwa ankara, malipo na ripoti za fedha.',
         ],
         'hr' => [
             'title'       => 'Rasilimali watu',
-            'description' => 'Manage wafanyakazi, mahudhurio, time-zima requests, na ajira processes efficiently.',
+            'description' => 'Simamia wafanyakazi, mahudhurio, maombi ya likizo na michakato ya uajiri kwa ufanisi.',
         ],
         'projects' => [
-            'title'       => 'Mradi Management',
-            'description' => 'Plan, track, na deliver miradi washa time na yetu integrated mradi management tools.',
+            'title'       => 'Usimamizi wa miradi',
+            'description' => 'Panga, fuatilia na kamilisha miradi kwa wakati kwa zana zetu zilizounganishwa za usimamizi wa miradi.',
         ],
     ],
 
     'stats' => [
-        'modules'      => 'Integrated Moduli',
-        'users'        => 'Inatumika Watumiaji',
-        'transactions' => 'Kila siku Transactions',
-        'uptime'       => 'Mfumo Uptime',
+        'modules'      => 'Moduli zilizounganishwa',
+        'users'        => 'Watumiaji hai',
+        'transactions' => 'Miamala ya kila siku',
+        'uptime'       => 'Muda wa mfumo kufanya kazi',
     ],
 
     'cta' => [
-        'title'       => 'Ready hadi Transform Yako Business?',
-        'description' => 'Join thousands ya businesses hiyo trust DEKA Central kwa yao kila siku shughuli.',
-        'button'      => 'Anza Free Trial',
+        'title'       => 'Uko tayari kubadilisha biashara yako?',
+        'description' => 'Jiunge na maelfu ya biashara zinazoamini DEKA Central kwa shughuli zao za kila siku.',
+        'button'      => 'Anza jaribio la bure',
     ],
 
     'footer' => [
-        'copyright'  => 'Zote rights imehifadhiwa.',
-        'powered_by' => 'Powered na Laravel',
+        'copyright'  => 'Haki zote zimehifadhiwa.',
+        'powered_by' => 'Inaendeshwa na Laravel',
         'links'      => [
-            'privacy' => 'Privacy Policy',
-            'terms'   => 'Terms ya Service',
-            'contact' => 'Mwasiliani Us',
+            'privacy' => 'Sera ya faragha',
+            'terms'   => 'Masharti ya huduma',
+            'contact' => 'Wasiliana nasi',
         ],
     ],
 ];

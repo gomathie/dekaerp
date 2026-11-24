@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'title'                 => 'Views',
+    'title'                 => 'Mionekano',
     'reset'                 => 'Weka upya',
     'default'               => 'Chaguo-msingi',
-    'apply-view'            => 'Tumia Angalia',
-    'add-to-favorites'      => 'Ongeza hadi Favorites',
-    'remove-from-favorites' => 'Ondoa kutoka Favorites',
-    'delete-view'           => 'Futa Angalia',
-    'replace-view'          => 'Replace Angalia',
+    'apply-view'            => 'Tumia mwonekano',
+    'add-to-favorites'      => 'Ongeza kwenye vipendwa',
+    'remove-from-favorites' => 'Ondoa kwenye vipendwa',
+    'delete-view'           => 'Futa mwonekano',
+    'replace-view'          => 'Badilisha mwonekano',
 ];

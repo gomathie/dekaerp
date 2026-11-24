@@ -3,17 +3,17 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Industry',
+            'label' => 'Новая отрасль',
 
             'notification' => [
-                'title' => 'Industry создано',
-                'body'  => 'industry есть создано successfully.',
+                'title' => 'Отрасль создана',
+                'body'  => 'Отрасль успешно создана.',
             ],
         ],
     ],
 
     'tabs' => [
         'all'      => 'Все',
-        'archived' => 'В архиве',
+        'archived' => 'Архив',
     ],
 ];

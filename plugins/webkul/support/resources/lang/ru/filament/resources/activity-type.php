@@ -11,47 +11,47 @@ return [
     'form' => [
         'sections' => [
             'activity-type-details' => [
-                'title' => 'Общее Сведения',
+                'title' => 'Общие сведения',
 
                 'fields' => [
-                    'name'                => 'Активность Тип',
-                    'name-tooltip'        => 'Введите official активность тип название',
+                    'name'                => 'Тип действия',
+                    'name-tooltip'        => 'Введите официальное название типа действия',
                     'action'              => 'Действие',
-                    'default-user'        => 'По умолчанию Пользователь',
-                    'summary'             => 'Сводка',
-                    'note'                => 'Заметка',
+                    'default-user'        => 'Пользователь по умолчанию',
+                    'summary'             => 'Краткое описание',
+                    'note'                => 'Примечание',
                 ],
             ],
 
             'delay-information' => [
-                'title' => 'Delay Сведения',
+                'title' => 'Задержка',
 
                 'fields' => [
-                    'delay-count'            => 'Delay Количество',
-                    'delay-unit'             => 'Delay Единица',
-                    'delay-form'             => 'Delay Форма',
-                    'delay-form-helper-text' => 'Источник delay calculation',
+                    'delay-count'            => 'Величина задержки',
+                    'delay-unit'             => 'Единица задержки',
+                    'delay-form'             => 'Отсчёт задержки',
+                    'delay-form-helper-text' => 'От чего отсчитывается задержка',
                 ],
             ],
 
             'advanced-information' => [
-                'title' => 'Advanced Сведения',
+                'title' => 'Дополнительно',
 
                 'fields' => [
                     'icon'                => 'Значок',
-                    'decoration-type'     => 'Decoration Тип',
-                    'chaining-type'       => 'Chaining Тип',
-                    'suggest'             => 'Suggest',
-                    'trigger'             => 'Trigger',
+                    'decoration-type'     => 'Тип оформления',
+                    'chaining-type'       => 'Тип связывания',
+                    'suggest'             => 'Предлагать',
+                    'trigger'             => 'Запускать',
                 ],
             ],
 
             'status-and-configuration-information' => [
-                'title' => 'Статус & Конфигурация',
+                'title' => 'Статус и настройки',
 
                 'fields' => [
                     'status'               => 'Статус',
-                    'keep-done-activities' => 'Оставить Завершён Деятельность',
+                    'keep-done-activities' => 'Сохранять выполненные действия',
                 ],
             ],
         ],
@@ -59,9 +59,9 @@ return [
 
     'table' => [
         'columns' => [
-            'name'       => 'Активность Тип',
-            'summary'    => 'Сводка',
-            'planned-in' => 'Запланировано В',
+            'name'       => 'Тип действия',
+            'summary'    => 'Краткое описание',
+            'planned-in' => 'Запланировано через',
             'type'       => 'Тип',
             'action'     => 'Действие',
             'status'     => 'Статус',
@@ -71,49 +71,49 @@ return [
 
         'groups' => [
             'name'             => 'Название',
-            'action-category'  => 'Действие Категория',
+            'action-category'  => 'Категория действия',
             'status'           => 'Статус',
-            'delay-count'      => 'Delay Количество',
-            'delay-unit'       => 'Delay Единица',
-            'delay-source'     => 'Delay Источник',
-            'associated-model' => 'Associated Model',
-            'chaining-type'    => 'Chaining Тип',
-            'decoration-type'  => 'Decoration Тип',
-            'default-user'     => 'По умолчанию Пользователь',
-            'creation-date'    => 'Creation Дата',
-            'last-update'      => 'Последний Обновить',
+            'delay-count'      => 'Величина задержки',
+            'delay-unit'       => 'Единица задержки',
+            'delay-source'     => 'Источник задержки',
+            'associated-model' => 'Связанная модель',
+            'chaining-type'    => 'Тип связывания',
+            'decoration-type'  => 'Тип оформления',
+            'default-user'     => 'Пользователь по умолчанию',
+            'creation-date'    => 'Дата создания',
+            'last-update'      => 'Последнее обновление',
         ],
 
         'filters' => [
             'action'    => 'Действие',
             'status'    => 'Статус',
-            'has-delay' => 'Есть Delay',
+            'has-delay' => 'Есть задержка',
         ],
 
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Активность тип restored',
-                    'body'  => 'активность тип есть restored successfully.',
+                    'title' => 'Тип действия восстановлен',
+                    'body'  => 'Тип действия успешно восстановлен.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Активность тип удалено',
-                    'body'  => 'активность тип есть удалено successfully.',
+                    'title' => 'Тип действия удалён',
+                    'body'  => 'Тип действия успешно удалён.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Активность тип force удалено',
-                        'body'  => 'Активность тип есть force удалено successfully.',
+                        'title' => 'Тип действия удалён безвозвратно',
+                        'body'  => 'Тип действия успешно удалён безвозвратно.',
                     ],
                     'error' => [
-                        'title' => 'Активность тип could не быть удалено',
-                        'body'  => 'Активность тип нельзя быть удалено потому что это currently в использовать.',
+                        'title' => 'Не удалось удалить тип действия',
+                        'body'  => 'Тип действия нельзя удалить, так как он сейчас используется.',
                     ],
                 ],
             ],
@@ -122,22 +122,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Активность types restored',
-                    'body'  => 'активность types есть restored successfully.',
+                    'title' => 'Типы действий восстановлены',
+                    'body'  => 'Типы действий успешно восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Активность types удалено',
-                    'body'  => 'активность types есть удалено successfully.',
+                    'title' => 'Типы действий удалены',
+                    'body'  => 'Типы действий успешно удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Активность types force удалено',
-                    'body'  => 'активность types есть force удалено successfully.',
+                    'title' => 'Типы действий удалены безвозвратно',
+                    'body'  => 'Типы действий успешно удалены безвозвратно.',
                 ],
             ],
         ],
@@ -146,48 +146,48 @@ return [
     'infolist' => [
         'sections' => [
             'activity-type-details' => [
-                'title' => 'Общее Сведения',
+                'title' => 'Общие сведения',
 
                 'entries' => [
-                    'name'                => 'Активность Тип',
-                    'name-tooltip'        => 'Введите official активность тип название',
+                    'name'                => 'Тип действия',
+                    'name-tooltip'        => 'Введите официальное название типа действия',
                     'action'              => 'Действие',
-                    'default-user'        => 'По умолчанию Пользователь',
-                    'plugin'              => 'Модуль',
-                    'summary'             => 'Сводка',
-                    'note'                => 'Заметка',
+                    'default-user'        => 'Пользователь по умолчанию',
+                    'plugin'              => 'Плагин',
+                    'summary'             => 'Краткое описание',
+                    'note'                => 'Примечание',
                 ],
             ],
 
             'delay-information' => [
-                'title' => 'Delay Сведения',
+                'title' => 'Задержка',
 
                 'entries' => [
-                    'delay-count'            => 'Delay Количество',
-                    'delay-unit'             => 'Delay Единица',
-                    'delay-form'             => 'Delay Форма',
-                    'delay-form-helper-text' => 'Источник delay calculation',
+                    'delay-count'            => 'Величина задержки',
+                    'delay-unit'             => 'Единица задержки',
+                    'delay-form'             => 'Отсчёт задержки',
+                    'delay-form-helper-text' => 'От чего отсчитывается задержка',
                 ],
             ],
 
             'advanced-information' => [
-                'title' => 'Advanced Сведения',
+                'title' => 'Дополнительно',
 
                 'entries' => [
                     'icon'                => 'Значок',
-                    'decoration-type'     => 'Decoration Тип',
-                    'chaining-type'       => 'Chaining Тип',
-                    'suggest'             => 'Suggest',
-                    'trigger'             => 'Trigger',
+                    'decoration-type'     => 'Тип оформления',
+                    'chaining-type'       => 'Тип связывания',
+                    'suggest'             => 'Предлагать',
+                    'trigger'             => 'Запускать',
                 ],
             ],
 
             'status-and-configuration-information' => [
-                'title' => 'Статус & Конфигурация',
+                'title' => 'Статус и настройки',
 
                 'entries' => [
                     'status'               => 'Статус',
-                    'keep-done-activities' => 'Оставить Завершён Деятельность',
+                    'keep-done-activities' => 'Сохранять выполненные действия',
                 ],
             ],
         ],

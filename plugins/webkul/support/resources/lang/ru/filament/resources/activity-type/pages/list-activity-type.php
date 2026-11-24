@@ -3,12 +3,12 @@
 return [
     'tabs' => [
         'all'      => 'Все',
-        'archived' => 'В архиве',
+        'archived' => 'Архив',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Активность Тип',
+            'label' => 'Новый тип действия',
         ],
     ],
 ];

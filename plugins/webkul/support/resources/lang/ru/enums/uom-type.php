@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'reference' => 'Ссылка',
-    'bigger'    => 'Bigger',
-    'smaller'   => 'Smaller',
+    'reference' => 'Базовая',
+    'bigger'    => 'Больше',
+    'smaller'   => 'Меньше',
 ];

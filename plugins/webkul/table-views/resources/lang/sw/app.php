@@ -5,10 +5,10 @@ return [
         'component' => [
             'tables' => [
                 'table-views' => [
-                    'title'          => 'Views',
-                    'favorite-views' => 'Favorite Views',
-                    'saved-views'    => 'Saved Views',
-                    'preset-views'   => 'Preset Views',
+                    'title'          => 'Mionekano',
+                    'favorite-views' => 'Mionekano pendwa',
+                    'saved-views'    => 'Mionekano iliyohifadhiwa',
+                    'preset-views'   => 'Mionekano iliyowekwa tayari',
                 ],
             ],
         ],

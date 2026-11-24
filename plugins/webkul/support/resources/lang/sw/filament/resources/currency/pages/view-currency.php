@@ -1,17 +1,17 @@
 <?php
 
 return [
-    'title' => 'Angalia Sarafu',
+    'title' => 'Tazama sarafu',
 
     'header-actions' => [
         'delete' => [
             'notification' => [
                 'title' => 'Sarafu imefutwa',
-                'body'  => 'sarafu ina imefutwa successfully.',
+                'body'  => 'Sarafu imefutwa kikamilifu.',
 
                 'error' => [
-                    'title' => 'Sarafu could si kuwa imefutwa',
-                    'body'  => 'sarafu haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                    'title' => 'Sarafu haikuweza kufutwa',
+                    'body'  => 'Sarafu haiwezi kufutwa kwa sababu inatumika kwa sasa.',
                 ],
             ],
         ],

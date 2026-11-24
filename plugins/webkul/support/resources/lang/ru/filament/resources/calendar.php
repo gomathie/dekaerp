@@ -1,15 +1,15 @@
 <?php
 
 return [
-    'title' => 'Working Schedules',
+    'title' => 'Рабочие графики',
 
     'navigation' => [
-        'title' => 'Working Schedules',
+        'title' => 'Рабочие графики',
     ],
 
     'groups' => [
         'status'     => 'Статус',
-        'created-by' => 'Создано От',
+        'created-by' => 'Создал',
         'created-at' => 'Создано',
         'updated-at' => 'Обновлено',
     ],
@@ -17,35 +17,35 @@ return [
     'form' => [
         'sections' => [
             'general' => [
-                'title'  => 'Общее Сведения',
+                'title'  => 'Общие сведения',
                 'fields' => [
                     'name'                  => 'Название',
-                    'schedule-name'         => 'График Название',
-                    'schedule-name-tooltip' => 'Пожалуйста запись descriptive working график название.',
-                    'timezone'              => 'Timezone',
-                    'timezone-tooltip'      => 'Пожалуйста выбрать timezone для working график.',
+                    'schedule-name'         => 'Название графика',
+                    'schedule-name-tooltip' => 'Укажите понятное название рабочего графика.',
+                    'timezone'              => 'Часовой пояс',
+                    'timezone-tooltip'      => 'Выберите часовой пояс для рабочего графика.',
                     'company'               => 'Компания',
                 ],
             ],
 
             'configuration' => [
-                'title'  => 'Work Часы Конфигурация',
+                'title'  => 'Рабочее время',
                 'fields' => [
-                    'hours-per-day'                   => 'Часы За День',
-                    'hours-per-day-suffix'            => 'Часы',
-                    'full-time-required-hours'        => 'Полный Time Обязательно Часы',
-                    'full-time-required-hours-suffix' => 'Часы За Неделя',
+                    'hours-per-day'                   => 'Часов в день',
+                    'hours-per-day-suffix'            => 'ч',
+                    'full-time-required-hours'        => 'Норма часов при полной занятости',
+                    'full-time-required-hours-suffix' => 'ч в неделю',
                 ],
             ],
 
             'flexibility' => [
-                'title'  => 'Flexibility',
+                'title'  => 'Гибкость',
                 'fields' => [
                     'status'                     => 'Статус',
-                    'two-weeks-calendar'         => 'Two Weeks Календарь',
-                    'two-weeks-calendar-tooltip' => 'Включить alternating two-неделя work график.',
-                    'flexible-hours'             => 'Flexible Часы',
-                    'flexible-hours-tooltip'     => 'Разрешить сотрудники до есть flexible work часы.',
+                    'two-weeks-calendar'         => 'Двухнедельный календарь',
+                    'two-weeks-calendar-tooltip' => 'Включить чередующийся двухнедельный график работы.',
+                    'flexible-hours'             => 'Гибкий график',
+                    'flexible-hours-tooltip'     => 'Разрешить сотрудникам гибкий график работы.',
                 ],
             ],
         ],
@@ -53,14 +53,14 @@ return [
 
     'table' => [
         'columns' => [
-            'id'             => 'Ид.',
-            'name'           => 'График Название',
-            'timezone'       => 'Timezone',
+            'id'             => 'ID',
+            'name'           => 'Название графика',
+            'timezone'       => 'Часовой пояс',
             'company'        => 'Компания',
-            'flexible-hours' => 'Flexible Часы',
+            'flexible-hours' => 'Гибкий график',
             'status'         => 'Статус',
-            'daily-hours'    => 'Ежедневно Часы',
-            'created-by'     => 'Создано От',
+            'daily-hours'    => 'Часов в день',
+            'created-by'     => 'Создал',
             'created-at'     => 'Создано',
             'updated-at'     => 'Обновлено',
         ],
@@ -68,25 +68,25 @@ return [
         'filters' => [
             'company'                  => 'Компания',
             'is-active'                => 'Статус',
-            'two-week-calendar'        => 'Two Weeks Календарь',
-            'flexible-hours'           => 'Flexible Часы',
-            'timezone'                 => 'Timezone',
-            'name'                     => 'График Название',
+            'two-week-calendar'        => 'Двухнедельный календарь',
+            'flexible-hours'           => 'Гибкий график',
+            'timezone'                 => 'Часовой пояс',
+            'name'                     => 'Название графика',
             'attendance'               => 'Посещаемость',
-            'created-by'               => 'Создано От',
-            'daily-hours'              => 'Ежедневно Часы',
-            'full-time-required-hours' => 'Полный Time Обязательно Часы',
+            'created-by'               => 'Создал',
+            'daily-hours'              => 'Часов в день',
+            'full-time-required-hours' => 'Норма часов при полной занятости',
             'updated-at'               => 'Обновлено',
             'created-at'               => 'Создано',
         ],
 
         'groups' => [
-            'name'           => 'График Название',
+            'name'           => 'Название графика',
             'status'         => 'Статус',
-            'timezone'       => 'Timezone',
-            'flexible-hours' => 'Flexible Часы',
-            'daily-hours'    => 'Ежедневно Часы',
-            'created-by'     => 'Создано От',
+            'timezone'       => 'Часовой пояс',
+            'flexible-hours' => 'Гибкий график',
+            'daily-hours'    => 'Часов в день',
+            'created-by'     => 'Создал',
             'created-at'     => 'Создано',
             'updated-at'     => 'Обновлено',
         ],
@@ -94,22 +94,22 @@ return [
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Календарь Plan restored',
-                    'body'  => 'календарь plan есть restored successfully.',
+                    'title' => 'График восстановлен',
+                    'body'  => 'График успешно восстановлен.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Календарь Plan удалено',
-                    'body'  => 'календарь plan есть удалено successfully.',
+                    'title' => 'График удалён',
+                    'body'  => 'График успешно удалён.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Календарь Plan force удалено',
-                    'body'  => 'календарь plan есть force удалено successfully.',
+                    'title' => 'График удалён безвозвратно',
+                    'body'  => 'График успешно удалён безвозвратно.',
                 ],
             ],
         ],
@@ -117,22 +117,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Календарь Plans restored',
-                    'body'  => 'календарь plans есть restored successfully.',
+                    'title' => 'Графики восстановлены',
+                    'body'  => 'Графики успешно восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Календарь Plans удалено',
-                    'body'  => 'календарь plans есть удалено successfully.',
+                    'title' => 'Графики удалены',
+                    'body'  => 'Графики успешно удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Календарь Plans force удалено',
-                    'body'  => 'календарь plans есть force удалено successfully.',
+                    'title' => 'Графики удалены безвозвратно',
+                    'body'  => 'Графики успешно удалены безвозвратно.',
                 ],
             ],
         ],
@@ -141,35 +141,35 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title'   => 'Общее Сведения',
+                'title'   => 'Общие сведения',
                 'entries' => [
                     'name'                  => 'Название',
-                    'schedule-name'         => 'График Название',
-                    'schedule-name-tooltip' => 'Пожалуйста запись descriptive working график название.',
-                    'timezone'              => 'Timezone',
-                    'timezone-tooltip'      => 'Пожалуйста выбрать timezone для working график.',
+                    'schedule-name'         => 'Название графика',
+                    'schedule-name-tooltip' => 'Укажите понятное название рабочего графика.',
+                    'timezone'              => 'Часовой пояс',
+                    'timezone-tooltip'      => 'Выберите часовой пояс для рабочего графика.',
                     'company'               => 'Компания',
                 ],
             ],
 
             'configuration' => [
-                'title'   => 'Work Часы Конфигурация',
+                'title'   => 'Рабочее время',
                 'entries' => [
-                    'hours-per-day'                   => 'Часы За День',
-                    'hours-per-day-suffix'            => ' Часы',
-                    'full-time-required-hours'        => 'Полный Time Обязательно Часы',
-                    'full-time-required-hours-suffix' => ' Часы За Неделя',
+                    'hours-per-day'                   => 'Часов в день',
+                    'hours-per-day-suffix'            => ' ч',
+                    'full-time-required-hours'        => 'Норма часов при полной занятости',
+                    'full-time-required-hours-suffix' => ' ч в неделю',
                 ],
             ],
 
             'flexibility' => [
-                'title'   => 'Flexibility',
+                'title'   => 'Гибкость',
                 'entries' => [
                     'status'                     => 'Статус',
-                    'two-weeks-calendar'         => 'Two Weeks Календарь',
-                    'two-weeks-calendar-tooltip' => 'Включить alternating two-неделя work график.',
-                    'flexible-hours'             => 'Flexible Часы',
-                    'flexible-hours-tooltip'     => 'Разрешить сотрудники до есть flexible work часы.',
+                    'two-weeks-calendar'         => 'Двухнедельный календарь',
+                    'two-weeks-calendar-tooltip' => 'Включить чередующийся двухнедельный график работы.',
+                    'flexible-hours'             => 'Гибкий график',
+                    'flexible-hours-tooltip'     => 'Разрешить сотрудникам гибкий график работы.',
                 ],
             ],
         ],

@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Karatasi za muda',
+    'title' => 'Rejista za muda',
 
     'navigation' => [
-        'title' => 'Karatasi za muda',
+        'title' => 'Rejista za muda',
     ],
 
     'global-search' => [
@@ -19,8 +19,8 @@ return [
         'project'                => 'Mradi',
         'task'                   => 'Kazi',
         'description'            => 'Maelezo',
-        'time-spent'             => 'Time Spent',
-        'time-spent-helper-text' => 'Time spent katika saa (Eg. 1.5 saa means 1 saa 30 dakika)',
+        'time-spent'             => 'Muda uliotumika',
+        'time-spent-helper-text' => 'Muda uliotumika kwa saa (mf. saa 1.5 ni saa 1 na dakika 30)',
     ],
 
     'table' => [
@@ -30,9 +30,9 @@ return [
             'project'     => 'Mradi',
             'task'        => 'Kazi',
             'description' => 'Maelezo',
-            'time-spent'  => 'Time Spent',
-            'created-at'  => 'Imeundwa',
-            'updated-at'  => 'Imesasishwa',
+            'time-spent'  => 'Muda uliotumika',
+            'created-at'  => 'Iliundwa',
+            'updated-at'  => 'Ilisasishwa',
         ],
 
         'groups' => [
@@ -40,30 +40,30 @@ return [
             'employee'   => 'Mfanyakazi',
             'project'    => 'Mradi',
             'task'       => 'Kazi',
-            'creator'    => 'Creator',
+            'creator'    => 'Mwandishi',
         ],
 
         'filters' => [
-            'date-from'  => 'Tarehe Kutoka',
-            'date-until' => 'Tarehe Mpaka',
+            'date-from'  => 'Tarehe kuanzia',
+            'date-until' => 'Tarehe hadi',
             'employee'   => 'Mfanyakazi',
             'project'    => 'Mradi',
             'task'       => 'Kazi',
-            'creator'    => 'Creator',
+            'creator'    => 'Mwandishi',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Karatasi ya muda imesasishwa',
-                    'body'  => 'karatasi ya muda ina imesasishwa successfully.',
+                    'title' => 'Rejista ya muda imesasishwa',
+                    'body'  => 'Rejista ya muda imesasishwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Karatasi ya muda imefutwa',
-                    'body'  => 'karatasi ya muda ina imefutwa successfully.',
+                    'title' => 'Rejista ya muda imefutwa',
+                    'body'  => 'Rejista ya muda imefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -71,8 +71,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Karatasi za muda imefutwa',
-                    'body'  => 'karatasi za muda ina imefutwa successfully.',
+                    'title' => 'Rejista za muda zimefutwa',
+                    'body'  => 'Rejista za muda zimefutwa kikamilifu.',
                 ],
             ],
         ],

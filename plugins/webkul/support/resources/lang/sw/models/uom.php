@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'category-has-uoms' => 'Wewe haiwezekani futa kategoria :category kwa sababu hii bado contains uniti ya measure.',
-    'reference-in-use'  => 'Wewe haiwezekani futa :uom kwa sababu hii ni kumbukumbu kipimo ya kategoria :category.',
+    'category-has-uoms' => 'Huwezi kufuta kategoria :category kwa sababu bado ina vipimo.',
+    'reference-in-use'  => 'Huwezi kufuta :uom kwa sababu ni kipimo cha rejea cha kategoria :category.',
 ];

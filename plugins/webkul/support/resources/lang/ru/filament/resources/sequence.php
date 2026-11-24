@@ -1,40 +1,40 @@
 <?php
 
 return [
-    'model-label' => 'Нумерация',
+    'model-label' => 'Последовательность',
 
-    'plural-model-label' => 'Sequences',
+    'plural-model-label' => 'Последовательности',
 
     'navigation' => [
-        'title' => 'Sequences',
+        'title' => 'Последовательности',
     ],
 
     'form' => [
         'sections' => [
             'general' => [
-                'title'       => 'Общее',
-                'description' => 'Sequences для журналы, склады и operation types создано автоматически когда те записи создано — изменить их здесь. Вручную creation только needed для свой код-based sequences.',
+                'title'       => 'Общие',
+                'description' => 'Последовательности для журналов, складов и типов операций создаются автоматически вместе с этими записями — изменяйте их здесь. Вручную нужно создавать только особые последовательности с собственным кодом.',
 
                 'fields' => [
                     'name'      => 'Название',
                     'code'      => 'Код',
-                    'code-help' => 'Technical identifier используется от документы, e.g. продажи.заказ. Auto-создано sequences уже есть справа код.',
+                    'code-help' => 'Технический идентификатор, который используют документы, например sales.order. У автоматически созданных последовательностей код уже правильный.',
                     'company'   => 'Компания',
                 ],
             ],
 
             'format' => [
-                'title' => 'Numbering',
+                'title' => 'Нумерация',
 
                 'fields' => [
                     'prefix'           => 'Префикс',
-                    'prefix-help'      => 'Placeholders: %(год), %(y), %(месяц), %(день). Пример: INV/%(год)/',
+                    'prefix-help'      => 'Подстановки: %(year), %(y), %(month), %(day). Пример: INV/%(year)/',
                     'suffix'           => 'Суффикс',
-                    'padding'          => 'Номер Padding',
-                    'next-number'      => 'Далее Номер',
-                    'next-number-help' => 'Можно только быть increased. До restart numbering safely, удалить нумерация — это быть recreated от highest existing документ номер.',
-                    'step'             => 'Step',
-                    'reset-frequency'  => 'Сбросить Counter',
+                    'padding'          => 'Количество цифр',
+                    'next-number'      => 'Следующий номер',
+                    'next-number-help' => 'Можно только увеличить. Чтобы безопасно начать нумерацию заново, удалите последовательность — она будет создана снова от наибольшего существующего номера документа.',
+                    'step'             => 'Шаг',
+                    'reset-frequency'  => 'Сброс счётчика',
                 ],
             ],
         ],
@@ -44,17 +44,17 @@ return [
         'columns' => [
             'name'            => 'Название',
             'code'            => 'Код',
-            'applies-to'      => 'Действует До',
+            'applies-to'      => 'Применяется к',
             'company'         => 'Компания',
-            'next-preview'    => 'Далее Документ Номер',
-            'next-number'     => 'Далее Номер',
-            'reset-frequency' => 'Сбросить Counter',
+            'next-preview'    => 'Следующий номер документа',
+            'next-number'     => 'Следующий номер',
+            'reset-frequency' => 'Сброс счётчика',
         ],
 
         'variants' => [
             'refund'         => 'Возврат',
-            'payment'        => 'Оплата',
-            'refund-payment' => 'Возврат + Оплата',
+            'payment'        => 'Платёж',
+            'refund-payment' => 'Возврат + платёж',
         ],
 
         'filters' => [
@@ -64,15 +64,15 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Нумерация обновлено',
-                    'body'  => 'нумерация есть обновлено successfully.',
+                    'title' => 'Последовательность обновлена',
+                    'body'  => 'Последовательность успешно обновлена.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Нумерация удалено',
-                    'body'  => 'нумерация есть удалено successfully.',
+                    'title' => 'Последовательность удалена',
+                    'body'  => 'Последовательность успешно удалена.',
                 ],
             ],
         ],
@@ -80,8 +80,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Sequences удалено',
-                    'body'  => 'sequences есть удалено successfully.',
+                    'title' => 'Последовательности удалены',
+                    'body'  => 'Последовательности успешно удалены.',
                 ],
             ],
         ],

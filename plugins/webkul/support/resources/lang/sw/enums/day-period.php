@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'morning'   => 'Morning',
-    'afternoon' => 'Afternoon',
-    'evening'   => 'Evening',
-    'night'     => 'Night',
+    'morning'   => 'Asubuhi',
+    'afternoon' => 'Mchana',
+    'evening'   => 'Jioni',
+    'night'     => 'Usiku',
 ];

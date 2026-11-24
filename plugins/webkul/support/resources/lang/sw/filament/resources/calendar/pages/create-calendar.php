@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Work Ratiba Plan imeundwa',
-        'body'  => 'work ratiba plan ina imeundwa successfully.',
+        'title' => 'Ratiba ya kazi imeundwa',
+        'body'  => 'Ratiba ya kazi imeundwa kikamilifu.',
     ],
 ];

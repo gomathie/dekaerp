@@ -14,72 +14,72 @@ return [
     'form' => [
         'sections' => [
             'company-information' => [
-                'title'  => 'Компания Сведения',
+                'title'  => 'Сведения о компании',
                 'fields' => [
-                    'name'                  => 'Компания Название',
-                    'registration-number'   => 'Registration Номер',
-                    'company-id'            => 'Компания Ид.',
-                    'tax-id'                => 'Налог Ид.',
-                    'tax-id-tooltip'        => 'Налог Ид. unique identifier для ваш компания.',
-                    'website'               => 'Сайт',
+                    'name'                  => 'Название компании',
+                    'registration-number'   => 'Регистрационный номер',
+                    'company-id'            => 'Идентификатор компании',
+                    'tax-id'                => 'Налоговый номер',
+                    'tax-id-tooltip'        => 'Налоговый номер — уникальный идентификатор вашей компании.',
+                    'website'               => 'Веб-сайт',
                 ],
             ],
 
             'address-information' => [
-                'title'  => 'Адрес Сведения',
+                'title'  => 'Адрес',
 
                 'fields' => [
-                    'street1'        => 'Street 1',
-                    'street2'        => 'Street 2',
+                    'street1'        => 'Улица 1',
+                    'street2'        => 'Улица 2',
                     'city'           => 'Город',
-                    'zipcode'        => 'Zip Код',
+                    'zipcode'        => 'Почтовый индекс',
                     'country'        => 'Страна',
-                    'currency-name'  => 'Валюта Название',
-                    'phone-code'     => 'Телефон Код',
+                    'currency-name'  => 'Название валюты',
+                    'phone-code'     => 'Телефонный код',
                     'code'           => 'Код',
-                    'country-name'   => 'Страна Название',
-                    'state-required' => 'Состояние Обязательно',
-                    'zip-required'   => 'Zip Обязательно',
-                    'create-country' => 'Создать Страна',
-                    'state'          => 'Состояние',
-                    'state-name'     => 'Состояние Название',
-                    'state-code'     => 'Состояние Код',
-                    'create-state'   => 'Создать Состояние',
+                    'country-name'   => 'Название страны',
+                    'state-required' => 'Регион обязателен',
+                    'zip-required'   => 'Индекс обязателен',
+                    'create-country' => 'Создать страну',
+                    'state'          => 'Регион',
+                    'state-name'     => 'Название региона',
+                    'state-code'     => 'Код региона',
+                    'create-state'   => 'Создать регион',
                 ],
             ],
 
             'additional-information' => [
-                'title' => 'Additional Сведения',
+                'title' => 'Дополнительные сведения',
 
                 'fields' => [
-                    'default-currency'        => 'По умолчанию Валюта',
-                    'currency-name'           => 'Валюта Название',
-                    'currency-full-name'      => 'Валюта Полный Название',
-                    'currency-symbol'         => 'Валюта Symbol',
-                    'currency-iso-numeric'    => 'Валюта ISO Numeric',
-                    'currency-decimal-places' => 'Валюта Decimal Places',
-                    'currency-rounding'       => 'Валюта Rounding',
-                    'currency-status'         => 'Валюта Статус',
-                    'company-foundation-date' => 'Компания Foundation Дата',
-                    'currency-create'         => 'Создать Валюта',
+                    'default-currency'        => 'Валюта по умолчанию',
+                    'currency-name'           => 'Название валюты',
+                    'currency-full-name'      => 'Полное название валюты',
+                    'currency-symbol'         => 'Символ валюты',
+                    'currency-iso-numeric'    => 'Цифровой код ISO',
+                    'currency-decimal-places' => 'Знаков после запятой',
+                    'currency-rounding'       => 'Округление валюты',
+                    'currency-status'         => 'Статус валюты',
+                    'company-foundation-date' => 'Дата основания компании',
+                    'currency-create'         => 'Создать валюту',
                     'status'                  => 'Статус',
                 ],
             ],
 
             'branding' => [
-                'title'  => 'Branding',
+                'title'  => 'Брендинг',
                 'fields' => [
-                    'company-logo' => 'Компания Логотип',
+                    'company-logo' => 'Логотип компании',
                     'color'        => 'Цвет',
                 ],
             ],
 
             'contact-information' => [
-                'title'  => 'Контакт Сведения',
+                'title'  => 'Контактные данные',
                 'fields' => [
-                    'email'  => 'Эл. почта Адрес',
-                    'phone'  => 'Телефон Номер',
-                    'mobile' => 'Телефон Номер',
+                    'email'  => 'Адрес эл. почты',
+                    'phone'  => 'Номер телефона',
+                    'mobile' => 'Номер телефона',
                 ],
             ],
         ],
@@ -88,27 +88,27 @@ return [
     'table' => [
         'columns' => [
             'logo'                 => 'Логотип',
-            'company-name'         => 'Компания Название',
-            'branches'             => 'Branches',
+            'company-name'         => 'Название компании',
+            'branches'             => 'Филиалы',
             'email'                => 'Эл. почта',
             'city'                 => 'Город',
             'country'              => 'Страна',
             'currency'             => 'Валюта',
             'status'               => 'Статус',
-            'created-by'           => 'Создано От',
+            'created-by'           => 'Создал',
             'created-at'           => 'Создано',
             'updated-at'           => 'Обновлено',
         ],
 
         'groups' => [
-            'company-name' => 'Компания Название',
+            'company-name' => 'Название компании',
             'city'         => 'Город',
             'country'      => 'Страна',
-            'state'        => 'Состояние',
+            'state'        => 'Регион',
             'email'        => 'Эл. почта',
             'phone'        => 'Телефон',
             'currency'     => 'Валюта',
-            'created-by'   => 'Создано От',
+            'created-by'   => 'Создал',
             'created-at'   => 'Создано',
             'updated-at'   => 'Обновлено',
         ],
@@ -121,40 +121,40 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Компания edited',
-                    'body'  => 'компания есть edited successfully.',
+                    'title' => 'Компания изменена',
+                    'body'  => 'Компания успешно изменена.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Компания удалено',
-                    'body'  => 'компания есть удалено successfully.',
+                    'title' => 'Компания удалена',
+                    'body'  => 'Компания успешно удалена.',
 
                     'default-company' => [
-                        'title' => 'Нельзя удалить по умолчанию компания',
-                        'body'  => 'Вы нельзя удалить компания currently задать как ваш по умолчанию компания.',
+                        'title' => 'Нельзя удалить компанию по умолчанию',
+                        'body'  => 'Нельзя удалить компанию, которая сейчас выбрана вашей компанией по умолчанию.',
                     ],
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Компания restored',
-                    'body'  => 'компания есть restored successfully.',
+                    'title' => 'Компания восстановлена',
+                    'body'  => 'Компания успешно восстановлена.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Компания force удалено',
-                        'body'  => 'компания есть force удалено successfully.',
+                        'title' => 'Компания удалена безвозвратно',
+                        'body'  => 'Компания успешно удалена безвозвратно.',
                     ],
 
                     'error' => [
-                        'title' => 'Компания force deletion не удалось',
-                        'body'  => 'компания could не быть force удалено потому что это associated с другое записи.',
+                        'title' => 'Не удалось удалить компанию безвозвратно',
+                        'body'  => 'Компанию нельзя удалить безвозвратно, так как она связана с другими записями.',
                     ],
                 ],
             ],
@@ -163,26 +163,26 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Компании restored',
-                    'body'  => 'компании есть restored successfully.',
+                    'title' => 'Компании восстановлены',
+                    'body'  => 'Компании успешно восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Компании удалено',
-                    'body'  => 'компании есть удалено successfully.',
+                    'title' => 'Компании удалены',
+                    'body'  => 'Компании успешно удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Компании force удалено',
-                    'body'  => 'компании есть force удалено successfully.',
+                    'title' => 'Компании удалены безвозвратно',
+                    'body'  => 'Компании успешно удалены безвозвратно.',
 
                     'error' => [
-                        'title' => 'Компании force deletion не удалось',
-                        'body'  => 'компании could не быть force удалено потому что они associated с другое записи.',
+                        'title' => 'Не удалось удалить компании безвозвратно',
+                        'body'  => 'Компании нельзя удалить безвозвратно, так как они связаны с другими записями.',
                     ],
                 ],
             ],
@@ -191,8 +191,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Компании создано',
-                    'body'  => 'компании есть создано successfully.',
+                    'title' => 'Компании созданы',
+                    'body'  => 'Компании успешно созданы.',
                 ],
             ],
         ],
@@ -201,72 +201,72 @@ return [
     'infolist' => [
         'sections' => [
             'company-information' => [
-                'title'   => 'Компания Сведения',
+                'title'   => 'Сведения о компании',
                 'entries' => [
-                    'name'                  => 'Компания Название',
-                    'registration-number'   => 'Registration Номер',
-                    'company-id'            => 'Компания Ид.',
-                    'tax-id'                => 'Налог Ид.',
-                    'tax-id-tooltip'        => 'Налог Ид. unique identifier для ваш компания.',
-                    'website'               => 'Сайт',
+                    'name'                  => 'Название компании',
+                    'registration-number'   => 'Регистрационный номер',
+                    'company-id'            => 'Идентификатор компании',
+                    'tax-id'                => 'Налоговый номер',
+                    'tax-id-tooltip'        => 'Налоговый номер — уникальный идентификатор вашей компании.',
+                    'website'               => 'Веб-сайт',
                 ],
             ],
 
             'address-information' => [
-                'title'  => 'Адрес Сведения',
+                'title'  => 'Адрес',
 
                 'entries' => [
-                    'street1'        => 'Street 1',
-                    'street2'        => 'Street 2',
+                    'street1'        => 'Улица 1',
+                    'street2'        => 'Улица 2',
                     'city'           => 'Город',
-                    'zipcode'        => 'Zip Код',
+                    'zipcode'        => 'Почтовый индекс',
                     'country'        => 'Страна',
-                    'currency-name'  => 'Валюта Название',
-                    'phone-code'     => 'Телефон Код',
+                    'currency-name'  => 'Название валюты',
+                    'phone-code'     => 'Телефонный код',
                     'code'           => 'Код',
-                    'country-name'   => 'Страна Название',
-                    'state-required' => 'Состояние Обязательно',
-                    'zip-required'   => 'Zip Обязательно',
-                    'create-country' => 'Создать Страна',
-                    'state'          => 'Состояние',
-                    'state-name'     => 'Состояние Название',
-                    'state-code'     => 'Состояние Код',
-                    'create-state'   => 'Создать Состояние',
+                    'country-name'   => 'Название страны',
+                    'state-required' => 'Регион обязателен',
+                    'zip-required'   => 'Индекс обязателен',
+                    'create-country' => 'Создать страну',
+                    'state'          => 'Регион',
+                    'state-name'     => 'Название региона',
+                    'state-code'     => 'Код региона',
+                    'create-state'   => 'Создать регион',
                 ],
             ],
 
             'additional-information' => [
-                'title' => 'Additional Сведения',
+                'title' => 'Дополнительные сведения',
 
                 'entries' => [
-                    'default-currency'        => 'По умолчанию Валюта',
-                    'currency-name'           => 'Валюта Название',
-                    'currency-full-name'      => 'Валюта Полный Название',
-                    'currency-symbol'         => 'Валюта Symbol',
-                    'currency-iso-numeric'    => 'Валюта ISO Numeric',
-                    'currency-decimal-places' => 'Валюта Decimal Places',
-                    'currency-rounding'       => 'Валюта Rounding',
-                    'currency-status'         => 'Валюта Статус',
-                    'company-foundation-date' => 'Компания Foundation Дата',
-                    'currency-create'         => 'Создать Валюта',
+                    'default-currency'        => 'Валюта по умолчанию',
+                    'currency-name'           => 'Название валюты',
+                    'currency-full-name'      => 'Полное название валюты',
+                    'currency-symbol'         => 'Символ валюты',
+                    'currency-iso-numeric'    => 'Цифровой код ISO',
+                    'currency-decimal-places' => 'Знаков после запятой',
+                    'currency-rounding'       => 'Округление валюты',
+                    'currency-status'         => 'Статус валюты',
+                    'company-foundation-date' => 'Дата основания компании',
+                    'currency-create'         => 'Создать валюту',
                     'status'                  => 'Статус',
                 ],
             ],
 
             'branding' => [
-                'title'   => 'Branding',
+                'title'   => 'Брендинг',
                 'entries' => [
-                    'company-logo' => 'Компания Логотип',
+                    'company-logo' => 'Логотип компании',
                     'color'        => 'Цвет',
                 ],
             ],
 
             'contact-information' => [
-                'title'   => 'Контакт Сведения',
+                'title'   => 'Контактные данные',
                 'entries' => [
-                    'email'  => 'Эл. почта Адрес',
-                    'phone'  => 'Телефон Номер',
-                    'mobile' => 'Телефон Номер',
+                    'email'  => 'Адрес эл. почты',
+                    'phone'  => 'Номер телефона',
+                    'mobile' => 'Номер телефона',
                 ],
             ],
         ],

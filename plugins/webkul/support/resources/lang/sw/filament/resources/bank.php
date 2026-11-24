@@ -2,8 +2,8 @@
 
 return [
     'navigation' => [
-        'title' => 'Banks',
-        'group' => 'Akaunti ya benkis',
+        'title' => 'Benki',
+        'group' => 'Akaunti za benki',
     ],
 
     'form' => [
@@ -13,7 +13,7 @@ return [
 
                 'fields' => [
                     'name'  => 'Jina',
-                    'code'  => 'Benki Identifier Msimbo',
+                    'code'  => 'Msimbo wa utambulisho wa benki',
                     'email' => 'Barua pepe',
                     'phone' => 'Simu',
                 ],
@@ -25,10 +25,10 @@ return [
                 'fields' => [
                     'address' => 'Anwani',
                     'city'    => 'Jiji',
-                    'street1' => 'Street 1',
-                    'street2' => 'Street 2',
-                    'state'   => 'Hali',
-                    'zip'     => 'Zip',
+                    'street1' => 'Mtaa 1',
+                    'street2' => 'Mtaa 2',
+                    'state'   => 'Mkoa',
+                    'zip'     => 'Msimbo wa posta',
                     'country' => 'Nchi',
                 ],
             ],
@@ -38,44 +38,44 @@ return [
     'table' => [
         'columns' => [
             'name'           => 'Jina',
-            'code'           => 'Benki Identifier Msimbo',
+            'code'           => 'Msimbo wa utambulisho wa benki',
             'country'        => 'Nchi',
-            'created-at'     => 'Imeundwa',
-            'updated-at'     => 'Imesasishwa',
-            'deleted-at'     => 'Imefutwa',
+            'created-at'     => 'Iliundwa',
+            'updated-at'     => 'Ilisasishwa',
+            'deleted-at'     => 'Ilifutwa',
         ],
 
         'groups' => [
             'country'               => 'Nchi',
-            'created-at'            => 'Imeundwa',
+            'created-at'            => 'Iliundwa',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
                     'title' => 'Benki imesasishwa',
-                    'body'  => 'benki ina imesasishwa successfully.',
+                    'body'  => 'Benki imesasishwa kikamilifu.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Benki restored',
-                    'body'  => 'benki ina restored successfully.',
+                    'title' => 'Benki imerejeshwa',
+                    'body'  => 'Benki imerejeshwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'title' => 'Benki imefutwa',
-                    'body'  => 'benki ina imefutwa successfully.',
+                    'body'  => 'Benki imefutwa kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Benki force imefutwa',
-                    'body'  => 'benki ina force imefutwa successfully.',
+                    'title' => 'Benki imefutwa kabisa',
+                    'body'  => 'Benki imefutwa kabisa.',
                 ],
             ],
         ],
@@ -83,22 +83,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Banks restored',
-                    'body'  => 'banks ina restored successfully.',
+                    'title' => 'Benki zimerejeshwa',
+                    'body'  => 'Benki zimerejeshwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Banks imefutwa',
-                    'body'  => 'banks ina imefutwa successfully.',
+                    'title' => 'Benki zimefutwa',
+                    'body'  => 'Benki zimefutwa kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Banks force imefutwa',
-                    'body'  => 'banks ina force imefutwa successfully.',
+                    'title' => 'Benki zimefutwa kabisa',
+                    'body'  => 'Benki zimefutwa kabisa.',
                 ],
             ],
         ],

@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Shughuli Aina imeundwa',
-        'body'  => 'shughuli aina ina imeundwa successfully.',
+        'title' => 'Aina ya shughuli imeundwa',
+        'body'  => 'Aina ya shughuli imeundwa kikamilifu.',
     ],
 ];

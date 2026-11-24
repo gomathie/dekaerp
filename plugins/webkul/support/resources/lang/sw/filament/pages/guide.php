@@ -9,15 +9,15 @@ return [
     'heading' => 'Miongozo',
 
     'audience' => [
-        'label' => 'Mwongozo audience',
+        'label' => 'Hadhira ya mwongozo',
     ],
 
-    'subheading' => '{0}Bado hakuna kurasa za mwongozo.|{1}Ukurasa mmoja unaoeleza mfumo unaweza kufanya nini.|[2,*]Kurasa :count zinazoeleza mfumo unaweza kufanya nini.',
+    'subheading' => '{0}Bado hakuna kurasa za mwongozo.|{1}Ukurasa mmoja unaoeleza uwezo wa mfumo.|[2,*]Kurasa :count zinazoeleza uwezo wa mfumo.',
 
     'search' => [
-        'placeholder' => 'Tafuta mwongozo',
-        'results'     => '{0}Hakuna vinavyolingana|{1}Kilinganacho kimoja|[2,*]Vinavyolingana :count',
-        'clear'       => 'Futa tafuta',
-        'empty'       => 'Nothing katika mwongozo vinavyolingana ":term". Jaribu feature jina, kama hiyo kama Ankara au Hisa.',
+        'placeholder' => 'Tafuta kwenye mwongozo',
+        'results'     => '{0}Hakuna matokeo|{1}Tokeo moja|[2,*]Matokeo :count',
+        'clear'       => 'Futa utafutaji',
+        'empty'       => 'Hakuna kitu kwenye mwongozo kinacholingana na ":term". Jaribu jina la kipengele, kama Ankara au Hisa.',
     ],
 ];

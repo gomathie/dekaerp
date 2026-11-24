@@ -1,30 +1,30 @@
 <?php
 
 return [
-    'label' => 'Ongeza Mpya',
+    'label' => 'Ongeza',
 
     'form' => [
         'name'                  => 'Jina',
         'color'                 => 'Rangi',
-        'icon'                  => 'Ikon',
-        'add-to-favorites'      => 'Ongeza Hadi Favorites',
-        'add-to-favorites-help' => 'Ongeza hii kichujio hadi yako favorites',
-        'make-public'           => 'Fanya Hadharani',
-        'make-public-help'      => 'Fanya hii kichujio inapatikana hadi zote watumiaji',
+        'icon'                  => 'Aikoni',
+        'add-to-favorites'      => 'Ongeza kwenye vipendwa',
+        'add-to-favorites-help' => 'Ongeza kichujio hiki kwenye vipendwa vyako',
+        'make-public'           => 'Fanya kuwa wazi',
+        'make-public-help'      => 'Fanya kichujio hiki kipatikane kwa watumiaji wote',
         'options'               => [
-            'danger'  => 'Danger',
-            'gray'    => 'Gray',
+            'danger'  => 'Hatari',
+            'gray'    => 'Kijivu',
             'info'    => 'Taarifa',
-            'success' => 'Imefanikiwa',
+            'success' => 'Mafanikio',
             'warning' => 'Onyo',
         ],
 
         'notification' => [
-            'created' => 'Angalia imeundwa successfully',
+            'created' => 'Mwonekano umeundwa',
         ],
 
         'modal' => [
-            'title' => 'Hifadhi Angalia',
+            'title' => 'Hifadhi mwonekano',
         ],
     ],
 ];

@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'alert' => 'Alert',
+    'alert' => 'Tahadhari',
     'error' => 'Hitilafu',
 ];

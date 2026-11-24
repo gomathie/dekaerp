@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'suggest' => 'Suggest Ifuatayo Shughuli',
-    'trigger' => 'Trigger Ifuatayo Shughuli',
+    'suggest' => 'Pendekeza shughuli inayofuata',
+    'trigger' => 'Anzisha shughuli inayofuata',
 ];

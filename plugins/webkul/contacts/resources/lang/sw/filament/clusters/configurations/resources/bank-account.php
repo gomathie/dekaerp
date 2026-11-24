@@ -2,7 +2,7 @@
 
 return [
     'navigation' => [
-        'title' => 'Akaunti ya benkis',
-        'group' => 'Akaunti ya benkis',
+        'title' => 'Akaunti za benki',
+        'group' => 'Akaunti za benki',
     ],
 ];

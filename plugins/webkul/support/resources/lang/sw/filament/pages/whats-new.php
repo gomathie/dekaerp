@@ -2,33 +2,33 @@
 
 return [
     'navigation' => [
-        'label' => "What's Mpya",
+        'label' => 'Kipi kipya',
     ],
 
-    'title'      => "What's Mpya",
-    'heading'    => "What's Mpya katika :app",
-    'subheading' => 'Za hivi karibuni features, improvements na fixes, straight kutoka kumbukumbu ya mabadiliko.',
+    'title'      => 'Kipi kipya',
+    'heading'    => 'Kipi kipya kwenye :app',
+    'subheading' => 'Vipengele vipya, maboresho na marekebisho ya hivi karibuni, moja kwa moja kutoka kumbukumbu ya mabadiliko.',
 
-    'latest' => 'Za hivi punde',
+    'latest' => 'Karibuni',
 
-    'empty' => 'Hakuna toleo maelezo ni inapatikana kwa hii :app installation bado.',
+    'empty' => 'Bado hakuna maelezo ya matoleo kwa usakinishaji huu wa :app.',
 
-    'no-match' => 'Nothing vinavyolingana yako tafuta au vichujio.',
+    'no-match' => 'Hakuna kinacholingana na utafutaji au vichujio vyako.',
 
     'search' => [
-        'label'       => 'Tafuta toleo maelezo',
-        'placeholder' => 'Tafuta toleo maelezo…',
+        'label'       => 'Tafuta maelezo ya matoleo',
+        'placeholder' => 'Tafuta maelezo ya matoleo…',
     ],
 
     'filters' => [
-        'label' => 'Kichujio na kategoria',
+        'label' => 'Chuja kwa kategoria',
     ],
 
     'categories' => [
         'new'      => 'Mpya',
-        'improved' => 'Improved',
-        'fixed'    => 'Isiyobadilika',
-        'upgrade'  => 'Upgrade maelezo',
+        'improved' => 'Imeboreshwa',
+        'fixed'    => 'Imerekebishwa',
+        'upgrade'  => 'Maelezo ya kusasisha',
         'security' => 'Usalama',
     ],
 
@@ -38,7 +38,7 @@ return [
     ],
 
     'shortcut' => [
-        'label'  => "What's Mpya",
-        'unseen' => "What's Mpya: mpya toleo ni inapatikana",
+        'label'  => 'Kipi kipya',
+        'unseen' => 'Kipi kipya: toleo jipya linapatikana',
     ],
 ];

@@ -4,8 +4,8 @@ return [
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Компания удалено',
-                'body'  => 'компания есть удалено successfully.',
+                'title' => 'Компания удалена',
+                'body'  => 'Компания успешно удалена.',
             ],
         ],
     ],

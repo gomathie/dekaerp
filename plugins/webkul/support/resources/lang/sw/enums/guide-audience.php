@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'user'       => 'Mtumiaji Mwongozo',
-    'admin'      => 'Msimamizi Mwongozo',
-    'superadmin' => 'Msimamizi mkuu Mwongozo',
+    'user'       => 'Mwongozo wa mtumiaji',
+    'admin'      => 'Mwongozo wa msimamizi',
+    'superadmin' => 'Mwongozo wa msimamizi mkuu',
 ];

@@ -2,8 +2,8 @@
 
 return [
     'none'        => 'Нет',
-    'upload-file' => 'Загрузить Файл',
+    'upload-file' => 'Загрузить файл',
     'default'     => 'По умолчанию',
-    'phone-call'  => 'Телефон Call',
-    'meeting'     => 'Meeting',
+    'phone-call'  => 'Телефонный звонок',
+    'meeting'     => 'Встреча',
 ];

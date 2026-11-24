@@ -2,8 +2,8 @@
 
 return [
     'none'        => 'Hakuna',
-    'upload-file' => 'Pakia Faili',
+    'upload-file' => 'Pakia faili',
     'default'     => 'Chaguo-msingi',
-    'phone-call'  => 'Simu Call',
-    'meeting'     => 'Meeting',
+    'phone-call'  => 'Simu',
+    'meeting'     => 'Mkutano',
 ];

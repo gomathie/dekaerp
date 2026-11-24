@@ -1,18 +1,18 @@
 <?php
 
 return [
-    'title' => 'Hariri UOM Kategoria',
+    'title' => 'Hariri kategoria ya vipimo',
 
     'notification' => [
-        'title' => 'UOM kategoria imesasishwa',
-        'body'  => 'UOM kategoria ina imesasishwa successfully.',
+        'title' => 'Kategoria ya vipimo imesasishwa',
+        'body'  => 'Kategoria ya vipimo imesasishwa kikamilifu.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'UOM kategoria imefutwa',
-                'body'  => 'UOM kategoria ina imefutwa successfully.',
+                'title' => 'Kategoria ya vipimo imefutwa',
+                'body'  => 'Kategoria ya vipimo imefutwa kikamilifu.',
             ],
         ],
     ],

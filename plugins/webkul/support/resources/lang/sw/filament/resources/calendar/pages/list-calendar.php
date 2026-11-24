@@ -3,16 +3,16 @@
 return [
     'tabs' => [
         'all'      => 'Zote',
-        'archived' => 'Imehifadhiwa',
+        'archived' => 'Kumbukumbu',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Working Ratiba',
+            'label' => 'Ratiba mpya ya kazi',
 
             'notification' => [
-                'title' => 'Working Ratiba imeundwa',
-                'body'  => 'working ratiba ina imeundwa successfully.',
+                'title' => 'Ratiba ya kazi imeundwa',
+                'body'  => 'Ratiba ya kazi imeundwa kikamilifu.',
             ],
         ],
     ],

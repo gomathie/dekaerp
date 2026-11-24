@@ -3,17 +3,17 @@
 return [
     'title' => 'Валюты',
 
-    'rates-source' => 'Обменный курсs обновить каждый день от ExchangeRate-API (открыт.er-api.com). ставка вы введите yourself для день kept.',
+    'rates-source' => 'Курсы обмена обновляются ежедневно из ExchangeRate-API (open.er-api.com). Курс, введённый вами вручную на определённый день, сохраняется.',
 
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Валюта',
+            'label' => 'Новая валюта',
         ],
     ],
 
     'tabs' => [
         'all'      => 'Все',
-        'active'   => 'Активен',
-        'inactive' => 'Неактивен',
+        'active'   => 'Активные',
+        'inactive' => 'Неактивные',
     ],
 ];

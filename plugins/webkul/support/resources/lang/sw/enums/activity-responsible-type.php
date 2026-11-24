@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'on-demand' => 'Ask saa launch',
-    'other'     => 'Chaguo-msingi mtumiaji',
-    'coach'     => 'Coach',
+    'on-demand' => 'Uliza wakati wa kuanza',
+    'other'     => 'Mtumiaji chaguo-msingi',
+    'coach'     => 'Mkufunzi',
     'manager'   => 'Meneja',
     'employee'  => 'Mfanyakazi',
 ];

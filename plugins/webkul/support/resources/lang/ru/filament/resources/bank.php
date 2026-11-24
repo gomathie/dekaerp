@@ -2,18 +2,18 @@
 
 return [
     'navigation' => [
-        'title' => 'Banks',
-        'group' => 'Банковский счётs',
+        'title' => 'Банки',
+        'group' => 'Банковские счета',
     ],
 
     'form' => [
         'sections' => [
             'general' => [
-                'title' => 'Общее',
+                'title' => 'Общие',
 
                 'fields' => [
                     'name'  => 'Название',
-                    'code'  => 'Банк Identifier Код',
+                    'code'  => 'Код банка (BIC)',
                     'email' => 'Эл. почта',
                     'phone' => 'Телефон',
                 ],
@@ -25,10 +25,10 @@ return [
                 'fields' => [
                     'address' => 'Адрес',
                     'city'    => 'Город',
-                    'street1' => 'Street 1',
-                    'street2' => 'Street 2',
-                    'state'   => 'Состояние',
-                    'zip'     => 'Zip',
+                    'street1' => 'Улица 1',
+                    'street2' => 'Улица 2',
+                    'state'   => 'Регион',
+                    'zip'     => 'Индекс',
                     'country' => 'Страна',
                 ],
             ],
@@ -38,7 +38,7 @@ return [
     'table' => [
         'columns' => [
             'name'           => 'Название',
-            'code'           => 'Банк Identifier Код',
+            'code'           => 'Код банка (BIC)',
             'country'        => 'Страна',
             'created-at'     => 'Создано',
             'updated-at'     => 'Обновлено',
@@ -53,29 +53,29 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Банк обновлено',
-                    'body'  => 'банк есть обновлено successfully.',
+                    'title' => 'Банк обновлён',
+                    'body'  => 'Банк успешно обновлён.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Банк restored',
-                    'body'  => 'банк есть restored successfully.',
+                    'title' => 'Банк восстановлен',
+                    'body'  => 'Банк успешно восстановлен.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Банк удалено',
-                    'body'  => 'банк есть удалено successfully.',
+                    'title' => 'Банк удалён',
+                    'body'  => 'Банк успешно удалён.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Банк force удалено',
-                    'body'  => 'банк есть force удалено successfully.',
+                    'title' => 'Банк удалён безвозвратно',
+                    'body'  => 'Банк успешно удалён безвозвратно.',
                 ],
             ],
         ],
@@ -83,22 +83,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Banks restored',
-                    'body'  => 'banks есть restored successfully.',
+                    'title' => 'Банки восстановлены',
+                    'body'  => 'Банки успешно восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Banks удалено',
-                    'body'  => 'banks есть удалено successfully.',
+                    'title' => 'Банки удалены',
+                    'body'  => 'Банки успешно удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Banks force удалено',
-                    'body'  => 'banks есть force удалено successfully.',
+                    'title' => 'Банки удалены безвозвратно',
+                    'body'  => 'Банки успешно удалены безвозвратно.',
                 ],
             ],
         ],

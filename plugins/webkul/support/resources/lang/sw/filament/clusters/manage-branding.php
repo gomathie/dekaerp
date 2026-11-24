@@ -1,46 +1,46 @@
 <?php
 
 return [
-    'breadcrumb' => 'Branding',
-    'title'      => 'Branding',
+    'breadcrumb' => 'Chapa',
+    'title'      => 'Chapa',
     'group'      => 'Jumla',
 
     'navigation' => [
-        'label' => 'Branding',
+        'label' => 'Chapa',
     ],
 
     'form' => [
         'sections' => [
             'logo' => [
-                'title'       => 'Nembo & Favicon',
-                'description' => 'Override logos, favicon na nembo urefu inatumika katika msimamizi na mteja panels. Likizo sehemu tupu hadi weka chaguo-msingi.',
+                'title'       => 'Nembo na aikoni ya tovuti',
+                'description' => 'Badilisha nembo, aikoni ya tovuti na urefu wa nembo vinavyotumika kwenye paneli za msimamizi na za wateja. Acha sehemu wazi ili kubaki na chaguo-msingi.',
             ],
             'colors' => [
-                'title'       => 'Colors',
-                'description' => 'Override mandhari colors inatumika katika msimamizi na mteja panels. Likizo rangi tupu hadi weka chaguo-msingi.',
+                'title'       => 'Rangi',
+                'description' => 'Badilisha rangi za mandhari zinazotumika kwenye paneli za msimamizi na za wateja. Acha rangi wazi ili kubaki na chaguo-msingi.',
             ],
         ],
         'fields' => [
-            'light-logo'         => 'Nyepesi Nembo',
-            'light-logo-helper'  => 'Shown washa nyepesi backgrounds. Replaces chaguo-msingi nembo.',
-            'dark-logo'          => 'Nyeusi Nembo',
-            'dark-logo-helper'   => 'Shown wakati nyeusi mode ni imewashwa.',
-            'favicon'            => 'Favicon',
-            'favicon-helper'     => 'Browser kichupo ikon.',
-            'logo-height'        => 'Nembo Urefu',
-            'logo-height-helper' => 'CSS urefu thamani, e.g. 2rem au 40px.',
-            'primary-color'      => 'Primary',
-            'gray-color'         => 'Gray',
-            'danger-color'       => 'Danger',
-            'info-color'         => 'Info',
-            'success-color'      => 'Imefanikiwa',
+            'light-logo'         => 'Nembo angavu',
+            'light-logo-helper'  => 'Huonyeshwa kwenye mandharinyuma angavu. Inachukua nafasi ya nembo chaguo-msingi.',
+            'dark-logo'          => 'Nembo nyeusi',
+            'dark-logo-helper'   => 'Huonyeshwa hali ya giza ikiwa imewashwa.',
+            'favicon'            => 'Aikoni ya tovuti',
+            'favicon-helper'     => 'Aikoni ya kichupo cha kivinjari.',
+            'logo-height'        => 'Urefu wa nembo',
+            'logo-height-helper' => 'Thamani ya urefu ya CSS, mf. 2rem au 40px.',
+            'primary-color'      => 'Msingi',
+            'gray-color'         => 'Kijivu',
+            'danger-color'       => 'Hatari',
+            'info-color'         => 'Taarifa',
+            'success-color'      => 'Mafanikio',
             'warning-color'      => 'Onyo',
         ],
     ],
 
     'actions' => [
         'reset' => [
-            'label' => 'Weka upya hadi chaguo-msingi',
+            'label' => 'Rejesha chaguo-msingi',
         ],
     ],
 ];

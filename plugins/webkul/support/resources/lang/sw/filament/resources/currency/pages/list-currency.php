@@ -3,17 +3,17 @@
 return [
     'title' => 'Sarafu',
 
-    'rates-source' => 'Kiwango cha ubadilishajis sasisha kila siku kutoka ExchangeRate-API (wazi.er-api.com). kiwango wewe ingiza yourself kwa siku ni kept.',
+    'rates-source' => 'Viwango vya ubadilishaji husasishwa kila siku kutoka ExchangeRate-API (open.er-api.com). Kiwango unachoweka mwenyewe kwa siku fulani huhifadhiwa.',
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Sarafu',
+            'label' => 'Sarafu mpya',
         ],
     ],
 
     'tabs' => [
         'all'      => 'Zote',
-        'active'   => 'Inatumika',
-        'inactive' => 'Haitumiki',
+        'active'   => 'Hai',
+        'inactive' => 'Hazitumiki',
     ],
 ];

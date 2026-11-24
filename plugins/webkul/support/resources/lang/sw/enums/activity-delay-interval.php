@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'before-plan-date' => 'Kabla ya Plan Tarehe',
-    'after-plan-date'  => 'Baada ya Plan Tarehe',
+    'before-plan-date' => 'Kabla ya tarehe iliyopangwa',
+    'after-plan-date'  => 'Baada ya tarehe iliyopangwa',
 ];

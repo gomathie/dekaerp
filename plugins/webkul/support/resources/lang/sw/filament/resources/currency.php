@@ -10,29 +10,29 @@ return [
     'form' => [
         'sections' => [
             'currency-details' => [
-                'title' => 'Sarafu Taarifa',
+                'title' => 'Taarifa za sarafu',
 
                 'fields' => [
-                    'name'         => 'Sarafu Jina',
-                    'name-tooltip' => 'Ingiza official sarafu jina',
-                    'symbol'       => 'Sarafu Symbol',
-                    'full-name'    => 'Kamili Jina',
-                    'iso-numeric'  => 'ISO Numeric Msimbo',
+                    'name'         => 'Jina la sarafu',
+                    'name-tooltip' => 'Weka jina rasmi la sarafu',
+                    'symbol'       => 'Alama ya sarafu',
+                    'full-name'    => 'Jina kamili',
+                    'iso-numeric'  => 'Msimbo wa namba wa ISO',
                 ],
             ],
 
             'format-information' => [
-                'title' => 'Umbizo Usanidi',
+                'title' => 'Mipangilio ya muundo',
 
                 'fields' => [
-                    'decimal-places'        => 'Decimal Places',
-                    'rounding'              => 'Rounding Precision',
-                    'rounding-helper-text'  => 'Weka rounding precision kwa sarafu calculations',
+                    'decimal-places'        => 'Nafasi za desimali',
+                    'rounding'              => 'Usahihi wa ukadiriaji',
+                    'rounding-helper-text'  => 'Weka usahihi wa ukadiriaji kwa hesabu za sarafu',
                 ],
             ],
 
             'status-and-configuration-information' => [
-                'title' => 'Hali & Usanidi',
+                'title' => 'Hali na mipangilio',
 
                 'fields' => [
                     'status' => 'Hali',
@@ -40,16 +40,16 @@ return [
             ],
 
             'rates' => [
-                'title'       => 'Sarafu Viwango',
-                'description' => 'Manage historic kiwango cha ubadilishajis kwa hii sarafu relative hadi base sarafu (USD).',
+                'title'       => 'Viwango vya sarafu',
+                'description' => 'Simamia historia ya viwango vya ubadilishaji vya sarafu hii ikilinganishwa na sarafu ya msingi (USD).',
 
                 'fields' => [
                     'name'              => 'Tarehe',
-                    'unit-per-currency' => 'Uniti Kwa :currency',
-                    'currency-per-unit' => ':currency Kwa Uniti',
+                    'unit-per-currency' => 'Vizio kwa kila :currency',
+                    'currency-per-unit' => ':currency kwa kila kizio',
                 ],
 
-                'add-rate'   => 'Ongeza Kiwango',
+                'add-rate'   => 'Ongeza kiwango',
                 'item-label' => 'Kiwango',
             ],
         ],
@@ -57,23 +57,23 @@ return [
 
     'table' => [
         'columns' => [
-            'name'           => 'Sarafu Jina',
-            'symbol'         => 'Symbol',
-            'full-name'      => 'Kamili Jina',
-            'iso-numeric'    => 'ISO Msimbo',
-            'decimal-places' => 'Decimal Places',
-            'rounding'       => 'Rounding',
+            'name'           => 'Jina la sarafu',
+            'symbol'         => 'Alama',
+            'full-name'      => 'Jina kamili',
+            'iso-numeric'    => 'Msimbo wa ISO',
+            'decimal-places' => 'Nafasi za desimali',
+            'rounding'       => 'Ukadiriaji',
             'status'         => 'Hali',
-            'created-at'     => 'Imeundwa',
-            'updated-at'     => 'Imesasishwa',
+            'created-at'     => 'Iliundwa',
+            'updated-at'     => 'Ilisasishwa',
         ],
 
         'groups' => [
             'name'           => 'Jina',
             'status'         => 'Hali',
-            'decimal-places' => 'Decimal Places',
-            'creation-date'  => 'Creation Tarehe',
-            'last-update'    => 'Mwisho Sasisha',
+            'decimal-places' => 'Nafasi za desimali',
+            'creation-date'  => 'Tarehe ya kuundwa',
+            'last-update'    => 'Sasisho la mwisho',
         ],
 
         'filters' => [
@@ -84,24 +84,24 @@ return [
             'delete' => [
                 'notification' => [
                     'title'   => 'Sarafu imefutwa',
-                    'body'    => 'sarafu ina imefutwa successfully.',
+                    'body'    => 'Sarafu imefutwa kikamilifu.',
 
                     'success' => [
                         'title' => 'Sarafu imefutwa',
-                        'body'  => 'sarafu ina imefutwa successfully.',
+                        'body'  => 'Sarafu imefutwa kikamilifu.',
                     ],
 
                     'error' => [
-                        'title' => 'Sarafu could si kuwa imefutwa',
-                        'body'  => 'sarafu haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Sarafu haikuweza kufutwa',
+                        'body'  => 'Sarafu haiwezi kufutwa kwa sababu inatumika kwa sasa.',
                     ],
                 ],
             ],
 
             'deactivate' => [
                 'notification' => [
-                    'title' => 'Sarafu haiwezekani kuwa deactivated',
-                    'body'  => 'Hii sarafu ni katika tumia na one au zaidi makampuni na haiwezekani kuwa deactivated.',
+                    'title' => 'Sarafu haiwezi kuzimwa',
+                    'body'  => 'Sarafu hii inatumiwa na kampuni moja au zaidi na haiwezi kuzimwa.',
                 ],
             ],
         ],
@@ -109,8 +109,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Sarafu imefutwa',
-                    'body'  => 'sarafu ina imefutwa successfully.',
+                    'title' => 'Sarafu zimefutwa',
+                    'body'  => 'Sarafu zimefutwa kikamilifu.',
                 ],
             ],
         ],
@@ -119,27 +119,27 @@ return [
     'infolist' => [
         'sections' => [
             'currency-details' => [
-                'title' => 'Sarafu Taarifa',
+                'title' => 'Taarifa za sarafu',
 
                 'entries' => [
-                    'name'         => 'Sarafu Jina',
-                    'symbol'       => 'Sarafu Symbol',
-                    'full-name'    => 'Kamili Jina',
-                    'iso-numeric'  => 'ISO Numeric Msimbo',
+                    'name'         => 'Jina la sarafu',
+                    'symbol'       => 'Alama ya sarafu',
+                    'full-name'    => 'Jina kamili',
+                    'iso-numeric'  => 'Msimbo wa namba wa ISO',
                 ],
             ],
 
             'format-information' => [
-                'title' => 'Umbizo Usanidi',
+                'title' => 'Mipangilio ya muundo',
 
                 'entries' => [
-                    'decimal-places' => 'Decimal Places',
-                    'rounding'       => 'Rounding Precision',
+                    'decimal-places' => 'Nafasi za desimali',
+                    'rounding'       => 'Usahihi wa ukadiriaji',
                 ],
             ],
 
             'status-and-configuration-information' => [
-                'title' => 'Hali & Usanidi',
+                'title' => 'Hali na mipangilio',
 
                 'entries' => [
                     'status' => 'Hali',
@@ -147,12 +147,12 @@ return [
             ],
 
             'rates' => [
-                'title'       => 'Sarafu Viwango',
+                'title'       => 'Viwango vya sarafu',
 
                 'entries' => [
                     'name'              => 'Tarehe',
-                    'unit-per-currency' => 'Uniti Kwa :currency',
-                    'currency-per-unit' => ':currency Kwa Uniti',
+                    'unit-per-currency' => 'Vizio kwa kila :currency',
+                    'currency-per-unit' => ':currency kwa kila kizio',
                 ],
             ],
         ],

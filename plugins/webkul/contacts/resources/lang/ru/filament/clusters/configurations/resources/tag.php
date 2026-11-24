@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Метки',
+        'title' => 'Теги',
     ],
 ];

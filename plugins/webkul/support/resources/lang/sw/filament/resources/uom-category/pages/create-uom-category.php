@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Unda UOM Kategoria',
+    'title' => 'Unda kategoria ya vipimo',
 
     'notification' => [
-        'title' => 'UOM kategoria imeundwa',
-        'body'  => 'UOM kategoria ina imeundwa successfully.',
+        'title' => 'Kategoria ya vipimo imeundwa',
+        'body'  => 'Kategoria ya vipimo imeundwa kikamilifu.',
     ],
 ];

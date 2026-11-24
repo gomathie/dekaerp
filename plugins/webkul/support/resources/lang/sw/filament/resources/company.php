@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Makampuni',
+    'title' => 'Kampuni',
 
     'navigation' => [
-        'title' => 'Makampuni',
+        'title' => 'Kampuni',
     ],
 
     'global-search' => [
@@ -14,72 +14,72 @@ return [
     'form' => [
         'sections' => [
             'company-information' => [
-                'title'  => 'Kampuni Taarifa',
+                'title'  => 'Taarifa za kampuni',
                 'fields' => [
-                    'name'                  => 'Kampuni Jina',
-                    'registration-number'   => 'Registration Nambari',
-                    'company-id'            => 'Kampuni Kitambulisho',
-                    'tax-id'                => 'Kodi Kitambulisho',
-                    'tax-id-tooltip'        => 'Kodi Kitambulisho ni unique identifier kwa yako kampuni.',
+                    'name'                  => 'Jina la kampuni',
+                    'registration-number'   => 'Namba ya usajili',
+                    'company-id'            => 'Kitambulisho cha kampuni',
+                    'tax-id'                => 'Namba ya mlipakodi',
+                    'tax-id-tooltip'        => 'Namba ya mlipakodi ni kitambulisho cha kipekee cha kampuni yako.',
                     'website'               => 'Tovuti',
                 ],
             ],
 
             'address-information' => [
-                'title'  => 'Anwani Taarifa',
+                'title'  => 'Taarifa za anwani',
 
                 'fields' => [
-                    'street1'        => 'Street 1',
-                    'street2'        => 'Street 2',
+                    'street1'        => 'Mtaa 1',
+                    'street2'        => 'Mtaa 2',
                     'city'           => 'Jiji',
-                    'zipcode'        => 'Zip Msimbo',
+                    'zipcode'        => 'Msimbo wa posta',
                     'country'        => 'Nchi',
-                    'currency-name'  => 'Sarafu Jina',
-                    'phone-code'     => 'Simu Msimbo',
+                    'currency-name'  => 'Jina la sarafu',
+                    'phone-code'     => 'Msimbo wa simu',
                     'code'           => 'Msimbo',
-                    'country-name'   => 'Nchi Jina',
-                    'state-required' => 'Hali Inahitajika',
-                    'zip-required'   => 'Zip Inahitajika',
-                    'create-country' => 'Unda Nchi',
-                    'state'          => 'Hali',
-                    'state-name'     => 'Hali Jina',
-                    'state-code'     => 'Hali Msimbo',
-                    'create-state'   => 'Unda Hali',
+                    'country-name'   => 'Jina la nchi',
+                    'state-required' => 'Mkoa unahitajika',
+                    'zip-required'   => 'Msimbo wa posta unahitajika',
+                    'create-country' => 'Unda nchi',
+                    'state'          => 'Mkoa',
+                    'state-name'     => 'Jina la mkoa',
+                    'state-code'     => 'Msimbo wa mkoa',
+                    'create-state'   => 'Unda mkoa',
                 ],
             ],
 
             'additional-information' => [
-                'title' => 'Additional Taarifa',
+                'title' => 'Taarifa za ziada',
 
                 'fields' => [
-                    'default-currency'        => 'Chaguo-msingi Sarafu',
-                    'currency-name'           => 'Sarafu Jina',
-                    'currency-full-name'      => 'Sarafu Kamili Jina',
-                    'currency-symbol'         => 'Sarafu Symbol',
-                    'currency-iso-numeric'    => 'Sarafu ISO Numeric',
-                    'currency-decimal-places' => 'Sarafu Decimal Places',
-                    'currency-rounding'       => 'Sarafu Rounding',
-                    'currency-status'         => 'Sarafu Hali',
-                    'company-foundation-date' => 'Kampuni Foundation Tarehe',
-                    'currency-create'         => 'Unda Sarafu',
+                    'default-currency'        => 'Sarafu chaguo-msingi',
+                    'currency-name'           => 'Jina la sarafu',
+                    'currency-full-name'      => 'Jina kamili la sarafu',
+                    'currency-symbol'         => 'Alama ya sarafu',
+                    'currency-iso-numeric'    => 'Namba ya ISO ya sarafu',
+                    'currency-decimal-places' => 'Nafasi za desimali',
+                    'currency-rounding'       => 'Ukadiriaji wa sarafu',
+                    'currency-status'         => 'Hali ya sarafu',
+                    'company-foundation-date' => 'Tarehe ya kuanzishwa kwa kampuni',
+                    'currency-create'         => 'Unda sarafu',
                     'status'                  => 'Hali',
                 ],
             ],
 
             'branding' => [
-                'title'  => 'Branding',
+                'title'  => 'Chapa',
                 'fields' => [
-                    'company-logo' => 'Kampuni Nembo',
+                    'company-logo' => 'Nembo ya kampuni',
                     'color'        => 'Rangi',
                 ],
             ],
 
             'contact-information' => [
-                'title'  => 'Mwasiliani Taarifa',
+                'title'  => 'Taarifa za mawasiliano',
                 'fields' => [
-                    'email'  => 'Barua pepe Anwani',
-                    'phone'  => 'Simu Nambari',
-                    'mobile' => 'Simu Nambari',
+                    'email'  => 'Anwani ya barua pepe',
+                    'phone'  => 'Namba ya simu',
+                    'mobile' => 'Namba ya simu',
                 ],
             ],
         ],
@@ -88,29 +88,29 @@ return [
     'table' => [
         'columns' => [
             'logo'                 => 'Nembo',
-            'company-name'         => 'Kampuni Jina',
-            'branches'             => 'Branches',
+            'company-name'         => 'Jina la kampuni',
+            'branches'             => 'Matawi',
             'email'                => 'Barua pepe',
             'city'                 => 'Jiji',
             'country'              => 'Nchi',
             'currency'             => 'Sarafu',
             'status'               => 'Hali',
-            'created-by'           => 'Imeundwa Na',
-            'created-at'           => 'Imeundwa',
-            'updated-at'           => 'Imesasishwa',
+            'created-by'           => 'Imeundwa na',
+            'created-at'           => 'Iliundwa',
+            'updated-at'           => 'Ilisasishwa',
         ],
 
         'groups' => [
-            'company-name' => 'Kampuni Jina',
+            'company-name' => 'Jina la kampuni',
             'city'         => 'Jiji',
             'country'      => 'Nchi',
-            'state'        => 'Hali',
+            'state'        => 'Mkoa',
             'email'        => 'Barua pepe',
             'phone'        => 'Simu',
             'currency'     => 'Sarafu',
-            'created-by'   => 'Imeundwa Na',
-            'created-at'   => 'Imeundwa',
-            'updated-at'   => 'Imesasishwa',
+            'created-by'   => 'Imeundwa na',
+            'created-at'   => 'Iliundwa',
+            'updated-at'   => 'Ilisasishwa',
         ],
 
         'filters' => [
@@ -121,40 +121,40 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Kampuni edited',
-                    'body'  => 'kampuni ina edited successfully.',
+                    'title' => 'Kampuni imehaririwa',
+                    'body'  => 'Kampuni imehaririwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'title' => 'Kampuni imefutwa',
-                    'body'  => 'kampuni ina imefutwa successfully.',
+                    'body'  => 'Kampuni imefutwa kikamilifu.',
 
                     'default-company' => [
-                        'title' => 'Haiwezekani futa chaguo-msingi kampuni',
-                        'body'  => 'Wewe haiwezekani futa kampuni currently weka kama yako chaguo-msingi kampuni.',
+                        'title' => 'Haiwezekani kufuta kampuni chaguo-msingi',
+                        'body'  => 'Huwezi kufuta kampuni iliyowekwa kwa sasa kuwa kampuni yako chaguo-msingi.',
                     ],
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Kampuni restored',
-                    'body'  => 'kampuni ina restored successfully.',
+                    'title' => 'Kampuni imerejeshwa',
+                    'body'  => 'Kampuni imerejeshwa kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Kampuni force imefutwa',
-                        'body'  => 'kampuni ina force imefutwa successfully.',
+                        'title' => 'Kampuni imefutwa kabisa',
+                        'body'  => 'Kampuni imefutwa kabisa.',
                     ],
 
                     'error' => [
-                        'title' => 'Kampuni force deletion imeshindwa',
-                        'body'  => 'kampuni could si kuwa force imefutwa kwa sababu hii ni associated na nyingine rekodi.',
+                        'title' => 'Imeshindwa kufuta kampuni kabisa',
+                        'body'  => 'Kampuni haikuweza kufutwa kabisa kwa sababu imeunganishwa na rekodi nyingine.',
                     ],
                 ],
             ],
@@ -163,26 +163,26 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Makampuni restored',
-                    'body'  => 'makampuni ina restored successfully.',
+                    'title' => 'Kampuni zimerejeshwa',
+                    'body'  => 'Kampuni zimerejeshwa kikamilifu.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Makampuni imefutwa',
-                    'body'  => 'makampuni ina imefutwa successfully.',
+                    'title' => 'Kampuni zimefutwa',
+                    'body'  => 'Kampuni zimefutwa kikamilifu.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Makampuni force imefutwa',
-                    'body'  => 'makampuni ina force imefutwa successfully.',
+                    'title' => 'Kampuni zimefutwa kabisa',
+                    'body'  => 'Kampuni zimefutwa kabisa.',
 
                     'error' => [
-                        'title' => 'Makampuni force deletion imeshindwa',
-                        'body'  => 'makampuni could si kuwa force imefutwa kwa sababu wao ni associated na nyingine rekodi.',
+                        'title' => 'Imeshindwa kufuta kampuni hizo kabisa',
+                        'body'  => 'Kampuni hazikuweza kufutwa kabisa kwa sababu zimeunganishwa na rekodi nyingine.',
                     ],
                 ],
             ],
@@ -191,8 +191,8 @@ return [
         'empty-state-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Makampuni imeundwa',
-                    'body'  => 'makampuni ina imeundwa successfully.',
+                    'title' => 'Kampuni zimeundwa',
+                    'body'  => 'Kampuni zimeundwa kikamilifu.',
                 ],
             ],
         ],
@@ -201,72 +201,72 @@ return [
     'infolist' => [
         'sections' => [
             'company-information' => [
-                'title'   => 'Kampuni Taarifa',
+                'title'   => 'Taarifa za kampuni',
                 'entries' => [
-                    'name'                  => 'Kampuni Jina',
-                    'registration-number'   => 'Registration Nambari',
-                    'company-id'            => 'Kampuni Kitambulisho',
-                    'tax-id'                => 'Kodi Kitambulisho',
-                    'tax-id-tooltip'        => 'Kodi Kitambulisho ni unique identifier kwa yako kampuni.',
+                    'name'                  => 'Jina la kampuni',
+                    'registration-number'   => 'Namba ya usajili',
+                    'company-id'            => 'Kitambulisho cha kampuni',
+                    'tax-id'                => 'Namba ya mlipakodi',
+                    'tax-id-tooltip'        => 'Namba ya mlipakodi ni kitambulisho cha kipekee cha kampuni yako.',
                     'website'               => 'Tovuti',
                 ],
             ],
 
             'address-information' => [
-                'title'  => 'Anwani Taarifa',
+                'title'  => 'Taarifa za anwani',
 
                 'entries' => [
-                    'street1'        => 'Street 1',
-                    'street2'        => 'Street 2',
+                    'street1'        => 'Mtaa 1',
+                    'street2'        => 'Mtaa 2',
                     'city'           => 'Jiji',
-                    'zipcode'        => 'Zip Msimbo',
+                    'zipcode'        => 'Msimbo wa posta',
                     'country'        => 'Nchi',
-                    'currency-name'  => 'Sarafu Jina',
-                    'phone-code'     => 'Simu Msimbo',
+                    'currency-name'  => 'Jina la sarafu',
+                    'phone-code'     => 'Msimbo wa simu',
                     'code'           => 'Msimbo',
-                    'country-name'   => 'Nchi Jina',
-                    'state-required' => 'Hali Inahitajika',
-                    'zip-required'   => 'Zip Inahitajika',
-                    'create-country' => 'Unda Nchi',
-                    'state'          => 'Hali',
-                    'state-name'     => 'Hali Jina',
-                    'state-code'     => 'Hali Msimbo',
-                    'create-state'   => 'Unda Hali',
+                    'country-name'   => 'Jina la nchi',
+                    'state-required' => 'Mkoa unahitajika',
+                    'zip-required'   => 'Msimbo wa posta unahitajika',
+                    'create-country' => 'Unda nchi',
+                    'state'          => 'Mkoa',
+                    'state-name'     => 'Jina la mkoa',
+                    'state-code'     => 'Msimbo wa mkoa',
+                    'create-state'   => 'Unda mkoa',
                 ],
             ],
 
             'additional-information' => [
-                'title' => 'Additional Taarifa',
+                'title' => 'Taarifa za ziada',
 
                 'entries' => [
-                    'default-currency'        => 'Chaguo-msingi Sarafu',
-                    'currency-name'           => 'Sarafu Jina',
-                    'currency-full-name'      => 'Sarafu Kamili Jina',
-                    'currency-symbol'         => 'Sarafu Symbol',
-                    'currency-iso-numeric'    => 'Sarafu ISO Numeric',
-                    'currency-decimal-places' => 'Sarafu Decimal Places',
-                    'currency-rounding'       => 'Sarafu Rounding',
-                    'currency-status'         => 'Sarafu Hali',
-                    'company-foundation-date' => 'Kampuni Foundation Tarehe',
-                    'currency-create'         => 'Unda Sarafu',
+                    'default-currency'        => 'Sarafu chaguo-msingi',
+                    'currency-name'           => 'Jina la sarafu',
+                    'currency-full-name'      => 'Jina kamili la sarafu',
+                    'currency-symbol'         => 'Alama ya sarafu',
+                    'currency-iso-numeric'    => 'Namba ya ISO ya sarafu',
+                    'currency-decimal-places' => 'Nafasi za desimali',
+                    'currency-rounding'       => 'Ukadiriaji wa sarafu',
+                    'currency-status'         => 'Hali ya sarafu',
+                    'company-foundation-date' => 'Tarehe ya kuanzishwa kwa kampuni',
+                    'currency-create'         => 'Unda sarafu',
                     'status'                  => 'Hali',
                 ],
             ],
 
             'branding' => [
-                'title'   => 'Branding',
+                'title'   => 'Chapa',
                 'entries' => [
-                    'company-logo' => 'Kampuni Nembo',
+                    'company-logo' => 'Nembo ya kampuni',
                     'color'        => 'Rangi',
                 ],
             ],
 
             'contact-information' => [
-                'title'   => 'Mwasiliani Taarifa',
+                'title'   => 'Taarifa za mawasiliano',
                 'entries' => [
-                    'email'  => 'Barua pepe Anwani',
-                    'phone'  => 'Simu Nambari',
-                    'mobile' => 'Simu Nambari',
+                    'email'  => 'Anwani ya barua pepe',
+                    'phone'  => 'Namba ya simu',
+                    'mobile' => 'Namba ya simu',
                 ],
             ],
         ],

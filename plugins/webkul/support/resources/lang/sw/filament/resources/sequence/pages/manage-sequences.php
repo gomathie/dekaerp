@@ -3,11 +3,11 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Mfuatano',
+            'label' => 'Mfuatano mpya',
 
             'notification' => [
-                'title' => 'Mfuatano imeundwa',
-                'body'  => 'mfuatano ina imeundwa successfully.',
+                'title' => 'Mfuatano umeundwa',
+                'body'  => 'Mfuatano umeundwa kikamilifu.',
             ],
         ],
     ],

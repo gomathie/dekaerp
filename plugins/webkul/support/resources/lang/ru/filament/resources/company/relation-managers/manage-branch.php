@@ -4,74 +4,74 @@ return [
     'form' => [
         'tabs' => [
             'general-information' => [
-                'title' => 'Общее Сведения',
+                'title' => 'Общие сведения',
 
                 'sections' => [
                     'branch-information' => [
-                        'title' => 'Branch Сведения',
+                        'title' => 'Сведения о филиале',
 
                         'fields' => [
-                            'company-name'                => 'Компания Название',
-                            'registration-number'         => 'Registration Номер',
-                            'tax-id'                      => 'Налог Ид.',
-                            'tax-id-tooltip'              => 'Налог Ид. unique identifier для ваш компания.',
+                            'company-name'                => 'Название компании',
+                            'registration-number'         => 'Регистрационный номер',
+                            'tax-id'                      => 'Налоговый номер',
+                            'tax-id-tooltip'              => 'Налоговый номер — уникальный идентификатор вашей компании.',
                             'color'                       => 'Цвет',
-                            'company-id'                  => 'Компания Ид.',
-                            'company-id-tooltip'          => 'Компания Ид. unique identifier для ваш компания.',
+                            'company-id'                  => 'Идентификатор компании',
+                            'company-id-tooltip'          => 'Идентификатор компании — уникальный идентификатор вашей компании.',
                         ],
                     ],
 
                     'branding' => [
-                        'title'  => 'Branding',
+                        'title'  => 'Брендинг',
                         'fields' => [
-                            'branch-logo' => 'Branch Логотип',
+                            'branch-logo' => 'Логотип филиала',
                         ],
                     ],
                 ],
             ],
 
             'address-information' => [
-                'title' => 'Адрес Сведения',
+                'title' => 'Адрес',
 
                 'sections' => [
                     'address-information' => [
-                        'title' => 'Адрес Сведения',
+                        'title' => 'Адрес',
 
                         'fields' => [
-                            'street1'                => 'Street 1',
-                            'street2'                => 'Street 2',
+                            'street1'                => 'Улица 1',
+                            'street2'                => 'Улица 2',
                             'city'                   => 'Город',
-                            'zip'                    => 'Zip Код',
+                            'zip'                    => 'Почтовый индекс',
                             'country'                => 'Страна',
-                            'country-currency-name'  => 'Валюта Название',
-                            'country-phone-code'     => 'Телефон Код',
+                            'country-currency-name'  => 'Название валюты',
+                            'country-phone-code'     => 'Телефонный код',
                             'country-code'           => 'Код',
-                            'country-name'           => 'Страна Название',
-                            'country-state-required' => 'Состояние Обязательно',
-                            'country-zip-required'   => 'Zip Обязательно',
-                            'country-create'         => 'Создать Страна',
-                            'state'                  => 'Состояние',
-                            'state-name'             => 'Состояние Название',
-                            'state-code'             => 'Состояние Код',
-                            'zip-code'               => 'Zip Код',
-                            'state-create'           => 'Создать Состояние',
+                            'country-name'           => 'Название страны',
+                            'country-state-required' => 'Регион обязателен',
+                            'country-zip-required'   => 'Индекс обязателен',
+                            'country-create'         => 'Создать страну',
+                            'state'                  => 'Регион',
+                            'state-name'             => 'Название региона',
+                            'state-code'             => 'Код региона',
+                            'zip-code'               => 'Почтовый индекс',
+                            'state-create'           => 'Создать регион',
                         ],
                     ],
 
                     'additional-information' => [
-                        'title' => 'Additional Сведения',
+                        'title' => 'Дополнительные сведения',
 
                         'fields' => [
-                            'default-currency'        => 'По умолчанию Валюта',
-                            'currency-name'           => 'Валюта Название',
-                            'currency-full-name'      => 'Валюта Полный Название',
-                            'currency-symbol'         => 'Валюта Symbol',
-                            'currency-iso-numeric'    => 'Валюта ISO Numeric',
-                            'currency-decimal-places' => 'Валюта Decimal Places',
-                            'currency-rounding'       => 'Валюта Rounding',
-                            'currency-status'         => 'Валюта Статус',
-                            'currency-create'         => 'Создать Валюта',
-                            'company-foundation-date' => 'Компания Foundation Дата',
+                            'default-currency'        => 'Валюта по умолчанию',
+                            'currency-name'           => 'Название валюты',
+                            'currency-full-name'      => 'Полное название валюты',
+                            'currency-symbol'         => 'Символ валюты',
+                            'currency-iso-numeric'    => 'Цифровой код ISO',
+                            'currency-decimal-places' => 'Знаков после запятой',
+                            'currency-rounding'       => 'Округление валюты',
+                            'currency-status'         => 'Статус валюты',
+                            'currency-create'         => 'Создать валюту',
+                            'company-foundation-date' => 'Дата основания компании',
                             'status'                  => 'Статус',
                         ],
                     ],
@@ -79,16 +79,16 @@ return [
             ],
 
             'contact-information' => [
-                'title' => 'Контакт Сведения',
+                'title' => 'Контактные данные',
 
                 'sections' => [
                     'contact-information' => [
-                        'title' => 'Контакт Сведения',
+                        'title' => 'Контактные данные',
 
                         'fields' => [
-                            'email-address' => 'Эл. почта Адрес',
-                            'phone-number'  => 'Телефон Номер',
-                            'mobile-number' => 'Телефон Номер',
+                            'email-address' => 'Адрес эл. почты',
+                            'phone-number'  => 'Номер телефона',
+                            'mobile-number' => 'Номер телефона',
                         ],
                     ],
                 ],
@@ -99,8 +99,8 @@ return [
     'table' => [
         'columns' => [
             'logo'                 => 'Логотип',
-            'company-name'         => 'Branch Название',
-            'branches'             => 'Branches',
+            'company-name'         => 'Название филиала',
+            'branches'             => 'Филиалы',
             'email'                => 'Эл. почта',
             'city'                 => 'Город',
             'country'              => 'Страна',
@@ -111,10 +111,10 @@ return [
         ],
 
         'groups' => [
-            'company-name' => 'Branch Название',
+            'company-name' => 'Название филиала',
             'city'         => 'Город',
             'country'      => 'Страна',
-            'state'        => 'Состояние',
+            'state'        => 'Регион',
             'email'        => 'Эл. почта',
             'phone'        => 'Телефон',
             'currency'     => 'Валюта',
@@ -123,7 +123,7 @@ return [
         ],
 
         'filters' => [
-            'trashed' => 'Trashed',
+            'trashed' => 'Удалённые',
             'status'  => 'Статус',
             'country' => 'Страна',
         ],
@@ -131,8 +131,8 @@ return [
         'header-actions' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Branch создано',
-                    'body'  => 'branch есть создано successfully.',
+                    'title' => 'Филиал создан',
+                    'body'  => 'Филиал успешно создан.',
                 ],
             ],
         ],
@@ -140,22 +140,22 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Branch обновлено',
-                    'body'  => 'branch есть обновлено successfully.',
+                    'title' => 'Филиал обновлён',
+                    'body'  => 'Филиал успешно обновлён.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Branch удалено',
-                    'body'  => 'branch есть удалено successfully.',
+                    'title' => 'Филиал удалён',
+                    'body'  => 'Филиал успешно удалён.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Branch restored',
-                    'body'  => 'branch есть restored successfully.',
+                    'title' => 'Филиал восстановлен',
+                    'body'  => 'Филиал успешно восстановлен.',
                 ],
             ],
         ],
@@ -163,22 +163,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Branches restored',
-                    'body'  => 'branches есть restored successfully.',
+                    'title' => 'Филиалы восстановлены',
+                    'body'  => 'Филиалы успешно восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Branches удалено',
-                    'body'  => 'branches есть удалено successfully.',
+                    'title' => 'Филиалы удалены',
+                    'body'  => 'Филиалы успешно удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Branches force удалено',
-                    'body'  => 'branches есть force удалено successfully.',
+                    'title' => 'Филиалы удалены безвозвратно',
+                    'body'  => 'Филиалы успешно удалены безвозвратно.',
                 ],
             ],
         ],
@@ -187,72 +187,72 @@ return [
     'infolist' => [
         'tabs' => [
             'general-information' => [
-                'title' => 'Общее Сведения',
+                'title' => 'Общие сведения',
 
                 'sections' => [
                     'branch-information' => [
-                        'title' => 'Branch Сведения',
+                        'title' => 'Сведения о филиале',
 
                         'entries' => [
-                            'company-name'                => 'Компания Название',
-                            'registration-number'         => 'Registration Номер',
-                            'tax-id'                      => 'Налог Ид.',
-                            'registration-number-tooltip' => 'Налог Ид. unique identifier для ваш компания.',
+                            'company-name'                => 'Название компании',
+                            'registration-number'         => 'Регистрационный номер',
+                            'tax-id'                      => 'Налоговый номер',
+                            'registration-number-tooltip' => 'Налоговый номер — уникальный идентификатор вашей компании.',
                             'color'                       => 'Цвет',
                         ],
                     ],
 
                     'branding' => [
-                        'title'   => 'Branding',
+                        'title'   => 'Брендинг',
                         'entries' => [
-                            'branch-logo' => 'Branch Логотип',
+                            'branch-logo' => 'Логотип филиала',
                         ],
                     ],
                 ],
             ],
 
             'address-information' => [
-                'title' => 'Адрес Сведения',
+                'title' => 'Адрес',
 
                 'sections' => [
                     'address-information' => [
-                        'title' => 'Адрес Сведения',
+                        'title' => 'Адрес',
 
                         'entries' => [
-                            'street1'                => 'Street 1',
-                            'street2'                => 'Street 2',
+                            'street1'                => 'Улица 1',
+                            'street2'                => 'Улица 2',
                             'city'                   => 'Город',
-                            'zip'                    => 'Zip Код',
+                            'zip'                    => 'Почтовый индекс',
                             'country'                => 'Страна',
-                            'country-currency-name'  => 'Валюта Название',
-                            'country-phone-code'     => 'Телефон Код',
+                            'country-currency-name'  => 'Название валюты',
+                            'country-phone-code'     => 'Телефонный код',
                             'country-code'           => 'Код',
-                            'country-name'           => 'Страна Название',
-                            'country-state-required' => 'Состояние Обязательно',
-                            'country-zip-required'   => 'Zip Обязательно',
-                            'country-create'         => 'Создать Страна',
-                            'state'                  => 'Состояние',
-                            'state-name'             => 'Состояние Название',
-                            'state-code'             => 'Состояние Код',
-                            'zip-code'               => 'Zip Код',
-                            'state-create'           => 'Создать Состояние',
+                            'country-name'           => 'Название страны',
+                            'country-state-required' => 'Регион обязателен',
+                            'country-zip-required'   => 'Индекс обязателен',
+                            'country-create'         => 'Создать страну',
+                            'state'                  => 'Регион',
+                            'state-name'             => 'Название региона',
+                            'state-code'             => 'Код региона',
+                            'zip-code'               => 'Почтовый индекс',
+                            'state-create'           => 'Создать регион',
                         ],
                     ],
 
                     'additional-information' => [
-                        'title' => 'Additional Сведения',
+                        'title' => 'Дополнительные сведения',
 
                         'entries' => [
-                            'default-currency'        => 'По умолчанию Валюта',
-                            'currency-name'           => 'Валюта Название',
-                            'currency-full-name'      => 'Валюта Полный Название',
-                            'currency-symbol'         => 'Валюта Symbol',
-                            'currency-iso-numeric'    => 'Валюта ISO Numeric',
-                            'currency-decimal-places' => 'Валюта Decimal Places',
-                            'currency-rounding'       => 'Валюта Rounding',
-                            'currency-status'         => 'Валюта Статус',
-                            'currency-create'         => 'Создать Валюта',
-                            'company-foundation-date' => 'Компания Foundation Дата',
+                            'default-currency'        => 'Валюта по умолчанию',
+                            'currency-name'           => 'Название валюты',
+                            'currency-full-name'      => 'Полное название валюты',
+                            'currency-symbol'         => 'Символ валюты',
+                            'currency-iso-numeric'    => 'Цифровой код ISO',
+                            'currency-decimal-places' => 'Знаков после запятой',
+                            'currency-rounding'       => 'Округление валюты',
+                            'currency-status'         => 'Статус валюты',
+                            'currency-create'         => 'Создать валюту',
+                            'company-foundation-date' => 'Дата основания компании',
                             'status'                  => 'Статус',
                         ],
                     ],
@@ -260,16 +260,16 @@ return [
             ],
 
             'contact-information' => [
-                'title' => 'Контакт Сведения',
+                'title' => 'Контактные данные',
 
                 'sections' => [
                     'contact-information' => [
-                        'title' => 'Контакт Сведения',
+                        'title' => 'Контактные данные',
 
                         'entries' => [
-                            'email-address' => 'Эл. почта Адрес',
-                            'phone-number'  => 'Телефон Номер',
-                            'mobile-number' => 'Телефон Номер',
+                            'email-address' => 'Адрес эл. почты',
+                            'phone-number'  => 'Номер телефона',
+                            'mobile-number' => 'Номер телефона',
                         ],
                     ],
                 ],
