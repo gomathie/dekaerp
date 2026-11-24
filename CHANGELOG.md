@@ -10,6 +10,8 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.17.0 — 2026-11-25
+
 ### Improvements
 
 - Russian and Swahili are now languages you can choose, next to English, Arabic, Spanish, French and Portuguese (Brazil). These translations are machine-assisted. If a phrase sounds wrong, a native speaker's correction is welcome, and English stays one click away.

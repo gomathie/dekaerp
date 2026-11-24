@@ -6,6 +6,35 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-25, release v1.17.0 (production)
+
+- **Why:** user, 2026-11-24: "do all now as hot fixes. even the monthly
+  release awaiting. we have no time left". Everything collected on develop
+  ships now instead of on the monthly release day. It carries features, so
+  it is a minor release (v1.17.0), not a patch.
+- **How:** contents are the entries below from v1.16.13 onward: MC-2/MC-2b
+  sale currency question and posting summary, MC-3 multi-currency report,
+  DB-9 dashboards, R-9 this month's cards on five lists and the contact's
+  company line, "View all" on dashboard lists, plan #10 languages (Russian
+  and Swahili retranslation, English source corrections in every locale).
+  27 plugins bumped one minor version (those this release changed;
+  analytics, full-calendar and payments unchanged); `config/app.php`
+  1.17.0; CHANGELOG "Unreleased" moved under v1.17.0.
+- **Benefit:** TRACE365's currency and dashboard requests reach production
+  together.
+- **Trade-off / risk:** larger than a hotfix. Deploy runs the sales
+  migration `2026_11_24_000001` (two nullable columns on `sales_orders`)
+  and the accounts migrations from MC-2. Russian and Swahili still want a
+  native speaker's review.
+- **Verification actually run** (worktree dekaerp-v1161, Sail pgsql):
+  `translations:check` 168/168; `aureuserp_testing_v113_k1` accounts 56
+  passed (274 assertions); `aureuserp_testing_v113_k2` sales 73 passed
+  (294); `aureuserp_testing_v113_k3` invoices and purchases dashboards,
+  PurchaseOrderResource, MultiCurrencyReport, support Locale 101 passed
+  (373). No failures.
+- **Rollback:** push the previous production commit back to `production`
+  (Laravel Cloud redeploys); the two sales columns are nullable and can stay.
+
 ## 2026-11-24, posting summary (MC-2) and this month's cards on four more lists (R-9) (develop, unreleased)
 
 - **Why:** the remaining plan #11 MC-2 step (posting summary) and plan #10
@@ -53,8 +82,10 @@ for the task/question log this change log is paired with.
   purchases Dashboard pair 12 passed (49), PurchaseOrderResource +
   PluginEntitlement 17 passed (77); `aureuserp_testing_agent_c` invoices
   PaymentsListCards, OverviewTest, InvoiceDashboard×2, sales
-  SalesDashboard×2, OrderResource: 62 passed (256). Merged run on develop:
-  MERGED_RESULT.
+  SalesDashboard×2, OrderResource: 62 passed (256). Merged run on develop
+  (with the languages merge), see the v1.17.0 entry above: accounts 56
+  passed (274), sales 73 passed (294), invoices/purchases/report/locale 101
+  passed (373).
 - **Rollback:** revert the merge commits; no schema change.
 
 ## 2026-11-24, MC-2b: the currency question on quotations and sales orders (develop, unreleased)
