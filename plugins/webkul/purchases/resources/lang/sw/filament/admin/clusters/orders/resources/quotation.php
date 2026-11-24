@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Request kwa Nukuu',
+        'title' => 'Ombi la nukuu ya bei',
     ],
 ];

@@ -4,8 +4,8 @@ return [
     'table' => [
         'columns' => [
             'reference'         => 'Kumbukumbu',
-            'total-amount'      => 'Jumla Kiasi',
-            'confirmation-date' => 'Confirmation Tarehe',
+            'total-amount'      => 'Jumla ya kiasi',
+            'confirmation-date' => 'Tarehe ya uthibitisho',
             'status'            => 'Hali',
         ],
     ],
@@ -13,8 +13,8 @@ return [
     'products' => [
         'columns' => [
             'product'    => 'Bidhaa',
-            'quantity'   => 'Kiasi',
-            'unit-price' => 'Bei ya uniti',
+            'quantity'   => 'Idadi',
+            'unit-price' => 'Bei ya kipimo',
             'taxes'      => 'Kodi',
             'discount'   => 'Punguzo %',
             'amount'     => 'Kiasi',
@@ -24,33 +24,33 @@ return [
     'infolist' => [
         'settings' => [
             'entries' => [
-                'buyer' => 'Buyer',
+                'buyer' => 'Mnunuzi',
             ],
 
             'actions' => [
                 'accept' => [
-                    'label' => 'Accept',
+                    'label' => 'Kubali',
 
                     'notification' => [
-                        'title' => 'Nukuu Accepted',
-                        'body'  => 'Ombi la bei ina acknowledged successfully.',
+                        'title' => 'Nukuu ya bei imekubaliwa',
+                        'body'  => 'Ombi la nukuu limekubaliwa.',
                     ],
 
                     'message' => [
-                        'body' => 'Ombi la bei ina acknowledged na msambazaji.',
+                        'body' => 'Msambazaji amekubali ombi la nukuu.',
                     ],
                 ],
 
                 'decline' => [
-                    'label' => 'Decline',
+                    'label' => 'Kataa',
 
                     'notification' => [
-                        'title' => 'Nukuu Declined',
-                        'body'  => 'Ombi la bei ina declined successfully.',
+                        'title' => 'Nukuu ya bei imekataliwa',
+                        'body'  => 'Ombi la nukuu limekataliwa.',
                     ],
 
                     'message' => [
-                        'body' => 'Ombi la bei ina declined na msambazaji.',
+                        'body' => 'Msambazaji amekataa ombi la nukuu.',
                     ],
                 ],
 
@@ -62,17 +62,17 @@ return [
 
         'general' => [
             'entries' => [
-                'purchase-order'        => 'Agizo la ununuzi #:id',
-                'quotation'             => 'Request kwa Nukuu #:id',
-                'order-date'            => 'Agizo Tarehe',
-                'from'                  => 'Kutoka',
-                'confirmation-date'     => 'Confirmation Tarehe',
-                'receipt-date'          => 'Stakabadhi Tarehe',
+                'purchase-order'        => 'Oda ya ununuzi #:id',
+                'quotation'             => 'Ombi la nukuu ya bei #:id',
+                'order-date'            => 'Tarehe ya oda',
+                'from'                  => 'Kuanzia',
+                'confirmation-date'     => 'Tarehe ya uthibitisho',
+                'receipt-date'          => 'Tarehe ya upokeaji',
                 'products'              => 'Bidhaa',
-                'untaxed-amount'        => 'Bila kodi Kiasi',
-                'tax-amount'            => 'Kodi Kiasi',
+                'untaxed-amount'        => 'Kiasi bila kodi',
+                'tax-amount'            => 'Kiasi cha kodi',
                 'total'                 => 'Jumla',
-                'communication-history' => 'Mawasiliano Historia',
+                'communication-history' => 'Historia ya mawasiliano',
             ],
         ],
     ],

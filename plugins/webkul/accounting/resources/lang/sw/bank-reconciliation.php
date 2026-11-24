@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'statement-name' => 'Taarifa :from hadi :to',
-    'entry-label'    => 'Benki taarifa mstari',
+    'statement-name' => 'Taarifa ya :from hadi :to',
+    'entry-label'    => 'Mstari wa taarifa ya benki',
 
     'fields' => [
         'date'   => 'tarehe',
@@ -10,15 +10,15 @@ return [
     ],
 
     'errors' => [
-        'not-allowed'            => 'Wewe haiwezekani patanisha hii akaunti ya benki.',
-        'not-a-bank-journal'     => 'Chagua benki au taslimu jarida.',
-        'foreign-currency'       => 'Hii jarida uses foreign sarafu. Tu akaunti ya benkis katika kampuni sarafu unaweza kuwa reconciled kwa sasa.',
-        'missing-bank-account'   => 'Hii jarida ina hakuna akaunti ya benki weka. Weka yake chaguo-msingi akaunti kwanza.',
-        'empty-file'             => 'faili ina hakuna taarifa mistari.',
-        'too-many-rows'          => 'faili ina zaidi kuliko :max mistari. Split hii ndani smaller statements.',
-        'bad-row'                => 'Mstari :row: :field haiwezekani kuwa kusoma. Hundi safu numbers na tarehe umbizo.',
-        'already-reconciled'     => 'Hii mstari ni tayari reconciled.',
-        'payment-does-not-match' => 'Hiyo malipo si kilinganacho hii mstari: hii lazima kuwa katika ile ile benki jarida, kwa ile ile kiasi na direction, na si tayari matched.',
-        'account-not-allowed'    => 'Hiyo akaunti haiwezekani kuwa inatumika hapa. Mteja na msambazaji akaunti ni settled na matching malipo.',
+        'not-allowed'            => 'Huwezi kulinganisha akaunti hii ya benki.',
+        'not-a-bank-journal'     => 'Chagua jarida la benki au la fedha taslimu.',
+        'foreign-currency'       => 'Jarida hili linatumia sarafu ya kigeni. Kwa sasa ni akaunti za benki zilizo kwa sarafu ya kampuni pekee zinazoweza kulinganishwa.',
+        'missing-bank-account'   => 'Jarida hili halina akaunti ya benki. Kwanza weka akaunti yake chaguomsingi.',
+        'empty-file'             => 'Faili halina mistari ya taarifa.',
+        'too-many-rows'          => 'Faili lina zaidi ya mistari :max. Ligawe katika taarifa ndogo zaidi.',
+        'bad-row'                => 'Mstari :row: :field haisomeki. Kagua nambari za safu wima na muundo wa tarehe.',
+        'already-reconciled'     => 'Mstari huu tayari umelinganishwa.',
+        'payment-does-not-match' => 'Malipo hayo hayalingani na mstari huu: lazima yawe kwenye jarida lilelile la benki, kwa kiasi na mwelekeo uleule, na yasiwe yamelinganishwa tayari.',
+        'account-not-allowed'    => 'Akaunti hiyo haiwezi kutumika hapa. Akaunti za wateja na wasambazaji hulipwa kwa kulinganisha malipo.',
     ],
 ];

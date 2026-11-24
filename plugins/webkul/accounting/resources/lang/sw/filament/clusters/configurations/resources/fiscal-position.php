@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'model-label' => 'Kifedha Cheo',
+    'model-label' => 'Hali ya kodi',
 
     'navigation' => [
-        'title' => 'Kifedha Positions',
+        'title' => 'Hali za kodi',
         'group' => 'Uhasibu',
     ],
 ];

@@ -2,70 +2,70 @@
 
 return [
     'unknown'       => 'Неизвестно',
-    'other'         => 'Другое',
-    'share'         => 'Share',
+    'other'         => 'Прочее',
+    'share'         => 'Доля',
     'status'        => 'Статус',
-    'receipt-status'=> 'Приход Статус',
+    'receipt-status'=> 'Статус поступления',
     'stats'         => [
-        'heading'              => 'Key Metrics',
-        'draft-rfqs'           => 'Черновик RFQs',
-        'sent-rfqs'            => 'Отправлено RFQs',
-        'confirmed-orders'     => 'Подтверждён Заказы',
-        'total-purchase-value' => 'Итого Закупка Значение',
-        'increase'             => ':percent% increase',
-        'decrease'             => ':percent% decrease',
-        'no-change'            => 'Нет изменить',
+        'heading'              => 'Ключевые показатели',
+        'draft-rfqs'           => 'Черновики запросов цены',
+        'sent-rfqs'            => 'Отправленные запросы цены',
+        'confirmed-orders'     => 'Подтверждённые заказы',
+        'total-purchase-value' => 'Общая стоимость закупок',
+        'increase'             => 'рост на :percent%',
+        'decrease'             => 'снижение на :percent%',
+        'no-change'            => 'Без изменений',
     ],
 
     'trend'        => [
-        'heading' => 'Заказ на закупкуs Trend от Состояние',
+        'heading' => 'Динамика заказов на закупку по статусам',
         'states'  => [
             'draft'    => 'Черновик',
-            'sent'     => 'Отправлено',
+            'sent'     => 'Отправлен',
             'purchase' => 'Закупка',
-            'done'     => 'Завершён',
+            'done'     => 'Выполнен',
             'canceled' => 'Отменён',
         ],
     ],
 
     'vendor-spend' => [
-        'heading'         => 'Поставщик Spend Share',
-        'total-purchased' => 'Итого Purchased',
+        'heading'         => 'Доля расходов по поставщикам',
+        'total-purchased' => 'Всего закуплено',
     ],
 
     'top-orders'   => [
-        'heading' => 'Top Заказы',
+        'heading' => 'Крупнейшие заказы',
         'columns' => [
-            'reference'      => 'Заказ Номер',
+            'reference'      => 'Номер заказа',
             'vendor'         => 'Поставщик',
-            'billing-status' => 'Billing Статус',
-            'amount'         => 'Итого Сумма',
+            'billing-status' => 'Статус выставления счетов',
+            'amount'         => 'Общая сумма',
         ],
     ],
 
     'top-products' => [
-        'heading' => 'Top Purchased Товары',
+        'heading' => 'Самые закупаемые товары',
         'columns' => [
             'name'     => 'Товар',
-            'quantity' => 'Итого Количество',
-            'value'    => 'Итого Значение',
+            'quantity' => 'Общее количество',
+            'value'    => 'Общая стоимость',
         ],
     ],
     'top-rfqs'     => [
-        'heading' => 'Top RFQs',
+        'heading' => 'Крупнейшие запросы цены',
         'columns' => [
-            'reference' => 'Запрос котировок Номер',
+            'reference' => 'Номер запроса цены',
             'status'    => 'Статус',
-            'amount'    => 'Итого Сумма',
+            'amount'    => 'Общая сумма',
         ],
     ],
 
     'top-vendors'  => [
-        'heading' => 'Top Поставщики',
+        'heading' => 'Основные поставщики',
         'columns' => [
             'vendor' => 'Поставщик',
             'orders' => 'Заказы',
-            'amount' => 'Итого Spend',
+            'amount' => 'Общие расходы',
         ],
     ],
 ];

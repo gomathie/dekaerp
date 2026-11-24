@@ -2,23 +2,23 @@
 
 return [
     'navigation' => [
-        'title' => 'Maagizo',
+        'title' => 'Oda',
     ],
 
     'tabs' => [
-        'my-orders'      => 'Yangu Maagizo',
-        'starred'        => 'Starred',
-        'waiting-bills'  => 'Waiting Bili',
-        'received-bills' => 'Bili Imepokelewa',
+        'my-orders'      => 'Oda zangu',
+        'starred'        => 'Zenye nyota',
+        'waiting-bills'  => 'Bili zinasubiriwa',
+        'received-bills' => 'Bili zimepokelewa',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Agizo jipya',
+            'label' => 'Oda mpya',
 
             'notification' => [
-                'title' => 'Agizo imeundwa',
-                'body'  => 'agizo ina imeundwa successfully.',
+                'title' => 'Oda imeundwa',
+                'body'  => 'Oda imeundwa.',
             ],
         ],
     ],

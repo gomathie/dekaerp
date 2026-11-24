@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Unda Agizo',
+    'title' => 'Unda oda',
 
     'notification' => [
-        'title' => 'Agizo imeundwa',
-        'body'  => 'agizo ina imeundwa successfully.',
+        'title' => 'Oda imeundwa',
+        'body'  => 'Oda imeundwa.',
     ],
 ];

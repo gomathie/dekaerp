@@ -6,13 +6,13 @@ return [
     ],
 
     'tabs' => [
-        'my-purchases'    => 'Мой Закупки',
-        'starred'         => 'Starred',
-        'purchase-orders' => 'Заказ на закупкуs',
-        'orders'          => 'RFQs',
-        'draft-orders'    => 'Черновик RFQs',
-        'waiting-orders'  => 'Waiting RFQs',
-        'late-orders'     => 'Late RFQs',
+        'my-purchases'    => 'Мои закупки',
+        'starred'         => 'Отмеченные',
+        'purchase-orders' => 'Заказы на закупку',
+        'orders'          => 'Запросы цены',
+        'draft-orders'    => 'Черновики запросов цены',
+        'waiting-orders'  => 'Ожидающие запросы цены',
+        'late-orders'     => 'Просроченные запросы цены',
     ],
 
     'header-actions' => [
@@ -20,8 +20,8 @@ return [
             'label' => 'Новый заказ',
 
             'notification' => [
-                'title' => 'Заказ создано',
-                'body'  => 'заказ есть создано successfully.',
+                'title' => 'Заказ создан',
+                'body'  => 'Заказ успешно создан.',
             ],
         ],
     ],

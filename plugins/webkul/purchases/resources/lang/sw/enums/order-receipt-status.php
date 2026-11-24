@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'no'      => 'Nothing Hadi Receive',
+    'no'      => 'Hakuna cha kupokea',
     'pending' => 'Inasubiri',
-    'partial' => 'Partially Imepokelewa',
-    'full'    => 'Fully Imepokelewa',
+    'partial' => 'Imepokelewa sehemu',
+    'full'    => 'Imepokelewa yote',
 ];

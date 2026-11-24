@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'model-label' => 'Chart ya Akaunti',
+    'model-label' => 'Chati ya akaunti',
 
     'navigation' => [
         'title' => 'Chati ya akaunti',

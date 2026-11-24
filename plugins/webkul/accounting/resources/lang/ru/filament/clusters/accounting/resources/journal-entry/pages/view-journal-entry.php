@@ -4,8 +4,8 @@ return [
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Проводка удалено',
-                'body'  => 'проводка есть удалено successfully.',
+                'title' => 'Проводка удалена',
+                'body'  => 'Проводка успешно удалена.',
             ],
         ],
     ],

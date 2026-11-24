@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'no'      => 'Nothing До Receive',
-    'pending' => 'Ожидает',
-    'partial' => 'Partially Получено',
-    'full'    => 'Fully Получено',
+    'no'      => 'Нечего получать',
+    'pending' => 'Ожидается',
+    'partial' => 'Частично получен',
+    'full'    => 'Полностью получен',
 ];

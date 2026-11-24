@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'title' => 'Katika/Nje',
+    'title' => 'NDANI/NJE',
 
     'table' => [
         'columns' => [
@@ -9,19 +9,19 @@ return [
             'reference'            => 'Kumbukumbu',
             'product'              => 'Bidhaa',
             'package'              => 'Kifurushi',
-            'lot'                  => 'Kundi / Nambari ya mfululizo Numbers',
-            'source-location'      => 'Chanzo Mahali',
-            'destination-location' => 'Unakoenda Mahali',
-            'quantity'             => 'Kiasi',
+            'lot'                  => 'Kundi / Nambari za mfululizo',
+            'source-location'      => 'Mahali chanzo',
+            'destination-location' => 'Mahali pa kufikia',
+            'quantity'             => 'Idadi',
             'state'                => 'Hali',
-            'done-by'              => 'Imekamilika Na',
+            'done-by'              => 'Imefanywa na',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Hamisha imefutwa',
-                    'body'  => 'hamisha ina imefutwa successfully.',
+                    'title' => 'Mwendo umefutwa',
+                    'body'  => 'Mwendo umefutwa.',
                 ],
             ],
         ],

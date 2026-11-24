@@ -6,10 +6,10 @@ return [
     ],
 
     'tabs' => [
-        'my-orders'      => 'Мой Заказы',
-        'starred'        => 'Starred',
-        'waiting-bills'  => 'Waiting Счета поставщиков',
-        'received-bills' => 'Счета поставщиков Получено',
+        'my-orders'      => 'Мои заказы',
+        'starred'        => 'Отмеченные',
+        'waiting-bills'  => 'Ожидаются счета',
+        'received-bills' => 'Счета получены',
     ],
 
     'header-actions' => [
@@ -17,8 +17,8 @@ return [
             'label' => 'Новый заказ',
 
             'notification' => [
-                'title' => 'Заказ создано',
-                'body'  => 'заказ есть создано successfully.',
+                'title' => 'Заказ создан',
+                'body'  => 'Заказ успешно создан.',
             ],
         ],
     ],

@@ -3,22 +3,22 @@
 return [
     'unknown'       => 'Haijulikani',
     'other'         => 'Nyingine',
-    'share'         => 'Share',
+    'share'         => 'Sehemu',
     'status'        => 'Hali',
-    'receipt-status'=> 'Stakabadhi Hali',
+    'receipt-status'=> 'Hali ya upokeaji',
     'stats'         => [
-        'heading'              => 'Key Metrics',
-        'draft-rfqs'           => 'Rasimu RFQs',
-        'sent-rfqs'            => 'Imetumwa RFQs',
-        'confirmed-orders'     => 'Imethibitishwa Maagizo',
-        'total-purchase-value' => 'Jumla Ununuzi Thamani',
-        'increase'             => ':percent% increase',
-        'decrease'             => ':percent% decrease',
-        'no-change'            => 'Hakuna badilisha',
+        'heading'              => 'Vipimo muhimu',
+        'draft-rfqs'           => 'Rasimu za maombi ya nukuu',
+        'sent-rfqs'            => 'Maombi ya nukuu yaliyotumwa',
+        'confirmed-orders'     => 'Oda zilizothibitishwa',
+        'total-purchase-value' => 'Jumla ya thamani ya ununuzi',
+        'increase'             => 'ongezeko la :percent%',
+        'decrease'             => 'upungufu wa :percent%',
+        'no-change'            => 'Hakuna mabadiliko',
     ],
 
     'trend'        => [
-        'heading' => 'Agizo la ununuzis Trend na Hali',
+        'heading' => 'Mwenendo wa oda za ununuzi kwa hali',
         'states'  => [
             'draft'    => 'Rasimu',
             'sent'     => 'Imetumwa',
@@ -29,43 +29,43 @@ return [
     ],
 
     'vendor-spend' => [
-        'heading'         => 'Msambazaji Spend Share',
-        'total-purchased' => 'Jumla Purchased',
+        'heading'         => 'Mgawanyo wa matumizi kwa wasambazaji',
+        'total-purchased' => 'Jumla iliyonunuliwa',
     ],
 
     'top-orders'   => [
-        'heading' => 'Top Maagizo',
+        'heading' => 'Oda kubwa zaidi',
         'columns' => [
-            'reference'      => 'Agizo Nambari',
+            'reference'      => 'Nambari ya oda',
             'vendor'         => 'Msambazaji',
-            'billing-status' => 'Billing Hali',
-            'amount'         => 'Jumla Kiasi',
+            'billing-status' => 'Hali ya bili',
+            'amount'         => 'Jumla ya kiasi',
         ],
     ],
 
     'top-products' => [
-        'heading' => 'Top Purchased Bidhaa',
+        'heading' => 'Bidhaa zinazonunuliwa zaidi',
         'columns' => [
             'name'     => 'Bidhaa',
-            'quantity' => 'Jumla Kiasi',
-            'value'    => 'Jumla Thamani',
+            'quantity' => 'Jumla ya idadi',
+            'value'    => 'Jumla ya thamani',
         ],
     ],
     'top-rfqs'     => [
-        'heading' => 'Top RFQs',
+        'heading' => 'Maombi makubwa ya nukuu',
         'columns' => [
-            'reference' => 'Ombi la bei Nambari',
+            'reference' => 'Nambari ya ombi la nukuu',
             'status'    => 'Hali',
-            'amount'    => 'Jumla Kiasi',
+            'amount'    => 'Jumla ya kiasi',
         ],
     ],
 
     'top-vendors'  => [
-        'heading' => 'Top Wasambazaji',
+        'heading' => 'Wasambazaji wakuu',
         'columns' => [
             'vendor' => 'Msambazaji',
-            'orders' => 'Maagizo',
-            'amount' => 'Jumla Spend',
+            'orders' => 'Oda',
+            'amount' => 'Jumla ya matumizi',
         ],
     ],
 ];

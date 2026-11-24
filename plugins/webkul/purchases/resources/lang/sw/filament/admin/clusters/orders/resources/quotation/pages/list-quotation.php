@@ -2,6 +2,6 @@
 
 return [
     'header-actions' => [
-        'create' => 'Mpya Ombi la bei',
+        'create' => 'Ombi jipya la nukuu',
     ],
 ];

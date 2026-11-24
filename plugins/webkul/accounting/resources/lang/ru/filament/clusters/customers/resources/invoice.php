@@ -21,7 +21,7 @@ return [
                     'products' => [
                         'actions' => [
                             'open-product' => [
-                                'tooltip' => 'Открыт товар',
+                                'tooltip' => 'Открыть товар',
                             ],
                         ],
                     ],

@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'blanket-order'     => 'Blanket Agizo',
-    'purchase-template' => 'Ununuzi Kiolezo',
+    'blanket-order'     => 'Oda ya jumla',
+    'purchase-template' => 'Kiolezo cha ununuzi',
 ];

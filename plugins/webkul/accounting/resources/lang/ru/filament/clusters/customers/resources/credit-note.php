@@ -4,7 +4,7 @@ return [
     'title' => 'Кредит-нота',
 
     'navigation' => [
-        'title' => 'Кредит-нотаs',
+        'title' => 'Кредит-ноты',
     ],
 
     'global-search' => [

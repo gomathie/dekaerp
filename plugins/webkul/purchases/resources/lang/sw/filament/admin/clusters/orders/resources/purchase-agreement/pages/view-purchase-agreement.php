@@ -8,8 +8,8 @@ return [
 
         'delete' => [
             'notification' => [
-                'title' => 'Ununuzi Agreement Imefutwa',
-                'body'  => 'ununuzi agreement ina imefutwa successfully.',
+                'title' => 'Makubaliano ya ununuzi yamefutwa',
+                'body'  => 'Makubaliano ya ununuzi yamefutwa.',
             ],
         ],
     ],

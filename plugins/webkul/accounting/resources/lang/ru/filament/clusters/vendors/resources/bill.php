@@ -15,9 +15,9 @@ return [
     ],
 
     'form' => [
-        'biller'            => 'Biller',
+        'biller'            => 'Выставитель',
         'reference'         => 'Ссылка',
-        'payment-reference' => 'Оплата Ссылка',
+        'payment-reference' => 'Назначение платежа',
         'date'              => 'Дата',
     ],
 ];

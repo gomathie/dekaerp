@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Request для Коммерческое предложение',
+        'title' => 'Запрос цены',
     ],
 ];

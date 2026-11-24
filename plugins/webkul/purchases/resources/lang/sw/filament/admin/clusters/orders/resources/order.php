@@ -14,15 +14,15 @@ return [
 
                 'fields' => [
                     'vendor'                   => 'Msambazaji',
-                    'vendor-reference'         => 'Msambazaji Kumbukumbu',
-                    'vendor-reference-tooltip' => 'kumbukumbu nambari ya agizo la mauzo au bid provided na msambazaji. Hii ni inatumika kwa matching wakati receiving bidhaa, kama hii kumbukumbu ni typically imejumuishwa katika vendor\'s usafirishaji agizo.',
-                    'agreement'                => 'Agreement',
+                    'vendor-reference'         => 'Kumbukumbu ya msambazaji',
+                    'vendor-reference-tooltip' => 'Nambari ya kumbukumbu ya oda ya mauzo au zabuni iliyotolewa na msambazaji. Hutumika kulinganisha wakati wa kupokea bidhaa, kwa kuwa kwa kawaida huwa kwenye hati ya uwasilishaji ya msambazaji.',
+                    'agreement'                => 'Makubaliano',
                     'currency'                 => 'Sarafu',
-                    'confirmation-date'        => 'Confirmation Tarehe',
-                    'order-deadline'           => 'Agizo Deadline',
-                    'expected-arrival'         => 'Inatarajiwa Arrival',
-                    'confirmed-by-vendor'      => 'Imethibitishwa na Msambazaji',
-                    'deliver-to'               => 'Deliver Hadi',
+                    'confirmation-date'        => 'Tarehe ya uthibitisho',
+                    'order-deadline'           => 'Tarehe ya mwisho ya oda',
+                    'expected-arrival'         => 'Tarehe ya kuwasili inayotarajiwa',
+                    'confirmed-by-vendor'      => 'Imethibitishwa na msambazaji',
+                    'deliver-to'               => 'Wasilisha kwa',
                 ],
             ],
         ],
@@ -38,68 +38,68 @@ return [
 
                         'fields' => [
                             'product'             => 'Bidhaa',
-                            'expected-arrival'    => 'Inatarajiwa Arrival',
-                            'quantity'            => 'Kiasi',
+                            'expected-arrival'    => 'Tarehe ya kuwasili inayotarajiwa',
+                            'quantity'            => 'Idadi',
                             'received'            => 'Imepokelewa',
-                            'billed'              => 'Billed',
-                            'unit'                => 'Uniti',
-                            'packaging-qty'       => 'Kifungashio Qty',
+                            'billed'              => 'Imetozwa',
+                            'unit'                => 'Kipimo',
+                            'packaging-qty'       => 'Idadi ya vifungashio',
                             'packaging'           => 'Kifungashio',
                             'taxes'               => 'Kodi',
                             'discount-percentage' => 'Punguzo (%)',
-                            'unit-price'          => 'Bei ya uniti',
+                            'unit-price'          => 'Bei ya kipimo',
                             'amount'              => 'Kiasi',
                         ],
 
                         'notifications' => [
                             'quantity-below-received' => [
-                                'title' => 'Haiwezekani Reduce Kiasi',
-                                'body'  => 'Wewe haiwezekani reduce kiasi chini ya imepokelewa kiasi (:qty).',
+                                'title' => 'Huwezi kupunguza idadi',
+                                'body'  => 'Huwezi kupunguza idadi chini ya idadi iliyopokelewa (:qty).',
                             ],
 
                             'blanket-order-qty-limit' => [
-                                'title' => 'Kiasi Exceeds Blanket Agizo Limit',
-                                'body'  => 'bidhaa kiasi (:product_qty) exceeds inapatikana kiasi (:available_qty) kutoka blanket agizo.',
+                                'title' => 'Idadi inazidi kikomo cha oda ya jumla',
+                                'body'  => 'Idadi ya bidhaa (:product_qty) inazidi idadi inayopatikana (:available_qty) kwenye oda ya jumla.',
                             ],
                         ],
 
                         'columns' => [
                             'product'             => 'Bidhaa',
-                            'expected-arrival'    => 'Inatarajiwa Arrival',
-                            'quantity'            => 'Kiasi',
+                            'expected-arrival'    => 'Tarehe ya kuwasili inayotarajiwa',
+                            'quantity'            => 'Idadi',
                             'received'            => 'Imepokelewa',
-                            'billed'              => 'Billed',
-                            'unit'                => 'Uniti',
-                            'packaging-qty'       => 'Kifungashio Qty',
+                            'billed'              => 'Imetozwa',
+                            'unit'                => 'Kipimo',
+                            'packaging-qty'       => 'Idadi ya vifungashio',
                             'packaging'           => 'Kifungashio',
                             'taxes'               => 'Kodi',
                             'discount-percentage' => 'Punguzo (%)',
-                            'unit-price'          => 'Bei ya uniti',
+                            'unit-price'          => 'Bei ya kipimo',
                             'amount'              => 'Kiasi',
                         ],
 
                         'delete-action' => [
                             'error' => [
-                                'title' => 'Haiwezekani Futa Bidhaa',
-                                'body'  => 'Bidhaa haiwezekani kuwa imefutwa kutoka imethibitishwa agizo la ununuzi.',
+                                'title' => 'Huwezi kufuta bidhaa',
+                                'body'  => 'Bidhaa haziwezi kufutwa kwenye oda ya ununuzi iliyothibitishwa.',
                             ],
                         ],
 
                         'actions' => [
                             'open-product' => [
-                                'tooltip' => 'Wazi bidhaa',
+                                'tooltip' => 'Fungua bidhaa',
                             ],
                         ],
                     ],
 
                     'section' => [
-                        'title' => 'Ongeza Sehemu',
+                        'title' => 'Ongeza sehemu',
 
                         'fields' => [],
                     ],
 
                     'note' => [
-                        'title' => 'Ongeza Maelezo',
+                        'title' => 'Ongeza kidokezo',
 
                         'fields' => [],
                     ],
@@ -107,81 +107,81 @@ return [
             ],
 
             'additional' => [
-                'title' => 'Additional Taarifa',
+                'title' => 'Taarifa za ziada',
 
                 'fields' => [
-                    'buyer'             => 'Buyer',
+                    'buyer'             => 'Mnunuzi',
                     'company'           => 'Kampuni',
-                    'source-document'   => 'Chanzo Hati',
+                    'source-document'   => 'Hati chanzo',
                     'incoterm'          => 'Incoterm',
-                    'incoterm-tooltip'  => 'International Commercial Terms (Incoterms) ni weka ya standardized trade terms inatumika katika global transactions hadi define responsibilities kati ya buyers na sellers.',
-                    'incoterm-location' => 'Incoterm Mahali',
+                    'incoterm-tooltip'  => 'Masharti ya Kimataifa ya Biashara (Incoterms) ni seti ya masharti sanifu ya biashara yanayotumika katika miamala ya kimataifa kufafanua majukumu ya wanunuzi na wauzaji.',
+                    'incoterm-location' => 'Mahali pa Incoterm',
                     'payment-term'      => 'Masharti ya malipo',
-                    'fiscal-position'   => 'Kifedha Cheo',
+                    'fiscal-position'   => 'Hali ya kodi',
                 ],
             ],
 
             'terms' => [
-                'title' => 'Terms na Conditions',
+                'title' => 'Sheria na masharti',
             ],
         ],
     ],
 
     'table' => [
         'columns' => [
-            'favorite'         => 'Favorite',
+            'favorite'         => 'Kipendwa',
             'priority'         => 'Kipaumbele',
-            'vendor-reference' => 'Msambazaji Kumbukumbu',
+            'vendor-reference' => 'Kumbukumbu ya msambazaji',
             'reference'        => 'Kumbukumbu',
             'vendor'           => 'Msambazaji',
-            'buyer'            => 'Buyer',
+            'buyer'            => 'Mnunuzi',
             'company'          => 'Kampuni',
-            'order-deadline'   => 'Agizo Deadline',
-            'source-document'  => 'Chanzo Hati',
-            'untaxed-amount'   => 'Bila kodi Kiasi',
-            'total-amount'     => 'Jumla Kiasi',
+            'order-deadline'   => 'Tarehe ya mwisho ya oda',
+            'source-document'  => 'Hati chanzo',
+            'untaxed-amount'   => 'Kiasi bila kodi',
+            'total-amount'     => 'Jumla ya kiasi',
             'status'           => 'Hali',
-            'billing-status'   => 'Billing Hali',
-            'receipt-status'   => 'Stakabadhi Hali',
+            'billing-status'   => 'Hali ya bili',
+            'receipt-status'   => 'Hali ya upokeaji',
             'currency'         => 'Sarafu',
         ],
 
         'groups' => [
             'vendor'     => 'Msambazaji',
-            'buyer'      => 'Buyer',
+            'buyer'      => 'Mnunuzi',
             'state'      => 'Hali',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'created-at' => 'Iliundwa',
+            'updated-at' => 'Ilisasishwa',
         ],
 
         'filters' => [
             'status'           => 'Hali',
-            'vendor-reference' => 'Msambazaji Kumbukumbu',
+            'vendor-reference' => 'Kumbukumbu ya msambazaji',
             'reference'        => 'Kumbukumbu',
-            'untaxed-amount'   => 'Bila kodi Kiasi',
-            'total-amount'     => 'Jumla Kiasi',
-            'order-deadline'   => 'Agizo Deadline',
+            'untaxed-amount'   => 'Kiasi bila kodi',
+            'total-amount'     => 'Jumla ya kiasi',
+            'order-deadline'   => 'Tarehe ya mwisho ya oda',
             'vendor'           => 'Msambazaji',
-            'buyer'            => 'Buyer',
+            'buyer'            => 'Mnunuzi',
             'company'          => 'Kampuni',
             'payment-term'     => 'Masharti ya malipo',
             'incoterm'         => 'Incoterm',
             'status'           => 'Hali',
-            'created-at'       => 'Imeundwa',
-            'updated-at'       => 'Imesasishwa',
+            'created-at'       => 'Iliundwa',
+            'updated-at'       => 'Ilisasishwa',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Agizo imefutwa',
-                        'body'  => 'agizo ina imefutwa successfully.',
+                        'title' => 'Oda imefutwa',
+                        'body'  => 'Oda imefutwa.',
                     ],
 
                     'error' => [
-                        'title' => 'Agizo could si kuwa imefutwa',
-                        'body'  => 'agizo haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Oda haikuweza kufutwa',
+                        'body'  => 'Oda haiwezi kufutwa kwa sababu inatumika.',
                     ],
                 ],
             ],
@@ -191,13 +191,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Maagizo imefutwa',
-                        'body'  => 'maagizo ina imefutwa successfully.',
+                        'title' => 'Oda zimefutwa',
+                        'body'  => 'Oda zimefutwa.',
                     ],
 
                     'error' => [
-                        'title' => 'Maagizo could si kuwa imefutwa',
-                        'body'  => 'maagizo haiwezekani kuwa imefutwa kwa sababu wao ni currently katika tumia.',
+                        'title' => 'Oda hazikuweza kufutwa',
+                        'body'  => 'Oda haziwezi kufutwa kwa sababu zinatumika.',
                     ],
                 ],
             ],
@@ -214,16 +214,16 @@ return [
                 'title' => 'Jumla',
 
                 'entries' => [
-                    'purchase-order'           => 'Agizo la ununuzi',
+                    'purchase-order'           => 'Oda ya ununuzi',
                     'vendor'                   => 'Msambazaji',
-                    'vendor-reference'         => 'Msambazaji Kumbukumbu',
-                    'vendor-reference-tooltip' => 'kumbukumbu nambari ya agizo la mauzo au bid provided na msambazaji. Hii ni inatumika kwa matching wakati receiving bidhaa, kama hii kumbukumbu ni typically imejumuishwa katika vendor\'s usafirishaji agizo.',
-                    'agreement'                => 'Agreement',
+                    'vendor-reference'         => 'Kumbukumbu ya msambazaji',
+                    'vendor-reference-tooltip' => 'Nambari ya kumbukumbu ya oda ya mauzo au zabuni iliyotolewa na msambazaji. Hutumika kulinganisha wakati wa kupokea bidhaa, kwa kuwa kwa kawaida huwa kwenye hati ya uwasilishaji ya msambazaji.',
+                    'agreement'                => 'Makubaliano',
                     'currency'                 => 'Sarafu',
-                    'confirmation-date'        => 'Confirmation Tarehe',
-                    'order-deadline'           => 'Agizo Deadline',
-                    'expected-arrival'         => 'Inatarajiwa Arrival',
-                    'confirmed-by-vendor'      => 'Imethibitishwa na Msambazaji',
+                    'confirmation-date'        => 'Tarehe ya uthibitisho',
+                    'order-deadline'           => 'Tarehe ya mwisho ya oda',
+                    'expected-arrival'         => 'Tarehe ya kuwasili inayotarajiwa',
+                    'confirmed-by-vendor'      => 'Imethibitishwa na msambazaji',
                 ],
             ],
         ],
@@ -239,47 +239,47 @@ return [
 
                         'entries' => [
                             'product'             => 'Bidhaa',
-                            'expected-arrival'    => 'Inatarajiwa Arrival',
-                            'quantity'            => 'Kiasi',
+                            'expected-arrival'    => 'Tarehe ya kuwasili inayotarajiwa',
+                            'quantity'            => 'Idadi',
                             'received'            => 'Imepokelewa',
-                            'billed'              => 'Billed',
-                            'unit'                => 'Uniti',
-                            'packaging-qty'       => 'Kifungashio Qty',
+                            'billed'              => 'Imetozwa',
+                            'unit'                => 'Kipimo',
+                            'packaging-qty'       => 'Idadi ya vifungashio',
                             'packaging'           => 'Kifungashio',
                             'taxes'               => 'Kodi',
                             'discount-percentage' => 'Punguzo (%)',
-                            'unit-price'          => 'Bei ya uniti',
+                            'unit-price'          => 'Bei ya kipimo',
                             'amount'              => 'Kiasi',
                         ],
                     ],
 
                     'section' => [
-                        'title' => 'Ongeza Sehemu',
+                        'title' => 'Ongeza sehemu',
                     ],
 
                     'note' => [
-                        'title' => 'Ongeza Maelezo',
+                        'title' => 'Ongeza kidokezo',
                     ],
                 ],
             ],
 
             'additional' => [
-                'title' => 'Additional Taarifa',
+                'title' => 'Taarifa za ziada',
 
                 'entries' => [
-                    'buyer'             => 'Buyer',
+                    'buyer'             => 'Mnunuzi',
                     'company'           => 'Kampuni',
-                    'source-document'   => 'Chanzo Hati',
+                    'source-document'   => 'Hati chanzo',
                     'incoterm'          => 'Incoterm',
-                    'incoterm-tooltip'  => 'International Commercial Terms (Incoterms) ni weka ya standardized trade terms inatumika katika global transactions hadi define responsibilities kati ya buyers na sellers.',
-                    'incoterm-location' => 'Incoterm Mahali',
+                    'incoterm-tooltip'  => 'Masharti ya Kimataifa ya Biashara (Incoterms) ni seti ya masharti sanifu ya biashara yanayotumika katika miamala ya kimataifa kufafanua majukumu ya wanunuzi na wauzaji.',
+                    'incoterm-location' => 'Mahali pa Incoterm',
                     'payment-term'      => 'Masharti ya malipo',
-                    'fiscal-position'   => 'Kifedha Cheo',
+                    'fiscal-position'   => 'Hali ya kodi',
                 ],
             ],
 
             'terms' => [
-                'title' => 'Terms na Conditions',
+                'title' => 'Sheria na masharti',
             ],
         ],
     ],

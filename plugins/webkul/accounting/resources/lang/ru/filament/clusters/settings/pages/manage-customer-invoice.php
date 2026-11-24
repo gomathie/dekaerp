@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'title' => 'Manage Счёт клиенту',
+    'title' => 'Управление счетами клиентам',
 
     'form' => [
         'cash-rounding' => [
-            'label'       => 'Касса Rounding',
-            'helper-text' => 'Specify lowest denomination валюта accepted для касса оплаты.',
+            'label'       => 'Округление наличных',
+            'helper-text' => 'Укажите наименьший номинал валюты, принимаемый при оплате наличными.',
         ],
 
         'incoterm' => [
-            'label' => 'По умолчанию Incoterm',
+            'label' => 'Инкотермс по умолчанию',
         ],
     ],
 ];

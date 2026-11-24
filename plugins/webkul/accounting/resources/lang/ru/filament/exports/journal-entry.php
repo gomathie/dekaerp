@@ -5,13 +5,13 @@ return [
         'invoice-date' => 'Дата счёта',
         'date'         => 'Дата',
         'number'       => 'Номер',
-        'partner'      => 'Контрагент',
+        'partner'      => 'Контакт',
         'reference'    => 'Ссылка',
         'journal'      => 'Журнал',
         'company'      => 'Компания',
         'total'        => 'Итого',
-        'state'        => 'Состояние',
-        'checked'      => 'Checked',
+        'state'        => 'Статус',
+        'checked'      => 'Проверено',
     ],
 
     'values' => [
@@ -20,7 +20,7 @@ return [
     ],
 
     'notification' => [
-        'completed' => 'Ваш проводка экспорт есть завершено и :count строка(s) exported.',
-        'failed'    => ':count строка(s) не удалось до экспорт.',
+        'completed' => 'Экспорт проводок завершён, выгружено строк: :count.',
+        'failed'    => 'Не удалось выгрузить строк: :count.',
     ],
 ];

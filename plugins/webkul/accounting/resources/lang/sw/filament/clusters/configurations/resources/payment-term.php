@@ -5,6 +5,6 @@ return [
 
     'navigation' => [
         'title' => 'Masharti ya malipo',
-        'group' => 'Invoicing',
+        'group' => 'Utozaji ankara',
     ],
 ];

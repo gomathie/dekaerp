@@ -1,21 +1,21 @@
 <?php
 
 return [
-    'title'          => 'Agizo',
+    'title'          => 'Oda',
 
     'titles'         => [
-        'quotation'      => 'Request kwa Nukuu',
-        'purchase-order' => 'Agizo la ununuzi',
+        'quotation'      => 'Ombi la nukuu ya bei',
+        'purchase-order' => 'Oda ya ununuzi',
     ],
 
     'log-attributes' => [
         'state'             => 'Hali',
-        'untaxed-amount'    => 'Bila kodi Kiasi',
-        'partner-reference' => 'Msambazaji Kumbukumbu',
-        'origin'            => 'Chanzo Hati',
+        'untaxed-amount'    => 'Kiasi bila kodi',
+        'partner-reference' => 'Kumbukumbu ya msambazaji',
+        'origin'            => 'Hati chanzo',
         'partner'           => 'Msambazaji',
-        'buyer'             => 'Buyer',
+        'buyer'             => 'Mnunuzi',
         'payment-term'      => 'Masharti ya malipo',
-        'fiscal-position'   => 'Kifedha Cheo',
+        'fiscal-position'   => 'Hali ya kodi',
     ],
 ];

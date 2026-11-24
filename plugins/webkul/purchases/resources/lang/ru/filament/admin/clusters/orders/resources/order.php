@@ -3,26 +3,26 @@
 return [
     'global-search' => [
         'vendor'    => 'Поставщик',
-        'reference' => 'Ссылка',
+        'reference' => 'Номер',
         'amount'    => 'Сумма',
     ],
 
     'form' => [
         'sections' => [
             'general' => [
-                'title' => 'Общее',
+                'title' => 'Основное',
 
                 'fields' => [
                     'vendor'                   => 'Поставщик',
-                    'vendor-reference'         => 'Поставщик Ссылка',
-                    'vendor-reference-tooltip' => 'ссылка номер заказ на продажу или bid provided от поставщик. Это используется для matching когда receiving товары, как этот ссылка typically включено в vendor\'s доставка заказ.',
-                    'agreement'                => 'Agreement',
+                    'vendor-reference'         => 'Номер у поставщика',
+                    'vendor-reference-tooltip' => 'Номер заказа на продажу или предложения поставщика. Используется для сопоставления при приёмке товаров, так как обычно указывается в накладной поставщика.',
+                    'agreement'                => 'Соглашение',
                     'currency'                 => 'Валюта',
-                    'confirmation-date'        => 'Confirmation Дата',
-                    'order-deadline'           => 'Заказ Deadline',
-                    'expected-arrival'         => 'Ожидается Arrival',
-                    'confirmed-by-vendor'      => 'Подтверждён от Поставщик',
-                    'deliver-to'               => 'Deliver До',
+                    'confirmation-date'        => 'Дата подтверждения',
+                    'order-deadline'           => 'Крайний срок заказа',
+                    'expected-arrival'         => 'Ожидаемое поступление',
+                    'confirmed-by-vendor'      => 'Подтверждено поставщиком',
+                    'deliver-to'               => 'Доставить в',
                 ],
             ],
         ],
@@ -38,12 +38,12 @@ return [
 
                         'fields' => [
                             'product'             => 'Товар',
-                            'expected-arrival'    => 'Ожидается Arrival',
+                            'expected-arrival'    => 'Ожидаемое поступление',
                             'quantity'            => 'Количество',
                             'received'            => 'Получено',
-                            'billed'              => 'Billed',
-                            'unit'                => 'Единица',
-                            'packaging-qty'       => 'Упаковка Qty',
+                            'billed'              => 'Выставлено',
+                            'unit'                => 'Ед. изм.',
+                            'packaging-qty'       => 'Кол-во упаковок',
                             'packaging'           => 'Упаковка',
                             'taxes'               => 'Налоги',
                             'discount-percentage' => 'Скидка (%)',
@@ -53,24 +53,24 @@ return [
 
                         'notifications' => [
                             'quantity-below-received' => [
-                                'title' => 'Нельзя Reduce Количество',
-                                'body'  => 'Вы нельзя reduce количество ниже получено количество (:qty).',
+                                'title' => 'Нельзя уменьшить количество',
+                                'body'  => 'Нельзя уменьшить количество ниже полученного (:qty).',
                             ],
 
                             'blanket-order-qty-limit' => [
-                                'title' => 'Количество Exceeds Blanket Заказ Limit',
-                                'body'  => 'товар количество (:product_qty) exceeds доступно количество (:available_qty) от blanket заказ.',
+                                'title' => 'Количество превышает лимит рамочного заказа',
+                                'body'  => 'Количество товара (:product_qty) превышает доступное количество (:available_qty) по рамочному заказу.',
                             ],
                         ],
 
                         'columns' => [
                             'product'             => 'Товар',
-                            'expected-arrival'    => 'Ожидается Arrival',
+                            'expected-arrival'    => 'Ожидаемое поступление',
                             'quantity'            => 'Количество',
                             'received'            => 'Получено',
-                            'billed'              => 'Billed',
-                            'unit'                => 'Единица',
-                            'packaging-qty'       => 'Упаковка Qty',
+                            'billed'              => 'Выставлено',
+                            'unit'                => 'Ед. изм.',
+                            'packaging-qty'       => 'Кол-во упаковок',
                             'packaging'           => 'Упаковка',
                             'taxes'               => 'Налоги',
                             'discount-percentage' => 'Скидка (%)',
@@ -80,26 +80,26 @@ return [
 
                         'delete-action' => [
                             'error' => [
-                                'title' => 'Нельзя Удалить Товар',
-                                'body'  => 'Товары нельзя быть удалено от подтверждён заказ на закупку.',
+                                'title' => 'Нельзя удалить товар',
+                                'body'  => 'Из подтверждённого заказа на закупку нельзя удалять товары.',
                             ],
                         ],
 
                         'actions' => [
                             'open-product' => [
-                                'tooltip' => 'Открыт товар',
+                                'tooltip' => 'Открыть товар',
                             ],
                         ],
                     ],
 
                     'section' => [
-                        'title' => 'Добавить Раздел',
+                        'title' => 'Добавить раздел',
 
                         'fields' => [],
                     ],
 
                     'note' => [
-                        'title' => 'Добавить Заметка',
+                        'title' => 'Добавить примечание',
 
                         'fields' => [],
                     ],
@@ -107,65 +107,65 @@ return [
             ],
 
             'additional' => [
-                'title' => 'Additional Сведения',
+                'title' => 'Дополнительная информация',
 
                 'fields' => [
-                    'buyer'             => 'Buyer',
+                    'buyer'             => 'Закупщик',
                     'company'           => 'Компания',
-                    'source-document'   => 'Источник Документ',
-                    'incoterm'          => 'Incoterm',
-                    'incoterm-tooltip'  => 'International Commercial Terms (Incoterms) задать standardized trade terms используется в global transactions до define responsibilities между buyers и sellers.',
-                    'incoterm-location' => 'Incoterm Место',
+                    'source-document'   => 'Исходный документ',
+                    'incoterm'          => 'Инкотермс',
+                    'incoterm-tooltip'  => 'Инкотермс (Incoterms) — набор стандартных условий международной торговли, определяющих обязанности покупателя и продавца.',
+                    'incoterm-location' => 'Место по Инкотермс',
                     'payment-term'      => 'Условие оплаты',
-                    'fiscal-position'   => 'Финансовый Должность',
+                    'fiscal-position'   => 'Налоговая позиция',
                 ],
             ],
 
             'terms' => [
-                'title' => 'Terms и Conditions',
+                'title' => 'Условия',
             ],
         ],
     ],
 
     'table' => [
         'columns' => [
-            'favorite'         => 'Favorite',
+            'favorite'         => 'Избранное',
             'priority'         => 'Приоритет',
-            'vendor-reference' => 'Поставщик Ссылка',
-            'reference'        => 'Ссылка',
+            'vendor-reference' => 'Номер у поставщика',
+            'reference'        => 'Номер',
             'vendor'           => 'Поставщик',
-            'buyer'            => 'Buyer',
+            'buyer'            => 'Закупщик',
             'company'          => 'Компания',
-            'order-deadline'   => 'Заказ Deadline',
-            'source-document'  => 'Источник Документ',
-            'untaxed-amount'   => 'Без налога Сумма',
-            'total-amount'     => 'Итого Сумма',
+            'order-deadline'   => 'Крайний срок заказа',
+            'source-document'  => 'Исходный документ',
+            'untaxed-amount'   => 'Сумма без налогов',
+            'total-amount'     => 'Общая сумма',
             'status'           => 'Статус',
-            'billing-status'   => 'Billing Статус',
-            'receipt-status'   => 'Приход Статус',
+            'billing-status'   => 'Статус выставления счетов',
+            'receipt-status'   => 'Статус поступления',
             'currency'         => 'Валюта',
         ],
 
         'groups' => [
             'vendor'     => 'Поставщик',
-            'buyer'      => 'Buyer',
-            'state'      => 'Состояние',
+            'buyer'      => 'Закупщик',
+            'state'      => 'Статус',
             'created-at' => 'Создано',
             'updated-at' => 'Обновлено',
         ],
 
         'filters' => [
             'status'           => 'Статус',
-            'vendor-reference' => 'Поставщик Ссылка',
-            'reference'        => 'Ссылка',
-            'untaxed-amount'   => 'Без налога Сумма',
-            'total-amount'     => 'Итого Сумма',
-            'order-deadline'   => 'Заказ Deadline',
+            'vendor-reference' => 'Номер у поставщика',
+            'reference'        => 'Номер',
+            'untaxed-amount'   => 'Сумма без налогов',
+            'total-amount'     => 'Общая сумма',
+            'order-deadline'   => 'Крайний срок заказа',
             'vendor'           => 'Поставщик',
-            'buyer'            => 'Buyer',
+            'buyer'            => 'Закупщик',
             'company'          => 'Компания',
             'payment-term'     => 'Условие оплаты',
-            'incoterm'         => 'Incoterm',
+            'incoterm'         => 'Инкотермс',
             'status'           => 'Статус',
             'created-at'       => 'Создано',
             'updated-at'       => 'Обновлено',
@@ -175,13 +175,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Заказ удалено',
-                        'body'  => 'заказ есть удалено successfully.',
+                        'title' => 'Заказ удалён',
+                        'body'  => 'Заказ успешно удалён.',
                     ],
 
                     'error' => [
-                        'title' => 'Заказ could не быть удалено',
-                        'body'  => 'заказ нельзя быть удалено потому что это currently в использовать.',
+                        'title' => 'Не удалось удалить заказ',
+                        'body'  => 'Заказ нельзя удалить, так как он используется.',
                     ],
                 ],
             ],
@@ -191,13 +191,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Заказы удалено',
-                        'body'  => 'заказы есть удалено successfully.',
+                        'title' => 'Заказы удалены',
+                        'body'  => 'Заказы успешно удалены.',
                     ],
 
                     'error' => [
-                        'title' => 'Заказы could не быть удалено',
-                        'body'  => 'заказы нельзя быть удалено потому что они currently в использовать.',
+                        'title' => 'Не удалось удалить заказы',
+                        'body'  => 'Заказы нельзя удалить, так как они используются.',
                     ],
                 ],
             ],
@@ -211,19 +211,19 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Общее',
+                'title' => 'Основное',
 
                 'entries' => [
                     'purchase-order'           => 'Заказ на закупку',
                     'vendor'                   => 'Поставщик',
-                    'vendor-reference'         => 'Поставщик Ссылка',
-                    'vendor-reference-tooltip' => 'ссылка номер заказ на продажу или bid provided от поставщик. Это используется для matching когда receiving товары, как этот ссылка typically включено в vendor\'s доставка заказ.',
-                    'agreement'                => 'Agreement',
+                    'vendor-reference'         => 'Номер у поставщика',
+                    'vendor-reference-tooltip' => 'Номер заказа на продажу или предложения поставщика. Используется для сопоставления при приёмке товаров, так как обычно указывается в накладной поставщика.',
+                    'agreement'                => 'Соглашение',
                     'currency'                 => 'Валюта',
-                    'confirmation-date'        => 'Confirmation Дата',
-                    'order-deadline'           => 'Заказ Deadline',
-                    'expected-arrival'         => 'Ожидается Arrival',
-                    'confirmed-by-vendor'      => 'Подтверждён от Поставщик',
+                    'confirmation-date'        => 'Дата подтверждения',
+                    'order-deadline'           => 'Крайний срок заказа',
+                    'expected-arrival'         => 'Ожидаемое поступление',
+                    'confirmed-by-vendor'      => 'Подтверждено поставщиком',
                 ],
             ],
         ],
@@ -239,12 +239,12 @@ return [
 
                         'entries' => [
                             'product'             => 'Товар',
-                            'expected-arrival'    => 'Ожидается Arrival',
+                            'expected-arrival'    => 'Ожидаемое поступление',
                             'quantity'            => 'Количество',
                             'received'            => 'Получено',
-                            'billed'              => 'Billed',
-                            'unit'                => 'Единица',
-                            'packaging-qty'       => 'Упаковка Qty',
+                            'billed'              => 'Выставлено',
+                            'unit'                => 'Ед. изм.',
+                            'packaging-qty'       => 'Кол-во упаковок',
                             'packaging'           => 'Упаковка',
                             'taxes'               => 'Налоги',
                             'discount-percentage' => 'Скидка (%)',
@@ -254,32 +254,32 @@ return [
                     ],
 
                     'section' => [
-                        'title' => 'Добавить Раздел',
+                        'title' => 'Добавить раздел',
                     ],
 
                     'note' => [
-                        'title' => 'Добавить Заметка',
+                        'title' => 'Добавить примечание',
                     ],
                 ],
             ],
 
             'additional' => [
-                'title' => 'Additional Сведения',
+                'title' => 'Дополнительная информация',
 
                 'entries' => [
-                    'buyer'             => 'Buyer',
+                    'buyer'             => 'Закупщик',
                     'company'           => 'Компания',
-                    'source-document'   => 'Источник Документ',
-                    'incoterm'          => 'Incoterm',
-                    'incoterm-tooltip'  => 'International Commercial Terms (Incoterms) задать standardized trade terms используется в global transactions до define responsibilities между buyers и sellers.',
-                    'incoterm-location' => 'Incoterm Место',
+                    'source-document'   => 'Исходный документ',
+                    'incoterm'          => 'Инкотермс',
+                    'incoterm-tooltip'  => 'Инкотермс (Incoterms) — набор стандартных условий международной торговли, определяющих обязанности покупателя и продавца.',
+                    'incoterm-location' => 'Место по Инкотермс',
                     'payment-term'      => 'Условие оплаты',
-                    'fiscal-position'   => 'Финансовый Должность',
+                    'fiscal-position'   => 'Налоговая позиция',
                 ],
             ],
 
             'terms' => [
-                'title' => 'Terms и Conditions',
+                'title' => 'Условия',
             ],
         ],
     ],

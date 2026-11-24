@@ -2,28 +2,28 @@
 
 return [
     'navigation' => [
-        'title' => 'Benki Upatanisho',
+        'title' => 'Ulinganisho wa benki',
     ],
 
     'import' => [
-        'label'       => 'Ingiza taarifa',
-        'description' => 'Pakia CSV faili kutoka yako benki. Give nambari ya kila safu, counting kutoka 1 washa iliyobaki.',
+        'label'       => 'Leta taarifa',
+        'description' => 'Pakia faili la CSV kutoka benki yako. Toa nambari ya kila safu wima, ukianza na 1 upande wa kushoto.',
         'journal'     => 'Akaunti ya benki',
-        'file'        => 'Taarifa faili (CSV)',
-        'name'        => 'Taarifa jina',
-        'date-format' => 'Tarehe umbizo',
-        'has-header'  => 'Kwanza mstari ni header',
-        'amount-help' => 'Au likizo tupu na give Pesa zinazoingia na Pesa zinazotoka safu.',
-        'done'        => ':count mistari imported.',
+        'file'        => 'Faili la taarifa (CSV)',
+        'name'        => 'Jina la taarifa',
+        'date-format' => 'Muundo wa tarehe',
+        'has-header'  => 'Mstari wa kwanza ni kichwa',
+        'amount-help' => 'Au acha wazi na utoe safu wima za pesa zilizoingia na zilizotoka.',
+        'done'        => 'Mistari :count imeletwa.',
 
         'columns' => [
-            'date'      => 'Tarehe safu',
-            'label'     => 'Maelezo safu',
-            'amount'    => 'Kiasi safu',
-            'money_in'  => 'Pesa zinazoingia safu',
-            'money_out' => 'Pesa zinazotoka safu',
-            'partner'   => 'Mteja au msambazaji safu',
-            'reference' => 'Kumbukumbu safu',
+            'date'      => 'Safu wima ya tarehe',
+            'label'     => 'Safu wima ya maelezo',
+            'amount'    => 'Safu wima ya kiasi',
+            'money_in'  => 'Safu wima ya pesa zilizoingia',
+            'money_out' => 'Safu wima ya pesa zilizotoka',
+            'partner'   => 'Safu wima ya mteja au msambazaji',
+            'reference' => 'Safu wima ya kumbukumbu',
         ],
     ],
 
@@ -38,28 +38,28 @@ return [
     ],
 
     'status' => [
-        'reconciled'   => 'Reconciled',
-        'to-reconcile' => 'Hadi patanisha',
+        'reconciled'   => 'Imelinganishwa',
+        'to-reconcile' => 'Ya kulinganisha',
     ],
 
     'match' => [
-        'label'       => 'Kilinganacho malipo',
-        'description' => 'Malipo katika hii akaunti ya benki kwa ile ile kiasi hiyo ni bado waiting kwa benki.',
+        'label'       => 'Linganisha malipo',
+        'description' => 'Malipo kwenye akaunti hii ya benki ya kiasi hichohicho ambayo bado yanasubiri benki.',
         'payment'     => 'Malipo',
-        'none'        => 'Hakuna malipo vinavyolingana. Jisajili malipo washa ankara kwanza, au book mstari hadi akaunti.',
-        'done'        => 'Mstari matched. malipo ni sasa imelipwa.',
+        'none'        => 'Hakuna malipo yanayolingana. Kwanza sajili malipo kwenye ankara, au rekodi mstari kwenye akaunti.',
+        'done'        => 'Mstari umelinganishwa. Malipo sasa yamelipwa.',
     ],
 
     'book' => [
-        'label'       => 'Book hadi akaunti',
-        'description' => 'Kwa benki charges, interest au uhamisho: posts mstari dhidi ya akaunti wewe chagua.',
+        'label'       => 'Rekodi kwenye akaunti',
+        'description' => 'Kwa ada za benki, riba au uhamisho: hurekodi mstari dhidi ya akaunti utakayochagua.',
         'account'     => 'Akaunti',
         'entry-label' => 'Lebo',
-        'done'        => 'Mstari booked.',
+        'done'        => 'Mstari umerekodiwa.',
     ],
 
     'empty' => [
-        'heading'     => 'Nothing hadi patanisha',
-        'description' => 'Ingiza taarifa kutoka yako benki hadi anza.',
+        'heading'     => 'Hakuna cha kulinganisha',
+        'description' => 'Leta taarifa kutoka benki yako ili kuanza.',
     ],
 ];

@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'title' => 'Manage Ankara ya mteja',
+    'title' => 'Simamia ankara za wateja',
 
     'form' => [
         'cash-rounding' => [
-            'label'       => 'Taslimu Rounding',
-            'helper-text' => 'Specify lowest denomination ya sarafu accepted kwa taslimu malipo.',
+            'label'       => 'Ukadiriaji wa fedha taslimu',
+            'helper-text' => 'Taja thamani ndogo zaidi ya sarafu inayokubaliwa kwa malipo ya fedha taslimu.',
         ],
 
         'incoterm' => [
-            'label' => 'Chaguo-msingi Incoterm',
+            'label' => 'Incoterm chaguomsingi',
         ],
     ],
 ];

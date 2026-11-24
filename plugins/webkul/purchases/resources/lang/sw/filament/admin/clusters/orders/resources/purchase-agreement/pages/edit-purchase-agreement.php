@@ -2,8 +2,8 @@
 
 return [
     'notification' => [
-        'title' => 'Ununuzi Agreement imesasishwa',
-        'body'  => 'ununuzi agreement ina imesasishwa successfully.',
+        'title' => 'Makubaliano ya ununuzi yamesasishwa',
+        'body'  => 'Makubaliano ya ununuzi yamesasishwa.',
     ],
 
     'header-actions' => [
@@ -12,8 +12,8 @@ return [
 
             'notification' => [
                 'unable' => [
-                    'title' => 'Haiwezekani hadi thibitisha ununuzi agreement',
-                    'body'  => 'Ongeza saa kidogo one bidhaa mstari kabla ya confirming hii ununuzi agreement.',
+                    'title' => 'Imeshindikana kuthibitisha makubaliano ya ununuzi',
+                    'body'  => 'Ongeza angalau mstari mmoja wa bidhaa kabla ya kuthibitisha makubaliano haya.',
                 ],
             ],
         ],
@@ -22,8 +22,8 @@ return [
             'label'        => 'Funga',
             'notification' => [
                 'warning' => [
-                    'title' => 'Haiwezekani hadi funga ununuzi agreement',
-                    'body'  => 'Wewe haiwezekani funga hii ununuzi agreement kwa sababu baadhi related RFQs ni si katika Imekamilika au Imeghairiwa hali.',
+                    'title' => 'Imeshindikana kufunga makubaliano ya ununuzi',
+                    'body'  => 'Huwezi kufunga makubaliano haya kwa sababu baadhi ya maombi ya nukuu yanayohusiana hayako katika hali ya Imekamilika au Imeghairiwa.',
                 ],
             ],
         ],
@@ -38,8 +38,8 @@ return [
 
         'delete' => [
             'notification' => [
-                'title' => 'Ununuzi Agreement imefutwa',
-                'body'  => 'ununuzi agreement ina imefutwa successfully.',
+                'title' => 'Makubaliano ya ununuzi yamefutwa',
+                'body'  => 'Makubaliano ya ununuzi yamefutwa.',
             ],
         ],
     ],

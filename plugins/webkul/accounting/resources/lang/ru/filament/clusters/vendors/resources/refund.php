@@ -4,7 +4,7 @@ return [
     'title' => 'Возврат',
 
     'navigation' => [
-        'title' => 'Refunds',
+        'title' => 'Возвраты',
     ],
 
     'global-search' => [
@@ -13,11 +13,11 @@ return [
     ],
 
     'form' => [
-        'biller'            => 'Biller',
-        'name'              => 'Поставщик Кредит-нота',
+        'biller'            => 'Выставитель',
+        'name'              => 'Кредит-нота поставщика',
         'name-placeholder'  => 'RBILL/2025/02/0001',
         'reference'         => 'Ссылка',
-        'payment-reference' => 'Оплата Ссылка',
-        'date'              => 'Учёт Дата',
+        'payment-reference' => 'Назначение платежа',
+        'date'              => 'Дата проводки',
     ],
 ];

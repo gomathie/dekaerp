@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Счета',
+        'title' => 'Счета поставщиков',
     ],
 ];

@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'label' => 'Chapisha PO',
+    'label' => 'Chapisha oda',
 ];

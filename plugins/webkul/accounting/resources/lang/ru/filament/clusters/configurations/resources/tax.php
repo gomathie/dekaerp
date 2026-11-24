@@ -5,6 +5,6 @@ return [
 
     'navigation' => [
         'title' => 'Налоги',
-        'group' => 'Учёт',
+        'group' => 'Бухгалтерия',
     ],
 ];

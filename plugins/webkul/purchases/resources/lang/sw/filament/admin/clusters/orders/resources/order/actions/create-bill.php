@@ -1,22 +1,22 @@
 <?php
 
 return [
-    'label' => 'Unda Bili',
+    'label' => 'Unda bili',
 
     'action' => [
         'notification' => [
             'warning' => [
-                'title' => 'Hakuna invoiceable mistari',
-                'body'  => 'ni hakuna invoiceable mstari, tafadhali fanya sure hiyo kiasi ina imepokelewa.',
+                'title' => 'Hakuna mistari ya kutoza',
+                'body'  => 'Hakuna mstari wa kutoza. Hakikisha kuwa idadi fulani imepokelewa.',
             ],
 
             'missing-journal' => [
-                'title' => 'Uhasibu ni si weka juu',
+                'title' => 'Uhasibu haujawekwa',
             ],
 
             'success' => [
                 'title' => 'Bili imeundwa',
-                'body'  => 'bili ina imeundwa successfully.',
+                'body'  => 'Bili imeundwa.',
             ],
         ],
     ],

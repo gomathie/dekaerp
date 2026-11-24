@@ -8,24 +8,24 @@ return [
     ],
 
     'record-sub-navigation' => [
-        'payment' => 'Оплата',
+        'payment' => 'Платёж',
     ],
 
     'global-search' => [
         'number'   => 'Номер',
-        'partner'  => 'Контрагент',
+        'partner'  => 'Контакт',
         'date'     => 'Дата счёта',
-        'due-date' => 'Счёт Срок оплаты',
+        'due-date' => 'Срок оплаты счёта',
     ],
 
     'form' => [
         'section' => [
             'general' => [
-                'title'  => 'Общее',
+                'title'  => 'Основное',
 
                 'fields' => [
                     'reference'       => 'Ссылка',
-                    'accounting-date' => 'Учёт Дата',
+                    'accounting-date' => 'Дата проводки',
                     'journal'         => 'Журнал',
                 ],
             ],
@@ -33,51 +33,51 @@ return [
 
         'tabs' => [
             'lines' => [
-                'title' => 'Журнал Позиции',
+                'title' => 'Строки проводок',
 
                 'repeater' => [
-                    'title'       => 'Позиции',
-                    'add-item'    => 'Добавить Позиция',
+                    'title'       => 'Строки',
+                    'add-item'    => 'Добавить строку',
 
                     'columns' => [
                         'account'                  => 'Счёт',
-                        'partner'                  => 'Контрагент',
-                        'label'                    => 'Подпись',
-                        'amount-currency'          => 'Сумма (Валюта)',
+                        'partner'                  => 'Контакт',
+                        'label'                    => 'Метка',
+                        'amount-currency'          => 'Сумма (валюта)',
                         'currency'                 => 'Валюта',
                         'taxes'                    => 'Налоги',
                         'debit'                    => 'Дебет',
                         'credit'                   => 'Кредит',
-                        'discount-amount-currency' => 'Скидка Сумма (Валюта)',
+                        'discount-amount-currency' => 'Сумма скидки (валюта)',
                     ],
 
                     'fields' => [
                         'account'                  => 'Счёт',
-                        'partner'                  => 'Контрагент',
-                        'label'                    => 'Подпись',
-                        'amount-currency'          => 'Сумма (Валюта)',
+                        'partner'                  => 'Контакт',
+                        'label'                    => 'Метка',
+                        'amount-currency'          => 'Сумма (валюта)',
                         'currency'                 => 'Валюта',
                         'taxes'                    => 'Налоги',
                         'debit'                    => 'Дебет',
                         'credit'                   => 'Кредит',
-                        'discount-amount-currency' => 'Скидка Сумма (Валюта)',
+                        'discount-amount-currency' => 'Сумма скидки (валюта)',
                     ],
                 ],
             ],
 
             'other-information' => [
-                'title'    => 'Другое Сведения',
+                'title'    => 'Прочая информация',
 
                 'fields' => [
-                    'checked'         => 'Checked',
+                    'checked'         => 'Проверено',
                     'company'         => 'Компания',
-                    'fiscal-position' => 'Финансовый Должность',
-                    'fiscal-position-tooltip' => 'Финансовый positions используется до adapt налоги и счета based вкл. клиент место.',
+                    'fiscal-position' => 'Налоговая позиция',
+                    'fiscal-position-tooltip' => 'Налоговые позиции применяются для подбора налогов и счетов в зависимости от местонахождения клиента.',
                 ],
             ],
 
             'term-and-conditions' => [
-                'title' => 'Term & Conditions',
+                'title' => 'Условия',
             ],
         ],
     ],
@@ -88,13 +88,13 @@ return [
             'invoice-date' => 'Дата счёта',
             'date'         => 'Дата',
             'number'       => 'Номер',
-            'partner'      => 'Контрагент',
+            'partner'      => 'Контакт',
             'reference'    => 'Ссылка',
             'journal'      => 'Журнал',
             'company'      => 'Компания',
             'total'        => 'Итого',
-            'state'        => 'Состояние',
-            'checked'      => 'Checked',
+            'state'        => 'Статус',
+            'checked'      => 'Проверено',
         ],
 
         'summarizers' => [
@@ -102,10 +102,10 @@ return [
         ],
 
         'groups' => [
-            'partner'        => 'Контрагент',
+            'partner'        => 'Контакт',
             'journal'        => 'Журнал',
-            'state'          => 'Состояние',
-            'payment-method' => 'Оплата Method',
+            'state'          => 'Статус',
+            'payment-method' => 'Способ оплаты',
             'date'           => 'Дата',
             'invoice-date'   => 'Дата счёта',
             'company'        => 'Компания',
@@ -113,10 +113,10 @@ return [
 
         'filters' => [
             'number'                       => 'Номер',
-            'invoice-partner-display-name' => 'Счёт Контрагент Display Название',
+            'invoice-partner-display-name' => 'Отображаемое имя контакта в счёте',
             'invoice-date'                 => 'Дата счёта',
-            'invoice-due-date'             => 'Счёт Срок оплаты',
-            'invoice-origin'               => 'Счёт Происхождение',
+            'invoice-due-date'             => 'Срок оплаты счёта',
+            'invoice-origin'               => 'Источник счёта',
             'reference'                    => 'Ссылка',
             'created-at'                   => 'Создано',
             'updated-at'                   => 'Обновлено',
@@ -125,8 +125,8 @@ return [
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Оплата удалено',
-                    'body'  => 'оплата есть удалено successfully.',
+                    'title' => 'Платёж удалён',
+                    'body'  => 'Платёж успешно удалён.',
                 ],
             ],
         ],
@@ -134,8 +134,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Оплаты удалено',
-                    'body'  => 'оплаты есть удалено successfully.',
+                    'title' => 'Платежи удалены',
+                    'body'  => 'Платежи успешно удалены.',
                 ],
             ],
         ],
@@ -150,11 +150,11 @@ return [
     'infolist' => [
         'section' => [
             'general' => [
-                'title'   => 'Общее',
+                'title'   => 'Основное',
                 'entries' => [
                     'number'          => 'Номер',
                     'reference'       => 'Ссылка',
-                    'accounting-date' => 'Учёт Дата',
+                    'accounting-date' => 'Дата проводки',
                     'journal'         => 'Журнал',
                 ],
             ],
@@ -162,13 +162,13 @@ return [
 
         'tabs' => [
             'lines' => [
-                'title' => 'Журнал Позиции',
+                'title' => 'Строки проводок',
 
                 'repeater' => [
                     'entries' => [
                         'account'  => 'Счёт',
-                        'partner'  => 'Контрагент',
-                        'label'    => 'Подпись',
+                        'partner'  => 'Контакт',
+                        'label'    => 'Метка',
                         'currency' => 'Валюта',
                         'taxes'    => 'Налоги',
                         'debit'    => 'Дебет',
@@ -178,23 +178,23 @@ return [
             ],
 
             'other-information' => [
-                'title' => 'Другое Сведения',
+                'title' => 'Прочая информация',
 
                 'fieldset' => [
                     'accounting' => [
-                        'title' => 'Учёт',
+                        'title' => 'Бухгалтерия',
 
                         'entries' => [
                             'company'         => 'Компания',
-                            'fiscal-position' => 'Финансовый Должность',
-                            'checked'         => 'Checked',
+                            'fiscal-position' => 'Налоговая позиция',
+                            'checked'         => 'Проверено',
                         ],
                     ],
                 ],
             ],
 
             'term-and-conditions' => [
-                'title' => 'Term & Conditions',
+                'title' => 'Условия',
             ],
         ],
     ],

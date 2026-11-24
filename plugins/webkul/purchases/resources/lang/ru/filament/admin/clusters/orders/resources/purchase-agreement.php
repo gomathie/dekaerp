@@ -2,8 +2,8 @@
 
 return [
     'navigation' => [
-        'title' => 'Закупка Agreements',
-        'group' => 'Закупка',
+        'title' => 'Соглашения о закупках',
+        'group' => 'Закупки',
     ],
 
     'global-search' => [
@@ -14,16 +14,16 @@ return [
     'form' => [
         'sections' => [
             'general' => [
-                'title' => 'Общее',
+                'title' => 'Основное',
 
                 'fields' => [
                     'vendor'                => 'Поставщик',
-                    'valid-from'            => 'Действительно От',
-                    'valid-to'              => 'Действительно До',
-                    'buyer'                 => 'Buyer',
-                    'reference'             => 'Ссылка',
-                    'reference-placeholder' => 'eg. PO/123',
-                    'agreement-type'        => 'Agreement Тип',
+                    'valid-from'            => 'Действует с',
+                    'valid-to'              => 'Действует до',
+                    'buyer'                 => 'Закупщик',
+                    'reference'             => 'Номер',
+                    'reference-placeholder' => 'напр. PO/123',
+                    'agreement-type'        => 'Тип соглашения',
                     'company'               => 'Компания',
                     'currency'              => 'Валюта',
                 ],
@@ -37,7 +37,7 @@ return [
                 'columns' => [
                     'product'    => 'Товар',
                     'quantity'   => 'Количество',
-                    'ordered'    => 'Ordered',
+                    'ordered'    => 'Заказано',
                     'uom'        => 'Единица измерения',
                     'unit-price' => 'Цена за единицу',
                 ],
@@ -45,52 +45,52 @@ return [
                 'fields' => [
                     'product'    => 'Товар',
                     'quantity'   => 'Количество',
-                    'ordered'    => 'Ordered',
+                    'ordered'    => 'Заказано',
                     'uom'        => 'Единица измерения',
                     'unit-price' => 'Цена за единицу',
                 ],
             ],
 
             'additional' => [
-                'title' => 'Additional Сведения',
+                'title' => 'Дополнительная информация',
             ],
 
             'terms' => [
-                'title' => 'Terms и Conditions',
+                'title' => 'Условия',
             ],
         ],
     ],
 
     'table' => [
         'columns' => [
-            'agreement'      => 'Agreement',
+            'agreement'      => 'Соглашение',
             'vendor'         => 'Поставщик',
-            'agreement-type' => 'Agreement Тип',
-            'buyer'          => 'Buyer',
+            'agreement-type' => 'Тип соглашения',
+            'buyer'          => 'Закупщик',
             'company'        => 'Компания',
-            'valid-from'     => 'Действительно От',
-            'valid-to'       => 'Действительно До',
-            'reference'      => 'Ссылка',
+            'valid-from'     => 'Действует с',
+            'valid-to'       => 'Действует до',
+            'reference'      => 'Номер',
             'status'         => 'Статус',
         ],
 
         'groups' => [
-            'agreement-type' => 'Agreement Тип',
+            'agreement-type' => 'Тип соглашения',
             'vendor'         => 'Поставщик',
-            'state'          => 'Состояние',
+            'state'          => 'Статус',
             'created-at'     => 'Создано',
             'updated-at'     => 'Обновлено',
         ],
 
         'filters' => [
-            'agreement'      => 'Agreement',
+            'agreement'      => 'Соглашение',
             'vendor'         => 'Поставщик',
-            'agreement-type' => 'Agreement Тип',
-            'buyer'          => 'Buyer',
+            'agreement-type' => 'Тип соглашения',
+            'buyer'          => 'Закупщик',
             'company'        => 'Компания',
-            'valid-from'     => 'Действительно От',
-            'valid-to'       => 'Действительно До',
-            'reference'      => 'Ссылка',
+            'valid-from'     => 'Действует с',
+            'valid-to'       => 'Действует до',
+            'reference'      => 'Номер',
             'status'         => 'Статус',
             'created-at'     => 'Создано',
             'updated-at'     => 'Обновлено',
@@ -99,33 +99,33 @@ return [
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Закупка Agreement удалено',
-                    'body'  => 'закупка agreement есть удалено successfully.',
+                    'title' => 'Соглашение о закупке удалено',
+                    'body'  => 'Соглашение о закупке успешно удалено.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Закупка Agreement restored',
-                    'body'  => 'закупка agreement есть restored successfully.',
+                    'title' => 'Соглашение о закупке восстановлено',
+                    'body'  => 'Соглашение о закупке успешно восстановлено.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Закупка Agreement permanently удалено',
-                        'body'  => 'закупка agreement есть permanently удалено successfully.',
+                        'title' => 'Соглашение о закупке удалено навсегда',
+                        'body'  => 'Соглашение о закупке успешно удалено навсегда.',
                     ],
 
                     'error' => [
-                        'title' => 'Закупка Agreement could не быть удалено',
-                        'body'  => 'закупка agreement нельзя быть удалено потому что это currently в использовать.',
+                        'title' => 'Не удалось удалить соглашение о закупке',
+                        'body'  => 'Соглашение о закупке нельзя удалить, так как оно используется.',
                     ],
 
                     'warning' => [
-                        'title' => 'Закупка Agreement нельзя быть удалено',
-                        'body'  => 'Только закупка agreements в Черновик или Отменён состояние можно быть удалено.',
+                        'title' => 'Соглашение о закупке нельзя удалить',
+                        'body'  => 'Удалять можно только соглашения в статусе «Черновик» или «Отменён».',
                     ],
                 ],
             ],
@@ -134,33 +134,33 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Закупка Agreements удалено',
-                    'body'  => 'закупка agreements есть удалено successfully.',
+                    'title' => 'Соглашения о закупках удалены',
+                    'body'  => 'Соглашения о закупках успешно удалены.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Закупка Agreements restored',
-                    'body'  => 'закупка agreements есть restored successfully.',
+                    'title' => 'Соглашения о закупках восстановлены',
+                    'body'  => 'Соглашения о закупках успешно восстановлены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Закупка Agreements permanently удалено',
-                        'body'  => 'закупка agreements есть permanently удалено successfully.',
+                        'title' => 'Соглашения о закупках удалены навсегда',
+                        'body'  => 'Соглашения о закупках успешно удалены навсегда.',
                     ],
 
                     'error' => [
-                        'title' => 'Закупка Agreements could не быть удалено',
-                        'body'  => 'закупка agreements нельзя быть удалено потому что они currently в использовать.',
+                        'title' => 'Не удалось удалить соглашения о закупках',
+                        'body'  => 'Соглашения о закупках нельзя удалить, так как они используются.',
                     ],
 
                     'warning' => [
-                        'title' => 'Закупка Agreement нельзя быть удалено',
-                        'body'  => 'Только закупка agreements в Черновик или Отменён состояние можно быть удалено.',
+                        'title' => 'Соглашение о закупке нельзя удалить',
+                        'body'  => 'Удалять можно только соглашения в статусе «Черновик» или «Отменён».',
                     ],
                 ],
             ],
@@ -170,27 +170,27 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Общее',
+                'title' => 'Основное',
 
                 'entries' => [
                     'vendor'                => 'Поставщик',
-                    'valid-from'            => 'Действительно От',
-                    'valid-to'              => 'Действительно До',
-                    'buyer'                 => 'Buyer',
-                    'reference'             => 'Ссылка',
-                    'reference-placeholder' => 'eg. PO/123',
-                    'agreement-type'        => 'Agreement Тип',
+                    'valid-from'            => 'Действует с',
+                    'valid-to'              => 'Действует до',
+                    'buyer'                 => 'Закупщик',
+                    'reference'             => 'Номер',
+                    'reference-placeholder' => 'напр. PO/123',
+                    'agreement-type'        => 'Тип соглашения',
                     'company'               => 'Компания',
                     'currency'              => 'Валюта',
                 ],
             ],
 
             'metadata' => [
-                'title' => 'Metadata',
+                'title' => 'Метаданные',
 
                 'entries' => [
                     'created-at' => 'Создано',
-                    'created-by' => 'Создано От',
+                    'created-by' => 'Создал',
                     'updated-at' => 'Обновлено',
                 ],
             ],
@@ -203,18 +203,18 @@ return [
                 'entries' => [
                     'product'    => 'Товар',
                     'quantity'   => 'Количество',
-                    'ordered'    => 'Ordered',
+                    'ordered'    => 'Заказано',
                     'uom'        => 'Единица измерения',
                     'unit-price' => 'Цена за единицу',
                 ],
             ],
 
             'additional' => [
-                'title' => 'Additional Сведения',
+                'title' => 'Дополнительная информация',
             ],
 
             'terms' => [
-                'title' => 'Terms и Conditions',
+                'title' => 'Условия',
             ],
         ],
     ],

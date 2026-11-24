@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'draft'      => 'Ombi la bei',
-    'sent'       => 'Ombi la bei Imetumwa',
-    'to_approve' => 'Hadi Idhinisha',
-    'purchase'   => 'Agizo la ununuzi',
+    'draft'      => 'Ombi la nukuu',
+    'sent'       => 'Ombi la nukuu limetumwa',
+    'to_approve' => 'Inasubiri idhini',
+    'purchase'   => 'Oda ya ununuzi',
     'done'       => 'Imefungwa',
     'canceled'   => 'Imeghairiwa',
 ];

@@ -2,7 +2,7 @@
 
 return [
     'navigation' => [
-        'title' => 'Ununuzi Agreements',
+        'title' => 'Makubaliano ya ununuzi',
         'group' => 'Ununuzi',
     ],
 
@@ -18,12 +18,12 @@ return [
 
                 'fields' => [
                     'vendor'                => 'Msambazaji',
-                    'valid-from'            => 'Halali Kutoka',
-                    'valid-to'              => 'Halali Mpaka',
-                    'buyer'                 => 'Buyer',
+                    'valid-from'            => 'Halali kuanzia',
+                    'valid-to'              => 'Halali hadi',
+                    'buyer'                 => 'Mnunuzi',
                     'reference'             => 'Kumbukumbu',
-                    'reference-placeholder' => 'eg. PO/123',
-                    'agreement-type'        => 'Agreement Aina',
+                    'reference-placeholder' => 'mf. PO/123',
+                    'agreement-type'        => 'Aina ya makubaliano',
                     'company'               => 'Kampuni',
                     'currency'              => 'Sarafu',
                 ],
@@ -36,96 +36,96 @@ return [
 
                 'columns' => [
                     'product'    => 'Bidhaa',
-                    'quantity'   => 'Kiasi',
-                    'ordered'    => 'Ordered',
+                    'quantity'   => 'Idadi',
+                    'ordered'    => 'Imeagizwa',
                     'uom'        => 'Kipimo',
-                    'unit-price' => 'Bei ya uniti',
+                    'unit-price' => 'Bei ya kipimo',
                 ],
 
                 'fields' => [
                     'product'    => 'Bidhaa',
-                    'quantity'   => 'Kiasi',
-                    'ordered'    => 'Ordered',
+                    'quantity'   => 'Idadi',
+                    'ordered'    => 'Imeagizwa',
                     'uom'        => 'Kipimo',
-                    'unit-price' => 'Bei ya uniti',
+                    'unit-price' => 'Bei ya kipimo',
                 ],
             ],
 
             'additional' => [
-                'title' => 'Additional Taarifa',
+                'title' => 'Taarifa za ziada',
             ],
 
             'terms' => [
-                'title' => 'Terms na Conditions',
+                'title' => 'Sheria na masharti',
             ],
         ],
     ],
 
     'table' => [
         'columns' => [
-            'agreement'      => 'Agreement',
+            'agreement'      => 'Makubaliano',
             'vendor'         => 'Msambazaji',
-            'agreement-type' => 'Agreement Aina',
-            'buyer'          => 'Buyer',
+            'agreement-type' => 'Aina ya makubaliano',
+            'buyer'          => 'Mnunuzi',
             'company'        => 'Kampuni',
-            'valid-from'     => 'Halali Kutoka',
-            'valid-to'       => 'Halali Mpaka',
+            'valid-from'     => 'Halali kuanzia',
+            'valid-to'       => 'Halali hadi',
             'reference'      => 'Kumbukumbu',
             'status'         => 'Hali',
         ],
 
         'groups' => [
-            'agreement-type' => 'Agreement Aina',
+            'agreement-type' => 'Aina ya makubaliano',
             'vendor'         => 'Msambazaji',
             'state'          => 'Hali',
-            'created-at'     => 'Imeundwa',
-            'updated-at'     => 'Imesasishwa',
+            'created-at'     => 'Iliundwa',
+            'updated-at'     => 'Ilisasishwa',
         ],
 
         'filters' => [
-            'agreement'      => 'Agreement',
+            'agreement'      => 'Makubaliano',
             'vendor'         => 'Msambazaji',
-            'agreement-type' => 'Agreement Aina',
-            'buyer'          => 'Buyer',
+            'agreement-type' => 'Aina ya makubaliano',
+            'buyer'          => 'Mnunuzi',
             'company'        => 'Kampuni',
-            'valid-from'     => 'Halali Kutoka',
-            'valid-to'       => 'Halali Mpaka',
+            'valid-from'     => 'Halali kuanzia',
+            'valid-to'       => 'Halali hadi',
             'reference'      => 'Kumbukumbu',
             'status'         => 'Hali',
-            'created-at'     => 'Imeundwa',
-            'updated-at'     => 'Imesasishwa',
+            'created-at'     => 'Iliundwa',
+            'updated-at'     => 'Ilisasishwa',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Ununuzi Agreement imefutwa',
-                    'body'  => 'ununuzi agreement ina imefutwa successfully.',
+                    'title' => 'Makubaliano ya ununuzi yamefutwa',
+                    'body'  => 'Makubaliano ya ununuzi yamefutwa.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Ununuzi Agreement restored',
-                    'body'  => 'ununuzi agreement ina restored successfully.',
+                    'title' => 'Makubaliano ya ununuzi yamerejeshwa',
+                    'body'  => 'Makubaliano ya ununuzi yamerejeshwa.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Ununuzi Agreement permanently imefutwa',
-                        'body'  => 'ununuzi agreement ina permanently imefutwa successfully.',
+                        'title' => 'Makubaliano ya ununuzi yamefutwa kabisa',
+                        'body'  => 'Makubaliano ya ununuzi yamefutwa kabisa.',
                     ],
 
                     'error' => [
-                        'title' => 'Ununuzi Agreement could si kuwa imefutwa',
-                        'body'  => 'ununuzi agreement haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Makubaliano ya ununuzi hayakuweza kufutwa',
+                        'body'  => 'Makubaliano ya ununuzi hayawezi kufutwa kwa sababu yanatumika.',
                     ],
 
                     'warning' => [
-                        'title' => 'Ununuzi Agreement haiwezekani kuwa imefutwa',
-                        'body'  => 'Tu ununuzi agreements katika Rasimu au Imeghairiwa hali unaweza kuwa imefutwa.',
+                        'title' => 'Makubaliano ya ununuzi hayawezi kufutwa',
+                        'body'  => 'Makubaliano ya ununuzi yaliyo katika hali ya Rasimu au Imeghairiwa pekee ndiyo yanaweza kufutwa.',
                     ],
                 ],
             ],
@@ -134,33 +134,33 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Ununuzi Agreements imefutwa',
-                    'body'  => 'ununuzi agreements ina imefutwa successfully.',
+                    'title' => 'Makubaliano ya ununuzi yamefutwa',
+                    'body'  => 'Makubaliano ya ununuzi yamefutwa.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Ununuzi Agreements restored',
-                    'body'  => 'ununuzi agreements ina restored successfully.',
+                    'title' => 'Makubaliano ya ununuzi yamerejeshwa',
+                    'body'  => 'Makubaliano ya ununuzi yamerejeshwa.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Ununuzi Agreements permanently imefutwa',
-                        'body'  => 'ununuzi agreements ina permanently imefutwa successfully.',
+                        'title' => 'Makubaliano ya ununuzi yamefutwa kabisa',
+                        'body'  => 'Makubaliano ya ununuzi yamefutwa kabisa.',
                     ],
 
                     'error' => [
-                        'title' => 'Ununuzi Agreements could si kuwa imefutwa',
-                        'body'  => 'ununuzi agreements haiwezekani kuwa imefutwa kwa sababu wao ni currently katika tumia.',
+                        'title' => 'Makubaliano ya ununuzi hayakuweza kufutwa',
+                        'body'  => 'Makubaliano ya ununuzi hayawezi kufutwa kwa sababu yanatumika.',
                     ],
 
                     'warning' => [
-                        'title' => 'Ununuzi Agreement haiwezekani kuwa imefutwa',
-                        'body'  => 'Tu ununuzi agreements katika Rasimu au Imeghairiwa hali unaweza kuwa imefutwa.',
+                        'title' => 'Makubaliano ya ununuzi hayawezi kufutwa',
+                        'body'  => 'Makubaliano ya ununuzi yaliyo katika hali ya Rasimu au Imeghairiwa pekee ndiyo yanaweza kufutwa.',
                     ],
                 ],
             ],
@@ -174,12 +174,12 @@ return [
 
                 'entries' => [
                     'vendor'                => 'Msambazaji',
-                    'valid-from'            => 'Halali Kutoka',
-                    'valid-to'              => 'Halali Mpaka',
-                    'buyer'                 => 'Buyer',
+                    'valid-from'            => 'Halali kuanzia',
+                    'valid-to'              => 'Halali hadi',
+                    'buyer'                 => 'Mnunuzi',
                     'reference'             => 'Kumbukumbu',
-                    'reference-placeholder' => 'eg. PO/123',
-                    'agreement-type'        => 'Agreement Aina',
+                    'reference-placeholder' => 'mf. PO/123',
+                    'agreement-type'        => 'Aina ya makubaliano',
                     'company'               => 'Kampuni',
                     'currency'              => 'Sarafu',
                 ],
@@ -189,9 +189,9 @@ return [
                 'title' => 'Metadata',
 
                 'entries' => [
-                    'created-at' => 'Imeundwa',
-                    'created-by' => 'Imeundwa Na',
-                    'updated-at' => 'Imesasishwa',
+                    'created-at' => 'Iliundwa',
+                    'created-by' => 'Iliundwa na',
+                    'updated-at' => 'Ilisasishwa',
                 ],
             ],
         ],
@@ -202,19 +202,19 @@ return [
 
                 'entries' => [
                     'product'    => 'Bidhaa',
-                    'quantity'   => 'Kiasi',
-                    'ordered'    => 'Ordered',
+                    'quantity'   => 'Idadi',
+                    'ordered'    => 'Imeagizwa',
                     'uom'        => 'Kipimo',
-                    'unit-price' => 'Bei ya uniti',
+                    'unit-price' => 'Bei ya kipimo',
                 ],
             ],
 
             'additional' => [
-                'title' => 'Additional Taarifa',
+                'title' => 'Taarifa za ziada',
             ],
 
             'terms' => [
-                'title' => 'Terms na Conditions',
+                'title' => 'Sheria na masharti',
             ],
         ],
     ],

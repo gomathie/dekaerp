@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Stakabadhi',
+    'title' => 'Upokeaji',
 
     'navigation' => [
-        'title' => 'Stakabadhi',
+        'title' => 'Upokeaji',
     ],
 
     'form' => [
@@ -12,7 +12,7 @@ return [
             'title'  => 'Mpokeaji',
             'fields' => [
                 'reference'         => 'Kumbukumbu',
-                'payment-reference' => 'Malipo Kumbukumbu',
+                'payment-reference' => 'Kumbukumbu ya malipo',
             ],
         ],
     ],

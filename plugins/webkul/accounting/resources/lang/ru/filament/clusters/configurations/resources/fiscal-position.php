@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'model-label' => 'Финансовый Должность',
+    'model-label' => 'Налоговая позиция',
 
     'navigation' => [
-        'title' => 'Финансовый Positions',
-        'group' => 'Учёт',
+        'title' => 'Налоговые позиции',
+        'group' => 'Бухгалтерия',
     ],
 ];

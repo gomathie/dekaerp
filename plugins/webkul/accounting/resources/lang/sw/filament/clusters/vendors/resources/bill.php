@@ -10,14 +10,14 @@ return [
     'global-search' => [
         'vendor'   => 'Msambazaji',
         'date'     => 'Tarehe',
-        'due-date' => 'Tarehe ya malipo',
+        'due-date' => 'Tarehe ya mwisho',
         'amount'   => 'Kiasi',
     ],
 
     'form' => [
-        'biller'            => 'Biller',
+        'biller'            => 'Mtozaji',
         'reference'         => 'Kumbukumbu',
-        'payment-reference' => 'Malipo Kumbukumbu',
+        'payment-reference' => 'Kumbukumbu ya malipo',
         'date'              => 'Tarehe',
     ],
 ];

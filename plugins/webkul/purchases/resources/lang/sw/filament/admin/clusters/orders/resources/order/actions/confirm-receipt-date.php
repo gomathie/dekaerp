@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'label' => 'Thibitisha Stakabadhi Tarehe',
+    'label' => 'Thibitisha tarehe ya upokeaji',
 
     'action' => [
         'notification' => [
             'success' => [
-                'title' => 'Agizo imethibitishwa stakabadhi tarehe',
-                'body'  => 'agizo ina imethibitishwa stakabadhi tarehe successfully.',
+                'title' => 'Tarehe ya upokeaji imethibitishwa',
+                'body'  => 'Tarehe ya upokeaji ya oda imethibitishwa.',
             ],
         ],
     ],

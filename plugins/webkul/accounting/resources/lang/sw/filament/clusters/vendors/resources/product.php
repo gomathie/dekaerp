@@ -3,7 +3,7 @@
 return [
     'navigation' => [
         'title' => 'Bidhaa',
-        'group' => 'Ghala',
+        'group' => 'Hisa',
     ],
 
     'form' => [
@@ -13,7 +13,7 @@ return [
 
                 'fields' => [
                     'name'             => 'Jina',
-                    'name-placeholder' => 'eg. T-shirt',
+                    'name-placeholder' => 'mf. fulana',
                     'description'      => 'Maelezo',
                     'tags'             => 'Lebo',
                     'sales'            => 'Mauzo',
@@ -22,13 +22,13 @@ return [
             ],
 
             'invoice-policy' => [
-                'title'            => 'Ankara Policy',
-                'ordered-policy'   => 'Wewe unaweza ankara goods kabla ya wao ni delivered.',
-                'delivered-policy' => 'Ankara baada ya usafirishaji, based washa quantities delivered, si ordered.',
+                'title'            => 'Sera ya ankara',
+                'ordered-policy'   => 'Unaweza kutoza ankara ya bidhaa kabla hazijawasilishwa.',
+                'delivered-policy' => 'Toza ankara baada ya uwasilishaji, kulingana na idadi iliyowasilishwa, si iliyoagizwa.',
             ],
 
             'images' => [
-                'title' => 'Images',
+                'title' => 'Picha',
             ],
 
             'settings' => [
@@ -37,14 +37,14 @@ return [
                 'fields' => [
                     'type'      => 'Aina',
                     'reference' => 'Kumbukumbu',
-                    'barcode'   => 'Msimbo pau',
+                    'barcode'   => 'Msimbopau',
                     'category'  => 'Kategoria',
                     'company'   => 'Kampuni',
                 ],
             ],
 
             'category-and-tags' => [
-                'title' => 'Kategoria & Lebo',
+                'title' => 'Kategoria na lebo',
 
                 'fields' => [
                     'category' => 'Kategoria',
@@ -53,7 +53,7 @@ return [
             ],
 
             'pricing' => [
-                'title' => 'Pricing',
+                'title' => 'Bei',
 
                 'fields' => [
                     'price' => 'Bei',
@@ -62,7 +62,7 @@ return [
             ],
 
             'additional' => [
-                'title' => 'Additional',
+                'title' => 'Ziada',
             ],
         ],
     ],
@@ -70,65 +70,65 @@ return [
     'table' => [
         'columns' => [
             'name'        => 'Jina',
-            'images'      => 'Images',
+            'images'      => 'Picha',
             'type'        => 'Aina',
             'reference'   => 'Kumbukumbu',
-            'responsible' => 'Responsible',
-            'barcode'     => 'Msimbo pau',
+            'responsible' => 'Msimamizi',
+            'barcode'     => 'Msimbopau',
             'category'    => 'Kategoria',
             'company'     => 'Kampuni',
             'price'       => 'Bei',
             'cost'        => 'Gharama',
             'tags'        => 'Lebo',
-            'deleted-at'  => 'Imefutwa',
-            'created-at'  => 'Imeundwa',
-            'updated-at'  => 'Imesasishwa',
+            'deleted-at'  => 'Ilifutwa',
+            'created-at'  => 'Iliundwa',
+            'updated-at'  => 'Ilisasishwa',
         ],
 
         'groups' => [
             'type'       => 'Aina',
             'category'   => 'Kategoria',
-            'created-at' => 'Imeundwa',
+            'created-at' => 'Iliundwa',
         ],
 
         'filters' => [
             'name'        => 'Jina',
             'type'        => 'Aina',
             'reference'   => 'Kumbukumbu',
-            'barcode'     => 'Msimbo pau',
+            'barcode'     => 'Msimbopau',
             'category'    => 'Kategoria',
             'company'     => 'Kampuni',
             'price'       => 'Bei',
             'cost'        => 'Gharama',
-            'is-favorite' => 'Ni Favorite',
+            'is-favorite' => 'Ni kipendwa',
             'weight'      => 'Uzito',
             'volume'      => 'Ujazo',
             'tags'        => 'Lebo',
-            'responsible' => 'Responsible',
-            'created-at'  => 'Imeundwa',
-            'updated-at'  => 'Imesasishwa',
-            'creator'     => 'Creator',
+            'responsible' => 'Msimamizi',
+            'created-at'  => 'Iliundwa',
+            'updated-at'  => 'Ilisasishwa',
+            'creator'     => 'Muundaji',
         ],
 
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Bidhaa restored',
-                    'body'  => 'bidhaa ina restored successfully.',
+                    'title' => 'Bidhaa imerejeshwa',
+                    'body'  => 'Bidhaa imerejeshwa.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'title' => 'Bidhaa imefutwa',
-                    'body'  => 'bidhaa ina imefutwa successfully.',
+                    'body'  => 'Bidhaa imefutwa.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Bidhaa force imefutwa',
-                    'body'  => 'bidhaa ina force imefutwa successfully.',
+                    'title' => 'Bidhaa imefutwa kabisa',
+                    'body'  => 'Bidhaa imefutwa kabisa.',
                 ],
             ],
         ],
@@ -136,22 +136,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Bidhaa restored',
-                    'body'  => 'bidhaa ina restored successfully.',
+                    'title' => 'Bidhaa zimerejeshwa',
+                    'body'  => 'Bidhaa zimerejeshwa.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Bidhaa imefutwa',
-                    'body'  => 'bidhaa ina imefutwa successfully.',
+                    'title' => 'Bidhaa zimefutwa',
+                    'body'  => 'Bidhaa zimefutwa.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Bidhaa force imefutwa',
-                    'body'  => 'bidhaa ina force imefutwa successfully.',
+                    'title' => 'Bidhaa zimefutwa kabisa',
+                    'body'  => 'Bidhaa zimefutwa kabisa.',
                 ],
             ],
         ],
@@ -164,14 +164,14 @@ return [
 
                 'entries' => [
                     'name'             => 'Jina',
-                    'name-placeholder' => 'eg. T-shirt',
+                    'name-placeholder' => 'mf. fulana',
                     'description'      => 'Maelezo',
                     'tags'             => 'Lebo',
                 ],
             ],
 
             'images' => [
-                'title' => 'Images',
+                'title' => 'Picha',
 
                 'entries' => [],
             ],
@@ -182,14 +182,14 @@ return [
                 'entries' => [
                     'type'      => 'Aina',
                     'reference' => 'Kumbukumbu',
-                    'barcode'   => 'Msimbo pau',
+                    'barcode'   => 'Msimbopau',
                     'category'  => 'Kategoria',
                     'company'   => 'Kampuni',
                 ],
             ],
 
             'pricing' => [
-                'title' => 'Pricing',
+                'title' => 'Bei',
 
                 'entries' => [
                     'price' => 'Bei',
@@ -198,18 +198,18 @@ return [
             ],
 
             'inventory' => [
-                'title' => 'Ghala',
+                'title' => 'Hisa',
 
                 'entries' => [],
 
                 'fieldsets' => [
                     'tracking' => [
-                        'title' => 'Tracking',
+                        'title' => 'Ufuatiliaji',
 
                         'entries' => [
-                            'track-inventory' => 'Track Ghala',
-                            'track-by'        => 'Track Na',
-                            'expiration-date' => 'Expiration Tarehe',
+                            'track-inventory' => 'Fuatilia hisa',
+                            'track-by'        => 'Fuatilia kwa',
+                            'expiration-date' => 'Tarehe ya kuisha muda',
                         ],
                     ],
 
@@ -225,33 +225,33 @@ return [
                         'title' => 'Usafirishaji',
 
                         'entries' => [
-                            'responsible' => 'Responsible',
+                            'responsible' => 'Msimamizi',
                             'weight'      => 'Uzito',
                             'volume'      => 'Ujazo',
-                            'sale-delay'  => 'Mteja Lead Time (Siku)',
+                            'sale-delay'  => 'Muda wa kumfikishia mteja (siku)',
                         ],
                     ],
 
                     'traceability' => [
-                        'title' => 'Traceability',
+                        'title' => 'Ufuatiliaji',
 
                         'entries' => [
-                            'expiration-date'  => 'Expiration Tarehe (Siku)',
-                            'best-before-date' => 'Best Kabla ya Tarehe (Siku)',
-                            'removal-date'     => 'Removal Tarehe (Siku)',
-                            'alert-date'       => 'Alert Tarehe (Siku)',
+                            'expiration-date'  => 'Kuisha muda (siku)',
+                            'best-before-date' => 'Bora kabla ya (siku)',
+                            'removal-date'     => 'Tarehe ya kuondoa (siku)',
+                            'alert-date'       => 'Tarehe ya tahadhari (siku)',
                         ],
                     ],
                 ],
             ],
 
             'record-information' => [
-                'title' => 'Rekodi Taarifa',
+                'title' => 'Taarifa za rekodi',
 
                 'entries' => [
-                    'created-at' => 'Imeundwa',
-                    'created-by' => 'Imeundwa Na',
-                    'updated-at' => 'Imesasishwa',
+                    'created-at' => 'Iliundwa',
+                    'created-by' => 'Iliundwa na',
+                    'updated-at' => 'Ilisasishwa',
                 ],
             ],
         ],

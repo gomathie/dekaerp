@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'label' => 'Send PO Na Barua pepe',
+    'label' => 'Tuma oda kwa barua pepe',
 
     'form' => [
         'fields' => [
-            'to'      => 'Hadi',
-            'subject' => 'Subject',
+            'to'      => 'Kwa',
+            'subject' => 'Mada',
             'message' => 'Ujumbe',
         ],
     ],
@@ -15,17 +15,17 @@ return [
         'notification' => [
             'success' => [
                 'title' => 'Barua pepe imetumwa',
-                'body'  => 'barua pepe ina imetumwa successfully.',
+                'body'  => 'Barua pepe imetumwa.',
             ],
 
             'warning' => [
-                'title' => 'Baadhi emails zilikuwa si imetumwa',
-                'body'  => 'Baadhi wasambazaji ita si pata barua pepe kwa sababu yao barua pepe anwani ni si inapatikana.',
+                'title' => 'Baadhi ya barua pepe hazikutumwa',
+                'body'  => 'Baadhi ya wasambazaji hawatapata barua pepe kwa sababu hawana anwani ya barua pepe.',
             ],
 
             'danger' => [
-                'title' => 'Barua pepe si imetumwa',
-                'body'  => 'Tafadhali ongeza barua pepe anwani hadi imechaguliwa wasambazaji na jaribu tena.',
+                'title' => 'Barua pepe haikutumwa',
+                'body'  => 'Ongeza anwani ya barua pepe kwa wasambazaji uliowachagua kisha ujaribu tena.',
             ],
         ],
     ],

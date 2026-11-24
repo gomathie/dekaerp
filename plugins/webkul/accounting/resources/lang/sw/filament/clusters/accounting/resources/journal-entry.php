@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Uingizaji wa jarida',
+    'title' => 'Maingizo ya jarida',
 
     'navigation' => [
-        'title' => 'Uingizaji wa jarida',
+        'title' => 'Maingizo ya jarida',
     ],
 
     'record-sub-navigation' => [
@@ -13,9 +13,9 @@ return [
 
     'global-search' => [
         'number'   => 'Nambari',
-        'partner'  => 'Mshirika',
+        'partner'  => 'Mhusika',
         'date'     => 'Tarehe ya ankara',
-        'due-date' => 'Ankara Tarehe ya malipo',
+        'due-date' => 'Tarehe ya mwisho ya ankara',
     ],
 
     'form' => [
@@ -25,7 +25,7 @@ return [
 
                 'fields' => [
                     'reference'       => 'Kumbukumbu',
-                    'accounting-date' => 'Uhasibu Tarehe',
+                    'accounting-date' => 'Tarehe ya uhasibu',
                     'journal'         => 'Jarida',
                 ],
             ],
@@ -33,51 +33,51 @@ return [
 
         'tabs' => [
             'lines' => [
-                'title' => 'Jarida Vipengee',
+                'title' => 'Vipengee vya jarida',
 
                 'repeater' => [
                     'title'       => 'Vipengee',
-                    'add-item'    => 'Ongeza Kipengee',
+                    'add-item'    => 'Ongeza kipengee',
 
                     'columns' => [
                         'account'                  => 'Akaunti',
-                        'partner'                  => 'Mshirika',
+                        'partner'                  => 'Mhusika',
                         'label'                    => 'Lebo',
-                        'amount-currency'          => 'Kiasi (Sarafu)',
+                        'amount-currency'          => 'Kiasi (sarafu)',
                         'currency'                 => 'Sarafu',
                         'taxes'                    => 'Kodi',
                         'debit'                    => 'Debiti',
                         'credit'                   => 'Krediti',
-                        'discount-amount-currency' => 'Punguzo Kiasi (Sarafu)',
+                        'discount-amount-currency' => 'Kiasi cha punguzo (sarafu)',
                     ],
 
                     'fields' => [
                         'account'                  => 'Akaunti',
-                        'partner'                  => 'Mshirika',
+                        'partner'                  => 'Mhusika',
                         'label'                    => 'Lebo',
-                        'amount-currency'          => 'Kiasi (Sarafu)',
+                        'amount-currency'          => 'Kiasi (sarafu)',
                         'currency'                 => 'Sarafu',
                         'taxes'                    => 'Kodi',
                         'debit'                    => 'Debiti',
                         'credit'                   => 'Krediti',
-                        'discount-amount-currency' => 'Punguzo Kiasi (Sarafu)',
+                        'discount-amount-currency' => 'Kiasi cha punguzo (sarafu)',
                     ],
                 ],
             ],
 
             'other-information' => [
-                'title'    => 'Nyingine Taarifa',
+                'title'    => 'Taarifa nyingine',
 
                 'fields' => [
-                    'checked'         => 'Checked',
+                    'checked'         => 'Imekaguliwa',
                     'company'         => 'Kampuni',
-                    'fiscal-position' => 'Kifedha Cheo',
-                    'fiscal-position-tooltip' => 'Kifedha positions ni inatumika hadi adapt kodi na akaunti based washa mteja mahali.',
+                    'fiscal-position' => 'Hali ya kodi',
+                    'fiscal-position-tooltip' => 'Hali za kodi hutumika kurekebisha kodi na akaunti kulingana na mahali mteja alipo.',
                 ],
             ],
 
             'term-and-conditions' => [
-                'title' => 'Term & Conditions',
+                'title' => 'Sheria na masharti',
             ],
         ],
     ],
@@ -88,13 +88,13 @@ return [
             'invoice-date' => 'Tarehe ya ankara',
             'date'         => 'Tarehe',
             'number'       => 'Nambari',
-            'partner'      => 'Mshirika',
+            'partner'      => 'Mhusika',
             'reference'    => 'Kumbukumbu',
             'journal'      => 'Jarida',
             'company'      => 'Kampuni',
             'total'        => 'Jumla',
             'state'        => 'Hali',
-            'checked'      => 'Checked',
+            'checked'      => 'Imekaguliwa',
         ],
 
         'summarizers' => [
@@ -102,10 +102,10 @@ return [
         ],
 
         'groups' => [
-            'partner'        => 'Mshirika',
+            'partner'        => 'Mhusika',
             'journal'        => 'Jarida',
             'state'          => 'Hali',
-            'payment-method' => 'Malipo Method',
+            'payment-method' => 'Njia ya malipo',
             'date'           => 'Tarehe',
             'invoice-date'   => 'Tarehe ya ankara',
             'company'        => 'Kampuni',
@@ -113,20 +113,20 @@ return [
 
         'filters' => [
             'number'                       => 'Nambari',
-            'invoice-partner-display-name' => 'Ankara Mshirika Display Jina',
+            'invoice-partner-display-name' => 'Jina la mhusika kwenye ankara',
             'invoice-date'                 => 'Tarehe ya ankara',
-            'invoice-due-date'             => 'Ankara Tarehe ya malipo',
-            'invoice-origin'               => 'Ankara Asili',
+            'invoice-due-date'             => 'Tarehe ya mwisho ya ankara',
+            'invoice-origin'               => 'Chanzo cha ankara',
             'reference'                    => 'Kumbukumbu',
-            'created-at'                   => 'Imeundwa',
-            'updated-at'                   => 'Imesasishwa',
+            'created-at'                   => 'Iliundwa',
+            'updated-at'                   => 'Ilisasishwa',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Malipo imefutwa',
-                    'body'  => 'malipo ina imefutwa successfully.',
+                    'title' => 'Malipo yamefutwa',
+                    'body'  => 'Malipo yamefutwa.',
                 ],
             ],
         ],
@@ -134,8 +134,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Malipo imefutwa',
-                    'body'  => 'malipo ina imefutwa successfully.',
+                    'title' => 'Malipo yamefutwa',
+                    'body'  => 'Malipo yamefutwa.',
                 ],
             ],
         ],
@@ -154,7 +154,7 @@ return [
                 'entries' => [
                     'number'          => 'Nambari',
                     'reference'       => 'Kumbukumbu',
-                    'accounting-date' => 'Uhasibu Tarehe',
+                    'accounting-date' => 'Tarehe ya uhasibu',
                     'journal'         => 'Jarida',
                 ],
             ],
@@ -162,12 +162,12 @@ return [
 
         'tabs' => [
             'lines' => [
-                'title' => 'Jarida Vipengee',
+                'title' => 'Vipengee vya jarida',
 
                 'repeater' => [
                     'entries' => [
                         'account'  => 'Akaunti',
-                        'partner'  => 'Mshirika',
+                        'partner'  => 'Mhusika',
                         'label'    => 'Lebo',
                         'currency' => 'Sarafu',
                         'taxes'    => 'Kodi',
@@ -178,7 +178,7 @@ return [
             ],
 
             'other-information' => [
-                'title' => 'Nyingine Taarifa',
+                'title' => 'Taarifa nyingine',
 
                 'fieldset' => [
                     'accounting' => [
@@ -186,15 +186,15 @@ return [
 
                         'entries' => [
                             'company'         => 'Kampuni',
-                            'fiscal-position' => 'Kifedha Cheo',
-                            'checked'         => 'Checked',
+                            'fiscal-position' => 'Hali ya kodi',
+                            'checked'         => 'Imekaguliwa',
                         ],
                     ],
                 ],
             ],
 
             'term-and-conditions' => [
-                'title' => 'Term & Conditions',
+                'title' => 'Sheria na masharti',
             ],
         ],
     ],

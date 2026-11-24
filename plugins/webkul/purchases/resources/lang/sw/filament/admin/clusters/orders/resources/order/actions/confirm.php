@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'label' => 'Thibitisha Agizo',
+    'label' => 'Thibitisha oda',
 
     'action' => [
         'notification' => [
             'success' => [
-                'title' => 'Agizo imethibitishwa',
-                'body'  => 'agizo ina imethibitishwa successfully.',
+                'title' => 'Oda imethibitishwa',
+                'body'  => 'Oda imethibitishwa.',
             ],
         ],
     ],

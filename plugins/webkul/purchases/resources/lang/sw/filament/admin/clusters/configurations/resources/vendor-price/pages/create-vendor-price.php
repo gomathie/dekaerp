@@ -2,11 +2,11 @@
 
 return [
     'navigation' => [
-        'title' => 'Unda Msambazaji Bei Orodha',
+        'title' => 'Unda orodha ya bei ya msambazaji',
     ],
 
     'notification' => [
-        'title' => 'Msambazaji Bei imeundwa',
-        'body'  => 'msambazaji bei ina imeundwa successfully.',
+        'title' => 'Bei ya msambazaji imeundwa',
+        'body'  => 'Bei ya msambazaji imeundwa.',
     ],
 ];

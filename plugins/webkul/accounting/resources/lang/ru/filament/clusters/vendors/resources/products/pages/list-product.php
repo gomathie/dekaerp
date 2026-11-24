@@ -3,6 +3,6 @@
 return [
     'tabs' => [
         'sales'    => 'Продажи',
-        'purchase' => 'Закупка',
+        'purchase' => 'Закупки',
     ],
 ];

@@ -2,8 +2,8 @@
 
 return [
     'notification' => [
-        'title' => 'Agizo imesasishwa',
-        'body'  => 'agizo ina imesasishwa successfully.',
+        'title' => 'Oda imesasishwa',
+        'body'  => 'Oda imesasishwa.',
     ],
 
     'header-actions' => [
@@ -26,13 +26,13 @@ return [
         'delete' => [
             'notification' => [
                 'success' => [
-                    'title' => 'Agizo imefutwa',
-                    'body'  => 'agizo ina imefutwa successfully.',
+                    'title' => 'Oda imefutwa',
+                    'body'  => 'Oda imefutwa.',
                 ],
 
                 'error' => [
-                    'title' => 'Agizo could si kuwa imefutwa',
-                    'body'  => 'agizo haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                    'title' => 'Oda haikuweza kufutwa',
+                    'body'  => 'Oda haiwezi kufutwa kwa sababu inatumika.',
                 ],
             ],
         ],

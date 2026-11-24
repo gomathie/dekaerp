@@ -6,10 +6,10 @@ return [
         'posted'      => 'Проведён',
         'sales'       => 'Продажи',
         'purchases'   => 'Закупки',
-        'reversed'    => 'Reversed',
+        'reversed'    => 'Сторнирован',
         'bank'        => 'Банк',
         'cash'        => 'Касса',
         'credit'      => 'Кредит',
-        'misc'        => 'Misc',
+        'misc'        => 'Прочее',
     ],
 ];

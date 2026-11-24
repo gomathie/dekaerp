@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Приходы',
+    'title' => 'Поступления',
 
     'navigation' => [
-        'title' => 'Приходы',
+        'title' => 'Поступления',
     ],
 
     'form' => [
@@ -12,7 +12,7 @@ return [
             'title'  => 'Получатель',
             'fields' => [
                 'reference'         => 'Ссылка',
-                'payment-reference' => 'Оплата Ссылка',
+                'payment-reference' => 'Назначение платежа',
             ],
         ],
     ],

@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'action'       => 'Weka juu uhasibu kwa hii kampuni',
-    'notice'       => 'Uhasibu ni si weka juu kwa hii kampuni bado. Tumia \'Weka juu accounting\' chini ya hadi unda yake chati ya akaunti, majarida na chaguo-msingi mipangilio.',
+    'action'       => 'Weka uhasibu kwa kampuni hii',
+    'notice'       => 'Uhasibu bado haujawekwa kwa kampuni hii. Tumia \'Weka uhasibu\' hapo chini ili kuunda chati yake ya akaunti, majarida na mipangilio chaguomsingi.',
     'notification' => [
-        'title' => 'Uhasibu weka juu',
-        'body'  => 'Chati ya akaunti, majarida na chaguo-msingi mipangilio zilikuwa imeundwa kwa hii kampuni.',
+        'title' => 'Uhasibu umewekwa',
+        'body'  => 'Chati ya akaunti, majarida na mipangilio chaguomsingi vimeundwa kwa kampuni hii.',
     ],
 ];

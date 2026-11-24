@@ -2,19 +2,19 @@
 
 return [
     'tabs' => [
-        'goods'                => 'Goods',
-        'services'             => 'Services',
-        'favorites'            => 'Favorites',
-        'archived'             => 'Imehifadhiwa',
+        'goods'                => 'Bidhaa',
+        'services'             => 'Huduma',
+        'favorites'            => 'Vipendwa',
+        'archived'             => 'Kwenye kumbukumbu',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Bidhaa',
+            'label' => 'Bidhaa mpya',
 
             'notification' => [
                 'title' => 'Bidhaa imeundwa',
-                'body'  => 'bidhaa ina imeundwa successfully.',
+                'body'  => 'Bidhaa imeundwa.',
             ],
         ],
     ],

@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Rudisho',
+    'title' => 'Marejesho',
 
     'navigation' => [
-        'title' => 'Refunds',
+        'title' => 'Marejesho',
     ],
 
     'global-search' => [
@@ -13,11 +13,11 @@ return [
     ],
 
     'form' => [
-        'biller'            => 'Biller',
-        'name'              => 'Msambazaji Noti ya mkopo',
+        'biller'            => 'Mtozaji',
+        'name'              => 'Hati ya mkopo ya msambazaji',
         'name-placeholder'  => 'RBILL/2025/02/0001',
         'reference'         => 'Kumbukumbu',
-        'payment-reference' => 'Malipo Kumbukumbu',
-        'date'              => 'Uhasibu Tarehe',
+        'payment-reference' => 'Kumbukumbu ya malipo',
+        'date'              => 'Tarehe ya uhasibu',
     ],
 ];

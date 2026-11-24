@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'blanket-order'     => 'Blanket Заказ',
-    'purchase-template' => 'Закупка Шаблон',
+    'blanket-order'     => 'Рамочный заказ',
+    'purchase-template' => 'Шаблон закупки',
 ];

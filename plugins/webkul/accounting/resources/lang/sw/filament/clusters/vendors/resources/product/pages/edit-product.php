@@ -3,18 +3,18 @@
 return [
     'notification' => [
         'title' => 'Bidhaa imesasishwa',
-        'body'  => 'bidhaa ina imesasishwa successfully.',
+        'body'  => 'Bidhaa imesasishwa.',
     ],
 
     'header-actions' => [
         'update-quantity' => [
-            'label'                     => 'Sasisha Kiasi',
-            'modal-heading'             => 'Sasisha Bidhaa Kiasi',
+            'label'                     => 'Sasisha idadi',
+            'modal-heading'             => 'Sasisha idadi ya bidhaa',
             'modal-submit-action-label' => 'Sasisha',
 
             'form' => [
                 'fields' => [
-                    'on-hand-qty' => 'Washa Mkono Kiasi',
+                    'on-hand-qty' => 'Idadi iliyopo',
                 ],
             ],
         ],
@@ -22,7 +22,7 @@ return [
         'delete' => [
             'notification' => [
                 'title' => 'Bidhaa imefutwa',
-                'body'  => 'bidhaa ina imefutwa successfully.',
+                'body'  => 'Bidhaa imefutwa.',
             ],
         ],
     ],

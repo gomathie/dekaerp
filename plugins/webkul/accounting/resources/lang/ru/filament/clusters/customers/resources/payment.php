@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'title'       => 'Оплата',
-    'model-label' => 'Оплата',
+    'title'       => 'Платёж',
+    'model-label' => 'Платёж',
 
     'navigation' => [
-        'title' => 'Оплаты',
+        'title' => 'Платежи',
         'group' => 'Счета',
     ],
 

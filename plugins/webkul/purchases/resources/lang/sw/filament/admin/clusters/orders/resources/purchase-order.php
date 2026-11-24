@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Agizo la ununuzis',
+        'title' => 'Oda za ununuzi',
     ],
 ];

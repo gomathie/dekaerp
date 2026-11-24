@@ -2,25 +2,25 @@
 
 return [
     'navigation' => [
-        'title' => 'Закупка Agreements',
+        'title' => 'Соглашения о закупках',
     ],
 
     'tabs' => [
-        'my-agreements'      => 'Мой Agreements',
-        'blanket-orders'     => 'Blanket Заказы',
-        'purchase-templates' => 'Закупка Шаблоны',
+        'my-agreements'      => 'Мои соглашения',
+        'blanket-orders'     => 'Рамочные заказы',
+        'purchase-templates' => 'Шаблоны закупок',
         'draft'              => 'Черновик',
-        'done'               => 'Завершён',
+        'done'               => 'Выполнен',
         'archived'           => 'В архиве',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Новое Закупка Agreement',
+            'label' => 'Новое соглашение о закупке',
 
             'notification' => [
-                'title' => 'Закупка Agreement создано',
-                'body'  => 'закупка agreement есть создано successfully.',
+                'title' => 'Соглашение о закупке создано',
+                'body'  => 'Соглашение о закупке успешно создано.',
             ],
         ],
     ],

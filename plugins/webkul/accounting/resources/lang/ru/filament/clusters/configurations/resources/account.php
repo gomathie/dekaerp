@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'model-label' => 'Chart Счёт',
+    'model-label' => 'План счетов',
 
     'navigation' => [
         'title' => 'План счетов',
-        'group' => 'Учёт',
+        'group' => 'Бухгалтерия',
     ],
 ];

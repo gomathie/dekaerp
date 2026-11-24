@@ -1,15 +1,15 @@
 <?php
 
 return [
-    'title' => 'Manage Maagizo',
+    'title' => 'Simamia oda',
 
     'form' => [
-        'enable-order-approval'                    => 'Agizo la ununuzi Approval',
-        'enable-order-approval-helper-text'        => 'Request managers hadi idhinisha maagizo juu ya minimum kiasi',
-        'min-amount'                               => 'Minimum Kiasi',
-        'enable-lock-confirmed-orders'             => 'Lock Imethibitishwa Maagizo',
-        'enable-lock-confirmed-orders-helper-text' => 'Kiotomatiki lock imethibitishwa maagizo hadi prevent editing',
-        'enable-purchase-agreements'               => 'Ununuzi Agreements',
-        'enable-purchase-agreements-helper-text'   => 'Manage blanket maagizo na ununuzi violezo',
+        'enable-order-approval'                    => 'Idhini ya oda za ununuzi',
+        'enable-order-approval-helper-text'        => 'Omba wasimamizi waidhinishe oda zinazozidi kiasi cha chini',
+        'min-amount'                               => 'Kiasi cha chini',
+        'enable-lock-confirmed-orders'             => 'Funga oda zilizothibitishwa',
+        'enable-lock-confirmed-orders-helper-text' => 'Funga oda zilizothibitishwa kiotomatiki ili zisihaririwe',
+        'enable-purchase-agreements'               => 'Makubaliano ya ununuzi',
+        'enable-purchase-agreements-helper-text'   => 'Simamia oda za jumla na violezo vya ununuzi',
     ],
 ];

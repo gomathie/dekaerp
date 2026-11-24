@@ -2,12 +2,12 @@
 
 return [
     'label'             => 'Uhasibu',
-    'cash'              => 'Taslimu saa benki',
-    'cash-hint'         => 'Benki na taslimu akaunti leo',
-    'to-reconcile'      => 'Benki mistari hadi patanisha',
-    'to-reconcile-hint' => 'Imported taarifa mistari si bado matched',
-    'drafts'            => 'Rasimu uingizaji wa jarida',
-    'drafts-hint'       => 'Maingizo si bado imewekwa',
-    'attention'         => '{1} :count benki mstari hadi patanisha|[2,*] :count benki mistari hadi patanisha',
-    'reconcile'         => 'Patanisha benki',
+    'cash'              => 'Fedha benkini',
+    'cash-hint'         => 'Akaunti za benki na fedha taslimu leo',
+    'to-reconcile'      => 'Mistari ya benki ya kulinganisha',
+    'to-reconcile-hint' => 'Mistari ya taarifa iliyoletwa ambayo bado haijalinganishwa',
+    'drafts'            => 'Rasimu za maingizo ya jarida',
+    'drafts-hint'       => 'Maingizo ambayo bado hayajarekodiwa',
+    'attention'         => '{1} Mstari :count wa benki wa kulinganisha|[2,*] Mistari :count ya benki ya kulinganisha',
+    'reconcile'         => 'Linganisha benki',
 ];

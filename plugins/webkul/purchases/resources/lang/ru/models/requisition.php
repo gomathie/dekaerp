@@ -1,14 +1,14 @@
 <?php
 
 return [
-    'title'          => 'Закупка Agreement',
+    'title'          => 'Соглашение о закупке',
 
     'log-attributes' => [
         'state'     => 'Статус',
-        'reference' => 'Ссылка',
-        'starts_at' => 'Начать Дата',
-        'ends_at'   => 'Конец Дата',
+        'reference' => 'Номер',
+        'starts_at' => 'Дата начала',
+        'ends_at'   => 'Дата окончания',
         'partner'   => 'Поставщик',
-        'buyer'     => 'Buyer',
+        'buyer'     => 'Закупщик',
     ],
 ];

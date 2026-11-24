@@ -2,26 +2,26 @@
 
 return [
     'navigation' => [
-        'title' => 'Maagizo',
+        'title' => 'Oda',
     ],
 
     'tabs' => [
-        'my-purchases'    => 'Yangu Ununuzi',
-        'starred'         => 'Starred',
-        'purchase-orders' => 'Agizo la ununuzis',
-        'orders'          => 'RFQs',
-        'draft-orders'    => 'Rasimu RFQs',
-        'waiting-orders'  => 'Waiting RFQs',
-        'late-orders'     => 'Late RFQs',
+        'my-purchases'    => 'Ununuzi wangu',
+        'starred'         => 'Zenye nyota',
+        'purchase-orders' => 'Oda za ununuzi',
+        'orders'          => 'Maombi ya nukuu',
+        'draft-orders'    => 'Rasimu za maombi ya nukuu',
+        'waiting-orders'  => 'Maombi ya nukuu yanayosubiri',
+        'late-orders'     => 'Maombi ya nukuu yaliyochelewa',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Agizo jipya',
+            'label' => 'Oda mpya',
 
             'notification' => [
-                'title' => 'Agizo imeundwa',
-                'body'  => 'agizo ina imeundwa successfully.',
+                'title' => 'Oda imeundwa',
+                'body'  => 'Oda imeundwa.',
             ],
         ],
     ],

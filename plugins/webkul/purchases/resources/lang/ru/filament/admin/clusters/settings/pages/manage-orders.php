@@ -1,15 +1,15 @@
 <?php
 
 return [
-    'title' => 'Manage Заказы',
+    'title' => 'Управление заказами',
 
     'form' => [
-        'enable-order-approval'                    => 'Заказ на закупку Approval',
-        'enable-order-approval-helper-text'        => 'Request managers до утвердить заказы выше minimum сумма',
-        'min-amount'                               => 'Minimum Сумма',
-        'enable-lock-confirmed-orders'             => 'Lock Подтверждён Заказы',
-        'enable-lock-confirmed-orders-helper-text' => 'Автоматически lock подтверждён заказы до prevent editing',
-        'enable-purchase-agreements'               => 'Закупка Agreements',
-        'enable-purchase-agreements-helper-text'   => 'Manage blanket заказы и закупка шаблоны',
+        'enable-order-approval'                    => 'Утверждение заказов на закупку',
+        'enable-order-approval-helper-text'        => 'Запрашивать утверждение руководителя для заказов выше минимальной суммы',
+        'min-amount'                               => 'Минимальная сумма',
+        'enable-lock-confirmed-orders'             => 'Блокировать подтверждённые заказы',
+        'enable-lock-confirmed-orders-helper-text' => 'Автоматически блокировать подтверждённые заказы от изменений',
+        'enable-purchase-agreements'               => 'Соглашения о закупках',
+        'enable-purchase-agreements-helper-text'   => 'Управлять рамочными заказами и шаблонами закупок',
     ],
 ];

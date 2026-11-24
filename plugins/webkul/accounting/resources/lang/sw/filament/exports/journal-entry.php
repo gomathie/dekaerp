@@ -5,22 +5,22 @@ return [
         'invoice-date' => 'Tarehe ya ankara',
         'date'         => 'Tarehe',
         'number'       => 'Nambari',
-        'partner'      => 'Mshirika',
+        'partner'      => 'Mhusika',
         'reference'    => 'Kumbukumbu',
         'journal'      => 'Jarida',
         'company'      => 'Kampuni',
         'total'        => 'Jumla',
         'state'        => 'Hali',
-        'checked'      => 'Checked',
+        'checked'      => 'Imekaguliwa',
     ],
 
     'values' => [
         'yes' => 'Ndiyo',
-        'no'  => 'Hakuna',
+        'no'  => 'Hapana',
     ],
 
     'notification' => [
-        'completed' => 'Yako uingizaji wa jarida hamisha ina imekamilika na :count mstari(s) exported.',
-        'failed'    => ':count mstari(s) imeshindwa hadi hamisha.',
+        'completed' => 'Uhamishaji wa maingizo ya jarida umekamilika na safu :count zimehamishwa.',
+        'failed'    => 'Safu :count hazikuweza kuhamishwa.',
     ],
 ];

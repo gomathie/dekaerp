@@ -1,20 +1,20 @@
 <?php
 
 return [
-    'title' => 'Manage Chaguo-msingi Akaunti',
+    'title' => 'Simamia akaunti chaguomsingi',
 
     'setup' => [
-        'action'       => 'Weka juu uhasibu kwa hii kampuni',
-        'notice'       => 'Uhasibu ni si weka juu kwa hii kampuni bado. Tumia "Weka juu uhasibu" juu ya hadi unda yake chati ya akaunti, majarida na chaguo-msingi mipangilio.',
+        'action'       => 'Weka uhasibu kwa kampuni hii',
+        'notice'       => 'Uhasibu bado haujawekwa kwa kampuni hii. Tumia "Weka uhasibu" hapo juu ili kuunda chati yake ya akaunti, majarida na mipangilio chaguomsingi.',
         'notification' => [
-            'title' => 'Uhasibu weka juu',
-            'body'  => 'Chati ya akaunti, majarida na chaguo-msingi mipangilio zilikuwa imeundwa kwa hii kampuni.',
+            'title' => 'Uhasibu umewekwa',
+            'body'  => 'Chati ya akaunti, majarida na mipangilio chaguomsingi vimeundwa kwa kampuni hii.',
         ],
     ],
 
     'form' => [
         'exchange-difference-entries' => [
-            'label' => 'Exchange Difference Maingizo',
+            'label' => 'Maingizo ya tofauti za ubadilishaji',
 
             'fields' => [
                 'journal' => [
@@ -22,7 +22,7 @@ return [
                 ],
 
                 'gain' => [
-                    'label' => 'Gain',
+                    'label' => 'Faida',
                 ],
 
                 'loss' => [
@@ -32,29 +32,29 @@ return [
         ],
 
         'bank-transfer-and-payments' => [
-            'label' => 'Benki Uhamisho na Malipo',
+            'label' => 'Uhamisho wa benki na malipo',
 
             'fields' => [
                 'bank-suspense-account' => [
-                    'label' => 'Benki Suspense Akaunti',
+                    'label' => 'Akaunti ya muda ya benki',
                 ],
 
                 'transfer-account' => [
-                    'label' => 'Uhamisho Akaunti',
+                    'label' => 'Akaunti ya uhamisho',
                 ],
             ],
         ],
 
         'product-accounts' => [
-            'label' => 'Bidhaa Akaunti',
+            'label' => 'Akaunti za bidhaa',
 
             'fields' => [
                 'income-account' => [
-                    'label' => 'Mapato Akaunti',
+                    'label' => 'Akaunti ya mapato',
                 ],
 
                 'expense-account' => [
-                    'label' => 'Gharama Akaunti',
+                    'label' => 'Akaunti ya gharama',
                 ],
             ],
         ],

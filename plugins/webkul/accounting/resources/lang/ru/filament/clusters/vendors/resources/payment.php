@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'title'       => 'Оплаты',
-    'model-label' => 'Оплата',
+    'title'       => 'Платежи',
+    'model-label' => 'Платёж',
 
     'navigation' => [
-        'title' => 'Оплаты',
+        'title' => 'Платежи',
     ],
 
     'record-sub-navigation' => [

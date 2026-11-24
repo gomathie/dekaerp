@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'label' => 'Lock',
+    'label' => 'Funga',
 
     'action' => [
         'notification' => [
             'success' => [
-                'title' => 'Agizo imefungwa',
-                'body'  => 'agizo ina imefungwa successfully.',
+                'title' => 'Oda imefungwa',
+                'body'  => 'Oda imefungwa.',
             ],
         ],
     ],

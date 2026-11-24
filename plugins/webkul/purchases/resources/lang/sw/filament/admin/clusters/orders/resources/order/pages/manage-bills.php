@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Bili ya msambazajis',
+        'title' => 'Bili za wasambazaji',
     ],
 ];

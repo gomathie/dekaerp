@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Stakabadhi',
+        'title' => 'Upokeaji',
     ],
 ];

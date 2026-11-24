@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'model-label' => 'Kodi Kundi',
+    'model-label' => 'Kundi la kodi',
 
     'navigation' => [
-        'title' => 'Kodi Groups',
+        'title' => 'Makundi ya kodi',
         'group' => 'Uhasibu',
     ],
 ];

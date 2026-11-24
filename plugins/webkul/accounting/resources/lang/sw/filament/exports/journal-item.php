@@ -5,7 +5,7 @@ return [
         'number'           => 'Nambari',
         'date'             => 'Tarehe',
         'account'          => 'Akaunti',
-        'partner'          => 'Mshirika',
+        'partner'          => 'Mhusika',
         'label'            => 'Lebo',
         'reference'        => 'Kumbukumbu',
         'journal'          => 'Jarida',
@@ -15,19 +15,19 @@ return [
         'currency'         => 'Sarafu',
         'company'          => 'Kampuni',
         'status'           => 'Hali',
-        'amount-currency'  => 'Kiasi Sarafu',
-        'amount-residual'  => 'Kiasi Residual',
-        'reconciled'       => 'Reconciled',
-        'due-date'         => 'Tarehe ya malipo',
+        'amount-currency'  => 'Kiasi kwa sarafu',
+        'amount-residual'  => 'Kiasi kilichobaki',
+        'reconciled'       => 'Imelinganishwa',
+        'due-date'         => 'Tarehe ya mwisho',
     ],
 
     'values' => [
         'yes' => 'Ndiyo',
-        'no'  => 'Hakuna',
+        'no'  => 'Hapana',
     ],
 
     'notification' => [
-        'completed' => 'Yako jarida kipengee hamisha ina imekamilika na :count mstari(s) exported.',
-        'failed'    => ':count mstari(s) imeshindwa hadi hamisha.',
+        'completed' => 'Uhamishaji wa vipengee vya jarida umekamilika na safu :count zimehamishwa.',
+        'failed'    => 'Safu :count hazikuweza kuhamishwa.',
     ],
 ];

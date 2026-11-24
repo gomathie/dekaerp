@@ -7,6 +7,6 @@ return [
         'purchases'     => 'Закупки',
         'cash'          => 'Касса',
         'bank'          => 'Банк',
-        'miscellaneous' => 'Miscellaneous',
+        'miscellaneous' => 'Прочее',
     ],
 ];

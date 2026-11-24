@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'model-label' => 'Касса Rounding',
+    'model-label' => 'Округление наличных',
 
     'navigation' => [
-        'title' => 'Касса Roundings',
-        'group' => 'Учёт',
+        'title' => 'Округления наличных',
+        'group' => 'Бухгалтерия',
     ],
 ];

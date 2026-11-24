@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Uingizaji wa jarida',
+        'title' => 'Maingizo ya jarida',
     ],
 ];

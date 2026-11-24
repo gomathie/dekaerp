@@ -1,15 +1,15 @@
 <?php
 
 return [
-    'title' => 'Unda Ununuzi Agreement',
+    'title' => 'Unda makubaliano ya ununuzi',
 
     'notification' => [
-        'title' => 'Ununuzi Agreement imeundwa',
-        'body'  => 'ununuzi agreement ina imeundwa successfully.',
+        'title' => 'Makubaliano ya ununuzi yameundwa',
+        'body'  => 'Makubaliano ya ununuzi yameundwa.',
     ],
 
     'confirmation' => [
-        'heading'     => 'Similar imethibitishwa agreement ipo',
-        'description' => 'Hii msambazaji tayari ina imethibitishwa ununuzi agreement hiyo ni si imefungwa au imeghairiwa. wewe want hadi endelea creating hii ununuzi agreement?',
+        'heading'     => 'Makubaliano kama haya yaliyothibitishwa yapo',
+        'description' => 'Msambazaji huyu tayari ana makubaliano ya ununuzi yaliyothibitishwa ambayo hayajafungwa wala kughairiwa. Je, unataka kuendelea kuunda makubaliano haya?',
     ],
 ];

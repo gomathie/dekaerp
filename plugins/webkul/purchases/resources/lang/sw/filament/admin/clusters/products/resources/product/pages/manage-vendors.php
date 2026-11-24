@@ -6,11 +6,11 @@ return [
     'table' => [
         'header-actions' => [
             'create' => [
-                'label' => 'Ongeza Msambazaji Bei',
+                'label' => 'Ongeza bei ya msambazaji',
 
                 'notification' => [
-                    'title' => 'Msambazaji Bei imeundwa',
-                    'body'  => 'msambazaji bei ina imeundwa successfully.',
+                    'title' => 'Bei ya msambazaji imeundwa',
+                    'body'  => 'Bei ya msambazaji imeundwa.',
                 ],
             ],
         ],

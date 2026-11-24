@@ -2,25 +2,25 @@
 
 return [
     'navigation' => [
-        'title' => 'Ununuzi Agreements',
+        'title' => 'Makubaliano ya ununuzi',
     ],
 
     'tabs' => [
-        'my-agreements'      => 'Yangu Agreements',
-        'blanket-orders'     => 'Blanket Maagizo',
-        'purchase-templates' => 'Ununuzi Violezo',
+        'my-agreements'      => 'Makubaliano yangu',
+        'blanket-orders'     => 'Oda za jumla',
+        'purchase-templates' => 'Violezo vya ununuzi',
         'draft'              => 'Rasimu',
         'done'               => 'Imekamilika',
-        'archived'           => 'Imehifadhiwa',
+        'archived'           => 'Kwenye kumbukumbu',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Ununuzi Agreement',
+            'label' => 'Makubaliano mapya ya ununuzi',
 
             'notification' => [
-                'title' => 'Ununuzi Agreement imeundwa',
-                'body'  => 'ununuzi agreement ina imeundwa successfully.',
+                'title' => 'Makubaliano ya ununuzi yameundwa',
+                'body'  => 'Makubaliano ya ununuzi yameundwa.',
             ],
         ],
     ],

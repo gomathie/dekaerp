@@ -10,7 +10,7 @@ return [
     'global-search' => [
         'customer' => 'Mteja',
         'date'     => 'Tarehe',
-        'due-date' => 'Tarehe ya malipo',
+        'due-date' => 'Tarehe ya mwisho',
         'amount'   => 'Kiasi',
     ],
 
@@ -21,7 +21,7 @@ return [
                     'products' => [
                         'actions' => [
                             'open-product' => [
-                                'tooltip' => 'Wazi bidhaa',
+                                'tooltip' => 'Fungua bidhaa',
                             ],
                         ],
                     ],

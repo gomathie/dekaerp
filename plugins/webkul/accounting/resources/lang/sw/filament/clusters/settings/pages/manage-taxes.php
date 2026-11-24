@@ -1,20 +1,20 @@
 <?php
 
 return [
-    'title' => 'Manage Kodi',
+    'title' => 'Simamia kodi',
 
     'form' => [
         'default-taxes' => [
-            'label'       => 'Chaguo-msingi Kodi',
-            'helper-text' => 'Chaguo-msingi ita kuwa imetumika washa bidhaa ikiwa hakuna kodi ni imechaguliwa',
+            'label'       => 'Kodi chaguomsingi',
+            'helper-text' => 'Chaguomsingi itatumika kwenye bidhaa kama hakuna kodi iliyochaguliwa',
         ],
 
         'sales-tax' => [
-            'label' => 'Mauzo Kodi',
+            'label' => 'Kodi ya mauzo',
         ],
 
         'purchase-tax' => [
-            'label' => 'Ununuzi Kodi',
+            'label' => 'Kodi ya ununuzi',
         ],
 
         'prices' => [
@@ -22,17 +22,17 @@ return [
         ],
 
         'rounding-method' => [
-            'label'       => 'Rounding Method',
-            'helper-text' => 'Method inatumika hadi round kodi amounts',
+            'label'       => 'Njia ya ukadiriaji',
+            'helper-text' => 'Njia inayotumika kukadiria kiasi cha kodi',
 
             'options' => [
-                'round-per-line' => 'Round Kwa Mstari',
-                'round-globally' => 'Round Globally',
+                'round-per-line' => 'Kadiria kwa kila mstari',
+                'round-globally' => 'Kadiria kwa jumla',
             ],
         ],
 
         'fiscal-country' => [
-            'label' => 'Kifedha Nchi',
+            'label' => 'Nchi ya kodi',
         ],
     ],
 ];

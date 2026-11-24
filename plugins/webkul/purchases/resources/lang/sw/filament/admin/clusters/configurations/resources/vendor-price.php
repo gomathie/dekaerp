@@ -2,7 +2,7 @@
 
 return [
     'navigation' => [
-        'title' => 'Msambazaji Bei Orodha',
+        'title' => 'Orodha za bei za wasambazaji',
     ],
 
     'form' => [
@@ -12,12 +12,12 @@ return [
 
                 'fields' => [
                     'vendor'                      => 'Msambazaji',
-                    'vendor-product-name'         => 'Msambazaji Bidhaa Jina',
-                    'vendor-product-name-tooltip' => 'vendor\'s bidhaa jina ita appear washa request kwa nukuu. Likizo hii blank hadi tumia ndani bidhaa jina.',
-                    'vendor-product-code'         => 'Msambazaji Bidhaa Msimbo',
-                    'vendor-product-code-tooltip' => 'vendor\'s bidhaa msimbo ita appear washa request kwa nukuu. Likizo hii blank hadi tumia ndani msimbo.',
-                    'delay'                       => 'Usafirishaji Lead Time (Siku)',
-                    'delay-tooltip'               => 'lead time (katika siku) kutoka agizo la ununuzi confirmation hadi bidhaa stakabadhi katika ghala. Inatumika na scheduler kwa kiotomatiki ununuzi agizo planning.',
+                    'vendor-product-name'         => 'Jina la bidhaa kwa msambazaji',
+                    'vendor-product-name-tooltip' => 'Jina la bidhaa la msambazaji litaonekana kwenye ombi la nukuu ya bei. Liache wazi ili kutumia jina la ndani la bidhaa.',
+                    'vendor-product-code'         => 'Msimbo wa bidhaa kwa msambazaji',
+                    'vendor-product-code-tooltip' => 'Msimbo wa bidhaa wa msambazaji utaonekana kwenye ombi la nukuu ya bei. Uache wazi ili kutumia msimbo wa ndani.',
+                    'delay'                       => 'Muda wa uwasilishaji (siku)',
+                    'delay-tooltip'               => 'Muda (kwa siku) kuanzia kuthibitishwa kwa oda ya ununuzi hadi bidhaa kupokelewa ghalani. Hutumiwa na kipanga ratiba kupanga oda za ununuzi kiotomatiki.',
                 ],
             ],
 
@@ -26,13 +26,13 @@ return [
 
                 'fields' => [
                     'product'            => 'Bidhaa',
-                    'quantity'           => 'Kiasi',
-                    'quantity-tooltip'   => 'minimum kiasi inahitajika hadi ununuzi kutoka hii msambazaji hadi qualify kwa specified bei. Hii ni expressed katika vendor\'s Bidhaa Kipimo au, ikiwa si weka, product\'s chaguo-msingi uniti ya measure.',
-                    'unit-price'         => 'Bei ya uniti',
-                    'unit-price-tooltip' => 'bei kwa uniti kwa hii bidhaa kutoka msambazaji, expressed katika msambazaji’s Bidhaa Kipimo au, ikiwa si weka, product\'s chaguo-msingi uniti ya measure.',
+                    'quantity'           => 'Idadi',
+                    'quantity-tooltip'   => 'Idadi ya chini inayohitajika kununua kutoka kwa msambazaji huyu ili kupata bei iliyotajwa. Hupimwa kwa kipimo cha bidhaa cha msambazaji au, kama hakijawekwa, kipimo chaguomsingi cha bidhaa.',
+                    'unit-price'         => 'Bei ya kipimo',
+                    'unit-price-tooltip' => 'Bei kwa kila kipimo cha bidhaa hii kutoka kwa msambazaji, kwa kipimo cha bidhaa cha msambazaji au, kama hakijawekwa, kipimo chaguomsingi cha bidhaa.',
                     'currency'           => 'Sarafu',
-                    'valid-from'         => 'Halali Kutoka',
-                    'valid-to'           => 'Halali Mpaka',
+                    'valid-from'         => 'Halali kuanzia',
+                    'valid-to'           => 'Halali hadi',
                     'discount'           => 'Punguzo (%)',
                     'company'            => 'Kampuni',
                 ],
@@ -43,54 +43,54 @@ return [
     'table' => [
         'columns' => [
             'vendor'              => 'Msambazaji',
-            'vendor-product-name' => 'Msambazaji Bidhaa Jina',
-            'vendor-product-code' => 'Msambazaji Bidhaa Msimbo',
-            'delay'               => 'Usafirishaji Lead Time (Siku)',
+            'vendor-product-name' => 'Jina la bidhaa kwa msambazaji',
+            'vendor-product-code' => 'Msimbo wa bidhaa kwa msambazaji',
+            'delay'               => 'Muda wa uwasilishaji (siku)',
             'product'             => 'Bidhaa',
-            'quantity'            => 'Kiasi',
-            'unit-price'          => 'Bei ya uniti',
+            'quantity'            => 'Idadi',
+            'unit-price'          => 'Bei ya kipimo',
             'currency'            => 'Sarafu',
-            'valid-from'          => 'Halali Kutoka',
-            'valid-to'            => 'Halali Mpaka',
+            'valid-from'          => 'Halali kuanzia',
+            'valid-to'            => 'Halali hadi',
             'discount'            => 'Punguzo (%)',
             'company'             => 'Kampuni',
-            'created-at'          => 'Imeundwa',
-            'updated-at'          => 'Imesasishwa',
+            'created-at'          => 'Iliundwa',
+            'updated-at'          => 'Ilisasishwa',
         ],
 
         'filters' => [
-            'vendor'        => 'Kichujio na Msambazaji',
-            'product'       => 'Kichujio na Bidhaa',
-            'currency'      => 'Kichujio na Sarafu',
-            'company'       => 'Kichujio na Kampuni',
-            'price-from'    => 'Minimum Bei',
-            'price-to'      => 'Maximum Bei',
-            'min-qty-from'  => 'Minimum Kiasi Kutoka',
-            'min-qty-to'    => 'Minimum Kiasi Hadi',
-            'starts-from'   => 'Halali Kutoka Tarehe',
-            'ends-before'   => 'Halali Hadi Tarehe',
-            'created-from'  => 'Imeundwa Kutoka',
-            'created-until' => 'Imeundwa Mpaka',
+            'vendor'        => 'Chuja kwa msambazaji',
+            'product'       => 'Chuja kwa bidhaa',
+            'currency'      => 'Chuja kwa sarafu',
+            'company'       => 'Chuja kwa kampuni',
+            'price-from'    => 'Bei ya chini',
+            'price-to'      => 'Bei ya juu',
+            'min-qty-from'  => 'Idadi ya chini kuanzia',
+            'min-qty-to'    => 'Idadi ya chini hadi',
+            'starts-from'   => 'Halali kuanzia tarehe',
+            'ends-before'   => 'Halali hadi tarehe',
+            'created-from'  => 'Iliundwa kuanzia',
+            'created-until' => 'Iliundwa hadi',
         ],
 
         'groups' => [
             'vendor'     => 'Msambazaji',
             'product'    => 'Bidhaa',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'created-at' => 'Iliundwa',
+            'updated-at' => 'Ilisasishwa',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Msambazaji Bei imefutwa',
-                        'body'  => 'msambazaji bei ina imefutwa successfully.',
+                        'title' => 'Bei ya msambazaji imefutwa',
+                        'body'  => 'Bei ya msambazaji imefutwa.',
                     ],
 
                     'error' => [
-                        'title' => 'Msambazaji Bei could si kuwa imefutwa',
-                        'body'  => 'msambazaji bei haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Bei ya msambazaji haikuweza kufutwa',
+                        'body'  => 'Bei ya msambazaji haiwezi kufutwa kwa sababu inatumika.',
                     ],
                 ],
             ],
@@ -100,13 +100,13 @@ return [
             'delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Msambazaji Bei imefutwa',
-                        'body'  => 'msambazaji bei ina imefutwa successfully.',
+                        'title' => 'Bei za wasambazaji zimefutwa',
+                        'body'  => 'Bei za wasambazaji zimefutwa.',
                     ],
 
                     'error' => [
-                        'title' => 'Msambazaji Bei could si kuwa imefutwa',
-                        'body'  => 'msambazaji bei haiwezekani kuwa imefutwa kwa sababu wao ni currently katika tumia.',
+                        'title' => 'Bei za wasambazaji hazikuweza kufutwa',
+                        'body'  => 'Bei za wasambazaji haziwezi kufutwa kwa sababu zinatumika.',
                     ],
                 ],
             ],
@@ -120,22 +120,22 @@ return [
 
                 'entries' => [
                     'vendor'                      => 'Msambazaji',
-                    'vendor-product-name'         => 'Msambazaji Bidhaa Jina',
-                    'vendor-product-name-tooltip' => 'vendor\'s bidhaa jina ita appear washa request kwa nukuu. Likizo hii blank hadi tumia ndani bidhaa jina.',
-                    'vendor-product-code'         => 'Msambazaji Bidhaa Msimbo',
-                    'vendor-product-code-tooltip' => 'vendor\'s bidhaa msimbo ita appear washa request kwa nukuu. Likizo hii blank hadi tumia ndani msimbo.',
-                    'delay'                       => 'Usafirishaji Lead Time (Siku)',
-                    'delay-tooltip'               => 'lead time (katika siku) kutoka agizo la ununuzi confirmation hadi bidhaa stakabadhi katika ghala. Inatumika na scheduler kwa kiotomatiki ununuzi agizo planning.',
+                    'vendor-product-name'         => 'Jina la bidhaa kwa msambazaji',
+                    'vendor-product-name-tooltip' => 'Jina la bidhaa la msambazaji litaonekana kwenye ombi la nukuu ya bei. Liache wazi ili kutumia jina la ndani la bidhaa.',
+                    'vendor-product-code'         => 'Msimbo wa bidhaa kwa msambazaji',
+                    'vendor-product-code-tooltip' => 'Msimbo wa bidhaa wa msambazaji utaonekana kwenye ombi la nukuu ya bei. Uache wazi ili kutumia msimbo wa ndani.',
+                    'delay'                       => 'Muda wa uwasilishaji (siku)',
+                    'delay-tooltip'               => 'Muda (kwa siku) kuanzia kuthibitishwa kwa oda ya ununuzi hadi bidhaa kupokelewa ghalani. Hutumiwa na kipanga ratiba kupanga oda za ununuzi kiotomatiki.',
                 ],
             ],
 
             'record-information' => [
-                'title'  => 'Rekodi Taarifa',
+                'title'  => 'Taarifa za rekodi',
 
                 'entries' => [
-                    'created-by'   => 'Imeundwa Na',
-                    'created-at'   => 'Imeundwa',
-                    'last-updated' => 'Mwisho Imesasishwa',
+                    'created-by'   => 'Iliundwa na',
+                    'created-at'   => 'Iliundwa',
+                    'last-updated' => 'Ilisasishwa mwisho',
                 ],
             ],
 
@@ -144,13 +144,13 @@ return [
 
                 'entries' => [
                     'product'            => 'Bidhaa',
-                    'quantity'           => 'Kiasi',
-                    'quantity-tooltip'   => 'minimum kiasi inahitajika hadi ununuzi kutoka hii msambazaji hadi qualify kwa specified bei. Hii ni expressed katika vendor\'s Bidhaa Kipimo au, ikiwa si weka, product\'s chaguo-msingi uniti ya measure.',
-                    'unit-price'         => 'Bei ya uniti',
-                    'unit-price-tooltip' => 'bei kwa uniti kwa hii bidhaa kutoka msambazaji, expressed katika msambazaji’s Bidhaa Kipimo au, ikiwa si weka, product\'s chaguo-msingi uniti ya measure.',
+                    'quantity'           => 'Idadi',
+                    'quantity-tooltip'   => 'Idadi ya chini inayohitajika kununua kutoka kwa msambazaji huyu ili kupata bei iliyotajwa. Hupimwa kwa kipimo cha bidhaa cha msambazaji au, kama hakijawekwa, kipimo chaguomsingi cha bidhaa.',
+                    'unit-price'         => 'Bei ya kipimo',
+                    'unit-price-tooltip' => 'Bei kwa kila kipimo cha bidhaa hii kutoka kwa msambazaji, kwa kipimo cha bidhaa cha msambazaji au, kama hakijawekwa, kipimo chaguomsingi cha bidhaa.',
                     'currency'           => 'Sarafu',
-                    'valid-from'         => 'Halali Kutoka',
-                    'valid-to'           => 'Halali Mpaka',
+                    'valid-from'         => 'Halali kuanzia',
+                    'valid-to'           => 'Halali hadi',
                     'discount'           => 'Punguzo (%)',
                     'company'            => 'Kampuni',
                 ],

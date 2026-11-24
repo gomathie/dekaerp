@@ -3,9 +3,9 @@
 return [
     'table' => [
         'columns' => [
-            'reference'         => 'Ссылка',
-            'total-amount'      => 'Итого Сумма',
-            'confirmation-date' => 'Confirmation Дата',
+            'reference'         => 'Номер',
+            'total-amount'      => 'Общая сумма',
+            'confirmation-date' => 'Дата подтверждения',
             'status'            => 'Статус',
         ],
     ],
@@ -24,55 +24,55 @@ return [
     'infolist' => [
         'settings' => [
             'entries' => [
-                'buyer' => 'Buyer',
+                'buyer' => 'Закупщик',
             ],
 
             'actions' => [
                 'accept' => [
-                    'label' => 'Accept',
+                    'label' => 'Принять',
 
                     'notification' => [
-                        'title' => 'Коммерческое предложение Accepted',
-                        'body'  => 'Запрос котировок есть acknowledged successfully.',
+                        'title' => 'Предложение принято',
+                        'body'  => 'Запрос цены успешно принят.',
                     ],
 
                     'message' => [
-                        'body' => 'Запрос котировок есть acknowledged от поставщик.',
+                        'body' => 'Поставщик принял запрос цены.',
                     ],
                 ],
 
                 'decline' => [
-                    'label' => 'Decline',
+                    'label' => 'Отклонить',
 
                     'notification' => [
-                        'title' => 'Коммерческое предложение Declined',
-                        'body'  => 'Запрос котировок есть declined successfully.',
+                        'title' => 'Предложение отклонено',
+                        'body'  => 'Запрос цены успешно отклонён.',
                     ],
 
                     'message' => [
-                        'body' => 'Запрос котировок есть declined от поставщик.',
+                        'body' => 'Поставщик отклонил запрос цены.',
                     ],
                 ],
 
                 'print' => [
-                    'label' => 'Скачать/Печать',
+                    'label' => 'Скачать/печать',
                 ],
             ],
         ],
 
         'general' => [
             'entries' => [
-                'purchase-order'        => 'Заказ на закупку #:id',
-                'quotation'             => 'Request для Коммерческое предложение #:id',
-                'order-date'            => 'Заказ Дата',
-                'from'                  => 'От',
-                'confirmation-date'     => 'Confirmation Дата',
-                'receipt-date'          => 'Приход Дата',
+                'purchase-order'        => 'Заказ на закупку № :id',
+                'quotation'             => 'Запрос цены № :id',
+                'order-date'            => 'Дата заказа',
+                'from'                  => 'С',
+                'confirmation-date'     => 'Дата подтверждения',
+                'receipt-date'          => 'Дата поступления',
                 'products'              => 'Товары',
-                'untaxed-amount'        => 'Без налога Сумма',
-                'tax-amount'            => 'Налог Сумма',
+                'untaxed-amount'        => 'Сумма без налогов',
+                'tax-amount'            => 'Сумма налога',
                 'total'                 => 'Итого',
-                'communication-history' => 'Сообщения История',
+                'communication-history' => 'История переписки',
             ],
         ],
     ],

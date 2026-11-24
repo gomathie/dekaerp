@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Noti ya mkopo',
+    'title' => 'Hati ya mkopo',
 
     'navigation' => [
-        'title' => 'Noti ya mkopos',
+        'title' => 'Hati za mkopo',
     ],
 
     'global-search' => [

@@ -2,20 +2,20 @@
 
 return [
     'navigation' => [
-        'title' => 'Angalia Msambazaji Bei Orodha',
+        'title' => 'Tazama orodha ya bei ya msambazaji',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
                 'success' => [
-                    'title' => 'Msambazaji Bei imefutwa',
-                    'body'  => 'msambazaji bei ina imefutwa successfully.',
+                    'title' => 'Bei ya msambazaji imefutwa',
+                    'body'  => 'Bei ya msambazaji imefutwa.',
                 ],
 
                 'error' => [
-                    'title' => 'Msambazaji Bei could si kuwa imefutwa',
-                    'body'  => 'msambazaji bei haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                    'title' => 'Bei ya msambazaji haikuweza kufutwa',
+                    'body'  => 'Bei ya msambazaji haiwezi kufutwa kwa sababu inatumika.',
                 ],
             ],
         ],

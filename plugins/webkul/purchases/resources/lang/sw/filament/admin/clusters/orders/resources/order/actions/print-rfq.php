@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'label' => 'Chapisha Ombi la bei',
+    'label' => 'Chapisha ombi la nukuu',
 ];

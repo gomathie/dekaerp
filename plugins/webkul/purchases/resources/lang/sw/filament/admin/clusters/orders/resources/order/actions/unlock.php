@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'label' => 'Unlock',
+    'label' => 'Fungua',
 
     'action' => [
         'notification' => [
             'success' => [
-                'title' => 'Agizo unlock',
-                'body'  => 'agizo ina unlock successfully.',
+                'title' => 'Oda imefunguliwa',
+                'body'  => 'Oda imefunguliwa.',
             ],
         ],
     ],

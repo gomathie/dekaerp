@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'model-label' => 'Taslimu Rounding',
+    'model-label' => 'Ukadiriaji wa fedha taslimu',
 
     'navigation' => [
-        'title' => 'Taslimu Roundings',
+        'title' => 'Ukadiriaji wa fedha taslimu',
         'group' => 'Uhasibu',
     ],
 ];

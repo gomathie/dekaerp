@@ -7,19 +7,19 @@ return [
         'notification' => [
             'warning' => [
                 'receipts' => [
-                    'title' => 'Haiwezekani ghairi agizo',
-                    'body'  => 'agizo haiwezekani kuwa imeghairiwa since wao ina stakabadhi hiyo ni tayari imekamilika.',
+                    'title' => 'Huwezi kughairi oda',
+                    'body'  => 'Oda haiwezi kughairiwa kwa sababu ina upokeaji uliokamilika.',
                 ],
 
                 'bills' => [
-                    'title' => 'Haiwezekani ghairi agizo',
-                    'body'  => 'agizo haiwezekani kuwa imeghairiwa. Wewe lazima kwanza ghairi yao related bili ya msambazajis.',
+                    'title' => 'Huwezi kughairi oda',
+                    'body'  => 'Oda haiwezi kughairiwa. Kwanza ghairi bili zake za msambazaji.',
                 ],
             ],
 
             'success' => [
-                'title' => 'Agizo imeghairiwa',
-                'body'  => 'agizo ina imeghairiwa successfully.',
+                'title' => 'Oda imeghairiwa',
+                'body'  => 'Oda imeghairiwa.',
             ],
         ],
     ],

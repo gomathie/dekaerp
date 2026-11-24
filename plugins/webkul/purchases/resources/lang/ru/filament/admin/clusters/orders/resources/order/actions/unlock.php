@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'label' => 'Unlock',
+    'label' => 'Разблокировать',
 
     'action' => [
         'notification' => [
             'success' => [
-                'title' => 'Заказ unlock',
-                'body'  => 'заказ есть unlock successfully.',
+                'title' => 'Заказ разблокирован',
+                'body'  => 'Заказ успешно разблокирован.',
             ],
         ],
     ],

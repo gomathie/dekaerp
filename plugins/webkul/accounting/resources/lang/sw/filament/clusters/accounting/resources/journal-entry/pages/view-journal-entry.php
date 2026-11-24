@@ -4,8 +4,8 @@ return [
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Uingizaji wa jarida imefutwa',
-                'body'  => 'uingizaji wa jarida ina imefutwa successfully.',
+                'title' => 'Ingizo la jarida limefutwa',
+                'body'  => 'Ingizo la jarida limefutwa.',
             ],
         ],
     ],

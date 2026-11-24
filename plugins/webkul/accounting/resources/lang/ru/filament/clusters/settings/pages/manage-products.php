@@ -1,15 +1,15 @@
 <?php
 
 return [
-    'title' => 'Manage Товары',
+    'title' => 'Управление товарами',
 
     'form' => [
-        'enable-variants'               => 'Variants',
-        'enable-variants-helper-text'   => 'Задать товар attributes (e.g. цвет, размер) до manage variants',
+        'enable-variants'               => 'Варианты',
+        'enable-variants-helper-text'   => 'Задавайте атрибуты товара (напр. цвет, размер) для управления вариантами',
         'enable-uom'                    => 'Единица измерения',
-        'enable-uom-helper-text'        => 'Sell и закупка товары в different единицы measure',
-        'enable-packagings'             => 'Packagings',
-        'enable-packagings-helper-text' => 'Manage товар packagings (e.g. pack 6 bottles, box 10 pieces)',
-        'configure-packagings'          => 'Configure Packagings',
+        'enable-uom-helper-text'        => 'Продавать и закупать товары в разных единицах измерения',
+        'enable-packagings'             => 'Упаковки',
+        'enable-packagings-helper-text' => 'Управлять упаковками товаров (напр. упаковка из 6 бутылок, коробка из 10 штук)',
+        'configure-packagings'          => 'Настроить упаковки',
     ],
 ];

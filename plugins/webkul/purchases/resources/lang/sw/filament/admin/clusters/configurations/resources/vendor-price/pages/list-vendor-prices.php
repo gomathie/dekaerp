@@ -2,16 +2,16 @@
 
 return [
     'navigation' => [
-        'title' => 'Msambazaji Bei Orodha',
+        'title' => 'Orodha za bei za wasambazaji',
     ],
 
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Msambazaji Bei',
+            'label' => 'Bei mpya ya msambazaji',
 
             'notification' => [
-                'title' => 'Msambazaji Bei imeundwa',
-                'body'  => 'msambazaji bei ina imeundwa successfully.',
+                'title' => 'Bei ya msambazaji imeundwa',
+                'body'  => 'Bei ya msambazaji imeundwa.',
             ],
         ],
     ],

@@ -5,8 +5,8 @@ return [
         'all'           => 'Zote',
         'sales'         => 'Mauzo',
         'purchases'     => 'Ununuzi',
-        'cash'          => 'Taslimu',
+        'cash'          => 'Fedha taslimu',
         'bank'          => 'Benki',
-        'miscellaneous' => 'Miscellaneous',
+        'miscellaneous' => 'Mengineyo',
     ],
 ];

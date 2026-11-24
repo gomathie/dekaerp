@@ -4,18 +4,18 @@ return [
     'title'          => 'Заказ',
 
     'titles'         => [
-        'quotation'      => 'Request для Коммерческое предложение',
+        'quotation'      => 'Запрос цены',
         'purchase-order' => 'Заказ на закупку',
     ],
 
     'log-attributes' => [
         'state'             => 'Статус',
-        'untaxed-amount'    => 'Без налога Сумма',
-        'partner-reference' => 'Поставщик Ссылка',
-        'origin'            => 'Источник Документ',
+        'untaxed-amount'    => 'Сумма без налогов',
+        'partner-reference' => 'Номер у поставщика',
+        'origin'            => 'Исходный документ',
         'partner'           => 'Поставщик',
-        'buyer'             => 'Buyer',
+        'buyer'             => 'Закупщик',
         'payment-term'      => 'Условие оплаты',
-        'fiscal-position'   => 'Финансовый Должность',
+        'fiscal-position'   => 'Налоговая позиция',
     ],
 ];

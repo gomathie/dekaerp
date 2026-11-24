@@ -2,44 +2,44 @@
 
 return [
     'navigation'      => 'Ripoti',
-    'export-complete' => 'Yako ununuzi hamisha ni ready: :count mistari.',
+    'export-complete' => 'Uhamishaji wa ununuzi uko tayari: safu :count.',
 
     'analysis' => [
-        'title'      => 'Ununuzi analysis',
-        'subheading' => 'Imethibitishwa agizo la ununuzis katika kampuni sarafu. Kundi na msambazaji, buyer au mwezi hadi see jumla.',
+        'title'      => 'Uchambuzi wa ununuzi',
+        'subheading' => 'Oda za ununuzi zilizothibitishwa kwa sarafu ya kampuni. Panga kwa msambazaji, mnunuzi au mwezi ili kuona jumla.',
         'export'     => 'Hamisha',
         'sum'        => 'Jumla',
         'columns'    => [
-            'reference' => 'Agizo',
+            'reference' => 'Oda',
             'date'      => 'Tarehe',
             'supplier'  => 'Msambazaji',
-            'buyer'     => 'Buyer',
+            'buyer'     => 'Mnunuzi',
             'untaxed'   => 'Bila kodi',
             'total'     => 'Jumla',
         ],
         'groups' => [
             'supplier' => 'Msambazaji',
-            'buyer'    => 'Buyer',
+            'buyer'    => 'Mnunuzi',
             'month'    => 'Mwezi',
         ],
         'filters' => [
-            'from'  => 'Kutoka',
-            'until' => 'Mpaka',
+            'from'  => 'Kuanzia',
+            'until' => 'Hadi',
         ],
     ],
 
     'by-product' => [
-        'title'      => 'Ununuzi na bidhaa',
-        'subheading' => 'Mistari ya imethibitishwa agizo la ununuzis katika kampuni sarafu. Kundi na bidhaa au kategoria hadi see quantities ordered na imepokelewa.',
+        'title'      => 'Ununuzi kwa bidhaa',
+        'subheading' => 'Mistari ya oda za ununuzi zilizothibitishwa kwa sarafu ya kampuni. Panga kwa bidhaa au kategoria ili kuona idadi iliyoagizwa na iliyopokelewa.',
         'export'     => 'Hamisha',
         'sum'        => 'Jumla',
         'columns'    => [
             'product'  => 'Bidhaa',
             'category' => 'Kategoria',
-            'order'    => 'Agizo la ununuzi',
+            'order'    => 'Oda ya ununuzi',
             'date'     => 'Tarehe',
             'supplier' => 'Msambazaji',
-            'ordered'  => 'Ordered',
+            'ordered'  => 'Imeagizwa',
             'received' => 'Imepokelewa',
             'untaxed'  => 'Bila kodi',
         ],
@@ -48,8 +48,8 @@ return [
             'category' => 'Kategoria',
         ],
         'filters' => [
-            'from'  => 'Kutoka',
-            'until' => 'Mpaka',
+            'from'  => 'Kuanzia',
+            'until' => 'Hadi',
         ],
     ],
 ];

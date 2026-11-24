@@ -1,20 +1,20 @@
 <?php
 
 return [
-    'title' => 'Manage Налоги',
+    'title' => 'Управление налогами',
 
     'form' => [
         'default-taxes' => [
-            'label'       => 'По умолчанию Налоги',
-            'helper-text' => 'По умолчанию быть применено вкл. товары если нет налог выбрано',
+            'label'       => 'Налоги по умолчанию',
+            'helper-text' => 'Применяются к товарам, если налог не выбран',
         ],
 
         'sales-tax' => [
-            'label' => 'Продажи Налог',
+            'label' => 'Налог с продаж',
         ],
 
         'purchase-tax' => [
-            'label' => 'Закупка Налог',
+            'label' => 'Налог на закупки',
         ],
 
         'prices' => [
@@ -22,17 +22,17 @@ return [
         ],
 
         'rounding-method' => [
-            'label'       => 'Rounding Method',
-            'helper-text' => 'Method используется до round налог amounts',
+            'label'       => 'Метод округления',
+            'helper-text' => 'Метод округления сумм налогов',
 
             'options' => [
-                'round-per-line' => 'Round За Строка',
-                'round-globally' => 'Round Globally',
+                'round-per-line' => 'Округлять по строкам',
+                'round-globally' => 'Округлять итог',
             ],
         ],
 
         'fiscal-country' => [
-            'label' => 'Финансовый Страна',
+            'label' => 'Страна налогообложения',
         ],
     ],
 ];

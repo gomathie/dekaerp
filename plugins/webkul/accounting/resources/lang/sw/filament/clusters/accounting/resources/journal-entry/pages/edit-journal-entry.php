@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Uingizaji wa jarida imesasishwa',
-        'body'  => 'uingizaji wa jarida ina imesasishwa successfully.',
+        'title' => 'Ingizo la jarida limesasishwa',
+        'body'  => 'Ingizo la jarida limesasishwa.',
     ],
 ];

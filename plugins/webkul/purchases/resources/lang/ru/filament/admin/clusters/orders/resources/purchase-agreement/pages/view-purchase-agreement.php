@@ -8,8 +8,8 @@ return [
 
         'delete' => [
             'notification' => [
-                'title' => 'Закупка Agreement Удалено',
-                'body'  => 'закупка agreement есть удалено successfully.',
+                'title' => 'Соглашение о закупке удалено',
+                'body'  => 'Соглашение о закупке успешно удалено.',
             ],
         ],
     ],

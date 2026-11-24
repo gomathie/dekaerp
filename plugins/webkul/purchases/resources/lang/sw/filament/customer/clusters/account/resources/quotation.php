@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Nukuu',
+        'title' => 'Nukuu za bei',
     ],
 ];

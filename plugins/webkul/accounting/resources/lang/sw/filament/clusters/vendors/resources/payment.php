@@ -9,6 +9,6 @@ return [
     ],
 
     'record-sub-navigation' => [
-        'journal-entry' => 'Uingizaji wa jarida',
+        'journal-entry' => 'Ingizo la jarida',
     ],
 ];

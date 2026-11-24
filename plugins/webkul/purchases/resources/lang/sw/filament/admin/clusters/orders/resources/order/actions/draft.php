@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'label' => 'Weka hadi Rasimu',
+    'label' => 'Rudisha kuwa rasimu',
 
     'action' => [
         'notification' => [
             'success' => [
-                'title' => 'Agizo marked kama rasimu',
-                'body'  => 'agizo ina marked kama rasimu successfully.',
+                'title' => 'Oda imerudishwa kuwa rasimu',
+                'body'  => 'Oda imerudishwa kuwa rasimu.',
             ],
         ],
     ],

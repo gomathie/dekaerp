@@ -3,13 +3,13 @@
 return [
     'tabs' => [
         'draft'       => 'Rasimu',
-        'posted'      => 'Imewekwa',
+        'posted'      => 'Imerekodiwa',
         'sales'       => 'Mauzo',
         'purchases'   => 'Ununuzi',
-        'reversed'    => 'Reversed',
+        'reversed'    => 'Imegeuzwa',
         'bank'        => 'Benki',
-        'cash'        => 'Taslimu',
+        'cash'        => 'Fedha taslimu',
         'credit'      => 'Krediti',
-        'misc'        => 'Misc',
+        'misc'        => 'Mengineyo',
     ],
 ];

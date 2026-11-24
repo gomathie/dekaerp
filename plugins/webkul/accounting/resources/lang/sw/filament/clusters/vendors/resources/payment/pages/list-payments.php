@@ -2,6 +2,6 @@
 
 return [
     'tabs' => [
-        'vendor-payments' => 'Msambazaji Malipo',
+        'vendor-payments' => 'Malipo kwa wasambazaji',
     ],
 ];

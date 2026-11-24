@@ -2,25 +2,25 @@
 
 return [
     'navigation' => [
-        'title' => 'Hariri Msambazaji Bei Orodha',
+        'title' => 'Hariri orodha ya bei ya msambazaji',
     ],
 
     'notification' => [
-        'title' => 'Msambazaji Bei imesasishwa',
-        'body'  => 'msambazaji bei ina imesasishwa successfully.',
+        'title' => 'Bei ya msambazaji imesasishwa',
+        'body'  => 'Bei ya msambazaji imesasishwa.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
                 'success' => [
-                    'title' => 'Msambazaji Bei imefutwa',
-                    'body'  => 'msambazaji bei ina imefutwa successfully.',
+                    'title' => 'Bei ya msambazaji imefutwa',
+                    'body'  => 'Bei ya msambazaji imefutwa.',
                 ],
 
                 'error' => [
-                    'title' => 'Msambazaji Bei could si kuwa imefutwa',
-                    'body'  => 'msambazaji bei haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                    'title' => 'Bei ya msambazaji haikuweza kufutwa',
+                    'body'  => 'Bei ya msambazaji haiwezi kufutwa kwa sababu inatumika.',
                 ],
             ],
         ],
