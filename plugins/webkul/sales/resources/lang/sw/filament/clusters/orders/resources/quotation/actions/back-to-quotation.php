@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'title' => 'Weka kama Nukuu',
+    'title' => 'Rudisha kuwa nukuu',
 
     'notification' => [
         'back-to-quotation' => [
-            'title' => 'Mauzo agizo weka kama Nukuu',
-            'body'  => 'Mauzo agizo ina weka kama Nukuu successfully.',
+            'title' => 'Oda ya mauzo imerudishwa kuwa nukuu',
+            'body'  => 'Oda ya mauzo imerudishwa kuwa nukuu kwa mafanikio.',
         ],
     ],
 ];

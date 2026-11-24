@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'title' => 'Angalia Mwasiliani',
+    'title' => 'Tazama mhusika',
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Mwasiliani imefutwa',
-                'body'  => 'mwasiliani ina imefutwa successfully.',
+                'title' => 'Mhusika amefutwa',
+                'body'  => 'Mhusika amefutwa kwa mafanikio.',
             ],
         ],
     ],

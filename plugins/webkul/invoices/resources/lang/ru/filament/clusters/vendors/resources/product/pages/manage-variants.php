@@ -1,14 +1,14 @@
 <?php
 
 return [
-    'title' => 'Variants',
+    'title' => 'Варианты',
 
     'form' => [
         'date'                   => 'Дата',
         'employee'               => 'Сотрудник',
         'description'            => 'Описание',
-        'time-spent'             => 'Time Spent',
-        'time-spent-helper-text' => 'Time spent в часы (Eg. 1.5 часы means 1 час 30 минуты)',
+        'time-spent'             => 'Затраченное время',
+        'time-spent-helper-text' => 'Затраченное время в часах (напр. 1,5 часа — это 1 час 30 минут)',
     ],
 
     'table' => [
@@ -16,17 +16,17 @@ return [
             'date'                   => 'Дата',
             'employee'               => 'Сотрудник',
             'description'            => 'Описание',
-            'time-spent'             => 'Time Spent',
-            'time-spent-on-subtasks' => 'Time Spent вкл. Subtasks',
-            'total-time-spent'       => 'Итого Time Spent',
-            'remaining-time'         => 'Осталось Time',
+            'time-spent'             => 'Затраченное время',
+            'time-spent-on-subtasks' => 'Время на подзадачи',
+            'total-time-spent'       => 'Всего затрачено',
+            'remaining-time'         => 'Оставшееся время',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Variant удалено',
-                    'body'  => 'variant есть удалено successfully.',
+                    'title' => 'Вариант удалён',
+                    'body'  => 'Вариант успешно удалён.',
                 ],
             ],
         ],

@@ -2,18 +2,18 @@
 
 return [
     'form' => [
-        'partner' => 'Mshirika',
+        'partner' => 'Mhusika',
         'name'    => 'Jina',
         'email'   => 'Barua pepe',
         'phone'   => 'Simu',
-        'mobile'  => 'Mobile',
+        'mobile'  => 'Simu ya mkononi',
         'type'    => 'Aina',
         'address' => 'Anwani',
         'city'    => 'Jiji',
-        'street1' => 'Street 1',
-        'street2' => 'Street 2',
-        'state'   => 'Hali',
-        'zip'     => 'Zip',
+        'street1' => 'Mtaa 1',
+        'street2' => 'Mtaa 2',
+        'state'   => 'Mkoa',
+        'zip'     => 'Msimbo wa posta',
         'code'    => 'Msimbo',
         'country' => 'Nchi',
     ],
@@ -21,24 +21,24 @@ return [
     'table' => [
         'header-actions' => [
             'create' => [
-                'label' => 'Ongeza Anwani',
+                'label' => 'Ongeza anwani',
 
                 'notification' => [
                     'title' => 'Anwani imeundwa',
-                    'body'  => 'anwani ina imeundwa successfully.',
+                    'body'  => 'Anwani imeundwa kwa mafanikio.',
                 ],
             ],
         ],
 
         'columns' => [
             'type'    => 'Aina',
-            'name'    => 'Mwasiliani Jina',
+            'name'    => 'Jina la mhusika',
             'address' => 'Anwani',
             'city'    => 'Jiji',
-            'street1' => 'Street 1',
-            'street2' => 'Street 2',
-            'state'   => 'Hali',
-            'zip'     => 'Zip',
+            'street1' => 'Mtaa 1',
+            'street2' => 'Mtaa 2',
+            'state'   => 'Mkoa',
+            'zip'     => 'Msimbo wa posta',
             'country' => 'Nchi',
         ],
 
@@ -46,14 +46,14 @@ return [
             'edit' => [
                 'notification' => [
                     'title' => 'Anwani imesasishwa',
-                    'body'  => 'anwani ina imesasishwa successfully.',
+                    'body'  => 'Anwani imesasishwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'title' => 'Anwani imefutwa',
-                    'body'  => 'anwani ina imefutwa successfully.',
+                    'body'  => 'Anwani imefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -61,8 +61,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Addresses imefutwa',
-                    'body'  => 'addresses ina imefutwa successfully.',
+                    'title' => 'Anwani zimefutwa',
+                    'body'  => 'Anwani zimefutwa kwa mafanikio.',
                 ],
             ],
         ],

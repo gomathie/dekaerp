@@ -2,9 +2,9 @@
 
 return [
     'tabs' => [
-        'my-quotations' => 'Мой Коммерческие предложения',
-        'quotations'    => 'Коммерческие предложения',
-        'sales-orders'  => 'Заказ на продажуs',
+        'my-quotations' => 'Мои предложения',
+        'quotations'    => 'Предложения',
+        'sales-orders'  => 'Заказы на продажу',
         'archived'      => 'В архиве',
     ],
 ];

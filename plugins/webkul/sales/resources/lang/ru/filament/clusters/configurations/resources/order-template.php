@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'title' => 'Заказ Шаблон Товары',
+    'title' => 'Товары шаблона заказа',
 
     'navigation' => [
-        'title' => 'Заказ Шаблон Товары',
-        'group' => 'Заказ на продажуs',
+        'title' => 'Товары шаблона заказа',
+        'group' => 'Заказы на продажу',
     ],
 
     'global-search' => [
@@ -14,13 +14,13 @@ return [
 
     'form' => [
         'fields' => [
-            'sort'           => 'Sort',
-            'order-template' => 'Заказ Шаблон',
+            'sort'           => 'Сортировка',
+            'order-template' => 'Шаблон заказа',
             'company'        => 'Компания',
             'product'        => 'Товар',
-            'product-uom'    => 'Товар UOM',
-            'creator'        => 'Creator',
-            'display-type'   => 'Display Тип',
+            'product-uom'    => 'Ед. изм. товара',
+            'creator'        => 'Создатель',
+            'display-type'   => 'Тип отображения',
             'name'           => 'Название',
             'quantity'       => 'Количество',
         ],
@@ -28,13 +28,13 @@ return [
 
     'table' => [
         'columns' => [
-            'sort'           => 'Sort',
-            'order-template' => 'Заказ Шаблон',
+            'sort'           => 'Сортировка',
+            'order-template' => 'Шаблон заказа',
             'company'        => 'Компания',
             'product'        => 'Товар',
-            'product-uom'    => 'Товар UOM',
-            'created-by'     => 'Создано От',
-            'display-type'   => 'Display Тип',
+            'product-uom'    => 'Ед. изм. товара',
+            'created-by'     => 'Кем создано',
+            'display-type'   => 'Тип отображения',
             'name'           => 'Название',
             'quantity'       => 'Количество',
             'created-at'     => 'Создано',
@@ -44,23 +44,23 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Заказ Шаблон Товары обновлено',
-                    'body'  => 'заказ шаблон товары есть обновлено successfully.',
+                    'title' => 'Товары шаблона заказа обновлены',
+                    'body'  => 'Товары шаблона заказа успешно обновлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Заказ Шаблон Товары удалено',
-                    'body'  => 'заказ шаблон товары есть удалено successfully.',
+                    'title' => 'Товары шаблона заказа удалены',
+                    'body'  => 'Товары шаблона заказа успешно удалены.',
                 ],
             ],
         ],
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Заказ Шаблон Товары удалено',
-                    'body'  => 'заказ шаблон товары есть удалено successfully.',
+                    'title' => 'Товары шаблона заказа удалены',
+                    'body'  => 'Товары шаблона заказа успешно удалены.',
                 ],
             ],
         ],
@@ -68,12 +68,12 @@ return [
 
     'infolist' => [
         'entries' => [
-            'sort'           => 'Sort Заказ',
-            'order-template' => 'Заказ Шаблон',
+            'sort'           => 'Порядок сортировки',
+            'order-template' => 'Шаблон заказа',
             'company'        => 'Компания',
             'product'        => 'Товар',
-            'product-uom'    => 'Товар UOM',
-            'display-type'   => 'Display Тип',
+            'product-uom'    => 'Ед. изм. товара',
+            'display-type'   => 'Тип отображения',
             'name'           => 'Название',
             'quantity'       => 'Количество',
         ],

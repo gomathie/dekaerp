@@ -9,27 +9,27 @@ return [
 
     'global-search' => [
         'customer'  => 'Клиент',
-        'reference' => 'Ссылка',
+        'reference' => 'Референс',
         'amount'    => 'Сумма',
     ],
 
     'form' => [
         'section' => [
             'general' => [
-                'title'  => 'Общее',
+                'title'  => 'Основное',
                 'fields' => [
                     'customer'       => 'Клиент',
-                    'expiration'     => 'Expiration',
-                    'quotation-date' => 'Коммерческое предложение Дата',
-                    'order-date'     => 'Заказ Дата',
-                    'payment-term'   => 'Условие оплаты',
+                    'expiration'     => 'Действует до',
+                    'quotation-date' => 'Дата предложения',
+                    'order-date'     => 'Дата заказа',
+                    'payment-term'   => 'Условия оплаты',
                 ],
             ],
         ],
 
         'tabs' => [
             'order-line' => [
-                'title' => 'Заказ Строка',
+                'title' => 'Строки заказа',
 
                 'repeater' => [
                     'products' => [
@@ -38,18 +38,18 @@ return [
 
                         'columns'     => [
                             'product'                    => 'Товар',
-                            'product-variants'           => 'Товар Variants',
-                            'product-simple'             => 'Товар Simple',
+                            'product-variants'           => 'Варианты товара',
+                            'product-simple'             => 'Простой товар',
                             'quantity'                   => 'Количество',
-                            'insufficient-stock-tooltip' => 'Insufficient запас до fulfill этот потребность.',
-                            'uom'                        => 'UOM',
-                            'lead-time'                  => 'Lead Time',
-                            'qty-delivered'              => 'Delivered',
-                            'qty-invoiced'               => 'Invoiced',
-                            'packaging-qty'              => 'Упаковка Количество',
+                            'insufficient-stock-tooltip' => 'Недостаточно запасов для выполнения этого спроса.',
+                            'uom'                        => 'Ед. изм.',
+                            'lead-time'                  => 'Срок поставки',
+                            'qty-delivered'              => 'Отгружено',
+                            'qty-invoiced'               => 'Выставлено',
+                            'packaging-qty'              => 'Кол-во упаковок',
                             'packaging'                  => 'Упаковка',
-                            'unit-price'                 => 'Цена за единицу',
-                            'cost'                       => 'Стоимость',
+                            'unit-price'                 => 'Цена за ед.',
+                            'cost'                       => 'Себестоимость',
                             'margin'                     => 'Маржа',
                             'taxes'                      => 'Налоги',
                             'amount'                     => 'Сумма',
@@ -59,17 +59,17 @@ return [
 
                         'fields'      => [
                             'product'             => 'Товар',
-                            'product-variants'    => 'Товар Variants',
-                            'product-simple'      => 'Товар Simple',
+                            'product-variants'    => 'Варианты товара',
+                            'product-simple'      => 'Простой товар',
                             'quantity'            => 'Количество',
                             'uom'                 => 'Единица измерения',
-                            'lead-time'           => 'Lead Time',
-                            'qty-delivered'       => 'Количество Delivered',
-                            'qty-invoiced'        => 'Количество Invoiced',
-                            'packaging-qty'       => 'Упаковка Количество',
+                            'lead-time'           => 'Срок поставки',
+                            'qty-delivered'       => 'Отгружено',
+                            'qty-invoiced'        => 'Выставлено',
+                            'packaging-qty'       => 'Кол-во упаковок',
                             'packaging'           => 'Упаковка',
-                            'unit-price'          => 'Цена за единицу',
-                            'cost'                => 'Стоимость',
+                            'unit-price'          => 'Цена за ед.',
+                            'cost'                => 'Себестоимость',
                             'margin'              => 'Маржа',
                             'taxes'               => 'Налоги',
                             'amount'              => 'Сумма',
@@ -79,27 +79,27 @@ return [
 
                         'notifications' => [
                             'quantity-below-delivered' => [
-                                'title' => 'Нельзя Reduce Количество',
-                                'body'  => 'Вы нельзя reduce количество ниже delivered количество (:qty).',
+                                'title' => 'Нельзя уменьшить количество',
+                                'body'  => 'Нельзя уменьшить количество ниже отгруженного (:qty).',
                             ],
                         ],
 
                         'delete-action' => [
                             'error' => [
-                                'title' => 'Нельзя Удалить Товар',
-                                'body'  => 'Товары нельзя быть удалено от подтверждён заказ на продажу.',
+                                'title' => 'Нельзя удалить товар',
+                                'body'  => 'Из подтверждённого заказа на продажу нельзя удалять товары.',
                             ],
                         ],
 
                         'actions' => [
                             'open-product' => [
-                                'tooltip' => 'Открыт товар',
+                                'tooltip' => 'Открыть товар',
                             ],
                         ],
                     ],
 
                     'product-optional' => [
-                        'title'       => 'Необязательно Товары',
+                        'title'       => 'Дополнительные товары',
                         'add-product' => 'Добавить товар',
 
                         'columns' => [
@@ -107,7 +107,7 @@ return [
                             'description'         => 'Описание',
                             'quantity'            => 'Количество',
                             'uom'                 => 'Единица измерения',
-                            'unit-price'          => 'Цена за единицу',
+                            'unit-price'          => 'Цена за ед.',
                             'discount-percentage' => 'Скидка (%)',
                         ],
 
@@ -116,33 +116,33 @@ return [
                             'description'         => 'Описание',
                             'quantity'            => 'Количество',
                             'uom'                 => 'Единица измерения',
-                            'unit-price'          => 'Цена за единицу',
+                            'unit-price'          => 'Цена за ед.',
                             'discount-percentage' => 'Скидка (%)',
 
                             'actions' => [
                                 'tooltip' => [
-                                    'add-order-line' => 'Добавить Заказ Строка',
-                                    'already-added'  => 'Уже Added До Заказ',
+                                    'add-order-line' => 'Добавить строку заказа',
+                                    'already-added'  => 'Уже в заказе',
                                 ],
 
                                 'notifications' => [
                                     'product-added' => [
-                                        'title' => 'Товар added',
-                                        'body'  => 'товар есть added successfully.',
+                                        'title' => 'Товар добавлен',
+                                        'body'  => 'Товар успешно добавлен.',
                                     ],
 
                                     'product-not-found' => [
-                                        'title' => 'Товар Не Найдено',
+                                        'title' => 'Товар не найден',
                                     ],
 
                                     'product-already-exists' => [
-                                        'title' => 'Товар Уже Существует',
-                                        'body'  => 'Этот товар уже в заказ строки. Пожалуйста обновить existing строка instead.',
+                                        'title' => 'Товар уже добавлен',
+                                        'body'  => 'Этот товар уже есть в строках заказа. Измените существующую строку.',
                                     ],
 
                                     'missing-product-data' => [
-                                        'title' => 'Отсутствует Товар Data',
-                                        'body'  => 'Не удалось до process выбрано товар.',
+                                        'title' => 'Нет данных о товаре',
+                                        'body'  => 'Не удалось обработать выбранный товар.',
                                     ],
                                 ],
                             ],
@@ -151,39 +151,39 @@ return [
                 ],
             ],
             'other-information' => [
-                'title' => 'Другое Сведения',
+                'title' => 'Прочие сведения',
 
                 'fieldset' => [
                     'sales' => [
                         'title' => 'Продажи',
 
                         'fields' => [
-                            'sales-person'       => 'Продажи Person',
-                            'customer-reference' => 'Ссылка клиента',
-                            'tags'               => 'Метки',
+                            'sales-person'       => 'Менеджер по продажам',
+                            'customer-reference' => 'Референс клиента',
+                            'tags'               => 'Теги',
                         ],
                     ],
 
                     'shipping' => [
-                        'title'  => 'Shipping',
+                        'title'  => 'Доставка',
                         'fields' => [
                             'warehouse'       => 'Склад',
-                            'commitment-date' => 'Доставка Дата',
+                            'commitment-date' => 'Дата отгрузки',
                         ],
                     ],
 
                     'tracking' => [
-                        'title'  => 'Tracking',
+                        'title'  => 'Отслеживание',
                         'fields' => [
-                            'source-document' => 'Источник Документ',
-                            'medium'          => 'Средний',
+                            'source-document' => 'Исходный документ',
+                            'medium'          => 'Канал',
                             'source'          => 'Источник',
-                            'campaign'        => 'Campaign',
+                            'campaign'        => 'Кампания',
                         ],
                     ],
 
                     'additional-information' => [
-                        'title' => 'Additional Сведения',
+                        'title' => 'Дополнительные сведения',
 
                         'fields' => [
                             'company'  => 'Компания',
@@ -194,7 +194,7 @@ return [
             ],
 
             'term-and-conditions' => [
-                'title' => 'Terms & Conditions',
+                'title' => 'Условия',
             ],
         ],
     ],
@@ -203,73 +203,73 @@ return [
         'columns' => [
             'number'             => 'Номер',
             'status'             => 'Статус',
-            'delivery-status'    => 'Доставка Статус',
-            'invoice-status'     => 'Счёт Статус',
-            'order-date'         => 'Заказ Дата',
-            'creation-date'      => 'Creation Дата',
-            'commitment-date'    => 'Commitment Дата',
-            'expected-date'      => 'Ожидается Дата',
+            'delivery-status'    => 'Статус отгрузки',
+            'invoice-status'     => 'Статус выставления',
+            'order-date'         => 'Дата заказа',
+            'creation-date'      => 'Дата создания',
+            'commitment-date'    => 'Обещанная дата',
+            'expected-date'      => 'Ожидаемая дата',
             'customer'           => 'Клиент',
-            'sales-person'       => 'Продажи Person',
-            'sales-team'         => 'Продажи Команда',
-            'untaxed-amount'     => 'Без налога Сумма',
-            'amount-tax'         => 'Сумма Налог',
-            'amount-total'       => 'Сумма Итого',
-            'customer-reference' => 'Ссылка клиента',
+            'sales-person'       => 'Менеджер по продажам',
+            'sales-team'         => 'Команда продаж',
+            'untaxed-amount'     => 'Сумма без налога',
+            'amount-tax'         => 'Сумма налога',
+            'amount-total'       => 'Итоговая сумма',
+            'customer-reference' => 'Референс клиента',
         ],
 
         'summarizers' => [
             'total'        => 'Итого',
             'taxes'        => 'Налоги',
-            'total-amount' => 'Итого Сумма',
+            'total-amount' => 'Итоговая сумма',
         ],
 
         'filters' => [
-            'sales-person'     => 'Продажи Person',
-            'utm-source'       => 'UTM Источник',
+            'sales-person'     => 'Менеджер по продажам',
+            'utm-source'       => 'Источник UTM',
             'company'          => 'Компания',
             'customer'         => 'Клиент',
             'journal'          => 'Журнал',
-            'invoice-address'  => 'Счёт Адрес',
-            'shipping-address' => 'Shipping Адрес',
-            'fiscal-position'  => 'Финансовый Должность',
-            'payment-term'     => 'Условие оплаты',
+            'invoice-address'  => 'Адрес для счетов',
+            'shipping-address' => 'Адрес доставки',
+            'fiscal-position'  => 'Налоговая позиция',
+            'payment-term'     => 'Условия оплаты',
             'currency'         => 'Валюта',
             'created-at'       => 'Создано',
             'updated-at'       => 'Обновлено',
         ],
 
         'groups' => [
-            'medium'          => 'Средний',
+            'medium'          => 'Канал',
             'source'          => 'Источник',
             'team'            => 'Команда',
-            'sales-person'    => 'Продажи Person',
+            'sales-person'    => 'Менеджер по продажам',
             'currency'        => 'Валюта',
             'company'         => 'Компания',
             'customer'        => 'Клиент',
-            'quotation-date'  => 'Коммерческое предложение Дата',
-            'commitment-date' => 'Commitment Дата',
+            'quotation-date'  => 'Дата предложения',
+            'commitment-date' => 'Обещанная дата',
         ],
 
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Коммерческое предложение restored',
-                    'body'  => 'коммерческое предложение есть restored successfully.',
+                    'title' => 'Предложение восстановлено',
+                    'body'  => 'Предложение успешно восстановлено.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Коммерческое предложение удалено',
-                    'body'  => 'коммерческое предложение есть удалено successfully.',
+                    'title' => 'Предложение удалено',
+                    'body'  => 'Предложение успешно удалено.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Коммерческое предложение force удалено',
-                    'body'  => 'коммерческое предложение есть force удалено successfully.',
+                    'title' => 'Предложение удалено навсегда',
+                    'body'  => 'Предложение успешно удалено навсегда.',
                 ],
             ],
         ],
@@ -277,22 +277,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Коммерческие предложения restored',
-                    'body'  => 'коммерческие предложения есть restored successfully.',
+                    'title' => 'Предложения восстановлены',
+                    'body'  => 'Предложения успешно восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Коммерческие предложения удалено',
-                    'body'  => 'коммерческие предложения есть удалено successfully.',
+                    'title' => 'Предложения удалены',
+                    'body'  => 'Предложения успешно удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Коммерческие предложения force удалено',
-                    'body'  => 'коммерческие предложения есть force удалено successfully.',
+                    'title' => 'Предложения удалены навсегда',
+                    'body'  => 'Предложения успешно удалены навсегда.',
                 ],
             ],
         ],
@@ -300,8 +300,8 @@ return [
         'empty-state-action' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Коммерческие предложения создано',
-                    'body'  => 'коммерческие предложения есть создано successfully.',
+                    'title' => 'Предложения созданы',
+                    'body'  => 'Предложения успешно созданы.',
                 ],
             ],
         ],
@@ -310,20 +310,20 @@ return [
     'infolist' => [
         'section' => [
             'general' => [
-                'title'   => 'Общее',
+                'title'   => 'Основное',
                 'entries' => [
                     'sale-order'     => 'Заказ на продажу',
                     'customer'       => 'Клиент',
-                    'expiration'     => 'Expiration',
-                    'quotation-date' => 'Коммерческое предложение Дата',
-                    'payment-term'   => 'Условие оплаты',
+                    'expiration'     => 'Действует до',
+                    'quotation-date' => 'Дата предложения',
+                    'payment-term'   => 'Условия оплаты',
                 ],
             ],
         ],
 
         'tabs' => [
             'order-line' => [
-                'title' => 'Заказ Строка',
+                'title' => 'Строки заказа',
 
                 'repeater' => [
                     'products' => [
@@ -331,47 +331,47 @@ return [
                         'add-product' => 'Добавить товар',
                         'entries'     => [
                             'product'             => 'Товар',
-                            'product-variants'    => 'Товар Variants',
-                            'product-simple'      => 'Товар Simple',
+                            'product-variants'    => 'Варианты товара',
+                            'product-simple'      => 'Простой товар',
                             'quantity'            => 'Количество',
-                            'qty-delivered'       => 'Delivered',
-                            'qty-invoiced'        => 'Invoiced',
-                            'uom'                 => 'UOM',
-                            'lead-time'           => 'Lead Time',
-                            'packaging-qty'       => 'Упаковка Количество',
+                            'qty-delivered'       => 'Отгружено',
+                            'qty-invoiced'        => 'Выставлено',
+                            'uom'                 => 'Ед. изм.',
+                            'lead-time'           => 'Срок поставки',
+                            'packaging-qty'       => 'Кол-во упаковок',
                             'packaging'           => 'Упаковка',
-                            'unit-price'          => 'Цена за единицу',
-                            'cost'                => 'Стоимость',
+                            'unit-price'          => 'Цена за ед.',
+                            'cost'                => 'Себестоимость',
                             'margin'              => 'Маржа',
                             'taxes'               => 'Налоги',
                             'amount'              => 'Сумма',
                             'margin-percentage'   => 'Маржа (%)',
                             'discount-percentage' => 'Скидка (%)',
-                            'sub-total'           => 'Промежуточный итог',
+                            'sub-total'           => 'Подытог',
                         ],
                     ],
 
                     'product-optional' => [
-                        'title'       => 'Необязательно Товары',
+                        'title'       => 'Дополнительные товары',
                         'add-product' => 'Добавить товар',
                         'entries'     => [
                             'product'             => 'Товар',
                             'description'         => 'Описание',
                             'quantity'            => 'Количество',
                             'uom'                 => 'Единица измерения',
-                            'unit-price'          => 'Цена за единицу',
+                            'unit-price'          => 'Цена за ед.',
                             'discount-percentage' => 'Скидка (%)',
-                            'sub-total'           => 'Промежуточный итог',
+                            'sub-total'           => 'Подытог',
 
                             'actions' => [
                                 'tooltip' => [
-                                    'add-order-line' => 'Добавить Заказ Строка',
+                                    'add-order-line' => 'Добавить строку заказа',
                                 ],
 
                                 'notifications' => [
                                     'product-added' => [
-                                        'title' => 'Товар added',
-                                        'body'  => 'товар есть added successfully.',
+                                        'title' => 'Товар добавлен',
+                                        'body'  => 'Товар успешно добавлен.',
                                     ],
                                 ],
                             ],
@@ -380,38 +380,38 @@ return [
                 ],
             ],
             'other-information' => [
-                'title' => 'Другое Сведения',
+                'title' => 'Прочие сведения',
 
                 'fieldset' => [
                     'sales' => [
                         'title' => 'Продажи',
 
                         'entries' => [
-                            'sales-person'       => 'Продажи Person',
-                            'customer-reference' => 'Ссылка клиента',
-                            'tags'               => 'Метки',
+                            'sales-person'       => 'Менеджер по продажам',
+                            'customer-reference' => 'Референс клиента',
+                            'tags'               => 'Теги',
                         ],
                     ],
 
                     'shipping' => [
-                        'title'   => 'Shipping',
+                        'title'   => 'Доставка',
                         'entries' => [
-                            'commitment-date' => 'Доставка Дата',
+                            'commitment-date' => 'Дата отгрузки',
                         ],
                     ],
 
                     'tracking' => [
-                        'title'   => 'Tracking',
+                        'title'   => 'Отслеживание',
                         'entries' => [
-                            'source-document' => 'Источник Документ',
-                            'medium'          => 'Средний',
+                            'source-document' => 'Исходный документ',
+                            'medium'          => 'Канал',
                             'source'          => 'Источник',
-                            'campaign'        => 'Campaign',
+                            'campaign'        => 'Кампания',
                         ],
                     ],
 
                     'additional-information' => [
-                        'title' => 'Additional Сведения',
+                        'title' => 'Дополнительные сведения',
 
                         'entries' => [
                             'company'  => 'Компания',
@@ -422,7 +422,7 @@ return [
             ],
 
             'term-and-conditions' => [
-                'title' => 'Terms & Conditions',
+                'title' => 'Условия',
             ],
         ],
     ],

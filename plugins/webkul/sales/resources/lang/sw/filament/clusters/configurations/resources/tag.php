@@ -5,7 +5,7 @@ return [
 
     'navigation' => [
         'title' => 'Lebo',
-        'group' => 'Agizo la mauzos',
+        'group' => 'Oda za mauzo',
     ],
 
     'form' => [
@@ -17,30 +17,30 @@ return [
 
     'table' => [
         'columns' => [
-            'created-by' => 'Imeundwa na',
+            'created-by' => 'Iliundwa na',
             'name'       => 'Jina',
             'color'      => 'Rangi',
         ],
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Bidhaa Lebo imesasishwa',
-                    'body'  => 'bidhaa Lebo ina imesasishwa successfully.',
+                    'title' => 'Lebo imesasishwa',
+                    'body'  => 'Lebo imesasishwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Bidhaa Lebo imefutwa',
-                    'body'  => 'bidhaa Lebo ina imefutwa successfully.',
+                    'title' => 'Lebo imefutwa',
+                    'body'  => 'Lebo imefutwa kwa mafanikio.',
                 ],
             ],
         ],
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Bidhaa Lebo imefutwa',
-                    'body'  => 'bidhaa Lebo ina imefutwa successfully.',
+                    'title' => 'Lebo imefutwa',
+                    'body'  => 'Lebo imefutwa kwa mafanikio.',
                 ],
             ],
         ],

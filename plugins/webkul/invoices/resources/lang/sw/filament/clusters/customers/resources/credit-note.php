@@ -1,15 +1,15 @@
 <?php
 
 return [
-    'title' => 'Noti ya mkopo',
+    'title' => 'Hati ya mkopo',
 
     'navigation' => [
-        'title' => 'Noti ya mkopos',
+        'title' => 'Hati za mkopo',
     ],
 
     'actions' => [
         'open-product' => [
-            'tooltip' => 'Wazi bidhaa',
+            'tooltip' => 'Fungua bidhaa',
         ],
     ],
 ];

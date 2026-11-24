@@ -6,12 +6,12 @@ return [
     'notification' => [
         'confirmed' => [
             'title' => 'Nukuu imethibitishwa',
-            'body'  => 'Nukuu ina imethibitishwa na zimebadilishwa hadi mauzo successfully.',
+            'body'  => 'Nukuu imethibitishwa na kubadilishwa kuwa mauzo kwa mafanikio.',
         ],
 
         'error' => [
             'title' => 'Hitilafu',
-            'body'  => 'hitilafu occurred wakati confirming nukuu.',
+            'body'  => 'Hitilafu imetokea wakati wa kuthibitisha nukuu.',
         ],
     ],
 ];

@@ -1,18 +1,18 @@
 <?php
 
 return [
-    'title' => 'Hariri Mwasiliani',
+    'title' => 'Hariri mhusika',
 
     'notification' => [
-        'title' => 'Mwasiliani imesasishwa',
-        'body'  => 'mwasiliani ina imesasishwa successfully.',
+        'title' => 'Mhusika amesasishwa',
+        'body'  => 'Mhusika amesasishwa kwa mafanikio.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Mwasiliani imefutwa',
-                'body'  => 'mwasiliani ina imefutwa successfully.',
+                'title' => 'Mhusika amefutwa',
+                'body'  => 'Mhusika amefutwa kwa mafanikio.',
             ],
         ],
     ],

@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Mauzo timu imesasishwa',
-        'body'  => 'mauzo timu ina imesasishwa successfully.',
+        'title' => 'Timu ya mauzo imesasishwa',
+        'body'  => 'Timu ya mauzo imesasishwa kwa mafanikio.',
     ],
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Mauzo timu imefutwa',
-                'body'  => 'mauzo timu ina imefutwa successfully.',
+                'title' => 'Timu ya mauzo imefutwa',
+                'body'  => 'Timu ya mauzo imefutwa kwa mafanikio.',
             ],
         ],
     ],

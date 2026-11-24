@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Товар variants',
+    'title' => 'Варианты товаров',
 
     'navigation' => [
-        'title' => 'Товар variants',
-        'group' => 'Склад',
+        'title' => 'Варианты товаров',
+        'group' => 'Запасы',
     ],
 ];

@@ -2,6 +2,6 @@
 
 return [
     'tabs' => [
-        'refund' => 'Rudisho',
+        'refund' => 'Marejesho',
     ],
 ];

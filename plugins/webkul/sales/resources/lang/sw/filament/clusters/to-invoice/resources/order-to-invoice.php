@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'Maagizo Hadi Ankara',
+    'title' => 'Oda za kutolewa ankara',
 
     'navigation' => [
-        'title' => 'Maagizo Hadi Ankara',
+        'title' => 'Oda za kutolewa ankara',
     ],
 ];

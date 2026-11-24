@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'draft'  => 'Nukuu',
-    'sent'   => 'Nukuu Imetumwa',
-    'sale'   => 'Agizo la mauzo',
+    'draft'  => 'Nukuu ya bei',
+    'sent'   => 'Nukuu imetumwa',
+    'sale'   => 'Oda ya mauzo',
     'cancel' => 'Imeghairiwa',
 ];

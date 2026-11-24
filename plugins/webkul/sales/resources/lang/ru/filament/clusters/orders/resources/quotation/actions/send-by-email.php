@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'title'        => 'Send От Эл. почта',
-    'resend-title' => 'Re-Send От Эл. почта',
-    'quotation'    => 'коммерческое предложение',
-    'quotations'   => 'коммерческие предложения',
+    'title'        => 'Отправить по эл. почте',
+    'resend-title' => 'Отправить повторно',
+    'quotation'    => 'предложение',
+    'quotations'   => 'предложения',
 
     'modal' => [
-        'heading' => 'Send Коммерческое предложение От Эл. почта',
+        'heading' => 'Отправить предложение по эл. почте',
     ],
 
     'form' => [
         'fields' => [
-            'partners'    => 'Контрагенты',
-            'subject'     => 'Subject',
+            'partners'    => 'Контакты',
+            'subject'     => 'Тема',
             'description' => 'Описание',
             'attachment'  => 'Вложение',
         ],
@@ -23,24 +23,24 @@ return [
         'notification' => [
             'email' => [
                 'no_recipients' => [
-                    'title' => 'Нет Recipients Выбрано',
-                    'body'  => 'Пожалуйста выбрать в наименее one контрагент до send коммерческие предложения до.',
+                    'title' => 'Получатели не выбраны',
+                    'body'  => 'Выберите хотя бы один контакт для отправки предложений.',
                 ],
 
                 'all_success' => [
-                    'title' => 'Коммерческие предложения Отправлено!',
-                    'body'  => 'Ваш :plural есть successfully delivered до: :recipients',
+                    'title' => 'Предложения отправлены!',
+                    'body'  => 'Успешно отправлено (:plural): :recipients',
                 ],
 
                 'all_failed' => [
-                    'title' => 'Не удалось до Send Коммерческие предложения',
-                    'body'  => 'Мы encountered issues sending ваш коммерческие предложения: :failures',
+                    'title' => 'Не удалось отправить предложения',
+                    'body'  => 'При отправке предложений возникли проблемы: :failures',
                 ],
 
                 'partial_success' => [
-                    'title'       => 'Некоторые Коммерческие предложения Отправлено',
-                    'sent_part'   => 'Successfully delivered до: :recipients',
-                    'failed_part' => 'Could не deliver до: :failures',
+                    'title'       => 'Часть предложений отправлена',
+                    'sent_part'   => 'Успешно доставлено: :recipients',
+                    'failed_part' => 'Не удалось доставить: :failures',
                 ],
 
                 'failure_item' => ':partner (:reason)',

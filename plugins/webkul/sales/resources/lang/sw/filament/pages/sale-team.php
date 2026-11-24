@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Mauzo Teams',
+        'title' => 'Timu za mauzo',
     ],
 ];

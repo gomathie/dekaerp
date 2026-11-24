@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'title'        => 'Send Na Barua pepe',
-    'resend-title' => 'Re-Send Na Barua pepe',
+    'title'        => 'Tuma kwa barua pepe',
+    'resend-title' => 'Tuma tena kwa barua pepe',
     'quotation'    => 'nukuu',
     'quotations'   => 'nukuu',
 
     'modal' => [
-        'heading' => 'Send Nukuu Na Barua pepe',
+        'heading' => 'Tuma nukuu kwa barua pepe',
     ],
 
     'form' => [
         'fields' => [
-            'partners'    => 'Washirika',
-            'subject'     => 'Subject',
+            'partners'    => 'Wahusika',
+            'subject'     => 'Kichwa',
             'description' => 'Maelezo',
             'attachment'  => 'Kiambatisho',
         ],
@@ -23,24 +23,24 @@ return [
         'notification' => [
             'email' => [
                 'no_recipients' => [
-                    'title' => 'Hakuna Recipients Imechaguliwa',
-                    'body'  => 'Tafadhali chagua saa kidogo one mshirika hadi send nukuu hadi.',
+                    'title' => 'Hakuna wapokeaji waliochaguliwa',
+                    'body'  => 'Tafadhali chagua angalau mhusika mmoja wa kutumiwa nukuu.',
                 ],
 
                 'all_success' => [
-                    'title' => 'Nukuu Imetumwa!',
-                    'body'  => 'Yako :plural ina successfully delivered hadi: :recipients',
+                    'title' => 'Nukuu zimetumwa!',
+                    'body'  => ':plural zako zimewasilishwa kwa mafanikio kwa: :recipients',
                 ],
 
                 'all_failed' => [
-                    'title' => 'Haiwezekani hadi Send Nukuu',
-                    'body'  => 'Sisi encountered issues sending yako nukuu: :failures',
+                    'title' => 'Imeshindikana kutuma nukuu',
+                    'body'  => 'Tumekumbana na matatizo kutuma nukuu zako: :failures',
                 ],
 
                 'partial_success' => [
-                    'title'       => 'Baadhi Nukuu Imetumwa',
-                    'sent_part'   => 'Successfully delivered hadi: :recipients',
-                    'failed_part' => 'Could si deliver hadi: :failures',
+                    'title'       => 'Baadhi ya nukuu zimetumwa',
+                    'sent_part'   => 'Zimewasilishwa kwa mafanikio kwa: :recipients',
+                    'failed_part' => 'Hazikuweza kuwasilishwa kwa: :failures',
                 ],
 
                 'failure_item' => ':partner (:reason)',

@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'up-selling'  => 'Upselling Opportunity',
-    'invoiced'    => 'Fully Invoiced',
-    'to-invoice'  => 'Hadi Ankara',
-    'no'          => 'Nothing hadi Ankara',
+    'up-selling'  => 'Fursa ya kuuza zaidi',
+    'invoiced'    => 'Ankara kamili',
+    'to-invoice'  => 'Ya kutolewa ankara',
+    'no'          => 'Hakuna cha kutoza',
 ];

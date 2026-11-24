@@ -1,22 +1,22 @@
 <?php
 
 return [
-    'title'          => 'Agizo la mauzo',
+    'title'          => 'Oda ya mauzo',
 
     'titles'         => [
-        'quotation'   => 'Nukuu',
-        'sales-order' => 'Agizo la mauzo',
+        'quotation'   => 'Nukuu ya bei',
+        'sales-order' => 'Oda ya mauzo',
     ],
 
     'log-attributes' => [
-        'state'           => 'Agizo Hali',
+        'state'           => 'Hali ya oda',
         'locked'          => 'Imefungwa',
-        'amount-untaxed'  => 'Kiasi Bila kodi',
-        'amount-total'    => 'Kiasi Jumla',
+        'amount-untaxed'  => 'Kiasi bila kodi',
+        'amount-total'    => 'Jumla ya kiasi',
         'partner'         => 'Mteja',
-        'sales-person'    => 'Mauzo Person',
-        'sales-team'      => 'Mauzo Timu',
+        'sales-person'    => 'Muuzaji',
+        'sales-team'      => 'Timu ya mauzo',
         'payment-term'    => 'Masharti ya malipo',
-        'fiscal-position' => 'Kifedha Cheo',
+        'fiscal-position' => 'Hali ya kodi',
     ],
 ];

@@ -11,8 +11,8 @@ return [
         'fieldset' => [
             'title'  => 'Mpokeaji',
             'fields' => [
-                'reference'         => 'Kumbukumbu',
-                'payment-reference' => 'Malipo Kumbukumbu',
+                'reference'         => 'Rejea',
+                'payment-reference' => 'Rejea ya malipo',
             ],
         ],
     ],

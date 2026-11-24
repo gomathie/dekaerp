@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'model-label' => 'Masharti ya malipo',
+    'model-label' => 'Sharti la malipo',
 
     'navigation' => [
         'title' => 'Masharti ya malipo',
-        'group' => 'Invoicing',
+        'group' => 'Utoaji wa ankara',
     ],
 ];

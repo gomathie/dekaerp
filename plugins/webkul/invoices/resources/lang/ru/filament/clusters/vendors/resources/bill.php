@@ -8,15 +8,15 @@ return [
     ],
 
     'form' => [
-        'biller'            => 'Biller',
-        'reference'         => 'Ссылка',
-        'payment-reference' => 'Оплата Ссылка',
+        'biller'            => 'Выставитель',
+        'reference'         => 'Референс',
+        'payment-reference' => 'Назначение платежа',
         'date'              => 'Дата',
     ],
 
     'actions' => [
         'open-product' => [
-            'tooltip' => 'Открыт товар',
+            'tooltip' => 'Открыть товар',
         ],
     ],
 ];

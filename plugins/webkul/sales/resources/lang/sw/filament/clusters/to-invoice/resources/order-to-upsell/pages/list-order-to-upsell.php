@@ -2,7 +2,7 @@
 
 return [
     'tabs' => [
-        'my-orders' => 'Yangu Maagizo',
-        'archived'  => 'Imehifadhiwa',
+        'my-orders' => 'Oda zangu',
+        'archived'  => 'Kumbukumbu',
     ],
 ];

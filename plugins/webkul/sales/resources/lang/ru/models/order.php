@@ -9,14 +9,14 @@ return [
     ],
 
     'log-attributes' => [
-        'state'           => 'Заказ Статус',
-        'locked'          => 'Заблокировано',
-        'amount-untaxed'  => 'Сумма Без налога',
-        'amount-total'    => 'Сумма Итого',
+        'state'           => 'Статус заказа',
+        'locked'          => 'Заблокирован',
+        'amount-untaxed'  => 'Сумма без налога',
+        'amount-total'    => 'Итоговая сумма',
         'partner'         => 'Клиент',
-        'sales-person'    => 'Продажи Person',
-        'sales-team'      => 'Продажи Команда',
-        'payment-term'    => 'Условие оплаты',
-        'fiscal-position' => 'Финансовый Должность',
+        'sales-person'    => 'Менеджер по продажам',
+        'sales-team'      => 'Команда продаж',
+        'payment-term'    => 'Условия оплаты',
+        'fiscal-position' => 'Налоговая позиция',
     ],
 ];

@@ -1,27 +1,27 @@
 <?php
 
 return [
-    'title' => 'Katika/Nje',
+    'title' => 'NDANI/NJE',
 
     'table' => [
         'columns' => [
             'date'                 => 'Tarehe',
-            'reference'            => 'Kumbukumbu',
+            'reference'            => 'Rejea',
             'product'              => 'Bidhaa',
             'package'              => 'Kifurushi',
-            'lot'                  => 'Kundi / Nambari ya mfululizo Numbers',
-            'source-location'      => 'Chanzo Mahali',
-            'destination-location' => 'Unakoenda Mahali',
-            'quantity'             => 'Kiasi',
+            'lot'                  => 'Namba za loti / mfululizo',
+            'source-location'      => 'Mahali pa kuanzia',
+            'destination-location' => 'Mahali pa kufikia',
+            'quantity'             => 'Idadi',
             'state'                => 'Hali',
-            'done-by'              => 'Imekamilika Na',
+            'done-by'              => 'Imefanywa na',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Hamisha imefutwa',
-                    'body'  => 'hamisha ina imefutwa successfully.',
+                    'title' => 'Uhamisho umefutwa',
+                    'body'  => 'Uhamisho umefutwa kwa mafanikio.',
                 ],
             ],
         ],

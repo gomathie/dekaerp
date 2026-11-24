@@ -5,7 +5,7 @@ return [
         'sections' => [
             'fields' => [
                 'vendor'                => 'Поставщик',
-                'vendor-bank-account'   => 'Поставщик Банковский счёт',
+                'vendor-bank-account'   => 'Банковский счёт поставщика',
             ],
         ],
     ],

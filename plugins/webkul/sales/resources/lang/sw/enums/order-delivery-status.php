@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'no'      => 'Nothing Hadi Deliver',
+    'no'      => 'Hakuna cha kuwasilisha',
     'pending' => 'Inasubiri',
-    'started' => 'Started',
-    'partial' => 'Partially Delivered',
-    'full'    => 'Fully Delivered',
+    'started' => 'Imeanza',
+    'partial' => 'Imewasilishwa sehemu',
+    'full'    => 'Imewasilishwa kikamilifu',
 ];

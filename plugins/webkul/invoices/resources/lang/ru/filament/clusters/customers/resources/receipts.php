@@ -1,18 +1,18 @@
 <?php
 
 return [
-    'title' => 'Приходы',
+    'title' => 'Квитанции',
 
     'navigation' => [
-        'title' => 'Приходы',
+        'title' => 'Квитанции',
     ],
 
     'form' => [
         'fieldset' => [
             'title'  => 'Получатель',
             'fields' => [
-                'reference'         => 'Ссылка',
-                'payment-reference' => 'Оплата Ссылка',
+                'reference'         => 'Референс',
+                'payment-reference' => 'Назначение платежа',
             ],
         ],
     ],

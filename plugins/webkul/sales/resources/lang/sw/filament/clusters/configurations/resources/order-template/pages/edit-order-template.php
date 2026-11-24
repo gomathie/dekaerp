@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Agizo Kiolezo Bidhaa imesasishwa',
-        'body'  => 'Agizo Kiolezo Bidhaa ina imesasishwa successfully',
+        'title' => 'Bidhaa ya kiolezo cha oda imesasishwa',
+        'body'  => 'Bidhaa ya kiolezo cha oda imesasishwa kwa mafanikio',
     ],
 
     'header-actions' => [
         'notification' => [
             'delete' => [
-                'title' => 'Agizo Kiolezo Bidhaa imefutwa',
-                'body'  => 'Agizo Kiolezo Bidhaa ina imefutwa successfully',
+                'title' => 'Bidhaa ya kiolezo cha oda imefutwa',
+                'body'  => 'Bidhaa ya kiolezo cha oda imefutwa kwa mafanikio',
             ],
         ],
     ],

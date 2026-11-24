@@ -7,11 +7,11 @@ return [
     ],
 
     'filters' => [
-        'date-range'    => 'Диапазон дат',
+        'date-range'    => 'Период',
         'countries'     => 'Страна',
         'products'      => 'Товары',
         'categories'    => 'Категория',
-        'teams'         => 'Продажи Команда',
-        'sales-persons' => 'Продажи Person',
+        'teams'         => 'Команда продаж',
+        'sales-persons' => 'Менеджер по продажам',
     ],
 ];

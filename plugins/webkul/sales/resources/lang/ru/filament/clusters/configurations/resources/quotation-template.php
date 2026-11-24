@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'title' => 'Коммерческое предложение Шаблон',
+    'title' => 'Шаблон предложения',
 
     'navigation' => [
-        'title'  => 'Коммерческое предложение Шаблон',
-        'group'  => 'Заказ на продажуs',
+        'title'  => 'Шаблон предложения',
+        'group'  => 'Заказы на продажу',
     ],
 
     'form' => [
@@ -20,31 +20,31 @@ return [
             ],
 
             'terms-and-conditions' => [
-                'title'  => 'Terms & Conditions',
+                'title'  => 'Условия',
                 'fields' => [
-                    'note-placeholder' => 'Запись ваш terms и conditions для коммерческие предложения.',
+                    'note-placeholder' => 'Укажите условия для коммерческих предложений.',
                 ],
             ],
         ],
 
         'sections' => [
             'general' => [
-                'title' => 'Общее Сведения',
+                'title' => 'Общие сведения',
 
                 'fields' => [
                     'name'               => 'Название',
-                    'quotation-validity' => 'Коммерческое предложение Validity',
-                    'sale-journal'       => 'Продажа Журнал',
+                    'quotation-validity' => 'Срок действия предложения',
+                    'sale-journal'       => 'Журнал продаж',
                 ],
             ],
 
             'signature-and-payment' => [
-                'title' => 'Signature & Оплаты',
+                'title' => 'Подпись и оплата',
 
                 'fields' => [
-                    'online-signature'      => 'Online Signature',
-                    'online-payment'        => 'Online Оплата',
-                    'prepayment-percentage' => 'Prepayment Процент',
+                    'online-signature'      => 'Онлайн-подпись',
+                    'online-payment'        => 'Онлайн-оплата',
+                    'prepayment-percentage' => 'Процент предоплаты',
                 ],
             ],
         ],
@@ -52,14 +52,14 @@ return [
 
     'table' => [
         'columns' => [
-            'created-by'            => 'Создано от',
+            'created-by'            => 'Кем создано',
             'company'               => 'Компания',
             'name'                  => 'Название',
-            'number-of-days'        => 'Номер дни',
-            'journal'               => 'Продажа Журнал',
-            'signature-required'    => 'Signature Обязательно',
-            'payment-required'      => 'Оплата Обязательно',
-            'prepayment-percentage' => 'Prepayment Процент',
+            'number-of-days'        => 'Количество дней',
+            'journal'               => 'Журнал продаж',
+            'signature-required'    => 'Нужна подпись',
+            'payment-required'      => 'Нужна оплата',
+            'prepayment-percentage' => 'Процент предоплаты',
         ],
         'groups'  => [
             'company' => 'Компания',
@@ -67,7 +67,7 @@ return [
             'journal' => 'Журнал',
         ],
         'filters' => [
-            'created-by' => 'Создано От',
+            'created-by' => 'Кем создано',
             'company'    => 'Компания',
             'name'       => 'Название',
             'created-at' => 'Создано',
@@ -76,8 +76,8 @@ return [
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Коммерческое предложение шаблон удалено',
-                    'body'  => 'коммерческое предложение шаблон есть удалено successfully.',
+                    'title' => 'Шаблон предложения удалён',
+                    'body'  => 'Шаблон предложения успешно удалён.',
                 ],
             ],
 
@@ -85,8 +85,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Коммерческое предложение шаблон удалено',
-                    'body'  => 'коммерческое предложение шаблон есть удалено successfully.',
+                    'title' => 'Шаблон предложения удалён',
+                    'body'  => 'Шаблон предложения успешно удалён.',
                 ],
             ],
         ],
@@ -98,30 +98,30 @@ return [
                 'title' => 'Товары',
             ],
             'terms-and-conditions' => [
-                'title' => 'Terms & Conditions',
+                'title' => 'Условия',
             ],
         ],
         'sections' => [
             'general' => [
-                'title' => 'Общее Сведения',
+                'title' => 'Общие сведения',
             ],
             'signature_and_payment' => [
-                'title' => 'Signature & Оплата',
+                'title' => 'Подпись и оплата',
             ],
         ],
         'entries' => [
             'product'               => 'Товар',
             'description'           => 'Описание',
             'quantity'              => 'Количество',
-            'unit-price'            => 'Цена за единицу',
-            'section-name'          => 'Раздел Название',
-            'note-title'            => 'Заметка Заголовок',
-            'name'                  => 'Шаблон Название',
-            'quotation-validity'    => 'Коммерческое предложение Validity',
-            'sale-journal'          => 'Продажа Журнал',
-            'online-signature'      => 'Online Signature',
-            'online-payment'        => 'Online Оплата',
-            'prepayment-percentage' => 'Prepayment Процент',
+            'unit-price'            => 'Цена за ед.',
+            'section-name'          => 'Название раздела',
+            'note-title'            => 'Заголовок примечания',
+            'name'                  => 'Название шаблона',
+            'quotation-validity'    => 'Срок действия предложения',
+            'sale-journal'          => 'Журнал продаж',
+            'online-signature'      => 'Онлайн-подпись',
+            'online-payment'        => 'Онлайн-оплата',
+            'prepayment-percentage' => 'Процент предоплаты',
         ],
     ],
 ];

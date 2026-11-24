@@ -3,17 +3,17 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Lebo',
+            'label' => 'Lebo mpya',
 
             'notification' => [
                 'title' => 'Lebo imeundwa',
-                'body'  => 'lebo ina imeundwa successfully.',
+                'body'  => 'Lebo imeundwa kwa mafanikio.',
             ],
         ],
     ],
 
     'tabs' => [
         'all'      => 'Zote',
-        'archived' => 'Imehifadhiwa',
+        'archived' => 'Kumbukumbu',
     ],
 ];

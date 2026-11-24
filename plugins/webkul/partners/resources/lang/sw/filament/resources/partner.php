@@ -13,16 +13,16 @@ return [
 
                 'fields' => [
                     'company'    => 'Kampuni',
-                    'avatar'     => 'Avatar',
-                    'tax-id'     => 'Kodi Kitambulisho',
-                    'job-title'  => 'Kazi Kichwa',
+                    'avatar'     => 'Picha',
+                    'tax-id'     => 'Namba ya kodi (TIN)',
+                    'job-title'  => 'Cheo cha kazi',
                     'phone'      => 'Simu',
-                    'mobile'     => 'Mobile',
+                    'mobile'     => 'Simu ya mkononi',
                     'email'      => 'Barua pepe',
                     'website'    => 'Tovuti',
-                    'title'      => 'Kichwa',
+                    'title'      => 'Cheo',
                     'name'       => 'Jina',
-                    'short-name' => 'Short Jina',
+                    'short-name' => 'Jina fupi',
                     'tags'       => 'Lebo',
                     'color'      => 'Rangi',
                 ],
@@ -31,11 +31,11 @@ return [
                     'title' => 'Anwani',
 
                     'fields' => [
-                        'street1'  => 'Street 1',
-                        'street2'  => 'Street 2',
+                        'street1'  => 'Mtaa 1',
+                        'street2'  => 'Mtaa 2',
                         'city'     => 'Jiji',
-                        'zip'      => 'ZIP',
-                        'state'    => 'Hali',
+                        'zip'      => 'Msimbo wa posta',
+                        'state'    => 'Mkoa',
                         'country'  => 'Nchi',
                         'name'     => 'Jina',
                         'code'     => 'Msimbo',
@@ -46,15 +46,15 @@ return [
 
         'tabs' => [
             'sales-purchase' => [
-                'title' => 'Mauzo na Ununuzi',
+                'title' => 'Mauzo na ununuzi',
 
                 'fields' => [
-                    'responsible'           => 'Responsible',
-                    'responsible-hint-text' => 'Hii ni ndani salesperson responsible kwa hii mteja',
-                    'company-id'            => 'Kampuni Kitambulisho',
-                    'company-id-hint-text'  => 'company\'s registry nambari, inatumika ikiwa different kutoka Kodi Kitambulisho. Hii lazima kuwa unique among zote washirika ndani ya ile ile nchi.',
-                    'reference'             => 'Kumbukumbu',
-                    'industry'              => 'Industry',
+                    'responsible'           => 'Msimamizi',
+                    'responsible-hint-text' => 'Huyu ni muuzaji wa ndani anayemhudumia mteja huyu',
+                    'company-id'            => 'Kitambulisho cha kampuni',
+                    'company-id-hint-text'  => 'Namba ya usajili wa kampuni, ikiwa ni tofauti na namba ya kodi. Lazima iwe ya kipekee kwa wahusika wote wa nchi moja.',
+                    'reference'             => 'Rejea',
+                    'industry'              => 'Sekta',
                 ],
             ],
         ],
@@ -62,72 +62,72 @@ return [
 
     'table' => [
         'columns' => [
-            'parent'     => 'Parent',
-            'work-email' => 'Work Barua pepe',
-            'work-phone' => 'Work Simu',
+            'parent'     => 'Mhusika mzazi',
+            'work-email' => 'Barua pepe ya kazini',
+            'work-phone' => 'Simu ya kazini',
         ],
 
         'groups' => [
-            'account-type' => 'Akaunti Aina',
-            'parent'       => 'Parent',
-            'title'        => 'Kichwa',
-            'job-title'    => 'Kazi Kichwa',
-            'industry'     => 'Industry',
+            'account-type' => 'Aina ya akaunti',
+            'parent'       => 'Mhusika mzazi',
+            'title'        => 'Cheo',
+            'job-title'    => 'Cheo cha kazi',
+            'industry'     => 'Sekta',
         ],
 
         'filters' => [
-            'account-type'     => 'Akaunti Aina',
+            'account-type'     => 'Aina ya akaunti',
             'name'             => 'Jina',
             'email'            => 'Barua pepe',
-            'parent'           => 'Parent',
-            'title'            => 'Kichwa',
-            'tax-id'           => 'Kodi Kitambulisho',
+            'parent'           => 'Mhusika mzazi',
+            'title'            => 'Cheo',
+            'tax-id'           => 'Namba ya kodi (TIN)',
             'phone'            => 'Simu',
-            'mobile'           => 'Mobile',
-            'job-title'        => 'Kazi Kichwa',
+            'mobile'           => 'Simu ya mkononi',
+            'job-title'        => 'Cheo cha kazi',
             'website'          => 'Tovuti',
-            'company-registry' => 'Kampuni Registry',
-            'responsible'      => 'Responsible',
-            'reference'        => 'Kumbukumbu',
-            'parent'           => 'Parent',
-            'creator'          => 'Creator',
+            'company-registry' => 'Namba ya usajili',
+            'responsible'      => 'Msimamizi',
+            'reference'        => 'Rejea',
+            'parent'           => 'Mhusika mzazi',
+            'creator'          => 'Muundaji',
             'company'          => 'Kampuni',
-            'industry'         => 'Industry',
-            'industry'         => 'Industry',
+            'industry'         => 'Sekta',
+            'industry'         => 'Sekta',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Mwasiliani imesasishwa',
-                    'body'  => 'mwasiliani ina imesasishwa successfully.',
+                    'title' => 'Mhusika amesasishwa',
+                    'body'  => 'Mhusika amesasishwa kwa mafanikio.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Mwasiliani restored',
-                    'body'  => 'mwasiliani ina restored successfully.',
+                    'title' => 'Mhusika amerejeshwa',
+                    'body'  => 'Mhusika amerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Mwasiliani imefutwa',
-                    'body'  => 'mwasiliani ina imefutwa successfully.',
+                    'title' => 'Mhusika amefutwa',
+                    'body'  => 'Mhusika amefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Mwasiliani force imefutwa',
-                        'body'  => 'mwasiliani ina force imefutwa successfully.',
+                        'title' => 'Mhusika amefutwa kabisa',
+                        'body'  => 'Mhusika amefutwa kabisa kwa mafanikio.',
                     ],
 
                     'error' => [
-                        'title' => 'Mwasiliani could si kuwa imefutwa',
-                        'body'  => 'mwasiliani haiwezekani kuwa imefutwa kwa sababu hii ni currently katika tumia.',
+                        'title' => 'Mhusika hawezi kufutwa',
+                        'body'  => 'Mhusika hawezi kufutwa kwa sababu anatumika kwa sasa.',
                     ],
                 ],
             ],
@@ -136,28 +136,28 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Mawasiliano restored',
-                    'body'  => 'mawasiliano ina restored successfully.',
+                    'title' => 'Wahusika wamerejeshwa',
+                    'body'  => 'Wahusika wamerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Mawasiliano imefutwa',
-                    'body'  => 'mawasiliano ina imefutwa successfully.',
+                    'title' => 'Wahusika wamefutwa',
+                    'body'  => 'Wahusika wamefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Mawasiliano force imefutwa',
-                        'body'  => 'mawasiliano ina force imefutwa successfully.',
+                        'title' => 'Wahusika wamefutwa kabisa',
+                        'body'  => 'Wahusika wamefutwa kabisa kwa mafanikio.',
                     ],
 
                     'error' => [
-                        'title' => 'Mawasiliano could si kuwa imefutwa',
-                        'body'  => 'mawasiliano haiwezekani kuwa imefutwa kwa sababu wao ni currently katika tumia.',
+                        'title' => 'Wahusika hawawezi kufutwa',
+                        'body'  => 'Wahusika hawawezi kufutwa kwa sababu wanatumika kwa sasa.',
                     ],
                 ],
             ],
@@ -171,16 +171,16 @@ return [
 
                 'fields' => [
                     'company'    => 'Kampuni',
-                    'avatar'     => 'Avatar',
-                    'tax-id'     => 'Kodi Kitambulisho',
-                    'job-title'  => 'Kazi Kichwa',
+                    'avatar'     => 'Picha',
+                    'tax-id'     => 'Namba ya kodi (TIN)',
+                    'job-title'  => 'Cheo cha kazi',
                     'phone'      => 'Simu',
-                    'mobile'     => 'Mobile',
+                    'mobile'     => 'Simu ya mkononi',
                     'email'      => 'Barua pepe',
                     'website'    => 'Tovuti',
-                    'title'      => 'Kichwa',
+                    'title'      => 'Cheo',
                     'name'       => 'Jina',
-                    'short-name' => 'Short Jina',
+                    'short-name' => 'Jina fupi',
                     'tags'       => 'Lebo',
                 ],
 
@@ -188,11 +188,11 @@ return [
                     'title' => 'Anwani',
 
                     'fields' => [
-                        'street1'  => 'Street 1',
-                        'street2'  => 'Street 2',
+                        'street1'  => 'Mtaa 1',
+                        'street2'  => 'Mtaa 2',
                         'city'     => 'Jiji',
-                        'zip'      => 'ZIP',
-                        'state'    => 'Hali',
+                        'zip'      => 'Msimbo wa posta',
+                        'state'    => 'Mkoa',
                         'country'  => 'Nchi',
                         'name'     => 'Jina',
                         'code'     => 'Msimbo',
@@ -203,15 +203,15 @@ return [
 
         'tabs' => [
             'sales-purchase' => [
-                'title' => 'Mauzo na Ununuzi',
+                'title' => 'Mauzo na ununuzi',
 
                 'fields' => [
-                    'responsible'           => 'Responsible',
-                    'responsible-hint-text' => 'Hii ni ndani salesperson responsible kwa hii mteja',
-                    'company-id'            => 'Kampuni Kitambulisho',
-                    'company-id-hint-text'  => 'registry nambari ya kampuni. Tumia hii ikiwa hii ni different kutoka Kodi Kitambulisho. Hii lazima kuwa unique katika zote washirika ya ile ile nchi',
-                    'reference'             => 'Kumbukumbu',
-                    'industry'              => 'Industry',
+                    'responsible'           => 'Msimamizi',
+                    'responsible-hint-text' => 'Huyu ni muuzaji wa ndani anayemhudumia mteja huyu',
+                    'company-id'            => 'Kitambulisho cha kampuni',
+                    'company-id-hint-text'  => 'Namba ya usajili wa kampuni. Itumie ikiwa ni tofauti na namba ya kodi. Lazima iwe ya kipekee kwa wahusika wote wa nchi moja.',
+                    'reference'             => 'Rejea',
+                    'industry'              => 'Sekta',
                 ],
             ],
         ],

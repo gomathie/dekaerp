@@ -3,17 +3,17 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Industry',
+            'label' => 'Sekta mpya',
 
             'notification' => [
-                'title' => 'Industry imeundwa',
-                'body'  => 'industry ina imeundwa successfully.',
+                'title' => 'Sekta imeundwa',
+                'body'  => 'Sekta imeundwa kwa mafanikio.',
             ],
         ],
     ],
 
     'tabs' => [
         'all'      => 'Zote',
-        'archived' => 'Imehifadhiwa',
+        'archived' => 'Kumbukumbu',
     ],
 ];

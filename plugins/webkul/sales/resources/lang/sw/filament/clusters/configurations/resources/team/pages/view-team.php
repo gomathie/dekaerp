@@ -4,8 +4,8 @@ return [
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Mauzo timu imefutwa',
-                'body'  => 'mauzo timu ina imefutwa successfully.',
+                'title' => 'Timu ya mauzo imefutwa',
+                'body'  => 'Timu ya mauzo imefutwa kwa mafanikio.',
             ],
         ],
     ],

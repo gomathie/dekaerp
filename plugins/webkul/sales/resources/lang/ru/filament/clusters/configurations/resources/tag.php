@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'title' => 'Метка',
+    'title' => 'Тег',
 
     'navigation' => [
-        'title' => 'Метка',
-        'group' => 'Заказ на продажуs',
+        'title' => 'Тег',
+        'group' => 'Заказы на продажу',
     ],
 
     'form' => [
@@ -17,30 +17,30 @@ return [
 
     'table' => [
         'columns' => [
-            'created-by' => 'Создано от',
+            'created-by' => 'Кем создано',
             'name'       => 'Название',
             'color'      => 'Цвет',
         ],
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Товар Метка обновлено',
-                    'body'  => 'товар Метка есть обновлено successfully.',
+                    'title' => 'Тег обновлён',
+                    'body'  => 'Тег успешно обновлён.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Товар Метка удалено',
-                    'body'  => 'товар Метка есть удалено successfully.',
+                    'title' => 'Тег удалён',
+                    'body'  => 'Тег успешно удалён.',
                 ],
             ],
         ],
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Товар Метка удалено',
-                    'body'  => 'товар Метка есть удалено successfully.',
+                    'title' => 'Тег удалён',
+                    'body'  => 'Тег успешно удалён.',
                 ],
             ],
         ],

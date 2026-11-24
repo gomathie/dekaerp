@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'individual' => 'Individual',
+    'individual' => 'Mtu binafsi',
     'company'    => 'Kampuni',
     'address'    => 'Anwani',
 ];

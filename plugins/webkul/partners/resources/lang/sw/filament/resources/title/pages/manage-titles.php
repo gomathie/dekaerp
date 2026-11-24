@@ -3,11 +3,11 @@
 return [
     'header-actions' => [
         'create' => [
-            'label' => 'Mpya Kichwa',
+            'label' => 'Cheo kipya',
 
             'notification' => [
-                'title' => 'Kichwa imeundwa',
-                'body'  => 'kichwa ina imeundwa successfully.',
+                'title' => 'Cheo kimeundwa',
+                'body'  => 'Cheo kimeundwa kwa mafanikio.',
             ],
         ],
     ],

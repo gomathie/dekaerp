@@ -2,27 +2,27 @@
 
 return [
     'notification' => [
-        'title' => 'Товар обновлено',
-        'body'  => 'товар есть обновлено successfully.',
+        'title' => 'Товар обновлён',
+        'body'  => 'Товар успешно обновлён.',
     ],
 
     'header-actions' => [
         'update-quantity' => [
-            'label'                     => 'Обновить Количество',
-            'modal-heading'             => 'Обновить Товар Количество',
+            'label'                     => 'Обновить количество',
+            'modal-heading'             => 'Обновить количество товара',
             'modal-submit-action-label' => 'Обновить',
 
             'form' => [
                 'fields' => [
-                    'on-hand-qty' => 'Вкл. Вручную Количество',
+                    'on-hand-qty' => 'Количество в наличии',
                 ],
             ],
         ],
 
         'delete' => [
             'notification' => [
-                'title' => 'Товар удалено',
-                'body'  => 'товар есть удалено successfully.',
+                'title' => 'Товар удалён',
+                'body'  => 'Товар успешно удалён.',
             ],
         ],
     ],

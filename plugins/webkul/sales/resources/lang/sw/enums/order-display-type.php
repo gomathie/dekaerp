@@ -2,5 +2,5 @@
 
 return [
     'section' => 'Sehemu',
-    'note'    => 'Maelezo',
+    'note'    => 'Kidokezo',
 ];

@@ -5,6 +5,6 @@ return [
 
     'navigation' => [
         'title' => 'Sarafu',
-        'group' => 'Agizo la mauzos',
+        'group' => 'Oda za mauzo',
     ],
 ];

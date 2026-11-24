@@ -1,15 +1,15 @@
 <?php
 
 return [
-    'title' => 'Nukuu',
+    'title' => 'Nukuu ya bei',
 
     'navigation' => [
-        'title' => 'Nukuu',
+        'title' => 'Nukuu za bei',
     ],
 
     'global-search' => [
         'customer'  => 'Mteja',
-        'reference' => 'Kumbukumbu',
+        'reference' => 'Rejea',
         'amount'    => 'Kiasi',
     ],
 
@@ -19,9 +19,9 @@ return [
                 'title'  => 'Jumla',
                 'fields' => [
                     'customer'       => 'Mteja',
-                    'expiration'     => 'Expiration',
-                    'quotation-date' => 'Nukuu Tarehe',
-                    'order-date'     => 'Agizo Tarehe',
+                    'expiration'     => 'Mwisho wa uhalali',
+                    'quotation-date' => 'Tarehe ya nukuu',
+                    'order-date'     => 'Tarehe ya oda',
                     'payment-term'   => 'Masharti ya malipo',
                 ],
             ],
@@ -29,7 +29,7 @@ return [
 
         'tabs' => [
             'order-line' => [
-                'title' => 'Agizo Mstari',
+                'title' => 'Mistari ya oda',
 
                 'repeater' => [
                     'products' => [
@@ -38,111 +38,111 @@ return [
 
                         'columns'     => [
                             'product'                    => 'Bidhaa',
-                            'product-variants'           => 'Bidhaa Variants',
-                            'product-simple'             => 'Bidhaa Simple',
-                            'quantity'                   => 'Kiasi',
-                            'insufficient-stock-tooltip' => 'Insufficient hisa hadi fulfill hii mahitaji.',
-                            'uom'                        => 'UOM',
-                            'lead-time'                  => 'Lead Time',
-                            'qty-delivered'              => 'Delivered',
-                            'qty-invoiced'               => 'Invoiced',
-                            'packaging-qty'              => 'Kifungashio Kiasi',
-                            'packaging'                  => 'Kifungashio',
-                            'unit-price'                 => 'Bei ya uniti',
+                            'product-variants'           => 'Aina za bidhaa',
+                            'product-simple'             => 'Bidhaa rahisi',
+                            'quantity'                   => 'Idadi',
+                            'insufficient-stock-tooltip' => 'Hisa hazitoshi kukidhi mahitaji haya.',
+                            'uom'                        => 'Kipimo',
+                            'lead-time'                  => 'Muda wa kufikisha',
+                            'qty-delivered'              => 'Imewasilishwa',
+                            'qty-invoiced'               => 'Imetolewa ankara',
+                            'packaging-qty'              => 'Idadi ya vifurushi',
+                            'packaging'                  => 'Kifurushi',
+                            'unit-price'                 => 'Bei ya kipimo',
                             'cost'                       => 'Gharama',
-                            'margin'                     => 'Pembe',
+                            'margin'                     => 'Faida',
                             'taxes'                      => 'Kodi',
                             'amount'                     => 'Kiasi',
-                            'margin-percentage'          => 'Pembe (%)',
+                            'margin-percentage'          => 'Faida (%)',
                             'discount-percentage'        => 'Punguzo (%)',
                         ],
 
                         'fields'      => [
                             'product'             => 'Bidhaa',
-                            'product-variants'    => 'Bidhaa Variants',
-                            'product-simple'      => 'Bidhaa Simple',
-                            'quantity'            => 'Kiasi',
+                            'product-variants'    => 'Aina za bidhaa',
+                            'product-simple'      => 'Bidhaa rahisi',
+                            'quantity'            => 'Idadi',
                             'uom'                 => 'Kipimo',
-                            'lead-time'           => 'Lead Time',
-                            'qty-delivered'       => 'Kiasi Delivered',
-                            'qty-invoiced'        => 'Kiasi Invoiced',
-                            'packaging-qty'       => 'Kifungashio Kiasi',
-                            'packaging'           => 'Kifungashio',
-                            'unit-price'          => 'Bei ya uniti',
+                            'lead-time'           => 'Muda wa kufikisha',
+                            'qty-delivered'       => 'Idadi iliyowasilishwa',
+                            'qty-invoiced'        => 'Idadi iliyotolewa ankara',
+                            'packaging-qty'       => 'Idadi ya vifurushi',
+                            'packaging'           => 'Kifurushi',
+                            'unit-price'          => 'Bei ya kipimo',
                             'cost'                => 'Gharama',
-                            'margin'              => 'Pembe',
+                            'margin'              => 'Faida',
                             'taxes'               => 'Kodi',
                             'amount'              => 'Kiasi',
-                            'margin-percentage'   => 'Pembe (%)',
+                            'margin-percentage'   => 'Faida (%)',
                             'discount-percentage' => 'Punguzo (%)',
                         ],
 
                         'notifications' => [
                             'quantity-below-delivered' => [
-                                'title' => 'Haiwezekani Reduce Kiasi',
-                                'body'  => 'Wewe haiwezekani reduce kiasi chini ya delivered kiasi (:qty).',
+                                'title' => 'Haiwezekani kupunguza idadi',
+                                'body'  => 'Huwezi kupunguza idadi chini ya idadi iliyowasilishwa (:qty).',
                             ],
                         ],
 
                         'delete-action' => [
                             'error' => [
-                                'title' => 'Haiwezekani Futa Bidhaa',
-                                'body'  => 'Bidhaa haiwezekani kuwa imefutwa kutoka imethibitishwa agizo la mauzo.',
+                                'title' => 'Haiwezekani kufuta bidhaa',
+                                'body'  => 'Bidhaa haziwezi kufutwa kwenye oda ya mauzo iliyothibitishwa.',
                             ],
                         ],
 
                         'actions' => [
                             'open-product' => [
-                                'tooltip' => 'Wazi bidhaa',
+                                'tooltip' => 'Fungua bidhaa',
                             ],
                         ],
                     ],
 
                     'product-optional' => [
-                        'title'       => 'Si lazima Bidhaa',
+                        'title'       => 'Bidhaa za hiari',
                         'add-product' => 'Ongeza bidhaa',
 
                         'columns' => [
                             'product'             => 'Bidhaa',
                             'description'         => 'Maelezo',
-                            'quantity'            => 'Kiasi',
+                            'quantity'            => 'Idadi',
                             'uom'                 => 'Kipimo',
-                            'unit-price'          => 'Bei ya uniti',
+                            'unit-price'          => 'Bei ya kipimo',
                             'discount-percentage' => 'Punguzo (%)',
                         ],
 
                         'fields'      => [
                             'product'             => 'Bidhaa',
                             'description'         => 'Maelezo',
-                            'quantity'            => 'Kiasi',
+                            'quantity'            => 'Idadi',
                             'uom'                 => 'Kipimo',
-                            'unit-price'          => 'Bei ya uniti',
+                            'unit-price'          => 'Bei ya kipimo',
                             'discount-percentage' => 'Punguzo (%)',
 
                             'actions' => [
                                 'tooltip' => [
-                                    'add-order-line' => 'Ongeza Agizo Mstari',
-                                    'already-added'  => 'Tayari Added Hadi Agizo',
+                                    'add-order-line' => 'Ongeza mstari wa oda',
+                                    'already-added'  => 'Tayari iko kwenye oda',
                                 ],
 
                                 'notifications' => [
                                     'product-added' => [
-                                        'title' => 'Bidhaa added',
-                                        'body'  => 'bidhaa ina added successfully.',
+                                        'title' => 'Bidhaa imeongezwa',
+                                        'body'  => 'Bidhaa imeongezwa kwa mafanikio.',
                                     ],
 
                                     'product-not-found' => [
-                                        'title' => 'Bidhaa Si Imepatikana',
+                                        'title' => 'Bidhaa haikupatikana',
                                     ],
 
                                     'product-already-exists' => [
-                                        'title' => 'Bidhaa Tayari Ipo',
-                                        'body'  => 'Hii bidhaa ni tayari katika agizo mistari. Tafadhali sasisha existing mstari instead.',
+                                        'title' => 'Bidhaa tayari ipo',
+                                        'body'  => 'Bidhaa hii tayari iko kwenye mistari ya oda. Tafadhali sasisha mstari uliopo badala yake.',
                                     ],
 
                                     'missing-product-data' => [
-                                        'title' => 'Haipo Bidhaa Data',
-                                        'body'  => 'Haiwezekani hadi process imechaguliwa bidhaa.',
+                                        'title' => 'Taarifa za bidhaa hazipo',
+                                        'body'  => 'Imeshindikana kuchakata bidhaa iliyochaguliwa.',
                                     ],
                                 ],
                             ],
@@ -151,39 +151,39 @@ return [
                 ],
             ],
             'other-information' => [
-                'title' => 'Nyingine Taarifa',
+                'title' => 'Taarifa nyingine',
 
                 'fieldset' => [
                     'sales' => [
                         'title' => 'Mauzo',
 
                         'fields' => [
-                            'sales-person'       => 'Mauzo Person',
-                            'customer-reference' => 'Kumbukumbu ya mteja',
+                            'sales-person'       => 'Muuzaji',
+                            'customer-reference' => 'Rejea ya mteja',
                             'tags'               => 'Lebo',
                         ],
                     ],
 
                     'shipping' => [
-                        'title'  => 'Shipping',
+                        'title'  => 'Usafirishaji',
                         'fields' => [
                             'warehouse'       => 'Ghala',
-                            'commitment-date' => 'Usafirishaji Tarehe',
+                            'commitment-date' => 'Tarehe ya uwasilishaji',
                         ],
                     ],
 
                     'tracking' => [
-                        'title'  => 'Tracking',
+                        'title'  => 'Ufuatiliaji',
                         'fields' => [
-                            'source-document' => 'Chanzo Hati',
-                            'medium'          => 'Wastani',
+                            'source-document' => 'Hati chanzo',
+                            'medium'          => 'Njia',
                             'source'          => 'Chanzo',
-                            'campaign'        => 'Campaign',
+                            'campaign'        => 'Kampeni',
                         ],
                     ],
 
                     'additional-information' => [
-                        'title' => 'Additional Taarifa',
+                        'title' => 'Taarifa za ziada',
 
                         'fields' => [
                             'company'  => 'Kampuni',
@@ -194,82 +194,82 @@ return [
             ],
 
             'term-and-conditions' => [
-                'title' => 'Terms & Conditions',
+                'title' => 'Vigezo na masharti',
             ],
         ],
     ],
 
     'table' => [
         'columns' => [
-            'number'             => 'Nambari',
+            'number'             => 'Namba',
             'status'             => 'Hali',
-            'delivery-status'    => 'Usafirishaji Hali',
-            'invoice-status'     => 'Ankara Hali',
-            'order-date'         => 'Agizo Tarehe',
-            'creation-date'      => 'Creation Tarehe',
-            'commitment-date'    => 'Commitment Tarehe',
-            'expected-date'      => 'Inatarajiwa Tarehe',
+            'delivery-status'    => 'Hali ya uwasilishaji',
+            'invoice-status'     => 'Hali ya ankara',
+            'order-date'         => 'Tarehe ya oda',
+            'creation-date'      => 'Tarehe ya kuundwa',
+            'commitment-date'    => 'Tarehe iliyoahidiwa',
+            'expected-date'      => 'Tarehe inayotarajiwa',
             'customer'           => 'Mteja',
-            'sales-person'       => 'Mauzo Person',
-            'sales-team'         => 'Mauzo Timu',
-            'untaxed-amount'     => 'Bila kodi Kiasi',
-            'amount-tax'         => 'Kiasi Kodi',
-            'amount-total'       => 'Kiasi Jumla',
-            'customer-reference' => 'Kumbukumbu ya mteja',
+            'sales-person'       => 'Muuzaji',
+            'sales-team'         => 'Timu ya mauzo',
+            'untaxed-amount'     => 'Kiasi bila kodi',
+            'amount-tax'         => 'Kiasi cha kodi',
+            'amount-total'       => 'Jumla ya kiasi',
+            'customer-reference' => 'Rejea ya mteja',
         ],
 
         'summarizers' => [
             'total'        => 'Jumla',
             'taxes'        => 'Kodi',
-            'total-amount' => 'Jumla Kiasi',
+            'total-amount' => 'Jumla ya kiasi',
         ],
 
         'filters' => [
-            'sales-person'     => 'Mauzo Person',
-            'utm-source'       => 'UTM Chanzo',
+            'sales-person'     => 'Muuzaji',
+            'utm-source'       => 'Chanzo cha UTM',
             'company'          => 'Kampuni',
             'customer'         => 'Mteja',
             'journal'          => 'Jarida',
-            'invoice-address'  => 'Ankara Anwani',
-            'shipping-address' => 'Shipping Anwani',
-            'fiscal-position'  => 'Kifedha Cheo',
+            'invoice-address'  => 'Anwani ya ankara',
+            'shipping-address' => 'Anwani ya usafirishaji',
+            'fiscal-position'  => 'Hali ya kodi',
             'payment-term'     => 'Masharti ya malipo',
             'currency'         => 'Sarafu',
-            'created-at'       => 'Imeundwa',
-            'updated-at'       => 'Imesasishwa',
+            'created-at'       => 'Iliundwa',
+            'updated-at'       => 'Ilisasishwa',
         ],
 
         'groups' => [
-            'medium'          => 'Wastani',
+            'medium'          => 'Njia',
             'source'          => 'Chanzo',
             'team'            => 'Timu',
-            'sales-person'    => 'Mauzo Person',
+            'sales-person'    => 'Muuzaji',
             'currency'        => 'Sarafu',
             'company'         => 'Kampuni',
             'customer'        => 'Mteja',
-            'quotation-date'  => 'Nukuu Tarehe',
-            'commitment-date' => 'Commitment Tarehe',
+            'quotation-date'  => 'Tarehe ya nukuu',
+            'commitment-date' => 'Tarehe iliyoahidiwa',
         ],
 
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Nukuu restored',
-                    'body'  => 'nukuu ina restored successfully.',
+                    'title' => 'Nukuu imerejeshwa',
+                    'body'  => 'Nukuu imerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'title' => 'Nukuu imefutwa',
-                    'body'  => 'nukuu ina imefutwa successfully.',
+                    'body'  => 'Nukuu imefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Nukuu force imefutwa',
-                    'body'  => 'nukuu ina force imefutwa successfully.',
+                    'title' => 'Nukuu imefutwa kabisa',
+                    'body'  => 'Nukuu imefutwa kabisa kwa mafanikio.',
                 ],
             ],
         ],
@@ -277,22 +277,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Nukuu restored',
-                    'body'  => 'nukuu ina restored successfully.',
+                    'title' => 'Nukuu zimerejeshwa',
+                    'body'  => 'Nukuu zimerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Nukuu imefutwa',
-                    'body'  => 'nukuu ina imefutwa successfully.',
+                    'title' => 'Nukuu zimefutwa',
+                    'body'  => 'Nukuu zimefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Nukuu force imefutwa',
-                    'body'  => 'nukuu ina force imefutwa successfully.',
+                    'title' => 'Nukuu zimefutwa kabisa',
+                    'body'  => 'Nukuu zimefutwa kabisa kwa mafanikio.',
                 ],
             ],
         ],
@@ -300,8 +300,8 @@ return [
         'empty-state-action' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Nukuu imeundwa',
-                    'body'  => 'nukuu ina imeundwa successfully.',
+                    'title' => 'Nukuu zimeundwa',
+                    'body'  => 'Nukuu zimeundwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -312,10 +312,10 @@ return [
             'general' => [
                 'title'   => 'Jumla',
                 'entries' => [
-                    'sale-order'     => 'Agizo la mauzo',
+                    'sale-order'     => 'Oda ya mauzo',
                     'customer'       => 'Mteja',
-                    'expiration'     => 'Expiration',
-                    'quotation-date' => 'Nukuu Tarehe',
+                    'expiration'     => 'Mwisho wa uhalali',
+                    'quotation-date' => 'Tarehe ya nukuu',
                     'payment-term'   => 'Masharti ya malipo',
                 ],
             ],
@@ -323,7 +323,7 @@ return [
 
         'tabs' => [
             'order-line' => [
-                'title' => 'Agizo Mstari',
+                'title' => 'Mistari ya oda',
 
                 'repeater' => [
                     'products' => [
@@ -331,47 +331,47 @@ return [
                         'add-product' => 'Ongeza bidhaa',
                         'entries'     => [
                             'product'             => 'Bidhaa',
-                            'product-variants'    => 'Bidhaa Variants',
-                            'product-simple'      => 'Bidhaa Simple',
-                            'quantity'            => 'Kiasi',
-                            'qty-delivered'       => 'Delivered',
-                            'qty-invoiced'        => 'Invoiced',
-                            'uom'                 => 'UOM',
-                            'lead-time'           => 'Lead Time',
-                            'packaging-qty'       => 'Kifungashio Kiasi',
-                            'packaging'           => 'Kifungashio',
-                            'unit-price'          => 'Bei ya uniti',
+                            'product-variants'    => 'Aina za bidhaa',
+                            'product-simple'      => 'Bidhaa rahisi',
+                            'quantity'            => 'Idadi',
+                            'qty-delivered'       => 'Imewasilishwa',
+                            'qty-invoiced'        => 'Imetolewa ankara',
+                            'uom'                 => 'Kipimo',
+                            'lead-time'           => 'Muda wa kufikisha',
+                            'packaging-qty'       => 'Idadi ya vifurushi',
+                            'packaging'           => 'Kifurushi',
+                            'unit-price'          => 'Bei ya kipimo',
                             'cost'                => 'Gharama',
-                            'margin'              => 'Pembe',
+                            'margin'              => 'Faida',
                             'taxes'               => 'Kodi',
                             'amount'              => 'Kiasi',
-                            'margin-percentage'   => 'Pembe (%)',
+                            'margin-percentage'   => 'Faida (%)',
                             'discount-percentage' => 'Punguzo (%)',
                             'sub-total'           => 'Jumla ndogo',
                         ],
                     ],
 
                     'product-optional' => [
-                        'title'       => 'Si lazima Bidhaa',
+                        'title'       => 'Bidhaa za hiari',
                         'add-product' => 'Ongeza bidhaa',
                         'entries'     => [
                             'product'             => 'Bidhaa',
                             'description'         => 'Maelezo',
-                            'quantity'            => 'Kiasi',
+                            'quantity'            => 'Idadi',
                             'uom'                 => 'Kipimo',
-                            'unit-price'          => 'Bei ya uniti',
+                            'unit-price'          => 'Bei ya kipimo',
                             'discount-percentage' => 'Punguzo (%)',
                             'sub-total'           => 'Jumla ndogo',
 
                             'actions' => [
                                 'tooltip' => [
-                                    'add-order-line' => 'Ongeza Agizo Mstari',
+                                    'add-order-line' => 'Ongeza mstari wa oda',
                                 ],
 
                                 'notifications' => [
                                     'product-added' => [
-                                        'title' => 'Bidhaa added',
-                                        'body'  => 'bidhaa ina added successfully.',
+                                        'title' => 'Bidhaa imeongezwa',
+                                        'body'  => 'Bidhaa imeongezwa kwa mafanikio.',
                                     ],
                                 ],
                             ],
@@ -380,38 +380,38 @@ return [
                 ],
             ],
             'other-information' => [
-                'title' => 'Nyingine Taarifa',
+                'title' => 'Taarifa nyingine',
 
                 'fieldset' => [
                     'sales' => [
                         'title' => 'Mauzo',
 
                         'entries' => [
-                            'sales-person'       => 'Mauzo Person',
-                            'customer-reference' => 'Kumbukumbu ya mteja',
+                            'sales-person'       => 'Muuzaji',
+                            'customer-reference' => 'Rejea ya mteja',
                             'tags'               => 'Lebo',
                         ],
                     ],
 
                     'shipping' => [
-                        'title'   => 'Shipping',
+                        'title'   => 'Usafirishaji',
                         'entries' => [
-                            'commitment-date' => 'Usafirishaji Tarehe',
+                            'commitment-date' => 'Tarehe ya uwasilishaji',
                         ],
                     ],
 
                     'tracking' => [
-                        'title'   => 'Tracking',
+                        'title'   => 'Ufuatiliaji',
                         'entries' => [
-                            'source-document' => 'Chanzo Hati',
-                            'medium'          => 'Wastani',
+                            'source-document' => 'Hati chanzo',
+                            'medium'          => 'Njia',
                             'source'          => 'Chanzo',
-                            'campaign'        => 'Campaign',
+                            'campaign'        => 'Kampeni',
                         ],
                     ],
 
                     'additional-information' => [
-                        'title' => 'Additional Taarifa',
+                        'title' => 'Taarifa za ziada',
 
                         'entries' => [
                             'company'  => 'Kampuni',
@@ -422,7 +422,7 @@ return [
             ],
 
             'term-and-conditions' => [
-                'title' => 'Terms & Conditions',
+                'title' => 'Vigezo na masharti',
             ],
         ],
     ],

@@ -9,21 +9,21 @@ return [
     'form' => [
         'sections' => [
             'general' => [
-                'title' => 'Общее',
+                'title' => 'Основное',
 
                 'fields' => [
                     'company'    => 'Компания',
-                    'avatar'     => 'Avatar',
-                    'tax-id'     => 'Налог Ид.',
-                    'job-title'  => 'Должность Заголовок',
+                    'avatar'     => 'Аватар',
+                    'tax-id'     => 'ИНН',
+                    'job-title'  => 'Должность',
                     'phone'      => 'Телефон',
-                    'mobile'     => 'Mobile',
+                    'mobile'     => 'Мобильный',
                     'email'      => 'Эл. почта',
-                    'website'    => 'Сайт',
-                    'title'      => 'Заголовок',
-                    'name'       => 'Название',
-                    'short-name' => 'Short Название',
-                    'tags'       => 'Метки',
+                    'website'    => 'Веб-сайт',
+                    'title'      => 'Обращение',
+                    'name'       => 'Имя',
+                    'short-name' => 'Сокращение',
+                    'tags'       => 'Теги',
                     'color'      => 'Цвет',
                 ],
 
@@ -31,11 +31,11 @@ return [
                     'title' => 'Адрес',
 
                     'fields' => [
-                        'street1'  => 'Street 1',
-                        'street2'  => 'Street 2',
+                        'street1'  => 'Улица 1',
+                        'street2'  => 'Улица 2',
                         'city'     => 'Город',
-                        'zip'      => 'ZIP',
-                        'state'    => 'Состояние',
+                        'zip'      => 'Индекс',
+                        'state'    => 'Регион',
                         'country'  => 'Страна',
                         'name'     => 'Название',
                         'code'     => 'Код',
@@ -46,15 +46,15 @@ return [
 
         'tabs' => [
             'sales-purchase' => [
-                'title' => 'Продажи и Закупки',
+                'title' => 'Продажи и закупки',
 
                 'fields' => [
-                    'responsible'           => 'Responsible',
-                    'responsible-hint-text' => 'Этот внутренний salesperson responsible для этот клиент',
-                    'company-id'            => 'Компания Ид.',
-                    'company-id-hint-text'  => 'company\'s registry номер, используется если different от Налог Ид.. Это нужно быть unique among все контрагенты в пределах тот же страна.',
-                    'reference'             => 'Ссылка',
-                    'industry'              => 'Industry',
+                    'responsible'           => 'Ответственный',
+                    'responsible-hint-text' => 'Внутренний менеджер по продажам, ответственный за этого клиента',
+                    'company-id'            => 'ID компании',
+                    'company-id-hint-text'  => 'Регистрационный номер компании, если он отличается от ИНН. Он должен быть уникальным среди всех контактов одной страны.',
+                    'reference'             => 'Референс',
+                    'industry'              => 'Отрасль',
                 ],
             ],
         ],
@@ -62,72 +62,72 @@ return [
 
     'table' => [
         'columns' => [
-            'parent'     => 'Parent',
-            'work-email' => 'Work Эл. почта',
-            'work-phone' => 'Work Телефон',
+            'parent'     => 'Родительский контакт',
+            'work-email' => 'Рабочая эл. почта',
+            'work-phone' => 'Рабочий телефон',
         ],
 
         'groups' => [
-            'account-type' => 'Счёт Тип',
-            'parent'       => 'Parent',
-            'title'        => 'Заголовок',
-            'job-title'    => 'Должность Заголовок',
-            'industry'     => 'Industry',
+            'account-type' => 'Тип учётной записи',
+            'parent'       => 'Родительский контакт',
+            'title'        => 'Обращение',
+            'job-title'    => 'Должность',
+            'industry'     => 'Отрасль',
         ],
 
         'filters' => [
-            'account-type'     => 'Счёт Тип',
-            'name'             => 'Название',
+            'account-type'     => 'Тип учётной записи',
+            'name'             => 'Имя',
             'email'            => 'Эл. почта',
-            'parent'           => 'Parent',
-            'title'            => 'Заголовок',
-            'tax-id'           => 'Налог Ид.',
+            'parent'           => 'Родительский контакт',
+            'title'            => 'Обращение',
+            'tax-id'           => 'ИНН',
             'phone'            => 'Телефон',
-            'mobile'           => 'Mobile',
-            'job-title'        => 'Должность Заголовок',
-            'website'          => 'Сайт',
-            'company-registry' => 'Компания Registry',
-            'responsible'      => 'Responsible',
-            'reference'        => 'Ссылка',
-            'parent'           => 'Parent',
-            'creator'          => 'Creator',
+            'mobile'           => 'Мобильный',
+            'job-title'        => 'Должность',
+            'website'          => 'Веб-сайт',
+            'company-registry' => 'Регистрационный номер',
+            'responsible'      => 'Ответственный',
+            'reference'        => 'Референс',
+            'parent'           => 'Родительский контакт',
+            'creator'          => 'Создатель',
             'company'          => 'Компания',
-            'industry'         => 'Industry',
-            'industry'         => 'Industry',
+            'industry'         => 'Отрасль',
+            'industry'         => 'Отрасль',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Контакт обновлено',
-                    'body'  => 'контакт есть обновлено successfully.',
+                    'title' => 'Контакт обновлён',
+                    'body'  => 'Контакт успешно обновлён.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Контакт restored',
-                    'body'  => 'контакт есть restored successfully.',
+                    'title' => 'Контакт восстановлен',
+                    'body'  => 'Контакт успешно восстановлен.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Контакт удалено',
-                    'body'  => 'контакт есть удалено successfully.',
+                    'title' => 'Контакт удалён',
+                    'body'  => 'Контакт успешно удалён.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Контакт force удалено',
-                        'body'  => 'контакт есть force удалено successfully.',
+                        'title' => 'Контакт удалён навсегда',
+                        'body'  => 'Контакт успешно удалён навсегда.',
                     ],
 
                     'error' => [
-                        'title' => 'Контакт could не быть удалено',
-                        'body'  => 'контакт нельзя быть удалено потому что это currently в использовать.',
+                        'title' => 'Не удалось удалить контакт',
+                        'body'  => 'Контакт нельзя удалить, так как он используется.',
                     ],
                 ],
             ],
@@ -136,28 +136,28 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Контакты restored',
-                    'body'  => 'контакты есть restored successfully.',
+                    'title' => 'Контакты восстановлены',
+                    'body'  => 'Контакты успешно восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Контакты удалено',
-                    'body'  => 'контакты есть удалено successfully.',
+                    'title' => 'Контакты удалены',
+                    'body'  => 'Контакты успешно удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
                     'success' => [
-                        'title' => 'Контакты force удалено',
-                        'body'  => 'контакты есть force удалено successfully.',
+                        'title' => 'Контакты удалены навсегда',
+                        'body'  => 'Контакты успешно удалены навсегда.',
                     ],
 
                     'error' => [
-                        'title' => 'Контакты could не быть удалено',
-                        'body'  => 'контакты нельзя быть удалено потому что они currently в использовать.',
+                        'title' => 'Не удалось удалить контакты',
+                        'body'  => 'Контакты нельзя удалить, так как они используются.',
                     ],
                 ],
             ],
@@ -167,32 +167,32 @@ return [
     'infolist' => [
         'sections' => [
             'general' => [
-                'title' => 'Общее',
+                'title' => 'Основное',
 
                 'fields' => [
                     'company'    => 'Компания',
-                    'avatar'     => 'Avatar',
-                    'tax-id'     => 'Налог Ид.',
-                    'job-title'  => 'Должность Заголовок',
+                    'avatar'     => 'Аватар',
+                    'tax-id'     => 'ИНН',
+                    'job-title'  => 'Должность',
                     'phone'      => 'Телефон',
-                    'mobile'     => 'Mobile',
+                    'mobile'     => 'Мобильный',
                     'email'      => 'Эл. почта',
-                    'website'    => 'Сайт',
-                    'title'      => 'Заголовок',
-                    'name'       => 'Название',
-                    'short-name' => 'Short Название',
-                    'tags'       => 'Метки',
+                    'website'    => 'Веб-сайт',
+                    'title'      => 'Обращение',
+                    'name'       => 'Имя',
+                    'short-name' => 'Сокращение',
+                    'tags'       => 'Теги',
                 ],
 
                 'address' => [
                     'title' => 'Адрес',
 
                     'fields' => [
-                        'street1'  => 'Street 1',
-                        'street2'  => 'Street 2',
+                        'street1'  => 'Улица 1',
+                        'street2'  => 'Улица 2',
                         'city'     => 'Город',
-                        'zip'      => 'ZIP',
-                        'state'    => 'Состояние',
+                        'zip'      => 'Индекс',
+                        'state'    => 'Регион',
                         'country'  => 'Страна',
                         'name'     => 'Название',
                         'code'     => 'Код',
@@ -203,15 +203,15 @@ return [
 
         'tabs' => [
             'sales-purchase' => [
-                'title' => 'Продажи и Закупки',
+                'title' => 'Продажи и закупки',
 
                 'fields' => [
-                    'responsible'           => 'Responsible',
-                    'responsible-hint-text' => 'Этот внутренний salesperson responsible для этот клиент',
-                    'company-id'            => 'Компания Ид.',
-                    'company-id-hint-text'  => 'registry номер компания. Использовать это если это different от Налог Ид.. Это нужно быть unique по все контрагенты тот же страна',
-                    'reference'             => 'Ссылка',
-                    'industry'              => 'Industry',
+                    'responsible'           => 'Ответственный',
+                    'responsible-hint-text' => 'Внутренний менеджер по продажам, ответственный за этого клиента',
+                    'company-id'            => 'ID компании',
+                    'company-id-hint-text'  => 'Регистрационный номер компании. Укажите его, если он отличается от ИНН. Он должен быть уникальным среди всех контактов одной страны.',
+                    'reference'             => 'Референс',
+                    'industry'              => 'Отрасль',
                 ],
             ],
         ],

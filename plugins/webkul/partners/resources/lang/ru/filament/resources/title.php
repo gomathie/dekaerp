@@ -3,33 +3,33 @@
 return [
     'form' => [
         'name'       => 'Название',
-        'short-name' => 'Short Название',
+        'short-name' => 'Сокращение',
     ],
 
     'table' => [
         'columns' => [
             'name'       => 'Название',
-            'short-name' => 'Short Название',
+            'short-name' => 'Сокращение',
             'created-at' => 'Создано',
             'updated-at' => 'Обновлено',
         ],
 
         'filters' => [
-            'creator' => 'Creator',
+            'creator' => 'Создатель',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Заголовок обновлено',
-                    'body'  => 'Заголовок есть обновлено successfully.',
+                    'title' => 'Обращение обновлено',
+                    'body'  => 'Обращение успешно обновлено.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Заголовок удалено',
-                    'body'  => 'заголовок есть удалено successfully.',
+                    'title' => 'Обращение удалено',
+                    'body'  => 'Обращение успешно удалено.',
                 ],
             ],
         ],
@@ -37,8 +37,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Titles удалено',
-                    'body'  => 'titles есть удалено successfully.',
+                    'title' => 'Обращения удалены',
+                    'body'  => 'Обращения успешно удалены.',
                 ],
             ],
         ],

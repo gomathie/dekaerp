@@ -2,5 +2,5 @@
 
 return [
     'manual'     => 'Kwa mkono',
-    'stock-move' => 'Hisa Hamisha',
+    'stock-move' => 'Uhamisho wa hisa',
 ];

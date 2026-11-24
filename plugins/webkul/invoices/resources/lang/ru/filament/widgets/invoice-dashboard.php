@@ -2,54 +2,54 @@
 
 return [
     'unknown'           => 'Неизвестно',
-    'other'             => 'Другое',
-    'payment-state'     => 'Оплата Состояние',
+    'other'             => 'Прочее',
+    'payment-state'     => 'Статус оплаты',
     'customer'          => 'Клиент',
     'vendor'            => 'Поставщик',
-    'increase'          => ':percent% increase',
-    'decrease'          => ':percent% decrease',
-    'no-change'         => 'Нет изменить',
+    'increase'          => 'Рост на :percent%',
+    'decrease'          => 'Снижение на :percent%',
+    'no-change'         => 'Без изменений',
     'invoice-stats'     => [
         'heading'    => 'Счета',
-        'total'      => 'Итого Invoiced',
-        'count'      => 'Счёт Количество',
-        'paid'       => 'Оплачен Счета',
-        'unpaid'     => 'Не оплачен Счета',
+        'total'      => 'Всего выставлено',
+        'count'      => 'Количество счетов',
+        'paid'       => 'Оплаченные счета',
+        'unpaid'     => 'Неоплаченные счета',
         'this-month' => 'Этот месяц',
     ],
 
     'bill-stats'        => [
-        'heading' => 'Счёт поставщикаs',
-        'total'   => 'Итого Billed',
-        'count'   => 'Счёт поставщика Количество',
-        'paid'    => 'Оплачен Счета поставщиков',
-        'unpaid'  => 'Не оплачен Счета поставщиков',
+        'heading' => 'Счета поставщиков',
+        'total'   => 'Всего по счетам поставщиков',
+        'count'   => 'Количество счетов поставщиков',
+        'paid'    => 'Оплаченные счета поставщиков',
+        'unpaid'  => 'Неоплаченные счета поставщиков',
     ],
 
     'revenue-over-time' => [
-        'heading'     => 'Выручка Более Time',
-        'description' => 'Оплачен Счёт клиентуs, от день, неделя или месяц',
+        'heading'     => 'Выручка по времени',
+        'description' => 'Оплаченные счета клиентов по дням, неделям или месяцам',
         'revenue'     => 'Выручка',
     ],
 
     'invoice-status'    => [
-        'heading'     => 'Счета от Статус',
-        'description' => 'Invoiced сумма от оплата статус',
+        'heading'     => 'Счета по статусу',
+        'description' => 'Сумма счетов по статусу оплаты',
     ],
 
     'customer-revenue'  => [
-        'heading'      => 'Клиент Выручка Share',
-        'total-billed' => 'Итого Invoiced',
+        'heading'      => 'Доля выручки по клиентам',
+        'total-billed' => 'Всего выставлено',
         'center-label' => 'Итого',
     ],
 
     'salespersons'      => [
-        'heading'      => 'Salesperson Performance',
-        'total-billed' => 'Итого Invoiced',
+        'heading'      => 'Эффективность менеджеров',
+        'total-billed' => 'Всего выставлено',
     ],
 
     'top-invoices'      => [
-        'heading' => 'Top Счета',
+        'heading' => 'Крупнейшие счета',
         'columns' => [
             'reference' => 'Номер',
             'date'      => 'Дата счёта',
@@ -58,10 +58,10 @@ return [
     ],
 
     'top-bills'         => [
-        'heading' => 'Top Счета поставщиков',
+        'heading' => 'Крупнейшие счета поставщиков',
         'columns' => [
-            'reference' => 'Счёт поставщика Номер',
-            'date'      => 'Счёт поставщика Дата',
+            'reference' => 'Номер счёта поставщика',
+            'date'      => 'Дата счёта поставщика',
             'amount'    => 'Итого',
         ],
     ],

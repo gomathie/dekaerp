@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'Заказы До Upsell',
+    'title' => 'Заказы для допродажи',
 
     'navigation' => [
-        'title' => 'Заказы До Upsell',
+        'title' => 'Заказы для допродажи',
     ],
 ];

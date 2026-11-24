@@ -4,8 +4,8 @@ return [
     'header-actions' => [
         'notification' => [
             'delete' => [
-                'title' => 'Agizo Kiolezo Bidhaa imefutwa',
-                'body'  => 'Agizo Kiolezo Bidhaa ina imefutwa successfully',
+                'title' => 'Bidhaa ya kiolezo cha oda imefutwa',
+                'body'  => 'Bidhaa ya kiolezo cha oda imefutwa kwa mafanikio',
             ],
         ],
     ],

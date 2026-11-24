@@ -3,14 +3,14 @@
 return [
     'notification' => [
         'title' => 'Nukuu imesasishwa',
-        'body'  => 'nukuu ina imesasishwa successfully.',
+        'body'  => 'Nukuu imesasishwa kwa mafanikio.',
     ],
 
     'header-actions' => [
         'notification' => [
             'delete' => [
-                'title' => 'Futa Nukuu',
-                'body'  => 'Nukuu ina imefutwa successfully.',
+                'title' => 'Futa nukuu',
+                'body'  => 'Nukuu imefutwa kwa mafanikio.',
             ],
         ],
     ],

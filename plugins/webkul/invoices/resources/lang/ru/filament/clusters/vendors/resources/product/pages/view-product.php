@@ -4,8 +4,8 @@ return [
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Товар Удалено',
-                'body'  => 'товар есть удалено successfully.',
+                'title' => 'Товар удалён',
+                'body'  => 'Товар успешно удалён.',
             ],
         ],
     ],

@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'title' => 'Mawasiliano',
+    'title' => 'Wahusika',
 
     'table' => [
         'header-actions' => [
             'create' => [
-                'label' => 'Ongeza Mwasiliani',
+                'label' => 'Ongeza mhusika',
 
                 'notification' => [
-                    'title' => 'Mwasiliani imeundwa',
-                    'body'  => 'mwasiliani ina imeundwa successfully.',
+                    'title' => 'Mhusika ameundwa',
+                    'body'  => 'Mhusika ameundwa kwa mafanikio.',
                 ],
             ],
         ],

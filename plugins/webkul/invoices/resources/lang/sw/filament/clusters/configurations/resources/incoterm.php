@@ -5,6 +5,6 @@ return [
 
     'navigation' => [
         'title' => 'Incoterms',
-        'group' => 'Invoicing',
+        'group' => 'Utoaji wa ankara',
     ],
 ];

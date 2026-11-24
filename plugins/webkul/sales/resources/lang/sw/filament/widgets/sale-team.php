@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'heading' => 'Mauzo Timu Performance',
+    'heading' => 'Utendaji wa timu za mauzo',
 ];

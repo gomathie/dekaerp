@@ -2,68 +2,68 @@
 
 return [
     'unknown'             => 'Неизвестно',
-    'other'               => 'Другое',
-    'share'               => 'Share',
+    'other'               => 'Прочее',
+    'share'               => 'Доля',
     'status'              => 'Статус',
-    'delivery-status'     => 'Доставка Статус',
-    'billing'             => 'Billing',
-    'sales-value'         => 'Подтверждённые заказы и счета, выставленные без заказа',
+    'delivery-status'     => 'Статус отгрузки',
+    'billing'             => 'Выставление счетов',
+    'sales-value'         => 'Подтверждённые заказы и счета без заказа',
     'stats'               => [
-        'heading'            => 'Key Metrics',
-        'total-quotations'   => 'Итого Коммерческие предложения',
-        'total-sales-orders' => 'Итого Продажи',
-        'total-revenue'      => 'Итого Выручка',
-        'average-revenue'    => 'Average Выручка',
-        'increase'           => 'increase',
-        'decrease'           => 'decrease',
+        'heading'            => 'Ключевые показатели',
+        'total-quotations'   => 'Всего предложений',
+        'total-sales-orders' => 'Всего продаж',
+        'total-revenue'      => 'Общая выручка',
+        'average-revenue'    => 'Средняя выручка',
+        'increase'           => 'рост',
+        'decrease'           => 'снижение',
     ],
 
     'order-activity'      => [
-        'heading'     => 'Движение заказов',
+        'heading'     => 'Активность заказов',
         'description' => 'Заказы, подтверждённые за период, по текущему этапу',
         'to-deliver'  => 'К отгрузке',
         'delivered'   => 'Отгружено',
-        'to-invoice'  => 'К выставлению счёта',
-        'invoiced'    => 'Счёт выставлен',
+        'to-invoice'  => 'К выставлению',
+        'invoiced'    => 'Выставлено',
         'share'       => ':percent% из :total заказов',
     ],
 
     'monthly-sales'       => [
-        'heading'  => 'Ежемесячно Продажи',
+        'heading'  => 'Продажи по времени',
         'revenue'  => 'Выручка',
-        'previous' => 'Compared период',
+        'previous' => 'Период сравнения',
     ],
 
     'revenue-by-category' => [
-        'heading' => 'Выручка от Категория',
+        'heading' => 'Выручка по категориям',
         'revenue' => 'Выручка',
     ],
 
     'sales-persons'       => [
-        'heading' => 'Продажи Person Performance',
+        'heading' => 'Эффективность менеджеров',
         'revenue' => 'Выручка',
     ],
 
     'quotation-outcome'   => [
-        'heading'     => 'Коммерческие предложения',
-        'description' => 'Что became коммерческие предложения сделано в период',
-        'won'         => 'Became заказы',
-        'open'        => 'Всё ещё открыт',
-        'cancelled'   => 'Отменён',
-        'count'       => 'Коммерческие предложения',
+        'heading'     => 'Предложения',
+        'description' => 'Что стало с предложениями, созданными за период',
+        'won'         => 'Стали заказами',
+        'open'        => 'Ещё открыты',
+        'cancelled'   => 'Отменены',
+        'count'       => 'Предложения',
     ],
 
     'top-products'        => [
-        'heading' => 'Top Товары',
+        'heading' => 'Лучшие товары',
         'columns' => [
             'name'     => 'Товар',
-            'quantity' => 'Количество Sold',
+            'quantity' => 'Продано',
             'revenue'  => 'Выручка',
         ],
     ],
 
     'top-customers'       => [
-        'heading' => 'Top Клиенты',
+        'heading' => 'Лучшие клиенты',
         'columns' => [
             'name'    => 'Клиент',
             'orders'  => 'Продажи',
@@ -72,19 +72,19 @@ return [
     ],
 
     'top-sales-orders'    => [
-        'heading' => 'Top Продажи',
+        'heading' => 'Крупнейшие продажи',
         'columns' => [
-            'reference'      => 'Заказ Номер',
+            'reference'      => 'Номер заказа',
             'customer'       => 'Клиент',
-            'amount'         => 'Итого Сумма',
-            'invoice-status' => 'Счёт Статус',
+            'amount'         => 'Итоговая сумма',
+            'invoice-status' => 'Статус выставления',
         ],
     ],
 
     'top-quotations'      => [
-        'heading' => 'Top Коммерческие предложения',
+        'heading' => 'Крупнейшие предложения',
         'columns' => [
-            'reference' => 'Ссылка',
+            'reference' => 'Референс',
             'customer'  => 'Клиент',
             'amount'    => 'Сумма',
         ],

@@ -1,44 +1,44 @@
 <?php
 
 return [
-    'title' => 'Attributes',
+    'title' => 'Атрибуты',
 
     'form' => [
-        'attribute' => 'Attribute',
-        'values'    => 'Values',
+        'attribute' => 'Атрибут',
+        'values'    => 'Значения',
     ],
 
     'table' => [
-        'description' => 'Предупреждение: adding или deleting attributes удалить и recreate existing variants и lead до убыток их possible customizations.',
+        'description' => 'Внимание: добавление или удаление атрибутов удалит и заново создаст существующие варианты, и их настройки могут быть потеряны.',
 
         'header-actions' => [
             'create' => [
-                'label' => 'Добавить Attribute',
+                'label' => 'Добавить атрибут',
 
                 'notification' => [
-                    'title' => 'Attribute создано',
-                    'body'  => 'attribute есть создано successfully.',
+                    'title' => 'Атрибут создан',
+                    'body'  => 'Атрибут успешно создан.',
                 ],
             ],
         ],
 
         'columns' => [
-            'attribute' => 'Attribute',
-            'values'    => 'Values',
+            'attribute' => 'Атрибут',
+            'values'    => 'Значения',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Attribute обновлено',
-                    'body'  => 'attribute есть обновлено successfully.',
+                    'title' => 'Атрибут обновлён',
+                    'body'  => 'Атрибут успешно обновлён.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Attribute удалено',
-                    'body'  => 'attribute есть удалено successfully.',
+                    'title' => 'Атрибут удалён',
+                    'body'  => 'Атрибут успешно удалён.',
                 ],
             ],
         ],

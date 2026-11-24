@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'delivered'  => 'Regular ankara',
-    'percentage' => 'Chini malipo (asilimia)',
-    'fixed'      => 'Chini malipo (isiyobadilika kiasi)',
+    'delivered'  => 'Ankara ya kawaida',
+    'percentage' => 'Malipo ya awali (asilimia)',
+    'fixed'      => 'Malipo ya awali (kiasi maalum)',
 ];

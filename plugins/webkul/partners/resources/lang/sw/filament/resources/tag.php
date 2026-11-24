@@ -14,36 +14,36 @@ return [
         'columns' => [
             'name'       => 'Jina',
             'color'      => 'Rangi',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'created-at' => 'Iliundwa',
+            'updated-at' => 'Ilisasishwa',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
                     'title' => 'Lebo imesasishwa',
-                    'body'  => 'lebo ina imesasishwa successfully.',
+                    'body'  => 'Lebo imesasishwa kwa mafanikio.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Lebo restored',
-                    'body'  => 'lebo ina restored successfully.',
+                    'title' => 'Lebo imerejeshwa',
+                    'body'  => 'Lebo imerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
                     'title' => 'Lebo imefutwa',
-                    'body'  => 'lebo ina imefutwa successfully.',
+                    'body'  => 'Lebo imefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Lebo force imefutwa',
-                    'body'  => 'lebo ina force imefutwa successfully.',
+                    'title' => 'Lebo imefutwa kabisa',
+                    'body'  => 'Lebo imefutwa kabisa kwa mafanikio.',
                 ],
             ],
         ],
@@ -51,22 +51,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Lebo restored',
-                    'body'  => 'lebo ina restored successfully.',
+                    'title' => 'Lebo zimerejeshwa',
+                    'body'  => 'Lebo zimerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Lebo imefutwa',
-                    'body'  => 'lebo ina imefutwa successfully.',
+                    'title' => 'Lebo zimefutwa',
+                    'body'  => 'Lebo zimefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Lebo force imefutwa',
-                    'body'  => 'lebo ina force imefutwa successfully.',
+                    'title' => 'Lebo zimefutwa kabisa',
+                    'body'  => 'Lebo zimefutwa kabisa kwa mafanikio.',
                 ],
             ],
         ],

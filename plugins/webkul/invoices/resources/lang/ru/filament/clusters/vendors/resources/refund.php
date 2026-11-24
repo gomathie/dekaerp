@@ -4,15 +4,15 @@ return [
     'title' => 'Возврат',
 
     'navigation' => [
-        'title' => 'Refunds',
+        'title' => 'Возвраты',
     ],
 
     'form' => [
-        'biller'            => 'Biller',
-        'name'              => 'Поставщик Кредит-нота',
+        'biller'            => 'Выставитель',
+        'name'              => 'Кредит-нота поставщика',
         'name-placeholder'  => 'RBILL/2025/02/0001',
-        'reference'         => 'Ссылка',
-        'payment-reference' => 'Оплата Ссылка',
-        'date'              => 'Учёт Дата',
+        'reference'         => 'Референс',
+        'payment-reference' => 'Назначение платежа',
+        'date'              => 'Дата проводки',
     ],
 ];

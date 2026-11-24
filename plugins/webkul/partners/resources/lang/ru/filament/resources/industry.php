@@ -2,18 +2,18 @@
 
 return [
     'navigation' => [
-        'title' => 'Industries',
+        'title' => 'Отрасли',
     ],
 
     'form' => [
         'name'      => 'Название',
-        'full-name' => 'Полный Название',
+        'full-name' => 'Полное название',
     ],
 
     'table' => [
         'columns' => [
             'name'       => 'Название',
-            'full-name'  => 'Полный Название',
+            'full-name'  => 'Полное название',
             'created-at' => 'Создано',
             'updated-at' => 'Обновлено',
         ],
@@ -21,29 +21,29 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Industry обновлено',
-                    'body'  => 'industry есть обновлено successfully.',
+                    'title' => 'Отрасль обновлена',
+                    'body'  => 'Отрасль успешно обновлена.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Industry restored',
-                    'body'  => 'industry есть restored successfully.',
+                    'title' => 'Отрасль восстановлена',
+                    'body'  => 'Отрасль успешно восстановлена.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Industry удалено',
-                    'body'  => 'industry есть удалено successfully.',
+                    'title' => 'Отрасль удалена',
+                    'body'  => 'Отрасль успешно удалена.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Industry force удалено',
-                    'body'  => 'industry есть force удалено successfully.',
+                    'title' => 'Отрасль удалена навсегда',
+                    'body'  => 'Отрасль успешно удалена навсегда.',
                 ],
             ],
         ],
@@ -51,22 +51,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Industries restored',
-                    'body'  => 'industries есть restored successfully.',
+                    'title' => 'Отрасли восстановлены',
+                    'body'  => 'Отрасли успешно восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Industries удалено',
-                    'body'  => 'industries есть удалено successfully.',
+                    'title' => 'Отрасли удалены',
+                    'body'  => 'Отрасли успешно удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Industries force удалено',
-                    'body'  => 'industries есть force удалено successfully.',
+                    'title' => 'Отрасли удалены навсегда',
+                    'body'  => 'Отрасли успешно удалены навсегда.',
                 ],
             ],
         ],

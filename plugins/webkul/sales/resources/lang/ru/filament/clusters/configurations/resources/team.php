@@ -1,25 +1,25 @@
 <?php
 
 return [
-    'title' => 'Продажи Teams',
+    'title' => 'Команды продаж',
 
     'navigation' => [
-        'title' => 'Продажи Teams',
+        'title' => 'Команды продаж',
     ],
 
     'form' => [
         'sections' => [
             'fields' => [
-                'name'     => 'Продажи Команда',
+                'name'     => 'Команда продаж',
                 'status'   => 'Статус',
                 'fieldset' => [
                     'team-details' => [
-                        'title'  => 'Команда Подробности',
+                        'title'  => 'Сведения о команде',
                         'fields' => [
-                            'team-leader'            => 'Команда Leader',
+                            'team-leader'            => 'Руководитель команды',
                             'company'                => 'Компания',
-                            'invoiced-target'        => 'Invoiced Назначение',
-                            'invoiced-target-suffix' => '/ Месяц',
+                            'invoiced-target'        => 'План по выставлению',
+                            'invoiced-target-suffix' => '/ мес.',
                             'color'                  => 'Цвет',
                             'members'                => 'Участники',
                         ],
@@ -31,23 +31,23 @@ return [
 
     'table' => [
         'columns' => [
-            'id'              => 'Ид.',
+            'id'              => 'ID',
             'company'         => 'Компания',
-            'team-leader'     => 'Команда Leader',
+            'team-leader'     => 'Руководитель команды',
             'name'            => 'Название',
             'status'          => 'Статус',
-            'invoiced-target' => 'Invoiced Назначение',
+            'invoiced-target' => 'План по выставлению',
             'color'           => 'Цвет',
-            'created-by'      => 'Создано От',
+            'created-by'      => 'Кем создано',
             'created-at'      => 'Создано',
             'updated-at'      => 'Обновлено',
         ],
 
         'filters' => [
             'name'        => 'Название',
-            'team-leader' => 'Команда Leader',
+            'team-leader' => 'Руководитель команды',
             'company'     => 'Компания',
-            'created-by'  => 'Создано От',
+            'created-by'  => 'Кем создано',
             'updated-at'  => 'Обновлено',
             'created-at'  => 'Создано',
         ],
@@ -55,7 +55,7 @@ return [
         'groups' => [
             'name'        => 'Название',
             'company'     => ' Компания',
-            'team-leader' => 'Команда Leader',
+            'team-leader' => 'Руководитель команды',
             'created-at'  => 'Создано',
             'updated-at'  => 'Обновлено',
         ],
@@ -63,22 +63,22 @@ return [
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Продажи Команда restored',
-                    'body'  => 'продажи Команда есть restored successfully.',
+                    'title' => 'Команда продаж восстановлена',
+                    'body'  => 'Команда продаж успешно восстановлена.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Продажи Команда удалено',
-                    'body'  => 'продажи Команда есть удалено successfully.',
+                    'title' => 'Команда продаж удалена',
+                    'body'  => 'Команда продаж успешно удалена.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Продажи Команда force удалено',
-                    'body'  => 'продажи Команда есть force удалено successfully.',
+                    'title' => 'Команда продаж удалена навсегда',
+                    'body'  => 'Команда продаж успешно удалена навсегда.',
                 ],
             ],
         ],
@@ -86,22 +86,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Продажи Teams restored',
-                    'body'  => 'продажи Teams есть restored successfully.',
+                    'title' => 'Команды продаж восстановлены',
+                    'body'  => 'Команды продаж успешно восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Продажи Teams удалено',
-                    'body'  => 'продажи Teams есть удалено successfully.',
+                    'title' => 'Команды продаж удалены',
+                    'body'  => 'Команды продаж успешно удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Продажи Teams force удалено',
-                    'body'  => 'продажи Teams есть force удалено successfully.',
+                    'title' => 'Команды продаж удалены навсегда',
+                    'body'  => 'Команды продаж успешно удалены навсегда.',
                 ],
             ],
         ],
@@ -109,8 +109,8 @@ return [
         'empty-state-action' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Продажи Teams создано',
-                    'body'  => 'продажи Teams есть создано successfully.',
+                    'title' => 'Команды продаж созданы',
+                    'body'  => 'Команды продаж успешно созданы.',
                 ],
             ],
         ],
@@ -119,16 +119,16 @@ return [
     'infolist' => [
         'sections' => [
             'entries' => [
-                'name'     => 'Продажи Команда',
+                'name'     => 'Команда продаж',
                 'status'   => 'Статус',
                 'fieldset' => [
                     'team-details' => [
-                        'title'   => 'Команда Подробности',
+                        'title'   => 'Сведения о команде',
                         'entries' => [
-                            'team-leader'            => 'Команда Leader',
+                            'team-leader'            => 'Руководитель команды',
                             'company'                => 'Компания',
-                            'invoiced-target'        => 'Invoiced Назначение',
-                            'invoiced-target-suffix' => '/ Месяц',
+                            'invoiced-target'        => 'План по выставлению',
+                            'invoiced-target-suffix' => '/ мес.',
                             'color'                  => 'Цвет',
                             'members'                => 'Участники',
                         ],

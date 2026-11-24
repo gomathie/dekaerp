@@ -1,27 +1,27 @@
 <?php
 
 return [
-    'title' => 'Создать Счёт',
+    'title' => 'Создать счёт',
 
     'modal' => [
-        'heading' => 'Создать Счёт',
+        'heading' => 'Создать счёт',
     ],
 
     'notification' => [
         'invoice-created' => [
-            'title' => 'Счёт создано',
-            'body'  => 'Счёт есть создано successfully.',
+            'title' => 'Счёт создан',
+            'body'  => 'Счёт успешно создан.',
         ],
 
         'no-invoiceable-lines' => [
-            'title' => 'Нет invoiceable строки',
-            'body'  => 'нет invoiceable строка, пожалуйста сделать sure тот количество есть получено.',
+            'title' => 'Нет строк для выставления',
+            'body'  => 'Нет строк для выставления счёта. Убедитесь, что количество получено.',
         ],
     ],
 
     'form' => [
         'fields' => [
-            'create-invoice' => 'Создать Счёт',
+            'create-invoice' => 'Создать счёт',
         ],
     ],
 ];

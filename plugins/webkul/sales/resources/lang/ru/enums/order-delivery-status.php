@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'no'      => 'Nothing До Deliver',
+    'no'      => 'Нечего отгружать',
     'pending' => 'Ожидает',
-    'started' => 'Started',
-    'partial' => 'Partially Delivered',
-    'full'    => 'Fully Delivered',
+    'started' => 'Начата',
+    'partial' => 'Частично отгружен',
+    'full'    => 'Полностью отгружен',
 ];

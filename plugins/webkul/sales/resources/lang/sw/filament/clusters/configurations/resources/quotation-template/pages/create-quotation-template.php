@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Nukuu Kiolezo Imeundwa',
-        'body'  => 'Nukuu Kiolezo ina imeundwa successfully.',
+        'title' => 'Kiolezo cha nukuu kimeundwa',
+        'body'  => 'Kiolezo cha nukuu kimeundwa kwa mafanikio.',
     ],
 ];

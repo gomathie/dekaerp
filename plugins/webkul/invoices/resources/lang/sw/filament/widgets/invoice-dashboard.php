@@ -3,65 +3,65 @@
 return [
     'unknown'           => 'Haijulikani',
     'other'             => 'Nyingine',
-    'payment-state'     => 'Malipo Hali',
+    'payment-state'     => 'Hali ya malipo',
     'customer'          => 'Mteja',
     'vendor'            => 'Msambazaji',
-    'increase'          => ':percent% increase',
-    'decrease'          => ':percent% decrease',
-    'no-change'         => 'Hakuna badilisha',
+    'increase'          => 'Ongezeko la :percent%',
+    'decrease'          => 'Upungufu wa :percent%',
+    'no-change'         => 'Hakuna mabadiliko',
     'invoice-stats'     => [
         'heading'    => 'Ankara',
-        'total'      => 'Jumla Invoiced',
-        'count'      => 'Ankara Idadi',
-        'paid'       => 'Imelipwa Ankara',
-        'unpaid'     => 'Haijalipwa Ankara',
+        'total'      => 'Jumla iliyotozwa',
+        'count'      => 'Idadi ya ankara',
+        'paid'       => 'Ankara zilizolipwa',
+        'unpaid'     => 'Ankara ambazo hazijalipwa',
         'this-month' => 'Mwezi huu',
     ],
 
     'bill-stats'        => [
-        'heading' => 'Bili ya msambazajis',
-        'total'   => 'Jumla Billed',
-        'count'   => 'Bili Idadi',
-        'paid'    => 'Imelipwa Bili',
-        'unpaid'  => 'Haijalipwa Bili',
+        'heading' => 'Bili za wasambazaji',
+        'total'   => 'Jumla ya bili',
+        'count'   => 'Idadi ya bili',
+        'paid'    => 'Bili zilizolipwa',
+        'unpaid'  => 'Bili ambazo hazijalipwa',
     ],
 
     'revenue-over-time' => [
-        'heading'     => 'Mapato Zaidi ya Time',
-        'description' => 'Imelipwa Ankara ya mtejas, na siku, wiki au mwezi',
+        'heading'     => 'Mapato kwa muda',
+        'description' => 'Ankara za wateja zilizolipwa, kwa siku, wiki au mwezi',
         'revenue'     => 'Mapato',
     ],
 
     'invoice-status'    => [
-        'heading'     => 'Ankara na Hali',
-        'description' => 'Invoiced kiasi na malipo hali',
+        'heading'     => 'Ankara kwa hali',
+        'description' => 'Kiasi kilichotozwa kwa hali ya malipo',
     ],
 
     'customer-revenue'  => [
-        'heading'      => 'Mteja Mapato Share',
-        'total-billed' => 'Jumla Invoiced',
+        'heading'      => 'Mgao wa mapato kwa mteja',
+        'total-billed' => 'Jumla iliyotozwa',
         'center-label' => 'Jumla',
     ],
 
     'salespersons'      => [
-        'heading'      => 'Salesperson Performance',
-        'total-billed' => 'Jumla Invoiced',
+        'heading'      => 'Utendaji wa wauzaji',
+        'total-billed' => 'Jumla iliyotozwa',
     ],
 
     'top-invoices'      => [
-        'heading' => 'Top Ankara',
+        'heading' => 'Ankara kubwa zaidi',
         'columns' => [
-            'reference' => 'Nambari',
+            'reference' => 'Namba',
             'date'      => 'Tarehe ya ankara',
             'amount'    => 'Jumla',
         ],
     ],
 
     'top-bills'         => [
-        'heading' => 'Top Bili',
+        'heading' => 'Bili kubwa zaidi',
         'columns' => [
-            'reference' => 'Bili Nambari',
-            'date'      => 'Bili Tarehe',
+            'reference' => 'Namba ya bili',
+            'date'      => 'Tarehe ya bili',
             'amount'    => 'Jumla',
         ],
     ],

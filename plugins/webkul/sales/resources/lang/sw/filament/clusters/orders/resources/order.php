@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'Agizo',
+    'title' => 'Oda',
 
     'navigation' => [
-        'title' => 'Maagizo',
+        'title' => 'Oda',
     ],
 ];

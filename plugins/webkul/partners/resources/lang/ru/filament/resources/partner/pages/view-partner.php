@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'title' => 'Просмотр Контакт',
+    'title' => 'Просмотр контакта',
 
     'header-actions' => [
         'delete' => [
             'notification' => [
-                'title' => 'Контакт удалено',
-                'body'  => 'контакт есть удалено successfully.',
+                'title' => 'Контакт удалён',
+                'body'  => 'Контакт успешно удалён.',
             ],
         ],
     ],

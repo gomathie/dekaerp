@@ -8,15 +8,15 @@ return [
     ],
 
     'form' => [
-        'biller'            => 'Biller',
-        'reference'         => 'Kumbukumbu',
-        'payment-reference' => 'Malipo Kumbukumbu',
+        'biller'            => 'Mtoaji wa bili',
+        'reference'         => 'Rejea',
+        'payment-reference' => 'Rejea ya malipo',
         'date'              => 'Tarehe',
     ],
 
     'actions' => [
         'open-product' => [
-            'tooltip' => 'Wazi bidhaa',
+            'tooltip' => 'Fungua bidhaa',
         ],
     ],
 ];

@@ -3,33 +3,33 @@
 return [
     'form' => [
         'name'       => 'Jina',
-        'short-name' => 'Short Jina',
+        'short-name' => 'Jina fupi',
     ],
 
     'table' => [
         'columns' => [
             'name'       => 'Jina',
-            'short-name' => 'Short Jina',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'short-name' => 'Jina fupi',
+            'created-at' => 'Iliundwa',
+            'updated-at' => 'Ilisasishwa',
         ],
 
         'filters' => [
-            'creator' => 'Creator',
+            'creator' => 'Muundaji',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Kichwa imesasishwa',
-                    'body'  => 'Kichwa ina imesasishwa successfully.',
+                    'title' => 'Cheo kimesasishwa',
+                    'body'  => 'Cheo kimesasishwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Kichwa imefutwa',
-                    'body'  => 'kichwa ina imefutwa successfully.',
+                    'title' => 'Cheo kimefutwa',
+                    'body'  => 'Cheo kimefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -37,8 +37,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Titles imefutwa',
-                    'body'  => 'titles ina imefutwa successfully.',
+                    'title' => 'Vyeo vimefutwa',
+                    'body'  => 'Vyeo vimefutwa kwa mafanikio.',
                 ],
             ],
         ],

@@ -2,15 +2,15 @@
 
 return [
     'notification' => [
-        'title' => 'Nukuu Kiolezo Imesasishwa',
-        'body'  => 'Nukuu Kiolezo ina imesasishwa successfully.',
+        'title' => 'Kiolezo cha nukuu kimesasishwa',
+        'body'  => 'Kiolezo cha nukuu kimesasishwa kwa mafanikio.',
     ],
 
     'header-actions' => [
         'notification' => [
             'delete' => [
-                'title' => 'Futa Nukuu Kiolezo',
-                'body'  => 'Nukuu kiolezo ina imefutwa successfully.',
+                'title' => 'Futa kiolezo cha nukuu',
+                'body'  => 'Kiolezo cha nukuu kimefutwa kwa mafanikio.',
             ],
         ],
     ],

@@ -1,31 +1,31 @@
 <?php
 
 return [
-    'title' => 'Отмена',
+    'title' => 'Отменить',
     'modal' => [
-        'heading'     => 'Отмена Коммерческое предложение',
-        'description' => 'вы sure вы want до отмена этот Коммерческое предложение?',
+        'heading'     => 'Отменить предложение',
+        'description' => 'Вы уверены, что хотите отменить это предложение?',
     ],
 
     'footer-actions' => [
         'send-and-cancel' => [
-            'title' => 'Send & Отмена',
+            'title' => 'Отправить и отменить',
 
             'notification' => [
                 'cancelled' => [
-                    'title' => 'Коммерческое предложение отменён',
-                    'body'  => 'Коммерческое предложение есть отменён и эл. почта есть отправлено successfully.',
+                    'title' => 'Предложение отменено',
+                    'body'  => 'Предложение отменено, письмо успешно отправлено.',
                 ],
             ],
         ],
 
         'cancel' => [
-            'title' => 'Отмена',
+            'title' => 'Отменить',
 
             'notification' => [
                 'cancelled' => [
-                    'title' => 'Коммерческое предложение отменён',
-                    'body'  => 'Коммерческое предложение есть отменён successfully.',
+                    'title' => 'Предложение отменено',
+                    'body'  => 'Предложение успешно отменено.',
                 ],
             ],
         ],
@@ -37,12 +37,12 @@ return [
 
     'form' => [
         'fields' => [
-            'partner'             => 'Контрагент',
-            'subject'             => 'Subject',
-            'subject-placeholder' => 'Subject',
-            'subject-default'     => 'Коммерческое предложение :name есть отменён для Заказ на продажу #:id',
+            'partner'             => 'Контакт',
+            'subject'             => 'Тема',
+            'subject-placeholder' => 'Тема',
+            'subject-default'     => 'Предложение :name по заказу на продажу №:id отменено',
             'description'         => 'Описание',
-            'description-default' => 'Dear <b>:partner_name</b>, <br/><br/>Мы would like до inform вы тот ваш Заказ на продажу <b>:name</b> есть отменён. Как результат, нет further charges применить до этот заказ. Если возврат обязательно, это быть processed в earliest convenience.<br/><br/>Следует вы есть любой questions или require further assistance, пожалуйста feel free до reach вне до us.',
+            'description-default' => 'Уважаемый(-ая) <b>:partner_name</b>, <br/><br/>Сообщаем, что ваш заказ на продажу <b>:name</b> отменён. Дальнейшие платежи по этому заказу начисляться не будут. Если требуется возврат, он будет оформлен в кратчайшие сроки.<br/><br/>Если у вас есть вопросы или нужна помощь, пожалуйста, свяжитесь с нами.',
         ],
     ],
 ];

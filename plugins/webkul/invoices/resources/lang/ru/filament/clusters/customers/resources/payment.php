@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Оплата',
+    'title' => 'Платёж',
 
     'navigation' => [
-        'title' => 'Оплаты',
+        'title' => 'Платежи',
         'group' => 'Счета',
     ],
 ];

@@ -1,20 +1,20 @@
 <?php
 
 return [
-    'title' => 'Manage Pricing',
+    'title' => 'Dhibiti bei',
 
-    'breadcrumb' => 'Manage Pricing',
+    'breadcrumb' => 'Dhibiti bei',
 
     'navigation' => [
-        'title' => 'Manage Pricing',
+        'title' => 'Dhibiti bei',
     ],
 
     'form' => [
         'fields' => [
             'discount'      => 'Punguzo',
-            'discount-help' => 'Washa punguzo washa bidhaa.',
-            'margins'       => 'Margins',
-            'margins-help'  => 'Onyesha margins washa maagizo.',
+            'discount-help' => 'Wezesha punguzo kwenye bidhaa.',
+            'margins'       => 'Faida',
+            'margins-help'  => 'Onyesha faida kwenye oda.',
         ],
     ],
 ];

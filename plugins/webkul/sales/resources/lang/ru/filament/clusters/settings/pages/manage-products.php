@@ -1,24 +1,24 @@
 <?php
 
 return [
-    'title' => 'Manage Товары',
+    'title' => 'Товары',
 
-    'breadcrumb' => 'Manage Товары',
+    'breadcrumb' => 'Товары',
 
     'navigation' => [
-        'title' => 'Manage Товары',
+        'title' => 'Товары',
     ],
 
     'form' => [
         'fields' => [
-            'variants'                      => 'Variants',
-            'variants-help'                 => 'Разрешить товары до есть multiple variants',
+            'variants'                      => 'Варианты',
+            'variants-help'                 => 'Разрешить товарам иметь несколько вариантов',
             'uom'                           => 'Единица измерения',
-            'uom-help'                      => 'Разрешить товары до есть единица измерения',
-            'packagings'                    => 'Packagings',
-            'packagings-help'               => 'Разрешить товары до есть multiple packagings',
-            'deliver-content-by-email'      => 'Deliver Content от Эл. почта',
-            'deliver-content-by-email-help' => 'Разрешить товары до deliver content от эл. почта',
+            'uom-help'                      => 'Разрешить товарам иметь единицу измерения',
+            'packagings'                    => 'Упаковки',
+            'packagings-help'               => 'Разрешить товарам иметь несколько упаковок',
+            'deliver-content-by-email'      => 'Доставка контента по эл. почте',
+            'deliver-content-by-email-help' => 'Разрешить товарам доставлять контент по эл. почте',
         ],
     ],
 ];

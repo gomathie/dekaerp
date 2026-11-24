@@ -2,7 +2,7 @@
 
 return [
     'navigation' => [
-        'title' => 'Метки',
+        'title' => 'Теги',
     ],
 
     'form' => [
@@ -21,29 +21,29 @@ return [
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Метка обновлено',
-                    'body'  => 'метка есть обновлено successfully.',
+                    'title' => 'Тег обновлён',
+                    'body'  => 'Тег успешно обновлён.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Метка restored',
-                    'body'  => 'метка есть restored successfully.',
+                    'title' => 'Тег восстановлен',
+                    'body'  => 'Тег успешно восстановлен.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Метка удалено',
-                    'body'  => 'метка есть удалено successfully.',
+                    'title' => 'Тег удалён',
+                    'body'  => 'Тег успешно удалён.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Метка force удалено',
-                    'body'  => 'метка есть force удалено successfully.',
+                    'title' => 'Тег удалён навсегда',
+                    'body'  => 'Тег успешно удалён навсегда.',
                 ],
             ],
         ],
@@ -51,22 +51,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Метки restored',
-                    'body'  => 'метки есть restored successfully.',
+                    'title' => 'Теги восстановлены',
+                    'body'  => 'Теги успешно восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Метки удалено',
-                    'body'  => 'метки есть удалено successfully.',
+                    'title' => 'Теги удалены',
+                    'body'  => 'Теги успешно удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Метки force удалено',
-                    'body'  => 'метки есть force удалено successfully.',
+                    'title' => 'Теги удалены навсегда',
+                    'body'  => 'Теги успешно удалены навсегда.',
                 ],
             ],
         ],

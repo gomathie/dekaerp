@@ -2,23 +2,23 @@
 
 return [
     'navigation' => [
-        'group' => 'Banks',
-        'title' => 'Банковский счётs',
+        'group' => 'Банки',
+        'title' => 'Банковские счета',
     ],
 
     'form' => [
-        'account-number'     => 'Счёт Номер',
+        'account-number'     => 'Номер счёта',
         'bank'               => 'Банк',
-        'account-holder'     => 'Счёт Holder',
-        'can-send-money'     => 'Можно Send Money',
+        'account-holder'     => 'Владелец счёта',
+        'can-send-money'     => 'Может отправлять деньги',
     ],
 
     'table' => [
         'columns' => [
-            'account-number' => 'Счёт Номер',
+            'account-number' => 'Номер счёта',
             'bank'           => 'Банк',
-            'account-holder' => 'Счёт Holder',
-            'send-money'     => 'Можно Send Money',
+            'account-holder' => 'Владелец счёта',
+            'send-money'     => 'Может отправлять деньги',
             'created-at'     => 'Создано',
             'updated-at'     => 'Обновлено',
             'deleted-at'     => 'Удалено',
@@ -26,43 +26,43 @@ return [
 
         'filters' => [
             'bank'           => 'Банк',
-            'account-holder' => 'Счёт Holder',
-            'creator'        => 'Creator',
-            'can-send-money' => 'Можно Send Money',
+            'account-holder' => 'Владелец счёта',
+            'creator'        => 'Создатель',
+            'can-send-money' => 'Может отправлять деньги',
         ],
 
         'groups' => [
             'bank'               => 'Банк',
-            'can-send-money'     => 'Можно Send Money',
+            'can-send-money'     => 'Может отправлять деньги',
             'created-at'         => 'Создано',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Банковский счёт обновлено',
-                    'body'  => 'банковский счёт есть обновлено successfully.',
+                    'title' => 'Банковский счёт обновлён',
+                    'body'  => 'Банковский счёт успешно обновлён.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Банковский счёт restored',
-                    'body'  => 'банковский счёт есть restored successfully.',
+                    'title' => 'Банковский счёт восстановлен',
+                    'body'  => 'Банковский счёт успешно восстановлен.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Банковский счёт удалено',
-                    'body'  => 'банковский счёт есть удалено successfully.',
+                    'title' => 'Банковский счёт удалён',
+                    'body'  => 'Банковский счёт успешно удалён.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Банковский счёт force удалено',
-                    'body'  => 'банковский счёт есть force удалено successfully.',
+                    'title' => 'Банковский счёт удалён навсегда',
+                    'body'  => 'Банковский счёт успешно удалён навсегда.',
                 ],
             ],
         ],
@@ -70,22 +70,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Банковский счётs restored',
-                    'body'  => 'банковский счётs есть restored successfully.',
+                    'title' => 'Банковские счета восстановлены',
+                    'body'  => 'Банковские счета успешно восстановлены.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Банковский счётs удалено',
-                    'body'  => 'банковский счётs есть удалено successfully.',
+                    'title' => 'Банковские счета удалены',
+                    'body'  => 'Банковские счета успешно удалены.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Банковский счётs force удалено',
-                    'body'  => 'банковский счётs есть force удалено successfully.',
+                    'title' => 'Банковские счета удалены навсегда',
+                    'body'  => 'Банковские счета успешно удалены навсегда.',
                 ],
             ],
         ],

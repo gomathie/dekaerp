@@ -4,11 +4,11 @@ return [
     'title'          => 'Timu',
 
     'log-attributes' => [
-        'name'            => 'Timu Jina',
+        'name'            => 'Jina la timu',
         'company'         => 'Kampuni',
-        'team_leader'     => 'Timu Leader',
-        'creator'         => 'Imeundwa Na',
+        'team_leader'     => 'Kiongozi wa timu',
+        'creator'         => 'Iliundwa na',
         'status'          => 'Hali',
-        'invoiced_target' => 'Invoiced Lengwa',
+        'invoiced_target' => 'Lengo la ankara',
     ],
 ];

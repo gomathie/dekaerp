@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'title' => 'Bidhaa variants',
+    'title' => 'Aina za bidhaa',
 
     'navigation' => [
-        'title' => 'Bidhaa variants',
-        'group' => 'Ghala',
+        'title' => 'Aina za bidhaa',
+        'group' => 'Hisa',
     ],
 ];

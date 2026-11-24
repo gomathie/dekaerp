@@ -9,7 +9,7 @@ return [
 
     'actions' => [
         'open-product' => [
-            'tooltip' => 'Wazi bidhaa',
+            'tooltip' => 'Fungua bidhaa',
         ],
     ],
 ];

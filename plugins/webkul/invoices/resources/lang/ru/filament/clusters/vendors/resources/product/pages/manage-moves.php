@@ -1,27 +1,27 @@
 <?php
 
 return [
-    'title' => 'В/Вне',
+    'title' => 'ПРИХОД/РАСХОД',
 
     'table' => [
         'columns' => [
             'date'                 => 'Дата',
-            'reference'            => 'Ссылка',
+            'reference'            => 'Референс',
             'product'              => 'Товар',
             'package'              => 'Упаковка',
-            'lot'                  => 'Партия / Серийный номер Numbers',
-            'source-location'      => 'Источник Место',
-            'destination-location' => 'Назначение Место',
+            'lot'                  => 'Партии / серийные номера',
+            'source-location'      => 'Исходное место',
+            'destination-location' => 'Место назначения',
             'quantity'             => 'Количество',
-            'state'                => 'Состояние',
-            'done-by'              => 'Завершён От',
+            'state'                => 'Статус',
+            'done-by'              => 'Выполнил',
         ],
 
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Переместить удалено',
-                    'body'  => 'переместить есть удалено successfully.',
+                    'title' => 'Перемещение удалено',
+                    'body'  => 'Перемещение успешно удалено.',
                 ],
             ],
         ],

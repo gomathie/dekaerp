@@ -1,23 +1,23 @@
 <?php
 
 return [
-    'title' => 'Manage Nukuu & Agizo',
+    'title' => 'Dhibiti nukuu na oda',
 
-    'breadcrumb' => 'Manage Nukuu & Agizo',
+    'breadcrumb' => 'Dhibiti nukuu na oda',
 
     'navigation' => [
-        'title' => 'Manage Nukuu & Agizo',
+        'title' => 'Dhibiti nukuu na oda',
     ],
 
     'form' => [
         'fields' => [
             'validity-suffix'             => 'siku',
-            'validity'                    => 'Chaguo-msingi Nukuu Validity',
-            'validity-help'               => 'chaguo-msingi nambari ya siku nukuu ni halali kwa.',
-            'lock-confirm-sales'          => 'Lock Thibitisha Mauzo',
-            'lock-confirm-sales-help'     => 'Ikiwa imewashwa, agizo la mauzo ita kuwa imefungwa baada ya confirmation.',
-            'goods-leave-on-invoice'      => 'Wateja take goods wakati invoiced',
-            'goods-leave-on-invoice-help' => 'Chaguo-msingi kwa ankara hiyo unda agizo la mauzo. Washa: usafirishaji ni recorded kama imekamilika wakati ankara ni imethibitishwa. Zima: usafirishaji ni iliyobaki kwa ghala hadi validate.',
+            'validity'                    => 'Uhalali wa kawaida wa nukuu',
+            'validity-help'               => 'Idadi ya kawaida ya siku ambazo nukuu ni halali.',
+            'lock-confirm-sales'          => 'Funga mauzo yaliyothibitishwa',
+            'lock-confirm-sales-help'     => 'Ikiwashwa, oda ya mauzo itafungwa baada ya kuthibitishwa.',
+            'goods-leave-on-invoice'      => 'Wateja huchukua bidhaa ankara inapotolewa',
+            'goods-leave-on-invoice-help' => 'Chaguo-msingi kwa ankara zinazounda oda ya mauzo. Imewashwa: uwasilishaji hurekodiwa kuwa umekamilika ankara inapothibitishwa. Imezimwa: uwasilishaji unaachwa ghala liuthibitishe.',
         ],
     ],
 ];

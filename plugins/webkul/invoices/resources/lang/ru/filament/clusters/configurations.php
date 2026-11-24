@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Конфигурация',
+        'title' => 'Настройки',
     ],
 ];

@@ -1,24 +1,24 @@
 <?php
 
 return [
-    'title' => 'Mauzo Teams',
+    'title' => 'Timu za mauzo',
 
     'navigation' => [
-        'title' => 'Mauzo Teams',
+        'title' => 'Timu za mauzo',
     ],
 
     'form' => [
         'sections' => [
             'fields' => [
-                'name'     => 'Mauzo Timu',
+                'name'     => 'Timu ya mauzo',
                 'status'   => 'Hali',
                 'fieldset' => [
                     'team-details' => [
-                        'title'  => 'Timu Maelezo',
+                        'title'  => 'Maelezo ya timu',
                         'fields' => [
-                            'team-leader'            => 'Timu Leader',
+                            'team-leader'            => 'Kiongozi wa timu',
                             'company'                => 'Kampuni',
-                            'invoiced-target'        => 'Invoiced Lengwa',
+                            'invoiced-target'        => 'Lengo la ankara',
                             'invoiced-target-suffix' => '/ Mwezi',
                             'color'                  => 'Rangi',
                             'members'                => 'Wanachama',
@@ -31,54 +31,54 @@ return [
 
     'table' => [
         'columns' => [
-            'id'              => 'Kitambulisho',
+            'id'              => 'ID',
             'company'         => 'Kampuni',
-            'team-leader'     => 'Timu Leader',
+            'team-leader'     => 'Kiongozi wa timu',
             'name'            => 'Jina',
             'status'          => 'Hali',
-            'invoiced-target' => 'Invoiced Lengwa',
+            'invoiced-target' => 'Lengo la ankara',
             'color'           => 'Rangi',
-            'created-by'      => 'Imeundwa Na',
-            'created-at'      => 'Imeundwa',
-            'updated-at'      => 'Imesasishwa',
+            'created-by'      => 'Iliundwa na',
+            'created-at'      => 'Iliundwa',
+            'updated-at'      => 'Ilisasishwa',
         ],
 
         'filters' => [
             'name'        => 'Jina',
-            'team-leader' => 'Timu Leader',
+            'team-leader' => 'Kiongozi wa timu',
             'company'     => 'Kampuni',
-            'created-by'  => 'Imeundwa Na',
-            'updated-at'  => 'Imesasishwa',
-            'created-at'  => 'Imeundwa',
+            'created-by'  => 'Iliundwa na',
+            'updated-at'  => 'Ilisasishwa',
+            'created-at'  => 'Iliundwa',
         ],
 
         'groups' => [
             'name'        => 'Jina',
             'company'     => ' Kampuni',
-            'team-leader' => 'Timu Leader',
-            'created-at'  => 'Imeundwa',
-            'updated-at'  => 'Imesasishwa',
+            'team-leader' => 'Kiongozi wa timu',
+            'created-at'  => 'Iliundwa',
+            'updated-at'  => 'Ilisasishwa',
         ],
 
         'actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Mauzo Timu restored',
-                    'body'  => 'mauzo Timu ina restored successfully.',
+                    'title' => 'Timu ya mauzo imerejeshwa',
+                    'body'  => 'Timu ya mauzo imerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Mauzo Timu imefutwa',
-                    'body'  => 'mauzo Timu ina imefutwa successfully.',
+                    'title' => 'Timu ya mauzo imefutwa',
+                    'body'  => 'Timu ya mauzo imefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Mauzo Timu force imefutwa',
-                    'body'  => 'mauzo Timu ina force imefutwa successfully.',
+                    'title' => 'Timu ya mauzo imefutwa kabisa',
+                    'body'  => 'Timu ya mauzo imefutwa kabisa kwa mafanikio.',
                 ],
             ],
         ],
@@ -86,22 +86,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Mauzo Teams restored',
-                    'body'  => 'mauzo Teams ina restored successfully.',
+                    'title' => 'Timu za mauzo zimerejeshwa',
+                    'body'  => 'Timu za mauzo zimerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Mauzo Teams imefutwa',
-                    'body'  => 'mauzo Teams ina imefutwa successfully.',
+                    'title' => 'Timu za mauzo zimefutwa',
+                    'body'  => 'Timu za mauzo zimefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Mauzo Teams force imefutwa',
-                    'body'  => 'mauzo Teams ina force imefutwa successfully.',
+                    'title' => 'Timu za mauzo zimefutwa kabisa',
+                    'body'  => 'Timu za mauzo zimefutwa kabisa kwa mafanikio.',
                 ],
             ],
         ],
@@ -109,8 +109,8 @@ return [
         'empty-state-action' => [
             'create' => [
                 'notification' => [
-                    'title' => 'Mauzo Teams imeundwa',
-                    'body'  => 'mauzo Teams ina imeundwa successfully.',
+                    'title' => 'Timu za mauzo zimeundwa',
+                    'body'  => 'Timu za mauzo zimeundwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -119,15 +119,15 @@ return [
     'infolist' => [
         'sections' => [
             'entries' => [
-                'name'     => 'Mauzo Timu',
+                'name'     => 'Timu ya mauzo',
                 'status'   => 'Hali',
                 'fieldset' => [
                     'team-details' => [
-                        'title'   => 'Timu Maelezo',
+                        'title'   => 'Maelezo ya timu',
                         'entries' => [
-                            'team-leader'            => 'Timu Leader',
+                            'team-leader'            => 'Kiongozi wa timu',
                             'company'                => 'Kampuni',
-                            'invoiced-target'        => 'Invoiced Lengwa',
+                            'invoiced-target'        => 'Lengo la ankara',
                             'invoiced-target-suffix' => '/ Mwezi',
                             'color'                  => 'Rangi',
                             'members'                => 'Wanachama',

@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'model-label' => 'Налог Группа',
+    'model-label' => 'Группа налогов',
 
     'navigation' => [
-        'title' => 'Налог Groups',
-        'group' => 'Учёт',
+        'title' => 'Группы налогов',
+        'group' => 'Бухгалтерия',
     ],
 ];

@@ -5,37 +5,37 @@ return [
 
     'header-actions' => [
         'create' => [
-            'label' => 'Создать Контакт',
+            'label' => 'Создать контакт',
         ],
 
         'import' => [
-            'label' => 'Импорт от Excel',
+            'label' => 'Импорт из Excel',
 
             'modal' => [
-                'heading'                  => 'Импорт контакты от spreadsheet',
-                'description'              => 'Скачать пример файл, fill в one контакт за строка, затем загрузить это здесь. Вверх до :max контакты за загрузить.',
-                'submit'                   => 'Импорт контакты',
+                'heading'                  => 'Импорт контактов из таблицы',
+                'description'              => 'Скачайте файл-пример, заполните по одному контакту в строке и загрузите его сюда. Не более :max контактов за одну загрузку.',
+                'submit'                   => 'Импортировать контакты',
                 'download-template-csv'    => 'Скачать пример (CSV)',
                 'download-template-excel'  => 'Скачать пример (Excel)',
 
                 'file' => [
-                    'label'  => 'Завершено файл',
-                    'helper' => 'Excel (.xlsx,.xls) или CSV. Оставить heading строка как это. Обязательно колонка: :columns. Строки с problem reported от строка номер и rest всё ещё imported.',
+                    'label'  => 'Заполненный файл',
+                    'helper' => 'Excel (.xlsx, .xls) или CSV. Не меняйте строку заголовков. Обязательный столбец: :columns. Строки с ошибками будут указаны по номеру, остальные всё равно будут импортированы.',
                 ],
             ],
 
             'notifications' => [
-                'imported'        => ':count контакты imported',
-                'skipped'         => ':count строки были skipped:',
-                'nothing-imported' => 'Нет контакты были imported',
-                'more-errors'     => '... и :count больше строки.',
-                'unreadable'      => 'Тот файл could не быть чтение. Пожалуйста загрузить Excel или CSV файл.',
+                'imported'        => 'Импортировано контактов: :count',
+                'skipped'         => 'Пропущено строк: :count:',
+                'nothing-imported' => 'Контакты не импортированы',
+                'more-errors'     => '... и ещё строк: :count.',
+                'unreadable'      => 'Не удалось прочитать файл. Загрузите файл Excel или CSV.',
             ],
         ],
     ],
 
     'tabs' => [
-        'individuals' => 'Individuals',
+        'individuals' => 'Физические лица',
         'companies'   => 'Компании',
         'employees'   => 'Сотрудники',
         'customers'   => 'Клиенты',

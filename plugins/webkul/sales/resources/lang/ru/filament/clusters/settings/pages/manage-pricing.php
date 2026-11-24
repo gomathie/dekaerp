@@ -1,20 +1,20 @@
 <?php
 
 return [
-    'title' => 'Manage Pricing',
+    'title' => 'Цены',
 
-    'breadcrumb' => 'Manage Pricing',
+    'breadcrumb' => 'Цены',
 
     'navigation' => [
-        'title' => 'Manage Pricing',
+        'title' => 'Цены',
     ],
 
     'form' => [
         'fields' => [
             'discount'      => 'Скидка',
-            'discount-help' => 'Включить скидка вкл. товары.',
-            'margins'       => 'Margins',
-            'margins-help'  => 'Показать margins вкл. заказы.',
+            'discount-help' => 'Разрешить скидки на товары.',
+            'margins'       => 'Маржа',
+            'margins-help'  => 'Показывать маржу в заказах.',
         ],
     ],
 ];

@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'Maagizo Hadi Upsell',
+    'title' => 'Oda za kuuza zaidi',
 
     'navigation' => [
-        'title' => 'Maagizo Hadi Upsell',
+        'title' => 'Oda za kuuza zaidi',
     ],
 ];

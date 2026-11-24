@@ -2,9 +2,9 @@
 
 return [
     'tabs' => [
-        'my-quotations' => 'Yangu Nukuu',
-        'quotations'    => 'Nukuu',
-        'sales-orders'  => 'Agizo la mauzos',
-        'archived'      => 'Imehifadhiwa',
+        'my-quotations' => 'Nukuu zangu',
+        'quotations'    => 'Nukuu za bei',
+        'sales-orders'  => 'Oda za mauzo',
+        'archived'      => 'Kumbukumbu',
     ],
 ];

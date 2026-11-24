@@ -1,24 +1,24 @@
 <?php
 
 return [
-    'title' => 'Manage Bidhaa',
+    'title' => 'Dhibiti bidhaa',
 
-    'breadcrumb' => 'Manage Bidhaa',
+    'breadcrumb' => 'Dhibiti bidhaa',
 
     'navigation' => [
-        'title' => 'Manage Bidhaa',
+        'title' => 'Dhibiti bidhaa',
     ],
 
     'form' => [
         'fields' => [
-            'variants'                      => 'Variants',
-            'variants-help'                 => 'Ruhusu bidhaa hadi ina multiple variants',
+            'variants'                      => 'Aina za bidhaa',
+            'variants-help'                 => 'Ruhusu bidhaa kuwa na aina nyingi',
             'uom'                           => 'Kipimo',
-            'uom-help'                      => 'Ruhusu bidhaa hadi ina kipimo',
-            'packagings'                    => 'Packagings',
-            'packagings-help'               => 'Ruhusu bidhaa hadi ina multiple packagings',
-            'deliver-content-by-email'      => 'Deliver Content na Barua pepe',
-            'deliver-content-by-email-help' => 'Ruhusu bidhaa hadi deliver content na barua pepe',
+            'uom-help'                      => 'Ruhusu bidhaa kuwa na kipimo',
+            'packagings'                    => 'Vifurushi',
+            'packagings-help'               => 'Ruhusu bidhaa kuwa na vifurushi vingi',
+            'deliver-content-by-email'      => 'Wasilisha maudhui kwa barua pepe',
+            'deliver-content-by-email-help' => 'Ruhusu bidhaa kuwasilisha maudhui kwa barua pepe',
         ],
     ],
 ];

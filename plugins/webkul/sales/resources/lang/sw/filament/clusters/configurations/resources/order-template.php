@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'title' => 'Agizo Kiolezo Bidhaa',
+    'title' => 'Bidhaa za kiolezo cha oda',
 
     'navigation' => [
-        'title' => 'Agizo Kiolezo Bidhaa',
-        'group' => 'Agizo la mauzos',
+        'title' => 'Bidhaa za kiolezo cha oda',
+        'group' => 'Oda za mauzo',
     ],
 
     'global-search' => [
@@ -14,53 +14,53 @@ return [
 
     'form' => [
         'fields' => [
-            'sort'           => 'Sort',
-            'order-template' => 'Agizo Kiolezo',
+            'sort'           => 'Mpangilio',
+            'order-template' => 'Kiolezo cha oda',
             'company'        => 'Kampuni',
             'product'        => 'Bidhaa',
-            'product-uom'    => 'Bidhaa UOM',
-            'creator'        => 'Creator',
-            'display-type'   => 'Display Aina',
+            'product-uom'    => 'Kipimo cha bidhaa',
+            'creator'        => 'Muundaji',
+            'display-type'   => 'Aina ya onyesho',
             'name'           => 'Jina',
-            'quantity'       => 'Kiasi',
+            'quantity'       => 'Idadi',
         ],
     ],
 
     'table' => [
         'columns' => [
-            'sort'           => 'Sort',
-            'order-template' => 'Agizo Kiolezo',
+            'sort'           => 'Mpangilio',
+            'order-template' => 'Kiolezo cha oda',
             'company'        => 'Kampuni',
             'product'        => 'Bidhaa',
-            'product-uom'    => 'Bidhaa UOM',
-            'created-by'     => 'Imeundwa Na',
-            'display-type'   => 'Display Aina',
+            'product-uom'    => 'Kipimo cha bidhaa',
+            'created-by'     => 'Iliundwa na',
+            'display-type'   => 'Aina ya onyesho',
             'name'           => 'Jina',
-            'quantity'       => 'Kiasi',
-            'created-at'     => 'Imeundwa',
-            'updated-at'     => 'Imesasishwa',
+            'quantity'       => 'Idadi',
+            'created-at'     => 'Iliundwa',
+            'updated-at'     => 'Ilisasishwa',
 
         ],
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Agizo Kiolezo Bidhaa imesasishwa',
-                    'body'  => 'agizo kiolezo bidhaa ina imesasishwa successfully.',
+                    'title' => 'Bidhaa za kiolezo cha oda zimesasishwa',
+                    'body'  => 'Bidhaa za kiolezo cha oda zimesasishwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Agizo Kiolezo Bidhaa imefutwa',
-                    'body'  => 'agizo kiolezo bidhaa ina imefutwa successfully.',
+                    'title' => 'Bidhaa za kiolezo cha oda zimefutwa',
+                    'body'  => 'Bidhaa za kiolezo cha oda zimefutwa kwa mafanikio.',
                 ],
             ],
         ],
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Agizo Kiolezo Bidhaa imefutwa',
-                    'body'  => 'agizo kiolezo bidhaa ina imefutwa successfully.',
+                    'title' => 'Bidhaa za kiolezo cha oda zimefutwa',
+                    'body'  => 'Bidhaa za kiolezo cha oda zimefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -68,14 +68,14 @@ return [
 
     'infolist' => [
         'entries' => [
-            'sort'           => 'Sort Agizo',
-            'order-template' => 'Agizo Kiolezo',
+            'sort'           => 'Mpangilio wa kupanga',
+            'order-template' => 'Kiolezo cha oda',
             'company'        => 'Kampuni',
             'product'        => 'Bidhaa',
-            'product-uom'    => 'Bidhaa UOM',
-            'display-type'   => 'Display Aina',
+            'product-uom'    => 'Kipimo cha bidhaa',
+            'display-type'   => 'Aina ya onyesho',
             'name'           => 'Jina',
-            'quantity'       => 'Kiasi',
+            'quantity'       => 'Idadi',
         ],
     ],
 ];

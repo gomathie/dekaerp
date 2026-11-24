@@ -2,7 +2,7 @@
 
 return [
     'navigation' => [
-        'title' => 'UOM Категории',
-        'group' => 'Единицы Measure',
+        'title' => 'Категории ед. изм.',
+        'group' => 'Единицы измерения',
     ],
 ];

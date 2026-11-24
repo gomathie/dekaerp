@@ -7,11 +7,11 @@ return [
     ],
 
     'filters' => [
-        'date-range'    => 'Kipindi cha tarehe',
+        'date-range'    => 'Kipindi',
         'countries'     => 'Nchi',
         'products'      => 'Bidhaa',
         'categories'    => 'Kategoria',
-        'teams'         => 'Mauzo Timu',
-        'sales-persons' => 'Mauzo Person',
+        'teams'         => 'Timu ya mauzo',
+        'sales-persons' => 'Muuzaji',
     ],
 ];

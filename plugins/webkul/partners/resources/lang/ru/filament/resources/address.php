@@ -2,18 +2,18 @@
 
 return [
     'form' => [
-        'partner' => 'Контрагент',
-        'name'    => 'Название',
+        'partner' => 'Контакт',
+        'name'    => 'Имя',
         'email'   => 'Эл. почта',
         'phone'   => 'Телефон',
-        'mobile'  => 'Mobile',
+        'mobile'  => 'Мобильный',
         'type'    => 'Тип',
         'address' => 'Адрес',
         'city'    => 'Город',
-        'street1' => 'Street 1',
-        'street2' => 'Street 2',
-        'state'   => 'Состояние',
-        'zip'     => 'Zip',
+        'street1' => 'Улица 1',
+        'street2' => 'Улица 2',
+        'state'   => 'Регион',
+        'zip'     => 'Индекс',
         'code'    => 'Код',
         'country' => 'Страна',
     ],
@@ -21,39 +21,39 @@ return [
     'table' => [
         'header-actions' => [
             'create' => [
-                'label' => 'Добавить Адрес',
+                'label' => 'Добавить адрес',
 
                 'notification' => [
-                    'title' => 'Адрес создано',
-                    'body'  => 'адрес есть создано successfully.',
+                    'title' => 'Адрес создан',
+                    'body'  => 'Адрес успешно создан.',
                 ],
             ],
         ],
 
         'columns' => [
             'type'    => 'Тип',
-            'name'    => 'Контакт Название',
+            'name'    => 'Контактное лицо',
             'address' => 'Адрес',
             'city'    => 'Город',
-            'street1' => 'Street 1',
-            'street2' => 'Street 2',
-            'state'   => 'Состояние',
-            'zip'     => 'Zip',
+            'street1' => 'Улица 1',
+            'street2' => 'Улица 2',
+            'state'   => 'Регион',
+            'zip'     => 'Индекс',
             'country' => 'Страна',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Адрес обновлено',
-                    'body'  => 'адрес есть обновлено successfully.',
+                    'title' => 'Адрес обновлён',
+                    'body'  => 'Адрес успешно обновлён.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Адрес удалено',
-                    'body'  => 'адрес есть удалено successfully.',
+                    'title' => 'Адрес удалён',
+                    'body'  => 'Адрес успешно удалён.',
                 ],
             ],
         ],
@@ -61,8 +61,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Addresses удалено',
-                    'body'  => 'addresses есть удалено successfully.',
+                    'title' => 'Адреса удалены',
+                    'body'  => 'Адреса успешно удалены.',
                 ],
             ],
         ],

@@ -2,12 +2,12 @@
 
 return [
     'tabs' => [
-        'my-orders'  => 'Мой Заказы',
-        'to-invoice' => 'До Счёт',
-        'up-selling' => 'Вверх Selling',
+        'my-orders'  => 'Мои заказы',
+        'to-invoice' => 'К выставлению',
+        'up-selling' => 'Допродажа',
         'to-deliver' => 'К отгрузке',
-        'delivered'  => 'Отгружено',
-        'invoiced'   => 'Счёт выставлен',
+        'delivered'  => 'Отгружены',
+        'invoiced'   => 'Выставлены',
         'archived'   => 'В архиве',
     ],
 ];

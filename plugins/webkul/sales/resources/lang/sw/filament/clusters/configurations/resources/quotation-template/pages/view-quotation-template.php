@@ -4,8 +4,8 @@ return [
     'header-actions' => [
         'notification' => [
             'delete' => [
-                'title' => 'Futa Nukuu Kiolezo',
-                'body'  => 'Nukuu kiolezo ina imefutwa successfully.',
+                'title' => 'Futa kiolezo cha nukuu',
+                'body'  => 'Kiolezo cha nukuu kimefutwa kwa mafanikio.',
             ],
         ],
     ],

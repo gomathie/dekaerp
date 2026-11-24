@@ -1,21 +1,21 @@
 <?php
 
 return [
-    'title' => 'Manage Счёт',
+    'title' => 'Выставление счетов',
 
-    'breadcrumb' => 'Manage Счёт',
+    'breadcrumb' => 'Выставление счетов',
 
     'navigation' => [
-        'title' => 'Manage Счёт',
+        'title' => 'Выставление счетов',
     ],
 
     'form' => [
         'invoice-policy' => [
-            'label'      => 'Счёт Policy',
-            'label-help' => 'Define как счета generated от заказ на продажуs.',
+            'label'      => 'Политика выставления счетов',
+            'label-help' => 'Определите, как счета создаются из заказов на продажу.',
             'options'    => [
-                'order'    => 'Generate счёт based вкл. ordered quantities',
-                'delivery' => 'Generate счёт based вкл. delivered quantities',
+                'order'    => 'Выставлять счёт по заказанному количеству',
+                'delivery' => 'Выставлять счёт по отгруженному количеству',
             ],
         ],
     ],

@@ -4,12 +4,12 @@ return [
     'title' => 'Кредит-нота',
 
     'navigation' => [
-        'title' => 'Кредит-нотаs',
+        'title' => 'Кредит-ноты',
     ],
 
     'actions' => [
         'open-product' => [
-            'tooltip' => 'Открыт товар',
+            'tooltip' => 'Открыть товар',
         ],
     ],
 ];

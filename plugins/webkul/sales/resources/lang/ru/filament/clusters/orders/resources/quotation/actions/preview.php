@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'title' => 'Preview',
+    'title' => 'Предпросмотр',
 ];

@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'up-selling'  => 'Upselling Opportunity',
-    'invoiced'    => 'Fully Invoiced',
-    'to-invoice'  => 'До Счёт',
-    'no'          => 'Nothing до Счёт',
+    'up-selling'  => 'Возможность допродажи',
+    'invoiced'    => 'Полностью выставлен',
+    'to-invoice'  => 'К выставлению',
+    'no'          => 'Нечего выставлять',
 ];

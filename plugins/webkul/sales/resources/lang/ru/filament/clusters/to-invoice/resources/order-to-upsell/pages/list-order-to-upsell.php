@@ -2,7 +2,7 @@
 
 return [
     'tabs' => [
-        'my-orders' => 'Мой Заказы',
+        'my-orders' => 'Мои заказы',
         'archived'  => 'В архиве',
     ],
 ];

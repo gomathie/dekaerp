@@ -4,11 +4,11 @@ return [
     'title'          => 'Команда',
 
     'log-attributes' => [
-        'name'            => 'Команда Название',
+        'name'            => 'Название команды',
         'company'         => 'Компания',
-        'team_leader'     => 'Команда Leader',
-        'creator'         => 'Создано От',
+        'team_leader'     => 'Руководитель команды',
+        'creator'         => 'Кем создано',
         'status'          => 'Статус',
-        'invoiced_target' => 'Invoiced Назначение',
+        'invoiced_target' => 'План по выставлению',
     ],
 ];

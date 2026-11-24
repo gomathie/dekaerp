@@ -1,45 +1,45 @@
 <?php
 
 return [
-    'title' => 'Mawasiliano',
+    'title' => 'Wahusika',
 
     'header-actions' => [
         'create' => [
-            'label' => 'Unda Mwasiliani',
+            'label' => 'Unda mhusika',
         ],
 
         'import' => [
-            'label' => 'Ingiza kutoka Excel',
+            'label' => 'Leta kutoka Excel',
 
             'modal' => [
-                'heading'                  => 'Ingiza mawasiliano kutoka spreadsheet',
-                'description'              => 'Pakua mfano faili, fill katika one mwasiliani kwa mstari, kisha pakia hii hapa. Juu hadi :max mawasiliano kwa pakia.',
-                'submit'                   => 'Ingiza mawasiliano',
+                'heading'                  => 'Leta wahusika kutoka jedwali',
+                'description'              => 'Pakua faili la mfano, jaza mhusika mmoja kwa kila safu, kisha lipakie hapa. Hadi wahusika :max kwa kila upakiaji.',
+                'submit'                   => 'Leta wahusika',
                 'download-template-csv'    => 'Pakua mfano (CSV)',
                 'download-template-excel'  => 'Pakua mfano (Excel)',
 
                 'file' => [
-                    'label'  => 'Imekamilika faili',
-                    'helper' => 'Excel (.xlsx,.xls) au CSV. Weka heading mstari kama hii ni. Inahitajika safu: :columns. Mistari na problem ni reported na mstari nambari na rest ni bado imported.',
+                    'label'  => 'Faili lililojazwa',
+                    'helper' => 'Excel (.xlsx, .xls) au CSV. Acha safu ya vichwa kama ilivyo. Safu wima inayohitajika: :columns. Safu zenye tatizo zitaonyeshwa kwa namba ya safu, na nyingine zitaletwa.',
                 ],
             ],
 
             'notifications' => [
-                'imported'        => ':count mawasiliano imported',
-                'skipped'         => ':count mistari zilikuwa skipped:',
-                'nothing-imported' => 'Hakuna mawasiliano zilikuwa imported',
-                'more-errors'     => '... na :count zaidi mistari.',
-                'unreadable'      => 'Hiyo faili could si kuwa kusoma. Tafadhali pakia Excel au CSV faili.',
+                'imported'        => 'Wahusika :count wameletwa',
+                'skipped'         => 'Safu :count zimerukwa:',
+                'nothing-imported' => 'Hakuna mhusika aliyeletwa',
+                'more-errors'     => '... na safu nyingine :count.',
+                'unreadable'      => 'Faili hilo halikuweza kusomwa. Tafadhali pakia faili la Excel au CSV.',
             ],
         ],
     ],
 
     'tabs' => [
-        'individuals' => 'Individuals',
-        'companies'   => 'Makampuni',
+        'individuals' => 'Watu binafsi',
+        'companies'   => 'Kampuni',
         'employees'   => 'Wafanyakazi',
         'customers'   => 'Wateja',
         'vendors'     => 'Wasambazaji',
-        'archived'    => 'Imehifadhiwa',
+        'archived'    => 'Kumbukumbu',
     ],
 ];

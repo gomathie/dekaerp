@@ -4,11 +4,11 @@ return [
     'table' => [
         'header-actions' => [
             'create' => [
-                'label' => 'Добавить Контакт',
+                'label' => 'Добавить контакт',
 
                 'notification' => [
-                    'title' => 'Контакт создано',
-                    'body'  => 'контакт есть создано successfully.',
+                    'title' => 'Контакт создан',
+                    'body'  => 'Контакт успешно создан.',
                 ],
             ],
         ],

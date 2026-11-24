@@ -2,7 +2,7 @@
 
 return [
     'notification' => [
-        'title' => 'Agizo Kiolezo Bidhaa imeundwa',
-        'body'  => 'Agizo Kiolezo Bidhaa ina imeundwa successfully',
+        'title' => 'Bidhaa ya kiolezo cha oda imeundwa',
+        'body'  => 'Bidhaa ya kiolezo cha oda imeundwa kwa mafanikio',
     ],
 ];

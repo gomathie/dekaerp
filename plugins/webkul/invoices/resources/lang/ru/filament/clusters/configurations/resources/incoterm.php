@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'model-label' => 'Incoterm',
+    'model-label' => 'Инкотермс',
 
     'navigation' => [
-        'title' => 'Incoterms',
-        'group' => 'Invoicing',
+        'title' => 'Инкотермс',
+        'group' => 'Выставление счетов',
     ],
 ];

@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'title' => 'Nukuu Kiolezo',
+    'title' => 'Kiolezo cha nukuu',
 
     'navigation' => [
-        'title'  => 'Nukuu Kiolezo',
-        'group'  => 'Agizo la mauzos',
+        'title'  => 'Kiolezo cha nukuu',
+        'group'  => 'Oda za mauzo',
     ],
 
     'form' => [
@@ -15,36 +15,36 @@ return [
                 'fields' => [
                     'products'     => 'Bidhaa',
                     'name'         => 'Jina',
-                    'quantity'     => 'Kiasi',
+                    'quantity'     => 'Idadi',
                 ],
             ],
 
             'terms-and-conditions' => [
-                'title'  => 'Terms & Conditions',
+                'title'  => 'Vigezo na masharti',
                 'fields' => [
-                    'note-placeholder' => 'Kuandika yako terms na conditions kwa nukuu.',
+                    'note-placeholder' => 'Andika vigezo na masharti ya nukuu za bei.',
                 ],
             ],
         ],
 
         'sections' => [
             'general' => [
-                'title' => 'Jumla Taarifa',
+                'title' => 'Taarifa za jumla',
 
                 'fields' => [
                     'name'               => 'Jina',
-                    'quotation-validity' => 'Nukuu Validity',
-                    'sale-journal'       => 'Mauzo Jarida',
+                    'quotation-validity' => 'Muda wa uhalali wa nukuu',
+                    'sale-journal'       => 'Jarida la mauzo',
                 ],
             ],
 
             'signature-and-payment' => [
-                'title' => 'Signature & Malipo',
+                'title' => 'Sahihi na malipo',
 
                 'fields' => [
-                    'online-signature'      => 'Online Signature',
-                    'online-payment'        => 'Online Malipo',
-                    'prepayment-percentage' => 'Prepayment Asilimia',
+                    'online-signature'      => 'Sahihi ya mtandaoni',
+                    'online-payment'        => 'Malipo ya mtandaoni',
+                    'prepayment-percentage' => 'Asilimia ya malipo ya awali',
                 ],
             ],
         ],
@@ -52,14 +52,14 @@ return [
 
     'table' => [
         'columns' => [
-            'created-by'            => 'Imeundwa na',
+            'created-by'            => 'Iliundwa na',
             'company'               => 'Kampuni',
             'name'                  => 'Jina',
-            'number-of-days'        => 'Nambari ya siku',
-            'journal'               => 'Mauzo Jarida',
-            'signature-required'    => 'Signature Inahitajika',
-            'payment-required'      => 'Malipo Inahitajika',
-            'prepayment-percentage' => 'Prepayment Asilimia',
+            'number-of-days'        => 'Idadi ya siku',
+            'journal'               => 'Jarida la mauzo',
+            'signature-required'    => 'Sahihi inahitajika',
+            'payment-required'      => 'Malipo yanahitajika',
+            'prepayment-percentage' => 'Asilimia ya malipo ya awali',
         ],
         'groups'  => [
             'company' => 'Kampuni',
@@ -67,17 +67,17 @@ return [
             'journal' => 'Jarida',
         ],
         'filters' => [
-            'created-by' => 'Imeundwa Na',
+            'created-by' => 'Iliundwa na',
             'company'    => 'Kampuni',
             'name'       => 'Jina',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'created-at' => 'Iliundwa',
+            'updated-at' => 'Ilisasishwa',
         ],
         'actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Nukuu kiolezo imefutwa',
-                    'body'  => 'nukuu kiolezo ina imefutwa successfully.',
+                    'title' => 'Kiolezo cha nukuu kimefutwa',
+                    'body'  => 'Kiolezo cha nukuu kimefutwa kwa mafanikio.',
                 ],
             ],
 
@@ -85,8 +85,8 @@ return [
         'bulk-actions' => [
             'delete' => [
                 'notification' => [
-                    'title' => 'Nukuu kiolezo imefutwa',
-                    'body'  => 'nukuu kiolezo ina imefutwa successfully.',
+                    'title' => 'Kiolezo cha nukuu kimefutwa',
+                    'body'  => 'Kiolezo cha nukuu kimefutwa kwa mafanikio.',
                 ],
             ],
         ],
@@ -98,30 +98,30 @@ return [
                 'title' => 'Bidhaa',
             ],
             'terms-and-conditions' => [
-                'title' => 'Terms & Conditions',
+                'title' => 'Vigezo na masharti',
             ],
         ],
         'sections' => [
             'general' => [
-                'title' => 'Jumla Taarifa',
+                'title' => 'Taarifa za jumla',
             ],
             'signature_and_payment' => [
-                'title' => 'Signature & Malipo',
+                'title' => 'Sahihi na malipo',
             ],
         ],
         'entries' => [
             'product'               => 'Bidhaa',
             'description'           => 'Maelezo',
-            'quantity'              => 'Kiasi',
-            'unit-price'            => 'Bei ya uniti',
-            'section-name'          => 'Sehemu Jina',
-            'note-title'            => 'Maelezo Kichwa',
-            'name'                  => 'Kiolezo Jina',
-            'quotation-validity'    => 'Nukuu Validity',
-            'sale-journal'          => 'Mauzo Jarida',
-            'online-signature'      => 'Online Signature',
-            'online-payment'        => 'Online Malipo',
-            'prepayment-percentage' => 'Prepayment Asilimia',
+            'quantity'              => 'Idadi',
+            'unit-price'            => 'Bei ya kipimo',
+            'section-name'          => 'Jina la sehemu',
+            'note-title'            => 'Kichwa cha kidokezo',
+            'name'                  => 'Jina la kiolezo',
+            'quotation-validity'    => 'Muda wa uhalali wa nukuu',
+            'sale-journal'          => 'Jarida la mauzo',
+            'online-signature'      => 'Sahihi ya mtandaoni',
+            'online-payment'        => 'Malipo ya mtandaoni',
+            'prepayment-percentage' => 'Asilimia ya malipo ya awali',
         ],
     ],
 ];

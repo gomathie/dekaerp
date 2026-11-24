@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Deliveries',
+        'title' => 'Uwasilishaji',
     ],
 ];

@@ -1,21 +1,21 @@
 <?php
 
 return [
-    'title' => 'Manage Ankara',
+    'title' => 'Dhibiti ankara',
 
-    'breadcrumb' => 'Manage Ankara',
+    'breadcrumb' => 'Dhibiti ankara',
 
     'navigation' => [
-        'title' => 'Manage Ankara',
+        'title' => 'Dhibiti ankara',
     ],
 
     'form' => [
         'invoice-policy' => [
-            'label'      => 'Ankara Policy',
-            'label-help' => 'Define jinsi ankara ni generated kutoka agizo la mauzos.',
+            'label'      => 'Sera ya ankara',
+            'label-help' => 'Bainisha jinsi ankara zinavyotolewa kutoka oda za mauzo.',
             'options'    => [
-                'order'    => 'Generate ankara based washa ordered quantities',
-                'delivery' => 'Generate ankara based washa delivered quantities',
+                'order'    => 'Toa ankara kwa idadi iliyoagizwa',
+                'delivery' => 'Toa ankara kwa idadi iliyowasilishwa',
             ],
         ],
     ],

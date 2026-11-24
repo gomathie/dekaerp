@@ -2,48 +2,48 @@
 
 return [
     'navigation' => [
-        'title' => 'Industries',
+        'title' => 'Sekta',
     ],
 
     'form' => [
         'name'      => 'Jina',
-        'full-name' => 'Kamili Jina',
+        'full-name' => 'Jina kamili',
     ],
 
     'table' => [
         'columns' => [
             'name'       => 'Jina',
-            'full-name'  => 'Kamili Jina',
-            'created-at' => 'Imeundwa',
-            'updated-at' => 'Imesasishwa',
+            'full-name'  => 'Jina kamili',
+            'created-at' => 'Iliundwa',
+            'updated-at' => 'Ilisasishwa',
         ],
 
         'actions' => [
             'edit' => [
                 'notification' => [
-                    'title' => 'Industry imesasishwa',
-                    'body'  => 'industry ina imesasishwa successfully.',
+                    'title' => 'Sekta imesasishwa',
+                    'body'  => 'Sekta imesasishwa kwa mafanikio.',
                 ],
             ],
 
             'restore' => [
                 'notification' => [
-                    'title' => 'Industry restored',
-                    'body'  => 'industry ina restored successfully.',
+                    'title' => 'Sekta imerejeshwa',
+                    'body'  => 'Sekta imerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Industry imefutwa',
-                    'body'  => 'industry ina imefutwa successfully.',
+                    'title' => 'Sekta imefutwa',
+                    'body'  => 'Sekta imefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Industry force imefutwa',
-                    'body'  => 'industry ina force imefutwa successfully.',
+                    'title' => 'Sekta imefutwa kabisa',
+                    'body'  => 'Sekta imefutwa kabisa kwa mafanikio.',
                 ],
             ],
         ],
@@ -51,22 +51,22 @@ return [
         'bulk-actions' => [
             'restore' => [
                 'notification' => [
-                    'title' => 'Industries restored',
-                    'body'  => 'industries ina restored successfully.',
+                    'title' => 'Sekta zimerejeshwa',
+                    'body'  => 'Sekta zimerejeshwa kwa mafanikio.',
                 ],
             ],
 
             'delete' => [
                 'notification' => [
-                    'title' => 'Industries imefutwa',
-                    'body'  => 'industries ina imefutwa successfully.',
+                    'title' => 'Sekta zimefutwa',
+                    'body'  => 'Sekta zimefutwa kwa mafanikio.',
                 ],
             ],
 
             'force-delete' => [
                 'notification' => [
-                    'title' => 'Industries force imefutwa',
-                    'body'  => 'industries ina force imefutwa successfully.',
+                    'title' => 'Sekta zimefutwa kabisa',
+                    'body'  => 'Sekta zimefutwa kabisa kwa mafanikio.',
                 ],
             ],
         ],

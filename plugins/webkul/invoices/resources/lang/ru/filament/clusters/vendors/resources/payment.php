@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'Оплаты',
+    'title' => 'Платежи',
 
     'navigation' => [
-        'title' => 'Оплаты',
+        'title' => 'Платежи',
     ],
 ];

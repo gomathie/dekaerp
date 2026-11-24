@@ -1,27 +1,27 @@
 <?php
 
 return [
-    'title' => 'Unda Ankara',
+    'title' => 'Unda ankara',
 
     'modal' => [
-        'heading' => 'Unda Ankara',
+        'heading' => 'Unda ankara',
     ],
 
     'notification' => [
         'invoice-created' => [
             'title' => 'Ankara imeundwa',
-            'body'  => 'Ankara ina imeundwa successfully.',
+            'body'  => 'Ankara imeundwa kwa mafanikio.',
         ],
 
         'no-invoiceable-lines' => [
-            'title' => 'Hakuna invoiceable mistari',
-            'body'  => 'ni hakuna invoiceable mstari, tafadhali fanya sure hiyo kiasi ina imepokelewa.',
+            'title' => 'Hakuna mistari ya kutoza',
+            'body'  => 'Hakuna mstari wa kutolewa ankara, tafadhali hakikisha kuwa idadi imepokelewa.',
         ],
     ],
 
     'form' => [
         'fields' => [
-            'create-invoice' => 'Unda Ankara',
+            'create-invoice' => 'Unda ankara',
         ],
     ],
 ];

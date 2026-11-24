@@ -3,67 +3,67 @@
 return [
     'unknown'             => 'Haijulikani',
     'other'               => 'Nyingine',
-    'share'               => 'Share',
+    'share'               => 'Mgao',
     'status'              => 'Hali',
-    'delivery-status'     => 'Usafirishaji Hali',
-    'billing'             => 'Billing',
-    'sales-value'         => 'Oda zilizothibitishwa na ankara zilizotolewa bila oda',
+    'delivery-status'     => 'Hali ya uwasilishaji',
+    'billing'             => 'Utozaji',
+    'sales-value'         => 'Oda zilizothibitishwa na ankara zisizo na oda',
     'stats'               => [
-        'heading'            => 'Key Metrics',
-        'total-quotations'   => 'Jumla Nukuu',
-        'total-sales-orders' => 'Jumla Mauzo',
-        'total-revenue'      => 'Jumla Mapato',
-        'average-revenue'    => 'Average Mapato',
-        'increase'           => 'increase',
-        'decrease'           => 'decrease',
+        'heading'            => 'Vipimo muhimu',
+        'total-quotations'   => 'Jumla ya nukuu',
+        'total-sales-orders' => 'Jumla ya mauzo',
+        'total-revenue'      => 'Jumla ya mapato',
+        'average-revenue'    => 'Wastani wa mapato',
+        'increase'           => 'ongezeko',
+        'decrease'           => 'upungufu',
     ],
 
     'order-activity'      => [
-        'heading'     => 'Hali ya oda',
+        'heading'     => 'Shughuli za oda',
         'description' => 'Oda zilizothibitishwa katika kipindi, kwa hatua zilipo sasa',
         'to-deliver'  => 'Za kuwasilisha',
         'delivered'   => 'Zimewasilishwa',
-        'to-invoice'  => 'Za kutozwa ankara',
-        'invoiced'    => 'Zimetozwa ankara',
+        'to-invoice'  => 'Za kutolewa ankara',
+        'invoiced'    => 'Zimetolewa ankara',
         'share'       => ':percent% ya oda :total',
     ],
 
     'monthly-sales'       => [
-        'heading'  => 'Kila mwezi Mauzo',
+        'heading'  => 'Mauzo kwa muda',
         'revenue'  => 'Mapato',
-        'previous' => 'Compared kipindi',
+        'previous' => 'Kipindi cha kulinganisha',
     ],
 
     'revenue-by-category' => [
-        'heading' => 'Mapato na Kategoria',
+        'heading' => 'Mapato kwa kategoria',
         'revenue' => 'Mapato',
     ],
 
     'sales-persons'       => [
-        'heading' => 'Mauzo Person Performance',
+        'heading' => 'Utendaji wa wauzaji',
         'revenue' => 'Mapato',
     ],
 
     'quotation-outcome'   => [
-        'heading'     => 'Nukuu',
-        'description' => 'Nini became ya nukuu imefanywa katika kipindi',
-        'won'         => 'Became maagizo',
-        'open'        => 'Bado wazi',
-        'cancelled'   => 'Imeghairiwa',
-        'count'       => 'Nukuu',
+        'heading'     => 'Nukuu za bei',
+        'description' => 'Kilichotokea kwa nukuu zilizoundwa katika kipindi',
+        'won'         => 'Zimekuwa oda',
+        'open'        => 'Bado ziko wazi',
+        'cancelled'   => 'Zimeghairiwa',
+        'count'       => 'Nukuu za bei',
     ],
 
     'top-products'        => [
-        'heading' => 'Top Bidhaa',
+        'heading' => 'Bidhaa bora',
         'columns' => [
             'name'     => 'Bidhaa',
-            'quantity' => 'Kiasi Sold',
+            'quantity' => 'Idadi iliyouzwa',
             'revenue'  => 'Mapato',
         ],
     ],
 
     'top-customers'       => [
-        'heading' => 'Top Wateja',
+        'heading' => 'Wateja bora',
         'columns' => [
             'name'    => 'Mteja',
             'orders'  => 'Mauzo',
@@ -72,19 +72,19 @@ return [
     ],
 
     'top-sales-orders'    => [
-        'heading' => 'Top Mauzo',
+        'heading' => 'Mauzo makubwa',
         'columns' => [
-            'reference'      => 'Agizo Nambari',
+            'reference'      => 'Namba ya oda',
             'customer'       => 'Mteja',
-            'amount'         => 'Jumla Kiasi',
-            'invoice-status' => 'Ankara Hali',
+            'amount'         => 'Jumla ya kiasi',
+            'invoice-status' => 'Hali ya ankara',
         ],
     ],
 
     'top-quotations'      => [
-        'heading' => 'Top Nukuu',
+        'heading' => 'Nukuu kubwa',
         'columns' => [
-            'reference' => 'Kumbukumbu',
+            'reference' => 'Rejea',
             'customer'  => 'Mteja',
             'amount'    => 'Kiasi',
         ],

@@ -2,6 +2,6 @@
 
 return [
     'navigation' => [
-        'title' => 'Hadi Ankara',
+        'title' => 'Za kutolewa ankara',
     ],
 ];

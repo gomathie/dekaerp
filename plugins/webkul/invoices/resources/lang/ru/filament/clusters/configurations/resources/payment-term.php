@@ -5,6 +5,6 @@ return [
 
     'navigation' => [
         'title' => 'Условия оплаты',
-        'group' => 'Invoicing',
+        'group' => 'Выставление счетов',
     ],
 ];
