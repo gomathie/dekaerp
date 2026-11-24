@@ -90,3 +90,15 @@ English for every `ru` and `sw` file: 0 missing, 0 mismatched. The plugin
 suites were not run here; they are left for a local run on
 `aureuserp_testing_wp_lang`. Browser check was not run: this worktree is not
 the app being served.
+
+## Handoff (2026-11-24): retranslation
+
+*Supersedes the wording quality notes above.* The 2026-11-23 files were
+glossary word swaps. Every `ru` and `sw` string is now translated from the
+English by ten agents under one brief and glossary, plus the strings added
+on develop since. `php -l` on all 2,186 files: 0 errors. Structure and keys
+match English for every file. Strings still carrying English: Russian 186
+of 14,757 (codes and brand names), Swahili 12. English source mistakes found
+while translating are corrected in all seven locales (details in
+`docs/change-log.md`). Not run, as the user asked: the plugin suites,
+`translations:check` and a browser check. Merge when the suites are green.

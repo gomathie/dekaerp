@@ -6,6 +6,64 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-24, Russian and Swahili retranslated; English source mistakes corrected (branch feature/languages-ru-sw, unreleased)
+
+- **Why:** user, 2026-11-24: "work on all the language fixes and complete
+  it in code on its own branch but don't run". The 2026-11-23 `ru` and `sw`
+  files were glossary word swaps, not translations ("Здесь что happening в
+  :company сегодня", "Talk hadi yetu timu kuhusu…"): 34% of Russian strings
+  still carried English words, and Swahili word order was wrong throughout
+  ("Zote sehemu"). The branch also lacked every string added on develop
+  since 2026-11-23. User chose parallel agents for the retranslation; then
+  "fix the english source mistakes too".
+- **How:**
+  - Merged develop; plans renumbered after the languages plan moved to
+    completed (multi-currency #10, reports usability #9), code and doc
+    references updated (historic change-log entries left as written).
+  - Generator `langgen.php` (scratchpad, not committed): writes each
+    locale file line for line from the EN file, from an ordered list of
+    that file's strings (refused unless the count is exact) or a keyed map;
+    escapes in PHP, never in a shell. It handles inline one-line arrays;
+    keyless nested arrays (only `support/.../help.php`) and two-entry
+    lines were done by hand.
+  - Ten agents retranslated every string of 28 plugin folders and
+    `lang/en` (about 14,750 strings per language) under one brief and
+    glossary; each group's files were reviewed by spot reads and committed
+    separately.
+  - English corrections, in all seven locales: activity types titled
+    "Departments" and "Delay Form"; lots "Package created"; time-off
+    allocations "Time Off created" and "approved approved"; accrual plan
+    "Accrual Type"; mandatory day and public holiday edit bodies
+    "restored"; resume entries "Skill Level"; bare-noun success titles
+    (employment type, job position, skill type); delay type "Days End of
+    Month No The"; accounts base bill, credit-note and refund titles
+    "Invoice" (not displayed today, the cluster files are). Grammar-only
+    slips ("have been") in English alone.
+  - Structure, all seven locales: `security/.../team.php` declared
+    `infolist` twice (first block dead, removed), `chatter-panel.php`
+    defined `original-note` twice, `user.php` line 16 held two entries
+    (split), and `chatter/.../follower-action.php` had four spaces before
+    `<?php`, which PHP sends as output whenever the file loads.
+- **Benefit:** both languages read as written by a person, every string
+  exists, and the corrected English no longer misnames screens.
+- **Trade-off / risk:** machine-assisted (D-LANG-2): a native speaker
+  should still review. Russian plurals that use `[2,4]`/`[5,*]` intervals
+  read wrongly for 21, 22… (rare). Swahili leaves a few IT terms in their
+  usual Latin form. The Portuguese `accounts/.../bill.php` was realigned to
+  the English spacing (whitespace only).
+- **Verification actually run:** host PHP 8.3: `php -l` on all 2,186 `ru`/
+  `sw` files, 0 errors; a line-structure and key comparison against English
+  (same rule as `translations:check`): 0 missing files, 0 differences,
+  0 missing keys; strings still carrying English: Russian 186 of 14,757
+  (codes and brand names such as ID, PDF, API), Swahili 12. After the
+  English corrections: generator reported no key or line-count mismatch on
+  the 137 files it wrote, `php -l` clean on every changed file, and team,
+  chatter-panel and user files have identical line counts in all seven
+  locales. No test suite, `translations:check` or browser check was run
+  (user: do not run); nothing in the tests asserts a changed English
+  string.
+- **Rollback:** revert the branch commits; no schema change.
+
 ## 2026-11-24, this month's figures above the invoice list (plan #10 R-9, develop, unreleased)
 
 - **Why:** TRACE365's reference invoice lists open with summary cards; R-9
