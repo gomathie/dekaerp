@@ -6,6 +6,23 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-24, the contact's company under the customer and vendor (plan #10 R-9, develop, unreleased)
+
+- **Why:** R-9 "two-line cells": a person's name alone did not say which
+  client they buy for.
+- **How:** `->description()` with the partner's parent contact on the
+  customer column of `InvoicesTable` and the vendor column of `BillsTable`;
+  both tables now eager load `partner.parent` with their other relations, so
+  the line costs two queries per page, not two per row.
+- **Benefit:** the company is visible without opening the invoice or adding
+  a column (and the phone card gets it in the same cell).
+- **Trade-off / risk:** the parent is read through the scoped relation; a
+  parent the viewer may not see simply shows no line.
+- **Verification:** `aureuserp_testing_v113_k2` (t4): InvoiceResourceTest
+  (new: a contact of "Acme Holdings Ltd" shows the company under their name)
+  and BillResourceTest: 29 passed (129 assertions). Pint and `php -l`: passed.
+- **Rollback:** revert the commit.
+
 ## 2026-11-24, this month's figures above the invoice list (plan #10 R-9, develop, unreleased)
 
 - **Why:** TRACE365's reference invoice lists open with summary cards; R-9
