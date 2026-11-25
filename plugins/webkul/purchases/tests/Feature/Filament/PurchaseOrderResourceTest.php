@@ -1,9 +1,11 @@
 <?php
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Livewire\Livewire;
+use Webkul\Partner\Models\Partner;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Package;
 use Webkul\Purchase\Enums\OrderInvoiceStatus;
@@ -65,6 +67,27 @@ it('lists purchase orders with their key columns for authorized users', function
         ->assertCanRenderTableColumn('name')
         ->assertCanRenderTableColumn('partner.name')
         ->assertCanRenderTableColumn('state');
+});
+
+/**
+ * Plan #9 R-9 (2026-11-25): two-line cells, as on the invoice list. The
+ * order date under the reference, and the company a vendor contact works for
+ * under their name; the separate date column is hidden by default.
+ */
+it('shows the order date under the reference and the vendor\'s company under the vendor', function () {
+    $user = FilamentHelper::actingAs(['view_any_purchase_purchase::order']);
+
+    $order = purchaseOrderRecord($user->id);
+    $order->forceFill(['ordered_at' => '2026-07-14 09:00:00'])->saveQuietly();
+
+    $acme = Partner::factory()->create(['company_id' => current_company_id(), 'name' => 'Acme Supplies Ltd']);
+    $order->partner->forceFill(['parent_id' => $acme->getKey()])->save();
+
+    Livewire::test(ListPurchaseOrders::class)
+        ->assertCanSeeTableRecords([$order])
+        ->assertSee(Carbon::parse('2026-07-14')->translatedFormat('d M Y'))
+        ->assertSee('Acme Supplies Ltd')
+        ->assertTableColumnExists('ordered_at', fn ($column): bool => $column->isToggledHiddenByDefault());
 });
 
 it('finds a purchase order by searching its number', function () {

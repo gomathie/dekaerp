@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Livewire\Livewire;
 use Webkul\Account\Models\PaymentTerm;
+use Webkul\Partner\Models\Partner;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Package;
 use Webkul\Sale\Enums\OrderState;
@@ -68,6 +69,26 @@ it('lists quotations with their key columns for authorized users', function () {
         ->assertCanRenderTableColumn('name')
         ->assertCanRenderTableColumn('partner.name')
         ->assertCanRenderTableColumn('state');
+});
+
+/**
+ * Plan #9 R-9 (2026-11-25): the company a customer works for under their
+ * name, as on the invoice list. The order date stays its own visible column
+ * (user, 2026-11-22; OrderResourceTest pins it), so it is not repeated under
+ * the number.
+ */
+it('shows the customer\'s company under the customer and keeps the order date column', function () {
+    $user = FilamentHelper::actingAs(['view_any_sale_quotation']);
+
+    $quotation = quotationRecord($user->id);
+
+    $acme = Partner::factory()->create(['company_id' => current_company_id(), 'name' => 'Acme Holdings Ltd']);
+    $quotation->partner->forceFill(['parent_id' => $acme->getKey()])->save();
+
+    Livewire::test(ListQuotations::class)
+        ->assertCanSeeTableRecords([$quotation])
+        ->assertSee('Acme Holdings Ltd')
+        ->assertCanRenderTableColumn('date_order');
 });
 
 it('finds a quotation by searching its number', function () {

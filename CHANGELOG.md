@@ -10,6 +10,15 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.17.1 — 2026-11-25
+
+### Improvements
+
+- Posting an invoice or bill in another currency that is dated an earlier day: the summary now also says what it would come to at the latest exchange rate, and a "Post at the latest rate" button posts it at that rate instead. Plain Confirm still uses the rate of the document's date. The choice is recorded in the document's history under your name.
+- On a phone, "What currency was this sale in?" opens as a panel from the bottom of the screen, with large full-width buttons and the rate in big type.
+- The Accounting app's customer payments list shows this month's money received and number of payments above the list, the same figures as in the Invoices app.
+- The purchase orders and payments lists show the date under each number, and the company a contact works for under their name, as the invoice list does. The separate date column is still available from the column picker. The sales orders and quotations lists show the customer's company under their name and keep the Order Date column.
+
 # CHANGELOG — v1.17.0 — 2026-11-25
 
 ### Improvements

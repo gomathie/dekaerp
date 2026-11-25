@@ -55,13 +55,18 @@ class OrdersTable
                     ->toggleable()
                     ->placeholder('—')
                     ->toggleable(isToggledHiddenByDefault: true),
+                // Two-line cells (plan #9 R-9, as the invoice list): the order
+                // date under the reference, the vendor's company under the vendor.
                 TextColumn::make('name')
                     ->label(__('purchases::filament/admin/clusters/orders/resources/order.table.columns.reference'))
+                    ->weight('semibold')
+                    ->description(fn ($record): ?string => $record->ordered_at?->translatedFormat('d M Y'))
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
                 TextColumn::make('partner.name')
                     ->label(__('purchases::filament/admin/clusters/orders/resources/order.table.columns.vendor'))
+                    ->description(fn ($record): ?string => $record->partner?->parent?->name)
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
@@ -77,12 +82,13 @@ class OrdersTable
                     ->sortable()
                     ->placeholder('—')
                     ->toggleable(),
+                // Shown under the reference now (R-9); still available as its own column.
                 TextColumn::make('ordered_at')
                     ->label(__('purchases::filament/admin/clusters/orders/resources/order.table.columns.order-deadline'))
                     ->visibleFrom('md')
                     ->sortable()
                     ->placeholder('—')
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('origin')
                     ->label(__('purchases::filament/admin/clusters/orders/resources/order.table.columns.source-document'))
                     ->visibleFrom('lg')
@@ -276,7 +282,9 @@ class OrdersTable
                 fn (Model $record): bool => OrderResource::can('delete', $record) && $record->state !== OrderState::DONE,
             )
             ->modifyQueryUsing(function (Builder $query) {
-                return $query->with('currency', 'company.currency');
+                // partner.parent: the company line under each vendor, without
+                // one query per row.
+                return $query->with('currency', 'company.currency', 'partner.parent');
             });
     }
 }

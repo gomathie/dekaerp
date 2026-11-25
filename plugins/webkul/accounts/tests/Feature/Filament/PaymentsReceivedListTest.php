@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Livewire\Livewire;
@@ -7,6 +8,7 @@ use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Filament\Resources\PaymentResource\Pages\ListPayments;
 use Webkul\Account\Filament\Resources\PaymentResource\Tables\PaymentsTable;
 use Webkul\Account\Models\Payment;
+use Webkul\Partner\Models\Partner;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Package;
 
@@ -77,6 +79,27 @@ it('lists the payments received in the chosen month, with the invoice each one s
         ->set('activeTableView', 'customer_payments')
         ->filterTable('period', ['year' => 2026, 'month' => null])
         ->assertCanSeeTableRecords([$march, $april]);
+});
+
+/**
+ * Plan #9 R-9 (2026-11-25): two-line cells, as on the invoice list. The
+ * payment date under the number, and the company a contact works for under
+ * their name; the separate date column is hidden by default.
+ */
+it('shows the payment date under the number and the contact\'s company under the contact', function () {
+    FilamentHelper::actingAs(['view_any_account_payment']);
+
+    $payment = paidInvoiceOn(500, '2026-03-10');
+
+    $acme = Partner::factory()->create(['company_id' => current_company_id(), 'name' => 'Acme Holdings Ltd']);
+    $payment->partner->forceFill(['parent_id' => $acme->getKey()])->save();
+
+    Livewire::test(ListPayments::class)
+        ->set('activeTableView', 'customer_payments')
+        ->assertCanSeeTableRecords([$payment])
+        ->assertSee(Carbon::parse('2026-03-10')->translatedFormat('d M Y'))
+        ->assertSee('Acme Holdings Ltd')
+        ->assertTableColumnExists('date', fn ($column): bool => $column->isToggledHiddenByDefault());
 });
 
 /**

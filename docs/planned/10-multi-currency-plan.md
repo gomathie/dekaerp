@@ -218,9 +218,16 @@ recorded under their name.
   rate is `SaleCurrencyQuestion::label()`, shared with the chatter note.
   *Posting summary built the same day:* `SaleCurrencyQuestion::postingSummary()`
   in the Confirm action (invoices, bills, refunds), at the document's own
-  stored rate and naming the rate's date when it is not today. "Offer
-  today's rate" was not built. Phone bottom-sheet styling: not done; the
-  dialog is Filament's modal, full width on a phone.
+  stored rate and naming the rate's date when it is not today. *"Offer
+  today's rate" and the phone bottom sheet built 2026-11-25 (develop,
+  unreleased; docs/change-log.md):* a back-dated foreign document whose
+  rate differs from the feed's latest gets a second button, "Post at the
+  latest rate", and a sentence giving the total at it
+  (`SaleCurrencyQuestion::latestRateOffer()` / `applyLatestRate()`: drafts
+  only, kept as `manual` under the person's name, lines re-costed, history
+  note). Plain Confirm is unchanged. On a phone the currency question is a
+  bottom sheet (CSS class `deka-sale-currency-sheet`, topbar view) with
+  48 px full-width buttons and the rate in 28 px type.
 - **MC-2b built (2026-11-24).** The dialog, its locked answer, the header
   action and the rate-applying step moved from `CreateInvoice` into one trait,
   `Account\Filament\Concerns\AsksSaleCurrency`, used by `CreateInvoice` and

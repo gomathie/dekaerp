@@ -1263,6 +1263,74 @@
                             font-weight: inherit;
                         }
                     }
+
+                    /* "What currency was this sale in?" on a phone (plan #10
+                       MC-2 step 1): a bottom sheet rather than a centred box,
+                       currency and footer buttons stacked full width and at
+                       least 48 px tall (a thumb target), the rate in 28 px
+                       type. Only this dialog carries the class
+                       (AsksSaleCurrency); every other modal is unchanged. */
+                    @media (max-width: 639px) {
+                        .fi-modal-window-ctn:has(> .deka-sale-currency-sheet) {
+                            grid-template-rows: 1fr auto;
+                            padding: 0;
+                        }
+
+                        .fi-modal-window-ctn > .fi-modal-window.deka-sale-currency-sheet {
+                            grid-row-start: 2;
+                            inline-size: 100%;
+                            max-inline-size: none;
+                            margin: 0;
+                            border-end-start-radius: 0;
+                            border-end-end-radius: 0;
+                            border-start-start-radius: 1rem;
+                            border-start-end-radius: 1rem;
+                            padding-block-end: env(safe-area-inset-bottom, 0px);
+                        }
+
+                        .fi-modal-window-ctn > .fi-modal-window.deka-sale-currency-sheet.fi-transition-enter-start,
+                        .fi-modal-window-ctn > .fi-modal-window.deka-sale-currency-sheet.fi-transition-leave-end {
+                            opacity: 1;
+                            transform: translateY(100%);
+                        }
+
+                        .fi-modal-window-ctn > .fi-modal-window.deka-sale-currency-sheet.fi-transition-enter-end,
+                        .fi-modal-window-ctn > .fi-modal-window.deka-sale-currency-sheet.fi-transition-leave-start {
+                            transform: translateY(0);
+                        }
+
+                        .deka-sale-currency-sheet .fi-fo-toggle-buttons {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 0.5rem;
+                        }
+
+                        .deka-sale-currency-sheet .fi-fo-toggle-buttons .fi-btn,
+                        .deka-sale-currency-sheet .fi-modal-footer-actions .fi-btn {
+                            inline-size: 100%;
+                            min-block-size: 3rem;
+                            justify-content: center;
+                        }
+
+                        .deka-sale-currency-sheet .fi-modal-footer-actions {
+                            display: flex;
+                            flex-direction: column-reverse;
+                            gap: 0.5rem;
+                        }
+
+                        .deka-sale-currency-sheet input.deka-sale-currency-rate {
+                            font-size: 1.75rem;
+                            line-height: 2.25rem;
+                            font-variant-numeric: tabular-nums;
+                        }
+                    }
+
+                    @media (max-width: 639px) and (prefers-reduced-motion: reduce) {
+                        .fi-modal-window-ctn > .fi-modal-window.deka-sale-currency-sheet.fi-transition-enter-start,
+                        .fi-modal-window-ctn > .fi-modal-window.deka-sale-currency-sheet.fi-transition-leave-end {
+                            transform: none;
+                        }
+                    }
                 }
                 @endverbatim
             </style>

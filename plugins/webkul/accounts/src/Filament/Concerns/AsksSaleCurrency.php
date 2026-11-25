@@ -88,6 +88,10 @@ trait AsksSaleCurrency
             ->modalDescription(__($lang.'.description'))
             ->modalIcon('heroicon-o-banknotes')
             ->modalWidth(Width::Large)
+            // On a phone the question is a bottom sheet with full-width
+            // 48 px buttons and the rate in 28 px type (MC-2 step 1); the CSS
+            // is with the other phone rules in the panel topbar view.
+            ->extraModalWindowAttributes(['class' => 'deka-sale-currency-sheet'])
             ->modalSubmitActionLabel(__($lang.'.continue'))
             ->fillForm(function () use ($baseId, $feed, $display): array {
                 $currencyId = (int) ($this->data['currency_id'] ?? $baseId);
@@ -111,6 +115,7 @@ trait AsksSaleCurrency
                 TextInput::make('rate')
                     ->label(__($lang.'.rate'))
                     ->numeric()
+                    ->extraInputAttributes(['class' => 'deka-sale-currency-rate'])
                     ->minValue(0.000001)
                     ->required(fn (Get $get): bool => (int) $get('currency_id') !== $baseId)
                     ->visible(fn (Get $get): bool => (int) $get('currency_id') !== $baseId)
