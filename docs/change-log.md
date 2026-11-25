@@ -35,7 +35,12 @@ for the task/question log this change log is paired with.
   `OrderDeliveryStatusRefreshTest` (new) + `OrderFromInvoiceTest`, 19 passed,
   79 assertions, 0 failures.
 - **Deploy step:** `php artisan sales:refresh-delivery-status --company=<TRACE365 id>`
-  (dry run, read the list), then the same with `--apply`.
+  (dry run, read the list), then the same with `--apply`. **Done
+  2026-11-26** by the user in the Laravel Cloud console for company 2
+  (TRACE365): SO/00003 to SO/00012 corrected, pending → no (10 orders).
+  Read-only check afterwards: confirmed orders are 10 "no", 1 "partial",
+  1 "pending" (real open deliveries); the 2 cancelled test orders are
+  untouched.
 - **Rollback:** revert the commit. Corrected statuses are true values and
   need no undo.
 
