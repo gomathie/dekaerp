@@ -63,8 +63,14 @@ class Journal extends Model implements Sortable
         'sort_when_creating' => true,
     ];
 
+    /**
+     * statement_import_columns is deliberately not fillable: only the bank
+     * reconciliation service writes it, after a successful import into a
+     * journal it has checked belongs to the user's company (plan #9 R-4).
+     */
     protected $casts = [
-        'type' => JournalType::class,
+        'type'                     => JournalType::class,
+        'statement_import_columns' => 'array',
     ];
 
     public function bankAccount()

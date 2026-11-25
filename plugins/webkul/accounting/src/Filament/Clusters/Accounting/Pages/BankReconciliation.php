@@ -11,6 +11,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -20,6 +21,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Webkul\Account\Enums\AccountType;
 use Webkul\Account\Enums\JournalType;
+use Webkul\Account\Exceptions\PeriodLockedException;
 use Webkul\Account\Models\Account;
 use Webkul\Account\Models\BankStatementLine;
 use Webkul\Account\Models\Journal;
@@ -37,6 +39,12 @@ use Webkul\Support\Services\CompanyContext;
  * match each line to the payment it confirms or book it to an account.
  * All the rules are in Services\BankReconciliation; this page only collects
  * input and shows the result.
+ *
+ * Plan #9 R-4 (2026-11-25) adds the balance check per account above the
+ * table, "Match all suggested", and the column mapping remembered per
+ * journal. Money here is not hidden by DashboardAccess: this is a working
+ * page, not a dashboard, and its table showed every amount already; the
+ * page permission decides.
  */
 class BankReconciliation extends Page implements HasTable
 {
@@ -53,6 +61,14 @@ class BankReconciliation extends Page implements HasTable
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-building-library';
 
     protected static ?int $navigationSort = 3;
+
+    /**
+     * Lines "Match all suggested" would match, for its label. Counted on
+     * page load and after each change on this page, not on every render:
+     * the count runs the suggestion rule per open line. Only a label: the
+     * action counts again when it opens and when it runs.
+     */
+    public int $suggestedCount = 0;
 
     protected static function getPagePermission(): ?string
     {
@@ -79,9 +95,66 @@ class BankReconciliation extends Page implements HasTable
         return __(self::LANG.'.navigation.title');
     }
 
+    public function mount(): void
+    {
+        $this->refreshSuggestedCount();
+    }
+
+    /**
+     * One card per bank, cash and Mobile Money journal of the current
+     * company (plan #9 R-4).
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function balanceCards(): array
+    {
+        try {
+            return app(Reconciliation::class)->balances();
+        } catch (CannotReconcile) {
+            return [];
+        }
+    }
+
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('matchAll')
+                ->label(fn (): string => __(self::LANG.'.match-all.label', ['count' => $this->suggestedCount]))
+                ->icon('heroicon-o-bolt')
+                ->color('gray')
+                ->visible(fn (): bool => $this->suggestedCount > 0)
+                ->requiresConfirmation()
+                ->modalIcon('heroicon-o-bolt')
+                ->modalHeading(__(self::LANG.'.match-all.heading'))
+                ->modalDescription(function (): string {
+                    $count = $this->countSuggested();
+
+                    return trans_choice(self::LANG.'.match-all.description', $count, ['count' => $count]);
+                })
+                ->modalSubmitActionLabel(__(self::LANG.'.match-all.submit'))
+                ->action(function (Reconciliation $service): void {
+                    try {
+                        $result = $service->matchAllSuggested();
+                    } catch (CannotReconcile $exception) {
+                        Notification::make()->danger()->title($exception->getMessage())->send();
+
+                        return;
+                    }
+
+                    $notification = Notification::make()
+                        ->title(trans_choice(self::LANG.'.match-all.done', $result['matched'], ['count' => $result['matched']]));
+
+                    if ($result['left'] > 0) {
+                        $notification->warning()->body(trans_choice(self::LANG.'.match-all.left', $result['left'], ['count' => $result['left']]));
+                    } else {
+                        $notification->success();
+                    }
+
+                    $notification->send();
+
+                    $this->refreshSuggestedCount();
+                }),
+
             Action::make('import')
                 ->label(__(self::LANG.'.import.label'))
                 ->icon('heroicon-o-arrow-up-tray')
@@ -90,6 +163,10 @@ class BankReconciliation extends Page implements HasTable
                     Select::make('journal_id')
                         ->label(__(self::LANG.'.import.journal'))
                         ->options(fn (): array => $this->journalOptions())
+                        ->live()
+                        // Pre-fill the columns this account's last import
+                        // used (plan #9 R-4); every field stays editable.
+                        ->afterStateUpdated(fn (Set $set, $state) => $this->fillRememberedColumns($set, $state))
                         ->required(),
                     FileUpload::make('file')
                         ->label(__(self::LANG.'.import.file'))
@@ -122,7 +199,13 @@ class BankReconciliation extends Page implements HasTable
                         $this->columnInput('money_out'),
                         $this->columnInput('partner'),
                         $this->columnInput('reference'),
+                        $this->columnInput('balance')
+                            ->helperText(__(self::LANG.'.import.balance-help')),
                     ]),
+                    TextInput::make('closing_balance')
+                        ->label(__(self::LANG.'.import.closing-balance'))
+                        ->helperText(__(self::LANG.'.import.closing-balance-help'))
+                        ->numeric(),
                 ])
                 ->action(function (array $data, Reconciliation $service): void {
                     $resolved = ImportUpload::resolve($data['file'] ?? null, 'bank-statement-');
@@ -140,7 +223,7 @@ class BankReconciliation extends Page implements HasTable
 
                         $map = ['date_format' => $data['date_format'], 'has_header' => (bool) $data['has_header']];
 
-                        foreach (['date', 'label', 'amount', 'money_in', 'money_out', 'partner', 'reference'] as $field) {
+                        foreach (Reconciliation::COLUMN_FIELDS as $field) {
                             $map[$field] = filled($data['col_'.$field] ?? null) ? ((int) $data['col_'.$field]) - 1 : null;
                         }
 
@@ -148,7 +231,13 @@ class BankReconciliation extends Page implements HasTable
                             throw CannotReconcile::badRow(1, __('accounting::bank-reconciliation.fields.amount'));
                         }
 
-                        $statement = $service->import($journal, $path, array_filter($map, fn ($value) => $value !== null));
+                        $statement = $service->import(
+                            $journal,
+                            $path,
+                            array_filter($map, fn ($value) => $value !== null),
+                            filled($data['name'] ?? null) ? (string) $data['name'] : null,
+                            filled($data['closing_balance'] ?? null) ? (float) $data['closing_balance'] : null,
+                        );
 
                         Notification::make()
                             ->success()
@@ -156,6 +245,8 @@ class BankReconciliation extends Page implements HasTable
                                 'count' => BankStatementLine::query()->where('statement_id', $statement->id)->count(),
                             ]))
                             ->send();
+
+                        $this->refreshSuggestedCount();
                     } catch (CannotReconcile $exception) {
                         Notification::make()->danger()->title($exception->getMessage())->send();
                     } finally {
@@ -272,15 +363,62 @@ class BankReconciliation extends Page implements HasTable
             ->required($required);
     }
 
+    /**
+     * Pre-fill the import form from the journal's remembered mapping. A
+     * journal the user may not use answers nothing, and the form keeps its
+     * defaults; the import itself refuses it.
+     */
+    protected function fillRememberedColumns(Set $set, mixed $journalId): void
+    {
+        if (! filled($journalId)) {
+            return;
+        }
+
+        try {
+            $remembered = app(Reconciliation::class)->rememberedColumns((int) $journalId);
+        } catch (CannotReconcile) {
+            return;
+        }
+
+        if ($remembered === null) {
+            return;
+        }
+
+        foreach (Reconciliation::COLUMN_FIELDS as $field) {
+            $set('col_'.$field, isset($remembered['columns'][$field]) ? $remembered['columns'][$field] + 1 : null);
+        }
+
+        $set('date_format', $remembered['date_format']);
+        $set('has_header', $remembered['has_header']);
+    }
+
     protected function attempt(callable $callback, string $successKey): void
     {
         try {
             $callback();
 
             Notification::make()->success()->title(__($successKey))->send();
-        } catch (CannotReconcile $exception) {
+        } catch (CannotReconcile|PeriodLockedException $exception) {
+            // A locked period is refused by Move's saving hook (PeriodLock);
+            // its message says which date is locked, so it is shown as is.
             Notification::make()->danger()->title($exception->getMessage())->send();
         }
+
+        $this->refreshSuggestedCount();
+    }
+
+    protected function countSuggested(): int
+    {
+        try {
+            return app(Reconciliation::class)->singleSuggestions()->count();
+        } catch (CannotReconcile) {
+            return 0;
+        }
+    }
+
+    protected function refreshSuggestedCount(): void
+    {
+        $this->suggestedCount = $this->countSuggested();
     }
 
     /**

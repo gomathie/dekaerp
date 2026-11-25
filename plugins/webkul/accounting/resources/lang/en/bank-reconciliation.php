@@ -5,8 +5,9 @@ return [
     'entry-label'    => 'Bank statement line',
 
     'fields' => [
-        'date'   => 'date',
-        'amount' => 'amount',
+        'date'    => 'date',
+        'amount'  => 'amount',
+        'balance' => 'balance',
     ],
 
     'errors' => [

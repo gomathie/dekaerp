@@ -135,6 +135,8 @@ class AccountServiceProvider extends PackageServiceProvider
                 '2026_11_23_000001_add_default_currency_to_partners_partners',
                 // "Ask which currency each sale is in" (plan #10 MC-2, 2026-11-24).
                 '2026_11_24_000001_add_sale_currency_question',
+                // Remembered statement columns and balance check (plan #9 R-4, 2026-11-25).
+                '2026_11_25_100001_add_statement_import_columns_to_accounts_journals',
             ])
             ->runsMigrations()
             ->hasSettings([
