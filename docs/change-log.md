@@ -6,6 +6,12 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+> **Status note (2026-11-25):** production's tree equals `develop` as of
+> hotfix v1.17.1 (`e058aa961`, checked with `git diff --raw`, changelogs
+> aside). Every entry below that says "develop, unreleased" or
+> "unreleased" and is dated before 2026-11-25 is therefore in production;
+> the headings are left as written at the time.
+
 ## 2026-11-25, currency question switched on for TRACE365 (production data)
 
 - **Why:** user, 2026-11-25: "switch it on for trace365", to check the

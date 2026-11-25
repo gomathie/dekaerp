@@ -4,6 +4,14 @@
 > **In progress since 2026-11-22** (user: "start dashboard"); the
 > restructure it waited for merged 2026-11-20. Order of work: DB-7's
 > journal-chart fix (D-DB-7), then DB-1, then DB-0 onward.
+> **State 2026-11-25:** everything built so far is in production (v1.16.3 to
+> v1.17.0, including DB-2/3/4/6/7/9). The "Still open" items below (DB-1
+> "—" and baseline caption, per-module widget-hidden checks) are being built
+> on branch `feature/plan9-r4`. New request (user, 2026-11-25, with a
+> screenshot): the period bar and the Filters panel both set the dates; merge
+> them into one row on a computer (period chips, Custom dates, the dates
+> shown, a Filters button with a count) and a bottom sheet on phones. Mocked
+> up, waiting for the user's approval; not built.
 > **Method:** the `dashboard-design` workflow in the shared library
 > (`workflows/dashboard-design.md`), adapted 2026-11-18 from the MIT skill
 > `abdiraimov-otabek/dashboard-design-skill`. Nothing was installed.

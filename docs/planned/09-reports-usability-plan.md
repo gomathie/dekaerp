@@ -1,10 +1,18 @@
 # Reports and payment flow usability
 
-Status: planned (user, 2026-11-19). *Superseded 2026-11-22: "Not started".*
-Partly done: R-1 decided (names kept), R-6 shipped in v1.13.1, R-3 partly
-built ("Paid now" and payment methods named by how they were paid, v1.13.0;
-"New direct sale" on develop). Open: R-2, R-4, R-5. Raised while TRACE365
-used the system; TRACE365 items ship as hotfixes or simplifications.
+Status (2026-11-25): **nearly done.** In production: R-1 (decided), R-6,
+R-7 (including "Unused amount", which shipped with v1.17.0: the "Not
+built" note in R-7 below is superseded), R-8, R-9 (complete; sales lists
+keep their Order Date column). Being built by agents on 2026-11-25 after the
+user approved mockups and decisions: R-2 (Export to PDF on the nine reports
+with Excel only; every report already opens on screen), R-3 (written Zoho
+comparison), R-4 (balance cards, Match all suggested, remembered column
+mapping; no bank presets until sample files arrive), R-5 (lines without a
+product: no tax until chosen, counted in sales, no stock). They ship as a
+hotfix (user: HiTrace/TRACE365 requests are hotfixes).
+*Superseded:* "planned (user, 2026-11-19) ... Partly done: R-1 decided, R-6
+shipped in v1.13.1, R-3 partly built ... Open: R-2, R-4, R-5." Raised while
+TRACE365 used the system; TRACE365 items ship as hotfixes or simplifications.
 
 ## R-1 Plain report names
 
