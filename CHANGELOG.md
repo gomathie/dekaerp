@@ -10,6 +10,12 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.17.7 — 2026-11-25
+
+### Features
+
+- Administrators now have a Developers tab under Help. It explains how to connect to the API and lists, with ready-to-copy examples, the API for the modules your company uses.
+
 # CHANGELOG — v1.17.6 — 2026-11-25
 
 ### Fixes

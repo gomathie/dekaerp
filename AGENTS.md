@@ -2179,6 +2179,16 @@ log named):
   so changing a product's account moved booked revenue. Drafts still follow
   the product. Test: accounts `Workflows/PostedLineAccountTest`.
 
+• Help › Developers tab, 2026-11-25 (user; v1.17.7): for Company Admin,
+  Multi-Company Admin and Super Admin only. The rule is
+  `ApiReference::allows()`, which uses `GuideAudience::Admin`; do not add a
+  second one. Refusal is server-side on every read (URL and Livewire state
+  re-checked). It lists only the current company's modules through
+  `PluginEntitlement::enabledForCompany()`, with no super-admin bypass;
+  `ApiReference::MODULES` maps each Scribe group to its plugin. Source: the
+  committed `.scribe/endpoints` (same as `/api/docs`); Scribe texts printed
+  as escaped plain text, never raw. Test: support `Help/DevelopersSectionTest`.
+
 • API reference sign-in only, 2026-11-25 (user; v1.17.5, Sentry DEKAERP-26):
   `/api/docs`, `/api/docs.openapi` and `/api/docs.postman` are sign-in only,
   always (`Support\Http\Controllers\ApiDocsController`). Do not turn

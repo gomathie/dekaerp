@@ -12,6 +12,35 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-25, hotfix v1.17.7: Help › Developers tab (API reference)
+
+- **Why:** user, 2026-11-25 (HiTrace/TRACE365 request, approved mockup
+  modelled on naviafriapi.com/v2): company administrators want the API
+  documented inside the app, showing only what their company's tokens can
+  call. Shipped as a hotfix under the HiTrace/TRACE365 rule.
+- **How:** Help page tab state (`tab`, `module`, `resource` in the URL), every
+  read re-checked through `Webkul\Support\Services\ApiReference`, which
+  applies the admin-guide audience rule (`GuideAudience::Admin`: Company
+  Admin, Multi-Company Admin, Super Admin) and the current company's module
+  grants (`PluginEntitlement::enabledForCompany()`, no super-admin bypass),
+  and caches each module keyed on a fingerprint of `.scribe/endpoints`.
+  `ApiCodeSamples` builds cURL / JavaScript / Python / PHP samples; partials
+  `help-developers`, `help-api-endpoint`, `help-api-required`; strings in
+  `help-developers.php` (7 locales); `support.css` rebuilt from the project
+  root and copied to `public/css/support`. Commit `005a21158` (from
+  `feature/api-help`). Support plugin 1.18.0 (feature).
+- **Benefit:** a ready-to-copy reference limited to the company's modules,
+  hidden from everyone else.
+- **Trade-off / risk:** the first view after the endpoint files change parses
+  ~1.9 MB of YAML (a few seconds). A new Scribe group must be added to
+  `ApiReference::MODULES` or it is hidden (`DevelopersSectionTest` fails
+  until it is).
+- **Verification actually run:** Docker volume copy, `aureuserp_testing_api`:
+  support `Help/DevelopersSectionTest` (new) + `Guide/GuideTest` +
+  `Guide/GuideAudienceTest`, 30 passed, 185 assertions;
+  `translations:check --plugin=support` 6/6 locales pass.
+- **Rollback:** revert `005a21158`; `/api/docs` is unaffected.
+
 ## 2026-11-25, hotfix v1.17.6: a posted journal item keeps its account (UF-030)
 
 - **Why:** `Account\Models\MoveLine::computeAccountId()` runs on every save
