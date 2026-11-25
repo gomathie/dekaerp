@@ -229,14 +229,16 @@ trait HasSaleDashboardFilters
     }
 
     /**
-     * Product lines of directInvoices(), joined to their invoice as
-     * `direct_moves`, with the product and category filters.
+     * The invoiced lines no order counts (DirectInvoices::soldLines(): every
+     * line of directInvoices(), and lines without a product of any invoice),
+     * joined to their invoice as `direct_moves`, with the product and
+     * category filters.
      */
     protected function directInvoiceLines(?Carbon $start = null, ?Carbon $end = null): Builder
     {
         $filters = $this->saleDashboardFilters();
 
-        $query = DirectInvoices::lines($this->directInvoices($start, $end));
+        $query = DirectInvoices::soldLines($this->invoicedSales($start, $end));
 
         if (! empty($filters['products'])) {
             $query->whereIn('accounts_account_move_lines.product_id', $filters['products']);
@@ -247,6 +249,17 @@ trait HasSaleDashboardFilters
         }
 
         return $query;
+    }
+
+    /**
+     * Lines without a product of this period's invoices that an order goes
+     * with (R-5). Figures read per order (customers, salespeople) add these:
+     * the order's own total leaves them out, and directInvoices() leaves out
+     * the whole invoice. See DirectInvoices::soldLines().
+     */
+    protected function orderInvoiceLinesWithoutProduct(?Carbon $start = null, ?Carbon $end = null): Builder
+    {
+        return DirectInvoices::orderInvoiceLinesWithoutProduct($this->invoicedSales($start, $end));
     }
 
     /**

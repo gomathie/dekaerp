@@ -41,6 +41,7 @@ return [
             'customer' => 'العميل',
             'quantity' => 'الكمية',
             'untaxed'  => 'بدون ضريبة',
+            'none'     => 'بدون منتج',
         ],
         'groups' => [
             'product'  => 'المنتج',

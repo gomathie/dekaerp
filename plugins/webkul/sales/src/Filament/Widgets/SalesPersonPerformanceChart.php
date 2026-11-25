@@ -6,6 +6,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\DB;
 use Webkul\Sale\Filament\Widgets\Concerns\GuardsSaleDashboardWidget;
 use Webkul\Sale\Filament\Widgets\Concerns\HasSaleDashboardFilters;
+use Webkul\Sale\Support\DirectInvoices;
 use Webkul\Support\Filament\Widgets\DashboardChartWidget;
 
 class SalesPersonPerformanceChart extends DashboardChartWidget
@@ -58,7 +59,17 @@ class SalesPersonPerformanceChart extends DashboardChartWidget
             ->selectRaw('SUM('.$invoices->qualifyColumn('amount_total_signed').') as revenue')
             ->get();
 
+        // Lines without a product on an invoice an order goes with: the
+        // order's total leaves them out (R-5). Same salesperson rule.
+        $lineRows = $this->orderInvoiceLinesWithoutProduct()
+            ->join('users', 'users.id', '=', DB::raw('COALESCE(direct_moves.invoice_user_id, direct_moves.creator_id)'))
+            ->groupBy('users.id', 'users.name')
+            ->select('users.id as user_id', 'users.name as name')
+            ->selectRaw('SUM('.DirectInvoices::lineAmountSql('price_total').') as revenue')
+            ->get();
+
         $rows = $rows->concat($invoiceRows)
+            ->concat($lineRows)
             ->groupBy('user_id')
             ->map(fn ($group): object => (object) ['name' => $group->first()->name, 'revenue' => $group->sum(fn ($row): float => (float) $row->revenue)])
             ->filter(fn (object $row): bool => $row->revenue > 0)
