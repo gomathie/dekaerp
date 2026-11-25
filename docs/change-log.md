@@ -12,6 +12,38 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-25, hotfix v1.17.5: /api/docs loads again and is sign-in only (DEKAERP-26)
+
+- **Why:** `/api/docs.openapi` answered 500 in production (Sentry
+  DEKAERP-26, FileNotFoundException on
+  `storage/app/private/scribe/openapi.yaml`, a file only `scribe:generate`
+  writes and that is gitignored), so the page showed "Document 'api-1' could
+  not be loaded". It was also public and loaded an unpinned Scalar build.
+  User decision 2026-11-25: sign-in only (option B, after previews).
+- **How:** Scribe's own routes off (`scribe.laravel.add_routes` false).
+  `Webkul\Support\Http\Controllers\ApiDocsController` serves `/api/docs`,
+  `.openapi` and `.postman` under the route names `scribe*`; each checks the
+  web guard, sends a guest to the admin login and refuses a user who may not
+  use the panel. `Webkul\Support\Services\ApiReference` builds the documents
+  from the committed `.scribe/endpoints/*.yaml` into
+  `storage/framework/cache/api-docs/{name}-{fingerprint}.json` on first
+  request (no deploy step, no database). Scalar pinned to 1.76.4 with SRI,
+  telemetry off, no request proxy; title "DEKA ERP API Documentation".
+  `.dockerignore` now ships `.scribe/endpoints`; `SCRIBE_DOCS_PRIVATE`
+  removed; the generated `resources/views/scribe/index.blade.php` deleted and
+  gitignored. `docs/api-access.md` updated. Commit `06c22c6e3` cherry-picked
+  from `feature/api-help`. Support plugin 1.17.3.
+- **Benefit:** the docs load in production; guests see nothing; a CDN
+  release cannot change the page.
+- **Trade-off / risk:** the first request per container builds the spec
+  (about 5 s; concurrent cold requests may each build it, no lock).
+  Regenerate with `php artisan scribe:generate` locally and commit
+  `.scribe/` when the API changes.
+- **Verification actually run:** Docker volume copy, `aureuserp_testing_api`:
+  support `Http/ApiDocsTest` + `Http/GuestLoginRedirectTest`, 14 passed, 33
+  assertions (each with the volume's "no .env" warning).
+- **Rollback:** revert `06c22c6e3` (docs go back to public and broken).
+
 ## 2026-11-25, hotfix v1.17.4: sales count follows invoiced sales; draft invoices in Needs attention (TRACE365)
 
 - **Why:** same TRACE365 call as v1.17.3. Sales showed "12 sales" and an
