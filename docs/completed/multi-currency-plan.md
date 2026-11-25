@@ -7,6 +7,8 @@ sheet in hotfix v1.17.1. The question is switched on for TRACE365 (company
 (user, 2026-11-24, raised for TRACE365) ... ships in a monthly release unless
 the user decides otherwise" — the user shipped it as hotfixes ("do all now as
 hot fixes", 2026-11-24; HiTrace/TRACE365 rule, 2026-11-25).
+MC-3's report, built without the mockup step, was approved as built by the
+user on 2026-11-25 after a mockup of the built page; no changes requested.
 
 Related: CR-6 company currencies (plan #1), DB-7 money rules (plan #2),
 `Account\Support\DocumentCurrency` (v1.16.7), R-7/R-8 (plan #9).

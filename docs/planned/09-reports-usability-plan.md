@@ -51,7 +51,16 @@ priority:
    one by one.
 3. **Saved statement formats** per journal (column mapping remembered;
    presets for MTN MoMo and the common Ghana banks), so an import is one
-   step.
+   step. *Superseded 2026-11-25 (user, mockup approved):* no bank presets.
+   DEKA publishes **its own statement template** (Excel and CSV, downloadable
+   from the import dialog, pre-filled with the account and currency): header
+   lines Account; Opening balance, Closing balance, Currency; Statement
+   from/to; then Date, Description, Reference, Partner, Money in, Money out,
+   Balance. Dates YYYY-MM-DD, amounts with a dot, in and out in separate
+   columns. A file in this layout needs no mapping; its balances feed the
+   balance cards; an import whose rows do not add up from opening to closing
+   is refused with the difference; a different currency is refused. Other
+   layouts keep the remembered column mapping.
 4. **Dashboard wording**: "Cash at bank" counts only reconciled money; say so
    and link to reconciliation (also dashboard plan #4).
 
