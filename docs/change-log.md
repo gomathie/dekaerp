@@ -11,7 +11,13 @@ for the task/question log this change log is paired with.
 *Shipped as hotfix v1.17.1 the same day (user: "releases should be a hot
 fix, since they came from HiTrace and TRACE365").* Plugins bumped one patch:
 accounting 1.13.1, accounts 1.17.1, invoices 1.15.1, purchases 1.15.1,
-sales 1.16.1. Sentry had no open DEKA ERP issue before the push.
+sales 1.16.1. Sentry had no open DEKA ERP issue before the push. After
+the deploy (read-only check as the test admin, `verify1171.cjs`): What's
+New lists v1.17.1; Accounting customer payments 200 with the "This month"
+cards; invoices payments 200 with the date under the number; purchase
+orders 200 (empty list in that company, date column no longer in the
+header); sales orders 200 with the Order Date column. Sentry: no unresolved
+issue after the deploy.
 
 - **Why:** user, 2026-11-25: "continue with the items not built yet". The
   four were listed open in plan #10 §5a (MC-2 "offers today's rate", phone
