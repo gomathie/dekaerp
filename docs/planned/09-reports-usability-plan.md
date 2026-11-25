@@ -106,6 +106,12 @@ number of clicks, fields asked, defaults, partial payments, and payments
 recorded from the customer or from a list. Record the findings in
 `docs/ux-findings.md` and adopt what makes ours simpler.
 
+*Compared 2026-11-25* (`docs/ux-findings.md`, "Recording payments: four
+cases counted against Zoho Books", U95–U100). Proposals, not built: one
+payment for several invoices, apply unused credit on confirm, remember the
+last way to pay, show the balance after a part payment, refund unused
+credit. Building any of them is the user's call.
+
 ## R-7 Payments received, by month and year (TRACE365, 2026-11-23)
 
 TRACE365 compute their taxes from the payments they received in a month or a
