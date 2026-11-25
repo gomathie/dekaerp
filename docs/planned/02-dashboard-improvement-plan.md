@@ -12,6 +12,15 @@
 > them into one row on a computer (period chips, Custom dates, the dates
 > shown, a Filters button with a count) and a bottom sheet on phones. Mocked
 > up, waiting for the user's approval; not built.
+> *Update 2026-11-25:* the filter row was approved and is built
+> (`feature/dashboard-filter-row`, tests pending). Shipped in v1.17.2: DB-3
+> Accounting widget-absent check (`JournalChartsWidget`), DB-1 Projects card
+> without tasks, DB-8 guide wording and the "Cash at bank (reconciled)"
+> explanation. Sales average "—" is built but waits for the TRACE365 Sales
+> headline hotfix (exact amounts below 100,000; count and average follow
+> invoiced sales). Still open: DB-4 browser check; DB-7 rules 4 and 5,
+> revenue split by currency and "Show in USD"; and whether the Accounting
+> overview page follows `DashboardAccess` (needs the user).
 > **Method:** the `dashboard-design` workflow in the shared library
 > (`workflows/dashboard-design.md`), adapted 2026-11-18 from the MIT skill
 > `abdiraimov-otabek/dashboard-design-skill`. Nothing was installed.

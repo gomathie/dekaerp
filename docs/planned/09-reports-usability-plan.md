@@ -37,6 +37,12 @@ filters.
 
 ## R-4 Clean reconciliation for Cash, Bank and Mobile Money
 
+*Shipped 2026-11-25 in hotfix v1.17.2:* items 1 (balance check per
+account), 2 (Match all suggested), 3 (remembered column mapping) and 4
+(Cash at bank wording and link). Cash journals show "No statement"; no cash
+counting. The DEKA statement template (below) is built and waiting for its
+test run.
+
 User, 2026-11-20: "Mobile Money, bank and cash reconcile cleanly in Zoho; we
 should have that too." We have the base already (accounting plan A3,
 Accounting → Bank Reconciliation: CSV import per cash/bank journal, match a

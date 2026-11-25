@@ -2171,6 +2171,20 @@ log named):
   count in every company. Test: inventories `QuantityResourceTest` "keeps other
   pending counts".
 
+• Reconciliation balance check, 2026-11-25 (plan #9 R-4, hotfix v1.17.2):
+  statement balance is the latest statement's `balance_end_real` (import:
+  typed closing balance, else the balance column on the statement's last
+  day, else previous closing plus the lines). Book balance is read from the
+  ledger filtered by company explicitly, never through `Move` (OwnershipScope
+  would make it depend on who looks). "Match all suggested" uses
+  `suggestions()` and `matchPayment()`, one transaction per line, and leaves
+  out a payment suggested for two lines; do not add a second suggestion
+  rule. Remembered columns live on `accounts_journals.statement_import_columns`
+  (not fillable), read and written only through `BankReconciliation::bankJournal()`.
+  "Cash at bank" counts reconciled money only and links to reconciliation
+  only for users who can open it. Tests: accounting `BankReconciliationTest`,
+  `AccountingOverviewTest`.
+
 • Sales lists keep their Order Date column, 2026-11-25 (user, after a
   preview; plan #9 R-9): quotations and sales orders show `date_order` as
   its own visible column, to filter and sort by date. Do not move it under

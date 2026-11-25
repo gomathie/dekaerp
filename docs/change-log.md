@@ -12,6 +12,50 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-25, hotfix v1.17.2: clean reconciliation (plan #9 R-4) and dashboard leftovers (plan #2)
+
+- **Why:** user approved the R-4 mockup 2026-11-25 ("Mobile Money, bank and
+  cash reconcile cleanly in Zoho; we should have that too") and asked for the
+  dashboard leftovers; shipped as a hotfix under the mini-fix rule (user,
+  2026-11-25: small pieces, ship each as soon as it is green).
+- **How:** `Accounting\Services\BankReconciliation::balances()` — one card
+  per cash, bank and Mobile Money journal of the current company: statement
+  balance (latest statement's `balance_end_real`), book balance (posted
+  ledger on the journal's account, filtered by company explicitly, in the
+  journal's currency; never through `Move`, whose OwnershipScope would make
+  it depend on the viewer), difference, latest statement date, open lines;
+  states Clean / "n to match" / "Difference to check" / "No statement".
+  Import closing balance: typed, else the Balance column on the statement's
+  last day, else previous closing plus this file's lines; migration
+  `2026_11_25_100001` adds `accounts_journals.statement_import_columns`
+  (nullable json, not fillable) and backfills older statements (production
+  had none, so a no-op). `singleSuggestions()`/`matchAllSuggested()` reuse
+  `suggestions()` and `matchPayment()`, one transaction per line; a payment
+  suggested for two lines is left out of both; the single Match action now
+  answers a locked period with a message. "Cash at bank (reconciled)" with a
+  hint, linking to Bank Reconciliation only for users who can open it
+  (`OverviewCard::cashUrl()`); `JournalChartsWidget::canView()` =
+  `Overview::canAccess()`. Projects Overview card shows no tasks-done bar
+  without tasks (DB-1). Guide (Invoices, Quotations) says which way to start
+  a sale (DB-8). Commits `f0911f7dd`, `14a039d4c`, `84e36815d`, `506c78c3d`
+  (from `feature/plan9-r4`). Plugins: accounting 1.13.2, accounts 1.17.2,
+  projects 1.11.1, support 1.17.1.
+- **Benefit:** "clean" is visible per account; single-suggestion lines match
+  in one step; a bank layout is entered once; "Cash at bank 0" after a
+  payment is explained and links to the fix.
+- **Trade-off / risk:** a statement without a closing balance chains from
+  the previous one, so a missing statement shows as a difference; the cards
+  cover the current company only, even in "All companies" mode.
+- **Verification actually run:** `aureuserp_testing_r4` (Docker volume copy
+  of the worktree): `BankReconciliationTest` + `AccountingOverviewTest` 34/36
+  (119 assertions), the two failing tests fixed (test bugs) and re-run 2
+  passed (7); Projects `OverviewCardTest` + `DashboardWidgetGuardTest` 2
+  passed (4). Pint and `php -l` clean; translation keys compared across the 7
+  locales. **Not run:** `translations:check` (timed out booting on the loaded
+  machine) and a browser check.
+- **Rollback:** revert the four commits; the migration's `down()` drops the
+  column.
+
 ## 2026-11-25, currency question switched on for TRACE365 (production data)
 
 - **Why:** user, 2026-11-25: "switch it on for trace365", to check the
