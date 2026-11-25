@@ -41,6 +41,7 @@ return [
             'customer' => 'Mteja',
             'quantity' => 'Idadi',
             'untaxed'  => 'Bila kodi',
+            'none'     => 'Hakuna bidhaa',
         ],
         'groups' => [
             'product'  => 'Bidhaa',

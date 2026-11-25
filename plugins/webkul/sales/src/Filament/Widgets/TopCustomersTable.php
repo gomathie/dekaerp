@@ -12,6 +12,7 @@ use Webkul\Sale\Filament\Clusters\Orders\Resources\CustomerResource;
 use Webkul\Sale\Filament\Widgets\Concerns\GuardsSaleDashboardWidget;
 use Webkul\Sale\Filament\Widgets\Concerns\HasSaleDashboardFilters;
 use Webkul\Sale\Models\Order;
+use Webkul\Sale\Support\DirectInvoices;
 use Webkul\Support\Filament\Concerns\HasDashboardEmptyState;
 
 class TopCustomersTable extends TableWidget
@@ -79,11 +80,17 @@ class TopCustomersTable extends TableWidget
                 ."CASE WHEN {$invoices->qualifyColumn('move_type')} = '".MoveType::OUT_INVOICE->value."' THEN 1 ELSE 0 END as is_sale, "
                 .$invoices->qualifyColumn('amount_total_signed').' as revenue');
 
-        // Both parts are already company-scoped; the outer query drops the
+        // Lines without a product on an invoice an order goes with: the
+        // order's total leaves them out (R-5). Not a sale of their own.
+        $unordered = $this->orderInvoiceLinesWithoutProduct()
+            ->toBase()
+            ->selectRaw('direct_moves.partner_id as partner_id, 0 as is_sale, '.DirectInvoices::lineAmountSql('price_total').' as revenue');
+
+        // Every part is already company-scoped; the outer query drops the
         // scopes that would point at a table the subquery does not have.
         return Order::query()
             ->withoutGlobalScopes()
-            ->fromSub($orders->unionAll($invoices), 'sales_rows')
+            ->fromSub($orders->unionAll($invoices)->unionAll($unordered), 'sales_rows')
             ->leftJoin('partners_partners', 'partners_partners.id', '=', 'sales_rows.partner_id')
             ->groupBy('partners_partners.id', 'partners_partners.name')
             ->selectRaw('COALESCE(partners_partners.id, 0) as id')

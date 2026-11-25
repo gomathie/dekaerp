@@ -508,3 +508,96 @@ it('splits the period orders into to deliver, delivered, to invoice and invoiced
         expect((string) $stats[$index]->getUrl())->toContain('activeTableView='.$view);
     }
 });
+
+/**
+ * Plan #9 R-5 (user, 2026-11-25: "count, no stock"): an invoice line without
+ * a product counts once in every figure. It never reaches an order line, so
+ * the figures add it from its invoice even when an order goes with that
+ * invoice; the order's own total leaves it out.
+ */
+it('counts invoice lines without a product once, under No product', function (): void {
+    TestBootstrapHelper::ensurePluginInstalled('inventories');
+
+    $company = Company::factory()->create();
+    $user = CompanyHelper::actingAsCompanyUser($company, []);
+
+    $product = SaleHelper::product(['company_id' => $company->getKey()]);
+    $partner = SaleHelper::partner();
+    $currencyId = SaleHelper::currency()->getKey();
+
+    $invoice = function (array $lines) use ($company, $partner, $currencyId, $user): int {
+        $total = array_sum(array_column($lines, 1));
+
+        $moveId = DB::table('accounts_account_moves')->insertGetId([
+            'company_id'          => $company->getKey(),
+            'partner_id'          => $partner->getKey(),
+            'invoice_user_id'     => $user->getKey(),
+            'move_type'           => 'out_invoice',
+            'state'               => 'posted',
+            'date'                => now()->toDateString(),
+            'invoice_date'        => now()->toDateString(),
+            'amount_total'        => $total,
+            'amount_total_signed' => $total,
+            'creator_id'          => $user->getKey(),
+            'created_at'          => now(),
+            'updated_at'          => now(),
+        ]);
+
+        foreach ($lines as [$productId, $amount]) {
+            DB::table('accounts_account_move_lines')->insert([
+                'move_id'      => $moveId,
+                'company_id'   => $company->getKey(),
+                'currency_id'  => $currencyId,
+                'product_id'   => $productId,
+                'display_type' => 'product',
+                'quantity'     => 1,
+                'price_total'  => $amount,
+                'created_at'   => now(),
+                'updated_at'   => now(),
+            ]);
+        }
+
+        return $moveId;
+    };
+
+    $invoice([[$product->getKey(), 80], [null, 30]]);
+
+    $fromOrder = $invoice([[$product->getKey(), 500], [null, 45]]);
+    $order = SaleHelper::order(['company_id' => $company->getKey(), 'user_id' => $user->getKey()]);
+    DB::table('sales_order_invoices')->insert(['order_id' => $order->getKey(), 'move_id' => $fromOrder]);
+
+    $filters = ['startDate' => now()->startOfMonth()->toDateString(), 'endDate' => now()->endOfMonth()->toDateString()];
+
+    $products = new TopProductsTable;
+    $products->pageFilters = $filters;
+    $rows = (fn () => $this->getTableQuery()->get())->call($products);
+
+    expect((float) $rows->firstWhere('id', 0)?->revenue)->toBe(75.0)
+        ->and($rows->firstWhere('id', 0)?->name)->toBeNull()
+        ->and((float) $rows->firstWhere('id', $product->getKey())?->revenue)->toBe(80.0);
+
+    $customers = new TopCustomersTable;
+    $customers->pageFilters = $filters;
+    $customer = (fn () => $this->getTableQuery()->get())->call($customers)->firstWhere('id', $partner->getKey());
+
+    // The direct invoice whole (110), plus the order invoice's line without
+    // a product (45); that invoice's product line is its order's.
+    expect((float) $customer?->revenue)->toBe(155.0)
+        ->and((int) $customer?->orders_count)->toBe(1);
+
+    $people = new SalesPersonPerformanceChart;
+    $people->pageFilters = $filters;
+
+    expect((fn (): array => $this->getData())->call($people)['datasets'][0]['data'])->toBe([155.0]);
+
+    $categories = new RevenueByCategoryChart;
+    $categories->pageFilters = $filters;
+
+    expect(array_sum((fn (): array => $this->resolveChartData())->call($categories)['data']))->toBe(155.0);
+
+    // Revenue reads whole posted invoices: each line once already.
+    $stats = new SaleStatsOverview;
+    $stats->pageFilters = $filters;
+
+    expect((fn (): float => $this->invoicedRevenue())->call($stats))->toBe(655.0);
+});

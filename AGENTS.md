@@ -2184,7 +2184,19 @@ log named):
   `HasLinesWithoutProduct::prepareLineWithoutProduct()`. Never let MoveLine's
   default branch pick the account. Account options are the document
   company's chart only, never receivable or payable. Test: accounts
-  `LineWithoutProductTest`.
+  `LineWithoutProductTest`. Lines without a product are counted from the
+  invoice, never from an order (`DirectInvoices::soldLines()`,
+  `orderInvoiceLinesWithoutProduct()`, v1.17.10). Do not copy them into the
+  order in `OrderFromInvoice`, or they count twice. Tests: sales
+  `SalesByProductTest`, `SalesDashboardTest`, `OrderFromInvoiceTest`.
+
+• Delivery status after a cancelled delivery, 2026-11-26 (plan #10 item 1,
+  v1.17.10): cancelling a delivery fires no event, so code that cancels an
+  order's deliveries outside `OrderWorkflow::cancel()` must recompute the
+  order (`computeSaleOrder()`), as `BackfillOrdersFromInvoices` does. Repairs
+  go through `sales:refresh-delivery-status`, which writes only
+  `delivery_status` via `OrderCalculator::refreshDeliveryStatus()`. Test:
+  sales `OrderDeliveryStatusRefreshTest`.
 
 • Deleted contacts as followers, 2026-11-25 (UF-031, hotfix v1.17.9):
   `Follower::partner()` includes trashed partners and `removeFollower()`

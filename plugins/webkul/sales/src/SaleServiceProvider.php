@@ -19,6 +19,7 @@ use Webkul\PluginManager\Console\Commands\UninstallCommand;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
 use Webkul\Sale\Console\Commands\BackfillOrdersFromInvoices;
+use Webkul\Sale\Console\Commands\RefreshOrderDeliveryStatus;
 use Webkul\Sale\Facades\SaleOrder as SaleOrderFacade;
 use Webkul\Sale\Filament\InvoiceContributions;
 use Webkul\Sale\Filament\Pages\SalesDashboard;
@@ -85,6 +86,7 @@ class SaleServiceProvider extends PackageServiceProvider
             ->runsSettings()
             ->hasCommands([
                 BackfillOrdersFromInvoices::class,
+                RefreshOrderDeliveryStatus::class,
             ])
             ->hasDependencies([
                 'invoices',
