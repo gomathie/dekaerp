@@ -10,6 +10,12 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.17.5 — 2026-11-25
+
+### Fixes
+
+- The API reference at /api/docs opens again. You now need to sign in to see it.
+
 # CHANGELOG — v1.17.4 — 2026-11-25
 
 ### Fixes

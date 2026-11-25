@@ -11,8 +11,10 @@ use function Knuckles\Scribe\Config\removeStrategies;
 // Only the most common configs are shown. See the https://scribe.knuckles.wtf/laravel/reference/config for all.
 
 return [
-    // The HTML <title> for the generated documentation.
-    'title' => config('app.name').' API Documentation',
+    // The HTML <title> for the generated documentation, and the OpenAPI
+    // document's title. Fixed rather than read from APP_NAME, which still says
+    // "DEKA Central" in some environments (user, 2026-11-25).
+    'title' => 'DEKA ERP API Documentation',
 
     // A short description of your API. Will be included in the docs webpage, Postman collection and OpenAPI spec.
     'description' => '',
@@ -68,8 +70,13 @@ return [
     ],
 
     'laravel' => [
-        // Whether to automatically create a docs route for you to view your generated docs. You can still set up routing manually.
-        'add_routes' => true,
+        // Off: Webkul\Support\Http\Controllers\ApiDocsController serves the docs
+        // under the same URLs and route names. Scribe's own routes read
+        // storage/app/private/scribe/openapi.yaml, which only exists where
+        // `scribe:generate` ran, so production answered 500 (Sentry
+        // DEKAERP-26). Do not turn this back on: it would also put the docs back
+        // in front of guests.
+        'add_routes' => false,
 
         // URL path to use for the docs endpoint (if `add_routes` is true).
         // By default, `/docs` opens the HTML page, `/docs.postman` opens the Postman collection, and `/docs.openapi` the OpenAPI spec.
@@ -80,16 +87,11 @@ return [
         // If set, assets will be stored in `public/{{assets_directory}}`
         'assets_directory' => null,
 
-        // Middleware to attach to the docs endpoint (if `add_routes` is true).
-        //
-        // /api/docs is public by default, which is a deliberate choice for a
-        // product whose customers integrate against it - but it does publish
-        // every endpoint, parameter and model shape of the ERP. Set
-        // SCRIBE_DOCS_PRIVATE=true to require an authenticated session
-        // instead; client integrations are unaffected either way, since they
-        // authenticate with a token against admin/api/* and never load this
-        // page.
-        'middleware' => env('SCRIBE_DOCS_PRIVATE', false) ? ['web', 'auth'] : [],
+        // Unused while add_routes is off. The docs are sign-in only, always
+        // (user, 2026-11-25): ApiDocsController sends a guest to the panel
+        // login on the page, the OpenAPI document and the Postman collection.
+        // SCRIBE_DOCS_PRIVATE no longer exists.
+        'middleware' => ['web', 'auth'],
     ],
 
     'external' => [

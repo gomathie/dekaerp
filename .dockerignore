@@ -42,7 +42,10 @@ auth.json
 .git
 .gitattributes
 /.github
-/.scribe
+# .scribe/endpoints ships: the Help page's Developers tab and /api/docs read
+# the API reference from it at runtime (Support's ApiReference). Only Scribe's
+# own extraction cache stays out.
+/.scribe/endpoints.cache
 
 # --- Tests and dev tooling ---
 /tests

@@ -2171,6 +2171,16 @@ log named):
   count in every company. Test: inventories `QuantityResourceTest` "keeps other
   pending counts".
 
+• API reference sign-in only, 2026-11-25 (user; v1.17.5, Sentry DEKAERP-26):
+  `/api/docs`, `/api/docs.openapi` and `/api/docs.postman` are sign-in only,
+  always (`Support\Http\Controllers\ApiDocsController`). Do not turn
+  `scribe.laravel.add_routes` back on: it serves a file production never has
+  and puts the docs back in front of guests. The spec source is the committed
+  `.scribe/endpoints`, built at runtime by `ApiReference`; never rely on
+  `storage/app/private/scribe/*`, and keep `.scribe/endpoints` out of
+  `.dockerignore`. Scalar stays pinned with SRI; change version and hash
+  together. Test: support `Http/ApiDocsTest`.
+
 • Dashboard money and sales count, 2026-11-25 (user, TRACE365; v1.17.3 and
   v1.17.4): `compact_money()` shows the exact `money()` amount below 100,000
   and shortens only from 100,000 up; do not compact smaller amounts again.

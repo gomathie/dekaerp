@@ -7,6 +7,9 @@
 /storage/*.key
 /storage/pail
 /vendor
+# Written by `php artisan scribe:generate` and unused: /api/docs is served by
+# Support's ApiDocsController from .scribe/endpoints (see docs/api-access.md).
+/resources/views/scribe/
 # Ignore every .env variant. Listing them individually meant any new one -
 # .env.staging, .env.laravel-cloud - was tracked by default, which is the wrong
 # way round for files that hold credentials.
