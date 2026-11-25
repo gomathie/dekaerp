@@ -43,8 +43,9 @@ class QuotationsTable
                 // from an invoice carries the invoice's date, while created_at is
                 // the day it was entered - a backfilled July sale read "22 Nov".
                 // Kept as its own visible column (OrderResourceTest pins it);
-                // R-9's "date under the number" was not applied here for that
-                // reason (2026-11-25), pending the user's choice.
+                // R-9's "date under the number" is deliberately not applied
+                // here (user, 2026-11-25, after a preview: keep the column to
+                // filter and sort by date).
                 TextColumn::make('date_order')
                     ->label(__('sales::filament/clusters/orders/resources/quotation.table.columns.order-date'))
                     ->visibleFrom('md')

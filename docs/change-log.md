@@ -53,8 +53,8 @@ for the task/question log this change log is paired with.
     2026-11-22 decision ("shows the order date first") is pinned by sales
     `OrderResourceTest` "opens on every order ... with the order date". The
     first draft hid it and that test went red, so it was put back rather than
-    the test changed; moving the date under the number on sales too is the
-    user's call.
+    the test changed. *Decided 2026-11-25 (user, after a preview):* sales
+    keeps the Order Date column, to filter and sort by date.
 - **Benefit:** a back-dated foreign sale can be booked at the current rate
   knowingly instead of by editing the date; the currency question is usable
   one-handed; Accounting users see the same payment figures as Invoices

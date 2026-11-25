@@ -184,5 +184,6 @@ Accounting's customer payments list shows the same two cards through
 show the date under the number (the separate date column hidden by
 default) and the contact's company under the contact. Sales quotations
 and orders show the customer's company; their "Order Date" stays its own
-visible column, as the 2026-11-22 decision pins. R-9 is complete except
-that open choice: the date under the number on sales too (user).
+visible column, as the 2026-11-22 decision pins. *Decided 2026-11-25
+(user, after a preview):* sales keeps its Order Date column, to filter and
+sort by date; the date is not repeated under the number. R-9 is complete.

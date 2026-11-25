@@ -2171,6 +2171,13 @@ log named):
   count in every company. Test: inventories `QuantityResourceTest` "keeps other
   pending counts".
 
+• Sales lists keep their Order Date column, 2026-11-25 (user, after a
+  preview; plan #9 R-9): quotations and sales orders show `date_order` as
+  its own visible column, to filter and sort by date. Do not move it under
+  the number as on invoices, bills, purchase orders and payments. Test: sales
+  `OrderResourceTest` "... with the order date" and `QuotationResourceTest`
+  "... keeps the order date column".
+
 • Sales orders carry their exchange rate, 2026-11-24 (hotfix v1.16.13,
   TRACE365): `Sale\Services\OrderCalculator::refreshCurrencyRate()` sets
   `sales_orders.currency_rate` (company -> order, as Purchases' UF-022 and
