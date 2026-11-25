@@ -12,6 +12,57 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-26, hotfix v1.17.10: delivery status after the backfill (plan #10 item 1) and lines without a product in sales figures (plan #9 R-5)
+
+### Delivery status after the backfill (TRACE365)
+
+- **Why:** `sales:backfill-orders-from-invoices` cancelled the deliveries of
+  past sales, but cancelling a delivery fires no event (only `OperationDone`
+  recomputes an order), so ten TRACE365 orders kept "pending" and Order
+  activity showed "To deliver 14" (really 4).
+- **How:** the backfill recomputes each order (`computeSaleOrder()`) after
+  cancelling its delivery. New `sales:refresh-delivery-status` (dry run by
+  default, `--apply`, `--company=*`) rewrites only `delivery_status` of
+  confirmed orders through `OrderCalculator::refreshDeliveryStatus()`, saved
+  through the model, so a read-only company's orders are refused and
+  reported. Commit `38b5d2f39` (cherry-pick of `2caf76415`).
+- **Benefit:** the dashboard's to-deliver count matches the real deliveries;
+  future backfills stay right.
+- **Trade-off / risk:** low. A delivery cancelled by hand in Inventory still
+  leaves its order stale (same cause); the general fix is queued as its own
+  piece, and the repair command corrects such orders meanwhile.
+- **Verification actually run:** DB `aureuserp_testing_flows` (volume copy):
+  `OrderDeliveryStatusRefreshTest` (new) + `OrderFromInvoiceTest`, 19 passed,
+  79 assertions, 0 failures.
+- **Deploy step:** `php artisan sales:refresh-delivery-status --company=<TRACE365 id>`
+  (dry run, read the list), then the same with `--apply`.
+- **Rollback:** revert the commit. Corrected statuses are true values and
+  need no undo.
+
+### Lines without a product in sales figures (R-5, last piece)
+
+- **Why:** plan #9 R-5 (user, 2026-11-25: "count, no stock"). Lines without a
+  product (v1.17.8) counted in revenue but not in Sales by product or the
+  per-product, customer and salesperson figures.
+- **How:** `DirectInvoices::soldLines()` returns every line of an invoice
+  made without an order, plus every line without a product of any posted
+  invoice; `orderInvoiceLinesWithoutProduct()` returns the latter for figures
+  read per order. Sales by product and Top products label them "No product"
+  (bound parameter, so exports get it too). Top customers and the
+  salesperson chart add those lines on invoices an order goes with. Commit
+  `712ae164e` (cherry-pick of `8caff93c5`). Sales 1.16.3.
+- **Benefit:** each line without a product counts exactly once across Sales
+  by product and the Sales dashboard, and moves no stock.
+- **Trade-off / risk:** Top sales orders and Sales analysis still show the
+  order's own amount. Logistics charges without a product now count under
+  "No product".
+- **Verification actually run:** DB `aureuserp_testing_r5` (volume copy):
+  `SalesByProductTest` + `SalesDashboardTest` + `OrderFromInvoiceTest` +
+  `SalesDashboardAgreementTest`, 39 passed, 166 assertions.
+  `translations:check` passes for accounts and sales; `php -l` on the 7
+  locale files and `DirectInvoices.php` clean (lead, after cherry-pick).
+- **Rollback:** revert the commit; no migration.
+
 ## 2026-11-25, hotfix v1.17.9: deleted contacts as followers (UF-031)
 
 - **Why:** upstream open PR #1703, register UF-031 (P2). `Follower::partner()`

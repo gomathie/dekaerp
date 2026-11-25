@@ -10,6 +10,13 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.17.10 — 2026-11-26
+
+### Fixes
+
+- Invoice lines without a product now show as "No product" in Sales by product and on the Sales dashboard. Each counts once, including on invoices made from a sales order.
+- Sales: orders whose past sales were recorded as already delivered no longer show as "waiting for delivery" on the Sales dashboard.
+
 # CHANGELOG — v1.17.9 — 2026-11-25
 
 ### Fixes
