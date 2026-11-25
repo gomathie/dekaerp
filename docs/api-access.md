@@ -3,7 +3,8 @@
 DEKA ERP exposes a token-authenticated REST API under `/admin/api/v1/*`,
 contributed by the sales, purchases, accounts, inventories, partners,
 products, projects, security and support plugins. Reference docs live at
-`/api/docs`, sign-in only - see "Reference docs" below.
+`/api/docs` (sign-in only) and, for Company Admins and up, under **Help ›
+Developers** - see "Reference docs" below.
 
 **This is the only API clients should ever be given.** The database also sits
 behind Supabase's Data API, which is deliberately closed - see
@@ -96,9 +97,19 @@ credential, or build refresh into the client.
 
 ## Reference docs
 
-The reference is built from the Scribe endpoint files committed in
-`.scribe/endpoints/*.yaml`, read by `Webkul\Support\Services\ApiReference`.
+Both references are built from one source: the Scribe endpoint files committed
+in `.scribe/endpoints/*.yaml`, read by `Webkul\Support\Services\ApiReference`.
 
+- **Help › Developers** (in the app). Visible to Company Admin, Multi-Company
+  Admin and Super Admin - the same rule as the administrator guide
+  (`GuideAudience::Admin`). Everyone else sees no tab, and the page refuses it
+  even when `?tab=developers` is in the URL. It lists only the modules the
+  **current company** has (`PluginEntitlement`, the same check
+  `plugin.entitlement:<plugin>` applies to the API routes), with the core
+  Contacts and Settings APIs always present and sign-in/sign-out under Getting
+  started. Getting started states the base URL, the rate limit
+  (`API_RATE_LIMIT`), the token lifetime (`SANCTUM_TOKEN_EXPIRATION`) and the
+  current company's id for `X-Company-Id`, all read from configuration.
 - **`/api/docs`** (Scalar, full reference, every module). **Sign-in only, always**
   (user decision, 2026-11-25): a guest is redirected to `/admin/login`, and so
   is a guest asking for `/api/docs.openapi` or `/api/docs.postman`. Served by
@@ -124,8 +135,10 @@ changed `.scribe/` files:
 docker compose run --rm laravel.test php artisan scribe:generate
 ```
 
-That one command is all: `/api/docs` picks up the new files by their content
-hash. The files Scribe also writes
+That one command is all: the Developers tab and `/api/docs` pick up the new
+files by their content hash. The files Scribe also writes
 (`storage/app/private/scribe/*`, `resources/views/scribe/index.blade.php`) are
 unused and ignored. Example responses come from that database, so generate
-against seed data, never a copy of a customer's.
+against seed data, never a copy of a customer's. A new Scribe group must be
+mapped to its plugin in `ApiReference::MODULES`, or the Developers tab will not
+show it (`DevelopersSectionTest` fails until it is).
