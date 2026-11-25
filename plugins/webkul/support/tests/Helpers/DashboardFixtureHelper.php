@@ -135,7 +135,8 @@ class DashboardFixtureHelper
      * and $other's confirmed order and direct invoice of 9,000 each.
      *
      * Known totals for March. Revenue (invoiced): 1,200 = INV-1 + DIR-1 -
-     * DIR-R. Sales: 3 (SO-1, SO-2, DIR-1; a credit note is not a sale).
+     * DIR-R. Sales: 2, the invoiced sales (INV-1 for SO-1, DIR-1; a credit
+     * note is not a sale; 3 before 2026-11-25, when SO-2 counted too).
      * Sales value (orders and invoices without one): 1,700; by customer X
      * 1,300 in 2 sales, Y 400 in 1; by salesperson A 1,300, B 400; by
      * category Goods 1,300, Services 400; top products Goods 1,300 (13),

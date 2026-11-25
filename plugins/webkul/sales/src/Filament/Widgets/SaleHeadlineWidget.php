@@ -111,7 +111,9 @@ class SaleHeadlineWidget extends StatsOverviewWidget
     {
         $this->pageFilters = $filters;
 
-        if ($this->salesCount() > 0 || $this->quotations()->exists()) {
+        // A confirmed order not invoiced yet is still activity in the period,
+        // although salesCount() (invoiced sales, 2026-11-25) leaves it out.
+        if ($this->salesCount() > 0 || $this->saleOrders()->exists() || $this->quotations()->exists()) {
             return null;
         }
 

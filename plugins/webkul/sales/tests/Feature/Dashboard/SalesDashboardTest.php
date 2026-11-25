@@ -326,10 +326,13 @@ it('counts products of invoices made without an order, once', function (): void 
     expect((fn (): array => $this->getData())->call($people)['datasets'][0]['data'])->toBe([120.0]);
 
     // The direct invoice is a sale: counted, and listed among the top sales.
+    // Changed 2026-11-25 (user decision, TRACE365): the count is invoiced
+    // sales, so the posted invoice made from the order counts too, once as
+    // its order's sale: 2 (it was 1, the order being only a quotation).
     $stats = new SaleStatsOverview;
     $stats->pageFilters = $filters;
 
-    expect((fn (): int => $this->salesCount())->call($stats))->toBe(1);
+    expect((fn (): int => $this->salesCount())->call($stats))->toBe(2);
 
     $top = new TopSalesOrdersTable;
     $top->pageFilters = $filters;

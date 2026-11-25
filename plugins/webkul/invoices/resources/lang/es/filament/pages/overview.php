@@ -50,6 +50,8 @@ return [
         'bills-due-soon'   => '{1} 1 factura de proveedor vence esta semana|[2,*] :count facturas de proveedor vencen esta semana',
         'old-quotations'   => '{1} 1 presupuesto espera más de 7 días|[2,*] :count presupuestos esperan más de 7 días',
         'rfqs-to-approve'  => '{1} 1 compra por aprobar|[2,*] :count compras por aprobar',
+        'draft-invoices'   => '{1} 1 factura en borrador por confirmar|[2,*] :count facturas en borrador por confirmar',
+        'draft-invoices-amount' => '{1} 1 factura en borrador por confirmar (:amount)|[2,*] :count facturas en borrador por confirmar (:amount)',
     ],
 
     'actions' => [

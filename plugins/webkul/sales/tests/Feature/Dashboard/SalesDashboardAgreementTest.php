@@ -48,6 +48,11 @@ function salesAgreementWidget(string $class): object
  * so a third way of counting cannot slip in. Before this test, a customer's
  * "Sales" column counted a credit note as a sale, while the Sales figure
  * did not.
+ *
+ * Changed 2026-11-25 (user decision, TRACE365): the Sales count follows
+ * Revenue, so it is the invoiced sales (INV-1 for SO-1, DIR-1): 2, not 3.
+ * A customer's "Sales" column is sales value and still counts SO-2, so it
+ * sums to the Sales count plus the order not invoiced yet.
  */
 it('tells the same story in the sales figures, charts and tables', function (): void {
     $own = Company::factory()->create();
@@ -78,7 +83,7 @@ it('tells the same story in the sales figures, charts and tables', function (): 
     $salesValue = array_sum($bySalesperson['datasets'][0]['data']);
     $notInvoiced = (float) $fixture['orders']['SO-2']->amount_total;
 
-    expect($figures)->toBe(['revenue' => 1200.0, 'sales' => 3, 'quotations' => 1])
+    expect($figures)->toBe(['revenue' => 1200.0, 'sales' => 2, 'quotations' => 1])
         // Revenue, its daily line and the monthly chart are one figure.
         ->and(array_sum($dailyRevenue))->toBe($figures['revenue'])
         ->and(array_sum($monthly['datasets'][0]['data']))->toBe($figures['revenue'])
@@ -88,9 +93,9 @@ it('tells the same story in the sales figures, charts and tables', function (): 
         ->and(array_combine($byCategory['labels'], $byCategory['data']))->toBe(['Goods category' => 1300.0, 'Services category' => 400.0])
         ->and($customers->mapWithKeys(fn ($row): array => [$row->name => (float) $row->revenue])->all())->toBe(['Customer X' => 1300.0, 'Customer Y' => 400.0])
         ->and($products->mapWithKeys(fn ($row): array => [$row->name => [(float) $row->revenue, (float) $row->quantity]])->all())->toBe(['Goods' => [1300.0, 13.0], 'Services' => [400.0, 4.0]])
-        // A customer's "Sales" add up to the Sales figure: a credit note is
-        // not a sale.
-        ->and($customers->sum(fn ($row): int => (int) $row->orders_count))->toBe($figures['sales'])
+        // A customer's "Sales" add up to the Sales figure plus SO-2, the
+        // order not invoiced yet: a credit note is not a sale.
+        ->and($customers->sum(fn ($row): int => (int) $row->orders_count))->toBe($figures['sales'] + 1)
         // The top sales are the period's three sales, largest first.
         ->and($topSales->map(fn ($row): float => (float) $row->amount_total)->all())->toBe([1000.0, 500.0, 300.0])
         // The two figures differ by the order not invoiced yet, nothing else.
@@ -141,7 +146,8 @@ it('shows this month above the sales orders list, the same figures as the dashbo
         'quotations' => $this->quotations()->count(),
     ])->call($cards);
 
-    expect($figures)->toBe(['revenue' => 1200.0, 'sales' => 3, 'quotations' => 1])
+    // Sales 2 since 2026-11-25: the invoiced sales behind Revenue.
+    expect($figures)->toBe(['revenue' => 1200.0, 'sales' => 2, 'quotations' => 1])
         ->and($cards->getHeading())->toBe(__('sales::filament/widgets/sales-dashboard.stats.this-month'))
         ->and((new SaleStatsOverview)->getHeading())->toBe(__('sales::filament/widgets/sales-dashboard.stats.heading'));
 });

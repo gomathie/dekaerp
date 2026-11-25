@@ -50,6 +50,8 @@ return [
         'bills-due-soon'   => '{1} Bili 1 inadaiwa wiki hii|[2,*] Bili :count zinadaiwa wiki hii',
         'old-quotations'   => '{1} Nukuu 1 inasubiri zaidi ya siku 7|[2,*] Nukuu :count zinasubiri zaidi ya siku 7',
         'rfqs-to-approve'  => '{1} Ununuzi 1 unasubiri idhini|[2,*] Ununuzi :count unasubiri idhini',
+        'draft-invoices'   => '{1} Rasimu 1 ya ankara inasubiri kuthibitishwa|[2,*] Rasimu :count za ankara zinasubiri kuthibitishwa',
+        'draft-invoices-amount' => '{1} Rasimu 1 ya ankara inasubiri kuthibitishwa (:amount)|[2,*] Rasimu :count za ankara zinasubiri kuthibitishwa (:amount)',
     ],
 
     'actions' => [
