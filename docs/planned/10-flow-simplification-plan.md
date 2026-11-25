@@ -70,7 +70,10 @@
 > - **Z3 Receipts:** after the import is checked, a second pass downloads
 >   the receipt and attachment files from Zoho (read-only) and attaches them
 >   to the imported entries.
-> - **Z4 Recurring invoices:** planned now, built after Z1. One money
+> - **Z4 Recurring invoices:** planned now, built after Z1. Each new
+>   invoice is created as a **draft** and the user is notified to check and
+>   send it; per template, "confirm and email automatically" can be switched
+>   on (user, 2026-11-26). One money
 >   feature in progress at a time; the scheduler must never invoice a period
 >   twice (unique key per template and period, as platform invoices do).
 > - **Z5 Small items:** map Zoho payment terms, units and item default taxes
