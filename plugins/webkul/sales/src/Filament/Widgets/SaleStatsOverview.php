@@ -41,9 +41,9 @@ class SaleStatsOverview extends DashboardStatsWidget
         $quotations = $this->quotations()->count();
         $previousQuotations = $this->quotations($previousStart, $previousEnd)->count();
 
-        // Sales are confirmed orders plus invoices made without one (user,
-        // 2026-11-20: direct invoices must reflect in sales). Revenue is
-        // invoiced sales (DB-8), and the average is that revenue per sale.
+        // Sales are the invoiced sales behind Revenue (user, 2026-11-25:
+        // salesCount() explains), so the average is revenue per invoiced
+        // sale. Revenue is invoiced sales (DB-8).
         $orders = $this->salesCount();
         $previousOrders = $this->salesCount($previousStart, $previousEnd);
 

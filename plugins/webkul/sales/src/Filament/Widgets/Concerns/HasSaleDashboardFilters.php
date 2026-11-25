@@ -166,48 +166,66 @@ trait HasSaleDashboardFilters
     }
 
     /**
-     * How many sales the period had: confirmed orders plus invoices made
-     * without one (credit notes are not sales). User, 2026-11-20: "all
-     * products sold and paid by invoices created directly should reflect in
-     * sales" - every count of sales reads this, not the order count alone.
+     * How many invoiced sales make up the period's revenue: posted customer
+     * invoices (invoicedSales()), each sale once - the invoices of one order
+     * are one sale, an invoice made without an order is one sale, and credit
+     * notes are not sales.
+     *
+     * User decision, 2026-11-25 (TRACE365): this used to be confirmed orders
+     * plus direct invoices, while Revenue beside it is invoiced (DB-8). With
+     * 12 orders of which 10 were invoiced, the tile read "12 sales" and the
+     * average divided invoiced revenue by 12. Every count of sales next to
+     * revenue reads this; Order activity keeps counting orders.
      */
     protected function salesCount(?Carbon $start = null, ?Carbon $end = null): int
     {
-        $invoices = $this->directInvoices($start, $end);
+        $query = $this->invoicedSoldQuery($start, $end);
 
-        return $this->saleOrders($start, $end)->count()
-            + $invoices->where($invoices->qualifyColumn('move_type'), MoveType::OUT_INVOICE)->count();
+        return (int) $query->toBase()
+            ->selectRaw('COUNT(DISTINCT '.static::SALE_KEY_SQL.') as total')
+            ->value('total');
     }
 
     /**
-     * Sales per day over the period (orders by order date, direct invoices by
-     * invoice date), keyed Y-m-d.
+     * Invoiced sales per day over the period, by invoice date, keyed Y-m-d.
+     * Same rule as salesCount().
      *
      * @return array<string, int>
      */
     protected function dailySalesCounts(?Carbon $start = null, ?Carbon $end = null): array
     {
-        $orders = $this->saleOrders($start, $end);
-        $orderDay = 'CAST('.$orders->qualifyColumn('date_order').' AS date)';
-
-        $invoices = $this->directInvoices($start, $end);
-        $invoiceDay = 'CAST('.$invoices->qualifyColumn('invoice_date').' AS date)';
+        $query = $this->invoicedSoldQuery($start, $end);
+        $day = 'CAST('.$query->qualifyColumn('invoice_date').' AS date)';
 
         $counts = [];
 
-        foreach ([
-            [$orders, $orderDay],
-            [$invoices->where($invoices->qualifyColumn('move_type'), MoveType::OUT_INVOICE), $invoiceDay],
-        ] as [$query, $day]) {
-            foreach ($query->toBase()->selectRaw("{$day} as day, COUNT(*) as total")->groupByRaw($day)->pluck('total', 'day') as $date => $total) {
-                $key = Carbon::parse($date)->toDateString();
-                $counts[$key] = ($counts[$key] ?? 0) + (int) $total;
-            }
+        foreach ($query->toBase()->selectRaw("{$day} as day, COUNT(DISTINCT ".static::SALE_KEY_SQL.') as total')->groupByRaw($day)->pluck('total', 'day') as $date => $total) {
+            $counts[Carbon::parse($date)->toDateString()] = (int) $total;
         }
 
         ksort($counts);
 
         return $counts;
+    }
+
+    /**
+     * One key per sale for the invoices of invoicedSoldQuery(): the order an
+     * invoice came from, or the invoice itself (negated, so it never meets
+     * an order id). Fixed SQL, never input.
+     */
+    protected const SALE_KEY_SQL = 'CASE WHEN sales_order_invoices.order_id IS NULL THEN -accounts_account_moves.id ELSE sales_order_invoices.order_id END';
+
+    /**
+     * Posted customer invoices of the period (no credit notes), joined to the
+     * order each came from, if any.
+     */
+    protected function invoicedSoldQuery(?Carbon $start = null, ?Carbon $end = null): Builder
+    {
+        $query = $this->invoicedSales($start, $end);
+
+        return $query
+            ->where($query->qualifyColumn('move_type'), MoveType::OUT_INVOICE)
+            ->leftJoin('sales_order_invoices', 'sales_order_invoices.move_id', '=', $query->qualifyColumn('id'));
     }
 
     /**
