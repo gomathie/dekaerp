@@ -2179,6 +2179,13 @@ log named):
   so changing a product's account moved booked revenue. Drafts still follow
   the product. Test: accounts `Workflows/PostedLineAccountTest`.
 
+• Invoice and bill lines without a product, 2026-11-25 (R-5, v1.17.8): a
+  product-type line with no product, `display_type` set explicitly in
+  `HasLinesWithoutProduct::prepareLineWithoutProduct()`. Never let MoveLine's
+  default branch pick the account. Account options are the document
+  company's chart only, never receivable or payable. Test: accounts
+  `LineWithoutProductTest`.
+
 • Help › Developers tab, 2026-11-25 (user; v1.17.7): for Company Admin,
   Multi-Company Admin and Super Admin only. The rule is
   `ApiReference::allows()`, which uses `GuideAudience::Admin`; do not add a

@@ -12,6 +12,36 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-25, hotfix v1.17.8: invoice and bill lines without a product (plan #9 R-5)
+
+- **Why:** plan #9 R-5 (user, 2026-11-25, approved mockup; HiTrace/TRACE365
+  rule). Invoices required a product; Zoho Books accepts a free-text line,
+  and HiTrace's Zoho history has 19 such lines.
+- **How:** trait `Account\Filament\Concerns\HasLinesWithoutProduct`, shared
+  by the invoice and bill line repeaters (credit notes and refunds inherit
+  it): footer button "Add a line without a product"; Description and Account
+  columns only while such a line exists; account defaults to the journal's
+  default account, limited to the document company's chart (not deprecated,
+  never receivable or payable); taxes start empty.
+  `prepareLineWithoutProduct()` saves product null and sets `display_type`
+  PRODUCT explicitly (otherwise MoveLine replaces the account with the
+  journal default and MoveCalculator zeroes the amounts). Form totals
+  include these lines. Commit `2e256499d` (cherry-pick of `6b0ae31e4`
+  (from `feature/plan9-r5`). Accounts 1.18.0 (feature).
+- **Benefit:** a line can be invoiced or billed without creating a product;
+  account kept; totals, tax lines, balanced entry and printed document
+  include it; no stock moves.
+- **Trade-off / risk:** sales reports do not list these lines under "No
+  product" until the sales-counting piece ships (headline revenue already
+  counts them). The invoice API still requires a product. Plan #10 will
+  replace the separate button with a Zoho-style single item box.
+- **Verification actually run:** Docker volume copy, `aureuserp_testing_r5`:
+  accounts `LineWithoutProductTest` (new) 7 passed, 78 assertions;
+  `InvoiceResourceTest` + `BillResourceTest` + `InvoiceCurrencySwitchTest` +
+  `PrintedDocumentTest` 44 passed, 192 assertions. `php -l` on the 7 new
+  language files clean. `translations:check` not run.
+- **Rollback:** revert the commit; no migration.
+
 ## 2026-11-25, hotfix v1.17.7: Help › Developers tab (API reference)
 
 - **Why:** user, 2026-11-25 (HiTrace/TRACE365 request, approved mockup
