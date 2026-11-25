@@ -1,8 +1,12 @@
 # Multi-currency invoicing: ask for the currency, confirm the rate, report it
 
-Status: **planned** (user, 2026-11-24, raised for TRACE365). TRACE365 items
-ship as hotfixes or simplifications; this plan is a feature, so it ships in a
-monthly release unless the user decides otherwise.
+Status: **completed, in production** (2026-11-25). MC-1, MC-2a, MC-2b and
+MC-3 shipped in v1.17.0; "Post at the latest rate" and the phone bottom
+sheet in hotfix v1.17.1. The question is switched on for TRACE365 (company
+2, 2026-11-25). Moved from `docs/planned/` (was #10). *Superseded:* "planned
+(user, 2026-11-24, raised for TRACE365) ... ships in a monthly release unless
+the user decides otherwise" — the user shipped it as hotfixes ("do all now as
+hot fixes", 2026-11-24; HiTrace/TRACE365 rule, 2026-11-25).
 
 Related: CR-6 company currencies (plan #1), DB-7 money rules (plan #2),
 `Account\Support\DocumentCurrency` (v1.16.7), R-7/R-8 (plan #9).

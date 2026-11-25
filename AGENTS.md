@@ -2101,7 +2101,7 @@ log named):
   - Tests: accounts `DocumentCurrencyTest`.
 
 • Confirmed exchange rate on an invoice, 2026-11-24 (plan #10 MC-2,
-  TRACE365; `docs/planned/10-multi-currency-plan.md` §5a):
+  TRACE365; `docs/completed/multi-currency-plan.md` §5a):
   - `Move::computeInvoiceCurrencyRate()` keeps `invoice_currency_rate` when
     `currency_rate_source` is `manual`, and drops the manual rate when the
     currency changes without a new rate. Do not remove the guard: every save
