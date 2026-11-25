@@ -44,3 +44,6 @@ opencode.json
 
 # graphify knowledge graph (local; built with /graphify)
 /graphify-out/
+
+# Windows shell crash dumps
+*.stackdump
