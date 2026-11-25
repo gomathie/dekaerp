@@ -2171,6 +2171,17 @@ log named):
   count in every company. Test: inventories `QuantityResourceTest` "keeps other
   pending counts".
 
+• Dashboard money and sales count, 2026-11-25 (user, TRACE365; v1.17.3 and
+  v1.17.4): `compact_money()` shows the exact `money()` amount below 100,000
+  and shortens only from 100,000 up; do not compact smaller amounts again.
+  The Sales count beside Revenue is invoiced sales
+  (`HasSaleDashboardFilters::salesCount()`: posted customer invoices, an
+  order's invoices once, credit notes none), and Average = revenue ÷ that
+  count; never pair invoiced revenue with an order count. Order activity
+  still counts orders. Draft customer invoices appear in Needs attention
+  (`InvoiceAttention`). Tests: support `CompactMoneyTest`, sales
+  `InvoicedSalesCountTest`, invoices `DraftInvoiceAttentionTest`.
+
 • Reconciliation balance check, 2026-11-25 (plan #9 R-4, hotfix v1.17.2):
   statement balance is the latest statement's `balance_end_real` (import:
   typed closing balance, else the balance column on the statement's last

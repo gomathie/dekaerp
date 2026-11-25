@@ -10,6 +10,13 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.17.4 — 2026-11-25
+
+### Fixes
+
+- The Sales dashboard's number of sales and average sale now count invoiced sales, the same sales that make up Revenue. Orders not invoiced yet no longer lower the average.
+- "Needs attention" on the Overview now shows customer invoices still in draft, with their total and a link to the draft invoices.
+
 # CHANGELOG — v1.17.3 — 2026-11-25
 
 ### Fixes

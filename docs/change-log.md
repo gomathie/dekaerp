@@ -12,6 +12,38 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-25, hotfix v1.17.4: sales count follows invoiced sales; draft invoices in Needs attention (TRACE365)
+
+- **Why:** same TRACE365 call as v1.17.3. Sales showed "12 sales" and an
+  average of $109: invoiced revenue ($1,312.50) divided by confirmed orders
+  (12). "Needs attention" said "All clear" while 5 customer invoices sat in
+  draft. User decisions 2026-11-25: count and average follow invoiced sales;
+  drafts appear in Needs attention.
+- **How:** `HasSaleDashboardFilters::salesCount()` and `dailySalesCounts()`
+  count posted customer invoices from `invoicedSales()`, one per sale (an
+  order's invoices once, via `sales_order_invoices`; a direct invoice once;
+  credit notes none). Total Sales, Average Revenue, the headline caption and
+  the Overview Sales panel read them; `latestBeforePeriod()` still treats an
+  uninvoiced confirmed order as activity; Order activity and
+  `conversionRate()` unchanged. `InvoiceAttention::items()` adds "N draft
+  invoices to confirm ($X)" for the company's draft out_invoices, linking to
+  the Draft view for users who can open it; the amount is hidden when the
+  money switch is off. Commits `6604cbf19`, `7558a8d0d` (from
+  `fix/trace365-dashboard-figures`). Plugins sales 1.16.2, invoices 1.15.2.
+- **Benefit:** the count and average match the revenue beside them; drafts
+  are no longer silent.
+- **Trade-off / risk:** the sales count drops by orders not yet invoiced; the
+  Sales value breakdowns (customer, salesperson, product) still count orders
+  plus direct invoices, so a customer's total can exceed the headline count.
+- **Verification actually run:** Docker volume copy of the exact commit,
+  `aureuserp_testing_figb`: `InvoicedSalesCountTest` (new),
+  `SalesDashboardTest`, `SalesDashboardAgreementTest`,
+  `DraftInvoiceAttentionTest` (new), `OverviewTest`: 41 passed, 168
+  assertions, 0 failures. Pinned tests changed on purpose (user decision,
+  docblock notes): `SalesDashboardAgreementTest` sales 3 → 2,
+  `SalesDashboardTest` 1 → 2.
+- **Rollback:** revert the two commits; no schema or data change.
+
 ## 2026-11-25, hotfix v1.17.3: exact dashboard amounts below 100,000 (TRACE365)
 
 - **Why:** TRACE365 called (2026-11-25): dashboard figures looked wrong.
