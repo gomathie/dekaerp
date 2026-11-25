@@ -42,6 +42,9 @@ class QuotationsTable
                 // The business date, shown first (user, 2026-11-22): an order made
                 // from an invoice carries the invoice's date, while created_at is
                 // the day it was entered - a backfilled July sale read "22 Nov".
+                // Kept as its own visible column (OrderResourceTest pins it);
+                // R-9's "date under the number" was not applied here for that
+                // reason (2026-11-25), pending the user's choice.
                 TextColumn::make('date_order')
                     ->label(__('sales::filament/clusters/orders/resources/quotation.table.columns.order-date'))
                     ->visibleFrom('md')
@@ -58,6 +61,8 @@ class QuotationsTable
                     ->sortable(),
                 TextColumn::make('partner.name')
                     ->label(__('sales::filament/clusters/orders/resources/quotation.table.columns.customer'))
+                    // The company a contact works for, under their name (R-9).
+                    ->description(fn ($record): ?string => $record->partner?->parent?->name)
                     ->placeholder('-')
                     ->searchable()
                     ->toggleable()
@@ -354,7 +359,9 @@ class QuotationsTable
                 fn (Model $record): bool => QuotationResource::can('delete', $record) && $record->state !== OrderState::SALE,
             )
             ->modifyQueryUsing(function (Builder $query) {
-                $query->with('currency');
+                // partner.parent: the company line under each customer, without
+                // one query per row.
+                $query->with('currency', 'partner.parent');
             });
     }
 }

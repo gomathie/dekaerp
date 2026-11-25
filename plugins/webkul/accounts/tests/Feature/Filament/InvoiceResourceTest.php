@@ -253,7 +253,9 @@ it('posts a draft invoice through the confirm action', function () {
  * Plan #10 MC-2 step 5 (TRACE365, 2026-11-24): before a foreign-currency
  * invoice is posted, Confirm says what it books in the company currency, from
  * the invoice's own rate (that of its date, not today's), and names the date
- * the rate belongs to when that is not today.
+ * the rate belongs to when that is not today. Extended 2026-11-25 ("offers
+ * today's rate"): when the latest rate differs, the summary also says what
+ * the document would book at it; plain Confirm still posts at its own rate.
  */
 it('summarises a foreign-currency invoice in the company currency before posting it', function () {
     FilamentHelper::actingAs(['view_any_account_invoice', 'update_account_invoice']);
@@ -283,8 +285,14 @@ it('summarises a foreign-currency invoice in the company currency before posting
         'rate'   => $question->label(10.0, $company->currency, $foreign),
     ]);
     $rateDate = __($lang.'.rate-date', ['date' => $invoiceDate->translatedFormat('j M Y')]);
+    // 1,200 at the latest rate of 20 would be 60.
+    $latest = __($lang.'.latest', [
+        'rate'  => $question->label(20.0, $company->currency, $foreign),
+        'date'  => now()->translatedFormat('j M Y'),
+        'value' => money(60.0, $company->currency->name),
+    ]);
 
-    expect($question->postingSummary($invoice->refresh()))->toBe($total.' '.$rateDate.' '.__($lang.'.question'));
+    expect($question->postingSummary($invoice->refresh()))->toBe($total.' '.$rateDate.' '.$latest.' '.__($lang.'.question'));
 
     $component = Livewire::test(EditInvoice::class, ['record' => $invoice->id])
         ->mountAction(ConfirmAction::class)
@@ -297,7 +305,65 @@ it('summarises a foreign-currency invoice in the company currency before posting
     $component->callMountedAction();
 
     expect($invoice->refresh()->state)->toBe(MoveState::POSTED)
-        ->and(abs((float) $invoice->amount_total_signed))->toBe(120.0);
+        ->and(abs((float) $invoice->amount_total_signed))->toBe(120.0)
+        ->and($invoice->currency_rate_source)->toBeNull();
+});
+
+/**
+ * Plan #10 MC-2 step 5, "offers today's rate" (2026-11-25): a back-dated
+ * foreign document can be posted at the latest rate instead, by choice. It is
+ * kept as a confirmed rate under the person's name (a feed rate would be
+ * re-read for the invoice date on the next save), the lines are re-costed at
+ * it, and the history says so. With nothing to offer there is no button.
+ */
+it('posts a back-dated foreign invoice at the latest rate when that is chosen', function () {
+    $user = FilamentHelper::actingAs(['view_any_account_invoice', 'update_account_invoice']);
+
+    $company = AccountHelper::company()->load('currency');
+    $foreign = AccountHelper::otherCurrency();
+    $invoiceDate = now()->subDays(3);
+    AccountHelper::setCurrencyRate($foreign, 10.0, now()->subDays(5)->toDateString());
+    AccountHelper::setCurrencyRate($foreign, 20.0, now()->toDateString());
+
+    $invoice = AccountHelper::invoice(MoveType::OUT_INVOICE, overrides: [
+        'currency_id'  => $foreign->getKey(),
+        'invoice_date' => $invoiceDate->toDateString(),
+        'date'         => $invoiceDate->toDateString(),
+    ]);
+    AccountHelper::productLine($invoice, AccountHelper::account('income'), qty: 2, priceUnit: 600);
+    AccountHelper::compute($invoice);
+
+    $question = app(SaleCurrencyQuestion::class);
+
+    expect($question->latestRateOffer($invoice->refresh())['rate'])->toBe(20.0);
+
+    Livewire::test(EditInvoice::class, ['record' => $invoice->id])
+        ->mountAction(ConfirmAction::class)
+        ->assertMountedActionModalSee(__('accounts::filament/resources/invoice/actions/confirm-action.currency-summary.use-latest'))
+        ->callAction('postAtLatestRate');
+
+    $invoice->refresh();
+
+    expect($invoice->state)->toBe(MoveState::POSTED)
+        ->and((float) $invoice->invoice_currency_rate)->toBe(20.0)
+        ->and($invoice->currency_rate_source)->toBe(Move::RATE_MANUAL)
+        ->and((int) $invoice->currency_rate_confirmed_by)->toBe($user->id)
+        // 1,200 at 20 per company unit is 60, on the lines as well as the total.
+        ->and(abs((float) $invoice->amount_total_signed))->toBe(60.0)
+        ->and(abs((float) $invoice->lines()->where('display_type', 'product')->sum('balance')))->toBe(60.0)
+        ->and($invoice->messages()->where('body', 'like', '%'.$question->label(20.0, $company->currency, $foreign).'%')->exists())->toBeTrue();
+
+    // Now at the latest rate, so nothing is offered; and a posted document's
+    // rate is never changed, whatever is asked.
+    expect($question->latestRateOffer($invoice))->toBeNull()
+        ->and(fn () => $question->applyLatestRate($invoice, $user->id))->toThrow(InvalidArgumentException::class);
+
+    // Dated today, or already at the latest rate: no offer, no second button.
+    $today = AccountHelper::invoice(MoveType::OUT_INVOICE, overrides: ['currency_id' => $foreign->getKey()]);
+    AccountHelper::productLine($today, AccountHelper::account('income'), qty: 1, priceUnit: 100);
+    AccountHelper::compute($today);
+
+    expect($question->latestRateOffer($today->refresh()))->toBeNull();
 });
 
 it('confirms a company-currency invoice with one click and summarises a foreign bill', function () {

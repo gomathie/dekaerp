@@ -2120,6 +2120,14 @@ log named):
     invoice made from the order (`Invoicer::createInvoice()`) carries it. One
     dialog for both, `Account\Filament\Concerns\AsksSaleCurrency`; do not copy
     it into a page. Tests: sales `Workflows/QuotationSaleCurrencyTest.php`.
+  - Posting at the latest rate, 2026-11-25 (MC-2 "offers today's rate"):
+    only by the person's choice ("Post at the latest rate" in Confirm), only
+    on a draft, through `SaleCurrencyQuestion::applyLatestRate()`, which
+    stores it as `manual` under their name. Do not store it as a feed rate:
+    the next save re-reads the invoice date's rate and silently undoes the
+    choice. Keep it a second button, not a form field: a form makes every
+    Confirm a dialog. Tests: accounts `InvoiceResourceTest` "posts a
+    back-dated foreign invoice at the latest rate when that is chosen".
 
 • Customer page shipments, 2026-11-10 (`docs/logistics-plan.md`, WP-9b, D11):
   - The customer infolist tab is `PartnerSchemaRegistry` slot `tabs.append`.

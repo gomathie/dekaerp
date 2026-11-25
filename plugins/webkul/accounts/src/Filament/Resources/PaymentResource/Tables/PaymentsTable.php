@@ -33,14 +33,21 @@ class PaymentsTable
         return $table
             ->reorderableColumns()
             ->columns(PaymentResource::mergeCustomTableColumns([
+                // Shown under the number now (plan #9 R-9, as the invoice list);
+                // still available as its own column.
                 TextColumn::make('date')
                     ->label(__('accounts::filament/resources/payment.table.columns.date'))
                     ->visibleFrom('sm')
                     ->placeholder('-')
                     ->date()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                // Two-line cells (R-9): the payment date under the number, the
+                // contact's company under the contact; also what a phone shows.
                 TextColumn::make('name')
                     ->label(__('accounts::filament/resources/payment.table.columns.name'))
+                    ->weight('semibold')
+                    ->description(fn ($record): ?string => $record->date?->translatedFormat('d M Y'))
                     ->searchable()
                     ->placeholder('-')
                     ->sortable(),
@@ -58,6 +65,7 @@ class PaymentsTable
                     ->sortable(),
                 TextColumn::make('partner.name')
                     ->label(__('accounts::filament/resources/payment.table.columns.partner'))
+                    ->description(fn ($record): ?string => $record->partner?->parent?->name)
                     ->placeholder('-')
                     ->sortable(),
                 // Which invoice or bill a payment settled (TRACE365, 2026-11-23): they
@@ -113,7 +121,9 @@ class PaymentsTable
             // Newest first as the table default, not as orderByDesc in getEloquentQuery():
             // that ran before any column sort, so clicking a header did nothing (upstream #1671).
             ->defaultSort('id', 'desc')
-            ->modifyQueryUsing(fn (Builder $query): Builder => $query->withUnusedAmount())
+            // partner.parent: the company line under each contact, without one
+            // query per row.
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->withUnusedAmount()->with('partner.parent'))
             ->groups([
                 Tables\Grouping\Group::make('name')
                     ->label(__('accounts::filament/resources/payment.table.groups.name'))

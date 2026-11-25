@@ -5,6 +5,8 @@ namespace Webkul\Account\Services;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use InvalidArgumentException;
+use Webkul\Account\Enums\MoveState;
+use Webkul\Account\Facades\Account as AccountFacade;
 use Webkul\Account\Models\CompanySetting;
 use Webkul\Account\Models\Move;
 use Webkul\Security\Models\User;
@@ -210,9 +212,87 @@ class SaleCurrencyQuestion
             $sentences[] = __($lang.'.rate-date', ['date' => $move->invoice_date->translatedFormat('j M Y')]);
         }
 
+        // MC-2 step 5 "offers today's rate": what the latest rate would book,
+        // so the choice between the two buttons is made with both figures.
+        if ($offer = $this->latestRateOffer($move)) {
+            $sentences[] = __($lang.'.latest', [
+                'rate'  => $offer['label'],
+                'date'  => $offer['date']?->translatedFormat('j M Y') ?? '—',
+                'value' => money($total / $offer['rate'], $base->name),
+            ]);
+        }
+
         $sentences[] = __($lang.'.question');
 
         return implode(' ', $sentences);
+    }
+
+    /**
+     * The latest feed rate, offered at posting when the document is dated
+     * another day and carries a different rate (MC-2 step 5). Null when
+     * there is nothing to offer: a document dated today, one already at the
+     * latest rate, or no feed rate at all (a missing rate is never 1).
+     *
+     * @return array{rate: float, date: ?Carbon, stale: bool, label: string}|null
+     */
+    public function latestRateOffer(Move $move): ?array
+    {
+        $company = $move->company;
+        $base = $company?->currency;
+        $currency = $move->currency;
+
+        if (! $move->isInvoice(true) || ! $base || ! $currency || (int) $currency->getKey() === (int) $base->getKey()) {
+            return null;
+        }
+
+        if (! $move->invoice_date || $move->invoice_date->isToday()) {
+            return null;
+        }
+
+        $feed = $this->feedRate($currency, $company);
+
+        if ($feed === null || abs($feed['rate'] - (float) $move->invoice_currency_rate) <= 1e-9 * max(1.0, $feed['rate'])) {
+            return null;
+        }
+
+        return $feed + ['label' => $this->label($feed['rate'], $base, $currency)];
+    }
+
+    /**
+     * Puts the latest rate on a draft before it is posted, when the person
+     * chose "Post at the latest rate". It is kept as a confirmed rate
+     * (manual, under their name): a feed rate would be re-read for the
+     * invoice date on the next save and silently undo the choice. The lines
+     * are re-costed at it and the history says who chose which rate.
+     *
+     * Refuses a document that is not a draft, or has nothing to offer: the
+     * rate of a posted entry never changes.
+     */
+    public function applyLatestRate(Move $move, int $userId): Move
+    {
+        $offer = $this->latestRateOffer($move);
+
+        if ($move->state !== MoveState::DRAFT || $offer === null) {
+            throw new InvalidArgumentException('There is no other rate to post this document at.');
+        }
+
+        $move->forceFill([
+            'invoice_currency_rate'      => $offer['rate'],
+            'currency_rate_source'       => Move::RATE_MANUAL,
+            'currency_rate_confirmed_by' => $userId,
+        ])->save();
+
+        $move = AccountFacade::computeAccountMove($move);
+
+        $move->addMessage([
+            'type' => 'note',
+            'body' => e(__('accounts::filament/resources/invoice/actions/confirm-action.currency-summary.latest-note', [
+                'rate' => $offer['label'],
+                'date' => $offer['date']?->translatedFormat('j M Y') ?? '—',
+            ])),
+        ]);
+
+        return $move;
     }
 
     /**

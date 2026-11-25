@@ -7,9 +7,8 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
-use Webkul\Account\Enums\PaymentStatus;
 use Webkul\Account\Enums\PaymentType;
-use Webkul\Account\Models\Payment;
+use Webkul\Account\Support\RecordedPayments;
 use Webkul\Support\Filament\DashboardPeriod;
 
 /**
@@ -188,16 +187,12 @@ class OverviewCashFlowChart extends RevenueOverTimeWidget
      * (outbound) between two dates, by payment date, in the company scope.
      * Public so the cards above the payments list read the same rule
      * (plan #9 R-9) instead of a second one; see dailyPayments() for why
-     * in process counts with paid.
+     * in process counts with paid. The rule itself is in Accounts
+     * (RecordedPayments), so Accounting's payments list reads it too.
      */
     public static function recordedPayments(PaymentType $type, Carbon $start, Carbon $end): Builder
     {
-        $query = Payment::query();
-
-        return $query
-            ->where($query->qualifyColumn('payment_type'), $type)
-            ->whereIn($query->qualifyColumn('state'), [PaymentStatus::PAID, PaymentStatus::IN_PROCESS])
-            ->whereBetween($query->qualifyColumn('date'), [$start->toDateString(), $end->toDateString()]);
+        return RecordedPayments::between($type, $start, $end);
     }
 
     /**

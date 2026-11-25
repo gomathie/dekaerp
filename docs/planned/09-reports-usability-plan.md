@@ -175,3 +175,14 @@ payments received (new invoices `PaymentStatsWidget`, on
 figures for this month. Every list's cards are hidden when the user's
 money-figures switch is off. Still open: the Accounting plugin's own
 payments page, and two-line cells on orders and payments.
+
+*Both built 2026-11-25 (develop, unreleased; docs/change-log.md):*
+Accounting's customer payments list shows the same two cards through
+`Account\Filament\Concerns\ShowsPaymentStats` and
+`Account\Support\RecordedPayments`, shared with the Invoices widget
+(Accounting does not depend on Invoices). Purchase orders and payments
+show the date under the number (the separate date column hidden by
+default) and the contact's company under the contact. Sales quotations
+and orders show the customer's company; their "Order Date" stays its own
+visible column, as the 2026-11-22 decision pins. R-9 is complete except
+that open choice: the date under the number on sales too (user).

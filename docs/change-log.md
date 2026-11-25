@@ -6,6 +6,80 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-25, the four items v1.17.0 left out (develop, unreleased)
+
+- **Why:** user, 2026-11-25: "continue with the items not built yet". The
+  four were listed open in plan #10 §5a (MC-2 "offers today's rate", phone
+  bottom sheet) and plan #9 R-9 (Accounting's payments page cards,
+  two-line cells on orders and payments).
+- **How:**
+  - *Latest rate at posting (MC-2 step 5).*
+    `SaleCurrencyQuestion::latestRateOffer()` (a foreign invoice, bill or
+    refund dated another day whose stored rate differs from the feed's
+    latest) and `applyLatestRate()` (drafts only; keeps the rate as
+    `manual` under the person's name, so a later save cannot re-read the
+    invoice date's rate; re-costs the lines through `computeAccountMove()`;
+    adds a history note). `postingSummary()` adds a "latest" sentence when
+    there is an offer. `ConfirmAction` gets a second footer button,
+    "Post at the latest rate", rather than a form field: an action with a
+    form always opens a dialog, and company-currency documents must keep
+    confirming with one click (pinned by "confirms a company-currency invoice
+    with one click"). Rate change and post run in one transaction.
+  - *Phone bottom sheet (MC-2 step 1).* `AsksSaleCurrency` tags its modal
+    window `deka-sale-currency-sheet` and the rate input
+    `deka-sale-currency-rate`. CSS in the phone block of
+    `resources/views/vendor/filament-panels/livewire/topbar.blade.php`
+    (below 640 px): anchored to the bottom, full width, top corners
+    rounded, safe-area padding, slide-up transition (none with reduced
+    motion), currency and footer buttons stacked full width at 48 px, rate
+    in 28 px tabular figures. No other modal carries the class.
+  - *Accounting payments cards (R-9).* Accounting depends on Accounts only,
+    not Invoices, so the shared parts moved to Accounts:
+    `Account\Support\RecordedPayments::between()` (the "which payments
+    count" rule; `OverviewCashFlowChart::recordedPayments()` now delegates
+    to it) and `Account\Filament\Concerns\ShowsPaymentStats` (the two
+    cards). Invoices' `PaymentStatsWidget` and the new
+    `Accounting\Filament\Widgets\PaymentStatsWidget` both use it; each keeps
+    its own `canView()` (its module, its list's permission,
+    `DashboardAccess::mayViewMoney()`). New strings
+    `accounting::filament/widgets/payment-stats` in 7 locales (copied from
+    the Invoices translations).
+  - *Two-line cells (R-9).* As the invoice list: the date under the number,
+    `partner.parent` under the contact (eager loaded), the date column
+    hidden by default, on purchase orders (`OrdersTable`, `ordered_at`) and
+    payments (`PaymentsTable`, `date`). Sales quotations/orders
+    (`QuotationsTable`) get only the company under the customer: the
+    "Order Date" column stays visible as its own column, because the
+    2026-11-22 decision ("shows the order date first") is pinned by sales
+    `OrderResourceTest` "opens on every order ... with the order date". The
+    first draft hid it and that test went red, so it was put back rather than
+    the test changed; moving the date under the number on sales too is the
+    user's call.
+- **Benefit:** a back-dated foreign sale can be booked at the current rate
+  knowingly instead of by editing the date; the currency question is usable
+  one-handed; Accounting users see the same payment figures as Invoices
+  users; every money list reads the same way on a phone.
+- **Trade-off / risk:** posting at the latest rate departs from the
+  document-date rate, by the user's explicit choice per document (plan
+  #10's approved flow); the history records it. On purchase orders and
+  payments, users who had the date column showing keep their saved column
+  choice; new sessions get the date under the number instead. Sales lists
+  keep their Order Date column. The phone bottom sheet was checked in
+  tests only, not in a browser.
+- **Verification actually run:** `translations:check` exit 0. Accounting
+  `PaymentsListCardsTest` + `PluginEntitlementTest` 3 passed
+  (`aureuserp_testing_v113_k4`). First run: accounts 33/34
+  (`InvoiceResourceTest`, `SaleCurrencyQuestionTest` green), sales 34/36,
+  purchases 14/15, invoices dashboard 39/40. The failures were two wrong
+  column assertions (toggled-hidden, not hidden), the pinned sales
+  Order Date test (change reverted on sales, see above) and invoices
+  `ModuleCardsTest` (passes alone; combined-run only). Re-run after the
+  fixes: accounts `PaymentsReceivedListTest` 4 passed (k1), sales
+  `QuotationResourceTest` + `OrderResourceTest` 32 passed (k2), purchases
+  `PurchaseOrderResourceTest` 15 passed (k3), invoices `ModuleCardsTest`
+  alone 6 passed (k5).
+- **Rollback:** revert the commit. No migration, no data change.
+
 ## 2026-11-25, release v1.17.0 (production)
 
 - **Why:** user, 2026-11-24: "do all now as hot fixes. even the monthly
