@@ -2,8 +2,8 @@
 
 DEKA ERP exposes a token-authenticated REST API under `/admin/api/v1/*`,
 contributed by the sales, purchases, accounts, inventories, partners,
-products, projects, security and support plugins. Generated reference docs
-live at `/api/docs`.
+products, projects, security and support plugins. Reference docs live at
+`/api/docs`, sign-in only - see "Reference docs" below.
 
 **This is the only API clients should ever be given.** The database also sits
 behind Supabase's Data API, which is deliberately closed - see
@@ -94,10 +94,38 @@ password to do it. That is a deliberate trade-off, but if long-lived
 integrations are the goal, raise it for the API and accept the longer-lived
 credential, or build refresh into the client.
 
-## Reference docs visibility
+## Reference docs
 
-`/api/docs` is public by default, which suits a product whose customers
-integrate against it, but it does publish the full endpoint surface. Set
-`SCRIBE_DOCS_PRIVATE=true` to require an authenticated session. Client
-integrations are unaffected either way - they authenticate with a token
-against `admin/api/*` and never load that page.
+The reference is built from the Scribe endpoint files committed in
+`.scribe/endpoints/*.yaml`, read by `Webkul\Support\Services\ApiReference`.
+
+- **`/api/docs`** (Scalar, full reference, every module). **Sign-in only, always**
+  (user decision, 2026-11-25): a guest is redirected to `/admin/login`, and so
+  is a guest asking for `/api/docs.openapi` or `/api/docs.postman`. Served by
+  `Webkul\Support\Http\Controllers\ApiDocsController`; Scribe's own routes are
+  off (`scribe.laravel.add_routes = false`). `SCRIBE_DOCS_PRIVATE` no longer
+  exists. Scalar is loaded from jsDelivr at a pinned version with a
+  Subresource Integrity hash, with telemetry off and no request proxy.
+
+The OpenAPI document and the Postman collection are generated from the
+committed files on first request and kept under `storage/framework/cache/api-docs/`
+(per container, rebuilt when the files change). Nothing runs at deploy, and no
+database or network is needed. Before 2026-11-25 `/api/docs.openapi` read
+`storage/app/private/scribe/openapi.yaml`, which only exists where someone ran
+`scribe:generate`, so production answered 500 (Sentry DEKAERP-26).
+
+### Regenerating after an API change
+
+Run Scribe locally against a seeded development database (its response calls
+send real GET requests to the app inside a transaction), then commit the
+changed `.scribe/` files:
+
+```bash
+docker compose run --rm laravel.test php artisan scribe:generate
+```
+
+That one command is all: `/api/docs` picks up the new files by their content
+hash. The files Scribe also writes
+(`storage/app/private/scribe/*`, `resources/views/scribe/index.blade.php`) are
+unused and ignored. Example responses come from that database, so generate
+against seed data, never a copy of a customer's.

@@ -27,6 +27,7 @@ use Webkul\Support\Database\Dialects\PostgresDialect;
 use Webkul\Support\Http\Controllers\CompanyContextController;
 use Webkul\Support\Http\Middleware\ResolveApiCompany;
 use Webkul\Support\Livewire\QuickNavigation;
+use Webkul\Support\Services\ApiReference;
 use Webkul\Support\Services\CompanyContext;
 use Webkul\Support\Services\GuideLibrary;
 use Webkul\Support\Traits\HasFilamentDefaults;
@@ -227,6 +228,10 @@ class SupportServiceProvider extends PackageServiceProvider
         // Scoped: guide.json is around 620KB, so it is decoded once per request
         // rather than once per page object asking for it.
         $this->app->scoped(GuideLibrary::class);
+
+        // Scoped for the same reason: the endpoint files are hashed and, when
+        // they change, parsed once per request at most.
+        $this->app->scoped(ApiReference::class);
 
         $this->registerLanguageSwitch();
 
