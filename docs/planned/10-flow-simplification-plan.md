@@ -44,6 +44,15 @@
 >   printed on the invoice.
 > - **Priority:** right after the four bug fixes and R-5, before D1–D7.
 >
+> **Paying an invoice, Zoho style (user, 2026-11-26):** Confirm, then a
+> prominent **"Record payment"** button on the confirmed invoice (today's
+> Pay, renamed). *Superseded:* "'Paid now' in the invoice Confirm dialog"
+> (2026-11-25). It is dropped: one click more, but each step does one thing
+> and no payment is recorded by accident. Record payment requires the
+> invoices plugin's payment permission (`create_invoice_payment`); today Pay
+> checks none. Company Admin and the business role keep it.
+> "Convert to invoice" shipped in v1.17.11.
+>
 > **Zoho Books parity, from the first Zoho migration (user decisions,
 > 2026-11-26; switchers from Zoho are the priority market):**
 > - **Z1 Expenses screen**, shipped as a hotfix: amount, date, expense
