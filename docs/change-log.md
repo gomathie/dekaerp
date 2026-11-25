@@ -6,6 +6,26 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
+## 2026-11-25, currency question switched on for TRACE365 (production data)
+
+- **Why:** user, 2026-11-25: "switch it on for trace365", to check the
+  phone bottom sheet on a real company and give TRACE365 the question.
+- **How:** one row in `accounts_company_settings` (company 2,
+  `ask_sale_currency = true`); TRACE365 had no row, so it read the default
+  off. Its base currency is USD and its permitted list GHS, so the question
+  offers USD (company currency) and GHS. Same effect as ticking "Currency
+  question on new invoices" on the company edit page.
+- **Verification:** production, Super Admin test account switched to
+  TRACE365 (session only; no impersonation, nothing saved), new invoice page
+  at 390 × 844: the sheet is anchored to the bottom (y 428–844), full-width
+  48 px Continue and Cancel buttons, USD preselected. Script
+  `phone-sheet2.cjs` (scratchpad).
+- **Sentry:** DEKAERP-26 (`/api/docs.openapi`: `storage/app/private/scribe/openapi.yaml`
+  does not exist) was raised by opening `/api/docs` during this check; the
+  fix is in the Developers/API work (`feature/api-help`).
+- **Rollback:** `update accounts_company_settings set ask_sale_currency =
+  false where company_id = 2`, or untick it on the company edit page.
+
 ## 2026-11-25, the four items v1.17.0 left out (hotfix v1.17.1, production)
 
 *Shipped as hotfix v1.17.1 the same day (user: "releases should be a hot
