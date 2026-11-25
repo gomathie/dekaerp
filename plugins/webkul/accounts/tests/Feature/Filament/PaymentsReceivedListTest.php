@@ -130,3 +130,47 @@ it('shows what a payment has not yet settled', function () {
         ->assertCanRenderTableColumn('unused_amount')
         ->assertCanSeeTableRecords([$over, $exact]);
 });
+
+/**
+ * Plan #9 R-7: the rest of Zoho's cases. A payment no longer matched to any
+ * invoice is unused in full; a draft has no journal entry and shows "-",
+ * not 0.
+ */
+it('shows a payment matched to nothing as wholly unused, and a draft as having no figure', function () {
+    FilamentHelper::actingAs(['view_any_account_payment']);
+
+    $payment = paidInvoiceOn(400, now()->toDateString());
+    $invoice = $payment->invoices()->firstOrFail();
+
+    expect(Payment::query()->withUnusedAmount()->findOrFail($payment->getKey())->unusedAmount())->toBe(0.0);
+
+    AccountHelper::unreconcile($invoice);
+
+    expect(Payment::query()->withUnusedAmount()->findOrFail($payment->getKey())->unusedAmount())->toBe(400.0)
+        ->and((new Payment)->unusedAmount())->toBeNull();
+});
+
+/**
+ * Plan #9 R-7: the unused amount is in the payment's own currency, like the
+ * Amount column beside it, not converted to the company's.
+ */
+it('shows the unused amount of a foreign-currency payment in that currency', function () {
+    AccountHelper::actingAsAdmin();
+
+    $foreign = AccountHelper::otherCurrency();
+    $foreign->rates()->delete();
+    AccountHelper::setCurrencyRate($foreign, 2.0);
+
+    $invoice = AccountHelper::invoice(MoveType::OUT_INVOICE, null, null, ['currency_id' => $foreign->id]);
+    AccountHelper::productLine($invoice, AccountHelper::account('income'), qty: 2, priceUnit: 100);
+    AccountHelper::compute($invoice);
+    AccountHelper::post($invoice);
+    AccountHelper::pay($invoice, 260.0);
+
+    $payment = Payment::query()->withUnusedAmount()
+        ->whereHas('invoices', fn ($query) => $query->whereKey($invoice->getKey()))
+        ->firstOrFail();
+
+    expect($payment->currency_id)->toBe($foreign->id)
+        ->and($payment->unusedAmount())->toBe(60.0);
+});

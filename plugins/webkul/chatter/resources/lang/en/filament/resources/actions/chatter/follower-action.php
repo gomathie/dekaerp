@@ -5,6 +5,7 @@
             'title'               => 'Followers',
             'submit-action-title' => 'Add Follower',
             'tooltip'             => 'Add Follower',
+            'deleted'             => '(deleted)',
 
             'form' => [
                 'fields' => [

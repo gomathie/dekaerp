@@ -5,6 +5,7 @@
             'title'               => 'المتابعون',
             'submit-action-title' => 'إضافة متابع',
             'tooltip'             => 'إضافة متابع',
+            'deleted'             => '(محذوف)',
 
             'form' => [
                 'fields' => [

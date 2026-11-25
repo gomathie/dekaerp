@@ -2186,6 +2186,14 @@ log named):
   company's chart only, never receivable or payable. Test: accounts
   `LineWithoutProductTest`.
 
+• Deleted contacts as followers, 2026-11-25 (UF-031, hotfix v1.17.9):
+  `Follower::partner()` includes trashed partners and `removeFollower()`
+  reads `Partner::withTrashed()`, so an old record's followers panel keeps
+  working. `ChatterNotificationService` must skip `trashed()` partners: its
+  `withoutGlobalScopes()` read also lifts the soft-delete scope, and a deleted
+  contact was mailed. Keep the company scope on `removeFollower()`; lift only
+  soft deletes. Test: chatter `DeletedFollowerTest`.
+
 • Help › Developers tab, 2026-11-25 (user; v1.17.7): for Company Admin,
   Multi-Company Admin and Super Admin only. The rule is
   `ApiReference::allows()`, which uses `GuideAudience::Admin`; do not add a

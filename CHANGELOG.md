@@ -10,6 +10,13 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.17.9 — 2026-11-25
+
+### Fixes
+
+- Records followed by a contact that was later deleted now open normally. The contact shows as "(deleted)" in the followers list and can be removed.
+- Deleted contacts no longer receive emails or notifications about records they used to follow.
+
 # CHANGELOG — v1.17.8 — 2026-11-25
 
 ### Features

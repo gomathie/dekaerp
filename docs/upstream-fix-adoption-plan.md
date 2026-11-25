@@ -7,7 +7,7 @@
 > **Common v1.5 baseline:** `8409fde`  
 > **Upstream reviewed:** `aureus/master` at `36744b597` *(superseded: latest
 > review 2026-11-25, `master` at `34bf04cb4` plus open PRs; see the Upstream
-> Review Log. Open findings: UF-029, UF-030, UF-031)*  
+> Review Log. Open finding: UF-029; UF-030 fixed in v1.17.6, UF-031 in v1.17.9)*  
 > **Package A implemented:** 2026-09-20; focused local verification complete, first remote CI run pending
 > **Next review due:** 2026-10-27, or earlier when a trigger below occurs
 
@@ -1235,12 +1235,12 @@ invoice, the posted line keeps its account.
 
 **Decision:** Proposed P2 (2026-11-25)  
 **Upstream reference:** open PR #1703 (not merged)  
-**Local state:** **Open, present locally.** `Chatter\Models\Follower::partner()`
-does not include soft-deleted partners, and `ChatterPanel::removeFollower()`
-uses `Partner::findOrFail()`. A record followed by a contact that was later
-deleted fails when its followers are listed or that follower is removed.
-Fix: `withTrashed()` on the relation and the lookup, show "(deleted)", and
-skip deleted contacts in `ChatterNotificationService` mail and mentions.
+**Local state:** **Fixed 2026-11-25 in hotfix v1.17.9** (commit `d782ae079`,
+chatter 1.9.1). `Follower::partner()` and `ChatterPanel::removeFollower()`
+now include soft-deleted partners, the list shows "(deleted)", and
+`ChatterNotificationService` skips deleted contacts (it was also mailing
+them, a local finding beyond the upstream PR). Test: chatter
+`DeletedFollowerTest`. *Superseded:* "Open, present locally."
 
 ### UF-032 - Open upstream fixes to watch (not adopted)
 

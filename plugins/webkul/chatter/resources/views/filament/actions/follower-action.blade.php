@@ -1,8 +1,13 @@
 <div class="max-h-[400px] w-full overflow-y-auto text-gray-900 dark:text-gray-100">
-    @forelse($record->followers as $follower)
+    {{-- UF-031: a follower row whose contact row is gone entirely is skipped; a deleted (archived) contact is shown greyed. --}}
+    @forelse($record->followers->filter(fn ($follower) => $follower->partner !== null) as $follower)
+        @php($isDeleted = $follower->partner->trashed())
         <div
             wire:key="non-follower-{{ $follower->partner->id }}"
-            class="group flex items-center justify-between rounded-lg p-2 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/60"
+            @class([
+                'group flex items-center justify-between rounded-lg p-2 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/60',
+                'opacity-60' => $isDeleted,
+            ])
         >
             <div class="flex items-center gap-3">
                 <x-filament-panels::avatar.user
@@ -10,7 +15,16 @@
                     :user="$follower->partner"
                 />
                 <div>
-                    <h3 class="font-medium text-gray-900 dark:text-gray-100">{{ $follower->partner->name }}</h3>
+                    <h3 @class([
+                        'font-medium',
+                        'text-gray-900 dark:text-gray-100' => ! $isDeleted,
+                        'text-gray-500 dark:text-gray-400' => $isDeleted,
+                    ])>
+                        {{ $follower->partner->name }}
+                        @if ($isDeleted)
+                            <span class="text-sm font-normal">{{ __('chatter::filament/resources/actions/chatter/follower-action.setup.deleted') }}</span>
+                        @endif
+                    </h3>
                     <p class="text-sm text-gray-500 dark:text-gray-400">{{ $follower->partner->email }}</p>
                 </div>
             </div>
