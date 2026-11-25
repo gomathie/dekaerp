@@ -19,8 +19,13 @@
 > explanation. Sales average "—" is built but waits for the TRACE365 Sales
 > headline hotfix (exact amounts below 100,000; count and average follow
 > invoiced sales). Still open: DB-4 browser check; DB-7 rules 4 and 5,
-> revenue split by currency and "Show in USD"; and whether the Accounting
-> overview page follows `DashboardAccess` (needs the user).
+> revenue split by currency and "Show in USD". *Decided 2026-11-25 (user):*
+> the Accounting overview page follows `DashboardAccess` like the other
+> dashboards (`can_see_dashboard` off hides it; `can_see_money_figures` off
+> hides its amounts); queued as a small fix. Also queued (user, 2026-11-25):
+> load a user's permissions for the company once per request instead of one
+> query per permission (Sentry DEKAERP-27/28: Quotations 132 queries, 2.8 s),
+> keeping the per-request memory and its flush rule in AGENTS.md.
 > **Method:** the `dashboard-design` workflow in the shared library
 > (`workflows/dashboard-design.md`), adapted 2026-11-18 from the MIT skill
 > `abdiraimov-otabek/dashboard-design-skill`. Nothing was installed.
