@@ -50,6 +50,8 @@ return [
         'bills-due-soon'   => '{1} 1 bill due this week|[2,*] :count bills due this week',
         'old-quotations'   => '{1} 1 quotation waiting over 7 days|[2,*] :count quotations waiting over 7 days',
         'rfqs-to-approve'  => '{1} 1 purchase to approve|[2,*] :count purchases to approve',
+        'draft-invoices'   => '{1} 1 draft invoice to confirm|[2,*] :count draft invoices to confirm',
+        'draft-invoices-amount' => '{1} 1 draft invoice to confirm (:amount)|[2,*] :count draft invoices to confirm (:amount)',
     ],
 
     'actions' => [

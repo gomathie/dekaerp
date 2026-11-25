@@ -50,6 +50,8 @@ return [
         'bills-due-soon'   => '{1} 1 conta vence esta semana|[2,*] :count contas vencem esta semana',
         'old-quotations'   => '{1} 1 cotação aguardando há mais de 7 dias|[2,*] :count cotações aguardando há mais de 7 dias',
         'rfqs-to-approve'  => '{1} 1 compra para aprovar|[2,*] :count compras para aprovar',
+        'draft-invoices'   => '{1} 1 fatura em rascunho para confirmar|[2,*] :count faturas em rascunho para confirmar',
+        'draft-invoices-amount' => '{1} 1 fatura em rascunho para confirmar (:amount)|[2,*] :count faturas em rascunho para confirmar (:amount)',
     ],
 
     'actions' => [

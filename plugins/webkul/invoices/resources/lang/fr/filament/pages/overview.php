@@ -50,6 +50,8 @@ return [
         'bills-due-soon'   => '{1} 1 facture fournisseur à payer cette semaine|[2,*] :count factures fournisseur à payer cette semaine',
         'old-quotations'   => '{1} 1 devis en attente depuis plus de 7 jours|[2,*] :count devis en attente depuis plus de 7 jours',
         'rfqs-to-approve'  => '{1} 1 achat à approuver|[2,*] :count achats à approuver',
+        'draft-invoices'   => '{1} 1 facture brouillon à confirmer|[2,*] :count factures brouillon à confirmer',
+        'draft-invoices-amount' => '{1} 1 facture brouillon à confirmer (:amount)|[2,*] :count factures brouillon à confirmer (:amount)',
     ],
 
     'actions' => [
