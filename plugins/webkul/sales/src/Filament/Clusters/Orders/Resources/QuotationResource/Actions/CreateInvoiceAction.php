@@ -10,10 +10,13 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Support\Facades\FilamentView;
 use Illuminate\Support\Arr;
+use Livewire\Component;
 use Webkul\Sale\Enums\AdvancedPayment;
 use Webkul\Sale\Enums\InvoiceStatus;
 use Webkul\Sale\Facades\SaleOrder as SalesFacade;
+use Webkul\Sale\Filament\Clusters\Orders\Resources\OrderInvoiceResource;
 use Webkul\Sale\Models\Order;
 
 class CreateInvoiceAction extends Action
@@ -97,5 +100,25 @@ class CreateInvoiceAction extends Action
                     ->success()
                     ->send();
             });
+    }
+
+    /**
+     * Opens the order's newest invoice - the one a regular invoicing run has
+     * just attached - on its edit page under the order, where the Invoices
+     * tab of the order links too. Read through the scoped relation: if the
+     * user may not see it, they stay where they are rather than land on a 404.
+     */
+    public static function openLatestInvoice(Order $order, Component $livewire): void
+    {
+        $invoice = $order->invoices()->orderByDesc('accounts_account_moves.id')->first();
+
+        if (! $invoice) {
+            return;
+        }
+
+        $livewire->redirect(
+            OrderInvoiceResource::getUrl('edit', ['sales_order' => $order, 'record' => $invoice]),
+            navigate: FilamentView::hasSpaMode(),
+        );
     }
 }
