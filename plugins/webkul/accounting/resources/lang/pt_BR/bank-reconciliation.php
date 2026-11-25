@@ -5,8 +5,9 @@ return [
     'entry-label'    => 'Linha de extrato bancário',
 
     'fields' => [
-        'date'   => 'data',
-        'amount' => 'valor',
+        'date'    => 'data',
+        'amount'  => 'valor',
+        'balance' => 'saldo',
     ],
 
     'errors' => [

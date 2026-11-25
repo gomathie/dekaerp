@@ -5,8 +5,9 @@ return [
     'entry-label'    => 'Ligne de relevé bancaire',
 
     'fields' => [
-        'date'   => 'date',
-        'amount' => 'montant',
+        'date'    => 'date',
+        'amount'  => 'montant',
+        'balance' => 'solde',
     ],
 
     'errors' => [

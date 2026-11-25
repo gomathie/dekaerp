@@ -10,6 +10,17 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.17.2 — 2026-11-25
+
+### Improvements
+
+- Bank Reconciliation now shows a balance check for each cash, bank and Mobile Money account: the statement balance, the balance in the books, the difference, and whether the account is clean.
+- "Match all suggested" matches, in one step, every bank line that has exactly one matching payment.
+- Each bank account remembers the columns of its last statement import, so the next import is already filled in. You can also type the statement's closing balance.
+- "Cash at bank" on the dashboard now says it counts reconciled money only, and opens Bank Reconciliation.
+- The Projects card no longer shows "0% done" when there are no tasks.
+- The guide says which way to start a sale: a quotation first, or an invoice straight away.
+
 # CHANGELOG — v1.17.1 — 2026-11-25
 
 ### Improvements

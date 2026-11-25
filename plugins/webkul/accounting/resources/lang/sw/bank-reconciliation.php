@@ -5,8 +5,9 @@ return [
     'entry-label'    => 'Mstari wa taarifa ya benki',
 
     'fields' => [
-        'date'   => 'tarehe',
-        'amount' => 'kiasi',
+        'date'    => 'tarehe',
+        'amount'  => 'kiasi',
+        'balance' => 'salio',
     ],
 
     'errors' => [

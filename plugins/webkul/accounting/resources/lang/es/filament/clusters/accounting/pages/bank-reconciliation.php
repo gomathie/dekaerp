@@ -6,15 +6,18 @@ return [
     ],
 
     'import' => [
-        'label'       => 'Importar extracto',
-        'description' => 'Suba el archivo CSV de su banco. Indique el número de cada columna, contando desde 1 a la izquierda.',
-        'journal'     => 'Cuenta bancaria',
-        'file'        => 'Archivo del extracto (CSV)',
-        'name'        => 'Nombre del extracto',
-        'date-format' => 'Formato de fecha',
-        'has-header'  => 'La primera línea es un encabezado',
-        'amount-help' => 'O déjelo vacío e indique las columnas de entradas y salidas.',
-        'done'        => ':count líneas importadas.',
+        'label'                => 'Importar extracto',
+        'description'          => 'Suba el archivo CSV de su banco. Indique el número de cada columna, contando desde 1 a la izquierda. Cada cuenta bancaria recuerda sus columnas para la próxima vez; si el banco mueve una columna, se vuelve a encontrar por su encabezado.',
+        'journal'              => 'Cuenta bancaria',
+        'file'                 => 'Archivo del extracto (CSV)',
+        'name'                 => 'Nombre del extracto',
+        'date-format'          => 'Formato de fecha',
+        'has-header'           => 'La primera línea es un encabezado',
+        'amount-help'          => 'O déjelo vacío e indique las columnas de entradas y salidas.',
+        'balance-help'         => 'Opcional: el saldo acumulado. Su valor del último día es el saldo final.',
+        'closing-balance'      => 'Saldo final del extracto',
+        'closing-balance-help' => 'Opcional. Sin él ni una columna de saldo, el saldo final es el del extracto anterior más estas líneas.',
+        'done'                 => ':count líneas importadas.',
 
         'columns' => [
             'date'      => 'Columna de fecha',
@@ -24,6 +27,33 @@ return [
             'money_out' => 'Columna de salidas',
             'partner'   => 'Columna de cliente o proveedor',
             'reference' => 'Columna de referencia',
+            'balance'   => 'Columna de saldo',
+        ],
+    ],
+
+    'match-all' => [
+        'label'       => 'Conciliar todas las sugerencias (:count)',
+        'heading'     => '¿Conciliar todas las líneas sugeridas?',
+        'description' => '{0} Ninguna línea tiene ahora un único pago sugerido.|{1} :count línea tiene un único pago sugerido del mismo importe. Se conciliará con él. Las demás líneas quedan como están.|[2,*] :count líneas tienen un único pago sugerido del mismo importe. Cada una se conciliará con su pago. Las demás líneas quedan como están.',
+        'submit'      => 'Conciliar',
+        'done'        => '{0} No se concilió ninguna línea.|{1} :count línea conciliada.|[2,*] :count líneas conciliadas.',
+        'left'        => '{1} :count línea quedó abierta: su periodo está cerrado o cambió mientras tanto.|[2,*] :count líneas quedaron abiertas: su periodo está cerrado o cambiaron mientras tanto.',
+    ],
+
+    'balances' => [
+        'heading'      => 'Control de saldo por cuenta',
+        'statement'    => 'Saldo del extracto',
+        'book'         => 'Saldo contable',
+        'difference'   => 'Diferencia',
+        'up-to'        => 'Extracto hasta el :date',
+        'no-statement' => 'Aún no se ha importado ningún extracto',
+        'explain'      => 'Saldo del extracto: el saldo final del último extracto importado. Saldo contable: lo que el libro mayor tiene en la cuenta; un pago cuenta cuando se concilia con una línea del extracto.',
+
+        'state' => [
+            'clean'      => 'Al día',
+            'to-match'   => '{1} :count por conciliar|[2,*] :count por conciliar',
+            'difference' => 'Diferencia por revisar',
+            'none'       => 'Sin extracto',
         ],
     ],
 

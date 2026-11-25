@@ -110,8 +110,20 @@ class OverviewCard
         ]] : [];
     }
 
+    /**
+     * "Cash at bank" counts reconciled money only: a payment waits in the
+     * outstanding account until its statement line is matched, so the
+     * figure read GHS 0 right after a payment (dashboard plan DB-8, plan #9
+     * R-4). The figure therefore opens the reconciliation page, where that
+     * is fixed, and the cash flow report only for someone who cannot open
+     * reconciliation. Each link only when its page opens for this user.
+     */
     public static function cashUrl(): ?string
     {
+        if (BankReconciliation::canAccess()) {
+            return BankReconciliation::getUrl();
+        }
+
         return CashFlow::canAccess() ? CashFlow::getUrl() : null;
     }
 

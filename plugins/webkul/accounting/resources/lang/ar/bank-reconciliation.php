@@ -5,8 +5,9 @@ return [
     'entry-label'    => 'سطر كشف بنكي',
 
     'fields' => [
-        'date'   => 'التاريخ',
-        'amount' => 'المبلغ',
+        'date'    => 'التاريخ',
+        'amount'  => 'المبلغ',
+        'balance' => 'الرصيد',
     ],
 
     'errors' => [

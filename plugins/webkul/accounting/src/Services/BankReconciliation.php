@@ -13,6 +13,7 @@ use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Enums\PaymentStatus;
 use Webkul\Account\Enums\PaymentType;
+use Webkul\Account\Exceptions\PeriodLockedException;
 use Webkul\Account\Facades\Account as AccountFacade;
 use Webkul\Account\Models\Account;
 use Webkul\Account\Models\BankStatement;
@@ -61,42 +62,84 @@ class BankReconciliation
         protected MoveWorkflow $workflow,
     ) {}
 
+    /** The mapped fields remembered per journal (plan #9 R-4), zero-based. */
+    public const COLUMN_FIELDS = ['date', 'label', 'amount', 'money_in', 'money_out', 'partner', 'reference', 'balance'];
+
     /**
      * Import a CSV statement into a bank or cash journal.
      *
-     * @param  array{date: int, label: int, amount?: int|null, money_in?: int|null, money_out?: int|null, partner?: int|null, reference?: int|null, date_format: string, has_header?: bool}  $map  zero-based column numbers
+     * The closing balance (plan #9 R-4) is, in this order: the one typed from
+     * the statement, the balance column on the statement's last day, or,
+     * when the file gives neither, the previous statement's closing balance
+     * plus this statement's lines. The balance check compares it with the
+     * books, so a typed or exported balance is preferred over arithmetic.
+     *
+     * @param  array{date: int, label: int, amount?: int|null, money_in?: int|null, money_out?: int|null, partner?: int|null, reference?: int|null, balance?: int|null, date_format: string, has_header?: bool}  $map  zero-based column numbers
      */
-    public function import(Journal $journal, string $path, array $map, ?string $name = null): BankStatement
+    public function import(Journal $journal, string $path, array $map, ?string $name = null, ?float $closingBalance = null): BankStatement
     {
         $journal = $this->bankJournal($journal->getKey());
 
         $format = in_array($map['date_format'] ?? null, self::DATE_FORMATS, true) ? $map['date_format'] : 'Y-m-d';
 
-        $rows = $this->readRows($path, (bool) ($map['has_header'] ?? true));
+        $hasHeader = (bool) ($map['has_header'] ?? true);
+
+        [$header, $rows] = $this->readRows($path, $hasHeader);
+
+        $map = $this->followMovedColumns($journal, $map, $header);
 
         $lines = [];
+        $balances = [];
+        $numbers = [];
 
         foreach ($rows as $number => $row) {
-            $lines[] = $this->parseRow($row, $number, $map, $format);
+            $parsed = $this->parseRow($row, $number, $map, $format);
+
+            $balances[] = $parsed['balance'];
+            $numbers[] = $number;
+
+            unset($parsed['balance']);
+
+            $lines[] = $parsed;
         }
 
         if ($lines === []) {
             throw CannotReconcile::emptyFile();
         }
 
-        return DB::transaction(function () use ($journal, $lines, $name): BankStatement {
+        if ($closingBalance === null && isset($map['balance'])) {
+            $closingBalance = $this->closingFromColumn($lines, $balances, $numbers);
+        }
+
+        return DB::transaction(function () use ($journal, $lines, $name, $closingBalance, $map, $header, $hasHeader, $format): BankStatement {
+            // Locked so two imports into one account cannot both start from
+            // the same previous closing balance.
+            $journal = Journal::query()->whereKey($journal->id)->lockForUpdate()->firstOrFail();
+
             $dates = collect($lines)->pluck('date');
+            $movement = round(collect($lines)->sum('amount'), 4);
+
+            $previousClosing = (float) (BankStatement::query()
+                ->where('company_id', $journal->company_id)
+                ->where('journal_id', $journal->id)
+                ->orderByDesc('date')
+                ->orderByDesc('id')
+                ->value('balance_end_real') ?? 0);
+
+            $closing = $closingBalance !== null ? round($closingBalance, 4) : round($previousClosing + $movement, 4);
 
             $statement = BankStatement::create([
-                'company_id'   => $journal->company_id,
-                'journal_id'   => $journal->id,
-                'name'         => $name ?: __('accounting::bank-reconciliation.statement-name', [
+                'company_id'       => $journal->company_id,
+                'journal_id'       => $journal->id,
+                'name'             => $name ?: __('accounting::bank-reconciliation.statement-name', [
                     'from' => $dates->min()->toDateString(),
                     'to'   => $dates->max()->toDateString(),
                 ]),
-                'date'         => $dates->max()->toDateString(),
-                'balance_end'  => round(collect($lines)->sum('amount'), 4),
-                'is_completed' => false,
+                'date'             => $dates->max()->toDateString(),
+                'balance_start'    => round($closing - $movement, 4),
+                'balance_end'      => $closing,
+                'balance_end_real' => $closing,
+                'is_completed'     => false,
             ]);
 
             foreach ($lines as $sort => $line) {
@@ -108,8 +151,216 @@ class BankReconciliation
                 ]);
             }
 
+            $this->rememberColumns($journal, $map, $header, $hasHeader, $format);
+
             return $statement;
         });
+    }
+
+    /**
+     * The column mapping the last successful import into this journal used,
+     * to pre-fill the next one; null when there is none yet. Read through
+     * bankJournal(), so a journal of a company the user is not working in is
+     * refused rather than answered.
+     *
+     * @return array{columns: array<string, int>, headers: array<string, string>, date_format: string, has_header: bool}|null
+     */
+    public function rememberedColumns(Journal|int $journal): ?array
+    {
+        $journal = $this->bankJournal($journal instanceof Journal ? $journal->getKey() : $journal);
+
+        $stored = $journal->statement_import_columns;
+
+        if (! is_array($stored) || ! is_array($stored['columns'] ?? null)) {
+            return null;
+        }
+
+        return [
+            'columns'     => array_map('intval', array_intersect_key($stored['columns'], array_flip(self::COLUMN_FIELDS))),
+            'headers'     => array_map('strval', array_intersect_key((array) ($stored['headers'] ?? []), array_flip(self::COLUMN_FIELDS))),
+            'date_format' => in_array($stored['date_format'] ?? null, self::DATE_FORMATS, true) ? $stored['date_format'] : 'Y-m-d',
+            'has_header'  => (bool) ($stored['has_header'] ?? true),
+        ];
+    }
+
+    /**
+     * Balance check per account (plan #9 R-4): for every bank and cash
+     * journal of the current company, the closing balance of its latest
+     * statement, the balance of its bank account in the posted ledger, the
+     * difference, and how many lines are still unmatched. Five queries for
+     * any number of journals.
+     *
+     * State: "none" without a statement; "to-match" while lines are open;
+     * "clean" when nothing is open and the two balances agree; "difference"
+     * when nothing is open but they still disagree (an opening balance never
+     * booked, or a payment posted straight to the bank twice).
+     *
+     * @return list<array{journal: Journal, currency: ?string, statement: ?float, book: float, difference: ?float, date: ?string, to_match: int, state: string}>
+     */
+    public function balances(): array
+    {
+        $this->authorize();
+
+        $companyId = app(CompanyContext::class)->currentId();
+
+        if (! $companyId || ! PluginEntitlement::enabledForCompany('accounting', (int) $companyId)) {
+            return [];
+        }
+
+        $journals = Journal::query()
+            ->with(['currency', 'company.currency'])
+            ->where('company_id', $companyId)
+            ->whereIn('type', [JournalType::BANK, JournalType::CASH])
+            ->orderBy('type')
+            ->orderBy('name')
+            ->get();
+
+        if ($journals->isEmpty()) {
+            return [];
+        }
+
+        $journalIds = $journals->modelKeys();
+
+        $latest = BankStatement::query()
+            ->where('company_id', $companyId)
+            ->whereIn('journal_id', $journalIds)
+            ->orderByDesc('date')
+            ->orderByDesc('id')
+            ->get(['id', 'journal_id', 'date', 'balance_end_real'])
+            ->unique('journal_id')
+            ->keyBy('journal_id');
+
+        $open = BankStatementLine::query()
+            ->where('company_id', $companyId)
+            ->whereIn('journal_id', $journalIds)
+            ->where('is_reconciled', false)
+            ->groupBy('journal_id')
+            ->selectRaw('journal_id, COUNT(*) AS open_lines')
+            ->pluck('open_lines', 'journal_id');
+
+        // A raw ledger read, filtered by company explicitly: through the
+        // Move model, OwnershipScope would hide other users' entries from an
+        // "individual" user, and the book balance would depend on who looks.
+        $ledger = DB::table('accounts_account_move_lines')
+            ->join('accounts_account_moves', 'accounts_account_moves.id', '=', 'accounts_account_move_lines.move_id')
+            ->where('accounts_account_moves.state', MoveState::POSTED->value)
+            ->where('accounts_account_moves.company_id', $companyId)
+            ->whereIn('accounts_account_move_lines.account_id', $journals->pluck('default_account_id')->filter()->unique()->all())
+            ->groupBy('accounts_account_move_lines.account_id', 'accounts_account_move_lines.currency_id')
+            ->selectRaw('accounts_account_move_lines.account_id, accounts_account_move_lines.currency_id, COALESCE(SUM(accounts_account_move_lines.balance), 0) AS balance, COALESCE(SUM(accounts_account_move_lines.amount_currency), 0) AS amount_currency')
+            ->get()
+            ->groupBy('account_id');
+
+        return $journals->map(function (Journal $journal) use ($latest, $open, $ledger): array {
+            $companyCurrencyId = $journal->company?->currency_id;
+            $foreign = $journal->currency_id && $journal->currency_id !== $companyCurrencyId;
+
+            $rows = $ledger->get($journal->default_account_id, collect());
+
+            // A foreign-currency account is read in its own currency, so it
+            // compares with a statement in that currency.
+            $book = $foreign
+                ? (float) $rows->where('currency_id', $journal->currency_id)->sum('amount_currency')
+                : (float) $rows->sum('balance');
+
+            $statement = $latest->get($journal->id);
+            $toMatch = (int) ($open[$journal->id] ?? 0);
+
+            $statementBalance = $statement ? round((float) $statement->balance_end_real, 2) : null;
+            $difference = $statementBalance !== null ? round($statementBalance - round($book, 2), 2) : null;
+
+            $state = match (true) {
+                $statement === null       => 'none',
+                $toMatch > 0              => 'to-match',
+                abs($difference) < 0.005  => 'clean',
+                default                   => 'difference',
+            };
+
+            return [
+                'journal'    => $journal,
+                'currency'   => ($foreign ? $journal->currency : $journal->company?->currency)?->name,
+                'statement'  => $statementBalance,
+                'book'       => round($book, 2),
+                'difference' => $difference,
+                'date'       => $statement?->date ? Carbon::parse($statement->date)->toDateString() : null,
+                'to_match'   => $toMatch,
+                'state'      => $state,
+            ];
+        })->values()->all();
+    }
+
+    /**
+     * Each open line that has exactly one suggested payment, with that
+     * payment (plan #9 R-4, "Match all suggested"). The suggestion rule is
+     * suggestions(), not a second copy: the query below only skips lines
+     * that have no payment of that amount in their journal at all, which
+     * suggestions() would refuse anyway. A payment that is the only
+     * suggestion of two lines is left out for both: which line it belongs
+     * to is a decision for a person.
+     *
+     * @return Collection<int, array{line: BankStatementLine, payment: Payment}>
+     */
+    public function singleSuggestions(): Collection
+    {
+        $this->authorize();
+
+        $lines = BankStatementLine::query()
+            ->whereIn('company_id', app(CompanyContext::class)->activeIds())
+            ->where('is_reconciled', false)
+            ->whereExists(fn ($query) => $query
+                ->selectRaw('1')
+                ->from('accounts_account_payments')
+                ->whereColumn('accounts_account_payments.company_id', 'accounts_bank_statement_lines.company_id')
+                ->whereColumn('accounts_account_payments.journal_id', 'accounts_bank_statement_lines.journal_id')
+                ->whereRaw('ABS(accounts_bank_statement_lines.amount) BETWEEN accounts_account_payments.amount - 0.005 AND accounts_account_payments.amount + 0.005'))
+            ->orderBy('date')
+            ->orderBy('id')
+            ->get();
+
+        $pairs = collect();
+
+        foreach ($lines as $line) {
+            try {
+                $suggested = $this->suggestions($line, 2);
+            } catch (CannotReconcile) {
+                continue;
+            }
+
+            if ($suggested->count() === 1) {
+                $pairs->push(['line' => $line, 'payment' => $suggested->first()]);
+            }
+        }
+
+        $shared = $pairs->countBy(fn (array $pair): int => $pair['payment']->id)->filter(fn (int $count): bool => $count > 1);
+
+        return $pairs->reject(fn (array $pair): bool => $shared->has($pair['payment']->id))->values();
+    }
+
+    /**
+     * Match every line singleSuggestions() returns, each through
+     * matchPayment() and so through its company, permission and lock-date
+     * guards. One transaction per line, not one for all: a line in a locked
+     * period, or one someone matched meanwhile, is left open and counted,
+     * and does not undo the matches that were valid.
+     *
+     * @return array{matched: int, left: int}
+     */
+    public function matchAllSuggested(): array
+    {
+        $matched = 0;
+        $left = 0;
+
+        foreach ($this->singleSuggestions() as $pair) {
+            try {
+                $this->matchPayment($pair['line'], $pair['payment']);
+
+                $matched++;
+            } catch (CannotReconcile|PeriodLockedException) {
+                $left++;
+            }
+        }
+
+        return ['matched' => $matched, 'left' => $left];
     }
 
     /**
@@ -421,7 +672,110 @@ class BankReconciliation
     }
 
     /**
-     * @return array<int, array<int, string>> row number (1-based, as the user sees it) => cells
+     * When the user kept a remembered column number and this file's header
+     * row has that column's remembered header name somewhere else, use the
+     * column where the name now is: banks add or reorder columns. Stored
+     * names are compared with header cells only, never with data rows, and
+     * a number the user changed is left as they typed it.
+     *
+     * @param  array<string, mixed>  $map
+     * @param  list<string>  $header
+     * @return array<string, mixed>
+     */
+    protected function followMovedColumns(Journal $journal, array $map, array $header): array
+    {
+        $remembered = $this->rememberedColumns($journal);
+
+        if ($remembered === null || $header === [] || ! ($map['has_header'] ?? true)) {
+            return $map;
+        }
+
+        $positions = [];
+
+        foreach ($header as $index => $cell) {
+            $positions[$this->headerKey($cell)] ??= $index;
+        }
+
+        foreach ($remembered['headers'] as $field => $name) {
+            $key = $this->headerKey($name);
+
+            if ($key !== ''
+                && isset($map[$field], $remembered['columns'][$field], $positions[$key])
+                && $map[$field] === $remembered['columns'][$field]) {
+                $map[$field] = $positions[$key];
+            }
+        }
+
+        return $map;
+    }
+
+    /**
+     * Store this import's mapping on the journal for next time. Called inside
+     * the import's transaction on the journal row it locked, which
+     * bankJournal() already checked belongs to the user's companies. Header
+     * names are kept short: they are only ever compared with a header row.
+     *
+     * @param  array<string, mixed>  $map
+     * @param  list<string>  $header
+     */
+    protected function rememberColumns(Journal $journal, array $map, array $header, bool $hasHeader, string $format): void
+    {
+        $columns = [];
+        $headers = [];
+
+        foreach (self::COLUMN_FIELDS as $field) {
+            if (! isset($map[$field])) {
+                continue;
+            }
+
+            $columns[$field] = (int) $map[$field];
+
+            if ($hasHeader && filled($header[$map[$field]] ?? null)) {
+                $headers[$field] = mb_substr($header[$map[$field]], 0, 100);
+            }
+        }
+
+        // Quietly: only this column changes, and the journal's own saving
+        // hooks (sequences, consistency checks) have nothing to do with it.
+        $journal->forceFill(['statement_import_columns' => [
+            'columns'     => $columns,
+            'headers'     => $headers,
+            'date_format' => $format,
+            'has_header'  => $hasHeader,
+        ]])->saveQuietly();
+    }
+
+    protected function headerKey(string $value): string
+    {
+        return mb_strtolower(trim(preg_replace('/\s+/u', ' ', $value) ?? ''));
+    }
+
+    /**
+     * The balance column on the statement's last day: the last row of that
+     * day in file order, or the first when the file lists the newest first.
+     *
+     * @param  list<array{date: Carbon}>  $lines
+     * @param  list<?float>  $balances
+     * @param  list<int>  $numbers  the file row numbers, as the user sees them
+     */
+    protected function closingFromColumn(array $lines, array $balances, array $numbers): float
+    {
+        $lastDay = collect($lines)->max('date');
+        $newestFirst = $lines[0]['date']->gt($lines[count($lines) - 1]['date']);
+
+        $candidates = array_keys(array_filter($lines, fn (array $line): bool => $line['date']->equalTo($lastDay)));
+
+        $index = $newestFirst ? min($candidates) : max($candidates);
+
+        if ($balances[$index] === null) {
+            throw CannotReconcile::badRow($numbers[$index], __('accounting::bank-reconciliation.fields.balance'));
+        }
+
+        return $balances[$index];
+    }
+
+    /**
+     * @return array{0: list<string>, 1: array<int, array<int, string>>} the header cells (empty without a header) and row number (1-based, as the user sees it) => cells
      */
     protected function readRows(string $path, bool $hasHeader): array
     {
@@ -432,6 +786,7 @@ class BankReconciliation
         }
 
         $rows = [];
+        $header = [];
         $number = 0;
 
         try {
@@ -451,6 +806,8 @@ class BankReconciliation
                 $number++;
 
                 if ($number === 1 && $hasHeader) {
+                    $header = array_map(fn ($cell): string => trim((string) $cell, " \t\n\r\0\x0B\xEF\xBB\xBF"), $cells);
+
                     continue;
                 }
 
@@ -468,12 +825,12 @@ class BankReconciliation
             fclose($handle);
         }
 
-        return $rows;
+        return [$header, $rows];
     }
 
     /**
      * @param  array<int, string>  $row
-     * @return array{date: Carbon, amount: float, partner_name: ?string, payment_reference: ?string}
+     * @return array{date: Carbon, amount: float, partner_name: ?string, payment_reference: ?string, balance: ?float}
      */
     protected function parseRow(array $row, int $number, array $map, string $format): array
     {
@@ -503,11 +860,22 @@ class BankReconciliation
 
         $label = $cell($map['label']);
 
+        // A running balance is optional on every row (some banks fill it only
+        // at day end); one that is there but unreadable is refused, so a
+        // wrong column number does not become a wrong closing balance.
+        $balanceCell = $cell($map['balance'] ?? null);
+        $balance = $balanceCell === null ? null : $this->number($balanceCell);
+
+        if ($balanceCell !== null && $balance === null) {
+            throw CannotReconcile::badRow($number, __('accounting::bank-reconciliation.fields.balance'));
+        }
+
         return [
             'date'              => $date,
             'amount'            => round($amount, 4),
             'partner_name'      => ($partner = $cell($map['partner'] ?? null)) !== null ? mb_substr($partner, 0, 255) : null,
             'payment_reference' => ($ref = $cell($map['reference'] ?? null) ?? $label) !== null ? mb_substr($ref, 0, 255) : null,
+            'balance'           => $balance,
         ];
     }
 

@@ -6,14 +6,20 @@ use Webkul\Account\Enums\AccountType;
 use Webkul\Account\Models\Account;
 use Webkul\Account\Models\BankStatement;
 use Webkul\Account\Models\BankStatementLine;
+use Webkul\Accounting\Filament\Clusters\Accounting\Pages\BankReconciliation as BankReconciliationPage;
+use Webkul\Accounting\Filament\Clusters\Reporting\Pages\CashFlow;
 use Webkul\Accounting\Filament\OverviewCard;
 use Webkul\Accounting\Filament\Widgets\AccountingHeadlineWidget;
+use Webkul\Accounting\Filament\Widgets\JournalChartsWidget;
+use Webkul\Accounting\Services\BankReconciliation;
 use Webkul\Invoice\Filament\Overview\OverviewRegistry;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Package;
+use Webkul\Support\Models\Company;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/FilamentHelper.php';
+require_once __DIR__.'/../../../../support/tests/Helpers/DashboardWidgetGuardHelper.php';
 require_once __DIR__.'/../../../../accounts/tests/Helpers/AccountHelper.php';
 
 /**
@@ -72,6 +78,44 @@ it('shows the card and the section only to users who may open the accounting ove
 
     expect(OverviewCard::visible())->toBeTrue()
         ->and(OverviewCard::data()['items'])->toHaveCount(3);
+});
+
+/**
+ * Plan #9 R-4 and dashboard plan DB-8 (2026-11-25): "Cash at bank" counts
+ * reconciled money only, says so, and opens the reconciliation page - but
+ * only for someone who may open it.
+ */
+it('says cash at bank is reconciled money and links it to reconciliation only for someone who may reconcile', function () {
+    FilamentHelper::actingAs(['page_accounting_overview', BankReconciliation::PERMISSION]);
+
+    $cash = app(AccountingHeadlineWidget::class)->headlineStats([])[0];
+
+    expect($cash->getLabel())->toBe(__('accounting::filament/overview-card.cash'))
+        ->and((string) $cash->getDescription())->toBe(__('accounting::filament/overview-card.cash-hint'))
+        ->and(OverviewCard::cashUrl())->toBe(BankReconciliationPage::getUrl());
+
+    FilamentHelper::actingAs(['page_accounting_overview', 'page_accounting_cash_flow']);
+
+    expect(BankReconciliationPage::canAccess())->toBeFalse()
+        ->and(OverviewCard::cashUrl())->toBe(CashFlow::getUrl());
+
+    FilamentHelper::actingAs(['page_accounting_overview']);
+
+    expect(OverviewCard::cashUrl())->toBeNull();
+});
+
+/**
+ * Dashboard plan DB-3 (2026-11-25, the module the 2026-11-23 sweep left
+ * out): the Accounting overview's journal cards are absent without the
+ * page permission or once Accounting is off for the company.
+ */
+it('shows the journal cards only with the overview permission and the module', function () {
+    FilamentHelper::bootAdminPanel();
+
+    $company = Company::factory()->create();
+
+    expect(DashboardWidgetGuardHelper::visibility([JournalChartsWidget::class], 'accounting', $company, ['page_accounting_overview']))
+        ->toBe(DashboardWidgetGuardHelper::guarded([JournalChartsWidget::class]));
 });
 
 it('contributes an Accounting section with its headline figures', function () {

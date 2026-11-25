@@ -5,8 +5,9 @@ return [
     'entry-label'    => 'Строка банковской выписки',
 
     'fields' => [
-        'date'   => 'дата',
-        'amount' => 'сумма',
+        'date'    => 'дата',
+        'amount'  => 'сумма',
+        'balance' => 'остаток',
     ],
 
     'errors' => [

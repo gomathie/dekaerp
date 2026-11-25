@@ -1,6 +1,9 @@
 # CRM — Plan
 
-Status: **decisions accepted (user, 2026-11-11); not started.** CRM-1 begins after Attendance and once upstream CRM is stable (CRM-D2). Asked for by the user together
+Status: **decisions accepted (user, 2026-11-11); not started.** *Added
+2026-11-25:* CRM stays inside DEKA as a plugin, with the performance and
+isolation requirements in section 6a (P1–P5), found in a review of
+upstream's CRM. CRM-1 begins after Attendance and once upstream CRM is stable (CRM-D2). Asked for by the user together
 with a "Contacts & CRM" sidebar heading. That heading shipped the same day:
 `NavigationGroup::Contact` → section `contacts-crm`, and a CRM module joins
 it there.
@@ -84,6 +87,33 @@ phases, and reveal and partner levels out.
   by the CRM plugin only, and Sales must work with CRM uninstalled.
 - A CRM section on the combined Overview dashboard through
   `OverviewRegistry` (pipeline value, won/lost this period).
+
+## 6a. Performance and isolation requirements (user, 2026-11-25)
+
+**Decision (user, 2026-11-25):** CRM stays inside DEKA as a plugin, not a
+separate app connected by API. The user's concern is that CRM must not slow
+DEKA, so the port must follow one rule: **nothing slow runs while a user
+waits.** Heavy work goes to the queue; every list and board is paged and
+indexed. If one part (most likely bulk email or SMS campaigns) ever outgrows
+that, only that part moves to its own worker or service.
+
+Review of upstream `plugins/webkul/crm` at `aureuserp/master` (last CRM
+commit 3b06067e2, 2026-11-05) found five problems. Each is a **required fix
+in the port, with a test named after it**:
+
+| # | Upstream today | Effect in DEKA | Required fix |
+| --- | --- | --- | --- |
+| P1 | `Lead::saved`/`deleted`/`restored` call `LeadScoring::scheduleRefresh()`, which runs `rebuildAndRescore()` in `DB::afterCommit` — inside the user's request — whenever a lead enters or leaves a won stage, or is deleted or restored | One card dragged to Won rebuilds scoring and rescores every open lead before the page answers; grows with every lead | Dispatch a queued, de-duplicated job (`ShouldQueue`, unique per company) instead; the request only records that a refresh is due. Test: moving a lead to Won dispatches the job and does not rescore in the request |
+| P2 | `rescoreOpenLeads()` reads leads `withoutGlobalScopes()` with no company filter; the frequency tables are built the same way | One tenant's action rescores every client's leads, and one company's win history can shape another company's probabilities | Rebuild and rescore per company, filtered by `company_id` explicitly (scope-free read plus company filter, as `ShipmentFromOrder` does). Test: a won lead in company A changes no score in company B |
+| P3 | The pipeline board (`ListLeads::getKanbanColumns()`) loads every lead with `->get()`, no limit | Fine at a few hundred leads, slow at thousands | Load a capped number of cards per stage (e.g. 50) with "Load more", and stage totals from one grouped query. Test: a stage with more cards than the cap renders the cap and a correct total |
+| P4 | `foreignId()->constrained()` on `stage_id`, `user_id`, `company_id`, `partner_id`, `team_id` (and the conversion/merge tables); PostgreSQL creates no index for a foreign key | Board, lists and filters slow down as data grows | Add indexes in the migrations, including `(company_id, stage_id)` for the board. Test: a schema test asserts the indexes exist |
+| P5 | `crm:fetch-mail` runs every minute and reads every active mail server of every company in one loop | Background, so not slow for users, but one shared loop over all clients' inboxes breaks the per-company mail rule (D16) | Fetch per company through the D16 per-company mail settings, each company's failure isolated and recorded without secrets; leads land in the mailbox owner's company only. Test: a mail server of company A never creates a lead in company B |
+
+Also keep from upstream: chart widgets have polling off (`$pollingInterval =
+null`); keep it so (never Filament's 5-second default). Upstream uses
+`wezlo/filament-kanban`, which DEKA already requires. Visitor tracking
+("reveal", `VisitorTracked` → `CreateLeadFromVisitor`) and partner levels
+stay out (section 3).
 
 ## 7. Decisions needed (user)
 

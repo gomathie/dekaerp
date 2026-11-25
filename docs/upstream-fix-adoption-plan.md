@@ -5,7 +5,9 @@
 > **Initial review:** 2026-09-18  
 > **Local baseline:** `feature/logistics` at `e0ce9f6a8467`  
 > **Common v1.5 baseline:** `8409fde`  
-> **Upstream reviewed:** `aureus/master` at `36744b597`  
+> **Upstream reviewed:** `aureus/master` at `36744b597` *(superseded: latest
+> review 2026-11-25, `master` at `34bf04cb4` plus open PRs; see the Upstream
+> Review Log. Open findings: UF-029, UF-030, UF-031)*  
 > **Package A implemented:** 2026-09-20; focused local verification complete, first remote CI run pending
 > **Next review due:** 2026-10-27, or earlier when a trigger below occurs
 
@@ -1195,6 +1197,58 @@ fold them either); revisit only if asked.
 > Invoices module, on Contacts and Accounting -> Customers. The customer screen
 > had Bills and Purchases but no invoices.
 
+### UF-029 - Document numbering (Sequence) screen has no policy (security)
+
+**Decision:** Proposed P1 (2026-11-25), awaiting the user (who may edit numbering)  
+**Upstream reference:** open PR #1693 "Add authorization policy for Sequence resource" (not merged)  
+**Local state:** **Open, present locally.** `support`
+`Filament\Resources\SequenceResource` (Settings group) has no policy and no
+`can*()` override, and `support/src/Policies` has no `SequencePolicy`.
+Filament allows every action on a resource with no policy, so any signed-in
+panel user can list, edit, reset or delete document number sequences of
+their company, and the shared ones (`company_id` null, which `CompanyScope`
+shows to everyone and `SequenceService::next()` creates when a company has
+none). Editing a shared counter changes numbering for every company that
+uses it. Fix: a policy using DEKA's Shield names
+(`<affix>_support_sequence`), refusal to edit a shared sequence except by
+installation staff, and a test that an ordinary user is refused.
+
+### UF-030 - A posted journal item's account changes when its product's account changes
+
+**Decision:** Proposed P1 (2026-11-25), accounting integrity  
+**Upstream reference:** open PR #1697 "Keep the account of a posted product line when the product account changes" (not merged)  
+**Local state:** **Open, present locally.** `Account\Models\MoveLine::computeAccountId()`
+runs on every save (see AGENTS.md, MoveLine note) and has no guard for a
+posted entry. A posted line is saved again by later work, for example
+reconciliation when the invoice is paid; if the product's income or expense
+account was changed in between, the posted line silently moves to the new
+account. The lock date only refuses this inside a locked period. Fix
+(upstream's, four lines): return early when the line exists, has an account
+and its move is posted; test: change a product's account, pay the old
+invoice, the posted line keeps its account.
+
+### UF-031 - Chatter followers crash on an archived (deleted) contact
+
+**Decision:** Proposed P2 (2026-11-25)  
+**Upstream reference:** open PR #1703 (not merged)  
+**Local state:** **Open, present locally.** `Chatter\Models\Follower::partner()`
+does not include soft-deleted partners, and `ChatterPanel::removeFollower()`
+uses `Partner::findOrFail()`. A record followed by a contact that was later
+deleted fails when its followers are listed or that follower is removed.
+Fix: `withTrashed()` on the relation and the lookup, show "(deleted)", and
+skip deleted contacts in `ChatterNotificationService` mail and mentions.
+
+### UF-032 - Open upstream fixes to watch (not adopted)
+
+**Decision:** Watch (2026-11-25)  
+**Local state:** not checked in depth. PR #1658 (purchase line amounts at
+currency precision; overlaps UF-022, which we fixed our own way), PR #1654
+(guard return quantities and returns of returns; Inventory is being changed
+by another developer, pass it on), PR #1655 (strict model writes, broad
+refactor), issue #1684 (editing a work order crashes on a missing name),
+issue #1698 (task creation needs a stage), issue #1705 (employee form
+fields). Re-check when they are merged upstream.
+
 ## Already Present Locally
 
 The following upstream runtime work does not need to be reimplemented:
@@ -1410,6 +1464,7 @@ They must not claim tests or production checks that were not executed.
 | 2026-10-20 | v1.6.0 release | `d66a7f0e1` | v1.6.0 full changelog review. Eight gaps not captured by the initial failing-test pass added as UF-017 through UF-024: XSS in chatter (P0 security), payment state bug (P1), Livewire nesting depth (P1), saved filter crash (P1), Employee parent_id FK (P1), RFQ/PO currency conversion (P1), active-currency delete error (P2), product variant name bug (P2). Upstream commit SHAs TBD during implementation. | 2026-10-27 or earlier trigger |
 | 2026-11-19 | upstream through 2026-10-29 | `68c8a286d` | Review of recent upstream fixes: #1671 list sorting (UF-026) and the Replenishment 404 (UF-027) adopted in hotfix v1.12.5. No P0/P1 found. | No cadence (dropped 2026-10-21) |
 | 2026-11-22 | upstream through 2026-11-19 (`0ccc4bb93`) | develop `49e9c5465` | About 50 commits since 2026-10-29, mostly card layouts, CRM, branding preview and tests. One applies: UF-028 (partner Bills tab not scoped to bills). Not needed: partner Invoices tab (we have none), card/branding UI, CRM (another developer). No P0/P1. | No cadence |
+| 2026-11-25 | upstream `master` unchanged since 2026-11-19 (`34bf04cb4`); open PRs and issues read through the public GitHub API | develop `e22840288` | No new merged commits. Open upstream PRs fix three problems DEKA has too: UF-029 Sequence screen without a policy (security, P1), UF-030 posted journal item re-accounted when its product account changes (P1), UF-031 chatter followers crash on a deleted contact (P2). Others watched (UF-032). Also reviewed upstream's CRM for performance: plan #6 §6a. | No cadence |
 
 ## Completion Criteria for This Plan
 

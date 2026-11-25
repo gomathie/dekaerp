@@ -5,8 +5,9 @@ return [
     'entry-label'    => 'Línea de extracto bancario',
 
     'fields' => [
-        'date'   => 'fecha',
-        'amount' => 'importe',
+        'date'    => 'fecha',
+        'amount'  => 'importe',
+        'balance' => 'saldo',
     ],
 
     'errors' => [

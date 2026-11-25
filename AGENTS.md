@@ -2101,7 +2101,7 @@ log named):
   - Tests: accounts `DocumentCurrencyTest`.
 
 • Confirmed exchange rate on an invoice, 2026-11-24 (plan #10 MC-2,
-  TRACE365; `docs/planned/10-multi-currency-plan.md` §5a):
+  TRACE365; `docs/completed/multi-currency-plan.md` §5a):
   - `Move::computeInvoiceCurrencyRate()` keeps `invoice_currency_rate` when
     `currency_rate_source` is `manual`, and drops the manual rate when the
     currency changes without a new rate. Do not remove the guard: every save
@@ -2171,6 +2171,20 @@ log named):
   count in every company. Test: inventories `QuantityResourceTest` "keeps other
   pending counts".
 
+• Reconciliation balance check, 2026-11-25 (plan #9 R-4, hotfix v1.17.2):
+  statement balance is the latest statement's `balance_end_real` (import:
+  typed closing balance, else the balance column on the statement's last
+  day, else previous closing plus the lines). Book balance is read from the
+  ledger filtered by company explicitly, never through `Move` (OwnershipScope
+  would make it depend on who looks). "Match all suggested" uses
+  `suggestions()` and `matchPayment()`, one transaction per line, and leaves
+  out a payment suggested for two lines; do not add a second suggestion
+  rule. Remembered columns live on `accounts_journals.statement_import_columns`
+  (not fillable), read and written only through `BankReconciliation::bankJournal()`.
+  "Cash at bank" counts reconciled money only and links to reconciliation
+  only for users who can open it. Tests: accounting `BankReconciliationTest`,
+  `AccountingOverviewTest`.
+
 • Sales lists keep their Order Date column, 2026-11-25 (user, after a
   preview; plan #9 R-9): quotations and sales orders show `date_order` as
   its own visible column, to filter and sort by date. Do not move it under
@@ -2189,6 +2203,26 @@ log named):
   day's rate" and "... that invoice's rate".
 
 DONE RECENTLY (newest first; details in docs/change-log.md)
+
+• 2026-11-25 — v1.17.0 (everything collected, shipped early on the user's
+  word) and hotfix v1.17.1: multi-currency plan complete (sale currency
+  question on invoices and quotations, posting summary, "Post at the latest
+  rate", phone bottom sheet, Multi-currency report; switched on for
+  TRACE365) and moved to docs/completed/; R-9 list pages complete (cards,
+  date under the number on purchase orders and payments, contact's company;
+  sales lists keep their Order Date column, user); Russian and Swahili in
+  production. Production's tree equals develop as of v1.17.1, so every
+  change-log entry marked "unreleased" before that is live. In progress
+  (agents, separate worktrees): plan #9 R-2/R-3/R-4/R-5, dashboard
+  leftovers, and a Developers (API) section on the Help page with /api/docs
+  made sign-in only and fixed (Sentry DEKAERP-26). HiTrace and TRACE365
+  requests ship as hotfixes (user, 2026-11-25).
+
+• 2026-11-20 to 2026-11-24 — v1.13.0 to v1.16.13: username sign-in,
+  simpler payments, sales order from an invoice (v1.15.0), dashboards
+  DB-2/3/4/6/7, printed documents R-8, payments received R-7, invoices list
+  R-9, currency per contact, payment methods per company, Adminer removed.
+  One change-log entry per version.
 
 • 2026-11-19 — Hotfixes v1.12.1 to v1.12.5, all from TRACE365 use
   (investor-owned: their issues ship as hotfixes). Locked-period deletes
@@ -2346,6 +2380,10 @@ REFERENCES
   x.y.Z), fixes only, no new features, approved by the user or urgent
   (a user-facing Sentry error), and said so in the handoff. Do not push to
   production just because a task finished.
+  *Widened 2026-11-25 (user):* work raised by **HiTrace or TRACE365** ships
+  as a hotfix as soon as it is tested, features included ("releases should
+  be a hot fix, since they came from HiTrace and TRACE365"). Everything else
+  still waits for the monthly release.
 • Plugin versions (user, 2026-11-13): each plugin has its own semver in its
   `composer.json` "version", shown on the Plugins page
   (`Plugin::currentVersion()`). In the push that ships a release, bump every

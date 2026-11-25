@@ -7,6 +7,28 @@ Note: this is a working log, separate from [`AGENTS.md`](../AGENTS.md) (Laravel
 Boost guidelines the agent follows) and [`CHANGELOG.md`](../CHANGELOG.md)
 (release notes). Code-change details go in [`docs/change-log.md`](change-log.md).
 
+## 2026-11-25
+
+**Requested:** Finish the items v1.17.0 left out; then "use 3 agents and
+complete the tasks remaining" (plan #9 R-2/R-3/R-4/R-5, R-7, dashboard
+leftovers) with mockups and questions first; an API section on the Help page
+like naviafriapi.com/v2; update every doc so none is out of date.
+
+**Decisions (user):** sales lists keep their Order Date column (after a
+preview). R-5 lines start with no tax and count in sales with no stock. R-4
+remembers each account's column mapping; bank presets wait for sample
+files. API section: under a "Developers" section of Help, Company Admin and
+up, only the company's modules; /api/docs sign-in only (option B). HiTrace
+and TRACE365 requests ship as hotfixes. Currency question switched on for
+TRACE365. Dashboard period bar and Filters panel to become one row (mockup
+awaiting approval).
+
+**Done:** hotfix v1.17.1 (verified in production, Sentry clean); phone
+bottom sheet checked on TRACE365 at 390 px; plan #10 moved to completed;
+docs brought up to date. **In progress:** four agents in worktrees
+`dekaerp-plan9-r5`, `-r2`, `-r4` and `dekaerp-api-help` (test databases
+`aureuserp_testing_r5`, `_r2`, `_r4`, `_api`, each with a `b` twin).
+
 ## 2026-11-23
 
 **Requested:** Finish plan #3, Russian and Swahili, on a feature branch for

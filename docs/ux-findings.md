@@ -193,3 +193,65 @@ session scratchpad `pw/mobile-audit.js`.
 | U92 | The currency question does not show the confirmed rate again on the invoice form; "Change" means reopening the form | Rate line under the currency (kept rate, who confirmed it, or that a currency change dropped it) and "Currency and rate" in the page header; posting summary still to do | S | Built (develop, unreleased) |
 | U94 | Dashboard customer, vendor and product lists ended at five rows with no way on; vendor rows did not open | "View all" on every dashboard list; vendor rows open the vendor | S | Built (develop, unreleased) |
 | U93 | Payments received gave no sign of money paid in but not yet applied to an invoice | "Unused amount" column and export column | S | Built (develop, unreleased) |
+
+## Recording payments: four cases counted against Zoho Books (2026-11-25, plan #9 R-3)
+
+Follows the 2026-11-20 comparison above (U35 to U42), which looked at the
+Pay window alone. This pass counts clicks and fields for four everyday
+cases. Ours was read from the code on `develop` (a2e081879): the invoice
+**Pay** window (`InvoiceResource\Actions\PayAction`), **Paid now** on a new
+invoice (`InvoiceForm`, `Services\QuickPayment`), the Payments list form
+(`PaymentResource\Schemas\PaymentForm`) and the invoice's **Outstanding
+credits → Add** (`Livewire\InvoiceSummary`). Reviewed, not clicked through
+in a browser. Zoho from its public help pages (sources below) and the
+2026-11-20 live session. Clicks start on the open invoice (or the
+Payments list) and end on save. "Fields" means fields on screen, and the
+number in brackets is how many the person has to fill or change.
+
+| Case | Zoho Books | DEKA ERP today |
+|---|---|---|
+| 1. Full payment of one invoice | Record Payment ▾ → Record Payment → Save as Paid: **3 clicks**. About 11 fields (2-3): amount received (full balance), bank charges, TDS, date (today), payment #, received on, **mode**, **deposit to**, reference, notes, attachments | **Pay** → **Pay**: **2 clicks**. 3 fields (0): "How was it paid?" (first cash/bank way), amount (full balance), date (today). The rest sits under More options. Picking another way to pay adds 2 clicks. A new walk-in sale needs no second step: **Paid now** on the new invoice, then pick the way (Cash by default), confirms and pays in the same save (+1 click) |
+| 2. Partial payment | As case 1, but type the amount: 3 clicks, 1 field typed. The invoice becomes Partially Paid | As case 1, but type the amount: 2 clicks, 1 field typed. The invoice becomes partly paid. No balance-after-payment hint, and no "close the difference" choice |
+| 3. One payment for two invoices | Payments Received → **+ New** → customer → the customer's unpaid invoices are listed → amount received → **Pay in Full** on each invoice (or tick "Received full amount") → Save: about **7 clicks on one screen**, 2 fields | No one-step way. Either **Pay each invoice** (2 × 3 clicks), which makes two payments for one deposit and two lines to match in bank reconciliation (R-4), or Payments → **New** → payment type (Receive: no default) → customer → amount (starts at 0) → Create → **Confirm** → open invoice 1 → Outstanding credits **Add** → open invoice 2 → **Add**: about **10 clicks over 3 screens**, 3 fields |
+| 4. Payment before the invoice (advance) | Customer → New Transaction → Customer Payment → **Customer Advance** tab → fields → Save: about 5 clicks. Later, on the invoice: **Credits Available → Apply Now** → amount → Apply Credits: 3 clicks. An overpayment is kept as unused credit, which can be refunded from Unused Credits | Payments → New → Receive → customer → amount → Create → Confirm: about 7 clicks. It stays as unused money ("Unused amount" column, U93). Once the invoice is posted, it shows **Outstanding credits** with **Add**: 1 click, and the amount applied is worked out. A Pay amount above the balance follows the same code path and is left as outstanding credit (code reading, not executed). Nothing on a new invoice says the customer has credit, and there is no refund-of-credit screen |
+
+Where we are already simpler: one question instead of "mode" plus
+"deposit to" (U39, decided); pay-on-create (U42, decided); applying credit
+is one click and needs no amount typed.
+
+Where Zoho is simpler: several invoices in one payment, the payment form
+that lists the customer's open invoices, and the credit notice on the
+invoice itself.
+
+| # | Seen | Proposal | Effort | Status |
+|---|---|---|---|---|
+| U95 | One deposit covering two invoices needs either two payments (two bank lines to reconcile) or about 10 clicks over 3 screens | "Record payment" from the invoice list: select the customer's open invoices, then **one** payment that fills the oldest first, with an amount per invoice the person can change (Zoho's "Pay in full"). One payment, one bank line. Supersedes U38 | M | Proposed |
+| U96 | The Payments list form starts blank: no payment type, amount 0, nothing about the customer's open invoices, and the payment is applied invoice by invoice afterwards | In the Customers cluster default the type to Receive. After a customer is picked, list their open invoices with "Pay in full" each and apply on Confirm. Draft plus Confirm become one Save for a received payment | M | Proposed |
+| U97 | A customer with unused credit gets a new invoice and nothing says so until someone opens Outstanding credits | On confirm (and in the Pay window), "This customer has GH₵ X unused. Apply it?" with Apply as the default answer | S | Proposed |
+| U98 | "How was it paid?" always starts on the first cash/bank way, so a business that is mostly Mobile Money changes it every time | Default to the way this user last used for this company, in Pay and in Paid now | S | Proposed |
+| U99 | A partial payment gives no sign of what remains | Live "Balance after this payment: X" under the amount. Above the balance: "X will be kept as credit for this customer" | S | Proposed |
+| U100 | Money kept as credit can only be applied, not refunded (Zoho: Unused Credits → Refund) | "Refund unused amount" on a payment with an unused amount, posting a payment out through the chosen way | M | Proposed |
+
+**Simplifications, in priority order** (none built; each needs the user's go):
+
+1. U95 + U96: one payment for several invoices, from the invoice list or the payment form. This is the biggest gap, and it also gives bank reconciliation (R-4) one line per deposit.
+2. U97: offer unused credit when an invoice is confirmed or paid.
+3. U98: remember the last way to pay.
+4. U99: show the balance after a part payment, and what an overpayment becomes.
+5. U100, U40 (reference beside the date for bank and Mobile Money) and U41 (bank charges), as TRACE365 asks.
+
+Sources: Zoho Books help, [Record Payment for
+Invoice](https://www.zoho.com/us/books/help/invoice/record-payment-for-invoice.html),
+[Invoice partial
+payment](https://www.zoho.com/us/books/kb/invoices/record-partial-payment.html),
+[Record multiple
+payments](https://www.zoho.com/en-ng/books/kb/payments/multi-payment.html),
+[Record advance
+payments](https://www.zoho.com/us/books/kb/payments/record-advance-payment.html),
+[Functions in Payments
+Received](https://www.zoho.com/in/books/help/payments-received/functions.html),
+[Refund excess
+payment](https://www.zoho.com/us/books/kb/payments/refund-excess-payment.html)
+(read 2026-11-25). Click counts for Zoho come from those steps. Its form
+fields come from the 2026-11-20 live session, because the help pages show
+them only as screenshots.

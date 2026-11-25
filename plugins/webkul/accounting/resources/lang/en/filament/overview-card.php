@@ -2,8 +2,8 @@
 
 return [
     'label'             => 'Accounting',
-    'cash'              => 'Cash at bank',
-    'cash-hint'         => 'Bank and cash accounts today',
+    'cash'              => 'Cash at bank (reconciled)',
+    'cash-hint'         => 'Reconciled money only: a payment into a bank counts once it is matched to a statement line.',
     'to-reconcile'      => 'Bank lines to reconcile',
     'to-reconcile-hint' => 'Imported statement lines not yet matched',
     'drafts'            => 'Draft journal entries',
