@@ -52,6 +52,8 @@
 > invoices plugin's payment permission (`create_invoice_payment`); today Pay
 > checks none. Company Admin and the business role keep it.
 > "Convert to invoice" shipped in v1.17.11.
+> The quotation view page's Confirm has no permission check of its own;
+> **leave it as it is** (user, 2026-11-26). Do not add one.
 >
 > **Zoho Books parity, from the first Zoho migration (user decisions,
 > 2026-11-26; switchers from Zoho are the priority market):**
