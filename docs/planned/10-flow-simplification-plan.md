@@ -43,6 +43,26 @@
 >   "Item / service"; "Quantity" → "Qty"; a description under each line,
 >   printed on the invoice.
 > - **Priority:** right after the four bug fixes and R-5, before D1–D7.
+>
+> **Zoho Books parity, from the first Zoho migration (user decisions,
+> 2026-11-26; switchers from Zoho are the priority market):**
+> - **Z1 Expenses screen**, shipped as a hotfix: amount, date, expense
+>   account, paid from (a bank or cash journal), vendor, tax, note, receipt
+>   file. It posts one balanced entry **in the chosen bank/cash journal**
+>   (expense debited, money account credited), the same entry the importer
+>   writes. Mockup first.
+> - **Z2 Bank/cash journals take manual movements only through Expenses.**
+>   Free-form manual entries there stay refused (`Move::getValidJournalTypes`
+>   unchanged for everything else), so bank reconciliation is not weakened.
+> - **Z3 Receipts:** after the import is checked, a second pass downloads
+>   the receipt and attachment files from Zoho (read-only) and attaches them
+>   to the imported entries.
+> - **Z4 Recurring invoices:** planned now, built after Z1. One money
+>   feature in progress at a time; the scheduler must never invoice a period
+>   twice (unique key per template and period, as platform invoices do).
+> - **Z5 Small items:** map Zoho payment terms, units and item default taxes
+>   after an import; a Won / Lost status on quotations; vendor bills and
+>   vendor payments in the importer; Zoho salespeople linked to DEKA users.
 
 Date: 25 November 2026. Prepared after TRACE365's call ("from quotation to
 invoice to confirm invoice the flow is too long").
