@@ -12,6 +12,34 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-25, hotfix v1.17.9: deleted contacts as followers (UF-031)
+
+- **Why:** upstream open PR #1703, register UF-031 (P2). `Follower::partner()`
+  hid soft-deleted contacts, so a record followed by a contact deleted later
+  failed when its followers were listed, and `removeFollower()`'s
+  `Partner::findOrFail()` could not find it. Separately,
+  `ChatterNotificationService` read followers with `withoutGlobalScopes()`,
+  which also lifts the soft-delete scope, so deleted contacts were still
+  mailed and their users still notified.
+- **How:** `Follower::partner()` adds `withTrashed()`; `removeFollower()` uses
+  `Partner::withTrashed()->findOrFail()` (company scope kept, only the
+  soft-delete scope lifted); the follower list shows a deleted contact greyed
+  with "(deleted)" (escaped, new key `setup.deleted` in 7 locales) and skips
+  a follower whose contact row no longer exists; the notification service
+  skips trashed partners for mail and for follower users. Commit `d782ae079`
+  (cherry-pick of `982755116`). Chatter 1.9.1 (fix).
+- **Benefit:** no failing followers panel on old records; a deleted contact
+  is never mailed.
+- **Trade-off / risk:** a deleted contact still appears in the list until
+  removed, by design (the user sees why mail stopped).
+- **Verification actually run:** Docker volume copy: chatter
+  `DeletedFollowerTest` (new) 3 passed, 11 assertions; `MailSenderTest` 2
+  passed; `translations:check --plugin=chatter` 6/6. Known pre-existing,
+  not caused by this change: chatter `CrossCompanyReadTest` fails 3 of 4 with
+  `CrossCompanyException` in its own fixtures since UF-025 (v1.11.3); it
+  needs `CompanyHelper::asNobody` around fixture creation. Queued.
+- **Rollback:** revert the commit; no migration.
+
 ## 2026-11-25, hotfix v1.17.8: invoice and bill lines without a product (plan #9 R-5)
 
 - **Why:** plan #9 R-5 (user, 2026-11-25, approved mockup; HiTrace/TRACE365
