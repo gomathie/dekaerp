@@ -514,10 +514,19 @@ if (! function_exists('compact_money')) {
      * Latin digits, as upstream does, and anything ICU cannot format (or a
      * host without ext-intl, which composer.json does not require) falls back
      * to the full money() string rather than failing the dashboard.
+     *
+     * Below 100,000 (either sign) the exact money() amount is shown, with the
+     * currency's decimals (user decision, 2026-11-25, TRACE365). Compact
+     * rounding made correct small figures look wrong: $3,750 of bills read
+     * "$3.8K" and a $1,000 supplier "$1K". Only 100,000 and above shorten.
      */
     function compact_money(float $amount, ?string $currency = null): string
     {
         $currency ??= config('app.currency');
+
+        if (abs($amount) < 100000) {
+            return money($amount, $currency);
+        }
 
         if (! class_exists(MessageFormatter::class)) {
             return money($amount, $currency);

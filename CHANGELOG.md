@@ -10,6 +10,12 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.17.3 — 2026-11-25
+
+### Fixes
+
+- Dashboards show money in full below 100,000, for example $3,750.00 instead of "$3.8K", so figures match your invoices and bills. Only amounts of 100,000 and more are shortened ($125K, $1.2M).
+
 # CHANGELOG — v1.17.2 — 2026-11-25
 
 ### Improvements
