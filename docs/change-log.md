@@ -12,6 +12,31 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-25, hotfix v1.17.3: exact dashboard amounts below 100,000 (TRACE365)
+
+- **Why:** TRACE365 called (2026-11-25): dashboard figures looked wrong.
+  Checked against production: purchases $3,750 (two paid bills) showed as
+  "$3.8K", supplier split $2,750 / $1,000 as "$2.8K" / "$1K". User decision:
+  exact amounts below 100,000, shortened only from 100,000 up.
+- **How:** `compact_money()` (`plugins/webkul/support/src/helpers.php`), the
+  one formatter every dashboard uses, returns `money()` (full amount with
+  the currency's decimals) when |amount| < 100,000. Commit `db2a6a78f`
+  (from `fix/trace365-dashboard-figures`). Support plugin 1.17.2.
+- **Benefit:** dashboard figures match invoices and bills to the cent.
+- **Trade-off / risk:** wider numbers on tiles between 10,000 and 99,999;
+  chart axes are unchanged.
+- **Verification actually run:** Docker volume copy of the exact commit,
+  `aureuserp_testing_fig`: support `CompactMoneyTest` (new) +
+  `DashboardMetricsTest`, purchases `PurchaseDashboardTest`, invoices
+  `InvoiceDashboardTest` + `PaymentsListCardsTest`, inventories
+  `InventoryHeadlineTest`, accounting `AccountingOverviewTest`: 47 passed,
+  159 assertions, 0 failures (each test carries the "no .env file" warning
+  of the volume copy).
+- **Rollback:** revert `db2a6a78f`.
+- **Still coming for the same call:** Sales count and average follow
+  invoiced sales; "draft invoices to confirm" under Needs attention (tests
+  running).
+
 ## 2026-11-25, hotfix v1.17.2: clean reconciliation (plan #9 R-4) and dashboard leftovers (plan #2)
 
 - **Why:** user approved the R-4 mockup 2026-11-25 ("Mobile Money, bank and
