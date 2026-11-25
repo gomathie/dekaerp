@@ -1,4 +1,33 @@
 <x-filament-panels::page>
+    {{--
+        Developers is a second tab for Company Admin and up (user, 2026-11-25).
+        Everyone else gets no tab bar at all, and the page refuses the tab even
+        when it is asked for in the URL or by a tampered Livewire update: see
+        Help::showsDevelopers() and ApiReference.
+    --}}
+    @if ($this->canViewDevelopers())
+        <x-filament::tabs>
+            <x-filament::tabs.item
+                :active="! $this->showsDevelopers()"
+                icon="heroicon-m-lifebuoy"
+                wire:click="openTab(null)"
+            >
+                {{ __('support::filament/pages/help-developers.tabs.help') }}
+            </x-filament::tabs.item>
+
+            <x-filament::tabs.item
+                :active="$this->showsDevelopers()"
+                icon="heroicon-m-code-bracket"
+                wire:click="openTab('developers')"
+            >
+                {{ __('support::filament/pages/help-developers.tabs.developers') }}
+            </x-filament::tabs.item>
+        </x-filament::tabs>
+    @endif
+
+    @if ($this->showsDevelopers())
+        @include('support::pages.partials.help-developers')
+    @else
     <div class="flex flex-col gap-8">
         @if ($this->hasGuides())
             <div class="flex flex-col gap-4">
@@ -167,4 +196,5 @@
             </div>
         @endunless
     </div>
+    @endif
 </x-filament-panels::page>
