@@ -10,6 +10,12 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.17.8 — 2026-11-25
+
+### Features
+
+- Invoices and bills can now have a line without a product: type a description, choose the account, the quantity and the price, and add a tax only if it applies.
+
 # CHANGELOG — v1.17.7 — 2026-11-25
 
 ### Features
