@@ -443,6 +443,21 @@ class MoveLine extends Model implements Sortable
             return;
         }
 
+        // UF-030: a line already saved as part of a posted entry keeps its
+        // account. This hook runs on every save, and later work saves posted
+        // lines again (reconciliation when the invoice is paid), so a product
+        // or category account changed in between silently moved the posted
+        // line - and its booked amount - to the new account. The stored
+        // parent_state is read as well as the move's, so only a line that was
+        // already posted before this save is frozen: drafts, and the save that
+        // moves a line from draft to posted, still follow the product.
+        if ($this->exists
+            && filled($this->account_id)
+            && $this->getRawOriginal('parent_state') === MoveState::POSTED->value
+            && $this->parent_state === MoveState::POSTED) {
+            return;
+        }
+
         $accountId = null;
 
         switch ($this->display_type) {
