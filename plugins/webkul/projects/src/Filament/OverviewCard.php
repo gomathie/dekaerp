@@ -47,11 +47,14 @@ class OverviewCard
                 ['label' => __($lang.'.open-tasks'), 'value' => number_format($open)],
                 ['label' => __($lang.'.overdue-tasks'), 'value' => number_format($overdue), 'tone' => $overdue > 0 ? 'danger' : null],
             ],
-            'bar' => [
+            // No bar without tasks (dashboard plan DB-1: unavailable data is
+            // not shown as 0): "0% of tasks done" read as work behind, when
+            // there was no work at all. Logistics' card does the same.
+            'bar' => ($open + $done) > 0 ? [
                 'percent' => $percent,
                 'tone'    => 'info',
                 'caption' => __($lang.'.done', ['percent' => $percent]),
-            ],
+            ] : null,
         ];
     }
 }
