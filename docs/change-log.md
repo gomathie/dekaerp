@@ -6,7 +6,12 @@ with the reasoning behind each one. This is distinct from
 release notes per version. See [`docs/agent-reminders.md`](agent-reminders.md)
 for the task/question log this change log is paired with.
 
-## 2026-11-25, the four items v1.17.0 left out (develop, unreleased)
+## 2026-11-25, the four items v1.17.0 left out (hotfix v1.17.1, production)
+
+*Shipped as hotfix v1.17.1 the same day (user: "releases should be a hot
+fix, since they came from HiTrace and TRACE365").* Plugins bumped one patch:
+accounting 1.13.1, accounts 1.17.1, invoices 1.15.1, purchases 1.15.1,
+sales 1.16.1. Sentry had no open DEKA ERP issue before the push.
 
 - **Why:** user, 2026-11-25: "continue with the items not built yet". The
   four were listed open in plan #10 §5a (MC-2 "offers today's rate", phone

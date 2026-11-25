@@ -10,6 +10,8 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.17.1 — 2026-11-25
+
 ### Improvements
 
 - Posting an invoice or bill in another currency that is dated an earlier day: the summary now also says what it would come to at the latest exchange rate, and a "Post at the latest rate" button posts it at that rate instead. Plain Confirm still uses the rate of the document's date. The choice is recorded in the document's history under your name.
