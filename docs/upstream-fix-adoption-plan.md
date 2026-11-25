@@ -1215,9 +1215,13 @@ installation staff, and a test that an ordinary user is refused.
 
 ### UF-030 - A posted journal item's account changes when its product's account changes
 
-**Decision:** Proposed P1 (2026-11-25), accounting integrity  
+**Decision:** Adopt, P1 (user, 2026-11-25), accounting integrity  
 **Upstream reference:** open PR #1697 "Keep the account of a posted product line when the product account changes" (not merged)  
-**Local state:** **Open, present locally.** `Account\Models\MoveLine::computeAccountId()`
+**Local state:** **Fixed 2026-11-25 in hotfix v1.17.6** (commit `2f6bbf2bb`):
+upstream's guard in `MoveLine::computeAccountId()`, keyed on the stored
+`parent_state` plus the move's state so the posting save still takes the
+current product account. Test: accounts `Workflows/PostedLineAccountTest`.
+*Superseded description below:* **Open, present locally.** `Account\Models\MoveLine::computeAccountId()`
 runs on every save (see AGENTS.md, MoveLine note) and has no guard for a
 posted entry. A posted line is saved again by later work, for example
 reconciliation when the invoice is paid; if the product's income or expense

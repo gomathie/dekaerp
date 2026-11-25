@@ -10,6 +10,12 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.17.6 — 2026-11-25
+
+### Fixes
+
+- Paying an invoice no longer moves its posted lines to a different income or expense account when the product's account was changed after the invoice was posted.
+
 # CHANGELOG — v1.17.5 — 2026-11-25
 
 ### Fixes
