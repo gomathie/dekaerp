@@ -2190,6 +2190,13 @@ log named):
   order in `OrderFromInvoice`, or they count twice. Tests: sales
   `SalesByProductTest`, `SalesDashboardTest`, `OrderFromInvoiceTest`.
 
+• Convert to invoice, 2026-11-26 (TRACE365, v1.17.11): it calls the Confirm
+  and Create invoice paths (`SaleOrder::confirmSaleOrder`,
+  `SaleOrder::createInvoice`), never a copy. Hidden unless the user may edit
+  the quotation and create customer invoices. Nothing invoiceable: it only
+  confirms. A failed invoice rolls the confirmation back. Test: sales
+  `Filament/ConvertToInvoiceTest`.
+
 • Delivery status after a cancelled delivery, 2026-11-26 (plan #10 item 1,
   v1.17.10): cancelling a delivery fires no event, so code that cancels an
   order's deliveries outside `OrderWorkflow::cancel()` must recompute the

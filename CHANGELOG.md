@@ -10,6 +10,12 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.17.11 — 2026-11-26
+
+### Features
+
+- New "Convert to invoice" button on quotations: one click confirms the quotation, creates its invoice and opens it, so you can check it before confirming.
+
 # CHANGELOG — v1.17.10 — 2026-11-26
 
 ### Fixes

@@ -12,6 +12,34 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-26, hotfix v1.17.11: Convert to invoice on a quotation (TRACE365)
+
+- **Why:** TRACE365 (2026-11-25): going from quotation to confirmed invoice
+  took about 10 clicks on 3 screens. User decision: "Convert to invoice",
+  which opens the invoice in case changes are needed.
+- **How:** new `ConvertToInvoiceAction` on the quotation edit and view pages
+  confirms through `SaleOrder::confirmSaleOrder` and invoices through
+  `SaleOrder::createInvoice` (regular): the existing Confirm and Create
+  invoice paths, never a copy. It then opens the draft invoice via
+  `CreateInvoiceAction::openLatestInvoice()`. Hidden unless the user may edit
+  the quotation and `InvoiceResource::canCreate()` (needs
+  `create_invoice_invoice` and the Invoices module). Nothing invoiceable:
+  confirm only, with the existing messages. Any failure rolls the
+  confirmation back. Not on confirmed orders (they keep Create invoice).
+  Commit `14ff43b7b` (cherry-pick of `481d759af`). Sales 1.17.0 (feature).
+- **Benefit:** one click from quotation to a draft invoice that can still be
+  checked, then Confirm.
+- **Trade-off / risk:** a quotation of delivered-quantity products is only
+  confirmed (no empty invoice). OrderResourceTest, InvoiceResourceTest and
+  the currency-question tests were not run for this piece; the order pages
+  inherit the quotation pages but the button stops at the order's state.
+  They run with the next piece.
+- **Verification actually run:** DB `aureuserp_testing_conv` (volume copy,
+  vendor in its own volume): `ConvertToInvoiceTest` (new, 6) +
+  `QuotationResourceTest`, 24 passed, 110 assertions. `php -l` clean on all
+  changed PHP files including 7 locale files (lead, after cherry-pick).
+- **Rollback:** revert the commit; no migration.
+
 ## 2026-11-26, hotfix v1.17.10: delivery status after the backfill (plan #10 item 1) and lines without a product in sales figures (plan #9 R-5)
 
 ### Delivery status after the backfill (TRACE365)
