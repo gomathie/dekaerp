@@ -5,6 +5,7 @@
             'title'               => 'Wafuasi',
             'submit-action-title' => 'Ongeza mfuasi',
             'tooltip'             => 'Ongeza mfuasi',
+            'deleted'             => '(imefutwa)',
 
             'form' => [
                 'fields' => [

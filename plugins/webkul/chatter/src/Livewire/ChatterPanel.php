@@ -43,7 +43,7 @@ use Webkul\Chatter\Filament\Infolists\Components\Messages\MessageRepeatableEntry
 use Webkul\Chatter\Filament\Infolists\Components\Messages\TitleTextEntry as MessageTitleTextEntry;
 use Webkul\Chatter\Support\ChatterMentions;
 use Webkul\Partner\Models\Partner;
-use Webkul\Security\Models\User;
+use Webkul\Support\Filament\CompanyMembers;
 use Webkul\Support\Models\ActivityPlan;
 use Webkul\Support\Models\ActivityType;
 
@@ -183,7 +183,9 @@ class ChatterPanel extends Component implements HasActions, HasForms, HasInfolis
 
     public function removeFollower($partnerId)
     {
-        $partner = Partner::findOrFail($partnerId);
+        // UF-031: a deleted contact must still be removable as a follower.
+        // Still company-scoped: only the soft-delete scope is lifted.
+        $partner = Partner::withTrashed()->findOrFail($partnerId);
 
         $this->record->removeFollower($partner);
 
@@ -610,7 +612,7 @@ class ChatterPanel extends Component implements HasActions, HasForms, HasInfolis
                                         ->hidden(fn (Get $get) => $get('activity_type_id') ? ActivityType::find($get('activity_type_id'))?->category == 'meeting' : false)
                                         ->live()
                                         ->visible(fn (Get $get) => ! $get('activity_plan_id'))
-                                        ->options(\Webkul\Support\Filament\CompanyMembers::options())
+                                        ->options(CompanyMembers::options())
                                         ->required(),
                                 ])->columns(2),
                             RichEditor::make('body')
