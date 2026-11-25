@@ -2,8 +2,8 @@
 
 return [
     'label'             => 'Uhasibu',
-    'cash'              => 'Fedha benkini',
-    'cash-hint'         => 'Akaunti za benki na fedha taslimu leo',
+    'cash'              => 'Fedha benkini (zilizolinganishwa)',
+    'cash-hint'         => 'Fedha zilizolinganishwa tu: malipo kwenda benki yanahesabiwa yakilinganishwa na mstari wa taarifa.',
     'to-reconcile'      => 'Mistari ya benki ya kulinganisha',
     'to-reconcile-hint' => 'Mistari ya taarifa iliyoletwa ambayo bado haijalinganishwa',
     'drafts'            => 'Rasimu za maingizo ya jarida',
