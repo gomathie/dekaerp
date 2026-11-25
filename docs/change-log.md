@@ -12,6 +12,29 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-25, hotfix v1.17.6: a posted journal item keeps its account (UF-030)
+
+- **Why:** `Account\Models\MoveLine::computeAccountId()` runs on every save
+  and re-derived the account from the product or journal. Posted lines are
+  saved again by later work (reconciliation when the invoice is paid), so a
+  product or category income/expense account changed after posting silently
+  moved the booked line, and its amount, to the new account. The lock date
+  refused this only inside a locked period. Upstream open PR #1697
+  (`docs/upstream-fix-adoption-plan.md` UF-030).
+- **How:** early return in `computeAccountId()`, after the
+  payment/tax/rounding return: the line exists, has an `account_id`, its
+  stored `parent_state` was `posted` before this save, and its move is still
+  posted. Drafts, and the save that posts a line, still follow the product.
+  Commit `2f6bbf2bb` (from `fix/upstream-uf029-031`). Accounts 1.17.3.
+- **Benefit:** posted revenue and expense stay on the account they were
+  booked to.
+- **Trade-off / risk:** an account set by hand on a posted line is now kept;
+  a posted entry being cancelled still re-derives (as upstream).
+- **Verification actually run:** Docker volume copy of the exact commit,
+  `aureuserp_testing_uf`: accounts `Workflows/PostedLineAccountTest` (new) +
+  `LockDateTest`, 13 passed, 28 assertions.
+- **Rollback:** revert `2f6bbf2bb`; no schema change.
+
 ## 2026-11-25, hotfix v1.17.5: /api/docs loads again and is sign-in only (DEKAERP-26)
 
 - **Why:** `/api/docs.openapi` answered 500 in production (Sentry

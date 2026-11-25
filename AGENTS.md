@@ -2171,6 +2171,14 @@ log named):
   count in every company. Test: inventories `QuantityResourceTest` "keeps other
   pending counts".
 
+• Posted journal items keep their account, 2026-11-25 (UF-030, hotfix
+  v1.17.6): `MoveLine::computeAccountId()` returns early for a line that
+  exists, has an account, was posted before this save (raw `parent_state`)
+  and whose move is still posted. Do not remove it: every save re-derived the
+  account from the product, and payment/reconciliation re-saves posted lines,
+  so changing a product's account moved booked revenue. Drafts still follow
+  the product. Test: accounts `Workflows/PostedLineAccountTest`.
+
 • API reference sign-in only, 2026-11-25 (user; v1.17.5, Sentry DEKAERP-26):
   `/api/docs`, `/api/docs.openapi` and `/api/docs.postman` are sign-in only,
   always (`Support\Http\Controllers\ApiDocsController`). Do not turn
