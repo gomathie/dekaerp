@@ -6,8 +6,11 @@ use Filament\Panel;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
+use Webkul\Account\Events\InvoicesDeletedFromScreen;
 use Webkul\Account\Events\MoveCancelled;
 use Webkul\Account\Events\MoveConfirmed;
+use Webkul\Account\Events\MoveDeleted;
+use Webkul\Account\Events\MoveDeleting;
 use Webkul\Account\Events\MoveDrafted;
 use Webkul\Account\Events\MovePaid;
 use Webkul\Account\Events\MoveReversed;
@@ -26,11 +29,13 @@ use Webkul\Sale\Filament\Pages\SalesDashboard;
 use Webkul\Sale\Filament\Widgets\SaleHeadlineWidget;
 use Webkul\Sale\Listeners\ComputeSaleOrderFromMoveListener;
 use Webkul\Sale\Listeners\ComputeSaleOrderListener;
+use Webkul\Sale\Listeners\RecomputeOrdersOfDeletedInvoiceListener;
 use Webkul\Sale\Listeners\SendSMSNotificationListener;
 use Webkul\Sale\Listeners\SyncOrderFromInvoiceListener;
 use Webkul\Sale\Livewire\QuotationSummary;
 use Webkul\Sale\Models\Order;
 use Webkul\Sale\Models\Team;
+use Webkul\Sale\Services\DeletedInvoiceOrders;
 use Webkul\Support\Services\SequenceService;
 
 class SaleServiceProvider extends PackageServiceProvider
@@ -145,6 +150,16 @@ class SaleServiceProvider extends PackageServiceProvider
             SyncOrderFromInvoiceListener::class,
         );
 
+        // An invoice made from an order, deleted: the order goes back to "To
+        // invoice", and the delete confirmation may cancel it too
+        // (production, 2026-11-25; DeletedInvoiceOrders). Safe if registered
+        // twice: remembering and recomputing again change nothing, and an
+        // order already cancelled is not cancelled again.
+        Event::listen(
+            [MoveDeleting::class, MoveDeleted::class, InvoicesDeletedFromScreen::class],
+            RecomputeOrdersOfDeletedInvoiceListener::class,
+        );
+
         InvoiceContributions::register();
     }
 
@@ -159,5 +174,9 @@ class SaleServiceProvider extends PackageServiceProvider
         $loader->alias('sale', SaleOrderFacade::class);
 
         $this->app->singleton('sale', SaleManager::class);
+
+        // Per request: links are read before an invoice is deleted and used
+        // after it, and must never carry over to another request.
+        $this->app->scoped(DeletedInvoiceOrders::class);
     }
 }

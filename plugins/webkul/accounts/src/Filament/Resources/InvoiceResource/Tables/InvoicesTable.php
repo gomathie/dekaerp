@@ -23,11 +23,14 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Oper
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Enums\PaymentState;
+use Webkul\Account\Events\InvoicesDeletedFromScreen;
 use Webkul\Account\Filament\Exports\InvoiceExporter;
 use Webkul\Account\Filament\Resources\InvoiceResource;
+use Webkul\Account\Filament\Resources\InvoiceResource\Support\InvoiceSchemaRegistry;
 use Webkul\Chatter\Filament\Actions\ActivityTableAction;
 use Webkul\Support\Support\CompanyCurrencyEquivalent;
 
@@ -360,6 +363,10 @@ class InvoicesTable
                     EditAction::make(),
                     DeleteAction::make()
                         ->hidden(fn (Model $record): bool => $record->state == MoveState::POSTED)
+                        // A plugin's questions before the delete (Sales: also
+                        // cancel the order?), answers handed back after it.
+                        ->schema(fn (Model $record): array => InvoiceSchemaRegistry::renderForm('delete', [$record]))
+                        ->after(fn (Model $record, array $data) => InvoicesDeletedFromScreen::dispatch([$record->getKey()], $data))
                         ->successNotification(
                             Notification::make()
                                 ->success()
@@ -371,6 +378,8 @@ class InvoicesTable
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
+                        ->schema(fn (Collection $records): array => InvoiceSchemaRegistry::renderForm('delete', $records))
+                        ->after(fn (Collection $records, array $data) => InvoicesDeletedFromScreen::dispatch($records->modelKeys(), $data))
                         ->successNotification(
                             Notification::make()
                                 ->success()

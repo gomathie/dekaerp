@@ -10,6 +10,12 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.17.12 — 2026-11-26
+
+### Fixes
+
+- Invoices: deleting a draft invoice made from a sales order now puts the order back to "To invoice", and asks whether to cancel the order and its delivery too.
+
 # CHANGELOG — v1.17.11 — 2026-11-26
 
 ### Features

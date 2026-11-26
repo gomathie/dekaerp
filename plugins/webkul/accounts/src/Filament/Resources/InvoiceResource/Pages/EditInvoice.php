@@ -6,10 +6,12 @@ use Filament\Actions\DeleteAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Webkul\Account\Enums\MoveState;
+use Webkul\Account\Events\InvoicesDeletedFromScreen;
 use Webkul\Account\Facades\Account as AccountFacade;
 use Webkul\Account\Filament\Resources\CreditNoteResource;
 use Webkul\Account\Filament\Resources\InvoiceResource;
 use Webkul\Account\Filament\Resources\InvoiceResource\Actions as BaseActions;
+use Webkul\Account\Filament\Resources\InvoiceResource\Support\InvoiceSchemaRegistry;
 use Webkul\Account\Models\Move;
 use Webkul\Chatter\Filament\Actions\ChatterAction;
 use Webkul\Support\Filament\Concerns\HandlesCrossCompanyException;
@@ -66,6 +68,11 @@ class EditInvoice extends EditRecord
             BaseActions\ResetToDraftAction::make(),
             DeleteAction::make()
                 ->hidden(fn (Move $record): bool => $record->state == MoveState::POSTED)
+                // Questions a plugin asks before the delete, and their answers
+                // handed back after it (Sales: also cancel the order this
+                // invoice came from?). Accounts must not reference Sales.
+                ->schema(fn (Move $record): array => InvoiceSchemaRegistry::renderForm('delete', [$record]))
+                ->after(fn (Move $record, array $data) => InvoicesDeletedFromScreen::dispatch([$record->getKey()], $data))
                 ->successNotification(
                     Notification::make()
                         ->success()
