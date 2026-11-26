@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\PermissionRegistrar;
 use Webkul\Security\PermissionRegistrar as SecurityPermissionRegistrar;
+use Webkul\Security\Services\CompanyAdminRoleProvisioner;
 use Webkul\Security\Services\RoleTemplateProvisioner;
 use Webkul\Security\Settings\UserSettings;
 
@@ -97,6 +98,15 @@ class SyncAdminPermissions extends Command
 
         if ($added > 0) {
             $this->components->info(sprintf('Business role given %d template permission(s).', $added));
+        }
+
+        // The Company Admin baseline grows (UF-029: document numbering), and
+        // its provisioner otherwise runs only from one old migration, so a new
+        // baseline permission would never reach production. Adds only.
+        $baseline = app(CompanyAdminRoleProvisioner::class)->grantMissingBasePermissions();
+
+        if ($baseline > 0) {
+            $this->components->info(sprintf('Company Admin role given %d baseline permission(s).', $baseline));
         }
 
         return self::SUCCESS;

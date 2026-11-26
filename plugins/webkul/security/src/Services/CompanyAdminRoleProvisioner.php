@@ -50,6 +50,15 @@ class CompanyAdminRoleProvisioner
         // companies they see is decided by user_allowed_companies, not here.
         'view_any_security_company',
         'view_security_company',
+        // Their own company's document numbering (UF-029, user, 2026-11-25:
+        // "Company Admin and up"). SequencePolicy still requires membership of
+        // the sequence's company, and keeps shared sequences and bulk delete
+        // with installation staff, so no delete_any here.
+        'view_any_support_sequence',
+        'view_support_sequence',
+        'create_support_sequence',
+        'update_support_sequence',
+        'delete_support_sequence',
     ];
 
     public function provision(): Role
@@ -87,5 +96,49 @@ class CompanyAdminRoleProvisioner
 
             return $role->refresh();
         });
+    }
+
+    /**
+     * Give an existing Company Admin role any baseline permission it lacks.
+     *
+     * Why (UF-029, 2026-11-25): provision() runs only from its 2026-09-24
+     * migration and the seeder, so a permission added to BASE_PERMISSIONS
+     * later never reached production's role. erp:sync-permissions calls this
+     * on every deploy. It only adds, unlike provision(), so nothing a Super
+     * Admin changed on the Roles screen is removed, and it creates no role.
+     *
+     * @return int permissions added
+     */
+    public function grantMissingBasePermissions(): int
+    {
+        $roleId = Role::query()
+            ->where('guard_name', 'web')
+            ->whereRaw('LOWER(name) = ?', [mb_strtolower(Role::COMPANY_ADMIN)])
+            ->value('id');
+
+        if ($roleId === null) {
+            return 0;
+        }
+
+        $ids = Permission::query()
+            ->where('guard_name', 'web')
+            ->whereIn('name', self::BASE_PERMISSIONS)
+            ->pluck('id');
+
+        $held = DB::table('role_has_permissions')->where('role_id', $roleId)->pluck('permission_id')->map(fn ($id): int => (int) $id);
+        $missing = $ids->map(fn ($id): int => (int) $id)->diff($held)->values();
+
+        if ($missing->isEmpty()) {
+            return 0;
+        }
+
+        DB::table('role_has_permissions')->insertOrIgnore(
+            $missing->map(fn (int $id): array => ['permission_id' => $id, 'role_id' => $roleId])->all()
+        );
+
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+        app(ForkPermissionRegistrar::class)->forgetCachedPermissions();
+
+        return $missing->count();
     }
 }
