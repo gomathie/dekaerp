@@ -17,6 +17,7 @@ use Webkul\Invoice\Filament\Clusters\Customers\Resources\PaymentResource;
 use Webkul\Invoice\Filament\Clusters\Customers\Resources\ProductResource;
 use Webkul\Invoice\Filament\Clusters\Vendors;
 use Webkul\Invoice\Filament\Clusters\Vendors\Resources\BillResource;
+use Webkul\Invoice\Filament\Clusters\Vendors\Resources\ExpenseResource;
 use Webkul\Invoice\Filament\Clusters\Vendors\Resources\PaymentResource as InvoicePaymentResource;
 use Webkul\Invoice\Filament\Clusters\Vendors\Resources\ProductResource as InvoiceProductResource;
 use Webkul\Invoice\Filament\Clusters\Vendors\Resources\RefundResource;
@@ -37,6 +38,8 @@ return [
             CreditNoteResource::class       => [...$basic, ...$delete, ...$reorder],
             InvoiceResource::class          => [...$basic, ...$delete, ...$reorder],
             BillResource::class             => [...$basic, ...$delete, ...$reorder],
+            // No delete_any: each delete reverses a posted entry with a reason.
+            ExpenseResource::class          => [...$basic, 'delete'],
             VendorResource::class           => [...$basic, ...$delete, ...$restore, ...$forceDelete],
             RefundResource::class           => [...$basic, ...$delete, ...$reorder],
             BankAccountResource::class      => [...$basic, ...$delete, ...$restore, ...$forceDelete],

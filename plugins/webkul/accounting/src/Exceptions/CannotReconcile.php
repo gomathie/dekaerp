@@ -55,6 +55,11 @@ class CannotReconcile extends RuntimeException
         return new self(__('accounting::bank-reconciliation.errors.payment-does-not-match'));
     }
 
+    public static function expenseDoesNotMatch(): self
+    {
+        return new self(__('accounting::bank-reconciliation.errors.expense-does-not-match'));
+    }
+
     public static function accountNotAllowed(): self
     {
         return new self(__('accounting::bank-reconciliation.errors.account-not-allowed'));

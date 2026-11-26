@@ -3,6 +3,7 @@
 namespace Webkul\Accounting\Services;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -18,6 +19,7 @@ use Webkul\Account\Facades\Account as AccountFacade;
 use Webkul\Account\Models\Account;
 use Webkul\Account\Models\BankStatement;
 use Webkul\Account\Models\BankStatementLine;
+use Webkul\Account\Models\Expense;
 use Webkul\Account\Models\Journal;
 use Webkul\Account\Models\Move;
 use Webkul\Account\Models\MoveLine;
@@ -56,6 +58,9 @@ class BankReconciliation
     public const MAX_ROWS = 5000;
 
     public const DATE_FORMATS = ['Y-m-d', 'd/m/Y', 'm/d/Y', 'd.m.Y', 'd-m-Y'];
+
+    /** Days either side of a statement line's date an expense may be dated. */
+    public const EXPENSE_DATE_DAYS = 3;
 
     public function __construct(
         protected Reconciler $reconciler,
@@ -298,7 +303,11 @@ class BankReconciliation
      * suggestion of two lines is left out for both: which line it belongs
      * to is a decision for a person.
      *
-     * @return Collection<int, array{line: BankStatementLine, payment: Payment}>
+     * Expenses count as candidates too (plan #10, user 2026-11-26): a line is
+     * single only when it has exactly one candidate of either kind, and the
+     * pair then carries `expense` instead of `payment`.
+     *
+     * @return Collection<int, array{line: BankStatementLine, payment?: Payment, expense?: Expense}>
      */
     public function singleSuggestions(): Collection
     {
@@ -307,12 +316,20 @@ class BankReconciliation
         $lines = BankStatementLine::query()
             ->whereIn('company_id', app(CompanyContext::class)->activeIds())
             ->where('is_reconciled', false)
-            ->whereExists(fn ($query) => $query
-                ->selectRaw('1')
-                ->from('accounts_account_payments')
-                ->whereColumn('accounts_account_payments.company_id', 'accounts_bank_statement_lines.company_id')
-                ->whereColumn('accounts_account_payments.journal_id', 'accounts_bank_statement_lines.journal_id')
-                ->whereRaw('ABS(accounts_bank_statement_lines.amount) BETWEEN accounts_account_payments.amount - 0.005 AND accounts_account_payments.amount + 0.005'))
+            ->where(fn ($lines) => $lines
+                ->whereExists(fn ($query) => $query
+                    ->selectRaw('1')
+                    ->from('accounts_account_payments')
+                    ->whereColumn('accounts_account_payments.company_id', 'accounts_bank_statement_lines.company_id')
+                    ->whereColumn('accounts_account_payments.journal_id', 'accounts_bank_statement_lines.journal_id')
+                    ->whereRaw('ABS(accounts_bank_statement_lines.amount) BETWEEN accounts_account_payments.amount - 0.005 AND accounts_account_payments.amount + 0.005'))
+                ->orWhereExists(fn ($query) => $query
+                    ->selectRaw('1')
+                    ->from('accounts_expenses')
+                    ->whereNull('accounts_expenses.deleted_at')
+                    ->whereColumn('accounts_expenses.company_id', 'accounts_bank_statement_lines.company_id')
+                    ->whereColumn('accounts_expenses.journal_id', 'accounts_bank_statement_lines.journal_id')
+                    ->whereRaw('ABS(accounts_bank_statement_lines.amount) BETWEEN accounts_expenses.amount_total - 0.005 AND accounts_expenses.amount_total + 0.005')))
             ->orderBy('date')
             ->orderBy('id')
             ->get();
@@ -321,19 +338,26 @@ class BankReconciliation
 
         foreach ($lines as $line) {
             try {
-                $suggested = $this->suggestions($line, 2);
+                $payments = $this->suggestions($line, 2);
+                $expenses = $this->expenseSuggestions($line, 2);
             } catch (CannotReconcile) {
                 continue;
             }
 
-            if ($suggested->count() === 1) {
-                $pairs->push(['line' => $line, 'payment' => $suggested->first()]);
+            if ($payments->count() + $expenses->count() !== 1) {
+                continue;
             }
+
+            $pairs->push($payments->isNotEmpty()
+                ? ['line' => $line, 'payment' => $payments->first()]
+                : ['line' => $line, 'expense' => $expenses->first()]);
         }
 
-        $shared = $pairs->countBy(fn (array $pair): int => $pair['payment']->id)->filter(fn (int $count): bool => $count > 1);
+        $key = fn (array $pair): string => isset($pair['expense']) ? 'expense:'.$pair['expense']->id : 'payment:'.$pair['payment']->id;
 
-        return $pairs->reject(fn (array $pair): bool => $shared->has($pair['payment']->id))->values();
+        $shared = $pairs->countBy($key)->filter(fn (int $count): bool => $count > 1);
+
+        return $pairs->reject(fn (array $pair): bool => $shared->has($key($pair)))->values();
     }
 
     /**
@@ -352,7 +376,9 @@ class BankReconciliation
 
         foreach ($this->singleSuggestions() as $pair) {
             try {
-                $this->matchPayment($pair['line'], $pair['payment']);
+                isset($pair['expense'])
+                    ? $this->matchExpense($pair['line'], $pair['expense'])
+                    : $this->matchPayment($pair['line'], $pair['payment']);
 
                 $matched++;
             } catch (CannotReconcile|PeriodLockedException) {
@@ -453,6 +479,89 @@ class BankReconciliation
 
             return $line;
         });
+    }
+
+    /**
+     * Expenses this line could be the bank side of (plan #10, user
+     * 2026-11-26): money out only, same company and journal, the same amount
+     * paid, dated within EXPENSE_DATE_DAYS of the line, posted, and not yet
+     * matched to another line. Nearest date first. Same amount tolerance as
+     * suggestions(), which stays the payments rule.
+     *
+     * @return Collection<int, Expense>
+     */
+    public function expenseSuggestions(BankStatementLine $line, int $limit = 10): Collection
+    {
+        $line = $this->openLine($line->getKey(), lock: false);
+
+        if ((float) $line->amount >= 0) {
+            return collect();
+        }
+
+        return $this->matchableExpenses($line)
+            ->limit(50)
+            ->get()
+            ->sortBy(fn (Expense $expense): int => (int) abs($expense->date->diffInDays($line->date)))
+            ->take($limit)
+            ->values();
+    }
+
+    /**
+     * Settle the line with the expense it confirms. Nothing is posted: the
+     * expense's entry already credited this bank account, and posting the
+     * bank side again would count the money twice. The line is linked to
+     * that entry, as for a payment that went straight to the bank.
+     */
+    public function matchExpense(BankStatementLine $line, Expense $expense): BankStatementLine
+    {
+        return DB::transaction(function () use ($line, $expense): BankStatementLine {
+            $line = $this->openLine($line->getKey(), lock: true);
+
+            $this->bankJournal($line->journal_id);
+
+            $expense = (float) $line->amount < 0
+                ? $this->matchableExpenses($line)->whereKey($expense->getKey())->lockForUpdate()->first()
+                : null;
+
+            if (! $expense) {
+                throw CannotReconcile::expenseDoesNotMatch();
+            }
+
+            $line->forceFill([
+                'move_id'         => $expense->move_id,
+                'partner_id'      => $line->partner_id ?? $expense->partner_id,
+                'is_reconciled'   => true,
+                'amount_residual' => 0,
+            ])->save();
+
+            return $line;
+        });
+    }
+
+    /**
+     * The one query for expenses a line may match, used by both the
+     * suggestion and the match, so a match never accepts what would not be
+     * suggested. Read under the company scope and filtered by the line's
+     * company explicitly; the entry is read past Move's ownership scope
+     * (the expense row names it).
+     */
+    protected function matchableExpenses(BankStatementLine $line): Builder
+    {
+        $amount = abs((float) $line->amount);
+        $date = Carbon::parse($line->date);
+
+        return Expense::query()
+            ->where('company_id', $line->company_id)
+            ->where('journal_id', $line->journal_id)
+            ->where('currency_id', $line->currency_id ?: $line->company?->currency_id)
+            ->whereBetween('amount_total', [$amount - 0.005, $amount + 0.005])
+            ->whereBetween('date', [
+                $date->copy()->subDays(self::EXPENSE_DATE_DAYS)->toDateString(),
+                $date->copy()->addDays(self::EXPENSE_DATE_DAYS)->toDateString(),
+            ])
+            ->whereIn('move_id', Move::withoutGlobalScopes()->where('state', MoveState::POSTED)->select('id'))
+            ->whereNotIn('move_id', BankStatementLine::query()->withoutGlobalScopes()->whereNotNull('move_id')->select('move_id'))
+            ->with('partner');
     }
 
     /**

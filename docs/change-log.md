@@ -12,6 +12,130 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-26, hotfix v1.17.19: Expenses follow-ups A, B, C
+
+- **Why:** user decisions on the three open questions of the entry below
+  (2026-11-26).
+- **How:**
+  - A: `ExpenseRecorder::changesTheBooks()` compares date, amount,
+    currency, account, journal, tax, vendor, reference and the tax switch
+    with the stored row. When only the note or the receipt changed,
+    `update()` saves them and the entry's narration (not a ledger field, so
+    this also works in a locked month). Nothing is re-posted and no reason
+    is asked. The edit form asks the reason through the same method.
+  - B: column `amount_includes_tax` (migration `2026_11_26_100002`,
+    nullable; null = the tax's own setting, so earlier expenses keep their
+    meaning without a backfill). `split()` passes it to
+    `TaxFacade::computeAll()` as forced included or excluded. The form has a
+    Toggle, set from the tax's own setting when a tax is chosen.
+  - C: accounting `BankReconciliation::expenseSuggestions()` /
+    `matchExpense()` share `matchableExpenses()`: same company and journal,
+    currency, amount within 0.005 (as payments), date ±3 days, posted, not
+    already linked to a statement line; money out only.
+    `singleSuggestions()` counts payments and expenses together, and
+    `matchAllSuggested()` matches either kind. Matching links the line to
+    the expense's entry (`move_id`, reconciled) and posts nothing. The page
+    has a "Match expense" action; `CannotReconcile::expenseDoesNotMatch()`
+    pins the refusal. Translations in 7 locales.
+- **Benefit:** typo fixes no longer reopen the books. The tax treatment
+  matches the receipt. A bank line paid for an expense can be reconciled
+  without counting the money twice.
+- **Trade-off / risk:** the reference stays in the books set, because it
+  is part of the line labels. A matched expense line cannot be "unmatched"
+  from the page, the same as for payments today.
+- **Verification actually run:** on the code after merging develop
+  v1.17.16 (Zoho import), volume copy, database
+  `aureuserp_testing_expenses`.
+  - Run 6: 163 tests across invoices `Expenses/*`, accounting
+    `BankReconciliationExpenseTest` (new, 6) and `BankReconciliationTest`,
+    accounts `JournalEntryTest`, `LockDateTest`, `InvoiceResourceTest` and
+    `BillResourceTest`, logistics `CompanyStorageTest`, and sales
+    `ZohoImportTest` (the importer's expenses, posted through this branch's
+    `ExpenseEntry`). 156 passed, 644 assertions. 7 failed, all one dataset
+    mistake in the new A test (closures nested one level too deep). Fixed.
+  - Run 7: invoices `Expenses/*`, 47 passed, 198 assertions.
+  - `translations:check` passes 6 of 6 locales for invoices, accounting and
+    accounts. `php -l` clean on the 32 touched files. Pint ran on all of
+    them.
+- **Rollback:** revert the two commits. Migration `2026_11_26_100002`
+  drops its column on rollback.
+
+## 2026-11-26, hotfix v1.17.19: Expenses screen (plan #10 Z1, Z2)
+
+- **Why:** plan #10 Z1/Z2 (user, 2026-11-26, mockup approved). Clients coming
+  from Zoho Books record costs paid from a bank, mobile-money or cash
+  account in one screen. DEKA had no such screen, and bank/cash journals
+  accepted only payments and statement lines.
+- **How:**
+  - Table `accounts_expenses` (accounts migration `2026_11_26_100001`), model
+    `Account\Models\Expense` (BelongsToCompany, soft deletes; company,
+    number, entry, rate and computed amounts not fillable) and
+    `Invoice\Models\Expense` for the screen's policy and `invoice_*`
+    permissions.
+  - `Account\Services\ExpenseEntry`: the one entry builder. It keeps the
+    Zoho importer's `post()` signature (feature/zoho-import, uncommitted
+    there) and adds `amount_currency` and tax-line keys, an optional
+    `Expense`, and `rewrite()`.
+  - `Account\Services\ExpenseRecorder` writes everything: company and module
+    guards, per-company numbers `EXP/<year>/<5 digits>` (`ensure()` first),
+    tax split from `TaxFacade::computeAll` (an included tax comes out of the
+    amount, an excluded tax goes on top), invoices' rate rule for another
+    currency (refused when no rate exists), post, rewrite on edit, reset and
+    cancel on delete (reason required).
+  - Z2: `Move::isExpenseEntryInItsJournal()`, the narrow exception in
+    `getValidJournalTypes()`.
+  - Screen: invoices `Vendors\Resources\ExpenseResource` (split layout),
+    `ExpensePolicy`, Shield config (`view_any`, `view`, `create`, `update`,
+    `delete`; no `delete_any`), `ExpenseExporter`, and translations in 7
+    locales.
+  - Journal Entries screens hide reset, cancel, reverse and delete on an
+    expense's entry and send edit to view.
+  - `CompanyStorage` promoted from Logistics to `Webkul\Support\Support`
+    (Logistics keeps a subclass) for receipts under the company prefix.
+  - Receipts: `ExpenseRecorder::storeReceipt()` reads the type from the
+    content (PDF, JPEG, PNG, WebP, HEIC; 10 MB at most) and stores the file
+    under a random name with our own extension. `isReceiptPath()` refuses
+    any other path, so a tampered payload cannot point at another file.
+- **Reused / not reused:** Logistics' `ExpensePoster` builds *draft vendor
+  bills* (IN_INVOICE, one per partner, never posted). That is a different
+  document, so it was read but not reused. The Zoho importer's
+  `ExpenseEntry` became the shared builder.
+- **Benefit:** an expense is one form and one posted entry in the journal the
+  money left, so the bank/cash balance is right immediately. A hand-made
+  entry still cannot sit in a bank journal.
+- **Trade-off / risk:** the expense's entry credits the journal's money
+  account directly. Bank reconciliation matches statement lines to
+  *payments* only, so a statement line for an expense cannot be matched yet
+  (the mockup said it could). Booking that line "to an account" would count
+  it twice. Open question for the user. Edit asks for a reason every time
+  (A2b). *Superseded 2026-11-26 by follow-ups A and C (entry above).* `ExpenseEntry.php` is also new on `feature/zoho-import`, so merging
+  both is an add/add conflict: keep this branch's file, which is a superset
+  with the same `post()` signature. Both branches also add a migration line
+  at the same place in `AccountServiceProvider`.
+- **Verification actually run:**
+  - Setup: Docker volume copy, database `aureuserp_testing_expenses`.
+  - Final run: invoices `Expenses/ExpenseRecorderTest` (24) and
+    `Expenses/ExpenseResourceTest` (10). 34 passed, 157 assertions.
+  - Siblings, run once with the expense files before the last two fixes: 41
+    passed. These were accounts `BillResourceTest`, `LockDateTest` and
+    `JournalEntryTest`, and logistics `CompanyStorageTest` and
+    `Expenses/ApprovalTest`. In that run 2 expense screen tests failed: the
+    Shield key shape the test read, and the receipt test. Both were fixed
+    and are green in the final run.
+  - A throwaway probe (deleted) showed the upload layer drops a `.php`
+    upload before the form state. That led to content-type storage in
+    `storeReceipt()`.
+  - `translations:check` for invoices and accounts: 6 of 6 locales each.
+    `php -l` on all 41 touched PHP files. Pint on every changed PHP file.
+  - The warnings in the runs are only the missing `.env` in the volume
+    copy.
+  - Not run: a browser check, or the full InvoiceFeature and AccountFeature
+    suites.
+- **Rollback:** revert the branch's commits; the migration's `down()` drops
+  `accounts_expenses`. Entries already posted stay in the ledger as ordinary
+  entries (they would then be moved to the general journal on their next
+  save).
+
 ## 2026-11-26, hotfix v1.17.18: one item box per line, with a description (plan #10 piece 7)
 
 - **Why:** user decision 2026-11-25 (follow Zoho, checked live in HiTrace's

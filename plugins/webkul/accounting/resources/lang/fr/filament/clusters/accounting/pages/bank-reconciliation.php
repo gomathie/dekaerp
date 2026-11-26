@@ -80,6 +80,14 @@ return [
         'done'        => 'Ligne rapprochée. Le paiement est maintenant payé.',
     ],
 
+    'match-expense' => [
+        'label'       => 'Rapprocher une dépense',
+        'description' => 'Dépenses payées depuis ce compte bancaire, du même montant, à quelques jours de cette ligne.',
+        'expense'     => 'Dépense',
+        'none'        => 'Aucune dépense ne correspond. Enregistrez d\'abord la dépense, ou affectez la ligne à un compte.',
+        'done'        => 'Ligne rapprochée de la dépense. Rien n\'a été comptabilisé de nouveau.',
+    ],
+
     'book' => [
         'label'       => 'Comptabiliser sur un compte',
         'description' => 'Pour les frais bancaires, intérêts ou virements : passe la ligne sur le compte choisi.',

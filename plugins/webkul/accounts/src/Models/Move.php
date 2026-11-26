@@ -466,9 +466,56 @@ class Move extends Model implements Sortable
             return [JournalType::PURCHASE];
         } elseif ($this->origin_payment_id || $this->statement_line_id) {
             return [JournalType::BANK, JournalType::CASH, JournalType::CREDIT_CARD];
+        } elseif ($this->isExpenseEntryInItsJournal()) {
+            return [JournalType::BANK, JournalType::CASH];
         } else {
             return [JournalType::GENERAL];
         }
+    }
+
+    /**
+     * Plan #10 Z2 (user, 2026-11-26): bank and cash journals take manual
+     * movements only through Expenses. Everything else stays as above: a
+     * hand-made entry put in a bank journal is moved to the general journal
+     * by computeJournalId(), so bank reconciliation keeps seeing only
+     * payments, statement lines and expenses there.
+     *
+     * The exception is narrow on purpose. It applies to an entry (never an
+     * invoice or bill), only while its journal is bank or cash, and only
+     * when the entry is the one an expense posted in that same journal:
+     * either the instance ExpenseEntry is writing (forExpense()), or a saved
+     * entry whose expense row names it and this journal. Without the second
+     * half, any later save of the entry (reset to draft, cancel,
+     * reconciliation) would silently move it out of the bank journal.
+     */
+    protected function isExpenseEntryInItsJournal(): bool
+    {
+        if ($this->move_type !== MoveType::ENTRY
+            || ! in_array($this->journal?->type, [JournalType::BANK, JournalType::CASH], true)) {
+            return false;
+        }
+
+        if ($this->postingExpense !== null) {
+            return $this->postingExpense->exists
+                && (int) $this->postingExpense->journal_id === (int) $this->journal_id;
+        }
+
+        return Expense::ownsMove($this);
+    }
+
+    /**
+     * Set only by Account\Services\ExpenseEntry while it writes an
+     * expense's entry, before the first save (the expense row cannot name
+     * an entry that has no id yet). Not an attribute: never saved, never
+     * fillable, so no payload can reach it.
+     */
+    protected ?Expense $postingExpense = null;
+
+    public function forExpense(Expense $expense): static
+    {
+        $this->postingExpense = $expense;
+
+        return $this;
     }
 
     public function getInvoiceInPaymentState()
