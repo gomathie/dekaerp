@@ -20,6 +20,7 @@ return [
         'bad-row'                => 'Line :row: the :field cannot be read. Check the column numbers and the date format.',
         'already-reconciled'     => 'This line is already reconciled.',
         'payment-does-not-match' => 'That payment does not match this line: it must be in the same bank journal, for the same amount and direction, and not already matched.',
+        'expense-does-not-match' => 'That expense does not match this line: it must be paid from the same bank account, for the same amount, within a few days of the line, and not already matched.',
         'account-not-allowed'    => 'That account cannot be used here. Customer and supplier accounts are settled by matching a payment.',
     ],
 ];

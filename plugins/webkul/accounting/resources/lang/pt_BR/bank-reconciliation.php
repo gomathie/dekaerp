@@ -20,6 +20,7 @@ return [
         'bad-row'                => 'Linha :row: não foi possível ler o campo :field. Verifique os números das colunas e o formato da data.',
         'already-reconciled'     => 'Esta linha já está conciliada.',
         'payment-does-not-match' => 'Esse pagamento não corresponde a esta linha: deve estar no mesmo diário bancário, com o mesmo valor e sentido, e ainda não conciliado.',
+        'expense-does-not-match' => 'Essa despesa não corresponde a esta linha: deve ter sido paga com a mesma conta bancária, com o mesmo valor, a poucos dias da linha, e ainda não conciliada.',
         'account-not-allowed'    => 'Essa conta não pode ser usada aqui. Contas de clientes e fornecedores são liquidadas conciliando um pagamento.',
     ],
 ];

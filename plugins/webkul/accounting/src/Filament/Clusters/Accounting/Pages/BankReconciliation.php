@@ -24,6 +24,7 @@ use Webkul\Account\Enums\JournalType;
 use Webkul\Account\Exceptions\PeriodLockedException;
 use Webkul\Account\Models\Account;
 use Webkul\Account\Models\BankStatementLine;
+use Webkul\Account\Models\Expense;
 use Webkul\Account\Models\Journal;
 use Webkul\Account\Models\Payment;
 use Webkul\Accounting\Exceptions\CannotReconcile;
@@ -325,6 +326,23 @@ class BankReconciliation extends Page implements HasTable
                     ->action(function (BankStatementLine $record, array $data, Reconciliation $service): void {
                         $this->attempt(fn () => $service->matchPayment($record, Payment::query()->findOrFail($data['payment_id'])), self::LANG.'.match.done');
                     }),
+                // Money out only: an expense is paid from this account (plan #10).
+                Action::make('matchExpense')
+                    ->label(__(self::LANG.'.match-expense.label'))
+                    ->icon('heroicon-o-receipt-percent')
+                    ->color('gray')
+                    ->visible(fn (BankStatementLine $record): bool => ! $record->is_reconciled && (float) $record->amount < 0)
+                    ->modalDescription(__(self::LANG.'.match-expense.description'))
+                    ->schema(fn (BankStatementLine $record): array => [
+                        Select::make('expense_id')
+                            ->label(__(self::LANG.'.match-expense.expense'))
+                            ->options(fn (): array => $this->expenseOptions($record))
+                            ->helperText(fn (): ?string => $this->expenseOptions($record) === [] ? __(self::LANG.'.match-expense.none') : null)
+                            ->required(),
+                    ])
+                    ->action(function (BankStatementLine $record, array $data, Reconciliation $service): void {
+                        $this->attempt(fn () => $service->matchExpense($record, Expense::query()->findOrFail($data['expense_id'])), self::LANG.'.match-expense.done');
+                    }),
                 Action::make('book')
                     ->label(__(self::LANG.'.book.label'))
                     ->icon('heroicon-o-pencil-square')
@@ -443,6 +461,24 @@ class BankReconciliation extends Page implements HasTable
             return app(Reconciliation::class)->suggestions($line)
                 ->mapWithKeys(fn (Payment $payment): array => [
                     $payment->id => collect([$payment->name, $payment->partner?->name, $payment->date?->toDateString()])->filter()->implode(' · '),
+                ])
+                ->all();
+        } catch (CannotReconcile) {
+            return [];
+        }
+    }
+
+    /**
+     * The service's own expense suggestions; labels are escaped by the select.
+     *
+     * @return array<int, string>
+     */
+    protected function expenseOptions(BankStatementLine $line): array
+    {
+        try {
+            return app(Reconciliation::class)->expenseSuggestions($line)
+                ->mapWithKeys(fn (Expense $expense): array => [
+                    $expense->id => collect([$expense->number, $expense->partner?->name, $expense->reference, $expense->date?->toDateString()])->filter()->implode(' · '),
                 ])
                 ->all();
         } catch (CannotReconcile) {

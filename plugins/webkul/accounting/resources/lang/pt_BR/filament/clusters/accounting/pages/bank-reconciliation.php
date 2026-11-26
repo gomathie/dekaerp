@@ -80,6 +80,14 @@ return [
         'done'        => 'Linha conciliada. O pagamento agora está pago.',
     ],
 
+    'match-expense' => [
+        'label'       => 'Conciliar despesa',
+        'description' => 'Despesas pagas com esta conta bancária, com o mesmo valor, a poucos dias desta linha.',
+        'expense'     => 'Despesa',
+        'none'        => 'Nenhuma despesa corresponde. Registre a despesa primeiro ou lance a linha em uma conta.',
+        'done'        => 'Linha conciliada com a despesa. Nada foi lançado de novo.',
+    ],
+
     'book' => [
         'label'       => 'Lançar em uma conta',
         'description' => 'Para tarifas bancárias, juros ou transferências: lança a linha na conta escolhida.',
