@@ -101,6 +101,7 @@ return [
             'number'           => 'Número',
             'state'            => 'Estado',
             'customer'         => 'Cliente',
+            'vendor'           => 'Fornecedor',
             'bill-date'        => 'Data da fatura de fornecedor',
             'checked'          => 'Verificado',
             'accounting-date'  => 'Contabilidade',
@@ -112,6 +113,7 @@ return [
             'tax'              => 'Imposto',
             'total'            => 'Total',
             'amount-due'       => 'Valor devido',
+            'amount-paid'      => 'Pago',
             'bill-currency'    => 'Moeda da fatura de fornecedor',
         ],
 
@@ -242,7 +244,6 @@ return [
                             'checked'           => 'Verificado',
                             'fiscal-position'   => 'Posição fiscal',
                             'cash-rounding'     => 'Método de arredondamento de caixa',
-                            'checked'           => 'Verificado',
                         ],
                     ],
                 ],
