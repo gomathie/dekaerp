@@ -1,5 +1,12 @@
 # UX findings
 
+## Recurring invoices (2026-11-26, plan #10 Z4)
+
+| # | Seen | Proposal | Effort | Status |
+|---|---|---|---|---|
+| U105 | Repeating customer invoices require re-entering the same customer and lines; missed periods can be recreated twice by parallel workers | A customer invoice template with schedule, pause/resume/stop, period history, draft by default, and one unique invoice per template period | M | **Built** 2026-11-26 (`feature/recurring-invoices`); test results in `docs/change-log.md` |
+| U106 | A scheduled invoice could reach a customer without anyone reviewing its date or lines | Notify the responsible user; keep automatic confirmation and email as a separate off-by-default option | S | **Built** 2026-11-26 (`feature/recurring-invoices`) |
+
 Running log of UI, look-and-feel and ease-of-use improvements noticed while
 testing (user rule, 2026-11-12: record them during every test session, judged
 by modern design standards). Each entry: flow, what was seen, proposal, effort

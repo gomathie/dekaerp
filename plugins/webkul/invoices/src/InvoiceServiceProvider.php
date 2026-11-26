@@ -3,14 +3,19 @@
 namespace Webkul\Invoice;
 
 use Filament\Panel;
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Models\Move;
+use Webkul\Invoice\Console\Commands\InvoiceRecurringTemplates;
 use Webkul\Invoice\Filament\Overview\InvoiceAttention;
 use Webkul\Invoice\Filament\Overview\OverviewRegistry;
 use Webkul\Invoice\Filament\Pages\Invoices;
 use Webkul\Invoice\Filament\Widgets\InvoiceHeadlineWidget;
 use Webkul\Invoice\Livewire\InvoiceSummary;
+use Webkul\Invoice\Models\RecurringInvoiceTemplate;
+use Webkul\Invoice\Policies\RecurringInvoiceTemplatePolicy;
 use Webkul\Partner\Models\Partner;
 use Webkul\PluginManager\Console\Commands\InstallCommand;
 use Webkul\PluginManager\Console\Commands\UninstallCommand;
@@ -27,12 +32,22 @@ class InvoiceServiceProvider extends PackageServiceProvider
         $package->name(static::$name)
             ->hasTranslations()
             ->hasViews()
+            ->runsMigrations()
+            ->hasMigrations([
+                '2026_11_26_120000_create_recurring_invoice_templates_table',
+                '2026_11_26_120001_create_recurring_invoice_lines_table',
+                '2026_11_26_120002_create_recurring_invoice_periods_table',
+            ])
+            ->hasCommands([InvoiceRecurringTemplates::class])
             ->hasDependencies([
                 'accounts',
             ])
             ->hasInstallCommand(function (InstallCommand $command) {
                 $command
                     ->installDependencies()
+                    // Invoices owns tables since recurring invoices (2026-11-26);
+                    // without this a fresh install never creates them.
+                    ->runsMigrations()
                     ->runsSeeders();
             })
             ->hasUninstallCommand(function (UninstallCommand $command) {})
@@ -41,6 +56,19 @@ class InvoiceServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        Gate::policy(RecurringInvoiceTemplate::class, RecurringInvoiceTemplatePolicy::class);
+
+        $this->app->booted(function (): void {
+            if (! $this->app->runningInConsole() || ! $this->app->bound(Schedule::class)) {
+                return;
+            }
+
+            $this->app->make(Schedule::class)
+                ->command('invoices:generate-recurring')
+                ->dailyAt('02:15')
+                ->withoutOverlapping();
+        });
+
         Livewire::component('invoice-invoice-summary', InvoiceSummary::class);
 
         // The Invoices tab on every customer and contact screen (user,
