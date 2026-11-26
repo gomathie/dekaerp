@@ -12,11 +12,14 @@ use Webkul\Account\Models\Move;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\Support\PluginAccess;
+use Webkul\Sale\Enums\AdvancedPayment;
 use Webkul\Sale\Enums\OrderState;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\OrderInvoiceResource;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\OrderResource;
+use Webkul\Sale\Filament\Clusters\Orders\Resources\OrderResource\Pages\ViewOrder;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource\Actions\ConfirmAction;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource\Actions\ConvertToInvoiceAction;
+use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource\Actions\CreateInvoiceAction;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource\Pages\EditQuotation;
 use Webkul\Sale\Filament\Clusters\Orders\Resources\QuotationResource\Pages\ViewQuotation;
 use Webkul\Sale\Models\Order;
@@ -187,4 +190,27 @@ it('only confirms when nothing can be invoiced yet and makes no empty invoice', 
 
     expect($quotation->refresh()->state)->toBe(OrderState::SALE)
         ->and($quotation->accountMoves()->count())->toBe(0);
+});
+
+/**
+ * Create invoice on a confirmed order (TRACE365, user 2026-11-25): the user
+ * used to stay on the order and had to find the new invoice. It opens now.
+ */
+it('opens the new invoice after creating it from a confirmed order', function () {
+    $user = FilamentHelper::actingAs(['view_any_sale_order', 'view_sale_order']);
+
+    $order = SaleHelper::confirm(convertibleQuotation($user->id));
+
+    $component = Livewire::test(ViewOrder::class, ['record' => $order->id])
+        ->callAction(CreateInvoiceAction::class, data: [
+            'advance_payment_method' => AdvancedPayment::DELIVERED->value,
+        ]);
+
+    $invoices = $order->refresh()->accountMoves()->get();
+    $invoiceUrl = OrderInvoiceResource::getUrl('edit', ['sales_order' => $order, 'record' => $invoices->first()]);
+
+    expect($invoices)->toHaveCount(1)
+        ->and($invoiceUrl)->toContain('invoices')->toContain((string) $invoices->first()->id);
+
+    $component->assertRedirect($invoiceUrl);
 });
