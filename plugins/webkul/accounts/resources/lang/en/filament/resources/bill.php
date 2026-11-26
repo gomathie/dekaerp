@@ -41,11 +41,11 @@ return [
                 'repeater' => [
                     'products' => [
                         'title'       => 'Products',
-                        'add-product' => 'Add Product',
+                        'add-product' => 'Add item',
 
                         'columns' => [
-                            'product'             => 'Product',
-                            'quantity'            => 'Quantity',
+                            'product'             => 'Item / service',
+                            'quantity'            => 'Qty',
                             'unit'                => 'Unit',
                             'taxes'               => 'Taxes',
                             'discount-percentage' => 'Discount Percentage',
@@ -54,8 +54,8 @@ return [
                         ],
 
                         'fields' => [
-                            'product'             => 'Product',
-                            'quantity'            => 'Quantity',
+                            'product'             => 'Item / service',
+                            'quantity'            => 'Qty',
                             'unit'                => 'Unit',
                             'taxes'               => 'Taxes',
                             'discount-percentage' => 'Discount Percentage',
@@ -215,11 +215,11 @@ return [
                 'repeater' => [
                     'products' => [
                         'title'       => 'Products',
-                        'add-product' => 'Add Product',
+                        'add-product' => 'Add item',
 
                         'entries' => [
-                            'product'             => 'Product',
-                            'quantity'            => 'Quantity',
+                            'product'             => 'Item / service',
+                            'quantity'            => 'Qty',
                             'unit'                => 'Unit',
                             'taxes'               => 'Taxes',
                             'discount-percentage' => 'Discount Percentage',

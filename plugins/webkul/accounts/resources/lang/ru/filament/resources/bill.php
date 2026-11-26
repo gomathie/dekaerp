@@ -41,11 +41,11 @@ return [
                 'repeater' => [
                     'products' => [
                         'title'       => 'Товары',
-                        'add-product' => 'Добавить товар',
+                        'add-product' => 'Добавить позицию',
 
                         'columns' => [
-                            'product'             => 'Товар',
-                            'quantity'            => 'Количество',
+                            'product'             => 'Товар / услуга',
+                            'quantity'            => 'Кол-во',
                             'unit'                => 'Ед. изм.',
                             'taxes'               => 'Налоги',
                             'discount-percentage' => 'Скидка, %',
@@ -54,8 +54,8 @@ return [
                         ],
 
                         'fields' => [
-                            'product'             => 'Товар',
-                            'quantity'            => 'Количество',
+                            'product'             => 'Товар / услуга',
+                            'quantity'            => 'Кол-во',
                             'unit'                => 'Ед. изм.',
                             'taxes'               => 'Налоги',
                             'discount-percentage' => 'Скидка, %',
@@ -215,11 +215,11 @@ return [
                 'repeater' => [
                     'products' => [
                         'title'       => 'Товары',
-                        'add-product' => 'Добавить товар',
+                        'add-product' => 'Добавить позицию',
 
                         'entries' => [
-                            'product'             => 'Товар',
-                            'quantity'            => 'Количество',
+                            'product'             => 'Товар / услуга',
+                            'quantity'            => 'Кол-во',
                             'unit'                => 'Ед. изм.',
                             'taxes'               => 'Налоги',
                             'discount-percentage' => 'Скидка, %',

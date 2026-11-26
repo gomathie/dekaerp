@@ -41,11 +41,11 @@ return [
                 'repeater' => [
                     'products' => [
                         'title'       => 'Produtos',
-                        'add-product' => 'Adicionar produto',
+                        'add-product' => 'Adicionar item',
 
                         'columns' => [
-                            'product'             => 'Produto',
-                            'quantity'            => 'Quantidade',
+                            'product'             => 'Item / serviço',
+                            'quantity'            => 'Qtd.',
                             'unit'                => 'Unidade',
                             'taxes'               => 'Impostos',
                             'discount-percentage' => 'Percentual de desconto',
@@ -54,8 +54,8 @@ return [
                         ],
 
                         'fields' => [
-                            'product'             => 'Produto',
-                            'quantity'            => 'Quantidade',
+                            'product'             => 'Item / serviço',
+                            'quantity'            => 'Qtd.',
                             'unit'                => 'Unidade',
                             'taxes'               => 'Impostos',
                             'discount-percentage' => 'Percentual de desconto',
@@ -215,11 +215,11 @@ return [
                 'repeater' => [
                     'products' => [
                         'title'       => 'Produtos',
-                        'add-product' => 'Adicionar produto',
+                        'add-product' => 'Adicionar item',
 
                         'entries' => [
-                            'product'             => 'Produto',
-                            'quantity'            => 'Quantidade',
+                            'product'             => 'Item / serviço',
+                            'quantity'            => 'Qtd.',
                             'unit'                => 'Unidade',
                             'taxes'               => 'Impostos',
                             'discount-percentage' => 'Percentual de desconto',

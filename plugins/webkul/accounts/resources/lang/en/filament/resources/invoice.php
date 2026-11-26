@@ -45,12 +45,12 @@ return [
                 'repeater' => [
                     'products' => [
                         'title'       => 'Products',
-                        'add-product' => 'Add Product',
+                        'add-product' => 'Add item',
                         'price-hint'  => 'A unit price changed here applies to this invoice only. The product keeps its own price.',
 
                         'columns' => [
-                            'product'             => 'Product',
-                            'quantity'            => 'Quantity',
+                            'product'             => 'Item / service',
+                            'quantity'            => 'Qty',
                             'unit'                => 'Unit',
                             'taxes'               => 'Taxes',
                             'discount-percentage' => 'Discount',
@@ -59,8 +59,8 @@ return [
                         ],
 
                         'fields' => [
-                            'product'             => 'Product',
-                            'quantity'            => 'Quantity',
+                            'product'             => 'Item / service',
+                            'quantity'            => 'Qty',
                             'unit'                => 'Unit',
                             'taxes'               => 'Taxes',
                             'discount-percentage' => 'Discount Percentage',
@@ -227,8 +227,8 @@ return [
                 'repeater' => [
                     'products' => [
                         'entries' => [
-                            'product'             => 'Product',
-                            'quantity'            => 'Quantity',
+                            'product'             => 'Item / service',
+                            'quantity'            => 'Qty',
                             'unit'                => 'Unit Of Measure',
                             'taxes'               => 'Taxes',
                             'discount-percentage' => 'Discount Percentage',

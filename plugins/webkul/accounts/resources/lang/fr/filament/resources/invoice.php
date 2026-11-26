@@ -45,12 +45,12 @@ return [
                 'repeater' => [
                     'products' => [
                         'title'       => 'Produits',
-                        'add-product' => 'Ajouter un produit',
+                        'add-product' => 'Ajouter un article',
                         'price-hint'  => 'Un prix unitaire modifié ici ne vaut que pour cette facture. Le produit garde son propre prix.',
 
                         'columns' => [
-                            'product'             => 'Produit',
-                            'quantity'            => 'Quantité',
+                            'product'             => 'Article / service',
+                            'quantity'            => 'Qté',
                             'unit'                => 'Unité',
                             'taxes'               => 'Taxes',
                             'discount-percentage' => 'Remise',
@@ -59,8 +59,8 @@ return [
                         ],
 
                         'fields' => [
-                            'product'             => 'Produit',
-                            'quantity'            => 'Quantité',
+                            'product'             => 'Article / service',
+                            'quantity'            => 'Qté',
                             'unit'                => 'Unité',
                             'taxes'               => 'Taxes',
                             'discount-percentage' => 'Pourcentage de remise',
@@ -227,8 +227,8 @@ return [
                 'repeater' => [
                     'products' => [
                         'entries' => [
-                            'product'             => 'Produit',
-                            'quantity'            => 'Quantité',
+                            'product'             => 'Article / service',
+                            'quantity'            => 'Qté',
                             'unit'                => 'Unité de mesure',
                             'taxes'               => 'Taxes',
                             'discount-percentage' => 'Pourcentage de remise',

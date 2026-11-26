@@ -29,11 +29,11 @@ return [
                 'repeater' => [
                     'products' => [
                         'title'       => 'Produtos',
-                        'add-product' => 'Adicionar produto',
+                        'add-product' => 'Adicionar item',
 
                         'fields' => [
-                            'product'             => 'Produto',
-                            'quantity'            => 'Quantidade',
+                            'product'             => 'Item / serviço',
+                            'quantity'            => 'Qtd.',
                             'unit'                => 'Unidade',
                             'taxes'               => 'Impostos',
                             'discount-percentage' => 'Percentual de desconto',
@@ -116,8 +116,8 @@ return [
                 'repeater' => [
                     'products' => [
                         'entries' => [
-                            'product'             => 'Produto',
-                            'quantity'            => 'Quantidade',
+                            'product'             => 'Item / serviço',
+                            'quantity'            => 'Qtd.',
                             'unit'                => 'Unidade de medida',
                             'taxes'               => 'Impostos',
                             'discount-percentage' => 'Percentual de desconto',

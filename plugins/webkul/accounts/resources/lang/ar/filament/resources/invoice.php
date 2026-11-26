@@ -45,11 +45,11 @@ return [
                 'repeater' => [
                     'products' => [
                         'title'       => 'المنتجات',
-                        'add-product' => 'إضافة منتج',
+                        'add-product' => 'إضافة بند',
                         'price-hint'  => 'سعر الوحدة الذي تغيّره هنا يسري على هذه الفاتورة فقط، ويبقى سعر المنتج كما هو.',
 
                         'columns' => [
-                            'product'             => 'المنتج',
+                            'product'             => 'البند / الخدمة',
                             'quantity'            => 'الكمية',
                             'unit'                => 'الوحدة',
                             'taxes'               => 'الضرائب',
@@ -59,7 +59,7 @@ return [
                         ],
 
                         'fields' => [
-                            'product'             => 'المنتج',
+                            'product'             => 'البند / الخدمة',
                             'quantity'            => 'الكمية',
                             'unit'                => 'الوحدة',
                             'taxes'               => 'الضرائب',
@@ -227,7 +227,7 @@ return [
                 'repeater' => [
                     'products' => [
                         'entries' => [
-                            'product'             => 'المنتج',
+                            'product'             => 'البند / الخدمة',
                             'quantity'            => 'الكمية',
                             'unit'                => 'وحدة القياس',
                             'taxes'               => 'الضرائب',

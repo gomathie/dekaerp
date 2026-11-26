@@ -29,11 +29,11 @@ return [
                 'repeater' => [
                     'products' => [
                         'title'       => 'Товары',
-                        'add-product' => 'Добавить товар',
+                        'add-product' => 'Добавить позицию',
 
                         'fields' => [
-                            'product'             => 'Товар',
-                            'quantity'            => 'Количество',
+                            'product'             => 'Товар / услуга',
+                            'quantity'            => 'Кол-во',
                             'unit'                => 'Ед. изм.',
                             'taxes'               => 'Налоги',
                             'discount-percentage' => 'Скидка, %',
@@ -116,8 +116,8 @@ return [
                 'repeater' => [
                     'products' => [
                         'entries' => [
-                            'product'             => 'Товар',
-                            'quantity'            => 'Количество',
+                            'product'             => 'Товар / услуга',
+                            'quantity'            => 'Кол-во',
                             'unit'                => 'Единица измерения',
                             'taxes'               => 'Налоги',
                             'discount-percentage' => 'Скидка, %',
