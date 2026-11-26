@@ -2190,6 +2190,15 @@ log named):
   order in `OrderFromInvoice`, or they count twice. Tests: sales
   `SalesByProductTest`, `SalesDashboardTest`, `OrderFromInvoiceTest`.
 
+• One item box per line, 2026-11-26 (user decision, Zoho; v1.17.18):
+  products and services come from
+  `HasLinesWithoutProduct::itemSearchResults()`, always filtered to the
+  document's company; typed text becomes a line without a product through
+  `startTypedLine()`, never a product_id. `MoveLine::computeName()` keeps a
+  description typed on this save. Do not bring back the separate "Add a line
+  without a product" button, and do not search products without the company
+  filter. Test: accounts `LineWithoutProductTest`.
+
 • Record payment needs `create_invoice_payment`, 2026-11-26 (user,
   v1.17.17): one rule, `QuickPayment::mayRecordPayment()`, for Record payment
   and Paid now (form, direct-sale preset, `confirmAndPay()`). Do not put the

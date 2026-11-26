@@ -46,6 +46,7 @@ use Webkul\Product\Models\Category as ProductCategory;
 use Webkul\Product\Models\Product as BaseProduct;
 use Webkul\Product\Settings\ProductSettings;
 use Webkul\Support\Filament\Forms\Components\Repeater;
+use Webkul\Support\Filament\Forms\Components\Repeater\TableCellGroup;
 use Webkul\Support\Filament\Forms\Components\Repeater\TableColumn;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Currency;
@@ -125,8 +126,9 @@ class InvoiceResource extends Resource
             })
             ->addable(fn ($record): bool => ! in_array($record?->state, [MoveState::POSTED, MoveState::CANCEL]))
             ->deletable(fn ($record): bool => ! in_array($record?->state, [MoveState::POSTED, MoveState::CANCEL]))
-            // Plan #9 R-5: a line without a product, next to "Add product".
-            ->footerActions([static::addLineWithoutProductAction()])
+            // R-5's separate "Add a line without a product" button is gone:
+            // typing any text in the item box makes such a line (plan 10,
+            // piece 7, Zoho-style).
             ->table(fn (Repeater $component): array => [
                 TableColumn::make('product_id')
                     ->label(__('accounts::filament/resources/invoice.form.tabs.invoice-lines.repeater.products.columns.product'))
@@ -164,94 +166,111 @@ class InvoiceResource extends Resource
             ])
             ->schema([
                 static::lineWithoutProductFlag(),
-                Select::make('product_id')
-                    ->label(__('accounts::filament/resources/invoice.form.tabs.invoice-lines.repeater.products.fields.product'))
-                    ->relationship(
-                        'product',
-                        'name',
-                        fn (Builder $query, Get $get) => $query
-                            ->withTrashed()
-                            ->where('is_configurable', null)
-                            ->where(owned_by_company($get('../../company_id'))),
-                    )
-                    ->wrapOptionLabels(false)
-                    ->getOptionLabelFromRecordUsing(function ($record): string {
-                        return $record->name.($record->trashed() ? ' (Deleted)' : '');
-                    })
-                    ->disableOptionWhen(function ($value, $state, $component, $label) {
-                        if (str_contains($label, ' (Deleted)')) {
-                            return true;
-                        }
+                // The item box with the line's description under it, in one
+                // cell (plan 10, piece 7).
+                TableCellGroup::make([
+                    Select::make('product_id')
+                        ->label(__('accounts::filament/resources/invoice.form.tabs.invoice-lines.repeater.products.fields.product'))
+                        ->relationship(
+                            'product',
+                            'name',
+                            fn (Builder $query, Get $get) => $query
+                                ->withTrashed()
+                                ->where('is_configurable', null)
+                                ->where(owned_by_company($get('../../company_id'))),
+                        )
+                        ->wrapOptionLabels(false)
+                        ->getOptionLabelFromRecordUsing(function ($record): string {
+                            return $record->name.($record->trashed() ? ' (Deleted)' : '');
+                        })
+                        ->disableOptionWhen(function ($value, $state, $component, $label) {
+                            if (str_contains($label, ' (Deleted)')) {
+                                return true;
+                            }
 
-                        $repeater = $component->getParentRepeater();
+                            $repeater = $component->getParentRepeater();
 
-                        if (! $repeater) {
-                            return false;
-                        }
+                            if (! $repeater) {
+                                return false;
+                            }
 
-                        return collect($repeater->getState())
-                            ->pluck(
-                                (string) str($component->getStatePath())
-                                    ->after("{$repeater->getStatePath()}.")
-                                    ->after('.'),
-                            )
-                            ->flatten()
-                            ->diff(Arr::wrap($state))
-                            ->filter(fn (mixed $siblingItemState): bool => filled($siblingItemState))
-                            ->contains($value);
-                    })
-                    ->searchable()
-                    ->preload()
-                    ->live()
-                    ->dehydrated()
-                    // A line without a product stays one (R-5): picking a product
-                    // there would keep its typed account, never the product's.
-                    ->disabled(fn ($record, Get $get) => in_array($record?->parent_state, [MoveState::POSTED, MoveState::CANCEL]) || static::isLineWithoutProduct($get))
-                    ->placeholder(fn (Select $component, Get $get): ?string => static::isLineWithoutProduct($get)
-                        ? __('accounts::filament/resources/line-without-product.no-product')
-                        : ($component->isDisabled() ? null : __('filament-forms::components.select.placeholder')))
-                    ->afterStateUpdated(fn (Set $set, Get $get) => static::afterProductUpdated($set, $get))
-                    /*
+                            return collect($repeater->getState())
+                                ->pluck(
+                                    (string) str($component->getStatePath())
+                                        ->after("{$repeater->getStatePath()}.")
+                                        ->after('.'),
+                                )
+                                ->flatten()
+                                ->diff(Arr::wrap($state))
+                                ->filter(fn (mixed $siblingItemState): bool => filled($siblingItemState))
+                                ->contains($value);
+                        })
+                        ->searchable()
+                        ->preload()
+                        // Products and services with their sales price, plus the
+                        // typed text as a free line (plan 10, piece 7).
+                        ->getSearchResultsUsing(fn (string $search, Get $get): array => static::itemSearchResults($search, $get('../../company_id'), $get('../../currency_id'), 'price'))
+                        ->live()
+                        ->dehydrated()
+                        // A line without a product stays one (R-5): picking a product
+                        // there would keep its typed account, never the product's.
+                        ->disabled(fn ($record, Get $get) => in_array($record?->parent_state, [MoveState::POSTED, MoveState::CANCEL]) || static::isLineWithoutProduct($get))
+                        ->placeholder(fn (Select $component, Get $get): ?string => static::isLineWithoutProduct($get)
+                            ? __('accounts::filament/resources/line-without-product.no-product')
+                            : ($component->isDisabled() ? null : __('accounts::filament/resources/line-without-product.item-placeholder')))
+                        ->afterStateUpdated(function (Set $set, Get $get, $state): void {
+                            if (static::isTypedLine($state)) {
+                                static::startTypedLine($set, $get, $state);
+
+                                return;
+                            }
+
+                            static::afterProductUpdated($set, $get);
+                        })
+                        /*
                      * "+" adds a product or service from the invoice line
                      * (user, 2026-11-20, after Zoho Books): name, kind and
                      * price only; unit and category take the product form's
                      * own defaults. Needs the product create permission.
                      */
-                    ->createOptionForm([
-                        TextInput::make('name')
-                            ->label(__('accounts::filament/resources/invoice.form.tabs.invoice-lines.repeater.products.fields.product'))
-                            ->required()
-                            ->maxLength(255),
-                        Radio::make('type')
-                            ->hiddenLabel()
-                            ->options(ProductType::class)
-                            ->default(ProductType::SERVICE->value)
-                            ->inline()
-                            ->required(),
-                        TextInput::make('price')
-                            ->label(__('accounts::filament/resources/invoice.form.tabs.invoice-lines.repeater.products.fields.unit-price'))
-                            ->numeric()
-                            ->minValue(0)
-                            ->default(0)
-                            ->required(),
-                    ])
-                    ->createOptionUsing(function (array $data): int {
-                        $uomId = BaseProductResource::getDefaultUomIdByProductType($data['type']);
+                        ->createOptionForm([
+                            TextInput::make('name')
+                                ->label(__('accounts::filament/resources/invoice.form.tabs.invoice-lines.repeater.products.fields.product'))
+                                ->required()
+                                ->maxLength(255),
+                            Radio::make('type')
+                                ->hiddenLabel()
+                                ->options(ProductType::class)
+                                ->default(ProductType::SERVICE->value)
+                                ->inline()
+                                ->required(),
+                            TextInput::make('price')
+                                ->label(__('accounts::filament/resources/invoice.form.tabs.invoice-lines.repeater.products.fields.unit-price'))
+                                ->numeric()
+                                ->minValue(0)
+                                ->default(0)
+                                ->required(),
+                        ])
+                        ->createOptionUsing(function (array $data): int {
+                            $uomId = BaseProductResource::getDefaultUomIdByProductType($data['type']);
 
-                        return Product::create([
-                            'name'        => $data['name'],
-                            'type'        => $data['type'],
-                            'price'       => $data['price'],
-                            'uom_id'      => $uomId,
-                            'uom_po_id'   => $uomId,
-                            'category_id' => ProductCategory::query()->orderBy('id')->value('id'),
-                            'company_id'  => current_company_id(),
-                        ])->getKey();
-                    })
-                    ->createOptionAction(fn (Action $action) => $action
-                        ->visible(fn (): bool => (bool) Auth::user()?->can('create', BaseProduct::class)))
-                    ->required(fn (Get $get): bool => ! static::isLineWithoutProduct($get)),
-                static::lineDescriptionField(),
+                            return Product::create([
+                                'name'        => $data['name'],
+                                'type'        => $data['type'],
+                                'price'       => $data['price'],
+                                'uom_id'      => $uomId,
+                                'uom_po_id'   => $uomId,
+                                'category_id' => ProductCategory::query()->orderBy('id')->value('id'),
+                                'company_id'  => current_company_id(),
+                            ])->getKey();
+                        })
+                        ->createOptionAction(fn (Action $action) => $action
+                            ->label(__('accounts::filament/resources/line-without-product.add-new-item'))
+                            ->tooltip(__('accounts::filament/resources/line-without-product.add-new-item'))
+                            ->visible(fn (): bool => (bool) Auth::user()?->can('create', BaseProduct::class)))
+                        ->required(fn (Get $get): bool => ! static::isLineWithoutProduct($get)),
+                    static::lineDescriptionField(),
+                ])->name('product_id'),
                 static::lineAccountField(),
                 TextInput::make('quantity')
                     ->label(__('accounts::filament/resources/invoice.form.tabs.invoice-lines.repeater.products.fields.quantity'))

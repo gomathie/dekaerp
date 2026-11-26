@@ -10,6 +10,12 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.17.18 — 2026-11-26
+
+### Features
+
+- Invoices and bills: one box per line finds your products and services (with their price) or takes whatever you type as a line you price yourself. Each line can have a description that prints on the invoice.
+
 # CHANGELOG — v1.17.17 — 2026-11-26
 
 ### Improvements

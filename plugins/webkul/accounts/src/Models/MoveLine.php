@@ -374,6 +374,15 @@ class MoveLine extends Model implements Sortable
             return;
         }
 
+        // Text typed on this save is the person's description of the line
+        // (plan 10, piece 7: a description under each line, printed on the
+        // invoice). The check above looks only at the saved name, so a line
+        // still showing its product's text had what was just typed replaced
+        // by that text again.
+        if ($this->exists && $this->isDirty('name') && filled($this->name) && $this->name !== $this->productName($this)) {
+            return;
+        }
+
         $this->name = $this->productName($this);
     }
 

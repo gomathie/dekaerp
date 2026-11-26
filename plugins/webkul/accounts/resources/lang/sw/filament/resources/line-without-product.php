@@ -1,9 +1,12 @@
 <?php
 
 return [
-    'add'        => 'Ongeza mstari bila bidhaa',
-    'no-product' => 'Hakuna bidhaa',
-    'columns'    => [
+    'no-product'              => 'Hakuna bidhaa',
+    'item-placeholder'        => 'Andika au chagua bidhaa au huduma',
+    'use-typed'               => 'Tumia “:text” (weka bei mwenyewe)',
+    'add-new-item'            => 'Ongeza kipengee kipya',
+    'description-placeholder' => 'Maelezo (si lazima, huchapishwa kwenye ankara)',
+    'columns'                 => [
         'description' => 'Maelezo',
         'account'     => 'Akaunti',
     ],
