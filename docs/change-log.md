@@ -9183,3 +9183,11 @@ default disk with a `'public/'` prefix instead of `Storage::disk('public')`).
 Left untouched since it's a different feature (chatter attachments) than the
 reported bug — worth a dedicated pass if attachment upload/removal is also
 misbehaving in production.
+# Backlog A — dashboard permission queries
+
+- **Why** — Dashboard navigation checks distinct permissions and previously queried once per ability.
+- **How** — The request-scoped resolver indexes each user's tenant grants by company and permission. The existing write listener clears the map.
+- **Benefit** — Distinct permission checks reuse the same loaded grants while retaining the company boundary.
+- **Trade-off** — The first lookup loads all tenant grants for the user.
+- **Verification** — The focused Pest run on `aureuserp_testing_backlog_a` exited successfully with 17 assertions and three tests reported as warnings. Pest also reported that its result cache was read-only.
+- **Rollback** — Revert the resolver change. No schema change is involved.

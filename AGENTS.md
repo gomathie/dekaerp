@@ -2085,6 +2085,9 @@ log named):
     or their pivots (`QueryExecuted` listener). Do not replace this with
     hand-placed `forget()` calls: the next new writer would bring back a
     stale permission. Do not make the memory outlive the request.
+  - The scoped resolver loads tenant grants as a map by user and company.
+    Navigation checks distinct abilities, so memoizing individual answers
+    still queries once per ability. Keep the company filter on every answer.
   - Test: security `PermissionCheckQueryBudgetTest` "reuses a permission
     answer within a request and drops it when a role changes".
 

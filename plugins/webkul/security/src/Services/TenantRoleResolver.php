@@ -48,14 +48,14 @@ class TenantRoleResolver
      */
     protected array $membershipIds = [];
 
-    /** @var array<string, bool> */
-    protected array $abilityAnswers = [];
+    /** @var array<int, array<int, array<string, true>>> */
+    protected array $tenantGrants = [];
 
     /** Drop every remembered answer. */
     public function forget(): void
     {
         $this->membershipIds = [];
-        $this->abilityAnswers = [];
+        $this->tenantGrants = [];
     }
 
     /**
@@ -106,12 +106,27 @@ class TenantRoleResolver
             return false;
         }
 
-        sort($companyIds);
-        $key = $user->getKey().'|'.$ability.'|'.implode(',', $companyIds);
+        // Navigation checks many distinct abilities. Load grants once in the
+        // scoped resolver and keep the company filter on each answer.
+        $userId = (int) $user->getKey();
 
-        return $this->abilityAnswers[$key] ??= $this->abilityQuery($user, $ability)
-            ->whereIn('company_membership_roles.company_id', $companyIds)
-            ->exists();
+        if (! isset($this->tenantGrants[$userId])) {
+            $grants = [];
+
+            foreach ($this->permissionQuery($user)->distinct()->get(['company_membership_roles.company_id', 'permissions.name']) as $grant) {
+                $grants[(int) $grant->company_id][$grant->name] = true;
+            }
+
+            $this->tenantGrants[$userId] = $grants;
+        }
+
+        foreach ($companyIds as $id) {
+            if (isset($this->tenantGrants[$userId][$id][$ability])) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -247,11 +262,15 @@ class TenantRoleResolver
 
     protected function abilityQuery(User $user, string $ability): Builder
     {
+        return $this->permissionQuery($user)->where('permissions.name', $ability);
+    }
+
+    protected function permissionQuery(User $user): Builder
+    {
         return DB::table('company_membership_roles')
             ->join('role_has_permissions', 'role_has_permissions.role_id', '=', 'company_membership_roles.role_id')
             ->join('permissions', 'permissions.id', '=', 'role_has_permissions.permission_id')
-            ->where('company_membership_roles.user_id', $user->getKey())
-            ->where('permissions.name', $ability);
+            ->where('company_membership_roles.user_id', $user->getKey());
     }
 
     protected function roleQuery(User $user, ?int $companyId = null): Builder
