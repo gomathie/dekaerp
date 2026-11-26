@@ -8,6 +8,7 @@ use Filament\Resources\Pages\EditRecord;
 use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Facades\Account as AccountFacade;
 use Webkul\Account\Filament\Resources\InvoiceResource\Actions as BaseActions;
+use Webkul\Account\Models\Expense;
 use Webkul\Accounting\Filament\Clusters\Accounting\Resources\JournalEntryResource;
 use Webkul\Accounting\Filament\Clusters\Customers\Resources\InvoiceResource;
 use Webkul\Accounting\Filament\Clusters\Vendors\Resources\BillResource;
@@ -43,6 +44,15 @@ class EditJournalEntry extends EditRecord
 
             return;
         }
+
+        // An expense's entry is changed from Expenses only (plan #10 Z2):
+        // edited by hand here it would stay in the bank journal as a
+        // free-form entry, which is what Z2 keeps out.
+        if (Expense::ownsMove($this->record)) {
+            $this->redirect(JournalEntryResource::getUrl('view', ['record' => $this->record]));
+
+            return;
+        }
     }
 
     protected function getSavedNotification(): ?Notification
@@ -60,10 +70,12 @@ class EditJournalEntry extends EditRecord
                 ->resource($this->getResource())
                 ->activityPlans($this->getRecord()->activityPlans()),
             BaseActions\ConfirmAction::make(),
-            BaseActions\CancelAction::make(),
-            BaseActions\ReverseAction::make(),
-            BaseActions\ResetToDraftAction::make(),
-            DeleteAction::make(),
+            // Each base action already decides by state, through visible()
+            // or hidden(); the other one is used here so that rule stays.
+            BaseActions\CancelAction::make()->visible(fn ($record): bool => ! Expense::ownsMove($record)),
+            BaseActions\ReverseAction::make()->hidden(fn ($record): bool => Expense::ownsMove($record)),
+            BaseActions\ResetToDraftAction::make()->hidden(fn ($record): bool => Expense::ownsMove($record)),
+            DeleteAction::make()->visible(fn ($record): bool => ! Expense::ownsMove($record)),
         ];
     }
 
