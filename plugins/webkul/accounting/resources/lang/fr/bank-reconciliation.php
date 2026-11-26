@@ -20,6 +20,7 @@ return [
         'bad-row'                => 'Ligne :row : le champ :field est illisible. Vérifiez les numéros de colonnes et le format de date.',
         'already-reconciled'     => 'Cette ligne est déjà rapprochée.',
         'payment-does-not-match' => 'Ce paiement ne correspond pas à cette ligne : il doit être dans le même journal bancaire, du même montant et du même sens, et pas encore rapproché.',
+        'expense-does-not-match' => 'Cette dépense ne correspond pas à cette ligne : elle doit être payée depuis le même compte bancaire, du même montant, à quelques jours de la ligne, et pas encore rapprochée.',
         'account-not-allowed'    => 'Ce compte ne peut pas être utilisé ici. Les comptes clients et fournisseurs se règlent en rapprochant un paiement.',
     ],
 ];

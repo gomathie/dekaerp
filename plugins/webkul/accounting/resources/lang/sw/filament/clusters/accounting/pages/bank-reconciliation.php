@@ -80,6 +80,14 @@ return [
         'done'        => 'Mstari umelinganishwa. Malipo sasa yamelipwa.',
     ],
 
+    'match-expense' => [
+        'label'       => 'Linganisha gharama',
+        'description' => 'Gharama zilizolipwa kutoka akaunti hii ya benki kwa kiasi kilekile, ndani ya siku chache za mstari huu.',
+        'expense'     => 'Gharama',
+        'none'        => 'Hakuna gharama inayolingana. Rekodi gharama kwanza, au weka mstari kwenye akaunti.',
+        'done'        => 'Mstari umelinganishwa na gharama. Hakuna kilichorekodiwa tena.',
+    ],
+
     'book' => [
         'label'       => 'Rekodi kwenye akaunti',
         'description' => 'Kwa ada za benki, riba au uhamisho: hurekodi mstari dhidi ya akaunti utakayochagua.',

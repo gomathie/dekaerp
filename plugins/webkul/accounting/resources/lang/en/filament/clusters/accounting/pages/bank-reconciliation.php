@@ -80,6 +80,14 @@ return [
         'done'        => 'Line matched. The payment is now paid.',
     ],
 
+    'match-expense' => [
+        'label'       => 'Match expense',
+        'description' => 'Expenses paid from this bank account for the same amount, within a few days of this line.',
+        'expense'     => 'Expense',
+        'none'        => 'No expense matches. Record the expense first, or book the line to an account.',
+        'done'        => 'Line matched to the expense. Nothing was posted again.',
+    ],
+
     'book' => [
         'label'       => 'Book to account',
         'description' => 'For bank charges, interest or transfers: posts the line against the account you choose.',

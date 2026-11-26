@@ -20,6 +20,7 @@ return [
         'bad-row'                => 'Mstari :row: :field haisomeki. Kagua nambari za safu wima na muundo wa tarehe.',
         'already-reconciled'     => 'Mstari huu tayari umelinganishwa.',
         'payment-does-not-match' => 'Malipo hayo hayalingani na mstari huu: lazima yawe kwenye jarida lilelile la benki, kwa kiasi na mwelekeo uleule, na yasiwe yamelinganishwa tayari.',
+        'expense-does-not-match' => 'Gharama hiyo hailingani na mstari huu: lazima iwe imelipwa kutoka akaunti ileile ya benki, kwa kiasi kilekile, ndani ya siku chache za mstari, na isiwe imelinganishwa tayari.',
         'account-not-allowed'    => 'Akaunti hiyo haiwezi kutumika hapa. Akaunti za wateja na wasambazaji hulipwa kwa kulinganisha malipo.',
     ],
 ];

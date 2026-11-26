@@ -67,9 +67,17 @@
 >   receipt-only edits need no reason and no re-posting; an "Amount includes
 >   tax" switch on the form, preset from the tax; then "Match to an expense"
 >   in bank reconciliation, extending the existing suggestion rule.
+>   *Built 2026-11-26 on `feature/expenses` (mockup approved), not yet
+>   released:* Purchase/Invoices › Vendors › Expenses, posted through
+>   `Account\Services\ExpenseRecorder` and the shared builder
+>   `ExpenseEntry`; the three follow-ups are built on the same branch.
+>   Details and verification in `docs/change-log.md`. Left for later as
+>   the mockup said: billable to a customer, mileage, split receipts.
 > - **Z2 Bank/cash journals take manual movements only through Expenses.**
 >   Free-form manual entries there stay refused (`Move::getValidJournalTypes`
 >   unchanged for everything else), so bank reconciliation is not weakened.
+>   *Built 2026-11-26 with Z1:* `Move::isExpenseEntryInItsJournal()`, see
+>   the protected decision in AGENTS.md.
 > - **Z3 Receipts:** after the import is checked, a second pass downloads
 >   the receipt and attachment files from Zoho (read-only) and attaches them
 >   to the imported entries.

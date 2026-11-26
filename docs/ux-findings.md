@@ -255,3 +255,16 @@ payment](https://www.zoho.com/us/books/kb/payments/refund-excess-payment.html)
 (read 2026-11-25). Click counts for Zoho come from those steps. Its form
 fields come from the 2026-11-20 live session, because the help pages show
 them only as screenshots.
+
+## Expenses (2026-11-26, plan #10 Z1)
+
+Seen while building the approved mockup; no browser check yet (see the change-log entry).
+
+| # | Seen | Proposal | Effort | Status |
+|---|---|---|---|---|
+| U101 | Editing a saved expense always asks "Reason for the change", even to fix a typo in the note | Ask only when an amount, date, account, tax or paid-from changes; a note or receipt change rewrites nothing in the books | S | **Built** 2026-11-26 (user decision A), feature/expenses |
+| U102 | "Paid from" is a row of buttons; a company with many bank and mobile-money accounts gets a long wrapped row on a phone | Over five accounts, switch to a searchable select with the last used first | S | Proposed |
+| U103 | The amount and its currency sit side by side; on a phone the currency select is narrow | Currency as a suffix chip inside the amount field (as the mockup drew it) | S | Proposed |
+| U104 | A bank statement line for an expense cannot be matched to it in reconciliation (only payments are matched) | "Match to an expense" beside "Match to a payment" in bank reconciliation, linking the line without posting again | M | **Built** 2026-11-26 (user decision C), feature/expenses |
+| U105 | The receipt opens in a new tab only from the view page | A paperclip in the list row that opens the receipt directly | S | Proposed |
+| U106 | On the invoice line, the item box placeholder ("Type or choose an item or service") and the description placeholder are cut off at 1440 px (seen in production, v1.17.18) | Shorter placeholders ("Item or service", "Description") or a wider first column | S | Proposed |

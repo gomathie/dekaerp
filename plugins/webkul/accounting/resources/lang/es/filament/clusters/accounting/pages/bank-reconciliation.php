@@ -80,6 +80,14 @@ return [
         'done'        => 'Línea conciliada. El pago ya está pagado.',
     ],
 
+    'match-expense' => [
+        'label'       => 'Conciliar gasto',
+        'description' => 'Gastos pagados desde esta cuenta bancaria por el mismo importe, a pocos días de esta línea.',
+        'expense'     => 'Gasto',
+        'none'        => 'Ningún gasto coincide. Registre primero el gasto o asigne la línea a una cuenta.',
+        'done'        => 'Línea conciliada con el gasto. No se contabilizó nada de nuevo.',
+    ],
+
     'book' => [
         'label'       => 'Contabilizar en una cuenta',
         'description' => 'Para comisiones bancarias, intereses o transferencias: registra la línea en la cuenta elegida.',
