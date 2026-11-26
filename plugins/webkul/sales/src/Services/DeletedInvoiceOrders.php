@@ -6,12 +6,9 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Gate;
 use Throwable;
 use Webkul\Account\Models\Move;
-use Webkul\Inventory\Models\Operation;
-use Webkul\PluginManager\Package;
 use Webkul\Sale\Enums\OrderState;
 use Webkul\Sale\Facades\SaleOrder as SaleOrderFacade;
 use Webkul\Sale\Models\Order;
-use Webkul\Sale\Models\OrderLine;
 use Webkul\Sale\Support\SalesAccess;
 
 /**
@@ -95,35 +92,10 @@ class DeletedInvoiceOrders
             ->whereNull('deleted_at')
             ->whereIn('id', $orderIds)
             ->get()
-            ->each(fn (Order $order) => SaleOrderFacade::computeSaleOrder($this->loadedPastScopes($order)));
-    }
-
-    /**
-     * The recompute reads the order through its lines, the other invoices
-     * through their lines and the deliveries, and Order, Move and Operation
-     * carry the ownership scope. Deleted by someone who sees only their own
-     * records, the line's order came back null and the delete failed (test,
-     * 2026-11-26). Each is read here past the scopes, filtered by this
-     * order's own keys.
-     */
-    protected function loadedPastScopes(Order $order): Order
-    {
-        $lines = OrderLine::withoutGlobalScopes()
-            ->where('order_id', $order->getKey())
-            ->with([
-                'accountMoveLines'      => fn ($query) => $query->withoutGlobalScopes(),
-                'accountMoveLines.move' => fn ($query) => $query->withoutGlobalScopes(),
-            ])
-            ->get()
-            ->each(fn (OrderLine $line) => $line->setRelation('order', $order));
-
-        $order->setRelation('lines', $lines);
-
-        if (Package::isPluginInstalled('inventories')) {
-            $order->setRelation('operations', Operation::withoutGlobalScopes()->where('sale_order_id', $order->getKey())->get());
-        }
-
-        return $order;
+            // OrderCalculator reads the order's lines, invoices and deliveries
+            // past the ownership scope, so a restricted user's delete does not
+            // crash the recompute (2026-11-26).
+            ->each(fn (Order $order) => SaleOrderFacade::computeSaleOrder($order));
     }
 
     /**

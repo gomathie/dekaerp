@@ -33,10 +33,10 @@ return [
                 'repeater' => [
                     'products' => [
                         'title'       => 'المنتجات',
-                        'add-product' => 'إضافة منتج',
+                        'add-product' => 'إضافة بند',
 
                         'fields' => [
-                            'product'             => 'المنتج',
+                            'product'             => 'البند / الخدمة',
                             'quantity'            => 'الكمية',
                             'unit'                => 'الوحدة',
                             'taxes'               => 'الضرائب',
@@ -110,10 +110,10 @@ return [
                 'repeater' => [
                     'products' => [
                         'title'       => 'المنتجات',
-                        'add-product' => 'إضافة منتج',
+                        'add-product' => 'إضافة بند',
 
                         'entries' => [
-                            'product'             => 'المنتج',
+                            'product'             => 'البند / الخدمة',
                             'quantity'            => 'الكمية',
                             'unit'                => 'الوحدة',
                             'taxes'               => 'الضرائب',

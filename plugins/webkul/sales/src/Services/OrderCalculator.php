@@ -23,6 +23,8 @@ class OrderCalculator
 
     public function recompute(Order $record): Order
     {
+        $this->loadPastOwnershipScope($record);
+
         $record->amount_untaxed = 0;
         $record->amount_tax = 0;
         $record->amount_total = 0;
@@ -108,6 +110,30 @@ class OrderCalculator
             company: $record->company,
             date: $record->date_order ?? now()->toDateString(),
         );
+    }
+
+    /**
+     * A recompute often runs for someone other than the order's owner: a
+     * listener after an invoice is confirmed, cancelled or deleted, or a
+     * delivery is done or cancelled. Order, Move and Operation carry the
+     * ownership scope, so for a user who sees only their own records the
+     * line's order read as null (the recompute crashed, 2026-11-26) and the
+     * other invoices and deliveries read as missing (the order was saved with
+     * wrong figures). These three are read here past the scopes, filtered by
+     * this order's own keys; nothing else of the order's is reached.
+     */
+    protected function loadPastOwnershipScope(Order $order): void
+    {
+        $order->load([
+            'lines.accountMoveLines'      => fn ($query) => $query->withoutGlobalScopes(),
+            'lines.accountMoveLines.move' => fn ($query) => $query->withoutGlobalScopes(),
+        ]);
+
+        $order->lines->each(fn (OrderLine $line) => $line->setRelation('order', $order));
+
+        if (Package::isPluginInstalled('inventories')) {
+            $order->load(['operations' => fn ($query) => $query->withoutGlobalScopes()]);
+        }
     }
 
     public function recomputeLine(OrderLine $line): OrderLine

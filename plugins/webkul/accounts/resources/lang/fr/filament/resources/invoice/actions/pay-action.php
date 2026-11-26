@@ -1,12 +1,13 @@
 <?php
 
 return [
-    'title' => 'Payer',
+    'title' => 'Enregistrer un paiement',
 
     'paid-now' => [
-        'label'   => 'Payée maintenant',
-        'helper'  => 'L\'enregistrement confirme la facture et enregistre le paiement complet.',
-        'invalid' => 'Ce moyen de paiement ne peut pas être utilisé pour cette facture.',
+        'label'       => 'Payée maintenant',
+        'helper'      => 'L\'enregistrement confirme la facture et enregistre le paiement complet.',
+        'invalid'     => 'Ce moyen de paiement ne peut pas être utilisé pour cette facture.',
+        'not-allowed' => 'Vous n\'êtes pas autorisé à enregistrer des paiements.',
     ],
 
     'form' => [

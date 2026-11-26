@@ -2,6 +2,7 @@
 
 namespace Webkul\Account\Services;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Webkul\Account\Enums\MoveState;
@@ -19,8 +20,36 @@ use Webkul\Account\Models\PaymentRegister;
  */
 class QuickPayment
 {
+    /**
+     * The Invoices module's payment permission (its PaymentPolicy::create).
+     * Named here rather than through that policy: accounts is the base
+     * plugin and must not reference the invoices plugin's classes.
+     */
+    public const PERMISSION = 'create_invoice_payment';
+
+    /**
+     * Who may record a payment from a screen: Record payment on an invoice,
+     * bill or refund, and "Paid now" on a new invoice. Recording money on the
+     * books needs its own permission (user, 2026-11-26); before, anyone who
+     * could open the document could pay it. Fails closed with no signed-in
+     * user. Super Admins and assigned Multi-Company Admins pass through their
+     * Gate::before on this bare permission check, as they do everywhere.
+     */
+    public static function mayRecordPayment(): bool
+    {
+        return (bool) Auth::user()?->can(self::PERMISSION);
+    }
+
     public function confirmAndPay(Move $move, int $journalId): Move
     {
+        // Repeated here, not only on the form: the direct-sale link presets
+        // "Paid now", and a Livewire update can set any form field.
+        if (! static::mayRecordPayment()) {
+            throw ValidationException::withMessages([
+                'paid_journal_id' => __('accounts::filament/resources/invoice/actions/pay-action.paid-now.not-allowed'),
+            ]);
+        }
+
         return DB::transaction(function () use ($move, $journalId): Move {
             if ($move->state === MoveState::DRAFT) {
                 $move->checked = $move->journal?->auto_check_on_post;

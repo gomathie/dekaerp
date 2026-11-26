@@ -36,6 +36,7 @@ use Webkul\Account\Models\FiscalPosition;
 use Webkul\Account\Models\Journal;
 use Webkul\Account\Models\Move;
 use Webkul\Account\Models\Partner;
+use Webkul\Account\Services\QuickPayment;
 use Webkul\Account\Services\SaleCurrencyQuestion;
 use Webkul\Account\Settings\CustomerInvoiceSettings;
 use Webkul\Account\Support\DocumentCurrency;
@@ -189,13 +190,15 @@ class InvoiceForm
                                          * (QuickPayment). Not stored on the invoice; read by
                                          * CreateInvoice::afterCreate(). Create only, and
                                          * customer invoices only: credit notes reuse this form.
+                                         * Only for whoever may record payments (2026-11-26),
+                                         * the same rule as Record payment.
                                          */
                                         Toggle::make('paid_now')
                                             ->label(__('accounts::filament/resources/invoice/actions/pay-action.paid-now.label'))
                                             ->helperText(__('accounts::filament/resources/invoice/actions/pay-action.paid-now.helper'))
                                             ->live()
                                             ->dehydrated(false)
-                                            ->visible(fn (string $operation, $livewire): bool => $operation === 'create' && ! static::isCreditNote($livewire)),
+                                            ->visible(fn (string $operation, $livewire): bool => $operation === 'create' && ! static::isCreditNote($livewire) && QuickPayment::mayRecordPayment()),
                                         Select::make('paid_journal_id')
                                             ->label(__('accounts::filament/resources/invoice/actions/pay-action.form.fields.paid-how'))
                                             ->options(fn (Get $get): array => Journal::query()
@@ -209,7 +212,7 @@ class InvoiceForm
                                                 ->where('type', JournalType::CASH)
                                                 ->value('id'))
                                             ->required(fn (Get $get): bool => (bool) $get('paid_now'))
-                                            ->visible(fn (Get $get, string $operation, $livewire): bool => $operation === 'create' && (bool) $get('paid_now') && ! static::isCreditNote($livewire))
+                                            ->visible(fn (Get $get, string $operation, $livewire): bool => $operation === 'create' && (bool) $get('paid_now') && ! static::isCreditNote($livewire) && QuickPayment::mayRecordPayment())
                                             ->dehydrated(false),
                                         // Fields other plugins add (Sales: create a linked
                                         // sales order). Accounts must not reference them.

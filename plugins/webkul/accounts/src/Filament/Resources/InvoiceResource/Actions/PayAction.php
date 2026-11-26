@@ -28,6 +28,7 @@ use Webkul\Account\Models\Move;
 use Webkul\Account\Models\PaymentMethodLine;
 use Webkul\Account\Models\PaymentRegister;
 use Webkul\Account\Services\PaymentWaysProvisioner;
+use Webkul\Account\Services\QuickPayment;
 use Webkul\Accounting\Models\Journal;
 use Webkul\Support\Models\Company;
 
@@ -72,7 +73,9 @@ class PayAction extends Action
 
         $this
             ->label(__('accounts::filament/resources/invoice/actions/pay-action.title'))
-            ->color('success')
+            // "Record payment", Zoho style (user, 2026-11-26): the main next
+            // step on a confirmed invoice or bill that is not fully paid.
+            ->color('primary')
             ->schema(function (Schema $schema) {
                 $paymentRegister = new PaymentRegister;
 
@@ -362,7 +365,11 @@ class PayAction extends Action
                 }
             })
             ->hidden(function (Move $record) {
-                return $record->state != MoveState::POSTED
+                // Who may record a payment: one rule, shared with "Paid now".
+                // Hidden actions cannot be called, so this also refuses a
+                // crafted request.
+                return ! QuickPayment::mayRecordPayment()
+                    || $record->state != MoveState::POSTED
                     || ! in_array($record->payment_state, [
                         PaymentState::NOT_PAID,
                         PaymentState::PARTIAL,

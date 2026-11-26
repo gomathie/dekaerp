@@ -1,12 +1,13 @@
 <?php
 
 return [
-    'title' => 'Lipa',
+    'title' => 'Rekodi malipo',
 
     'paid-now' => [
-        'label'   => 'Imelipwa sasa',
-        'helper'  => 'Kuhifadhi kunathibitisha ankara na kurekodi malipo kamili.',
-        'invalid' => 'Njia hii ya kulipa haiwezi kutumika kwa ankara hii.',
+        'label'       => 'Imelipwa sasa',
+        'helper'      => 'Kuhifadhi kunathibitisha ankara na kurekodi malipo kamili.',
+        'invalid'     => 'Njia hii ya kulipa haiwezi kutumika kwa ankara hii.',
+        'not-allowed' => 'Huna ruhusa ya kurekodi malipo.',
     ],
 
     'form' => [

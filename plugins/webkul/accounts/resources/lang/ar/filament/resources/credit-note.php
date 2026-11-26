@@ -29,10 +29,10 @@ return [
                 'repeater' => [
                     'products' => [
                         'title'       => 'المنتجات',
-                        'add-product' => 'إضافة منتج',
+                        'add-product' => 'إضافة بند',
 
                         'fields' => [
-                            'product'             => 'المنتج',
+                            'product'             => 'البند / الخدمة',
                             'quantity'            => 'الكمية',
                             'unit'                => 'الوحدة',
                             'taxes'               => 'الضرائب',
@@ -116,7 +116,7 @@ return [
                 'repeater' => [
                     'products' => [
                         'entries' => [
-                            'product'             => 'المنتج',
+                            'product'             => 'البند / الخدمة',
                             'quantity'            => 'الكمية',
                             'unit'                => 'وحدة القياس',
                             'taxes'               => 'الضرائب',

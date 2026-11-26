@@ -33,10 +33,10 @@ return [
                 'repeater' => [
                     'products' => [
                         'title'       => 'Bidhaa',
-                        'add-product' => 'Ongeza bidhaa',
+                        'add-product' => 'Ongeza kipengee',
 
                         'fields' => [
-                            'product'             => 'Bidhaa',
+                            'product'             => 'Bidhaa / huduma',
                             'quantity'            => 'Idadi',
                             'unit'                => 'Kipimo',
                             'taxes'               => 'Kodi',
@@ -110,10 +110,10 @@ return [
                 'repeater' => [
                     'products' => [
                         'title'       => 'Bidhaa',
-                        'add-product' => 'Ongeza bidhaa',
+                        'add-product' => 'Ongeza kipengee',
 
                         'entries' => [
-                            'product'             => 'Bidhaa',
+                            'product'             => 'Bidhaa / huduma',
                             'quantity'            => 'Idadi',
                             'unit'                => 'Kipimo',
                             'taxes'               => 'Kodi',

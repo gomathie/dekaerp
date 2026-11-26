@@ -45,11 +45,11 @@ return [
                 'repeater' => [
                     'products' => [
                         'title'       => 'Bidhaa',
-                        'add-product' => 'Ongeza bidhaa',
+                        'add-product' => 'Ongeza kipengee',
                         'price-hint'  => 'Bei ya kipimo ikibadilishwa hapa inahusu ankara hii pekee. Bidhaa inabaki na bei yake.',
 
                         'columns' => [
-                            'product'             => 'Bidhaa',
+                            'product'             => 'Bidhaa / huduma',
                             'quantity'            => 'Idadi',
                             'unit'                => 'Kipimo',
                             'taxes'               => 'Kodi',
@@ -59,7 +59,7 @@ return [
                         ],
 
                         'fields' => [
-                            'product'             => 'Bidhaa',
+                            'product'             => 'Bidhaa / huduma',
                             'quantity'            => 'Idadi',
                             'unit'                => 'Kipimo',
                             'taxes'               => 'Kodi',
@@ -227,7 +227,7 @@ return [
                 'repeater' => [
                     'products' => [
                         'entries' => [
-                            'product'             => 'Bidhaa',
+                            'product'             => 'Bidhaa / huduma',
                             'quantity'            => 'Idadi',
                             'unit'                => 'Kipimo',
                             'taxes'               => 'Kodi',

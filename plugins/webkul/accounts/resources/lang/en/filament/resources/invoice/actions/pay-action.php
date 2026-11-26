@@ -1,12 +1,13 @@
 <?php
 
 return [
-    'title' => 'Pay',
+    'title' => 'Record payment',
 
     'paid-now' => [
-        'label'   => 'Paid now',
-        'helper'  => 'Saving confirms the invoice and records the full payment.',
-        'invalid' => 'This way to pay cannot be used for this invoice.',
+        'label'       => 'Paid now',
+        'helper'      => 'Saving confirms the invoice and records the full payment.',
+        'invalid'     => 'This way to pay cannot be used for this invoice.',
+        'not-allowed' => 'You are not allowed to record payments.',
     ],
 
     'form' => [

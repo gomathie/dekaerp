@@ -166,7 +166,8 @@ it('fills the salesperson with the creator and lists only company members', func
  * warning, and nothing is saved.
  */
 it('warns instead of failing when paid now is ticked on an invoice with no lines', function () {
-    AccountHelper::actingAsAdmin();
+    // "Paid now" records a payment, which needs its permission (2026-11-26).
+    SecurityHelper::grantPermissions(AccountHelper::actingAsAdmin(), ['create_invoice_payment']);
     $bank = AccountHelper::bankJournal();
     $customer = Partner::factory()->create(['company_id' => current_company_id()]);
     $before = Move::query()->withoutGlobalScopes()->count();
@@ -486,7 +487,8 @@ it('marks a posted invoice as checked through the action', function () {
 });
 
 it('registers a full payment and marks the invoice paid through the action', function () {
-    FilamentHelper::actingAs(['view_any_account_invoice', 'update_account_invoice']);
+    // Record payment needs the payment permission since 2026-11-26.
+    FilamentHelper::actingAs(['view_any_account_invoice', 'update_account_invoice', 'create_invoice_payment']);
 
     AccountHelper::bankJournal();
 

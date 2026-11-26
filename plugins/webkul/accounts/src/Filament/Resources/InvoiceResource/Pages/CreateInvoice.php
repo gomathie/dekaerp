@@ -68,7 +68,9 @@ class CreateInvoice extends CreateRecord
             && ($this->data['move_type'] ?? null) === MoveType::OUT_INVOICE->value
             && current_company_id()) {
             $this->data['partner_id'] = app(WalkInCustomer::class)->forCompany((int) current_company_id())->getKey();
-            $this->data['paid_now'] = true;
+            // Only for someone who may record payments (user, 2026-11-26);
+            // anyone else gets the walk-in invoice and records payment later.
+            $this->data['paid_now'] = QuickPayment::mayRecordPayment();
         }
 
         $this->form->fill($this->data);
