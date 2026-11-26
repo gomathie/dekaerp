@@ -79,8 +79,8 @@ for the task/question log this change log is paired with.
     `storeReceipt()`.
   - `translations:check` for invoices and accounts: 6 of 6 locales each.
     `php -l` on all 41 touched PHP files. Pint on every changed PHP file.
-  - The "pending" warnings in the runs are only the missing `.env` in the
-    volume copy.
+  - The warnings in the runs are only the missing `.env` in the volume
+    copy.
   - Not run: a browser check, or the full InvoiceFeature and AccountFeature
     suites.
 - **Rollback:** revert the branch's commits; the migration's `down()` drops
