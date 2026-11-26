@@ -130,10 +130,14 @@ return [
 
     'temporary_file_upload' => [
         'disk'          => env('LIVEWIRE_TEMPORARY_FILE_UPLOAD_DISK', 'local'),
+        // json / application/json: the Zoho Books import uploads a JSON
+        // export (2026-11-26). Without them every upload to that page failed
+        // here with a 422 before the page's own rules ran. Each field still
+        // applies its own rules after this global check.
         'rules'         => [
             'file',
-            'mimes:jpg,jpeg,png,gif,bmp,svg,webp,pdf,doc,docx,xls,xlsx,ppt,pptx,txt,csv,zip,mp4,mov,avi,wmv,mp3,m4a,wav,mpga,wma',
-            'mimetypes:image/*,video/*,audio/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,text/plain,text/csv,application/zip',
+            'mimes:jpg,jpeg,png,gif,bmp,svg,webp,pdf,doc,docx,xls,xlsx,ppt,pptx,txt,csv,json,zip,mp4,mov,avi,wmv,mp3,m4a,wav,mpga,wma',
+            'mimetypes:image/*,video/*,audio/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,text/plain,text/csv,application/json,application/zip',
         ],
         'directory'     => null,
         'middleware'    => 'auth',
