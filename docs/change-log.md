@@ -12,6 +12,26 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-26, HiTrace Zoho Books history imported (production data)
+
+- **What:** the initial load into company 5 (HiTrace), run by the agent
+  through Settings › Import from Zoho Books as the user decided (import as
+  soon as the tool ships). A fresh read-only Zoho export was taken first; it
+  was identical in content to the rehearsed one. The proposed matching (run 1)
+  was compared section by section with the approved mapping: identical.
+- **Result:** run 1 finished in 24 minutes over 29 queued steps; cut-off
+  2026-11-26 02:32 UTC. Created 10 accounts, 12 taxes, 52 contacts (+9
+  contact persons), 42 products; imported 13 quotations, 82 invoices
+  (including 2 sales receipts), 67 payments, 228 expenses, 2 owner
+  contributions. The run's own comparison: 214 of 214 rows OK, no document
+  in one system only. The export was cleared from the run row afterwards.
+  Sentry: no new issue.
+- **First attempt:** the upload answered 422 (JSON not allowed by Livewire's
+  global upload rules); fixed in v1.17.17 before the run. Nothing had been
+  recorded.
+- **From now on:** the parallel run. A second import into company 5 is
+  refused (one-time guard); weekly compare-only runs from the same page.
+
 ## 2026-11-26, hotfix v1.17.17: Zoho upload fix, Record payment, order recomputes, line wording
 
 Accounts 1.20.0, Sales 1.19.1, Security 1.16.0, Support 1.18.2.
