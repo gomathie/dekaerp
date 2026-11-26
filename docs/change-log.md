@@ -12,6 +12,73 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-26, hotfix v1.17.14: plan #10 items (b), 2, 3, 4
+
+Commits `a31074863`, `1357dd022`, `e93a18f54`, `15371496a` (cherry-picks
+of `a64efaf57`, `3d3918406`, `39fa38654`, `e6d7bceb2` from
+`fix/flow-plan10`). Accounts 1.18.2, Inventories 1.12.0, Sales 1.18.1.
+**Verification actually run (all four together):** DB
+`aureuserp_testing_flows` (volume copy, vendor in a read-only volume):
+sales `OrderDeliveryStatusRefreshTest`, `OneStepSaleOrderTest`,
+`TwoStepsSaleOrderTest`, `ThreeStepsSaleOrderTest`,
+`DeletedInvoiceOrderTest`; inventories `InventoryHeadlineTest`; accounts
+`BillResourceTest`, `InvoiceEmailMessageTest`: 61 passed, 232 assertions,
+0 failures. `php -l` clean on every changed PHP file (lead, after
+cherry-pick). The Swahili/other-locale duplicate-key removal in item 3 was
+lint-checked only (made after the test copy).
+
+### (b) A cancelled delivery recomputes its order
+
+- **Why:** Inventory fires `OperationCanceled` from `TransferWorkflow::cancel()`
+  (Cancel button, API, backfill), but nothing listened; only `OperationDone`
+  recomputed the order, so a delivery cancelled by hand left the order
+  "pending" (the general fix promised in v1.17.10).
+- **How:** `ComputeSaleOrderListener` handles `OperationDone|OperationCanceled`,
+  registered for both in `SaleServiceProvider`. Piece 1's repair test now
+  forces the stale state directly (`staleOrder()` helper, docblock says why);
+  its assertions are unchanged. The backfill keeps its explicit recompute.
+- **Benefit / trade-off:** the "to deliver" count is right however a delivery
+  is cancelled; one recompute per cancelled delivery. A cancelled order now
+  ends "nothing to deliver" instead of a stale "pending"; dashboards count
+  confirmed orders only, so no figure moves.
+- **Rollback:** revert `a31074863`.
+
+### (2) Needs attention: deliveries ready to validate
+
+- **Why:** TRACE365 had 4 ready deliveries never validated while the panel
+  said "All clear".
+- **How:** `InventoryHeadlineWidget::attention()` on Inventory's Overview
+  section (module switch and page permission still decide the section);
+  counts this company's outgoing deliveries in state ready; links to the
+  deliveries list's Ready view; nothing unless `DeliveryResource::canViewAny()`.
+  7 locales.
+- **Benefit / trade-off:** ready deliveries get validated; one count query
+  per Overview load.
+- **Rollback:** revert `1357dd022`.
+
+### (3) Vendor bills list
+
+- **Why:** the heading said "Customer", amounts were negative, no Paid
+  column, money columns off-screen at 1440 px.
+- **How:** `BillsTable`: "Vendor" label; `abs()` state and an absolute-sum
+  summarizer on signed columns (sorting and search use stored columns); Paid
+  column and own-currency amount due as on invoices; date under the number;
+  Tax excluded, Tax and Bill date hidden by default (still in the picker).
+  Also removes a duplicate infolist `checked` key present, with the same
+  value, in all seven `bill.php` locale files.
+- **Rollback:** revert `e93a18f54`.
+
+### (4) Invoice email text
+
+- **Why:** fixed English, signed "Administrator", said "account N/A", and
+  inserted the contact name into the HTML unescaped.
+- **How:** `PrintAndSendAction::defaultMessage()` from translations in the
+  sender's language (contacts have no language field); signed with the
+  sending user and the invoice's company; bank sentence only when the invoice
+  has a bank account; every value escaped with `e()`. The From rule is
+  unchanged (application address, author as From name).
+- **Rollback:** revert `15371496a`.
+
 ## 2026-11-26, hotfix v1.17.13: Create invoice opens the invoice; Confirm needs edit rights (TRACE365); UF-029
 
 - **Why:** TRACE365 (2026-11-25): after Create invoice, users had to look

@@ -10,6 +10,18 @@ Authoring notes (not shown on the What's New page, which strips HTML comments):
 
 ## Unreleased
 
+# CHANGELOG — v1.17.14 — 2026-11-26
+
+### Improvements
+
+- Overview: Needs attention now shows deliveries that are ready but not yet validated, with a link to them.
+- Bills: the list now says Vendor, shows amounts without a minus sign, has a Paid column, and fits the money on screen.
+- Invoices: the email sent with an invoice is now in your language, signed with your name and your company, and no longer mentions a bank account when there isn't one.
+
+### Fixes
+
+- Sales: cancelling a delivery now updates its order's delivery status straight away.
+
 # CHANGELOG — v1.17.13 — 2026-11-26
 
 ### Improvements
