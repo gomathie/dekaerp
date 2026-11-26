@@ -9,6 +9,7 @@ use Webkul\PluginManager\Support\PluginEntitlement;
 use Webkul\Support\Enums\NavigationGroup;
 use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 use Webkul\Support\Filament\Contracts\ShowsDashboardBanner;
+use Webkul\Support\Filament\DashboardAccess;
 
 class Overview extends Page implements ShowsDashboardBanner
 {
@@ -44,6 +45,10 @@ class Overview extends Page implements ShowsDashboardBanner
     public static function canAccess(): bool
     {
         return PluginEntitlement::enabledForCurrent('accounting')
-            && static::hasPagePermission();
+            && static::hasPagePermission()
+            // The same two switches as the other money dashboards (user,
+            // 2026-11-25). Off hides this page, its widgets and the
+            // Accounting section of the combined Overview.
+            && DashboardAccess::mayViewMoney();
     }
 }

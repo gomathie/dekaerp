@@ -12,6 +12,15 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-26 (unreleased): Accounting overview follows the dashboard switches
+
+- **Why:** The Accounting overview stayed visible when `can_see_dashboard` or `can_see_money_figures` was off. The other money dashboards already hide (plan #2, user 2026-11-25).
+- **How:** `Overview::canAccess()` also requires `DashboardAccess::mayViewMoney()`. The journal charts and the Accounting section of the combined Overview call that same rule. Lists stay on the role permission.
+- **Benefit:** Turning off dashboards, or money figures, hides Accounting the same way it hides Invoices, Sales and Purchases.
+- **Trade-off / risk:** A user who could open Accounting from its permission alone, with money figures off, no longer can. That is the switch working.
+- **Verification actually run:** `aureuserp_testing_backlog_a`. `AccountingOverviewTest` "follows the dashboard switches like the other money dashboards": 1 passed, 7 assertions. Pest exit code 0.
+- **Rollback:** remove the `DashboardAccess::mayViewMoney()` line from `Overview::canAccess()`. No schema change.
+
 ## 2026-11-26 (unreleased): dashboard period and filters on one row
 
 - **Why:** The period bar and the Filters panel both set the same dates (plan #2, user 2026-11-25, approved mockup).

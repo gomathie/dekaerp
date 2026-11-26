@@ -1981,10 +1981,14 @@ log named):
     (both default true), are read only through
     `Support\Filament\DashboardAccess`: off hides every dashboard page and
     the Overview, or the money sections (accounting, invoices, purchases,
-    sales) and the Invoices/Sales/Purchases dashboards. Set on the user form
+    sales) and the Invoices, Sales, Purchases and Accounting overview
+    dashboards. The Accounting overview uses `mayViewMoney()`, the same rule
+    as the other money dashboards. Set on the user form
     by Company Admin and up, never on one's own record. Dashboards only:
     lists and records keep their role permissions. Test: invoices
-    `OverviewTest` "hides the overview or only its money sections".
+    `OverviewTest` "hides the overview or only its money sections". Accounting
+    overview: `AccountingOverviewTest` "follows the dashboard switches like
+    the other money dashboards".
   - Refresh every 5 minutes at most (user). Never Filament's 5-second
     default (Sentry DEKAERP-11). Test: `OverviewTest` polling test.
 

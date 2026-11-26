@@ -29,7 +29,8 @@
 > revenue split by currency and "Show in USD". *Decided 2026-11-25 (user):*
 > the Accounting overview page follows `DashboardAccess` like the other
 > dashboards (`can_see_dashboard` off hides it; `can_see_money_figures` off
-> hides its amounts); queued as a small fix. Also queued (user, 2026-11-25):
+> hides its amounts). Built and tested on `feature/backlog-a` (2026-11-26).
+> Also queued (user, 2026-11-25):
 > load a user's permissions for the company once per request instead of one
 > query per permission (Sentry DEKAERP-27/28: Quotations 132 queries, 2.8 s),
 > keeping the per-request memory and its flush rule in AGENTS.md.
