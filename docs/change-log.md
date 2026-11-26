@@ -12,6 +12,15 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-26 (unreleased): report PDF export
+
+- **Why:** The nine reports could be read on screen and saved as Excel. There was no PDF of the same view (plan #9 R-2).
+- **How:** One table action builds the PDF from the filtered query, the visible columns and the totals. Multi-currency builds its PDF from the same figures the page shows. A report over 2,000 rows is refused. Company scope stays on the query. The action checks the page's own access rule again when it runs.
+- **Benefit:** Someone can hand over the report they are looking at, filters and totals included.
+- **Trade-off / risk:** Excel stays unlimited. The PDF stops at 2,000 rows so a large export does not time out.
+- **Verification actually run:** `aureuserp_testing_backlog_a`. The four PDF test files together: 22 passed and 4 failed (131 assertions). After the refusal tests were pointed at a fresh request, those tests passed: 5 passed, 15 assertions. The other 22 were not repeated after that edit; their code did not change.
+- **Rollback:** remove the export actions and `ReportPdf`. No schema change.
+
 ## 2026-11-26 (unreleased): invoice view loads its lines in one go
 
 - **Why:** Sentry DEKAERP-27, DEKAERP-28 and DEKAERP-2A. Opening an invoice asked for each line's currency, taxes, unit and account on its own.

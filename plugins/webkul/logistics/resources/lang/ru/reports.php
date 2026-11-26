@@ -38,7 +38,7 @@ return [
 
     'shipment-register' => [
         'title'  => 'Реестр отправок',
-        'export' => 'Экспорт',
+        'export' => 'Экспорт в Excel',
 
         'columns' => [
             'reference'   => 'Отправка',
@@ -60,7 +60,7 @@ return [
     'delivery-performance' => [
         'title'      => 'Показатели доставки',
         'subheading' => 'Оценивается по ожидаемой дате доставки. Отправки без ожидаемой даты не оцениваются.',
-        'export'     => 'Экспорт',
+        'export'     => 'Экспорт в Excel',
 
         'columns' => [
             'reference' => 'Отправка',
@@ -90,7 +90,7 @@ return [
     'profitability' => [
         'title'      => 'Рентабельность отправок',
         'subheading' => 'Начисления клиенту против утверждённых затрат, каждое в валюте своей отправки. Черновые затраты не учитываются.',
-        'export'     => 'Экспорт',
+        'export'     => 'Экспорт в Excel',
 
         'columns' => [
             'reference' => 'Отправка',
@@ -109,14 +109,14 @@ return [
 
     'vehicle-trips' => [
         'title'   => 'История рейсов транспорта',
-        'export'  => 'Экспорт',
+        'export'  => 'Экспорт в Excel',
         'columns' => $tripColumns,
         'filters' => $tripFilters,
     ],
 
     'driver-trips' => [
         'title'   => 'История рейсов водителей',
-        'export'  => 'Экспорт',
+        'export'  => 'Экспорт в Excel',
         'columns' => $tripColumns,
         'filters' => $tripFilters,
     ],

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Webkul\Logistics\Enums\TripState;
 use Webkul\Logistics\Filament\Exports\TripHistoryExporter;
 use Webkul\Logistics\Models\Trip;
+use Webkul\Support\Filament\Actions\ExportTablePdfAction;
 
 /**
  * Trips, by vehicle or by driver (WP-11).
@@ -103,6 +104,7 @@ abstract class TripHistory extends ReportPage
                     ->label(__(static::$lang.'.export'))
                     ->icon('heroicon-o-arrow-up-tray')
                     ->exporter(TripHistoryExporter::class),
+                ExportTablePdfAction::make(),
             ])
             ->defaultSort('actual_start_at', 'desc');
     }

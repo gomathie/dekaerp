@@ -7,7 +7,7 @@ return [
     'analysis' => [
         'title'      => 'Analyse des ventes',
         'subheading' => 'Commandes confirmées et factures sans commande, en devise de la société. Regroupez par client, vendeur ou mois pour voir les totaux.',
-        'export'     => 'Exporter',
+        'export'     => 'Exporter vers Excel',
         'sum'        => 'Total',
         'columns'    => [
             'reference'   => 'Commande',
@@ -31,7 +31,7 @@ return [
     'by-product' => [
         'title'      => 'Ventes par produit',
         'subheading' => 'Lignes des commandes confirmées et des factures sans commande, en devise de la société. Regroupez par produit ou catégorie pour voir les quantités et les totaux.',
-        'export'     => 'Exporter',
+        'export'     => 'Exporter vers Excel',
         'sum'        => 'Total',
         'columns'    => [
             'product'  => 'Produit',

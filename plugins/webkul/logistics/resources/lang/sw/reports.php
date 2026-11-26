@@ -38,7 +38,7 @@ return [
 
     'shipment-register' => [
         'title'  => 'Rejista ya usafirishaji',
-        'export' => 'Hamisha',
+        'export' => 'Hamisha kwenda Excel',
 
         'columns' => [
             'reference'   => 'Usafirishaji',
@@ -60,7 +60,7 @@ return [
     'delivery-performance' => [
         'title'      => 'Utendaji wa uwasilishaji',
         'subheading' => 'Hupimwa dhidi ya tarehe ya uwasilishaji inayotarajiwa. Usafirishaji usio na tarehe inayotarajiwa haupimwi.',
-        'export'     => 'Hamisha',
+        'export'     => 'Hamisha kwenda Excel',
 
         'columns' => [
             'reference' => 'Usafirishaji',
@@ -90,7 +90,7 @@ return [
     'profitability' => [
         'title'      => 'Faida ya usafirishaji',
         'subheading' => 'Tozo za mteja dhidi ya gharama zilizoidhinishwa, kila moja katika sarafu ya usafirishaji husika. Gharama za rasimu hazihesabiwi.',
-        'export'     => 'Hamisha',
+        'export'     => 'Hamisha kwenda Excel',
 
         'columns' => [
             'reference' => 'Usafirishaji',
@@ -109,14 +109,14 @@ return [
 
     'vehicle-trips' => [
         'title'   => 'Historia ya safari za magari',
-        'export'  => 'Hamisha',
+        'export'  => 'Hamisha kwenda Excel',
         'columns' => $tripColumns,
         'filters' => $tripFilters,
     ],
 
     'driver-trips' => [
         'title'   => 'Historia ya safari za madereva',
-        'export'  => 'Hamisha',
+        'export'  => 'Hamisha kwenda Excel',
         'columns' => $tripColumns,
         'filters' => $tripFilters,
     ],

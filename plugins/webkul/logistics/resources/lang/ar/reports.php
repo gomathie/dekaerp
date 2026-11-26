@@ -38,7 +38,7 @@ return [
 
     'shipment-register' => [
         'title'  => 'سجل الشحنات',
-        'export' => 'تصدير',
+        'export' => 'تصدير إلى إكسل',
 
         'columns' => [
             'reference'   => 'الشحنة',
@@ -60,7 +60,7 @@ return [
     'delivery-performance' => [
         'title'      => 'أداء التسليم',
         'subheading' => 'يُقاس مقابل تاريخ التسليم المتوقع. لا تُقيّم الشحنات التي ليس لها تاريخ متوقع.',
-        'export'     => 'تصدير',
+        'export'     => 'تصدير إلى إكسل',
 
         'columns' => [
             'reference' => 'الشحنة',
@@ -90,7 +90,7 @@ return [
     'profitability' => [
         'title'      => 'ربحية الشحنة',
         'subheading' => 'الرسوم القابلة للفوترة مقابل التكاليف المعتمدة، كل منها بعملة الشحنة. لا تُحتسب التكاليف المسودة.',
-        'export'     => 'تصدير',
+        'export'     => 'تصدير إلى إكسل',
 
         'columns' => [
             'reference' => 'الشحنة',
@@ -109,14 +109,14 @@ return [
 
     'vehicle-trips' => [
         'title'   => 'سجل رحلات المركبة',
-        'export'  => 'تصدير',
+        'export'  => 'تصدير إلى إكسل',
         'columns' => $tripColumns,
         'filters' => $tripFilters,
     ],
 
     'driver-trips' => [
         'title'   => 'سجل رحلات السائق',
-        'export'  => 'تصدير',
+        'export'  => 'تصدير إلى إكسل',
         'columns' => $tripColumns,
         'filters' => $tripFilters,
     ],

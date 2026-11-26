@@ -7,7 +7,7 @@ return [
     'analysis' => [
         'title'      => 'Análisis de compras',
         'subheading' => 'Pedidos de compra confirmados en la moneda de la empresa. Agrupe por proveedor, comprador o mes para ver los totales.',
-        'export'     => 'Exportar',
+        'export'     => 'Exportar a Excel',
         'sum'        => 'Total',
         'columns'    => [
             'reference' => 'Pedido',
@@ -31,7 +31,7 @@ return [
     'by-product' => [
         'title'      => 'Compras por producto',
         'subheading' => 'Líneas de órdenes de compra confirmadas en la moneda de la empresa. Agrupe por producto o categoría para ver cantidades pedidas y recibidas.',
-        'export'     => 'Exportar',
+        'export'     => 'Exportar a Excel',
         'sum'        => 'Total',
         'columns'    => [
             'product'  => 'Producto',

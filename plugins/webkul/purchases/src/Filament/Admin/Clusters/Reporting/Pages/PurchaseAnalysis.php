@@ -22,6 +22,7 @@ use Webkul\Purchase\Filament\Admin\Clusters\Reporting;
 use Webkul\Purchase\Filament\Admin\Exports\PurchaseAnalysisExporter;
 use Webkul\Purchase\Models\PurchaseOrder;
 use Webkul\Purchase\Support\PurchasesAccess;
+use Webkul\Support\Filament\Actions\ExportTablePdfAction;
 use Webkul\Support\Filament\CompanyMembers;
 use Webkul\Support\Filament\Concerns\ChecksPagePermission;
 
@@ -129,6 +130,7 @@ class PurchaseAnalysis extends Page implements HasTable
                     ->label(__($lang.'.export'))
                     ->icon('heroicon-o-arrow-up-tray')
                     ->exporter(PurchaseAnalysisExporter::class),
+                ExportTablePdfAction::make(),
             ])
             ->defaultSort('ordered_at', 'desc')
             ->paginated([25, 50, 100]);
