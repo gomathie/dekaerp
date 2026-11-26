@@ -44,6 +44,35 @@ class InventoryHeadlineWidget extends StatsOverviewWidget
     }
 
     /**
+     * Inventory's line in Needs attention (plan 10, item 2, 2026-11-25):
+     * TRACE365 had 4 deliveries ready but never validated while the panel
+     * said "All clear", and dashboards counted those sales as undelivered.
+     * Ready means reserved and waiting only for Validate (the deliveries
+     * list's "Ready" view). Company-scoped through Operation. Only for someone
+     * who may open the deliveries list, since the line leads there.
+     *
+     * @return list<array{label: string, count: int, url: ?string, tone: string}>
+     */
+    public static function attention(): array
+    {
+        if (! DeliveryResource::canViewAny()) {
+            return [];
+        }
+
+        $ready = Operation::query()
+            ->where('state', OperationState::ASSIGNED)
+            ->whereHas('operationType', fn (Builder $query) => $query->where('type', OperationTypeEnum::OUTGOING))
+            ->count();
+
+        return [[
+            'label' => trans_choice('inventories::filament/widgets/inventory-headline.ready-deliveries', $ready, ['count' => $ready]),
+            'count' => $ready,
+            'url'   => DeliveryResource::getUrl('index', ['activeTableView' => 'ready']),
+            'tone'  => 'warning',
+        ]];
+    }
+
+    /**
      * This section's figures for the Overview's "At a glance" row. Filters are
      * accepted for the shared contract and deliberately unused (open work is
      * as of today).
