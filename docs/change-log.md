@@ -12,6 +12,41 @@ for the task/question log this change log is paired with.
 > "unreleased" and is dated before 2026-11-25 is therefore in production;
 > the headings are left as written at the time.
 
+## 2026-11-26, hotfix v1.17.18: one item box per line, with a description (plan #10 piece 7)
+
+- **Why:** user decision 2026-11-25 (follow Zoho, checked live in HiTrace's
+  Zoho): one box per line that finds products and services or takes any
+  typed text; a description under each line, printed. Adding a free line
+  needed a separate button (R-5), and a product line had no description of
+  its own.
+- **How:** `HasLinesWithoutProduct::itemSearchResults()` (the document
+  company's products and services with their price: sales price on
+  invoices, cost on bills; always the same company filter as the
+  relationship) plus a "Use '<typed text>'" choice; `startTypedLine()` turns
+  the line into R-5's line without a product (product_id null on the spot,
+  never saved). R-5's "Add a line without a product" button is removed; the
+  create button on invoice lines reads "Add new item". New support
+  `TableCellGroup` (a named Group, so the table repeater can place it) puts
+  the description input under the item box; R-5's separate Description
+  column is gone. Root cause fixed on the way: `MoveLine::computeName()`
+  replaced a description typed on an existing product line with the
+  product's text; it now keeps text changed in this save. Commit `206c59f4f`
+  (cherry-pick of `2c273fbe8`). Accounts 1.21.0, Support 1.19.0.
+- **Benefit:** one place to pick an item, a service or anything typed, with
+  a description that prints.
+- **Trade-off / risk:** each line is taller (description under the item).
+  The layout was not rendered before release; checked in production right
+  after deploy (see below).
+- **Verification actually run:** DB `aureuserp_testing_flows`, merged code:
+  `LineWithoutProductTest`, `InvoiceResourceTest`, `BillResourceTest`,
+  accounts `Workflows/InvoiceTest`: 74 passed, 355 assertions. Before the
+  merge also `CreditNoteResourceTest`, `RefundResourceTest`, sales
+  `InvoiceGoodsOptionsTest`, `OrderFromInvoiceTest` (73 tests; the only 2
+  failures were in the new tests, both fixed). R-5's four pinned tests now
+  type into the box instead of pressing the removed button; their checks are
+  unchanged. `php -l` clean (lead).
+- **Rollback:** revert the commit; no migration.
+
 ## 2026-11-26, HiTrace Zoho Books history imported (production data)
 
 - **What:** the initial load into company 5 (HiTrace), run by the agent
