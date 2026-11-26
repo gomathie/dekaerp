@@ -26,4 +26,13 @@ return [
             ],
         ],
     ],
+
+    'message' => [
+        'subject'   => 'Facture :partner (Réf. :number)',
+        'greeting'  => 'Bonjour :name,',
+        'body'      => 'Votre facture :number de :company d’un montant de :amount est disponible. Merci de procéder au paiement dans les meilleurs délais.',
+        'bank'      => 'Lors du paiement, merci d’indiquer la référence :number pour le compte :account.',
+        'questions' => 'Pour toute question, n’hésitez pas à nous contacter.',
+        'regards'   => 'Cordialement,',
+    ],
 ];

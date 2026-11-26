@@ -38,23 +38,14 @@ class PrintAndSendAction extends Action
             });
 
         $this->beforeFormFilled(function (Move $record, Action $action) {
-            $money = function ($amount, $currency) {
-                return money($amount, $currency);
-            };
-
-            $description = "
-                    <p>Dear {$record->partner->name},</p>
-                    <p>Your invoice <strong>{$record->name}</strong> from <strong>{$record->company->name}</strong> for <strong>{$money($record->amount_total, $record->currency->name)}</strong> is now available. Kindly arrange payment at your earliest convenience.</p>
-                    <p>When making the payment, please reference <strong>{$record->name}</strong> for account <strong>".($record->partnerBank->bank->name ?? 'N/A').'</strong>.</p>
-                    <p>If you have any questions, feel free to reach out.</p>
-                    <p><strong>Best regards,</strong><br>Administrator</p>
-                ';
-
             $action->fillForm([
                 'files'       => $this->prepareInvoice($record),
                 'partners'    => [$record->partner_id],
-                'subject'     => $record->partner->name.' Invoice (Ref '.$record->name.')',
-                'description' => $description,
+                'subject'     => __('accounts::filament/resources/invoice/actions/print-and-send.message.subject', [
+                    'partner' => $record->partner?->name,
+                    'number'  => $record->name,
+                ]),
+                'description' => static::defaultMessage($record),
             ]);
         });
 
@@ -96,6 +87,44 @@ class PrintAndSendAction extends Action
             $action->label(__('accounts::filament/resources/invoice/actions/print-and-send.modal.action.submit.title'));
             $action->icon('heroicon-m-paper-airplane');
         });
+    }
+
+    /**
+     * The message the form opens with (plan 10, item 4, 2026-11-25). It was
+     * fixed English, signed "Administrator" whoever sent it, and said "for
+     * account N/A" when the invoice had no bank account. Now: the sender's
+     * language (the partner has no language of its own), signed with the
+     * sending user's name and the company, and the bank sentence only when
+     * an account is set. Every value is escaped: the text is HTML and a
+     * contact or company name is user input.
+     */
+    public static function defaultMessage(Move $record): string
+    {
+        $lang = 'accounts::filament/resources/invoice/actions/print-and-send.message';
+        $strong = fn (?string $value): string => '<strong>'.e((string) $value).'</strong>';
+
+        $paragraphs = [
+            __($lang.'.greeting', ['name' => e((string) $record->partner?->name)]),
+            __($lang.'.body', [
+                'number'  => $strong($record->name),
+                'company' => $strong($record->company?->name),
+                'amount'  => $strong(money($record->amount_total, $record->currency?->name)),
+            ]),
+        ];
+
+        $account = collect([$record->partnerBank?->account_number, $record->partnerBank?->bank?->name])->filter()->join(', ');
+
+        if ($account !== '') {
+            $paragraphs[] = __($lang.'.bank', ['number' => $strong($record->name), 'account' => $strong($account)]);
+        }
+
+        $paragraphs[] = __($lang.'.questions');
+
+        $signature = collect([auth()->user()?->name, $record->company?->name])->filter()->map(fn (string $line): string => e($line))->join('<br>');
+
+        $paragraphs[] = '<strong>'.__($lang.'.regards').'</strong>'.($signature !== '' ? '<br>'.$signature : '');
+
+        return collect($paragraphs)->map(fn (string $paragraph): string => '<p>'.$paragraph.'</p>')->join('');
     }
 
     private function prepareInvoice(Move $record): ?string
