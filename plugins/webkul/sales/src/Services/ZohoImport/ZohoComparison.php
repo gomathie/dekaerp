@@ -355,8 +355,8 @@ class ZohoComparison
             $label = ($mapping['bank_accounts'][$zohoId]['journal_name'] ?? $bank['account_name']).' ('.($this->codes[(string) $zohoId] ?? 'unmapped').')';
 
             // Zoho's ledger balance when the export has it: the bank list's
-            // "balance" also counts bank-feed items nobody categorised
-            // (HiTrace: 33,355.31 against a ledger of 17,345.31).
+            // "balance" also counts bank-feed items nobody categorised, so it
+            // can differ from the ledger by thousands (seen in a real export).
             $rows[] = $this->row('Bank and cash balance', $label, $this->export->accountBalance((string) $zohoId) ?? (float) $bank['balance'], $deka);
         }
 

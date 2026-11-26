@@ -1625,7 +1625,7 @@ class ZohoImporter
      * income...): one journal entry, the account the money went to debited
      * and the account it came from credited, both through the approved
      * mapping. Without these, every bank balance misses the money the owner
-     * put in (HiTrace: 34,032.00 in two contributions).
+     * put in (seen in a real export: two owner contributions).
      *
      * Posted in Miscellaneous Operations through the one entry builder, as
      * expenses are; the bank or cash account is debited or credited directly.
