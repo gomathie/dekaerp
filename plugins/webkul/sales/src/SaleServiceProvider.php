@@ -74,6 +74,7 @@ class SaleServiceProvider extends PackageServiceProvider
                 '2026_08_03_130000_seed_sales_sequences',
                 '2026_11_22_000001_create_sales_invoice_order_links_table',
                 '2026_11_24_000001_add_currency_rate_source_to_sales_orders_table',
+                '2026_11_26_000001_widen_sales_order_lines_name',
             ])
             ->runsMigrations()
             ->hasSettings([
