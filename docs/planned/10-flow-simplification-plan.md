@@ -63,7 +63,10 @@
 >   account, paid from (a bank or cash journal), vendor, tax, note, receipt
 >   file. It posts one balanced entry **in the chosen bank/cash journal**
 >   (expense debited, money account credited), the same entry the importer
->   writes. Mockup first.
+>   writes. Mockup first. Follow-ups (user, 2026-11-26): note-only or
+>   receipt-only edits need no reason and no re-posting; an "Amount includes
+>   tax" switch on the form, preset from the tax; then "Match to an expense"
+>   in bank reconciliation, extending the existing suggestion rule.
 > - **Z2 Bank/cash journals take manual movements only through Expenses.**
 >   Free-form manual entries there stay refused (`Move::getValidJournalTypes`
 >   unchanged for everything else), so bank reconciliation is not weakened.
