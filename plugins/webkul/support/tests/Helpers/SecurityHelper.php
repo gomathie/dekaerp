@@ -3,10 +3,10 @@
 use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\Sanctum;
 use Spatie\Permission\PermissionRegistrar;
-use Webkul\Security\PermissionRegistrar as ForkPermissionRegistrar;
 use Webkul\Security\Enums\PermissionType;
 use Webkul\Security\Models\Permission;
 use Webkul\Security\Models\User;
+use Webkul\Security\PermissionRegistrar as ForkPermissionRegistrar;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Services\CompanyContext;
 
@@ -77,6 +77,17 @@ class SecurityHelper
         return User::withoutEvents(fn (): User => User::factory()->create([
             'default_company_id' => $companyId,
         ]));
+    }
+
+    /**
+     * Give an already signed-in user (the seeded admin, say) permissions a
+     * test needs, without depending on which plugins happened to generate
+     * them in this run.
+     */
+    public static function grantPermissions(User $user, array $permissionNames): void
+    {
+        static::ensurePermissionsExist($permissionNames);
+        static::assignPermissionsToUser($user, $permissionNames);
     }
 
     private static function ensurePermissionsExist(array $permissionNames): void

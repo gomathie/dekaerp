@@ -14,6 +14,7 @@ use Webkul\Support\Models\Company;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
 require_once __DIR__.'/../../../../support/tests/Helpers/CompanyHelper.php';
+require_once __DIR__.'/../../../../support/tests/Helpers/SecurityHelper.php';
 require_once __DIR__.'/../../Helpers/AccountHelper.php';
 
 /**
@@ -31,7 +32,8 @@ beforeEach(function () {
 
     Package::$plugins = Plugin::all()->keyBy('name');
 
-    AccountHelper::actingAsAdmin();
+    // Recording a payment needs its permission (2026-11-26).
+    SecurityHelper::grantPermissions(AccountHelper::actingAsAdmin(), ['create_invoice_payment']);
 });
 
 it('renames the default journals and adds Mobile Money with its own account, once', function () {

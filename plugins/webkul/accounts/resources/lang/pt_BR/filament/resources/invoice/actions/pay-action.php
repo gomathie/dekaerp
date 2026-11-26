@@ -1,12 +1,13 @@
 <?php
 
 return [
-    'title' => 'Pagar',
+    'title' => 'Registrar pagamento',
 
     'paid-now' => [
-        'label'   => 'Paga agora',
-        'helper'  => 'Ao salvar, a fatura é confirmada e o pagamento total é registrado.',
-        'invalid' => 'Esta forma de pagamento não pode ser usada para esta fatura.',
+        'label'       => 'Paga agora',
+        'helper'      => 'Ao salvar, a fatura é confirmada e o pagamento total é registrado.',
+        'invalid'     => 'Esta forma de pagamento não pode ser usada para esta fatura.',
+        'not-allowed' => 'Você não tem permissão para registrar pagamentos.',
     ],
 
     'form' => [

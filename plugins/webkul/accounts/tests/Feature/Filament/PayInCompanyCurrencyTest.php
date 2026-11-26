@@ -42,7 +42,7 @@ beforeEach(function () {
 });
 
 it('pays an invoice in a company whose base currency is not the installation default', function () {
-    FilamentHelper::actingAs(['view_any_account_invoice', 'update_account_invoice']);
+    FilamentHelper::actingAs(['view_any_account_invoice', 'update_account_invoice', 'create_invoice_payment']);
 
     $company = AccountHelper::company();
     $local = AccountHelper::otherCurrency();
@@ -68,7 +68,7 @@ it('pays an invoice in a company whose base currency is not the installation def
 });
 
 it('prepares a payment register for an invoice in the company currency without errors', function () {
-    FilamentHelper::actingAs(['view_any_account_invoice', 'update_account_invoice']);
+    FilamentHelper::actingAs(['view_any_account_invoice', 'update_account_invoice', 'create_invoice_payment']);
 
     $company = AccountHelper::company();
     $local = AccountHelper::otherCurrency();
@@ -125,7 +125,7 @@ function paidInvoicePayment(): array
 }
 
 it('resets a paid payment and its journal entry to draft together', function () {
-    FilamentHelper::actingAs(['view_any_account_invoice', 'update_account_invoice', 'view_any_account_payment', 'view_account_payment', 'update_account_payment']);
+    FilamentHelper::actingAs(['view_any_account_invoice', 'update_account_invoice', 'view_any_account_payment', 'view_account_payment', 'update_account_payment', 'create_invoice_payment']);
 
     [$invoice, $payment] = paidInvoicePayment();
 
@@ -137,7 +137,7 @@ it('resets a paid payment and its journal entry to draft together', function () 
 });
 
 it('finishes a reset left half done: entry draft, payment still paid', function () {
-    FilamentHelper::actingAs(['view_any_account_invoice', 'update_account_invoice', 'view_any_account_payment', 'view_account_payment', 'update_account_payment']);
+    FilamentHelper::actingAs(['view_any_account_invoice', 'update_account_invoice', 'view_any_account_payment', 'view_account_payment', 'update_account_payment', 'create_invoice_payment']);
 
     [$invoice, $payment] = paidInvoicePayment();
 

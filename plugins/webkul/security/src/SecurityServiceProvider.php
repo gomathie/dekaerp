@@ -81,6 +81,8 @@ class SecurityServiceProvider extends PackageServiceProvider
                 '2026_11_20_000001_add_dashboard_switches_to_users_table',
                 // Sign in with email or username (user, 2026-11-19).
                 '2026_11_20_000002_add_username_to_users_table',
+                // Existing Sales Manager roles record payments (user, 2026-11-26).
+                '2026_11_26_000001_grant_sales_manager_payment_permission',
             ])
             ->hasSettings([
                 '2024_11_05_042358_create_user_settings',

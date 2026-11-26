@@ -22,7 +22,9 @@ use Webkul\Security\PermissionRegistrar as ForkPermissionRegistrar;
  * Rules that keep this safe:
  *  - A template is created only when missing, with its permissions at that
  *    moment. Later runs never touch an existing role, so an edit made on the
- *    Roles screen survives every deploy.
+ *    Roles screen survives every deploy. (Two narrow exceptions:
+ *    stripAdminDenied() only removes what a Company Admin may never hold,
+ *    and a new EXTRA_PERMISSIONS entry is added once by its own migration.)
  *  - Templates hold business permissions only. Security, roles, plugins,
  *    scope bypasses and impersonation never match a template's plugins, and
  *    are filtered out again by name as a backstop.
@@ -68,6 +70,24 @@ class RoleTemplateProvisioner
         'Standard Employee' => ['project' => self::VIEW, 'timesheet' => self::STANDARD, 'time_off' => self::VIEW],
     ];
 
+    /**
+     * Single permissions a template holds beyond its plugin access levels.
+     *
+     * Sales Manager records payments (user, 2026-11-26): sales staff take
+     * money at the counter, and Record payment needs the Invoices module's
+     * payment permission, which "invoice => view" does not give.
+     *
+     * Given when a template is created, and covered by the administrators'
+     * business role on every sync. An existing role gets a new extra once,
+     * from a migration (addExtraPermissions()), never on every sync: a later
+     * removal on the Roles screen must survive deploys like any other edit.
+     *
+     * @var array<string, list<string>>
+     */
+    public const EXTRA_PERMISSIONS = [
+        'Sales Manager' => ['create_invoice_payment'],
+    ];
+
     /** Never granted by a template, whatever a plugin key happens to match. */
     protected const FORBIDDEN_FRAGMENTS = ['_security_', '_role', '_plugin_', 'bypass_', 'impersonate'];
 
@@ -96,7 +116,7 @@ class RoleTemplateProvisioner
                 }
 
                 $role = Role::query()->create(['name' => $name, 'guard_name' => 'web']);
-                $role->permissions()->sync($this->permissionIdsFor($plugins)->all());
+                $role->permissions()->sync($this->templatePermissionIds($name, $plugins)->all());
                 $created[] = $name;
             }
         });
@@ -173,7 +193,7 @@ class RoleTemplateProvisioner
         }
 
         $ids = collect(self::TEMPLATES)
-            ->flatMap(fn (array $plugins): Collection => $this->permissionIdsFor($plugins))
+            ->flatMap(fn (array $plugins, string $name): Collection => $this->templatePermissionIds($name, $plugins))
             ->unique();
 
         $held = DB::table('role_has_permissions')->where('role_id', $roleId)->pluck('permission_id')->map(fn ($id): int => (int) $id);
@@ -210,19 +230,90 @@ class RoleTemplateProvisioner
             ->values();
     }
 
+    /**
+     * Everything a template holds: its plugin access levels plus its extras.
+     *
+     * @param  array<string, string>  $plugins
+     * @return Collection<int, int>
+     */
+    public function templatePermissionIds(string $template, array $plugins): Collection
+    {
+        return $this->permissionIdsFor($plugins)
+            ->merge($this->extraPermissionIdsFor($template))
+            ->unique()
+            ->values();
+    }
+
+    /**
+     * A template's extra permissions that exist in this installation. They
+     * pass the same filter as everything else a template holds.
+     *
+     * @return Collection<int, int>
+     */
+    public function extraPermissionIdsFor(string $template): Collection
+    {
+        $names = array_values(array_filter(
+            self::EXTRA_PERMISSIONS[$template] ?? [],
+            fn (string $name): bool => $this->isGrantable($name),
+        ));
+
+        if ($names === []) {
+            return collect();
+        }
+
+        return Permission::query()
+            ->where('guard_name', 'web')
+            ->whereIn('name', $names)
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->values();
+    }
+
+    /**
+     * Brings the existing role of that template up to its extra permissions,
+     * adding only. Called once per new extra, from a migration, so that a
+     * permission later removed on the Roles screen stays removed.
+     *
+     * @return int permissions added
+     */
+    public function addExtraPermissions(string $template): int
+    {
+        $roleId = Role::query()
+            ->where('guard_name', 'web')
+            ->whereRaw('LOWER(name) = ?', [mb_strtolower($template)])
+            ->value('id');
+
+        $ids = $roleId ? $this->extraPermissionIdsFor($template) : collect();
+
+        if ($ids->isEmpty()) {
+            return 0;
+        }
+
+        $held = DB::table('role_has_permissions')->where('role_id', $roleId)->pluck('permission_id')->map(fn ($id): int => (int) $id);
+        $missing = $ids->diff($held)->values();
+
+        if ($missing->isEmpty()) {
+            return 0;
+        }
+
+        DB::table('role_has_permissions')->insertOrIgnore(
+            $missing->map(fn (int $id): array => ['permission_id' => $id, 'role_id' => (int) $roleId])->all()
+        );
+
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+        if (app()->bound(ForkPermissionRegistrar::class)) {
+            app(ForkPermissionRegistrar::class)->forgetCachedPermissions();
+        }
+
+        return $missing->count();
+    }
+
     /** @param  array<string, string>  $plugins */
     public function grants(array $plugins, string $permission): bool
     {
-        // One rule, one place: a template may hold nothing a Company Admin is
-        // denied, or no Company Admin can assign it.
-        if (app(MultiCompanyAdminService::class)->deniesAbility($permission)) {
+        if (! $this->isGrantable($permission)) {
             return false;
-        }
-
-        foreach (self::FORBIDDEN_FRAGMENTS as $fragment) {
-            if (str_contains($permission, $fragment)) {
-                return false;
-            }
         }
 
         foreach ($plugins as $plugin => $access) {
@@ -240,6 +331,23 @@ class RoleTemplateProvisioner
         }
 
         return false;
+    }
+
+    protected function isGrantable(string $permission): bool
+    {
+        // One rule, one place: a template may hold nothing a Company Admin is
+        // denied, or no Company Admin can assign it.
+        if (app(MultiCompanyAdminService::class)->deniesAbility($permission)) {
+            return false;
+        }
+
+        foreach (self::FORBIDDEN_FRAGMENTS as $fragment) {
+            if (str_contains($permission, $fragment)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /** @param  list<string>  $prefixes */

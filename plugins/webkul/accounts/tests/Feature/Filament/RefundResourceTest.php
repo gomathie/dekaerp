@@ -117,7 +117,8 @@ it('marks a posted refund as checked through the action', function () {
 });
 
 it('registers a full payment and marks the refund paid through the action', function () {
-    FilamentHelper::actingAs(['view_any_account_refund', 'update_account_refund']);
+    // Record payment needs the payment permission since 2026-11-26.
+    FilamentHelper::actingAs(['view_any_account_refund', 'update_account_refund', 'create_invoice_payment']);
 
     AccountHelper::bankJournal();
 

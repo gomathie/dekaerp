@@ -28,6 +28,7 @@ use Webkul\Support\Models\Currency;
 use Webkul\Support\Models\CurrencyRate;
 
 require_once __DIR__.'/../../../../support/tests/Helpers/TestBootstrapHelper.php';
+require_once __DIR__.'/../../../../support/tests/Helpers/SecurityHelper.php';
 require_once __DIR__.'/../../../../inventories/tests/Helpers/InventoryHelper.php';
 require_once __DIR__.'/../../Helpers/SaleHelper.php';
 
@@ -320,6 +321,9 @@ it('leaves the delivery for the warehouse when the goods were not taken, then ma
  * counter sale is one save. A plain new invoice keeps the order box clear.
  */
 it('opens a direct sale with every box set and a plain invoice without', function () {
+    // "Paid now" is preset only for whoever may record payments (2026-11-26).
+    SecurityHelper::grantPermissions(auth()->user(), ['create_invoice_payment']);
+
     Livewire::withQueryParams(['direct_sale' => 1])
         ->test(CreateInvoice::class)
         ->assertFormSet([

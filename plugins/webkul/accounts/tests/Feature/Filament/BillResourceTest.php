@@ -192,7 +192,8 @@ it('marks a posted bill as checked through the action', function () {
 });
 
 it('registers a full payment and marks the bill paid through the action', function () {
-    FilamentHelper::actingAs(['view_any_account_bill', 'update_account_bill']);
+    // Record payment needs the payment permission since 2026-11-26.
+    FilamentHelper::actingAs(['view_any_account_bill', 'update_account_bill', 'create_invoice_payment']);
 
     AccountHelper::bankJournal();
 
