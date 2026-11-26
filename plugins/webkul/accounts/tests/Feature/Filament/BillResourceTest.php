@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Livewire\Livewire;
@@ -116,6 +117,34 @@ function postedBillRecord(): Move
 
     return AccountHelper::post($bill);
 }
+
+/**
+ * Plan 10, item 3 (2026-11-25): the bills list was headed "Customer", showed
+ * totals as negative (-$2,750.00), had no "Paid" column, and pushed the money
+ * off a 1440 px screen. The vendor heading, positive amounts and Paid show by
+ * default; Tax excluded, Tax and the bill date column start hidden (the date
+ * shows under the number) and stay in the column picker.
+ */
+it('lists bills with the vendor, positive amounts and what is paid', function () {
+    FilamentHelper::actingAs(['view_any_account_bill']);
+
+    $bill = postedBillRecord();
+
+    expect((float) $bill->refresh()->amount_total_in_currency_signed)->toBeLessThan(0);
+
+    Livewire::test(ListBills::class)
+        ->assertOk()
+        ->assertTableColumnExists('invoice_partner_display_name', fn (TextColumn $column): bool => $column->getLabel() === __('accounts::filament/resources/bill.table.columns.vendor'))
+        ->assertTableColumnStateSet('amount_total_in_currency_signed', 200.0, $bill)
+        ->assertTableColumnStateSet('amount_residual_signed', 200.0, $bill)
+        ->assertTableColumnStateSet('amount_paid', 0.0, $bill)
+        ->assertCanRenderTableColumn('amount_total_in_currency_signed')
+        ->assertCanRenderTableColumn('amount_paid')
+        ->assertCanRenderTableColumn('amount_residual_signed')
+        ->assertCanNotRenderTableColumn('amount_untaxed_in_currency_signed')
+        ->assertCanNotRenderTableColumn('amount_tax_signed')
+        ->assertCanNotRenderTableColumn('invoice_date');
+});
 
 it('reverses a posted bill into a refund through the action', function () {
     FilamentHelper::actingAs(['view_any_account_bill', 'update_account_bill']);

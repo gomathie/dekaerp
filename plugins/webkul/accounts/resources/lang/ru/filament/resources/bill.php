@@ -101,6 +101,7 @@ return [
             'number'           => 'Номер',
             'state'            => 'Статус',
             'customer'         => 'Клиент',
+            'vendor'           => 'Поставщик',
             'bill-date'        => 'Дата счёта',
             'checked'          => 'Проверен',
             'accounting-date'  => 'Учёт',
@@ -112,6 +113,7 @@ return [
             'tax'              => 'Налог',
             'total'            => 'Итого',
             'amount-due'       => 'К оплате',
+            'amount-paid'      => 'Оплачено',
             'bill-currency'    => 'Валюта счёта',
         ],
 
@@ -242,7 +244,6 @@ return [
                             'checked'           => 'Проверен',
                             'fiscal-position'   => 'Налоговая позиция',
                             'cash-rounding'     => 'Способ округления наличных',
-                            'checked'           => 'Проверен',
                         ],
                     ],
                 ],

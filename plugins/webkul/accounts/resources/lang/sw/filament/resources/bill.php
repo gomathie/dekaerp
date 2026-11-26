@@ -101,6 +101,7 @@ return [
             'number'           => 'Nambari',
             'state'            => 'Hali',
             'customer'         => 'Mteja',
+            'vendor'           => 'Msambazaji',
             'bill-date'        => 'Tarehe ya bili',
             'checked'          => 'Imekaguliwa',
             'accounting-date'  => 'Uhasibu',
@@ -112,6 +113,7 @@ return [
             'tax'              => 'Kodi',
             'total'            => 'Jumla',
             'amount-due'       => 'Kiasi kinachodaiwa',
+            'amount-paid'      => 'Kilicholipwa',
             'bill-currency'    => 'Sarafu ya bili',
         ],
 
@@ -242,7 +244,6 @@ return [
                             'checked'           => 'Imekaguliwa',
                             'fiscal-position'   => 'Nafasi ya kodi',
                             'cash-rounding'     => 'Njia ya ukadiriaji wa fedha taslimu',
-                            'checked'           => 'Imekaguliwa',
                         ],
                     ],
                 ],

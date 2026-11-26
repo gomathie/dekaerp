@@ -101,6 +101,7 @@ return [
             'number'           => 'الرقم',
             'state'            => 'الحالة',
             'customer'         => 'العميل',
+            'vendor'           => 'المورّد',
             'bill-date'        => 'تاريخ الفاتورة',
             'checked'          => 'تم التحقق',
             'accounting-date'  => 'تاريخ المحاسبة',
@@ -112,6 +113,7 @@ return [
             'tax'              => 'الضريبة',
             'total'            => 'الإجمالي',
             'amount-due'       => 'المبلغ المستحق',
+            'amount-paid'      => 'المدفوع',
             'bill-currency'    => 'عملة الفاتورة',
         ],
 
@@ -242,7 +244,6 @@ return [
                             'checked'           => 'تم التحقق',
                             'fiscal-position'   => 'الموقف المالي',
                             'cash-rounding'     => 'طريقة التقريب النقدي',
-                            'checked'           => 'تم التحقق',
                         ],
                     ],
                 ],

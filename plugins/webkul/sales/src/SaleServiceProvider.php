@@ -15,6 +15,7 @@ use Webkul\Account\Events\MoveDrafted;
 use Webkul\Account\Events\MovePaid;
 use Webkul\Account\Events\MoveReversed;
 use Webkul\Chatter\Services\ChatterCleanupService;
+use Webkul\Inventory\Events\OperationCanceled;
 use Webkul\Inventory\Events\OperationDone;
 use Webkul\Invoice\Filament\Overview\OverviewRegistry;
 use Webkul\PluginManager\Console\Commands\InstallCommand;
@@ -134,7 +135,8 @@ class SaleServiceProvider extends PackageServiceProvider
             columns: 6,
         );
 
-        Event::listen(OperationDone::class, ComputeSaleOrderListener::class);
+        // Done and cancelled both change an order's delivery status (plan 10).
+        Event::listen([OperationDone::class, OperationCanceled::class], ComputeSaleOrderListener::class);
 
         Event::listen(MovePaid::class, SendSMSNotificationListener::class);
 

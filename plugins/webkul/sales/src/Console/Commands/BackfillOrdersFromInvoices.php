@@ -80,11 +80,11 @@ class BackfillOrdersFromInvoices extends Command
                 if ($order) {
                     $procurement->cancelOperations($order->refresh());
 
-                    // Cancelling a delivery fires no event (only OperationDone
-                    // recomputes an order), so the order kept the "pending"
-                    // status it was confirmed with and the Sales dashboard
-                    // counted it "to deliver" (plan 10, item 1: 14 shown, 4
-                    // real). Recompute it from the cancelled delivery.
+                    // Without a recompute the order kept the "pending" status
+                    // it was confirmed with and the Sales dashboard counted it
+                    // "to deliver" (plan 10, item 1: 14 shown, 4 real). Sales
+                    // now also recomputes on OperationCanceled; this stays so
+                    // the backfill does not depend on that listener.
                     SaleOrderFacade::computeSaleOrder($order->refresh());
 
                     $created++;

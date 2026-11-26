@@ -109,14 +109,35 @@ it('does not count a backfilled order as to deliver once its only delivery is ca
         ->and(in_array($order->delivery_status, OrderActivityWidget::TO_DELIVER, true))->toBeFalse();
 });
 
-it('corrects an order left pending after its only delivery was cancelled, without touching stock', function () {
-    $stale = orderWaitingForDelivery($this->product);
-    expect($stale->delivery_status)->toBe(OrderDeliveryStatus::PENDING);
+/**
+ * An order as production has it: delivery cancelled, status still
+ * "pending". Since cancelling now recomputes the order (OperationCanceled),
+ * the stale status is written back by hand, past the model, to stand for
+ * the rows the November backfill left.
+ */
+function staleOrder($product): Order
+{
+    $order = orderWaitingForDelivery($product);
+    $order->operations->each(fn ($operation) => Inventory::cancelTransfer($operation));
 
-    // What the backfill did before it recomputed: the delivery is
-    // cancelled, the order keeps "pending".
-    $stale->operations->each(fn ($operation) => Inventory::cancelTransfer($operation));
-    expect($stale->refresh()->delivery_status)->toBe(OrderDeliveryStatus::PENDING);
+    Order::withoutGlobalScopes()->whereKey($order->id)->update(['delivery_status' => OrderDeliveryStatus::PENDING->value]);
+
+    return $order->refresh();
+}
+
+it('recomputes an order when its only delivery is cancelled by hand', function () {
+    $order = orderWaitingForDelivery($this->product);
+    expect($order->delivery_status)->toBe(OrderDeliveryStatus::PENDING);
+
+    // The same service the Cancel button and the API call.
+    $order->operations->each(fn ($operation) => Inventory::cancelTransfer($operation));
+
+    expect($order->refresh()->delivery_status)->toBe(OrderDeliveryStatus::NO);
+});
+
+it('corrects an order left pending after its only delivery was cancelled, without touching stock', function () {
+    $stale = staleOrder($this->product);
+    expect($stale->delivery_status)->toBe(OrderDeliveryStatus::PENDING);
 
     $waiting = orderWaitingForDelivery($this->product);
 
@@ -137,8 +158,7 @@ it('corrects an order left pending after its only delivery was cancelled, withou
 });
 
 it('limits the repair to the companies named', function () {
-    $stale = orderWaitingForDelivery($this->product);
-    $stale->operations->each(fn ($operation) => Inventory::cancelTransfer($operation));
+    $stale = staleOrder($this->product);
 
     $this->artisan('sales:refresh-delivery-status', ['--apply' => true, '--company' => [$stale->company_id + 1000]])
         ->assertSuccessful();

@@ -2190,6 +2190,17 @@ log named):
   order in `OrderFromInvoice`, or they count twice. Tests: sales
   `SalesByProductTest`, `SalesDashboardTest`, `OrderFromInvoiceTest`.
 
+• A cancelled delivery recomputes its order, 2026-11-26 (plan #10,
+  v1.17.14): Sales listens to `OperationCanceled` as well as `OperationDone`
+  (`ComputeSaleOrderListener`). Do not drop it: a delivery cancelled by hand
+  or through the API left its order "to deliver". Test: sales
+  `OrderDeliveryStatusRefreshTest` "recomputes an order when its only
+  delivery is cancelled by hand".
+
+• Invoice email text, 2026-11-26 (plan #10, v1.17.14): every value put into
+  the default message is escaped with `e()` (the contact name used to be
+  inserted raw). Test: accounts `InvoiceEmailMessageTest` "escapes ...".
+
 • Document numbering, 2026-11-26 (UF-029, v1.17.13; user 2026-11-25
   "Company Admin and up"; docs/upstream-fix-adoption-plan.md):
   - Every rule is in `Support\Policies\SequencePolicy`. Allowed: installation
